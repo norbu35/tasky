@@ -21,6 +21,17 @@ appId: mn.tasky.mobile
       - tapOn: "Allow"
       - waitForAnimationToEnd
 
+# Wait for app UI to settle before checking for Android-specific dialogs
+- waitForAnimationToEnd
+
+# Dismiss Android 16KB page-size compatibility dialog (appears on API 35+ emulators)
+- runFlow:
+    when:
+      visible: "Don't Show Again"
+    commands:
+      - tapOn: "Don't Show Again"
+      - waitForAnimationToEnd
+
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-002"
@@ -55,48 +66,34 @@ appId: mn.tasky.mobile
       - tapOn:
           id: "role-sheet-confirm"
       - waitForAnimationToEnd
+      # Permission screens: use "Skip for now" to bypass reliably on Android.
+      # See login-customer.yaml for rationale.
+      # SCR-SHARED-007 — Camera permission
       - extendedWaitUntil:
           visible:
             id: "SCR-SHARED-007"
           timeout: 15000
       - tapOn:
-          id: "permission-allow-button"
-      - runFlow:
-          when:
-            visible: "Allow"
-          commands:
-            - tapOn: "Allow"
-            - waitForAnimationToEnd
+          id: "permission-skip-button"
       - waitForAnimationToEnd
-      # SCR-SHARED-008 only appears if this permission hasn't been granted yet
+      # SCR-SHARED-008 — Location permission
       - runFlow:
           when:
             visible:
               id: "SCR-SHARED-008"
           commands:
             - tapOn:
-                id: "permission-allow-button"
-            - runFlow:
-                when:
-                  visible: "Allow"
-                commands:
-                  - tapOn: "Allow"
-                  - waitForAnimationToEnd
+                id: "permission-skip-button"
             - waitForAnimationToEnd
-      # SCR-SHARED-009 only appears if this permission hasn't been granted yet
+      # SCR-SHARED-009 — Notification permission
       - runFlow:
           when:
             visible:
               id: "SCR-SHARED-009"
           commands:
             - tapOn:
-                id: "permission-allow-button"
-            - runFlow:
-                when:
-                  visible: "Allow"
-                commands:
-                  - tapOn: "Allow"
-                  - waitForAnimationToEnd
+                id: "permission-skip-button"
+            - waitForAnimationToEnd
 
 - extendedWaitUntil:
     visible:

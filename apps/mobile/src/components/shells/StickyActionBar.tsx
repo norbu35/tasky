@@ -29,7 +29,11 @@ export function StickyActionBar({
     <View
       className={cn('absolute left-0 right-0 bottom-0 px-action-bar pt-action-bar', className)}
       style={[
-        { paddingBottom: insets.bottom + screenLayout.actions.barPadding + tabClearance },
+        {
+          paddingBottom: insets.bottom + screenLayout.actions.barPadding + tabClearance,
+          zIndex: 10,
+          elevation: 10,
+        },
         style,
       ]}
       testID={testID}

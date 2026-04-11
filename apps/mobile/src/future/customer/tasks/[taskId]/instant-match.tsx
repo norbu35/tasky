@@ -141,7 +141,7 @@ export default function CustomerInstantMatchScreen() {
         : t('CustomerInstantMatchScreen.copy2');
 
   return (
-    <DetailTemplate testID="SCR-CUST-027" onBack={onBack}>
+    <DetailTemplate testID="SCR-CUST-027">
       <View className="gap-lg" style={{ minHeight: 480 }}>
         <View className="gap-sm">
           <Text className="text-heading font-bold text-primary-deep">{heroTitle}</Text>

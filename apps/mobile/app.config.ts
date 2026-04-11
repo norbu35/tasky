@@ -12,11 +12,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     package: 'mn.tasky.mobile',
-    config: {
-      googleMaps: {
-        apiKey: process.env.GOOGLE_MAPS_API_KEY ?? '',
-      },
-    },
   },
   web: {
     bundler: 'metro',

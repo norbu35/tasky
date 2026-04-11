@@ -7,24 +7,24 @@ const scale = nativeTokens.typography.scale;
 export const screenTypographyPlugin = plugin(function ({ addUtilities }) {
   addUtilities({
     '.font-screen-greeting': {
-      fontSize: String(scale.caption),
+      fontSize: `${scale.caption}px`,
       fontFamily: 'PlusJakartaSans_600SemiBold',
-      letterSpacing: '0.8',
+      letterSpacing: '0.8px',
       textTransform: 'uppercase',
     },
     '.font-screen-title': {
-      fontSize: String(scale.heroTitle),
+      fontSize: `${scale.heroTitle}px`,
       fontFamily: 'Manrope_700Bold',
     },
     '.font-screen-section': {
-      fontSize: String(scale.heading),
+      fontSize: `${scale.heading}px`,
       fontFamily: 'Manrope_700Bold',
-      lineHeight: String(Math.round(scale.heading * 1.25)),
+      lineHeight: `${Math.round(scale.heading * 1.25)}px`,
     },
     '.font-screen-card-title': {
-      fontSize: String(scale.body),
+      fontSize: `${scale.body}px`,
       fontFamily: 'PlusJakartaSans_700Bold',
-      lineHeight: String(Math.round(scale.body * 1.35)),
+      lineHeight: `${Math.round(scale.body * 1.35)}px`,
     },
     '.font-screen-subtitle': {
       fontSize: String(scale.subtitle),

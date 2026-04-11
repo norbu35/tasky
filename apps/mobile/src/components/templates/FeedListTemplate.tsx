@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -98,6 +99,7 @@ export function FeedListTemplate<T>({
   className,
 }: FeedListTemplateProps<T>) {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   const renderListItem = useCallback(
     ({ item, index }: { item: T; index: number }) => renderItem(item, index),
@@ -173,7 +175,7 @@ export function FeedListTemplate<T>({
         renderItem={renderListItem}
         keyExtractor={keyExtractor}
         contentContainerStyle={{
-          paddingBottom: screenLayout.chrome.contentBottomClearance,
+          paddingBottom: screenLayout.chrome.contentBottomClearance + insets.bottom,
         }}
         ItemSeparatorComponent={ItemSeparator}
         ListHeaderComponent={combinedHeader}

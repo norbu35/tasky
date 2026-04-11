@@ -40,9 +40,9 @@ export const screenLayout = {
 
   chrome: {
     /** Tab bar total height */
-    tabBarHeight: Platform.OS === 'ios' ? 96 : 76,
-    /** Tab bar bottom offset from screen edge */
-    tabBarBottom: 0,
+    tabBarHeight: Platform.OS === 'ios' ? 64 : 58,
+    /** Tab bar fixed gap above safe area zone (components add insets.bottom on top) */
+    tabBarBottom: 8,
     /** FAB diameter */
     fabSize: 60,
     /** FAB distance from right edge */

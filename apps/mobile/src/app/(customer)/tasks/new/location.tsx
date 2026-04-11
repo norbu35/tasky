@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
-import MapView, { Marker, Region, UrlTile } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_DEFAULT, Region, UrlTile } from 'react-native-maps';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { LocateFixed, Minus, Navigation, Plus } from 'lucide-react-native';
@@ -10,11 +10,11 @@ import { Input } from '../../../../components/ui/Input';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { getCurrentLocation } from '../../../../utils/permissions';
-import { HttpMobileApiClient } from '../../../../lib/mobileApiClient';
+import { createMobileApiClient } from '../../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../../store/authStore';
 import { useRecentLocations } from '../../../../features/tasks/hooks/useRecentLocations';
 
-const api = new HttpMobileApiClient();
+const api = createMobileApiClient();
 
 const { colors } = mobileTheme;
 
@@ -221,6 +221,7 @@ export default function LocationScreen() {
         {/* map: MapView always imperative */}
         <MapView
           ref={mapRef}
+          provider={PROVIDER_DEFAULT}
           style={{ alignSelf: 'stretch', height: 280 }}
           initialRegion={{
             ...UB_CENTER,

@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { BlurView } from 'expo-blur';
-import { Platform, StyleSheet, Pressable, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import {
   Briefcase,
   ClipboardList,
@@ -9,6 +9,7 @@ import {
   Search,
   User,
 } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { screenLayout } from '../../design/screenLayout';
 import { FAB } from '../../components/ui/FAB';
@@ -19,26 +20,6 @@ const { colors, spacing, radius, typography } = mobileTheme;
 
 const TAB_ICON_SIZE = 24;
 const TAB_BORDER_RADIUS = 24;
-
-// Tab bar style objects — must remain imperative: passed to Tabs screenOptions (not NativeWind-compatible)
-const tabBarStyle = {
-  position: 'absolute' as const,
-  borderTopWidth: 0,
-  height: screenLayout.chrome.tabBarHeight,
-  bottom: screenLayout.chrome.tabBarBottom,
-  marginHorizontal: spacing.md,
-  paddingBottom: spacing.md,
-  paddingTop: spacing.md,
-  borderRadius: TAB_BORDER_RADIUS,
-  // Android: solid background + elevation shadow
-  backgroundColor: Platform.OS === 'android' ? colors.card : 'transparent',
-  elevation: Platform.OS === 'android' ? 8 : 0,
-  // iOS: shadow rendered against the BlurView background
-  shadowColor: colors.foreground,
-  shadowOffset: { width: 0, height: -2 },
-  shadowOpacity: 0.06,
-  shadowRadius: 20,
-};
 
 const tabItemStyle = {
   borderRadius: radius.md,
@@ -56,10 +37,33 @@ const tabLabelStyle = {
 export default function TabsLayout() {
   const { t } = useTranslation();
   const { isCustomer } = useRole();
+  const insets = useSafeAreaInsets();
+
+  // Tab bar style must be computed here: bottom depends on dynamic safe-area inset.
+  // safeAreaInsets: { bottom: 0 } prevents React Navigation from double-adding the inset.
+  const tabBarStyle = {
+    position: 'absolute' as const,
+    borderTopWidth: 0,
+    height: screenLayout.chrome.tabBarHeight,
+    bottom: insets.bottom + screenLayout.chrome.tabBarBottom,
+    marginHorizontal: spacing.md,
+    paddingBottom: spacing.sm,
+    paddingTop: spacing.sm,
+    borderRadius: TAB_BORDER_RADIUS,
+    // Android: solid background + elevation shadow
+    backgroundColor: Platform.OS === 'android' ? colors.card : 'transparent',
+    elevation: Platform.OS === 'android' ? 8 : 0,
+    // iOS: shadow rendered against the BlurView background
+    shadowColor: colors.foreground,
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 20,
+  };
 
   return (
     <View className="flex-1">
       <Tabs
+        safeAreaInsets={{ bottom: 0 }}
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: colors.primaryForeground,

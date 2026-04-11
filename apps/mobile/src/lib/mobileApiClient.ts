@@ -897,6 +897,10 @@ export class HttpMobileApiClient implements MobileApiClient {
   }
 }
 
+let _sharedClient: MobileApiClient | null = null;
+
 export function createMobileApiClient(baseUrl?: string): MobileApiClient {
-  return new HttpMobileApiClient(baseUrl);
+  if (baseUrl) return new HttpMobileApiClient(baseUrl);
+  if (!_sharedClient) _sharedClient = new HttpMobileApiClient();
+  return _sharedClient;
 }

@@ -16,10 +16,21 @@ appId: mn.tasky.mobile
       id: 'SCR-CUST-001'
     timeout: 5000
 
-# Tap empty-state CTA to post new task
-# Note: FAB uses AnimatedPressable (Reanimated) which is unreliable in Maestro — use empty state CTA instead
-- tapOn:
-    id: 'my-tasks-feed-empty-cta'
+# Create new task — use empty-state CTA if feed is empty, otherwise the feed FAB
+- runFlow:
+    when:
+      visible:
+        id: 'my-tasks-feed-empty-cta'
+    commands:
+      - tapOn:
+          id: 'my-tasks-feed-empty-cta'
+- runFlow:
+    when:
+      visible:
+        id: 'my-tasks-feed-fab'
+    commands:
+      - tapOn:
+          id: 'my-tasks-feed-fab'
 
 # Step 1: Category selection (SCR-CUST-002)
 - extendedWaitUntil:
@@ -33,14 +44,11 @@ appId: mn.tasky.mobile
       id: 'category-selection-grid'
     timeout: 10000
 
-# Tap first category card — "Cleaning" text is inside an accessibility button
-# so Maestro can't match standalone text. Tap by position within the grid area.
+# Tap first category card — tapping a card navigates directly to intake (no Continue step).
+# "Cleaning" text is inside an accessibility button so Maestro can't match standalone text;
+# tap by position within the grid area.
 - tapOn:
     point: '30%,38%'
-
-# Tap "Continue" to advance (category screen uses select-then-continue pattern)
-- tapOn:
-    id: 'SCR-CUST-002-next'
 
 # Step 2: Intake / Task details (SCR-CUST-003)
 - extendedWaitUntil:
@@ -50,13 +58,37 @@ appId: mn.tasky.mobile
 
 - tapOn:
     id: 'intake-description-input'
-- inputText: 'Гэрийн цэвэрлэгээ хэрэгтэй байна. 3 өрөө байшин.'
+# Note: Maestro on Android does not support Unicode input (github.com/mobile-dev-inc/maestro/issues/146).
+# Using ASCII fallback; Mongolian text would be used on iOS.
+- inputText: 'Need home cleaning service. 3 room apartment.'
 
-# Tap non-interactive header to dismiss keyboard (hideKeyboard fails on RN custom inputs)
+# Dismiss keyboard by tapping header, then fill required intake schema fields
 - tapOn:
     id: 'intake-header'
-# Wait for keyboard dismiss animation to complete before tapping the button
 - waitForAnimationToEnd
+
+# Cleaning intake schema fields (category-specific, from V11__seed_intake_schemas.sql)
+# property_type: single_select — tap "Apartment"
+- tapOn:
+    id: 'intake-property_type-apartment'
+
+# size_or_rooms: numeric_counter
+- tapOn:
+    id: 'intake-size_or_rooms-input'
+- eraseText: 3
+- inputText: '3'
+- tapOn:
+    id: 'intake-header'
+- waitForAnimationToEnd
+
+# cleaning_type: single_select — tap "Standard"
+- tapOn:
+    id: 'intake-cleaning_type-standard'
+
+# supplies_provided: yes_no — tap "Yes"
+- tapOn:
+    id: 'intake-supplies_provided-yes'
+
 - tapOn:
     id: 'SCR-CUST-003-next'
 
@@ -82,7 +114,8 @@ appId: mn.tasky.mobile
 # Fill location description explicitly so the review screen has deterministic text
 - tapOn:
     id: 'location-text-input'
-- inputText: 'Сүхбаатар дүүрэг, 1-р хороо'
+# ASCII fallback for Android (Maestro unicode limitation)
+- inputText: 'Sukhbaatar district, 1st khoroo'
 
 - hideKeyboard
 - tapOn:
