@@ -1,5 +1,4 @@
 import type { Config } from 'tailwindcss';
-import tailwindcssAnimate from 'tailwindcss-animate';
 import { webTokens } from '@tasky/design-tokens';
 
 const config: Config = {
@@ -74,7 +73,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [],
 };
 
 export default config;
