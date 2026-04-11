@@ -19,7 +19,9 @@ const normalizeLanguage = (language: string | undefined): 'en' | 'mn' => {
   return baseLanguage === 'en' || baseLanguage === 'mn' ? baseLanguage : 'mn';
 };
 
-const fallbackLanguage = normalizeLanguage(import.meta.env.VITE_DEFAULT_LOCALE as string | undefined);
+const fallbackLanguage = normalizeLanguage(
+  import.meta.env.VITE_DEFAULT_LOCALE as string | undefined,
+);
 
 i18n
   .use(LanguageDetector)
@@ -38,6 +40,12 @@ i18n
     },
     interpolation: {
       escapeValue: false, // React already safes from xss
+    },
+    react: {
+      // Disable Suspense mode — app doesn't use <Suspense> for translations.
+      // react-i18next@17 defaults useSuspense:true in React 19 environments;
+      // without this, components re-render-suspend after async state updates.
+      useSuspense: false,
     },
   });
 

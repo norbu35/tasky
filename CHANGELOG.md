@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-04-11 — Frontend dependency cascade
+
+**Branch:** `upgrade/frontend-cascade` | **Baseline → Postflight:** web 264/264 ✓, mobile 741/741 ✓, typecheck 0 errors, lint 0 errors
+
+### Web (apps/web)
+
+- **Vite 5.4 → 8.0** with Rolldown bundler + **@vitejs/plugin-react 4.5 → 6.0.1**
+- **Vitest 3 → 4** (co-upgraded with Vite; vitest@4 peers vite@8)
+- **TypeScript 5.9 → 6.0** (added `declare module '*.css' {}` for side-effect CSS import support)
+- **Tailwind CSS 3.4 → 4.2** — migrated `@tailwind` directives to `@import "tailwindcss"` + `@config`, replaced `autoprefixer` with `@tailwindcss/postcss` plugin, removed `tailwindcss-animate`
+- **React 19.2.3 → 19.2.5** — patch alignment to unify React instance across workspace (core package resolves against mobile's 19.2.5 peer; mismatched versions caused "Invalid hook call" in tests)
+- **i18next 25 → 26** + **react-i18next 16 → 17** — added `react: { useSuspense: false }` to i18n config (react-i18next@17 defaults `useSuspense: true` in React 19 concurrent environments)
+- **react-router-dom 6 → 7**, **lucide-react 0.575 → 1.8** (replaced removed brand icons: `Facebook→Share2`, `Twitter→MessageCircle`, `Instagram→Camera`), **zod 3 → 4**, **Stryker 8 → 9**, **eslint-plugin-react-hooks 5 → 7**
+- **pnpm override:** `postcss: 8.5.9` added to root to resolve dual-postcss version conflict introduced by Vite 8
+- **Test fix:** `AdminFeaturesPage.test.tsx` — stabilised `useAppContext` mock to return a constant reference (React 19 useCallback dep stability requirement)
+
+### Mobile (apps/mobile)
+
+- **TypeScript 5.9 → 6.0** — added `declare module '*.css' {}` to `nativewind-env.d.ts`
+- **i18next 25 → 26** + **react-i18next 16 → 17**, **lucide-react-native 0.575 → 1.8** (`Facebook→LogIn`)
+- **eslint-plugin-react-hooks pinned to 5.2.0** — pnpm was hoisting web's v7 to root, bleeding React Compiler rules into mobile's ESLint (mobile stays on eslint-config-expo@55 which bundles v5)
+- **Jest 30 deferred** — jest-expo@55 is hard-coupled to Jest 29; deferred to jest-expo@56 upgrade cycle
+- **Reanimated v4 Jest mock** — replaced `react-native-reanimated/mock` (which imports native worklets in v4) with lightweight `__tests__/test-utils/reanimated-mock.js`; added `moduleNameMapper` + `react-native-worklets` mock
+
+### Packages
+
+- **packages/core:** TypeScript 5.9 → 6.0, zod 3 → 4
+- **packages/sdk:** TypeScript 5.9 → 6.0
+
 ## 2026-04-11
 
 - chore: upgrade frontend safe dependencies (Playwright 1.59, testing-library, postcss, openapi-typescript 7.13, react-query 5.97)
