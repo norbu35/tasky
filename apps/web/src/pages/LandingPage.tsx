@@ -12,7 +12,7 @@ import {
   Smartphone,
   BadgeCheck,
   Banknote,
-  Share2,
+  Globe,
   MessageCircle,
   Camera,
 } from 'lucide-react';
@@ -874,7 +874,7 @@ export function LandingPage() {
                 href="#"
                 className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
               >
-                <Share2 className="w-4 h-4" />
+                <Globe className="w-4 h-4" />
               </a>
               <a
                 href="#"
