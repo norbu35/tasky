@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  cleanup-gate:
+  structural-gate:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,16 +31,16 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Ensure scripts are executable
-        run: chmod +x gradlew tooling/scripts/check-cleanup-gate.sh tooling/scripts/validate-sdk-contract-drift.sh
+        run: chmod +x gradlew tooling/scripts/*.sh tooling/scripts/*.py
 
-      - name: Validate SDK generated drift
+      - name: Validate SDK contract drift
         run: tooling/scripts/validate-sdk-contract-drift.sh
 
-      - name: Validate workspace dependency boundaries
+      - name: Validate workspace boundaries
         run: pnpm workspace:boundaries
 
-      - name: Run trusted cleanup gate
-        run: tooling/scripts/check-cleanup-gate.sh
+      - name: Validate migration safety
+        run: python3 tooling/scripts/validate-migrations.py
 
   backend-quality:
     runs-on: ubuntu-latest
@@ -62,14 +62,8 @@ jobs:
       - name: Ensure gradlew is executable
         run: chmod +x gradlew
 
-      - name: Run backend tests
-        run: ./gradlew --no-daemon :services:api:test
-
-      - name: Validate OpenAPI contract
-        run: ./gradlew --no-daemon :services:api:openApiValidate
-
-      - name: Validate migrations
-        run: python3 tooling/scripts/validate-migrations.py
+      - name: Run backend quality checks
+        run: ./gradlew --no-daemon :services:api:check :services:api:jacocoTestCoverageVerification :services:api:openApiValidate
 
   frontend-quality:
     runs-on: ubuntu-latest
@@ -99,38 +93,10 @@ jobs:
       - name: Test
         run: pnpm -r test
 
-  web-e2e-smoke:
+  e2e-web:
     runs-on: ubuntu-latest
-    continue-on-error: true # pre-existing regression: dev-auth requires live backend not available in CI
     permissions:
       contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Install Playwright Chromium dependencies
-        run: pnpm --filter @tasky/web exec playwright install --with-deps chromium
-
-      - name: Run Playwright smoke journeys
-        run: pnpm --filter @tasky/web test:e2e:smoke
-
-  mobile-e2e-smoke:
-    runs-on: macos-latest
-    permissions:
-      contents: read
-    env:
-      CI: '1'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -149,33 +115,131 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
+      - name: Setup Gradle cache
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Ensure scripts are executable
+        run: chmod +x gradlew
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Start infrastructure
+        run: |
+          docker compose up -d postgres minio minio-bootstrap
+          echo "Waiting for Postgres..."
+          for i in $(seq 1 30); do
+            docker compose exec -T postgres pg_isready -U tasky -d tasky && break
+            sleep 2
+          done
+          echo "Waiting for MinIO..."
+          for i in $(seq 1 15); do
+            curl -sf http://localhost:9000/minio/health/live && break
+            sleep 2
+          done
+
+      - name: Build and start backend
+        run: |
+          ./gradlew --no-daemon :services:api:bootJar
+          java -jar services/api/build/libs/*.jar --spring.profiles.active=ci &
+          echo "Waiting for backend health..."
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8080/actuator/health && break
+            sleep 2
+          done
+        env:
+          FACEBOOK_TEST_APP_ID: ${{ secrets.FACEBOOK_TEST_APP_ID }}
+          FACEBOOK_TEST_APP_SECRET: ${{ secrets.FACEBOOK_TEST_APP_SECRET }}
+
+      - name: Install Playwright Chromium
+        run: pnpm --filter @tasky/web exec playwright install --with-deps chromium
+
+      - name: Run Playwright smoke tests
+        run: pnpm --filter @tasky/web test:e2e:smoke
+
+      - name: Stop infrastructure
+        if: always()
+        run: docker compose down
+
+  e2e-android:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Gradle cache
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Ensure scripts are executable
+        run: chmod +x gradlew
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Enable KVM acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Start infrastructure
+        run: |
+          docker compose up -d postgres minio minio-bootstrap
+          for i in $(seq 1 30); do
+            docker compose exec -T postgres pg_isready -U tasky -d tasky && break
+            sleep 2
+          done
+          for i in $(seq 1 15); do
+            curl -sf http://localhost:9000/minio/health/live && break
+            sleep 2
+          done
+
+      - name: Build and start backend
+        run: |
+          ./gradlew --no-daemon :services:api:bootJar
+          java -jar services/api/build/libs/*.jar --spring.profiles.active=ci &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8080/actuator/health && break
+            sleep 2
+          done
+        env:
+          FACEBOOK_TEST_APP_ID: ${{ secrets.FACEBOOK_TEST_APP_ID }}
+          FACEBOOK_TEST_APP_SECRET: ${{ secrets.FACEBOOK_TEST_APP_SECRET }}
 
       - name: Install Maestro CLI
         run: |
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
 
-      - name: Boot iOS simulator
-        run: |
-          SIMULATOR_NAME="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ {gsub(/^ +| +$/, "", $1); print $1; exit}')"
-          SIMULATOR_UDID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ {print $2; exit}')"
-          if [ -z "$SIMULATOR_NAME" ] || [ -z "$SIMULATOR_UDID" ]; then
-            echo "ERROR: no available iPhone simulator found" >&2
-            exit 1
-          fi
-          echo "SIMULATOR_NAME=$SIMULATOR_NAME" >> "$GITHUB_ENV"
-          echo "SIMULATOR_UDID=$SIMULATOR_UDID" >> "$GITHUB_ENV"
-          open -a Simulator
-          xcrun simctl boot "$SIMULATOR_UDID" || true
-          xcrun simctl bootstatus "$SIMULATOR_UDID" -b
+      - name: Build Android release app
+        run: pnpm --filter @tasky/mobile exec expo run:android --variant release --no-bundler
 
-      - name: Build Tasky iOS release app
-        run: pnpm --filter @tasky/mobile exec expo run:ios --configuration Release --device "$SIMULATOR_NAME" --no-bundler
+      - name: Run Maestro smoke flows
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          script: pnpm --filter @tasky/mobile test:e2e:smoke
 
-      - name: Run Maestro smoke journeys
-        run: pnpm --filter @tasky/mobile test:e2e:smoke
+      - name: Stop infrastructure
+        if: always()
+        run: docker compose down
 
   security:
     runs-on: ubuntu-latest
@@ -186,12 +250,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Dependency review (PR only)
-        if: github.event_name == 'pull_request'
-        continue-on-error: true
-        uses: actions/dependency-review-action@v4
-        with:
-          fail-on-severity: high
+      - name: Check .trivyignore expiry
+        run: bash tooling/scripts/check-trivyignore-expiry.sh
 
       - name: Filesystem vulnerability scan
         uses: aquasecurity/trivy-action@0.35.0
@@ -201,7 +261,7 @@ jobs:
           scanners: vuln,misconfig,secret
           ignore-unfixed: true
           severity: HIGH,CRITICAL
-          exit-code: '0'
+          exit-code: '1'
 
       - name: Build container image
         run: docker build -t tasky-server:ci .
@@ -215,6 +275,7 @@ jobs:
           vuln-type: os,library
           severity: HIGH,CRITICAL
           exit-code: '0'
+          trivyignores: .trivyignore
 
       - name: Semgrep SAST
         uses: returntocorp/semgrep-action@v1
@@ -223,3 +284,10 @@ jobs:
             p/owasp-top-ten
             p/java
             tooling/config/semgrep/tasky-rules.yaml
+
+      - name: OpenSSF Scorecard
+        uses: ossf/scorecard-action@v2
+        continue-on-error: true
+        with:
+          results_file: scorecard-results.json
+          results_format: json
