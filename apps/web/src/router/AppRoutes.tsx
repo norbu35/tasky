@@ -81,6 +81,18 @@ function HomeRedirect() {
     return <Navigate replace to="/banned" />;
   }
 
+  if (session?.user?.role === 'CUSTOMER') {
+    return <Navigate replace to="/customer/dashboard" />;
+  }
+
+  if (session?.user?.role === 'TASKER') {
+    return <Navigate replace to="/tasker/feed" />;
+  }
+
+  if (session?.user?.role === 'ADMIN') {
+    return <Navigate replace to="/admin" />;
+  }
+
   return <Navigate replace to="/profile" />;
 }
 
@@ -90,7 +102,7 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route element={session ? <HomeRedirect /> : <LandingPage />} path="/" />
-      <Route element={session ? <Navigate replace to="/profile" /> : <AuthPage />} path="/auth" />
+      <Route element={<AuthPage />} path="/auth" />
       <Route
         element={
           <ProtectedRoute>

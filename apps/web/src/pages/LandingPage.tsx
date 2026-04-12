@@ -15,6 +15,7 @@ import {
   Globe,
   MessageCircle,
   Camera,
+  User,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { LanguageSwitcher } from '../layout/LanguageSwitcher';
@@ -116,18 +117,19 @@ function AnimatedTaskFeed() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-5 py-4"
+            className="flex items-center gap-4 rounded-xl border border-white/20 bg-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-md px-5 py-4 hover:bg-white/20 transition-colors cursor-pointer"
           >
             <div
               className={`w-3 h-3 rounded-full flex-shrink-0 ${CATEGORY_COLORS[task.category]}`}
             />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-white truncate">{task.title}</p>
-              <p className="text-xs text-white/50">
+              <p className="text-xs text-white/80 mt-0.5">
                 {task.price} · {task.district}
               </p>
             </div>
-            <span className="text-[10px] font-bold bg-verified text-white px-2 py-1 rounded flex-shrink-0">
+            <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full flex items-center gap-1 flex-shrink-0 backdrop-blur-md">
+              <BadgeCheck className="w-3.5 h-3.5" />
               {t('landing.verified', 'Verified')}
             </span>
           </motion.div>
@@ -143,8 +145,8 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen font-sans selection:bg-accent/20">
-      {/* Header — transparent over dark hero */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-transparent backdrop-blur-md px-6 py-4">
+      {/* Header — floating glassmorphic nav */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/5 backdrop-blur-xl border-b border-white/[0.02] shadow-sm px-6 py-4 transition-all duration-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Shield className="w-8 h-8 text-accent" />
@@ -153,29 +155,29 @@ export function LandingPage() {
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <LanguageSwitcher />
+            <LanguageSwitcher className="bg-black/20 text-white hover:bg-black/40 border border-white/10 backdrop-blur-md shadow-sm" />
             <Button
-              variant="ghost"
-              className="hidden sm:inline-flex font-semibold text-primary-foreground/70 hover:text-primary-foreground"
+              className="font-semibold bg-accent text-accent-foreground hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/20 transition-all hover:-translate-y-0.5 flex items-center gap-2"
               onClick={() => navigate('/auth')}
             >
+              <User className="w-4 h-4" />
               {t('auth.login', 'Login')}
-            </Button>
-            <Button
-              className="font-semibold bg-accent text-accent-foreground hover:bg-accent/90"
-              onClick={() => navigate('/auth')}
-            >
-              {t('landing.getStarted', 'Get Started')}
             </Button>
           </div>
         </div>
       </header>
 
       <main className="pb-20">
-        {/* Hero Section — Dark Teal */}
-        <section className="relative min-h-screen flex items-center bg-gradient-to-br from-primary-deep via-primary to-primary-deep overflow-hidden">
+        {/* Hero Section — Dynamic Premium Gradient Mesh */}
+        <section className="relative min-h-screen flex items-center bg-[#071318] overflow-hidden">
+          {/* Animated Background Mesh */}
+          <div className="absolute inset-0 z-0">
+            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary rounded-full blur-[120px] mix-blend-screen opacity-40 animate-pulse" />
+            <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-accent rounded-full blur-[150px] mix-blend-screen opacity-20" />
+            <div className="absolute top-[20%] right-[15%] w-[30%] h-[30%] bg-secondary rounded-full blur-[100px] mix-blend-screen opacity-20" />
+          </div>
           {/* Metallic Gradient Streak Overlay */}
-          <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(105deg,transparent_20%,rgba(255,255,255,0.4)_35%,rgba(255,255,255,0.4)_40%,transparent_55%)] mix-blend-overlay opacity-50"></div>
+          <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(105deg,transparent_20%,rgba(255,255,255,0.15)_35%,rgba(255,255,255,0.15)_40%,transparent_55%)] mix-blend-overlay opacity-50"></div>
 
           <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 lg:py-0 w-full grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left — Copy */}
@@ -185,31 +187,15 @@ export function LandingPage() {
               transition={{ duration: 0.8, ease: 'easeOut' }}
               className="space-y-8 text-center lg:text-left"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-accent font-semibold text-sm">
-                <ShieldCheck className="w-4 h-4" />
-                <span>{t('landing.trustedBy', 'Trusted by 10,000+ users in Mongolia')}</span>
-              </div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tight leading-[1.05] text-primary-foreground">
+
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tighter leading-[1.05] text-white drop-shadow-sm">
                 {t('landing.heroTitle1', 'Trusted help,')}
                 <br />
                 {t('landing.heroTitle2', 'fixed price.')}
-                <svg
-                  className="inline-block ml-3 w-8 h-8 sm:w-10 sm:h-10 -translate-y-2"
-                  viewBox="0 0 40 40"
-                  fill="none"
-                >
-                  <path
-                    d="M 8 20 L 16 28 L 32 10"
-                    stroke="#3B9B7A"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
               </h1>
 
-              <p className="text-lg text-primary-foreground/60 max-w-lg mx-auto lg:mx-0">
+              <p className="text-lg sm:text-xl text-white/80 font-medium leading-relaxed max-w-lg mx-auto lg:mx-0">
                 {t(
                   'landing.heroSubtitle',
                   'ID-verified workers. Upfront budgets. Local support when you need it.',
@@ -219,16 +205,16 @@ export function LandingPage() {
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto h-14 px-8 text-lg font-bold bg-accent text-accent-foreground hover:bg-accent/90 shadow-xl shadow-accent/20"
+                  className="w-full sm:w-auto h-14 px-8 text-lg font-bold bg-accent text-accent-foreground hover:bg-accent/90 shadow-xl shadow-accent/20 transition-all hover:scale-105 active:scale-95 group"
                   onClick={() => navigate('/auth')}
                 >
                   {t('landing.postTaskBtn', 'Post a Task')}
-                  <ArrowRight className="ml-2 w-5 h-5" />
+                  <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Button>
                 <Button
                   size="lg"
                   variant="ghost"
-                  className="w-full sm:w-auto h-14 px-8 text-lg font-semibold text-primary-foreground/80 border border-white/20 hover:bg-white/5 hover:text-primary-foreground"
+                  className="w-full sm:w-auto h-14 px-8 text-lg font-semibold text-primary-foreground/90 border border-white/20 hover:bg-white/10 backdrop-blur-sm transition-all hover:scale-105 active:scale-95 hover:border-white/40 hover:text-white"
                   onClick={() => navigate('/auth')}
                 >
                   {t('landing.becomeTaskerBtn', 'Become a Tasker')}
@@ -260,19 +246,6 @@ export function LandingPage() {
               <div className="max-w-xl">
                 <h2 className="text-4xl font-black text-foreground tracking-tighter mb-4 uppercase">
                   {t('landing.featuredServices', 'What do you need done?')}
-                  <svg
-                    className="inline-block ml-2 w-7 h-7 -translate-y-1 opacity-70"
-                    viewBox="0 0 40 40"
-                    fill="none"
-                  >
-                    <path
-                      d="M 8 20 L 16 28 L 32 10"
-                      stroke="#3B9B7A"
-                      strokeWidth="3.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
                   {t(
@@ -287,7 +260,7 @@ export function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Deep Cleaning */}
               <div
-                className="md:col-span-2 group relative overflow-hidden rounded-xl aspect-[16/9] md:aspect-auto md:h-[500px] bg-card transition-all hover:shadow-2xl cursor-pointer"
+                className="md:col-span-2 group relative overflow-hidden rounded-xl aspect-[16/9] md:aspect-auto md:h-[500px] bg-card transition-all hover:shadow-[0_20px_50px_rgba(59,155,122,0.15)] hover:-translate-y-1 cursor-pointer"
                 onClick={() => navigate('/auth')}
               >
                 <img
@@ -307,14 +280,14 @@ export function LandingPage() {
                     )}
                   </p>
                   <span className="text-accent font-bold tracking-widest uppercase text-sm flex items-center gap-2">
-                    {t('landing.postTask', 'Post a Task')} <ArrowRight className="w-4 h-4" />
+                    {t('landing.postTask', 'Post a Task')} <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
                   </span>
                 </div>
               </div>
 
               {/* Handyman & Repairs */}
               <div
-                className="group relative overflow-hidden rounded-xl bg-card hover:shadow-2xl transition-all cursor-pointer border border-border/50"
+                className="group relative overflow-hidden rounded-xl bg-card hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-1 cursor-pointer border border-border/50"
                 onClick={() => navigate('/auth')}
               >
                 <div className="p-8 sm:p-10 h-full flex flex-col justify-between">
@@ -342,7 +315,7 @@ export function LandingPage() {
 
               {/* Electrician */}
               <div
-                className="group relative overflow-hidden rounded-xl bg-card border border-border/50 text-foreground hover:shadow-2xl transition-all cursor-pointer"
+                className="group relative overflow-hidden rounded-xl bg-card border border-border/50 text-foreground hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-1 cursor-pointer"
                 onClick={() => navigate('/auth')}
               >
                 <div className="p-8 sm:p-10">
@@ -369,7 +342,7 @@ export function LandingPage() {
 
               {/* Movers & Help */}
               <div
-                className="md:col-span-2 group relative overflow-hidden rounded-xl bg-primary text-primary-foreground hover:shadow-2xl transition-all cursor-pointer"
+                className="md:col-span-2 group relative overflow-hidden rounded-xl bg-primary text-primary-foreground hover:shadow-[0_20px_50px_rgba(59,155,122,0.2)] transition-all hover:-translate-y-1 cursor-pointer"
                 onClick={() => navigate('/auth')}
               >
                 <div className="p-8 sm:p-10 grid md:grid-cols-2 gap-8 items-center h-full">
@@ -427,7 +400,7 @@ export function LandingPage() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
-                className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-xl shadow-primary/5 border border-primary/10 relative overflow-hidden"
+                className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-[0_30px_60px_rgba(59,155,122,0.1)] ring-1 ring-inset ring-primary/10 relative overflow-hidden transition-shadow hover:shadow-[0_30px_60px_rgba(59,155,122,0.15)]"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[100px] -z-0" />
                 <div className="relative z-10 space-y-3 mb-8">
@@ -488,7 +461,7 @@ export function LandingPage() {
                       className="flex gap-5 group"
                     >
                       <div
-                        className={`flex-shrink-0 w-14 h-14 rounded-2xl ${step.bg} flex items-center justify-center ${step.text} font-bold text-xl transition-all duration-300 group-hover:scale-110 ${step.hoverBg} group-hover:text-white shadow-sm`}
+                        className={`flex-shrink-0 w-14 h-14 rounded-2xl ${step.bg} flex items-center justify-center ${step.text} font-bold text-xl transition-all duration-300 group-hover:scale-[1.15] ${step.hoverBg} group-hover:text-white shadow-sm ring-4 ring-white relative z-10 group-hover:shadow-lg`}
                       >
                         {step.num}
                       </div>
@@ -506,7 +479,7 @@ export function LandingPage() {
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
-                className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-xl shadow-secondary/5 border border-secondary/20 relative overflow-hidden lg:mt-12"
+                className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-[0_30px_60px_rgba(242,166,90,0.1)] ring-1 ring-inset ring-secondary/20 relative overflow-hidden lg:mt-12 transition-shadow hover:shadow-[0_30px_60px_rgba(242,166,90,0.15)]"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-bl-[100px] -z-0" />
                 <div className="relative z-10 space-y-3 mb-8">
@@ -567,7 +540,7 @@ export function LandingPage() {
                       className="flex gap-5 group"
                     >
                       <div
-                        className={`flex-shrink-0 w-14 h-14 rounded-2xl ${step.bg} flex items-center justify-center ${step.text} font-bold text-xl transition-all duration-300 group-hover:scale-110 ${step.hoverBg} group-hover:text-white shadow-sm`}
+                        className={`flex-shrink-0 w-14 h-14 rounded-2xl ${step.bg} flex items-center justify-center ${step.text} font-bold text-xl transition-all duration-300 group-hover:scale-[1.15] ${step.hoverBg} group-hover:text-white shadow-sm ring-4 ring-white relative z-10 group-hover:shadow-lg`}
                       >
                         {step.num}
                       </div>
@@ -584,50 +557,40 @@ export function LandingPage() {
         </section>
 
         {/* Trust & Safety Section — Split Screen */}
-        <section className="w-full">
-          <div className="grid md:grid-cols-2 min-h-[500px]">
+        <section className="w-full border-t border-border/30 bg-gradient-to-br from-[#0A1A1F] via-primary-deep to-primary-deep relative overflow-hidden">
+          <div className="absolute inset-0 bg-[linear-gradient(105deg,transparent_20%,rgba(255,255,255,0.05)_35%,rgba(255,255,255,0.05)_40%,transparent_55%)] pointer-events-none" />
+          <div className="grid md:grid-cols-2 min-h-[500px] relative z-10">
             {/* Left — The Pain */}
             <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.6 }}
-              className="bg-gradient-to-br from-primary-deep via-primary to-primary-deep text-primary-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28"
+              transition={{ duration: 0.6, ease: 'easeOut' }}
+              className="text-primary-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28"
             >
-              <p className="text-sm font-bold uppercase tracking-widest text-accent mb-8">
-                {t('landing.trustReality', 'The reality')}
-              </p>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-6">
-                {t('landing.trustPainLine', '10 phone calls. 3 no-shows. 1 stranger at your door.')}
-              </h2>
-              <p className="text-lg text-primary-foreground/50 max-w-md">
-                {t('landing.trustPainDesc', "That's the Facebook group experience.")}
-              </p>
+              <div className="relative z-10">
+                <p className="text-sm font-bold uppercase tracking-widest text-accent mb-8">
+                  {t('landing.trustReality', 'The reality')}
+                </p>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-6 text-white">
+                  {t('landing.trustPainLine', '10 phone calls. 3 no-shows. 1 stranger at your door.')}
+                </h2>
+                <p className="text-lg text-primary-foreground/50 max-w-md">
+                  {t('landing.trustPainDesc', "That's the Facebook group experience.")}
+                </p>
+              </div>
             </motion.div>
 
             {/* Right — The Relief */}
             <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-background text-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28"
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="bg-background text-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28 relative z-10 lg:-ml-6 shadow-[-20px_0_40px_rgba(0,0,0,0.1)] rounded-l-3xl lg:rounded-l-[3rem]"
             >
               <h3 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-10">
                 {t('landing.trustRelief', 'Or just use Tasky.')}
-                <svg
-                  className="inline-block ml-2 w-8 h-8 sm:w-10 sm:h-10 -translate-y-1"
-                  viewBox="0 0 40 40"
-                  fill="none"
-                >
-                  <path
-                    d="M 8 20 L 16 28 L 32 10"
-                    stroke="#3B9B7A"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
               </h3>
 
               <div className="space-y-6 mb-12">

@@ -18,107 +18,13 @@ import { parseError } from '../lib/errorHandling';
 import { LocationPicker } from '../components/task-creation/LocationPicker';
 import { PhotoUploadManager } from '../components/task-creation/PhotoUploadManager';
 import { IntakeFormRenderer } from '../components/task-creation/IntakeFormRenderer';
-import type { IntakeSchema, IntakeField } from '../components/task-creation/IntakeFormRenderer';
-import { createTaskSchema } from '@tasky/core';
+import {
+  createTaskSchema,
+  generateIntakeScopeSummary,
+  normalizeCategoryIntakeSchema,
+} from '@tasky/core';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-
-/**
- * Convert the raw `intake_schema_json` array from the Category SDK type
- * into the IntakeSchema shape expected by IntakeFormRenderer.
- *
- * The SDK returns IntakeFieldSchema objects with `key`, `label`, `type`,
- * `required`, `options` (string[]), `min`, `max`.  IntakeFormRenderer
- * expects `name`, `label`, `label_mn`, `options` as {value, label, label_mn}[].
- */
-function parseIntakeSchema(category: Category): IntakeSchema | null {
-  if (!category.intake_enabled || !category.intake_schema_json) {
-    return null;
-  }
-
-  const raw = category.intake_schema_json;
-  if (!Array.isArray(raw) || raw.length === 0) {
-    return null;
-  }
-
-  const fields: IntakeField[] = raw.map((f: Record<string, unknown>) => ({
-    name: (f.key as string) ?? (f.name as string) ?? '',
-    label: (f.label as string) ?? '',
-    label_mn: (f.label_mn as string) ?? (f.label as string) ?? '',
-    type: f.type as IntakeField['type'],
-    required: Boolean(f.required),
-    options: Array.isArray(f.options)
-      ? (f.options as (string | { value: string; label: string; label_mn: string })[]).map(
-          (opt) => {
-            if (typeof opt === 'string') {
-              // Convert plain string options to labeled objects
-              const label = opt.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-              return { value: opt, label, label_mn: label };
-            }
-            return opt;
-          },
-        )
-      : undefined,
-    min: typeof f.min === 'number' ? f.min : undefined,
-    max: typeof f.max === 'number' ? f.max : undefined,
-  }));
-
-  return {
-    version: (category as unknown as { intake_schema_version?: number }).intake_schema_version ?? 1,
-    fields,
-  };
-}
-
-/**
- * Generate a deterministic "Job Scope Summary" from intake answers.
- * Each answered field produces one "Label: human value" line.
- */
-function generateScopeSummary(schema: IntakeSchema, answers: Record<string, unknown>): string {
-  const lines: string[] = [];
-
-  for (const field of schema.fields) {
-    const raw = answers[field.name];
-    if (raw === undefined || raw === null || raw === '') {
-      continue;
-    }
-
-    let displayValue: string;
-
-    switch (field.type) {
-      case 'yes_no':
-        displayValue = raw === true ? 'Yes' : raw === false ? 'No' : String(raw);
-        break;
-      case 'single_select':
-      case 'dropdown': {
-        const opt = field.options?.find((o) => o.value === raw);
-        displayValue = opt ? opt.label : String(raw);
-        break;
-      }
-      case 'multi_select': {
-        if (Array.isArray(raw)) {
-          displayValue = (raw as string[])
-            .map((v) => {
-              const opt = field.options?.find((o) => o.value === v);
-              return opt ? opt.label : v;
-            })
-            .join(', ');
-        } else {
-          displayValue = String(raw);
-        }
-        break;
-      }
-      case 'numeric_counter':
-        displayValue = String(raw);
-        break;
-      default:
-        displayValue = String(raw);
-    }
-
-    lines.push(`${field.label}: ${displayValue}`);
-  }
-
-  return lines.join('\n');
-}
 
 export function CustomerTaskPage() {
   const { apiClient, session, setProfileError, trackClientEvent } = useAppContext();
@@ -151,7 +57,7 @@ export function CustomerTaskPage() {
   );
 
   const intakeSchema = useMemo(
-    () => (selectedCategory ? parseIntakeSchema(selectedCategory) : null),
+    () => (selectedCategory ? normalizeCategoryIntakeSchema(selectedCategory) : null),
     [selectedCategory],
   );
 
@@ -176,7 +82,11 @@ export function CustomerTaskPage() {
         const next = { ...prev, [fieldName]: value };
         // Auto-generate summary if not manually edited
         if (!summaryManuallyEdited && intakeSchema) {
-          const summary = generateScopeSummary(intakeSchema, next);
+          const summary = generateIntakeScopeSummary(intakeSchema, next, {
+            locale: i18n.language === 'mn' ? 'mn' : 'en',
+            yesLabel: t('common.yes', 'Yes'),
+            noLabel: t('common.no', 'No'),
+          });
           setDescription(summary);
         }
         return next;

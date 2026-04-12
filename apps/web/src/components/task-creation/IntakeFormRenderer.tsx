@@ -1,31 +1,30 @@
-export interface IntakeField {
-  name: string;
-  label: string;
-  label_mn: string;
-  type: 'single_select' | 'multi_select' | 'dropdown' | 'yes_no' | 'numeric_counter' | 'text' | 'textarea';
-  required: boolean;
-  options?: { value: string; label: string; label_mn: string }[];
-  min?: number;
-  max?: number;
-  min_length?: number;
-  max_length?: number;
-}
+import {
+  getIntakeFieldLabel,
+  getIntakeOptionLabel,
+  type IntakeField,
+  type IntakeLocale,
+  type IntakeSchema,
+} from '@tasky/core';
 
-export interface IntakeSchema {
-  version: number;
-  fields: IntakeField[];
-}
+export type { IntakeField, IntakeSchema } from '@tasky/core';
 
 export interface IntakeFormRendererProps {
   schema: IntakeSchema;
   values: Record<string, unknown>;
   onChange: (fieldName: string, value: unknown) => void;
   errors?: Record<string, string>;
-  locale?: 'en' | 'mn';
+  locale?: IntakeLocale;
 }
 
-function getLabel(item: { label: string; label_mn: string }, locale: 'en' | 'mn'): string {
-  return locale === 'mn' ? item.label_mn : item.label;
+function getFieldLabel(field: IntakeField, locale: IntakeLocale): string {
+  return getIntakeFieldLabel(field, locale);
+}
+
+function getOptionLabel(
+  option: NonNullable<IntakeField['options']>[number],
+  locale: IntakeLocale,
+): string {
+  return getIntakeOptionLabel(option, locale);
 }
 
 function SingleSelectField({
@@ -39,9 +38,9 @@ function SingleSelectField({
   value: unknown;
   onChange: (name: string, value: unknown) => void;
   error?: string;
-  locale: 'en' | 'mn';
+  locale: IntakeLocale;
 }) {
-  const fieldLabel = getLabel(field, locale);
+  const fieldLabel = getFieldLabel(field, locale);
   return (
     <div data-field={field.name}>
       <span>
@@ -54,7 +53,7 @@ function SingleSelectField({
         aria-required={field.required ? 'true' : undefined}
       >
         {field.options?.map((opt) => {
-          const optLabel = getLabel(opt, locale);
+          const optLabel = getOptionLabel(opt, locale);
           const id = `${field.name}-${opt.value}`;
           return (
             <label key={opt.value} htmlFor={id} className="flex items-center gap-2">
@@ -87,9 +86,9 @@ function MultiSelectField({
   value: unknown;
   onChange: (name: string, value: unknown) => void;
   error?: string;
-  locale: 'en' | 'mn';
+  locale: IntakeLocale;
 }) {
-  const fieldLabel = getLabel(field, locale);
+  const fieldLabel = getFieldLabel(field, locale);
   const selected = Array.isArray(value) ? (value as string[]) : [];
 
   return (
@@ -97,7 +96,7 @@ function MultiSelectField({
       <span>{fieldLabel}</span>
       <div>
         {field.options?.map((opt) => {
-          const optLabel = getLabel(opt, locale);
+          const optLabel = getOptionLabel(opt, locale);
           const id = `${field.name}-${opt.value}`;
           const isChecked = selected.includes(opt.value);
           return (
@@ -140,9 +139,9 @@ function DropdownField({
   value: unknown;
   onChange: (name: string, value: unknown) => void;
   error?: string;
-  locale: 'en' | 'mn';
+  locale: IntakeLocale;
 }) {
-  const fieldLabel = getLabel(field, locale);
+  const fieldLabel = getFieldLabel(field, locale);
   return (
     <div data-field={field.name}>
       <label htmlFor={field.name}>
@@ -160,7 +159,7 @@ function DropdownField({
         </option>
         {field.options?.map((opt) => (
           <option key={opt.value} value={opt.value}>
-            {getLabel(opt, locale)}
+            {getOptionLabel(opt, locale)}
           </option>
         ))}
       </select>
@@ -180,9 +179,9 @@ function YesNoField({
   value: unknown;
   onChange: (name: string, value: unknown) => void;
   error?: string;
-  locale: 'en' | 'mn';
+  locale: IntakeLocale;
 }) {
-  const fieldLabel = getLabel(field, locale);
+  const fieldLabel = getFieldLabel(field, locale);
   const yesId = `${field.name}-yes`;
   const noId = `${field.name}-no`;
 
@@ -227,9 +226,9 @@ function NumericCounterField({
   value: unknown;
   onChange: (name: string, value: unknown) => void;
   error?: string;
-  locale: 'en' | 'mn';
+  locale: IntakeLocale;
 }) {
-  const fieldLabel = getLabel(field, locale);
+  const fieldLabel = getFieldLabel(field, locale);
   const currentValue = typeof value === 'number' ? value : (field.min ?? 0);
 
   return (
@@ -288,9 +287,9 @@ function TextField({
   value: unknown;
   onChange: (name: string, value: unknown) => void;
   error?: string;
-  locale: 'en' | 'mn';
+  locale: IntakeLocale;
 }) {
-  const fieldLabel = getLabel(field, locale);
+  const fieldLabel = getFieldLabel(field, locale);
   return (
     <div data-field={field.name}>
       <label htmlFor={field.name}>
@@ -321,9 +320,9 @@ function TextareaField({
   value: unknown;
   onChange: (name: string, value: unknown) => void;
   error?: string;
-  locale: 'en' | 'mn';
+  locale: IntakeLocale;
 }) {
-  const fieldLabel = getLabel(field, locale);
+  const fieldLabel = getFieldLabel(field, locale);
   return (
     <div data-field={field.name}>
       <label htmlFor={field.name}>

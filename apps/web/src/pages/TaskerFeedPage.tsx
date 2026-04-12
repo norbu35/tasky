@@ -4,6 +4,15 @@ import { useCategoriesQuery, useTasksQuery } from '@tasky/core';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from '../components/ui/dialog';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { useAppContext } from '../context/AppContext';
@@ -94,35 +103,54 @@ export function TaskerFeedPage() {
           </p>
         </div>
 
-        {/* Category filter chips */}
-        <div className="flex gap-2 overflow-x-auto pb-1 mb-4 scrollbar-none">
-          <button
-            type="button"
-            aria-pressed={!filters.categoryId}
-            onClick={() => setFilters((prev) => ({ ...prev, categoryId: '' }))}
-            className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold border transition-colors ${
-              !filters.categoryId
-                ? 'bg-primary text-primary-foreground border-primary'
-                : 'bg-card text-muted-foreground border-border hover:border-primary/50'
-            }`}
-          >
-            {t('taskerFeed.allCategories', 'All')}
-          </button>
-          {categories.map((c) => (
+        {/* Category filter chips & Radius Selector */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none max-w-full">
             <button
-              key={c.id}
               type="button"
-              aria-pressed={filters.categoryId === c.id}
-              onClick={() => setFilters((prev) => ({ ...prev, categoryId: c.id }))}
+              aria-pressed={!filters.categoryId}
+              onClick={() => setFilters((prev) => ({ ...prev, categoryId: '' }))}
               className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold border transition-colors ${
-                filters.categoryId === c.id
-                  ? 'bg-primary text-primary-foreground border-primary'
+                !filters.categoryId
+                  ? 'bg-primary text-primary-foreground border-primary shadow-sm'
                   : 'bg-card text-muted-foreground border-border hover:border-primary/50'
               }`}
             >
-              {isMongolian ? c.name_mn : c.name}
+              {t('taskerFeed.allCategories', 'All')}
             </button>
-          ))}
+            {categories.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                aria-pressed={filters.categoryId === c.id}
+                onClick={() => setFilters((prev) => ({ ...prev, categoryId: c.id }))}
+                className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold border transition-colors ${
+                  filters.categoryId === c.id
+                    ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                    : 'bg-card text-muted-foreground border-border hover:border-primary/50'
+                }`}
+              >
+                {isMongolian ? c.name_mn : c.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Distance Filter */}
+          <div className="flex items-center gap-2 shrink-0 bg-card border border-border/60 px-4 py-1.5 rounded-full shadow-sm">
+            <MapPin className="w-4 h-4 text-primary/70" />
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('taskerFeed.distance', 'Distance')}:</span>
+            <select
+              title="Search radius"
+              className="bg-transparent text-sm font-bold text-foreground focus:outline-none cursor-pointer border-none"
+              value={filters.radiusKm}
+              onChange={(e) => setFilters(prev => ({ ...prev, radiusKm: e.target.value }))}
+            >
+              <option value="5">5 km</option>
+              <option value="10">10 km</option>
+              <option value="20">20 km</option>
+              <option value="50">50 km</option>
+            </select>
+          </div>
         </div>
 
         {tasksError && (
@@ -192,78 +220,99 @@ export function TaskerFeedPage() {
             taskCards.map((task: PublicTask) => (
               <Card
                 key={task.id}
-                className="overflow-hidden shadow-md hover:shadow-lg transition-all group border-border"
+                className="overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group border-border/80 flex flex-col h-full bg-card"
               >
-                <CardHeader className="bg-muted/10 pb-4">
-                  <div className="flex justify-between items-start gap-4">
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="hover:bg-secondary">
-                          {task.category?.name || t('taskerFeed.categoryFallback', 'Task')}
-                        </Badge>
-                        <Badge variant="outline" className="text-muted-foreground">
-                          {t('taskerFeed.statusOpen', 'Open')}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-xl leading-snug font-medium mt-2">
-                        {task.description}
-                      </CardTitle>
+                <CardHeader className="bg-muted/10 pb-4 border-b border-border/20">
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge variant="secondary" className="hover:bg-secondary/80 px-2.5 py-0.5">
+                        {task.category?.name || t('taskerFeed.categoryFallback', 'Task')}
+                      </Badge>
+                      <Badge variant="outline" className="text-emerald-500 border-emerald-500/30 bg-emerald-500/5 px-2.5 py-0.5 font-semibold">
+                        {t('taskerFeed.statusOpen', 'Open')}
+                      </Badge>
                     </div>
-                    <div className="text-right whitespace-nowrap">
-                      <div className="text-2xl font-display font-bold text-foreground">
-                        {task.budget.toLocaleString(locale)}{' '}
-                        <span className="text-sm font-normal text-muted-foreground">MNT</span>
-                      </div>
+                    <CardTitle className="text-xl leading-snug font-medium line-clamp-2">
+                      {task.description}
+                    </CardTitle>
+                    <div className="text-2xl font-display font-bold text-foreground mt-1">
+                      {task.budget.toLocaleString(locale)}{' '}
+                      <span className="text-sm font-normal text-muted-foreground">MNT</span>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="pt-4 pb-4 border-t border-border/40 grid md:grid-cols-2 gap-4 text-sm bg-card">
-                  <div className="flex items-center gap-2 text-muted-foreground">
+                <CardContent className="pt-5 pb-5 flex-1 grid grid-cols-1 gap-3 text-sm">
+                  <div className="flex items-center gap-2.5 text-muted-foreground bg-muted/20 p-2.5 rounded-lg border border-border/30">
                     <MapPin className="w-4 h-4 shrink-0 text-primary/70" />
                     <span>
-                      {t('taskerFeed.approxLocation', 'Approximate location: ')}
+                      {t('taskerFeed.approxLocation', 'Location: ')}
                       <strong className="text-foreground">{task.approximate_location}</strong>
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
+                  <div className="flex items-center gap-2.5 text-muted-foreground bg-muted/20 p-2.5 rounded-lg border border-border/30">
                     <Coins className="w-4 h-4 shrink-0 text-primary/70" />
                     <span>
-                      {t('taskerFeed.payStructure', 'Pay structure: ')}
+                      {t('taskerFeed.payStructure', 'Pay: ')}
                       <strong className="text-foreground">
                         {t('taskerFeed.fixedPrice', 'Fixed price')}
                       </strong>
                     </span>
                   </div>
                 </CardContent>
-                <CardFooter className="bg-muted/10 border-t border-border/40 p-4 pt-4 flex flex-col items-stretch gap-3">
-                  <Label
-                    htmlFor={`apply-${task.id}`}
-                    className="text-xs uppercase font-semibold text-muted-foreground tracking-wider"
-                  >
-                    {t('taskerFeed.appMessageLabel', 'Application message')}
-                  </Label>
-                  <Textarea
-                    id={`apply-${task.id}`}
-                    className="resize-none min-h-[80px] rounded-xl bg-background border-border/60 focus:bg-background transition-colors"
-                    value={applyDrafts[task.id] ?? ''}
-                    onChange={(e) =>
-                      setApplyDrafts((prev) => ({ ...prev, [task.id]: e.target.value }))
-                    }
-                    placeholder={t(
-                      'taskerFeed.appMessagePlaceholder',
-                      'Explain why you are the best fit for this task...',
-                    )}
-                  />
-                  <div className="flex justify-end mt-1">
-                    <Button
-                      disabled={working || (applyDrafts[task.id] ?? '').trim().length < 10}
-                      onClick={() => void applyToTask(task.id)}
-                      className="rounded-xl shadow-lg hover:translate-y-[-1px] transition-all font-semibold"
-                    >
-                      {working ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-                      {t('taskerFeed.applyButton', 'Apply to task')}
-                    </Button>
-                  </div>
+                <CardFooter className="bg-muted/10 border-t border-border/40 p-4 mt-auto">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="w-full rounded-xl shadow-md hover:-translate-y-[1px] transition-all font-semibold active:translate-y-0">
+                        {t('taskerFeed.viewAndApply', 'View Details & Apply')}
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px] rounded-2xl border-border/60 shadow-2xl">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl">{t('taskerFeed.applyToTask', 'Apply for task')}</DialogTitle>
+                        <DialogDescription className="text-sm">
+                          {t('taskerFeed.applyDescription', 'Submit your message to the customer.')}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-5 py-4">
+                        <div className="space-y-2 bg-muted/30 p-4 rounded-xl border border-border/40">
+                          <h4 className="text-sm font-medium leading-relaxed text-foreground">{task.description}</h4>
+                          <div className="text-xl font-bold text-primary">
+                            {task.budget.toLocaleString(locale)} <span className="text-sm font-medium text-muted-foreground">MNT</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-3 mt-2">
+                          <Label
+                            htmlFor={`apply-${task.id}`}
+                            className="text-xs uppercase font-semibold text-muted-foreground tracking-wider"
+                          >
+                            {t('taskerFeed.appMessageLabel', 'Application message')}
+                          </Label>
+                          <Textarea
+                            id={`apply-${task.id}`}
+                            className="resize-none min-h-[120px] rounded-xl bg-background border-border/80 focus:bg-background transition-colors text-sm"
+                            value={applyDrafts[task.id] ?? ''}
+                            onChange={(e) =>
+                              setApplyDrafts((prev) => ({ ...prev, [task.id]: e.target.value }))
+                            }
+                            placeholder={t(
+                              'taskerFeed.appMessagePlaceholder',
+                              'Explain why you are the best fit for this task...',
+                            )}
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button
+                          disabled={working || (applyDrafts[task.id] ?? '').trim().length < 10}
+                          onClick={() => void applyToTask(task.id)}
+                          className="w-full rounded-xl font-bold py-5 shadow-lg active:scale-[0.98] transition-all"
+                        >
+                          {working ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                          {t('taskerFeed.applySubmit', 'Submit Application')}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </CardFooter>
               </Card>
             ))}

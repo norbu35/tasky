@@ -65,7 +65,7 @@ export function AuthPage() {
   const devAuthEnabled = import.meta.env.VITE_DEV_AUTH_ENABLED === 'true';
   const facebookAppId = import.meta.env.VITE_FACEBOOK_APP_ID;
 
-  const { apiClient, setSession, setProfile, refreshProfile } = useAppContext();
+  const { apiClient, session, setSession, setProfile, refreshProfile } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
@@ -79,7 +79,31 @@ export function AuthPage() {
   const returnPath =
     typeof location.state === 'object' && location.state !== null && 'from' in location.state
       ? (location.state as { from: string }).from
-      : '/profile';
+      : '/';
+
+  // Securely intercept logged in sessions and bounce.
+  useEffect(() => {
+    if (session) {
+      const isCrossRoleRedirect = 
+        (returnPath.startsWith('/tasker') && session.user?.role !== 'TASKER') ||
+        (returnPath.startsWith('/customer') && session.user?.role !== 'CUSTOMER') ||
+        (returnPath.startsWith('/admin') && session.user?.role !== 'ADMIN');
+
+      if (returnPath === '/' || isCrossRoleRedirect) {
+        if (session.user?.role === 'CUSTOMER') {
+          navigate('/customer/dashboard', { replace: true });
+        } else if (session.user?.role === 'TASKER') {
+          navigate('/tasker/feed', { replace: true });
+        } else if (session.user?.role === 'ADMIN') {
+          navigate('/admin', { replace: true });
+        } else {
+          navigate('/profile', { replace: true });
+        }
+      } else {
+        navigate(returnPath, { replace: true });
+      }
+    }
+  }, [session, navigate, returnPath]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -184,7 +208,7 @@ export function AuthPage() {
     setLoading(true);
     try {
       const devPhone =
-        role === 'ADMIN' ? '+97692000003' : role === 'TASKER' ? '+97692000002' : '+97692000001';
+        role === 'ADMIN' ? '+97694000001' : role === 'TASKER' ? '+97693000001' : '+97692000001';
       const session = await apiClient.devLogin(devPhone, role as 'CUSTOMER' | 'TASKER');
       setSession(session);
       setProfile(null);
@@ -199,13 +223,13 @@ export function AuthPage() {
 
   return (
     <main className="min-h-screen w-full flex bg-background font-sans overflow-hidden">
-      <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 text-white relative overflow-hidden">
+      <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 text-white relative overflow-hidden bg-gradient-to-br from-primary-deep via-primary to-primary-deep">
         {/* Background Image & Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-deep/95 via-primary/90 to-primary-deep/95 z-0" />
+        <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(105deg,transparent_20%,rgba(255,255,255,0.4)_35%,rgba(255,255,255,0.4)_40%,transparent_55%)] mix-blend-overlay opacity-50" />
         <img
           src="/images/auth-bg.png"
           alt={t('auth.heroImageAlt', 'Premium abstract interior')}
-          className="absolute inset-0 w-full h-full object-cover z-[-1] opacity-60 mix-blend-overlay"
+          className="pointer-events-none absolute inset-0 z-0 w-full h-full object-cover mix-blend-overlay opacity-50"
         />
 
         <div className="absolute top-[-10%] left-[-30%] w-[50vw] h-[50vw] rounded-full bg-accent/40 blur-[130px] z-0 mix-blend-screen" />
@@ -249,7 +273,7 @@ export function AuthPage() {
                 ? t('auth.sdkBindingVerified', 'Verified')
                 : t('auth.sdkBindingOffline', 'Offline')}
             </p>
-            <LanguageSwitcher />
+            <LanguageSwitcher className="hover:bg-foreground/10" />
           </div>
         </div>
       </div>

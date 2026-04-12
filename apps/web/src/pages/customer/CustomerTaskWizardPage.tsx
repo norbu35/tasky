@@ -1,7 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { createTaskSchema } from '@tasky/core';
+import {
+  createTaskSchema,
+  generateIntakeScopeSummary,
+  normalizeCategoryIntakeSchema,
+} from '@tasky/core';
 import { Loader2, Plus, Save } from 'lucide-react';
 
 import { ResponsiveWizardShell, StatePanel } from '../../components/parity';
@@ -13,76 +17,9 @@ import { Textarea } from '../../components/ui/textarea';
 import { useAppContext } from '../../context/AppContext';
 import { parseError } from '../../lib/errorHandling';
 import type { Category, Task } from '../../lib/apiClient';
-import {
-  IntakeFormRenderer,
-  type IntakeField,
-  type IntakeSchema,
-} from '../../components/task-creation/IntakeFormRenderer';
+import { IntakeFormRenderer } from '../../components/task-creation/IntakeFormRenderer';
 import { LocationPicker } from '../../components/task-creation/LocationPicker';
 import { PhotoUploadManager } from '../../components/task-creation/PhotoUploadManager';
-
-function parseIntakeSchema(category: Category): IntakeSchema | null {
-  if (!category.intake_enabled || !category.intake_schema_json) {
-    return null;
-  }
-
-  if (!Array.isArray(category.intake_schema_json) || category.intake_schema_json.length === 0) {
-    return null;
-  }
-
-  return {
-    version: category.intake_schema_version ?? 1,
-    fields: category.intake_schema_json.map((field: Record<string, unknown>) => ({
-      name: String(field.key ?? field.name ?? ''),
-      label: String(field.label ?? ''),
-      label_mn: String(field.label_mn ?? field.label ?? ''),
-      type: field.type as IntakeField['type'],
-      required: Boolean(field.required),
-      options: Array.isArray(field.options)
-        ? field.options.map((option) => {
-            if (typeof option === 'string') {
-              return { value: option, label: option, label_mn: option };
-            }
-
-            const typed = option as { value?: string; label?: string; label_mn?: string };
-            return {
-              value: typed.value ?? '',
-              label: typed.label ?? typed.label_mn ?? '',
-              label_mn: typed.label_mn ?? typed.label ?? '',
-            };
-          })
-        : undefined,
-      min: typeof field.min === 'number' ? field.min : undefined,
-      max: typeof field.max === 'number' ? field.max : undefined,
-    })),
-  };
-}
-
-function generateScopeSummary(schema: IntakeSchema, answers: Record<string, unknown>): string {
-  return schema.fields
-    .map((field) => {
-      const raw = answers[field.name];
-      if (raw === undefined || raw === null || raw === '') {
-        return null;
-      }
-
-      if (field.type === 'numeric_counter') {
-        return `${field.label}: ${String(raw)}`;
-      }
-
-      if (field.type === 'yes_no') {
-        return `${field.label}: ${raw === true ? 'Yes' : 'No'}`;
-      }
-
-      if (Array.isArray(raw)) {
-        return `${field.label}: ${raw.join(', ')}`;
-      }
-
-      return `${field.label}: ${String(raw)}`;
-    })
-    .filter((line): line is string => Boolean(line))
-    .join('\n');
-}
 
 export function CustomerTaskWizardPage() {
   const { t, i18n } = useTranslation();
@@ -128,7 +65,7 @@ export function CustomerTaskWizardPage() {
   );
 
   const intakeSchema = useMemo(
-    () => (selectedCategory ? parseIntakeSchema(selectedCategory) : null),
+    () => (selectedCategory ? normalizeCategoryIntakeSchema(selectedCategory) : null),
     [selectedCategory],
   );
 
@@ -144,7 +81,13 @@ export function CustomerTaskWizardPage() {
     setIntakeAnswers((current) => {
       const next = { ...current, [fieldName]: value };
       if (!summaryManuallyEdited && intakeSchema) {
-        setDescription(generateScopeSummary(intakeSchema, next));
+        setDescription(
+          generateIntakeScopeSummary(intakeSchema, next, {
+            locale: i18n.language === 'mn' ? 'mn' : 'en',
+            yesLabel: t('common.yes', 'Yes'),
+            noLabel: t('common.no', 'No'),
+          }),
+        );
       }
       return next;
     });
