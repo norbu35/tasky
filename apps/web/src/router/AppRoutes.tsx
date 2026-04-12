@@ -609,6 +609,11 @@ export function AppRoutes() {
         <Route path="concierge" element={<AdminConciergePage />} />
         <Route path="moderation" element={<AdminModerationPage />} />
       </Route>
+      <Route path="/customer/booking-payment" element={<Navigate replace to="/profile" />} />
+      <Route path="/tasker/profile/polish" element={<Navigate replace to="/profile" />} />
+      <Route path="/verification" element={<Navigate replace to="/profile" />} />
+      <Route path="/admin/payouts" element={<Navigate replace to="/profile" />} />
+      <Route path="/admin/pricing" element={<Navigate replace to="/profile" />} />
       <Route element={<Navigate replace to="/" />} path="*" />
     </Routes>
   );

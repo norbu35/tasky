@@ -4,21 +4,12 @@ import { useCategoriesQuery, useTasksQuery } from '@tasky/core';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '../components/ui/dialog';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { parseError } from '../lib/errorHandling';
-import { Coins, Loader2, MapPin, Search, Calendar, Users, ImageIcon, Star } from 'lucide-react';
+import { Coins, Loader2, MapPin, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export function TaskerFeedPage() {
@@ -257,171 +248,34 @@ export function TaskerFeedPage() {
                   </div>
                 </CardContent>
                 <CardFooter className="bg-muted/10 border-t border-border/40 p-4 mt-auto">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button className="w-full rounded-xl shadow-md hover:-translate-y-[1px] transition-all font-semibold active:translate-y-0">
-                        {t('taskerFeed.viewAndApply', 'View Details & Apply')}
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-[95vw] sm:max-w-[600px] rounded-2xl border-border/60 shadow-2xl overflow-y-auto max-h-[90vh] p-0 flex flex-col hidden-scrollbar">
-                      <div className="p-6 pb-2">
-                        <DialogHeader className="mb-6">
-                          <DialogTitle className="text-2xl font-display font-semibold">
-                            {t('taskerFeed.applyToTask', 'Task Details & Application')}
-                          </DialogTitle>
-                          <DialogDescription className="text-sm">
-                            {t(
-                              'taskerFeed.applyDescription',
-                              'Review the details before submitting your application.',
-                            )}
-                          </DialogDescription>
-                        </DialogHeader>
-
-                        <div className="grid gap-6">
-                          {/* Customer Row */}
-                          <div className="flex items-center justify-between bg-muted/20 p-4 rounded-xl border border-border/40 shadow-sm">
-                            <div className="flex items-center gap-3">
-                              <Avatar className="w-12 h-12 border border-border shadow-sm">
-                                <AvatarImage
-                                  src={task.customer?.avatar_url || ''}
-                                  alt={task.customer?.full_name || 'Customer'}
-                                  className="object-cover"
-                                />
-                                <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                                  {task.customer?.full_name?.charAt(0) || 'C'}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <h3 className="font-semibold text-base leading-tight">
-                                  {task.customer?.full_name || t('common.customer', 'Customer')}
-                                </h3>
-                                <div className="flex items-center text-sm text-amber-500 font-medium mt-0.5">
-                                  <Star className="w-3.5 h-3.5 fill-current mr-1" />
-                                  <span>{task.customer?.rating_avg?.toFixed(1) || 'NEW'}</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-2xl font-bold text-primary font-display">
-                                {task.budget.toLocaleString(locale)}
-                              </div>
-                              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                MNT
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Metrics Header */}
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                            <div className="flex flex-col gap-1.5 p-3 bg-muted/10 rounded-xl border border-border/30">
-                              <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                <MapPin className="w-3.5 h-3.5 mr-1.5 text-primary/70" />
-                                {t('taskerFeed.locationLabel', 'Location')}
-                              </div>
-                              <span
-                                className="font-medium text-sm line-clamp-1"
-                                title={task.approximate_location}
-                              >
-                                {task.approximate_location}
-                              </span>
-                            </div>
-                            <div className="flex flex-col gap-1.5 p-3 bg-muted/10 rounded-xl border border-border/30">
-                              <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                <Calendar className="w-3.5 h-3.5 mr-1.5 text-primary/70" />
-                                {t('taskerFeed.dateLabel', 'Date')}
-                              </div>
-                              <span className="font-medium text-sm line-clamp-1">
-                                {new Date(task.scheduled_at).toLocaleDateString(locale, {
-                                  month: 'short',
-                                  day: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })}
-                              </span>
-                            </div>
-                            <div className="flex flex-col gap-1.5 p-3 bg-muted/10 rounded-xl border border-border/30 col-span-2 md:col-span-1">
-                              <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                <Users className="w-3.5 h-3.5 mr-1.5 text-primary/70" />
-                                {t('taskerFeed.applicantsLabel', 'Applicants')}
-                              </div>
-                              <span className="font-medium text-sm line-clamp-1">
-                                {task.application_count}{' '}
-                                {t('taskerFeed.applicantsSuffix', 'applied')}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Task Description */}
-                          <div className="space-y-3">
-                            <h4 className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">
-                              {t('taskerFeed.descriptionLabel', 'Task Description')}
-                            </h4>
-                            <div className="text-sm font-medium leading-relaxed text-foreground bg-background p-4 rounded-xl border border-border/40 shadow-sm whitespace-pre-wrap">
-                              {task.description}
-                            </div>
-                          </div>
-
-                          {/* Photo Gallery */}
-                          {task.photo_urls && task.photo_urls.length > 0 && (
-                            <div className="space-y-3">
-                              <h4 className="text-xs uppercase tracking-wider font-semibold text-muted-foreground flex items-center gap-1.5">
-                                <ImageIcon className="w-3.5 h-3.5" />
-                                {t('taskerFeed.photosLabel', 'Photos')}
-                              </h4>
-                              <div className="flex flex-wrap gap-3">
-                                {task.photo_urls.map((url, idx) => (
-                                  <div
-                                    key={idx}
-                                    className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl overflow-hidden border border-border/40 shadow-sm shrink-0"
-                                  >
-                                    <img
-                                      src={url}
-                                      alt={`Task media ${idx + 1}`}
-                                      className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                                    />
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Application Form at bottom */}
-                      <div className="bg-muted/40 border-t border-border/60 p-6 mt-4 shrink-0">
-                        <div className="flex flex-col gap-3">
-                          <Label
-                            htmlFor={`apply-${task.id}`}
-                            className="text-xs uppercase font-bold text-primary tracking-wider"
-                          >
-                            {t('taskerFeed.appMessageLabel', 'Your Application Message')}
-                          </Label>
-                          <Textarea
-                            id={`apply-${task.id}`}
-                            className="resize-none min-h-[100px] rounded-xl bg-background border-border/60 focus:bg-background transition-colors text-sm shadow-inner"
-                            value={applyDrafts[task.id] ?? ''}
-                            onChange={(e) =>
-                              setApplyDrafts((prev) => ({ ...prev, [task.id]: e.target.value }))
-                            }
-                            placeholder={t(
-                              'taskerFeed.appMessagePlaceholder',
-                              'Explain why you are the best fit for this task...',
-                            )}
-                          />
-                        </div>
-                        <div className="mt-5">
-                          <Button
-                            disabled={working || (applyDrafts[task.id] ?? '').trim().length < 10}
-                            onClick={() => void applyToTask(task.id)}
-                            className="w-full rounded-xl font-bold py-6 text-base shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all border border-primary/20"
-                          >
-                            {working ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
-                            {t('taskerFeed.applySubmit', 'Submit Application')}
-                          </Button>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                  <div className="flex flex-col gap-3 w-full">
+                    <Label
+                      htmlFor={`apply-${task.id}`}
+                      className="text-xs uppercase font-bold text-primary tracking-wider"
+                    >
+                      {t('taskerFeed.appMessageLabel', 'Application message')}
+                    </Label>
+                    <Textarea
+                      id={`apply-${task.id}`}
+                      className="resize-none min-h-[80px] rounded-xl bg-background border-border/60 focus:bg-background transition-colors text-sm shadow-inner"
+                      value={applyDrafts[task.id] ?? ''}
+                      onChange={(e) =>
+                        setApplyDrafts((prev) => ({ ...prev, [task.id]: e.target.value }))
+                      }
+                      placeholder={t(
+                        'taskerFeed.appMessagePlaceholder',
+                        'Explain why you are the best fit for this task...',
+                      )}
+                    />
+                    <Button
+                      disabled={working || (applyDrafts[task.id] ?? '').trim().length < 10}
+                      onClick={() => void applyToTask(task.id)}
+                      className="w-full rounded-xl font-bold py-3 text-base shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all border border-primary/20"
+                    >
+                      {working ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
+                      {t('taskerFeed.applySubmit', 'Apply to task')}
+                    </Button>
+                  </div>
                 </CardFooter>
               </Card>
             ))}
