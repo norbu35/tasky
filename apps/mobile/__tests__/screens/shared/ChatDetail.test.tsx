@@ -44,6 +44,30 @@ jest.mock('../../../src/features/chat/hooks/useSendMessage', () => ({
   useSendMessage: jest.fn(),
 }));
 
+jest.mock('../../../src/features/chat/hooks/useConversations', () => ({
+  useConversations: () => ({
+    data: {
+      data: [
+        {
+          id: 'conv-123',
+          task_id: 'task-1',
+          task_title: 'Test task',
+          counterparty_id: 'user-2',
+          counterparty_name: 'Test User',
+          counterparty_avatar_url: null,
+          counterparty_last_active_at: null,
+          last_message_content: 'Hello',
+          last_message_at: null,
+          unread_count: 0,
+          created_at: '2024-01-01T00:00:00Z',
+        },
+      ],
+    },
+    isLoading: false,
+    isError: false,
+  }),
+}));
+
 jest.mock('../../../src/store/authStore', () => ({
   useAuthStore: (selector: any) =>
     selector({
