@@ -47,6 +47,7 @@ jest.mock('expo-router', () => {
     Tabs: TabsMock,
     router: { replace: jest.fn(), push: jest.fn() },
     useRouter: () => ({ replace: jest.fn(), push: jest.fn(), back: jest.fn() }),
+    useSegments: jest.fn().mockReturnValue([]),
   };
 });
 

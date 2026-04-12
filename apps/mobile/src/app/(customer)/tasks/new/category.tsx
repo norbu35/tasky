@@ -119,16 +119,17 @@ export default function CategorySelectionScreen() {
       title={t('CategorySelectionScreen.pageTitle')}
       testID="SCR-CUST-002"
     >
+      <Text className="text-body text-text-secondary leading-[22px]">
+        {t('CategorySelectionScreen.intro')}
+      </Text>
+
       {/* Category list */}
       {isLoading ? (
         <View className="py-xl items-center" testID="category-selection-loading">
           <ActivityIndicator color={colors.primary} />
         </View>
       ) : isError ? (
-        <View
-          className="p-xl gap-sm rounded-md bg-card"
-          style={elevations.soft}
-        >
+        <View className="p-xl gap-sm rounded-md bg-card" style={elevations.soft}>
           <Text className="text-body font-sans-bold text-primary-deep">
             {t('CategorySelectionScreen.loadError')}
           </Text>

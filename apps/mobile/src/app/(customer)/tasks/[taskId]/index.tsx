@@ -42,9 +42,7 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 }
 
 function prettifyKey(key: string): string {
-  return key
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function formatAnswerValue(value: unknown, t: (k: string) => string): string {
@@ -55,7 +53,13 @@ function formatAnswerValue(value: unknown, t: (k: string) => string): string {
   return String(value ?? '');
 }
 
-function IntakeAnswersSection({ answers, t }: { answers: Record<string, unknown>; t: (k: string) => string }) {
+function IntakeAnswersSection({
+  answers,
+  t,
+}: {
+  answers: Record<string, unknown>;
+  t: (k: string) => string;
+}) {
   const entries = Object.entries(answers).filter(([, v]) => v != null && v !== '');
   if (entries.length === 0) return null;
 
@@ -73,10 +77,7 @@ function IntakeAnswersSection({ answers, t }: { answers: Record<string, unknown>
           <View className="flex-row flex-wrap gap-xs">
             {Array.isArray(value) ? (
               value.map((item, idx) => (
-                <View
-                  key={`${key}-${idx}`}
-                  className="px-md py-sm rounded-sm bg-card"
-                >
+                <View key={`${key}-${idx}`} className="px-md py-sm rounded-sm bg-card">
                   <Text className="text-label font-bold text-foreground">
                     {prettifyKey(String(item))}
                   </Text>
@@ -136,9 +137,9 @@ export default function TaskDetailCustomerScreen() {
     }
     if (isTaskerMarkedDone) {
       const bookingId = (task as any)?.booking?.id;
-      return bookingId
-        ? () => router.push(`/(customer)/bookings/${bookingId}`)
-        : undefined;
+      return () => {
+        if (bookingId) router.push(`/(customer)/bookings/${bookingId}`);
+      };
     }
     if (isAssigned && tasker) {
       const bookingId = (task as any)?.booking?.id;
@@ -215,11 +216,11 @@ export default function TaskDetailCustomerScreen() {
             {task.intake_answers != null &&
               typeof task.intake_answers === 'object' &&
               Object.keys(task.intake_answers).length > 0 && (
-              <IntakeAnswersSection
-                answers={task.intake_answers as Record<string, unknown>}
-                t={t}
-              />
-            )}
+                <IntakeAnswersSection
+                  answers={task.intake_answers as Record<string, unknown>}
+                  t={t}
+                />
+              )}
 
             {/* budgetCard: shadow → imperative */}
             <View className="bg-primary-deep rounded-lg p-lg gap-sm" style={elevations.soft}>
@@ -307,7 +308,9 @@ export default function TaskDetailCustomerScreen() {
                         backgroundColor: `${colors.primary}12`,
                       }}
                     >
-                      <Text className="text-body font-extrabold text-primary-deep">{index + 1}</Text>
+                      <Text className="text-body font-extrabold text-primary-deep">
+                        {index + 1}
+                      </Text>
                     </View>
                   ))
                 ) : (
