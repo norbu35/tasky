@@ -8,17 +8,22 @@ import { SearchBar } from '../../../components/ui/SearchBar';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { ScreenHeader } from '../../../components/ui/ScreenHeader';
 import { elevations, mobileTheme } from '../../../design/tokenAdapter';
+import { formatLastActive } from '../../../lib/formatLastActive';
 
 const { colors } = mobileTheme;
 
 interface ConversationItem {
   id: string;
-  task_title?: string;
-  last_message_preview?: string;
-  last_message_at?: string;
-  counterparty_name?: string;
+  task_id: string;
+  task_title?: string | null;
+  counterparty_id: string;
+  counterparty_name: string;
   counterparty_avatar_url?: string | null;
-  unread_count?: number;
+  counterparty_last_active_at?: string | null;
+  last_message_content?: string | null;
+  last_message_at?: string | null;
+  unread_count: number;
+  created_at: string;
 }
 
 export default function ConversationListScreen() {
@@ -77,6 +82,7 @@ export default function ConversationListScreen() {
     (item: ConversationItem) => {
       const title = item.counterparty_name ?? item.task_title ?? t('messaging.taskDiscussion');
       const isUnread = (item.unread_count ?? 0) > 0;
+      const activity = formatLastActive(item.counterparty_last_active_at);
       return (
         <Pressable
           testID={`conversation-row-${item.id}`}
@@ -84,8 +90,14 @@ export default function ConversationListScreen() {
           onPress={() => router.push(`/inbox/${item.id}`)}
           accessibilityRole="button"
         >
-          <View className="mr-md">
+          <View className="mr-md relative">
             <ProfileAvatar uri={item.counterparty_avatar_url ?? undefined} name={title} size="md" />
+            {activity.isActive && (
+              <View
+                className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-verified"
+                style={{ borderWidth: 2, borderColor: colors.card }}
+              />
+            )}
           </View>
           <View className="flex-1">
             <View className="flex-row justify-between items-center">
@@ -103,9 +115,9 @@ export default function ConversationListScreen() {
                 </Text>
               )}
             </View>
-            {item.last_message_preview && (
+            {item.last_message_content && (
               <Text className="text-label text-muted-foreground mt-[2px]" numberOfLines={1}>
-                {item.last_message_preview}
+                {item.last_message_content}
               </Text>
             )}
           </View>
