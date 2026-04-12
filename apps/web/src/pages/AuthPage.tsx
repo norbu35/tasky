@@ -84,14 +84,15 @@ export function AuthPage() {
   // Securely intercept logged in sessions and bounce.
   useEffect(() => {
     if (session) {
-      const isCrossRoleRedirect = 
+      const isCrossRoleRedirect =
         (returnPath.startsWith('/tasker') && session.user?.role !== 'TASKER') ||
         (returnPath.startsWith('/customer') && session.user?.role !== 'CUSTOMER') ||
         (returnPath.startsWith('/admin') && session.user?.role !== 'ADMIN');
 
       if (returnPath === '/' || isCrossRoleRedirect) {
         if (session.user?.role === 'CUSTOMER') {
-          navigate('/customer/dashboard', { replace: true });
+          // Fresh logins land on profile setup before entering the main app
+          navigate('/profile', { replace: true });
         } else if (session.user?.role === 'TASKER') {
           navigate('/tasker/feed', { replace: true });
         } else if (session.user?.role === 'ADMIN') {
@@ -196,7 +197,9 @@ export function AuthPage() {
       setSession(session);
       setProfile(null);
       await refreshProfile();
-      navigate(returnPath, { replace: true });
+      // Fresh logins (returnPath '/') land on profile setup so new users
+      // can complete their profile before entering the main app.
+      navigate(returnPath === '/' ? '/profile' : returnPath, { replace: true });
     } catch (error) {
       toast.error(parseError(error));
     } finally {
