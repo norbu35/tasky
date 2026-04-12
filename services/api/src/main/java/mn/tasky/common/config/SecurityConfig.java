@@ -3,6 +3,7 @@ package mn.tasky.common.config;
 import java.util.ArrayList;
 import java.util.List;
 import mn.tasky.common.security.JwtAuthenticationFilter;
+import mn.tasky.common.security.LastActiveFilter;
 import mn.tasky.common.security.RateLimitFilter;
 import mn.tasky.common.security.RestAccessDeniedHandler;
 import mn.tasky.common.security.RestAuthenticationEntryPoint;
@@ -25,6 +26,7 @@ public class SecurityConfig {
     private final List<String> allowedOrigins;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RateLimitFilter rateLimitFilter;
+    private final LastActiveFilter lastActiveFilter;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final RestAccessDeniedHandler restAccessDeniedHandler;
     private final boolean devAuthEnabled;
@@ -34,12 +36,14 @@ public class SecurityConfig {
             @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled,
             JwtAuthenticationFilter jwtAuthenticationFilter,
             RateLimitFilter rateLimitFilter,
+            LastActiveFilter lastActiveFilter,
             RestAuthenticationEntryPoint restAuthenticationEntryPoint,
             RestAccessDeniedHandler restAccessDeniedHandler) {
         this.allowedOrigins = List.of(allowedOrigins.trim().split("\\s*,\\s*"));
         this.devAuthEnabled = devAuthEnabled;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.rateLimitFilter = rateLimitFilter;
+        this.lastActiveFilter = lastActiveFilter;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
         this.restAccessDeniedHandler = restAccessDeniedHandler;
     }
@@ -99,6 +103,7 @@ public class SecurityConfig {
                         .authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(rateLimitFilter, JwtAuthenticationFilter.class)
+                .addFilterAfter(lastActiveFilter, RateLimitFilter.class)
                 .build();
     }
 
