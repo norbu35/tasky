@@ -37,9 +37,7 @@ public interface ProfileDao {
 
     @SqlUpdate("UPDATE profiles SET full_name = :fullName, avatar_url = :avatarUrl WHERE user_id = :userId")
     void updateNameAndAvatar(
-            @Bind("userId") UUID userId,
-            @Bind("fullName") String fullName,
-            @Bind("avatarUrl") String avatarUrl);
+            @Bind("userId") UUID userId, @Bind("fullName") String fullName, @Bind("avatarUrl") String avatarUrl);
 
     default void updateStats(String userId, double ratingAvg, int completedTasks) {
         updateStats(required(userId, "userId"), ratingAvg, completedTasks);
@@ -57,6 +55,10 @@ public interface ProfileDao {
     }
 
     @SqlUpdate("UPDATE profiles SET instant_match_revoked_until = :revokedUntil WHERE user_id = :userId")
-    void setInstantMatchRevokedUntil(
-            @Bind("userId") UUID userId, @Bind("revokedUntil") Instant revokedUntil);
+    void setInstantMatchRevokedUntil(@Bind("userId") UUID userId, @Bind("revokedUntil") Instant revokedUntil);
+
+    @SqlUpdate("UPDATE profiles SET last_active_at = now() "
+            + "WHERE user_id = :userId "
+            + "AND (last_active_at IS NULL OR last_active_at < now() - interval '2 minutes')")
+    void touchLastActive(@Bind("userId") UUID userId);
 }
