@@ -1953,6 +1953,11 @@ export interface components {
             is_pro: boolean;
             /** Format: date-time */
             created_at: string;
+            /**
+             * Format: date-time
+             * @description Last time the user made an authenticated API request. Updated at most every 2 minutes.
+             */
+            last_active_at?: string | null;
         };
         StrikePolicy: {
             strikeWindowDays: number;
@@ -2003,17 +2008,29 @@ export interface components {
             /** Format: date-time */
             sla_deadline_at?: string | null;
         };
+        IntakeFieldOption: {
+            /** @example deep_clean */
+            value: string;
+            /** @example Deep Clean */
+            label: string;
+            /** @example Гүнзгий цэвэрлэгээ */
+            label_mn: string;
+        };
         IntakeFieldSchema: {
             /** @example cleaning_type */
             key: string;
             /** @example Cleaning type */
             label: string;
+            /** @example Цэвэрлэгээний төрөл */
+            label_mn: string;
             /** @enum {string} */
-            type: "single_select" | "multi_select" | "dropdown" | "yes_no" | "numeric_counter";
+            type: "single_select" | "multi_select" | "dropdown" | "yes_no" | "numeric_counter" | "text" | "textarea";
             required: boolean;
-            options?: string[] | null;
+            options?: components["schemas"]["IntakeFieldOption"][] | null;
             min?: number | null;
             max?: number | null;
+            min_length?: number | null;
+            max_length?: number | null;
         };
         Category: {
             /** Format: uuid */
@@ -2429,14 +2446,19 @@ export interface components {
             /** Format: uuid */
             task_id: string;
             /** @description Truncated task description for display. */
-            task_title?: string;
+            task_title?: string | null;
             /** Format: uuid */
-            customer_id: string;
-            customer?: components["schemas"]["Profile"];
-            /** Format: uuid */
-            tasker_id: string;
-            tasker?: components["schemas"]["Profile"];
-            last_message: components["schemas"]["Message"];
+            counterparty_id: string;
+            counterparty_name: string;
+            /** Format: uri */
+            counterparty_avatar_url?: string | null;
+            /** Format: date-time */
+            counterparty_last_active_at?: string | null;
+            /** @description Truncated last message content. */
+            last_message_content?: string | null;
+            /** Format: date-time */
+            last_message_at?: string | null;
+            /** @description Always 0 until read-receipt tracking is implemented. */
             unread_count: number;
             /** Format: date-time */
             created_at: string;
