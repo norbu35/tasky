@@ -27,7 +27,7 @@ The chat system has working backend infrastructure (STOMP WebSocket, message CRU
 
 ## Backend Changes
 
-### 1. Flyway Migration: `V18__profile_last_active.sql`
+### 1. Flyway Migration: `V21__profile_last_active.sql`
 
 ```sql
 ALTER TABLE profiles
@@ -252,7 +252,7 @@ Used by both the inbox list (green dot) and chat detail header (text label).
 
 | File                                                                              | Change                                            |
 | --------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `services/api/src/main/resources/db/migration/V18__profile_last_active.sql`       | New migration                                     |
+| `services/api/src/main/resources/db/migration/V21__profile_last_active.sql`       | New migration                                     |
 | `services/api/src/main/java/mn/tasky/common/security/LastActiveFilter.java`       | New filter                                        |
 | `services/api/src/main/java/mn/tasky/common/config/SecurityConfig.java`           | Register filter in chain                          |
 | `services/api/src/main/java/mn/tasky/auth/dao/ProfileDao.java`                    | Add `touchLastActive()`                           |
