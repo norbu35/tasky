@@ -14,6 +14,7 @@ import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
 import mn.tasky.messaging.dto.Conversation;
+import mn.tasky.messaging.dto.EnrichedConversation;
 import mn.tasky.messaging.dto.Message;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -87,6 +88,22 @@ public class MessagingService {
      */
     public List<Conversation> listConversations(String userId, String cursor, int limit) {
         return conversationDao.findByUserId(userId, cursor, limit);
+    }
+
+    /**
+     * Lists enriched conversations for a user with pagination, including counterparty profile
+     * details and last message preview.
+     *
+     * @param userId The ID of the user.
+     * @param cursor The pagination cursor (ISO-8601 timestamp string).
+     * @param limit  The maximum number of results.
+     * @return A list of {@link EnrichedConversation} objects.
+     */
+    public List<EnrichedConversation> listEnrichedConversations(String userId, String cursor, int limit) {
+        if (cursor == null || cursor.isBlank()) {
+            return conversationDao.findEnrichedFirstPage(userId, limit);
+        }
+        return conversationDao.findEnrichedAfterCursor(userId, cursor, limit);
     }
 
     /**
