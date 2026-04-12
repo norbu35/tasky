@@ -1,1 +1,1 @@
-npx lint-staged --cwd "$(git rev-parse --show-toplevel)"
+npx lint-staged
