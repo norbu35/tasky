@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.messaging.dto.Conversation;
+import mn.tasky.messaging.dto.EnrichedConversation;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 @RegisterConstructorMapper(Conversation.class)
+@RegisterConstructorMapper(EnrichedConversation.class)
 public interface ConversationDao {
 
     default void insert(String id, String taskId, String customerId, String taskerId, Instant createdAt) {
@@ -79,4 +81,66 @@ public interface ConversationDao {
             + "ORDER BY id LIMIT :limit")
     List<Conversation> findByUserIdAfterCursor(
             @Bind("userId") UUID userId, @Bind("cursor") UUID cursor, @Bind("limit") int limit);
+
+    @SqlQuery("SELECT "
+            + "c.id, "
+            + "c.task_id AS taskId, "
+            + "t.description AS taskDescription, "
+            + "CASE WHEN c.customer_id = CAST(:userId AS UUID) THEN c.tasker_id "
+            + "     ELSE c.customer_id END AS counterpartyId, "
+            + "cp.full_name AS counterpartyName, "
+            + "cp.avatar_url AS counterpartyAvatarUrl, "
+            + "cp.last_active_at AS counterpartyLastActiveAt, "
+            + "lm.content AS lastMessageContent, "
+            + "lm.sent_at AS lastMessageAt, "
+            + "0 AS unreadCount, "
+            + "c.created_at AS createdAt "
+            + "FROM conversations c "
+            + "JOIN tasks t ON t.id = c.task_id "
+            + "JOIN profiles cp ON cp.user_id = CASE "
+            + "  WHEN c.customer_id = CAST(:userId AS UUID) THEN c.tasker_id "
+            + "  ELSE c.customer_id END "
+            + "LEFT JOIN LATERAL ("
+            + "  SELECT m.content, m.sent_at "
+            + "  FROM messages m "
+            + "  WHERE m.conversation_id = c.id "
+            + "  ORDER BY m.sent_at DESC LIMIT 1"
+            + ") lm ON true "
+            + "WHERE c.customer_id = CAST(:userId AS UUID) "
+            + "   OR c.tasker_id = CAST(:userId AS UUID) "
+            + "ORDER BY COALESCE(lm.sent_at, c.created_at) DESC, c.id DESC "
+            + "LIMIT :limit")
+    List<EnrichedConversation> findEnrichedFirstPage(@Bind("userId") String userId, @Bind("limit") int limit);
+
+    @SqlQuery("SELECT "
+            + "c.id, "
+            + "c.task_id AS taskId, "
+            + "t.description AS taskDescription, "
+            + "CASE WHEN c.customer_id = CAST(:userId AS UUID) THEN c.tasker_id "
+            + "     ELSE c.customer_id END AS counterpartyId, "
+            + "cp.full_name AS counterpartyName, "
+            + "cp.avatar_url AS counterpartyAvatarUrl, "
+            + "cp.last_active_at AS counterpartyLastActiveAt, "
+            + "lm.content AS lastMessageContent, "
+            + "lm.sent_at AS lastMessageAt, "
+            + "0 AS unreadCount, "
+            + "c.created_at AS createdAt "
+            + "FROM conversations c "
+            + "JOIN tasks t ON t.id = c.task_id "
+            + "JOIN profiles cp ON cp.user_id = CASE "
+            + "  WHEN c.customer_id = CAST(:userId AS UUID) THEN c.tasker_id "
+            + "  ELSE c.customer_id END "
+            + "LEFT JOIN LATERAL ("
+            + "  SELECT m.content, m.sent_at "
+            + "  FROM messages m "
+            + "  WHERE m.conversation_id = c.id "
+            + "  ORDER BY m.sent_at DESC LIMIT 1"
+            + ") lm ON true "
+            + "WHERE (c.customer_id = CAST(:userId AS UUID) "
+            + "    OR c.tasker_id = CAST(:userId AS UUID)) "
+            + "  AND COALESCE(lm.sent_at, c.created_at) < CAST(:cursor AS TIMESTAMPTZ) "
+            + "ORDER BY COALESCE(lm.sent_at, c.created_at) DESC, c.id DESC "
+            + "LIMIT :limit")
+    List<EnrichedConversation> findEnrichedAfterCursor(
+            @Bind("userId") String userId, @Bind("cursor") String cursor, @Bind("limit") int limit);
 }
