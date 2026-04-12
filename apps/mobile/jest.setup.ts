@@ -47,7 +47,7 @@ jest.mock('react-native-safe-area-context', () => {
 });
 
 jest.mock('@react-native-async-storage/async-storage', () =>
-  require('@react-native-async-storage/async-storage/jest'),
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
 
 jest.mock('expo/virtual/env', () => ({}), { virtual: true });
