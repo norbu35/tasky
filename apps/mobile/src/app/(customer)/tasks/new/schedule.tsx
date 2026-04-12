@@ -67,6 +67,7 @@ export default function ScheduleBudgetScreen() {
     description: string;
     intakeAnswers?: string;
     intakeSchemaVersion?: string;
+    intakeSchemaJson?: string;
     photos: string;
     location: string;
     lat: string;
@@ -166,6 +167,7 @@ export default function ScheduleBudgetScreen() {
         description: params.description,
         intakeAnswers: params.intakeAnswers,
         intakeSchemaVersion: params.intakeSchemaVersion,
+        intakeSchemaJson: params.intakeSchemaJson,
         photos: params.photos,
         location: params.location,
         lat: params.lat,

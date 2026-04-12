@@ -2,6 +2,13 @@ import React, { useMemo, useState } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import {
+  normalizeIntakeSchema,
+  prettifyIntakeToken,
+  summarizeIntakeAnswers,
+  type IntakeAnswerSummaryItem,
+  type IntakeSchema,
+} from '@tasky/core';
 import { CalendarDays, CircleAlert, CircleDollarSign, MapPin, Sparkles } from 'lucide-react-native';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { Toast } from '../../../../components/ui/Toast';
@@ -64,6 +71,36 @@ function formatSchedule(scheduledAt?: string): string {
     hour12: false,
   });
   return `${date}, ${time}`;
+}
+
+function buildFallbackAnswerSummary(
+  answers: Record<string, unknown>,
+  t: (key: string) => string,
+): IntakeAnswerSummaryItem[] {
+  return Object.entries(answers)
+    .filter(([, value]) => value != null && value !== '')
+    .map(([key, value]) => {
+      const values = Array.isArray(value)
+        ? value.map((item) => prettifyIntakeToken(String(item)))
+        : [
+            typeof value === 'boolean'
+              ? value
+                ? t('common.yes')
+                : t('common.no')
+              : typeof value === 'number'
+                ? String(value)
+                : typeof value === 'string'
+                  ? prettifyIntakeToken(value)
+                  : String(value ?? ''),
+          ].filter(Boolean);
+
+      return {
+        key,
+        name: key,
+        label: prettifyIntakeToken(key),
+        values,
+      };
+    });
 }
 
 function extractTaskId(result: unknown): string | null {
@@ -209,6 +246,48 @@ function PhotosCard({ photos, onEdit }: { photos: string[]; onEdit: () => void }
   );
 }
 
+function IntakeAnswersSummary({
+  answers,
+  schema,
+}: {
+  answers: Record<string, unknown>;
+  schema: IntakeSchema | null;
+}) {
+  const { t, i18n } = useTranslation();
+  const summaryItems = useMemo(() => {
+    if (schema) {
+      return summarizeIntakeAnswers(schema, answers, {
+        locale: i18n.language === 'mn' ? 'mn' : 'en',
+        yesLabel: t('common.yes'),
+        noLabel: t('common.no'),
+      });
+    }
+
+    return buildFallbackAnswerSummary(answers, t);
+  }, [answers, i18n.language, schema, t]);
+
+  if (summaryItems.length === 0) {
+    return null;
+  }
+
+  return (
+    <View className="mt-sm gap-sm">
+      {summaryItems.map((item: IntakeAnswerSummaryItem) => (
+        <View key={item.key} className="gap-xs">
+          <Text className="text-caption font-bold text-text-secondary">{item.label}</Text>
+          <View className="flex-row flex-wrap gap-xs">
+            {item.values.map((value: string, index: number) => (
+              <View key={`${item.key}-${index}`} className="px-md py-sm rounded-sm bg-card">
+                <Text className="text-label font-bold text-foreground">{value}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+}
+
 export default function ReviewSubmitScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -218,6 +297,7 @@ export default function ReviewSubmitScreen() {
     description: string;
     intakeAnswers?: string;
     intakeSchemaVersion?: string;
+    intakeSchemaJson?: string;
     photos: string;
     location: string;
     lat: string;
@@ -236,6 +316,10 @@ export default function ReviewSubmitScreen() {
   );
 
   const intakeSchemaVersion = Number(params.intakeSchemaVersion) || 1;
+  const intakeSchema = useMemo(
+    () => normalizeIntakeSchema(params.intakeSchemaJson, intakeSchemaVersion),
+    [params.intakeSchemaJson, intakeSchemaVersion],
+  );
   const hasRequiredPayload =
     Boolean(params.categoryId) &&
     Boolean(params.description?.trim()) &&
@@ -250,6 +334,7 @@ export default function ReviewSubmitScreen() {
     description: params.description ?? '',
     intakeAnswers: JSON.stringify(intakeAnswers),
     intakeSchemaVersion: String(intakeSchemaVersion),
+    intakeSchemaJson: params.intakeSchemaJson ?? '',
     photos: JSON.stringify(photos),
     location: params.location ?? '',
     lat: params.lat ?? '',
@@ -344,7 +429,9 @@ export default function ReviewSubmitScreen() {
           })
         }
         testID="review-section-title"
-      />
+      >
+        <IntakeAnswersSummary answers={intakeAnswers} schema={intakeSchema} />
+      </SectionCard>
 
       <View className="bg-muted rounded-sm p-lg mb-md gap-sm" testID="review-section-description">
         <View className="flex-row justify-between items-center">

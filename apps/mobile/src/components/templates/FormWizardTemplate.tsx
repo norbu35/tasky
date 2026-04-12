@@ -13,6 +13,7 @@ import { X } from 'lucide-react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
+import { ScreenHeader } from '../ui/ScreenHeader';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 import { screenLayout } from '../../design/screenLayout';
 
@@ -32,6 +33,10 @@ export interface FormWizardTemplateProps {
   showBack?: boolean;
   /** Hide the sticky action bar entirely (e.g. when the step advances via item tap). */
   hideNext?: boolean;
+  /** Optional screen header — rendered above children with consistent typography. */
+  title?: string;
+  /** Optional eyebrow text above the title (e.g. "STEP 1 OF 7"). */
+  greeting?: string;
   testID?: string;
   /** Override the auto-generated testID for the primary action button (defaults to `${testID}-next`). */
   nextButtonTestID?: string;
@@ -49,6 +54,8 @@ export function FormWizardTemplate({
   nextLoading = false,
   showBack = true,
   hideNext = false,
+  title,
+  greeting,
   testID,
   nextButtonTestID,
   className,
@@ -115,6 +122,7 @@ export function FormWizardTemplate({
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
+          {title != null && <ScreenHeader greeting={greeting} title={title} />}
           {children}
         </InsetScrollView>
 

@@ -2,6 +2,13 @@ import React, { useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import {
+  getIntakeFieldLabel,
+  getIntakeOptionLabel,
+  normalizeIntakeSchema,
+  type IntakeField,
+  type IntakeFieldOption,
+} from '@tasky/core';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
@@ -10,47 +17,10 @@ import { elevations } from '../../../../design/elevations';
 const DESCRIPTION_MIN_LENGTH = 10;
 const DESCRIPTION_MAX_LENGTH = 2000;
 
-// ── Schema types ──────────────────────────────────────────────────────────────
-
-type FieldType =
-  | 'single_select'
-  | 'multi_select'
-  | 'dropdown'
-  | 'yes_no'
-  | 'numeric_counter'
-  | 'text'
-  | 'textarea';
-
-interface IntakeFieldOption {
-  value: string;
-  label: string;
-  label_mn: string;
-}
-
-interface IntakeField {
-  key: string;
-  label: string;
-  label_mn: string;
-  type: FieldType;
-  required: boolean;
-  options?: IntakeFieldOption[] | null;
-  min?: number | null;
-  max?: number | null;
-  min_length?: number | null;
-  max_length?: number | null;
-}
-
 // ── Parsers ───────────────────────────────────────────────────────────────────
 
 function parseSchema(value?: string): IntakeField[] | null {
-  if (!value) return null;
-  try {
-    const parsed = JSON.parse(value);
-    if (Array.isArray(parsed)) return parsed as IntakeField[];
-    return null;
-  } catch {
-    return null;
-  }
+  return normalizeIntakeSchema(value)?.fields ?? null;
 }
 
 function parseAnswers(value?: string): Record<string, unknown> {
@@ -67,8 +37,8 @@ function parseAnswers(value?: string): Record<string, unknown> {
 
 // ── Locale helper ─────────────────────────────────────────────────────────────
 
-function getFieldLabel(field: { label: string; label_mn: string }, locale: string): string {
-  return locale === 'mn' ? field.label_mn : field.label;
+function getFieldLabel(field: IntakeField, locale: string): string {
+  return getIntakeFieldLabel(field, locale === 'mn' ? 'mn' : 'en');
 }
 
 // ── Field renderers ───────────────────────────────────────────────────────────
@@ -111,7 +81,7 @@ function ChipGroup({
     <View className="flex-row flex-wrap gap-sm">
       {options.map((opt) => {
         const active = selected.includes(opt.value);
-        const displayLabel = locale === 'mn' ? opt.label_mn : opt.label;
+        const displayLabel = getIntakeOptionLabel(opt, locale === 'mn' ? 'mn' : 'en');
         return (
           <Pressable
             key={opt.value}
@@ -232,36 +202,37 @@ export default function IntakeFormScreen() {
     if (intakeEnabled && schema) {
       const newErrors: Record<string, string> = {};
       for (const field of schema) {
+        const fieldKey = field.key ?? field.name;
         if (!field.required) continue;
-        const val = answers[field.key];
+        const val = answers[fieldKey];
         if (field.type === 'yes_no') {
           if (val !== true && val !== false) {
-            newErrors[field.key] = t('Intake.required');
+            newErrors[fieldKey] = t('Intake.required');
           }
         } else if (field.type === 'multi_select') {
           if (!Array.isArray(val) || val.length === 0) {
-            newErrors[field.key] = t('Intake.required');
+            newErrors[fieldKey] = t('Intake.required');
           }
         } else if (field.type === 'numeric_counter') {
           const num = Number(val);
           if (val === undefined || val === null || val === '' || !Number.isFinite(num)) {
-            newErrors[field.key] = t('Intake.required');
+            newErrors[fieldKey] = t('Intake.required');
           } else if (field.min != null && num < field.min) {
-            newErrors[field.key] = t('Intake.minimumValue').replace('{{min}}', String(field.min));
+            newErrors[fieldKey] = t('Intake.minimumValue').replace('{{min}}', String(field.min));
           } else if (field.max != null && num > field.max) {
-            newErrors[field.key] = t('Intake.maximumValue').replace('{{max}}', String(field.max));
+            newErrors[fieldKey] = t('Intake.maximumValue').replace('{{max}}', String(field.max));
           }
         } else if (field.type === 'text' || field.type === 'textarea') {
           const strVal = typeof val === 'string' ? val : '';
           if (!strVal.trim()) {
-            newErrors[field.key] = t('Intake.required');
+            newErrors[fieldKey] = t('Intake.required');
           } else if (field.min_length != null && strVal.length < field.min_length) {
-            newErrors[field.key] = t('Intake.minimumLength').replace(
+            newErrors[fieldKey] = t('Intake.minimumLength').replace(
               '{{min}}',
               String(field.min_length),
             );
           } else if (field.max_length != null && strVal.length > field.max_length) {
-            newErrors[field.key] = t('Intake.maximumLength').replace(
+            newErrors[fieldKey] = t('Intake.maximumLength').replace(
               '{{max}}',
               String(field.max_length),
             );
@@ -269,7 +240,7 @@ export default function IntakeFormScreen() {
         } else {
           // single_select, dropdown
           if (!val) {
-            newErrors[field.key] = t('Intake.required');
+            newErrors[fieldKey] = t('Intake.required');
           }
         }
       }
@@ -290,6 +261,7 @@ export default function IntakeFormScreen() {
         description,
         intakeAnswers: JSON.stringify(answers),
         intakeSchemaVersion: params.intakeSchemaVersion ?? '',
+        intakeSchemaJson: params.intakeSchemaJson ?? '',
       },
     });
   };
@@ -297,7 +269,8 @@ export default function IntakeFormScreen() {
   const locale = i18n.language ?? 'en';
 
   const renderSchemaField = (field: IntakeField) => {
-    const error = fieldErrors[field.key];
+    const fieldKey = field.key ?? field.name;
+    const error = fieldErrors[fieldKey];
     const fieldLabel = getFieldLabel(field, locale);
 
     if (
@@ -306,43 +279,43 @@ export default function IntakeFormScreen() {
       field.type === 'dropdown'
     ) {
       const val =
-        (answers[field.key] as string | string[] | undefined) ??
+        (answers[fieldKey] as string | string[] | undefined) ??
         (field.type === 'multi_select' ? [] : null);
       return (
-        <FormField key={field.key} label={fieldLabel} errorText={error}>
+        <FormField key={fieldKey} label={fieldLabel} errorText={error}>
           <ChipGroup
             options={field.options ?? []}
             value={val as string | string[] | null}
             multi={field.type === 'multi_select'}
-            onChange={(v) => setField(field.key, v)}
-            testIDPrefix={field.key}
+            onChange={(v) => setField(fieldKey, v)}
+            testIDPrefix={fieldKey}
             locale={locale}
           />
         </FormField>
       );
     }
     if (field.type === 'yes_no') {
-      const val = answers[field.key];
+      const val = answers[fieldKey];
       const boolVal = val === true ? true : val === false ? false : null;
       return (
-        <FormField key={field.key} label={fieldLabel} errorText={error}>
+        <FormField key={fieldKey} label={fieldLabel} errorText={error}>
           <YesNo
             value={boolVal}
-            onChange={(v) => setField(field.key, v)}
-            testIDPrefix={field.key}
+            onChange={(v) => setField(fieldKey, v)}
+            testIDPrefix={fieldKey}
           />
         </FormField>
       );
     }
     if (field.type === 'numeric_counter') {
-      const val = answers[field.key];
+      const val = answers[fieldKey];
       return (
-        <FormField key={field.key} label={fieldLabel} errorText={error}>
+        <FormField key={fieldKey} label={fieldLabel} errorText={error}>
           <Input
-            testID={`intake-${field.key}-input`}
+            testID={`intake-${fieldKey}-input`}
             value={val != null ? String(val) : ''}
             onChangeText={(text: string) => {
-              setField(field.key, text === '' ? '' : Number(text));
+              setField(fieldKey, text === '' ? '' : Number(text));
             }}
             placeholder={field.min != null && field.max != null ? `${field.min}–${field.max}` : ''}
             keyboardType="numeric"
@@ -353,13 +326,13 @@ export default function IntakeFormScreen() {
       );
     }
     if (field.type === 'text') {
-      const val = answers[field.key];
+      const val = answers[fieldKey];
       return (
-        <FormField key={field.key} label={fieldLabel} errorText={error}>
+        <FormField key={fieldKey} label={fieldLabel} errorText={error}>
           <Input
-            testID={`intake-${field.key}-input`}
+            testID={`intake-${fieldKey}-input`}
             value={val != null ? String(val) : ''}
-            onChangeText={(text: string) => setField(field.key, text)}
+            onChangeText={(text: string) => setField(fieldKey, text)}
             maxLength={field.max_length ?? 200}
             invalid={!!error}
           />
@@ -367,13 +340,13 @@ export default function IntakeFormScreen() {
       );
     }
     if (field.type === 'textarea') {
-      const val = answers[field.key];
+      const val = answers[fieldKey];
       return (
-        <FormField key={field.key} label={fieldLabel} errorText={error}>
+        <FormField key={fieldKey} label={fieldLabel} errorText={error}>
           <Input
-            testID={`intake-${field.key}-input`}
+            testID={`intake-${fieldKey}-input`}
             value={val != null ? String(val) : ''}
-            onChangeText={(text: string) => setField(field.key, text)}
+            onChangeText={(text: string) => setField(fieldKey, text)}
             multiline
             numberOfLines={4}
             maxLength={field.max_length ?? 2000}

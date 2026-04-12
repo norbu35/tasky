@@ -13,6 +13,7 @@ export function useCreateTask() {
     mutationFn: (payload: CreateTaskRequest) => api.createTask(token!, payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      void queryClient.invalidateQueries({ queryKey: ['myTasks'] });
       void queryClient.invalidateQueries({ queryKey: ['recent-locations'] });
     },
   });

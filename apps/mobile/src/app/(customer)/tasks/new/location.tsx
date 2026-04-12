@@ -36,6 +36,7 @@ export default function LocationScreen() {
     description: string;
     intakeAnswers?: string;
     intakeSchemaVersion?: string;
+    intakeSchemaJson?: string;
     photos: string;
     location?: string;
     lat?: string;
@@ -186,6 +187,7 @@ export default function LocationScreen() {
         description: params.description,
         intakeAnswers: params.intakeAnswers,
         intakeSchemaVersion: params.intakeSchemaVersion,
+        intakeSchemaJson: params.intakeSchemaJson,
         photos: params.photos,
         location: locationText,
         lat: String(pin.latitude),

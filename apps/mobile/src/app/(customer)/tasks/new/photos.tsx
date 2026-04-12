@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Alert, Image, Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { CircleX, Info, Plus } from 'lucide-react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { CircleX, Info, Loader, Plus } from 'lucide-react-native';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
+import { useTaskPhotoUpload } from '../../../../features/tasks/hooks/useTaskPhotoUpload';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
 const { colors } = mobileTheme;
@@ -32,16 +34,50 @@ export default function PhotoUploadScreen() {
     description: string;
     intakeAnswers?: string;
     intakeSchemaVersion?: string;
+    intakeSchemaJson?: string;
     photos?: string;
   }>();
   const [photos, setPhotos] = useState<string[]>(() => parsePhotoKeys(params.photos).slice(0, 3));
+  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
+  const { uploadPhoto } = useTaskPhotoUpload();
+
   const slots = useMemo(
     () => Array.from({ length: 3 }, (_, index) => photos[index] ?? null),
     [photos],
   );
 
-  const handleAddPhoto = () => {
-    // Photo picker integration is not yet wired in this lane.
+  const handleAddPhoto = async (slotIndex: number) => {
+    if (photos.length >= 3) return;
+
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(t('Photos.permissionTitle'), t('Photos.permissionBody'));
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.8,
+    });
+
+    if (result.canceled || result.assets.length === 0) return;
+
+    const uri = result.assets[0].uri;
+    setUploadingIndex(slotIndex);
+    try {
+      const storageKey = await uploadPhoto(uri);
+      setPhotos((prev) => {
+        const next = [...prev];
+        next[slotIndex] = storageKey;
+        return next.filter(Boolean) as string[];
+      });
+    } catch {
+      Alert.alert(t('common.error'), t('Photos.uploadError'));
+    } finally {
+      setUploadingIndex(null);
+    }
   };
 
   const handleRemovePhoto = (index: number) => {
@@ -57,6 +93,7 @@ export default function PhotoUploadScreen() {
         description: params.description,
         intakeAnswers: params.intakeAnswers,
         intakeSchemaVersion: params.intakeSchemaVersion,
+        intakeSchemaJson: params.intakeSchemaJson,
         photos: JSON.stringify(photos),
       },
     });
@@ -70,6 +107,7 @@ export default function PhotoUploadScreen() {
       onNext={handleNext}
       onBack={() => router.back()}
       nextLabel={photos.length > 0 ? t('common.continue') : t('Photos.photosSkip')}
+      nextDisabled={uploadingIndex !== null}
     >
       <View className="flex-row items-center justify-between gap-sm">
         <Text className="text-caption text-text-secondary">{t('Photos.photosProgressHint')}</Text>
@@ -104,20 +142,27 @@ export default function PhotoUploadScreen() {
             <Pressable
               key={`add-${index}`}
               className="rounded-lg border-2 border-dashed border-chip-inactive bg-muted items-center justify-center gap-xs p-sm w-[31.5%] aspect-square"
-              onPress={handleAddPhoto}
+              onPress={() => handleAddPhoto(index)}
+              disabled={uploadingIndex !== null}
               testID={`photo-upload-add-${index}`}
               accessibilityRole="button"
               accessibilityLabel={t('Photos.addPhoto')}
             >
-              <View
-                className="w-9 h-9 rounded-full items-center justify-center"
-                style={{ backgroundColor: `${colors.primary}14` }}
-              >
-                <Plus size={20} color={colors.primaryDeep} />
-              </View>
-              <Text className="text-caption text-primary-deep font-sans-bold uppercase text-center">
-                {t('Photos.addPhoto')}
-              </Text>
+              {uploadingIndex === index ? (
+                <Loader size={20} color={colors.primaryDeep} />
+              ) : (
+                <>
+                  <View
+                    className="w-9 h-9 rounded-full items-center justify-center"
+                    style={{ backgroundColor: `${colors.primary}14` }}
+                  >
+                    <Plus size={20} color={colors.primaryDeep} />
+                  </View>
+                  <Text className="text-caption text-primary-deep font-sans-bold uppercase text-center">
+                    {t('Photos.addPhoto')}
+                  </Text>
+                </>
+              )}
             </Pressable>
           ),
         )}
