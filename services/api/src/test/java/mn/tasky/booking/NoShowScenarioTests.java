@@ -16,12 +16,12 @@ import java.util.UUID;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.application.BookingTimelineService;
 import mn.tasky.booking.application.NoShowService;
+import mn.tasky.booking.application.NoShowService.NoShowFlagResult;
 import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dao.BookingScheduleEventDao;
 import mn.tasky.booking.dao.BookingTimelineEventDao;
 import mn.tasky.booking.dto.BookingScheduleEvent;
 import mn.tasky.booking.dto.BookingState;
-import mn.tasky.booking.application.NoShowService.NoShowFlagResult;
 import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
@@ -67,8 +67,16 @@ class NoShowScenarioTests {
         taskService = mock(TaskService.class);
 
         noShowService = new NoShowService(
-                bookingDao, timelineService, timelineEventDao, scheduleEventDao,
-                messageDao, conversationDao, taskService, authService, notificationService, auditEventDao);
+                bookingDao,
+                timelineService,
+                timelineEventDao,
+                scheduleEventDao,
+                messageDao,
+                conversationDao,
+                taskService,
+                authService,
+                notificationService,
+                auditEventDao);
 
         // Default: no recent activity, no accepted reschedule, no conversation
         when(timelineEventDao.existsRecentByBookingId(anyString(), any())).thenReturn(false);
@@ -79,9 +87,21 @@ class NoShowScenarioTests {
 
     /** Creates a booking state with configuredScheduledAt, in ASSIGNED status. */
     private BookingState assignedBooking(Instant confirmedScheduledAt) {
-        return new BookingState(BOOKING_ID, TASK_ID, TASKER_ID, CUSTOMER_ID, 50_000, "ASSIGNED",
-                null, true, confirmedScheduledAt, "DIRECT", false, null,
-                Instant.now().minus(1, ChronoUnit.HOURS), Instant.now());
+        return new BookingState(
+                BOOKING_ID,
+                TASK_ID,
+                TASKER_ID,
+                CUSTOMER_ID,
+                50_000,
+                "ASSIGNED",
+                null,
+                true,
+                confirmedScheduledAt,
+                "DIRECT",
+                false,
+                null,
+                Instant.now().minus(1, ChronoUnit.HOURS),
+                Instant.now());
     }
 
     // ── SCN-BOOK-010 ─────────────────────────────────────────────────────────
@@ -96,8 +116,8 @@ class NoShowScenarioTests {
 
         verify(notificationService).sendPush(eq(CUSTOMER_ID), anyString(), anyString(), eq("NO_SHOW_REMINDER"));
         verify(notificationService).sendPush(eq(TASKER_ID), anyString(), anyString(), eq("NO_SHOW_REMINDER"));
-        verify(timelineService).recordEvent(eq(BOOKING_ID),
-                eq(BookingTimelineService.NO_SHOW_REMINDER_SENT), any(), any());
+        verify(timelineService)
+                .recordEvent(eq(BOOKING_ID), eq(BookingTimelineService.NO_SHOW_REMINDER_SENT), any(), any());
     }
 
     // ── SCN-BOOK-011 ─────────────────────────────────────────────────────────
@@ -142,10 +162,14 @@ class NoShowScenarioTests {
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(booking));
         // An accepted reschedule for a future time exists
         BookingScheduleEvent acceptedReschedule = new BookingScheduleEvent(
-                UUID.randomUUID().toString(), BOOKING_ID, CUSTOMER_ID, "ACCEPTED",
-                Instant.now().plus(2, ChronoUnit.HOURS), null, Instant.now());
-        when(scheduleEventDao.findLatestAcceptedByBookingId(BOOKING_ID))
-                .thenReturn(Optional.of(acceptedReschedule));
+                UUID.randomUUID().toString(),
+                BOOKING_ID,
+                CUSTOMER_ID,
+                "ACCEPTED",
+                Instant.now().plus(2, ChronoUnit.HOURS),
+                null,
+                Instant.now());
+        when(scheduleEventDao.findLatestAcceptedByBookingId(BOOKING_ID)).thenReturn(Optional.of(acceptedReschedule));
 
         NoShowFlagResult result = noShowService.flagNoShow(BOOKING_ID, CUSTOMER_ID);
 
@@ -162,13 +186,22 @@ class NoShowScenarioTests {
         BookingState booking = assignedBooking(Instant.now().minus(20, ChronoUnit.MINUTES));
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(booking));
         // After update, return updated state
-        BookingState updated = new BookingState(BOOKING_ID, TASK_ID, TASKER_ID, CUSTOMER_ID,
-                50_000, "NO_SHOW", null, true,
-                booking.confirmedScheduledAt(), "DIRECT", false, null,
-                booking.createdAt(), Instant.now());
-        when(bookingDao.findById(BOOKING_ID))
-                .thenReturn(Optional.of(booking))
-                .thenReturn(Optional.of(updated));
+        BookingState updated = new BookingState(
+                BOOKING_ID,
+                TASK_ID,
+                TASKER_ID,
+                CUSTOMER_ID,
+                50_000,
+                "NO_SHOW",
+                null,
+                true,
+                booking.confirmedScheduledAt(),
+                "DIRECT",
+                false,
+                null,
+                booking.createdAt(),
+                Instant.now());
+        when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(booking)).thenReturn(Optional.of(updated));
 
         NoShowFlagResult result = noShowService.flagNoShow(BOOKING_ID, CUSTOMER_ID);
 
@@ -176,8 +209,8 @@ class NoShowScenarioTests {
         assertThat(result.booking().status()).isEqualTo("NO_SHOW");
         verify(bookingDao).updateStatus(eq(BOOKING_ID), eq("NO_SHOW"), any());
         verify(taskService).transitionToNoShow(TASK_ID);
-        verify(timelineService).recordEvent(eq(BOOKING_ID),
-                eq(BookingTimelineService.NO_SHOW_CONFIRMED), anyString(), anyString());
+        verify(timelineService)
+                .recordEvent(eq(BOOKING_ID), eq(BookingTimelineService.NO_SHOW_CONFIRMED), anyString(), anyString());
         verify(auditEventDao).insert(anyString(), eq("NO_SHOW_FLAGGED"), eq("BOOKING"), eq(BOOKING_ID), anyString());
     }
 
@@ -191,10 +224,21 @@ class NoShowScenarioTests {
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(booking));
         when(bookingDao.findById(BOOKING_ID))
                 .thenReturn(Optional.of(booking))
-                .thenReturn(Optional.of(new BookingState(BOOKING_ID, TASK_ID, TASKER_ID, CUSTOMER_ID,
-                        50_000, "NO_SHOW", null, true,
-                        booking.confirmedScheduledAt(), "DIRECT", false, null,
-                        booking.createdAt(), Instant.now())));
+                .thenReturn(Optional.of(new BookingState(
+                        BOOKING_ID,
+                        TASK_ID,
+                        TASKER_ID,
+                        CUSTOMER_ID,
+                        50_000,
+                        "NO_SHOW",
+                        null,
+                        true,
+                        booking.confirmedScheduledAt(),
+                        "DIRECT",
+                        false,
+                        null,
+                        booking.createdAt(),
+                        Instant.now())));
 
         // Customer flags no-show (tasker is the no-show party)
         noShowService.flagNoShow(BOOKING_ID, CUSTOMER_ID);
@@ -209,10 +253,21 @@ class NoShowScenarioTests {
     @DisplayName("SCN-BOOK-016: Repeating the no-show flag on an already NO_SHOW booking is idempotent")
     void duplicateNoShowFlagOnAlreadyNoShowIsIdempotent() {
         // Booking already in NO_SHOW terminal state
-        BookingState noShowBooking = new BookingState(BOOKING_ID, TASK_ID, TASKER_ID, CUSTOMER_ID,
-                50_000, "NO_SHOW", null, true,
-                Instant.now().minus(20, ChronoUnit.MINUTES), "DIRECT", false, null,
-                Instant.now().minus(1, ChronoUnit.HOURS), Instant.now());
+        BookingState noShowBooking = new BookingState(
+                BOOKING_ID,
+                TASK_ID,
+                TASKER_ID,
+                CUSTOMER_ID,
+                50_000,
+                "NO_SHOW",
+                null,
+                true,
+                Instant.now().minus(20, ChronoUnit.MINUTES),
+                "DIRECT",
+                false,
+                null,
+                Instant.now().minus(1, ChronoUnit.HOURS),
+                Instant.now());
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(noShowBooking));
 
         NoShowFlagResult result = noShowService.flagNoShow(BOOKING_ID, CUSTOMER_ID);

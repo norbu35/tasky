@@ -14,11 +14,11 @@ import java.util.UUID;
 import mn.tasky.auth.application.FacebookCircuitBreaker;
 import mn.tasky.auth.application.FacebookGraphClient;
 import mn.tasky.common.IntegrationTestBase;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -39,9 +39,7 @@ import org.springframework.http.ResponseEntity;
  *
  * <p>Tests run against a real database (Testcontainers) via IntegrationTestBase.
  */
-@SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "tasky.otp.enabled=false")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "tasky.otp.enabled=false")
 @SuppressWarnings({"rawtypes", "unchecked"})
 class AuthHttpScenarioTests extends IntegrationTestBase {
 
@@ -65,8 +63,7 @@ class AuthHttpScenarioTests extends IntegrationTestBase {
     @DisplayName("SCN-AUTH-002: Phase 0-1 OTP request endpoint is disabled with 403 FEATURE_DISABLED")
     void otpRequestDisabledReturns403() {
         // Given: tasky.otp.enabled=false (default in test profile — Phase 0-1)
-        ResponseEntity<Map> response = post("/api/v1/auth/otp/request",
-                Map.of("phone", "+97699001122"));
+        ResponseEntity<Map> response = post("/api/v1/auth/otp/request", Map.of("phone", "+97699001122"));
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -79,8 +76,8 @@ class AuthHttpScenarioTests extends IntegrationTestBase {
     @DisplayName("SCN-AUTH-003: Phase 0-1 OTP verify endpoint is disabled with 403 FEATURE_DISABLED")
     void otpVerifyDisabledReturns403() {
         // Given: tasky.otp.enabled=false (default in test profile — Phase 0-1)
-        ResponseEntity<Map> response = post("/api/v1/auth/otp/verify",
-                Map.of("phone", "+97699001122", "code", "123456"));
+        ResponseEntity<Map> response =
+                post("/api/v1/auth/otp/verify", Map.of("phone", "+97699001122", "code", "123456"));
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -100,8 +97,9 @@ class AuthHttpScenarioTests extends IntegrationTestBase {
                 .claim("token_type", "access")
                 .issuedAt(Date.from(Instant.now()))
                 .expiration(Date.from(Instant.now().plusSeconds(3600)))
-                .signWith(Keys.hmacShaKeyFor(
-                        "wrong-secret-key-minimum-32-chars-long-xxx".getBytes(StandardCharsets.UTF_8)),
+                .signWith(
+                        Keys.hmacShaKeyFor(
+                                "wrong-secret-key-minimum-32-chars-long-xxx".getBytes(StandardCharsets.UTF_8)),
                         Jwts.SIG.HS256)
                 .compact();
 
@@ -119,12 +117,11 @@ class AuthHttpScenarioTests extends IntegrationTestBase {
     void facebookOutageReturns503() {
         // Given: FacebookGraphClient throws provider-unavailable on every call
         when(facebookGraphClient.debugToken(anyString()))
-                .thenThrow(new FacebookAuthException("AUTH_PROVIDER_UNAVAILABLE",
-                        "Facebook authentication is temporarily unavailable"));
+                .thenThrow(new FacebookAuthException(
+                        "AUTH_PROVIDER_UNAVAILABLE", "Facebook authentication is temporarily unavailable"));
 
         // When
-        ResponseEntity<Map> response = post("/api/v1/auth/facebook",
-                Map.of("access_token", "any-token"));
+        ResponseEntity<Map> response = post("/api/v1/auth/facebook", Map.of("access_token", "any-token"));
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
@@ -141,8 +138,8 @@ class AuthHttpScenarioTests extends IntegrationTestBase {
 
         // And: Facebook is unavailable for new logins
         when(facebookGraphClient.debugToken(anyString()))
-                .thenThrow(new FacebookAuthException("AUTH_PROVIDER_UNAVAILABLE",
-                        "Facebook authentication is temporarily unavailable"));
+                .thenThrow(new FacebookAuthException(
+                        "AUTH_PROVIDER_UNAVAILABLE", "Facebook authentication is temporarily unavailable"));
 
         // When: the authenticated user calls a product endpoint with existing session
         ResponseEntity<Map> response = getWithAuth("/api/v1/bookings", validToken);
@@ -155,9 +152,7 @@ class AuthHttpScenarioTests extends IntegrationTestBase {
     // ── SCN-AUTH-011 (nested — requires OTP enabled) ─────────────────────────
 
     @org.junit.jupiter.api.Nested
-    @SpringBootTest(
-            webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-            properties = "tasky.otp.enabled=true")
+    @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "tasky.otp.enabled=true")
     class OtpEnabledScenarios extends IntegrationTestBase {
 
         private final TestRestTemplate restTemplate = new TestRestTemplate();
@@ -172,8 +167,8 @@ class AuthHttpScenarioTests extends IntegrationTestBase {
             post("/api/v1/auth/otp/request", Map.of("phone", "+97699008800"));
 
             // When: correct OTP code submitted
-            ResponseEntity<Map> response = post("/api/v1/auth/otp/verify",
-                    Map.of("phone", "+97699008800", "code", "123456"));
+            ResponseEntity<Map> response =
+                    post("/api/v1/auth/otp/verify", Map.of("phone", "+97699008800", "code", "123456"));
 
             // Then: authenticated session returned
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -197,10 +192,7 @@ class AuthHttpScenarioTests extends IntegrationTestBase {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         return restTemplate.exchange(
-                "http://localhost:" + port + path,
-                HttpMethod.GET,
-                new HttpEntity<>(headers),
-                Map.class);
+                "http://localhost:" + port + path, HttpMethod.GET, new HttpEntity<>(headers), Map.class);
     }
 
     private String validToken(String role, String status) {
@@ -212,9 +204,7 @@ class AuthHttpScenarioTests extends IntegrationTestBase {
                 .claim("token_type", "access")
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(3600)))
-                .signWith(
-                        Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)),
-                        Jwts.SIG.HS256)
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
                 .compact();
     }
 }

@@ -1,5 +1,6 @@
 package mn.tasky.analytics;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -10,11 +11,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.analytics.dao.AnalyticsEventDao;
+import mn.tasky.auth.application.BadgeEvaluationService;
+import mn.tasky.auth.application.ReliabilityScoreService;
 import mn.tasky.common.outbox.DomainEventOutboxProcessor;
 import mn.tasky.common.outbox.OutboxEvent;
 import mn.tasky.common.outbox.OutboxEventTypes;
-import mn.tasky.auth.application.BadgeEvaluationService;
-import mn.tasky.auth.application.ReliabilityScoreService;
 import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
@@ -23,8 +24,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Domain-unit tests for analytics event emission scenarios.
@@ -74,15 +73,13 @@ class AnalyticsScenarioTests {
         analyticsService.track(
                 AnalyticsService.EVENT_TASK_POSTED,
                 customerId,
-                Map.of(
-                        AnalyticsService.PROPERTY_TASK_ID, taskId,
-                        "category_id", categoryId));
+                Map.of(AnalyticsService.PROPERTY_TASK_ID, taskId, "category_id", categoryId));
 
         // Verify that the event was persisted to the DAO with the correct event name
         ArgumentCaptor<String> nameCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> propsCaptor = ArgumentCaptor.forClass(String.class);
-        verify(analyticsEventDao).insert(anyString(), nameCaptor.capture(), eq(customerId),
-                propsCaptor.capture(), any());
+        verify(analyticsEventDao)
+                .insert(anyString(), nameCaptor.capture(), eq(customerId), propsCaptor.capture(), any());
 
         assertThat(nameCaptor.getValue()).isEqualTo("TASK_POSTED");
 
@@ -121,7 +118,10 @@ class AnalyticsScenarioTests {
                 reviewEnforcementService,
                 reliabilityScoreService,
                 badgeEvaluationService,
-                25, 15, 60, 1500);
+                25,
+                15,
+                60,
+                1500);
 
         // Build a TASK_APPLICATION_ACCEPTED outbox event payload
         Map<String, Object> payload = Map.of(
@@ -147,8 +147,8 @@ class AnalyticsScenarioTests {
 
         // Invoke dispatch via reflection since it's private — or we test through processBatch
         // Instead, use reflection to call the private dispatch method
-        java.lang.reflect.Method dispatch = DomainEventOutboxProcessor.class
-                .getDeclaredMethod("dispatch", OutboxEvent.class);
+        java.lang.reflect.Method dispatch =
+                DomainEventOutboxProcessor.class.getDeclaredMethod("dispatch", OutboxEvent.class);
         dispatch.setAccessible(true);
         dispatch.invoke(processor, event);
 
@@ -186,7 +186,10 @@ class AnalyticsScenarioTests {
                 reviewEnforcementService,
                 reliabilityScoreService,
                 badgeEvaluationService,
-                25, 15, 60, 1500);
+                25,
+                15,
+                60,
+                1500);
 
         // Build a BOOKING_COMPLETED outbox event payload
         Map<String, Object> payload = Map.of(
@@ -210,8 +213,8 @@ class AnalyticsScenarioTests {
                 java.time.Instant.now(),
                 null);
 
-        java.lang.reflect.Method dispatch = DomainEventOutboxProcessor.class
-                .getDeclaredMethod("dispatch", OutboxEvent.class);
+        java.lang.reflect.Method dispatch =
+                DomainEventOutboxProcessor.class.getDeclaredMethod("dispatch", OutboxEvent.class);
         dispatch.setAccessible(true);
         dispatch.invoke(processor, event);
 

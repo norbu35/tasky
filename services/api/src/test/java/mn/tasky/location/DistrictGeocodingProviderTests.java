@@ -23,10 +23,11 @@ class DistrictGeocodingProviderTests {
         districtGeoDao = mock(DistrictGeoDao.class);
         provider = new DistrictGeocodingProvider(districtGeoDao);
 
-        when(districtGeoDao.findAllCentroids()).thenReturn(List.of(
-                new DistrictCentroid("Sukhbaatar", "Сүхбаатар", 47.9213, 106.9197),
-                new DistrictCentroid("Bayangol", "Баянгол", 47.9133, 106.8684),
-                new DistrictCentroid("Chingeltei", "Чингэлтэй", 47.9379, 106.8919)));
+        when(districtGeoDao.findAllCentroids())
+                .thenReturn(List.of(
+                        new DistrictCentroid("Sukhbaatar", "Сүхбаатар", 47.9213, 106.9197),
+                        new DistrictCentroid("Bayangol", "Баянгол", 47.9133, 106.8684),
+                        new DistrictCentroid("Chingeltei", "Чингэлтэй", 47.9379, 106.8919)));
     }
 
     @Test

@@ -14,7 +14,8 @@ class OpenApiSpringParityTests {
     @DisplayName("TID-TASK-112-CONTRACT-SPRING-PARITY live Spring MVC API paths are documented in OpenAPI")
     void liveSpringMvcApiPathsAreDocumented() throws IOException {
         Set<String> livePaths = OpenApiContractTestSupport.liveApiPaths();
-        Set<String> documentedPaths = OpenApiContractTestSupport.documentedPaths(OpenApiContractTestSupport.readOpenApi());
+        Set<String> documentedPaths =
+                OpenApiContractTestSupport.documentedPaths(OpenApiContractTestSupport.readOpenApi());
 
         Set<String> undocumentedLivePaths = new TreeSet<>(livePaths);
         undocumentedLivePaths.removeAll(documentedPaths);

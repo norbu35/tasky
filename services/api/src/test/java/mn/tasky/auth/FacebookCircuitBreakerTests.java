@@ -31,7 +31,8 @@ class FacebookCircuitBreakerTests {
     // ------------------------------------------------------------------
 
     @Test
-    @DisplayName("SCN-AUTH-014: Facebook circuit breaker opens after repeated provider failures and status reports unavailable")
+    @DisplayName(
+            "SCN-AUTH-014: Facebook circuit breaker opens after repeated provider failures and status reports unavailable")
     void threeFailuresWithinWindowOpensCircuit() {
         breaker.recordFailure();
         breaker.recordFailure();

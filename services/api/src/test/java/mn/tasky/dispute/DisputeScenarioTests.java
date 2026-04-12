@@ -7,12 +7,12 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.common.audit.AuditEventDao;
@@ -21,7 +21,6 @@ import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.dispute.dao.DisputeEvidenceDao;
 import mn.tasky.dispute.dto.Dispute;
 import mn.tasky.dispute.dto.DisputeRaiseResult;
-import mn.tasky.dispute.dto.DisputeRequest;
 import mn.tasky.dispute.dto.DisputeResolutionResult;
 import mn.tasky.dispute.scheduling.DisputeEvidenceGraceScheduler;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,8 +34,8 @@ class DisputeScenarioTests {
 
     private static final String BOOKING_ID = UUID.randomUUID().toString();
     private static final String CUSTOMER_ID = "customer-1";
-    private static final String TASKER_ID   = "tasker-1";
-    private static final String REASON      = "Work was not completed as agreed";
+    private static final String TASKER_ID = "tasker-1";
+    private static final String REASON = "Work was not completed as agreed";
 
     private BookingService bookingService;
     private DisputeDao disputeDao;
@@ -48,8 +47,8 @@ class DisputeScenarioTests {
         bookingService = mock(BookingService.class);
         disputeDao = mock(DisputeDao.class);
         disputeEvidenceDao = mock(DisputeEvidenceDao.class);
-        disputeService = new DisputeService(bookingService, disputeDao, disputeEvidenceDao,
-                mock(AuditEventDao.class), new ObjectMapper());
+        disputeService = new DisputeService(
+                bookingService, disputeDao, disputeEvidenceDao, mock(AuditEventDao.class), new ObjectMapper());
 
         // Default: no existing dispute
         when(disputeDao.findOpenByBookingId(BOOKING_ID)).thenReturn(Optional.empty());
@@ -59,14 +58,35 @@ class DisputeScenarioTests {
     }
 
     private BookingState bookingWith(String status, Instant updatedAt) {
-        return new BookingState(BOOKING_ID, "task-1", TASKER_ID, CUSTOMER_ID,
-                50_000, status, null, true, null, "DIRECT", false, null,
-                updatedAt.minus(1, ChronoUnit.HOURS), updatedAt);
+        return new BookingState(
+                BOOKING_ID,
+                "task-1",
+                TASKER_ID,
+                CUSTOMER_ID,
+                50_000,
+                status,
+                null,
+                true,
+                null,
+                "DIRECT",
+                false,
+                null,
+                updatedAt.minus(1, ChronoUnit.HOURS),
+                updatedAt);
     }
 
     private Dispute openDispute() {
-        return new Dispute(UUID.randomUUID().toString(), BOOKING_ID, CUSTOMER_ID,
-                REASON, "OPEN", null, null, null, Instant.now(), Instant.now());
+        return new Dispute(
+                UUID.randomUUID().toString(),
+                BOOKING_ID,
+                CUSTOMER_ID,
+                REASON,
+                "OPEN",
+                null,
+                null,
+                null,
+                Instant.now(),
+                Instant.now());
     }
 
     // ── SCN-DISPUTE-001 ──────────────────────────────────────────────────────
@@ -74,8 +94,7 @@ class DisputeScenarioTests {
     @Test
     @DisplayName("SCN-DISPUTE-001: Either participant can open a dispute while the booking is ASSIGNED")
     void participantCanOpenDisputeFromAssigned() {
-        when(bookingService.getBooking(BOOKING_ID))
-                .thenReturn(Optional.of(bookingWith("ASSIGNED", Instant.now())));
+        when(bookingService.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("ASSIGNED", Instant.now())));
         Dispute created = openDispute();
         when(disputeDao.findById(anyString())).thenReturn(Optional.of(created));
 
@@ -91,8 +110,7 @@ class DisputeScenarioTests {
     @DisplayName("SCN-DISPUTE-002: Either participant can open a dispute within 24 hours after booking completion")
     void participantCanOpenDisputeWithin24hOfCompletion() {
         Instant completedAt = Instant.now().minus(12, ChronoUnit.HOURS);
-        when(bookingService.getBooking(BOOKING_ID))
-                .thenReturn(Optional.of(bookingWith("COMPLETED", completedAt)));
+        when(bookingService.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("COMPLETED", completedAt)));
         Dispute created = openDispute();
         when(disputeDao.findById(anyString())).thenReturn(Optional.of(created));
 
@@ -107,8 +125,7 @@ class DisputeScenarioTests {
     @DisplayName("SCN-DISPUTE-003: Completed-booking dispute after 24 hours is rejected")
     void disputeAfter24hWindowExpiredRejected() {
         Instant completedAt = Instant.now().minus(25, ChronoUnit.HOURS);
-        when(bookingService.getBooking(BOOKING_ID))
-                .thenReturn(Optional.of(bookingWith("COMPLETED", completedAt)));
+        when(bookingService.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("COMPLETED", completedAt)));
 
         DisputeRaiseResult result = disputeService.raiseDispute(CUSTOMER_ID, BOOKING_ID, REASON);
 
@@ -122,8 +139,7 @@ class DisputeScenarioTests {
     @DisplayName("SCN-DISPUTE-004: Dispute creation outside ASSIGNED or COMPLETED booking states is rejected")
     void disputeFromInvalidStatusRejected() {
         for (String status : List.of("CANCELLED", "NO_SHOW")) {
-            when(bookingService.getBooking(BOOKING_ID))
-                    .thenReturn(Optional.of(bookingWith(status, Instant.now())));
+            when(bookingService.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith(status, Instant.now())));
 
             DisputeRaiseResult result = disputeService.raiseDispute(CUSTOMER_ID, BOOKING_ID, REASON);
 
@@ -140,8 +156,7 @@ class DisputeScenarioTests {
     @DisplayName("SCN-DISPUTE-005: Dispute submission requires at least one evidence artifact")
     void disputeWithoutEvidenceRecordedAsOpenPendingEvidence() {
         // When no evidenceItems are supplied, dispute is created but open (pending evidence)
-        when(bookingService.getBooking(BOOKING_ID))
-                .thenReturn(Optional.of(bookingWith("ASSIGNED", Instant.now())));
+        when(bookingService.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("ASSIGNED", Instant.now())));
         Dispute created = openDispute();
         when(disputeDao.findById(anyString())).thenReturn(Optional.of(created));
 
@@ -157,11 +172,19 @@ class DisputeScenarioTests {
     // ── SCN-DISPUTE-006 ──────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-DISPUTE-006: Missing evidence after reminder and 24-hour grace auto-closes the dispute as INSUFFICIENT_EVIDENCE")
+    @DisplayName(
+            "SCN-DISPUTE-006: Missing evidence after reminder and 24-hour grace auto-closes the dispute as INSUFFICIENT_EVIDENCE")
     void staleDisputeWithNoEvidenceAutoCloses() {
         // Dispute is OPEN and older than 24h, with zero evidence
-        Dispute stale = new Dispute(UUID.randomUUID().toString(), BOOKING_ID, CUSTOMER_ID,
-                REASON, "OPEN", null, null, null,
+        Dispute stale = new Dispute(
+                UUID.randomUUID().toString(),
+                BOOKING_ID,
+                CUSTOMER_ID,
+                REASON,
+                "OPEN",
+                null,
+                null,
+                null,
                 Instant.now().minus(25, ChronoUnit.HOURS),
                 Instant.now().minus(25, ChronoUnit.HOURS));
         when(disputeDao.findOpenOlderThan(org.mockito.ArgumentMatchers.any())).thenReturn(List.of(stale));
@@ -170,13 +193,14 @@ class DisputeScenarioTests {
         DisputeEvidenceGraceScheduler scheduler = new DisputeEvidenceGraceScheduler(disputeDao, disputeEvidenceDao);
         scheduler.closeStaleDisputes();
 
-        verify(disputeDao).update(
-                org.mockito.ArgumentMatchers.eq(stale.id()),
-                org.mockito.ArgumentMatchers.eq("CLOSED_INSUFFICIENT_EVIDENCE"),
-                org.mockito.ArgumentMatchers.isNull(),
-                org.mockito.ArgumentMatchers.isNull(),
-                org.mockito.ArgumentMatchers.isNull(),
-                org.mockito.ArgumentMatchers.any(Instant.class));
+        verify(disputeDao)
+                .update(
+                        org.mockito.ArgumentMatchers.eq(stale.id()),
+                        org.mockito.ArgumentMatchers.eq("CLOSED_INSUFFICIENT_EVIDENCE"),
+                        org.mockito.ArgumentMatchers.isNull(),
+                        org.mockito.ArgumentMatchers.isNull(),
+                        org.mockito.ArgumentMatchers.isNull(),
+                        org.mockito.ArgumentMatchers.any(Instant.class));
     }
 
     // ── SCN-DISPUTE-007 ──────────────────────────────────────────────────────
@@ -184,8 +208,15 @@ class DisputeScenarioTests {
     @Test
     @DisplayName("SCN-DISPUTE-007: Evidence added during the grace window prevents insufficient-evidence auto-close")
     void disputeWithEvidenceNotAutoClosedByScheduler() {
-        Dispute withEvidence = new Dispute(UUID.randomUUID().toString(), BOOKING_ID, CUSTOMER_ID,
-                REASON, "OPEN", null, null, null,
+        Dispute withEvidence = new Dispute(
+                UUID.randomUUID().toString(),
+                BOOKING_ID,
+                CUSTOMER_ID,
+                REASON,
+                "OPEN",
+                null,
+                null,
+                null,
                 Instant.now().minus(25, ChronoUnit.HOURS),
                 Instant.now().minus(25, ChronoUnit.HOURS));
         when(disputeDao.findOpenOlderThan(org.mockito.ArgumentMatchers.any())).thenReturn(List.of(withEvidence));
@@ -196,24 +227,25 @@ class DisputeScenarioTests {
         scheduler.closeStaleDisputes();
 
         // Should NOT auto-close
-        verify(disputeDao, never()).update(
-                org.mockito.ArgumentMatchers.eq(withEvidence.id()),
-                anyString(),
-                org.mockito.ArgumentMatchers.any(),
-                org.mockito.ArgumentMatchers.any(),
-                org.mockito.ArgumentMatchers.any(),
-                org.mockito.ArgumentMatchers.any());
+        verify(disputeDao, never())
+                .update(
+                        org.mockito.ArgumentMatchers.eq(withEvidence.id()),
+                        anyString(),
+                        org.mockito.ArgumentMatchers.any(),
+                        org.mockito.ArgumentMatchers.any(),
+                        org.mockito.ArgumentMatchers.any(),
+                        org.mockito.ArgumentMatchers.any());
     }
 
     // ── SCN-DISPUTE-008 ──────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-DISPUTE-008: Phase 1 dispute resolution is limited to evidence-only outcomes and admin misconduct notes")
+    @DisplayName(
+            "SCN-DISPUTE-008: Phase 1 dispute resolution is limited to evidence-only outcomes and admin misconduct notes")
     void phase1ResolutionAllowsOnlyEvidenceOutcomes() {
         Dispute dispute = openDispute();
         when(disputeDao.findById(dispute.id())).thenReturn(Optional.of(dispute));
-        when(bookingService.getBooking(BOOKING_ID)).thenReturn(
-                Optional.of(bookingWith("ASSIGNED", Instant.now())));
+        when(bookingService.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("ASSIGNED", Instant.now())));
 
         String adminId = "admin-1";
 
@@ -221,8 +253,7 @@ class DisputeScenarioTests {
         for (String outcome : List.of("RESOLVE_CUSTOMER", "RESOLVE_TASKER", "ESCALATE")) {
             // Re-stub as OPEN for each iteration
             when(disputeDao.findById(dispute.id())).thenReturn(Optional.of(openDispute()));
-            DisputeResolutionResult result = disputeService.resolveDispute(
-                    adminId, dispute.id(), outcome, null);
+            DisputeResolutionResult result = disputeService.resolveDispute(adminId, dispute.id(), outcome, null);
             assertThat(result.isSuccess())
                     .as("Expected %s to be a valid Phase 1 resolution outcome", outcome)
                     .isTrue();
@@ -231,8 +262,7 @@ class DisputeScenarioTests {
         // REFUND and RELEASE are Phase 3+ only — invalid in Phase 1
         for (String outcome : List.of("REFUND", "RELEASE")) {
             when(disputeDao.findById(dispute.id())).thenReturn(Optional.of(openDispute()));
-            DisputeResolutionResult result = disputeService.resolveDispute(
-                    adminId, dispute.id(), outcome, null);
+            DisputeResolutionResult result = disputeService.resolveDispute(adminId, dispute.id(), outcome, null);
             assertThat(result.isSuccess())
                     .as("Expected %s to be rejected as invalid Phase 1 outcome", outcome)
                     .isFalse();

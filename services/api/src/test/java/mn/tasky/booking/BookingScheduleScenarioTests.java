@@ -49,20 +49,33 @@ class BookingScheduleScenarioTests {
         timelineService = mock(BookingTimelineService.class);
         notificationService = mock(NotificationService.class);
 
-        scheduleService = new BookingScheduleService(
-                scheduleEventDao, bookingDao, timelineService, notificationService);
+        scheduleService =
+                new BookingScheduleService(scheduleEventDao, bookingDao, timelineService, notificationService);
     }
 
     private BookingState assignedBooking() {
-        return new BookingState(BOOKING_ID, TASK_ID, TASKER_ID, CUSTOMER_ID, 50_000, "ASSIGNED",
-                null, true, Instant.now().plus(2, ChronoUnit.HOURS), "DIRECT", false, null,
-                Instant.now().minus(1, ChronoUnit.HOURS), Instant.now());
+        return new BookingState(
+                BOOKING_ID,
+                TASK_ID,
+                TASKER_ID,
+                CUSTOMER_ID,
+                50_000,
+                "ASSIGNED",
+                null,
+                true,
+                Instant.now().plus(2, ChronoUnit.HOURS),
+                "DIRECT",
+                false,
+                null,
+                Instant.now().minus(1, ChronoUnit.HOURS),
+                Instant.now());
     }
 
     // ── SCN-BOOK-017 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-BOOK-017: Reschedule request in ASSIGNED creates a REQUESTED event with proposed datetime and optional reason")
+    @DisplayName(
+            "SCN-BOOK-017: Reschedule request in ASSIGNED creates a REQUESTED event with proposed datetime and optional reason")
     void rescheduleRequestCreatesRequestedEvent() {
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(assignedBooking()));
         Instant proposed = Instant.now().plus(1, ChronoUnit.DAYS);
@@ -70,15 +83,22 @@ class BookingScheduleScenarioTests {
                 EVENT_ID, BOOKING_ID, CUSTOMER_ID, "REQUESTED", proposed, "Need to move it", Instant.now());
         when(scheduleEventDao.findById(anyString())).thenReturn(Optional.of(created));
 
-        BookingScheduleEvent result = scheduleService.requestReschedule(
-                BOOKING_ID, CUSTOMER_ID, proposed, "Need to move it");
+        BookingScheduleEvent result =
+                scheduleService.requestReschedule(BOOKING_ID, CUSTOMER_ID, proposed, "Need to move it");
 
         assertThat(result.eventType()).isEqualTo("REQUESTED");
         assertThat(result.proposedScheduledAt()).isEqualTo(proposed);
-        verify(scheduleEventDao).insert(anyString(), eq(BOOKING_ID), eq(CUSTOMER_ID),
-                eq("REQUESTED"), eq(proposed), eq("Need to move it"));
-        verify(timelineService).recordEvent(eq(BOOKING_ID),
-                eq(BookingTimelineService.RESCHEDULE_REQUESTED), eq(CUSTOMER_ID), anyString());
+        verify(scheduleEventDao)
+                .insert(
+                        anyString(),
+                        eq(BOOKING_ID),
+                        eq(CUSTOMER_ID),
+                        eq("REQUESTED"),
+                        eq(proposed),
+                        eq("Need to move it"));
+        verify(timelineService)
+                .recordEvent(
+                        eq(BOOKING_ID), eq(BookingTimelineService.RESCHEDULE_REQUESTED), eq(CUSTOMER_ID), anyString());
     }
 
     // ── SCN-BOOK-018 ─────────────────────────────────────────────────────────
@@ -88,22 +108,21 @@ class BookingScheduleScenarioTests {
     void acceptedRescheduleUpdatesCanonicalSchedule() {
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(assignedBooking()));
         Instant proposed = Instant.now().plus(1, ChronoUnit.DAYS);
-        BookingScheduleEvent requestedEvent = new BookingScheduleEvent(
-                EVENT_ID, BOOKING_ID, CUSTOMER_ID, "REQUESTED", proposed, null, Instant.now());
-        BookingScheduleEvent acceptedEvent = new BookingScheduleEvent(
-                EVENT_ID, BOOKING_ID, CUSTOMER_ID, "ACCEPTED", proposed, null, Instant.now());
+        BookingScheduleEvent requestedEvent =
+                new BookingScheduleEvent(EVENT_ID, BOOKING_ID, CUSTOMER_ID, "REQUESTED", proposed, null, Instant.now());
+        BookingScheduleEvent acceptedEvent =
+                new BookingScheduleEvent(EVENT_ID, BOOKING_ID, CUSTOMER_ID, "ACCEPTED", proposed, null, Instant.now());
         when(scheduleEventDao.findById(EVENT_ID))
                 .thenReturn(Optional.of(requestedEvent))
                 .thenReturn(Optional.of(acceptedEvent));
 
-        BookingScheduleEvent result = scheduleService.respondToReschedule(
-                BOOKING_ID, EVENT_ID, TASKER_ID, "ACCEPT");
+        BookingScheduleEvent result = scheduleService.respondToReschedule(BOOKING_ID, EVENT_ID, TASKER_ID, "ACCEPT");
 
         // Canonical confirmed schedule updated
         verify(bookingDao).updateConfirmedSchedule(eq(BOOKING_ID), eq(proposed));
         verify(scheduleEventDao).updateStatus(eq(EVENT_ID), eq("ACCEPTED"));
-        verify(timelineService).recordEvent(eq(BOOKING_ID),
-                eq(BookingTimelineService.RESCHEDULE_ACCEPTED), eq(TASKER_ID), any());
+        verify(timelineService)
+                .recordEvent(eq(BOOKING_ID), eq(BookingTimelineService.RESCHEDULE_ACCEPTED), eq(TASKER_ID), any());
         assertThat(result.eventType()).isEqualTo("ACCEPTED");
     }
 
@@ -113,54 +132,95 @@ class BookingScheduleScenarioTests {
     @DisplayName("SCN-BOOK-019: Declined or expired reschedule request preserves the original schedule")
     void declinedReschedulePreservesOriginalSchedule() {
         Instant originalSchedule = Instant.now().plus(2, ChronoUnit.HOURS);
-        BookingState booking = new BookingState(BOOKING_ID, TASK_ID, TASKER_ID, CUSTOMER_ID, 50_000,
-                "ASSIGNED", null, true, originalSchedule, "DIRECT", false, null,
-                Instant.now().minus(1, ChronoUnit.HOURS), Instant.now());
+        BookingState booking = new BookingState(
+                BOOKING_ID,
+                TASK_ID,
+                TASKER_ID,
+                CUSTOMER_ID,
+                50_000,
+                "ASSIGNED",
+                null,
+                true,
+                originalSchedule,
+                "DIRECT",
+                false,
+                null,
+                Instant.now().minus(1, ChronoUnit.HOURS),
+                Instant.now());
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(booking));
 
         Instant proposed = Instant.now().plus(1, ChronoUnit.DAYS);
-        BookingScheduleEvent requestedEvent = new BookingScheduleEvent(
-                EVENT_ID, BOOKING_ID, CUSTOMER_ID, "REQUESTED", proposed, null, Instant.now());
-        BookingScheduleEvent declinedEvent = new BookingScheduleEvent(
-                EVENT_ID, BOOKING_ID, CUSTOMER_ID, "DECLINED", proposed, null, Instant.now());
+        BookingScheduleEvent requestedEvent =
+                new BookingScheduleEvent(EVENT_ID, BOOKING_ID, CUSTOMER_ID, "REQUESTED", proposed, null, Instant.now());
+        BookingScheduleEvent declinedEvent =
+                new BookingScheduleEvent(EVENT_ID, BOOKING_ID, CUSTOMER_ID, "DECLINED", proposed, null, Instant.now());
         when(scheduleEventDao.findById(EVENT_ID))
                 .thenReturn(Optional.of(requestedEvent))
                 .thenReturn(Optional.of(declinedEvent));
 
-        BookingScheduleEvent result = scheduleService.respondToReschedule(
-                BOOKING_ID, EVENT_ID, TASKER_ID, "DECLINE");
+        BookingScheduleEvent result = scheduleService.respondToReschedule(BOOKING_ID, EVENT_ID, TASKER_ID, "DECLINE");
 
         // Original confirmed schedule NOT updated
         verify(bookingDao, never()).updateConfirmedSchedule(anyString(), any());
         verify(scheduleEventDao).updateStatus(eq(EVENT_ID), eq("DECLINED"));
-        verify(timelineService).recordEvent(eq(BOOKING_ID),
-                eq(BookingTimelineService.RESCHEDULE_DECLINED), eq(TASKER_ID), any());
+        verify(timelineService)
+                .recordEvent(eq(BOOKING_ID), eq(BookingTimelineService.RESCHEDULE_DECLINED), eq(TASKER_ID), any());
         assertThat(result.eventType()).isEqualTo("DECLINED");
     }
 
     // ── SCN-BOOK-020 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-BOOK-020: Only the latest mutually accepted in-app schedule changes policy timers and the reschedule lifecycle remains audit-immutable")
+    @DisplayName(
+            "SCN-BOOK-020: Only the latest mutually accepted in-app schedule changes policy timers and the reschedule lifecycle remains audit-immutable")
     void onlyAcceptedInAppReschedulesChangePolicyTimers() {
         // Booking has an original confirmed schedule
         Instant originalSchedule = Instant.now().plus(3, ChronoUnit.HOURS);
-        BookingState booking = new BookingState(BOOKING_ID, TASK_ID, TASKER_ID, CUSTOMER_ID, 50_000,
-                "ASSIGNED", null, true, originalSchedule, "DIRECT", false, null,
-                Instant.now().minus(1, ChronoUnit.HOURS), Instant.now());
+        BookingState booking = new BookingState(
+                BOOKING_ID,
+                TASK_ID,
+                TASKER_ID,
+                CUSTOMER_ID,
+                50_000,
+                "ASSIGNED",
+                null,
+                true,
+                originalSchedule,
+                "DIRECT",
+                false,
+                null,
+                Instant.now().minus(1, ChronoUnit.HOURS),
+                Instant.now());
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(booking));
 
         // There are reschedule events: REQUESTED, DECLINED, and REQUESTED again
         Instant proposedA = Instant.now().plus(1, ChronoUnit.DAYS);
         Instant proposedB = Instant.now().plus(2, ChronoUnit.DAYS);
         List<BookingScheduleEvent> allEvents = List.of(
-                new BookingScheduleEvent(UUID.randomUUID().toString(), BOOKING_ID, CUSTOMER_ID,
-                        "REQUESTED", proposedA, null, Instant.now().minus(2, ChronoUnit.HOURS)),
-                new BookingScheduleEvent(UUID.randomUUID().toString(), BOOKING_ID, TASKER_ID,
-                        "DECLINED", proposedA, null, Instant.now().minus(1, ChronoUnit.HOURS)),
-                new BookingScheduleEvent(UUID.randomUUID().toString(), BOOKING_ID, CUSTOMER_ID,
-                        "REQUESTED", proposedB, null, Instant.now().minus(30, ChronoUnit.MINUTES))
-        );
+                new BookingScheduleEvent(
+                        UUID.randomUUID().toString(),
+                        BOOKING_ID,
+                        CUSTOMER_ID,
+                        "REQUESTED",
+                        proposedA,
+                        null,
+                        Instant.now().minus(2, ChronoUnit.HOURS)),
+                new BookingScheduleEvent(
+                        UUID.randomUUID().toString(),
+                        BOOKING_ID,
+                        TASKER_ID,
+                        "DECLINED",
+                        proposedA,
+                        null,
+                        Instant.now().minus(1, ChronoUnit.HOURS)),
+                new BookingScheduleEvent(
+                        UUID.randomUUID().toString(),
+                        BOOKING_ID,
+                        CUSTOMER_ID,
+                        "REQUESTED",
+                        proposedB,
+                        null,
+                        Instant.now().minus(30, ChronoUnit.MINUTES)));
         when(scheduleEventDao.findByBookingId(BOOKING_ID)).thenReturn(allEvents);
 
         List<BookingScheduleEvent> events = scheduleService.listScheduleEvents(BOOKING_ID, CUSTOMER_ID);

@@ -74,7 +74,12 @@ public class BookingIntentService {
 
     @Transactional
     public CreateResult createIntent(
-            String customerId, String taskId, String source, String taskerId, String originalBookingId, String offerId) {
+            String customerId,
+            String taskId,
+            String source,
+            String taskerId,
+            String originalBookingId,
+            String offerId) {
         if (!StringUtils.hasText(source) || !StringUtils.hasText(taskerId)) {
             return CreateResult.error(CreateResult.INVALID_REQUEST, "Missing booking intent request fields.");
         }
@@ -130,7 +135,8 @@ public class BookingIntentService {
                 null,
                 now,
                 now);
-        return bookingIntentDao.findById(intentId)
+        return bookingIntentDao
+                .findById(intentId)
                 .map(CreateResult::success)
                 .orElseGet(() -> CreateResult.error(CreateResult.NOT_FOUND, "Booking intent was not persisted."));
     }
@@ -161,10 +167,12 @@ public class BookingIntentService {
             Optional<BookingState> existingBooking = bookingService.getBooking(intent.confirmedBookingId());
             return existingBooking
                     .map(ConfirmResult::success)
-                    .orElseGet(() -> ConfirmResult.error(ConfirmResult.CONFLICT, "Confirmed booking no longer exists."));
+                    .orElseGet(
+                            () -> ConfirmResult.error(ConfirmResult.CONFLICT, "Confirmed booking no longer exists."));
         }
         if (!"PENDING".equals(intent.status())) {
-            return ConfirmResult.error(ConfirmResult.CONFLICT, "Booking intent cannot be confirmed from current status.");
+            return ConfirmResult.error(
+                    ConfirmResult.CONFLICT, "Booking intent cannot be confirmed from current status.");
         }
 
         Optional<TaskState> taskOpt = taskDao.findById(intent.taskId());

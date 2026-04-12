@@ -40,7 +40,9 @@ public class BookingIntentController {
     private final IdempotencyService idempotencyService;
 
     public BookingIntentController(
-            BookingIntentService bookingIntentService, BookingService bookingService, IdempotencyService idempotencyService) {
+            BookingIntentService bookingIntentService,
+            BookingService bookingService,
+            IdempotencyService idempotencyService) {
         this.bookingIntentService = bookingIntentService;
         this.bookingService = bookingService;
         this.idempotencyService = idempotencyService;
@@ -71,8 +73,9 @@ public class BookingIntentController {
                     .body(error("NOT_IMPLEMENTED", result.errorMessage(), request));
             case BookingIntentService.CreateResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(error("CONFLICT", result.errorMessage(), request));
-            case BookingIntentService.CreateResult.INVALID_SOURCE, BookingIntentService.CreateResult.INVALID_REQUEST ->
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error("BAD_REQUEST", result.errorMessage(), request));
+            case BookingIntentService.CreateResult.INVALID_SOURCE,
+                    BookingIntentService.CreateResult.INVALID_REQUEST -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(error("BAD_REQUEST", result.errorMessage(), request));
             default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         };
     }
@@ -124,23 +127,27 @@ public class BookingIntentController {
                 return ResponseEntity.ok(basic(result.booking()));
             }
 
-            idempotencyService.abandon(principal.userId(), IdempotencyOperations.CONFIRM_BOOKING_INTENT, idempotencyKey);
+            idempotencyService.abandon(
+                    principal.userId(), IdempotencyOperations.CONFIRM_BOOKING_INTENT, idempotencyKey);
             return switch (result.errorCode()) {
                 case BookingIntentService.ConfirmResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(error("NOT_FOUND", result.errorMessage(), request));
                 case BookingIntentService.ConfirmResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body(error("FORBIDDEN", result.errorMessage(), request));
-                case BookingIntentService.ConfirmResult.DISCLAIMER_REQUIRED -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                case BookingIntentService.ConfirmResult.DISCLAIMER_REQUIRED -> ResponseEntity.status(
+                                HttpStatus.BAD_REQUEST)
                         .body(error("DISCLAIMER_REQUIRED", result.errorMessage(), request));
                 case BookingIntentService.ConfirmResult.TASK_NOT_OPEN,
                         BookingIntentService.ConfirmResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
                         .body(error(result.errorCode(), result.errorMessage(), request));
                 case BookingIntentService.ConfirmResult.DEFERRED -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(error("NOT_IMPLEMENTED", result.errorMessage(), request));
-                default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .build();
             };
         } catch (RuntimeException exception) {
-            idempotencyService.abandon(principal.userId(), IdempotencyOperations.CONFIRM_BOOKING_INTENT, idempotencyKey);
+            idempotencyService.abandon(
+                    principal.userId(), IdempotencyOperations.CONFIRM_BOOKING_INTENT, idempotencyKey);
             throw exception;
         }
     }
@@ -157,7 +164,9 @@ public class BookingIntentController {
         body.put("offer_id", intent.offerId());
         body.put("expires_at", intent.expiresAt() != null ? intent.expiresAt().toString() : null);
         body.put("confirmed_booking_id", intent.confirmedBookingId());
-        body.put("confirmed_at", intent.confirmedAt() != null ? intent.confirmedAt().toString() : null);
+        body.put(
+                "confirmed_at",
+                intent.confirmedAt() != null ? intent.confirmedAt().toString() : null);
         body.put("created_at", intent.createdAt().toString());
         body.put("updated_at", intent.updatedAt().toString());
         return body;

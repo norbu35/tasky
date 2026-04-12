@@ -39,10 +39,7 @@ public class UserProfileController {
     private final StorageKeyPolicy storageKeyPolicy;
 
     public UserProfileController(
-            AuthService authService,
-            UserDao userDao,
-            AuditEventDao auditEventDao,
-            StorageKeyPolicy storageKeyPolicy) {
+            AuthService authService, UserDao userDao, AuditEventDao auditEventDao, StorageKeyPolicy storageKeyPolicy) {
         this.authService = authService;
         this.userDao = userDao;
         this.auditEventDao = auditEventDao;

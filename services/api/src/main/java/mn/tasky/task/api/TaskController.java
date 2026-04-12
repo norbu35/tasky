@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import mn.tasky.auth.application.AuthService;
-import mn.tasky.location.application.LocationService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.category.application.CategoryService;
 import mn.tasky.category.dto.CategoryState;
@@ -27,6 +26,7 @@ import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyService;
 import mn.tasky.common.security.JwtPrincipal;
+import mn.tasky.location.application.LocationService;
 import mn.tasky.task.application.TaskDraftService;
 import mn.tasky.task.application.TaskService;
 import mn.tasky.task.dto.AcceptApplicationRequest;
@@ -54,7 +54,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.util.HtmlUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,6 +63,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.HtmlUtils;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -132,7 +132,9 @@ public class TaskController {
         var approx = locationService.reverseGeocode(task.locationLat(), task.locationLng());
         response.put("id", task.id());
 
-        categoryService.getCategory(task.categoryId()).ifPresent(cat -> response.put("category", toCategoryPayload(cat)));
+        categoryService
+                .getCategory(task.categoryId())
+                .ifPresent(cat -> response.put("category", toCategoryPayload(cat)));
 
         authService
                 .getProfile(task.customerId())
@@ -177,8 +179,7 @@ public class TaskController {
         response.put("sort_order", category.sortOrder());
         response.put("intake_enabled", Boolean.TRUE.equals(category.intakeEnabled()));
         response.put(
-                "intake_schema_version",
-                category.intakeSchemaVersion() != null ? category.intakeSchemaVersion() : 0);
+                "intake_schema_version", category.intakeSchemaVersion() != null ? category.intakeSchemaVersion() : 0);
         response.put("intake_schema_json", parseJson(category.intakeSchemaJson()));
         return response;
     }
@@ -218,13 +219,15 @@ public class TaskController {
         }
         List<RecentLocation> locations = taskService.recentLocations(principal.userId(), 3);
 
-        List<Map<String, Object>> data = locations.stream().map(loc -> {
-            Map<String, Object> entry = new LinkedHashMap<>();
-            entry.put("location_lat", loc.locationLat());
-            entry.put("location_lng", loc.locationLng());
-            entry.put("location_text", loc.locationText());
-            return entry;
-        }).toList();
+        List<Map<String, Object>> data = locations.stream()
+                .map(loc -> {
+                    Map<String, Object> entry = new LinkedHashMap<>();
+                    entry.put("location_lat", loc.locationLat());
+                    entry.put("location_lng", loc.locationLng());
+                    entry.put("location_text", loc.locationText());
+                    return entry;
+                })
+                .toList();
 
         return ResponseEntity.ok(Map.of("locations", data));
     }
@@ -266,11 +269,14 @@ public class TaskController {
                 .mapToObj(index -> toOwnedPhotoResponse(photoKeys.get(index), index, task.customerId()))
                 .flatMap(Optional::stream)
                 .toList();
-        List<String> visiblePhotoKeys =
-                photos.stream().map(photo -> String.valueOf(photo.get("storage_key"))).toList();
+        List<String> visiblePhotoKeys = photos.stream()
+                .map(photo -> String.valueOf(photo.get("storage_key")))
+                .toList();
         response.put("id", task.id());
         response.put("category_id", task.categoryId());
-        categoryService.getCategory(task.categoryId()).ifPresent(cat -> response.put("category", toCategoryPayload(cat)));
+        categoryService
+                .getCategory(task.categoryId())
+                .ifPresent(cat -> response.put("category", toCategoryPayload(cat)));
         response.put("customer_id", task.customerId());
         response.put("description", task.description());
         response.put("budget", task.budget());
@@ -350,7 +356,9 @@ public class TaskController {
                         body.locationText(),
                         body.scheduledAt(),
                         body.photoKeys() != null ? body.photoKeys() : List.of(),
-                        body.intakeAnswersJson() != null ? body.intakeAnswersJson().toString() : null,
+                        body.intakeAnswersJson() != null
+                                ? body.intakeAnswersJson().toString()
+                                : null,
                         body.intakeSchemaVersion(),
                         body.scopeSummary(),
                         body.draftId()));
@@ -799,11 +807,14 @@ public class TaskController {
             @Valid @RequestBody UpdateDraftRequest body,
             HttpServletRequest request) {
         try {
-            TaskDraft updated =
-                    taskDraftService.updateDraft(id, principal.userId(),
-                            body.intakeAnswers() != null ? body.intakeAnswers().toString() : null,
-                            body.summaryDraft(),
-                            body.locationLat(), body.locationLng(), body.locationText());
+            TaskDraft updated = taskDraftService.updateDraft(
+                    id,
+                    principal.userId(),
+                    body.intakeAnswers() != null ? body.intakeAnswers().toString() : null,
+                    body.summaryDraft(),
+                    body.locationLat(),
+                    body.locationLng(),
+                    body.locationText());
             return ResponseEntity.ok(TaskDraftResponse.from(updated));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

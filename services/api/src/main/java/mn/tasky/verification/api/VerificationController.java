@@ -68,7 +68,7 @@ public class VerificationController {
                             "message",
                             "Consent must be accepted to submit verification.",
                             "trace_id",
-                                resolveTraceId(request)));
+                            resolveTraceId(request)));
         }
         try {
             storageKeyPolicy.validateOwnedKey(

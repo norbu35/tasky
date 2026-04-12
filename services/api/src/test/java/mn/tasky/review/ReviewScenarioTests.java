@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,9 +25,9 @@ import org.junit.jupiter.api.Test;
  */
 class ReviewScenarioTests {
 
-    private static final String BOOKING_ID  = UUID.randomUUID().toString();
+    private static final String BOOKING_ID = UUID.randomUUID().toString();
     private static final String CUSTOMER_ID = "customer-1";
-    private static final String TASKER_ID   = "tasker-1";
+    private static final String TASKER_ID = "tasker-1";
 
     private ReviewEnforcementCaseDao caseDao;
     private NotificationService notificationService;
@@ -49,8 +48,15 @@ class ReviewScenarioTests {
     }
 
     private ReviewEnforcementCase openCase(String userId) {
-        return new ReviewEnforcementCase(UUID.randomUUID().toString(), BOOKING_ID, userId,
-                "BOOKING_COMPLETED", "PENDING", false, Instant.now(), null);
+        return new ReviewEnforcementCase(
+                UUID.randomUUID().toString(),
+                BOOKING_ID,
+                userId,
+                "BOOKING_COMPLETED",
+                "PENDING",
+                false,
+                Instant.now(),
+                null);
     }
 
     // ── SCN-REVIEW-001 ───────────────────────────────────────────────────────
@@ -97,8 +103,14 @@ class ReviewScenarioTests {
     @DisplayName("SCN-REVIEW-004: Open review case at 72 hours sends the final reminder")
     void reminded24hCaseOlderThan72hGetsFinalReminder() {
         ReviewEnforcementCase reminded = new ReviewEnforcementCase(
-                UUID.randomUUID().toString(), BOOKING_ID, TASKER_ID,
-                "BOOKING_COMPLETED", "REMINDED_24H", false, Instant.now(), null);
+                UUID.randomUUID().toString(),
+                BOOKING_ID,
+                TASKER_ID,
+                "BOOKING_COMPLETED",
+                "REMINDED_24H",
+                false,
+                Instant.now(),
+                null);
         when(caseDao.findPendingOlderThan(any())).thenReturn(List.of());
         when(caseDao.findReminded24hOlderThan(any())).thenReturn(List.of(reminded));
 
@@ -127,7 +139,8 @@ class ReviewScenarioTests {
     // ── SCN-REVIEW-006 ───────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-REVIEW-006: Hard lock triggered by dispute, repeated non-submission, or investigation logs the trigger reason")
+    @DisplayName(
+            "SCN-REVIEW-006: Hard lock triggered by dispute, repeated non-submission, or investigation logs the trigger reason")
     void hardLockAppliedWhenRiskSignalPresent() {
         ReviewEnforcementCase openCase = openCase(CUSTOMER_ID);
         when(caseDao.findOpenByUser(CUSTOMER_ID)).thenReturn(List.of(openCase));

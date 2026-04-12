@@ -8,7 +8,9 @@ import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
-@AnalyzeClasses(packages = "mn.tasky", importOptions = {ImportOption.DoNotIncludeTests.class})
+@AnalyzeClasses(
+        packages = "mn.tasky",
+        importOptions = {ImportOption.DoNotIncludeTests.class})
 class BackendArchitectureTest {
 
     @ArchTest
@@ -43,10 +45,22 @@ class BackendArchitectureTest {
     @ArchTest
     static final ArchRule crossDomainSchedulingDependenciesAreForbidden = noClasses()
             .that()
-            .resideInAnyPackage("mn.tasky.auth..", "mn.tasky.booking..", "mn.tasky.category..", "mn.tasky.task..",
-                    "mn.tasky.review..", "mn.tasky.wallet..", "mn.tasky.payment..", "mn.tasky.dispute..",
-                    "mn.tasky.messaging..", "mn.tasky.notification..", "mn.tasky.admin..", "mn.tasky.analytics..",
-                    "mn.tasky.user..", "mn.tasky.verification..", "mn.tasky.security..")
+            .resideInAnyPackage(
+                    "mn.tasky.auth..",
+                    "mn.tasky.booking..",
+                    "mn.tasky.category..",
+                    "mn.tasky.task..",
+                    "mn.tasky.review..",
+                    "mn.tasky.wallet..",
+                    "mn.tasky.payment..",
+                    "mn.tasky.dispute..",
+                    "mn.tasky.messaging..",
+                    "mn.tasky.notification..",
+                    "mn.tasky.admin..",
+                    "mn.tasky.analytics..",
+                    "mn.tasky.user..",
+                    "mn.tasky.verification..",
+                    "mn.tasky.security..")
             .should()
             .dependOnClassesThat()
             .resideInAnyPackage(

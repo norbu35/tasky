@@ -1,7 +1,7 @@
 package mn.tasky.auth;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -36,9 +36,9 @@ class OtpRateLimitScenarioTests {
                 new JwtTokenService("test-jwt-secret-key-minimum-32-chars-long-xxx", 900L, 1209600L),
                 DEFAULT_PHONE_LIMIT,
                 DEFAULT_IP_LIMIT,
-                5,   // otpVerifyLimitPerPhone
-                20,  // otpVerifyLimitPerIp
-                10,  // refreshLimitPerToken
+                5, // otpVerifyLimitPerPhone
+                20, // otpVerifyLimitPerIp
+                10, // refreshLimitPerToken
                 30); // refreshLimitPerIp
     }
 
@@ -65,7 +65,8 @@ class OtpRateLimitScenarioTests {
     @DisplayName("SCN-AUTH-009: OTP request is allowed when under the per-phone limit")
     void otpRequestAllowedUnderPhoneLimit() {
         // Given: phone key is under limit
-        when(rateLimitCounterDao.incrementAndGet(anyString(), any(), any(), any())).thenReturn(1);
+        when(rateLimitCounterDao.incrementAndGet(anyString(), any(), any(), any()))
+                .thenReturn(1);
 
         // When/Then: no exception
         assertThatCode(() -> service.assertRequestAllowed("+97699001122", "10.0.0.1"))

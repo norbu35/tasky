@@ -1303,9 +1303,9 @@ public class AuthService {
      * @return true if Instant Match is allowed, false if currently revoked.
      */
     public boolean isInstantMatchAllowed(String userId) {
-        return profileDao.findByUserId(userId)
-                .map(p -> p.instantMatchRevokedUntil() == null
-                        || Instant.now().isAfter(p.instantMatchRevokedUntil()))
+        return profileDao
+                .findByUserId(userId)
+                .map(p -> p.instantMatchRevokedUntil() == null || Instant.now().isAfter(p.instantMatchRevokedUntil()))
                 .orElse(true);
     }
 

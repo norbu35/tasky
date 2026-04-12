@@ -18,8 +18,7 @@ class LocationFuzzingTests {
         GeocodingProvider provider = mock(GeocodingProvider.class);
         when(provider.reverseGeocode(anyDouble(), anyDouble()))
                 .thenReturn(new ReverseGeocodeResponse(
-                        "Sukhbaatar, Ulaanbaatar", "Sukhbaatar", "Сүхбаатар",
-                        47.9213, 106.9197));
+                        "Sukhbaatar, Ulaanbaatar", "Sukhbaatar", "Сүхбаатар", 47.9213, 106.9197));
 
         var r1 = provider.reverseGeocode(47.9200, 106.9200);
         var r2 = provider.reverseGeocode(47.9200, 106.9200);

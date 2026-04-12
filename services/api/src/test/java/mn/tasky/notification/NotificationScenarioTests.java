@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.auth.dao.UserDao;
-import mn.tasky.auth.dto.AuthUser;
 import mn.tasky.common.security.CryptoService;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.notification.dao.DeviceTokenDao;
@@ -89,13 +88,15 @@ class NotificationScenarioTests {
 
         // Track device token upserts
         doAnswer(inv -> {
-            String userId = inv.getArgument(0);
-            String token = inv.getArgument(1);
-            String platform = inv.getArgument(2);
-            Instant createdAt = inv.getArgument(3);
-            registeredTokens.add(new DeviceTokenRecord(userId, token, platform, createdAt));
-            return null;
-        }).when(deviceTokenDao).upsert(anyString(), anyString(), anyString(), any(Instant.class));
+                    String userId = inv.getArgument(0);
+                    String token = inv.getArgument(1);
+                    String platform = inv.getArgument(2);
+                    Instant createdAt = inv.getArgument(3);
+                    registeredTokens.add(new DeviceTokenRecord(userId, token, platform, createdAt));
+                    return null;
+                })
+                .when(deviceTokenDao)
+                .upsert(anyString(), anyString(), anyString(), any(Instant.class));
 
         notificationService = new NotificationService(
                 deviceTokenDao,
@@ -119,21 +120,33 @@ class NotificationScenarioTests {
 
         // When a customer posts a task in a category the tasker covers
         // (TaskService.notifyNearbyTaskers calls notificationService.sendPush)
-        notificationService.sendPush(TASKER_ID, "New task nearby",
-                "A new task matching your recent work area is available.", "MATCHING_TASK_NEARBY");
+        notificationService.sendPush(
+                TASKER_ID,
+                "New task nearby",
+                "A new task matching your recent work area is available.",
+                "MATCHING_TASK_NEARBY");
 
         // Then a push notification is sent to the tasker's device token
-        verify(pushProvider).sendPush(
-                eq(TASKER_TOKEN),
-                eq("ANDROID"),
-                eq("New task nearby"),
-                eq("A new task matching your recent work area is available."),
-                any(Map.class));
+        verify(pushProvider)
+                .sendPush(
+                        eq(TASKER_TOKEN),
+                        eq("ANDROID"),
+                        eq("New task nearby"),
+                        eq("A new task matching your recent work area is available."),
+                        any(Map.class));
 
         // And a notification log entry is recorded
-        verify(notificationLogDao).insert(
-                anyString(), eq(TASKER_ID), eq("MATCHING_TASK_NEARBY"), eq("PUSH"),
-                eq("SENT"), anyString(), anyString(), any(), any(Instant.class));
+        verify(notificationLogDao)
+                .insert(
+                        anyString(),
+                        eq(TASKER_ID),
+                        eq("MATCHING_TASK_NEARBY"),
+                        eq("PUSH"),
+                        eq("SENT"),
+                        anyString(),
+                        anyString(),
+                        any(),
+                        any(Instant.class));
     }
 
     // ── SCN-NOTIF-002 ───────────────────────────────────────────────────────
@@ -149,15 +162,13 @@ class NotificationScenarioTests {
 
         // When the booking is confirmed (outbox processor calls sendPushWithEventKey)
         notificationService.sendPushWithEventKey(
-                TASKER_ID, "You are hired!", "Your application has been accepted.",
-                "HIRED", "HIRED_" + bookingId);
+                TASKER_ID, "You are hired!", "Your application has been accepted.", "HIRED", "HIRED_" + bookingId);
 
         // Then a push notification is sent to the tasker indicating they are hired
         ArgumentCaptor<String> titleCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> bodyCaptor = ArgumentCaptor.forClass(String.class);
-        verify(pushProvider).sendPush(
-                eq(TASKER_TOKEN), eq("IOS"),
-                titleCaptor.capture(), bodyCaptor.capture(), any(Map.class));
+        verify(pushProvider)
+                .sendPush(eq(TASKER_TOKEN), eq("IOS"), titleCaptor.capture(), bodyCaptor.capture(), any(Map.class));
 
         assertThat(titleCaptor.getValue()).contains("hired");
         assertThat(bodyCaptor.getValue()).contains("accepted");
@@ -167,8 +178,7 @@ class NotificationScenarioTests {
         org.mockito.Mockito.reset(pushProvider);
 
         notificationService.sendPushWithEventKey(
-                TASKER_ID, "You are hired!", "Your application has been accepted.",
-                "HIRED", "HIRED_" + bookingId);
+                TASKER_ID, "You are hired!", "Your application has been accepted.", "HIRED", "HIRED_" + bookingId);
 
         // Push NOT sent again (idempotent)
         verify(pushProvider, never()).sendPush(anyString(), anyString(), anyString(), anyString(), any());
@@ -187,24 +197,46 @@ class NotificationScenarioTests {
 
         // When the no-show reminder job runs and sends notifications
         // (NoShowService.sendReminder calls notificationService.sendPush for each participant)
-        notificationService.sendPush(CUSTOMER_ID, "Attendance Reminder",
-                "Your booking is scheduled for now -- please confirm attendance.", "NO_SHOW_REMINDER");
-        notificationService.sendPush(TASKER_ID, "Attendance Reminder",
-                "Your booking is scheduled for now -- please confirm attendance.", "NO_SHOW_REMINDER");
+        notificationService.sendPush(
+                CUSTOMER_ID,
+                "Attendance Reminder",
+                "Your booking is scheduled for now -- please confirm attendance.",
+                "NO_SHOW_REMINDER");
+        notificationService.sendPush(
+                TASKER_ID,
+                "Attendance Reminder",
+                "Your booking is scheduled for now -- please confirm attendance.",
+                "NO_SHOW_REMINDER");
 
         // Then both customer and tasker receive a push notification
-        verify(pushProvider).sendPush(eq(CUSTOMER_TOKEN), eq("IOS"),
-                eq("Attendance Reminder"), anyString(), any(Map.class));
-        verify(pushProvider).sendPush(eq(TASKER_TOKEN), eq("ANDROID"),
-                eq("Attendance Reminder"), anyString(), any(Map.class));
+        verify(pushProvider)
+                .sendPush(eq(CUSTOMER_TOKEN), eq("IOS"), eq("Attendance Reminder"), anyString(), any(Map.class));
+        verify(pushProvider)
+                .sendPush(eq(TASKER_TOKEN), eq("ANDROID"), eq("Attendance Reminder"), anyString(), any(Map.class));
 
         // Both log entries recorded
-        verify(notificationLogDao).insert(
-                anyString(), eq(CUSTOMER_ID), eq("NO_SHOW_REMINDER"), eq("PUSH"),
-                eq("SENT"), anyString(), anyString(), any(), any(Instant.class));
-        verify(notificationLogDao).insert(
-                anyString(), eq(TASKER_ID), eq("NO_SHOW_REMINDER"), eq("PUSH"),
-                eq("SENT"), anyString(), anyString(), any(), any(Instant.class));
+        verify(notificationLogDao)
+                .insert(
+                        anyString(),
+                        eq(CUSTOMER_ID),
+                        eq("NO_SHOW_REMINDER"),
+                        eq("PUSH"),
+                        eq("SENT"),
+                        anyString(),
+                        anyString(),
+                        any(),
+                        any(Instant.class));
+        verify(notificationLogDao)
+                .insert(
+                        anyString(),
+                        eq(TASKER_ID),
+                        eq("NO_SHOW_REMINDER"),
+                        eq("PUSH"),
+                        eq("SENT"),
+                        anyString(),
+                        anyString(),
+                        any(),
+                        any(Instant.class));
     }
 
     // ── SCN-NOTIF-004 ───────────────────────────────────────────────────────

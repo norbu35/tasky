@@ -15,7 +15,6 @@ import java.util.UUID;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.application.BookingService;
-import mn.tasky.booking.dto.BookingState;
 import mn.tasky.category.application.CategoryService;
 import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.common.outbox.DomainEventOutboxService;
@@ -91,8 +90,7 @@ class TaskAcceptScenarioTests {
 
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(TaskAcceptResult.DISCLAIMER_REQUIRED);
-        verify(bookingService, never())
-                .createBooking(anyString(), anyString(), anyString(), anyInt());
+        verify(bookingService, never()).createBooking(anyString(), anyString(), anyString(), anyInt());
         verify(bookingService, never())
                 .createBooking(anyString(), anyString(), anyString(), anyInt(), any(Boolean.class));
     }

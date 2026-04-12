@@ -93,13 +93,15 @@ public class StorageKeyPolicy {
     }
 
     private void validateExtension(String extension) {
-        if (!StringUtils.hasText(extension) || !EXTENSION_PATTERN.matcher(extension).matches()) {
+        if (!StringUtils.hasText(extension)
+                || !EXTENSION_PATTERN.matcher(extension).matches()) {
             throw new IllegalArgumentException("Invalid storage key");
         }
     }
 
     private void validateFileName(String fileName) {
-        if (!StringUtils.hasText(fileName) || !FILE_NAME_PATTERN.matcher(fileName).matches()) {
+        if (!StringUtils.hasText(fileName)
+                || !FILE_NAME_PATTERN.matcher(fileName).matches()) {
             throw new IllegalArgumentException("Invalid storage key");
         }
 

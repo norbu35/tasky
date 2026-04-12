@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -58,16 +57,15 @@ class ContractEnvelopeTests extends IntegrationTestBase {
                 Arguments.of("/api/v1/disputes"),
                 Arguments.of("/api/v1/reviews/me"),
                 Arguments.of("/api/v1/admin/categories"),
-                Arguments.of("/api/v1/admin/users")
-        );
+                Arguments.of("/api/v1/admin/users"));
     }
 
     @ParameterizedTest(name = "SCN-CONTRACT-401: GET {0} without auth returns 401 with standard envelope")
     @MethodSource("protectedGetEndpoints")
     @DisplayName("SCN-CONTRACT-401 SCN-SMOKE-005: Unauthenticated requests return 401 with standard error envelope")
     void unauthenticatedReturns401WithEnvelope(String path) {
-        ResponseEntity<Map> resp = http.exchange(url(path), HttpMethod.GET,
-                new HttpEntity<>(new HttpHeaders()), Map.class);
+        ResponseEntity<Map> resp =
+                http.exchange(url(path), HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), Map.class);
 
         assertThat(resp.getStatusCode().value()).isEqualTo(401);
         assertEnvelope(resp.getBody(), path);
@@ -79,16 +77,15 @@ class ContractEnvelopeTests extends IntegrationTestBase {
         return Stream.of(
                 Arguments.of("/api/v1/admin/categories", "CUSTOMER"),
                 Arguments.of("/api/v1/admin/users", "TASKER"),
-                Arguments.of("/api/v1/security/admin/ping", "CUSTOMER")
-        );
+                Arguments.of("/api/v1/security/admin/ping", "CUSTOMER"));
     }
 
     @ParameterizedTest(name = "SCN-CONTRACT-403: {0} with role {1} returns 403 with standard envelope")
     @MethodSource("adminOnlyEndpoints")
     @DisplayName("SCN-CONTRACT-403: Forbidden access returns 403 with standard error envelope")
     void forbiddenReturns403WithEnvelope(String path, String role) {
-        ResponseEntity<Map> resp = http.exchange(url(path), HttpMethod.GET,
-                new HttpEntity<>(authHeaders(role)), Map.class);
+        ResponseEntity<Map> resp =
+                http.exchange(url(path), HttpMethod.GET, new HttpEntity<>(authHeaders(role)), Map.class);
 
         assertThat(resp.getStatusCode().value()).isEqualTo(403);
         assertEnvelope(resp.getBody(), path);
@@ -102,8 +99,8 @@ class ContractEnvelopeTests extends IntegrationTestBase {
         HttpHeaders h = new HttpHeaders();
         h.setContentType(MediaType.APPLICATION_JSON);
         // Missing required access_token field
-        ResponseEntity<Map> resp = http.exchange(url("/api/v1/auth/facebook"),
-                HttpMethod.POST, new HttpEntity<>(Map.of(), h), Map.class);
+        ResponseEntity<Map> resp =
+                http.exchange(url("/api/v1/auth/facebook"), HttpMethod.POST, new HttpEntity<>(Map.of(), h), Map.class);
 
         assertThat(resp.getStatusCode().value()).isBetween(400, 422);
         assertEnvelope(resp.getBody(), "/api/v1/auth/facebook");
@@ -115,26 +112,40 @@ class ContractEnvelopeTests extends IntegrationTestBase {
         // Authenticate first
         HttpHeaders h = new HttpHeaders();
         h.setContentType(MediaType.APPLICATION_JSON);
-        ResponseEntity<Map> authResp = http.postForEntity(url("/api/v1/auth/dev/login"),
-                new HttpEntity<>(Map.of("phone", "+97693001001", "role", "CUSTOMER"), h), Map.class);
+        ResponseEntity<Map> authResp = http.postForEntity(
+                url("/api/v1/auth/dev/login"),
+                new HttpEntity<>(Map.of("phone", "+97693001001", "role", "CUSTOMER"), h),
+                Map.class);
         String token = (String) authResp.getBody().get("access_token");
 
         // Get a category
         HttpHeaders authH = authHeaders("CUSTOMER", token);
-        Map cats = http.exchange(url("/api/v1/categories"), HttpMethod.GET,
-                new HttpEntity<>(authH), Map.class).getBody();
-        String catId = ((Map) ((java.util.List) cats.get("data")).get(0)).get("id").toString();
+        Map cats = http.exchange(url("/api/v1/categories"), HttpMethod.GET, new HttpEntity<>(authH), Map.class)
+                .getBody();
+        String catId =
+                ((Map) ((java.util.List) cats.get("data")).get(0)).get("id").toString();
 
         // POST task with budget below @Min(5000)
         HttpHeaders postH = new HttpHeaders();
         postH.setBearerAuth(token);
         postH.setContentType(MediaType.APPLICATION_JSON);
-        Map body = Map.of("category_id", catId, "description", "Budget test task description",
-                "budget", 100, "location_lat", 47.9, "location_lng", 106.9,
-                "location_text", "Test, UB", "scheduled_at",
+        Map body = Map.of(
+                "category_id",
+                catId,
+                "description",
+                "Budget test task description",
+                "budget",
+                100,
+                "location_lat",
+                47.9,
+                "location_lng",
+                106.9,
+                "location_text",
+                "Test, UB",
+                "scheduled_at",
                 Instant.now().plus(1, java.time.temporal.ChronoUnit.DAYS).toString());
-        ResponseEntity<Map> resp = http.exchange(url("/api/v1/tasks"), HttpMethod.POST,
-                new HttpEntity<>(body, postH), Map.class);
+        ResponseEntity<Map> resp =
+                http.exchange(url("/api/v1/tasks"), HttpMethod.POST, new HttpEntity<>(body, postH), Map.class);
 
         assertThat(resp.getStatusCode().value()).isBetween(400, 422);
         assertEnvelope(resp.getBody(), "/api/v1/tasks");
@@ -147,7 +158,9 @@ class ContractEnvelopeTests extends IntegrationTestBase {
     void unknownTaskReturns404WithEnvelope() {
         ResponseEntity<Map> resp = http.exchange(
                 url("/api/v1/tasks/" + UUID.randomUUID()),
-                HttpMethod.GET, new HttpEntity<>(authHeaders("CUSTOMER")), Map.class);
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders("CUSTOMER")),
+                Map.class);
 
         assertThat(resp.getStatusCode().value()).isEqualTo(404);
         assertEnvelope(resp.getBody(), "/api/v1/tasks/{id}");
@@ -158,7 +171,9 @@ class ContractEnvelopeTests extends IntegrationTestBase {
     void unknownBookingReturns404WithEnvelope() {
         ResponseEntity<Map> resp = http.exchange(
                 url("/api/v1/bookings/" + UUID.randomUUID()),
-                HttpMethod.GET, new HttpEntity<>(authHeaders("CUSTOMER")), Map.class);
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders("CUSTOMER")),
+                Map.class);
 
         assertThat(resp.getStatusCode().value()).isEqualTo(404);
         assertEnvelope(resp.getBody(), "/api/v1/bookings/{id}");
@@ -171,7 +186,9 @@ class ContractEnvelopeTests extends IntegrationTestBase {
     void invalidCursorReturns400WithEnvelope() {
         ResponseEntity<Map> resp = http.exchange(
                 url("/api/v1/tasks?cursor=not-base64"),
-                HttpMethod.GET, new HttpEntity<>(authHeaders("TASKER")), Map.class);
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders("TASKER")),
+                Map.class);
 
         assertThat(resp.getStatusCode().value()).isEqualTo(400);
         assertEnvelope(resp.getBody(), "/api/v1/tasks?cursor");
@@ -185,8 +202,8 @@ class ContractEnvelopeTests extends IntegrationTestBase {
     void errorEnvelopeShapeVerifiedAcrossEndpoints() {
         // Delegates to the parameterized 401/403/400/404 tests above.
         // This method anchors SCN-SMOKE-005 so surefire XML captures the smoke ID.
-        ResponseEntity<Map> resp = http.exchange(url("/api/v1/tasks"), HttpMethod.GET,
-                new HttpEntity<>(new HttpHeaders()), Map.class);
+        ResponseEntity<Map> resp =
+                http.exchange(url("/api/v1/tasks"), HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), Map.class);
         assertEnvelope(resp.getBody(), "smoke-anchor /api/v1/tasks");
     }
 
@@ -198,15 +215,9 @@ class ContractEnvelopeTests extends IntegrationTestBase {
      * {"code": "...", "message": "...", "trace_id": "..."}.
      */
     private void assertEnvelope(Map<String, Object> body, String context) {
-        assertThat(body)
-                .as("Error envelope missing 'code' for %s", context)
-                .containsKey("code");
-        assertThat(body)
-                .as("Error envelope missing 'message' for %s", context)
-                .containsKey("message");
-        assertThat(body)
-                .as("Error envelope missing 'trace_id' for %s", context)
-                .containsKey("trace_id");
+        assertThat(body).as("Error envelope missing 'code' for %s", context).containsKey("code");
+        assertThat(body).as("Error envelope missing 'message' for %s", context).containsKey("message");
+        assertThat(body).as("Error envelope missing 'trace_id' for %s", context).containsKey("trace_id");
         assertThat(body.get("code")).isNotNull().isNotEqualTo("");
         assertThat(body.get("message")).isNotNull().isNotEqualTo("");
         assertThat(body.get("trace_id")).isNotNull().isNotEqualTo("");
@@ -233,8 +244,7 @@ class ContractEnvelopeTests extends IntegrationTestBase {
                 .claim("token_type", "access")
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(3600)))
-                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)),
-                        Jwts.SIG.HS256)
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
                 .compact();
     }
 

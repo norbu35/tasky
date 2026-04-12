@@ -196,11 +196,7 @@ public class WalletService {
                 "Payout processed",
                 now);
         auditEventDao.insert(
-                actorUserId,
-                "PAYOUT_PROCESSED",
-                "PAYOUT",
-                payout.id(),
-                toAuditMetadata(payout, sanitizedReason));
+                actorUserId, "PAYOUT_PROCESSED", "PAYOUT", payout.id(), toAuditMetadata(payout, sanitizedReason));
         log.info(
                 "wallet_payout_processed payoutId={} userId={} amount={} actorUserId={}",
                 payoutId,
@@ -243,11 +239,16 @@ public class WalletService {
     private String toAuditMetadata(PayoutRequest payout, String reason) {
         try {
             return objectMapper.writeValueAsString(Map.of(
-                    "user_id", payout.userId(),
-                    "amount", payout.amount(),
-                    "old_status", "PENDING",
-                    "new_status", "PROCESSED",
-                    "reason", reason));
+                    "user_id",
+                    payout.userId(),
+                    "amount",
+                    payout.amount(),
+                    "old_status",
+                    "PENDING",
+                    "new_status",
+                    "PROCESSED",
+                    "reason",
+                    reason));
         } catch (JsonProcessingException exception) {
             throw new IllegalArgumentException("Failed to serialize payout audit metadata.", exception);
         }

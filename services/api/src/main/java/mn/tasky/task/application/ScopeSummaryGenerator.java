@@ -88,7 +88,8 @@ public class ScopeSummaryGenerator {
             java.util.Map<String, String> valueLabelMap = new java.util.HashMap<>();
             for (JsonNode opt : field.get("options")) {
                 if (opt.isObject() && opt.has("value") && opt.has("label")) {
-                    valueLabelMap.put(opt.get("value").asText(), opt.get("label").asText());
+                    valueLabelMap.put(
+                            opt.get("value").asText(), opt.get("label").asText());
                 }
             }
 

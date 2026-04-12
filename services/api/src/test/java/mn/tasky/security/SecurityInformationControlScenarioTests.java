@@ -1,18 +1,11 @@
 package mn.tasky.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import mn.tasky.auth.application.FacebookGraphClient;
 import mn.tasky.common.IntegrationTestBase;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +66,8 @@ class SecurityInformationControlScenarioTests extends IntegrationTestBase {
     // ── SCN-SEC-007 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-SEC-007: Exact task address is revealed only to the owner or booked tasker after booking confirmation")
+    @DisplayName(
+            "SCN-SEC-007: Exact task address is revealed only to the owner or booked tasker after booking confirmation")
     void exactAddressRevealedToOwnerAndBookedTasker() {
         // Given: customer owns the task
         AuthContext customer = devLogin("sec007-customer", "CUSTOMER");
@@ -117,8 +111,8 @@ class SecurityInformationControlScenarioTests extends IntegrationTestBase {
         }
 
         // Tasker profile endpoint also never returns phone
-        ResponseEntity<Map> taskerProfile = getWithAuth(
-                "/api/v1/users/" + tasker.userId() + "/profile", customer.token());
+        ResponseEntity<Map> taskerProfile =
+                getWithAuth("/api/v1/users/" + tasker.userId() + "/profile", customer.token());
         if (taskerProfile.getStatusCode().value() < 300) {
             assertThat(taskerProfile.getBody()).doesNotContainKey("phone");
         }
@@ -140,7 +134,8 @@ class SecurityInformationControlScenarioTests extends IntegrationTestBase {
         ResponseEntity<Map> feedResponse = getWithAuth("/api/v1/tasks", tasker.token());
         assertThat(feedResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        List<Map<String, Object>> tasks = (List<Map<String, Object>>) feedResponse.getBody().get("data");
+        List<Map<String, Object>> tasks =
+                (List<Map<String, Object>>) feedResponse.getBody().get("data");
         if (tasks != null) {
             for (Map<String, Object> task : tasks) {
                 assertThat(task).doesNotContainKey("phone");
@@ -182,8 +177,8 @@ class SecurityInformationControlScenarioTests extends IntegrationTestBase {
 
     private AuthContext devLogin(String seed, String role) {
         Map<String, Object> body = Map.of("phone", phoneFor(seed), "role", role);
-        ResponseEntity<Map> resp = restTemplate.postForEntity(
-                "http://localhost:" + port + "/api/v1/auth/dev/login", body, Map.class);
+        ResponseEntity<Map> resp =
+                restTemplate.postForEntity("http://localhost:" + port + "/api/v1/auth/dev/login", body, Map.class);
         String token = (String) resp.getBody().get("access_token");
         String userId = (String) ((Map) resp.getBody().get("user")).get("id");
         return new AuthContext(userId, token);
@@ -192,18 +187,27 @@ class SecurityInformationControlScenarioTests extends IntegrationTestBase {
     private String createTask(AuthContext customer) {
         // Fetch first available category
         ResponseEntity<Map> cats = getWithAuth("/api/v1/categories", customer.token());
-        String categoryId = ((Map<String, Object>)
-                ((List<?>) cats.getBody().get("data")).get(0)).get("id").toString();
+        String categoryId = ((Map<String, Object>) ((List<?>) cats.getBody().get("data")).get(0))
+                .get("id")
+                .toString();
 
         Map<String, Object> body = Map.of(
-                "category_id", categoryId,
-                "description", "Security test task description",
-                "budget", 50000,
-                "location_lat", 47.9077,
-                "location_lng", 106.8832,
-                "location_text", "Test Street 1, UB",
-                "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString(),
-                "intake_answers", Map.of());
+                "category_id",
+                categoryId,
+                "description",
+                "Security test task description",
+                "budget",
+                50000,
+                "location_lat",
+                47.9077,
+                "location_lng",
+                106.8832,
+                "location_text",
+                "Test Street 1, UB",
+                "scheduled_at",
+                Instant.now().plus(1, ChronoUnit.DAYS).toString(),
+                "intake_answers",
+                Map.of());
 
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", customer.token(), body);
         return resp.getBody().get("id").toString();
@@ -217,8 +221,7 @@ class SecurityInformationControlScenarioTests extends IntegrationTestBase {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         return restTemplate.exchange(
-                "http://localhost:" + port + path, HttpMethod.GET,
-                new HttpEntity<>(headers), Map.class);
+                "http://localhost:" + port + path, HttpMethod.GET, new HttpEntity<>(headers), Map.class);
     }
 
     private ResponseEntity<Map> postWithAuth(String path, String token, Object body) {
@@ -226,7 +229,6 @@ class SecurityInformationControlScenarioTests extends IntegrationTestBase {
         headers.setBearerAuth(token);
         headers.setContentType(MediaType.APPLICATION_JSON);
         return restTemplate.exchange(
-                "http://localhost:" + port + path, HttpMethod.POST,
-                new HttpEntity<>(body, headers), Map.class);
+                "http://localhost:" + port + path, HttpMethod.POST, new HttpEntity<>(body, headers), Map.class);
     }
 }

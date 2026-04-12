@@ -52,8 +52,10 @@ public class BookingLifecycleService {
             return BookingTransitionResult.OPEN_DISPUTE_RESULT;
         }
 
-        TaskState task = taskService.getTask(booking.taskId()).orElseThrow(() -> new IllegalStateException(
-                "Task not found when cancelling booking " + bookingId + "."));
+        TaskState task = taskService
+                .getTask(booking.taskId())
+                .orElseThrow(
+                        () -> new IllegalStateException("Task not found when cancelling booking " + bookingId + "."));
         BookingTransitionResult result = bookingService.cancelBooking(actorUserId, bookingId, task.scheduledAt());
         if (!result.isSuccess()) {
             return result;
@@ -61,9 +63,9 @@ public class BookingLifecycleService {
 
         BookingState updated = result.booking();
         if (updated.taskerId().equals(actorUserId)) {
-            requireTaskUpdate(
-                    taskService.reopenTask(updated.taskId()), "reopening", bookingId, updated.taskId());
-            boolean isSafetyOrFraud = reason != null && reason.toLowerCase(java.util.Locale.ROOT).contains("safety");
+            requireTaskUpdate(taskService.reopenTask(updated.taskId()), "reopening", bookingId, updated.taskId());
+            boolean isSafetyOrFraud =
+                    reason != null && reason.toLowerCase(java.util.Locale.ROOT).contains("safety");
             if (!isSafetyOrFraud) {
                 authService.addStrike(actorUserId, reason, bookingId);
             }
@@ -71,9 +73,11 @@ public class BookingLifecycleService {
             requireTaskUpdate(
                     taskService.transitionToCancelled(updated.taskId()), "cancelling", bookingId, updated.taskId());
         }
-        timelineService.recordEvent(
-                bookingId, BookingTimelineService.BOOKING_CANCELLED, actorUserId, null);
-        return bookingService.getBooking(bookingId).map(BookingTransitionResult::success).orElse(result);
+        timelineService.recordEvent(bookingId, BookingTimelineService.BOOKING_CANCELLED, actorUserId, null);
+        return bookingService
+                .getBooking(bookingId)
+                .map(BookingTransitionResult::success)
+                .orElse(result);
     }
 
     @Transactional
@@ -89,8 +93,7 @@ public class BookingLifecycleService {
         BookingState updated = result.booking();
         requireTaskUpdate(
                 taskService.transitionToCompleted(updated.taskId()), "completing", bookingId, updated.taskId());
-        timelineService.recordEvent(
-                bookingId, BookingTimelineService.BOOKING_COMPLETED, actorUserId, null);
+        timelineService.recordEvent(bookingId, BookingTimelineService.BOOKING_COMPLETED, actorUserId, null);
         domainEventOutboxService.publish(
                 OutboxEventTypes.BOOKING_COMPLETED,
                 "BOOKING",
@@ -106,7 +109,10 @@ public class BookingLifecycleService {
                         updated.taskerId(),
                         "price",
                         updated.price()));
-        return bookingService.getBooking(bookingId).map(BookingTransitionResult::success).orElse(result);
+        return bookingService
+                .getBooking(bookingId)
+                .map(BookingTransitionResult::success)
+                .orElse(result);
     }
 
     private boolean hasOpenDispute(String bookingId) {

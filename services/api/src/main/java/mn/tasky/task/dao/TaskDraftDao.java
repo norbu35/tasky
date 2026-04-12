@@ -51,10 +51,14 @@ public interface TaskDraftDao {
             + "FROM task_drafts WHERE id = :id")
     Optional<TaskDraft> findById(@Bind("id") UUID id);
 
-    default void update(String id, String intakeAnswersJson, String summaryDraft,
-                        Double locationLat, Double locationLng, String locationText) {
-        update(required(id, "id"), intakeAnswersJson, summaryDraft,
-                locationLat, locationLng, locationText);
+    default void update(
+            String id,
+            String intakeAnswersJson,
+            String summaryDraft,
+            Double locationLat,
+            Double locationLng,
+            String locationText) {
+        update(required(id, "id"), intakeAnswersJson, summaryDraft, locationLat, locationLng, locationText);
     }
 
     @SqlUpdate("UPDATE task_drafts SET intake_answers_json = CAST(:intakeAnswersJson AS jsonb), "

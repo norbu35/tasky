@@ -242,11 +242,16 @@ public class DisputeService {
                 "DISPUTE",
                 disputeId,
                 toJson(Map.of(
-                        "booking_id", dispute.bookingId(),
-                        "old_status", dispute.status(),
-                        "new_status", newStatus,
-                        "resolution_action", outcome,
-                        "resolution_notes", sanitizedNotes == null ? "" : sanitizedNotes)));
+                        "booking_id",
+                        dispute.bookingId(),
+                        "old_status",
+                        dispute.status(),
+                        "new_status",
+                        newStatus,
+                        "resolution_action",
+                        outcome,
+                        "resolution_notes",
+                        sanitizedNotes == null ? "" : sanitizedNotes)));
 
         Dispute resolved = new Dispute(
                 dispute.id(),

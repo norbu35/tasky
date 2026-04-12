@@ -131,11 +131,29 @@ tasks.named("compileJava") {
 }
 
 tasks.named<BootRun>("bootRun") {
-    val activeProfileFromSystemProperty = System.getProperty("spring.profiles.active")
-    val activeProfileFromEnvironment = System.getenv("SPRING_PROFILES_ACTIVE")
+    // Load monorepo root .env for local development.
+    // Real environment variables take precedence — .env only fills in gaps.
+    val envFile = rootProject.file(".env")
+    if (envFile.exists()) {
+        envFile.readLines()
+            .filter { it.isNotBlank() && !it.startsWith("#") && it.contains("=") }
+            .forEach { line ->
+                val idx = line.indexOf('=')
+                val key = line.substring(0, idx).trim()
+                val value = line.substring(idx + 1).trim()
+                if (System.getenv(key) == null) {
+                    environment(key, value)
+                }
+            }
+    }
 
-    if (activeProfileFromSystemProperty.isNullOrBlank() && activeProfileFromEnvironment.isNullOrBlank()) {
-        environment("SPRING_PROFILES_ACTIVE", "dev")
+    // Default to 'local' profile when nothing else sets it.
+    // bootRun is a local-only task — 'local' matches application-local.yml
+    // which has dev-auth enabled and sensible local-dev defaults.
+    val profileFromEnv = System.getenv("SPRING_PROFILES_ACTIVE")
+    val profileFromProp = System.getProperty("spring.profiles.active")
+    if (profileFromEnv.isNullOrBlank() && profileFromProp.isNullOrBlank()) {
+        environment("SPRING_PROFILES_ACTIVE", "local")
     }
 }
 

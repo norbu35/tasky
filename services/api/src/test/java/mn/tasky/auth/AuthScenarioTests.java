@@ -10,11 +10,9 @@ import static org.mockito.Mockito.when;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,7 +30,6 @@ import mn.tasky.auth.dao.UserDao;
 import mn.tasky.auth.dao.VerificationDao;
 import mn.tasky.auth.dto.AuthSession;
 import mn.tasky.auth.dto.AuthUser;
-import mn.tasky.auth.dto.RefreshSession;
 import mn.tasky.auth.dto.UserProfileState;
 import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.security.CryptoService;
@@ -116,15 +113,25 @@ class AuthScenarioTests {
         Map<String, AuthUser> store = new HashMap<>();
         org.mockito.stubbing.Answer<Void> captureInsert = inv -> {
             UUID id = inv.getArgument(0);
-            store.put(id.toString(), new AuthUser(
-                    id.toString(), null, TEST_FB_ID, "CUSTOMER", "PENDING", "FACEBOOK",
-                    Instant.now(), Instant.now()));
+            store.put(
+                    id.toString(),
+                    new AuthUser(
+                            id.toString(),
+                            null,
+                            TEST_FB_ID,
+                            "CUSTOMER",
+                            "PENDING",
+                            "FACEBOOK",
+                            Instant.now(),
+                            Instant.now()));
             return null;
         };
         org.mockito.Mockito.doAnswer(captureInsert)
-                .when(userDao).insertWithFacebookId(any(UUID.class), anyString(), anyString(), anyString(), any());
+                .when(userDao)
+                .insertWithFacebookId(any(UUID.class), anyString(), anyString(), anyString(), any());
         when(userDao.findById(anyString()))
-                .thenAnswer(inv -> Optional.ofNullable(store.get(inv.getArgument(0).toString())));
+                .thenAnswer(
+                        inv -> Optional.ofNullable(store.get(inv.getArgument(0).toString())));
 
         // When
         AuthSession session = authService(false, false).facebookLogin("valid-fb-token");
@@ -142,8 +149,7 @@ class AuthScenarioTests {
     void sameFacebookIdReturnsExistingUser() {
         // Given: a Tasky account already exists for this facebook_id
         AuthUser existing = new AuthUser(
-                TEST_USER_ID, null, TEST_FB_ID, "CUSTOMER", "ACTIVE", "FACEBOOK",
-                Instant.now(), Instant.now());
+                TEST_USER_ID, null, TEST_FB_ID, "CUSTOMER", "ACTIVE", "FACEBOOK", Instant.now(), Instant.now());
         when(facebookGraphClient.debugToken(anyString())).thenReturn(TEST_FB_ID);
         when(facebookGraphClient.fetchProfile(anyString()))
                 .thenReturn(new FacebookGraphClient.FacebookProfile(TEST_FB_ID, "Test User", null));
@@ -167,8 +173,7 @@ class AuthScenarioTests {
     void successfulAuthenticationIssuesJwtWithRequiredClaims() {
         // Given: existing ACTIVE user
         AuthUser existing = new AuthUser(
-                TEST_USER_ID, null, TEST_FB_ID, "CUSTOMER", "ACTIVE", "FACEBOOK",
-                Instant.now(), Instant.now());
+                TEST_USER_ID, null, TEST_FB_ID, "CUSTOMER", "ACTIVE", "FACEBOOK", Instant.now(), Instant.now());
         when(facebookGraphClient.debugToken(anyString())).thenReturn(TEST_FB_ID);
         when(facebookGraphClient.fetchProfile(anyString()))
                 .thenReturn(new FacebookGraphClient.FacebookProfile(TEST_FB_ID, "Test User", null));
@@ -194,12 +199,12 @@ class AuthScenarioTests {
     // ── SCN-AUTH-008 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-AUTH-008: BANNED or active SUSPENDED account is denied authentication even with otherwise valid credentials")
+    @DisplayName(
+            "SCN-AUTH-008: BANNED or active SUSPENDED account is denied authentication even with otherwise valid credentials")
     void bannedAccountDeniedAuthentication() {
         // Given: banned user
         AuthUser banned = new AuthUser(
-                TEST_USER_ID, null, TEST_FB_ID, "CUSTOMER", "BANNED", "FACEBOOK",
-                Instant.now(), Instant.now());
+                TEST_USER_ID, null, TEST_FB_ID, "CUSTOMER", "BANNED", "FACEBOOK", Instant.now(), Instant.now());
         when(facebookGraphClient.debugToken(anyString())).thenReturn(TEST_FB_ID);
         when(facebookGraphClient.fetchProfile(anyString()))
                 .thenReturn(new FacebookGraphClient.FacebookProfile(TEST_FB_ID, "Banned User", null));

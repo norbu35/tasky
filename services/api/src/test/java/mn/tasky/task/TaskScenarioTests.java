@@ -51,16 +51,13 @@ class TaskScenarioTests extends IntegrationTestBase {
     // The Cleaning category schema has 4 required questions (version 1)
     // Values must match the structured option `value` fields in V11 seed schema (snake_case)
     private static final Map<String, Object> CLEANING_INTAKE_ANSWERS = Map.of(
-            "property_type", "apartment",
-            "size_or_rooms", 2,
-            "cleaning_type", "standard",
-            "supplies_provided", true);
+            "property_type", "apartment", "size_or_rooms", 2, "cleaning_type", "standard", "supplies_provided", true);
     private static final int CLEANING_SCHEMA_VERSION = 1;
 
     @BeforeEach
     void auth() {
         custToken = devLogin("+97692000001", "CUSTOMER");
-        custId    = userId("+97692000001");
+        custId = userId("+97692000001");
         taskerToken = devLogin("+97692000002", "TASKER");
         // First category in seed = Cleaning (intake_enabled=true, schema version 1)
         Map cats = getWithAuth("/api/v1/categories").getBody();
@@ -75,11 +72,9 @@ class TaskScenarioTests extends IntegrationTestBase {
         ResponseEntity<Map> categoriesResponse = getWithAuth("/api/v1/categories");
         assertThat(categoriesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         Map firstCategory = (Map) ((List) categoriesResponse.getBody().get("data")).get(0);
-        assertThat(firstCategory)
-                .containsKeys("intake_enabled", "intake_schema_version", "intake_schema_json");
+        assertThat(firstCategory).containsKeys("intake_enabled", "intake_schema_version", "intake_schema_json");
 
-        ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks/drafts",
-                Map.of("category_id", categoryId), custToken);
+        ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks/drafts", Map.of("category_id", categoryId), custToken);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(resp.getBody()).containsKey("intake_schema_version");
@@ -89,22 +84,32 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-002 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-002: Task submit with missing required intake answers fails with field-level validation errors")
+    @DisplayName(
+            "SCN-TASK-002: Task submit with missing required intake answers fails with field-level validation errors")
     void missingRequiredIntakeAnswersRejected() {
         // Provide schema version with answers that are missing required fields
         // The Cleaning schema requires: property_type, size_or_rooms, cleaning_type, supplies_provided
         // Provide only one answer — three required fields are absent
         Map<String, Object> partialAnswers = Map.of("property_type", "Apartment");
         Map body = Map.of(
-                "category_id", categoryId,
-                "description", "Task with partial intake answers",
-                "budget", 50000,
-                "location_lat", 47.9, "location_lng", 106.9,
-                "location_text", "Test Street 1, UB",
-                "scheduled_at", future(),
-                "intake_schema_version", CLEANING_SCHEMA_VERSION,
-                "intake_answers", partialAnswers
-        );
+                "category_id",
+                categoryId,
+                "description",
+                "Task with partial intake answers",
+                "budget",
+                50000,
+                "location_lat",
+                47.9,
+                "location_lng",
+                106.9,
+                "location_text",
+                "Test Street 1, UB",
+                "scheduled_at",
+                future(),
+                "intake_schema_version",
+                CLEANING_SCHEMA_VERSION,
+                "intake_answers",
+                partialAnswers);
 
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", body, custToken);
 
@@ -119,12 +124,18 @@ class TaskScenarioTests extends IntegrationTestBase {
     void missingBaseFieldsRejected() {
         // Omit description entirely — @NotBlank @Size(min=10) will fail
         Map body = Map.of(
-                "category_id", categoryId,
-                "budget", 50000,
-                "location_lat", 47.9, "location_lng", 106.9,
-                "location_text", "Test Street 1, UB",
-                "scheduled_at", future()
-        );
+                "category_id",
+                categoryId,
+                "budget",
+                50000,
+                "location_lat",
+                47.9,
+                "location_lng",
+                106.9,
+                "location_text",
+                "Test Street 1, UB",
+                "scheduled_at",
+                future());
 
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", body, custToken);
 
@@ -164,15 +175,26 @@ class TaskScenarioTests extends IntegrationTestBase {
     void fourthPhotoRejected() {
         // Supply 4 photo keys (max 3 allowed)
         Map body = Map.of(
-                "category_id", categoryId,
-                "description", "Task with too many photos supplied",
-                "budget", 50000,
-                "location_lat", 47.9, "location_lng", 106.9,
-                "location_text", "Test Street 1, UB",
-                "scheduled_at", future(),
-                "photo_keys", List.of("tasks/" + custId + "/p1", "tasks/" + custId + "/p2",
-                        "tasks/" + custId + "/p3", "tasks/" + custId + "/p4")
-        );
+                "category_id",
+                categoryId,
+                "description",
+                "Task with too many photos supplied",
+                "budget",
+                50000,
+                "location_lat",
+                47.9,
+                "location_lng",
+                106.9,
+                "location_text",
+                "Test Street 1, UB",
+                "scheduled_at",
+                future(),
+                "photo_keys",
+                List.of(
+                        "tasks/" + custId + "/p1",
+                        "tasks/" + custId + "/p2",
+                        "tasks/" + custId + "/p3",
+                        "tasks/" + custId + "/p4"));
 
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", body, custToken);
 
@@ -322,18 +344,28 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-014 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-014: Deterministic job scope summary is generated from intake answers before submit and persisted")
+    @DisplayName(
+            "SCN-TASK-014: Deterministic job scope summary is generated from intake answers before submit and persisted")
     void scopeSummaryGeneratedAndPersisted() {
         Map body = Map.of(
-                "category_id", categoryId,
-                "description", "Cleaning job in Zaisan apartment",
-                "budget", 50000,
-                "location_lat", 47.9, "location_lng", 106.9,
-                "location_text", "Zaisan, UB",
-                "scheduled_at", future(),
-                "intake_schema_version", CLEANING_SCHEMA_VERSION,
-                "intake_answers", CLEANING_INTAKE_ANSWERS
-        );
+                "category_id",
+                categoryId,
+                "description",
+                "Cleaning job in Zaisan apartment",
+                "budget",
+                50000,
+                "location_lat",
+                47.9,
+                "location_lng",
+                106.9,
+                "location_text",
+                "Zaisan, UB",
+                "scheduled_at",
+                future(),
+                "intake_schema_version",
+                CLEANING_SCHEMA_VERSION,
+                "intake_answers",
+                CLEANING_INTAKE_ANSWERS);
 
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", body, custToken);
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -351,7 +383,8 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-015 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-015: Summary rendering failure falls back to canonical key-value summary without blocking posting")
+    @DisplayName(
+            "SCN-TASK-015: Summary rendering failure falls back to canonical key-value summary without blocking posting")
     void summaryFallbackDoesNotBlockPosting() {
         // Test the ScopeSummaryGenerator directly: malformed schema falls back
         ScopeSummaryGenerator.SummaryResult result =
@@ -368,8 +401,7 @@ class TaskScenarioTests extends IntegrationTestBase {
     @Test
     @DisplayName("SCN-TASK-016: Draft creation binds and returns the active intake schema version at form start")
     void draftBindsActiveSchemaVersion() {
-        ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks/drafts",
-                Map.of("category_id", categoryId), custToken);
+        ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks/drafts", Map.of("category_id", categoryId), custToken);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Integer boundVersion = (Integer) resp.getBody().get("intake_schema_version");
@@ -379,27 +411,38 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-017 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-017: Draft submit validates against its bound schema version even after a newer version is activated")
+    @DisplayName(
+            "SCN-TASK-017: Draft submit validates against its bound schema version even after a newer version is activated")
     void draftSubmitUsesBindVersion() {
         // Create a draft bound to version 1
-        ResponseEntity<Map> draftResp = postWithAuth("/api/v1/tasks/drafts",
-                Map.of("category_id", categoryId), custToken);
+        ResponseEntity<Map> draftResp =
+                postWithAuth("/api/v1/tasks/drafts", Map.of("category_id", categoryId), custToken);
         String draftId = draftResp.getBody().get("id").toString();
         int boundVersion = (Integer) draftResp.getBody().get("intake_schema_version");
         assertThat(boundVersion).isEqualTo(CLEANING_SCHEMA_VERSION);
 
         // Submit task using draft_id — the service uses the draft's bound version
         Map body = Map.of(
-                "category_id", categoryId,
-                "description", "Task submitted with draft binding version 1",
-                "budget", 50000,
-                "location_lat", 47.9, "location_lng", 106.9,
-                "location_text", "Test Street 1, UB",
-                "scheduled_at", future(),
-                "draft_id", draftId,
-                "intake_answers", CLEANING_INTAKE_ANSWERS,
-                "intake_schema_version", CLEANING_SCHEMA_VERSION
-        );
+                "category_id",
+                categoryId,
+                "description",
+                "Task submitted with draft binding version 1",
+                "budget",
+                50000,
+                "location_lat",
+                47.9,
+                "location_lng",
+                106.9,
+                "location_text",
+                "Test Street 1, UB",
+                "scheduled_at",
+                future(),
+                "draft_id",
+                draftId,
+                "intake_answers",
+                CLEANING_INTAKE_ANSWERS,
+                "intake_schema_version",
+                CLEANING_SCHEMA_VERSION);
 
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", body, custToken);
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -408,26 +451,37 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-018 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-018: Draft submit still uses its bound schema version even if that version is no longer active")
+    @DisplayName(
+            "SCN-TASK-018: Draft submit still uses its bound schema version even if that version is no longer active")
     void draftSubmitWithBoundVersionAfterDeactivation() {
         // Create draft bound to current active version
-        ResponseEntity<Map> draftResp = postWithAuth("/api/v1/tasks/drafts",
-                Map.of("category_id", categoryId), custToken);
+        ResponseEntity<Map> draftResp =
+                postWithAuth("/api/v1/tasks/drafts", Map.of("category_id", categoryId), custToken);
         String draftId = draftResp.getBody().get("id").toString();
 
         // Submit with the draft — even if in theory the schema changed, the service
         // uses the draft's bound version for validation
         Map body = Map.of(
-                "category_id", categoryId,
-                "description", "Task submitted from a bound draft",
-                "budget", 50000,
-                "location_lat", 47.9, "location_lng", 106.9,
-                "location_text", "Test Street 1, UB",
-                "scheduled_at", future(),
-                "draft_id", draftId,
-                "intake_answers", CLEANING_INTAKE_ANSWERS,
-                "intake_schema_version", CLEANING_SCHEMA_VERSION
-        );
+                "category_id",
+                categoryId,
+                "description",
+                "Task submitted from a bound draft",
+                "budget",
+                50000,
+                "location_lat",
+                47.9,
+                "location_lng",
+                106.9,
+                "location_text",
+                "Test Street 1, UB",
+                "scheduled_at",
+                future(),
+                "draft_id",
+                draftId,
+                "intake_answers",
+                CLEANING_INTAKE_ANSWERS,
+                "intake_schema_version",
+                CLEANING_SCHEMA_VERSION);
 
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", body, custToken);
         // Submission succeeds using the bound version
@@ -437,34 +491,54 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-019 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-019: Deactivated category blocks new draft and create requests but existing tasks keep their lifecycle")
+    @DisplayName(
+            "SCN-TASK-019: Deactivated category blocks new draft and create requests but existing tasks keep their lifecycle")
     void deactivatedCategoryBlocksNewTasksNotExistingOnes() {
         String adminToken = adminJwt();
 
         // Create a test-specific category to avoid polluting the shared seeded categories
-        ResponseEntity<Map> catResp = postWithToken("/api/v1/admin/categories", adminToken,
-                Map.of("name", "Temp Test Category", "name_mn", "Тест",
-                       "icon_url", "https://example.com/icon.png", "sort_order", 99));
+        ResponseEntity<Map> catResp = postWithToken(
+                "/api/v1/admin/categories",
+                adminToken,
+                Map.of(
+                        "name",
+                        "Temp Test Category",
+                        "name_mn",
+                        "Тест",
+                        "icon_url",
+                        "https://example.com/icon.png",
+                        "sort_order",
+                        99));
         assertThat(catResp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         String tempCatId = catResp.getBody().get("id").toString();
 
         // Create a task while category is active
-        Map body = Map.of("category_id", tempCatId,
-                "description", "Task in category that will be deactivated",
-                "budget", 50000,
-                "location_lat", 47.9, "location_lng", 106.9,
-                "location_text", "Test Street 1, UB",
-                "scheduled_at", future(),
-                "intake_answers", Map.of());
+        Map body = Map.of(
+                "category_id",
+                tempCatId,
+                "description",
+                "Task in category that will be deactivated",
+                "budget",
+                50000,
+                "location_lat",
+                47.9,
+                "location_lng",
+                106.9,
+                "location_text",
+                "Test Street 1, UB",
+                "scheduled_at",
+                future(),
+                "intake_answers",
+                Map.of());
         ResponseEntity<Map> existing = postWithAuth("/api/v1/tasks", body, custToken);
         assertThat(existing.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         String existingTaskId = existing.getBody().get("id").toString();
 
         // Deactivate the temp category
         ResponseEntity<Map> deactivateResp = putWithToken(
-                "/api/v1/admin/categories/" + tempCatId, adminToken,
-                Map.of("is_active", false, "name", "Temp Test Category",
-                        "name_mn", "Тест", "sort_order", 99));
+                "/api/v1/admin/categories/" + tempCatId,
+                adminToken,
+                Map.of("is_active", false, "name", "Temp Test Category", "name_mn", "Тест", "sort_order", 99));
         assertThat(deactivateResp.getStatusCode().value()).isLessThan(300);
 
         // New task in deactivated category is rejected
@@ -473,8 +547,8 @@ class TaskScenarioTests extends IntegrationTestBase {
         assertThat(newTask.getBody().get("code").toString()).contains("CATEGORY");
 
         // New draft in deactivated category is rejected
-        ResponseEntity<Map> newDraft = postWithAuth("/api/v1/tasks/drafts",
-                Map.of("category_id", tempCatId), custToken);
+        ResponseEntity<Map> newDraft =
+                postWithAuth("/api/v1/tasks/drafts", Map.of("category_id", tempCatId), custToken);
         assertThat(newDraft.getStatusCode().value()).isGreaterThanOrEqualTo(400);
 
         // Existing task can still be viewed
@@ -487,29 +561,41 @@ class TaskScenarioTests extends IntegrationTestBase {
     private String devLogin(String phone, String role) {
         HttpHeaders h = new HttpHeaders();
         h.setContentType(MediaType.APPLICATION_JSON);
-        ResponseEntity<Map> resp = http.postForEntity(url("/api/v1/auth/dev/login"),
-                new HttpEntity<>(Map.of("phone", phone, "role", role), h), Map.class);
+        ResponseEntity<Map> resp = http.postForEntity(
+                url("/api/v1/auth/dev/login"), new HttpEntity<>(Map.of("phone", phone, "role", role), h), Map.class);
         return (String) resp.getBody().get("access_token");
     }
 
     private String userId(String phone) {
         HttpHeaders h = new HttpHeaders();
         h.setContentType(MediaType.APPLICATION_JSON);
-        ResponseEntity<Map> resp = http.postForEntity(url("/api/v1/auth/dev/login"),
-                new HttpEntity<>(Map.of("phone", phone, "role", "CUSTOMER"), h), Map.class);
+        ResponseEntity<Map> resp = http.postForEntity(
+                url("/api/v1/auth/dev/login"),
+                new HttpEntity<>(Map.of("phone", phone, "role", "CUSTOMER"), h),
+                Map.class);
         return (String) ((Map) resp.getBody().get("user")).get("id");
     }
 
     private Map taskBody(int budget) {
         return Map.of(
-                "category_id", categoryId,
-                "description", "Standard scenario test task description",
-                "budget", budget,
-                "location_lat", 47.9077, "location_lng", 106.8832,
-                "location_text", "Test Street 1, Ulaanbaatar",
-                "scheduled_at", future(),
-                "intake_answers", CLEANING_INTAKE_ANSWERS,
-                "intake_schema_version", CLEANING_SCHEMA_VERSION);
+                "category_id",
+                categoryId,
+                "description",
+                "Standard scenario test task description",
+                "budget",
+                budget,
+                "location_lat",
+                47.9077,
+                "location_lng",
+                106.8832,
+                "location_text",
+                "Test Street 1, Ulaanbaatar",
+                "scheduled_at",
+                future(),
+                "intake_answers",
+                CLEANING_INTAKE_ANSWERS,
+                "intake_schema_version",
+                CLEANING_SCHEMA_VERSION);
     }
 
     private String future() {

@@ -65,15 +65,17 @@ class MessagingScenarioTests {
 
         // In-memory conversation insert
         doAnswer(inv -> {
-            String id = inv.getArgument(0);
-            String taskId = inv.getArgument(1);
-            String customerId = inv.getArgument(2);
-            String taskerId = inv.getArgument(3);
-            Instant createdAt = inv.getArgument(4);
-            Conversation conv = new Conversation(id, taskId, customerId, taskerId, createdAt);
-            conversationStore.put(id, conv);
-            return null;
-        }).when(conversationDao).insert(anyString(), anyString(), anyString(), anyString(), any(Instant.class));
+                    String id = inv.getArgument(0);
+                    String taskId = inv.getArgument(1);
+                    String customerId = inv.getArgument(2);
+                    String taskerId = inv.getArgument(3);
+                    Instant createdAt = inv.getArgument(4);
+                    Conversation conv = new Conversation(id, taskId, customerId, taskerId, createdAt);
+                    conversationStore.put(id, conv);
+                    return null;
+                })
+                .when(conversationDao)
+                .insert(anyString(), anyString(), anyString(), anyString(), any(Instant.class));
 
         // findById delegates to store
         when(conversationDao.findById(anyString())).thenAnswer(inv -> {
@@ -96,17 +98,25 @@ class MessagingScenarioTests {
 
         // In-memory message insert
         doAnswer(inv -> {
-            String id = inv.getArgument(0);
-            String convId = inv.getArgument(1);
-            String senderId = inv.getArgument(2);
-            String content = inv.getArgument(3);
-            boolean flagged = inv.getArgument(4);
-            String hash = inv.getArgument(5);
-            Instant sentAt = inv.getArgument(6);
-            messageStore.add(new Message(id, convId, senderId, content, flagged, hash, sentAt));
-            return null;
-        }).when(messageDao).insert(anyString(), anyString(), anyString(), anyString(),
-                any(Boolean.class), anyString(), any(Instant.class));
+                    String id = inv.getArgument(0);
+                    String convId = inv.getArgument(1);
+                    String senderId = inv.getArgument(2);
+                    String content = inv.getArgument(3);
+                    boolean flagged = inv.getArgument(4);
+                    String hash = inv.getArgument(5);
+                    Instant sentAt = inv.getArgument(6);
+                    messageStore.add(new Message(id, convId, senderId, content, flagged, hash, sentAt));
+                    return null;
+                })
+                .when(messageDao)
+                .insert(
+                        anyString(),
+                        anyString(),
+                        anyString(),
+                        anyString(),
+                        any(Boolean.class),
+                        anyString(),
+                        any(Instant.class));
 
         // findByConversationId returns stored messages
         when(messageDao.findByConversationId(anyString(), any(), any(int.class)))
@@ -118,11 +128,7 @@ class MessagingScenarioTests {
                 });
 
         messagingService = new MessagingService(
-                messagingTemplate,
-                conversationDao,
-                messageDao,
-                new PhoneLeakDetector(),
-                analyticsService);
+                messagingTemplate, conversationDao, messageDao, new PhoneLeakDetector(), analyticsService);
     }
 
     // ── SCN-MSG-001 ─────────────────────────────────────────────────────────
@@ -189,14 +195,12 @@ class MessagingScenarioTests {
         String conversationId = messagingService.startConversation(TASK_ID, TASKER_ID, CUSTOMER_ID);
 
         // When a third user attempts to send a message in that conversation
-        assertThatThrownBy(() ->
-                messagingService.sendMessage(OUTSIDER_ID, conversationId, "Trying to sneak in"))
+        assertThatThrownBy(() -> messagingService.sendMessage(OUTSIDER_ID, conversationId, "Trying to sneak in"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("not a participant");
 
         // When a third user attempts to read messages in that conversation
-        assertThatThrownBy(() ->
-                messagingService.listMessages(OUTSIDER_ID, conversationId, null, 50))
+        assertThatThrownBy(() -> messagingService.listMessages(OUTSIDER_ID, conversationId, null, 50))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("not a participant");
     }
@@ -210,8 +214,7 @@ class MessagingScenarioTests {
         String conversationId = messagingService.startConversation(TASK_ID, TASKER_ID, CUSTOMER_ID);
 
         // When a participant sends a message containing a phone number pattern
-        Optional<Message> result = messagingService.sendMessage(
-                CUSTOMER_ID, conversationId, "Call me at 99112233");
+        Optional<Message> result = messagingService.sendMessage(CUSTOMER_ID, conversationId, "Call me at 99112233");
 
         // Then the message is stored with a phone_number_flagged indicator
         assertThat(result).isPresent();
@@ -222,20 +225,17 @@ class MessagingScenarioTests {
         assertThat(messageStore.get(0).phoneNumberFlagged()).isTrue();
 
         // Verify analytics event for phone number flagging was emitted
-        verify(analyticsService).track(
-                eq("message_phone_number_flagged"),
-                eq(CUSTOMER_ID),
-                any(Map.class));
+        verify(analyticsService).track(eq("message_phone_number_flagged"), eq(CUSTOMER_ID), any(Map.class));
 
         // Also verify: international format triggers flagging
-        Optional<Message> intlResult = messagingService.sendMessage(
-                TASKER_ID, conversationId, "Reach me at +97699887766");
+        Optional<Message> intlResult =
+                messagingService.sendMessage(TASKER_ID, conversationId, "Reach me at +97699887766");
         assertThat(intlResult).isPresent();
         assertThat(intlResult.get().phoneNumberFlagged()).isTrue();
 
         // And: non-phone message is NOT flagged
-        Optional<Message> safeResult = messagingService.sendMessage(
-                CUSTOMER_ID, conversationId, "See you tomorrow at 3pm");
+        Optional<Message> safeResult =
+                messagingService.sendMessage(CUSTOMER_ID, conversationId, "See you tomorrow at 3pm");
         assertThat(safeResult).isPresent();
         assertThat(safeResult.get().phoneNumberFlagged()).isFalse();
     }

@@ -112,19 +112,32 @@ class RecentLocationsTests extends IntegrationTestBase {
 
     private String createTask(double lat, double lng, String locationText) {
         Map body = Map.of(
-                "category_id", categoryId,
-                "description", "Test task for recent locations feature",
-                "budget", 50000,
-                "location_lat", lat,
-                "location_lng", lng,
-                "location_text", locationText,
-                "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString(),
-                "intake_answers", Map.of(
-                        "property_type", "apartment",
-                        "size_or_rooms", 2,
-                        "cleaning_type", "standard",
-                        "supplies_provided", true),
-                "intake_schema_version", 1);
+                "category_id",
+                categoryId,
+                "description",
+                "Test task for recent locations feature",
+                "budget",
+                50000,
+                "location_lat",
+                lat,
+                "location_lng",
+                lng,
+                "location_text",
+                locationText,
+                "scheduled_at",
+                Instant.now().plus(1, ChronoUnit.DAYS).toString(),
+                "intake_answers",
+                Map.of(
+                        "property_type",
+                        "apartment",
+                        "size_or_rooms",
+                        2,
+                        "cleaning_type",
+                        "standard",
+                        "supplies_provided",
+                        true),
+                "intake_schema_version",
+                1);
         ResponseEntity<Map> resp = postWithToken("/api/v1/tasks", body);
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         return resp.getBody().get("id").toString();
@@ -133,8 +146,8 @@ class RecentLocationsTests extends IntegrationTestBase {
     private String devLogin(String phone, String role) {
         HttpHeaders h = new HttpHeaders();
         h.setContentType(MediaType.APPLICATION_JSON);
-        ResponseEntity<Map> resp = http.postForEntity(url("/api/v1/auth/dev/login"),
-                new HttpEntity<>(Map.of("phone", phone, "role", role), h), Map.class);
+        ResponseEntity<Map> resp = http.postForEntity(
+                url("/api/v1/auth/dev/login"), new HttpEntity<>(Map.of("phone", phone, "role", role), h), Map.class);
         return (String) resp.getBody().get("access_token");
     }
 

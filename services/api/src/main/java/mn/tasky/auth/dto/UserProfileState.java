@@ -3,11 +3,7 @@ package mn.tasky.auth.dto;
 import java.time.Instant;
 
 public record UserProfileState(
-        String fullName,
-        String avatarUrl,
-        double ratingAvg,
-        int completedTasks,
-        Instant instantMatchRevokedUntil) {
+        String fullName, String avatarUrl, double ratingAvg, int completedTasks, Instant instantMatchRevokedUntil) {
 
     private static final String DEFAULT_PROFILE_NAME = "Tasky User";
 

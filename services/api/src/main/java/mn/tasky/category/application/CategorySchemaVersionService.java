@@ -99,8 +99,7 @@ public class CategorySchemaVersionService {
             throw new IllegalStateException("Schema version " + version + " is already active.");
         }
         if (!"DRAFT".equals(status) && !"CANARY".equals(status) && !"ROLLED_BACK".equals(status)) {
-            throw new IllegalStateException(
-                    "Schema version " + version + " cannot be activated from status " + status);
+            throw new IllegalStateException("Schema version " + version + " cannot be activated from status " + status);
         }
 
         // Roll back current active version if one exists
@@ -203,8 +202,7 @@ public class CategorySchemaVersionService {
     private void validateOptionsArray(JsonNode field, String key) {
         JsonNode options = field.get("options");
         if (options == null || !options.isArray() || options.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Field '" + key + "' must have a non-empty 'options' array.");
+            throw new IllegalArgumentException("Field '" + key + "' must have a non-empty 'options' array.");
         }
         for (int i = 0; i < options.size(); i++) {
             JsonNode opt = options.get(i);
@@ -221,28 +219,24 @@ public class CategorySchemaVersionService {
     private void requireOptionString(JsonNode opt, String property, String fieldKey, int optIndex) {
         JsonNode node = opt.get(property);
         if (node == null || !node.isTextual() || node.asText().isBlank()) {
-            throw new IllegalArgumentException(
-                    "Field '" + fieldKey + "' option at index " + optIndex
-                            + " must have a non-blank string '" + property + "' property.");
+            throw new IllegalArgumentException("Field '" + fieldKey + "' option at index " + optIndex
+                    + " must have a non-blank string '" + property + "' property.");
         }
     }
 
     private void validateTextConstraints(JsonNode field, String key) {
         JsonNode maxLength = field.get("max_length");
         if (maxLength == null || !maxLength.isInt() || maxLength.asInt() <= 0) {
-            throw new IllegalArgumentException(
-                    "Field '" + key + "' of type '" + field.get("type").asText()
-                            + "' must have a positive integer 'max_length' property.");
+            throw new IllegalArgumentException("Field '" + key + "' of type '"
+                    + field.get("type").asText() + "' must have a positive integer 'max_length' property.");
         }
         JsonNode minLength = field.get("min_length");
         if (minLength != null) {
             if (!minLength.isInt() || minLength.asInt() < 0) {
-                throw new IllegalArgumentException(
-                        "Field '" + key + "': 'min_length' must be a non-negative integer.");
+                throw new IllegalArgumentException("Field '" + key + "': 'min_length' must be a non-negative integer.");
             }
             if (minLength.asInt() >= maxLength.asInt()) {
-                throw new IllegalArgumentException(
-                        "Field '" + key + "': 'min_length' must be less than 'max_length'.");
+                throw new IllegalArgumentException("Field '" + key + "': 'min_length' must be less than 'max_length'.");
             }
         }
     }

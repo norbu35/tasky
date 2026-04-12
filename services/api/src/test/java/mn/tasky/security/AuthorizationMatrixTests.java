@@ -199,7 +199,8 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
 
     @ParameterizedTest(name = "SCN-SEC-005: POST /api/v1/tasks role={0} expected={1}")
     @MethodSource("createTaskMatrix")
-    @DisplayName("SCN-SEC-005: Task creation endpoint allows CUSTOMER and rejects TASKER or ADMIN at the security layer")
+    @DisplayName(
+            "SCN-SEC-005: Task creation endpoint allows CUSTOMER and rejects TASKER or ADMIN at the security layer")
     void createTaskEnforcesCustomerRole(String role, HttpStatus expected) {
         String token = role != null ? tokenFor(role) : null;
         ResponseEntity<Map> response = exchange("/api/v1/tasks", HttpMethod.POST, token);

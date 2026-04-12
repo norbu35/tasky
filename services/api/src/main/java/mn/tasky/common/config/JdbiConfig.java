@@ -51,8 +51,8 @@ import org.jdbi.v3.core.mapper.ColumnMappers;
 import org.jdbi.v3.core.mapper.reflect.ReflectionMappers;
 import org.jdbi.v3.jackson2.Jackson2Plugin;
 import org.jdbi.v3.postgres.PostgresPlugin;
-import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.jdbi.v3.spring5.SpringConnectionFactory;
+import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

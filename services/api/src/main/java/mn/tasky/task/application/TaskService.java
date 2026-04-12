@@ -33,10 +33,10 @@ import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
-import mn.tasky.task.dto.RecentLocation;
 import mn.tasky.task.dao.TaskDraftDao;
 import mn.tasky.task.dao.TaskPhotoDao;
 import mn.tasky.task.dto.CreateTask;
+import mn.tasky.task.dto.RecentLocation;
 import mn.tasky.task.dto.TaskAcceptResult;
 import mn.tasky.task.dto.TaskApplicationState;
 import mn.tasky.task.dto.TaskApplicationsListResult;
@@ -156,8 +156,7 @@ public class TaskService {
         }
         if (!areOwnedTaskPhotoKeys(command.photoKeys(), customerId)) {
             return TaskCreateResult.error(
-                    TaskCreateResult.INVALID_PHOTO_KEY,
-                    "Photo keys must belong to the caller's task-photo namespace.");
+                    TaskCreateResult.INVALID_PHOTO_KEY, "Photo keys must belong to the caller's task-photo namespace.");
         }
 
         String sanitizedDescription = TextSanitizer.plainText(command.description());
@@ -343,8 +342,10 @@ public class TaskService {
                         }
                     }
                     case "multi_select" -> {
-                        if (field.has("options") && field.get("options").isArray()
-                                && answerNode != null && answerNode.isArray()) {
+                        if (field.has("options")
+                                && field.get("options").isArray()
+                                && answerNode != null
+                                && answerNode.isArray()) {
                             List<String> validValues = new ArrayList<>();
                             for (JsonNode opt : field.get("options")) {
                                 if (opt.isObject() && opt.has("value")) {

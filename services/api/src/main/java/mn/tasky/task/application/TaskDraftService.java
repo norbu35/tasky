@@ -91,9 +91,13 @@ public class TaskDraftService {
      * @throws IllegalStateException    if the draft has expired
      */
     public TaskDraft updateDraft(
-            String draftId, String requestingUserId,
-            String intakeAnswersJson, String summaryDraft,
-            Double locationLat, Double locationLng, String locationText) {
+            String draftId,
+            String requestingUserId,
+            String intakeAnswersJson,
+            String summaryDraft,
+            Double locationLat,
+            Double locationLng,
+            String locationText) {
         TaskDraft existing =
                 taskDraftDao.findById(draftId).orElseThrow(() -> new IllegalArgumentException("Draft not found."));
 
@@ -105,8 +109,7 @@ public class TaskDraftService {
             throw new IllegalStateException("Draft has expired.");
         }
 
-        taskDraftDao.update(draftId, intakeAnswersJson, summaryDraft,
-                locationLat, locationLng, locationText);
+        taskDraftDao.update(draftId, intakeAnswersJson, summaryDraft, locationLat, locationLng, locationText);
 
         return taskDraftDao
                 .findById(draftId)

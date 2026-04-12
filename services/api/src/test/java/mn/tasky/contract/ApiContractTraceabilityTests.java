@@ -85,7 +85,9 @@ class ApiContractTraceabilityTests {
         var deferredPaths = OpenApiContractTestSupport.documentedPaths(api);
         deferredPaths.removeAll(OpenApiContractTestSupport.liveApiPaths());
 
-        assertThat(deferredPaths).as("expected at least one deferred endpoint in the OpenAPI spec").isNotEmpty();
+        assertThat(deferredPaths)
+                .as("expected at least one deferred endpoint in the OpenAPI spec")
+                .isNotEmpty();
 
         for (String path : deferredPaths) {
             String block = OpenApiContractTestSupport.endpointBlock(api, path);

@@ -47,7 +47,9 @@ class LocationApiTests extends IntegrationTestBase {
     void reverseGeocodeRequiresAuth() {
         ResponseEntity<Map> response = http.exchange(
                 url("/api/v1/location/reverse-geocode?lat=47.92&lng=106.92"),
-                HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), Map.class);
+                HttpMethod.GET,
+                new HttpEntity<>(new HttpHeaders()),
+                Map.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
@@ -76,8 +78,8 @@ class LocationApiTests extends IntegrationTestBase {
     private String devLogin(String phone, String role) {
         HttpHeaders h = new HttpHeaders();
         h.setContentType(MediaType.APPLICATION_JSON);
-        ResponseEntity<Map> resp = http.postForEntity(url("/api/v1/auth/dev/login"),
-                new HttpEntity<>(Map.of("phone", phone, "role", role), h), Map.class);
+        ResponseEntity<Map> resp = http.postForEntity(
+                url("/api/v1/auth/dev/login"), new HttpEntity<>(Map.of("phone", phone, "role", role), h), Map.class);
         return (String) resp.getBody().get("access_token");
     }
 
