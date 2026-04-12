@@ -148,7 +148,8 @@ describe('Tasker phase 1 parity', () => {
     expect(await screen.findByRole('heading', { name: 'Open task feed' })).toBeInTheDocument();
     expect(await screen.findByText('Сүхбаатар дүүрэг')).toBeInTheDocument();
 
-    fireEvent.change(screen.getByLabelText('Application message'), {
+    fireEvent.click(await screen.findByRole('button', { name: 'View Details & Apply' }));
+    fireEvent.change(await screen.findByLabelText('Application message'), {
       target: { value: 'I can complete this task quickly and safely.' },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Apply to task' }));

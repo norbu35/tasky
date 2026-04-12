@@ -27,7 +27,7 @@ describe('Tasks Integration', () => {
       scheduled_at: '2026-02-16T00:00:00Z',
       photos: [],
       created_at: '2026-02-14T00:00:00Z',
-    } as any as Task;
+    } as unknown as Task;
 
     const customerApi = buildApiClientMock({
       createTask: vi.fn().mockResolvedValue(createdTask),
@@ -84,7 +84,7 @@ describe('Tasks Integration', () => {
       role: 'TASKER',
       status: 'VERIFIED',
       full_name: 'Verified Tasker',
-    } as any as Profile;
+    } as unknown as Profile;
 
     const taskerSession: AuthTokens = {
       ...baseSession,
@@ -133,7 +133,8 @@ describe('Tasks Integration', () => {
     await screen.findByText('Баянзүрх дүүрэг');
     expect(screen.queryByText('SHOULD NOT RENDER')).not.toBeInTheDocument();
 
-    fireEvent.change(screen.getByLabelText('Application message'), {
+    fireEvent.click(await screen.findByRole('button', { name: 'View Details & Apply' }));
+    fireEvent.change(await screen.findByLabelText('Application message'), {
       target: { value: 'I can complete this task quickly and safely.' },
     });
 
