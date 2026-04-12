@@ -6,21 +6,27 @@ import {
   Platform,
   Pressable,
   Text,
+  TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Briefcase, ChevronLeft, Paperclip, ShieldAlert } from 'lucide-react-native';
+import { ChevronLeft, Send } from 'lucide-react-native';
+import { formatLastActive } from '../../../lib/formatLastActive';
+import { useConversations } from '../../../features/chat/hooks/useConversations';
 import { useMessages } from '../../../features/chat/hooks/useMessages';
 import { useSendMessage } from '../../../features/chat/hooks/useSendMessage';
 import { ErrorStateTemplate } from '../../../components/templates/ErrorStateTemplate';
-import { Input } from '../../../components/ui/Input';
+
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { useAuthStore } from '../../../store/authStore';
-import { elevations, mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme } from '../../../design/tokenAdapter';
 import { ScreenContainer } from '../../../components/shells/ScreenContainer';
+import { screenLayout } from '../../../design/screenLayout';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const { colors } = mobileTheme;
+const { colors, spacing, radius } = mobileTheme;
 
 const PHONE_REGEX = /(\+?976)?[\s-]?\d{4}[\s-]?\d{4}|\d{8,}/;
 
@@ -35,26 +41,24 @@ export default function ChatDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const profile = useAuthStore((s) => s.profile);
   const myId = profile?.id;
 
   const { data, isLoading, isError, refetch } = useMessages(id ?? '');
   const { mutate: sendMessage, isPending } = useSendMessage();
+  const { data: conversationsData } = useConversations();
+  const conversation = useMemo(
+    () => conversationsData?.data?.find((c: { id: string }) => c.id === id),
+    [conversationsData, id],
+  );
+  const activity = formatLastActive(conversation?.counterparty_last_active_at);
 
   const [draft, setDraft] = useState('');
   const flatListRef = useRef<FlatList>(null);
 
   const messages: MessageItem[] = data?.data ?? [];
   const showPhoneWarning = PHONE_REGEX.test(draft);
-
-  const activeTask = useMemo(
-    () => ({
-      title: t('shared.inbox.contextTitle'),
-      subtitle: t('shared.inbox.contextSubtitle'),
-      status: t('shared.inbox.contextStatus'),
-    }),
-    [t],
-  );
 
   const handleSend = useCallback(() => {
     if (!id || draft.trim().length === 0) return;
@@ -65,10 +69,10 @@ export default function ChatDetailScreen() {
   const renderMessage = useCallback(
     ({ item }: { item: MessageItem }) => {
       const isMine = item.sender_id === myId;
-      const timestamp = new Date(item.created_at).toLocaleTimeString([], {
-        hour: 'numeric',
-        minute: '2-digit',
-      });
+      const date = new Date(item.created_at);
+      const timestamp = isNaN(date.getTime())
+        ? ''
+        : date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 
       return (
         <View
@@ -93,17 +97,19 @@ export default function ChatDetailScreen() {
             >
               {item.content}
             </Text>
-            <Text
-              testID={`message-timestamp-${item.id}`}
-              className="mt-xs text-caption"
-              style={
-                isMine
-                  ? { color: colors.card, opacity: 0.7, textAlign: 'right' as const }
-                  : { color: colors.textSecondary }
-              }
-            >
-              {timestamp}
-            </Text>
+            {timestamp !== '' && (
+              <Text
+                testID={`message-timestamp-${item.id}`}
+                className="mt-xs text-caption"
+                style={
+                  isMine
+                    ? { color: colors.card, opacity: 0.7, textAlign: 'right' as const }
+                    : { color: colors.textSecondary }
+                }
+              >
+                {timestamp}
+              </Text>
+            )}
           </View>
         </View>
       );
@@ -123,12 +129,59 @@ export default function ChatDetailScreen() {
 
   if (isError) {
     return (
-      <ScreenContainer testID="SCR-SHARED-011">
+      <ScreenContainer testID="SCR-SHARED-011" padded={false}>
         <KeyboardAvoidingView
           className="flex-1"
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         >
+          <View className="flex-row items-center justify-between pb-md px-lg bg-card">
+            <Pressable
+              onPress={() => router.back()}
+              className="w-10 h-10 justify-center items-center"
+              testID="chat-back"
+            >
+              <ChevronLeft size={24} color={colors.primary} />
+            </Pressable>
+            <View className="flex-1 items-center">
+              <Text className="text-subtitle font-bold text-foreground" numberOfLines={1}>
+                {conversation?.counterparty_name ?? t('shared.inbox.chatTitle')}
+              </Text>
+              {activity.label && (
+                <View className="flex-row items-center gap-xs" style={{ marginTop: 2 }}>
+                  {activity.isActive && <View className="w-2 h-2 rounded-full bg-verified" />}
+                  <Text className="text-micro text-muted-foreground">{activity.label}</Text>
+                </View>
+              )}
+            </View>
+            <View className="w-10 items-end">
+              <ProfileAvatar
+                uri={conversation?.counterparty_avatar_url ?? undefined}
+                name={conversation?.counterparty_name ?? 'T'}
+                size="sm"
+              />
+            </View>
+          </View>
+          <ErrorStateTemplate
+            message={t('shared.inbox.errorMessage')}
+            retryLabel={t('shared.inbox.retry')}
+            onRetry={() => {
+              void refetch();
+            }}
+            testID="chat-detail-error"
+          />
+        </KeyboardAvoidingView>
+      </ScreenContainer>
+    );
+  }
+
+  return (
+    <ScreenContainer testID="SCR-SHARED-011" padded={false}>
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      >
         <View className="flex-row items-center justify-between pb-md px-lg bg-card">
           <Pressable
             onPress={() => router.back()}
@@ -139,154 +192,92 @@ export default function ChatDetailScreen() {
           </Pressable>
           <View className="flex-1 items-center">
             <Text className="text-subtitle font-bold text-foreground" numberOfLines={1}>
-              {t('shared.inbox.chatTitle')}
+              {conversation?.counterparty_name ?? t('shared.inbox.chatTitle')}
             </Text>
-            <View className="flex-row items-center gap-xs" style={{ marginTop: 2 }}>
-              <View className="w-2 h-2 rounded-full bg-verified" />
-              <Text className="text-micro text-muted-foreground">{t('shared.inbox.online')}</Text>
-            </View>
+            {activity.label && (
+              <View className="flex-row items-center gap-xs" style={{ marginTop: 2 }}>
+                {activity.isActive && <View className="w-2 h-2 rounded-full bg-verified" />}
+                <Text className="text-micro text-muted-foreground">{activity.label}</Text>
+              </View>
+            )}
           </View>
           <View className="w-10 items-end">
-            <ProfileAvatar uri={profile?.avatar_url} name={profile?.full_name ?? 'T'} size="sm" />
+            <ProfileAvatar
+              uri={conversation?.counterparty_avatar_url ?? undefined}
+              name={conversation?.counterparty_name ?? 'T'}
+              size="sm"
+            />
           </View>
         </View>
-        <ErrorStateTemplate
-          message={t('shared.inbox.errorMessage')}
-          retryLabel={t('shared.inbox.retry')}
-          onRetry={() => {
-            void refetch();
-          }}
-          testID="chat-detail-error"
+
+        <FlatList
+          style={{ flex: 1 }}
+          ref={flatListRef}
+          data={messages}
+          keyExtractor={(item) => item.id}
+          renderItem={renderMessage}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 24 }}
+          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
         />
-        </KeyboardAvoidingView>
-      </ScreenContainer>
-    );
-  }
 
-  return (
-    <ScreenContainer testID="SCR-SHARED-011">
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-      >
-      <View className="flex-row items-center justify-between pb-md px-lg bg-card">
-        <Pressable
-          onPress={() => router.back()}
-          className="w-10 h-10 justify-center items-center"
-          testID="chat-back"
-        >
-          <ChevronLeft size={24} color={colors.primary} />
-        </Pressable>
-        <View className="flex-1 items-center">
-          <Text className="text-subtitle font-bold text-foreground" numberOfLines={1}>
-            {t('shared.inbox.chatTitle')}
-          </Text>
-          <View className="flex-row items-center gap-xs" style={{ marginTop: 2 }}>
-            <View className="w-2 h-2 rounded-full bg-verified" />
-            <Text className="text-micro text-muted-foreground">{t('shared.inbox.online')}</Text>
+        {showPhoneWarning && (
+          <View testID="phone-warning" className="bg-secondary py-sm px-md">
+            <Text className="text-label text-foreground text-center">
+              {t('ChatDetailScreen.copy2')}
+            </Text>
           </View>
-        </View>
-        <View className="w-10 items-end">
-          <ProfileAvatar uri={profile?.avatar_url} name={profile?.full_name ?? 'T'} size="sm" />
-        </View>
-      </View>
+        )}
 
-      {/* contextCard: shadow → imperative */}
-      <View
-        className="flex-row items-center gap-md mx-lg mt-md p-md rounded-lg bg-card"
-        style={elevations.card}
-      >
-        <View className="w-10 h-10 rounded-md bg-primary items-center justify-center">
-          <Briefcase size={18} color={colors.primaryForeground} />
-        </View>
-        <View className="flex-1" style={{ gap: 2 }}>
-          <Text
-            className="text-micro font-bold text-muted-foreground uppercase"
-            style={{ letterSpacing: 0.8 }}
-          >
-            {activeTask.title}
-          </Text>
-          <Text className="text-body font-bold text-foreground" numberOfLines={2}>
-            {activeTask.subtitle}
-          </Text>
-        </View>
-        <View className="px-sm py-xs rounded-full bg-accent">
-          <Text className="text-micro font-bold text-primary">{activeTask.status}</Text>
-        </View>
-      </View>
-
-      <View className="flex-row items-center gap-sm mt-md mx-lg px-md py-sm rounded-md bg-secondary">
-        <ShieldAlert size={16} color={colors.primary} />
-        <Text className="flex-1 text-label text-foreground">{t('ChatDetailScreen.copy1')}</Text>
-      </View>
-
-      <FlatList
-        ref={flatListRef}
-        data={messages}
-        keyExtractor={(item) => item.id}
-        renderItem={renderMessage}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 24 }}
-        onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-        ListFooterComponent={<View style={{ height: 24 }} />}
-      />
-
-      {showPhoneWarning && (
-        <View testID="phone-warning" className="bg-secondary py-sm px-md">
-          <Text className="text-label text-foreground text-center">
-            {t('ChatDetailScreen.copy2')}
-          </Text>
-        </View>
-      )}
-
-      {/* inputBar: Platform.OS conditional paddingBottom → imperative */}
-      <View
-        className="flex-row gap-sm px-lg pt-md bg-card border-t border-border items-center"
-        style={{ paddingBottom: Platform.OS === 'ios' ? 24 : 12 }}
-      >
-        <Pressable
-          className="w-10 h-10 rounded-md bg-muted items-center justify-center"
-          accessibilityRole="button"
-        >
-          <Paperclip size={18} color={colors.foreground} />
-        </Pressable>
-        <Input
-          testID="chat-input"
+        <View
           style={{
-            flex: 1,
-            backgroundColor: colors.muted,
-            borderRadius: 12,
-            paddingHorizontal: 12,
-            paddingVertical: 8,
-            color: colors.foreground,
-            maxHeight: 96,
-            fontSize: 16,
+            flexDirection: 'row',
+            alignItems: 'flex-end',
+            gap: spacing.sm,
+            paddingHorizontal: screenLayout.insetX,
+            paddingTop: screenLayout.actions.barPadding,
+            paddingBottom: insets.bottom + screenLayout.actions.barPadding,
+            backgroundColor: colors.card,
+            borderTopWidth: 1,
+            borderTopColor: colors.border,
           }}
-          value={draft}
-          onChangeText={setDraft}
-          placeholder={t('shared.inbox.sendPlaceholder')}
-          placeholderTextColor={colors.mutedForeground}
-          maxLength={500}
-          multiline
-        />
-        <Pressable
-          testID="chat-send-button"
-          style={({ pressed }) => [
-            {
-              paddingHorizontal: 16,
-              paddingVertical: 8,
-              backgroundColor: colors.primary,
-              borderRadius: 12,
-            },
-            draft.trim().length === 0 && { opacity: 0.5 },
-            pressed && draft.trim().length > 0 && { opacity: 0.85 },
-          ]}
-          onPress={handleSend}
-          disabled={draft.trim().length === 0 || isPending}
         >
-          <Text className="text-primary-foreground font-bold text-body">{t('chat.send')}</Text>
-        </Pressable>
-      </View>
+          <TextInput
+            testID="chat-input"
+            style={{
+              flex: 1,
+              backgroundColor: colors.muted,
+              borderRadius: radius.lg,
+              paddingHorizontal: spacing.lg,
+              paddingVertical: spacing.sm + 2,
+              fontSize: 16,
+              color: colors.foreground,
+              maxHeight: spacing['3xl'] * 2.5,
+            }}
+            value={draft}
+            onChangeText={setDraft}
+            placeholder={t('shared.inbox.sendPlaceholder')}
+            placeholderTextColor={colors.mutedForeground}
+            maxLength={500}
+            multiline
+          />
+          <TouchableOpacity
+            testID="chat-send-button"
+            onPress={handleSend}
+            disabled={draft.trim().length === 0 || isPending}
+            activeOpacity={0.85}
+            style={{
+              width: spacing['3xl'],
+              height: spacing['3xl'],
+              borderRadius: radius.full,
+              backgroundColor: colors.primary,
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: draft.trim().length === 0 ? 0.4 : 1,
+            }}
+          >
+            <Send size={18} color={colors.primaryForeground} />
+          </TouchableOpacity>
+        </View>
       </KeyboardAvoidingView>
     </ScreenContainer>
   );
