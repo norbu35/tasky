@@ -936,7 +936,8 @@
       "roleTasker": "Tasker",
       "trustTitle": "Verified Tasker",
       "understood": "Understood",
-      "viewStats": "View Stats"
+      "viewStats": "View Stats",
+      "uploadError": "Failed to upload photo. Please try again."
     },
     "settings": {
       "title": "Settings",
@@ -1182,6 +1183,7 @@
     "cancelConfirmMessage": "This will remove the task and notify all applicants. This cannot be undone.",
     "yesCancel": "Cancel Task",
     "goBack": "Go Back",
+    "intakeTitle": "Task Specifics",
     "sectionDetails": "Details",
     "assignedTasker": "Assigned Tasker",
     "completedTitle": "Task completed",
@@ -1218,6 +1220,8 @@
     "emptyCta": "Clear Filters"
   },
   "CategorySelectionScreen": {
+    "greeting": "GET STARTED",
+    "pageTitle": "What kind of help do you need?",
     "searchPlaceholder": "Search categories...",
     "intro": "Select the area where you need help. We will suggest professional taskers for you.",
     "loadError": "Failed to load categories",
@@ -1308,7 +1312,10 @@
     "addPhoto": "Add Photo",
     "photosOptional": "Photos are optional — you can skip",
     "photosTipTitle": "Photo tip",
-    "photosTipBody": "Natural light and wide shots help Taskers price the work more accurately."
+    "photosTipBody": "Natural light and wide shots help Taskers price the work more accurately.",
+    "permissionTitle": "Photos Permission",
+    "permissionBody": "Please allow access to your photo library to add photos.",
+    "uploadError": "Failed to upload photo. Please try again."
   },
   "Intake": {
     "yes": "Yes",
@@ -1926,6 +1933,7 @@
   "MyJobsScreen.active": "Active",
   "MyJobsScreen.completed": "Completed",
   "MyJobsScreen.cancelled": "Cancelled",
+  "MyJobsScreen.noShow": "No-show",
   "MyJobsScreen.copy1": "Apply to tasks to get your first job",
   "ProfilePolishScreen.copy1": "Use AI to present your work experience and skills more professionally.",
   "ProfilePolishScreen.copy2": "Write about your work experience",

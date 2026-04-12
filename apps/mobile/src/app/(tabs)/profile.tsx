@@ -16,6 +16,7 @@ import { useAuthStore } from '../../store/authStore';
 import { LoginRequiredCTA } from '../../components/ui/LoginRequiredCTA';
 import { screenLayout } from '../../design/screenLayout';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { colors } = mobileTheme;
 
@@ -35,6 +36,7 @@ function AuthenticatedProfile() {
   const router = useRouter();
   const { data: profile, isLoading, isError, refetch } = useMyProfile();
   const { isTasker } = useRole();
+  const insets = useSafeAreaInsets();
   return (
     <DetailTemplate
       testID="SCR-SHARED-012"
@@ -47,7 +49,7 @@ function AuthenticatedProfile() {
       {profile && (
         <View
           className="gap-xl"
-          style={{ paddingBottom: screenLayout.chrome.contentBottomClearance }}
+          style={{ paddingBottom: screenLayout.chrome.contentBottomClearance + insets.bottom }}
         >
           {/* Hero Section */}
           <View className="items-center gap-md">

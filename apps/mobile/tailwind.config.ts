@@ -28,7 +28,7 @@ const config: Config = {
       spacing: {
         ...nativeTokens.spacing,
         'screen-x': nativeTokens.spacing.lg,
-        'header-top': nativeTokens.spacing.xl,
+        'header-top': nativeTokens.spacing['2xl'],
         'header-greeting': nativeTokens.spacing.xs,
         'header-title': nativeTokens.spacing.sm,
         'header-bottom': nativeTokens.spacing.xl,

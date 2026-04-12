@@ -8,13 +8,14 @@ export const screenTypographyPlugin = plugin(function ({ addUtilities }) {
   addUtilities({
     '.font-screen-greeting': {
       fontSize: `${scale.caption}px`,
-      fontFamily: 'PlusJakartaSans_600SemiBold',
-      letterSpacing: '0.8px',
+      fontFamily: 'PlusJakartaSans_700Bold',
+      letterSpacing: '1.2px',
       textTransform: 'uppercase',
     },
     '.font-screen-title': {
-      fontSize: `${scale.heroTitle}px`,
+      fontSize: `${scale.heroTitle + 2}px`,
       fontFamily: 'Manrope_700Bold',
+      letterSpacing: '-0.5px',
     },
     '.font-screen-section': {
       fontSize: `${scale.heading}px`,

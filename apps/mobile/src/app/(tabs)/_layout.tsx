@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useSegments } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { Platform, StyleSheet, View } from 'react-native';
 import {
@@ -38,26 +38,42 @@ export default function TabsLayout() {
   const { t } = useTranslation();
   const { isCustomer } = useRole();
   const insets = useSafeAreaInsets();
+  const segments = useSegments();
+
+  // Hide tab bar when inside a chat detail screen (inbox/[id])
+  const inboxIdx = segments.indexOf('inbox');
+  const isChatDetail = inboxIdx >= 0 && inboxIdx < segments.length - 1;
 
   // Tab bar style must be computed here: bottom depends on dynamic safe-area inset.
   // safeAreaInsets: { bottom: 0 } prevents React Navigation from double-adding the inset.
+  //
+  // Android: full-width bar, flush to screen bottom, safe area absorbed as internal padding.
+  // iOS: floating pill positioned above the home indicator zone.
+  const isAndroid = Platform.OS === 'android';
   const tabBarStyle = {
     position: 'absolute' as const,
     borderTopWidth: 0,
-    height: screenLayout.chrome.tabBarHeight,
-    bottom: insets.bottom + screenLayout.chrome.tabBarBottom,
-    marginHorizontal: spacing.md,
-    paddingBottom: spacing.sm,
+    // Android: height grows to include system nav bar inset; content sits in top portion.
+    // iOS: fixed height, bar floats above safe area.
+    height: isAndroid
+      ? screenLayout.chrome.tabBarHeight + insets.bottom
+      : screenLayout.chrome.tabBarHeight,
+    bottom: isAndroid ? 0 : insets.bottom + screenLayout.chrome.tabBarBottom,
+    // Android: full-width, no margin. iOS: pill with horizontal margin.
+    marginHorizontal: isAndroid ? 0 : spacing.md,
+    // Android: push content up from system nav zone. iOS: symmetric padding.
+    paddingBottom: isAndroid ? insets.bottom + spacing.sm : spacing.sm,
     paddingTop: spacing.sm,
-    borderRadius: TAB_BORDER_RADIUS,
+    borderRadius: isAndroid ? 0 : TAB_BORDER_RADIUS,
     // Android: solid background + elevation shadow
-    backgroundColor: Platform.OS === 'android' ? colors.card : 'transparent',
-    elevation: Platform.OS === 'android' ? 8 : 0,
+    backgroundColor: isAndroid ? colors.card : 'transparent',
+    elevation: isAndroid ? 8 : 0,
     // iOS: shadow rendered against the BlurView background
     shadowColor: colors.foreground,
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.06,
     shadowRadius: 20,
+    ...(isChatDetail ? { display: 'none' as const } : {}),
   };
 
   return (

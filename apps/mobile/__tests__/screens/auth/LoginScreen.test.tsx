@@ -49,13 +49,17 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   },
 }));
 
-jest.mock('../../../src/features/auth/hooks/useAuth', () => ({
-  useDevLogin: () => ({
-    mutate: mockDevLoginMutate,
-    isPending: false,
-    error: null,
-  }),
-}));
+jest.mock('../../../src/features/auth/hooks/useAuth', () => {
+  const actual = jest.requireActual('../../../src/features/auth/hooks/useAuth');
+  return {
+    ...actual,
+    useDevLogin: () => ({
+      mutate: mockDevLoginMutate,
+      isPending: false,
+      error: null,
+    }),
+  };
+});
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -64,6 +68,30 @@ beforeEach(() => {
 });
 
 describe('LoginScreen (SCR-SHARED-002)', () => {
+  it('uses the seeded customer persona for dev quick login', () => {
+    process.env.EXPO_PUBLIC_DEV_AUTH_ENABLED = 'true';
+
+    render(<LoginScreen />);
+    fireEvent.press(screen.getByTestId('dev-login-customer'));
+
+    expect(mockDevLoginMutate).toHaveBeenCalledWith({
+      phone: '+97692000001',
+      role: 'CUSTOMER',
+    });
+  });
+
+  it('uses the seeded tasker persona for dev quick login', () => {
+    process.env.EXPO_PUBLIC_DEV_AUTH_ENABLED = 'true';
+
+    render(<LoginScreen />);
+    fireEvent.press(screen.getByTestId('dev-login-tasker'));
+
+    expect(mockDevLoginMutate).toHaveBeenCalledWith({
+      phone: '+97693000001',
+      role: 'TASKER',
+    });
+  });
+
   it('renders the Figma login title', () => {
     render(<LoginScreen />);
     expect(screen.getByText('Tasky-д тавтай морилно уу')).toBeTruthy();

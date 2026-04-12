@@ -13,6 +13,7 @@ import {
 } from 'lucide-react-native';
 import { SettingsTemplate } from '../../../components/templates/SettingsTemplate';
 import { ConfirmSheet } from '../../../components/ui/ConfirmSheet';
+import { LanguageSwitcher } from '../../../components/ui/LanguageSwitcher';
 import { useRole } from '../../../providers/RoleProvider';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
@@ -31,9 +32,8 @@ export default function SettingsScreen() {
       rows: [
         {
           label: t('shared.settings.language'),
-          value: t('shared.settings.languageValue'),
-          onPress: () => {},
           icon: <Globe size={20} color={colors.primary} />,
+          rightElement: <LanguageSwitcher />,
         },
         {
           label: t('shared.settings.notifications'),

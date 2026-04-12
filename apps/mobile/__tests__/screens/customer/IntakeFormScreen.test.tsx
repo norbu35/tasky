@@ -60,13 +60,15 @@ const mockCleaningSchema = JSON.stringify([
   },
 ]);
 
+let mockSchemaJson = mockCleaningSchema;
+
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: jest.fn(), back: mockBack }),
   useLocalSearchParams: () => ({
     categoryId: 'cat-123',
     intakeEnabled: '1',
     intakeSchemaVersion: '1',
-    intakeSchemaJson: mockCleaningSchema,
+    intakeSchemaJson: mockSchemaJson,
   }),
 }));
 
@@ -92,6 +94,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   resetTestI18n();
   setTestLanguage('en');
+  mockSchemaJson = mockCleaningSchema;
 });
 
 describe('IntakeFormScreen (SCR-CUST-003)', () => {
@@ -124,6 +127,32 @@ describe('IntakeFormScreen (SCR-CUST-003)', () => {
     render(<IntakeFormScreen />);
     expect(screen.getByText('Apartment')).toBeTruthy();
     expect(screen.getByText('Standard')).toBeTruthy();
+  });
+
+  it('renders fallback labels when schema options are plain strings', () => {
+    mockSchemaJson = JSON.stringify([
+      {
+        key: 'property_type',
+        label: 'Property type',
+        label_mn: 'Property type',
+        type: 'single_select',
+        required: true,
+        options: ['apartment', 'ger', 'office', 'house'],
+      },
+      {
+        key: 'cleaning_type',
+        label: 'Cleaning type',
+        label_mn: 'Cleaning type',
+        type: 'single_select',
+        required: true,
+        options: ['standard', 'deep_clean', 'move_in_move_out', 'post_renovation'],
+      },
+    ]);
+
+    render(<IntakeFormScreen />);
+
+    expect(screen.getByText('Apartment')).toBeTruthy();
+    expect(screen.getByText('Deep Clean')).toBeTruthy();
   });
 
   it('renders yes_no as Yes/No chips', () => {

@@ -10,6 +10,7 @@ import { elevations } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { screenLayout } from '../../../design/screenLayout';
 import { ScreenContainer } from '../../../components/shells';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { colors } = mobileTheme;
 
@@ -241,6 +242,7 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
 export default function MyTasksListScreen() {
   const router = useRouter();
   const { data, isLoading, isError, isFetching, refetch } = useMyTasks();
+  const insets = useSafeAreaInsets();
 
   const tasks = useMemo(() => {
     return [...((data?.data ?? []) as TaskLike[])].sort((a, b) => {
@@ -316,7 +318,7 @@ export default function MyTasksListScreen() {
             ListHeaderComponent={header}
             ListEmptyComponent={<EmptyState onPostTask={handleFabPress} />}
             contentContainerStyle={{
-              paddingBottom: screenLayout.chrome.contentBottomClearance,
+              paddingBottom: screenLayout.chrome.contentBottomClearance + insets.bottom,
             }}
             refreshControl={
               <RefreshControl
@@ -340,7 +342,7 @@ export default function MyTasksListScreen() {
                 {
                   position: 'absolute',
                   right: screenLayout.chrome.fabInsetRight,
-                  bottom: screenLayout.chrome.contentBottomClearance,
+                  bottom: screenLayout.chrome.contentBottomClearance + insets.bottom,
                   width: fabSize,
                   height: fabSize,
                   borderRadius: fabSize / 2,

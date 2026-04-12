@@ -23,7 +23,7 @@ const { colors, spacing } = mobileTheme;
 export default function BookingConfirmedScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
+  const { bookingId, taskerName } = useLocalSearchParams<{ bookingId: string; taskerName?: string }>();
   const [canAddToCalendar, setCanAddToCalendar] = React.useState(false);
   const canAddToCalendarRef = React.useRef(canAddToCalendar);
 
@@ -65,6 +65,10 @@ export default function BookingConfirmedScreen() {
   const handleDone = React.useCallback(() => {
     router.replace('/(customer)/bookings');
   }, [router]);
+
+  const handleMessage = React.useCallback(() => {
+    router.push(bookingId ? `/inbox/${bookingId}` : '/inbox');
+  }, [bookingId, router]);
 
   const handleCalendar = React.useCallback(() => {
     const url = Platform.OS === 'ios' ? 'calshow:0' : 'content://com.android.calendar/time';
@@ -150,13 +154,14 @@ export default function BookingConfirmedScreen() {
                 {t('customer.bookings.providerLabel')}
               </Text>
               <Text className="text-body font-sans-bold text-primary-deep">
-                {t('customer.bookings.providerName')}
+                {taskerName ?? t('customer.bookings.providerLabel')}
               </Text>
             </View>
           </View>
           <Touchable
             className="w-[40px] h-[40px] rounded-md bg-muted items-center justify-center"
             accessibilityRole="button"
+            onPress={handleMessage}
             testID="booking-confirmed-screen-message"
           >
             <MessageSquare size={18} color={colors.primaryDeep} />

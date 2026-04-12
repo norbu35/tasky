@@ -50,7 +50,7 @@ export default function BookingConfirmScreen() {
         });
     router.replace({
       pathname: '/(customer)/bookings/confirmed',
-      params: { bookingId: booking.id },
+      params: { bookingId: booking.id, taskerName: params.taskerName },
     });
   }, [params, acceptApplication, confirmBookingIntent, router]);
 

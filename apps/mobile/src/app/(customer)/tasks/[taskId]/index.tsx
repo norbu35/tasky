@@ -10,7 +10,6 @@ import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCustomerTaskDetail';
 import { TaskCancelSheet } from '../../../../features/tasks/components/TaskCancelSheet';
-import { ConfirmSheet } from '../../../../components/ui/ConfirmSheet';
 
 const { colors } = mobileTheme;
 
@@ -38,6 +37,61 @@ function DetailRow({ label, value }: { label: string; value: string }) {
         {label}
       </Text>
       <Text className="flex-1 text-label font-bold text-foreground text-right">{value}</Text>
+    </View>
+  );
+}
+
+function prettifyKey(key: string): string {
+  return key
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function formatAnswerValue(value: unknown, t: (k: string) => string): string {
+  if (typeof value === 'boolean') return value ? t('common.yes') : t('common.no');
+  if (typeof value === 'number') return String(value);
+  if (typeof value === 'string') return prettifyKey(value);
+  if (Array.isArray(value)) return value.map((v) => prettifyKey(String(v))).join(', ');
+  return String(value ?? '');
+}
+
+function IntakeAnswersSection({ answers, t }: { answers: Record<string, unknown>; t: (k: string) => string }) {
+  const entries = Object.entries(answers).filter(([, v]) => v != null && v !== '');
+  if (entries.length === 0) return null;
+
+  return (
+    <View className="bg-muted rounded-sm p-lg gap-md">
+      <Text
+        className="text-caption font-bold text-text-secondary uppercase"
+        style={{ letterSpacing: 0.8 }}
+      >
+        {t('TaskDetailCustomerScreen.intakeTitle')}
+      </Text>
+      {entries.map(([key, value]) => (
+        <View key={key} className="gap-xs">
+          <Text className="text-caption text-text-secondary">{prettifyKey(key)}</Text>
+          <View className="flex-row flex-wrap gap-xs">
+            {Array.isArray(value) ? (
+              value.map((item, idx) => (
+                <View
+                  key={`${key}-${idx}`}
+                  className="px-md py-sm rounded-sm bg-card"
+                >
+                  <Text className="text-label font-bold text-foreground">
+                    {prettifyKey(String(item))}
+                  </Text>
+                </View>
+              ))
+            ) : (
+              <View className="px-md py-sm rounded-sm bg-card">
+                <Text className="text-label font-bold text-foreground">
+                  {formatAnswerValue(value, t)}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+      ))}
     </View>
   );
 }
@@ -81,18 +135,20 @@ export default function TaskDetailCustomerScreen() {
       return () => router.push(`/(customer)/tasks/${taskId}/applicants`);
     }
     if (isTaskerMarkedDone) {
-      return () => {
-        // Completion flow is handled elsewhere in the booking path.
-      };
+      const bookingId = (task as any)?.booking?.id;
+      return bookingId
+        ? () => router.push(`/(customer)/bookings/${bookingId}`)
+        : undefined;
     }
     if (isAssigned && tasker) {
-      return () => router.push('/inbox');
+      const bookingId = (task as any)?.booking?.id;
+      return () => router.push(bookingId ? `/inbox/${bookingId}` : '/inbox');
     }
     if (isOpen) {
       return () => setShowCancelSheet(true);
     }
     return undefined;
-  }, [hasApplicants, isAssigned, isOpen, isTaskerMarkedDone, router, taskId, tasker]);
+  }, [hasApplicants, isAssigned, isOpen, isTaskerMarkedDone, router, task, taskId, tasker]);
 
   const secondaryCtaLabel = useMemo(() => {
     if ((isOpen && hasApplicants) || isAssigned) {
@@ -155,6 +211,15 @@ export default function TaskDetailCustomerScreen() {
                 value={formatSchedule(task.scheduled_at)}
               />
             </View>
+
+            {task.intake_answers != null &&
+              typeof task.intake_answers === 'object' &&
+              Object.keys(task.intake_answers).length > 0 && (
+              <IntakeAnswersSection
+                answers={task.intake_answers as Record<string, unknown>}
+                t={t}
+              />
+            )}
 
             {/* budgetCard: shadow → imperative */}
             <View className="bg-primary-deep rounded-lg p-lg gap-sm" style={elevations.soft}>
@@ -339,19 +404,6 @@ export default function TaskDetailCustomerScreen() {
         taskId={taskId}
         taskStatus={status}
         bookingId={(task as any)?.booking?.id}
-      />
-      <ConfirmSheet
-        testID="SCR-CUST-010"
-        isOpen={showCancelSheet}
-        onClose={() => setShowCancelSheet(false)}
-        title={t('TaskDetailCustomerScreen.cancelTitle')}
-        description={t('TaskDetailCustomerScreen.cancelDescription')}
-        confirmLabel={t('TaskDetailCustomerScreen.cancelConfirm')}
-        onConfirm={() => {
-          // TODO: wire real cancellation API
-          setShowCancelSheet(false);
-        }}
-        isDestructive
       />
     </>
   );

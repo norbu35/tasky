@@ -70,7 +70,7 @@ export default function LoginScreen() {
         </Pressable>
       }
       bottomSlot={
-        <View className="gap-lg px-xl">
+        <View className="gap-lg px-screen-x">
           <Button
             testID="facebook-login-button"
             onPress={() => {
@@ -79,6 +79,7 @@ export default function LoginScreen() {
             disabled={isFacebookLoading}
             isLoading={isFacebookLoading}
             className="min-h-[56px] bg-primary-deep"
+            style={{ alignSelf: 'stretch' }}
           >
             {!isFacebookLoading ? (
               <View className="flex-row items-center gap-sm">

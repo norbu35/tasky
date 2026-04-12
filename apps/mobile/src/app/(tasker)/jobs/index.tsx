@@ -52,6 +52,7 @@ export default function MyJobsScreen() {
       { id: 'active', label: t('MyJobsScreen.active') },
       { id: 'completed', label: t('MyJobsScreen.completed') },
       { id: 'cancelled', label: t('MyJobsScreen.cancelled') },
+      { id: 'no_show', label: t('MyJobsScreen.noShow') },
     ],
     [t],
   );
@@ -64,8 +65,11 @@ export default function MyJobsScreen() {
     if (activeFilters.includes('cancelled')) {
       return bookings.filter((booking) => booking.status === 'CANCELLED');
     }
+    if (activeFilters.includes('no_show')) {
+      return bookings.filter((booking) => booking.status === 'NO_SHOW');
+    }
     return bookings.filter(
-      (booking) => booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED',
+      (booking) => booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED' && booking.status !== 'NO_SHOW',
     );
   }, [activeFilters, bookings]);
 

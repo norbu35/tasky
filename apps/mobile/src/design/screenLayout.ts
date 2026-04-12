@@ -9,7 +9,7 @@ export const screenLayout = {
 
   header: {
     /** Top of screen to first element */
-    topInset: spacing.xl,
+    topInset: spacing['2xl'],
     /** Greeting label to screen title */
     greetingGap: spacing.xs,
     /** Screen title to subtitle or first body content */
@@ -51,7 +51,14 @@ export const screenLayout = {
     get fabBottom() {
       return this.tabBarHeight + this.tabBarBottom + spacing.sm;
     },
-    /** Minimum clearance for scrollable content — clears tab bar */
+    /**
+     * Minimum clearance for scrollable content — clears the tab bar.
+     *
+     * This value does NOT include the device's system navigation bar inset
+     * (useSafeAreaInsets().bottom). Callers inside a tab navigator should add
+     * that inset themselves so content scrolls fully above the tab bar on
+     * Android button-nav devices.
+     */
     get contentBottomClearance() {
       return this.tabBarHeight + this.tabBarBottom + spacing.md;
     },

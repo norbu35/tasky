@@ -53,6 +53,9 @@ beforeEach(() => {
   Object.assign(mockParams, {
     categoryId: 'cat-123',
     description: 'Fix my sink',
+    intakeAnswers: undefined,
+    intakeSchemaVersion: undefined,
+    intakeSchemaJson: undefined,
     photos: '[]',
     location: 'Behind State Dept Store',
     lat: '47.92123',
@@ -87,6 +90,57 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
   it('shows task summary with budget', () => {
     render(<ReviewSubmitScreen />);
     expect(screen.getByText('₮50,000')).toBeTruthy();
+  });
+
+  it('renders structured intake answers with schema-backed labels in the review summary', () => {
+    Object.assign(mockParams, {
+      intakeAnswers: JSON.stringify({
+        property_type: 'apartment',
+        cleaning_type: 'deep_clean',
+      }),
+      intakeSchemaJson: JSON.stringify([
+        {
+          key: 'property_type',
+          label: 'Property type',
+          label_mn: 'Property type',
+          type: 'single_select',
+          required: true,
+          options: ['apartment'],
+        },
+        {
+          key: 'cleaning_type',
+          label: 'Cleaning type',
+          label_mn: 'Cleaning type',
+          type: 'single_select',
+          required: true,
+          options: ['deep_clean'],
+        },
+      ]),
+      intakeSchemaVersion: '7',
+    });
+
+    render(<ReviewSubmitScreen />);
+
+    expect(screen.getByText('Property type')).toBeTruthy();
+    expect(screen.getByText('Apartment')).toBeTruthy();
+    expect(screen.getByText('Cleaning type')).toBeTruthy();
+    expect(screen.getByText('Deep Clean')).toBeTruthy();
+  });
+
+  it('falls back to prettified intake answers when schema is missing', () => {
+    Object.assign(mockParams, {
+      intakeAnswers: JSON.stringify({
+        property_type: 'apartment',
+        has_pets: true,
+      }),
+    });
+
+    render(<ReviewSubmitScreen />);
+
+    expect(screen.getByText('Property Type')).toBeTruthy();
+    expect(screen.getByText('Apartment')).toBeTruthy();
+    expect(screen.getByText('Has Pets')).toBeTruthy();
+    expect(screen.getByText('Yes')).toBeTruthy();
   });
 
   it('renders edit buttons for sections', () => {

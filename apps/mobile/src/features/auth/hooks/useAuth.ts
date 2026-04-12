@@ -8,7 +8,7 @@ import { resolvePostAuthHref } from '../../../utils/authRouting';
 const api = createMobileApiClient();
 
 export const DEV_LOGIN_CUSTOMER_PHONE = '+97692000001';
-export const DEV_LOGIN_TASKER_PHONE = '+97692000002';
+export const DEV_LOGIN_TASKER_PHONE = '+97693000001';
 
 export function useRequestOtp() {
   return useMutation({

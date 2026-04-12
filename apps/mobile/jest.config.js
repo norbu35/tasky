@@ -9,6 +9,7 @@ module.exports = {
     ],
     testMatch: ["**/__tests__/**/*.test.ts?(x)"],
     moduleNameMapper: {
+        "^@tasky/core$": "<rootDir>/../../packages/core/src/index.ts",
         "^react-native-reanimated/mock$": "<rootDir>/__tests__/test-utils/reanimated-mock.js",
     },
     transformIgnorePatterns: [
