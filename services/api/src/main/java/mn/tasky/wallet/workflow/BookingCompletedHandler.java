@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
  * creates review enforcement cases, recomputes reliability score, and evaluates badges.
  *
  * Migrated from {@code DomainEventOutboxProcessor.handleBookingCompleted}.
+ * Idempotent: duplicate event delivery will not duplicate wallet credits or other side effects.
  */
 @Component
 @ConditionalOnProperty(name = "tasky.automation.broker.enabled", havingValue = "true")
@@ -61,6 +62,11 @@ public class BookingCompletedHandler extends AbstractEventHandler {
 
     @Override
     public void handle(AutomationEventEnvelope envelope) {
+        if (!tryClaimEvent(envelope)) {
+            log.info("Skipping duplicate event: eventId={}", envelope.eventId());
+            return;
+        }
+
         Map<String, Object> payload = envelope.payload();
         String bookingId = requiredString(payload, "booking_id");
         String taskId = requiredString(payload, "task_id");

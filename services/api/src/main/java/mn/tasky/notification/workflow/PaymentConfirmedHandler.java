@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
  * sends push notifications to both tasker and customer, and tracks analytics.
  *
  * Migrated from {@code DomainEventOutboxProcessor.handlePaymentConfirmed}.
+ * Idempotent: duplicate event delivery will not duplicate side effects.
  */
 @Component
 @ConditionalOnProperty(name = "tasky.automation.broker.enabled", havingValue = "true")
@@ -38,6 +39,11 @@ public class PaymentConfirmedHandler extends AbstractEventHandler {
 
     @Override
     public void handle(AutomationEventEnvelope envelope) {
+        if (!tryClaimEvent(envelope)) {
+            log.info("Skipping duplicate event: eventId={}", envelope.eventId());
+            return;
+        }
+
         Map<String, Object> payload = envelope.payload();
         String paymentId = requiredString(payload, "payment_id");
         String bookingId = requiredString(payload, "booking_id");

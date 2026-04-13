@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
  * and tracks analytics events.
  *
  * Migrated from {@code DomainEventOutboxProcessor.handleTaskApplicationAccepted}.
+ * Idempotent: duplicate event delivery will not duplicate side effects.
  */
 @Component
 @ConditionalOnProperty(name = "tasky.automation.broker.enabled", havingValue = "true")
@@ -45,6 +46,11 @@ public class TaskApplicationAcceptedHandler extends AbstractEventHandler {
 
     @Override
     public void handle(AutomationEventEnvelope envelope) {
+        if (!tryClaimEvent(envelope)) {
+            log.info("Skipping duplicate event: eventId={}", envelope.eventId());
+            return;
+        }
+
         Map<String, Object> payload = envelope.payload();
         String taskId = requiredString(payload, "task_id");
         String bookingId = requiredString(payload, "booking_id");
