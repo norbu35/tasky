@@ -18,6 +18,11 @@
 - **BookingLifecycleService → TrustQueryPort**: Replaced direct `DisputeDao` dependency with `TrustQueryPort.hasOpenDispute()`, eliminating the last DAO dependency from the booking lifecycle layer. Added `hasOpenDispute(bookingId)` to `TrustQueryPort`, implemented via `DisputeService`.
 - **Booking completion path fully port-bound**: All completion/cancellation guards (dispute checks) now flow through public ports instead of direct DAO access.
 
+### Slice 3: Verification review — already on v2 ports (no changes needed)
+
+- **Verification flow audit confirmed clean**: `VerificationController` and `AdminVerificationController` both delegate exclusively through `IdentityCommandPort`/`IdentityQueryPort` and composition services. No direct DAO or concrete service dependencies in the verification path.
+- **Note**: Verification application logic lives in `AuthService` rather than a dedicated `VerificationService` — this is a bounded-context extraction concern for a future pass, not a port-migration gap.
+
 ### Slice 1: Task apply/accept v2 seam completion
 
 - **TaskService → BookingCommandPort**: `TaskService.acceptApplication()` now delegates through `BookingCommandPort.createBooking()` instead of the concrete `BookingService`, eliminating the last cross-module concrete service dependency in the task module.
