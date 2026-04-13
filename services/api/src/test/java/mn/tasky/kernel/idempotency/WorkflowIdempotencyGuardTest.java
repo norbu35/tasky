@@ -72,9 +72,10 @@ class WorkflowIdempotencyGuardTest {
     }
 
     @Test
-    @DisplayName("IDEM-DAO-004: complete() transitions the row")
-    void completeTransitionsRow() {
-        dao.completeEvent(EVENT_ID);
+    @DisplayName("IDEM-DAO-004: guard.complete() delegates to dao.completeEvent()")
+    void guardCompleteDelegatesToDao() {
+        // This proves guard.complete(eventId) actually delegates to the DAO.
+        guard.complete(EVENT_ID);
 
         verify(dao).completeEvent(EVENT_ID);
     }
