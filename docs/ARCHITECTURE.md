@@ -115,7 +115,7 @@ Any addition to the exception set requires deliberate justification in code revi
   - **Current state**: `FirebasePushProvider` is the active production provider. Expo push relay is removed from runtime use and retained only as historical context in ADR-0002.
 - **Async Processing**:
   - **Mechanism**: Spring `@Async` + `ApplicationEventPublisher` for decoupling.
-  - **Persistence**: For critical tasks (e.g., notifications, payouts), the `domain_outbox_events` table provides at-least-once delivery with retry logic (`DomainEventOutboxProcessor`).
+  - **Persistence**: For critical tasks (e.g., notifications, payouts), the `domain_outbox_events` table provides at-least-once delivery. Events are published to RabbitMQ via an outbox relay poller, then handled by domain-owned workflow consumers.
 - **Geospatial**:
   - **Engine**: PostGIS running in the Postgres container.
   - **Indexing**: GiST index on `tasks.location_point` is mandatory.
@@ -241,8 +241,8 @@ they are not all present in current migrations/runtime and must not be read as l
 
 #### Infrastructure Tables
 
-- `domain_outbox_events`: `id`, `type`, `payload (JSONB)`, `status` (PENDING, PROCESSING, PROCESSED, FAILED), `attempts`, `last_error`, `available_at`, `created_at`
-  — full outbox pattern with retry and scheduling; processed by `DomainEventOutboxProcessor`
+- `domain_outbox_events`: `id`, `type`, `payload (JSONB)`, `status` (PENDING, PROCESSING, PROCESSED, FAILED), `attempts`, `last_error`, `available_at`, `created_at`, `correlation_id`, `causation_id`, `command_id`, `workflow_id`, `actor_id`
+  — full outbox pattern with context propagation; events relayed to RabbitMQ and consumed by domain workflow handlers.
 - `feature_toggles`: `id`, `feature_name`, `is_enabled`, `activated_at`, `deactivated_at`, `updated_by`
   — four toggles are currently seeded at migration time: `escrow_enabled` is the only implemented-gated monetization
   path with confirmed runtime enforcement in this sweep; `lead_fee_enabled`, `subscription_enabled`, and

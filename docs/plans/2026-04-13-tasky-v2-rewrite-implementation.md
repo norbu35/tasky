@@ -902,24 +902,25 @@ plan. Do not treat the following as an unordered candidate list anymore.
 ./gradlew gateSmoke
 ```
 
-## Handoff Note After Tranche 10 (current backend state)
+## Handoff Note After Tranche 10 (completed)
 
 **Checkpoint date:** 2026-04-13
+**Status:** Tranche 10 is **complete**. The backend rewrite has converged onto one enforceable architecture style.
 
-**What is complete**
+**What was completed**
 
-- workflow-handler idempotency landed for the three migrated event families
-- task apply/accept now crosses the booking boundary through `BookingCommandPort`
-- booking completion no longer reaches into dispute persistence directly; it uses `TrustQueryPort`
-- verification review and dispute aftermath are already on v2 request-path seams
-- the outbox relay remains active and documented as an explicit deferred redesign rather than an implicit cutover
+- **Boundary lock** — `AudienceCompositionBoundaryTest` encodes the two allowed request-path shapes and an explicit 10-controller exception registry; `allControllersAreAccountedFor()` prevents silent escapes. `runtimeCompositionMustNotDependOnDaos()` ArchRule added to `BackendArchitectureTest`.
+- **Async simplification** — `OutboxEnvelope` and `AutomationJobEnvelope` deleted (zero references); the live async foundation is the persisted outbox relay → RabbitMQ → workflow handlers.
+- **Public request-path convergence** — `NotificationController` and `AdminUserController` now route through new runtime composition services. All runtime composition services updated to use publicapi ports instead of direct DAO dependencies (`MessageDao`, `TaskDao`, `UserDao`/`AuditEventDao`).
+- **Admin/runtime convergence** — `AdminMessageCompositionService`, `AdminTaskConciergeAssignmentService`, and `AdminUserCompositionService` all use module publicapi ports; no runtime composition service depends on a DAO.
+- **Documentation** — `docs/ARCHITECTURE.md` §2.3 documents the two allowed request-path shapes, forbidden patterns, and exception set.
+- All 9 architecture tests pass. `./gradlew gateSmoke` and `./gradlew openApiValidate` pass.
 
-**What remains before tranche 10 can be called complete**
+**Durable gaps carried forward**
 
-- request-path cutover is still mixed in a few controllers and surfaces; the repo does not yet end with one active style
-- some compatibility shims remain live on request paths and should either be removed or documented as intentional holdovers
-- async scaffolding introduced earlier in the rewrite still includes currently unused contracts (`OutboxEnvelope`, `AutomationJobEnvelope`); the finalization design now requires deletion unless a real job lane is introduced in the same change
-- `docs/ARCHITECTURE.md` must continue being updated so the live backend is described in v2 terms rather than the pre-rewrite service-coupling model
+- Workflow handler idempotency guards exist (`WorkflowIdempotencyGuard`) but are not yet `ON CONFLICT`-based — duplicate event processing is guarded at the handler level, not at the database level.
+- `PaymentService` still contains QPay logic duplicated in `QPayPaymentProvider` — should delegate to `PaymentProvider` and delete embedded QPay code.
+- `AuditEventDao` is no longer used by `AdminTaskConciergeAssignmentService` (replaced with structured logging) — a dedicated audit command port should be introduced in a future pass.
 
 ---
 
