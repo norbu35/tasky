@@ -28,6 +28,21 @@
 - **Dispute flow audit confirmed clean**: `DisputeController` → `DisputeRaiseService` → `TrustCommandPort`, and `AdminDisputeController` → `AdminDisputeResolutionService` → `TrustCommandPort`. Both paths use idempotency guards and port delegation. The `DisputeEvidenceGraceScheduler` auto-close runs independently and does not need port wrapping.
 - **Note**: Dispute aftermath is intentionally minimal — no wallet refunds, booking status changes, or notifications on resolution per current product behavior.
 
+### Slice 5: Rescue escalation — scheduler-only, no port-migration needed
+
+- **RescueScheduler audit confirmed**: Pure background scheduler with no controller endpoints or user-facing API. Depends on concrete DAOs and `NotificationService` directly, but this is a scheduling concern, not a request-path flow. Conversion to the automation/job system deferred as a future architectural refinement.
+- **No old orchestration paths to delete** — rescue was never on a port-based path.
+
+### Phase 1 Summary: All 5 flow slices audited
+
+| Slice | Flow                | Changes                                                           | Status               |
+| ----- | ------------------- | ----------------------------------------------------------------- | -------------------- |
+| 1     | Task apply/accept   | `TaskService` → `BookingCommandPort`                              | ✅ Code changed      |
+| 2     | Booking completion  | `BookingLifecycleService` → `TrustQueryPort` (DisputeDao removed) | ✅ Code changed      |
+| 3     | Verification review | Already on v2 ports                                               | ✅ No changes needed |
+| 4     | Dispute aftermath   | Already on v2 ports                                               | ✅ No changes needed |
+| 5     | Rescue escalation   | Scheduler-only, no API path                                       | ✅ No changes needed |
+
 ### Slice 1: Task apply/accept v2 seam completion
 
 - **TaskService → BookingCommandPort**: `TaskService.acceptApplication()` now delegates through `BookingCommandPort.createBooking()` instead of the concrete `BookingService`, eliminating the last cross-module concrete service dependency in the task module.
