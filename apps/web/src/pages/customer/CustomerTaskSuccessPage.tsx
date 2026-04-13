@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2 } from 'lucide-react';
 
-import { ResponsiveWizardShell, StatePanel } from '../../components/parity';
+import { ResponsiveWizardShell, StatePanel } from '../../layout/parity';
 import { Button } from '../../components/ui/button';
 
 export function CustomerTaskSuccessPage() {

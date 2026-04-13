@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ResponsiveWizardShell, StatePanel } from '../../components/parity';
+import { ResponsiveWizardShell, StatePanel } from '../../layout/parity';
 import { Button } from '../../components/ui/button';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';

@@ -15,9 +15,9 @@ import { Textarea } from '../components/ui/textarea';
 import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
 import { parseError } from '../lib/errorHandling';
-import { LocationPicker } from '../components/task-creation/LocationPicker';
-import { PhotoUploadManager } from '../components/task-creation/PhotoUploadManager';
-import { IntakeFormRenderer } from '../components/task-creation/IntakeFormRenderer';
+import { LocationPicker } from '../components/feature/task-creation/LocationPicker';
+import { PhotoUploadManager } from '../components/feature/task-creation/PhotoUploadManager';
+import { IntakeFormRenderer } from '../components/feature/task-creation/IntakeFormRenderer';
 import {
   createTaskSchema,
   generateIntakeScopeSummary,

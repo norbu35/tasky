@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowRight, Star, Users } from 'lucide-react';
 
-import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../components/parity';
+import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../layout/parity';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';

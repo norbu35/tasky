@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 
 import { useAppContext } from '../../context/AppContext';
-import { ResponsiveFeedShell } from '../../components/parity';
+import { ResponsiveFeedShell } from '../../layout/parity';
 import { Badge } from '../../components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 

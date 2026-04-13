@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { TimelineList } from '../../components/parity';
+import { TimelineList } from '../../layout/parity';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { ResponsiveDetailShell } from '../../components/parity';
+import { ResponsiveDetailShell } from '../../layout/parity';
 
 export function CustomerTimelinePage() {
   const { t } = useTranslation();

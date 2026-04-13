@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react';
 
-import { StatePanel } from '../../components/parity';
+import { StatePanel } from '../../layout/parity';
 import { Button } from '../../components/ui/button';
 
 export function CustomerTaskCancelDialog() {

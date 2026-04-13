@@ -15,7 +15,7 @@ import {
   ResponsiveWizardShell,
   StatePanel,
   TimelineList,
-} from '../../src/components/parity';
+} from '../../src/layout/parity';
 
 describe('Parity shells', () => {
   it('renders the responsive feed shell with content and side rail slots', () => {

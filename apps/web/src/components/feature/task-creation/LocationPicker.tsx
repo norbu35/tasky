@@ -1,5 +1,5 @@
 import { Map, Marker } from 'pigeon-maps';
-import { Label } from '../ui/label';
+import { Label } from '../../ui/label';
 import { useTranslation } from 'react-i18next';
 
 interface LocationPickerProps {

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ResponsiveDetailShell } from '../../components/parity/ResponsiveDetailShell';
+import { ResponsiveDetailShell } from '../../layout/parity/ResponsiveDetailShell';
 import { Card, CardContent } from '../../components/ui/card';
 
 export function VerificationPendingPage() {

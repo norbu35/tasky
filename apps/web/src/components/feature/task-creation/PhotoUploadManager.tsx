@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react';
-import { Button } from '../ui/button';
-import { Label } from '../ui/label';
+import { Button } from '../../ui/button';
+import { Label } from '../../ui/label';
 import { ImagePlus, Loader2, X } from 'lucide-react';
-import { useAppContext } from '../../context/AppContext';
-import { parseError } from '../../lib/errorHandling';
+import { useAppContext } from '../../../context/AppContext';
+import { parseError } from '../../../lib/errorHandling';
 import { useTranslation } from 'react-i18next';
 
 interface PhotoUploadManagerProps {

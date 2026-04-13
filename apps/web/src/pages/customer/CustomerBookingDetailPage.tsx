@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useAppContext } from '../../context/AppContext';
-import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../components/parity';
+import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../layout/parity';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { MessageSquareText } from 'lucide-react';

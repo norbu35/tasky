@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ResponsiveFeedShell } from '../../components/parity';
+import { ResponsiveFeedShell } from '../../layout/parity';
 import { Card, CardContent } from '../../components/ui/card';
 
 export function HelpPage() {

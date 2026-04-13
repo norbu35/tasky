@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { useAppContext } from '../context/AppContext';
-import { ResponsiveDetailShell } from '../components/parity';
+import { ResponsiveDetailShell } from '../layout/parity';
 import { parseError } from '../lib/errorHandling';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';

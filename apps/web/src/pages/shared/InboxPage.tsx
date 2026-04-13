@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { MessageSquare } from 'lucide-react';
-import { ResponsiveFeedShell } from '../../components/parity';
+import { ResponsiveFeedShell } from '../../layout/parity';
 import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 

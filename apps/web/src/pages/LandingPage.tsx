@@ -22,7 +22,7 @@ import { LanguageSwitcher } from '../layout/LanguageSwitcher';
 import {
   CustomerAdvantageVisual,
   TaskerAdvantageVisual,
-} from '../components/landing/ComparisonVisuals';
+} from '../components/feature/landing/ComparisonVisuals';
 
 interface SampleTask {
   title: string;

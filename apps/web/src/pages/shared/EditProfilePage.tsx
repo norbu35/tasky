@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ResponsiveWizardShell } from '../../components/parity';
+import { ResponsiveWizardShell } from '../../layout/parity';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';

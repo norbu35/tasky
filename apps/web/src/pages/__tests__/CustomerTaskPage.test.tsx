@@ -6,7 +6,7 @@ import { AppContext } from '../../context/AppContext';
 import type { AppContextValue } from '../../context/AppContext';
 import type { ApiClient, Category, CursorPage, Task } from '../../lib/apiClient';
 import { CustomerTaskPage } from '../CustomerTaskPage';
-import type { IntakeSchema } from '../../components/task-creation/IntakeFormRenderer';
+import type { IntakeSchema } from '../../components/feature/task-creation/IntakeFormRenderer';
 
 // ─── Intake Schema Fixtures ────────────────────────────────────────────────
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useId } from 'react';
-import { ScreenFrame } from '../../layout/ScreenFrame';
+import { ScreenFrame } from '../ScreenFrame';
 import { cn } from '../../lib/utils';
 
 type ResponsiveFeedShellProps = {

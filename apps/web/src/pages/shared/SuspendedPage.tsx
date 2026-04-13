@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { StatePanel } from '../../components/parity';
+import { StatePanel } from '../../layout/parity';
 import { ScreenFrame } from '../../layout/ScreenFrame';
 
 export function SuspendedPage() {

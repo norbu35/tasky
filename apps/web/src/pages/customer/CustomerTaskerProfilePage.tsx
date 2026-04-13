@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { MessageSquareText, Star } from 'lucide-react';
 
-import { ActionRail, ResponsiveDetailShell } from '../../components/parity';
+import { ActionRail, ResponsiveDetailShell } from '../../layout/parity';
 import { Avatar, AvatarFallback } from '../../components/ui/avatar';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';

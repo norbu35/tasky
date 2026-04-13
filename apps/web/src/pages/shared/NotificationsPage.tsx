@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Bell } from 'lucide-react';
-import { ResponsiveFeedShell, StatePanel } from '../../components/parity';
+import { ResponsiveFeedShell, StatePanel } from '../../layout/parity';
 
 export function NotificationsPage() {
   const { t } = useTranslation();

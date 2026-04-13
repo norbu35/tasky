@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { RefreshCcw } from 'lucide-react';
 
-import { ResponsiveFeedShell, StatePanel } from '../../components/parity';
+import { ResponsiveFeedShell, StatePanel } from '../../layout/parity';
 
 export function AppUpdatePage() {
   const { t } = useTranslation();

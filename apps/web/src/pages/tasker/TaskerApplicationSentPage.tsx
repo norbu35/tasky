@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
-import { ResponsiveWizardShell } from '../../components/parity';
+import { ResponsiveWizardShell } from '../../layout/parity';
 
 export function TaskerApplicationSentPage() {
   const { t } = useTranslation();
