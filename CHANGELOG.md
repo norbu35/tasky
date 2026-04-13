@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-04-14 — Rewrite Hardening Follow-Up
+
+- **NotificationCommandPort** introduced with `registerDevice`, `unregisterDevice`, and `sendPush`. `NotificationCompositionService` and `BookingPublicOperationService` updated to depend on the port instead of `NotificationService`.
+- **AdminAuditCommandPort** introduced with `recordAdminAction`. `AdminTaskConciergeAssignmentService` restored durable audit evidence via `AuditEventDao`, replacing the logs-only fallback.
+- **`notificationCompositionMustUsePublicPorts`** ArchRule added to enforce that runtime composition cannot depend on `notification.application` classes.
+- **`package-lock.json`** removed — repo uses `pnpm` exclusively.
+
 ## 2026-04-13 — Tranche 10: Backend Finalization (COMPLETE)
 
 ### Phase 0: Workflow handler idempotency (infra gate)

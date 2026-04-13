@@ -913,14 +913,15 @@ plan. Do not treat the following as an unordered candidate list anymore.
 - **Async simplification** — `OutboxEnvelope` and `AutomationJobEnvelope` deleted (zero references); the live async foundation is the persisted outbox relay → RabbitMQ → workflow handlers.
 - **Public request-path convergence** — `NotificationController` and `AdminUserController` now route through new runtime composition services. All runtime composition services updated to use publicapi ports instead of direct DAO dependencies (`MessageDao`, `TaskDao`, `UserDao`/`AuditEventDao`).
 - **Admin/runtime convergence** — `AdminMessageCompositionService`, `AdminTaskConciergeAssignmentService`, and `AdminUserCompositionService` all use module publicapi ports; no runtime composition service depends on a DAO.
+- **Durable audit seam** — `AdminTaskConciergeAssignmentService` records concierge assignment through `AdminAuditCommandPort` → `AuditEventDao`, replacing the logs-only fallback introduced during Tranche 10.
 - **Documentation** — `docs/ARCHITECTURE.md` §2.3 documents the two allowed request-path shapes, forbidden patterns, and exception set.
-- All 9 architecture tests pass. `./gradlew gateSmoke` and `./gradlew openApiValidate` pass.
+- All 10 architecture tests pass. `./gradlew gateSmoke` and `./gradlew openApiValidate` pass.
 
 **Durable gaps carried forward**
 
 - Workflow handler idempotency guards exist (`WorkflowIdempotencyGuard`) but are not yet `ON CONFLICT`-based — duplicate event processing is guarded at the handler level, not at the database level.
 - `PaymentService` still contains QPay logic duplicated in `QPayPaymentProvider` — should delegate to `PaymentProvider` and delete embedded QPay code.
-- `AuditEventDao` is no longer used by `AdminTaskConciergeAssignmentService` (replaced with structured logging) — a dedicated audit command port should be introduced in a future pass.
+- Runtime composition services beyond the notification surface still depend on feature-module application services (booking, payment, category, location, analytics) — the `notificationCompositionMustUsePublicPorts` ArchRule enforces the notification surface as the first incrementally-adopted module.
 
 ---
 
