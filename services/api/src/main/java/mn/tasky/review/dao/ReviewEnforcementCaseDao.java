@@ -20,7 +20,8 @@ public interface ReviewEnforcementCaseDao {
     }
 
     @SqlUpdate("INSERT INTO review_enforcement_cases (id, booking_id, user_id, reason_code) "
-            + "VALUES (:id, :bookingId, :userId, :reasonCode)")
+            + "VALUES (:id, :bookingId, :userId, :reasonCode) "
+            + "ON CONFLICT (booking_id, user_id) DO NOTHING")
     void insert(
             @Bind("id") UUID id,
             @Bind("bookingId") UUID bookingId,
