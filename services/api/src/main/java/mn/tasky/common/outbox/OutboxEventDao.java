@@ -14,10 +14,12 @@ public interface OutboxEventDao {
     @SqlUpdate(
             """
             INSERT INTO domain_outbox_events
-                (id, event_type, aggregate_type, aggregate_id, payload, status, attempts, available_at, created_at)
+                (id, event_type, aggregate_type, aggregate_id, payload, status, attempts,
+                 available_at, created_at, correlation_id, causation_id, command_id, workflow_id, actor_id)
             VALUES
                 (:id, :eventType, :aggregateType, :aggregateId, CAST(:payload AS jsonb),
-                 :status, :attempts, :availableAt, :createdAt)
+                 :status, :attempts, :availableAt, :createdAt,
+                 :correlationId, :causationId, :commandId, :workflowId, :actorId)
             """)
     void insert(
             @Bind("id") UUID id,
@@ -28,7 +30,12 @@ public interface OutboxEventDao {
             @Bind("status") String status,
             @Bind("attempts") int attempts,
             @Bind("availableAt") Instant availableAt,
-            @Bind("createdAt") Instant createdAt);
+            @Bind("createdAt") Instant createdAt,
+            @Bind("correlationId") String correlationId,
+            @Bind("causationId") String causationId,
+            @Bind("commandId") String commandId,
+            @Bind("workflowId") String workflowId,
+            @Bind("actorId") String actorId);
 
     @SqlQuery(
             """
@@ -57,7 +64,12 @@ public interface OutboxEventDao {
                       e.available_at,
                       e.created_at,
                       e.processed_at,
-                      e.last_error
+                      e.last_error,
+                      e.correlation_id,
+                      e.causation_id,
+                      e.command_id,
+                      e.workflow_id,
+                      e.actor_id
             """)
     List<OutboxEvent> claimBatch(
             @Bind("now") Instant now, @Bind("claimUntil") Instant claimUntil, @Bind("limit") int limit);

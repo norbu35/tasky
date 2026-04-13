@@ -9,10 +9,16 @@ import java.util.Map;
 import java.util.UUID;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.common.observability.RequestObservabilityFilter;
+import mn.tasky.kernel.logging.LogField;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+/**
+ * Publishes domain events to the outbox table with enriched context propagation.
+ * Extracts correlation, causation, command, workflow, and actor identifiers from
+ * the current request's MDC so that downstream workers can trace the full chain.
+ */
 @Service
 public class DomainEventOutboxService {
 
@@ -32,8 +38,22 @@ public class DomainEventOutboxService {
     public void publish(String eventType, String aggregateType, UUID aggregateId, Map<String, Object> payload) {
         String payloadJson = toPayloadJson(enrichWithObservability(payload));
         Instant now = Instant.now();
+
         outboxEventDao.insert(
-                UUID.randomUUID(), eventType, aggregateType, aggregateId, payloadJson, "PENDING", 0, now, now);
+                UUID.randomUUID(),
+                eventType,
+                aggregateType,
+                aggregateId,
+                payloadJson,
+                "PENDING",
+                0,
+                now,
+                now,
+                extractMdc(LogField.CORRELATION_ID.key()),
+                extractMdc(LogField.CAUSATION_ID.key()),
+                extractMdc(LogField.COMMAND_ID.key()),
+                extractMdc(LogField.WORKFLOW_ID.key()),
+                extractMdc(LogField.ACTOR_ID.key()));
     }
 
     private Map<String, Object> enrichWithObservability(Map<String, Object> payload) {
@@ -57,6 +77,11 @@ public class DomainEventOutboxService {
             enriched.putIfAbsent(AnalyticsService.PROPERTY_PLATFORM, platform.toUpperCase(Locale.ROOT));
         }
         return enriched;
+    }
+
+    private String extractMdc(String key) {
+        String value = MDC.get(key);
+        return StringUtils.hasText(value) ? value : null;
     }
 
     private String toPayloadJson(Map<String, Object> payload) {

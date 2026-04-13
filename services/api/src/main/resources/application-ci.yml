@@ -45,3 +45,7 @@ tasky:
 
   feature:
     monetization-enabled: false
+
+  automation:
+    broker:
+      enabled: false

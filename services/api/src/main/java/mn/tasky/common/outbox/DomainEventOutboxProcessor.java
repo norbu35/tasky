@@ -1,72 +1,52 @@
 package mn.tasky.common.outbox;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import mn.tasky.analytics.application.AnalyticsService;
-import mn.tasky.auth.application.BadgeEvaluationService;
-import mn.tasky.auth.application.ReliabilityScoreService;
-import mn.tasky.messaging.application.MessagingService;
-import mn.tasky.notification.application.NotificationService;
-import mn.tasky.review.application.ReviewEnforcementService;
-import mn.tasky.wallet.application.WalletService;
+import mn.tasky.automation.broker.EventRelayPublisher;
+import mn.tasky.automation.event.AutomationEventEnvelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+/**
+ * Polls the outbox table and relays persisted events to the RabbitMQ event bus.
+ * The event was already persisted when this processor picks it up, so relay failures
+ * are retried without risk of data loss.
+ *
+ * Once all event families are migrated to workflow handlers, this class is deleted
+ * and the outbox service publishes directly to the broker at write time.
+ */
 @Service
+@ConditionalOnBean(EventRelayPublisher.class)
 public class DomainEventOutboxProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(DomainEventOutboxProcessor.class);
-    private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {};
 
     private final OutboxEventDao outboxEventDao;
     private final ObjectMapper objectMapper;
-    private final MessagingService messagingService;
-    private final NotificationService notificationService;
-    private final AnalyticsService analyticsService;
-    private final WalletService walletService;
-    private final ReviewEnforcementService reviewEnforcementService;
-    private final ReliabilityScoreService reliabilityScoreService;
-    private final BadgeEvaluationService badgeEvaluationService;
+    private final EventRelayPublisher eventRelayPublisher;
     private final int batchSize;
     private static final int MAX_ATTEMPTS = 10;
     private final long retryDelaySeconds;
     private final long processingLeaseSeconds;
-    private final int platformFeeBasisPoints;
 
     public DomainEventOutboxProcessor(
             OutboxEventDao outboxEventDao,
             ObjectMapper objectMapper,
-            MessagingService messagingService,
-            NotificationService notificationService,
-            AnalyticsService analyticsService,
-            WalletService walletService,
-            ReviewEnforcementService reviewEnforcementService,
-            ReliabilityScoreService reliabilityScoreService,
-            BadgeEvaluationService badgeEvaluationService,
+            EventRelayPublisher eventRelayPublisher,
             @Value("${tasky.outbox.processor.batch-size:25}") int batchSize,
             @Value("${tasky.outbox.processor.retry-delay-seconds:15}") long retryDelaySeconds,
-            @Value("${tasky.outbox.processor.processing-lease-seconds:60}") long processingLeaseSeconds,
-            @Value("${tasky.wallet.platform-fee-basis-points:1500}") int platformFeeBasisPoints) {
+            @Value("${tasky.outbox.processor.processing-lease-seconds:60}") long processingLeaseSeconds) {
         this.outboxEventDao = outboxEventDao;
         this.objectMapper = objectMapper;
-        this.messagingService = messagingService;
-        this.notificationService = notificationService;
-        this.analyticsService = analyticsService;
-        this.walletService = walletService;
-        this.reviewEnforcementService = reviewEnforcementService;
-        this.reliabilityScoreService = reliabilityScoreService;
-        this.badgeEvaluationService = badgeEvaluationService;
+        this.eventRelayPublisher = eventRelayPublisher;
         this.batchSize = batchSize;
         this.retryDelaySeconds = retryDelaySeconds;
         this.processingLeaseSeconds = processingLeaseSeconds;
-        this.platformFeeBasisPoints = platformFeeBasisPoints;
     }
 
     @Scheduled(fixedDelayString = "${tasky.outbox.processor.poll-interval-ms:1000}")
@@ -84,7 +64,7 @@ public class DomainEventOutboxProcessor {
                 continue;
             }
             try {
-                dispatch(event);
+                relay(event);
                 outboxEventDao.markProcessed(event.id(), Instant.now());
             } catch (RuntimeException exception) {
                 String error =
@@ -93,174 +73,33 @@ public class DomainEventOutboxProcessor {
                     error = error.substring(0, 1024);
                 }
                 outboxEventDao.markFailed(event.id(), Instant.now().plusSeconds(retryDelaySeconds), error);
-                log.warn(
-                        "Outbox event processing failed: id={} type={} error={}", event.id(), event.eventType(), error);
+                log.warn("Outbox event relay failed: id={} type={} error={}", event.id(), event.eventType(), error);
             }
         }
     }
 
-    private void dispatch(OutboxEvent event) {
-        Map<String, Object> payload = parsePayload(event.payload());
-        switch (event.eventType()) {
-            case OutboxEventTypes.TASK_APPLICATION_ACCEPTED -> handleTaskApplicationAccepted(payload);
-            case OutboxEventTypes.PAYMENT_CONFIRMED -> handlePaymentConfirmed(payload);
-            case OutboxEventTypes.BOOKING_COMPLETED -> handleBookingCompleted(payload);
-            default -> throw new IllegalArgumentException("Unsupported outbox event type: " + event.eventType());
-        }
+    private void relay(OutboxEvent event) {
+        AutomationEventEnvelope envelope = AutomationEventEnvelope.builder()
+                .eventId(event.id().toString())
+                .eventType(event.eventType())
+                .aggregateType(event.aggregateType())
+                .aggregateId(event.aggregateId() != null ? event.aggregateId().toString() : null)
+                .payload(parsePayload(event.payload()))
+                .correlationId(event.correlationId())
+                .causationId(event.causationId())
+                .commandId(event.commandId())
+                .workflowId(event.workflowId())
+                .actorId(event.actorId())
+                .occurredAt(event.createdAt())
+                .build();
+        eventRelayPublisher.publish(envelope);
     }
 
-    private Map<String, Object> parsePayload(String payloadJson) {
+    private java.util.Map<String, Object> parsePayload(String payloadJson) {
         try {
-            return objectMapper.readValue(payloadJson, MAP_TYPE);
+            return objectMapper.readValue(payloadJson, new com.fasterxml.jackson.core.type.TypeReference<>() {});
         } catch (Exception exception) {
             throw new IllegalArgumentException("Failed to parse outbox event payload.", exception);
-        }
-    }
-
-    private void handleTaskApplicationAccepted(Map<String, Object> payload) {
-        String taskId = requiredString(payload, "task_id");
-        String bookingId = requiredString(payload, "booking_id");
-        String customerId = requiredString(payload, "customer_id");
-        String taskerId = requiredString(payload, "tasker_id");
-        String applicationId = requiredString(payload, "application_id");
-
-        String conversationId = messagingService.startConversation(taskId, taskerId, customerId);
-        notificationService.sendPushWithEventKey(
-                taskerId, "You are hired!", "Your application has been accepted.", "HIRED", "HIRED_" + bookingId);
-
-        analyticsService.track(
-                AnalyticsService.EVENT_TASKER_ACCEPTED,
-                customerId,
-                withObservability(
-                        payload,
-                        Map.of(
-                                AnalyticsService.PROPERTY_TASK_ID,
-                                taskId,
-                                AnalyticsService.PROPERTY_BOOKING_ID,
-                                bookingId,
-                                "tasker_id",
-                                taskerId,
-                                "application_id",
-                                applicationId,
-                                "conversation_id",
-                                conversationId)));
-        analyticsService.track(
-                AnalyticsService.EVENT_BOOKING_CONFIRMED,
-                customerId,
-                withObservability(
-                        payload,
-                        Map.of(
-                                AnalyticsService.PROPERTY_TASK_ID,
-                                taskId,
-                                AnalyticsService.PROPERTY_BOOKING_ID,
-                                bookingId,
-                                "tasker_id",
-                                taskerId,
-                                "application_id",
-                                applicationId)));
-    }
-
-    private void handlePaymentConfirmed(Map<String, Object> payload) {
-        String paymentId = requiredString(payload, "payment_id");
-        String bookingId = requiredString(payload, "booking_id");
-        String taskId = requiredString(payload, "task_id");
-        String customerId = requiredString(payload, "customer_id");
-        String taskerId = requiredString(payload, "tasker_id");
-
-        notificationService.sendPushWithEventKey(
-                taskerId,
-                "Booking Confirmed",
-                "Payment received for booking #" + bookingId,
-                "BOOKING_CONFIRMED",
-                "BOOKING_CONFIRMED_TASKER_" + bookingId);
-        notificationService.sendPushWithEventKey(
-                customerId,
-                "Booking Confirmed",
-                "Your payment for booking #" + bookingId + " was successful.",
-                "BOOKING_CONFIRMED",
-                "BOOKING_CONFIRMED_CUSTOMER_" + bookingId);
-        analyticsService.track(
-                AnalyticsService.EVENT_PAYMENT_CONFIRMED,
-                customerId,
-                withObservability(
-                        payload,
-                        Map.of(
-                                AnalyticsService.PROPERTY_BOOKING_ID,
-                                bookingId,
-                                AnalyticsService.PROPERTY_TASK_ID,
-                                taskId,
-                                "payment_id",
-                                paymentId)));
-    }
-
-    private void handleBookingCompleted(Map<String, Object> payload) {
-        String bookingId = requiredString(payload, "booking_id");
-        String taskId = requiredString(payload, "task_id");
-        String customerId = requiredString(payload, "customer_id");
-        String taskerId = requiredString(payload, "tasker_id");
-        int price = requiredInt(payload);
-
-        walletService.creditTaskCompletion(taskerId, bookingId, price, platformFeeBasisPoints);
-        notificationService.sendPushWithEventKey(
-                taskerId,
-                "Job Complete",
-                "The customer has marked the job as complete.",
-                "JOB_COMPLETED",
-                "BOOKING_COMPLETED_" + bookingId);
-        analyticsService.track(
-                AnalyticsService.EVENT_BOOKING_COMPLETED,
-                customerId,
-                withObservability(
-                        payload,
-                        Map.of(
-                                AnalyticsService.PROPERTY_BOOKING_ID,
-                                bookingId,
-                                AnalyticsService.PROPERTY_TASK_ID,
-                                taskId,
-                                "tasker_id",
-                                taskerId)));
-
-        reviewEnforcementService.createCasesForBooking(bookingId, customerId, taskerId);
-
-        reliabilityScoreService.recompute(taskerId);
-        badgeEvaluationService.evaluate(taskerId);
-    }
-
-    private String requiredString(Map<String, Object> payload, String key) {
-        Object value = payload.get(key);
-        if (value == null) {
-            throw new IllegalArgumentException("Missing payload field: " + key);
-        }
-        return value.toString();
-    }
-
-    private int requiredInt(Map<String, Object> payload) {
-        Object value = payload.get("price");
-        if (value == null) {
-            throw new IllegalArgumentException("Missing payload field: " + "price");
-        }
-        if (value instanceof Number number) {
-            return number.intValue();
-        }
-        try {
-            return Integer.parseInt(value.toString());
-        } catch (NumberFormatException exception) {
-            throw new IllegalArgumentException("Payload field is not an integer: " + "price", exception);
-        }
-    }
-
-    private Map<String, Object> withObservability(Map<String, Object> payload, Map<String, Object> base) {
-        Map<String, Object> enriched = new LinkedHashMap<>(base);
-        copyIfPresent(payload, enriched, AnalyticsService.PROPERTY_CORRELATION_ID);
-        copyIfPresent(payload, enriched, AnalyticsService.PROPERTY_LOCALE);
-        copyIfPresent(payload, enriched, AnalyticsService.PROPERTY_PLATFORM);
-        return enriched;
-    }
-
-    private void copyIfPresent(Map<String, Object> source, Map<String, Object> target, String key) {
-        Object value = source.get(key);
-        if (value != null) {
-            target.putIfAbsent(key, value);
         }
     }
 }

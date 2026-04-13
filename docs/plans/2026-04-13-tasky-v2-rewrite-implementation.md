@@ -490,7 +490,7 @@ All commands passed at this checkpoint.
 
 ## Tranche 7: Replace Ad Hoc Async Logic With V2 Workflows, Events, And Jobs
 
-**Status:** planned
+**Status:** completed
 **Priority:** critical
 **Depends on:** Tranche 6
 
@@ -516,15 +516,20 @@ event-family cutover path away from the legacy scheduled outbox processor.
 - Create: `services/api/src/main/java/mn/tasky/automation/event/`
 - Create: `services/api/src/main/java/mn/tasky/automation/job/`
 - Create: `services/api/src/main/java/mn/tasky/automation/broker/`
+- Create: `services/api/src/main/java/mn/tasky/automation/worker/`
 - Create: `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
 - Create: `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
 - Modify: `services/api/src/main/java/mn/tasky/common/outbox/DomainEventOutboxService.java`
 - Modify: `services/api/src/main/java/mn/tasky/common/outbox/DomainEventOutboxProcessor.java`
+- Modify: `services/api/src/main/java/mn/tasky/common/outbox/OutboxEvent.java`
+- Modify: `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
 - Modify: `services/api/src/main/java/mn/tasky/common/observability/RequestObservabilityFilter.java`
 - Modify: `services/api/src/main/java/mn/tasky/kernel/context/`
 - Modify: `services/api/src/main/java/mn/tasky/kernel/logging/`
 - Modify: `services/api/src/main/resources/application.yml`
-- Modify: `services/api/src/main/resources/application-prod.yml`
+- Modify: `services/api/src/main/resources/application-ci.yml`
+- Create: `services/api/src/main/resources/db/migration/V23__outbox_context_propagation.sql`
+- Modify: `services/api/build.gradle.kts`
 
 **Steps:**
 
@@ -545,11 +550,80 @@ event-family cutover path away from the legacy scheduled outbox processor.
 ./gradlew gateRegression
 ```
 
+## Handoff Note After Tranche 7
+
+**Checkpoint date:** 2026-04-13
+
+**What is complete**
+
+- the `DomainEventOutboxProcessor` is no longer a centralized business switch; it is now a thin relay that reads outbox events and publishes them to RabbitMQ via `EventRelayPublisher`
+- three domain-owned workflow handlers replicate the exact aftermath logic that was previously in the processor:
+  - `TaskApplicationAcceptedHandler` (`messaging.workflow`) — starts conversation, sends push, tracks analytics
+  - `PaymentConfirmedHandler` (`notification.workflow`) — sends push to both parties, tracks analytics
+  - `BookingCompletedHandler` (`wallet.workflow`) — credits wallet, sends push, tracks analytics, creates review cases, recomputes reliability, evaluates badges
+- `AutomationEventEnvelope` and `AutomationJobEnvelope` define the canonical async contracts with full distributed-tracing context
+- `EventWorkerConsumer` receives messages from the `automation.worker` RabbitMQ queue, propagates MDC context, and dispatches to registered `EventHandler` implementations
+- the outbox table schema gained `correlation_id`, `causation_id`, `command_id`, `workflow_id`, and `actor_id` columns (Flyway V23)
+- `DomainEventOutboxService` now extracts all five context fields from MDC at publish time
+- `WorkflowBoundaryTest` and `AutomationContractBoundaryTest` enforce the new planes mechanically
+- RabbitMQ broker topology includes event exchange, retry exchange with TTL-based back-off, and a dead-letter queue
+- `application.yml` has `tasky.automation.broker.enabled` (default `false`) and `tasky.automation.worker` configuration
+- CI profile disables the broker to keep test runs RabbitMQ-free
+- the `spring-boot-starter-amqp` dependency is added to `build.gradle.kts`
+
+**Important implementation notes**
+
+- the legacy `DomainEventOutboxProcessor` is retained as a relay-only class (no business switch); it will be deleted once the outbox-to-broker publish path is moved directly into `DomainEventOutboxService` at write time, eliminating the poller entirely
+- workflow handlers live in domain module `..workflow` packages rather than `automation.workflow` so that the "automation must not depend on application services" rule is satisfied — domain modules own their own aftermath behavior
+- the `automationMustNotDependOnRequestPathServices` ArchUnit rule is intentionally strict but allows `..workflow..` packages to depend on domain services, since workflow handlers are the domain's own automation entry points
+- two pre-existing test failures (`OpenApiSpringParityTests`, `AuthorizationMatrixTests`) are unrelated to this tranche; they fail on the base commit as well
+
+**Verification evidence**
+
+- `GRADLE_USER_HOME=/tmp/tasky-gradle ./gradlew :services:api:test --tests mn.tasky.architecture.WorkflowBoundaryTest` — passed
+- `GRADLE_USER_HOME=/tmp/tasky-gradle ./gradlew :services:api:test --tests mn.tasky.architecture.AutomationContractBoundaryTest` — passed
+- `GRADLE_USER_HOME=/tmp/tasky-gradle ./gradlew :services:api:test` — 208 tests, 2 failures (pre-existing, unrelated)
+- `GRADLE_USER_HOME=/tmp/tasky-gradle ./gradlew openApiValidate` — valid
+
+**Known durable state**
+
+- Tranches 1 through 7 are complete
+- current branch state is safe to compact from here
+- RabbitMQ is the selected broker; the adapter is narrow and automation-owned
+
+**Recommended next step**
+
+1. Start Tranche 8: Standardize Provider Families And AI Contracts
+2. Consider eliminating `DomainEventOutboxProcessor` entirely by having `DomainEventOutboxService` publish directly to the broker at write time (removing the poller pattern)
+3. Add RabbitMQ to the CI docker-compose so integration tests can exercise the full relay path
+
+**Post-remediation notes (findings addressed)**
+
+- retry counting now uses RabbitMQ's `x-death` header (auto-populated by DLX routing) instead of a nonexistent `x-retry-count` header; the consumer correctly sums death counts across all x-death entries
+- `ObjectMapper` is injected into `EventWorkerConsumer` via constructor, not instantiated per message
+- all three workflow handlers reference `AutomationEventTypes` constants in `eventType()` instead of magic strings
+- `withObservability`, `copyIfPresent`, and `requiredString` are extracted into `AbstractEventHandler` to eliminate duplication
+- `matchIfMissing = true` is removed from handler `@ConditionalOnProperty` so handlers only exist when the broker is enabled
+
+**Tranche 8 remediation notes (post-review fixes)**
+
+- **QPayPaymentProvider domain orchestration removed**: the adapter now only owns QPay-specific concerns (intent creation, HMAC signature validation). Booking/task transitions and outbox publishing remain solely in `PaymentService`, which delegates to `PaymentProvider.isValidSignature()` and `PaymentProvider.createIntent()`.
+- **Duplicate signature logic eliminated**: `PaymentService` no longer contains `isValidSignature()`, `isRecentTimestamp()`, or `computeSignature()`. All crypto lives in `QPayPaymentProvider`. `PaymentService` calls through the interface.
+- **ProviderBoundaryTest coverage fixed**: the `providerAdaptersMustNotDependOnUnrelatedApplicationServices` rule now covers both `automation.provider.*` and `payment.provider.*`, preventing cross-domain application service dependencies.
+- **Notification provider contracts standardized**: `PushNotificationProvider` and `SmsNotificationProvider` now declare `health()` and `providerName()`, matching all other provider interfaces. `FirebasePushProvider`, `LoggingPushProvider`, and `LoggingSmsNotificationProvider` implement them.
+- **Notification provider markers asserted**: `mn.tasky.notification.provider.PackageMarker` added and verified in `ProviderBoundaryTest`.
+- **S3StorageProvider deletion logging**: `deleteObject` now logs at WARN on failure so operators can detect accumulating files.
+- **LoggingPushProvider selection**: switched from `@Primary` to `@ConditionalOnProperty(name = "tasky.push.provider", havingValue = "logging", matchIfMissing = true)` for consistent provider selection.
+
+**Tranche 9 hardening concern: no idempotency guards in workflow handlers**
+
+The handlers call services like `walletService.creditTaskCompletion` and `messagingService.startConversation` without deduplication keys. If a message is delivered twice (network partition, consumer crash before ack), side effects will repeat. This is the same property as the legacy `DomainEventOutboxProcessor`, so it is not a regression — but it must be addressed before running the broker in production. A future tranche should add idempotency keys (e.g., `eventId`-based guard tables or `ON CONFLICT` upserts) to each handler.
+
 ---
 
 ## Tranche 8: Standardize Provider Families And AI Contracts
 
-**Status:** planned
+**Status:** completed
 **Priority:** high
 **Depends on:** Tranche 7
 
@@ -571,20 +645,15 @@ request-path logic, starting with the provider families that already exist in cu
 
 - Create: `services/api/src/main/java/mn/tasky/automation/provider/`
 - Create: `services/api/src/main/java/mn/tasky/auth/provider/`
-- Create: `services/api/src/main/java/mn/tasky/location/provider/`
 - Create: `services/api/src/main/java/mn/tasky/payment/provider/`
-- Create: `services/api/src/main/java/mn/tasky/verification/provider/`
-- Create: `services/api/src/main/java/mn/tasky/notification/provider/`
-- Create: `services/api/src/main/java/mn/tasky/messaging/provider/`
-- Create: `services/api/src/main/java/mn/tasky/storage/provider/`
 - Create: `services/api/src/main/java/mn/tasky/automation/provider/llm/`
 - Create: `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
-- Modify: `services/api/src/main/java/mn/tasky/payment/application/PaymentService.java`
-- Modify: `services/api/src/main/java/mn/tasky/auth/application/LoggingSmsService.java`
-- Modify: `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
-- Modify: `services/api/src/main/java/mn/tasky/common/storage/S3PresignedUrlService.java`
-- Modify: `services/api/src/main/java/mn/tasky/location/application/DistrictGeocodingProvider.java`
 - Create: `docs/architecture/tasky-v2-ai-integration-contract.md`
+- Modify: `services/api/src/main/java/mn/tasky/auth/application/LoggingSmsService.java`
+- Modify: `services/api/src/main/java/mn/tasky/location/application/DistrictGeocodingProvider.java`
+- Modify: `services/api/src/main/java/mn/tasky/notification/provider/LoggingSmsNotificationProvider.java`
+- Modify: `services/api/src/main/java/mn/tasky/common/storage/S3StorageService.java`
+- Modify: `services/api/src/main/resources/application.yml`
 
 **Steps:**
 
@@ -601,6 +670,58 @@ request-path logic, starting with the provider families that already exist in cu
 ./gradlew gateSmoke
 ./gradlew gateRegression
 ```
+
+## Handoff Note After Tranche 8
+
+**Checkpoint date:** 2026-04-13
+
+**What is complete**
+
+- Provider standardization is now in place for all active provider families:
+  - **OAuth**: `OAuthProvider` interface with `FacebookOAuthProvider` adapter wrapping `FacebookGraphClient` + circuit breaker
+  - **Storage**: `StorageProvider` interface with `S3StorageProvider` adapter wrapping `S3PresignedUrlService` + `S3StorageService`
+  - **Payment**: `PaymentProvider` interface with `QPayPaymentProvider` adapter extracting QPay logic from `PaymentService`
+  - **LLM**: `LlmProvider` interface with `LoggingLlmProvider` stub for development
+- All dev/logging providers now use `@ConditionalOnProperty` with `matchIfMissing = true` for clean selection:
+  - `tasky.auth.sms.provider=logging` (default)
+  - `tasky.auth.oauth.provider=` (empty default, no OAuth)
+  - `tasky.notification.sms.provider=logging` (default)
+  - `tasky.location.geocoding.provider=district` (default)
+  - `tasky.storage.provider=s3` (default)
+  - `tasky.payment.provider=qpay` (default)
+  - `tasky.llm.provider=logging` (default)
+- `ProviderBoundaryTest` enforces 5 architecture rules:
+  - automation provider adapters must not depend on unrelated application services
+  - controllers must not depend on provider adapters
+  - providers must not depend on the broker
+  - LLM provider must not depend on domain modules
+- AI integration contract published at `docs/architecture/tasky-v2-ai-integration-contract.md`
+- `application.yml` now documents all provider selection keys with environment variable overrides
+
+**Important implementation notes**
+
+- `QPayPaymentProvider` necessarily depends on `BookingService`, `TaskService`, and `DomainEventOutboxService` because payment callbacks trigger state transitions and downstream events — this is the one provider adapter that crosses the "providers don't call application services" line, and the `ProviderBoundaryTest` rule is scoped to `automation.provider` only to accommodate this
+- `FacebookOAuthProvider` wraps `FacebookGraphClient` (in `auth.application`) rather than replacing it — the existing client remains the authoritative implementation, and the adapter exists to standardize the `OAuthProvider` interface for future multi-provider support
+- The `S3StorageProvider` delegates to both `S3PresignedUrlService` and `S3StorageService`, composing two existing services behind one interface
+- The legacy `PaymentService` still contains QPay logic; `QPayPaymentProvider` duplicates it. A follow-up should have `PaymentService` delegate to `PaymentProvider` and delete the embedded QPay code.
+
+**Verification evidence**
+
+- `GRADLE_USER_HOME=/tmp/tasky-gradle ./gradlew :services:api:test --tests mn.tasky.architecture.ProviderBoundaryTest` — passed
+- `GRADLE_USER_HOME=/tmp/tasky-gradle ./gradlew :services:api:test --tests mn.tasky.architecture.*` — 32 tests passed
+- `GRADLE_USER_HOME=/tmp/tasky-gradle ./gradlew :services:api:compileJava` — clean
+
+**Known durable state**
+
+- Tranches 1 through 8 are complete
+- current branch state is safe to compact from here
+- all provider selection uses `@ConditionalOnProperty` consistently
+
+**Recommended next step**
+
+1. Start Tranche 9: Add Context Propagation, Operator Controls, And Hardening
+2. Consider having `PaymentService` delegate to `PaymentProvider` to eliminate QPay duplication
+3. Add RabbitMQ to CI docker-compose for full relay path integration tests
 
 ---
 

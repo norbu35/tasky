@@ -14,4 +14,9 @@ public record OutboxEvent(
         Instant availableAt,
         Instant createdAt,
         Instant processedAt,
-        String lastError) {}
+        String lastError,
+        String correlationId,
+        String causationId,
+        String commandId,
+        String workflowId,
+        String actorId) {}

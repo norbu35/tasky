@@ -80,6 +80,10 @@ tasky:
   auth:
     otp-ttl-seconds: ${TASKY_OTP_TTL_SECONDS:300}
     otp-test-code: ${TASKY_OTP_TEST_CODE:}
+    sms:
+      provider: ${TASKY_AUTH_SMS_PROVIDER:logging}
+    oauth:
+      provider: ${TASKY_AUTH_OAUTH_PROVIDER:}
   dev-auth:
     enabled: ${TASKY_DEV_AUTH_ENABLED:false}
   rate-limit:
@@ -111,3 +115,24 @@ tasky:
     #   logging   — dev default; logs pushes to console, no real delivery
     #   firebase  — production; requires FIREBASE_SERVICE_ACCOUNT_JSON env var
     #   expo      — DEPRECATED; retained in config history only, class removed
+  notification:
+    sms:
+      provider: ${TASKY_NOTIFICATION_SMS_PROVIDER:logging}
+  payment:
+    provider: ${TASKY_PAYMENT_PROVIDER:qpay}
+  location:
+    geocoding:
+      provider: ${TASKY_GEOCODING_PROVIDER:district}
+  llm:
+    provider: ${TASKY_LLM_PROVIDER:logging}
+
+  automation:
+    broker:
+      enabled: ${TASKY_AUTOMATION_BROKER_ENABLED:false}
+      exchange: tasky.events
+      retry-exchange: tasky.events.retry
+      dlq-exchange: tasky.events.dlq
+      default-routing-key: 'task.#'
+    worker:
+      concurrency: ${TASKY_WORKER_CONCURRENCY:4}
+      max-retries: ${TASKY_WORKER_MAX_RETRIES:3}
