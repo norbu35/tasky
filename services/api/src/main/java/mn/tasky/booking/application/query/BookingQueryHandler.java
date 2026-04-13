@@ -3,7 +3,9 @@ package mn.tasky.booking.application.query;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import mn.tasky.booking.application.BookingScheduleService;
 import mn.tasky.booking.application.BookingService;
+import mn.tasky.booking.dto.BookingScheduleEvent;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.publicapi.BookingQueryPort;
 import org.springframework.stereotype.Service;
@@ -11,9 +13,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class BookingQueryHandler implements BookingQueryPort {
     private final BookingService bookingService;
+    private final BookingScheduleService bookingScheduleService;
 
-    public BookingQueryHandler(BookingService bookingService) {
+    public BookingQueryHandler(BookingService bookingService, BookingScheduleService bookingScheduleService) {
         this.bookingService = bookingService;
+        this.bookingScheduleService = bookingScheduleService;
     }
 
     @Override
@@ -34,5 +38,15 @@ public class BookingQueryHandler implements BookingQueryPort {
     @Override
     public Optional<Instant> getTaskerMarkedDoneAt(String bookingId) {
         return bookingService.getTaskerMarkedDoneAt(bookingId);
+    }
+
+    @Override
+    public List<BookingScheduleEvent> listScheduleEvents(String bookingId, String requestingUserId) {
+        return bookingScheduleService.listScheduleEvents(bookingId, requestingUserId);
+    }
+
+    @Override
+    public Optional<BookingScheduleEvent> getScheduleEvent(String eventId) {
+        return bookingScheduleService.getScheduleEvent(eventId);
     }
 }

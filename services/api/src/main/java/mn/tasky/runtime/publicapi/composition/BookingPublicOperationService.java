@@ -8,6 +8,8 @@ import mn.tasky.booking.application.RepeatBookingService;
 import mn.tasky.booking.dto.BookingMarkDoneResult;
 import mn.tasky.booking.dto.BookingScheduleEvent;
 import mn.tasky.booking.dto.BookingTransitionResult;
+import mn.tasky.booking.dto.NoShowFlagResult;
+import mn.tasky.booking.dto.RebookResult;
 import mn.tasky.booking.dto.RescheduleRequest;
 import mn.tasky.booking.dto.RescheduleRespondRequest;
 import mn.tasky.booking.publicapi.BookingCommandPort;
@@ -202,7 +204,7 @@ public class BookingPublicOperationService {
         }
 
         try {
-            NoShowService.NoShowFlagResult result = noShowService.flagNoShow(bookingId, userId);
+            NoShowFlagResult result = noShowService.flagNoShow(bookingId, userId);
             if (result.success()) {
                 idempotencyService.completeWithResource(
                         userId,
@@ -328,18 +330,17 @@ public class BookingPublicOperationService {
     }
 
     public BookingOperationOutcome rebook(String userId, String bookingId) {
-        RepeatBookingService.RebookResult result = repeatBookingService.rebook(bookingId, userId);
+        RebookResult result = repeatBookingService.rebook(bookingId, userId);
         if (result.isSuccess()) {
             return BookingOperationOutcome.created(bookingResponseCompositionService.rebookTaskResponse(result.task()));
         }
 
         return switch (result.errorCode()) {
-            case RepeatBookingService.RebookResult.NOT_FOUND,
-                    RepeatBookingService.RebookResult.TASK_NOT_FOUND -> BookingOperationOutcome.failure(
+            case RebookResult.NOT_FOUND, RebookResult.TASK_NOT_FOUND -> BookingOperationOutcome.failure(
                     BookingOperationOutcome.Status.NOT_FOUND, "NOT_FOUND", result.errorMessage());
-            case RepeatBookingService.RebookResult.NOT_COMPLETED -> BookingOperationOutcome.failure(
+            case RebookResult.NOT_COMPLETED -> BookingOperationOutcome.failure(
                     BookingOperationOutcome.Status.NOT_COMPLETED, "NOT_COMPLETED", result.errorMessage());
-            case RepeatBookingService.RebookResult.FORBIDDEN -> BookingOperationOutcome.failure(
+            case RebookResult.FORBIDDEN -> BookingOperationOutcome.failure(
                     BookingOperationOutcome.Status.FORBIDDEN, "FORBIDDEN", result.errorMessage());
             default -> BookingOperationOutcome.internalError();
         };

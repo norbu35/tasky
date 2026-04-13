@@ -3,6 +3,7 @@ package mn.tasky.booking.publicapi;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import mn.tasky.booking.dto.BookingScheduleEvent;
 import mn.tasky.booking.dto.BookingState;
 
 public interface BookingQueryPort {
@@ -13,4 +14,8 @@ public interface BookingQueryPort {
     List<BookingState> listBookings(String userId, String role, String status, String cursor, int limit);
 
     Optional<Instant> getTaskerMarkedDoneAt(String bookingId);
+
+    List<BookingScheduleEvent> listScheduleEvents(String bookingId, String requestingUserId);
+
+    Optional<BookingScheduleEvent> getScheduleEvent(String eventId);
 }

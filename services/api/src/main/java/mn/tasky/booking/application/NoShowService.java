@@ -10,6 +10,7 @@ import mn.tasky.booking.dao.BookingScheduleEventDao;
 import mn.tasky.booking.dao.BookingTimelineEventDao;
 import mn.tasky.booking.dto.BookingScheduleEvent;
 import mn.tasky.booking.dto.BookingState;
+import mn.tasky.booking.dto.NoShowFlagResult;
 import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
@@ -184,19 +185,5 @@ public class NoShowService {
         BookingState updated = bookingDao.findById(bookingId).orElse(booking);
         log.info("Booking {} flagged as NO_SHOW by {} — no-show party: {}", bookingId, flaggingUserId, noShowPartyId);
         return NoShowFlagResult.success(updated);
-    }
-
-    /**
-     * Result of a no-show flag attempt.
-     */
-    public record NoShowFlagResult(boolean success, BookingState booking, String errorCode) {
-
-        public static NoShowFlagResult success(BookingState booking) {
-            return new NoShowFlagResult(true, booking, null);
-        }
-
-        public static NoShowFlagResult error(String errorCode) {
-            return new NoShowFlagResult(false, null, errorCode);
-        }
     }
 }
