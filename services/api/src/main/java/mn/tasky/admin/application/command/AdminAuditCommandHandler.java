@@ -14,7 +14,8 @@ public class AdminAuditCommandHandler implements AdminAuditCommandPort {
     }
 
     @Override
-    public void recordAdminAction(String adminId, String actionType, String entityType, String entityId, String metadataJson) {
+    public void recordAdminAction(
+            String adminId, String actionType, String entityType, String entityId, String metadataJson) {
         auditEventDao.insert(adminId, actionType, entityType, entityId, metadataJson);
     }
 }

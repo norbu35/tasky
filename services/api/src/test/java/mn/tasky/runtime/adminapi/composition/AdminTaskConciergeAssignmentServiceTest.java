@@ -40,16 +40,32 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class AdminTaskConciergeAssignmentServiceTest {
 
-    @Mock private MarketplaceQueryPort marketplaceQueryPort;
-    @Mock private MarketplaceCommandPort marketplaceCommandPort;
-    @Mock private AdminAuditCommandPort adminAuditCommandPort;
-    @Mock private IdentityQueryPort identityQueryPort;
-    @Mock private BookingCommandPort bookingCommandPort;
-    @Mock private BookingQueryPort bookingQueryPort;
-    @Mock private IdempotencyService idempotencyService;
-    @Mock private BookingResponseCompositionService bookingResponseCompositionService;
+    @Mock
+    private MarketplaceQueryPort marketplaceQueryPort;
 
-    @Captor private ArgumentCaptor<String> metadataCaptor;
+    @Mock
+    private MarketplaceCommandPort marketplaceCommandPort;
+
+    @Mock
+    private AdminAuditCommandPort adminAuditCommandPort;
+
+    @Mock
+    private IdentityQueryPort identityQueryPort;
+
+    @Mock
+    private BookingCommandPort bookingCommandPort;
+
+    @Mock
+    private BookingQueryPort bookingQueryPort;
+
+    @Mock
+    private IdempotencyService idempotencyService;
+
+    @Mock
+    private BookingResponseCompositionService bookingResponseCompositionService;
+
+    @Captor
+    private ArgumentCaptor<String> metadataCaptor;
 
     private AdminTaskConciergeAssignmentService service;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -84,37 +100,57 @@ class AdminTaskConciergeAssignmentServiceTest {
 
         // Task lookup
         TaskState task = new TaskState(
-                taskId, customerId, null, "Test task", 1000,
-                47.9, 106.9, "Ulaanbaatar", "OPEN", Instant.now(),
-                null, null, null, null, Instant.now(), Instant.now());
+                taskId,
+                customerId,
+                null,
+                "Test task",
+                1000,
+                47.9,
+                106.9,
+                "Ulaanbaatar",
+                "OPEN",
+                Instant.now(),
+                null,
+                null,
+                null,
+                null,
+                Instant.now(),
+                Instant.now());
         when(marketplaceQueryPort.getTask(taskId)).thenReturn(Optional.of(task));
 
         // Tasker verification
-        UserProfile tasker = new UserProfile(
-                taskerId, "+97699112233", "TASKER", "VERIFIED", "Test User", null,
-                0.0, 0, false, null);
+        UserProfile tasker =
+                new UserProfile(taskerId, "+97699112233", "TASKER", "VERIFIED", "Test User", null, 0.0, 0, false, null);
         when(identityQueryPort.getProfile(taskerId)).thenReturn(Optional.of(tasker));
 
         // Booking creation
         BookingState booking = new BookingState(
-                bookingId, taskId, taskerId, customerId, 1000, "ASSIGNED",
-                null, true, Instant.now(), "CONCIERGE", false, Instant.now(), Instant.now(), Instant.now());
+                bookingId,
+                taskId,
+                taskerId,
+                customerId,
+                1000,
+                "ASSIGNED",
+                null,
+                true,
+                Instant.now(),
+                "CONCIERGE",
+                false,
+                Instant.now(),
+                Instant.now(),
+                Instant.now());
         when(bookingCommandPort.createBooking(anyString(), anyString(), anyString(), anyInt(), anyBoolean(), any()))
                 .thenReturn(booking);
-        when(bookingResponseCompositionService.basicBookingResponse(any()))
-                .thenReturn(Map.of("id", bookingId));
+        when(bookingResponseCompositionService.basicBookingResponse(any())).thenReturn(Map.of("id", bookingId));
 
         // Execute
-        AdminTaskConciergeAssignmentOutcome outcome = service.conciergeAssign(
-                adminId, taskId, taskerId, "test override", true, idempotencyKey);
+        AdminTaskConciergeAssignmentOutcome outcome =
+                service.conciergeAssign(adminId, taskId, taskerId, "test override", true, idempotencyKey);
 
         // Verify the durable audit write happened (not just a log line)
-        verify(adminAuditCommandPort).recordAdminAction(
-                eq(adminId),
-                eq("CONCIERGE_ASSIGN"),
-                eq("BOOKING"),
-                eq(bookingId),
-                metadataCaptor.capture());
+        verify(adminAuditCommandPort)
+                .recordAdminAction(
+                        eq(adminId), eq("CONCIERGE_ASSIGN"), eq("BOOKING"), eq(bookingId), metadataCaptor.capture());
 
         // Verify the audit metadata contains the key evidence fields
         String metadata = metadataCaptor.getValue();
@@ -143,14 +179,27 @@ class AdminTaskConciergeAssignmentServiceTest {
                 .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
 
         TaskState task = new TaskState(
-                taskId, "customer-001", null, "Test task", 1000,
-                47.9, 106.9, "Ulaanbaatar", "COMPLETED", Instant.now(),
-                null, null, null, null, Instant.now(), Instant.now());
+                taskId,
+                "customer-001",
+                null,
+                "Test task",
+                1000,
+                47.9,
+                106.9,
+                "Ulaanbaatar",
+                "COMPLETED",
+                Instant.now(),
+                null,
+                null,
+                null,
+                null,
+                Instant.now(),
+                Instant.now());
         when(marketplaceQueryPort.getTask(taskId)).thenReturn(Optional.of(task));
 
         service.conciergeAssign(adminId, taskId, taskerId, null, true, idempotencyKey);
 
-        verify(adminAuditCommandPort, never()).recordAdminAction(
-                anyString(), anyString(), anyString(), anyString(), anyString());
+        verify(adminAuditCommandPort, never())
+                .recordAdminAction(anyString(), anyString(), anyString(), anyString(), anyString());
     }
 }
