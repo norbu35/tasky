@@ -274,7 +274,7 @@ class BookingScenarioTests {
                         taskService,
                         authService,
                         mock(mn.tasky.common.outbox.DomainEventOutboxService.class),
-                        mock(mn.tasky.dispute.dao.DisputeDao.class));
+                        mock(mn.tasky.trust.publicapi.TrustQueryPort.class));
 
         // Use standard cancellation reason
         lifecycleService.cancelBooking("tasker-1", booking.id(), "Car broke down");
