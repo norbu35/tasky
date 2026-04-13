@@ -36,23 +36,26 @@ importers:
         specifier: ^9.1.8
         version: 9.1.8(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))
       '@react-native-async-storage/async-storage':
-        specifier: 2.2.0
-        version: 2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))
+        specifier: 3.0.2
+        version: 3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
       '@react-native-community/datetimepicker':
         specifier: 8.6.0
         version: 8.6.0(expo@55.0.14)(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
       '@react-native-firebase/app':
         specifier: ^24.0.0
-        version: 24.0.0(@react-native-async-storage/async-storage@2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0)))(expo@55.0.14)(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
+        version: 24.0.0(@react-native-async-storage/async-storage@3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(expo@55.0.14)(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
       '@react-native-firebase/messaging':
         specifier: ^24.0.0
-        version: 24.0.0(@react-native-firebase/app@24.0.0(@react-native-async-storage/async-storage@2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0)))(expo@55.0.14)(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(expo@55.0.14)
+        version: 24.0.0(@react-native-firebase/app@24.0.0(@react-native-async-storage/async-storage@3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(expo@55.0.14)(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(expo@55.0.14)
       '@stomp/stompjs':
         specifier: ^7.3.0
         version: 7.3.0
       '@tanstack/react-query':
         specifier: ^5.0.0
         version: 5.90.21(react@19.2.0)
+      '@tasky/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@tasky/design-tokens':
         specifier: workspace:*
         version: link:../../packages/design-tokens
@@ -348,7 +351,7 @@ importers:
         version: 8.58.1(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
       '@vitejs/plugin-react':
         specifier: 6.0.1
-        version: 6.0.1(babel-plugin-react-compiler@1.0.0)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2))
+        version: 6.0.1(babel-plugin-react-compiler@1.0.0)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
       '@vitest/coverage-v8':
         specifier: 4.1.4
         version: 4.1.4(vitest@4.1.4)
@@ -378,10 +381,10 @@ importers:
         version: 6.0.2
       vite:
         specifier: 8.0.8
-        version: 8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2)
+        version: 8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)
       vitest:
         specifier: 4.1.4
-        version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(jsdom@29.0.2)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2))
+        version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(jsdom@29.0.2)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
 
   packages/core:
     dependencies:
@@ -572,6 +575,11 @@ packages:
 
   '@babel/parser@7.29.0':
     resolution: {integrity: sha512-IyDgFV5GeDUVX4YdF/3CPULtVGSXXMLh1xVIgdCgxApktqnQV0r7/8Nqthg+8YLGaAtdyIlo2qIdZrbCv4+7ww==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+
+  '@babel/parser@7.29.2':
+    resolution: {integrity: sha512-4GgRzy/+fsBa72/RZVJmGKPmZu9Byn8o4MoLpmNe1m8ZfYnz5emHLQz3U4gLud6Zwl0RZIcgiLD7Uq7ySFuDLA==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -2257,10 +2265,11 @@ packages:
   '@radix-ui/rect@1.1.1':
     resolution: {integrity: sha512-HPwpGIzkl28mWyZqG52jiqDJ12waP11Pa1lGoiyUkIEuMLBP0oeK/C89esbXrxsky5we7dfd8U58nm0SgAWpVw==}
 
-  '@react-native-async-storage/async-storage@2.2.0':
-    resolution: {integrity: sha512-gvRvjR5JAaUZF8tv2Kcq/Gbt3JHwbKFYfmb445rhOj6NUMx3qPLixmDx5pZAyb9at1bYvJ4/eTUipU5aki45xw==}
+  '@react-native-async-storage/async-storage@3.0.2':
+    resolution: {integrity: sha512-XP0zDIl+1XoeuQ7f878qXKdl77zLwzLALPpxvNRc7ZtDh9ew36WSvOdQOhFkexMySapFAWxEbZxS8K8J2DU4eg==}
     peerDependencies:
-      react-native: ^0.0.0-0 || >=0.65 <1.0
+      react: '*'
+      react-native: '*'
 
   '@react-native-community/datetimepicker@8.6.0':
     resolution: {integrity: sha512-yxPSqNfxgpGaqHQIpatqe6ykeBdU/1pdsk/G3x01mY2bpTflLpmVTLqFSJYd3MiZzxNZcMs/j1dQakUczSjcYA==}
@@ -3141,6 +3150,11 @@ packages:
 
   acorn@8.15.0:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+
+  acorn@8.16.0:
+    resolution: {integrity: sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -4694,6 +4708,9 @@ packages:
   idb@7.1.1:
     resolution: {integrity: sha512-gchesWBzyvGHRO9W8tzUWFDycow5gwjvFKfyV9FF32Y7F50yZMp7mP+T2mJIWFx49zicqyC4uefHM17o6xKIVQ==}
 
+  idb@8.0.3:
+    resolution: {integrity: sha512-LtwtVyVYO5BqRvcsKuB2iUMnHwPVByPCXFXOpuU96IZPPoPN6xjOGxZQ74pgSVVLQWtUOYgyeL4GE98BY5D3wg==}
+
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
@@ -4835,10 +4852,6 @@ packages:
   is-number@7.0.0:
     resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
     engines: {node: '>=0.12.0'}
-
-  is-plain-obj@2.1.0:
-    resolution: {integrity: sha512-YWnfyRwxL/+SsrWYfOpUtz5b3YD+nyfkHvjbcanzk8zgyO4ASD67uVMRt8k5bM4lLMDnXfriRhOpemw+NfT1eA==}
-    engines: {node: '>=8'}
 
   is-plain-obj@4.1.0:
     resolution: {integrity: sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg==}
@@ -5466,10 +5479,6 @@ packages:
 
   memoize-one@5.2.1:
     resolution: {integrity: sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==}
-
-  merge-options@3.0.4:
-    resolution: {integrity: sha512-2Sug1+knBjkaMsMgf1ctR1Ujx+Ayku4EdJN4Z+C2+JzoeF7A3OZ9KM2GY0CpQS51NR61LTurMJrRKPhSs3ZRTQ==}
-    engines: {node: '>=10'}
 
   merge-stream@2.0.0:
     resolution: {integrity: sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w==}
@@ -6836,6 +6845,11 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  terser@5.46.1:
+    resolution: {integrity: sha512-vzCjQO/rgUuK9sf8VJZvjqiqiHFaZLnOiimmUuOKODxWL8mm/xua7viT7aqX7dgPY60otQjUotzFMmCB4VdmqQ==}
+    engines: {node: '>=10'}
+    hasBin: true
+
   test-exclude@6.0.0:
     resolution: {integrity: sha512-cAGWPIyOHU6zlmg88jwm7VRyXnMN7iV68OGAbYDk/Mh/xC/pzVPlQtY6ngoIH/5/tciuhGfvESU8GrHrcxD56w==}
     engines: {node: '>=8'}
@@ -7377,6 +7391,11 @@ packages:
     engines: {node: '>= 14.6'}
     hasBin: true
 
+  yaml@2.8.3:
+    resolution: {integrity: sha512-AvbaCLOO2Otw/lW5bmh9d/WEdcDFdQp2Z2ZUH3pX9U2ihyUY0nvLv7J6TrWowklRGPYbB/IuIMfYgxaCPg5Bpg==}
+    engines: {node: '>= 14.6'}
+    hasBin: true
+
   yargs-parser@21.1.1:
     resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
     engines: {node: '>=12'}
@@ -7600,6 +7619,10 @@ snapshots:
       '@babel/types': 7.29.0
 
   '@babel/parser@7.29.0':
+    dependencies:
+      '@babel/types': 7.29.0
+
+  '@babel/parser@7.29.2':
     dependencies:
       '@babel/types': 7.29.0
 
@@ -8591,10 +8614,10 @@ snapshots:
       idb: 7.1.1
       tslib: 2.8.1
 
-  '@firebase/auth-compat@0.6.3(@firebase/app-compat@0.5.9)(@firebase/app-types@0.9.3)(@firebase/app@0.14.9)(@react-native-async-storage/async-storage@2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0)))':
+  '@firebase/auth-compat@0.6.3(@firebase/app-compat@0.5.9)(@firebase/app-types@0.9.3)(@firebase/app@0.14.9)(@react-native-async-storage/async-storage@3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))':
     dependencies:
       '@firebase/app-compat': 0.5.9
-      '@firebase/auth': 1.12.1(@firebase/app@0.14.9)(@react-native-async-storage/async-storage@2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0)))
+      '@firebase/auth': 1.12.1(@firebase/app@0.14.9)(@react-native-async-storage/async-storage@3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))
       '@firebase/auth-types': 0.13.0(@firebase/app-types@0.9.3)(@firebase/util@1.14.0)
       '@firebase/component': 0.7.1
       '@firebase/util': 1.14.0
@@ -8611,7 +8634,7 @@ snapshots:
       '@firebase/app-types': 0.9.3
       '@firebase/util': 1.14.0
 
-  '@firebase/auth@1.12.1(@firebase/app@0.14.9)(@react-native-async-storage/async-storage@2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0)))':
+  '@firebase/auth@1.12.1(@firebase/app@0.14.9)(@react-native-async-storage/async-storage@3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))':
     dependencies:
       '@firebase/app': 0.14.9
       '@firebase/component': 0.7.1
@@ -8619,7 +8642,7 @@ snapshots:
       '@firebase/util': 1.14.0
       tslib: 2.8.1
     optionalDependencies:
-      '@react-native-async-storage/async-storage': 2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))
+      '@react-native-async-storage/async-storage': 3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
 
   '@firebase/component@0.7.1':
     dependencies:
@@ -9870,9 +9893,10 @@ snapshots:
 
   '@radix-ui/rect@1.1.1': {}
 
-  '@react-native-async-storage/async-storage@2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))':
+  '@react-native-async-storage/async-storage@3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)':
     dependencies:
-      merge-options: 3.0.4
+      idb: 8.0.3
+      react: 19.2.0
       react-native: 0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0)
 
   '@react-native-community/datetimepicker@8.6.0(expo@55.0.14)(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)':
@@ -9883,9 +9907,9 @@ snapshots:
     optionalDependencies:
       expo: 55.0.14(@babel/core@7.29.0)(@expo/dom-webview@55.0.5)(@expo/metro-runtime@55.0.9)(expo-router@55.0.12)(react-dom@19.2.5(react@19.2.0))(react-native-worklets@0.8.1(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)(typescript@6.0.2)
 
-  '@react-native-firebase/app@24.0.0(@react-native-async-storage/async-storage@2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0)))(expo@55.0.14)(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)':
+  '@react-native-firebase/app@24.0.0(@react-native-async-storage/async-storage@3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(expo@55.0.14)(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)':
     dependencies:
-      firebase: 12.10.0(@react-native-async-storage/async-storage@2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0)))
+      firebase: 12.10.0(@react-native-async-storage/async-storage@3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))
       react: 19.2.0
       react-native: 0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0)
     optionalDependencies:
@@ -9893,9 +9917,9 @@ snapshots:
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
 
-  '@react-native-firebase/messaging@24.0.0(@react-native-firebase/app@24.0.0(@react-native-async-storage/async-storage@2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0)))(expo@55.0.14)(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(expo@55.0.14)':
+  '@react-native-firebase/messaging@24.0.0(@react-native-firebase/app@24.0.0(@react-native-async-storage/async-storage@3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(expo@55.0.14)(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(expo@55.0.14)':
     dependencies:
-      '@react-native-firebase/app': 24.0.0(@react-native-async-storage/async-storage@2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0)))(expo@55.0.14)(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
+      '@react-native-firebase/app': 24.0.0(@react-native-async-storage/async-storage@3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(expo@55.0.14)(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
     optionalDependencies:
       expo: 55.0.14(@babel/core@7.29.0)(@expo/dom-webview@55.0.5)(@expo/metro-runtime@55.0.9)(expo-router@55.0.12)(react-dom@19.2.5(react@19.2.0))(react-native-worklets@0.8.1(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)(typescript@6.0.2)
 
@@ -10325,7 +10349,7 @@ snapshots:
       '@stryker-mutator/util': 9.6.1
       semver: 7.7.4
       tslib: 2.8.1
-      vitest: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(jsdom@29.0.2)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2))
+      vitest: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(jsdom@29.0.2)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
 
   '@tailwindcss/node@4.2.2':
     dependencies:
@@ -10883,10 +10907,10 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.11.1':
     optional: true
 
-  '@vitejs/plugin-react@6.0.1(babel-plugin-react-compiler@1.0.0)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2))':
+  '@vitejs/plugin-react@6.0.1(babel-plugin-react-compiler@1.0.0)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-rc.7
-      vite: 8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2)
+      vite: 8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)
     optionalDependencies:
       babel-plugin-react-compiler: 1.0.0
 
@@ -10902,7 +10926,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.0.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(jsdom@29.0.2)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2))
+      vitest: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(jsdom@29.0.2)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
 
   '@vitest/expect@4.1.4':
     dependencies:
@@ -10913,13 +10937,13 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.1.0
 
-  '@vitest/mocker@4.1.4(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2))':
+  '@vitest/mocker@4.1.4(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))':
     dependencies:
       '@vitest/spy': 4.1.4
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2)
+      vite: 8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)
 
   '@vitest/pretty-format@4.1.4':
     dependencies:
@@ -10977,6 +11001,8 @@ snapshots:
       acorn: 8.15.0
 
   acorn@8.15.0: {}
+
+  acorn@8.16.0: {}
 
   agent-base@6.0.2:
     dependencies:
@@ -12506,7 +12532,7 @@ snapshots:
       locate-path: 6.0.0
       path-exists: 4.0.0
 
-  firebase@12.10.0(@react-native-async-storage/async-storage@2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))):
+  firebase@12.10.0(@react-native-async-storage/async-storage@3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)):
     dependencies:
       '@firebase/ai': 2.9.0(@firebase/app-types@0.9.3)(@firebase/app@0.14.9)
       '@firebase/analytics': 0.10.20(@firebase/app@0.14.9)
@@ -12516,8 +12542,8 @@ snapshots:
       '@firebase/app-check-compat': 0.4.1(@firebase/app-compat@0.5.9)(@firebase/app@0.14.9)
       '@firebase/app-compat': 0.5.9
       '@firebase/app-types': 0.9.3
-      '@firebase/auth': 1.12.1(@firebase/app@0.14.9)(@react-native-async-storage/async-storage@2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0)))
-      '@firebase/auth-compat': 0.6.3(@firebase/app-compat@0.5.9)(@firebase/app-types@0.9.3)(@firebase/app@0.14.9)(@react-native-async-storage/async-storage@2.2.0(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0)))
+      '@firebase/auth': 1.12.1(@firebase/app@0.14.9)(@react-native-async-storage/async-storage@3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))
+      '@firebase/auth-compat': 0.6.3(@firebase/app-compat@0.5.9)(@firebase/app-types@0.9.3)(@firebase/app@0.14.9)(@react-native-async-storage/async-storage@3.0.2(react-native@0.83.4(@babel/core@7.29.0)(@react-native/metro-config@0.85.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))
       '@firebase/data-connect': 0.4.0(@firebase/app@0.14.9)
       '@firebase/database': 1.1.1
       '@firebase/database-compat': 2.1.1
@@ -12825,6 +12851,8 @@ snapshots:
 
   idb@7.1.1: {}
 
+  idb@8.0.3: {}
+
   ignore@5.3.2: {}
 
   ignore@7.0.5: {}
@@ -12956,8 +12984,6 @@ snapshots:
       has-tostringtag: 1.0.2
 
   is-number@7.0.0: {}
-
-  is-plain-obj@2.1.0: {}
 
   is-plain-obj@4.1.0: {}
 
@@ -13789,10 +13815,6 @@ snapshots:
 
   memoize-one@5.2.1: {}
 
-  merge-options@3.0.4:
-    dependencies:
-      is-plain-obj: 2.1.0
-
   merge-stream@2.0.0: {}
 
   merge2@1.4.1: {}
@@ -13865,7 +13887,7 @@ snapshots:
       metro-cache: 0.84.2
       metro-core: 0.84.2
       metro-runtime: 0.84.2
-      yaml: 2.8.2
+      yaml: 2.8.3
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -13919,7 +13941,7 @@ snapshots:
   metro-minify-terser@0.84.2:
     dependencies:
       flow-enums-runtime: 0.0.6
-      terser: 5.46.0
+      terser: 5.46.1
 
   metro-resolver@0.83.5:
     dependencies:
@@ -14035,7 +14057,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.29.0
       '@babel/generator': 7.29.1
-      '@babel/parser': 7.29.0
+      '@babel/parser': 7.29.2
       '@babel/types': 7.29.0
       flow-enums-runtime: 0.0.6
       metro: 0.84.2
@@ -14103,7 +14125,7 @@ snapshots:
       '@babel/code-frame': 7.29.0
       '@babel/core': 7.29.0
       '@babel/generator': 7.29.1
-      '@babel/parser': 7.29.0
+      '@babel/parser': 7.29.2
       '@babel/template': 7.28.6
       '@babel/traverse': 7.29.0
       '@babel/types': 7.29.0
@@ -15505,6 +15527,13 @@ snapshots:
       commander: 2.20.3
       source-map-support: 0.5.21
 
+  terser@5.46.1:
+    dependencies:
+      '@jridgewell/source-map': 0.3.11
+      acorn: 8.16.0
+      commander: 2.20.3
+      source-map-support: 0.5.21
+
   test-exclude@6.0.0:
     dependencies:
       '@istanbuljs/schema': 0.1.3
@@ -15791,7 +15820,7 @@ snapshots:
       - '@types/react'
       - '@types/react-dom'
 
-  vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2):
+  vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3):
     dependencies:
       lightningcss: 1.32.0
       picomatch: 4.0.4
@@ -15802,13 +15831,13 @@ snapshots:
       '@types/node': 25.6.0
       fsevents: 2.3.3
       jiti: 2.6.1
-      terser: 5.46.0
-      yaml: 2.8.2
+      terser: 5.46.1
+      yaml: 2.8.3
 
-  vitest@4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(jsdom@29.0.2)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2)):
+  vitest@4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(jsdom@29.0.2)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)):
     dependencies:
       '@vitest/expect': 4.1.4
-      '@vitest/mocker': 4.1.4(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2))
+      '@vitest/mocker': 4.1.4(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3))
       '@vitest/pretty-format': 4.1.4
       '@vitest/runner': 4.1.4
       '@vitest/snapshot': 4.1.4
@@ -15825,7 +15854,7 @@ snapshots:
       tinyexec: 1.1.1
       tinyglobby: 0.2.15
       tinyrainbow: 3.1.0
-      vite: 8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2)
+      vite: 8.0.8(@types/node@25.6.0)(jiti@2.6.1)(terser@5.46.1)(yaml@2.8.3)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 25.6.0
@@ -16005,6 +16034,8 @@ snapshots:
   yaml-ast-parser@0.0.43: {}
 
   yaml@2.8.2: {}
+
+  yaml@2.8.3: {}
 
   yargs-parser@21.1.1: {}
 
