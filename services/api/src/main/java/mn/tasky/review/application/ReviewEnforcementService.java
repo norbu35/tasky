@@ -51,19 +51,33 @@ public class ReviewEnforcementService {
     /**
      * Creates PENDING enforcement cases for both booking participants and sends
      * an immediate review prompt notification to each.
+     * Idempotent: skips case creation if cases already exist for this booking+user pair.
      */
     @Transactional
     public void createCasesForBooking(String bookingId, String customerId, String taskerId) {
-        String customerCaseId = UUID.randomUUID().toString();
-        String taskerCaseId = UUID.randomUUID().toString();
+        // Idempotency: only insert if no case exists for this booking+user pair
+        if (reviewEnforcementCaseDao.findByBookingAndUser(bookingId, customerId).isEmpty()) {
+            reviewEnforcementCaseDao.insert(
+                    UUID.randomUUID().toString(), bookingId, customerId, REASON_BOOKING_COMPLETED);
+        }
+        if (reviewEnforcementCaseDao.findByBookingAndUser(bookingId, taskerId).isEmpty()) {
+            reviewEnforcementCaseDao.insert(
+                    UUID.randomUUID().toString(), bookingId, taskerId, REASON_BOOKING_COMPLETED);
+        }
 
-        reviewEnforcementCaseDao.insert(customerCaseId, bookingId, customerId, REASON_BOOKING_COMPLETED);
-        reviewEnforcementCaseDao.insert(taskerCaseId, bookingId, taskerId, REASON_BOOKING_COMPLETED);
-
-        notificationService.sendPush(
-                customerId, "Review Your Booking", "Please review your recent booking.", NOTIFICATION_TYPE);
-        notificationService.sendPush(
-                taskerId, "Review Your Booking", "Please review your recent booking.", NOTIFICATION_TYPE);
+        // Use event-keyed push for dedup on retry
+        notificationService.sendPushWithEventKey(
+                customerId,
+                "Review Your Booking",
+                "Please review your recent booking.",
+                NOTIFICATION_TYPE,
+                "REVIEW_PROMPT_" + bookingId + "_customer");
+        notificationService.sendPushWithEventKey(
+                taskerId,
+                "Review Your Booking",
+                "Please review your recent booking.",
+                NOTIFICATION_TYPE,
+                "REVIEW_PROMPT_" + bookingId + "_tasker");
 
         log.info("Created enforcement cases for booking={} customer={} tasker={}", bookingId, customerId, taskerId);
     }

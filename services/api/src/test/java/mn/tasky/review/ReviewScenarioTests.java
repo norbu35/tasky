@@ -78,8 +78,11 @@ class ReviewScenarioTests {
     void immediateReviewPromptSentOnCompletion() {
         service.createCasesForBooking(BOOKING_ID, CUSTOMER_ID, TASKER_ID);
 
-        verify(notificationService).sendPush(eq(CUSTOMER_ID), anyString(), anyString(), eq("REVIEW_PROMPT"));
-        verify(notificationService).sendPush(eq(TASKER_ID), anyString(), anyString(), eq("REVIEW_PROMPT"));
+        // Notifications are now sent via sendPushWithEventKey for dedup on retry
+        verify(notificationService)
+                .sendPushWithEventKey(eq(CUSTOMER_ID), anyString(), anyString(), eq("REVIEW_PROMPT"), anyString());
+        verify(notificationService)
+                .sendPushWithEventKey(eq(TASKER_ID), anyString(), anyString(), eq("REVIEW_PROMPT"), anyString());
     }
 
     // ── SCN-REVIEW-003 ───────────────────────────────────────────────────────
