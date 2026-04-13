@@ -7,8 +7,8 @@ import mn.tasky.common.feature.FeatureToggleService;
 import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyService;
-import mn.tasky.payment.application.PaymentService;
 import mn.tasky.payment.dto.PaymentIntent;
+import mn.tasky.payment.publicapi.PaymentCommandPort;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,19 +16,19 @@ public class PaymentInitiationService {
 
     private final BookingCommandPort bookingCommandPort;
     private final BookingQueryPort bookingQueryPort;
-    private final PaymentService paymentService;
+    private final PaymentCommandPort paymentCommandPort;
     private final FeatureToggleService featureToggleService;
     private final IdempotencyService idempotencyService;
 
     public PaymentInitiationService(
             BookingCommandPort bookingCommandPort,
             BookingQueryPort bookingQueryPort,
-            PaymentService paymentService,
+            PaymentCommandPort paymentCommandPort,
             FeatureToggleService featureToggleService,
             IdempotencyService idempotencyService) {
         this.bookingCommandPort = bookingCommandPort;
         this.bookingQueryPort = bookingQueryPort;
-        this.paymentService = paymentService;
+        this.paymentCommandPort = paymentCommandPort;
         this.featureToggleService = featureToggleService;
         this.idempotencyService = idempotencyService;
     }
@@ -44,7 +44,7 @@ public class PaymentInitiationService {
             if (claim.record() == null || claim.record().resourceId() == null) {
                 return PaymentInitiationOutcome.replayMissing();
             }
-            return paymentService
+            return paymentCommandPort
                     .findPaymentIntent(claim.record().resourceId().toString())
                     .map(intent -> PaymentInitiationOutcome.success(paymentIntentResponse(intent)))
                     .orElseGet(PaymentInitiationOutcome::replayMissing);
@@ -78,7 +78,7 @@ public class PaymentInitiationService {
                         }
 
                         bookingCommandPort.recordDisclaimerAcceptance(bookingId);
-                        PaymentIntent intent = paymentService.initiatePayment(bookingId);
+                        PaymentIntent intent = paymentCommandPort.initiatePayment(bookingId);
                         idempotencyService.completeWithResource(
                                 customerId,
                                 IdempotencyOperations.INITIATE_PAYMENT,

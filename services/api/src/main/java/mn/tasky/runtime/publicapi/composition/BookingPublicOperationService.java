@@ -2,9 +2,6 @@ package mn.tasky.runtime.publicapi.composition;
 
 import java.time.Instant;
 import java.util.Map;
-import mn.tasky.booking.application.BookingScheduleService;
-import mn.tasky.booking.application.NoShowService;
-import mn.tasky.booking.application.RepeatBookingService;
 import mn.tasky.booking.dto.BookingMarkDoneResult;
 import mn.tasky.booking.dto.BookingScheduleEvent;
 import mn.tasky.booking.dto.BookingTransitionResult;
@@ -25,9 +22,6 @@ public class BookingPublicOperationService {
 
     private final BookingQueryPort bookingQueryPort;
     private final BookingCommandPort bookingCommandPort;
-    private final BookingScheduleService bookingScheduleService;
-    private final NoShowService noShowService;
-    private final RepeatBookingService repeatBookingService;
     private final NotificationCommandPort notificationCommandPort;
     private final IdempotencyService idempotencyService;
     private final BookingResponseCompositionService bookingResponseCompositionService;
@@ -35,17 +29,11 @@ public class BookingPublicOperationService {
     public BookingPublicOperationService(
             BookingQueryPort bookingQueryPort,
             BookingCommandPort bookingCommandPort,
-            BookingScheduleService bookingScheduleService,
-            NoShowService noShowService,
-            RepeatBookingService repeatBookingService,
             NotificationCommandPort notificationCommandPort,
             IdempotencyService idempotencyService,
             BookingResponseCompositionService bookingResponseCompositionService) {
         this.bookingQueryPort = bookingQueryPort;
         this.bookingCommandPort = bookingCommandPort;
-        this.bookingScheduleService = bookingScheduleService;
-        this.noShowService = noShowService;
-        this.repeatBookingService = repeatBookingService;
         this.notificationCommandPort = notificationCommandPort;
         this.idempotencyService = idempotencyService;
         this.bookingResponseCompositionService = bookingResponseCompositionService;
@@ -204,7 +192,7 @@ public class BookingPublicOperationService {
         }
 
         try {
-            NoShowFlagResult result = noShowService.flagNoShow(bookingId, userId);
+            NoShowFlagResult result = bookingCommandPort.flagNoShow(bookingId, userId);
             if (result.success()) {
                 idempotencyService.completeWithResource(
                         userId,
@@ -266,7 +254,7 @@ public class BookingPublicOperationService {
         try {
             Instant proposedAt = Instant.parse(body.proposedScheduledAt());
             BookingScheduleEvent event =
-                    bookingScheduleService.requestReschedule(bookingId, userId, proposedAt, body.reason());
+                    bookingCommandPort.requestReschedule(bookingId, userId, proposedAt, body.reason());
 
             idempotencyService.completeWithResource(
                     userId,
@@ -304,7 +292,7 @@ public class BookingPublicOperationService {
 
         try {
             BookingScheduleEvent event =
-                    bookingScheduleService.respondToReschedule(bookingId, eventId, userId, body.action());
+                    bookingCommandPort.respondToReschedule(bookingId, eventId, userId, body.action());
 
             idempotencyService.completeWithResource(
                     userId,
@@ -330,7 +318,7 @@ public class BookingPublicOperationService {
     }
 
     public BookingOperationOutcome rebook(String userId, String bookingId) {
-        RebookResult result = repeatBookingService.rebook(bookingId, userId);
+        RebookResult result = bookingCommandPort.rebook(bookingId, userId);
         if (result.isSuccess()) {
             return BookingOperationOutcome.created(bookingResponseCompositionService.rebookTaskResponse(result.task()));
         }
@@ -375,7 +363,7 @@ public class BookingPublicOperationService {
         if (claim.record() == null || claim.record().resourceId() == null) {
             return BookingOperationOutcome.replayMissing();
         }
-        Map<String, Object> body = bookingScheduleService
+        Map<String, Object> body = bookingQueryPort
                 .getScheduleEvent(claim.record().resourceId().toString())
                 .map(bookingResponseCompositionService::scheduleEventResponse)
                 .orElse(Map.of("id", claim.record().resourceId().toString()));

@@ -1,7 +1,7 @@
 package mn.tasky.runtime.publicapi.composition;
 
-import mn.tasky.booking.application.BookingIntentService;
 import mn.tasky.booking.dto.BookingIntentConfirmResult;
+import mn.tasky.booking.publicapi.BookingIntentCommandPort;
 import mn.tasky.booking.publicapi.BookingQueryPort;
 import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
@@ -11,17 +11,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookingIntentConfirmationService {
 
-    private final BookingIntentService bookingIntentService;
+    private final BookingIntentCommandPort bookingIntentCommandPort;
     private final BookingQueryPort bookingQueryPort;
     private final BookingResponseCompositionService bookingResponseCompositionService;
     private final IdempotencyService idempotencyService;
 
     public BookingIntentConfirmationService(
-            BookingIntentService bookingIntentService,
+            BookingIntentCommandPort bookingIntentCommandPort,
             BookingQueryPort bookingQueryPort,
             BookingResponseCompositionService bookingResponseCompositionService,
             IdempotencyService idempotencyService) {
-        this.bookingIntentService = bookingIntentService;
+        this.bookingIntentCommandPort = bookingIntentCommandPort;
         this.bookingQueryPort = bookingQueryPort;
         this.bookingResponseCompositionService = bookingResponseCompositionService;
         this.idempotencyService = idempotencyService;
@@ -48,7 +48,7 @@ public class BookingIntentConfirmationService {
 
         try {
             BookingIntentConfirmResult result =
-                    bookingIntentService.confirmIntent(customerId, intentId, liabilityDisclaimerAccepted);
+                    bookingIntentCommandPort.confirmIntent(customerId, intentId, liabilityDisclaimerAccepted);
             if (result.isSuccess()) {
                 idempotencyService.completeWithResource(
                         customerId,

@@ -2,7 +2,7 @@ package mn.tasky.runtime.publicapi.composition;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import mn.tasky.analytics.application.AnalyticsService;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.booking.publicapi.BookingQueryPort;
 import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
@@ -17,7 +17,7 @@ public class DisputeRaiseService {
 
     private final TrustCommandPort trustCommandPort;
     private final TrustQueryPort trustQueryPort;
-    private final AnalyticsService analyticsService;
+    private final AnalyticsCommandPort analyticsCommandPort;
     private final BookingQueryPort bookingQueryPort;
     private final IdempotencyService idempotencyService;
     private final DisputePublicCompositionService disputePublicCompositionService;
@@ -25,13 +25,13 @@ public class DisputeRaiseService {
     public DisputeRaiseService(
             TrustCommandPort trustCommandPort,
             TrustQueryPort trustQueryPort,
-            AnalyticsService analyticsService,
+            AnalyticsCommandPort analyticsCommandPort,
             BookingQueryPort bookingQueryPort,
             IdempotencyService idempotencyService,
             DisputePublicCompositionService disputePublicCompositionService) {
         this.trustCommandPort = trustCommandPort;
         this.trustQueryPort = trustQueryPort;
-        this.analyticsService = analyticsService;
+        this.analyticsCommandPort = analyticsCommandPort;
         this.bookingQueryPort = bookingQueryPort;
         this.idempotencyService = idempotencyService;
         this.disputePublicCompositionService = disputePublicCompositionService;
@@ -84,12 +84,13 @@ public class DisputeRaiseService {
             }
 
             Map<String, Object> analyticsProperties = new LinkedHashMap<>();
-            analyticsProperties.put(AnalyticsService.PROPERTY_BOOKING_ID, bookingId);
+            analyticsProperties.put(AnalyticsCommandPort.PROPERTY_BOOKING_ID, bookingId);
             analyticsProperties.put("dispute_id", result.dispute().id());
             bookingQueryPort
                     .getBooking(bookingId)
-                    .ifPresent(booking -> analyticsProperties.put(AnalyticsService.PROPERTY_TASK_ID, booking.taskId()));
-            analyticsService.track(AnalyticsService.EVENT_DISPUTE_RAISED, userId, analyticsProperties);
+                    .ifPresent(booking ->
+                            analyticsProperties.put(AnalyticsCommandPort.PROPERTY_TASK_ID, booking.taskId()));
+            analyticsCommandPort.track(AnalyticsCommandPort.EVENT_DISPUTE_RAISED, userId, analyticsProperties);
 
             idempotencyService.completeWithResource(
                     userId,

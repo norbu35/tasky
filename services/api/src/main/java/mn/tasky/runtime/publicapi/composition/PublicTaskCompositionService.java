@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import mn.tasky.booking.publicapi.BookingQueryPort;
-import mn.tasky.category.application.CategoryService;
 import mn.tasky.category.dto.CategoryState;
+import mn.tasky.category.publicapi.CategoryQueryPort;
 import mn.tasky.identity.publicapi.IdentityQueryPort;
-import mn.tasky.location.application.LocationService;
+import mn.tasky.location.publicapi.LocationQueryPort;
 import mn.tasky.marketplace.publicapi.MarketplaceQueryPort;
 import mn.tasky.task.dto.RecentLocation;
 import mn.tasky.task.dto.TaskApplicationState;
@@ -24,24 +24,24 @@ public class PublicTaskCompositionService {
 
     private final MarketplaceQueryPort marketplaceQueryPort;
     private final BookingQueryPort bookingQueryPort;
-    private final CategoryService categoryService;
+    private final CategoryQueryPort categoryQueryPort;
     private final IdentityQueryPort identityQueryPort;
     private final ObjectMapper objectMapper;
-    private final LocationService locationService;
+    private final LocationQueryPort locationQueryPort;
 
     public PublicTaskCompositionService(
             MarketplaceQueryPort marketplaceQueryPort,
             BookingQueryPort bookingQueryPort,
-            CategoryService categoryService,
+            CategoryQueryPort categoryQueryPort,
             IdentityQueryPort identityQueryPort,
             ObjectMapper objectMapper,
-            LocationService locationService) {
+            LocationQueryPort locationQueryPort) {
         this.marketplaceQueryPort = marketplaceQueryPort;
         this.bookingQueryPort = bookingQueryPort;
-        this.categoryService = categoryService;
+        this.categoryQueryPort = categoryQueryPort;
         this.identityQueryPort = identityQueryPort;
         this.objectMapper = objectMapper;
-        this.locationService = locationService;
+        this.locationQueryPort = locationQueryPort;
     }
 
     public List<Map<String, Object>> toPublicTaskResponses(List<TaskState> tasks) {
@@ -83,10 +83,10 @@ public class PublicTaskCompositionService {
 
     private Map<String, Object> toPublicTaskResponse(TaskState task) {
         Map<String, Object> response = new LinkedHashMap<>();
-        var approx = locationService.reverseGeocode(task.locationLat(), task.locationLng());
+        var approx = locationQueryPort.reverseGeocode(task.locationLat(), task.locationLng());
         response.put("id", task.id());
 
-        categoryService
+        categoryQueryPort
                 .getCategory(task.categoryId())
                 .ifPresent(category -> response.put("category", toCategoryPayload(category)));
 
@@ -128,7 +128,7 @@ public class PublicTaskCompositionService {
 
         response.put("id", task.id());
         response.put("category_id", task.categoryId());
-        categoryService
+        categoryQueryPort
                 .getCategory(task.categoryId())
                 .ifPresent(category -> response.put("category", toCategoryPayload(category)));
         response.put("customer_id", task.customerId());
