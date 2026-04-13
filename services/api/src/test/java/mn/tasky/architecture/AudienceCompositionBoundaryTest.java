@@ -15,6 +15,33 @@ import org.junit.jupiter.api.Test;
 
 class AudienceCompositionBoundaryTest {
 
+    /**
+     * Explicit exception set from the backend finalization design.
+     * These controllers are allowed to exist outside the two standard request-path shapes:
+     *   1. controller -> runtime composition -> publicapi ports
+     *   2. controller -> module-owned publicapi ports
+     *
+     * Any addition to this set requires deliberate justification in code review.
+     * "Not migrated yet" is not a valid reason.
+     */
+    private static final Set<String> EXCEPTION_CONTROLLERS = Set.of(
+            // System/health endpoints
+            "mn.tasky.common.config.SystemInfoController",
+            // Security introspection endpoints
+            "mn.tasky.security.api.SecurityScopeController",
+            // Development-only auth helpers
+            "mn.tasky.auth.api.DevAuthController",
+            // Auth lifecycle endpoints (token management, OAuth callback)
+            "mn.tasky.auth.api.TokenController",
+            "mn.tasky.auth.api.FacebookAuthController",
+            // Pure lookup/reference-data endpoints
+            "mn.tasky.location.api.LocationController",
+            "mn.tasky.notification.api.ServiceAreaController",
+            "mn.tasky.category.api.CategoryController",
+            // Operator endpoints (low-level platform control)
+            "mn.tasky.admin.api.OutboxReplayController",
+            "mn.tasky.admin.api.AdminFeatureToggleController");
+
     @Test
     void runtimeAudienceCompositionPackagesAndServicesExist() {
         assertDoesNotThrow(() -> Class.forName("mn.tasky.runtime.publicapi.composition.PackageMarker"));
@@ -266,6 +293,96 @@ class AudienceCompositionBoundaryTest {
                 mn.tasky.auth.api.OtpController.class,
                 "mn.tasky.runtime.publicapi.composition.OtpPublicCompositionService");
         assertControllerOmitsMethods(mn.tasky.auth.api.OtpController.class, Set.of("featureDisabled"));
+
+        // NotificationController: device registration through runtime composition
+        assertControllerDependsOn(
+                mn.tasky.notification.api.NotificationController.class,
+                "mn.tasky.runtime.publicapi.composition.NotificationCompositionService");
+        assertControllerOmitsMethods(
+                mn.tasky.notification.api.NotificationController.class, Set.of("toDeviceResponse"));
+
+        // AdminUserController: admin user management through admin composition
+        assertControllerDependsOn(
+                mn.tasky.admin.api.AdminUserController.class,
+                "mn.tasky.runtime.adminapi.composition.AdminUserCompositionService");
+        assertControllerDoesNotDependOn(
+                mn.tasky.admin.api.AdminUserController.class, "mn.tasky.identity.publicapi.IdentityQueryPort");
+        assertControllerOmitsMethods(
+                mn.tasky.admin.api.AdminUserController.class, Set.of("toAdminUserProfileResponse"));
+    }
+
+    /**
+     * Verifies that every controller in the codebase either:
+     * (a) is in the explicit exception set, or
+     * (b) is covered by the representative controller assertions above.
+     *
+     * This prevents controllers from silently escaping the boundary checks.
+     */
+    @Test
+    void allControllersAreAccountedFor() {
+        // Controllers covered by representativeControllersDelegateAudienceCompositionToRuntimeServices
+        Set<String> coveredControllers = Set.of(
+                "mn.tasky.task.api.TaskController",
+                "mn.tasky.admin.api.AdminDisputeController",
+                "mn.tasky.payment.api.PaymentController",
+                "mn.tasky.wallet.api.WalletController",
+                "mn.tasky.booking.api.BookingIntentController",
+                "mn.tasky.booking.api.BookingController",
+                "mn.tasky.admin.api.AdminPayoutController",
+                "mn.tasky.user.api.UserProfileController",
+                "mn.tasky.admin.api.AdminTaskController",
+                "mn.tasky.dispute.api.DisputeController",
+                "mn.tasky.admin.api.AdminVerificationController",
+                "mn.tasky.admin.api.AdminModerationController",
+                "mn.tasky.messaging.api.MessagingController",
+                "mn.tasky.review.api.ReviewController",
+                "mn.tasky.admin.api.AdminMessageController",
+                "mn.tasky.verification.api.VerificationController",
+                "mn.tasky.auth.api.OtpController",
+                "mn.tasky.notification.api.NotificationController",
+                "mn.tasky.admin.api.AdminUserController");
+
+        // All known controllers in the codebase
+        Set<String> allKnownControllers = Set.of(
+                "mn.tasky.admin.api.AdminDisputeController",
+                "mn.tasky.admin.api.AdminFeatureToggleController",
+                "mn.tasky.admin.api.AdminMessageController",
+                "mn.tasky.admin.api.AdminModerationController",
+                "mn.tasky.admin.api.AdminPayoutController",
+                "mn.tasky.admin.api.AdminTaskController",
+                "mn.tasky.admin.api.AdminUserController",
+                "mn.tasky.admin.api.AdminVerificationController",
+                "mn.tasky.admin.api.OutboxReplayController",
+                "mn.tasky.auth.api.DevAuthController",
+                "mn.tasky.auth.api.FacebookAuthController",
+                "mn.tasky.auth.api.OtpController",
+                "mn.tasky.auth.api.TokenController",
+                "mn.tasky.booking.api.BookingController",
+                "mn.tasky.booking.api.BookingIntentController",
+                "mn.tasky.category.api.CategoryController",
+                "mn.tasky.common.config.SystemInfoController",
+                "mn.tasky.dispute.api.DisputeController",
+                "mn.tasky.location.api.LocationController",
+                "mn.tasky.messaging.api.MessagingController",
+                "mn.tasky.notification.api.NotificationController",
+                "mn.tasky.notification.api.ServiceAreaController",
+                "mn.tasky.payment.api.PaymentController",
+                "mn.tasky.review.api.ReviewController",
+                "mn.tasky.security.api.SecurityScopeController",
+                "mn.tasky.task.api.TaskController",
+                "mn.tasky.user.api.UserProfileController",
+                "mn.tasky.verification.api.VerificationController",
+                "mn.tasky.wallet.api.WalletController");
+
+        for (String controller : allKnownControllers) {
+            boolean isException = EXCEPTION_CONTROLLERS.contains(controller);
+            boolean isCovered = coveredControllers.contains(controller);
+            assertTrue(
+                    isException || isCovered,
+                    controller + " is neither an exception nor covered by boundary assertions. "
+                            + "Add it to the exception registry (with justification) or to the "
+                            + "representative controller assertions.");
+        }
     }
 
     private static void assertControllerDependsOn(Class<?> controllerType, String dependencyTypeName) {

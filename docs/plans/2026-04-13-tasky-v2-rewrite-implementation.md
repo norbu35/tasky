@@ -833,10 +833,18 @@ Tranche 7.
 Finish the backend rewrite by converging the remaining meaningful request paths onto the final Tasky v2 shapes and
 removing superseded structural paths.
 
-This tranche is now governed by:
+This tranche is now governed by the **finalization design** as the normative execution target:
 
-- `docs/plans/2026-04-13-tasky-v2-backend-finalization-design.md`
-- `docs/plans/2026-04-13-tasky-v2-backend-finalization.md`
+- `docs/plans/2026-04-13-tasky-v2-backend-finalization-design.md` (execution target)
+- `docs/plans/2026-04-13-tasky-v2-backend-finalization.md` (implementation plan)
+
+The finalization design supersedes any ambiguous guidance in this tranche description. The only allowed backend
+request-path shapes after this pass are:
+
+1. `controller -> runtime composition -> publicapi ports`
+2. `controller -> module-owned publicapi ports`
+
+plus the narrow, explicitly documented exception set.
 
 ## Done When
 

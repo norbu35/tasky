@@ -95,4 +95,24 @@ class BackendArchitectureTest {
                     "mn.tasky.security..")
             .because("kernel should remain a narrow shared plane instead of accumulating feature logic")
             .allowEmptyShould(true);
+
+    // -- Finalization rules (Tranche 10) -----------------------------------------------
+
+    /**
+     * Runtime composition services must not reach into DAOs.
+     * They may depend on module publicapi ports and same-module application services,
+     * but never on DAOs directly.
+     */
+    @ArchTest
+    static final ArchRule runtimeCompositionMustNotDependOnDaos = noClasses()
+            .that()
+            .resideInAnyPackage(
+                    "mn.tasky.runtime.publicapi.composition..",
+                    "mn.tasky.runtime.adminapi.composition..",
+                    "mn.tasky.runtime.user.composition..")
+            .should()
+            .dependOnClassesThat()
+            .resideInAnyPackage("mn.tasky..dao..")
+            .because("runtime composition must use publicapi ports, not DAOs")
+            .allowEmptyShould(true);
 }
