@@ -12,7 +12,7 @@ plugins {
     id("com.github.spotbugs") version "6.1.11"
     id("net.ltgt.errorprone") version "4.1.0"
     id("org.owasp.dependencycheck") version "12.1.0"
-    id("com.diffplug.spotless") version "6.25.0"
+    id("com.diffplug.spotless") version "8.4.0"
     id("info.solidsoft.pitest") version "1.15.0"
 }
 
