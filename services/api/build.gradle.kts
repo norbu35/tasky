@@ -72,7 +72,7 @@ dependencies {
 
     // Jackson
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-    implementation("org.jsoup:jsoup:1.18.3")
+    implementation("org.jsoup:jsoup:1.22.1")
 
     // Firebase
     implementation("com.google.firebase:firebase-admin:9.4.2")
