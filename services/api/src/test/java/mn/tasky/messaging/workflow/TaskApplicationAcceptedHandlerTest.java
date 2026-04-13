@@ -84,7 +84,7 @@ class TaskApplicationAcceptedHandlerTest {
     }
 
     @Test
-    @DisplayName("SCN-T10-IDEM-001: First event delivery executes all side effects")
+    @DisplayName("IDEM-001: First event delivery executes all side effects")
     void firstEventDeliveryExecutesAllSideEffects() {
         when(idempotencyGuard.claim(anyString(), anyString())).thenReturn(true);
 
@@ -94,10 +94,12 @@ class TaskApplicationAcceptedHandlerTest {
         verify(notificationService)
                 .sendPushWithEventKey(eq(TASKER_ID), anyString(), anyString(), anyString(), anyString());
         verify(analyticsService, atLeastOnce()).track(anyString(), eq(CUSTOMER_ID), anyMap());
+        // Two-phase: complete() is called after side effects succeed
+        verify(idempotencyGuard).complete(EVENT_ID);
     }
 
     @Test
-    @DisplayName("SCN-T10-IDEM-002: Duplicate event delivery does not duplicate side effects")
+    @DisplayName("IDEM-002: Duplicate event delivery does not duplicate side effects")
     void duplicateEventDeliveryDoesNotDuplicateSideEffects() {
         when(idempotencyGuard.claim(anyString(), anyString()))
                 .thenReturn(true) // first delivery
@@ -111,14 +113,15 @@ class TaskApplicationAcceptedHandlerTest {
         verify(messagingService, times(1)).startConversation(anyString(), anyString(), anyString());
         verify(notificationService, times(1))
                 .sendPushWithEventKey(anyString(), anyString(), anyString(), anyString(), anyString());
+        // complete() only called on first delivery
+        verify(idempotencyGuard, times(1)).complete(EVENT_ID);
     }
 
     @Test
-    @DisplayName("SCN-T10-IDEM-003: Different events (different eventId) execute independently")
+    @DisplayName("IDEM-003: Different events (different eventId) execute independently")
     void differentEventsExecuteIndependently() {
         String eventId2 = UUID.randomUUID().toString();
 
-        // claim(eventType, eventId) — both events share the same type
         when(idempotencyGuard.claim(eq(AutomationEventTypes.TASK_APPLICATION_ACCEPTED), eq(EVENT_ID)))
                 .thenReturn(true);
         when(idempotencyGuard.claim(eq(AutomationEventTypes.TASK_APPLICATION_ACCEPTED), eq(eventId2)))

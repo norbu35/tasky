@@ -99,6 +99,8 @@ public class BookingCompletedHandler extends AbstractEventHandler {
         reliabilityScoreService.recompute(taskerId);
         badgeEvaluationService.evaluate(taskerId);
 
+        tryClaimEventComplete(envelope);
+
         log.info(
                 "Booking completed aftermath: bookingId={} taskId={} taskerId={} price={}",
                 bookingId,

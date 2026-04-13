@@ -77,20 +77,20 @@ class PaymentConfirmedHandlerTest {
     }
 
     @Test
-    @DisplayName("SCN-T10-IDEM-004: Payment confirmed first delivery sends notifications")
+    @DisplayName("IDEM-004: Payment confirmed first delivery sends notifications")
     void firstDeliverySendsNotifications() {
         when(idempotencyGuard.claim(anyString(), anyString())).thenReturn(true);
 
         handler.handle(envelope());
 
-        // Two pushes: one to tasker, one to customer
         verify(notificationService, times(2))
                 .sendPushWithEventKey(anyString(), anyString(), anyString(), anyString(), anyString());
         verify(analyticsService).track(anyString(), eq(CUSTOMER_ID), anyMap());
+        verify(idempotencyGuard).complete(EVENT_ID);
     }
 
     @Test
-    @DisplayName("SCN-T10-IDEM-005: Payment confirmed duplicate delivery does not resend notifications")
+    @DisplayName("IDEM-005: Payment confirmed duplicate delivery does not resend notifications")
     void duplicateDeliveryDoesNotResend() {
         when(idempotencyGuard.claim(anyString(), anyString()))
                 .thenReturn(true) // first
@@ -100,8 +100,8 @@ class PaymentConfirmedHandlerTest {
         handler.handle(env);
         handler.handle(env);
 
-        // Still exactly 2 pushes (one per party), not 4
         verify(notificationService, times(2))
                 .sendPushWithEventKey(anyString(), anyString(), anyString(), anyString(), anyString());
+        verify(idempotencyGuard, times(1)).complete(EVENT_ID);
     }
 }

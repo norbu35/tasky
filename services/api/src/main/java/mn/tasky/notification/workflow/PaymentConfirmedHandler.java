@@ -77,6 +77,8 @@ public class PaymentConfirmedHandler extends AbstractEventHandler {
                                 "payment_id",
                                 paymentId)));
 
+        tryClaimEventComplete(envelope);
+
         log.info("Payment confirmed aftermath completed: paymentId={} bookingId={}", paymentId, bookingId);
     }
 }

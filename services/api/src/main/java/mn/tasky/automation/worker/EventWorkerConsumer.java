@@ -54,7 +54,8 @@ public class EventWorkerConsumer {
         try {
             AutomationEventEnvelope envelope = parseEnvelope(message);
             if (envelope == null) {
-                log.error("Received unparseable message, rejecting to DLQ: messageId={}",
+                log.error(
+                        "Received unparseable message, rejecting to DLQ: messageId={}",
                         message.getMessageProperties().getMessageId());
                 throw new AmqpRejectAndDontRequeueException("Unparseable message");
             }
@@ -109,9 +110,7 @@ public class EventWorkerConsumer {
     }
 
     @SuppressWarnings("unchecked")
-    private void handleProcessingFailure(
-            org.springframework.amqp.core.Message message,
-            RuntimeException exception) {
+    private void handleProcessingFailure(org.springframework.amqp.core.Message message, RuntimeException exception) {
         log.error("Event processing failed: error={}", exception.getMessage());
 
         int attempt = extractDeathCount(message);

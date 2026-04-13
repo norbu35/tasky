@@ -31,6 +31,16 @@ public abstract class AbstractEventHandler implements EventHandler {
         return idempotencyGuard.claim(eventType(), envelope.eventId());
     }
 
+    /**
+     * Marks the event as completed after side effects succeed.
+     * Subclasses should call this at the end of handle().
+     */
+    protected void tryClaimEventComplete(AutomationEventEnvelope envelope) {
+        if (idempotencyGuard != null) {
+            idempotencyGuard.complete(envelope.eventId());
+        }
+    }
+
     protected Map<String, Object> withObservability(Map<String, Object> payload, Map<String, Object> base) {
         Map<String, Object> enriched = new LinkedHashMap<>(base);
         copyIfPresent(payload, enriched, AnalyticsService.PROPERTY_CORRELATION_ID);

@@ -13,10 +13,10 @@
   - `BookingCompletedHandler` — duplicate events won't duplicate wallet credits (financial safety).
 - **7 duplicate-delivery tests** (SCN-T10-IDEM-001 through SCN-T10-IDEM-007) verify first-delivery side effects execute once and duplicate deliveries are skipped.
 
-### Slice 2: Booking completion v2 seam completion
+### Slice 2: Booking completion v2 seam progress
 
-- **BookingLifecycleService → TrustQueryPort**: Replaced direct `DisputeDao` dependency with `TrustQueryPort.hasOpenDispute()`, eliminating the last DAO dependency from the booking lifecycle layer. Added `hasOpenDispute(bookingId)` to `TrustQueryPort`, implemented via `DisputeService`.
-- **Booking completion path fully port-bound**: All completion/cancellation guards (dispute checks) now flow through public ports instead of direct DAO access.
+- **BookingLifecycleService → TrustQueryPort**: Replaced direct `DisputeDao` dependency with `TrustQueryPort.hasOpenDispute()`, eliminating the last DAO dependency from the booking lifecycle layer.
+- **Remaining gap**: `BookingLifecycleService.completeBooking()` still delegates the actor-aware completion command to `BookingService.completeBooking()` (not yet through a port). Full lifecycle cutover deferred to a dedicated architectural slice.
 
 ### Slice 3: Verification review — already on v2 ports (no changes needed)
 

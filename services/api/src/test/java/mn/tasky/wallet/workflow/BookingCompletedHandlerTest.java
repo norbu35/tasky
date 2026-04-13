@@ -95,29 +95,24 @@ class BookingCompletedHandlerTest {
     }
 
     @Test
-    @DisplayName("SCN-T10-IDEM-006: Booking completed first delivery executes all side effects")
+    @DisplayName("IDEM-006: Booking completed first delivery executes all side effects")
     void firstDeliveryExecutesAllSideEffects() {
         when(idempotencyGuard.claim(anyString(), anyString())).thenReturn(true);
 
         handler.handle(envelope());
 
-        // Financial side effect — wallet credit
         verify(walletService).creditTaskCompletion(TASKER_ID, BOOKING_ID, PRICE, 1500);
-        // Notification
         verify(notificationService)
                 .sendPushWithEventKey(eq(TASKER_ID), anyString(), anyString(), anyString(), anyString());
-        // Analytics
         verify(analyticsService).track(anyString(), eq(CUSTOMER_ID), anyMap());
-        // Review enforcement
         verify(reviewEnforcementService).createCasesForBooking(BOOKING_ID, CUSTOMER_ID, TASKER_ID);
-        // Reliability score
         verify(reliabilityScoreService).recompute(TASKER_ID);
-        // Badge evaluation
         verify(badgeEvaluationService).evaluate(TASKER_ID);
+        verify(idempotencyGuard).complete(EVENT_ID);
     }
 
     @Test
-    @DisplayName("SCN-T10-IDEM-007: Booking completed duplicate delivery does not duplicate wallet credit")
+    @DisplayName("IDEM-007: Booking completed duplicate delivery does not duplicate wallet credit")
     void duplicateDeliveryDoesNotDuplicateWalletCredit() {
         when(idempotencyGuard.claim(anyString(), anyString()))
                 .thenReturn(true) // first delivery
@@ -127,12 +122,12 @@ class BookingCompletedHandlerTest {
         handler.handle(env);
         handler.handle(env); // duplicate
 
-        // Wallet credit called exactly once — this is the critical financial guard
         verify(walletService, times(1)).creditTaskCompletion(anyString(), anyString(), anyInt(), anyInt());
         verify(notificationService, times(1))
                 .sendPushWithEventKey(anyString(), anyString(), anyString(), anyString(), anyString());
         verify(reviewEnforcementService, times(1)).createCasesForBooking(anyString(), anyString(), anyString());
         verify(reliabilityScoreService, times(1)).recompute(anyString());
         verify(badgeEvaluationService, times(1)).evaluate(anyString());
+        verify(idempotencyGuard, times(1)).complete(EVENT_ID);
     }
 }

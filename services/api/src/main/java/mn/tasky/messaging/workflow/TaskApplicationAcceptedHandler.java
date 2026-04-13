@@ -93,6 +93,8 @@ public class TaskApplicationAcceptedHandler extends AbstractEventHandler {
                                 "application_id",
                                 applicationId)));
 
+        tryClaimEventComplete(envelope);
+
         log.info(
                 "Task application accepted aftermath completed: taskId={} bookingId={} conversationId={}",
                 taskId,

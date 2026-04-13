@@ -27,6 +27,7 @@ import mn.tasky.common.idempotency.IdempotencyDao;
 import mn.tasky.common.outbox.OutboxEventDao;
 import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.dispute.dao.DisputeEvidenceDao;
+import mn.tasky.kernel.idempotency.EventIdempotencyDao;
 import mn.tasky.location.dao.DistrictGeoDao;
 import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
@@ -309,6 +310,12 @@ public class JdbiConfig {
     @Bean
     public IdempotencyDao idempotencyDao(Jdbi jdbi) {
         return jdbi.onDemand(IdempotencyDao.class);
+    }
+
+    // Workflow handler event idempotency DAO
+    @Bean
+    public EventIdempotencyDao eventIdempotencyDao(Jdbi jdbi) {
+        return jdbi.onDemand(EventIdempotencyDao.class);
     }
 
     @Bean
