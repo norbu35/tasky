@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Runtime composition services now route through publicapi ports instead of depending on feature-module
+  application services directly. New ports: CategoryQueryPort, LocationQueryPort, AnalyticsCommandPort,
+  PaymentCommandPort, BookingIntentCommandPort. Extended: BookingCommandPort, BookingQueryPort.
+- Admin composition services (verification, moderation) now use AdminAuditCommandPort instead of AuditEventDao.
+- ArchUnit boundary enforcement broadened from notification-only to all feature modules.
+
 ## 2026-04-14 — Rewrite Hardening Follow-Up
 
 - **NotificationCommandPort** introduced with `registerDevice`, `unregisterDevice`, and `sendPush`. `NotificationCompositionService` and `BookingPublicOperationService` updated to depend on the port instead of `NotificationService`.

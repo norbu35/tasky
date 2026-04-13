@@ -113,19 +113,15 @@ class BackendArchitectureTest {
             .should()
             .dependOnClassesThat()
             .resideInAnyPackage("mn.tasky..dao..")
-            .because("runtime composition must use publicapi ports, not DAOs")
-            .allowEmptyShould(true);
+            .because("runtime composition must use publicapi ports, not DAOs");
 
     /**
      * Runtime composition services must depend on module publicapi ports, not on
      * feature-module application services directly.
      * This enforces the two allowed request-path shapes from the finalization design.
-     *
-     * Narrow scope: each module is enforced individually so the rule can be adopted
-     * incrementally without breaking existing surfaces mid-migration.
      */
     @ArchTest
-    static final ArchRule notificationCompositionMustUsePublicPorts = noClasses()
+    static final ArchRule runtimeCompositionMustUsePublicPorts = noClasses()
             .that()
             .resideInAnyPackage(
                     "mn.tasky.runtime.publicapi.composition..",
@@ -133,7 +129,36 @@ class BackendArchitectureTest {
                     "mn.tasky.runtime.user.composition..")
             .should()
             .dependOnClassesThat()
-            .resideInAnyPackage("mn.tasky.notification.application..")
-            .because("notification composition must use NotificationCommandPort, not NotificationService")
-            .allowEmptyShould(true);
+            .resideInAnyPackage(
+                    "mn.tasky.analytics.application..",
+                    "mn.tasky.auth.application..",
+                    "mn.tasky.booking.application..",
+                    "mn.tasky.category.application..",
+                    "mn.tasky.dispute.application..",
+                    "mn.tasky.location.application..",
+                    "mn.tasky.messaging.application..",
+                    "mn.tasky.notification.application..",
+                    "mn.tasky.payment.application..",
+                    "mn.tasky.review.application..",
+                    "mn.tasky.task.application..",
+                    "mn.tasky.user.application..",
+                    "mn.tasky.verification.application..",
+                    "mn.tasky.wallet.application..")
+            .because("runtime composition must use publicapi ports, not feature-module application services");
+
+    /**
+     * Runtime composition must not depend on common.audit internals.
+     * Use AdminAuditCommandPort instead.
+     */
+    @ArchTest
+    static final ArchRule runtimeCompositionMustNotDependOnAuditDao = noClasses()
+            .that()
+            .resideInAnyPackage(
+                    "mn.tasky.runtime.publicapi.composition..",
+                    "mn.tasky.runtime.adminapi.composition..",
+                    "mn.tasky.runtime.user.composition..")
+            .should()
+            .dependOnClassesThat()
+            .resideInAnyPackage("mn.tasky.common.audit..")
+            .because("runtime composition must use AdminAuditCommandPort, not AuditEventDao");
 }
