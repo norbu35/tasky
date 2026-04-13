@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.AuthService;
-import mn.tasky.booking.application.BookingService;
+import mn.tasky.booking.publicapi.BookingCommandPort;
 import mn.tasky.category.application.CategoryService;
 import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.common.outbox.DomainEventOutboxService;
@@ -43,17 +43,17 @@ class TaskAcceptScenarioTests {
 
     private TaskService taskService;
     private TaskDao taskDao;
-    private BookingService bookingService;
+    private BookingCommandPort bookingCommandPort;
 
     @BeforeEach
     void setUp() {
         taskDao = mock(TaskDao.class);
-        bookingService = mock(BookingService.class);
+        bookingCommandPort = mock(BookingCommandPort.class);
 
         taskService = new TaskService(
                 mock(AuthService.class),
                 mock(CategoryService.class),
-                bookingService,
+                bookingCommandPort,
                 mock(MessagingService.class),
                 mock(NotificationService.class),
                 mock(AnalyticsService.class),
@@ -90,8 +90,7 @@ class TaskAcceptScenarioTests {
 
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(TaskAcceptResult.DISCLAIMER_REQUIRED);
-        verify(bookingService, never()).createBooking(anyString(), anyString(), anyString(), anyInt());
-        verify(bookingService, never())
-                .createBooking(anyString(), anyString(), anyString(), anyInt(), any(Boolean.class));
+        verify(bookingCommandPort, never())
+                .createBooking(anyString(), anyString(), anyString(), anyInt(), any(Boolean.class), any());
     }
 }

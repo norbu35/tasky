@@ -16,8 +16,8 @@ import java.util.UUID;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dto.UserProfile;
-import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
+import mn.tasky.booking.publicapi.BookingCommandPort;
 import mn.tasky.category.application.CategoryService;
 import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.category.dto.CategorySchemaVersion;
@@ -70,7 +70,7 @@ public class TaskService {
 
     private final AuthService authService;
     private final CategoryService categoryService;
-    private final BookingService bookingService;
+    private final BookingCommandPort bookingCommandPort;
     private final MessagingService messagingService;
     private final NotificationService notificationService;
     private final AnalyticsService analyticsService;
@@ -91,7 +91,7 @@ public class TaskService {
     public TaskService(
             AuthService authService,
             CategoryService categoryService,
-            BookingService bookingService,
+            BookingCommandPort bookingCommandPort,
             MessagingService messagingService,
             NotificationService notificationService,
             AnalyticsService analyticsService,
@@ -110,7 +110,7 @@ public class TaskService {
             @Value("${tasky.notifications.task-match-limit:50}") int taskMatchNotificationLimit) {
         this.authService = authService;
         this.categoryService = categoryService;
-        this.bookingService = bookingService;
+        this.bookingCommandPort = bookingCommandPort;
         this.messagingService = messagingService;
         this.notificationService = notificationService;
         this.analyticsService = analyticsService;
@@ -886,7 +886,7 @@ public class TaskService {
         taskApplicationDao.updateStatus(selected.id(), "ACCEPTED");
         taskApplicationDao.rejectOthers(taskId, selected.id());
 
-        BookingState booking = bookingService.createBooking(
+        BookingState booking = bookingCommandPort.createBooking(
                 task.id(), selected.taskerId(), task.customerId(), task.budget(), true, task.scheduledAt());
         taskDao.updateStatus(task.id(), "ASSIGNED", Instant.now());
 
