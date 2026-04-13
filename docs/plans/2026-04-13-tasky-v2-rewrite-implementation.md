@@ -781,7 +781,7 @@ Tranche 7.
   - `GET /events/{id}` — single event detail
   - `POST /events/{id}/replay` — reset a FAILED event to PENDING (guarded: only FAILED status is replayable; replaying PROCESSED events would duplicate wallet credits, conversations, and notifications)
   - `POST /events/replay-all` — bulk replay all failed events
-- `EventWorkerConsumer` cleanly separates poison-message rejection (`AmqpRejectAndDontRequeueException` → RabbitMQ DLX, no manual republish) from handler failures (manual retry/DLQ via `rabbitTemplate`). Previously the catch block republished *and* rethrew, causing double-enqueue.
+- `EventWorkerConsumer` cleanly separates poison-message rejection (`AmqpRejectAndDontRequeueException` → RabbitMQ DLX, no manual republish) from handler failures (manual retry/DLQ via `rabbitTemplate`). Previously the catch block republished _and_ rethrew, causing double-enqueue.
 - Operations documentation published:
   - `docs/operations/tasky-v2-runbook.md` — health checks, replay procedures, provider config, deployment checklist, rollback
   - `docs/operations/tasky-v2-failure-modes.md` — failure matrix, per-handler failure modes, recovery procedures, known idempotency gap
@@ -824,30 +824,45 @@ Tranche 7.
 
 ## Tranche 10: Migrate Current Core Flows To V2 And Remove The Old Style
 
-**Status:** planned
+**Status:** in progress
 **Priority:** critical
 **Depends on:** Tranche 9
 
 ## Description
 
-Finish the rewrite by moving the important current flows fully onto the Tasky v2 architecture and removing superseded structural paths.
+Finish the backend rewrite by converging the remaining meaningful request paths onto the final Tasky v2 shapes and
+removing superseded structural paths.
+
+This tranche is now governed by:
+
+- `docs/plans/2026-04-13-tasky-v2-backend-finalization-design.md`
+- `docs/plans/2026-04-13-tasky-v2-backend-finalization.md`
 
 ## Done When
 
-- current Phase 1 core flows use v2 module ports, workflows, jobs, and providers
-- broad compatibility shims are reduced or removed
-- the repo ends with one active architecture style
+- all meaningful backend request paths use one of the two allowed final shapes:
+  - `controller -> runtime composition -> module publicapi ports`
+  - `controller -> module-owned publicapi ports`
+- the documented exception set remains narrow and explicit
+- the live async foundation is singular and unambiguous: persisted outbox relay -> RabbitMQ -> workflow handlers
+- broad compatibility shims are removed or documented with owner and deletion trigger
+- the backend ends with one active architecture style
 
 ### Task 10: Migrate flows and retire old structural paths
 
-**Candidate flows:**
+**Execution model:**
 
-- task creation and publish
-- task apply and accept
-- booking completion and review aftermath
-- verification review
-- dispute aftermath
-- rescue escalation
+Execute Tranche 10 as the backend finalization pass defined in the dedicated finalization design and implementation
+plan. Do not treat the following as an unordered candidate list anymore.
+
+**Priority flow families:**
+
+1. task creation / task apply / acceptance / booking lifecycle request paths
+2. payment and wallet request paths
+3. booking-intent request paths
+4. remaining admin/public request paths that still orchestrate through concrete services
+5. cleanup of superseded orchestration paths and transition shims
+6. documentation sync to the live backend architecture
 
 **Files:**
 
@@ -857,24 +872,46 @@ Finish the rewrite by moving the important current flows fully onto the Tasky v2
 - Modify: `services/api/src/main/java/mn/tasky/dispute/**`
 - Modify: `services/api/src/main/java/mn/tasky/review/**`
 - Modify: `services/api/src/main/java/mn/tasky/common/**`
+- Modify: `services/api/src/main/java/mn/tasky/runtime/**`
+- Modify: `services/api/src/test/java/mn/tasky/architecture/**`
 - Modify: `docs/ARCHITECTURE.md`
 - Modify: `CHANGELOG.md`
 
 **Steps:**
 
-1. Migrate one core flow at a time behind parity checks
-2. Remove old orchestration paths only after parity is proven
-3. Update docs so Tasky v2 is described directly as the live architecture
+1. Lock the final boundary in architecture tests before further cutover work
+2. Remove speculative async scaffolding that conflicts with the chosen event-only foundation
+3. Migrate one request-path family at a time behind parity checks
+4. Remove old orchestration paths only after the affected family passes parity verification
+5. Update docs so Tasky v2 is described directly as the live backend architecture
 
 ## Verification
 
 ```bash
-./gradlew test
+./gradlew :services:api:test --tests "mn.tasky.architecture.AudienceCompositionBoundaryTest"
+./gradlew :services:api:test --tests "mn.tasky.architecture.BackendArchitectureTest"
 ./gradlew openApiValidate
-pnpm -r typecheck
-pnpm -r test
-./gradlew gateFull
+./gradlew gateSmoke
 ```
+
+## Handoff Note After Tranche 10 (current backend state)
+
+**Checkpoint date:** 2026-04-13
+
+**What is complete**
+
+- workflow-handler idempotency landed for the three migrated event families
+- task apply/accept now crosses the booking boundary through `BookingCommandPort`
+- booking completion no longer reaches into dispute persistence directly; it uses `TrustQueryPort`
+- verification review and dispute aftermath are already on v2 request-path seams
+- the outbox relay remains active and documented as an explicit deferred redesign rather than an implicit cutover
+
+**What remains before tranche 10 can be called complete**
+
+- request-path cutover is still mixed in a few controllers and surfaces; the repo does not yet end with one active style
+- some compatibility shims remain live on request paths and should either be removed or documented as intentional holdovers
+- async scaffolding introduced earlier in the rewrite still includes currently unused contracts (`OutboxEnvelope`, `AutomationJobEnvelope`); the finalization design now requires deletion unless a real job lane is introduced in the same change
+- `docs/ARCHITECTURE.md` must continue being updated so the live backend is described in v2 terms rather than the pre-rewrite service-coupling model
 
 ---
 
