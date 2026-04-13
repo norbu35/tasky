@@ -112,6 +112,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/dev/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Dev login (development only)
+         * @description Authenticate with a phone number and role without SMS OTP.
+         *     Only available when `tasky.dev-auth.enabled=true`. Never enabled in production.
+         */
+        post: operations["devLogin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/token/refresh": {
         parameters: {
             query?: never;
@@ -1906,6 +1927,22 @@ export interface paths {
          */
         get: operations["adminGetOutboxEvent"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/outbox/events/{id}/replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * Replay outbox event
          * @description Resets a FAILED outbox event to PENDING so the processor will retry it.
@@ -2996,6 +3033,40 @@ export interface operations {
                 };
             };
             429: components["responses"]["TooManyRequests"];
+        };
+    };
+    devLogin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: phone */
+                    phone: string;
+                    /** @enum {string} */
+                    role: "CUSTOMER" | "TASKER" | "ADMIN";
+                };
+            };
+        };
+        responses: {
+            /** @description Auth session with tokens. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        access_token: string;
+                        refresh_token: string;
+                        user: components["schemas"]["User"];
+                    };
+                };
+            };
+            400: components["responses"]["BadRequest"];
         };
     };
     refreshToken: {
