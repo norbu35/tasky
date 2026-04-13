@@ -1,6 +1,6 @@
 import '../../src/lib/i18n';
 
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
@@ -16,10 +16,10 @@ import { CustomerNoShowReminderDialog } from '../../src/pages/customer/CustomerN
 import { CustomerRebookPage } from '../../src/pages/customer/CustomerRebookPage';
 import { CustomerReschedulePage } from '../../src/pages/customer/CustomerReschedulePage';
 import { CustomerTimelinePage } from '../../src/pages/customer/CustomerTimelinePage';
-import { buildApiClientMock } from '../setup/mockApiClient';
-import { baseBooking, baseProfile, baseSession } from '../setup/mockData';
+import { createMockApiClient } from '../../src/test/mocks';
+import { makeBooking, makeProfile, makeSession } from '../../src/test/factories';
 
-function renderWithContext(ui: React.ReactElement, apiClient = buildApiClientMock()) {
+function renderWithContext(ui: React.ReactElement, apiClient = createMockApiClient()) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
@@ -27,8 +27,8 @@ function renderWithContext(ui: React.ReactElement, apiClient = buildApiClientMoc
   const contextValue: AppContextValue = {
     apiClient,
     locale: 'en',
-    session: baseSession,
-    profile: baseProfile,
+    session: makeSession(),
+    profile: makeProfile(),
     profileBusy: false,
     profileError: null,
     setSession: vi.fn(),
@@ -53,7 +53,7 @@ function renderWithRoute(
   path: string,
   route: string,
   ui: React.ReactElement,
-  apiClient = buildApiClientMock(),
+  apiClient = createMockApiClient(),
 ) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -62,8 +62,8 @@ function renderWithRoute(
   const contextValue: AppContextValue = {
     apiClient,
     locale: 'en',
-    session: baseSession,
-    profile: baseProfile,
+    session: makeSession(),
+    profile: makeProfile(),
     profileBusy: false,
     profileError: null,
     setSession: vi.fn(),
@@ -90,12 +90,12 @@ function renderWithRoute(
 
 describe('Customer bookings phase 1 parity', () => {
   it('renders the customer bookings list and booking detail shell', async () => {
-    const apiClient = buildApiClientMock({
+    const apiClient = createMockApiClient({
       listBookings: vi.fn().mockResolvedValue({
-        data: [{ ...baseBooking, id: 'booking-1', status: 'ASSIGNED' }],
+        data: [{ ...makeBooking(), id: 'booking-1', status: 'ASSIGNED' }],
         cursor: { next: null, has_more: false },
       }),
-      getBooking: vi.fn().mockResolvedValue({ ...baseBooking, id: 'booking-1' }),
+      getBooking: vi.fn().mockResolvedValue({ ...makeBooking(), id: 'booking-1' }),
     });
 
     const bookingsView = renderWithContext(<CustomerBookingsPage />, apiClient);
@@ -116,22 +116,20 @@ describe('Customer bookings phase 1 parity', () => {
   });
 
   it('renders the booking confirmation and confirmed states', async () => {
-    const apiClient = buildApiClientMock({
-      getBooking: vi.fn().mockResolvedValue({ ...baseBooking, id: 'booking-1' }),
+    const apiClient = createMockApiClient({
+      getBooking: vi.fn().mockResolvedValue({ ...makeBooking(), id: 'booking-1' }),
     });
 
     const confirmedView = renderWithContext(<CustomerBookingConfirmedPage />, apiClient);
 
-    expect(
-      await screen.findByRole('heading', { name: 'Booking confirmed' }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Booking confirmed' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Back to bookings' })).toBeInTheDocument();
     confirmedView.unmount();
   });
 
   it('renders the timeline, reschedule, dispute, rescue, and rebook surfaces', async () => {
-    const apiClient = buildApiClientMock({
-      getBooking: vi.fn().mockResolvedValue({ ...baseBooking, id: 'booking-1' }),
+    const apiClient = createMockApiClient({
+      getBooking: vi.fn().mockResolvedValue({ ...makeBooking(), id: 'booking-1' }),
     });
 
     const timelineView = renderWithContext(<CustomerTimelinePage />, apiClient);
@@ -162,7 +160,7 @@ describe('Customer bookings phase 1 parity', () => {
   it('renders the no-show reminder dialog', () => {
     const reminderView = renderWithContext(
       <CustomerNoShowReminderDialog open onOpenChange={vi.fn()} />,
-      buildApiClientMock(),
+      createMockApiClient(),
     );
 
     expect(screen.getByRole('dialog', { name: 'No-show reminder' })).toBeInTheDocument();

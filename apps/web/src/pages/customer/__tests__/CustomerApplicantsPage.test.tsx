@@ -6,17 +6,17 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { AppContext, type AppContextValue } from '../../../context/AppContext';
 import { CustomerApplicantsPage } from '../CustomerApplicantsPage';
-import { buildApiClientMock } from '../../../../tests/setup/mockApiClient';
-import { baseCategory, baseProfile, baseSession } from '../../../../tests/setup/mockData';
+import { createMockApiClient } from '../../../test/mocks';
+import { makeCategory, makeProfile, makeSession } from '../../../test/factories';
 
 function createContext(overrides: Partial<AppContextValue> = {}): AppContextValue {
-  const apiClient = overrides.apiClient ?? buildApiClientMock();
+  const apiClient = overrides.apiClient ?? createMockApiClient();
 
   return {
     apiClient,
     locale: 'en',
-    session: baseSession,
-    profile: baseProfile,
+    session: makeSession(),
+    profile: makeProfile(),
     profileBusy: false,
     profileError: null,
     setSession: vi.fn(),
@@ -32,13 +32,13 @@ function createContext(overrides: Partial<AppContextValue> = {}): AppContextValu
 
 describe('CustomerApplicantsPage', () => {
   it('TID-TASK-114-WEB-APPLICANTS-ACTIONS fetches applicants for the routed task and wires profile and accept actions', async () => {
-    const apiClient = buildApiClientMock({
+    const apiClient = createMockApiClient({
       listMyTasks: vi.fn().mockResolvedValue({
         data: [
           {
             id: 'task-77',
-            category_id: baseCategory.id,
-            category: baseCategory,
+            category_id: makeCategory().id,
+            category: makeCategory(),
             description: 'Move a sofa',
             budget: 90000,
             location_text: 'БЗД 1-р хороо',
@@ -105,7 +105,7 @@ describe('CustomerApplicantsPage', () => {
     expect(await screen.findByText('Tasker One')).toBeInTheDocument();
     await waitFor(() => {
       expect(apiClient.listTaskApplications).toHaveBeenCalledWith(
-        baseSession.accessToken,
+        makeSession().accessToken,
         'task-77',
       );
     });
@@ -115,13 +115,13 @@ describe('CustomerApplicantsPage', () => {
   });
 
   it('TID-TASK-114-WEB-SCAFFOLD-CLEANUP removes scaffold copy and dead fallback messaging from the applicants page', async () => {
-    const apiClient = buildApiClientMock({
+    const apiClient = createMockApiClient({
       listMyTasks: vi.fn().mockResolvedValue({
         data: [
           {
             id: 'task-88',
-            category_id: baseCategory.id,
-            category: baseCategory,
+            category_id: makeCategory().id,
+            category: makeCategory(),
             description: 'Deep clean apartment',
             budget: 120000,
             location_text: 'ХУД 15-р хороо',

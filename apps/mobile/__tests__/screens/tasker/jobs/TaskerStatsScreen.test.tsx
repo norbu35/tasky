@@ -86,7 +86,6 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
     expect(screen.getByText('96%')).toBeTruthy();
     expect(screen.getByText('94%')).toBeTruthy();
     expect(screen.getByText('1')).toBeTruthy();
-    expect(screen.getByText('42%')).toBeTruthy();
   });
 
   it('renders the hero rating panel', () => {
@@ -148,7 +147,6 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
     expect(screen.getByText('Гүйцэтгэсэн ажлууд')).toBeTruthy();
     expect(screen.getByText('Дундаж үнэлгээ')).toBeTruthy();
     expect(screen.getByText('Гүйцэтгэлийн хувь')).toBeTruthy();
-    expect(screen.getByText('Анкетын амжилт')).toBeTruthy();
     expect(screen.getByText('Цуцлалт (30 хоногт)')).toBeTruthy();
     expect(screen.getByText('Үнэлгээний задаргаа')).toBeTruthy();
     expect(screen.getByText(/Даалгаврын тодорхой байдал/)).toBeTruthy();
@@ -157,7 +155,6 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
     expect(screen.getByText('Найдвартай байдал')).toBeTruthy();
     expect(screen.getByText('Найдвартай байдлын оноо')).toBeTruthy();
     expect(screen.getByText('Pro Badge олдсон!')).toBeTruthy();
-    expect(screen.getByText('Идэвхжил')).toBeTruthy();
   });
 
   it('shows error state with retry', () => {

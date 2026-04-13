@@ -92,7 +92,7 @@ export function CustomerTaskPage() {
         return next;
       });
     },
-    [intakeSchema, summaryManuallyEdited],
+    [intakeSchema, summaryManuallyEdited, i18n.language, t],
   );
 
   useEffect(() => {

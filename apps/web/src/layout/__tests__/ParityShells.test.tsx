@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { renderWithAppContext as render } from '../../test/render-helpers';
 import type { ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
 
@@ -15,7 +16,7 @@ import {
   ResponsiveWizardShell,
   StatePanel,
   TimelineList,
-} from '../../src/layout/parity';
+} from '../parity';
 
 describe('Parity shells', () => {
   it('renders the responsive feed shell with content and side rail slots', () => {

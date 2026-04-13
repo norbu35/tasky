@@ -1,21 +1,27 @@
+import type { AdminApiClient } from '../../../lib/adminApiClient';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ApiClient, User, Message } from '../../../lib/apiClient';
 
 // ── Mock AppContext ──────────────────────────────────────────────────
-const mockApiClient: Partial<ApiClient> = {
+const mockAdminApiClient: Partial<AdminApiClient> = {
   adminSearchUsers: vi.fn(),
   adminBanUser: vi.fn(),
   adminUnbanUser: vi.fn(),
   adminListFlaggedMessages: vi.fn(),
 };
 
+const mockApiClient = {} as ApiClient;
 vi.mock('../../../context/AppContext', () => ({
   useAppContext: vi.fn(() => ({
     apiClient: mockApiClient,
     session: { accessToken: 'test-token', refreshToken: 'rt', user: { id: '1', role: 'ADMIN' } },
   })),
+}));
+
+vi.mock('../../../lib/adminApiClient', () => ({
+  useAdminApiClient: () => mockAdminApiClient,
 }));
 
 // ── Mock sonner toast ────────────────────────────────────────────────
@@ -76,23 +82,23 @@ function renderPage() {
 describe('AdminUsersPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(mockApiClient.adminSearchUsers!).mockResolvedValue({
+    vi.mocked(mockAdminApiClient.adminSearchUsers!).mockResolvedValue({
       data: MOCK_USERS,
       cursor: { next: null, has_more: false },
     });
-    vi.mocked(mockApiClient.adminBanUser!).mockImplementation(
+    vi.mocked(mockAdminApiClient.adminBanUser!).mockImplementation(
       async (_token: string, userId: string) => ({
         ...MOCK_USERS.find((u) => u.id === userId)!,
         status: 'BANNED',
       }),
     );
-    vi.mocked(mockApiClient.adminUnbanUser!).mockImplementation(
+    vi.mocked(mockAdminApiClient.adminUnbanUser!).mockImplementation(
       async (_token: string, userId: string) => ({
         ...MOCK_USERS.find((u) => u.id === userId)!,
         status: 'VERIFIED',
       }),
     );
-    vi.mocked(mockApiClient.adminListFlaggedMessages!).mockResolvedValue({
+    vi.mocked(mockAdminApiClient.adminListFlaggedMessages!).mockResolvedValue({
       data: MOCK_FLAGGED_MESSAGES,
       cursor: { next: null, has_more: false },
     });
@@ -115,7 +121,10 @@ describe('AdminUsersPage', () => {
     fireEvent.click(searchButton);
 
     await waitFor(() => {
-      expect(mockApiClient.adminSearchUsers).toHaveBeenCalledWith('test-token', '+97699001122');
+      expect(mockAdminApiClient.adminSearchUsers).toHaveBeenCalledWith(
+        'test-token',
+        '+97699001122',
+      );
     });
   });
 
@@ -166,7 +175,7 @@ describe('AdminUsersPage', () => {
     fireEvent.click(confirmButton);
 
     await waitFor(() => {
-      expect(mockApiClient.adminBanUser).toHaveBeenCalledWith(
+      expect(mockAdminApiClient.adminBanUser).toHaveBeenCalledWith(
         'test-token',
         'user-1',
         'Spam behavior',
@@ -194,7 +203,7 @@ describe('AdminUsersPage', () => {
     fireEvent.click(unbanButton);
 
     await waitFor(() => {
-      expect(mockApiClient.adminUnbanUser).toHaveBeenCalledWith('test-token', 'user-2');
+      expect(mockAdminApiClient.adminUnbanUser).toHaveBeenCalledWith('test-token', 'user-2');
     });
 
     await waitFor(() => {
@@ -210,7 +219,7 @@ describe('AdminUsersPage', () => {
     await user.click(flaggedTab);
 
     await waitFor(() => {
-      expect(mockApiClient.adminListFlaggedMessages).toHaveBeenCalledWith('test-token');
+      expect(mockAdminApiClient.adminListFlaggedMessages).toHaveBeenCalledWith('test-token');
     });
 
     await waitFor(() => {
@@ -221,7 +230,7 @@ describe('AdminUsersPage', () => {
   });
 
   it('empty search results show message', async () => {
-    vi.mocked(mockApiClient.adminSearchUsers!).mockResolvedValue({
+    vi.mocked(mockAdminApiClient.adminSearchUsers!).mockResolvedValue({
       data: [],
       cursor: { next: null, has_more: false },
     });
@@ -238,7 +247,7 @@ describe('AdminUsersPage', () => {
   });
 
   it('error state with retry', async () => {
-    vi.mocked(mockApiClient.adminSearchUsers!).mockRejectedValue(new Error('Network error'));
+    vi.mocked(mockAdminApiClient.adminSearchUsers!).mockRejectedValue(new Error('Network error'));
 
     renderPage();
 
@@ -253,7 +262,7 @@ describe('AdminUsersPage', () => {
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
 
     // Fix the mock and retry
-    vi.mocked(mockApiClient.adminSearchUsers!).mockResolvedValue({
+    vi.mocked(mockAdminApiClient.adminSearchUsers!).mockResolvedValue({
       data: MOCK_USERS,
       cursor: { next: null, has_more: false },
     });

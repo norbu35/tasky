@@ -1,3 +1,4 @@
+import { useAdminApiClient } from '../../lib/adminApiClient';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -47,7 +48,8 @@ function formatTimestamp(iso: string): string {
 
 export function AdminFeaturesPage() {
   const { t } = useTranslation();
-  const { apiClient, session } = useAppContext();
+  const { session } = useAppContext();
+  const adminApiClient = useAdminApiClient();
 
   const [toggles, setToggles] = useState<FeatureToggle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,14 +67,14 @@ export function AdminFeaturesPage() {
     setLoading(true);
     setError(null);
     try {
-      const result = await apiClient.adminListFeatureToggles(session.accessToken);
+      const result = await adminApiClient.adminListFeatureToggles(session.accessToken);
       setToggles(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load feature toggles');
     } finally {
       setLoading(false);
     }
-  }, [apiClient, session]);
+  }, [adminApiClient, session]);
 
   useEffect(() => {
     fetchToggles();
@@ -86,7 +88,7 @@ export function AdminFeaturesPage() {
     if (!pendingToggle || !session) return;
     setUpdating(true);
     try {
-      const updated = await apiClient.adminUpdateFeatureToggle(
+      const updated = await adminApiClient.adminUpdateFeatureToggle(
         session.accessToken,
         pendingToggle.featureName,
         pendingToggle.newValue,

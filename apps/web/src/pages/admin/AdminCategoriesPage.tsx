@@ -1,3 +1,4 @@
+import { useAdminApiClient } from '../../lib/adminApiClient';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -247,7 +248,8 @@ function statusBadgeVariant(status: string): 'default' | 'secondary' | 'destruct
 
 function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
   const { t } = useTranslation();
-  const { apiClient, session } = useAppContext();
+  const { session } = useAppContext();
+  const adminApiClient = useAdminApiClient();
   const [versions, setVersions] = useState<CategorySchemaVersion[]>([]);
   const [loading, setLoading] = useState(true);
   const [schemaDialogOpen, setSchemaDialogOpen] = useState(false);
@@ -256,7 +258,7 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
     if (!session) return;
     setLoading(true);
     try {
-      const result = await apiClient.adminListCategorySchemas(session.accessToken, categoryId);
+      const result = await adminApiClient.adminListCategorySchemas(session.accessToken, categoryId);
       setVersions(result);
     } catch (err) {
       toast.error(
@@ -267,7 +269,7 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
     } finally {
       setLoading(false);
     }
-  }, [apiClient, session, categoryId, t]);
+  }, [adminApiClient, session, categoryId, t]);
 
   useEffect(() => {
     fetchSchemas();
@@ -276,7 +278,7 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
   const handleCreateSchema = async (schemaJson: Record<string, unknown>) => {
     if (!session) return;
     try {
-      const created = await apiClient.adminCreateCategorySchema(
+      const created = await adminApiClient.adminCreateCategorySchema(
         session.accessToken,
         categoryId,
         schemaJson,
@@ -297,7 +299,7 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
   const handleActivate = async (version: number) => {
     if (!session) return;
     try {
-      const updated = await apiClient.adminActivateCategorySchema(
+      const updated = await adminApiClient.adminActivateCategorySchema(
         session.accessToken,
         categoryId,
         version,
@@ -317,7 +319,7 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
   const handleRollback = async (version: number) => {
     if (!session) return;
     try {
-      const updated = await apiClient.adminActivateCategorySchema(
+      const updated = await adminApiClient.adminActivateCategorySchema(
         session.accessToken,
         categoryId,
         version,
@@ -399,7 +401,8 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
 
 export function AdminCategoriesPage() {
   const { t } = useTranslation();
-  const { apiClient, session } = useAppContext();
+  const { session } = useAppContext();
+  const adminApiClient = useAdminApiClient();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -417,7 +420,7 @@ export function AdminCategoriesPage() {
     setLoading(true);
     setError(null);
     try {
-      const result = await apiClient.adminListCategories(session.accessToken);
+      const result = await adminApiClient.adminListCategories(session.accessToken);
       setCategories(result.data);
     } catch (err) {
       setError(
@@ -428,7 +431,7 @@ export function AdminCategoriesPage() {
     } finally {
       setLoading(false);
     }
-  }, [apiClient, session, t]);
+  }, [adminApiClient, session, t]);
 
   useEffect(() => {
     fetchCategories();
@@ -457,7 +460,7 @@ export function AdminCategoriesPage() {
 
     try {
       if (editingCategory) {
-        const updated = await apiClient.adminUpdateCategory(
+        const updated = await adminApiClient.adminUpdateCategory(
           session.accessToken,
           editingCategory.id,
           payload,
@@ -465,7 +468,7 @@ export function AdminCategoriesPage() {
         setCategories((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
         toast.success(t('admin.categories.updated', 'Category updated'));
       } else {
-        const created = await apiClient.adminCreateCategory(session.accessToken, payload);
+        const created = await adminApiClient.adminCreateCategory(session.accessToken, payload);
         setCategories((prev) => [...prev, created]);
         toast.success(t('admin.categories.created', 'Category created'));
       }
@@ -482,7 +485,7 @@ export function AdminCategoriesPage() {
   const handleToggleActive = async (category: Category) => {
     if (!session) return;
     try {
-      const updated = await apiClient.adminUpdateCategory(session.accessToken, category.id, {
+      const updated = await adminApiClient.adminUpdateCategory(session.accessToken, category.id, {
         is_active: !category.is_active,
       });
       setCategories((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));

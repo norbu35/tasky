@@ -20,16 +20,19 @@ const mockAdminRejectVerification = vi.fn();
 
 vi.mock('../../../context/AppContext', () => ({
   useAppContext: vi.fn(() => ({
-    apiClient: {
-      adminListPendingVerifications: mockAdminListPendingVerifications,
-      adminApproveVerification: mockAdminApproveVerification,
-      adminRejectVerification: mockAdminRejectVerification,
-    },
     session: {
       accessToken: 'test-admin-token',
       refreshToken: 'test-refresh',
       user: { id: 'admin-1', role: 'ADMIN' },
     },
+  })),
+}));
+
+vi.mock('../../../lib/adminApiClient', () => ({
+  useAdminApiClient: vi.fn(() => ({
+    adminListPendingVerifications: mockAdminListPendingVerifications,
+    adminApproveVerification: mockAdminApproveVerification,
+    adminRejectVerification: mockAdminRejectVerification,
   })),
 }));
 

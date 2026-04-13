@@ -1,3 +1,4 @@
+import type { AdminApiClient } from '../../../lib/adminApiClient';
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type {
@@ -8,7 +9,7 @@ import type {
 } from '../../../lib/apiClient';
 
 // ── Mock AppContext ──────────────────────────────────────────────────
-const mockApiClient: Partial<ApiClient> = {
+const mockAdminApiClient: Partial<AdminApiClient> = {
   adminListCategories: vi.fn(),
   adminCreateCategory: vi.fn(),
   adminUpdateCategory: vi.fn(),
@@ -23,11 +24,16 @@ const mockSession = {
   user: { id: '1', role: 'ADMIN' },
 };
 
+const mockApiClient = {} as ApiClient;
 vi.mock('../../../context/AppContext', () => ({
   useAppContext: vi.fn(() => ({
     apiClient: mockApiClient,
     session: mockSession,
   })),
+}));
+
+vi.mock('../../../lib/adminApiClient', () => ({
+  useAdminApiClient: () => mockAdminApiClient,
 }));
 
 // ── Mock sonner toast ────────────────────────────────────────────────
@@ -112,26 +118,28 @@ function renderPage() {
 describe('AdminCategoriesPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(mockApiClient.adminListCategories!).mockResolvedValue(MOCK_CATEGORIES_PAGE);
-    vi.mocked(mockApiClient.adminCreateCategory!).mockImplementation(async (_token, payload) => ({
-      id: 'cat-new',
-      name: payload.name,
-      name_mn: payload.name_mn,
-      icon_url: payload.icon_url,
-      is_active: true,
-      sort_order: payload.sort_order,
-      intake_enabled: payload.intake_enabled,
-      intake_schema_version: 0,
-      intake_schema_json: null,
-    }));
-    vi.mocked(mockApiClient.adminUpdateCategory!).mockImplementation(
+    vi.mocked(mockAdminApiClient.adminListCategories!).mockResolvedValue(MOCK_CATEGORIES_PAGE);
+    vi.mocked(mockAdminApiClient.adminCreateCategory!).mockImplementation(
+      async (_token, payload) => ({
+        id: 'cat-new',
+        name: payload.name,
+        name_mn: payload.name_mn,
+        icon_url: payload.icon_url,
+        is_active: true,
+        sort_order: payload.sort_order,
+        intake_enabled: payload.intake_enabled,
+        intake_schema_version: 0,
+        intake_schema_json: null,
+      }),
+    );
+    vi.mocked(mockAdminApiClient.adminUpdateCategory!).mockImplementation(
       async (_token, categoryId, payload) => {
         const existing = MOCK_CATEGORIES.find((c) => c.id === categoryId)!;
         return { ...existing, ...payload };
       },
     );
-    vi.mocked(mockApiClient.adminListCategorySchemas!).mockResolvedValue(MOCK_SCHEMA_VERSIONS);
-    vi.mocked(mockApiClient.adminCreateCategorySchema!).mockImplementation(
+    vi.mocked(mockAdminApiClient.adminListCategorySchemas!).mockResolvedValue(MOCK_SCHEMA_VERSIONS);
+    vi.mocked(mockAdminApiClient.adminCreateCategorySchema!).mockImplementation(
       async (_token, _categoryId, schemaJson) => ({
         version: 4,
         status: 'DRAFT',
@@ -139,7 +147,7 @@ describe('AdminCategoriesPage', () => {
         created_at: new Date().toISOString(),
       }),
     );
-    vi.mocked(mockApiClient.adminActivateCategorySchema!).mockImplementation(
+    vi.mocked(mockAdminApiClient.adminActivateCategorySchema!).mockImplementation(
       async (_token, _categoryId, version, mode) => ({
         version,
         status: mode === 'rollback' ? 'ROLLED_BACK' : 'ACTIVE',
@@ -151,7 +159,7 @@ describe('AdminCategoriesPage', () => {
 
   // ── Loading state ──────────────────────────────────────────────────
   it('shows loading skeleton initially', () => {
-    vi.mocked(mockApiClient.adminListCategories!).mockReturnValue(new Promise(() => {}));
+    vi.mocked(mockAdminApiClient.adminListCategories!).mockReturnValue(new Promise(() => {}));
 
     renderPage();
 
@@ -211,7 +219,7 @@ describe('AdminCategoriesPage', () => {
 
   // ── Empty state ────────────────────────────────────────────────────
   it('shows empty state when no categories', async () => {
-    vi.mocked(mockApiClient.adminListCategories!).mockResolvedValue({
+    vi.mocked(mockAdminApiClient.adminListCategories!).mockResolvedValue({
       data: [],
       cursor: { next: null, has_more: false },
     });
@@ -225,7 +233,9 @@ describe('AdminCategoriesPage', () => {
 
   // ── Error state ────────────────────────────────────────────────────
   it('shows error state with retry', async () => {
-    vi.mocked(mockApiClient.adminListCategories!).mockRejectedValue(new Error('Network error'));
+    vi.mocked(mockAdminApiClient.adminListCategories!).mockRejectedValue(
+      new Error('Network error'),
+    );
 
     renderPage();
 
@@ -233,7 +243,7 @@ describe('AdminCategoriesPage', () => {
     expect(screen.getByText(/load error/i)).toBeInTheDocument();
 
     // Now fix the mock and retry
-    vi.mocked(mockApiClient.adminListCategories!).mockResolvedValue(MOCK_CATEGORIES_PAGE);
+    vi.mocked(mockAdminApiClient.adminListCategories!).mockResolvedValue(MOCK_CATEGORIES_PAGE);
 
     fireEvent.click(retryButton);
 
@@ -271,7 +281,7 @@ describe('AdminCategoriesPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /^save$/i }));
 
     await waitFor(() => {
-      expect(mockApiClient.adminCreateCategory).toHaveBeenCalledWith(
+      expect(mockAdminApiClient.adminCreateCategory).toHaveBeenCalledWith(
         'test-token',
         expect.objectContaining({
           name: 'Moving',
@@ -315,7 +325,7 @@ describe('AdminCategoriesPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /^save$/i }));
 
     await waitFor(() => {
-      expect(mockApiClient.adminUpdateCategory).toHaveBeenCalledWith(
+      expect(mockAdminApiClient.adminUpdateCategory).toHaveBeenCalledWith(
         'test-token',
         'cat-1',
         expect.objectContaining({
@@ -343,7 +353,7 @@ describe('AdminCategoriesPage', () => {
     fireEvent.click(toggle);
 
     await waitFor(() => {
-      expect(mockApiClient.adminUpdateCategory).toHaveBeenCalledWith('test-token', 'cat-1', {
+      expect(mockAdminApiClient.adminUpdateCategory).toHaveBeenCalledWith('test-token', 'cat-1', {
         is_active: false,
       });
     });
@@ -361,7 +371,10 @@ describe('AdminCategoriesPage', () => {
     fireEvent.click(within(row1).getByRole('button', { name: /schema/i }));
 
     await waitFor(() => {
-      expect(mockApiClient.adminListCategorySchemas).toHaveBeenCalledWith('test-token', 'cat-1');
+      expect(mockAdminApiClient.adminListCategorySchemas).toHaveBeenCalledWith(
+        'test-token',
+        'cat-1',
+      );
     });
 
     // Wait for schema versions to appear
@@ -406,7 +419,7 @@ describe('AdminCategoriesPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /^save$/i }));
 
     await waitFor(() => {
-      expect(mockApiClient.adminCreateCategorySchema).toHaveBeenCalledWith(
+      expect(mockAdminApiClient.adminCreateCategorySchema).toHaveBeenCalledWith(
         'test-token',
         'cat-1',
         { type: 'object', properties: { area: { type: 'number' } } },
@@ -440,7 +453,7 @@ describe('AdminCategoriesPage', () => {
     fireEvent.click(within(draftRow).getByRole('button', { name: /activate/i }));
 
     await waitFor(() => {
-      expect(mockApiClient.adminActivateCategorySchema).toHaveBeenCalledWith(
+      expect(mockAdminApiClient.adminActivateCategorySchema).toHaveBeenCalledWith(
         'test-token',
         'cat-1',
         2,

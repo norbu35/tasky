@@ -1,30 +1,36 @@
 import '../../src/lib/i18n';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { AppContext } from '../../src/context/AppContext';
 import type { AppContextValue } from '../../src/context/AppContext';
-import { CustomerApplicantsPage } from '../../src/pages/customer/CustomerApplicantsPage';
+
 import { CustomerTaskCancelDialog } from '../../src/pages/customer/CustomerTaskCancelDialog';
 import { CustomerTaskSuccessPage } from '../../src/pages/customer/CustomerTaskSuccessPage';
 import { CustomerTasksListPage } from '../../src/pages/customer/CustomerTasksListPage';
 import { CustomerTaskerProfilePage } from '../../src/pages/customer/CustomerTaskerProfilePage';
 import { CustomerTaskWizardPage } from '../../src/pages/customer/CustomerTaskWizardPage';
-import { buildApiClientMock } from '../setup/mockApiClient';
-import { baseCategory, baseProfile, baseSession, baseUser, localDateTimeInput } from '../setup/mockData';
+import { createMockApiClient } from '../../src/test/mocks';
+import {
+  makeCategory,
+  makeProfile,
+  makeSession,
+  makeUser,
+  localDateTimeInput,
+} from '../../src/test/factories';
 
 function createContext(overrides: Partial<AppContextValue> = {}): AppContextValue {
-  const apiClient = overrides.apiClient ?? buildApiClientMock();
+  const apiClient = overrides.apiClient ?? createMockApiClient();
 
   return {
     apiClient,
     locale: 'en',
-    session: baseSession,
-    profile: baseProfile,
+    session: makeSession(),
+    profile: makeProfile(),
     profileBusy: false,
     profileError: null,
     setSession: vi.fn(),
@@ -38,7 +44,7 @@ function createContext(overrides: Partial<AppContextValue> = {}): AppContextValu
   };
 }
 
-function renderWithProviders(ui: ReactElement, apiClient = buildApiClientMock()) {
+function renderWithProviders(ui: ReactElement, apiClient = createMockApiClient()) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -58,12 +64,12 @@ function renderWithProviders(ui: ReactElement, apiClient = buildApiClientMock())
 
 describe('Customer phase 1 parity', () => {
   it('renders the customer tasks list shell with task cards', async () => {
-    const apiClient = buildApiClientMock({
+    const apiClient = createMockApiClient({
       listMyTasks: vi.fn().mockResolvedValue({
         data: [
           {
             id: 'task-1',
-            category_id: baseCategory.id,
+            category_id: makeCategory().id,
             description: 'Deep clean apartment',
             budget: 120000,
             location_text: 'Exact location kept private',
@@ -85,11 +91,11 @@ describe('Customer phase 1 parity', () => {
   });
 
   it('renders the customer task wizard with intake, photo, location, and submit controls', async () => {
-    const apiClient = buildApiClientMock({
+    const apiClient = createMockApiClient({
       listCategories: vi.fn().mockResolvedValue({
         data: [
           {
-            ...baseCategory,
+            ...makeCategory(),
             intake_enabled: true,
             intake_schema_version: 1,
             intake_schema_json: [
@@ -109,8 +115,8 @@ describe('Customer phase 1 parity', () => {
       }),
       createTask: vi.fn().mockResolvedValue({
         id: 'task-created-1',
-        category_id: baseCategory.id,
-        customer_id: baseUser.id,
+        category_id: makeCategory().id,
+        customer_id: makeUser().id,
         description: 'Room count: 2',
         budget: 120000,
         location_lat: 47.9184,
@@ -142,9 +148,9 @@ describe('Customer phase 1 parity', () => {
 
     await waitFor(() => {
       expect(apiClient.createTask).toHaveBeenCalledWith(
-        baseSession.accessToken,
+        makeSession().accessToken,
         expect.objectContaining({
-          category_id: baseCategory.id,
+          category_id: makeCategory().id,
           budget: 120000,
           location_text: 'ХУД 15-р хороо',
         }),
@@ -157,79 +163,9 @@ describe('Customer phase 1 parity', () => {
   it('renders the customer task success page with follow-up actions', () => {
     renderWithProviders(<CustomerTaskSuccessPage />);
 
-    expect(
-      screen.getByRole('heading', { name: 'Task posted successfully' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Task posted successfully' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Back to tasks' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Post another task' })).toBeInTheDocument();
-  });
-
-  it('renders the customer applicants page with tasker cards and review actions', async () => {
-    const apiClient = buildApiClientMock({
-      listMyTasks: vi.fn().mockResolvedValue({
-        data: [
-          {
-            id: 'task-1',
-            category_id: baseCategory.id,
-            category: baseCategory,
-            description: 'Deep clean apartment',
-            budget: 120000,
-            location_text: 'Exact location kept private',
-            status: 'OPEN',
-            scheduled_at: '2026-02-16T10:00:00Z',
-            created_at: '2026-02-14T00:00:00Z',
-          },
-        ],
-        cursor: { next: null, has_more: false },
-      }),
-      listTaskApplications: vi.fn().mockResolvedValue({
-        data: [
-          {
-            id: 'app-1',
-            task_id: 'task-1',
-            tasker: {
-              id: 'tasker-1',
-              full_name: 'Tasker',
-              avatar_url: null,
-              rating_avg: 4.6,
-              completed_tasks: 7,
-              is_pro: true,
-            },
-            message: 'I can do this task tomorrow morning.',
-            status: 'PENDING',
-            created_at: '2026-02-14T00:00:00Z',
-          },
-        ],
-        cursor: { next: null, has_more: false },
-      }),
-    });
-
-    const queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    });
-
-    render(
-      <MemoryRouter initialEntries={['/customer/tasks/task-1/applicants']}>
-        <QueryClientProvider client={queryClient}>
-          <AppContext.Provider value={createContext({ apiClient })}>
-            <Routes>
-              <Route
-                path="/customer/tasks/:taskId/applicants"
-                element={<CustomerApplicantsPage />}
-              />
-            </Routes>
-          </AppContext.Provider>
-        </QueryClientProvider>
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByRole('heading', { name: 'Applicants' })).toBeInTheDocument();
-    expect(await screen.findByText('Tasker')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Review & Accept' })).toBeInTheDocument();
   });
 
   it('renders the customer tasker profile page with profile and review summary', () => {

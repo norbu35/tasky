@@ -1,25 +1,7 @@
-import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { FeatureToggle, ApiClient } from '../../../lib/apiClient';
-
-// ── Mock AppContext ──────────────────────────────────────────────────
-const mockApiClient: Partial<ApiClient> = {
-  adminListFeatureToggles: vi.fn(),
-  adminUpdateFeatureToggle: vi.fn(),
-};
-
-// Stable reference required for React 19: new object per call causes
-// useCallback([apiClient, session]) to see a changed session dep every
-// render, re-triggering the effect and keeping the component in a
-// loading loop. Return the same object each time.
-const mockContextValue = {
-  apiClient: mockApiClient,
-  session: { accessToken: 'test-token', refreshToken: 'rt', user: { id: '1', role: 'ADMIN' } },
-};
-
-vi.mock('../../../context/AppContext', () => ({
-  useAppContext: vi.fn(() => mockContextValue),
-}));
+import { renderWithAppContext } from '../../../test/render-helpers';
+import { makeFeatureToggle } from '../../../test/factories';
 
 // ── Mock sonner toast ────────────────────────────────────────────────
 vi.mock('sonner', () => ({
@@ -33,43 +15,47 @@ import { toast } from 'sonner';
 import { AdminFeaturesPage } from '../AdminFeaturesPage';
 
 // ── Test Data ────────────────────────────────────────────────────────
-const MOCK_TOGGLES: FeatureToggle[] = [
-  {
+const MOCK_TOGGLES = [
+  makeFeatureToggle({
     feature_name: 'lead_fee_enabled',
     is_enabled: true,
-    updated_by: 'admin@tasky.mn',
     updated_at: '2026-03-20T10:30:00Z',
-  },
-  {
+  }),
+  makeFeatureToggle({
     feature_name: 'subscription_enabled',
     is_enabled: false,
-    updated_by: 'admin@tasky.mn',
     updated_at: '2026-03-19T14:00:00Z',
-  },
-  {
+  }),
+  makeFeatureToggle({
     feature_name: 'escrow_enabled',
     is_enabled: true,
-    updated_by: 'admin@tasky.mn',
     updated_at: '2026-03-18T09:15:00Z',
-  },
-  {
+  }),
+  makeFeatureToggle({
     feature_name: 'ai_scope_summary_enabled',
     is_enabled: false,
-    updated_by: 'admin@tasky.mn',
     updated_at: '2026-03-17T16:45:00Z',
-  },
+  }),
 ];
 
 // ── Helpers ──────────────────────────────────────────────────────────
+const mockAdminListFeatureToggles = vi.fn();
+const mockAdminUpdateFeatureToggle = vi.fn();
+
 function renderPage() {
-  return render(<AdminFeaturesPage />);
+  return renderWithAppContext(<AdminFeaturesPage />, {
+    adminApiClient: {
+      adminListFeatureToggles: mockAdminListFeatureToggles,
+      adminUpdateFeatureToggle: mockAdminUpdateFeatureToggle,
+    },
+  });
 }
 
 describe('AdminFeaturesPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(mockApiClient.adminListFeatureToggles!).mockResolvedValue(MOCK_TOGGLES);
-    vi.mocked(mockApiClient.adminUpdateFeatureToggle!).mockImplementation(
+    vi.mocked(mockAdminListFeatureToggles).mockResolvedValue(MOCK_TOGGLES);
+    vi.mocked(mockAdminUpdateFeatureToggle).mockImplementation(
       async (_token: string, featureName: string, isEnabled: boolean) => ({
         feature_name: featureName,
         is_enabled: isEnabled,
@@ -81,7 +67,7 @@ describe('AdminFeaturesPage', () => {
 
   it('shows loading skeleton initially', () => {
     // Never resolve so we stay in loading state
-    vi.mocked(mockApiClient.adminListFeatureToggles!).mockReturnValue(new Promise(() => {}));
+    vi.mocked(mockAdminListFeatureToggles).mockReturnValue(new Promise(() => {}));
 
     renderPage();
 
@@ -155,7 +141,7 @@ describe('AdminFeaturesPage', () => {
     fireEvent.click(confirmButton);
 
     await waitFor(() => {
-      expect(mockApiClient.adminUpdateFeatureToggle).toHaveBeenCalledWith(
+      expect(mockAdminUpdateFeatureToggle).toHaveBeenCalledWith(
         'test-token',
         'lead_fee_enabled',
         false, // toggling from true to false
@@ -186,11 +172,11 @@ describe('AdminFeaturesPage', () => {
     const cancelButton = screen.getByRole('button', { name: /cancel/i });
     fireEvent.click(cancelButton);
 
-    expect(mockApiClient.adminUpdateFeatureToggle).not.toHaveBeenCalled();
+    expect(mockAdminUpdateFeatureToggle).not.toHaveBeenCalled();
   });
 
   it('shows error state with retry', async () => {
-    vi.mocked(mockApiClient.adminListFeatureToggles!).mockRejectedValue(new Error('Network error'));
+    vi.mocked(mockAdminListFeatureToggles).mockRejectedValue(new Error('Network error'));
 
     renderPage();
 
@@ -201,7 +187,7 @@ describe('AdminFeaturesPage', () => {
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
 
     // Now fix the mock and retry
-    vi.mocked(mockApiClient.adminListFeatureToggles!).mockResolvedValue(MOCK_TOGGLES);
+    vi.mocked(mockAdminListFeatureToggles).mockResolvedValue(MOCK_TOGGLES);
 
     fireEvent.click(screen.getByRole('button', { name: /retry/i }));
 

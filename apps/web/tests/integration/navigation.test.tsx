@@ -5,8 +5,8 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { App } from '../../src/App';
 import type { Task } from '../../src/lib/apiClient';
-import { buildApiClientMock } from '../setup/mockApiClient';
-import { baseProfile, baseSession, baseUser } from '../setup/mockData';
+import { createMockApiClient } from '../../src/test/mocks';
+import { makeProfile, makeSession, makeUser } from '../../src/test/factories';
 
 afterEach(() => {
   cleanup();
@@ -28,11 +28,11 @@ function renderApp(initialRoute: string, role: 'CUSTOMER' | 'TASKER' = 'CUSTOMER
     created_at: '2026-02-14T00:00:00Z',
   } as unknown as Task;
 
-  const apiClient = buildApiClientMock({
+  const apiClient = createMockApiClient({
     getMyProfile: async () => ({
-      ...baseProfile,
+      ...makeProfile(),
       role,
-      full_name: role === 'TASKER' ? 'Verified Tasker' : baseProfile.full_name,
+      full_name: role === 'TASKER' ? 'Verified Tasker' : makeProfile().full_name,
     }),
     listMyTasks: async () => ({
       data: [task],
@@ -44,9 +44,9 @@ function renderApp(initialRoute: string, role: 'CUSTOMER' | 'TASKER' = 'CUSTOMER
     <App
       apiClient={apiClient}
       initialSession={{
-        ...baseSession,
+        ...makeSession(),
         user: {
-          ...baseUser,
+          ...makeUser(),
           role,
         },
       }}

@@ -1,27 +1,24 @@
-import '../../src/lib/i18n';
+import '../../lib/i18n';
 
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 
-import { AppContext, type AppContextValue } from '../../src/context/AppContext';
-import {
-  avatarValueToApiPayload,
-  avatarValueToPreviewUrl,
-  ProfilePage,
-} from '../../src/pages/ProfilePage';
-import { buildApiClientMock } from '../setup/mockApiClient';
-import { baseProfile, baseSession } from '../setup/mockData';
+import { AppContext, type AppContextValue } from '../../context/AppContext';
+import { ProfilePage } from '../ProfilePage';
+import { avatarValueToApiPayload, avatarValueToPreviewUrl } from '../../lib/avatarHelpers';
+import { createMockApiClient } from '../../test/mocks';
+import { makeProfile, makeSession } from '../../test/factories';
 
 function renderProfilePage(profileOverrides: Partial<AppContextValue['profile']> = {}) {
-  const apiClient = buildApiClientMock();
+  const apiClient = createMockApiClient();
 
   const contextValue: AppContextValue = {
     apiClient,
     locale: 'en',
-    session: baseSession,
+    session: makeSession(),
     profile: {
-      ...baseProfile,
+      ...makeProfile(),
       role: 'CUSTOMER',
       status: 'VERIFIED',
       ...profileOverrides,

@@ -7,8 +7,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 import { AppContext, type AppContextValue } from '../../src/context/AppContext';
-import { buildApiClientMock } from '../setup/mockApiClient';
-import { baseProfile, baseSession, baseUser } from '../setup/mockData';
+import { createMockApiClient } from '../../src/test/mocks';
+import { makeProfile, makeSession, makeUser } from '../../src/test/factories';
 import { TaskerApplicationSentPage } from '../../src/pages/tasker/TaskerApplicationSentPage';
 import { TaskerBookingDetailPage } from '../../src/pages/tasker/TaskerBookingDetailPage';
 import { TaskerCancelDialog } from '../../src/pages/tasker/TaskerCancelDialog';
@@ -31,20 +31,20 @@ import { VerificationUploadPage } from '../../src/pages/tasker/VerificationUploa
 // Keep this file as a smoke baseline around the tasker route family.
 
 function createContext(overrides: Partial<AppContextValue> = {}): AppContextValue {
-  const apiClient = overrides.apiClient ?? buildApiClientMock();
+  const apiClient = overrides.apiClient ?? createMockApiClient();
 
   return {
     apiClient,
     locale: 'en',
     session: {
-      ...baseSession,
+      ...makeSession(),
       user: {
-        ...baseUser,
+        ...makeUser(),
         role: 'TASKER',
       },
     },
     profile: {
-      ...baseProfile,
+      ...makeProfile(),
       role: 'TASKER',
       status: 'VERIFIED',
       full_name: 'Verified Tasker',
@@ -62,7 +62,7 @@ function createContext(overrides: Partial<AppContextValue> = {}): AppContextValu
   };
 }
 
-function renderWithProviders(ui: ReactElement, apiClient = buildApiClientMock()) {
+function renderWithProviders(ui: ReactElement, apiClient = createMockApiClient()) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -82,13 +82,13 @@ function renderWithProviders(ui: ReactElement, apiClient = buildApiClientMock())
 
 describe('Tasker phase 1 parity', () => {
   it('renders the tasker feed and application-sent surfaces', async () => {
-    const apiClient = buildApiClientMock({
+    const apiClient = createMockApiClient({
       listTasks: vi.fn().mockResolvedValue({
         data: [
           {
             id: 'public-task-1',
             category: {
-              ...baseProfile,
+              ...makeProfile(),
               id: 'cat-cleaning',
               name: 'Cleaning',
               name_mn: 'Цэвэрлэгээ',
@@ -168,7 +168,7 @@ describe('Tasker phase 1 parity', () => {
   });
 
   it('renders the tasker jobs and verification smoke surfaces', async () => {
-    const apiClient = buildApiClientMock({
+    const apiClient = createMockApiClient({
       listTasks: vi.fn().mockResolvedValue({
         data: [
           {

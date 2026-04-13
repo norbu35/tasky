@@ -1,3 +1,4 @@
+import { useAdminApiClient } from '../../lib/adminApiClient';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../context/AppContext';
@@ -13,6 +14,7 @@ type PageState = 'idle' | 'loading' | 'error' | 'ready' | 'assigning' | 'success
 export function AdminConciergePage() {
   const { t } = useTranslation();
   const { apiClient, session } = useAppContext();
+  const adminApiClient = useAdminApiClient();
 
   const [tasks, setTasks] = useState<PublicTask[]>([]);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
@@ -40,7 +42,7 @@ export function AdminConciergePage() {
     } catch {
       setPageState('error');
     }
-  }, [apiClient, accessToken]);
+  }, [accessToken, apiClient]);
 
   useEffect(() => {
     if (accessToken) {
@@ -52,7 +54,7 @@ export function AdminConciergePage() {
     if (!phoneQuery.trim()) return;
     setSearchLoading(true);
     try {
-      const result = await apiClient.adminSearchUsers(accessToken, phoneQuery.trim());
+      const result = await adminApiClient.adminSearchUsers(accessToken, phoneQuery.trim());
       setTaskerResults(result.data.filter((user) => user.role === 'TASKER'));
     } catch {
       setTaskerResults([]);
@@ -73,7 +75,7 @@ export function AdminConciergePage() {
     setAssignError(null);
     try {
       const idempotencyKey = crypto.randomUUID();
-      const result = await apiClient.adminConciergeAssignTask(
+      const result = await adminApiClient.adminConciergeAssignTask(
         accessToken,
         selectedTaskId,
         selectedTaskerId,

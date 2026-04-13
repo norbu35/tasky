@@ -1,13 +1,13 @@
 import '../../src/lib/i18n';
 
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 import { AppContext, type AppContextValue } from '../../src/context/AppContext';
-import { buildApiClientMock } from '../setup/mockApiClient';
-import { baseProfile, baseSession } from '../setup/mockData';
+import { createMockApiClient } from '../../src/test/mocks';
+import { makeProfile, makeSession } from '../../src/test/factories';
 import { InboxPage } from '../../src/pages/shared/InboxPage';
 import { ChatDetailPage } from '../../src/pages/shared/ChatDetailPage';
 import { NotificationsPage } from '../../src/pages/shared/NotificationsPage';
@@ -27,12 +27,12 @@ import { TermsPage } from '../../src/pages/shared/TermsPage';
 import { PrivacyPage } from '../../src/pages/shared/PrivacyPage';
 
 function renderWithAppContext(ui: ReactNode) {
-  const apiClient = buildApiClientMock();
+  const apiClient = createMockApiClient();
   const contextValue: AppContextValue = {
     apiClient,
     locale: 'en-US',
-    session: baseSession,
-    profile: baseProfile,
+    session: makeSession(),
+    profile: makeProfile(),
     profileBusy: false,
     profileError: null,
     setSession: vi.fn(),

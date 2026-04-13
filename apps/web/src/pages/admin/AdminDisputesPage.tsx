@@ -1,3 +1,4 @@
+import { useAdminApiClient } from '../../lib/adminApiClient';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -33,7 +34,8 @@ function formatDate(iso: string): string {
 
 export function AdminDisputesPage() {
   const { t } = useTranslation();
-  const { apiClient, session } = useAppContext();
+  const { session } = useAppContext();
+  const adminApiClient = useAdminApiClient();
   const navigate = useNavigate();
 
   const [disputes, setDisputes] = useState<Dispute[]>([]);
@@ -45,14 +47,14 @@ export function AdminDisputesPage() {
     setLoading(true);
     setError(null);
     try {
-      const result = await apiClient.adminListDisputes(session.accessToken);
+      const result = await adminApiClient.adminListDisputes(session.accessToken);
       setDisputes(result.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : t('common.unknownError', 'Unknown error'));
     } finally {
       setLoading(false);
     }
-  }, [apiClient, session, t]);
+  }, [adminApiClient, session, t]);
 
   useEffect(() => {
     fetchDisputes();

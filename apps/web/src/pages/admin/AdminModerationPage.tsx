@@ -1,3 +1,4 @@
+import { useAdminApiClient } from '../../lib/adminApiClient';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Scale } from 'lucide-react';
@@ -13,7 +14,8 @@ import { Label } from '../../components/ui/label';
 
 export function AdminModerationPage() {
   const { t } = useTranslation();
-  const { apiClient, session } = useAppContext();
+  const { session } = useAppContext();
+  const adminApiClient = useAdminApiClient();
 
   const [policy, setPolicy] = useState<StrikePolicy | null>(null);
   const [loading, setLoading] = useState(true);
@@ -29,14 +31,14 @@ export function AdminModerationPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await apiClient.adminGetStrikePolicy(accessToken);
+      const data = await adminApiClient.adminGetStrikePolicy(accessToken);
       setPolicy(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load policy');
     } finally {
       setLoading(false);
     }
-  }, [apiClient, accessToken]);
+  }, [adminApiClient, accessToken]);
 
   useEffect(() => {
     fetchPolicy();
@@ -64,7 +66,7 @@ export function AdminModerationPage() {
     if (!draft || !accessToken) return;
     setSaving(true);
     try {
-      const updated = await apiClient.adminUpdateStrikePolicy(accessToken, draft);
+      const updated = await adminApiClient.adminUpdateStrikePolicy(accessToken, draft);
       setPolicy(updated);
       setEditing(false);
       setDraft(null);

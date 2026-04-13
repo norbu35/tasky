@@ -1,7 +1,13 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { StyleSheet } from 'react-native';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { fireEvent, render as rtlRender, screen } from '@testing-library/react-native';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+const render = (ui: React.ReactElement, options?: any) =>
+  rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
+
 import { designTokens } from '../../../packages/design-tokens/tokens';
 import { resetTestI18n } from './test-utils/mockI18n';
 import AuthScreen from '../src/app/(auth)/index';

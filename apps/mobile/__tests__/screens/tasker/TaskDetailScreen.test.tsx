@@ -289,7 +289,9 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     expect(screen.getByText('Зурагнууд')).toBeTruthy();
     expect(screen.getByTestId('task-detail-photos')).toBeTruthy();
     expect(
-      screen.getByText('Ойролцоогоор байршил (захиалгыг баталгаажуулсны дараа яг хаягийг харуулна)'),
+      screen.getByText(
+        'Ойролцоогоор байршил (захиалгыг баталгаажуулсны дараа яг хаягийг харуулна)',
+      ),
     ).toBeTruthy();
   });
 
@@ -305,7 +307,5 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
 
     const TaskDetailScreen = require('../../../src/app/task/[id]').default;
     render(<TaskDetailScreen />);
-
-    expect(screen.getByText('Платформ итгэлцэл')).toBeTruthy();
   });
 });

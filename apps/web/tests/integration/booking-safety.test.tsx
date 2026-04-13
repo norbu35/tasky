@@ -3,8 +3,14 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { App } from '../../src/App';
-import { buildApiClientMock } from '../setup/mockApiClient';
-import { baseBooking, baseDispute, baseProfile, baseReview, baseSession } from '../setup/mockData';
+import { createMockApiClient } from '../../src/test/mocks';
+import {
+  makeBooking,
+  makeDispute,
+  makeProfile,
+  makeReview,
+  makeSession,
+} from '../../src/test/factories';
 import type { Booking } from '../../src/lib/apiClient';
 
 // 1. Mock the DropdownMenu so its items are just rendered inline for easy clicking in JSDOM
@@ -25,11 +31,11 @@ vi.mock('../../src/components/ui/dropdown-menu', () => ({
 
 describe('Booking Safety Integration', () => {
   it('TID-TASK-081-WEB-BOOKING-SAFETY-FLOW supports booking transitions, review, and dispute actions', async () => {
-    const activeBooking: Booking = { ...baseBooking, status: 'ASSIGNED', id: 'active-bkg' };
-    const completedBooking: Booking = { ...baseBooking, status: 'COMPLETED', id: 'complete-bkg' };
+    const activeBooking: Booking = { ...makeBooking(), status: 'ASSIGNED', id: 'active-bkg' };
+    const completedBooking: Booking = { ...makeBooking(), status: 'COMPLETED', id: 'complete-bkg' };
 
-    const apiClient = buildApiClientMock({
-      getMyProfile: vi.fn().mockResolvedValue(baseProfile),
+    const apiClient = createMockApiClient({
+      getMyProfile: vi.fn().mockResolvedValue(makeProfile()),
       listBookings: vi.fn().mockImplementation(async (_token, params) => {
         if (params?.status === 'ASSIGNED')
           return { data: [activeBooking], cursor: { next: null, has_more: false } };
@@ -39,12 +45,12 @@ describe('Booking Safety Integration', () => {
       }),
       cancelBooking: vi.fn().mockResolvedValue({ ...activeBooking, status: 'CANCELLED' }),
       completeBooking: vi.fn().mockResolvedValue({ ...activeBooking, status: 'COMPLETED' }),
-      submitReview: vi.fn().mockResolvedValue(baseReview),
-      raiseDispute: vi.fn().mockResolvedValue(baseDispute),
+      submitReview: vi.fn().mockResolvedValue(makeReview()),
+      raiseDispute: vi.fn().mockResolvedValue(makeDispute()),
     });
 
     render(
-      <App apiClient={apiClient} initialRoute="/booking/safety" initialSession={baseSession} />,
+      <App apiClient={apiClient} initialRoute="/booking/safety" initialSession={makeSession()} />,
     );
 
     await screen.findByRole('heading', { name: /Booking Management/i });

@@ -2,8 +2,8 @@ import '../../src/lib/i18n';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { App } from '../../src/App';
-import { buildApiClientMock } from '../setup/mockApiClient';
-import { baseProfile, baseSession } from '../setup/mockData';
+import { createMockApiClient } from '../../src/test/mocks';
+import { makeProfile, makeSession } from '../../src/test/factories';
 
 // JSDOM does not implement scrollIntoView
 window.HTMLElement.prototype.scrollIntoView = vi.fn();
@@ -19,13 +19,13 @@ describe('Messaging & Notifications Integration', () => {
     const mockMsg = {
       id: 'msg-1',
       conversation_id: 'conv-1',
-      sender_id: baseProfile.id,
+      sender_id: makeProfile().id,
       content: 'On my way',
       created_at: new Date().toISOString(),
     };
 
-    const apiClient = buildApiClientMock({
-      getMyProfile: vi.fn().mockResolvedValue(baseProfile),
+    const apiClient = createMockApiClient({
+      getMyProfile: vi.fn().mockResolvedValue(makeProfile()),
       listConversations: vi
         .fn()
         .mockResolvedValue({ data: [mockConv], cursor: { next: null, has_more: false } }),
@@ -35,7 +35,7 @@ describe('Messaging & Notifications Integration', () => {
       sendMessage: vi.fn().mockResolvedValue({
         ...mockMsg,
         id: 'msg-2',
-        sender_id: baseProfile.id,
+        sender_id: makeProfile().id,
         content: 'Great',
         created_at: new Date().toISOString(),
       }),
@@ -44,13 +44,15 @@ describe('Messaging & Notifications Integration', () => {
     });
 
     render(
-      <App apiClient={apiClient} initialSession={baseSession} initialRoute="/communication" />,
+      <App apiClient={apiClient} initialSession={makeSession()} initialRoute="/communication" />,
     );
 
     // Verify Header
     await screen.findByRole('heading', { name: 'Inbox' });
     expect(
-      screen.getByText(/browser notifications keep you updated on new messages and booking changes/i),
+      screen.getByText(
+        /browser notifications keep you updated on new messages and booking changes/i,
+      ),
     ).toBeInTheDocument();
 
     // Wait for Conversations to load and the mock one to be active
@@ -59,7 +61,7 @@ describe('Messaging & Notifications Integration', () => {
 
     await waitFor(() => {
       expect(apiClient.listConversations).toHaveBeenCalled();
-      expect(apiClient.listMessages).toHaveBeenCalledWith(baseSession.accessToken, 'conv-1');
+      expect(apiClient.listMessages).toHaveBeenCalledWith(makeSession().accessToken, 'conv-1');
     });
 
     // Current messages

@@ -1,3 +1,4 @@
+import { useAdminApiClient } from '../../lib/adminApiClient';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -27,7 +28,8 @@ function disputeStatusVariant(status: string): 'default' | 'secondary' | 'outlin
 export function AdminDisputeDetailPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  const { apiClient, session } = useAppContext();
+  const { session } = useAppContext();
+  const adminApiClient = useAdminApiClient();
   const navigate = useNavigate();
 
   const [detail, setDetail] = useState<AdminDisputeDetail | null>(null);
@@ -42,14 +44,14 @@ export function AdminDisputeDetailPage() {
     setLoading(true);
     setError(null);
     try {
-      const result = await apiClient.adminGetDispute(session.accessToken, id);
+      const result = await adminApiClient.adminGetDispute(session.accessToken, id);
       setDetail(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : t('common.unknownError', 'Unknown error'));
     } finally {
       setLoading(false);
     }
-  }, [apiClient, session, id, t]);
+  }, [adminApiClient, session, id, t]);
 
   useEffect(() => {
     fetchDetail();
@@ -66,7 +68,7 @@ export function AdminDisputeDetailPage() {
       setResolving(true);
       try {
         const idempotencyKey = crypto.randomUUID();
-        await apiClient.adminResolveDispute(
+        await adminApiClient.adminResolveDispute(
           session.accessToken,
           id,
           resolution,
@@ -80,7 +82,7 @@ export function AdminDisputeDetailPage() {
         setResolving(false);
       }
     },
-    [apiClient, session, id, notes, navigate, t],
+    [adminApiClient, session, id, notes, navigate, t],
   );
 
   if (loading) {

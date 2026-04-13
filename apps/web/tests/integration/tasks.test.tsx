@@ -2,22 +2,22 @@ import '../../src/lib/i18n';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { App } from '../../src/App';
-import { buildApiClientMock } from '../setup/mockApiClient';
+import { createMockApiClient } from '../../src/test/mocks';
 import {
-  baseCategory,
-  baseProfile,
-  baseSession,
-  baseUser,
+  makeCategory,
+  makeProfile,
+  makeSession,
+  makeUser,
   localDateTimeInput,
-} from '../setup/mockData';
+} from '../../src/test/factories';
 import type { AuthTokens, Profile, Task } from '../../src/lib/apiClient';
 
 describe('Tasks Integration', () => {
   it('TID-TASK-080-WEB-TASK-APPLICATION-FLOW supports task create, privacy-safe feed browsing, and tasker apply', async () => {
     const createdTask = {
       id: 'task-created-1',
-      category_id: baseCategory.id,
-      customer_id: baseUser.id,
+      category_id: makeCategory().id,
+      customer_id: makeUser().id,
       description: 'Deep clean two-bedroom apartment',
       budget: 120000,
       location_lat: 47.9184,
@@ -29,16 +29,16 @@ describe('Tasks Integration', () => {
       created_at: '2026-02-14T00:00:00Z',
     } as unknown as Task;
 
-    const customerApi = buildApiClientMock({
+    const customerApi = createMockApiClient({
       createTask: vi.fn().mockResolvedValue(createdTask),
-      getMyProfile: vi.fn().mockResolvedValue(baseProfile),
+      getMyProfile: vi.fn().mockResolvedValue(makeProfile()),
     });
 
     const customerRender = render(
       <App
         apiClient={customerApi}
         initialRoute="/customer/tasks/new"
-        initialSession={baseSession}
+        initialSession={makeSession()}
       />,
     );
 
@@ -52,7 +52,7 @@ describe('Tasks Integration', () => {
       expect(categorySelect.options.length).toBeGreaterThan(1);
     });
     fireEvent.change(categorySelect, {
-      target: { value: baseCategory.id },
+      target: { value: makeCategory().id },
     });
     fireEvent.change(screen.getByLabelText('Task details'), {
       target: { value: 'Deep clean two-bedroom apartment with kitchen and bathroom.' },
@@ -80,16 +80,16 @@ describe('Tasks Integration', () => {
     customerRender.unmount();
 
     const taskerProfile = {
-      ...baseProfile,
+      ...makeProfile(),
       role: 'TASKER',
       status: 'VERIFIED',
       full_name: 'Verified Tasker',
     } as unknown as Profile;
 
     const taskerSession: AuthTokens = {
-      ...baseSession,
+      ...makeSession(),
       user: {
-        ...baseUser,
+        ...makeUser(),
         role: 'TASKER',
         status: 'VERIFIED',
       },
@@ -97,7 +97,7 @@ describe('Tasks Integration', () => {
 
     const privacySafeTask = {
       id: 'public-task-privacy-1',
-      category: baseCategory,
+      category: makeCategory(),
       customer: {
         id: 'customer-99',
         full_name: 'Customer',
@@ -117,7 +117,7 @@ describe('Tasks Integration', () => {
       location_text: 'SHOULD NOT RENDER',
     };
 
-    const taskerApi = buildApiClientMock({
+    const taskerApi = createMockApiClient({
       getMyProfile: vi.fn().mockResolvedValue(taskerProfile),
       listTasks: vi.fn().mockResolvedValue({
         data: [privacySafeTask],

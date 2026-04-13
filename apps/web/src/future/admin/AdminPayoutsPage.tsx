@@ -1,3 +1,4 @@
+import { useAdminApiClient } from '../../lib/adminApiClient';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Banknote } from 'lucide-react';
@@ -20,7 +21,8 @@ type PageState = 'loading' | 'phase-gated' | 'error' | 'ready';
 
 export function AdminPayoutsPage() {
   const { t } = useTranslation();
-  const { apiClient, session } = useAppContext();
+  const { session } = useAppContext();
+  const adminApiClient = useAdminApiClient();
 
   const [payouts, setPayouts] = useState<PayoutRequest[]>([]);
   const [pageState, setPageState] = useState<PageState>('loading');
@@ -33,7 +35,7 @@ export function AdminPayoutsPage() {
     if (!accessToken) return;
     setPageState('loading');
     try {
-      const result = await apiClient.adminListPendingPayouts(accessToken);
+      const result = await adminApiClient.adminListPendingPayouts(accessToken);
       setPayouts(result.data);
       setPageState('ready');
     } catch (err) {
@@ -44,7 +46,7 @@ export function AdminPayoutsPage() {
         setPageState('error');
       }
     }
-  }, [apiClient, accessToken]);
+  }, [adminApiClient, accessToken]);
 
   useEffect(() => {
     fetchPayouts();
@@ -54,7 +56,7 @@ export function AdminPayoutsPage() {
     if (!confirmingId || !accessToken) return;
     setProcessing(true);
     try {
-      await apiClient.adminProcessPayout(accessToken, confirmingId, crypto.randomUUID());
+      await adminApiClient.adminProcessPayout(accessToken, confirmingId, crypto.randomUUID());
       setPayouts((prev) => prev.filter((p) => p.id !== confirmingId));
       setConfirmingId(null);
       toast.success(t('admin.payouts.processed', 'Payout marked as processed'));

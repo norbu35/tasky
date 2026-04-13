@@ -1,3 +1,4 @@
+import { useAdminApiClient } from '../../lib/adminApiClient';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
@@ -53,7 +54,8 @@ function computeSla(submittedAt: string, now: Date, t: TFunction): SlaInfo {
 
 export function AdminVerificationsPage() {
   const { t, i18n } = useTranslation();
-  const { apiClient, session } = useAppContext();
+  const { session } = useAppContext();
+  const adminApiClient = useAdminApiClient();
   const locale = (i18n.resolvedLanguage ?? i18n.language).toLowerCase().startsWith('mn')
     ? 'mn-MN'
     : 'en-US';
@@ -78,7 +80,7 @@ export function AdminVerificationsPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await apiClient.adminListPendingVerifications(accessToken);
+      const data = await adminApiClient.adminListPendingVerifications(accessToken);
       // Sort by submitted_at ascending (oldest first — highest urgency)
       const sorted = [...data].sort(
         (a, b) => new Date(a.submitted_at).getTime() - new Date(b.submitted_at).getTime(),
@@ -101,7 +103,7 @@ export function AdminVerificationsPage() {
       if (!accessToken) return;
       setApprovingId(verificationId);
       try {
-        await apiClient.adminApproveVerification(accessToken, verificationId);
+        await adminApiClient.adminApproveVerification(accessToken, verificationId);
         setVerifications((prev) => prev.filter((v) => v.id !== verificationId));
         setExpandedId(null);
       } catch (err) {
@@ -124,7 +126,11 @@ export function AdminVerificationsPage() {
       if (!accessToken || !rejectReason.trim()) return;
       setConfirmingRejectId(verificationId);
       try {
-        await apiClient.adminRejectVerification(accessToken, verificationId, rejectReason.trim());
+        await adminApiClient.adminRejectVerification(
+          accessToken,
+          verificationId,
+          rejectReason.trim(),
+        );
         setVerifications((prev) => prev.filter((v) => v.id !== verificationId));
         setRejectingId(null);
         setRejectReason('');

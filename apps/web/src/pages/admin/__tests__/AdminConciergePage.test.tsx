@@ -1,14 +1,16 @@
+import type { AdminApiClient } from '../../../lib/adminApiClient';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ApiClient, PublicTask, User, Booking, CursorPage } from '../../../lib/apiClient';
 
 // ── Mock AppContext ──────────────────────────────────────────────────
+const mockAdminApiClient: Partial<AdminApiClient> = {
+  adminConciergeAssignTask: vi.fn(),
+  adminSearchUsers: vi.fn(),
+};
 const mockApiClient: Partial<ApiClient> = {
   listTasks: vi.fn(),
-  adminSearchUsers: vi.fn(),
-  adminConciergeAssignTask: vi.fn(),
 };
-
 vi.mock('../../../context/AppContext', () => ({
   useAppContext: vi.fn(() => ({
     apiClient: mockApiClient,
@@ -18,6 +20,10 @@ vi.mock('../../../context/AppContext', () => ({
       user: { id: 'admin-1', role: 'ADMIN' },
     },
   })),
+}));
+
+vi.mock('../../../lib/adminApiClient', () => ({
+  useAdminApiClient: () => mockAdminApiClient,
 }));
 
 // ── Mock sonner toast ────────────────────────────────────────────────
@@ -131,8 +137,8 @@ describe('AdminConciergePage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(mockApiClient.listTasks!).mockResolvedValue(MOCK_TASKS);
-    vi.mocked(mockApiClient.adminSearchUsers!).mockResolvedValue(MOCK_TASKER_USERS);
-    vi.mocked(mockApiClient.adminConciergeAssignTask!).mockResolvedValue(MOCK_BOOKING);
+    vi.mocked(mockAdminApiClient.adminSearchUsers!).mockResolvedValue(MOCK_TASKER_USERS);
+    vi.mocked(mockAdminApiClient.adminConciergeAssignTask!).mockResolvedValue(MOCK_BOOKING);
   });
 
   it('renders open tasks list', async () => {
@@ -173,7 +179,10 @@ describe('AdminConciergePage', () => {
     fireEvent.click(searchButton);
 
     await waitFor(() => {
-      expect(mockApiClient.adminSearchUsers).toHaveBeenCalledWith('test-token', '+97699001122');
+      expect(mockAdminApiClient.adminSearchUsers).toHaveBeenCalledWith(
+        'test-token',
+        '+97699001122',
+      );
     });
   });
 
@@ -286,7 +295,7 @@ describe('AdminConciergePage', () => {
     fireEvent.click(assignButton);
 
     await waitFor(() => {
-      expect(mockApiClient.adminConciergeAssignTask).toHaveBeenCalledWith(
+      expect(mockAdminApiClient.adminConciergeAssignTask).toHaveBeenCalledWith(
         'test-token',
         'task-1',
         'tasker-1',
@@ -348,7 +357,9 @@ describe('AdminConciergePage', () => {
   });
 
   it('shows error when assignment fails', async () => {
-    vi.mocked(mockApiClient.adminConciergeAssignTask!).mockRejectedValue(new Error('Conflict'));
+    vi.mocked(mockAdminApiClient.adminConciergeAssignTask!).mockRejectedValue(
+      new Error('Conflict'),
+    );
 
     renderPage();
 

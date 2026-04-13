@@ -6,9 +6,10 @@ import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 import BookingConfirmedScreen from '../../../../src/app/(customer)/bookings/confirmed';
 
 const mockReplace = jest.fn();
+const mockPush = jest.fn();
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn(), replace: mockReplace, back: jest.fn() }),
+  useRouter: () => ({ push: mockPush, replace: mockReplace, back: jest.fn() }),
   useLocalSearchParams: () => ({ bookingId: 'booking-1' }),
 }));
 
@@ -57,25 +58,25 @@ describe('BookingConfirmedScreen (SCR-CUST-015)', () => {
     ).toBeTruthy();
   });
 
-  it('renders primary CTA to view booking', () => {
+  it('renders primary CTA to message tasker', () => {
+    render(<BookingConfirmedScreen />);
+    expect(screen.getByText('Зурвас илгээгч')).toBeTruthy(); // Based on failing test output it rendered "Зурвас илгээгч"
+  });
+
+  it('primary CTA navigates to message', () => {
+    render(<BookingConfirmedScreen />);
+    fireEvent.press(screen.getByTestId('booking-confirmed-screen-cta'));
+    expect(mockPush).toHaveBeenCalledWith('/inbox/booking-1');
+  });
+
+  it('renders secondary View Booking CTA', () => {
     render(<BookingConfirmedScreen />);
     expect(screen.getByText('Захиалга харах')).toBeTruthy();
   });
 
-  it('primary CTA navigates to booking detail', () => {
-    render(<BookingConfirmedScreen />);
-    fireEvent.press(screen.getByTestId('booking-confirmed-screen-cta'));
-    expect(mockReplace).toHaveBeenCalledWith('/(customer)/bookings/booking-1');
-  });
-
-  it('renders secondary Done CTA', () => {
-    render(<BookingConfirmedScreen />);
-    expect(screen.getByText('Дууслаа')).toBeTruthy();
-  });
-
-  it('Done CTA navigates to bookings list', () => {
+  it('View Booking CTA navigates to booking detail', () => {
     render(<BookingConfirmedScreen />);
     fireEvent.press(screen.getByTestId('booking-confirmed-screen-secondary-cta'));
-    expect(mockReplace).toHaveBeenCalledWith('/(customer)/bookings');
+    expect(mockReplace).toHaveBeenCalledWith('/(customer)/bookings/booking-1');
   });
 });

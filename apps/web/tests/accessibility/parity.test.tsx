@@ -4,7 +4,6 @@ import { render, screen } from '@testing-library/react';
 import { designTokens } from '../../../../packages/design-tokens/tokens';
 import { App } from '../../src/App';
 import type { ApiClient } from '../../src/lib/apiClient';
-
 function hexToRgb(hexColor: string): [number, number, number] {
   const clean = hexColor.replace('#', '');
   const normalized =
@@ -17,7 +16,6 @@ function hexToRgb(hexColor: string): [number, number, number] {
   const int = Number.parseInt(normalized, 16);
   return [(int >> 16) & 255, (int >> 8) & 255, int & 255];
 }
-
 function relativeLuminance(hexColor: string): number {
   const [r, g, b] = hexToRgb(hexColor);
   const channels = [r, g, b].map((channel) => {
@@ -26,14 +24,12 @@ function relativeLuminance(hexColor: string): number {
   });
   return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
 }
-
 function contrastRatio(foreground: string, background: string): number {
   const light = Math.max(relativeLuminance(foreground), relativeLuminance(background));
   const dark = Math.min(relativeLuminance(foreground), relativeLuminance(background));
   return (light + 0.05) / (dark + 0.05);
 }
-
-function buildApiClientMock(): ApiClient {
+function createMockApiClient(): ApiClient {
   return {
     loginWithFacebook: vi.fn().mockResolvedValue({
       accessToken: 'access',
@@ -90,39 +86,12 @@ function buildApiClientMock(): ApiClient {
     getVerificationUploadUrl: vi.fn(),
     submitVerification: vi.fn(),
     getVerificationStatus: vi.fn(),
-    adminSearchUsers: vi.fn(),
-    adminBanUser: vi.fn(),
-    adminUnbanUser: vi.fn(),
-    adminListFlaggedMessages: vi.fn(),
-    adminListPendingVerifications: vi.fn(),
-    adminApproveVerification: vi.fn(),
-    adminRejectVerification: vi.fn(),
-    adminListDisputes: vi.fn(),
-    adminGetDispute: vi.fn(),
-    adminResolveDispute: vi.fn(),
-    adminGetStrikePolicy: vi.fn(),
-    adminUpdateStrikePolicy: vi.fn(),
-    adminListPendingPayouts: vi.fn(),
-    adminProcessPayout: vi.fn(),
-    adminListLeadUnlockPrices: vi.fn(),
-    adminCreateLeadUnlockPrice: vi.fn(),
-    adminListFeatureToggles: vi.fn(),
-    adminUpdateFeatureToggle: vi.fn(),
-    adminConciergeAssignTask: vi.fn(),
-    adminListCategories: vi.fn(),
-    adminCreateCategory: vi.fn(),
-    adminUpdateCategory: vi.fn(),
-    adminListCategorySchemas: vi.fn(),
-    adminCreateCategorySchema: vi.fn(),
-    adminActivateCategorySchema: vi.fn(),
   };
 }
-
 afterEach(() => {
   delete (window as Window & { FB?: unknown }).FB;
   delete (window as Window & { fbAsyncInit?: unknown }).fbAsyncInit;
 });
-
 describe('Accessibility and parity gates', () => {
   it('TID-TASK-072-WEB-A11Y-KEYBOARD keeps key controls focusable for keyboard navigation', async () => {
     Object.defineProperty(window, 'FB', {
@@ -135,30 +104,24 @@ describe('Accessibility and parity gates', () => {
         }),
       },
     });
-    render(<App apiClient={buildApiClientMock()} initialRoute="/auth" />);
-
+    render(<App apiClient={createMockApiClient()} initialRoute="/auth" />);
     const facebookButton = screen.getByRole('button', { name: 'Continue with Facebook' });
     const languageButton = screen.getByRole('button', { name: /en/i });
-
     facebookButton.focus();
     expect(facebookButton).toHaveFocus();
-
     languageButton.focus();
     expect(languageButton).toHaveFocus();
   });
-
   it('TID-TASK-072-WEB-A11Y-CONTRAST-AA enforces WCAG AA contrast for core token pairs', () => {
     const ratios = [
       contrastRatio(designTokens.colors.foreground.hex, designTokens.colors.background.hex),
       contrastRatio(designTokens.colors.primaryForeground.hex, designTokens.colors.primary.hex),
       contrastRatio(designTokens.colors.secondaryForeground.hex, designTokens.colors.secondary.hex),
     ];
-
     ratios.forEach((ratio) => {
       expect(ratio).toBeGreaterThanOrEqual(4.5);
     });
   });
-
   it('TID-TASK-072-CROSS-PLATFORM-PARITY-CHECK validates token usage and component state parity', () => {
     const webStyles = readFileSync(resolve(process.cwd(), 'src/styles.css'), 'utf8');
     const webButton = readFileSync(resolve(process.cwd(), 'src/components/ui/button.tsx'), 'utf8');
@@ -174,7 +137,6 @@ describe('Accessibility and parity gates', () => {
       resolve(process.cwd(), '../mobile/src/design/tokenAdapter.ts'),
       'utf8',
     );
-
     expect(webStyles).toContain('--primary: var(--tasky-color-primary);');
     expect(webButton).toContain('secondary');
     expect(webButton).toContain('ghost');

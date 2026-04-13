@@ -5,17 +5,17 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { AppContext, type AppContextValue } from '../../../context/AppContext';
 import { CustomerBookingDetailPage } from '../CustomerBookingDetailPage';
-import { buildApiClientMock } from '../../../../tests/setup/mockApiClient';
-import { baseBooking, baseProfile, baseSession } from '../../../../tests/setup/mockData';
+import { createMockApiClient } from '../../../test/mocks';
+import { makeBooking, makeProfile, makeSession } from '../../../test/factories';
 
 function createContext(overrides: Partial<AppContextValue> = {}): AppContextValue {
-  const apiClient = overrides.apiClient ?? buildApiClientMock();
+  const apiClient = overrides.apiClient ?? createMockApiClient();
 
   return {
     apiClient,
     locale: 'en',
-    session: baseSession,
-    profile: baseProfile,
+    session: makeSession(),
+    profile: makeProfile(),
     profileBusy: false,
     profileError: null,
     setSession: vi.fn(),
@@ -31,9 +31,9 @@ function createContext(overrides: Partial<AppContextValue> = {}): AppContextValu
 
 describe('CustomerBookingDetailPage', () => {
   it('TID-TASK-114-WEB-ROUTE-PARAM-LOAD loads the booking from :bookingId instead of a scaffold fallback', async () => {
-    const apiClient = buildApiClientMock({
+    const apiClient = createMockApiClient({
       getBooking: vi.fn().mockResolvedValue({
-        ...baseBooking,
+        ...makeBooking(),
         id: 'booking-99',
         task_id: 'task-99',
       }),
@@ -59,7 +59,7 @@ describe('CustomerBookingDetailPage', () => {
 
     expect(await screen.findByRole('heading', { name: 'Booking detail' })).toBeInTheDocument();
     await waitFor(() => {
-      expect(apiClient.getBooking).toHaveBeenCalledWith(baseSession.accessToken, 'booking-99');
+      expect(apiClient.getBooking).toHaveBeenCalledWith(makeSession().accessToken, 'booking-99');
     });
     expect(screen.getByText('booking-99')).toBeInTheDocument();
   });

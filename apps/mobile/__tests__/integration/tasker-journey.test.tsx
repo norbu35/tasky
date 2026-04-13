@@ -1,5 +1,11 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react-native';
+import { render as rtlRender, screen } from '@testing-library/react-native';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+const render = (ui: React.ReactElement, options?: any) =>
+  rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
+
 import { resetTestI18n, setTestLanguage } from '../test-utils/mockI18n';
 import {
   baseTask,

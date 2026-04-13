@@ -1,5 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react-native';
+import { render as rtlRender, screen, fireEvent } from '@testing-library/react-native';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+const render = (ui: React.ReactElement, options?: any) =>
+  rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
+
 import { useTasks } from '../../../src/features/tasks/hooks/useTasks';
 import type { PublicTask } from '../../../src/lib/mobileApiClient';
 import { RoleProvider } from '../../../src/providers/RoleProvider';

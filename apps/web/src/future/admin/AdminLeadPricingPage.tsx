@@ -1,3 +1,4 @@
+import { useAdminApiClient } from '../../lib/adminApiClient';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tag } from 'lucide-react';
@@ -30,7 +31,8 @@ const EMPTY_FORM: LeadUnlockPricePayload = {
 
 export function AdminLeadPricingPage() {
   const { t } = useTranslation();
-  const { apiClient, session } = useAppContext();
+  const { session } = useAppContext();
+  const adminApiClient = useAdminApiClient();
 
   const [prices, setPrices] = useState<LeadUnlockPrice[]>([]);
   const [pageState, setPageState] = useState<PageState>('loading');
@@ -44,7 +46,7 @@ export function AdminLeadPricingPage() {
     if (!accessToken) return;
     setPageState('loading');
     try {
-      const result = await apiClient.adminListLeadUnlockPrices(accessToken);
+      const result = await adminApiClient.adminListLeadUnlockPrices(accessToken);
       setPrices(result.data);
       setPageState('ready');
     } catch (err) {
@@ -55,7 +57,7 @@ export function AdminLeadPricingPage() {
         setPageState('error');
       }
     }
-  }, [apiClient, accessToken]);
+  }, [adminApiClient, accessToken]);
 
   useEffect(() => {
     fetchPrices();
@@ -74,7 +76,7 @@ export function AdminLeadPricingPage() {
         ...form,
         effective_to: form.effective_to || null,
       };
-      const created = await apiClient.adminCreateLeadUnlockPrice(accessToken, payload);
+      const created = await adminApiClient.adminCreateLeadUnlockPrice(accessToken, payload);
       setPrices((prev) => [created, ...prev]);
       setDialogOpen(false);
       toast.success(t('admin.pricing.created', 'Price rule created'));

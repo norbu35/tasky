@@ -1,3 +1,4 @@
+import { useAdminApiClient } from '../../lib/adminApiClient';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -34,7 +35,8 @@ function formatTimestamp(iso: string, locale: string): string {
 
 export function AdminUsersPage() {
   const { t, i18n } = useTranslation();
-  const { apiClient, session } = useAppContext();
+  const { session } = useAppContext();
+  const adminApiClient = useAdminApiClient();
   const locale = (i18n.resolvedLanguage ?? i18n.language).toLowerCase().startsWith('mn')
     ? 'mn-MN'
     : 'en-US';
@@ -64,7 +66,7 @@ export function AdminUsersPage() {
     setSearchError(null);
     setHasSearched(true);
     try {
-      const result = await apiClient.adminSearchUsers(session.accessToken, phone);
+      const result = await adminApiClient.adminSearchUsers(session.accessToken, phone);
       setUsers(result.data);
     } catch (err) {
       setSearchError(
@@ -73,14 +75,18 @@ export function AdminUsersPage() {
     } finally {
       setSearchLoading(false);
     }
-  }, [apiClient, session, phone, t]);
+  }, [adminApiClient, session, phone, t]);
 
   // ── Ban handler ──────────────────────────────────────────────────
   const handleBan = async () => {
     if (!banTarget || !session) return;
     setBanBusy(true);
     try {
-      const updated = await apiClient.adminBanUser(session.accessToken, banTarget.id, banReason);
+      const updated = await adminApiClient.adminBanUser(
+        session.accessToken,
+        banTarget.id,
+        banReason,
+      );
       setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
       toast.success(t('admin.users.banSuccess', 'User banned successfully'));
     } catch (err) {
@@ -98,7 +104,7 @@ export function AdminUsersPage() {
   const handleUnban = async (userId: string) => {
     if (!session) return;
     try {
-      const updated = await apiClient.adminUnbanUser(session.accessToken, userId);
+      const updated = await adminApiClient.adminUnbanUser(session.accessToken, userId);
       setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
       toast.success(t('admin.users.unbanSuccess', 'User unbanned successfully'));
     } catch (err) {
@@ -114,7 +120,7 @@ export function AdminUsersPage() {
     setFlaggedLoading(true);
     setFlaggedError(null);
     try {
-      const result = await apiClient.adminListFlaggedMessages(session.accessToken);
+      const result = await adminApiClient.adminListFlaggedMessages(session.accessToken);
       setFlaggedMessages(result.data);
     } catch (err) {
       setFlaggedError(
@@ -126,7 +132,7 @@ export function AdminUsersPage() {
       setFlaggedLoading(false);
       setFlaggedLoaded(true);
     }
-  }, [apiClient, session, t]);
+  }, [adminApiClient, session, t]);
 
   const [activeTab, setActiveTab] = useState('search');
 

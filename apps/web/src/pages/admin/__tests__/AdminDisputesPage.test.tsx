@@ -1,3 +1,4 @@
+import { type AdminApiClient, AdminApiClientContext } from '../../../lib/adminApiClient';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -87,7 +88,9 @@ const DISPUTE_DETAIL: AdminDisputeDetail = {
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
-function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClient {
+function createMockAdminApiClient(
+  overrides: Partial<ApiClient & AdminApiClient> = {},
+): ApiClient & AdminApiClient {
   return {
     adminListDisputes: vi.fn().mockResolvedValue({
       data: [DISPUTE_1, DISPUTE_2],
@@ -100,7 +103,7 @@ function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClient {
       resolution_action: 'RESOLVE_CUSTOMER',
     }),
     ...overrides,
-  } as unknown as ApiClient;
+  } as unknown as ApiClient & AdminApiClient;
 }
 
 function createAppContext(apiClient: ApiClient): AppContextValue {
@@ -133,12 +136,14 @@ function renderListPage(apiClient: ApiClient) {
   const ctx = createAppContext(apiClient);
   return render(
     <AppContext.Provider value={ctx}>
-      <MemoryRouter initialEntries={['/admin/disputes']}>
-        <Routes>
-          <Route path="/admin/disputes" element={<AdminDisputesPage />} />
-          <Route path="/admin/disputes/:id" element={<AdminDisputeDetailPage />} />
-        </Routes>
-      </MemoryRouter>
+      <AdminApiClientContext.Provider value={apiClient as unknown as AdminApiClient}>
+        <MemoryRouter initialEntries={['/admin/disputes']}>
+          <Routes>
+            <Route path="/admin/disputes" element={<AdminDisputesPage />} />
+            <Route path="/admin/disputes/:id" element={<AdminDisputeDetailPage />} />
+          </Routes>
+        </MemoryRouter>
+      </AdminApiClientContext.Provider>
     </AppContext.Provider>,
   );
 }
@@ -147,12 +152,14 @@ function renderDetailPage(apiClient: ApiClient, disputeId = 'd-001') {
   const ctx = createAppContext(apiClient);
   return render(
     <AppContext.Provider value={ctx}>
-      <MemoryRouter initialEntries={[`/admin/disputes/${disputeId}`]}>
-        <Routes>
-          <Route path="/admin/disputes" element={<AdminDisputesPage />} />
-          <Route path="/admin/disputes/:id" element={<AdminDisputeDetailPage />} />
-        </Routes>
-      </MemoryRouter>
+      <AdminApiClientContext.Provider value={apiClient as unknown as AdminApiClient}>
+        <MemoryRouter initialEntries={[`/admin/disputes/${disputeId}`]}>
+          <Routes>
+            <Route path="/admin/disputes" element={<AdminDisputesPage />} />
+            <Route path="/admin/disputes/:id" element={<AdminDisputeDetailPage />} />
+          </Routes>
+        </MemoryRouter>
+      </AdminApiClientContext.Provider>
     </AppContext.Provider>,
   );
 }
@@ -161,7 +168,7 @@ function renderDetailPage(apiClient: ApiClient, disputeId = 'd-001') {
 
 describe('AdminDisputesPage', () => {
   it('renders dispute list after load', async () => {
-    const api = createMockApiClient();
+    const api = createMockAdminApiClient();
     renderListPage(api);
 
     await waitFor(() => {
@@ -173,7 +180,7 @@ describe('AdminDisputesPage', () => {
   });
 
   it('clicking a dispute row navigates to detail page', async () => {
-    const api = createMockApiClient();
+    const api = createMockAdminApiClient();
     renderListPage(api);
 
     await waitFor(() => {
@@ -194,7 +201,7 @@ describe('AdminDisputesPage', () => {
   });
 
   it('shows empty state when no disputes', async () => {
-    const api = createMockApiClient({
+    const api = createMockAdminApiClient({
       adminListDisputes: vi.fn().mockResolvedValue({
         data: [],
         cursor: { next: null, has_more: false },
@@ -208,7 +215,7 @@ describe('AdminDisputesPage', () => {
   });
 
   it('shows error state on fetch failure', async () => {
-    const api = createMockApiClient({
+    const api = createMockAdminApiClient({
       adminListDisputes: vi.fn().mockRejectedValue(new Error('Network error')),
     });
     renderListPage(api);
@@ -219,7 +226,7 @@ describe('AdminDisputesPage', () => {
   });
 
   it('renders status badges for disputes', async () => {
-    const api = createMockApiClient();
+    const api = createMockAdminApiClient();
     renderListPage(api);
 
     await waitFor(() => {
@@ -236,7 +243,7 @@ describe('AdminDisputesPage', () => {
 
 describe('AdminDisputeDetailPage', () => {
   it('shows dispute info and booking context', async () => {
-    const api = createMockApiClient();
+    const api = createMockAdminApiClient();
     renderDetailPage(api);
 
     await waitFor(() => {
@@ -254,7 +261,7 @@ describe('AdminDisputeDetailPage', () => {
   });
 
   it('shows evidence messages', async () => {
-    const api = createMockApiClient();
+    const api = createMockAdminApiClient();
     renderDetailPage(api);
 
     await waitFor(() => {
@@ -265,7 +272,7 @@ describe('AdminDisputeDetailPage', () => {
   });
 
   it('resolve for customer calls adminResolveDispute with RESOLVE_CUSTOMER', async () => {
-    const api = createMockApiClient();
+    const api = createMockAdminApiClient();
     renderDetailPage(api);
 
     await waitFor(() => {
@@ -294,7 +301,7 @@ describe('AdminDisputeDetailPage', () => {
   });
 
   it('resolve requires notes — shows validation error without notes', async () => {
-    const api = createMockApiClient();
+    const api = createMockAdminApiClient();
     renderDetailPage(api);
 
     await waitFor(() => {
@@ -317,7 +324,7 @@ describe('AdminDisputeDetailPage', () => {
   });
 
   it('back button navigates to dispute list', async () => {
-    const api = createMockApiClient();
+    const api = createMockAdminApiClient();
     renderDetailPage(api);
 
     await waitFor(() => {
@@ -336,7 +343,7 @@ describe('AdminDisputeDetailPage', () => {
   });
 
   it('shows loading state while fetching', () => {
-    const api = createMockApiClient({
+    const api = createMockAdminApiClient({
       adminGetDispute: vi.fn().mockReturnValue(new Promise(() => {})), // never resolves
     });
     renderDetailPage(api);
@@ -345,7 +352,7 @@ describe('AdminDisputeDetailPage', () => {
   });
 
   it('shows error state on fetch failure', async () => {
-    const api = createMockApiClient({
+    const api = createMockAdminApiClient({
       adminGetDispute: vi.fn().mockRejectedValue(new Error('Server error')),
     });
     renderDetailPage(api);

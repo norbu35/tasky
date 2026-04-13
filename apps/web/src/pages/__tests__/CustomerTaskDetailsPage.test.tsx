@@ -5,17 +5,17 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { AppContext, type AppContextValue } from '../../context/AppContext';
 import { CustomerTaskDetailsPage } from '../CustomerTaskDetailsPage';
-import { buildApiClientMock } from '../../../tests/setup/mockApiClient';
-import { baseCategory, baseProfile, baseSession } from '../../../tests/setup/mockData';
+import { createMockApiClient } from '../../test/mocks';
+import { makeCategory, makeProfile, makeSession } from '../../test/factories';
 
 function createContext(overrides: Partial<AppContextValue> = {}): AppContextValue {
-  const apiClient = overrides.apiClient ?? buildApiClientMock();
+  const apiClient = overrides.apiClient ?? createMockApiClient();
 
   return {
     apiClient,
     locale: 'en',
-    session: baseSession,
-    profile: baseProfile,
+    session: makeSession(),
+    profile: makeProfile(),
     profileBusy: false,
     profileError: null,
     setSession: vi.fn(),
@@ -31,13 +31,13 @@ function createContext(overrides: Partial<AppContextValue> = {}): AppContextValu
 
 describe('CustomerTaskDetailsPage', () => {
   it('TID-TASK-114-WEB-ROUTE-PARAM-LOAD loads the routed task and its applicants from :taskId', async () => {
-    const apiClient = buildApiClientMock({
+    const apiClient = createMockApiClient({
       listMyTasks: vi.fn().mockResolvedValue({
         data: [
           {
             id: 'task-99',
-            category_id: baseCategory.id,
-            category: baseCategory,
+            category_id: makeCategory().id,
+            category: makeCategory(),
             description: 'Deep clean apartment',
             budget: 120000,
             location_text: 'ХУД 15-р хороо',
@@ -77,7 +77,7 @@ describe('CustomerTaskDetailsPage', () => {
     ).toBeInTheDocument();
     await waitFor(() => {
       expect(apiClient.listTaskApplications).toHaveBeenCalledWith(
-        baseSession.accessToken,
+        makeSession().accessToken,
         'task-99',
       );
     });

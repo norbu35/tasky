@@ -1,3 +1,4 @@
+import type { AdminApiClient } from '../../../lib/adminApiClient';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ApiClient, StrikePolicy } from '../../../lib/apiClient';
@@ -12,16 +13,21 @@ const MOCK_POLICY: StrikePolicy = {
   updatedAt: '2026-03-20T10:00:00Z',
 };
 
-const mockApiClient: Partial<ApiClient> = {
+const mockAdminApiClient: Partial<AdminApiClient> = {
   adminGetStrikePolicy: vi.fn(),
   adminUpdateStrikePolicy: vi.fn(),
 };
 
+const mockApiClient = {} as ApiClient;
 vi.mock('../../../context/AppContext', () => ({
   useAppContext: vi.fn(() => ({
     apiClient: mockApiClient,
     session: { accessToken: 'test-token', refreshToken: 'rt', user: { id: '1', role: 'ADMIN' } },
   })),
+}));
+
+vi.mock('../../../lib/adminApiClient', () => ({
+  useAdminApiClient: () => mockAdminApiClient,
 }));
 
 vi.mock('sonner', () => ({
@@ -38,8 +44,8 @@ function renderPage() {
 describe('AdminModerationPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(mockApiClient.adminGetStrikePolicy!).mockResolvedValue(MOCK_POLICY);
-    vi.mocked(mockApiClient.adminUpdateStrikePolicy!).mockResolvedValue({
+    vi.mocked(mockAdminApiClient.adminGetStrikePolicy!).mockResolvedValue(MOCK_POLICY);
+    vi.mocked(mockAdminApiClient.adminUpdateStrikePolicy!).mockResolvedValue({
       ...MOCK_POLICY,
       strikeThreshold: 2,
     });
@@ -54,18 +60,20 @@ describe('AdminModerationPage', () => {
 
     expect(screen.getByText('3')).toBeInTheDocument(); // strikeThreshold
     expect(screen.getByText('7')).toBeInTheDocument(); // firstSuspensionDays
-    expect(mockApiClient.adminGetStrikePolicy).toHaveBeenCalledWith('test-token');
+    expect(mockAdminApiClient.adminGetStrikePolicy).toHaveBeenCalledWith('test-token');
   });
 
   it('shows loading skeleton before data loads', () => {
-    vi.mocked(mockApiClient.adminGetStrikePolicy!).mockReturnValue(new Promise(() => {}));
+    vi.mocked(mockAdminApiClient.adminGetStrikePolicy!).mockReturnValue(new Promise(() => {}));
     renderPage();
 
     expect(screen.getByTestId('moderation-loading')).toBeInTheDocument();
   });
 
   it('shows error state on fetch failure', async () => {
-    vi.mocked(mockApiClient.adminGetStrikePolicy!).mockRejectedValue(new Error('Server error'));
+    vi.mocked(mockAdminApiClient.adminGetStrikePolicy!).mockRejectedValue(
+      new Error('Server error'),
+    );
     renderPage();
 
     await waitFor(() => {
@@ -123,7 +131,7 @@ describe('AdminModerationPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /save/i }));
 
     await waitFor(() => {
-      expect(mockApiClient.adminUpdateStrikePolicy).toHaveBeenCalledWith(
+      expect(mockAdminApiClient.adminUpdateStrikePolicy).toHaveBeenCalledWith(
         'test-token',
         expect.objectContaining({ strikeThreshold: 2 }),
       );
