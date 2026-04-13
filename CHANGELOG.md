@@ -33,7 +33,19 @@
 - **RescueScheduler audit confirmed**: Pure background scheduler with no controller endpoints or user-facing API. Depends on concrete DAOs and `NotificationService` directly, but this is a scheduling concern, not a request-path flow. Conversion to the automation/job system deferred as a future architectural refinement.
 - **No old orchestration paths to delete** — rescue was never on a port-based path.
 
-### Phase 1 Summary: All 5 flow slices audited
+### Phase 2: Deferred structural cleanups
+
+#### DomainEventOutboxProcessor elimination
+
+- **Direct broker publish at write time**: `DomainEventOutboxService` now calls `EventRelayPublisher.publish()` synchronously after the outbox DAO insert, eliminating the polling relay entirely.
+- **Deleted `DomainEventOutboxProcessor`**: The poller was a generic relay with no domain logic. Broker publish failure is logged as a warning (event already persisted to outbox table, recoverable by retry).
+- **Optional broker injection**: `EventRelayPublisher` injected via `@Autowired(required = false)` so outbox service still works when broker is disabled (dev/test).
+
+#### PaymentProvider QPay dedup
+
+- **Added `resolvePaymentIntent(paymentId)` to `PaymentProvider` interface**: Gateway-specific URL/QR code construction now lives in the provider, not the domain service.
+- **`QPayPaymentProvider.resolvePaymentIntent()`**: Constructs `"https://qpay.mn/pay/{id}"` and `"BASE64_QR_CODE_{id}"` — QPay implementation details now encapsulated.
+- **`PaymentService.findPaymentIntent()` delegates to provider**: No longer hardcodes QPay URLs in the domain layer.
 
 | Slice | Flow                | Changes                                                           | Status               |
 | ----- | ------------------- | ----------------------------------------------------------------- | -------------------- |

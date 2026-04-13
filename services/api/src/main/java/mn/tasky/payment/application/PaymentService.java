@@ -92,11 +92,7 @@ public class PaymentService {
      * @return The matching {@link PaymentIntent}, if one exists.
      */
     public Optional<PaymentIntent> findPaymentIntent(String paymentId) {
-        return paymentIntentDao.findBookingIdByPaymentId(paymentId).map(ignored -> {
-            // Reconstruct the intent from the booking ID.
-            // In a future iteration this could be stored in the DAO.
-            return new PaymentIntent(paymentId, "https://qpay.mn/pay/" + paymentId, "BASE64_QR_CODE_" + paymentId);
-        });
+        return Optional.ofNullable(paymentProvider.resolvePaymentIntent(paymentId));
     }
 
     /**

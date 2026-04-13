@@ -42,4 +42,10 @@ public interface PaymentProvider {
      * Returns the canonical provider name (e.g. "qpay", "stripe").
      */
     String providerName();
+
+    /**
+     * Resolves a payment intent by ID to its checkout URL and QR code data.
+     * Gateway-specific — e.g. QPay uses "https://qpay.mn/pay/{id}".
+     */
+    PaymentIntent resolvePaymentIntent(String paymentId);
 }

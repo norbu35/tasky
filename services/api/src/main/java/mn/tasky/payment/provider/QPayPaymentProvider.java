@@ -78,6 +78,15 @@ public class QPayPaymentProvider implements PaymentProvider {
         return "qpay";
     }
 
+    @Override
+    public PaymentIntent resolvePaymentIntent(String paymentId) {
+        return paymentIntentDao
+                .findBookingIdByPaymentId(paymentId)
+                .map(bookingId ->
+                        new PaymentIntent(paymentId, "https://qpay.mn/pay/" + paymentId, "BASE64_QR_CODE_" + paymentId))
+                .orElse(null);
+    }
+
     private boolean isRecentTimestamp(long epochSeconds) {
         long now = Instant.now().getEpochSecond();
         return Math.abs(now - epochSeconds) <= maxCallbackAgeSeconds;
