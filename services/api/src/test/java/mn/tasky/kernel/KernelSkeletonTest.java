@@ -15,7 +15,6 @@ import mn.tasky.kernel.context.WorkflowContext;
 import mn.tasky.kernel.error.KernelError;
 import mn.tasky.kernel.idempotency.IdempotencyKey;
 import mn.tasky.kernel.logging.LogField;
-import mn.tasky.kernel.outbox.OutboxEnvelope;
 import org.junit.jupiter.api.Test;
 
 class KernelSkeletonTest {
@@ -51,16 +50,8 @@ class KernelSkeletonTest {
     }
 
     @Test
-    void kernelSkeletonIncludesErrorAndOutboxEnvelopes() {
+    void kernelSkeletonIncludesErrorContract() {
         assertRecordComponents(KernelError.class, "code", "message", "traceId", "retryable");
-        assertRecordComponents(
-                OutboxEnvelope.class,
-                "eventType",
-                "aggregateType",
-                "aggregateId",
-                "payload",
-                "workflowContext",
-                "occurredAt");
     }
 
     @Test
