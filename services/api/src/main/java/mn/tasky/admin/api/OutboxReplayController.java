@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import mn.tasky.common.api.ErrorResponse;
 import mn.tasky.common.outbox.OutboxEvent;
 import mn.tasky.common.outbox.OutboxEventDao;
 import org.springframework.http.ResponseEntity;
@@ -49,14 +50,12 @@ public class OutboxReplayController {
     }
 
     @PostMapping("/events/{id}/replay")
-    public ResponseEntity<Map<String, Object>> replayEvent(@PathVariable String id) {
+    public ResponseEntity<?> replayEvent(@PathVariable String id) {
         UUID uuid = UUID.fromString(id);
         int updated = outboxEventDao.resetForReplay(uuid, Instant.now());
         if (updated == 0) {
             return ResponseEntity.status(409)
-                    .body(Map.of(
-                            "error", "event_not_replayable",
-                            "message", "Event is not in FAILED status, or does not exist"));
+                    .body(new ErrorResponse("event_not_replayable", "Event is not in FAILED status", null));
         }
         return ResponseEntity.ok(Map.of("status", "replayed", "eventId", id));
     }

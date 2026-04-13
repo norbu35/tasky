@@ -51,20 +51,19 @@ public class EventWorkerConsumer {
 
     @RabbitListener(queues = "automation.worker")
     public void onMessage(org.springframework.amqp.core.Message message) {
-        AutomationEventEnvelope envelope = null;
-
         try {
-            envelope = parseEnvelope(message);
+            AutomationEventEnvelope envelope = parseEnvelope(message);
             if (envelope == null) {
-                throw new AmqpRejectAndDontRequeueException("Unparseable message on automation worker queue: messageId="
-                        + message.getMessageProperties().getMessageId());
+                log.error("Received unparseable message, rejecting to DLQ: messageId={}",
+                        message.getMessageProperties().getMessageId());
+                throw new AmqpRejectAndDontRequeueException("Unparseable message");
             }
 
             propagateMdc(envelope);
             EventHandler handler = handlersByEventType.get(envelope.eventType());
             if (handler == null) {
-                throw new AmqpRejectAndDontRequeueException(
-                        "No handler registered for event type: " + envelope.eventType());
+                log.error("No handler registered for event type: {}, rejecting to DLQ", envelope.eventType());
+                throw new AmqpRejectAndDontRequeueException("No handler for event type: " + envelope.eventType());
             }
 
             log.info(
@@ -74,8 +73,11 @@ public class EventWorkerConsumer {
                     envelope.correlationId());
             handler.handle(envelope);
             log.info("Event processed successfully: eventId={} type={}", envelope.eventId(), envelope.eventType());
+        } catch (AmqpRejectAndDontRequeueException exception) {
+            log.warn("Rejecting message without requeue: reason={}", exception.getMessage());
+            throw exception;
         } catch (RuntimeException exception) {
-            handleProcessingFailure(message, envelope, exception);
+            handleProcessingFailure(message, exception);
             throw exception;
         } finally {
             clearMdc();
@@ -109,22 +111,15 @@ public class EventWorkerConsumer {
     @SuppressWarnings("unchecked")
     private void handleProcessingFailure(
             org.springframework.amqp.core.Message message,
-            AutomationEventEnvelope envelope,
             RuntimeException exception) {
-        String eventId = envelope != null ? envelope.eventId() : "unknown";
-        String eventType = envelope != null ? envelope.eventType() : "unknown";
-        log.error("Event processing failed: eventId={} type={} error={}", eventId, eventType, exception.getMessage());
+        log.error("Event processing failed: error={}", exception.getMessage());
 
         int attempt = extractDeathCount(message);
         if (attempt >= maxRetries) {
-            log.warn(
-                    "Event exceeded max retries ({} deaths), sending to DLQ: eventId={} type={}",
-                    attempt,
-                    eventId,
-                    eventType);
+            log.warn("Event exceeded max retries ({} deaths), sending to DLQ", attempt);
             rabbitTemplate.send(dlqExchange, "", message);
         } else {
-            log.info("Routing event to retry exchange (death {} of {}): eventId={}", attempt, maxRetries, eventId);
+            log.info("Routing event to retry exchange (death {} of {})", attempt, maxRetries);
             rabbitTemplate.send(retryExchange, "", message);
         }
     }

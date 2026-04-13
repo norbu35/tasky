@@ -1853,6 +1853,90 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/outbox/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Outbox event summary
+         * @description Returns counts of outbox events by status (pending, failed, processed, processing).
+         */
+        get: operations["adminOutboxSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/outbox/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List outbox events
+         * @description Paginated list of outbox events filtered by status.
+         */
+        get: operations["adminListOutboxEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/outbox/events/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get outbox event detail
+         * @description Returns a single outbox event by ID.
+         */
+        get: operations["adminGetOutboxEvent"];
+        put?: never;
+        /**
+         * Replay outbox event
+         * @description Resets a FAILED outbox event to PENDING so the processor will retry it.
+         */
+        post: operations["adminReplayOutboxEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/outbox/events/replay-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Replay all failed outbox events
+         * @description Resets all FAILED outbox events to PENDING for bulk retry.
+         */
+        post: operations["adminReplayAllOutboxEvents"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/location/reverse-geocode": {
         parameters: {
             query?: never;
@@ -2578,6 +2662,46 @@ export interface components {
         };
         LocationSearchResponse: {
             results: components["schemas"]["LocationSearchResult"][];
+        };
+        OutboxSummary: {
+            pending: number;
+            failed: number;
+            processed: number;
+            processing: number;
+        };
+        OutboxEvent: {
+            /** Format: uuid */
+            id: string;
+            event_type: string;
+            aggregate_type?: string;
+            /** Format: uuid */
+            aggregate_id?: string | null;
+            /** @description JSON payload */
+            payload?: string;
+            /** @enum {string} */
+            status: "PENDING" | "PROCESSING" | "PROCESSED" | "FAILED";
+            attempts?: number;
+            /** Format: date-time */
+            available_at?: string;
+            /** Format: date-time */
+            created_at?: string;
+            /** Format: date-time */
+            processed_at?: string | null;
+            last_error?: string | null;
+            correlation_id?: string | null;
+            trace_id?: string | null;
+            causation_id?: string | null;
+            command_id?: string | null;
+            workflow_id?: string | null;
+            actor_id?: string | null;
+            locale?: string | null;
+            platform?: string | null;
+        };
+        OutboxEventPage: {
+            events: components["schemas"]["OutboxEvent"][];
+            total: number;
+            offset: number;
+            limit: number;
         };
         LocationSearchResult: {
             formatted_address: string;
@@ -6185,6 +6309,141 @@ export interface operations {
                         role: string;
                         /** Format: uuid */
                         userId: string;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    adminOutboxSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Outbox summary. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutboxSummary"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    adminListOutboxEvents: {
+        parameters: {
+            query?: {
+                status?: "PENDING" | "FAILED" | "PROCESSED" | "PROCESSING";
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated list of outbox events. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutboxEventPage"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    adminGetOutboxEvent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Outbox event detail. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutboxEvent"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    adminReplayOutboxEvent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event replay initiated. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        status?: string;
+                        eventId?: string;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description Event is not in FAILED status. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    adminReplayAllOutboxEvents: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Bulk replay initiated. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        status?: string;
+                        replayed_count?: number;
+                        total_failed?: number;
                     };
                 };
             };

@@ -1759,6 +1759,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /auth/dev/login:
+    post:
+      tags: [Auth]
+      summary: Dev login (development only)
+      description: |
+        Authenticate with a phone number and role without SMS OTP.
+        Only available when `tasky.dev-auth.enabled=true`. Never enabled in production.
+      operationId: devLogin
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, role]
+              properties:
+                phone:
+                  type: string
+                  format: phone
+                role:
+                  type: string
+                  enum: [CUSTOMER, TASKER, ADMIN]
+      responses:
+        '200':
+          description: Auth session with tokens.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [access_token, refresh_token, user]
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
   /auth/token/refresh:
     post:
       tags: [Auth]
