@@ -37,4 +37,9 @@ public class MessagingQueryHandler implements MessagingQueryPort {
     public List<Message> listMessagesForConversation(String conversationId, String cursor, int limit) {
         return messagingService.listMessagesForConversation(conversationId, cursor, limit);
     }
+
+    @Override
+    public List<Message> findFlaggedMessages(String cursor, int limit) {
+        return messagingService.findFlaggedMessages(cursor, limit);
+    }
 }

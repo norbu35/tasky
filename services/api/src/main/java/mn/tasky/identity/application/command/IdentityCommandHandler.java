@@ -109,4 +109,9 @@ public class IdentityCommandHandler implements IdentityCommandPort {
                 repeatOffenseWindowDays,
                 autoUnsuspendEnabled);
     }
+
+    @Override
+    public void requestAccountDeletion(String userId) {
+        authService.requestAccountDeletion(userId);
+    }
 }

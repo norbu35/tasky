@@ -203,6 +203,10 @@ public class MessagingService {
         return messageDao.findByConversationId(conversationId, cursor, limit);
     }
 
+    public List<Message> findFlaggedMessages(String cursor, int limit) {
+        return messageDao.findFlagged(cursor, limit);
+    }
+
     private String computeContentHash(String conversationId, String senderId, String content, Instant sentAt) {
         try {
             String hashInput = conversationId + "|" + senderId + "|" + content + "|" + sentAt.toEpochMilli();

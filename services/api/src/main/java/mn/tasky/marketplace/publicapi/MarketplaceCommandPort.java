@@ -23,4 +23,9 @@ public interface MarketplaceCommandPort {
             String customerId, String taskId, String applicationId, boolean liabilityDisclaimerAccepted);
 
     Optional<PresignedUpload> createPhotoUploadUrl(String userId, String contentType);
+
+    /**
+     * Update task status directly (used by admin concierge assignment).
+     */
+    void updateTaskStatus(String taskId, String status);
 }

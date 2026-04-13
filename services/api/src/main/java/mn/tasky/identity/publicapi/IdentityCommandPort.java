@@ -47,4 +47,10 @@ public interface IdentityCommandPort {
             int repeatSuspensionDays,
             int repeatOffenseWindowDays,
             boolean autoUnsuspendEnabled);
+
+    /**
+     * Request self-service account deletion.
+     * Marks user as DELETED and records audit event.
+     */
+    void requestAccountDeletion(String userId);
 }

@@ -1082,4 +1082,11 @@ public class TaskService {
     }
 
     private record TaskCursor(Instant createdAt, UUID id) {}
+
+    /**
+     * Directly update task status (used by admin concierge assignment through MarketplaceCommandPort).
+     */
+    public void updateTaskStatus(String taskId, String status) {
+        taskDao.updateStatus(taskId, status, Instant.now());
+    }
 }

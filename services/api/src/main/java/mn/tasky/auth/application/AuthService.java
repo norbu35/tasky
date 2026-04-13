@@ -1332,4 +1332,14 @@ public class AuthService {
         String uploadUrl = storageService.generateUploadUrl(storageKey, normalizedContentType);
         return Optional.of(new PresignedUpload(uploadUrl, storageKey));
     }
+
+    /**
+     * Request self-service account deletion.
+     * Marks user as DELETED and records audit event.
+     */
+    public void requestAccountDeletion(String userId) {
+        userDao.updateStatus(userId, "DELETED");
+        auditEventDao.insert(
+                userId, "USER_SELF_DELETE_REQUEST", "USER", userId, "{\"reason\":\"USER_SELF_DELETE_REQUEST\"}");
+    }
 }

@@ -3,22 +3,22 @@ package mn.tasky.runtime.adminapi.composition;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import mn.tasky.messaging.dao.MessageDao;
 import mn.tasky.messaging.dto.Message;
+import mn.tasky.messaging.publicapi.MessagingQueryPort;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AdminMessageCompositionService {
 
-    private final MessageDao messageDao;
+    private final MessagingQueryPort messagingQueryPort;
 
-    public AdminMessageCompositionService(MessageDao messageDao) {
-        this.messageDao = messageDao;
+    public AdminMessageCompositionService(MessagingQueryPort messagingQueryPort) {
+        this.messagingQueryPort = messagingQueryPort;
     }
 
     public AdminMessagePage listFlagged(String cursor, int limit) {
         int clampedLimit = Math.max(1, Math.min(limit, 100));
-        List<Message> results = messageDao.findFlagged(cursor, clampedLimit + 1);
+        List<Message> results = messagingQueryPort.findFlaggedMessages(cursor, clampedLimit + 1);
         boolean hasMore = results.size() > clampedLimit;
         List<Message> page = hasMore ? results.subList(0, clampedLimit) : results;
         List<Map<String, Object>> data =

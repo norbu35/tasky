@@ -14,4 +14,10 @@ public interface MessagingQueryPort {
     Optional<Conversation> findConversationByTaskAndParticipants(String taskId, String customerId, String taskerId);
 
     List<Message> listMessagesForConversation(String conversationId, String cursor, int limit);
+
+    /**
+     * Returns messages flagged for moderation review.
+     * Used by admin runtime composition for moderation queue listing.
+     */
+    List<Message> findFlaggedMessages(String cursor, int limit);
 }

@@ -3,8 +3,8 @@ package mn.tasky.notification.api;
 import jakarta.validation.Valid;
 import java.util.Map;
 import mn.tasky.common.security.JwtPrincipal;
-import mn.tasky.notification.application.NotificationService;
 import mn.tasky.notification.dto.RegisterDeviceRequest;
+import mn.tasky.runtime.publicapi.composition.NotificationCompositionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -20,22 +20,22 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class NotificationController {
 
-    private final NotificationService notificationService;
+    private final NotificationCompositionService notificationCompositionService;
 
-    public NotificationController(NotificationService notificationService) {
-        this.notificationService = notificationService;
+    public NotificationController(NotificationCompositionService notificationCompositionService) {
+        this.notificationCompositionService = notificationCompositionService;
     }
 
     @PostMapping
     public ResponseEntity<?> register(
             @AuthenticationPrincipal JwtPrincipal principal, @Valid @RequestBody RegisterDeviceRequest body) {
-        notificationService.registerDevice(principal.userId(), body.token(), body.platform());
+        notificationCompositionService.registerDevice(principal.userId(), body);
         return ResponseEntity.ok(Map.of("message", "Device registered successfully."));
     }
 
     @DeleteMapping("/{token}")
     public ResponseEntity<?> unregister(@AuthenticationPrincipal JwtPrincipal principal, @PathVariable String token) {
-        notificationService.unregisterDevice(principal.userId(), token);
+        notificationCompositionService.unregisterDevice(principal.userId(), token);
         return ResponseEntity.noContent().build();
     }
 }

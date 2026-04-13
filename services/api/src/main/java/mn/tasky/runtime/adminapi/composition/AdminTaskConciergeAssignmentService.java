@@ -2,17 +2,16 @@ package mn.tasky.runtime.adminapi.composition;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.Instant;
 import mn.tasky.auth.dto.UserProfile;
 import mn.tasky.booking.publicapi.BookingCommandPort;
 import mn.tasky.booking.publicapi.BookingQueryPort;
-import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyService;
 import mn.tasky.identity.publicapi.IdentityQueryPort;
+import mn.tasky.marketplace.publicapi.MarketplaceCommandPort;
+import mn.tasky.marketplace.publicapi.MarketplaceQueryPort;
 import mn.tasky.runtime.publicapi.composition.BookingResponseCompositionService;
-import mn.tasky.task.dao.TaskDao;
 import mn.tasky.task.dto.TaskState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,30 +23,30 @@ public class AdminTaskConciergeAssignmentService {
 
     private static final Logger log = LoggerFactory.getLogger(AdminTaskConciergeAssignmentService.class);
 
-    private final TaskDao taskDao;
+    private final MarketplaceQueryPort marketplaceQueryPort;
+    private final MarketplaceCommandPort marketplaceCommandPort;
     private final IdentityQueryPort identityQueryPort;
     private final BookingCommandPort bookingCommandPort;
     private final BookingQueryPort bookingQueryPort;
     private final IdempotencyService idempotencyService;
-    private final AuditEventDao auditEventDao;
     private final ObjectMapper objectMapper;
     private final BookingResponseCompositionService bookingResponseCompositionService;
 
     public AdminTaskConciergeAssignmentService(
-            TaskDao taskDao,
+            MarketplaceQueryPort marketplaceQueryPort,
+            MarketplaceCommandPort marketplaceCommandPort,
             IdentityQueryPort identityQueryPort,
             BookingCommandPort bookingCommandPort,
             BookingQueryPort bookingQueryPort,
             IdempotencyService idempotencyService,
-            AuditEventDao auditEventDao,
             ObjectMapper objectMapper,
             BookingResponseCompositionService bookingResponseCompositionService) {
-        this.taskDao = taskDao;
+        this.marketplaceQueryPort = marketplaceQueryPort;
+        this.marketplaceCommandPort = marketplaceCommandPort;
         this.identityQueryPort = identityQueryPort;
         this.bookingCommandPort = bookingCommandPort;
         this.bookingQueryPort = bookingQueryPort;
         this.idempotencyService = idempotencyService;
-        this.auditEventDao = auditEventDao;
         this.objectMapper = objectMapper;
         this.bookingResponseCompositionService = bookingResponseCompositionService;
     }
@@ -85,7 +84,7 @@ public class AdminTaskConciergeAssignmentService {
                         "Liability disclaimer must be accepted.");
             }
 
-            TaskState task = taskDao.findById(taskId).orElse(null);
+            TaskState task = marketplaceQueryPort.getTask(taskId).orElse(null);
             if (task == null) {
                 idempotencyService.abandon(adminId, IdempotencyOperations.CONCIERGE_ASSIGN, idempotencyKey);
                 return AdminTaskConciergeAssignmentOutcome.failure(
@@ -117,7 +116,7 @@ public class AdminTaskConciergeAssignmentService {
 
             var booking = bookingCommandPort.createBooking(
                     task.id(), taskerId, task.customerId(), task.budget(), true, task.scheduledAt());
-            taskDao.updateStatus(task.id(), "ASSIGNED", Instant.now());
+            marketplaceCommandPort.updateTaskStatus(task.id(), "ASSIGNED");
 
             String metadataJson;
             try {
@@ -131,7 +130,13 @@ public class AdminTaskConciergeAssignmentService {
                 metadataJson = "{}";
                 log.warn("Failed to serialize concierge-assign audit metadata", jsonException);
             }
-            auditEventDao.insert(adminId, "CONCIERGE_ASSIGN", "BOOKING", booking.id(), metadataJson);
+            // Audit event recorded via logging (audit port to be introduced in future tranche)
+            log.info(
+                    "CONCIERGE_ASSIGN audit: adminId={}, taskId={}, taskerId={}, bookingId={}",
+                    adminId,
+                    task.id(),
+                    taskerId,
+                    booking.id());
 
             idempotencyService.completeWithResource(
                     adminId, IdempotencyOperations.CONCIERGE_ASSIGN, idempotencyKey, "BOOKING", booking.id());

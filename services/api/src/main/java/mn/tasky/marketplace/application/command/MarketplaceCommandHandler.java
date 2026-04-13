@@ -51,4 +51,9 @@ public class MarketplaceCommandHandler implements MarketplaceCommandPort {
     public Optional<PresignedUpload> createPhotoUploadUrl(String userId, String contentType) {
         return taskService.createPhotoUploadUrl(userId, contentType);
     }
+
+    @Override
+    public void updateTaskStatus(String taskId, String status) {
+        taskService.updateTaskStatus(taskId, status);
+    }
 }
