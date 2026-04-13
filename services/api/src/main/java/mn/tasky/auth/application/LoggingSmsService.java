@@ -4,12 +4,15 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /**
  * Development SMS provider that logs OTP codes instead of sending real SMS.
+ * Activated when tasky.auth.sms.provider=logging (default) or when no provider is configured.
  */
 @Service
+@ConditionalOnProperty(name = "tasky.auth.sms.provider", havingValue = "logging", matchIfMissing = true)
 public class LoggingSmsService implements SmsService {
 
     private static final Logger log = LoggerFactory.getLogger(LoggingSmsService.class);

@@ -3,17 +3,18 @@ package mn.tasky.notification.provider;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import mn.tasky.automation.provider.ProviderHealth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Primary;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
  * Development push provider that logs notification payloads instead of calling a real service.
- * Marked {@code @Primary} so it is selected by default; production providers override via profile.
+ * Activated when tasky.push.provider=logging (default).
  */
 @Component
-@Primary
+@ConditionalOnProperty(name = "tasky.push.provider", havingValue = "logging", matchIfMissing = true)
 public class LoggingPushProvider implements PushNotificationProvider {
 
     private static final Logger log = LoggerFactory.getLogger(LoggingPushProvider.class);
@@ -33,8 +34,18 @@ public class LoggingPushProvider implements PushNotificationProvider {
 
     @Override
     public NotificationResult sendToTopic(String topic, String title, String body, Map<String, String> data) {
-        String messageId = "LOG-TOPIC-" + java.util.UUID.randomUUID();
+        String messageId = "LOG-TOPIC-" + UUID.randomUUID();
         log.info("TOPIC-SEND [{}] title={} body={} data={}", topic, title, body, data);
         return new NotificationResult(true, messageId, null);
+    }
+
+    @Override
+    public ProviderHealth health() {
+        return ProviderHealth.healthy(providerName());
+    }
+
+    @Override
+    public String providerName() {
+        return "logging";
     }
 }

@@ -6,13 +6,16 @@ import mn.tasky.location.dao.DistrictGeoDao;
 import mn.tasky.location.dao.DistrictGeoDao.DistrictCentroid;
 import mn.tasky.location.dto.LocationSearchResult;
 import mn.tasky.location.dto.ReverseGeocodeResponse;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
  * Launch-default geocoding backed by district centroids.
  * Returns the nearest UB district as the address approximation.
+ * Activated when tasky.location.geocoding.provider=district (default).
  */
 @Component
+@ConditionalOnProperty(name = "tasky.location.geocoding.provider", havingValue = "district", matchIfMissing = true)
 public class DistrictGeocodingProvider implements GeocodingProvider {
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DistrictGeocodingProvider.class);

@@ -1,15 +1,7 @@
 package mn.tasky.payment.application;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.time.Instant;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
@@ -18,63 +10,47 @@ import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.payment.dao.PaymentIntentDao;
 import mn.tasky.payment.dto.PaymentIntent;
+import mn.tasky.payment.provider.PaymentProvider;
 import mn.tasky.task.application.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 /**
  * Service responsible for payment intent lifecycle and verified gateway callbacks.
- * Integrates booking/task transitions and emits post-payment side effects via domain outbox.
+ * Delegates gateway-specific operations (intent creation, signature validation)
+ * to the active {@link PaymentProvider}, and owns all domain orchestration
+ * (booking transitions, task assignment, outbox event publishing).
  */
 @Service
 public class PaymentService {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentService.class);
-    private static final String HMAC_ALGORITHM = "HmacSHA256";
 
+    private final PaymentProvider paymentProvider;
     private final BookingService bookingService;
     private final TaskService taskService;
     private final DomainEventOutboxService domainEventOutboxService;
     private final AnalyticsService analyticsService;
     private final PaymentIntentDao paymentIntentDao;
     private final FeatureToggleService featureToggleService;
-    private final String qpayWebhookSecret;
-    private final long maxCallbackAgeSeconds;
-    private final AtomicReference<byte[]> qpayWebhookSecretBytes = new AtomicReference<>();
 
     public PaymentService(
+            PaymentProvider paymentProvider,
             BookingService bookingService,
             TaskService taskService,
             DomainEventOutboxService domainEventOutboxService,
             AnalyticsService analyticsService,
             PaymentIntentDao paymentIntentDao,
-            FeatureToggleService featureToggleService,
-            @Value("${tasky.qpay.webhook-secret:}") String qpayWebhookSecret,
-            @Value("${tasky.qpay.max-callback-age-seconds:300}") long maxCallbackAgeSeconds) {
+            FeatureToggleService featureToggleService) {
+        this.paymentProvider = paymentProvider;
         this.bookingService = bookingService;
         this.taskService = taskService;
         this.domainEventOutboxService = domainEventOutboxService;
         this.analyticsService = analyticsService;
         this.paymentIntentDao = paymentIntentDao;
         this.featureToggleService = featureToggleService;
-        this.qpayWebhookSecret = qpayWebhookSecret;
-        this.maxCallbackAgeSeconds = maxCallbackAgeSeconds;
-    }
-
-    private byte[] getWebhookSecretBytes() {
-        byte[] bytes = this.qpayWebhookSecretBytes.get();
-        if (bytes == null) {
-            if (!StringUtils.hasText(qpayWebhookSecret)) {
-                throw new IllegalStateException("tasky.qpay.webhook-secret must be configured when escrow is enabled.");
-            }
-            bytes = qpayWebhookSecret.getBytes(StandardCharsets.UTF_8);
-            this.qpayWebhookSecretBytes.set(bytes);
-        }
-        return bytes;
     }
 
     /**
@@ -86,8 +62,7 @@ public class PaymentService {
      */
     public PaymentIntent initiatePayment(String bookingId) {
         ensureMonetizationEnabled();
-        String paymentId = UUID.randomUUID().toString();
-        paymentIntentDao.insert(paymentId, bookingId);
+        PaymentIntent intent = paymentProvider.createIntent(bookingId);
 
         Optional<BookingState> booking = bookingService.getBooking(bookingId);
         booking.ifPresent(b -> analyticsService.track(
@@ -99,9 +74,9 @@ public class PaymentService {
                         AnalyticsService.PROPERTY_TASK_ID,
                         b.taskId(),
                         "payment_id",
-                        paymentId)));
+                        intent.paymentId())));
 
-        return new PaymentIntent(paymentId, "https://qpay.mn/pay/" + paymentId, "BASE64_QR_CODE_" + paymentId);
+        return intent;
     }
 
     private void ensureMonetizationEnabled() {
@@ -117,17 +92,17 @@ public class PaymentService {
      * @return The matching {@link PaymentIntent}, if one exists.
      */
     public Optional<PaymentIntent> findPaymentIntent(String paymentId) {
-        return paymentIntentDao
-                .findBookingIdByPaymentId(paymentId)
-                .map(ignored -> new PaymentIntent(
-                        paymentId, "https://qpay.mn/pay/" + paymentId, "BASE64_QR_CODE_" + paymentId));
+        return paymentIntentDao.findBookingIdByPaymentId(paymentId).map(ignored -> {
+            // Reconstruct the intent from the booking ID.
+            // In a future iteration this could be stored in the DAO.
+            return new PaymentIntent(paymentId, "https://qpay.mn/pay/" + paymentId, "BASE64_QR_CODE_" + paymentId);
+        });
     }
 
     /**
-     * Processes a signed payment callback from QPay.
-     * Accepts callbacks only when signature and timestamp are valid and status is {@code PAID}.
-     * On first successful processing, transitions the booking/task state and enqueues
-     * post-payment side effects through the domain outbox.
+     * Processes a signed payment callback from the gateway.
+     * Validates the signature via the provider, then orchestrates booking/task
+     * transitions and publishes post-payment side effects through the domain outbox.
      *
      * @param paymentId The payment identifier.
      * @param status    The callback payment status.
@@ -141,8 +116,8 @@ public class PaymentService {
     @Transactional
     public boolean processCallback(String paymentId, String status, long timestamp, String signature) {
         ensureMonetizationEnabled();
-        if (!isValidSignature(paymentId, status, timestamp, signature)) {
-            log.warn("Rejected QPay callback due to invalid signature for payment {}", paymentId);
+        if (!paymentProvider.isValidSignature(paymentId, status, timestamp, signature)) {
+            log.warn("Rejected gateway callback due to invalid signature for payment {}", paymentId);
             return false;
         }
 
@@ -194,41 +169,5 @@ public class PaymentService {
         }
 
         return true;
-    }
-
-    private boolean isValidSignature(String paymentId, String status, long timestamp, String providedSignature) {
-        if (!StringUtils.hasText(paymentId)
-                || !StringUtils.hasText(status)
-                || !StringUtils.hasText(providedSignature)
-                || timestamp <= 0) {
-            return false;
-        }
-        if (!isRecentTimestamp(timestamp)) {
-            return false;
-        }
-        String expected = computeSignature(paymentId + "|" + status + "|" + timestamp);
-        String normalizedProvided = providedSignature.trim().toLowerCase(Locale.ROOT);
-        return MessageDigest.isEqual(
-                expected.getBytes(StandardCharsets.UTF_8), normalizedProvided.getBytes(StandardCharsets.UTF_8));
-    }
-
-    private boolean isRecentTimestamp(long epochSeconds) {
-        long now = Instant.now().getEpochSecond();
-        return Math.abs(now - epochSeconds) <= maxCallbackAgeSeconds;
-    }
-
-    private String computeSignature(String payload) {
-        try {
-            Mac mac = Mac.getInstance(HMAC_ALGORITHM);
-            mac.init(new SecretKeySpec(getWebhookSecretBytes(), HMAC_ALGORITHM));
-            byte[] signature = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
-            StringBuilder builder = new StringBuilder(signature.length * 2);
-            for (byte b : signature) {
-                builder.append(String.format(Locale.ROOT, "%02x", b));
-            }
-            return builder.toString();
-        } catch (Exception ex) {
-            throw new IllegalStateException("Failed to calculate QPay signature", ex);
-        }
     }
 }

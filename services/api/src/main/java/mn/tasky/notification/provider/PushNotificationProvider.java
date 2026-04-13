@@ -2,13 +2,14 @@ package mn.tasky.notification.provider;
 
 import java.util.List;
 import java.util.Map;
+import mn.tasky.automation.provider.ProviderHealth;
 
 /**
  * Contract for push notification providers (FCM, etc.).
  *
- * <p>All providers must implement {@link #sendPush}. {@link #subscribeToTopics} and
- * {@link #sendToTopic} default to no-ops so non-FCM providers (e.g. LoggingPushProvider)
- * need not implement topic functionality.
+ * <p>All providers must implement {@link #sendPush} and {@link #health}.
+ * {@link #subscribeToTopics} and {@link #sendToTopic} default to no-ops so
+ * non-FCM providers (e.g. LoggingPushProvider) need not implement topic functionality.
  */
 public interface PushNotificationProvider {
 
@@ -45,4 +46,14 @@ public interface PushNotificationProvider {
     default NotificationResult sendToTopic(String topic, String title, String body, Map<String, String> data) {
         return new NotificationResult(false, null, "TOPIC_NOT_SUPPORTED");
     }
+
+    /**
+     * Returns the provider's current health status.
+     */
+    ProviderHealth health();
+
+    /**
+     * Returns the canonical provider name (e.g. "firebase", "logging").
+     */
+    String providerName();
 }

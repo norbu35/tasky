@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import mn.tasky.automation.provider.ProviderHealth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,5 +137,24 @@ public class FirebasePushProvider implements PushNotificationProvider {
         } catch (IOException e) {
             throw new IllegalStateException("Failed to initialise Firebase Admin SDK", e);
         }
+    }
+
+    @Override
+    public ProviderHealth health() {
+        try {
+            // FirebaseMessaging doesn't expose a lightweight health check;
+            // check that the instance was initialized without error.
+            if (messaging == null) {
+                return ProviderHealth.unhealthy(providerName(), "FirebaseMessaging not initialized");
+            }
+            return ProviderHealth.healthy(providerName());
+        } catch (Exception exception) {
+            return ProviderHealth.unhealthy(providerName(), exception.getMessage());
+        }
+    }
+
+    @Override
+    public String providerName() {
+        return "firebase";
     }
 }

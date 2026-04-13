@@ -41,6 +41,13 @@ public class S3StorageService {
     }
 
     /**
+     * Returns the underlying S3 client for health checks and diagnostics.
+     */
+    public S3Client getS3Client() {
+        return s3Client;
+    }
+
+    /**
      * Deletes an object from the storage bucket.
      * Logs but does not throw on failure to avoid blocking the retention process.
      */
