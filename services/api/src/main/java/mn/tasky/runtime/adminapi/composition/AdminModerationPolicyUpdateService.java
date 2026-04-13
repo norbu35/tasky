@@ -1,8 +1,8 @@
 package mn.tasky.runtime.adminapi.composition;
 
 import mn.tasky.admin.dto.StrikePolicyRequest;
+import mn.tasky.admin.publicapi.AdminAuditCommandPort;
 import mn.tasky.auth.dto.ModerationPolicy;
-import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.identity.publicapi.IdentityCommandPort;
 import org.springframework.stereotype.Component;
 
@@ -10,15 +10,15 @@ import org.springframework.stereotype.Component;
 public class AdminModerationPolicyUpdateService {
 
     private final IdentityCommandPort identityCommandPort;
-    private final AuditEventDao auditEventDao;
+    private final AdminAuditCommandPort adminAuditCommandPort;
     private final AdminModerationCompositionService adminModerationCompositionService;
 
     public AdminModerationPolicyUpdateService(
             IdentityCommandPort identityCommandPort,
-            AuditEventDao auditEventDao,
+            AdminAuditCommandPort adminAuditCommandPort,
             AdminModerationCompositionService adminModerationCompositionService) {
         this.identityCommandPort = identityCommandPort;
-        this.auditEventDao = auditEventDao;
+        this.adminAuditCommandPort = adminAuditCommandPort;
         this.adminModerationCompositionService = adminModerationCompositionService;
     }
 
@@ -39,7 +39,8 @@ public class AdminModerationPolicyUpdateService {
                 body.repeatSuspensionDays(),
                 body.repeatOffenseWindowDays(),
                 body.autoUnsuspendEnabled());
-        auditEventDao.insert(adminUserId, "MODERATION_POLICY_UPDATED", "MODERATION_POLICY", null, null);
+        adminAuditCommandPort.recordAdminAction(
+                adminUserId, "MODERATION_POLICY_UPDATED", "MODERATION_POLICY", null, null);
         return AdminModerationPolicyUpdateOutcome.success(
                 adminModerationCompositionService.strikePolicyResponse(updated));
     }

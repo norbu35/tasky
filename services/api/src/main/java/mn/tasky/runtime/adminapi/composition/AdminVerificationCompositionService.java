@@ -3,8 +3,8 @@ package mn.tasky.runtime.adminapi.composition;
 import java.util.List;
 import java.util.Optional;
 import mn.tasky.admin.dto.VerificationDetailResponse;
+import mn.tasky.admin.publicapi.AdminAuditCommandPort;
 import mn.tasky.auth.dto.VerificationDetail;
-import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.security.CryptoService;
 import mn.tasky.common.storage.S3PresignedUrlService;
 import mn.tasky.common.storage.StorageKeyPolicy;
@@ -18,19 +18,19 @@ public class AdminVerificationCompositionService {
 
     private final AdminVerificationQueueProjectionService queueProjectionService;
     private final IdentityQueryPort identityQueryPort;
-    private final AuditEventDao auditEventDao;
+    private final AdminAuditCommandPort adminAuditCommandPort;
     private final CryptoService cryptoService;
     private final S3PresignedUrlService storageService;
 
     public AdminVerificationCompositionService(
             AdminVerificationQueueProjectionService queueProjectionService,
             IdentityQueryPort identityQueryPort,
-            AuditEventDao auditEventDao,
+            AdminAuditCommandPort adminAuditCommandPort,
             CryptoService cryptoService,
             S3PresignedUrlService storageService) {
         this.queueProjectionService = queueProjectionService;
         this.identityQueryPort = identityQueryPort;
-        this.auditEventDao = auditEventDao;
+        this.adminAuditCommandPort = adminAuditCommandPort;
         this.cryptoService = cryptoService;
         this.storageService = storageService;
     }
@@ -49,7 +49,7 @@ public class AdminVerificationCompositionService {
     public Optional<VerificationDetailResponse> verificationDetail(String verificationId, String adminUserId) {
         return identityQueryPort.getVerificationDetail(verificationId).map(detail -> {
             if (detail.idCardFrontUrl() != null) {
-                auditEventDao.insert(
+                adminAuditCommandPort.recordAdminAction(
                         adminUserId,
                         "VERIFICATION_MEDIA_VIEWED",
                         "VERIFICATION",
@@ -57,7 +57,7 @@ public class AdminVerificationCompositionService {
                         "{\"field\":\"id_card_front\"}");
             }
             if (detail.idCardBackUrl() != null) {
-                auditEventDao.insert(
+                adminAuditCommandPort.recordAdminAction(
                         adminUserId,
                         "VERIFICATION_MEDIA_VIEWED",
                         "VERIFICATION",
