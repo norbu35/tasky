@@ -1767,6 +1767,8 @@ paths:
         Authenticate with a phone number and role without SMS OTP.
         Only available when `tasky.dev-auth.enabled=true`. Never enabled in production.
       operationId: devLogin
+      x-tasky-status: deferred
+      x-tasky-target-phase: phase_2
       security: []
       requestBody:
         required: true
