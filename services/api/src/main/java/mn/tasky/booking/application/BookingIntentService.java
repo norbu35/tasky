@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.booking.dao.BookingIntentDao;
+import mn.tasky.booking.dto.BookingIntentConfirmResult;
 import mn.tasky.booking.dto.BookingIntentState;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.task.dao.TaskDao;
@@ -48,27 +49,6 @@ public class BookingIntentService {
 
         public boolean isSuccess() {
             return intent != null;
-        }
-    }
-
-    public record ConfirmResult(BookingState booking, String errorCode, String errorMessage) {
-        public static final String NOT_FOUND = "NOT_FOUND";
-        public static final String FORBIDDEN = "FORBIDDEN";
-        public static final String DISCLAIMER_REQUIRED = "DISCLAIMER_REQUIRED";
-        public static final String TASK_NOT_OPEN = "TASK_NOT_OPEN";
-        public static final String CONFLICT = "CONFLICT";
-        public static final String DEFERRED = "DEFERRED";
-
-        static ConfirmResult success(BookingState booking) {
-            return new ConfirmResult(booking, null, null);
-        }
-
-        static ConfirmResult error(String errorCode, String errorMessage) {
-            return new ConfirmResult(null, errorCode, errorMessage);
-        }
-
-        public boolean isSuccess() {
-            return booking != null;
         }
     }
 
@@ -146,42 +126,46 @@ public class BookingIntentService {
     }
 
     @Transactional
-    public ConfirmResult confirmIntent(String customerId, String intentId, boolean liabilityDisclaimerAccepted) {
+    public BookingIntentConfirmResult confirmIntent(
+            String customerId, String intentId, boolean liabilityDisclaimerAccepted) {
         Optional<BookingIntentState> intentOpt = bookingIntentDao.findById(intentId);
         if (intentOpt.isEmpty()) {
-            return ConfirmResult.error(ConfirmResult.NOT_FOUND, "Booking intent not found.");
+            return BookingIntentConfirmResult.error(BookingIntentConfirmResult.NOT_FOUND, "Booking intent not found.");
         }
 
         BookingIntentState intent = intentOpt.get();
         if (!customerId.equals(intent.customerId())) {
-            return ConfirmResult.error(ConfirmResult.FORBIDDEN, "Only booking intent owner can confirm.");
+            return BookingIntentConfirmResult.error(
+                    BookingIntentConfirmResult.FORBIDDEN, "Only booking intent owner can confirm.");
         }
         if (!liabilityDisclaimerAccepted) {
-            return ConfirmResult.error(
-                    ConfirmResult.DISCLAIMER_REQUIRED, "Liability disclaimer must be accepted to confirm booking.");
+            return BookingIntentConfirmResult.error(
+                    BookingIntentConfirmResult.DISCLAIMER_REQUIRED,
+                    "Liability disclaimer must be accepted to confirm booking.");
         }
         if (SOURCE_INSTANT_MATCH.equals(intent.source())) {
-            return ConfirmResult.error(ConfirmResult.DEFERRED, "Instant match booking intents are not implemented.");
+            return BookingIntentConfirmResult.error(
+                    BookingIntentConfirmResult.DEFERRED, "Instant match booking intents are not implemented.");
         }
         if ("CONFIRMED".equals(intent.status()) && intent.confirmedBookingId() != null) {
             Optional<BookingState> existingBooking = bookingService.getBooking(intent.confirmedBookingId());
             return existingBooking
-                    .map(ConfirmResult::success)
-                    .orElseGet(
-                            () -> ConfirmResult.error(ConfirmResult.CONFLICT, "Confirmed booking no longer exists."));
+                    .map(BookingIntentConfirmResult::success)
+                    .orElseGet(() -> BookingIntentConfirmResult.error(
+                            BookingIntentConfirmResult.CONFLICT, "Confirmed booking no longer exists."));
         }
         if (!"PENDING".equals(intent.status())) {
-            return ConfirmResult.error(
-                    ConfirmResult.CONFLICT, "Booking intent cannot be confirmed from current status.");
+            return BookingIntentConfirmResult.error(
+                    BookingIntentConfirmResult.CONFLICT, "Booking intent cannot be confirmed from current status.");
         }
 
         Optional<TaskState> taskOpt = taskDao.findById(intent.taskId());
         if (taskOpt.isEmpty()) {
-            return ConfirmResult.error(ConfirmResult.NOT_FOUND, "Task not found.");
+            return BookingIntentConfirmResult.error(BookingIntentConfirmResult.NOT_FOUND, "Task not found.");
         }
         TaskState task = taskOpt.get();
         if (!"OPEN".equals(task.status())) {
-            return ConfirmResult.error(ConfirmResult.TASK_NOT_OPEN, "Task is not OPEN.");
+            return BookingIntentConfirmResult.error(BookingIntentConfirmResult.TASK_NOT_OPEN, "Task is not OPEN.");
         }
 
         BookingState booking = bookingService.createBooking(
@@ -189,6 +173,6 @@ public class BookingIntentService {
         taskDao.updateStatus(task.id(), "ASSIGNED", Instant.now());
         Instant now = Instant.now();
         bookingIntentDao.markConfirmed(intent.id(), booking.id(), now, now);
-        return ConfirmResult.success(booking);
+        return BookingIntentConfirmResult.success(booking);
     }
 }

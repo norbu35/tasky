@@ -1,6 +1,7 @@
 package mn.tasky.runtime.publicapi.composition;
 
 import mn.tasky.booking.application.BookingIntentService;
+import mn.tasky.booking.dto.BookingIntentConfirmResult;
 import mn.tasky.booking.publicapi.BookingQueryPort;
 import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
@@ -46,7 +47,7 @@ public class BookingIntentConfirmationService {
         }
 
         try {
-            BookingIntentService.ConfirmResult result =
+            BookingIntentConfirmResult result =
                     bookingIntentService.confirmIntent(customerId, intentId, liabilityDisclaimerAccepted);
             if (result.isSuccess()) {
                 idempotencyService.completeWithResource(
@@ -61,19 +62,19 @@ public class BookingIntentConfirmationService {
 
             idempotencyService.abandon(customerId, IdempotencyOperations.CONFIRM_BOOKING_INTENT, idempotencyKey);
             return switch (result.errorCode()) {
-                case BookingIntentService.ConfirmResult.NOT_FOUND -> BookingIntentConfirmationOutcome.failure(
+                case BookingIntentConfirmResult.NOT_FOUND -> BookingIntentConfirmationOutcome.failure(
                         BookingIntentConfirmationOutcome.Status.NOT_FOUND, "NOT_FOUND", result.errorMessage());
-                case BookingIntentService.ConfirmResult.FORBIDDEN -> BookingIntentConfirmationOutcome.failure(
+                case BookingIntentConfirmResult.FORBIDDEN -> BookingIntentConfirmationOutcome.failure(
                         BookingIntentConfirmationOutcome.Status.FORBIDDEN, "FORBIDDEN", result.errorMessage());
-                case BookingIntentService.ConfirmResult.DISCLAIMER_REQUIRED -> BookingIntentConfirmationOutcome.failure(
+                case BookingIntentConfirmResult.DISCLAIMER_REQUIRED -> BookingIntentConfirmationOutcome.failure(
                         BookingIntentConfirmationOutcome.Status.DISCLAIMER_REQUIRED,
                         "DISCLAIMER_REQUIRED",
                         result.errorMessage());
-                case BookingIntentService.ConfirmResult.TASK_NOT_OPEN -> BookingIntentConfirmationOutcome.failure(
+                case BookingIntentConfirmResult.TASK_NOT_OPEN -> BookingIntentConfirmationOutcome.failure(
                         BookingIntentConfirmationOutcome.Status.TASK_NOT_OPEN, "TASK_NOT_OPEN", result.errorMessage());
-                case BookingIntentService.ConfirmResult.CONFLICT -> BookingIntentConfirmationOutcome.failure(
+                case BookingIntentConfirmResult.CONFLICT -> BookingIntentConfirmationOutcome.failure(
                         BookingIntentConfirmationOutcome.Status.CONFLICT, "CONFLICT", result.errorMessage());
-                case BookingIntentService.ConfirmResult.DEFERRED -> BookingIntentConfirmationOutcome.failure(
+                case BookingIntentConfirmResult.DEFERRED -> BookingIntentConfirmationOutcome.failure(
                         BookingIntentConfirmationOutcome.Status.DEFERRED, "NOT_IMPLEMENTED", result.errorMessage());
                 default -> BookingIntentConfirmationOutcome.failure(
                         BookingIntentConfirmationOutcome.Status.INTERNAL_ERROR, null, null);
