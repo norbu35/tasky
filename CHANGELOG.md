@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-04-13 — Tranche 10: Core flows to v2 architecture (Phase 0 + Slice 1)
+
+### Phase 0: Workflow handler idempotency (infra gate)
+
+- **Event idempotency table** — Flyway V25 adds `event_idempotency` (`event_id` TEXT PRIMARY KEY) for deduplicating workflow handler side effects on event redelivery.
+- **WorkflowIdempotencyGuard** — new `kernel.idempotency` component using `EventIdempotencyDao` with `claim()` / `find()` / `purge()` operations.
+- **AbstractEventHandler** — now provides `tryClaimEvent(envelope)` for subclass handlers; `@Nullable` injection keeps handlers functional when broker is disabled.
+- **All three workflow handlers guarded**:
+  - `TaskApplicationAcceptedHandler` — duplicate events won't create duplicate conversations or notifications.
+  - `PaymentConfirmedHandler` — duplicate events won't resend push notifications.
+  - `BookingCompletedHandler` — duplicate events won't duplicate wallet credits (financial safety).
+- **7 duplicate-delivery tests** (SCN-T10-IDEM-001 through SCN-T10-IDEM-007) verify first-delivery side effects execute once and duplicate deliveries are skipped.
+
+### Slice 1: Task apply/accept v2 seam completion
+
+- **TaskService → BookingCommandPort**: `TaskService.acceptApplication()` now delegates through `BookingCommandPort.createBooking()` instead of the concrete `BookingService`, eliminating the last cross-module concrete service dependency in the task module.
+- **ArchUnit boundary test** confirms `TaskController` depends only on public ports and composition services (no `TaskService`, no `BookingService`).
+
 ## 2026-04-11 — Frontend dependency cascade
 
 **Branch:** `upgrade/frontend-cascade` | **Baseline → Postflight:** web 264/264 ✓, mobile 741/741 ✓, typecheck 0 errors, lint 0 errors
