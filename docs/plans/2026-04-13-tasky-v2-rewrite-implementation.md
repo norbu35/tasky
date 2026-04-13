@@ -905,7 +905,7 @@ plan. Do not treat the following as an unordered candidate list anymore.
 ## Handoff Note After Tranche 10 (completed)
 
 **Checkpoint date:** 2026-04-13
-**Status:** Tranche 10 is **complete**. The backend rewrite has converged onto one enforceable architecture style.
+**Status:** Tranche 10 is **substantially complete**. The backend rewrite has converged onto one enforceable architecture style for the notification surface and DAO boundaries; remaining module application-service dependencies in runtime composition are documented as an incremental backlog.
 
 **What was completed**
 
@@ -914,8 +914,22 @@ plan. Do not treat the following as an unordered candidate list anymore.
 - **Public request-path convergence** — `NotificationController` and `AdminUserController` now route through new runtime composition services. All runtime composition services updated to use publicapi ports instead of direct DAO dependencies (`MessageDao`, `TaskDao`, `UserDao`/`AuditEventDao`).
 - **Admin/runtime convergence** — `AdminMessageCompositionService`, `AdminTaskConciergeAssignmentService`, and `AdminUserCompositionService` all use module publicapi ports; no runtime composition service depends on a DAO.
 - **Durable audit seam** — `AdminTaskConciergeAssignmentService` records concierge assignment through `AdminAuditCommandPort` → `AuditEventDao`, replacing the logs-only fallback introduced during Tranche 10.
+- **Notification hardening** — `NotificationCommandPort` introduced; `NotificationCompositionService` and `BookingPublicOperationService` updated to depend on the port instead of `NotificationService`. `notificationCompositionMustUsePublicPorts` ArchRule enforces this.
 - **Documentation** — `docs/ARCHITECTURE.md` §2.3 documents the two allowed request-path shapes, forbidden patterns, and exception set.
 - All 10 architecture tests pass. `./gradlew gateSmoke` and `./gradlew openApiValidate` pass.
+
+**Remaining runtime composition application-service dependencies (incremental backlog)**
+
+The following runtime composition services still depend on feature-module application services and must be ported to publicapi ports in a future pass:
+
+- `BookingPublicOperationService` → `BookingScheduleService`, `NoShowService`, `RepeatBookingService`
+- `BookingPublicCompositionService` → `BookingScheduleService`
+- `BookingIntentConfirmationService` → `BookingIntentService`
+- `PublicTaskCompositionService` → `CategoryService`, `LocationService`
+- `PaymentInitiationService` → `PaymentService`
+- `DisputeRaiseService` → `AnalyticsService`
+
+Each should receive its own `..CommandPort` or `..QueryPort` and a matching ArchRule incrementally.
 
 **Durable gaps carried forward**
 
