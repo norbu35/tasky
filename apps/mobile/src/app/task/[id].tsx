@@ -2,18 +2,22 @@ import React, { useCallback, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Star } from 'lucide-react-native';
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
+import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
 import { PriceTag } from '../../components/ui/PriceTag';
 import { CategoryChip } from '../../components/ui/CategoryChip';
 import { LocationPin } from '../../components/ui/LocationPin';
 import { PhotoGrid } from '../../components/ui/PhotoGrid';
-import { TrustBanner } from '../../components/ui/TrustBanner';
 import { useTaskDetail } from '../../features/tasks/hooks/useTasks';
 import { ApplicationSentSuccess } from '../../features/tasks/components/ApplicationSentSuccess';
 import { createMobileApiClient } from '../../lib/mobileApiClient';
 import { useAuthStore } from '../../store/authStore';
+import { formatFullDate } from '../../utils/formatDate';
+import { mobileTheme } from '../../design/tokenAdapter';
 
 const api = createMobileApiClient();
+const { colors } = mobileTheme;
 
 export default function TaskDetailScreen() {
   const { t } = useTranslation();
@@ -105,67 +109,80 @@ export default function TaskDetailScreen() {
       >
         {task && (
           <View className="gap-lg">
-            {/* Customer info */}
-            <View className="flex-row items-center gap-sm bg-muted rounded-md p-md">
-              <Text className="text-subtitle font-semibold text-foreground">
-                {task.customer.full_name}
-              </Text>
-              {task.customer.rating_avg > 0 && (
-                <Text className="text-label font-semibold text-secondary">
-                  {task.customer.rating_avg.toFixed(1)}
+            {/* Customer hero — avatar, name, rating */}
+            <View className="flex-row items-center gap-md bg-muted rounded-md p-lg">
+              <ProfileAvatar
+                uri={undefined}
+                name={task.customer.full_name}
+                size="lg"
+              />
+              <View className="flex-1 gap-xs">
+                <Text className="text-subtitle font-sans-bold text-foreground">
+                  {task.customer.full_name}
                 </Text>
+                {task.customer.rating_avg > 0 && (
+                  <View className="flex-row items-center gap-xs">
+                    <Star size={14} color={colors.accent} fill={colors.accent} />
+                    <Text className="text-label font-sans-bold text-foreground">
+                      {task.customer.rating_avg.toFixed(1)}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </View>
+
+            {/* Task description — hero element */}
+            <Text className="text-heading font-sans-bold text-primary-deep leading-tight">
+              {task.description}
+            </Text>
+
+            {/* Task details — budget, category, location, schedule inline */}
+            <View className="bg-muted rounded-md p-lg gap-md">
+              {task.category && (
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
+                    {t('TaskDetailCustomerScreen.categoryLabel')}
+                  </Text>
+                  <CategoryChip label={task.category.name} isActive />
+                </View>
+              )}
+
+              <View className="flex-row items-center justify-between">
+                <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
+                  {t('taskDetails.budget')}
+                </Text>
+                <PriceTag amount={task.budget} size="sm" />
+              </View>
+
+              {task.approximate_location && (
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
+                    {t('taskDetails.location')}
+                  </Text>
+                  <LocationPin text={task.approximate_location} compact />
+                </View>
+              )}
+
+              {task.scheduled_at && (
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
+                    {t('taskDetail.dateTime')}
+                  </Text>
+                  <Text className="text-label font-sans-medium text-foreground">
+                    {formatFullDate(task.scheduled_at)}
+                  </Text>
+                </View>
               )}
             </View>
 
-            {/* Task description */}
-            <Text className="text-body text-foreground leading-[26px]">{task.description}</Text>
-
-            {/* Budget */}
-            <View className="gap-xs bg-muted rounded-md p-md">
-              <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
-                {t('taskDetails.budget')}
-              </Text>
-              <PriceTag amount={task.budget} size="lg" />
-            </View>
-
-            {/* Category */}
-            {task.category && (
-              <View className="gap-xs bg-muted rounded-md p-md">
-                <CategoryChip label={task.category.name} isActive />
-              </View>
-            )}
-
-            {/* Location */}
+            {/* Location note */}
             {task.approximate_location && (
-              <View className="gap-xs bg-muted rounded-md p-md">
-                <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
-                  {t('taskDetails.location')}
-                </Text>
-                <LocationPin text={task.approximate_location} />
-                <Text className="text-caption text-text-secondary leading-[20px] mt-xs">
-                  {t('TaskDetailScreen.copy1')}
-                </Text>
-              </View>
+              <Text className="text-caption text-text-secondary leading-[20px]">
+                {t('TaskDetailScreen.copy1')}
+              </Text>
             )}
 
-            {/* Schedule */}
-            {task.scheduled_at && (
-              <View className="gap-xs bg-muted rounded-md p-md">
-                <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
-                  {t('taskDetail.dateTime')}
-                </Text>
-                <Text className="text-body text-foreground">
-                  {new Date(task.scheduled_at).toLocaleDateString('en', {
-                    weekday: 'long',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: '2-digit',
-                  })}
-                </Text>
-              </View>
-            )}
-
+            {/* Photos */}
             {task.photo_urls.length > 0 && (
               <View className="gap-xs bg-muted rounded-md p-md">
                 <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
@@ -181,12 +198,6 @@ export default function TaskDetailScreen() {
                 {task.application_count} {t('TaskDetailCustomerScreen.applicants')}
               </Text>
             )}
-
-            <TrustBanner
-              title={t('tasker.taskDetail.trustTitle')}
-              description={t('TaskDetailScreen.copy2')}
-              variant="compact"
-            />
           </View>
         )}
       </DetailTemplate>

@@ -1127,6 +1127,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/me/pending-reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get my pending reviews
+         * @description Returns a list of the authenticated user's pending reviews (enforcement cases).
+         */
+        get: operations["getMyPendingReviews"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/users/{id}/reviews": {
         parameters: {
             query?: never;
@@ -2391,6 +2411,21 @@ export interface components {
             created_at: string;
             /** Format: date-time */
             processed_at?: string | null;
+        };
+        PendingReview: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            booking_id: string;
+            /** Format: uuid */
+            user_id: string;
+            /** @enum {string} */
+            status: "PENDING" | "REMINDED_24H" | "REMINDED_72H" | "COMPLETED" | "EXPIRED";
+            /** Format: date-time */
+            triggered_at: string;
+            /** Format: date-time */
+            resolved_at?: string | null;
+            investigation_active?: boolean;
         };
         Review: {
             /** Format: uuid */
@@ -4819,6 +4854,29 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
+        };
+    };
+    getMyPendingReviews: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Pending reviews for the authenticated user. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["PendingReview"][];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
         };
     };
     getUserReviews: {

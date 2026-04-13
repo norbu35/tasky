@@ -26,7 +26,7 @@ const buttonVariants = cva('flex-row items-center justify-center rounded-md', {
     },
     size: {
       default: 'px-lg py-sm min-h-[48px]',
-      sm: 'px-md min-h-[36px]',
+      sm: 'px-md min-h-[44px]',
       lg: 'px-xl min-h-[52px]',
       icon: 'w-[36px] h-[36px] p-0',
     },
@@ -44,8 +44,8 @@ const textVariants = cva('text-center font-sans-bold', {
       destructive: 'text-danger-foreground',
     },
     size: {
-      default: 'text-label',
-      sm: 'text-caption',
+      default: 'text-body',
+      sm: 'text-label',
       lg: 'text-body',
       icon: 'hidden',
     },

@@ -8,6 +8,7 @@ import { StatusBadge } from '../../components/ui/StatusBadge';
 import { SplitCard } from '../../components/ui/SplitCard';
 import { useBookings } from '../../features/bookings/hooks/useBookings';
 import { useRole } from '../../providers/RoleProvider';
+import { formatDateTime } from '../../utils/formatDate';
 type BookingStatus = 'ASSIGNED' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW';
 
 interface BookingItem {
@@ -54,12 +55,7 @@ function BookingCardHeader({ booking, isCustomer }: { booking: BookingItem; isCu
 function BookingCardBody({ booking }: { booking: BookingItem }) {
   const { t } = useTranslation();
   const description = booking.task?.description ?? t('customer.taskList.categoryFallback');
-  const date = new Date(booking.confirmed_scheduled_at).toLocaleDateString('en', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
+  const date = formatDateTime(booking.confirmed_scheduled_at);
 
   return (
     <View className="gap-sm">

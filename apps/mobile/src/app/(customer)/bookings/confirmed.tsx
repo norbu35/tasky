@@ -158,34 +158,12 @@ export default function BookingConfirmedScreen() {
               </Text>
             </View>
           </View>
-          <Touchable
-            className="w-[40px] h-[40px] rounded-md bg-muted items-center justify-center"
-            accessibilityRole="button"
-            onPress={handleMessage}
-            testID="booking-confirmed-screen-message"
-          >
-            <MessageSquare size={18} color={colors.primaryDeep} />
-          </Touchable>
         </View>
-
-        {canAddToCalendar ? (
-          <Touchable
-            accessibilityRole="button"
-            onPress={handleCalendar}
-            className="self-stretch flex-row items-center rounded-md bg-muted px-md py-sm gap-sm"
-            testID="booking-confirmed-screen-calendar"
-          >
-            <CalendarPlus2 size={18} color={colors.secondary} />
-            <Text className="text-label font-sans-bold text-secondary">
-              {t('customer.bookings.addToCalendar')}
-            </Text>
-          </Touchable>
-        ) : null}
 
         <View className="self-stretch mt-md gap-md">
           <Touchable
             accessibilityRole="button"
-            onPress={handleViewBooking}
+            onPress={handleMessage}
             className="self-stretch rounded-md overflow-hidden"
             testID="booking-confirmed-screen-cta"
           >
@@ -202,19 +180,23 @@ export default function BookingConfirmedScreen() {
                 gap: spacing.sm,
               }}
             >
+              <MessageSquare size={18} color={colors.primaryForeground} />
               <Text className="text-body font-sans-bold text-primary-foreground">
-                {t('customer.bookings.ctaViewBooking')}
+                {t('TaskDetailCustomerScreen.messageTasker')}
               </Text>
-              <ArrowRight size={18} color={colors.primaryForeground} />
             </LinearGradient>
           </Touchable>
 
-          <Button
-            label={t('customer.bookings.ctaDone')}
-            variant="outline"
-            onPress={handleDone}
+          <Touchable
+            accessibilityRole="button"
+            onPress={handleViewBooking}
+            className="items-center py-sm"
             testID="booking-confirmed-screen-secondary-cta"
-          />
+          >
+            <Text className="text-body font-sans-bold text-primary-deep">
+              {t('customer.bookings.ctaViewBooking')}
+            </Text>
+          </Touchable>
         </View>
       </InsetScrollView>
 

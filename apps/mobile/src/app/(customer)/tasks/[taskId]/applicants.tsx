@@ -56,9 +56,18 @@ function ApplicantCard({
           <View className="flex-row items-center" style={{ gap: spacing.xs }}>
             <Star size={12} color={colors.accent} fill={colors.accent} />
             <Text className="text-label font-sans-bold text-foreground">{applicant.rating}</Text>
+            <Text className="text-caption text-text-secondary">·</Text>
             <Text className="text-caption text-text-secondary">
-              ({applicant.reviewCount} {t('applicants.reviews')})
+              {applicant.reviewCount} {t('applicants.jobs')}
             </Text>
+            {applicant.isVerified ? (
+              <>
+                <Text className="text-caption text-text-secondary">·</Text>
+                <Text className="text-caption font-sans-bold text-trust-muted">
+                  {t('applicants.verified')}
+                </Text>
+              </>
+            ) : null}
           </View>
         </View>
         {applicant.isRecommended ? (

@@ -7,6 +7,7 @@ import { NotificationProvider } from '../store/NotificationContext';
 import { useEffect } from 'react';
 import Constants from 'expo-constants';
 import { RoleProvider } from '../providers/RoleProvider';
+import { ReviewGateProvider } from '../features/review/components/ReviewGateProvider';
 
 import '../utils/i18n';
 import '../design/nativewind-interop';
@@ -74,8 +75,10 @@ export default function RootLayout() {
         <NotificationProvider>
           <QueryClientProvider client={queryClient}>
             <RoleProvider>
-              <Stack screenOptions={{ headerShown: false }} />
-              <StatusBar style="auto" />
+              <ReviewGateProvider>
+                <Stack screenOptions={{ headerShown: false }} />
+                <StatusBar style="auto" />
+              </ReviewGateProvider>
             </RoleProvider>
           </QueryClientProvider>
         </NotificationProvider>

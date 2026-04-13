@@ -47,7 +47,7 @@ export function VerifiedBadge({ status, size = 'sm', testID, className }: Verifi
     >
       <Icon size={iconSize} color={colors.primaryForeground} />
       {size === 'md' && (
-        <Text className="text-micro font-sans-bold text-primary-foreground">
+        <Text className="text-label font-sans-bold text-primary-foreground">
           {t(`verification.${status}`)}
         </Text>
       )}

@@ -68,13 +68,14 @@ Deep sky base (`212 35% 6%`) with warm foreground (`40 30% 88%`). Brand colors i
 | Role | Font | Weight | Min Size |
 |------|------|--------|----------|
 | Display / Headlines | Manrope | 600–800 | 24px |
-| Body / UI | Plus Jakarta Sans | 400–600 | **16px** (hard floor) |
+| Body / Long-form text | Plus Jakarta Sans | 400–600 | **16px** (hard floor) |
+| UI / Badges / Meta | Plus Jakarta Sans | 500–700 | 12px (caption floor) |
 | Fallback (Cyrillic) | Roboto | system | — |
 
 ### Mongolian Cyrillic rules
-- **Minimum body size: 16px** — non-negotiable for Mongolian readability on mobile
-- **Line-height: 1.6** for body text — Cyrillic letterforms are more "fence-like" and need more vertical breathing room than Latin
-- **No wide letter-spacing on Cyrillic** — tracking wider than `0em` degrades readability
+- **Body text size: 16px** — non-negotiable for reading long-term Mongolian content on mobile. However, auxiliary UI components (badges, timestamps) may scale down to 12px/14px using a heavier font weight.
+- **Line-height: 1.6** for multi-line body paragraphs. UI structurals (Buttons, Badges) must use `tight` (1.2–1.3) leading to preserve vertical layout alignment.
+- **Letter-spacing:** Prohibited `(wide tracking > 0em)` universally on sentence-case text. Allow slight tracking (+1px) exclusively on ALL-CAPS microcopy to separate the block forms of Cyrillic caps.
 - **Flush-left alignment** — justified text creates uneven gaps in Mongolian words; always left-align
 - **Font fallback** — Manrope and Plus Jakarta Sans cover the Ү and Ө glyphs; Roboto is listed as a system fallback for edge cases
 

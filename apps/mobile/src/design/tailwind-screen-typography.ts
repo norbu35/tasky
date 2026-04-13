@@ -9,7 +9,7 @@ export const screenTypographyPlugin = plugin(function ({ addUtilities }) {
     '.font-screen-greeting': {
       fontSize: `${scale.caption}px`,
       fontFamily: 'PlusJakartaSans_700Bold',
-      letterSpacing: '1.2px',
+      letterSpacing: '1px',
       textTransform: 'uppercase',
     },
     '.font-screen-title': {

@@ -556,7 +556,6 @@ export default function ReviewSubmitScreen() {
         }
         testID="review-section-budget"
         icon={<CircleDollarSign size={16} color={colors.accent} />}
-        featured
       />
 
       <View className="rounded-md bg-muted p-md flex-row items-start gap-sm mb-sm">

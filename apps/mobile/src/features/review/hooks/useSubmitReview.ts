@@ -1,51 +1,40 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../../../store/authStore';
 import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import type { Review } from '../../../lib/mobileApiClient';
+import { PENDING_REVIEWS_QUERY_KEY } from './usePendingReviews';
 
 const api = createMobileApiClient();
 
-const RATING_KEY_MAP: Record<string, string> = {
-  qualityOfWork: 'quality_rating',
-  punctuality: 'punctuality_rating',
-  communication: 'communication_rating',
-  taskDescriptionClarity: 'clarity_rating',
-  respectfulness: 'respectfulness_rating',
-};
-
-interface ReviewFormInput {
+interface SubmitReviewPayload {
   bookingId: string;
   ratings: Record<string, number>;
-  comment?: string;
+  comment?: string | null;
 }
 
-export function useSubmitReview(onSuccess?: () => void) {
-  const session = useAuthStore((s) => s.session);
-  const token = session?.accessToken;
+export function useSubmitReview(onSuccessCb?: () => void) {
+  const session = useAuthStore((state) => state.session);
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: ReviewFormInput) => {
-      const payload: Record<string, number | string | null> = {};
-      for (const [key, value] of Object.entries(input.ratings)) {
-        const mappedKey = RATING_KEY_MAP[key];
-        if (mappedKey) {
-          payload[mappedKey] = value;
-        }
-      }
-      if (input.comment !== undefined) {
-        payload['comment'] = input.comment;
-      }
-      return api.submitReview(
-        token!,
-        input.bookingId,
-        payload as Parameters<typeof api.submitReview>[2],
-      );
+    mutationFn: async (payload: SubmitReviewPayload) => {
+      if (!session?.accessToken) throw new Error('Unauthorized');
+      const { bookingId, ratings, comment } = payload;
+      return api.submitReview(session.accessToken, bookingId, {
+        quality_rating: ratings['qualityOfWork'],
+        punctuality_rating: ratings['punctuality'],
+        communication_rating: ratings['communication'],
+        clarity_rating: ratings['taskDescriptionClarity'],
+        respectfulness_rating: ratings['respectfulness'],
+        comment,
+      });
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['booking'] });
-      void queryClient.invalidateQueries({ queryKey: ['bookings'] });
-      void queryClient.invalidateQueries({ queryKey: ['taskerProfile'] });
-      onSuccess?.();
+      if (onSuccessCb) onSuccessCb();
+      // Invalidate pending reviews to clear the gate
+      queryClient.invalidateQueries({ queryKey: [PENDING_REVIEWS_QUERY_KEY] });
+      // Invalidate the specific booking to show updated review state
+      queryClient.invalidateQueries({ queryKey: ['booking'] });
     },
   });
 }

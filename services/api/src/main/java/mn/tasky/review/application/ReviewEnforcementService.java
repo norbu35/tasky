@@ -142,6 +142,13 @@ public class ReviewEnforcementService {
     }
 
     /**
+     * Retrieves all non-completed and non-expired enforcement cases for a given user.
+     */
+    public List<ReviewEnforcementCase> getOpenCases(String userId) {
+        return reviewEnforcementCaseDao.findOpenByUser(userId);
+    }
+
+    /**
      * Expires enforcement cases that have been open for more than 7 days
      * without the user submitting a review.
      */

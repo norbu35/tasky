@@ -263,19 +263,27 @@ export default function ScheduleBudgetScreen() {
           errorText={budgetError || undefined}
           helperText={t('ScheduleBudgetScreen.budgetHelper')}
         >
-          <Input
-            testID="schedule-budget-input"
-            value={budget}
-            onChangeText={(text: string) => {
-              setBudget(text);
-              setTouchedBudget(true);
-            }}
-            onBlur={() => setTouchedBudget(true)}
-            placeholder={t('ScheduleBudgetScreen.budgetPlaceholder')}
-            keyboardType="numeric"
-            invalid={Boolean(budgetError)}
-          />
+          <View className="flex-row items-center gap-sm">
+            <Text className="text-heading font-sans-bold text-primary-deep">₮</Text>
+            <View className="flex-1">
+              <Input
+                testID="schedule-budget-input"
+                value={budget}
+                onChangeText={(text: string) => {
+                  setBudget(text);
+                  setTouchedBudget(true);
+                }}
+                onBlur={() => setTouchedBudget(true)}
+                placeholder={t('ScheduleBudgetScreen.budgetPlaceholder')}
+                keyboardType="numeric"
+                invalid={Boolean(budgetError)}
+              />
+            </View>
+          </View>
         </FormField>
+        <Text className="text-caption font-semibold text-accent leading-relaxed">
+          {t('ScheduleBudgetScreen.budgetTypicalRange')}
+        </Text>
         <Text className="text-caption font-semibold text-muted-foreground leading-relaxed">
           {t('ScheduleBudgetScreen.budgetGoldHint')}
         </Text>

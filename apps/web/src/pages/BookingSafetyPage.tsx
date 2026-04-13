@@ -294,6 +294,13 @@ export function BookingSafetyPage() {
                                 <XCircle className="mr-2 h-4 w-4" />{' '}
                                 {t('bookingSafety.cancelBooking', 'Cancel Booking')}
                               </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => openDialog('DISPUTE', booking)}
+                                className="text-accent focus:text-accent"
+                              >
+                                <ShieldAlert className="mr-2 h-4 w-4" />{' '}
+                                {t('bookingSafety.raiseDispute', 'Raise Dispute')}
+                              </DropdownMenuItem>
                             </>
                           )}
                           {booking.status === 'COMPLETED' && (

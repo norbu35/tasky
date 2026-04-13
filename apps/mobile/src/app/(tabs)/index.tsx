@@ -6,17 +6,20 @@ import { Clock } from 'lucide-react-native';
 import { useRole } from '../../providers/RoleProvider';
 import CustomerMyTasks from '../(customer)/tasks/index';
 import { FeedListTemplate } from '../../components/templates/FeedListTemplate';
+import { useReviewGate } from '../../features/review/components/ReviewGateProvider';
+import { ReviewGateBanner } from '../../features/review/components/ReviewGateBanner';
 import { SplitCard } from '../../components/ui/SplitCard';
 import { FilterBar } from '../../components/ui/FilterBar';
 import { SearchBar } from '../../components/ui/SearchBar';
-import { Input } from '../../components/ui/Input';
 import { PriceTag } from '../../components/ui/PriceTag';
 import { CategoryChip } from '../../components/ui/CategoryChip';
 import { LocationPin } from '../../components/ui/LocationPin';
 import { TrustBanner } from '../../components/ui/TrustBanner';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { useTasks } from '../../features/tasks/hooks/useTasks';
+import { useCategories } from '../../features/tasks/hooks/useCategories';
 import type { PublicTask } from '../../lib/mobileApiClient';
+import { formatShortDate } from '../../utils/formatDate';
 import { mobileTheme } from '../../design/tokenAdapter';
 
 const { colors } = mobileTheme;
@@ -24,13 +27,10 @@ const { colors } = mobileTheme;
 function TaskCardHeader({ task }: { task: PublicTask }) {
   return (
     <View className="flex-row items-center justify-between">
-      <Text
-        className="text-label font-sans-semibold flex-1 mr-sm text-primary-foreground"
-        numberOfLines={1}
-      >
-        {task.customer.full_name}
-      </Text>
-      <PriceTag amount={task.budget} size="sm" />
+      <View className="flex-row items-center flex-1 mr-sm gap-sm">
+        {task.category && <CategoryChip label={task.category.name} isActive />}
+        <PriceTag amount={task.budget} size="sm" />
+      </View>
     </View>
   );
 }
@@ -45,19 +45,18 @@ function TaskCardBody({ task }: { task: PublicTask }) {
         {task.description}
       </Text>
       <View className="flex-row flex-wrap items-center gap-sm mt-xs">
-        {task.category && <CategoryChip label={task.category.name} isActive />}
         {task.approximate_location && <LocationPin text={task.approximate_location} compact />}
         {task.scheduled_at && (
           <View className="flex-row items-center gap-xs">
             <Clock size={14} color={colors.textSecondary} />
             <Text className="text-caption text-text-secondary">
-              {new Date(task.scheduled_at).toLocaleDateString('en', {
-                month: 'short',
-                day: 'numeric',
-              })}
+              {formatShortDate(task.scheduled_at)}
             </Text>
           </View>
         )}
+        <Text className="text-caption text-text-secondary" numberOfLines={1}>
+          {task.customer.full_name}
+        </Text>
       </View>
     </View>
   );
@@ -72,6 +71,7 @@ export default function HomeTab() {
 function TaskerBrowseScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { hasPending, isLocked, oldestPending } = useReviewGate();
   const { data, isLoading, isError, isRefetching, refetch } = useTasks() as {
     data: { data: PublicTask[]; cursor: { next: string | null; has_more: boolean } } | undefined;
     isLoading: boolean;
@@ -82,16 +82,17 @@ function TaskerBrowseScreen() {
 
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const categories = useMemo(
-    () => [
+  const { data: categoriesData } = useCategories();
+  const categories = useMemo(() => {
+    const apiCategories = (categoriesData?.data ?? []).map((cat: any) => ({
+      id: cat.name?.toLowerCase() ?? cat.id,
+      label: cat.name_mn ?? cat.name ?? cat.id,
+    }));
+    return [
       { id: 'all', label: t('TaskerBrowseScreen.all') },
-      { id: 'cleaning', label: t('TaskerBrowseScreen.cleaning') },
-      { id: 'repair', label: t('TaskerBrowseScreen.repair') },
-      { id: 'moving', label: t('TaskerBrowseScreen.moving') },
-      { id: 'electrician', label: t('TaskerBrowseScreen.electrician') },
-    ],
-    [t],
-  );
+      ...apiCategories,
+    ];
+  }, [categoriesData, t]);
 
   const handleClearFilters = useCallback(() => {
     setActiveFilters([]);
@@ -126,14 +127,15 @@ function TaskerBrowseScreen() {
 
   const handleTaskPress = useCallback(
     (task: PublicTask) => {
+      if (isLocked) return;
       router.push(`/task/${task.id}` as any);
     },
-    [router],
+    [router, isLocked],
   );
 
   const renderItem = useCallback(
     (task: PublicTask, index: number) => (
-      <View testID={`task-card-index-${index}`}>
+      <View testID={`task-card-index-${index}`} style={{ opacity: isLocked ? 0.5 : 1 }}>
         <SplitCard
           headerContent={<TaskCardHeader task={task} />}
           bodyContent={<TaskCardBody task={task} />}
@@ -142,7 +144,7 @@ function TaskerBrowseScreen() {
         />
       </View>
     ),
-    [handleTaskPress],
+    [handleTaskPress, isLocked],
   );
 
   const keyExtractor = useCallback((task: PublicTask) => task.id, []);
@@ -162,6 +164,9 @@ function TaskerBrowseScreen() {
         ListHeaderComponent={
           <View className="gap-md mb-md">
             <ScreenHeader title={t('tasker.browse.title')} subtitle={t('tasker.browse.subtitle')} />
+            {hasPending && oldestPending && (
+              <ReviewGateBanner pendingReview={oldestPending} />
+            )}
             <SearchBar
               value={searchQuery}
               onChangeText={setSearchQuery}

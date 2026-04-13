@@ -4,9 +4,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import java.util.Map;
+import java.util.stream.Collectors;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.security.JwtPrincipal;
+import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.review.dto.ReviewRequest;
 import mn.tasky.runtime.publicapi.composition.ReviewPublicCompositionService;
 import mn.tasky.runtime.publicapi.composition.ReviewSubmissionOutcome;
@@ -29,12 +31,15 @@ public class ReviewController {
 
     private final ReviewPublicCompositionService reviewPublicCompositionService;
     private final ReviewSubmissionService reviewSubmissionService;
+    private final ReviewEnforcementService reviewEnforcementService;
 
     public ReviewController(
             ReviewPublicCompositionService reviewPublicCompositionService,
-            ReviewSubmissionService reviewSubmissionService) {
+            ReviewSubmissionService reviewSubmissionService,
+            ReviewEnforcementService reviewEnforcementService) {
         this.reviewPublicCompositionService = reviewPublicCompositionService;
         this.reviewSubmissionService = reviewSubmissionService;
+        this.reviewEnforcementService = reviewEnforcementService;
     }
 
     @PostMapping("/bookings/{id}/reviews")
@@ -65,5 +70,26 @@ public class ReviewController {
         var page = reviewPublicCompositionService.listReviews(id, cursor, limit);
         return ResponseEntity.ok(
                 new PagedResponse<>(page.data(), new CursorPagination(page.nextCursor(), page.hasMore())));
+    }
+
+    @GetMapping("/me/pending-reviews")
+    public ResponseEntity<?> getPendingReviews(@AuthenticationPrincipal JwtPrincipal principal) {
+        var cases = reviewEnforcementService.getOpenCases(principal.userId());
+        var data = cases.stream()
+                .map(c -> {
+                    var map = new java.util.LinkedHashMap<String, Object>();
+                    map.put("id", c.id());
+                    map.put("booking_id", c.bookingId());
+                    map.put("user_id", c.userId());
+                    map.put("status", c.status());
+                    map.put("triggered_at", c.triggeredAt().toString());
+                    map.put(
+                            "resolved_at",
+                            c.resolvedAt() != null ? c.resolvedAt().toString() : null);
+                    map.put("investigation_active", c.investigationActive());
+                    return map;
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(Map.of("data", data));
     }
 }

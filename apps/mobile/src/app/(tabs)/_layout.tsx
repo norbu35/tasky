@@ -15,6 +15,7 @@ import { screenLayout } from '../../design/screenLayout';
 import { FAB } from '../../components/ui/FAB';
 import { useTranslation } from 'react-i18next';
 import { useRole } from '../../providers/RoleProvider';
+import { useUnreadCount } from '../../features/chat/hooks/useUnreadCount';
 
 const { colors, spacing, radius, typography } = mobileTheme;
 
@@ -39,6 +40,7 @@ export default function TabsLayout() {
   const { isCustomer } = useRole();
   const insets = useSafeAreaInsets();
   const segments = useSegments();
+  const unreadCount = useUnreadCount();
 
   // Hide tab bar when inside a chat detail screen (inbox/[id])
   const inboxIdx = segments.indexOf('inbox');
@@ -132,6 +134,8 @@ export default function TabsLayout() {
           options={{
             title: t('nav.inbox'),
             tabBarButtonTestID: 'tab-inbox',
+            tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
+            tabBarBadgeStyle: { backgroundColor: colors.danger, fontSize: 10 },
             tabBarIcon: ({ color }) => <MessageSquare color={color} size={TAB_ICON_SIZE} />,
           }}
         />

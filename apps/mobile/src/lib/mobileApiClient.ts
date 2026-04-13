@@ -11,6 +11,7 @@ export type TaskApplication = components['schemas']['TaskApplication'];
 export type Booking = components['schemas']['Booking'];
 export type BookingIntent = components['schemas']['BookingIntent'];
 export type Review = components['schemas']['Review'];
+export type PendingReview = components['schemas']['PendingReview'];
 export type Dispute = components['schemas']['Dispute'];
 export type Conversation = components['schemas']['Conversation'];
 export type Message = components['schemas']['Message'];
@@ -146,6 +147,8 @@ export interface MobileApiClient {
       comment?: string | null;
     },
   ): Promise<Review>;
+
+  getMyPendingReviews(accessToken: string): Promise<PendingReview[]>;
 
   getUserReviews(accessToken: string, userId: string): Promise<CursorPage<Review>>;
 
@@ -620,6 +623,14 @@ export class HttpMobileApiClient implements MobileApiClient {
       },
       accessToken,
     );
+  }
+
+  getMyPendingReviews(accessToken: string): Promise<PendingReview[]> {
+    return this.requestJson<{ data: PendingReview[] }>(
+      '/me/pending-reviews',
+      { method: 'GET' },
+      accessToken,
+    ).then((r) => r.data);
   }
 
   getUserReviews(accessToken: string, userId: string): Promise<CursorPage<Review>> {

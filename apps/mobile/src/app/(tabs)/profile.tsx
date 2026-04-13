@@ -132,13 +132,6 @@ function AuthenticatedProfile() {
             />
           </View>
 
-          {/* Trust Banner for Taskers */}
-          {isTasker && (
-            <TrustBanner
-              title={t('shared.profile.trustTitle')}
-              description={t('MyProfileScreen.copy1')}
-            />
-          )}
 
           {/* Stats Link for Taskers — now accessible via secondary CTA */}
         </View>

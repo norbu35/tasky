@@ -11,6 +11,8 @@ import { mobileTheme } from '../../../design/tokenAdapter';
 import { screenLayout } from '../../../design/screenLayout';
 import { ScreenContainer } from '../../../components/shells';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useReviewGate } from '../../../features/review/components/ReviewGateProvider';
+import { ReviewGateBanner } from '../../../features/review/components/ReviewGateBanner';
 
 const { colors } = mobileTheme;
 
@@ -125,6 +127,7 @@ function Header({
   onNotificationsPress: () => void;
 }) {
   const { t } = useTranslation();
+  const { hasPending, oldestPending } = useReviewGate();
 
   return (
     <View className="px-screen-x pt-header-top pb-header-bottom gap-item">
@@ -144,6 +147,10 @@ function Header({
           </Pressable>
         }
       />
+
+      {hasPending && oldestPending && (
+        <ReviewGateBanner pendingReview={oldestPending} />
+      )}
 
       <View className="rounded-lg p-card gap-item bg-card" style={elevations.soft}>
         <Text className="text-subtitle font-extrabold text-primary-deep">
@@ -268,9 +275,12 @@ export default function MyTasksListScreen() {
     [tasks],
   );
 
+  const { isLocked } = useReviewGate();
+
   const handleFabPress = useCallback(() => {
+    if (isLocked) return;
     router.push('/(customer)/tasks/new');
-  }, [router]);
+  }, [router, isLocked]);
 
   const handleNotificationsPress = useCallback(() => {
     router.push('/(shared)/notifications');
@@ -349,6 +359,7 @@ export default function MyTasksListScreen() {
                   backgroundColor: colors.primary,
                   justifyContent: 'center',
                   alignItems: 'center',
+                  opacity: isLocked ? 0.5 : 1,
                 },
                 elevations.elevated,
               ]}
