@@ -5438,6 +5438,8 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+
+  /admin/outbox/events/{id}/replay:
     post:
       tags: [Admin]
       summary: Replay outbox event
