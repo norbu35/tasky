@@ -16,4 +16,10 @@ public interface TrustQueryPort {
     Optional<Dispute> getDisputeForUser(String disputeId, String userId);
 
     List<DisputeEvidence> getDisputeEvidence(String disputeId);
+
+    /**
+     * Checks if the given booking has an open dispute.
+     * Used by booking completion to block completion when a dispute is active.
+     */
+    boolean hasOpenDispute(String bookingId);
 }

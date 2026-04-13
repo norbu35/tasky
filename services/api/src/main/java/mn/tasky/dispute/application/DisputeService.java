@@ -66,6 +66,13 @@ public class DisputeService {
     }
 
     /**
+     * Checks if the given booking has an open dispute.
+     */
+    public boolean hasOpenDispute(String bookingId) {
+        return disputeDao.findOpenByBookingId(bookingId).isPresent();
+    }
+
+    /**
      * Raises a new dispute for a given booking, optionally with evidence items.
      * Evidence can be provided at creation time or added later within the 24h grace period.
      *

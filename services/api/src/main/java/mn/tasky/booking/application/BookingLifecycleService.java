@@ -6,9 +6,9 @@ import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.outbox.OutboxEventTypes;
-import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.task.application.TaskService;
 import mn.tasky.task.dto.TaskState;
+import mn.tasky.trust.publicapi.TrustQueryPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +20,7 @@ public class BookingLifecycleService {
     private final TaskService taskService;
     private final AuthService authService;
     private final DomainEventOutboxService domainEventOutboxService;
-    private final DisputeDao disputeDao;
+    private final TrustQueryPort trustQueryPort;
 
     public BookingLifecycleService(
             BookingService bookingService,
@@ -28,13 +28,13 @@ public class BookingLifecycleService {
             TaskService taskService,
             AuthService authService,
             DomainEventOutboxService domainEventOutboxService,
-            DisputeDao disputeDao) {
+            TrustQueryPort trustQueryPort) {
         this.bookingService = bookingService;
         this.timelineService = timelineService;
         this.taskService = taskService;
         this.authService = authService;
         this.domainEventOutboxService = domainEventOutboxService;
-        this.disputeDao = disputeDao;
+        this.trustQueryPort = trustQueryPort;
     }
 
     @Transactional
@@ -116,7 +116,7 @@ public class BookingLifecycleService {
     }
 
     private boolean hasOpenDispute(String bookingId) {
-        return disputeDao.findOpenByBookingId(bookingId).isPresent();
+        return trustQueryPort.hasOpenDispute(bookingId);
     }
 
     private void requireTaskUpdate(

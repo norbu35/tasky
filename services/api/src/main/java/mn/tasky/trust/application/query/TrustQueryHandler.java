@@ -44,4 +44,9 @@ public class TrustQueryHandler implements TrustQueryPort {
     public List<DisputeEvidence> getDisputeEvidence(String disputeId) {
         return disputeService.getDisputeEvidence(disputeId);
     }
+
+    @Override
+    public boolean hasOpenDispute(String bookingId) {
+        return disputeService.hasOpenDispute(bookingId);
+    }
 }
