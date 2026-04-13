@@ -19,19 +19,14 @@ import java.util.UUID;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.application.FacebookGraphClient;
 import mn.tasky.auth.application.SmsService;
-import mn.tasky.auth.dao.BadgeDao;
-import mn.tasky.auth.dao.ModerationPolicyDao;
+import mn.tasky.auth.application.UserStatusResolver;
 import mn.tasky.auth.dao.OtpChallengeDao;
 import mn.tasky.auth.dao.ProfileDao;
 import mn.tasky.auth.dao.RefreshSessionDao;
-import mn.tasky.auth.dao.StrikeDao;
-import mn.tasky.auth.dao.SuspensionEventDao;
 import mn.tasky.auth.dao.UserDao;
-import mn.tasky.auth.dao.VerificationDao;
 import mn.tasky.auth.dto.AuthSession;
 import mn.tasky.auth.dto.AuthUser;
 import mn.tasky.auth.dto.UserProfileState;
-import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.security.CryptoService;
 import mn.tasky.common.security.JwtTokenService;
 import mn.tasky.common.storage.S3PresignedUrlService;
@@ -57,8 +52,6 @@ class AuthScenarioTests {
     private UserDao userDao;
     private ProfileDao profileDao;
     private RefreshSessionDao refreshSessionDao;
-    private SuspensionEventDao suspensionEventDao;
-    private ModerationPolicyDao moderationPolicyDao;
     private JwtTokenService jwtTokenService;
 
     @BeforeEach
@@ -67,13 +60,10 @@ class AuthScenarioTests {
         userDao = mock(UserDao.class);
         profileDao = mock(ProfileDao.class);
         refreshSessionDao = mock(RefreshSessionDao.class);
-        suspensionEventDao = mock(SuspensionEventDao.class);
-        moderationPolicyDao = mock(ModerationPolicyDao.class);
         jwtTokenService = new JwtTokenService(TEST_JWT_SECRET, 900L, 1209600L);
 
-        // Safe defaults: no active suspension, no moderation policy override
+        // Safe defaults: no active suspension
         when(userDao.findSuspensionEndAt(anyString())).thenReturn(Optional.empty());
-        when(moderationPolicyDao.findActive()).thenReturn(Optional.empty());
         when(profileDao.findByUserId(anyString()))
                 .thenReturn(Optional.of(new UserProfileState("Test User", null, 0.0, 0, null)));
     }
@@ -221,6 +211,10 @@ class AuthScenarioTests {
         Environment environment = mock(Environment.class);
         when(environment.getActiveProfiles()).thenReturn(activeProfiles);
 
+        UserStatusResolver statusResolver = mock(UserStatusResolver.class);
+        when(statusResolver.resolve(anyString(), anyString()))
+                .thenAnswer(invocation -> invocation.getArgument(1));
+
         return new AuthService(
                 jwtTokenService,
                 mock(CryptoService.class),
@@ -233,12 +227,7 @@ class AuthScenarioTests {
                 profileDao,
                 mock(OtpChallengeDao.class),
                 refreshSessionDao,
-                mock(VerificationDao.class),
-                mock(AuditEventDao.class),
-                mock(StrikeDao.class),
-                moderationPolicyDao,
-                suspensionEventDao,
-                mock(BadgeDao.class),
+                statusResolver,
                 new io.micrometer.core.instrument.simple.SimpleMeterRegistry(),
                 devAuthEnabled,
                 otpEnabled,

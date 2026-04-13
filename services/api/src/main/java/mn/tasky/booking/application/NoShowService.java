@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
-import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.application.ModerationService;
 import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dao.BookingScheduleEventDao;
 import mn.tasky.booking.dao.BookingTimelineEventDao;
@@ -45,7 +45,7 @@ public class NoShowService {
     private final MessageDao messageDao;
     private final ConversationDao conversationDao;
     private final TaskService taskService;
-    private final AuthService authService;
+    private final ModerationService moderationService;
     private final NotificationService notificationService;
     private final AuditEventDao auditEventDao;
 
@@ -57,7 +57,7 @@ public class NoShowService {
             MessageDao messageDao,
             ConversationDao conversationDao,
             TaskService taskService,
-            AuthService authService,
+            ModerationService moderationService,
             NotificationService notificationService,
             AuditEventDao auditEventDao) {
         this.bookingDao = bookingDao;
@@ -67,7 +67,7 @@ public class NoShowService {
         this.messageDao = messageDao;
         this.conversationDao = conversationDao;
         this.taskService = taskService;
-        this.authService = authService;
+        this.moderationService = moderationService;
         this.notificationService = notificationService;
         this.auditEventDao = auditEventDao;
     }
@@ -178,7 +178,7 @@ public class NoShowService {
 
         // f. If no-show party is the tasker, add strike
         if (booking.taskerId().equals(noShowPartyId)) {
-            authService.addStrike(noShowPartyId, "NO_SHOW", bookingId);
+            moderationService.addStrike(noShowPartyId, "NO_SHOW", bookingId);
         }
 
         // Return updated booking

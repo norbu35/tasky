@@ -1,7 +1,7 @@
 package mn.tasky.booking.application;
 
 import java.util.Map;
-import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.application.ModerationService;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import mn.tasky.common.outbox.DomainEventOutboxService;
@@ -18,7 +18,7 @@ public class BookingLifecycleService {
     private final BookingService bookingService;
     private final BookingTimelineService timelineService;
     private final TaskService taskService;
-    private final AuthService authService;
+    private final ModerationService moderationService;
     private final DomainEventOutboxService domainEventOutboxService;
     private final TrustQueryPort trustQueryPort;
 
@@ -26,13 +26,13 @@ public class BookingLifecycleService {
             BookingService bookingService,
             BookingTimelineService timelineService,
             TaskService taskService,
-            AuthService authService,
+            ModerationService moderationService,
             DomainEventOutboxService domainEventOutboxService,
             TrustQueryPort trustQueryPort) {
         this.bookingService = bookingService;
         this.timelineService = timelineService;
         this.taskService = taskService;
-        this.authService = authService;
+        this.moderationService = moderationService;
         this.domainEventOutboxService = domainEventOutboxService;
         this.trustQueryPort = trustQueryPort;
     }
@@ -67,7 +67,7 @@ public class BookingLifecycleService {
             boolean isSafetyOrFraud =
                     reason != null && reason.toLowerCase(java.util.Locale.ROOT).contains("safety");
             if (!isSafetyOrFraud) {
-                authService.addStrike(actorUserId, reason, bookingId);
+                moderationService.addStrike(actorUserId, reason, bookingId);
             }
         } else if (updated.customerId().equals(actorUserId)) {
             requireTaskUpdate(

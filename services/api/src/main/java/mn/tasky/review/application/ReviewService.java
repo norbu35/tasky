@@ -3,8 +3,8 @@ package mn.tasky.review.application;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
-import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.application.BadgeEvaluationService;
+import mn.tasky.auth.application.UserProfileService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.review.dao.ReviewDao;
@@ -20,19 +20,19 @@ import org.springframework.stereotype.Service;
 public class ReviewService {
 
     private final BookingService bookingService;
-    private final AuthService authService;
+    private final UserProfileService userProfileService;
     private final ReviewDao reviewDao;
     private final ReviewEnforcementService reviewEnforcementService;
     private final BadgeEvaluationService badgeEvaluationService;
 
     public ReviewService(
             BookingService bookingService,
-            AuthService authService,
+            UserProfileService userProfileService,
             ReviewDao reviewDao,
             ReviewEnforcementService reviewEnforcementService,
             BadgeEvaluationService badgeEvaluationService) {
         this.bookingService = bookingService;
-        this.authService = authService;
+        this.userProfileService = userProfileService;
         this.reviewDao = reviewDao;
         this.reviewEnforcementService = reviewEnforcementService;
         this.badgeEvaluationService = badgeEvaluationService;
@@ -144,7 +144,7 @@ public class ReviewService {
                 sanitizedComment,
                 now);
 
-        authService.updateUserStats(targetUserId, reviewAverage, false);
+        userProfileService.updateUserStats(targetUserId, reviewAverage, false);
 
         reviewEnforcementService.resolveCase(bookingId, authorId);
 

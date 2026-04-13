@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.application.UserProfileService;
 import mn.tasky.booking.dao.BookingCompletionSignalDao;
 import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
@@ -28,19 +28,19 @@ public class BookingService {
 
     private static final Logger log = LoggerFactory.getLogger(BookingService.class);
 
-    private final AuthService authService;
+    private final UserProfileService userProfileService;
     private final BookingDao bookingDao;
     private final BookingReliabilityIncidentDao bookingReliabilityIncidentDao;
     private final BookingCompletionSignalDao bookingCompletionSignalDao;
     private final MeterRegistry meterRegistry;
 
     public BookingService(
-            AuthService authService,
+            UserProfileService userProfileService,
             BookingDao bookingDao,
             BookingReliabilityIncidentDao bookingReliabilityIncidentDao,
             BookingCompletionSignalDao bookingCompletionSignalDao,
             MeterRegistry meterRegistry) {
-        this.authService = authService;
+        this.userProfileService = userProfileService;
         this.bookingDao = bookingDao;
         this.bookingReliabilityIncidentDao = bookingReliabilityIncidentDao;
         this.bookingCompletionSignalDao = bookingCompletionSignalDao;
@@ -264,7 +264,7 @@ public class BookingService {
 
         BookingTransitionResult result = transition(bookingId, "COMPLETED", List.of("ASSIGNED", "PAID"));
         if (result.isSuccess()) {
-            authService.updateUserStats(booking.taskerId(), 0, true);
+            userProfileService.updateUserStats(booking.taskerId(), 0, true);
         }
         return result;
     }
@@ -312,7 +312,7 @@ public class BookingService {
                             : "Customer cancelled within 4 hours. Ranking penalty and Instant Match disabled.",
                     Instant.now());
             if ("CUSTOMER_LATE_CANCEL_PENALTY".equals(incidentType)) {
-                authService.revokeInstantMatch(userId, java.time.Duration.ofDays(30));
+                userProfileService.revokeInstantMatch(userId, java.time.Duration.ofDays(30));
             }
         }
         return result;

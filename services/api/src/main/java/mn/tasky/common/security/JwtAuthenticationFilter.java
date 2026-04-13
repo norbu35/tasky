@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.application.UserProfileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,19 +35,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenService jwtTokenService;
     private final JsonSecurityResponseWriter responseWriter;
-    private final AuthService authService;
+    private final UserProfileService userProfileService;
     private final boolean devAuthEnabled;
     private final boolean otpMigrationEnforced;
 
     public JwtAuthenticationFilter(
             JwtTokenService jwtTokenService,
             JsonSecurityResponseWriter responseWriter,
-            AuthService authService,
+            UserProfileService userProfileService,
             @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled,
             @Value("${tasky.auth.otp-migration-enforced:false}") boolean otpMigrationEnforced) {
         this.jwtTokenService = jwtTokenService;
         this.responseWriter = responseWriter;
-        this.authService = authService;
+        this.userProfileService = userProfileService;
         this.devAuthEnabled = devAuthEnabled;
         this.otpMigrationEnforced = otpMigrationEnforced;
     }
@@ -81,7 +81,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String effectiveStatus =
-                authService.currentUserStatus(principal.userId()).orElse(principal.status());
+                userProfileService.currentUserStatus(principal.userId()).orElse(principal.status());
 
         if ("BANNED".equals(effectiveStatus)
                 || "SUSPENDED".equals(effectiveStatus)
@@ -95,7 +95,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         if (otpMigrationEnforced
-                && authService.requiresOtpMigration(principal.userId())
+                && userProfileService.requiresOtpMigration(principal.userId())
                 && !isAuthOrPublicPath(request.getRequestURI())) {
             responseWriter.write(
                     request,

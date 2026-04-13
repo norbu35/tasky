@@ -9,26 +9,18 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.analytics.application.AnalyticsService;
-import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.application.UserProfileService;
 import mn.tasky.booking.publicapi.BookingCommandPort;
-import mn.tasky.category.application.CategoryService;
-import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.common.outbox.DomainEventOutboxService;
-import mn.tasky.common.storage.S3PresignedUrlService;
-import mn.tasky.common.storage.StorageKeyPolicy;
 import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
-import mn.tasky.task.application.ScopeSummaryGenerator;
-import mn.tasky.task.application.TaskService;
+import mn.tasky.task.application.TaskApplicationService;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
-import mn.tasky.task.dao.TaskDraftDao;
-import mn.tasky.task.dao.TaskPhotoDao;
 import mn.tasky.task.dto.TaskAcceptResult;
 import mn.tasky.task.dto.TaskState;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +33,7 @@ import org.junit.jupiter.api.Test;
  */
 class TaskAcceptScenarioTests {
 
-    private TaskService taskService;
+    private TaskApplicationService taskApplicationService;
     private TaskDao taskDao;
     private BookingCommandPort bookingCommandPort;
 
@@ -50,26 +42,16 @@ class TaskAcceptScenarioTests {
         taskDao = mock(TaskDao.class);
         bookingCommandPort = mock(BookingCommandPort.class);
 
-        taskService = new TaskService(
-                mock(AuthService.class),
-                mock(CategoryService.class),
+        taskApplicationService = new TaskApplicationService(
+                mock(UserProfileService.class),
                 bookingCommandPort,
                 mock(MessagingService.class),
                 mock(NotificationService.class),
                 mock(AnalyticsService.class),
                 mock(DomainEventOutboxService.class),
                 mock(ReviewEnforcementService.class),
-                mock(ScopeSummaryGenerator.class),
-                mock(S3PresignedUrlService.class),
-                mock(StorageKeyPolicy.class),
                 taskDao,
-                mock(TaskPhotoDao.class),
-                mock(TaskApplicationDao.class),
-                mock(CategorySchemaVersionDao.class),
-                mock(TaskDraftDao.class),
-                new ObjectMapper(),
-                10.0,
-                50);
+                mock(TaskApplicationDao.class));
     }
 
     // ── SCN-BOOK-007 ─────────────────────────────────────────────────────────
@@ -86,7 +68,7 @@ class TaskAcceptScenarioTests {
         when(openTask.status()).thenReturn("OPEN");
         when(taskDao.findById(taskId)).thenReturn(Optional.of(openTask));
 
-        TaskAcceptResult result = taskService.acceptApplication(customerId, taskId, applicationId, false);
+        TaskAcceptResult result = taskApplicationService.acceptApplication(customerId, taskId, applicationId, false);
 
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(TaskAcceptResult.DISCLAIMER_REQUIRED);

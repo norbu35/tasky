@@ -4,6 +4,10 @@
 
 ### Changed
 
+- **God class decomposition** — `AuthService` (1,345 → 547 LOC) split into `AuthService`, `UserProfileService`,
+  `VerificationService`, `ModerationService`, `UserSearchService`, and `UserStatusResolver`.
+  `TaskService` (1,092 → 665 LOC) split into `TaskService`, `TaskApplicationService`, `TaskPhotoService`,
+  and `TaskQueryService`. No public API or schema changes.
 - Runtime composition services now route through publicapi ports instead of depending on feature-module
   application services directly. New ports: CategoryQueryPort, LocationQueryPort, AnalyticsCommandPort,
   PaymentCommandPort, BookingIntentCommandPort. Extended: BookingCommandPort, BookingQueryPort.

@@ -1,7 +1,7 @@
 package mn.tasky.common.config;
 
 import java.util.List;
-import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.application.UserProfileService;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.common.security.JwtTokenService;
 import mn.tasky.messaging.application.MessagingService;
@@ -24,13 +24,13 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
 
     private final JwtTokenService jwtTokenService;
     private final MessagingService messagingService;
-    private final AuthService authService;
+    private final UserProfileService userProfileService;
 
     public ChannelInterceptorConfig(
-            JwtTokenService jwtTokenService, @Lazy MessagingService messagingService, AuthService authService) {
+            JwtTokenService jwtTokenService, @Lazy MessagingService messagingService, UserProfileService userProfileService) {
         this.jwtTokenService = jwtTokenService;
         this.messagingService = messagingService;
-        this.authService = authService;
+        this.userProfileService = userProfileService;
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
 
     private void assertUserNotRestricted(JwtPrincipal principal) {
         String effectiveStatus =
-                authService.currentUserStatus(principal.userId()).orElse(principal.status());
+                userProfileService.currentUserStatus(principal.userId()).orElse(principal.status());
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             throw new IllegalArgumentException("Forbidden");
         }

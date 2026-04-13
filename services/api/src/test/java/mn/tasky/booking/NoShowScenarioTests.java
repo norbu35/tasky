@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
-import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.application.ModerationService;
 import mn.tasky.booking.application.BookingTimelineService;
 import mn.tasky.booking.application.NoShowService;
 import mn.tasky.booking.dao.BookingDao;
@@ -48,7 +48,7 @@ class NoShowScenarioTests {
     private MessageDao messageDao;
     private BookingTimelineService timelineService;
     private NotificationService notificationService;
-    private AuthService authService;
+    private ModerationService moderationService;
     private AuditEventDao auditEventDao;
     private TaskService taskService;
     private NoShowService noShowService;
@@ -62,7 +62,7 @@ class NoShowScenarioTests {
         messageDao = mock(MessageDao.class);
         timelineService = mock(BookingTimelineService.class);
         notificationService = mock(NotificationService.class);
-        authService = mock(AuthService.class);
+        moderationService = mock(ModerationService.class);
         auditEventDao = mock(AuditEventDao.class);
         taskService = mock(TaskService.class);
 
@@ -74,7 +74,7 @@ class NoShowScenarioTests {
                 messageDao,
                 conversationDao,
                 taskService,
-                authService,
+                moderationService,
                 notificationService,
                 auditEventDao);
 
@@ -219,7 +219,7 @@ class NoShowScenarioTests {
     @Test
     @DisplayName("SCN-BOOK-015: Repeated no-shows within 28 days create a strike-review case")
     void repeatedNoShowsCreateStrikeReviewCase() {
-        // When no-show party is the tasker, authService.addStrike() is called
+        // When no-show party is the tasker, moderationService.addStrike() is called
         BookingState booking = assignedBooking(Instant.now().minus(20, ChronoUnit.MINUTES));
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(booking));
         when(bookingDao.findById(BOOKING_ID))
@@ -244,7 +244,7 @@ class NoShowScenarioTests {
         noShowService.flagNoShow(BOOKING_ID, CUSTOMER_ID);
 
         // addStrike is called for the tasker (no-show party) with reason and booking context
-        verify(authService).addStrike(eq(TASKER_ID), eq("NO_SHOW"), eq(BOOKING_ID));
+        verify(moderationService).addStrike(eq(TASKER_ID), eq("NO_SHOW"), eq(BOOKING_ID));
     }
 
     // ── SCN-BOOK-016 ─────────────────────────────────────────────────────────

@@ -9,4 +9,8 @@ public record ModerationPolicy(
         int repeatSuspensionDays,
         int repeatOffenseWindowDays,
         boolean autoUnsuspendEnabled,
-        Instant updatedAt) {}
+        Instant updatedAt) {
+
+    public static final ModerationPolicy DEFAULT =
+            new ModerationPolicy(30, 3, 7, 14, 180, true, Instant.EPOCH);
+}

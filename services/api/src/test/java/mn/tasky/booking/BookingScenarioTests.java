@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.application.ModerationService;
+import mn.tasky.auth.application.UserProfileService;
 import mn.tasky.booking.application.BookingLifecycleService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dao.BookingCompletionSignalDao;
@@ -55,12 +56,14 @@ class BookingScenarioTests {
     private final Map<String, BookingState> store = new HashMap<>();
     private BookingService bookingService;
     private BookingReliabilityIncidentDao incidentDao;
-    private AuthService authService;
+    private ModerationService moderationService;
+    private UserProfileService userProfileService;
 
     @BeforeEach
     void setUp() {
         store.clear();
-        authService = mock(AuthService.class);
+        moderationService = mock(ModerationService.class);
+        userProfileService = mock(UserProfileService.class);
         BookingDao bookingDao = mock(BookingDao.class);
         incidentDao = mock(BookingReliabilityIncidentDao.class);
         BookingCompletionSignalDao completionSignalDao = mock(BookingCompletionSignalDao.class);
@@ -152,7 +155,7 @@ class BookingScenarioTests {
         when(completionSignalDao.findByBookingId(anyString())).thenReturn(Optional.empty());
 
         bookingService = new BookingService(
-                authService, bookingDao, incidentDao, completionSignalDao, new SimpleMeterRegistry());
+                userProfileService, bookingDao, incidentDao, completionSignalDao, new SimpleMeterRegistry());
     }
 
     // ── SCN-BOOK-001 ─────────────────────────────────────────────────────────
@@ -246,7 +249,7 @@ class BookingScenarioTests {
                         org.mockito.ArgumentMatchers.eq("CUSTOMER_LATE_CANCEL_PENALTY"),
                         anyString(),
                         any());
-        verify(authService)
+        verify(userProfileService)
                 .revokeInstantMatch(
                         org.mockito.ArgumentMatchers.eq("customer-1"),
                         org.mockito.ArgumentMatchers.eq(java.time.Duration.ofDays(30)));
@@ -272,23 +275,23 @@ class BookingScenarioTests {
                         bookingService,
                         mock(mn.tasky.booking.application.BookingTimelineService.class),
                         taskService,
-                        authService,
+                        moderationService,
                         mock(mn.tasky.common.outbox.DomainEventOutboxService.class),
                         mock(mn.tasky.trust.publicapi.TrustQueryPort.class));
 
         // Use standard cancellation reason
         lifecycleService.cancelBooking("tasker-1", booking.id(), "Car broke down");
-        verify(authService).addStrike("tasker-1", "Car broke down", booking.id());
+        verify(moderationService).addStrike("tasker-1", "Car broke down", booking.id());
 
-        org.mockito.Mockito.reset(authService);
+        org.mockito.Mockito.reset(moderationService);
 
         // Use Safety/Fraud reason
         BookingState booking2 = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50_000);
         lifecycleService.cancelBooking("tasker-1", booking2.id(), "Safety/Fraud");
 
         // No strike applied
-        verify(authService, org.mockito.Mockito.never()).addStrike(anyString());
-        verify(authService, org.mockito.Mockito.never()).addStrike(anyString(), anyString(), anyString());
+        verify(moderationService, org.mockito.Mockito.never()).addStrike(anyString());
+        verify(moderationService, org.mockito.Mockito.never()).addStrike(anyString(), anyString(), anyString());
     }
 
     // SCN-BOOK-007 moved to TaskAcceptScenarioTests — disclaimer rejection is tested

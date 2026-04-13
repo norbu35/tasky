@@ -6,42 +6,27 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import mn.tasky.auth.AccountRestrictedException;
-import mn.tasky.auth.dao.BadgeDao;
-import mn.tasky.auth.dao.ModerationPolicyDao;
 import mn.tasky.auth.dao.OtpChallengeDao;
 import mn.tasky.auth.dao.ProfileDao;
 import mn.tasky.auth.dao.RefreshSessionDao;
-import mn.tasky.auth.dao.StrikeDao;
-import mn.tasky.auth.dao.SuspensionEventDao;
 import mn.tasky.auth.dao.UserDao;
-import mn.tasky.auth.dao.VerificationDao;
 import mn.tasky.auth.dto.AuthSession;
 import mn.tasky.auth.dto.AuthTokens;
 import mn.tasky.auth.dto.AuthUser;
-import mn.tasky.auth.dto.ModerationPolicy;
 import mn.tasky.auth.dto.OtpChallenge;
 import mn.tasky.auth.dto.ProfileUpdate;
 import mn.tasky.auth.dto.RefreshSession;
 import mn.tasky.auth.dto.RoleActivationResult;
 import mn.tasky.auth.dto.UserProfile;
-import mn.tasky.auth.dto.UserProfilePage;
 import mn.tasky.auth.dto.UserProfileState;
-import mn.tasky.auth.dto.VerificationDetail;
-import mn.tasky.auth.dto.VerificationRequest;
-import mn.tasky.auth.dto.VerificationStatusResponse;
-import mn.tasky.auth.dto.VerificationSubmitResult;
-import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.common.security.CryptoService;
 import mn.tasky.common.security.JwtPrincipal;
@@ -63,16 +48,9 @@ import org.springframework.util.StringUtils;
 @Service
 public class AuthService {
 
-    private static final ModerationPolicy DEFAULT_MODERATION_POLICY =
-            new ModerationPolicy(30, 3, 7, 14, 180, true, Instant.EPOCH);
-
     private static final Set<String> DEV_AUTH_ALLOWED_ROLES = Set.of("CUSTOMER", "TASKER", "ADMIN");
     private static final Set<String> NON_PROD_PROFILES = Set.of("dev", "test", "local");
     private static final Set<String> DEV_AUTH_ALLOWED_PROFILES = Set.of("local", "test");
-    private static final Map<String, String> AVATAR_EXTENSION_BY_CONTENT_TYPE =
-            Map.of("image/jpeg", "jpg", "image/png", "png", "image/webp", "webp");
-    private static final Map<String, String> VERIFICATION_EXTENSION_BY_CONTENT_TYPE =
-            Map.of("image/jpeg", "jpg", "image/png", "png");
 
     private final JwtTokenService jwtTokenService;
     private final CryptoService cryptoService;
@@ -91,12 +69,7 @@ public class AuthService {
     private final ProfileDao profileDao;
     private final OtpChallengeDao otpChallengeDao;
     private final RefreshSessionDao refreshSessionDao;
-    private final VerificationDao verificationDao;
-    private final AuditEventDao auditEventDao;
-    private final StrikeDao strikeDao;
-    private final ModerationPolicyDao moderationPolicyDao;
-    private final SuspensionEventDao suspensionEventDao;
-    private final BadgeDao badgeDao;
+    private final UserStatusResolver userStatusResolver;
     private final MeterRegistry meterRegistry;
 
     public AuthService(
@@ -111,12 +84,7 @@ public class AuthService {
             ProfileDao profileDao,
             OtpChallengeDao otpChallengeDao,
             RefreshSessionDao refreshSessionDao,
-            VerificationDao verificationDao,
-            AuditEventDao auditEventDao,
-            StrikeDao strikeDao,
-            ModerationPolicyDao moderationPolicyDao,
-            SuspensionEventDao suspensionEventDao,
-            BadgeDao badgeDao,
+            UserStatusResolver userStatusResolver,
             MeterRegistry meterRegistry,
             @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled,
             @Value("${tasky.otp.enabled:false}") boolean otpEnabled,
@@ -133,12 +101,7 @@ public class AuthService {
         this.profileDao = profileDao;
         this.otpChallengeDao = otpChallengeDao;
         this.refreshSessionDao = refreshSessionDao;
-        this.verificationDao = verificationDao;
-        this.auditEventDao = auditEventDao;
-        this.strikeDao = strikeDao;
-        this.moderationPolicyDao = moderationPolicyDao;
-        this.suspensionEventDao = suspensionEventDao;
-        this.badgeDao = badgeDao;
+        this.userStatusResolver = userStatusResolver;
         this.meterRegistry = meterRegistry;
         this.devAuthEnabled = devAuthEnabled;
         this.otpEnabled = otpEnabled;
@@ -313,7 +276,7 @@ public class AuthService {
 
         otpChallengeDao.delete(blindIndex);
         AuthUser user = resolveOtpUser(phone, blindIndex, facebookAccessToken);
-        String effectiveStatus = resolveUserStatus(user.id(), user.status());
+        String effectiveStatus = userStatusResolver.resolve(user.id(), user.status());
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             meterRegistry
                     .counter("tasky.auth.login_attempts", "method", "otp", "result", "failure")
@@ -383,31 +346,8 @@ public class AuthService {
         return MessageDigest.isEqual(left.getBytes(StandardCharsets.UTF_8), right.getBytes(StandardCharsets.UTF_8));
     }
 
-    private String resolveUserStatus(String userId, String currentStatus) {
-        if (!"SUSPENDED".equals(currentStatus)) {
-            return currentStatus;
-        }
-
-        ModerationPolicy policy = moderationPolicy();
-        if (!policy.autoUnsuspendEnabled()) {
-            return currentStatus;
-        }
-
-        Optional<Instant> suspensionEnd = userDao.findSuspensionEndAt(userId);
-        if (suspensionEnd.isEmpty()) {
-            return currentStatus;
-        }
-        if (suspensionEnd.get().isAfter(Instant.now())) {
-            return currentStatus;
-        }
-
-        userDao.updateStatusAndSuspensionEnd(userId, "ACTIVE", null);
-        suspensionEventDao.markUnsuspended(userId, Instant.now());
-        return "ACTIVE";
-    }
-
     private AuthSession issueSession(AuthUser user) {
-        String effectiveStatus = resolveUserStatus(user.id(), user.status());
+        String effectiveStatus = userStatusResolver.resolve(user.id(), user.status());
         JwtPrincipal principal = new JwtPrincipal(user.id(), user.role(), effectiveStatus);
         String accessToken = jwtTokenService.issueAccessToken(principal);
         RefreshToken refreshToken = jwtTokenService.issueRefreshToken(user.id());
@@ -428,10 +368,6 @@ public class AuthService {
         sessionUser.put("created_at", user.createdAt().toString());
 
         return new AuthSession(accessToken, refreshToken.token(), sessionUser);
-    }
-
-    private ModerationPolicy moderationPolicy() {
-        return moderationPolicyDao.findActive().orElse(DEFAULT_MODERATION_POLICY);
     }
 
     private String decryptPhone(String encryptedPhone) {
@@ -458,7 +394,7 @@ public class AuthService {
             }
 
             AuthUser user = ensureUserByFacebookId(profile.facebookId(), profile);
-            String effectiveStatus = resolveUserStatus(user.id(), user.status());
+            String effectiveStatus = userStatusResolver.resolve(user.id(), user.status());
             if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
                 meterRegistry
                         .counter("tasky.auth.login_attempts", "method", "facebook", "result", "failure")
@@ -546,7 +482,7 @@ public class AuthService {
                     user.updatedAt());
         }
 
-        String effectiveStatus = resolveUserStatus(user.id(), user.status());
+        String effectiveStatus = userStatusResolver.resolve(user.id(), user.status());
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             throw new AccountRestrictedException("This account is suspended or banned.");
         }
@@ -591,7 +527,7 @@ public class AuthService {
             return Optional.empty();
         }
         AuthUser user = userOpt.get();
-        String effectiveStatus = resolveUserStatus(user.id(), user.status());
+        String effectiveStatus = userStatusResolver.resolve(user.id(), user.status());
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             return Optional.empty();
         }
@@ -607,739 +543,5 @@ public class AuthService {
                 user.updatedAt());
         AuthSession rotated = issueSession(effectiveUser);
         return Optional.of(new AuthTokens(rotated.accessToken(), rotated.refreshToken()));
-    }
-
-    /**
-     * Updates mutable profile fields for an existing user.
-     *
-     * @param userId User identifier.
-     * @param update Profile update payload.
-     * @return Updated profile when user exists.
-     */
-    public Optional<UserProfile> updateProfile(String userId, ProfileUpdate update) {
-        Optional<AuthUser> userOpt = userDao.findById(userId);
-        if (userOpt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        AuthUser user = userOpt.get();
-        UserProfileState current = profileDao.findByUserId(user.id()).orElse(UserProfileState.defaultState());
-
-        String fullName = update.fullName() != null ? update.fullName().trim() : current.fullName();
-        String avatarUrl = update.avatarUrl() != null ? update.avatarUrl().trim() : current.avatarUrl();
-
-        profileDao.updateNameAndAvatar(user.id(), fullName, avatarUrl);
-
-        return getProfile(user.id());
-    }
-
-    /**
-     * Returns consolidated user profile view including resolved status.
-     *
-     * @param userId User identifier.
-     * @return User profile when user exists.
-     */
-    public Optional<UserProfile> getProfile(String userId) {
-        Optional<AuthUser> userOpt = userDao.findById(userId);
-        if (userOpt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        AuthUser user = userOpt.get();
-        UserProfileState profile = profileDao.findByUserId(user.id()).orElse(UserProfileState.defaultState());
-        String effectiveStatus = resolveUserStatus(user.id(), user.status());
-        AuthUser effectiveUser = new AuthUser(
-                user.id(),
-                user.phone(),
-                user.facebookId(),
-                user.role(),
-                effectiveStatus,
-                user.primaryAuth(),
-                user.createdAt(),
-                user.updatedAt());
-        return Optional.of(toProfile(effectiveUser, profile));
-    }
-
-    private UserProfile toProfile(AuthUser user, UserProfileState profile) {
-        boolean isPro =
-                badgeDao.findActiveByTaskerId(user.id()).stream().anyMatch(badge -> "PRO".equals(badge.badgeType()));
-        return new UserProfile(
-                user.id(),
-                decryptPhone(user.phone()),
-                user.role(),
-                user.status(),
-                profile.fullName(),
-                profile.avatarUrl(),
-                profile.ratingAvg(),
-                profile.completedTasks(),
-                isPro,
-                user.createdAt().toString());
-    }
-
-    /**
-     * Activates tasker role for a customer account and rotates tokens.
-     *
-     * @param userId User identifier.
-     * @return Activation payload when transition is applicable.
-     */
-    public Optional<RoleActivationResult> activateTaskerRole(String userId) {
-        Optional<AuthUser> userOpt = userDao.findById(userId);
-        if (userOpt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        AuthUser user = userOpt.get();
-        if ("TASKER".equals(user.role()) || "ADMIN".equals(user.role())) {
-            return Optional.empty();
-        }
-
-        userDao.updateRole(user.id(), "TASKER");
-        AuthUser updated = new AuthUser(
-                user.id(),
-                user.phone(),
-                user.facebookId(),
-                "TASKER",
-                user.status(),
-                user.primaryAuth(),
-                user.createdAt(),
-                user.updatedAt());
-
-        AuthSession session = issueSession(updated);
-        return Optional.of(new RoleActivationResult(session.accessToken(), session.refreshToken(), session.user()));
-    }
-
-    /**
-     * Creates a signed upload URL for verification document images.
-     *
-     * @param userId      User identifier.
-     * @param contentType MIME type.
-     * @return Upload payload when user exists and MIME type is supported.
-     */
-    public Optional<PresignedUpload> createVerificationUploadUrl(String userId, String contentType) {
-        Optional<AuthUser> userOpt = userDao.findById(userId);
-        if (userOpt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        String normalizedContentType = contentType.toLowerCase(Locale.ROOT);
-        String extension = VERIFICATION_EXTENSION_BY_CONTENT_TYPE.get(normalizedContentType);
-        if (!StringUtils.hasText(extension)) {
-            return Optional.empty();
-        }
-
-        String storageKey = storageKeyPolicy.createKey(StorageKeyPolicy.Namespace.VERIFICATION, userId, extension);
-        String uploadUrl = storageService.generateUploadUrl(storageKey, normalizedContentType);
-        return Optional.of(new PresignedUpload(uploadUrl, storageKey));
-    }
-
-    /**
-     * Submits a tasker verification request.
-     *
-     * @param userId   Tasker identifier.
-     * @param frontKey Storage key for front ID image.
-     * @param backKey  Storage key for back ID image.
-     * @return Verification submission result with status code and payload when successful.
-     */
-    public VerificationSubmitResult submitVerification(
-            String userId, String frontKey, String backKey, String consentPolicyVersion) {
-        Optional<AuthUser> userOpt = userDao.findById(userId);
-        if (userOpt.isEmpty()) {
-            return new VerificationSubmitResult(VerificationSubmitResult.USER_NOT_FOUND, null);
-        }
-        AuthUser user = userOpt.get();
-
-        if (!"TASKER".equals(user.role())) {
-            return new VerificationSubmitResult(VerificationSubmitResult.NOT_TASKER, null);
-        }
-
-        Optional<VerificationRequest> existingOpt = verificationDao.findLatestByUserId(userId);
-        boolean hasPendingOrApproved = existingOpt
-                .map(existing -> "PENDING".equals(existing.status()) || "APPROVED".equals(existing.status()))
-                .orElse(false);
-        if (hasPendingOrApproved) {
-            return new VerificationSubmitResult(VerificationSubmitResult.CONFLICT, null);
-        }
-
-        String id = UUID.randomUUID().toString();
-        Instant now = Instant.now();
-        verificationDao.insert(
-                id, userId, frontKey, backKey, "PENDING", now, null, null, consentPolicyVersion, now, null);
-        VerificationRequest request =
-                new VerificationRequest(id, userId, frontKey, backKey, "PENDING", now, null, null);
-        return new VerificationSubmitResult(VerificationSubmitResult.SUCCESS, toVerificationStatus(request));
-    }
-
-    private VerificationStatusResponse toVerificationStatus(VerificationRequest request) {
-        return new VerificationStatusResponse(
-                request.status(),
-                request.adminNotes(),
-                request.submittedAt() != null ? request.submittedAt().toString() : null,
-                request.reviewedAt() != null ? request.reviewedAt().toString() : null);
-    }
-
-    /**
-     * Returns latest verification status for a user, or {@code NOT_SUBMITTED}.
-     *
-     * @param userId User identifier.
-     * @return Current verification status view.
-     */
-    public VerificationStatusResponse getVerificationStatus(String userId) {
-        return verificationDao
-                .findLatestByUserId(userId)
-                .map(this::toVerificationStatus)
-                .orElseGet(() -> new VerificationStatusResponse("NOT_SUBMITTED", null, null, null));
-    }
-
-    /**
-     * Returns a single verification detail by ID, including presigned URLs.
-     *
-     * @param verificationId Verification identifier.
-     * @return Verification detail when found.
-     */
-    public Optional<VerificationDetail> getVerificationDetail(String verificationId) {
-        return verificationDao.findById(verificationId).map(this::toVerificationDetail);
-    }
-
-    /**
-     * Lists pending verification requests using first-page defaults.
-     *
-     * @param limit Maximum number of rows.
-     * @return Pending verification details.
-     */
-    public List<VerificationDetail> listPendingVerifications(int limit) {
-        return listPendingVerifications(null, limit);
-    }
-
-    /**
-     * Lists pending verification requests with pagination cursor.
-     *
-     * @param cursor Optional cursor.
-     * @param limit  Maximum number of rows.
-     * @return Pending verification details.
-     */
-    public List<VerificationDetail> listPendingVerifications(String cursor, int limit) {
-        List<VerificationRequest> pending = verificationDao.findPending(cursor, limit);
-        return pending.stream().map(this::toVerificationDetail).toList();
-    }
-
-    private VerificationDetail toVerificationDetail(VerificationRequest request) {
-        Optional<AuthUser> userOpt = userDao.findById(request.userId());
-        UserProfileState profile = profileDao.findByUserId(request.userId()).orElse(null);
-        String phone = userOpt.map(u -> decryptPhone(u.phone())).orElse(null);
-        String name = profile != null ? profile.fullName() : null;
-
-        String frontUrl = safeVerificationDownloadUrl(request.idCardFrontKey());
-        String backUrl = safeVerificationDownloadUrl(request.idCardBackKey());
-
-        return new VerificationDetail(
-                request.id(),
-                request.userId(),
-                phone,
-                name,
-                frontUrl,
-                backUrl,
-                request.status(),
-                request.adminNotes(),
-                request.submittedAt().toString(),
-                request.reviewedAt() != null ? request.reviewedAt().toString() : null,
-                null,
-                null,
-                null);
-    }
-
-    private String safeVerificationDownloadUrl(String storageKey) {
-        if (!StringUtils.hasText(storageKey)) {
-            return null;
-        }
-
-        try {
-            return storageService.generateDownloadUrl(storageKey, StorageKeyPolicy.Namespace.VERIFICATION);
-        } catch (IllegalArgumentException exception) {
-            return null;
-        }
-    }
-
-    /**
-     * Checks whether a verification request exists.
-     *
-     * @param verificationId Verification identifier.
-     * @return {@code true} when present.
-     */
-    public boolean verificationExists(String verificationId) {
-        return verificationDao.findById(verificationId).isPresent();
-    }
-
-    /**
-     * Approves a pending verification and marks user status as {@code VERIFIED}.
-     *
-     * @param verificationId Verification identifier.
-     * @return Resolved verification detail when transition succeeds.
-     */
-    public Optional<VerificationDetail> approveVerification(String verificationId) {
-        return resolveVerification(verificationId, "APPROVED", null, true);
-    }
-
-    private Optional<VerificationDetail> resolveVerification(
-            String verificationId, String status, String notes, boolean markUserVerified) {
-        Optional<VerificationRequest> requestOpt = verificationDao.findById(verificationId);
-        if (requestOpt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        VerificationRequest request = requestOpt.get();
-        if (!"PENDING".equals(request.status())) {
-            return Optional.empty();
-        }
-
-        String adminNotes = notes != null ? notes : request.adminNotes();
-        Instant now = Instant.now();
-        verificationDao.updateStatus(verificationId, status, adminNotes, now);
-        if (markUserVerified) {
-            userDao.updateStatus(request.userId(), "VERIFIED");
-        }
-
-        VerificationRequest resolved = new VerificationRequest(
-                request.id(),
-                request.userId(),
-                request.idCardFrontKey(),
-                request.idCardBackKey(),
-                status,
-                request.submittedAt(),
-                adminNotes,
-                now);
-        return Optional.of(toVerificationDetail(resolved));
-    }
-
-    /**
-     * Rejects a pending verification with admin reason.
-     *
-     * @param verificationId Verification identifier.
-     * @param reason         Rejection reason/notes.
-     * @return Resolved verification detail when transition succeeds.
-     */
-    public Optional<VerificationDetail> rejectVerification(String verificationId, String reason) {
-        return resolveVerification(verificationId, "REJECTED", reason, false);
-    }
-
-    /**
-     * Updates aggregate profile stats.
-     *
-     * @param userId             User identifier.
-     * @param rating             Optional new rating; values {@code <= 0} do not change average.
-     * @param incrementCompleted Whether to increment completed task count.
-     */
-    public void updateUserStats(String userId, double rating, boolean incrementCompleted) {
-        UserProfileState current = profileDao.findByUserId(userId).orElse(UserProfileState.defaultState());
-
-        int newCompleted = current.completedTasks() + (incrementCompleted ? 1 : 0);
-        double newRating = current.ratingAvg();
-
-        if (rating > 0) {
-            if (current.ratingAvg() == 0.0) {
-                newRating = rating;
-            } else {
-                int count = current.completedTasks();
-                if (count == 0) {
-                    count = 1;
-                }
-                newRating = (current.ratingAvg() * count + rating) / (count + 1);
-                if (current.ratingAvg() == 5.0 && rating == 5.0) {
-                    newRating = 5.0;
-                }
-            }
-        }
-
-        profileDao.updateStats(userId, newRating, newCompleted);
-    }
-
-    // getAuditLog removed — audit_log table replaced by audit_events (V10).
-    // A query-capable audit service will be introduced in a later task.
-
-    /**
-     * Adds a moderation strike and applies suspension policy when thresholds are reached.
-     *
-     * @param userId Target user identifier.
-     */
-    public void addStrike(String userId) {
-        Instant now = Instant.now();
-        strikeDao.insert(UUID.randomUUID().toString(), userId, null, null, now);
-
-        ModerationPolicy policy = moderationPolicy();
-        Instant windowStart = now.minus(policy.strikeWindowDays(), ChronoUnit.DAYS);
-        long recentStrikes = strikeDao.countSince(userId, windowStart);
-
-        if (recentStrikes < policy.strikeThreshold()) {
-            return;
-        }
-
-        Optional<AuthUser> userOpt = userDao.findById(userId);
-        if (userOpt.isEmpty()) {
-            return;
-        }
-        AuthUser user = userOpt.get();
-        String effectiveStatus = resolveUserStatus(user.id(), user.status());
-        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
-            return;
-        }
-
-        Instant repeatLookback = now.minus(policy.repeatOffenseWindowDays(), ChronoUnit.DAYS);
-        long priorSuspensions = suspensionEventDao.countSince(userId, repeatLookback);
-        int suspensionDays = priorSuspensions > 0 ? policy.repeatSuspensionDays() : policy.firstSuspensionDays();
-        Instant suspensionEndAt = now.plus(suspensionDays, ChronoUnit.DAYS);
-
-        userDao.updateStatusAndSuspensionEnd(userId, "SUSPENDED", suspensionEndAt);
-        suspensionEventDao.insert(
-                UUID.randomUUID().toString(), userId, Math.toIntExact(recentStrikes), suspensionDays, now, null);
-    }
-
-    /**
-     * Searches users by exact normalized phone value and returns cursor-paged profile results.
-     *
-     * @param phonePart Phone input to normalize and search.
-     * @param cursor    Optional UUID cursor.
-     * @param limit     Page size.
-     * @return Paged user profiles.
-     * @throws IllegalArgumentException when cursor is not a valid UUID.
-     */
-    public UserProfilePage searchUsersByPhone(String phonePart, String cursor, int limit) {
-        UUID cursorId = parseUserSearchCursor(cursor);
-        List<UserProfile> candidates = searchUsersByPhoneExact(phonePart).stream()
-                .sorted(Comparator.comparing(profile -> UUID.fromString(profile.id())))
-                .filter(profile ->
-                        cursorId == null || UUID.fromString(profile.id()).compareTo(cursorId) > 0)
-                .limit(limit + 1L)
-                .toList();
-
-        boolean hasMore = candidates.size() > limit;
-        List<UserProfile> pageData = hasMore ? candidates.subList(0, limit) : candidates;
-        String nextCursor = hasMore && !pageData.isEmpty() ? pageData.getLast().id() : null;
-
-        return new UserProfilePage(List.copyOf(pageData), nextCursor, hasMore);
-    }
-
-    private UUID parseUserSearchCursor(String cursor) {
-        if (!StringUtils.hasText(cursor)) {
-            return null;
-        }
-        try {
-            return UUID.fromString(cursor.trim());
-        } catch (IllegalArgumentException exception) {
-            throw new IllegalArgumentException("Cursor is invalid.", exception);
-        }
-    }
-
-    /**
-     * Searches users by full name prefix and returns cursor-paged profile results.
-     */
-    public UserProfilePage searchUsersByName(String name, String cursor, int limit) {
-        if (!StringUtils.hasText(name) || name.trim().length() < 2) {
-            return new UserProfilePage(List.of(), null, false);
-        }
-        String pattern = name.trim() + "%";
-        UUID cursorId = parseUserSearchCursor(cursor);
-
-        List<AuthUser> candidates = cursorId == null
-                ? userDao.searchByName(pattern, limit + 1)
-                : userDao.searchByNameAfterCursor(pattern, cursorId, limit + 1);
-
-        List<UserProfile> profiles = candidates.stream()
-                .map(user -> {
-                    String effectiveStatus = resolveUserStatus(user.id(), user.status());
-                    AuthUser effective = new AuthUser(
-                            user.id(),
-                            user.phone(),
-                            user.facebookId(),
-                            user.role(),
-                            effectiveStatus,
-                            user.primaryAuth(),
-                            user.createdAt(),
-                            user.updatedAt());
-                    return toProfile(
-                            effective, profileDao.findByUserId(user.id()).orElse(UserProfileState.defaultState()));
-                })
-                .toList();
-
-        boolean hasMore = profiles.size() > limit;
-        List<UserProfile> pageData = hasMore ? profiles.subList(0, limit) : profiles;
-        String nextCursor = hasMore && !pageData.isEmpty() ? pageData.getLast().id() : null;
-        return new UserProfilePage(List.copyOf(pageData), nextCursor, hasMore);
-    }
-
-    /**
-     * Searches users by exact Facebook ID and returns cursor-paged profile results.
-     */
-    public UserProfilePage searchUsersByFacebookId(String facebookId, String cursor, int limit) {
-        if (!StringUtils.hasText(facebookId)) {
-            return new UserProfilePage(List.of(), null, false);
-        }
-        UUID cursorId = parseUserSearchCursor(cursor);
-        List<UserProfile> candidates = userDao
-                .findByFacebookId(facebookId.trim())
-                .map(user -> {
-                    String effectiveStatus = resolveUserStatus(user.id(), user.status());
-                    AuthUser effective = new AuthUser(
-                            user.id(),
-                            user.phone(),
-                            user.facebookId(),
-                            user.role(),
-                            effectiveStatus,
-                            user.primaryAuth(),
-                            user.createdAt(),
-                            user.updatedAt());
-                    return toProfile(
-                            effective, profileDao.findByUserId(user.id()).orElse(UserProfileState.defaultState()));
-                })
-                .stream()
-                .filter(p -> cursorId == null || UUID.fromString(p.id()).compareTo(cursorId) > 0)
-                .limit(limit + 1L)
-                .toList();
-
-        boolean hasMore = candidates.size() > limit;
-        List<UserProfile> pageData = hasMore ? candidates.subList(0, limit) : candidates;
-        String nextCursor = hasMore && !pageData.isEmpty() ? pageData.getLast().id() : null;
-        return new UserProfilePage(List.copyOf(pageData), nextCursor, hasMore);
-    }
-
-    private List<UserProfile> searchUsersByPhoneExact(String phone) {
-        String normalizedPhone = normalizePhone(phone);
-        if (!StringUtils.hasText(normalizedPhone)) {
-            return List.of();
-        }
-        String blindIndex = cryptoService.blindIndex(normalizedPhone);
-        return userDao
-                .findByPhoneBlindIndex(blindIndex)
-                .map(user -> {
-                    String effectiveStatus = resolveUserStatus(user.id(), user.status());
-                    AuthUser effectiveUser = new AuthUser(
-                            user.id(),
-                            user.phone(),
-                            user.facebookId(),
-                            user.role(),
-                            effectiveStatus,
-                            user.primaryAuth(),
-                            user.createdAt(),
-                            user.updatedAt());
-                    return toProfile(
-                            effectiveUser, profileDao.findByUserId(user.id()).orElse(UserProfileState.defaultState()));
-                })
-                .stream()
-                .toList();
-    }
-
-    /**
-     * Bans a user and writes an admin audit log entry.
-     *
-     * @param adminId Admin identifier.
-     * @param userId  Target user identifier.
-     * @param reason  Ban reason.
-     * @return {@code true} when user exists and was updated.
-     */
-    public boolean banUser(String adminId, String userId, String reason) {
-        Optional<AuthUser> userOpt = userDao.findById(userId);
-        if (userOpt.isEmpty()) {
-            return false;
-        }
-
-        userDao.updateStatusAndSuspensionEnd(userId, "BANNED", null);
-        auditEventDao.insert(adminId, "BAN_USER", "USER", userId, "{\"reason\":\"" + reason + "\"}");
-        return true;
-    }
-
-    /**
-     * Removes ban/suspension status from a user and writes an admin audit log entry.
-     *
-     * @param adminId Admin identifier.
-     * @param userId  Target user identifier.
-     * @param reason  Unban reason.
-     * @return {@code true} when user exists and was updated.
-     */
-    public boolean unbanUser(String adminId, String userId, String reason) {
-        Optional<AuthUser> userOpt = userDao.findById(userId);
-        if (userOpt.isEmpty()) {
-            return false;
-        }
-
-        userDao.updateStatusAndSuspensionEnd(userId, "ACTIVE", null);
-        auditEventDao.insert(adminId, "UNBAN_USER", "USER", userId, "{\"reason\":\"" + reason + "\"}");
-        return true;
-    }
-
-    /**
-     * Returns effective status for a user id if id format and user are valid.
-     *
-     * @param userId User identifier.
-     * @return Effective status when user exists and id is valid UUID; otherwise empty.
-     */
-    public Optional<String> currentUserStatus(String userId) {
-        try {
-            UUID.fromString(userId);
-        } catch (IllegalArgumentException ignored) {
-            return Optional.empty();
-        }
-        return userDao.findById(userId).map(user -> resolveUserStatus(user.id(), user.status()));
-    }
-
-    /**
-     * Returns whether an existing Facebook-era account must complete OTP migration before product access.
-     *
-     * @param userId Authenticated user identifier.
-     * @return {@code true} when OTP is enabled and user has Facebook identity without a linked phone.
-     */
-    public boolean requiresOtpMigration(String userId) {
-        return otpEnabled
-                && userDao.findById(userId)
-                        .map(user -> StringUtils.hasText(user.facebookId())
-                                && !StringUtils.hasText(decryptPhone(user.phone())))
-                        .orElse(false);
-    }
-
-    /**
-     * Returns the active moderation policy, or default policy when no row is present.
-     *
-     * @return Current moderation policy.
-     */
-    public ModerationPolicy getModerationPolicy() {
-        return moderationPolicy();
-    }
-
-    /**
-     * Updates moderation policy after validating value ranges.
-     *
-     * @param strikeWindowDays        Strike rolling window in days.
-     * @param strikeThreshold         Strike count that triggers suspension.
-     * @param firstSuspensionDays     First suspension duration in days.
-     * @param repeatSuspensionDays    Repeat suspension duration in days.
-     * @param repeatOffenseWindowDays Lookback window for repeat offense escalation.
-     * @param autoUnsuspendEnabled    Whether automatic unsuspend is enabled.
-     * @return Updated moderation policy.
-     * @throws IllegalArgumentException if provided values fail validation constraints.
-     * @throws IllegalStateException    if moderation policy row is missing at update time.
-     */
-    public ModerationPolicy updateModerationPolicy(
-            int strikeWindowDays,
-            int strikeThreshold,
-            int firstSuspensionDays,
-            int repeatSuspensionDays,
-            int repeatOffenseWindowDays,
-            boolean autoUnsuspendEnabled) {
-        validatePolicy(
-                strikeWindowDays, strikeThreshold, firstSuspensionDays, repeatSuspensionDays, repeatOffenseWindowDays);
-        Instant now = Instant.now();
-        int updated = moderationPolicyDao.update(
-                strikeWindowDays,
-                strikeThreshold,
-                firstSuspensionDays,
-                repeatSuspensionDays,
-                repeatOffenseWindowDays,
-                autoUnsuspendEnabled,
-                now);
-        if (updated == 0) {
-            throw new IllegalStateException("Moderation policy row is missing.");
-        }
-        return moderationPolicyDao
-                .findActive()
-                .orElse(new ModerationPolicy(
-                        strikeWindowDays,
-                        strikeThreshold,
-                        firstSuspensionDays,
-                        repeatSuspensionDays,
-                        repeatOffenseWindowDays,
-                        autoUnsuspendEnabled,
-                        now));
-    }
-
-    private void validatePolicy(
-            int strikeWindowDays,
-            int strikeThreshold,
-            int firstSuspensionDays,
-            int repeatSuspensionDays,
-            int repeatOffenseWindowDays) {
-        if (strikeWindowDays < 1 || strikeWindowDays > 365) {
-            throw new IllegalArgumentException("strikeWindowDays must be between 1 and 365");
-        }
-        if (strikeThreshold < 1 || strikeThreshold > 10) {
-            throw new IllegalArgumentException("strikeThreshold must be between 1 and 10");
-        }
-        if (firstSuspensionDays < 1 || firstSuspensionDays > 365) {
-            throw new IllegalArgumentException("firstSuspensionDays must be between 1 and 365");
-        }
-        if (repeatSuspensionDays < firstSuspensionDays || repeatSuspensionDays > 365) {
-            throw new IllegalArgumentException("repeatSuspensionDays must be between " + "firstSuspensionDays and 365");
-        }
-        if (repeatOffenseWindowDays < strikeWindowDays || repeatOffenseWindowDays > 730) {
-            throw new IllegalArgumentException("repeatOffenseWindowDays must be between " + "strikeWindowDays and 730");
-        }
-    }
-
-    /**
-     * Adds a moderation strike with optional reason and booking context.
-     * Delegates to the single-arg overload for the suspension logic.
-     *
-     * @param userId    Target user identifier.
-     * @param reason    Human-readable reason (for audit; not persisted separately).
-     * @param bookingId Booking context (for audit; not persisted separately).
-     */
-    public void addStrike(String userId, String reason, String bookingId) {
-        addStrike(userId);
-    }
-
-    /**
-     * Revokes Instant Match access for the given user for the specified duration.
-     * Writes instant_match_revoked_until = NOW + duration to the user profile.
-     *
-     * @param userId   The user whose Instant Match access to revoke.
-     * @param duration How long to revoke access for.
-     */
-    public void revokeInstantMatch(String userId, java.time.Duration duration) {
-        Instant revokedUntil = Instant.now().plus(duration);
-        profileDao.setInstantMatchRevokedUntil(userId, revokedUntil);
-    }
-
-    /**
-     * Returns true if the user is currently allowed to use Instant Match.
-     * Returns true if no revocation timestamp is recorded or if it has expired.
-     *
-     * @param userId The customer user ID to check.
-     * @return true if Instant Match is allowed, false if currently revoked.
-     */
-    public boolean isInstantMatchAllowed(String userId) {
-        return profileDao
-                .findByUserId(userId)
-                .map(p -> p.instantMatchRevokedUntil() == null || Instant.now().isAfter(p.instantMatchRevokedUntil()))
-                .orElse(true);
-    }
-
-    /**
-     * Creates a signed upload URL for avatar images.
-     *
-     * @param userId      User identifier.
-     * @param contentType MIME type.
-     * @return Upload payload when user exists and MIME type is supported.
-     */
-    public Optional<PresignedUpload> createAvatarUploadUrl(String userId, String contentType) {
-        Optional<AuthUser> userOpt = userDao.findById(userId);
-        if (userOpt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        String normalizedContentType = contentType.toLowerCase(Locale.ROOT);
-        String extension = AVATAR_EXTENSION_BY_CONTENT_TYPE.get(normalizedContentType);
-        if (!StringUtils.hasText(extension)) {
-            return Optional.empty();
-        }
-
-        String storageKey = storageKeyPolicy.createKey(StorageKeyPolicy.Namespace.AVATAR, userId, extension);
-        String uploadUrl = storageService.generateUploadUrl(storageKey, normalizedContentType);
-        return Optional.of(new PresignedUpload(uploadUrl, storageKey));
-    }
-
-    /**
-     * Request self-service account deletion.
-     * Marks user as DELETED and records audit event.
-     */
-    public void requestAccountDeletion(String userId) {
-        userDao.updateStatus(userId, "DELETED");
-        auditEventDao.insert(
-                userId, "USER_SELF_DELETE_REQUEST", "USER", userId, "{\"reason\":\"USER_SELF_DELETE_REQUEST\"}");
     }
 }
