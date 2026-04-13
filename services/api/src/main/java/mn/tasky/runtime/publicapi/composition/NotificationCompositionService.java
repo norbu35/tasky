@@ -1,27 +1,27 @@
 package mn.tasky.runtime.publicapi.composition;
 
-import mn.tasky.notification.application.NotificationService;
 import mn.tasky.notification.dto.RegisterDeviceRequest;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
 import org.springframework.stereotype.Component;
 
 /**
  * Runtime composition service for notification device management.
- * Delegates device registration/unregistration to the notification application service.
+ * Delegates device registration/unregistration through the notification module's public command port.
  */
 @Component
 public class NotificationCompositionService {
 
-    private final NotificationService notificationService;
+    private final NotificationCommandPort notificationCommandPort;
 
-    public NotificationCompositionService(NotificationService notificationService) {
-        this.notificationService = notificationService;
+    public NotificationCompositionService(NotificationCommandPort notificationCommandPort) {
+        this.notificationCommandPort = notificationCommandPort;
     }
 
     public void registerDevice(String userId, RegisterDeviceRequest body) {
-        notificationService.registerDevice(userId, body.token(), body.platform());
+        notificationCommandPort.registerDevice(userId, body.token(), body.platform());
     }
 
     public void unregisterDevice(String userId, String token) {
-        notificationService.unregisterDevice(userId, token);
+        notificationCommandPort.unregisterDevice(userId, token);
     }
 }

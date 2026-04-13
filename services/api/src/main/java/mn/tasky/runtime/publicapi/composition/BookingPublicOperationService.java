@@ -15,7 +15,7 @@ import mn.tasky.booking.publicapi.BookingQueryPort;
 import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyService;
-import mn.tasky.notification.application.NotificationService;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,7 +26,7 @@ public class BookingPublicOperationService {
     private final BookingScheduleService bookingScheduleService;
     private final NoShowService noShowService;
     private final RepeatBookingService repeatBookingService;
-    private final NotificationService notificationService;
+    private final NotificationCommandPort notificationCommandPort;
     private final IdempotencyService idempotencyService;
     private final BookingResponseCompositionService bookingResponseCompositionService;
 
@@ -36,7 +36,7 @@ public class BookingPublicOperationService {
             BookingScheduleService bookingScheduleService,
             NoShowService noShowService,
             RepeatBookingService repeatBookingService,
-            NotificationService notificationService,
+            NotificationCommandPort notificationCommandPort,
             IdempotencyService idempotencyService,
             BookingResponseCompositionService bookingResponseCompositionService) {
         this.bookingQueryPort = bookingQueryPort;
@@ -44,7 +44,7 @@ public class BookingPublicOperationService {
         this.bookingScheduleService = bookingScheduleService;
         this.noShowService = noShowService;
         this.repeatBookingService = repeatBookingService;
-        this.notificationService = notificationService;
+        this.notificationCommandPort = notificationCommandPort;
         this.idempotencyService = idempotencyService;
         this.bookingResponseCompositionService = bookingResponseCompositionService;
     }
@@ -156,7 +156,7 @@ public class BookingPublicOperationService {
             BookingMarkDoneResult result = bookingCommandPort.markBookingDone(userId, bookingId);
             if (result.isSuccess()) {
                 if (result.newlyMarked()) {
-                    notificationService.sendPush(
+                    notificationCommandPort.sendPush(
                             result.booking().customerId(),
                             "Tasker marked job complete",
                             "Your tasker marked the booking as done. Please review and confirm completion.",

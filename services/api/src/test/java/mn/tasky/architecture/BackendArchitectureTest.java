@@ -115,4 +115,25 @@ class BackendArchitectureTest {
             .resideInAnyPackage("mn.tasky..dao..")
             .because("runtime composition must use publicapi ports, not DAOs")
             .allowEmptyShould(true);
+
+    /**
+     * Runtime composition services must depend on module publicapi ports, not on
+     * feature-module application services directly.
+     * This enforces the two allowed request-path shapes from the finalization design.
+     *
+     * Narrow scope: each module is enforced individually so the rule can be adopted
+     * incrementally without breaking existing surfaces mid-migration.
+     */
+    @ArchTest
+    static final ArchRule notificationCompositionMustUsePublicPorts = noClasses()
+            .that()
+            .resideInAnyPackage(
+                    "mn.tasky.runtime.publicapi.composition..",
+                    "mn.tasky.runtime.adminapi.composition..",
+                    "mn.tasky.runtime.user.composition..")
+            .should()
+            .dependOnClassesThat()
+            .resideInAnyPackage("mn.tasky.notification.application..")
+            .because("notification composition must use NotificationCommandPort, not NotificationService")
+            .allowEmptyShould(true);
 }

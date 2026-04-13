@@ -298,6 +298,9 @@ class AudienceCompositionBoundaryTest {
         assertControllerDependsOn(
                 mn.tasky.notification.api.NotificationController.class,
                 "mn.tasky.runtime.publicapi.composition.NotificationCompositionService");
+        assertControllerDoesNotDependOn(
+                mn.tasky.notification.api.NotificationController.class,
+                "mn.tasky.notification.application.NotificationService");
         assertControllerOmitsMethods(
                 mn.tasky.notification.api.NotificationController.class, Set.of("toDeviceResponse"));
 
