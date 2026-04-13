@@ -23,6 +23,11 @@
 - **Verification flow audit confirmed clean**: `VerificationController` and `AdminVerificationController` both delegate exclusively through `IdentityCommandPort`/`IdentityQueryPort` and composition services. No direct DAO or concrete service dependencies in the verification path.
 - **Note**: Verification application logic lives in `AuthService` rather than a dedicated `VerificationService` — this is a bounded-context extraction concern for a future pass, not a port-migration gap.
 
+### Slice 4: Dispute aftermath — already on v2 ports (no changes needed)
+
+- **Dispute flow audit confirmed clean**: `DisputeController` → `DisputeRaiseService` → `TrustCommandPort`, and `AdminDisputeController` → `AdminDisputeResolutionService` → `TrustCommandPort`. Both paths use idempotency guards and port delegation. The `DisputeEvidenceGraceScheduler` auto-close runs independently and does not need port wrapping.
+- **Note**: Dispute aftermath is intentionally minimal — no wallet refunds, booking status changes, or notifications on resolution per current product behavior.
+
 ### Slice 1: Task apply/accept v2 seam completion
 
 - **TaskService → BookingCommandPort**: `TaskService.acceptApplication()` now delegates through `BookingCommandPort.createBooking()` instead of the concrete `BookingService`, eliminating the last cross-module concrete service dependency in the task module.
