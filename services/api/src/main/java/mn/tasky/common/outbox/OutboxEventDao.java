@@ -199,7 +199,7 @@ public interface OutboxEventDao {
                 attempts = 0,
                 available_at = :availableAt,
                 last_error = NULL
-            WHERE id = :id AND status IN ('FAILED', 'PROCESSED')
+            WHERE id = :id AND status = 'FAILED'
             """)
     int resetForReplay(@Bind("id") UUID id, @Bind("availableAt") Instant availableAt);
 }

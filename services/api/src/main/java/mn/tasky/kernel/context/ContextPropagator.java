@@ -14,17 +14,15 @@ public final class ContextPropagator {
 
     private ContextPropagator() {}
 
-    // MDC keys — single source of truth, aligned with LogField
+    // MDC keys — single source of truth, aligned with LogField and persisted outbox columns
     public static final String MDC_CORRELATION_ID = "correlation_id";
     public static final String MDC_TRACE_ID = "trace_id";
     public static final String MDC_CAUSATION_ID = "causation_id";
     public static final String MDC_COMMAND_ID = "command_id";
     public static final String MDC_WORKFLOW_ID = "workflow_id";
-    public static final String MDC_JOB_ID = "job_id";
     public static final String MDC_ACTOR_ID = "actor_id";
     public static final String MDC_LOCALE = "locale";
     public static final String MDC_PLATFORM = "platform";
-    public static final String MDC_RUNTIME_SURFACE = "runtime_surface";
 
     /**
      * Populate MDC from a RequestContext (HTTP request boundary).
@@ -53,9 +51,8 @@ public final class ContextPropagator {
      * Populate MDC from a JobContext (job execution boundary).
      */
     public static void propagate(JobContext ctx) {
-        propagate((WorkflowContext) new WorkflowContext(
+        propagate(new WorkflowContext(
                 ctx.correlationId(), ctx.causationId(), ctx.commandId(), ctx.workflowId(), ctx.actorId()));
-        putIfPresent(MDC_JOB_ID, ctx.jobId());
     }
 
     /**
@@ -109,11 +106,9 @@ public final class ContextPropagator {
         MDC.remove(MDC_CAUSATION_ID);
         MDC.remove(MDC_COMMAND_ID);
         MDC.remove(MDC_WORKFLOW_ID);
-        MDC.remove(MDC_JOB_ID);
         MDC.remove(MDC_ACTOR_ID);
         MDC.remove(MDC_LOCALE);
         MDC.remove(MDC_PLATFORM);
-        MDC.remove(MDC_RUNTIME_SURFACE);
     }
 
     private static void putIfPresent(String key, String value) {

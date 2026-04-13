@@ -56,7 +56,7 @@ public class OutboxReplayController {
             return ResponseEntity.status(409)
                     .body(Map.of(
                             "error", "event_not_replayable",
-                            "message", "Event is not in FAILED or PROCESSED status, or does not exist"));
+                            "message", "Event is not in FAILED status, or does not exist"));
         }
         return ResponseEntity.ok(Map.of("status", "replayed", "eventId", id));
     }

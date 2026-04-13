@@ -10,6 +10,7 @@ import mn.tasky.kernel.context.ContextPropagator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,17 +56,15 @@ public class EventWorkerConsumer {
         try {
             envelope = parseEnvelope(message);
             if (envelope == null) {
-                log.warn(
-                        "Received unparseable message on automation worker queue, rejecting: messageId={}",
-                        message.getMessageProperties().getMessageId());
-                return;
+                throw new AmqpRejectAndDontRequeueException("Unparseable message on automation worker queue: messageId="
+                        + message.getMessageProperties().getMessageId());
             }
 
             propagateMdc(envelope);
             EventHandler handler = handlersByEventType.get(envelope.eventType());
             if (handler == null) {
-                log.warn("No handler registered for event type: {}", envelope.eventType());
-                return;
+                throw new AmqpRejectAndDontRequeueException(
+                        "No handler registered for event type: " + envelope.eventType());
             }
 
             log.info(

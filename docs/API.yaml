@@ -1065,6 +1065,32 @@ components:
           nullable: true
 
     # ─── Reviews ──────────────────────────────────────────────
+    PendingReview:
+      type: object
+      required: [id, booking_id, user_id, status, triggered_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        booking_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [PENDING, REMINDED_24H, REMINDED_72H, COMPLETED, EXPIRED]
+        triggered_at:
+          type: string
+          format: date-time
+        resolved_at:
+          type: string
+          format: date-time
+          nullable: true
+        investigation_active:
+          type: boolean
+
     Review:
       type: object
       required: [id, booking_id, reviewer_id, reviewee_id, punctuality_rating, created_at]
@@ -1364,6 +1390,95 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LocationSearchResult'
+
+    OutboxSummary:
+      type: object
+      required: [pending, failed, processed, processing]
+      properties:
+        pending:
+          type: integer
+        failed:
+          type: integer
+        processed:
+          type: integer
+        processing:
+          type: integer
+
+    OutboxEvent:
+      type: object
+      required: [id, event_type, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        event_type:
+          type: string
+        aggregate_type:
+          type: string
+        aggregate_id:
+          type: string
+          format: uuid
+          nullable: true
+        payload:
+          type: string
+          description: JSON payload
+        status:
+          type: string
+          enum: [PENDING, PROCESSING, PROCESSED, FAILED]
+        attempts:
+          type: integer
+        available_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        processed_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_error:
+          type: string
+          nullable: true
+        correlation_id:
+          type: string
+          nullable: true
+        trace_id:
+          type: string
+          nullable: true
+        causation_id:
+          type: string
+          nullable: true
+        command_id:
+          type: string
+          nullable: true
+        workflow_id:
+          type: string
+          nullable: true
+        actor_id:
+          type: string
+          nullable: true
+        locale:
+          type: string
+          nullable: true
+        platform:
+          type: string
+          nullable: true
+
+    OutboxEventPage:
+      type: object
+      required: [events, total, offset, limit]
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/OutboxEvent'
+        total:
+          type: integer
+        offset:
+          type: integer
+        limit:
+          type: integer
 
     LocationSearchResult:
       type: object
@@ -3772,6 +3887,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /me/pending-reviews:
+    get:
+      tags: [Reviews]
+      summary: Get my pending reviews
+      description: Returns a list of the authenticated user's pending reviews (enforcement cases).
+      operationId: getMyPendingReviews
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Pending reviews for the authenticated user.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PendingReview'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
   /users/{id}/reviews:
     get:
       tags: [Reviews]
@@ -5203,6 +5342,161 @@ paths:
                   userId:
                     type: string
                     format: uuid
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/outbox/summary:
+    get:
+      tags: [Admin]
+      summary: Outbox event summary
+      description: Returns counts of outbox events by status (pending, failed, processed, processing).
+      operationId: adminOutboxSummary
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Outbox summary.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutboxSummary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/outbox/events:
+    get:
+      tags: [Admin]
+      summary: List outbox events
+      description: Paginated list of outbox events filtered by status.
+      operationId: adminListOutboxEvents
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [PENDING, FAILED, PROCESSED, PROCESSING]
+            default: FAILED
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+            minimum: 1
+            maximum: 200
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: Paginated list of outbox events.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutboxEventPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/outbox/events/{id}:
+    get:
+      tags: [Admin]
+      summary: Get outbox event detail
+      description: Returns a single outbox event by ID.
+      operationId: adminGetOutboxEvent
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Outbox event detail.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutboxEvent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags: [Admin]
+      summary: Replay outbox event
+      description: Resets a FAILED outbox event to PENDING so the processor will retry it.
+      operationId: adminReplayOutboxEvent
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Event replay initiated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  eventId:
+                    type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: Event is not in FAILED status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/outbox/events/replay-all:
+    post:
+      tags: [Admin]
+      summary: Replay all failed outbox events
+      description: Resets all FAILED outbox events to PENDING for bulk retry.
+      operationId: adminReplayAllOutboxEvents
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Bulk replay initiated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  replayed_count:
+                    type: integer
+                  total_failed:
+                    type: integer
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
