@@ -4,7 +4,9 @@ import { StyleSheet } from 'react-native';
 import { fireEvent, render as rtlRender, screen } from '@testing-library/react-native';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false, gcTime: Infinity } },
+});
 const render = (ui: React.ReactElement, options?: any) =>
   rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
 

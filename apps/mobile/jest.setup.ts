@@ -1,3 +1,10 @@
+import { notifyManager } from '@tanstack/react-query';
+
+// TanStack Query's default scheduler uses setTimeout(cb, 0) for batch notifications,
+// which fires after act() closes and triggers "not wrapped in act" warnings.
+// Running notifications synchronously prevents this.
+notifyManager.setScheduler((cb) => cb());
+
 jest.mock('react-native-reanimated', () => require('./__tests__/test-utils/reanimated-mock.js'));
 
 jest.mock('react-native-worklets', () => {

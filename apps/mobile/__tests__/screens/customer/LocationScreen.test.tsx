@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react-native';
+import { act, render, screen, fireEvent } from '@testing-library/react-native';
 import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockPush = jest.fn();
@@ -90,13 +90,15 @@ describe('LocationScreen (SCR-CUST-005)', () => {
     expect(screen.getByText('Location description')).toBeTruthy();
   });
 
-  it('navigates to schedule when next pressed with location', () => {
+  it('navigates to schedule when next pressed with location', async () => {
     render(<LocationScreen />);
     fireEvent.changeText(screen.getByTestId('location-text-input'), 'Behind State Dept Store');
-    fireEvent(screen.getByTestId('location-map'), 'onPress', {
-      nativeEvent: {
-        coordinate: { latitude: 47.92123, longitude: 106.91876 },
-      },
+    await act(async () => {
+      fireEvent(screen.getByTestId('location-map'), 'onPress', {
+        nativeEvent: {
+          coordinate: { latitude: 47.92123, longitude: 106.91876 },
+        },
+      });
     });
     fireEvent.press(screen.getByTestId('SCR-CUST-005-next'));
     expect(mockPush).toHaveBeenCalledWith(
@@ -121,7 +123,7 @@ describe('LocationScreen (SCR-CUST-005)', () => {
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
 
-  it('keeps next disabled until a pin is placed', () => {
+  it('keeps next disabled until a pin is placed', async () => {
     render(<LocationScreen />);
     const nextButton = screen.getByTestId('SCR-CUST-005-next');
 
@@ -129,10 +131,12 @@ describe('LocationScreen (SCR-CUST-005)', () => {
     fireEvent.press(nextButton);
     expect(mockPush).not.toHaveBeenCalled();
 
-    fireEvent(screen.getByTestId('location-map'), 'onPress', {
-      nativeEvent: {
-        coordinate: { latitude: 47.92123, longitude: 106.91876 },
-      },
+    await act(async () => {
+      fireEvent(screen.getByTestId('location-map'), 'onPress', {
+        nativeEvent: {
+          coordinate: { latitude: 47.92123, longitude: 106.91876 },
+        },
+      });
     });
 
     expect(nextButton).not.toBeDisabled();
