@@ -86,10 +86,13 @@ public class DomainEventOutboxProcessor {
                 .aggregateId(event.aggregateId() != null ? event.aggregateId().toString() : null)
                 .payload(parsePayload(event.payload()))
                 .correlationId(event.correlationId())
+                .traceId(event.traceId())
                 .causationId(event.causationId())
                 .commandId(event.commandId())
                 .workflowId(event.workflowId())
                 .actorId(event.actorId())
+                .locale(event.locale())
+                .platform(event.platform())
                 .occurredAt(event.createdAt())
                 .build();
         eventRelayPublisher.publish(envelope);

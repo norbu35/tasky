@@ -50,10 +50,13 @@ public class DomainEventOutboxService {
                 now,
                 now,
                 extractMdc(LogField.CORRELATION_ID.key()),
+                extractMdc(LogField.TRACE_ID.key()),
                 extractMdc(LogField.CAUSATION_ID.key()),
                 extractMdc(LogField.COMMAND_ID.key()),
                 extractMdc(LogField.WORKFLOW_ID.key()),
-                extractMdc(LogField.ACTOR_ID.key()));
+                extractMdc(LogField.ACTOR_ID.key()),
+                extractMdc(LogField.LOCALE.key()),
+                extractMdc(LogField.PLATFORM.key()));
     }
 
     private Map<String, Object> enrichWithObservability(Map<String, Object> payload) {

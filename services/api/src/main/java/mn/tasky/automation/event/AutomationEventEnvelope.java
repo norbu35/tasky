@@ -16,10 +16,13 @@ public record AutomationEventEnvelope(
         String aggregateId,
         Map<String, Object> payload,
         String correlationId,
+        String traceId,
         String causationId,
         String commandId,
         String workflowId,
         String actorId,
+        String locale,
+        String platform,
         Instant occurredAt,
         String publishedAt) {
 
@@ -34,10 +37,13 @@ public record AutomationEventEnvelope(
         private String aggregateId;
         private Map<String, Object> payload = Map.of();
         private String correlationId;
+        private String traceId;
         private String causationId;
         private String commandId;
         private String workflowId;
         private String actorId;
+        private String locale;
+        private String platform;
         private Instant occurredAt;
 
         public Builder eventId(String id) {
@@ -70,6 +76,11 @@ public record AutomationEventEnvelope(
             return this;
         }
 
+        public Builder traceId(String id) {
+            this.traceId = id;
+            return this;
+        }
+
         public Builder causationId(String id) {
             this.causationId = id;
             return this;
@@ -87,6 +98,16 @@ public record AutomationEventEnvelope(
 
         public Builder actorId(String id) {
             this.actorId = id;
+            return this;
+        }
+
+        public Builder locale(String value) {
+            this.locale = value;
+            return this;
+        }
+
+        public Builder platform(String value) {
+            this.platform = value;
             return this;
         }
 
@@ -109,10 +130,13 @@ public record AutomationEventEnvelope(
                     aggregateId,
                     payload,
                     correlationId,
+                    traceId,
                     causationId,
                     commandId,
                     workflowId,
                     actorId,
+                    locale,
+                    platform,
                     occurredAt,
                     Instant.now().toString());
         }

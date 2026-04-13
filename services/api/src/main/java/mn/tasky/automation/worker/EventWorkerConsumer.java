@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import mn.tasky.automation.event.AutomationEventEnvelope;
+import mn.tasky.kernel.context.ContextPropagator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -92,29 +93,18 @@ public class EventWorkerConsumer {
     }
 
     private void propagateMdc(AutomationEventEnvelope envelope) {
-        if (envelope.correlationId() != null) {
-            MDC.put("correlation_id", envelope.correlationId());
-        }
-        if (envelope.causationId() != null) {
-            MDC.put("causation_id", envelope.causationId());
-        }
-        if (envelope.commandId() != null) {
-            MDC.put("command_id", envelope.commandId());
-        }
-        if (envelope.workflowId() != null) {
-            MDC.put("workflow_id", envelope.workflowId());
-        }
-        if (envelope.actorId() != null) {
-            MDC.put("actor_id", envelope.actorId());
-        }
+        MDC.put(ContextPropagator.MDC_CORRELATION_ID, envelope.correlationId() != null ? envelope.correlationId() : "");
+        MDC.put(ContextPropagator.MDC_TRACE_ID, envelope.traceId() != null ? envelope.traceId() : "");
+        MDC.put(ContextPropagator.MDC_CAUSATION_ID, envelope.causationId() != null ? envelope.causationId() : "");
+        MDC.put(ContextPropagator.MDC_COMMAND_ID, envelope.commandId() != null ? envelope.commandId() : "");
+        MDC.put(ContextPropagator.MDC_WORKFLOW_ID, envelope.workflowId() != null ? envelope.workflowId() : "");
+        MDC.put(ContextPropagator.MDC_ACTOR_ID, envelope.actorId() != null ? envelope.actorId() : "");
+        MDC.put(ContextPropagator.MDC_LOCALE, envelope.locale() != null ? envelope.locale() : "");
+        MDC.put(ContextPropagator.MDC_PLATFORM, envelope.platform() != null ? envelope.platform() : "");
     }
 
     private void clearMdc() {
-        MDC.remove("correlation_id");
-        MDC.remove("causation_id");
-        MDC.remove("command_id");
-        MDC.remove("workflow_id");
-        MDC.remove("actor_id");
+        ContextPropagator.clear();
     }
 
     @SuppressWarnings("unchecked")
