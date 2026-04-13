@@ -824,7 +824,7 @@ Tranche 7.
 
 ## Tranche 10: Migrate Current Core Flows To V2 And Remove The Old Style
 
-**Status:** in progress
+**Status:** completed
 **Priority:** critical
 **Depends on:** Tranche 9
 

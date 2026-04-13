@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-04-13 — Tranche 10: Backend Finalization (COMPLETE)
+
+### Phase 0: Workflow handler idempotency (infra gate)
+
+- **Event idempotency table** — Flyway V25 adds `event_idempotency` (`event_id` TEXT PRIMARY KEY) for deduplicating workflow handler side effects on event redelivery.
+- **WorkflowIdempotencyGuard** — new `kernel.idempotency` component using `EventIdempotencyDao` with `claim()` / `find()` / `purge()` operations.
+- **AbstractEventHandler** — now provides `tryClaimEvent(envelope)` for subclass handlers; `@Nullable` injection keeps handlers functional when broker is disabled.
+- **All three workflow handlers guarded**:
+  - `TaskApplicationAcceptedHandler` — duplicate events won't create duplicate conversations or notifications.
+  - `PaymentConfirmedHandler` — duplicate events won't resend push notifications.
+  - `BookingCompletedHandler` — duplicate events won't duplicate wallet credits (financial safety).
+- **7 duplicate-delivery tests** (SCN-T10-IDEM-001 through SCN-T10-IDEM-007) verify first-delivery side effects execute once and duplicate deliveries are skipped.
+
+### Slice 1: Boundary lock and async simplification
+
+- **Explicit exception registry** — `AudienceCompositionBoundaryTest` now documents 10 controllers allowed outside the two standard request-path shapes, with `allControllersAreAccountedFor()` test preventing silent escapes.
+- **`runtimeCompositionMustNotDependOnDaos`** — new ArchUnit rule enforcing that runtime composition services use publicapi ports, not DAOs.
+- **Deleted speculative async placeholders** — `OutboxEnvelope` and `AutomationJobEnvelope` removed (zero references); live async foundation is the persisted outbox relay to RabbitMQ only.
+- **`KernelSkeletonTest`** updated to remove deleted envelope assertions.
+
+### Slice 2: Public request-path convergence
+
+- **NotificationCompositionService** created; `NotificationController` now routes through runtime composition.
+- **AdminUserCompositionService** created; `AdminUserController` now routes through admin composition.
+- **MessagingQueryPort** extended with `findFlaggedMessages()`; `AdminMessageCompositionService` updated to use port instead of `MessageDao`.
+- **MarketplaceCommandPort** extended with `updateTaskStatus()`; `AdminTaskConciergeAssignmentService` updated to use Marketplace ports instead of `TaskDao`.
+- **IdentityCommandPort** extended with `requestAccountDeletion()`; `UserAccountDeletionService` updated to use port instead of `UserDao`/`AuditEventDao`.
+- All 9 architecture tests pass.
+
+### Slice 3: Documentation sync
+
+- **`docs/ARCHITECTURE.md`** updated with §2.3 V2 Request-Path Architecture documenting the two allowed shapes, forbidden patterns, and exception set.
+- **Tranche 10** marked completed in rewrite implementation plan.
+
+---
+
 ## 2026-04-13 — Tranche 10: Core flows to v2 architecture (Phase 0 + Slice 1)
 
 ### Phase 0: Workflow handler idempotency (infra gate)
