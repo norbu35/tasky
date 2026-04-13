@@ -35,6 +35,8 @@ import mn.tasky.notification.dao.DistrictDao;
 import mn.tasky.notification.dao.NotificationLogDao;
 import mn.tasky.notification.dao.TaskerServiceAreaDao;
 import mn.tasky.payment.dao.PaymentIntentDao;
+import mn.tasky.projection.admin.AdminDisputeQueueProjectionDao;
+import mn.tasky.projection.admin.AdminVerificationQueueProjectionDao;
 import mn.tasky.review.dao.ReviewDao;
 import mn.tasky.review.dao.ReviewEnforcementCaseDao;
 import mn.tasky.task.dao.TaskApplicationDao;
@@ -267,6 +269,17 @@ public class JdbiConfig {
     @Bean
     public DisputeEvidenceDao disputeEvidenceDao(Jdbi jdbi) {
         return jdbi.onDemand(DisputeEvidenceDao.class);
+    }
+
+    // Projection DAOs
+    @Bean
+    public AdminVerificationQueueProjectionDao adminVerificationQueueProjectionDao(Jdbi jdbi) {
+        return jdbi.onDemand(AdminVerificationQueueProjectionDao.class);
+    }
+
+    @Bean
+    public AdminDisputeQueueProjectionDao adminDisputeQueueProjectionDao(Jdbi jdbi) {
+        return jdbi.onDemand(AdminDisputeQueueProjectionDao.class);
     }
 
     // Review DAOs

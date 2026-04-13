@@ -2,9 +2,9 @@ package mn.tasky.auth.api;
 
 import jakarta.validation.Valid;
 import java.util.Map;
-import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dto.AuthSession;
 import mn.tasky.auth.dto.DevLoginRequest;
+import mn.tasky.identity.publicapi.IdentityCommandPort;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,15 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 @ConditionalOnProperty(name = "tasky.dev-auth.enabled", havingValue = "true")
 public class DevAuthController {
 
-    private final AuthService authService;
+    private final IdentityCommandPort identityCommandPort;
 
-    public DevAuthController(AuthService authService) {
-        this.authService = authService;
+    public DevAuthController(IdentityCommandPort identityCommandPort) {
+        this.identityCommandPort = identityCommandPort;
     }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> devLogin(@Valid @RequestBody DevLoginRequest body) {
-        AuthSession session = authService.devLogin(body.phone(), body.role());
+        AuthSession session = identityCommandPort.devLogin(body.phone(), body.role());
         return ResponseEntity.ok(Map.of(
                 "access_token",
                 session.accessToken(),

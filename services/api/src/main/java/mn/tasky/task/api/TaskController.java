@@ -1,41 +1,30 @@
 package mn.tasky.task.api;
 
-import static mn.tasky.booking.api.BookingResponseMapper.basic;
 import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
 import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
 import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.IntStream;
-import mn.tasky.auth.application.AuthService;
-import mn.tasky.booking.application.BookingService;
-import mn.tasky.category.application.CategoryService;
-import mn.tasky.category.dto.CategoryState;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
-import mn.tasky.common.idempotency.IdempotencyClaim;
-import mn.tasky.common.idempotency.IdempotencyOperations;
-import mn.tasky.common.idempotency.IdempotencyService;
 import mn.tasky.common.security.JwtPrincipal;
-import mn.tasky.location.application.LocationService;
+import mn.tasky.marketplace.publicapi.MarketplaceCommandPort;
+import mn.tasky.marketplace.publicapi.MarketplaceQueryPort;
+import mn.tasky.runtime.publicapi.composition.PublicTaskCompositionService;
+import mn.tasky.runtime.publicapi.composition.TaskApplicationAcceptanceOutcome;
+import mn.tasky.runtime.publicapi.composition.TaskApplicationAcceptanceService;
 import mn.tasky.task.application.TaskDraftService;
-import mn.tasky.task.application.TaskService;
 import mn.tasky.task.dto.AcceptApplicationRequest;
 import mn.tasky.task.dto.ApplyTaskRequest;
 import mn.tasky.task.dto.CreateDraftRequest;
 import mn.tasky.task.dto.CreateTask;
 import mn.tasky.task.dto.CreateTaskRequest;
-import mn.tasky.task.dto.RecentLocation;
-import mn.tasky.task.dto.TaskAcceptResult;
 import mn.tasky.task.dto.TaskApplicationState;
 import mn.tasky.task.dto.TaskApplicationsListResult;
 import mn.tasky.task.dto.TaskApplyResult;
@@ -63,39 +52,29 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.HtmlUtils;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
 @Validated
 public class TaskController {
 
-    private final TaskService taskService;
+    private final MarketplaceCommandPort marketplaceCommandPort;
+    private final MarketplaceQueryPort marketplaceQueryPort;
     private final TaskDraftService taskDraftService;
-    private final CategoryService categoryService;
-    private final AuthService authService;
-    private final BookingService bookingService;
-    private final IdempotencyService idempotencyService;
-    private final ObjectMapper objectMapper;
-    private final LocationService locationService;
+    private final PublicTaskCompositionService taskCompositionService;
+    private final TaskApplicationAcceptanceService taskApplicationAcceptanceService;
 
     public TaskController(
-            TaskService taskService,
+            MarketplaceCommandPort marketplaceCommandPort,
+            MarketplaceQueryPort marketplaceQueryPort,
             TaskDraftService taskDraftService,
-            CategoryService categoryService,
-            AuthService authService,
-            BookingService bookingService,
-            IdempotencyService idempotencyService,
-            ObjectMapper objectMapper,
-            LocationService locationService) {
-        this.taskService = taskService;
+            PublicTaskCompositionService taskCompositionService,
+            TaskApplicationAcceptanceService taskApplicationAcceptanceService) {
+        this.marketplaceCommandPort = marketplaceCommandPort;
+        this.marketplaceQueryPort = marketplaceQueryPort;
         this.taskDraftService = taskDraftService;
-        this.categoryService = categoryService;
-        this.authService = authService;
-        this.bookingService = bookingService;
-        this.idempotencyService = idempotencyService;
-        this.objectMapper = objectMapper;
-        this.locationService = locationService;
+        this.taskCompositionService = taskCompositionService;
+        this.taskApplicationAcceptanceService = taskApplicationAcceptanceService;
     }
 
     @GetMapping
@@ -108,10 +87,8 @@ public class TaskController {
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
             HttpServletRequest request) {
         try {
-            TaskPage page = taskService.listTasks(category, lat, lng, radiusKm, cursor, limit);
-
-            List<Map<String, Object>> data =
-                    page.data().stream().map(this::toPublicTaskResponse).toList();
+            TaskPage page = marketplaceQueryPort.listTasks(category, lat, lng, radiusKm, cursor, limit);
+            List<Map<String, Object>> data = taskCompositionService.toPublicTaskResponses(page.data());
 
             return ResponseEntity.ok(
                     new PagedResponse<>(data, new CursorPagination(page.nextCursor(), page.hasMore())));
@@ -127,83 +104,6 @@ public class TaskController {
         }
     }
 
-    private Map<String, Object> toPublicTaskResponse(TaskState task) {
-        Map<String, Object> response = new LinkedHashMap<>();
-        var approx = locationService.reverseGeocode(task.locationLat(), task.locationLng());
-        response.put("id", task.id());
-
-        categoryService
-                .getCategory(task.categoryId())
-                .ifPresent(cat -> response.put("category", toCategoryPayload(cat)));
-
-        authService
-                .getProfile(task.customerId())
-                .ifPresent(profile -> response.put(
-                        "customer",
-                        Map.of(
-                                "id",
-                                profile.id(),
-                                "full_name",
-                                profile.fullName(),
-                                "avatar_url",
-                                profile.avatarUrl() != null ? profile.avatarUrl() : "",
-                                "rating_avg",
-                                profile.ratingAvg())));
-
-        response.put("description", task.description());
-        response.put("budget", task.budget());
-        response.put("approximate_location", approx.formattedAddress());
-        response.put("approximate_lat", approx.approximateLat());
-        response.put("approximate_lng", approx.approximateLng());
-        response.put("status", task.status());
-        response.put("scheduled_at", task.scheduledAt().toString());
-        List<String> photoKeys = task.photoKeys() == null ? List.of() : task.photoKeys();
-        response.put("photo_urls", taskService.buildPhotoAccessUrls(photoKeys, task.customerId()));
-        response.put("application_count", taskApplicationCount(task.id()));
-        response.put("created_at", task.createdAt().toString());
-
-        return response;
-    }
-
-    private int taskApplicationCount(String taskId) {
-        return taskService.countApplications(taskId);
-    }
-
-    private Map<String, Object> toCategoryPayload(CategoryState category) {
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("id", category.id());
-        response.put("name", sanitize(category.name()));
-        response.put("name_mn", sanitize(category.nameMn()));
-        response.put("icon_url", sanitize(category.iconUrl()));
-        response.put("is_active", category.isActive());
-        response.put("sort_order", category.sortOrder());
-        response.put("intake_enabled", Boolean.TRUE.equals(category.intakeEnabled()));
-        response.put(
-                "intake_schema_version", category.intakeSchemaVersion() != null ? category.intakeSchemaVersion() : 0);
-        response.put("intake_schema_json", parseJson(category.intakeSchemaJson()));
-        return response;
-    }
-
-    private Object parseJsonOrEmptyObject(String value) {
-        Object parsed = parseJson(value);
-        return parsed != null ? parsed : Map.of();
-    }
-
-    private Object parseJson(String value) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-        try {
-            return objectMapper.readValue(value, Object.class);
-        } catch (IOException exception) {
-            return null;
-        }
-    }
-
-    private String sanitize(String value) {
-        return value == null ? null : HtmlUtils.htmlEscape(value);
-    }
-
     @GetMapping("/mine/recent-locations")
     public ResponseEntity<?> recentLocations(
             @AuthenticationPrincipal JwtPrincipal principal, HttpServletRequest request) {
@@ -217,19 +117,8 @@ public class TaskController {
                             "trace_id",
                             resolveTraceId(request)));
         }
-        List<RecentLocation> locations = taskService.recentLocations(principal.userId(), 3);
-
-        List<Map<String, Object>> data = locations.stream()
-                .map(loc -> {
-                    Map<String, Object> entry = new LinkedHashMap<>();
-                    entry.put("location_lat", loc.locationLat());
-                    entry.put("location_lng", loc.locationLng());
-                    entry.put("location_text", loc.locationText());
-                    return entry;
-                })
-                .toList();
-
-        return ResponseEntity.ok(Map.of("locations", data));
+        return ResponseEntity.ok(taskCompositionService.recentLocationsResponse(
+                marketplaceQueryPort.recentLocations(principal.userId(), 3)));
     }
 
     @GetMapping("/mine")
@@ -241,9 +130,8 @@ public class TaskController {
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
             HttpServletRequest request) {
         try {
-            TaskPage page = taskService.listMyTasks(principal.userId(), role, status, cursor, limit);
-            List<Map<String, Object>> data =
-                    page.data().stream().map(this::toTaskResponse).toList();
+            TaskPage page = marketplaceQueryPort.listMyTasks(principal.userId(), role, status, cursor, limit);
+            List<Map<String, Object>> data = taskCompositionService.toOwnedTaskResponses(page.data());
             return ResponseEntity.ok(
                     new PagedResponse<>(data, new CursorPagination(page.nextCursor(), page.hasMore())));
         } catch (IllegalArgumentException exception) {
@@ -261,72 +149,16 @@ public class TaskController {
         }
     }
 
-    private Map<String, Object> toTaskResponse(TaskState task) {
-        Map<String, Object> response = new LinkedHashMap<>();
-        List<String> rawPhotoKeys = task.photoKeys();
-        final List<String> photoKeys = rawPhotoKeys == null ? List.of() : rawPhotoKeys;
-        List<Map<String, Object>> photos = IntStream.range(0, photoKeys.size())
-                .mapToObj(index -> toOwnedPhotoResponse(photoKeys.get(index), index, task.customerId()))
-                .flatMap(Optional::stream)
-                .toList();
-        List<String> visiblePhotoKeys = photos.stream()
-                .map(photo -> String.valueOf(photo.get("storage_key")))
-                .toList();
-        response.put("id", task.id());
-        response.put("category_id", task.categoryId());
-        categoryService
-                .getCategory(task.categoryId())
-                .ifPresent(cat -> response.put("category", toCategoryPayload(cat)));
-        response.put("customer_id", task.customerId());
-        response.put("description", task.description());
-        response.put("budget", task.budget());
-        response.put("location_lat", task.locationLat());
-        response.put("location_lng", task.locationLng());
-        response.put("location_text", task.locationText());
-        response.put("status", task.status());
-        response.put("scheduled_at", task.scheduledAt().toString());
-        response.put("intake_answers", parseJsonOrEmptyObject(task.intakeAnswersJson()));
-        response.put("intake_schema_version", task.intakeSchemaVersion() != null ? task.intakeSchemaVersion() : 0);
-        response.put("scope_summary_source", task.scopeSummarySource());
-        response.put("photos", photos);
-        response.put("photo_keys", visiblePhotoKeys);
-        response.put("created_at", task.createdAt().toString());
-        response.put("updated_at", task.updatedAt().toString());
-        return response;
-    }
-
-    private Optional<Map<String, Object>> toOwnedPhotoResponse(String storageKey, int sortOrder, String customerId) {
-        return taskService.buildOwnedPhotoAccessUrl(storageKey, customerId).map(url -> {
-            Map<String, Object> photo = new LinkedHashMap<>();
-            photo.put("storage_key", storageKey);
-            photo.put("url", url);
-            photo.put("sort_order", sortOrder);
-            return photo;
-        });
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<?> getTask(
             @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id, HttpServletRequest request) {
-        Optional<TaskState> taskOpt = taskService.getTask(id);
+        Optional<TaskState> taskOpt = marketplaceQueryPort.getTask(id);
         if (taskOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
                             "code", "NOT_FOUND", "message", "Task not found.", "trace_id", resolveTraceId(request)));
         }
-
-        TaskState task = taskOpt.get();
-        boolean owner = task.customerId().equals(principal.userId());
-        boolean bookedTasker = bookingService.listBookings(principal.userId(), "tasker", null).stream()
-                .anyMatch(booking -> booking.taskId().equals(task.id())
-                        && ("ASSIGNED".equals(booking.status())
-                                || "PAID".equals(booking.status())
-                                || "COMPLETED".equals(booking.status())));
-
-        if (owner || bookedTasker) {
-            return ResponseEntity.ok(toTaskResponse(task));
-        }
-        return ResponseEntity.ok(toPublicTaskResponse(task));
+        return ResponseEntity.ok(taskCompositionService.toTaskResponseForViewer(taskOpt.get(), principal.userId()));
     }
 
     @PostMapping
@@ -345,7 +177,7 @@ public class TaskController {
                             resolveTraceId(request)));
         }
 
-        TaskCreateResult result = taskService.createTask(
+        TaskCreateResult result = marketplaceCommandPort.createTask(
                 principal.userId(),
                 new CreateTask(
                         body.categoryId(),
@@ -364,7 +196,8 @@ public class TaskController {
                         body.draftId()));
 
         if (result.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(toTaskResponse(result.task()));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(taskCompositionService.toOwnedTaskResponse(result.task()));
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -383,7 +216,7 @@ public class TaskController {
             @PathVariable String id,
             @Valid @RequestBody UpdateTaskRequest body,
             HttpServletRequest request) {
-        TaskUpdateResult result = taskService.updateTask(
+        TaskUpdateResult result = marketplaceCommandPort.updateTask(
                 principal.userId(),
                 id,
                 new UpdateTask(
@@ -396,7 +229,7 @@ public class TaskController {
                         body.photoKeys()));
 
         if (result.isSuccess()) {
-            return ResponseEntity.ok(toTaskResponse(result.task()));
+            return ResponseEntity.ok(taskCompositionService.toOwnedTaskResponse(result.task()));
         }
 
         return switch (result.errorCode()) {
@@ -466,10 +299,10 @@ public class TaskController {
     @PostMapping("/{id}/cancel")
     public ResponseEntity<?> cancelTask(
             @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id, HttpServletRequest request) {
-        TaskCancelResult result = taskService.cancelTask(principal.userId(), id);
+        TaskCancelResult result = marketplaceCommandPort.cancelTask(principal.userId(), id);
 
         if (result.isSuccess()) {
-            return ResponseEntity.ok(toTaskResponse(result.task()));
+            return ResponseEntity.ok(taskCompositionService.toOwnedTaskResponse(result.task()));
         }
 
         return switch (result.errorCode()) {
@@ -502,10 +335,12 @@ public class TaskController {
             @PathVariable String id,
             @Valid @RequestBody ApplyTaskRequest body,
             HttpServletRequest request) {
-        TaskApplyResult result = taskService.applyToTask(principal.userId(), principal.role(), id, body.message());
+        TaskApplyResult result =
+                marketplaceCommandPort.applyToTask(principal.userId(), principal.role(), id, body.message());
 
         if (result.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(toApplicationResponse(result.application()));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(taskCompositionService.toTaskApplicationResponse(result.application()));
         }
 
         return switch (result.errorCode()) {
@@ -540,31 +375,6 @@ public class TaskController {
         };
     }
 
-    private Map<String, Object> toApplicationResponse(TaskApplicationState app) {
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("id", app.id());
-        response.put("task_id", app.taskId());
-        response.put(
-                "tasker",
-                Map.of(
-                        "id",
-                        app.taskerId(),
-                        "full_name",
-                        app.taskerFullName(),
-                        "avatar_url",
-                        app.taskerAvatarUrl() != null ? app.taskerAvatarUrl() : "",
-                        "rating_avg",
-                        app.taskerRatingAvg(),
-                        "completed_tasks",
-                        app.taskerCompletedTasks(),
-                        "is_pro",
-                        app.taskerIsPro()));
-        response.put("message", app.message());
-        response.put("status", app.status());
-        response.put("created_at", app.createdAt().toString());
-        return response;
-    }
-
     @GetMapping("/{id}/applications")
     public ResponseEntity<?> listTaskApplications(
             @AuthenticationPrincipal JwtPrincipal principal,
@@ -574,7 +384,7 @@ public class TaskController {
             HttpServletRequest request) {
         TaskApplicationsListResult result;
         try {
-            result = taskService.listTaskApplications(principal.userId(), id, cursor, limit + 1);
+            result = marketplaceQueryPort.listTaskApplications(principal.userId(), id, cursor, limit + 1);
         } catch (IllegalArgumentException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of(
@@ -592,8 +402,7 @@ public class TaskController {
             List<TaskApplicationState> pageData = hasMore ? applications.subList(0, limit) : applications;
             String nextCursor = hasMore ? pageData.getLast().id() : null;
 
-            List<Map<String, Object>> data =
-                    pageData.stream().map(this::toApplicationResponse).toList();
+            List<Map<String, Object>> data = taskCompositionService.toTaskApplicationResponses(pageData);
             return ResponseEntity.ok(new PagedResponse<>(data, new CursorPagination(nextCursor, hasMore)));
         }
 
@@ -621,85 +430,40 @@ public class TaskController {
             @Valid @RequestBody AcceptApplicationRequest body,
             @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
             HttpServletRequest request) {
-        IdempotencyClaim claim =
-                idempotencyService.claim(principal.userId(), IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey);
-        if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
-            return idempotencyInProgress(request);
-        }
-        if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
-            if (claim.record() == null || claim.record().resourceId() == null) {
-                return idempotencyReplayMissing(request);
-            }
-            String bookingId = claim.record().resourceId().toString();
-            return bookingService
-                    .getBooking(bookingId)
-                    .<ResponseEntity<?>>map(booking -> ResponseEntity.ok(basic(booking)))
-                    .orElseGet(() -> idempotencyReplayMissing(request));
-        }
+        TaskApplicationAcceptanceOutcome outcome = taskApplicationAcceptanceService.acceptApplication(
+                principal.userId(),
+                id,
+                applicationId,
+                Boolean.TRUE.equals(body.liabilityDisclaimerAccepted()),
+                idempotencyKey);
 
-        try {
-            TaskAcceptResult result = taskService.acceptApplication(
-                    principal.userId(), id, applicationId, Boolean.TRUE.equals(body.liabilityDisclaimerAccepted()));
-
-            if (result.isSuccess()) {
-                idempotencyService.completeWithResource(
-                        principal.userId(),
-                        IdempotencyOperations.ACCEPT_APPLICATION,
-                        idempotencyKey,
-                        "BOOKING",
-                        result.booking().id());
-                return ResponseEntity.ok(basic(result.booking()));
-            }
-
-            idempotencyService.abandon(principal.userId(), IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey);
-            return switch (result.errorCode()) {
-                case TaskAcceptResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Map.of(
-                                "code",
-                                "NOT_FOUND",
-                                "message",
-                                "Task or application not found.",
-                                "trace_id",
-                                resolveTraceId(request)));
-                case TaskAcceptResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body(Map.of(
-                                "code",
-                                "FORBIDDEN",
-                                "message",
-                                "Only the task owner can accept applications.",
-                                "trace_id",
-                                resolveTraceId(request)));
-                case TaskAcceptResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(Map.of(
-                                "code",
-                                "TASK_NOT_OPEN",
-                                "message",
-                                "Task is no longer open.",
-                                "trace_id",
-                                resolveTraceId(request)));
-                case TaskAcceptResult.DISCLAIMER_REQUIRED -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of(
-                                "code",
-                                "DISCLAIMER_REQUIRED",
-                                "message",
-                                "Liability disclaimer must be accepted to confirm booking.",
-                                "trace_id",
-                                resolveTraceId(request)));
-                case TaskAcceptResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(Map.of(
-                                "code",
-                                "CONFLICT",
-                                "message",
-                                "Application already processed or task assigned.",
-                                "trace_id",
-                                resolveTraceId(request)));
-                default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .build();
-            };
-        } catch (RuntimeException exception) {
-            idempotencyService.abandon(principal.userId(), IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey);
-            throw exception;
-        }
+        return switch (outcome.status()) {
+            case IN_PROGRESS -> idempotencyInProgress(request);
+            case REPLAY_MISSING -> idempotencyReplayMissing(request);
+            case SUCCESS -> ResponseEntity.ok(outcome.body());
+            case NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "code", outcome.errorCode(),
+                            "message", outcome.errorMessage(),
+                            "trace_id", resolveTraceId(request)));
+            case FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of(
+                            "code", outcome.errorCode(),
+                            "message", outcome.errorMessage(),
+                            "trace_id", resolveTraceId(request)));
+            case TASK_NOT_OPEN, CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of(
+                            "code", outcome.errorCode(),
+                            "message", outcome.errorMessage(),
+                            "trace_id", resolveTraceId(request)));
+            case DISCLAIMER_REQUIRED -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of(
+                            "code", outcome.errorCode(),
+                            "message", outcome.errorMessage(),
+                            "trace_id", resolveTraceId(request)));
+            case INTERNAL_ERROR -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        };
     }
 
     @PostMapping("/{id}/photos/upload-url")
@@ -708,7 +472,7 @@ public class TaskController {
             @PathVariable String id,
             @Valid @RequestBody TaskPhotoUploadUrlRequest body,
             HttpServletRequest request) {
-        Optional<TaskState> taskOpt = taskService.getTask(id);
+        Optional<TaskState> taskOpt = marketplaceQueryPort.getTask(id);
         if (taskOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
@@ -748,7 +512,7 @@ public class TaskController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @Valid @RequestBody TaskPhotoUploadUrlRequest body,
             HttpServletRequest request) {
-        return taskService
+        return marketplaceCommandPort
                 .createPhotoUploadUrl(principal.userId(), body.contentType())
                 .<ResponseEntity<?>>map(upload ->
                         ResponseEntity.ok(Map.of("upload_url", upload.uploadUrl(), "storage_key", upload.storageKey())))

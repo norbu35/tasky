@@ -60,6 +60,17 @@ management:
 tasky:
   api:
     version: v1
+  runtime:
+    public-api:
+      enabled: ${TASKY_RUNTIME_PUBLIC_API_ENABLED:true}
+      base-path: ${TASKY_RUNTIME_PUBLIC_API_BASE_PATH:/api}
+    admin-api:
+      enabled: ${TASKY_RUNTIME_ADMIN_API_ENABLED:true}
+      base-path: ${TASKY_RUNTIME_ADMIN_API_BASE_PATH:/api/admin}
+    worker:
+      enabled: ${TASKY_RUNTIME_WORKER_ENABLED:true}
+    scheduler:
+      enabled: ${TASKY_RUNTIME_SCHEDULER_ENABLED:true}
   otp:
     enabled: ${TASKY_OTP_ENABLED:false}
   facebook:

@@ -1,20 +1,17 @@
 package mn.tasky.user.api;
 
-import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
+import static mn.tasky.common.api.ApiResponseSupport.errorBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.net.URI;
-import java.util.Map;
-import mn.tasky.auth.application.AuthService;
-import mn.tasky.auth.dao.UserDao;
-import mn.tasky.auth.dto.ProfileUpdate;
-import mn.tasky.auth.dto.UserProfile;
-import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.security.JwtPrincipal;
-import mn.tasky.common.storage.StorageKeyPolicy;
+import mn.tasky.identity.publicapi.IdentityCommandPort;
+import mn.tasky.identity.publicapi.IdentityQueryPort;
+import mn.tasky.runtime.publicapi.composition.UserProfileCompositionService;
+import mn.tasky.runtime.publicapi.composition.UserProfileUpdateOutcome;
+import mn.tasky.runtime.publicapi.composition.UserProfileUpdateService;
+import mn.tasky.runtime.user.composition.UserAccountDeletionService;
 import mn.tasky.user.dto.AvatarUploadUrlRequest;
-import mn.tasky.user.dto.ProfileResponse;
 import mn.tasky.user.dto.UpdateProfileRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,50 +30,33 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class UserProfileController {
 
-    private final AuthService authService;
-    private final UserDao userDao;
-    private final AuditEventDao auditEventDao;
-    private final StorageKeyPolicy storageKeyPolicy;
+    private final IdentityCommandPort identityCommandPort;
+    private final IdentityQueryPort identityQueryPort;
+    private final UserProfileCompositionService userProfileCompositionService;
+    private final UserProfileUpdateService userProfileUpdateService;
+    private final UserAccountDeletionService userAccountDeletionService;
 
     public UserProfileController(
-            AuthService authService, UserDao userDao, AuditEventDao auditEventDao, StorageKeyPolicy storageKeyPolicy) {
-        this.authService = authService;
-        this.userDao = userDao;
-        this.auditEventDao = auditEventDao;
-        this.storageKeyPolicy = storageKeyPolicy;
+            IdentityCommandPort identityCommandPort,
+            IdentityQueryPort identityQueryPort,
+            UserProfileCompositionService userProfileCompositionService,
+            UserProfileUpdateService userProfileUpdateService,
+            UserAccountDeletionService userAccountDeletionService) {
+        this.identityCommandPort = identityCommandPort;
+        this.identityQueryPort = identityQueryPort;
+        this.userProfileCompositionService = userProfileCompositionService;
+        this.userProfileUpdateService = userProfileUpdateService;
+        this.userAccountDeletionService = userAccountDeletionService;
     }
 
     @GetMapping("/me")
     public ResponseEntity<?> getMyProfile(@AuthenticationPrincipal JwtPrincipal principal, HttpServletRequest request) {
-        return authService
+        return identityQueryPort
                 .getProfile(principal.userId())
-                .<ResponseEntity<?>>map(profile -> ResponseEntity.ok(toProfileResponse(profile)))
-                .orElseGet(() -> unauthorizedResponse(request));
-    }
-
-    private ProfileResponse toProfileResponse(UserProfile profile) {
-        return new ProfileResponse(
-                profile.id(),
-                profile.phone(),
-                profile.role(),
-                profile.status(),
-                profile.fullName(),
-                profile.avatarUrl(),
-                profile.ratingAvg(),
-                profile.completedTasks(),
-                profile.isPro(),
-                profile.createdAt());
-    }
-
-    private ResponseEntity<Map<String, String>> unauthorizedResponse(HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of(
-                        "code",
-                        "USER_NOT_FOUND",
-                        "message",
-                        "Authenticated user could not be resolved.",
-                        "trace_id",
-                        resolveTraceId(request)));
+                .<ResponseEntity<?>>map(
+                        profile -> ResponseEntity.ok(userProfileCompositionService.profileResponse(profile)))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(errorBody("USER_NOT_FOUND", "Authenticated user could not be resolved.", request)));
     }
 
     @PutMapping("/me")
@@ -84,52 +64,27 @@ public class UserProfileController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @Valid @RequestBody UpdateProfileRequest body,
             HttpServletRequest request) {
-        if (body.avatarUrl() != null) {
-            try {
-                storageKeyPolicy.validateOwnedKey(
-                        extractAvatarStorageKey(body.avatarUrl()),
-                        StorageKeyPolicy.Namespace.AVATAR,
-                        principal.userId());
-            } catch (IllegalArgumentException exception) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of(
-                                "code",
-                                "INVALID_AVATAR_KEY",
-                                "message",
-                                "Avatar key must belong to the caller's avatar namespace.",
-                                "trace_id",
-                                resolveTraceId(request)));
-            }
-        }
-
-        ProfileUpdate update = new ProfileUpdate(body.fullName(), body.avatarUrl());
-
-        return authService
-                .updateProfile(principal.userId(), update)
-                .<ResponseEntity<?>>map(profile -> ResponseEntity.ok(toProfileResponse(profile)))
-                .orElseGet(() -> unauthorizedResponse(request));
+        UserProfileUpdateOutcome outcome =
+                userProfileUpdateService.updateProfile(principal.userId(), body.fullName(), body.avatarUrl());
+        return switch (outcome.status()) {
+            case SUCCESS -> ResponseEntity.ok(outcome.profile());
+            case INVALID_AVATAR_KEY -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(errorBody(
+                            "INVALID_AVATAR_KEY", "Avatar key must belong to the caller's avatar namespace.", request));
+            case USER_NOT_FOUND -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(errorBody("USER_NOT_FOUND", "Authenticated user could not be resolved.", request));
+        };
     }
 
     @PostMapping("/me/role/tasker")
     public ResponseEntity<?> activateTaskerRole(
             @AuthenticationPrincipal JwtPrincipal principal, HttpServletRequest request) {
-        return authService
+        return identityCommandPort
                 .activateTaskerRole(principal.userId())
-                .<ResponseEntity<?>>map(result -> ResponseEntity.ok(Map.of(
-                        "access_token",
-                        result.accessToken(),
-                        "refresh_token",
-                        result.refreshToken(),
-                        "user",
-                        result.user())))
+                .<ResponseEntity<?>>map(
+                        result -> ResponseEntity.ok(userProfileCompositionService.roleActivationResponse(result)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(Map.of(
-                                "code",
-                                "ROLE_ALREADY_ASSIGNED",
-                                "message",
-                                "User is already TASKER or ADMIN.",
-                                "trace_id",
-                                resolveTraceId(request))));
+                        .body(errorBody("ROLE_ALREADY_ASSIGNED", "User is already TASKER or ADMIN.", request)));
     }
 
     @PostMapping("/me/avatar/upload-url")
@@ -137,44 +92,16 @@ public class UserProfileController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @Valid @RequestBody AvatarUploadUrlRequest body,
             HttpServletRequest request) {
-        return authService
+        return identityCommandPort
                 .createAvatarUploadUrl(principal.userId(), body.contentType())
-                .<ResponseEntity<?>>map(upload ->
-                        ResponseEntity.ok(Map.of("upload_url", upload.uploadUrl(), "storage_key", upload.storageKey())))
-                .orElseGet(() -> unauthorizedResponse(request));
+                .<ResponseEntity<?>>map(
+                        upload -> ResponseEntity.ok(userProfileCompositionService.avatarUploadResponse(upload)))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(errorBody("USER_NOT_FOUND", "Authenticated user could not be resolved.", request)));
     }
 
     @DeleteMapping("/me")
     public ResponseEntity<?> deleteMyAccount(@AuthenticationPrincipal JwtPrincipal principal) {
-        userDao.updateStatus(principal.userId(), "DELETED");
-
-        auditEventDao.insert(
-                principal.userId(),
-                "USER_SELF_DELETE_REQUEST",
-                "USER",
-                principal.userId(),
-                "{\"reason\":\"USER_SELF_DELETE_REQUEST\"}");
-
-        return ResponseEntity.ok(
-                Map.of("message", "Account deletion requested. Data will be removed after 90-day retention period."));
-    }
-
-    private String extractAvatarStorageKey(String avatarUrl) {
-        if (avatarUrl.startsWith("uploads/")) {
-            return avatarUrl;
-        }
-
-        URI uri = URI.create(avatarUrl);
-        String host = uri.getHost();
-        if (!"cdn.tasky.mn".equals(host) && !"cdn.tasky.local".equals(host)) {
-            throw new IllegalArgumentException("Invalid avatar URL");
-        }
-
-        String path = uri.getPath();
-        if (path == null || path.isBlank()) {
-            throw new IllegalArgumentException("Invalid avatar URL");
-        }
-
-        return path.startsWith("/") ? path.substring(1) : path;
+        return ResponseEntity.ok(userAccountDeletionService.deleteMyAccount(principal.userId()));
     }
 }

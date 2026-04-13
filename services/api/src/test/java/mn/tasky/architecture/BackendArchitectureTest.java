@@ -70,4 +70,29 @@ class BackendArchitectureTest {
                     "mn.tasky.review.scheduling..",
                     "mn.tasky.task.scheduling..")
             .allowEmptyShould(true);
+
+    @ArchTest
+    static final ArchRule kernelMustNotDependOnFeatureModules = noClasses()
+            .that()
+            .resideInAnyPackage("mn.tasky.kernel..")
+            .should()
+            .dependOnClassesThat()
+            .resideInAnyPackage(
+                    "mn.tasky.auth..",
+                    "mn.tasky.booking..",
+                    "mn.tasky.category..",
+                    "mn.tasky.task..",
+                    "mn.tasky.review..",
+                    "mn.tasky.wallet..",
+                    "mn.tasky.payment..",
+                    "mn.tasky.dispute..",
+                    "mn.tasky.messaging..",
+                    "mn.tasky.notification..",
+                    "mn.tasky.admin..",
+                    "mn.tasky.analytics..",
+                    "mn.tasky.user..",
+                    "mn.tasky.verification..",
+                    "mn.tasky.security..")
+            .because("kernel should remain a narrow shared plane instead of accumulating feature logic")
+            .allowEmptyShould(true);
 }

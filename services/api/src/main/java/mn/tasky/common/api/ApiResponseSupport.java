@@ -13,13 +13,16 @@ public final class ApiResponseSupport {
 
     public static ResponseEntity<Map<String, String>> idempotencyInProgress(HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Map.of(
-                        "code",
-                        "IDEMPOTENCY_IN_PROGRESS",
-                        "message",
-                        "An identical request is still being processed.",
-                        "trace_id",
-                        resolveTraceId(request)));
+                .body(errorBody("IDEMPOTENCY_IN_PROGRESS", "An identical request is still being processed.", request));
+    }
+
+    public static ResponseEntity<Map<String, String>> featureDeferred(HttpServletRequest request, String message) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(errorBody("FEATURE_DEFERRED", message, request));
+    }
+
+    public static Map<String, String> errorBody(String code, String message, HttpServletRequest request) {
+        return Map.of("code", code, "message", message, "trace_id", resolveTraceId(request));
     }
 
     public static String resolveTraceId(HttpServletRequest request) {
@@ -32,12 +35,9 @@ public final class ApiResponseSupport {
 
     public static ResponseEntity<Map<String, String>> idempotencyReplayMissing(HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Map.of(
-                        "code",
+                .body(errorBody(
                         "IDEMPOTENCY_REPLAY_MISSING",
-                        "message",
                         "Previous request exists but replay state could not be loaded.",
-                        "trace_id",
-                        resolveTraceId(request)));
+                        request));
     }
 }

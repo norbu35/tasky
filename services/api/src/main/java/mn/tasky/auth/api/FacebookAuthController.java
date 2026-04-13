@@ -3,12 +3,12 @@ package mn.tasky.auth.api;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.Map;
-import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.application.FacebookCircuitBreaker;
 import mn.tasky.auth.application.FacebookRateLimitService;
 import mn.tasky.auth.dto.AuthSession;
 import mn.tasky.auth.dto.FacebookLoginRequest;
 import mn.tasky.common.security.ClientIpResolver;
+import mn.tasky.identity.publicapi.IdentityCommandPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,17 +22,17 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class FacebookAuthController {
 
-    private final AuthService authService;
+    private final IdentityCommandPort identityCommandPort;
     private final FacebookRateLimitService facebookRateLimitService;
     private final FacebookCircuitBreaker circuitBreaker;
     private final ClientIpResolver clientIpResolver;
 
     public FacebookAuthController(
-            AuthService authService,
+            IdentityCommandPort identityCommandPort,
             FacebookRateLimitService facebookRateLimitService,
             FacebookCircuitBreaker circuitBreaker,
             ClientIpResolver clientIpResolver) {
-        this.authService = authService;
+        this.identityCommandPort = identityCommandPort;
         this.facebookRateLimitService = facebookRateLimitService;
         this.circuitBreaker = circuitBreaker;
         this.clientIpResolver = clientIpResolver;
@@ -49,7 +49,7 @@ public class FacebookAuthController {
     public ResponseEntity<Map<String, Object>> login(
             @Valid @RequestBody FacebookLoginRequest body, HttpServletRequest request) {
         facebookRateLimitService.assertAllowed(clientIpResolver.resolve(request));
-        AuthSession session = authService.facebookLogin(body.accessToken());
+        AuthSession session = identityCommandPort.facebookLogin(body.accessToken());
 
         return ResponseEntity.ok(Map.of(
                 "access_token",

@@ -3,11 +3,12 @@ package mn.tasky.admin.api;
 import jakarta.validation.Valid;
 import java.util.Map;
 import mn.tasky.admin.dto.AdminActionRequest;
-import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dto.UserProfilePage;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.security.JwtPrincipal;
+import mn.tasky.identity.publicapi.IdentityCommandPort;
+import mn.tasky.identity.publicapi.IdentityQueryPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -24,10 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class AdminUserController {
 
-    private final AuthService authService;
+    private final IdentityCommandPort identityCommandPort;
+    private final IdentityQueryPort identityQueryPort;
 
-    public AdminUserController(AuthService authService) {
-        this.authService = authService;
+    public AdminUserController(IdentityCommandPort identityCommandPort, IdentityQueryPort identityQueryPort) {
+        this.identityCommandPort = identityCommandPort;
+        this.identityQueryPort = identityQueryPort;
     }
 
     @GetMapping
@@ -41,11 +44,11 @@ public class AdminUserController {
         try {
             UserProfilePage page;
             if (name != null && !name.isBlank()) {
-                page = authService.searchUsersByName(name, cursor, clampedLimit);
+                page = identityQueryPort.searchUsersByName(name, cursor, clampedLimit);
             } else if (facebookId != null && !facebookId.isBlank()) {
-                page = authService.searchUsersByFacebookId(facebookId, cursor, clampedLimit);
+                page = identityQueryPort.searchUsersByFacebookId(facebookId, cursor, clampedLimit);
             } else if (phone != null && !phone.isBlank()) {
-                page = authService.searchUsersByPhone(phone, cursor, clampedLimit);
+                page = identityQueryPort.searchUsersByPhone(phone, cursor, clampedLimit);
             } else {
                 return ResponseEntity.badRequest()
                         .body(Map.of(
@@ -65,7 +68,7 @@ public class AdminUserController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
             @Valid @RequestBody AdminActionRequest body) {
-        boolean success = authService.banUser(principal.userId(), id, body.reason());
+        boolean success = identityCommandPort.banUser(principal.userId(), id, body.reason());
         if (!success) {
             return ResponseEntity.notFound().build();
         }
@@ -77,7 +80,7 @@ public class AdminUserController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
             @Valid @RequestBody AdminActionRequest body) {
-        boolean success = authService.unbanUser(principal.userId(), id, body.reason());
+        boolean success = identityCommandPort.unbanUser(principal.userId(), id, body.reason());
         if (!success) {
             return ResponseEntity.notFound().build();
         }

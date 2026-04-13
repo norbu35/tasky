@@ -1,12 +1,12 @@
 package mn.tasky.admin.api;
 
 import jakarta.validation.Valid;
+import java.util.Map;
 import mn.tasky.admin.dto.StrikePolicyRequest;
-import mn.tasky.admin.dto.StrikePolicyResponse;
-import mn.tasky.auth.application.AuthService;
-import mn.tasky.auth.dto.ModerationPolicy;
-import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.security.JwtPrincipal;
+import mn.tasky.runtime.adminapi.composition.AdminModerationCompositionService;
+import mn.tasky.runtime.adminapi.composition.AdminModerationPolicyUpdateOutcome;
+import mn.tasky.runtime.adminapi.composition.AdminModerationPolicyUpdateService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -21,58 +21,30 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class AdminModerationController {
 
-    private final AuthService authService;
-    private final AuditEventDao auditEventDao;
+    private final AdminModerationCompositionService adminModerationCompositionService;
+    private final AdminModerationPolicyUpdateService adminModerationPolicyUpdateService;
 
-    public AdminModerationController(AuthService authService, AuditEventDao auditEventDao) {
-        this.authService = authService;
-        this.auditEventDao = auditEventDao;
+    public AdminModerationController(
+            AdminModerationCompositionService adminModerationCompositionService,
+            AdminModerationPolicyUpdateService adminModerationPolicyUpdateService) {
+        this.adminModerationCompositionService = adminModerationCompositionService;
+        this.adminModerationPolicyUpdateService = adminModerationPolicyUpdateService;
     }
 
     @GetMapping("/strike-policy")
     public ResponseEntity<?> getStrikePolicy() {
-        return ResponseEntity.ok(toResponse(authService.getModerationPolicy()));
-    }
-
-    private StrikePolicyResponse toResponse(ModerationPolicy policy) {
-        return new StrikePolicyResponse(
-                policy.strikeWindowDays(),
-                policy.strikeThreshold(),
-                policy.firstSuspensionDays(),
-                policy.repeatSuspensionDays(),
-                policy.repeatOffenseWindowDays(),
-                policy.autoUnsuspendEnabled(),
-                policy.updatedAt() != null ? policy.updatedAt().toString() : null);
+        return ResponseEntity.ok(adminModerationCompositionService.currentStrikePolicy());
     }
 
     @PutMapping("/strike-policy")
     public ResponseEntity<?> updateStrikePolicy(
             @AuthenticationPrincipal JwtPrincipal principal, @Valid @RequestBody StrikePolicyRequest body) {
-        if (body.repeatSuspensionDays() < body.firstSuspensionDays()) {
-            return ResponseEntity.badRequest()
-                    .body(java.util.Map.of(
-                            "code",
-                            "INVALID_POLICY",
-                            "message",
-                            "repeatSuspensionDays must be greater than or equal to " + "firstSuspensionDays"));
-        }
-        if (body.repeatOffenseWindowDays() < body.strikeWindowDays()) {
-            return ResponseEntity.badRequest()
-                    .body(java.util.Map.of(
-                            "code",
-                            "INVALID_POLICY",
-                            "message",
-                            "repeatOffenseWindowDays must be greater than or equal to " + "strikeWindowDays"));
-        }
-
-        ModerationPolicy updated = authService.updateModerationPolicy(
-                body.strikeWindowDays(),
-                body.strikeThreshold(),
-                body.firstSuspensionDays(),
-                body.repeatSuspensionDays(),
-                body.repeatOffenseWindowDays(),
-                body.autoUnsuspendEnabled());
-        auditEventDao.insert(principal.userId(), "MODERATION_POLICY_UPDATED", "MODERATION_POLICY", null, null);
-        return ResponseEntity.ok(toResponse(updated));
+        AdminModerationPolicyUpdateOutcome outcome =
+                adminModerationPolicyUpdateService.updatePolicy(principal.userId(), body);
+        return switch (outcome.status()) {
+            case SUCCESS -> ResponseEntity.ok(outcome.body());
+            case INVALID_POLICY -> ResponseEntity.badRequest()
+                    .body(Map.of("code", outcome.errorCode(), "message", outcome.errorMessage()));
+        };
     }
 }

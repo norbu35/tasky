@@ -1,23 +1,18 @@
 package mn.tasky.booking.api;
 
-import static mn.tasky.booking.api.BookingResponseMapper.basic;
+import static mn.tasky.common.api.ApiResponseSupport.errorBody;
 import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
 import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
-import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import mn.tasky.booking.application.BookingIntentService;
-import mn.tasky.booking.application.BookingService;
-import mn.tasky.booking.dto.BookingIntentState;
 import mn.tasky.booking.dto.ConfirmBookingIntentRequest;
 import mn.tasky.booking.dto.CreateBookingIntentRequest;
-import mn.tasky.common.idempotency.IdempotencyClaim;
-import mn.tasky.common.idempotency.IdempotencyOperations;
-import mn.tasky.common.idempotency.IdempotencyService;
 import mn.tasky.common.security.JwtPrincipal;
+import mn.tasky.runtime.publicapi.composition.BookingIntentCompositionService;
+import mn.tasky.runtime.publicapi.composition.BookingIntentConfirmationOutcome;
+import mn.tasky.runtime.publicapi.composition.BookingIntentConfirmationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,16 +31,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookingIntentController {
 
     private final BookingIntentService bookingIntentService;
-    private final BookingService bookingService;
-    private final IdempotencyService idempotencyService;
+    private final BookingIntentCompositionService bookingIntentCompositionService;
+    private final BookingIntentConfirmationService bookingIntentConfirmationService;
 
     public BookingIntentController(
             BookingIntentService bookingIntentService,
-            BookingService bookingService,
-            IdempotencyService idempotencyService) {
+            BookingIntentCompositionService bookingIntentCompositionService,
+            BookingIntentConfirmationService bookingIntentConfirmationService) {
         this.bookingIntentService = bookingIntentService;
-        this.bookingService = bookingService;
-        this.idempotencyService = idempotencyService;
+        this.bookingIntentCompositionService = bookingIntentCompositionService;
+        this.bookingIntentConfirmationService = bookingIntentConfirmationService;
     }
 
     @PostMapping("/tasks/{id}/booking-intents")
@@ -57,25 +52,26 @@ public class BookingIntentController {
         BookingIntentService.CreateResult result = bookingIntentService.createIntent(
                 principal.userId(), id, body.source(), body.taskerId(), body.originalBookingId(), body.offerId());
         if (result.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(result.intent()));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(bookingIntentCompositionService.bookingIntentResponse(result.intent()));
         }
 
         return switch (result.errorCode()) {
             case BookingIntentService.CreateResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(error("NOT_FOUND", result.errorMessage(), request));
+                    .body(errorBody("NOT_FOUND", result.errorMessage(), request));
             case BookingIntentService.CreateResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(error("FORBIDDEN", result.errorMessage(), request));
+                    .body(errorBody("FORBIDDEN", result.errorMessage(), request));
             case BookingIntentService.CreateResult.NOT_COMPLETED -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(error("NOT_COMPLETED", result.errorMessage(), request));
+                    .body(errorBody("NOT_COMPLETED", result.errorMessage(), request));
             case BookingIntentService.CreateResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(error("TASK_NOT_OPEN", result.errorMessage(), request));
+                    .body(errorBody("TASK_NOT_OPEN", result.errorMessage(), request));
             case BookingIntentService.CreateResult.DEFERRED -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(error("NOT_IMPLEMENTED", result.errorMessage(), request));
+                    .body(errorBody("NOT_IMPLEMENTED", result.errorMessage(), request));
             case BookingIntentService.CreateResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(error("CONFLICT", result.errorMessage(), request));
+                    .body(errorBody("CONFLICT", result.errorMessage(), request));
             case BookingIntentService.CreateResult.INVALID_SOURCE,
                     BookingIntentService.CreateResult.INVALID_REQUEST -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(error("BAD_REQUEST", result.errorMessage(), request));
+                    .body(errorBody("BAD_REQUEST", result.errorMessage(), request));
             default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         };
     }
@@ -86,9 +82,10 @@ public class BookingIntentController {
         return bookingIntentService
                 .getIntent(id)
                 .filter(intent -> principal.userId().equals(intent.customerId()))
-                .<ResponseEntity<?>>map(intent -> ResponseEntity.ok(toResponse(intent)))
+                .<ResponseEntity<?>>map(
+                        intent -> ResponseEntity.ok(bookingIntentCompositionService.bookingIntentResponse(intent)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(error("NOT_FOUND", "Booking intent not found.", request)));
+                        .body(errorBody("NOT_FOUND", "Booking intent not found.", request)));
     }
 
     @PostMapping("/booking-intents/{id}/confirm")
@@ -98,81 +95,24 @@ public class BookingIntentController {
             @Valid @RequestBody ConfirmBookingIntentRequest body,
             @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
             HttpServletRequest request) {
-        IdempotencyClaim claim = idempotencyService.claim(
-                principal.userId(), IdempotencyOperations.CONFIRM_BOOKING_INTENT, idempotencyKey);
-        if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
-            return idempotencyInProgress(request);
-        }
-        if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
-            if (claim.record() == null || claim.record().resourceId() == null) {
-                return idempotencyReplayMissing(request);
-            }
-            String bookingId = claim.record().resourceId().toString();
-            return bookingService
-                    .getBooking(bookingId)
-                    .<ResponseEntity<?>>map(booking -> ResponseEntity.ok(basic(booking)))
-                    .orElseGet(() -> idempotencyReplayMissing(request));
-        }
-
-        try {
-            BookingIntentService.ConfirmResult result = bookingIntentService.confirmIntent(
-                    principal.userId(), id, Boolean.TRUE.equals(body.liabilityDisclaimerAccepted()));
-            if (result.isSuccess()) {
-                idempotencyService.completeWithResource(
-                        principal.userId(),
-                        IdempotencyOperations.CONFIRM_BOOKING_INTENT,
-                        idempotencyKey,
-                        "BOOKING",
-                        result.booking().id());
-                return ResponseEntity.ok(basic(result.booking()));
-            }
-
-            idempotencyService.abandon(
-                    principal.userId(), IdempotencyOperations.CONFIRM_BOOKING_INTENT, idempotencyKey);
-            return switch (result.errorCode()) {
-                case BookingIntentService.ConfirmResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(error("NOT_FOUND", result.errorMessage(), request));
-                case BookingIntentService.ConfirmResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body(error("FORBIDDEN", result.errorMessage(), request));
-                case BookingIntentService.ConfirmResult.DISCLAIMER_REQUIRED -> ResponseEntity.status(
-                                HttpStatus.BAD_REQUEST)
-                        .body(error("DISCLAIMER_REQUIRED", result.errorMessage(), request));
-                case BookingIntentService.ConfirmResult.TASK_NOT_OPEN,
-                        BookingIntentService.ConfirmResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(error(result.errorCode(), result.errorMessage(), request));
-                case BookingIntentService.ConfirmResult.DEFERRED -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(error("NOT_IMPLEMENTED", result.errorMessage(), request));
-                default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .build();
-            };
-        } catch (RuntimeException exception) {
-            idempotencyService.abandon(
-                    principal.userId(), IdempotencyOperations.CONFIRM_BOOKING_INTENT, idempotencyKey);
-            throw exception;
-        }
-    }
-
-    private static Map<String, Object> toResponse(BookingIntentState intent) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("id", intent.id());
-        body.put("task_id", intent.taskId());
-        body.put("tasker_id", intent.taskerId());
-        body.put("customer_id", intent.customerId());
-        body.put("source", intent.source());
-        body.put("status", intent.status());
-        body.put("original_booking_id", intent.originalBookingId());
-        body.put("offer_id", intent.offerId());
-        body.put("expires_at", intent.expiresAt() != null ? intent.expiresAt().toString() : null);
-        body.put("confirmed_booking_id", intent.confirmedBookingId());
-        body.put(
-                "confirmed_at",
-                intent.confirmedAt() != null ? intent.confirmedAt().toString() : null);
-        body.put("created_at", intent.createdAt().toString());
-        body.put("updated_at", intent.updatedAt().toString());
-        return body;
-    }
-
-    private static Map<String, Object> error(String code, String message, HttpServletRequest request) {
-        return Map.of("code", code, "message", message, "trace_id", resolveTraceId(request));
+        BookingIntentConfirmationOutcome outcome = bookingIntentConfirmationService.confirmIntent(
+                principal.userId(), id, Boolean.TRUE.equals(body.liabilityDisclaimerAccepted()), idempotencyKey);
+        return switch (outcome.status()) {
+            case IN_PROGRESS -> idempotencyInProgress(request);
+            case REPLAY_MISSING -> idempotencyReplayMissing(request);
+            case SUCCESS -> ResponseEntity.ok(outcome.body());
+            case NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
+            case FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
+            case DISCLAIMER_REQUIRED -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
+            case TASK_NOT_OPEN, CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
+            case DEFERRED -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
+            case INTERNAL_ERROR -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        };
     }
 }

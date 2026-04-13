@@ -52,6 +52,20 @@ operational need, not ideology.
 
 The rewrite preserves current working product behavior unless a specific product change is separately approved.
 
+### 5. Prefer the simplest mechanism that preserves the boundary
+
+Tasky v2 should not import distributed-systems machinery into the monolith unless it is buying a real operational or
+product benefit.
+
+That means:
+
+- prefer synchronous query ports for strongly consistent request-path reads
+- prefer Postgres-native read models such as optimized SQL, views, materialized views, or module-owned read tables
+  before introducing broker-driven projections
+- use broker-driven projection consumers only when replayability, fan-out, lag isolation, or independent worker
+  operation is actually needed
+- keep command/query/workflow structure proportional to the complexity of the behavior
+
 ## System Shape
 
 Tasky v2 has four runtime surfaces:
@@ -105,8 +119,16 @@ Each module exposes a narrow `publicapi` surface for other modules.
 No module may:
 
 - call another module's internal DAO
-- read another module's tables directly once a published query port exists
+- treat another module's tables as an ad hoc integration API once a published query port or owned read model exists
 - rely on another module's broad application service as an integration surface
+
+Cross-module SQL joins are not forbidden as a primitive. They are allowed only inside:
+
+- the owning module's published query implementation
+- an explicit runtime composition layer
+- an owned projection or reporting surface
+
+They are not allowed as arbitrary shortcuts from unrelated domain services or DAOs.
 
 ## Runtime Surfaces
 
@@ -174,6 +196,9 @@ Forbidden responsibilities:
 - cross-module facades
 - reusable business workflows
 
+`kernel` is a standardization layer around Spring/JDBI/Micrometer-era platform concerns. It must not become an
+in-house application framework that reimplements capabilities the platform already provides well.
+
 ## Command, Query, Event, And Job Model
 
 Tasky v2 uses four explicit internal contract types.
@@ -185,6 +210,9 @@ Used for transactional state changes. A command handler should be small, explici
 ### Queries
 
 Used for reads. Query services should not quietly mutate state.
+
+Command/query separation is a boundary rule, not a ceremony target. For simple CRUD behavior, a thin command port and a
+thin query port are enough. Explicit workflow handlers are reserved for genuinely multi-step or delayed processes.
 
 ### Events
 
@@ -227,9 +255,29 @@ Use for:
 
 These are eventually consistent, but lag must be bounded and observable.
 
+### Projection implementation ladder
+
+The default order of implementation is:
+
+1. published query port against the owning transactional model
+2. Postgres-native read model in the same database:
+   - optimized SQL
+   - SQL view
+   - materialized view
+   - module-owned or projection-owned read table
+3. outbox-driven worker update in the same codebase
+4. broker-driven projection consumer only when there is a concrete need for:
+   - fan-out to multiple independent consumers
+   - replay and rebuild discipline
+   - isolation from request-path transaction latency
+   - separately operated worker throughput or failure domains
+
+The architecture cares that the read model is explicitly owned and observable. It does not require a broker just
+because a read model is called a projection.
+
 ## Workflow And Automation Model
 
-The standard execution pattern is:
+The standard async-capable execution pattern is:
 
 ```text
 request
@@ -238,10 +286,16 @@ request
   -> transaction
   -> outbox event
   -> relay
-  -> broker
+  -> RabbitMQ
   -> worker handler
   -> provider / projection / workflow continuation
 ```
+
+Not every successful request must continue into an async pipeline. Use the outbox and worker path for aftermath,
+integration, projection maintenance, or delayed continuation work. Keep purely local synchronous behavior local.
+
+For this rewrite program, RabbitMQ is the chosen broker. Keep the adapter narrow and automation-owned so a future
+broker swap remains a contained infrastructure change rather than a workflow rewrite.
 
 Explicit workflow handlers own multi-step processes such as:
 
@@ -340,7 +394,7 @@ The system only becomes AI-native if verification is modular enough that agents 
 - migrate one flow at a time
 - preserve parity before deleting old paths
 - prefer logical runtime separation before physical deployment separation
-- prefer broker-backed workers before durable workflow engines
+- prefer RabbitMQ-backed workers before durable workflow engines
 
 ## Non-Goals
 

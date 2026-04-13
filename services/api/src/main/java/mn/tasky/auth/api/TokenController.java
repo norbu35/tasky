@@ -5,10 +5,10 @@ import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.Map;
-import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.application.OtpRateLimitService;
 import mn.tasky.auth.dto.RefreshTokenRequest;
 import mn.tasky.common.security.ClientIpResolver;
+import mn.tasky.identity.publicapi.IdentityCommandPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,13 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class TokenController {
 
-    private final AuthService authService;
+    private final IdentityCommandPort identityCommandPort;
     private final OtpRateLimitService otpRateLimitService;
     private final ClientIpResolver clientIpResolver;
 
     public TokenController(
-            AuthService authService, OtpRateLimitService otpRateLimitService, ClientIpResolver clientIpResolver) {
-        this.authService = authService;
+            IdentityCommandPort identityCommandPort,
+            OtpRateLimitService otpRateLimitService,
+            ClientIpResolver clientIpResolver) {
+        this.identityCommandPort = identityCommandPort;
         this.otpRateLimitService = otpRateLimitService;
         this.clientIpResolver = clientIpResolver;
     }
@@ -38,7 +40,7 @@ public class TokenController {
             @Valid @RequestBody RefreshTokenRequest body, HttpServletRequest request) {
         otpRateLimitService.assertRefreshAllowed(body.refreshToken(), clientIpResolver.resolve(request));
 
-        return authService
+        return identityCommandPort
                 .refreshToken(body.refreshToken())
                 .map(tokens -> ResponseEntity.ok(
                         Map.of("access_token", tokens.accessToken(), "refresh_token", tokens.refreshToken())))

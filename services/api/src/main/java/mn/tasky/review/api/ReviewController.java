@@ -3,15 +3,14 @@ package mn.tasky.review.api;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.security.JwtPrincipal;
-import mn.tasky.review.application.ReviewService;
-import mn.tasky.review.dto.Review;
 import mn.tasky.review.dto.ReviewRequest;
+import mn.tasky.runtime.publicapi.composition.ReviewPublicCompositionService;
+import mn.tasky.runtime.publicapi.composition.ReviewSubmissionOutcome;
+import mn.tasky.runtime.publicapi.composition.ReviewSubmissionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -28,10 +27,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class ReviewController {
 
-    private final ReviewService reviewService;
+    private final ReviewPublicCompositionService reviewPublicCompositionService;
+    private final ReviewSubmissionService reviewSubmissionService;
 
-    public ReviewController(ReviewService reviewService) {
-        this.reviewService = reviewService;
+    public ReviewController(
+            ReviewPublicCompositionService reviewPublicCompositionService,
+            ReviewSubmissionService reviewSubmissionService) {
+        this.reviewPublicCompositionService = reviewPublicCompositionService;
+        this.reviewSubmissionService = reviewSubmissionService;
     }
 
     @PostMapping("/bookings/{id}/reviews")
@@ -39,54 +42,19 @@ public class ReviewController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
             @Valid @RequestBody ReviewRequest body) {
-
-        var result = reviewService.submitReview(
-                principal.userId(),
-                id,
-                body.qualityRating(),
-                body.punctualityRating(),
-                body.communicationRating(),
-                body.clarityRating(),
-                body.respectfulnessRating(),
-                body.comment());
-
-        if (!result.isSuccess()) {
-            return switch (result.error()) {
-                case "INVALID_RATING" -> ResponseEntity.badRequest()
-                        .body(Map.of("code", "INVALID_RATING", "message", "Rating must be between 1 and 5"));
-                case "BOOKING_NOT_FOUND" -> ResponseEntity.status(404)
-                        .body(Map.of("code", "NOT_FOUND", "message", "Booking not found"));
-                case "BOOKING_NOT_COMPLETED" -> ResponseEntity.badRequest()
-                        .body(Map.of(
-                                "code",
-                                "BOOKING_NOT_COMPLETED",
-                                "message",
-                                "Reviews allowed only on completed bookings"));
-                case "NOT_PARTICIPANT" -> ResponseEntity.status(403)
-                        .body(Map.of("code", "FORBIDDEN", "message", "Only booking participants can leave reviews"));
-                case "ALREADY_REVIEWED" -> ResponseEntity.status(409)
-                        .body(Map.of("code", "ALREADY_REVIEWED", "message", "You have already reviewed this booking"));
-                default -> ResponseEntity.internalServerError().build();
-            };
-        }
-
-        return ResponseEntity.status(201).body(toReviewResponse(result.review()));
-    }
-
-    private Map<String, Object> toReviewResponse(Review review) {
-        Map<String, Object> res = new LinkedHashMap<>();
-        res.put("id", review.id());
-        res.put("booking_id", review.bookingId());
-        res.put("reviewer_id", review.reviewerId());
-        res.put("reviewee_id", review.revieweeId());
-        res.put("quality_rating", review.qualityRating());
-        res.put("punctuality_rating", review.punctualityRating());
-        res.put("communication_rating", review.communicationRating());
-        res.put("clarity_rating", review.clarityRating());
-        res.put("respectfulness_rating", review.respectfulnessRating());
-        res.put("comment", review.comment());
-        res.put("created_at", review.createdAt().toString());
-        return res;
+        ReviewSubmissionOutcome outcome = reviewSubmissionService.submitReview(principal.userId(), id, body);
+        return switch (outcome.status()) {
+            case SUCCESS -> ResponseEntity.status(201).body(outcome.body());
+            case INVALID_RATING, BOOKING_NOT_COMPLETED -> ResponseEntity.badRequest()
+                    .body(Map.of("code", outcome.errorCode(), "message", outcome.errorMessage()));
+            case NOT_FOUND -> ResponseEntity.status(404)
+                    .body(Map.of("code", outcome.errorCode(), "message", outcome.errorMessage()));
+            case FORBIDDEN -> ResponseEntity.status(403)
+                    .body(Map.of("code", outcome.errorCode(), "message", outcome.errorMessage()));
+            case ALREADY_REVIEWED -> ResponseEntity.status(409)
+                    .body(Map.of("code", outcome.errorCode(), "message", outcome.errorMessage()));
+            case INTERNAL_ERROR -> ResponseEntity.internalServerError().build();
+        };
     }
 
     @GetMapping("/users/{id}/reviews")
@@ -94,14 +62,8 @@ public class ReviewController {
             @PathVariable String id,
             @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit) {
-
-        List<Review> reviews = reviewService.listReviews(id, cursor, limit + 1);
-        boolean hasMore = reviews.size() > limit;
-        List<Review> pageReviews = hasMore ? reviews.subList(0, limit) : reviews;
-
-        List<Map<String, Object>> data =
-                pageReviews.stream().map(this::toReviewResponse).toList();
-
-        return ResponseEntity.ok(new PagedResponse<>(data, CursorPagination.from(reviews, limit, Review::id)));
+        var page = reviewPublicCompositionService.listReviews(id, cursor, limit);
+        return ResponseEntity.ok(
+                new PagedResponse<>(page.data(), new CursorPagination(page.nextCursor(), page.hasMore())));
     }
 }

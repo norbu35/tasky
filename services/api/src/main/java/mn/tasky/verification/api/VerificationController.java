@@ -5,12 +5,11 @@ import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.Map;
-import mn.tasky.auth.application.AuthService;
-import mn.tasky.auth.dto.VerificationStatusResponse;
-import mn.tasky.auth.dto.VerificationSubmitResult;
 import mn.tasky.common.security.JwtPrincipal;
-import mn.tasky.common.storage.StorageKeyPolicy;
-import mn.tasky.verification.dto.VerificationStatusApiResponse;
+import mn.tasky.identity.publicapi.IdentityCommandPort;
+import mn.tasky.runtime.publicapi.composition.VerificationPublicCompositionService;
+import mn.tasky.runtime.publicapi.composition.VerificationSubmissionOutcome;
+import mn.tasky.runtime.publicapi.composition.VerificationSubmissionService;
 import mn.tasky.verification.dto.VerificationSubmitRequest;
 import mn.tasky.verification.dto.VerificationUploadUrlRequest;
 import org.springframework.http.HttpStatus;
@@ -28,12 +27,17 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class VerificationController {
 
-    private final AuthService authService;
-    private final StorageKeyPolicy storageKeyPolicy;
+    private final IdentityCommandPort identityCommandPort;
+    private final VerificationPublicCompositionService verificationPublicCompositionService;
+    private final VerificationSubmissionService verificationSubmissionService;
 
-    public VerificationController(AuthService authService, StorageKeyPolicy storageKeyPolicy) {
-        this.authService = authService;
-        this.storageKeyPolicy = storageKeyPolicy;
+    public VerificationController(
+            IdentityCommandPort identityCommandPort,
+            VerificationPublicCompositionService verificationPublicCompositionService,
+            VerificationSubmissionService verificationSubmissionService) {
+        this.identityCommandPort = identityCommandPort;
+        this.verificationPublicCompositionService = verificationPublicCompositionService;
+        this.verificationSubmissionService = verificationSubmissionService;
     }
 
     @PostMapping("/upload-url")
@@ -41,10 +45,10 @@ public class VerificationController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @Valid @RequestBody VerificationUploadUrlRequest body,
             HttpServletRequest request) {
-        return authService
+        return identityCommandPort
                 .createVerificationUploadUrl(principal.userId(), body.contentType())
-                .<ResponseEntity<?>>map(upload ->
-                        ResponseEntity.ok(Map.of("upload_url", upload.uploadUrl(), "storage_key", upload.storageKey())))
+                .<ResponseEntity<?>>map(
+                        upload -> ResponseEntity.ok(verificationPublicCompositionService.uploadUrlResponse(upload)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Map.of(
                                 "code",
@@ -60,72 +64,39 @@ public class VerificationController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @Valid @RequestBody VerificationSubmitRequest body,
             HttpServletRequest request) {
-        if (!Boolean.TRUE.equals(body.consentAccepted())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        VerificationSubmissionOutcome outcome =
+                verificationSubmissionService.submitVerification(principal.userId(), body);
+        return switch (outcome.status()) {
+            case SUCCESS -> ResponseEntity.ok(outcome.body());
+            case CONSENT_REQUIRED, INVALID_VERIFICATION_KEY, NOT_TASKER -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of(
                             "code",
-                            "CONSENT_REQUIRED",
+                            outcome.errorCode(),
                             "message",
-                            "Consent must be accepted to submit verification.",
+                            outcome.errorMessage(),
                             "trace_id",
                             resolveTraceId(request)));
-        }
-        try {
-            storageKeyPolicy.validateOwnedKey(
-                    body.idCardFrontKey(), StorageKeyPolicy.Namespace.VERIFICATION, principal.userId());
-            storageKeyPolicy.validateOwnedKey(
-                    body.idCardBackKey(), StorageKeyPolicy.Namespace.VERIFICATION, principal.userId());
-        } catch (IllegalArgumentException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            case CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of(
                             "code",
-                            "INVALID_VERIFICATION_KEY",
+                            outcome.errorCode(),
                             "message",
-                            "Verification keys must belong to the caller's verification namespace.",
+                            outcome.errorMessage(),
                             "trace_id",
                             resolveTraceId(request)));
-        }
-
-        VerificationSubmitResult result = authService.submitVerification(
-                principal.userId(), body.idCardFrontKey(), body.idCardBackKey(), body.consentPolicyVersion());
-
-        return switch (result.outcome()) {
-            case VerificationSubmitResult.SUCCESS -> ResponseEntity.ok(toStatusResponse(result.statusResponse()));
-            case VerificationSubmitResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
+            case USER_NOT_FOUND -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of(
                             "code",
-                            "VERIFICATION_ALREADY_SUBMITTED",
+                            outcome.errorCode(),
                             "message",
-                            "Verification already submitted or approved.",
-                            "trace_id",
-                            resolveTraceId(request)));
-            case VerificationSubmitResult.NOT_TASKER -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of(
-                            "code",
-                            "NOT_TASKER",
-                            "message",
-                            "User must activate TASKER role before submitting " + "verification.",
-                            "trace_id",
-                            resolveTraceId(request)));
-            default -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of(
-                            "code",
-                            "USER_NOT_FOUND",
-                            "message",
-                            "Authenticated user could not be resolved.",
+                            outcome.errorMessage(),
                             "trace_id",
                             resolveTraceId(request)));
         };
     }
 
-    private VerificationStatusApiResponse toStatusResponse(VerificationStatusResponse status) {
-        return new VerificationStatusApiResponse(
-                status.status(), status.adminNotes(), status.submittedAt(), status.reviewedAt());
-    }
-
     @GetMapping("/status")
     public ResponseEntity<?> getStatus(@AuthenticationPrincipal JwtPrincipal principal) {
-        VerificationStatusResponse status = authService.getVerificationStatus(principal.userId());
-        return ResponseEntity.ok(toStatusResponse(status));
+        return ResponseEntity.ok(verificationPublicCompositionService.verificationStatus(principal.userId()));
     }
 }
