@@ -2,6 +2,7 @@ package mn.tasky.runtime.adminapi.composition;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import mn.tasky.admin.publicapi.AdminAuditCommandPort;
 import mn.tasky.auth.dto.UserProfile;
 import mn.tasky.booking.publicapi.BookingCommandPort;
 import mn.tasky.booking.publicapi.BookingQueryPort;
@@ -25,6 +26,7 @@ public class AdminTaskConciergeAssignmentService {
 
     private final MarketplaceQueryPort marketplaceQueryPort;
     private final MarketplaceCommandPort marketplaceCommandPort;
+    private final AdminAuditCommandPort adminAuditCommandPort;
     private final IdentityQueryPort identityQueryPort;
     private final BookingCommandPort bookingCommandPort;
     private final BookingQueryPort bookingQueryPort;
@@ -35,6 +37,7 @@ public class AdminTaskConciergeAssignmentService {
     public AdminTaskConciergeAssignmentService(
             MarketplaceQueryPort marketplaceQueryPort,
             MarketplaceCommandPort marketplaceCommandPort,
+            AdminAuditCommandPort adminAuditCommandPort,
             IdentityQueryPort identityQueryPort,
             BookingCommandPort bookingCommandPort,
             BookingQueryPort bookingQueryPort,
@@ -43,6 +46,7 @@ public class AdminTaskConciergeAssignmentService {
             BookingResponseCompositionService bookingResponseCompositionService) {
         this.marketplaceQueryPort = marketplaceQueryPort;
         this.marketplaceCommandPort = marketplaceCommandPort;
+        this.adminAuditCommandPort = adminAuditCommandPort;
         this.identityQueryPort = identityQueryPort;
         this.bookingCommandPort = bookingCommandPort;
         this.bookingQueryPort = bookingQueryPort;
@@ -130,13 +134,8 @@ public class AdminTaskConciergeAssignmentService {
                 metadataJson = "{}";
                 log.warn("Failed to serialize concierge-assign audit metadata", jsonException);
             }
-            // Audit event recorded via logging (audit port to be introduced in future tranche)
-            log.info(
-                    "CONCIERGE_ASSIGN audit: adminId={}, taskId={}, taskerId={}, bookingId={}",
-                    adminId,
-                    task.id(),
-                    taskerId,
-                    booking.id());
+            adminAuditCommandPort.recordAdminAction(
+                    adminId, "CONCIERGE_ASSIGN", "BOOKING", booking.id(), metadataJson);
 
             idempotencyService.completeWithResource(
                     adminId, IdempotencyOperations.CONCIERGE_ASSIGN, idempotencyKey, "BOOKING", booking.id());
