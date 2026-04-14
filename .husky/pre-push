@@ -10,6 +10,8 @@ python3 tooling/scripts/validate-migrations.py || exit 1
 
 ./gradlew openApiValidate -q || exit 1
 
+bash tooling/scripts/check-trivyignore-expiry.sh || exit 1
+
 # === Lint + SDK drift (~13s) ===
 
 pnpm -r lint || exit 1

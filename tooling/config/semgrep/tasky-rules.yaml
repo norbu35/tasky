@@ -2,14 +2,14 @@ rules:
   - id: no-string-concat-in-sql-query
     pattern: |
       @SqlQuery("..." + $VAR + "...")
-    message: "Use @Bind parameters instead of string concatenation in SQL queries"
+    message: 'Use @Bind parameters instead of string concatenation in SQL queries'
     languages: [java]
     severity: ERROR
 
   - id: no-string-concat-in-sql-update
     pattern: |
       @SqlUpdate("..." + $VAR + "...")
-    message: "Use @Bind parameters instead of string concatenation in SQL updates"
+    message: 'Use @Bind parameters instead of string concatenation in SQL updates'
     languages: [java]
     severity: ERROR
 
@@ -21,7 +21,48 @@ rules:
           ... TextSanitizer.plainText($INPUT) ...
       - metavariable-regex:
           metavariable: $METHOD
-          regex: "insert|update"
-    message: "User-supplied freetext should be sanitized via TextSanitizer.plainText() before persistence"
+          regex: 'insert|update'
+    message: 'User-supplied freetext should be sanitized via TextSanitizer.plainText() before persistence'
+    languages: [java]
+    severity: WARNING
+
+  - id: no-hardcoded-secrets
+    patterns:
+      - pattern-regex: '(password|secret|api_key|apikey|token|private_key)\s*=\s*"[^"]{8,}"'
+    paths:
+      exclude:
+        - '**/test/**'
+        - '**/application-test.yml'
+        - '**/.env.example'
+    message: 'Potential hardcoded secret detected. Use environment variables or a secrets manager.'
+    languages: [java]
+    severity: ERROR
+
+  - id: no-string-format-in-sql
+    pattern: |
+      String.format("..." + $SQL + "...", ...)
+    message: 'Use @Bind parameters instead of String.format in SQL queries'
+    languages: [java]
+    severity: ERROR
+
+  - id: spring-csrf-disabled
+    pattern: |
+      $HTTP.csrf(csrf -> csrf.disable())
+    paths:
+      exclude:
+        - '**/test/**'
+    message: 'CSRF protection is disabled. Ensure this is intentional and documented.'
+    languages: [java]
+    severity: WARNING
+
+  - id: no-system-out
+    patterns:
+      - pattern-either:
+          - pattern: System.out.$METHOD(...)
+          - pattern: System.err.$METHOD(...)
+    paths:
+      exclude:
+        - '**/test/**'
+    message: 'Use SLF4J logger instead of System.out/err'
     languages: [java]
     severity: WARNING
