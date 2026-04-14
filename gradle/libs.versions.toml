@@ -1,0 +1,81 @@
+[versions]
+spring-boot = "3.5.13"
+spring-dependency-management = "1.1.7"
+openapi-generator = "7.21.0"
+spotbugs-gradle = "6.1.11"
+errorprone-gradle = "4.1.0"
+owasp = "12.1.0"
+spotless = "6.25.0"
+pitest-gradle = "1.15.0"
+
+jdbi = "3.52.1"
+testcontainers = "1.21.4"
+jjwt = "0.13.0"
+aws-sdk = "2.29.46"
+firebase-admin = "9.4.2"
+logstash-logback = "8.0"
+jsoup = "1.18.3"
+shedlock = "7.7.0"
+archunit = "1.4.1"
+swagger-validator = "2.46.1"
+checkstyle = "10.21.2"
+spotbugs = "4.8.6"
+errorprone-core = "2.36.0"
+findsecbugs = "1.13.0"
+palantir-java-format = "2.47.0"
+pitest = "1.17.0"
+pitest-junit5 = "1.2.1"
+jacoco = "0.8.12"
+pmd = "7.9.0"
+
+[libraries]
+# JDBI
+jdbi-core = { module = "org.jdbi:jdbi3-core", version.ref = "jdbi" }
+jdbi-sqlobject = { module = "org.jdbi:jdbi3-sqlobject", version.ref = "jdbi" }
+jdbi-postgres = { module = "org.jdbi:jdbi3-postgres", version.ref = "jdbi" }
+jdbi-jackson2 = { module = "org.jdbi:jdbi3-jackson2", version.ref = "jdbi" }
+jdbi-spring5 = { module = "org.jdbi:jdbi3-spring5", version.ref = "jdbi" }
+
+# ShedLock
+shedlock-spring = { module = "net.javacrumbs.shedlock:shedlock-spring", version.ref = "shedlock" }
+shedlock-jdbc = { module = "net.javacrumbs.shedlock:shedlock-provider-jdbc-template", version.ref = "shedlock" }
+
+# JWT
+jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }
+jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt" }
+jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt" }
+
+# AWS
+aws-s3 = { module = "software.amazon.awssdk:s3", version.ref = "aws-sdk" }
+
+# Logging
+logstash-logback = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "logstash-logback" }
+
+# Misc
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+firebase-admin = { module = "com.google.firebase:firebase-admin", version.ref = "firebase-admin" }
+
+# Test
+testcontainers-bom = { module = "org.testcontainers:testcontainers-bom", version.ref = "testcontainers" }
+testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-jdbc = { module = "org.testcontainers:jdbc", version.ref = "testcontainers" }
+testcontainers-db-commons = { module = "org.testcontainers:database-commons", version.ref = "testcontainers" }
+testcontainers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+archunit = { module = "com.tngtech.archunit:archunit-junit5", version.ref = "archunit" }
+swagger-validator = { module = "com.atlassian.oai:swagger-request-validator-mockmvc", version.ref = "swagger-validator" }
+
+# Static analysis
+errorprone-core = { module = "com.google.errorprone:error_prone_core", version.ref = "errorprone-core" }
+findsecbugs = { module = "com.h3xstream.findsecbugs:findsecbugs-plugin", version.ref = "findsecbugs" }
+spotbugs-annotations = { module = "com.github.spotbugs:spotbugs-annotations", version.ref = "spotbugs" }
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
+openapi-generator = { id = "org.openapi.generator", version.ref = "openapi-generator" }
+spotbugs = { id = "com.github.spotbugs", version.ref = "spotbugs-gradle" }
+errorprone = { id = "net.ltgt.errorprone", version.ref = "errorprone-gradle" }
+owasp = { id = "org.owasp.dependencycheck", version.ref = "owasp" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+pitest = { id = "info.solidsoft.pitest", version.ref = "pitest-gradle" }
