@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
+import { AlertCircle, Calendar, CheckCircle, MapPin, Rocket } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import type { Task } from '../lib/apiClient';
-import { useAppContext } from '../context/AppContext';
-import { ScreenFrame } from '../layout/ScreenFrame';
+
+import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
+import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import {
   Card,
@@ -13,11 +15,11 @@ import {
   CardTitle,
 } from '../components/ui/card';
 import { Skeleton } from '../components/ui/skeleton';
-import { Badge } from '../components/ui/badge';
-import { AlertCircle, Calendar, CheckCircle, MapPin, Rocket } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { useTranslation } from 'react-i18next';
+import { useAppContext } from '../context/AppContext';
+import { ScreenFrame } from '../layout/ScreenFrame';
+import type { Task } from '../lib/apiClient';
+
 
 function TaskerBookingCard({ task }: { task: Task }) {
   const navigate = useNavigate();
@@ -87,7 +89,7 @@ export function TaskerTasksPage() {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['tasksFeed', session?.accessToken],
+    queryKey: ['tasksFeed', session, apiClient],
     queryFn: async () => {
       if (!session) throw new Error('Not authenticated');
       return apiClient.listTasks(session.accessToken);

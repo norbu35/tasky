@@ -1,20 +1,24 @@
-import { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import type { Booking } from '../lib/apiClient';
+import { AlertCircle, CheckCircle2, ChevronLeft, ClipboardList, ShieldCheck } from 'lucide-react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+
+import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Checkbox } from '../components/ui/checkbox';
-import { useAppContext } from '../context/AppContext';
-import { ScreenFrame } from '../layout/ScreenFrame';
-import { parseError } from '../lib/errorHandling';
-import { createIdempotencyKey } from '../lib/idempotency';
-import { AlertCircle, CheckCircle2, ChevronLeft, ClipboardList, ShieldCheck } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Separator } from '../components/ui/separator';
 import { Skeleton } from '../components/ui/skeleton';
-import { useTranslation } from 'react-i18next';
+import { useAppContext } from '../context/AppContext';
+import { ScreenFrame } from '../layout/ScreenFrame';
+import type { Booking } from '../lib/apiClient';
+import { parseError } from '../lib/errorHandling';
+import { createIdempotencyKey } from '../lib/idempotency';
+
+
+
 
 export function BookingConfirmationPage() {
   const { apiClient, session, trackClientEvent } = useAppContext();
@@ -32,18 +36,19 @@ export function BookingConfirmationPage() {
 
   // Fetch Task and Application strictly for displaying info nicely (if possible)
   const { data: tasksPage, isLoading: loadingTask } = useQuery({
-    queryKey: ['customerTasks', session?.accessToken],
+    queryKey: ['customerTasks', session, apiClient],
     queryFn: async () => apiClient.listMyTasks(session!.accessToken),
     enabled: !!session && !!taskId,
   });
 
   const { data: appsPage, isLoading: loadingApp } = useQuery({
-    queryKey: ['taskApplications', taskId, session?.accessToken],
+    queryKey: ['taskApplications', taskId, session, apiClient],
     queryFn: async () => apiClient.listTaskApplications(session!.accessToken, taskId!),
     enabled: !!session && !!taskId && source === 'application' && !!applicationId,
   });
 
   const acceptMutation = useMutation({
+    mutationKey: ['acceptBooking', session, taskId, applicationId, bookingIntentId, apiClient],
     mutationFn: async () => {
       if (!session) throw new Error('Missing requirements');
       if (source === 'rebook') {

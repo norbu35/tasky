@@ -1,25 +1,27 @@
-import { useTranslation } from 'react-i18next';
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Loader2, Plus, Save } from 'lucide-react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
+
 import {
   createTaskSchema,
   generateIntakeScopeSummary,
   normalizeCategoryIntakeSchema,
 } from '@tasky/core';
-import { Loader2, Plus, Save } from 'lucide-react';
 
-import { ResponsiveWizardShell, StatePanel } from '../../layout/parity';
+
+import { IntakeFormRenderer } from '../../components/feature/task-creation/IntakeFormRenderer';
+import { LocationPicker } from '../../components/feature/task-creation/LocationPicker';
+import { PhotoUploadManager } from '../../components/feature/task-creation/PhotoUploadManager';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { useAppContext } from '../../context/AppContext';
-import { parseError } from '../../lib/errorHandling';
+import { ResponsiveWizardShell, StatePanel } from '../../layout/parity';
 import type { Category, Task } from '../../lib/apiClient';
-import { IntakeFormRenderer } from '../../components/feature/task-creation/IntakeFormRenderer';
-import { LocationPicker } from '../../components/feature/task-creation/LocationPicker';
-import { PhotoUploadManager } from '../../components/feature/task-creation/PhotoUploadManager';
+import { parseError } from '../../lib/errorHandling';
 
 export function CustomerTaskWizardPage() {
   const { t, i18n } = useTranslation();
@@ -41,7 +43,7 @@ export function CustomerTaskWizardPage() {
   const [createdTask, setCreatedTask] = useState<Task | null>(null);
 
   const { data: categoriesPage } = useQuery({
-    queryKey: ['customerTaskWizardCategories', session?.accessToken],
+    queryKey: ['customerTaskWizardCategories', session, apiClient],
     queryFn: async () => {
       if (!session) {
         throw new Error('Not authenticated');

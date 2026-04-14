@@ -1,12 +1,13 @@
-import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
+import { MessageSquareText } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useAppContext } from '../../context/AppContext';
-import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../layout/parity';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { MessageSquareText } from 'lucide-react';
+import { useAppContext } from '../../context/AppContext';
+import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../layout/parity';
+
 
 export function CustomerBookingDetailPage() {
   const { apiClient, session } = useAppContext();
@@ -15,7 +16,7 @@ export function CustomerBookingDetailPage() {
   const navigate = useNavigate();
 
   const { data } = useQuery({
-    queryKey: ['customerBookingDetail', session?.accessToken, bookingId],
+    queryKey: ['customerBookingDetail', session, bookingId, apiClient],
     queryFn: async () => {
       if (!session || !bookingId) {
         throw new Error('Not authenticated');

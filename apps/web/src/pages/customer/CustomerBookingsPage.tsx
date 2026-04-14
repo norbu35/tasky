@@ -1,17 +1,17 @@
-import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
-import { useAppContext } from '../../context/AppContext';
-import { ResponsiveFeedShell } from '../../layout/parity';
 import { Badge } from '../../components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { useAppContext } from '../../context/AppContext';
+import { ResponsiveFeedShell } from '../../layout/parity';
 
 export function CustomerBookingsPage() {
   const { apiClient, session } = useAppContext();
   const { t } = useTranslation();
 
   const { data } = useQuery({
-    queryKey: ['customerBookings', session?.accessToken],
+    queryKey: ['customerBookings', session, apiClient],
     queryFn: async () => {
       if (!session) {
         throw new Error('Not authenticated');

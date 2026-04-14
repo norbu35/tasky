@@ -1,8 +1,11 @@
-import baseConfig from './base.mjs';
+import _baseConfig from './base.mjs';
+import queryPlugin from '@tanstack/eslint-plugin-query';
 
-// eslint-config-expo/flat must be imported dynamically at the consumer level
+// eslint-config-expo must be imported dynamically at the consumer level
 // because it requires expo to be installed. This config provides the base rules
 // and the mobile-specific overrides that get spread into the consumer's flat config.
+
+export const baseConfig = [..._baseConfig, ...queryPlugin.configs['flat/recommended']];
 
 export const mobileOverrides = [
   {
@@ -52,5 +55,3 @@ export const mobileOverrides = [
     rules: { 'no-restricted-imports': 'off' },
   },
 ];
-
-export { baseConfig };

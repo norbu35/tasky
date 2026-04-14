@@ -483,6 +483,9 @@ importers:
       '@eslint/js':
         specifier: ^9.39.0
         version: 9.39.2
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.99.0
+        version: 5.99.0(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
       eslint:
         specifier: ^9.39.0
         version: 9.39.2(jiti@2.6.1)
@@ -495,6 +498,9 @@ importers:
       eslint-plugin-no-secrets:
         specifier: ^1.1.0
         version: 1.1.2(eslint@9.39.2(jiti@2.6.1))
+      eslint-plugin-react:
+        specifier: ^7.37.5
+        version: 7.37.5(eslint@9.39.2(jiti@2.6.1))
       eslint-plugin-security:
         specifier: ^3.0.0
         version: 3.0.1
@@ -2748,6 +2754,15 @@ packages:
 
   '@tailwindcss/postcss@4.2.2':
     resolution: {integrity: sha512-n4goKQbW8RVXIbNKRB/45LzyUqN451deQK0nzIeauVEqjlI49slUlgKYJM2QyUzap/PcpnS7kzSUmPb1sCRvYQ==}
+
+  '@tanstack/eslint-plugin-query@5.99.0':
+    resolution: {integrity: sha512-jVp1AEL7S7BeuQvH5SN1F5UdrNW/AbryKDeWUUMeAKNzh9C+Ik/bRSa/HeuJLlmaN+WOUkdDFbtCK0go7BxnUQ==}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
+      typescript: ^5.4.0 || ^6.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   '@tanstack/query-core@5.90.20':
     resolution: {integrity: sha512-OMD2HLpNouXEfZJWcKeVKUgQ5n+n3A2JFmBaScpNDUqSrQSjiveC7dKMe53uJUg1nDG16ttFPz2xfilz6i2uVg==}
@@ -10110,6 +10125,15 @@ snapshots:
       '@tailwindcss/oxide': 4.2.2
       postcss: 8.5.9
       tailwindcss: 4.2.2
+
+  '@tanstack/eslint-plugin-query@5.99.0(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)':
+    dependencies:
+      '@typescript-eslint/utils': 8.58.2(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
+      eslint: 9.39.2(jiti@2.6.1)
+    optionalDependencies:
+      typescript: 6.0.2
+    transitivePeerDependencies:
+      - supports-color
 
   '@tanstack/query-core@5.90.20': {}
 
