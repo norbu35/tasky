@@ -1,14 +1,17 @@
 {
-  "extends": "expo/tsconfig.base",
+  "extends": ["expo/tsconfig.base", "@tasky/tooling-config/tsconfig/react-native"],
   "compilerOptions": {
     "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "paths": {
       "@tasky/core": ["../../packages/core/src/index.ts"]
     },
-    "strict": true,
-    "skipLibCheck": true,
-    "types": ["vitest/globals", "node"]
+    "types": ["vitest/globals", "node"],
+    "verbatimModuleSyntax": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": false
   },
   "include": [
     "nativewind-env.d.ts",
