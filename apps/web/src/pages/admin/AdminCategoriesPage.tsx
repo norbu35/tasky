@@ -1,17 +1,10 @@
-import { useAdminApiClient } from '../../lib/adminApiClient';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { useAppContext } from '../../context/AppContext';
-import type { Category, CategorySchemaVersion, AdminCategoryPayload } from '../../lib/apiClient';
-import { Card, CardContent } from '../../components/ui/card';
-import { Switch } from '../../components/ui/switch';
-import { Skeleton } from '../../components/ui/skeleton';
-import { Button } from '../../components/ui/button';
+
 import { Badge } from '../../components/ui/badge';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
-import { Textarea } from '../../components/ui/textarea';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent } from '../../components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -20,6 +13,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../../components/ui/dialog';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Skeleton } from '../../components/ui/skeleton';
+import { Switch } from '../../components/ui/switch';
+import { Textarea } from '../../components/ui/textarea';
+import { useAppContext } from '../../context/AppContext';
+import { useAdminApiClient } from '../../lib/adminApiClient';
+import type { Category, CategorySchemaVersion, AdminCategoryPayload } from '../../lib/apiClient';
 
 // ── Category Form Dialog ─────────────────────────────────────────────
 

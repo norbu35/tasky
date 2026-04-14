@@ -1,9 +1,8 @@
 import { screen } from '@testing-library/react';
-import { renderWithAppContext as render } from '../../test/render-helpers';
 import type { ReactNode } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import { vi } from 'vitest';
+import { renderWithAppContext as render } from '../../test/render-helpers';
 
 vi.mock('../../src/layout/ScreenFrame', () => ({
   ScreenFrame: ({ children }: { children: ReactNode }) => <div>{children}</div>,

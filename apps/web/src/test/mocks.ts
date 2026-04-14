@@ -1,6 +1,8 @@
 import { vi } from 'vitest';
-import type { ApiClient } from '../lib/apiClient';
+
 import type { AdminApiClient } from '../lib/adminApiClient';
+import type { ApiClient } from '../lib/apiClient';
+
 import {
   makeUser,
   makeProfile,

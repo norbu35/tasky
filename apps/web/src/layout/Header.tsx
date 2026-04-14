@@ -1,10 +1,12 @@
+import { motion } from 'framer-motion';
 import { Shield } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { LanguageSwitcher } from './LanguageSwitcher';
-import { useAppContext } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+
+import { Button } from '../components/ui/button';
+import { useAppContext } from '../context/AppContext';
+
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 const CUSTOMER_NAV = [
   { to: '/customer/dashboard', label: 'nav.home', fallback: 'Home' },

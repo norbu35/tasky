@@ -21,7 +21,6 @@ import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
 import type { TaskApplication } from '../lib/apiClient';
 
-
 function formatTimeAgo(value: string, t: TFunction): string {
   const timestamp = new Date(value).getTime();
   const diffMs = Math.max(0, Date.now() - timestamp);

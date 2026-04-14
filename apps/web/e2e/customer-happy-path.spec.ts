@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+
 import { loginThroughDevAuth, nextLocalDateTimeInput } from './support/mockApi';
 
 test.describe('Customer happy path', () => {

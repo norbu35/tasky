@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ResponsiveDetailShell } from '../../layout/parity';
+
 import { Button } from '../../components/ui/button';
 import { Checkbox } from '../../components/ui/checkbox';
 import { Label } from '../../components/ui/label';
+import { ResponsiveDetailShell } from '../../layout/parity';
 
 export function DeleteAccountPage() {
   const { t } = useTranslation();

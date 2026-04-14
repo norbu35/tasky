@@ -1,5 +1,8 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+
 import { useAppContext } from '../context/AppContext';
+import { AdminLayout } from '../layout/AdminLayout';
+import { isRestrictedUser } from '../lib/userAccess';
 import {
   AuthPage,
   AppUpdatePage,
@@ -65,10 +68,9 @@ import {
   AdminConciergePage,
   AdminModerationPage,
 } from '../pages/admin';
-import { ProtectedRoute, RoleGuard } from './RouteGuards';
+
 import { AdminRoute } from './AdminRoute';
-import { AdminLayout } from '../layout/AdminLayout';
-import { isRestrictedUser } from '../lib/userAccess';
+import { ProtectedRoute, RoleGuard } from './RouteGuards';
 
 function HomeRedirect() {
   const { session, profile } = useAppContext();

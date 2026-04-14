@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
 import { useId } from 'react';
-import { ScreenFrame } from '../ScreenFrame';
+
 import { Button } from '../../components/ui/button';
 import { cn } from '../../lib/utils';
+import { ScreenFrame } from '../ScreenFrame';
 
 type ResponsiveDetailShellProps = {
   title: string;

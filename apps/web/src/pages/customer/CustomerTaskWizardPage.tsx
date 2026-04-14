@@ -9,7 +9,6 @@ import {
   normalizeCategoryIntakeSchema,
 } from '@tasky/core';
 
-
 import { IntakeFormRenderer } from '../../components/feature/task-creation/IntakeFormRenderer';
 import { LocationPicker } from '../../components/feature/task-creation/LocationPicker';
 import { PhotoUploadManager } from '../../components/feature/task-creation/PhotoUploadManager';

@@ -1,12 +1,13 @@
 import type { ReactNode } from 'react';
-import { Navigate, NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Navigate, NavLink, useLocation } from 'react-router-dom';
+
 import { Button } from '../components/ui/button';
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
 import { useAppContext } from '../context/AppContext';
+import type { Role } from '../context/AppContext';
 import { LoadingCard } from '../layout/LoadingCard';
 import { ScreenFrame } from '../layout/ScreenFrame';
-import type { Role } from '../context/AppContext';
 import { isRestrictedUser } from '../lib/userAccess';
 
 export function ProtectedRoute({ children }: { children: ReactNode }) {

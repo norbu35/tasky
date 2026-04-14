@@ -1,13 +1,14 @@
-import { useAdminApiClient } from '../../lib/adminApiClient';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../../context/AppContext';
-import type { Dispute } from '../../lib/apiClient';
+
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Skeleton } from '../../components/ui/skeleton';
-import { Button } from '../../components/ui/button';
-import { Badge } from '../../components/ui/badge';
+import { useAppContext } from '../../context/AppContext';
+import { useAdminApiClient } from '../../lib/adminApiClient';
+import type { Dispute } from '../../lib/apiClient';
 
 function disputeStatusVariant(status: string): 'default' | 'secondary' | 'outline' | 'destructive' {
   switch (status) {

@@ -1,7 +1,8 @@
-import { NavLink } from 'react-router-dom';
 import { Home, Briefcase, MessageSquare, User, Search } from 'lucide-react';
-import { useAppContext } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
+import { NavLink } from 'react-router-dom';
+
+import { useAppContext } from '../context/AppContext';
 
 const CUSTOMER_TABS = [
   { to: '/customer/dashboard', icon: Home, label: 'nav.home', fallback: 'Home' },

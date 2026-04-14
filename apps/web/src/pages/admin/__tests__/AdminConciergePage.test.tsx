@@ -1,6 +1,7 @@
-import type { AdminApiClient } from '../../../lib/adminApiClient';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+import type { AdminApiClient } from '../../../lib/adminApiClient';
 import type { ApiClient, PublicTask, User, Booking, CursorPage } from '../../../lib/apiClient';
 
 // ── Mock AppContext ──────────────────────────────────────────────────

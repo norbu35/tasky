@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
-import { Header } from './Header';
+
 import { BottomNavBar } from './BottomNavBar';
 import { DesktopSidebar } from './DesktopSidebar';
+import { Header } from './Header';
 
 export type MaxWidth = 'narrow' | 'default' | 'wide';
 

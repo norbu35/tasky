@@ -1,7 +1,4 @@
-import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
   Shield,
@@ -17,12 +14,16 @@ import {
   Camera,
   User,
 } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { LanguageSwitcher } from '../layout/LanguageSwitcher';
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useNavigate } from 'react-router-dom';
+
 import {
   CustomerAdvantageVisual,
   TaskerAdvantageVisual,
 } from '../components/feature/landing/ComparisonVisuals';
+import { Button } from '../components/ui/button';
+import { LanguageSwitcher } from '../layout/LanguageSwitcher';
 
 interface SampleTask {
   title: string;

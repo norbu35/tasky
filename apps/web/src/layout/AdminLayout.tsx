@@ -1,5 +1,3 @@
-import { NavLink, Outlet } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import {
   ShieldCheck,
   AlertTriangle,
@@ -9,6 +7,9 @@ import {
   Headset,
   Scale,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { NavLink, Outlet } from 'react-router-dom';
+
 import { Button } from '../components/ui/button';
 import { useAppContext } from '../context/AppContext';
 

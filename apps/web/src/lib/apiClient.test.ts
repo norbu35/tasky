@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+
 import { buildSocketBaseUrl, HttpApiClient } from './apiClient';
 
 const accessToken = 'facebook-token-test';

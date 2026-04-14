@@ -1,5 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { Category, Task, TaskApplication } from '../lib/apiClient';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+
+import {
+  createTaskSchema,
+  generateIntakeScopeSummary,
+  normalizeCategoryIntakeSchema,
+} from '@tasky/core';
+
+import { IntakeFormRenderer } from '../components/feature/task-creation/IntakeFormRenderer';
+import { LocationPicker } from '../components/feature/task-creation/LocationPicker';
+import { PhotoUploadManager } from '../components/feature/task-creation/PhotoUploadManager';
 import { Button } from '../components/ui/button';
 import {
   Card,
@@ -14,17 +25,8 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
+import type { Category, Task, TaskApplication } from '../lib/apiClient';
 import { parseError } from '../lib/errorHandling';
-import { LocationPicker } from '../components/feature/task-creation/LocationPicker';
-import { PhotoUploadManager } from '../components/feature/task-creation/PhotoUploadManager';
-import { IntakeFormRenderer } from '../components/feature/task-creation/IntakeFormRenderer';
-import {
-  createTaskSchema,
-  generateIntakeScopeSummary,
-  normalizeCategoryIntakeSchema,
-} from '@tasky/core';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 
 export function CustomerTaskPage() {
   const { apiClient, session, setProfileError, trackClientEvent } = useAppContext();

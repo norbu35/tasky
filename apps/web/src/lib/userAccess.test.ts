@@ -1,6 +1,7 @@
 import { expect, test, describe } from 'vitest';
-import { isRestrictedUser } from './userAccess';
+
 import type { Profile } from './apiClient';
+import { isRestrictedUser } from './userAccess';
 
 describe('userAccess', () => {
   describe('isRestrictedUser', () => {

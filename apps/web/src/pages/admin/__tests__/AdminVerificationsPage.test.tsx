@@ -1,11 +1,12 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
 import type { VerificationDetail } from '../../../lib/apiClient';
 
 // ── Mock i18n ────────────────────────────────────────────────────────
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string, fallback: string) => fallback,
+    t: (_key: string, fallback: string) => fallback,
     i18n: {
       language: 'en',
       resolvedLanguage: 'en',

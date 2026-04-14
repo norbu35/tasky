@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { useAppContext } from '../../context/AppContext';
 import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../layout/parity';
 
-
 export function CustomerBookingDetailPage() {
   const { apiClient, session } = useAppContext();
   const { t } = useTranslation();

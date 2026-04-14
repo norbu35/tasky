@@ -1,12 +1,12 @@
 import { defineConfig } from 'vitest/config';
+import { baseTestConfig } from '@tasky/tooling-config/vitest/base';
 
 export default defineConfig({
   test: {
-    environment: 'jsdom',
-    globals: true,
+    ...baseTestConfig,
     include: ['src/**/*.test.{ts,tsx}'],
     coverage: {
-      provider: 'v8',
+      ...baseTestConfig.coverage,
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['src/**/*.d.ts', 'src/index.ts'],
       thresholds: {
@@ -15,7 +15,6 @@ export default defineConfig({
         branches: 0,
         statements: 0,
       },
-      reporter: ['text', 'json'],
     },
   },
 });

@@ -1,6 +1,7 @@
-import type { AdminApiClient } from '../../../lib/adminApiClient';
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+import type { AdminApiClient } from '../../../lib/adminApiClient';
 import type {
   ApiClient,
   Category,
@@ -45,6 +46,7 @@ vi.mock('sonner', () => ({
 }));
 
 import { toast } from 'sonner';
+
 import { AdminCategoriesPage } from '../AdminCategoriesPage';
 
 // ── Test Data ────────────────────────────────────────────────────────

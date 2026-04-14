@@ -13,7 +13,6 @@ import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
 import type { Task } from '../lib/apiClient';
 
-
 function TaskCard({ task }: { task: Task }) {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { generateIntakeScopeSummary, normalizeIntakeSchema } from '@tasky/core';
 
 describe('intake schema utilities', () => {

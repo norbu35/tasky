@@ -1,6 +1,10 @@
+import { Coins, Loader2, MapPin, Search, Calendar, Users, ImageIcon, Star } from 'lucide-react';
 import { useState } from 'react';
-import type { PublicTask } from '../lib/apiClient';
+import { useTranslation } from 'react-i18next';
+
 import { useCategoriesQuery, useTasksQuery } from '@tasky/core';
+
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
@@ -16,10 +20,8 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
+import type { PublicTask } from '../lib/apiClient';
 import { parseError } from '../lib/errorHandling';
-import { Coins, Loader2, MapPin, Search, Calendar, Users, ImageIcon, Star } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 
 export function TaskerFeedPage() {
   const { apiClient, session, trackClientEvent } = useAppContext();

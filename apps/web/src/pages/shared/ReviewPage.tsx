@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ResponsiveWizardShell, StatePanel } from '../../layout/parity';
+
 import { Button } from '../../components/ui/button';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
+import { ResponsiveWizardShell, StatePanel } from '../../layout/parity';
 
 export function ReviewPage() {
   const { t } = useTranslation();

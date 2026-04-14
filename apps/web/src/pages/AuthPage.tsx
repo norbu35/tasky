@@ -1,8 +1,11 @@
-import type { paths } from '@tasky/sdk';
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { AlertTriangle, ArrowRight, Loader2, Shield, User, Wrench } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+
+import type { paths } from '@tasky/sdk';
 
 import { Button } from '../components/ui/button';
 import {
@@ -14,10 +17,8 @@ import {
   CardTitle,
 } from '../components/ui/card';
 import { useAppContext } from '../context/AppContext';
-import { parseError } from '../lib/errorHandling';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import { LanguageSwitcher } from '../layout/LanguageSwitcher';
+import { parseError } from '../lib/errorHandling';
 
 type DevRole = 'CUSTOMER' | 'TASKER' | 'ADMIN';
 

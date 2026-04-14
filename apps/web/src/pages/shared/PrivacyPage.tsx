@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { ResponsiveDetailShell } from '../../layout/parity';
+
 import { Card, CardContent } from '../../components/ui/card';
+import { ResponsiveDetailShell } from '../../layout/parity';
 
 export function PrivacyPage() {
   const { t } = useTranslation();

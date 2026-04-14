@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
+
 import { useAppContext } from '../context/AppContext';
 
 export function AdminRoute({ children }: { children: ReactNode }) {

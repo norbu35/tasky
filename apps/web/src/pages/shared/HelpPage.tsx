@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { ResponsiveFeedShell } from '../../layout/parity';
+
 import { Card, CardContent } from '../../components/ui/card';
+import { ResponsiveFeedShell } from '../../layout/parity';
 
 export function HelpPage() {
   const { t } = useTranslation();

@@ -1,9 +1,10 @@
+import { Pencil, Clock, Share2, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { ResponsiveDetailShell, StatePanel } from '../../layout/parity';
-import { Pencil, Clock, Share2, Users } from 'lucide-react';
 
 export function CustomerNoApplicantRescuePage() {
   const { t } = useTranslation();

@@ -1,6 +1,7 @@
-import type { AdminApiClient } from '../../../lib/adminApiClient';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+import type { AdminApiClient } from '../../../lib/adminApiClient';
 import type { ApiClient, StrikePolicy } from '../../../lib/apiClient';
 
 const MOCK_POLICY: StrikePolicy = {
@@ -35,6 +36,7 @@ vi.mock('sonner', () => ({
 }));
 
 import { toast } from 'sonner';
+
 import { AdminModerationPage } from '../AdminModerationPage';
 
 function renderPage() {

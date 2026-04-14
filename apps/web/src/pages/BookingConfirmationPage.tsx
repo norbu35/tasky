@@ -17,9 +17,6 @@ import type { Booking } from '../lib/apiClient';
 import { parseError } from '../lib/errorHandling';
 import { createIdempotencyKey } from '../lib/idempotency';
 
-
-
-
 export function BookingConfirmationPage() {
   const { apiClient, session, trackClientEvent } = useAppContext();
   const navigate = useNavigate();

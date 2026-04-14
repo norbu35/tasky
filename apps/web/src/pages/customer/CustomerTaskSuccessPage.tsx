@@ -1,8 +1,8 @@
-import { useTranslation } from 'react-i18next';
 import { CheckCircle2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
-import { ResponsiveWizardShell, StatePanel } from '../../layout/parity';
 import { Button } from '../../components/ui/button';
+import { ResponsiveWizardShell, StatePanel } from '../../layout/parity';
 
 export function CustomerTaskSuccessPage() {
   const { t } = useTranslation();

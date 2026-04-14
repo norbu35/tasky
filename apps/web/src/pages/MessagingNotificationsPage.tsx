@@ -1,15 +1,16 @@
+import { Client } from '@stomp/stompjs';
+import { Bell, BellOff, MessageSquareText, Search, Send } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { buildSocketBaseUrl, type Conversation, type Message } from '../lib/apiClient';
+import { useTranslation } from 'react-i18next';
+import SockJS from 'sockjs-client';
+
+import { Avatar, AvatarFallback } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
+import { buildSocketBaseUrl, type Conversation, type Message } from '../lib/apiClient';
 import { parseError } from '../lib/errorHandling';
-import { Avatar, AvatarFallback } from '../components/ui/avatar';
-import { Bell, BellOff, MessageSquareText, Search, Send } from 'lucide-react';
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
-import { useTranslation } from 'react-i18next';
 
 export function MessagingNotificationsPage() {
   const { apiClient, session, profile } = useAppContext();

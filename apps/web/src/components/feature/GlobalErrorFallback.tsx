@@ -1,8 +1,9 @@
-import { useTranslation } from 'react-i18next';
 import { AlertTriangle, RefreshCcw } from 'lucide-react';
-import { Button } from '../ui/button';
-import { ScreenFrame } from '../../layout/ScreenFrame';
 import type { FallbackProps } from 'react-error-boundary';
+import { useTranslation } from 'react-i18next';
+
+import { ScreenFrame } from '../../layout/ScreenFrame';
+import { Button } from '../ui/button';
 
 export function GlobalErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   const { t } = useTranslation();

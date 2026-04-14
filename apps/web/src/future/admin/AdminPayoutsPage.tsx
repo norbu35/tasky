@@ -1,13 +1,10 @@
-import { useAdminApiClient } from '../../lib/adminApiClient';
+import { Banknote } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Banknote } from 'lucide-react';
 import { toast } from 'sonner';
-import { useAppContext } from '../../context/AppContext';
-import type { PayoutRequest } from '../../lib/apiClient';
-import { Card, CardContent } from '../../components/ui/card';
+
 import { Button } from '../../components/ui/button';
-import { Skeleton } from '../../components/ui/skeleton';
+import { Card, CardContent } from '../../components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -16,6 +13,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../../components/ui/dialog';
+import { Skeleton } from '../../components/ui/skeleton';
+import { useAppContext } from '../../context/AppContext';
+import { useAdminApiClient } from '../../lib/adminApiClient';
+import type { PayoutRequest } from '../../lib/apiClient';
 
 type PageState = 'loading' | 'phase-gated' | 'error' | 'ready';
 

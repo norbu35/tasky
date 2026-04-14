@@ -20,7 +20,7 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
-    "test": "vitest run --reporter verbose"
+    "test": "vitest run --reporter verbose --passWithNoTests"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.28.0",

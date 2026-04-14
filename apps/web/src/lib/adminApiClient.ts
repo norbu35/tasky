@@ -1,4 +1,6 @@
 import { useMemo, createContext, useContext } from 'react';
+
+import { HttpApiClient } from './apiClient';
 import type {
   User,
   Message,
@@ -17,7 +19,6 @@ import type {
   AdminCategoryPayload,
   CategorySchemaVersion,
 } from './apiTypes';
-import { HttpApiClient } from './apiClient';
 
 export interface AdminApiClient {
   // ─── Admin Methods ───────────────────────────────────────────────
