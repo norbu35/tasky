@@ -4,27 +4,27 @@
 
 Call `mcp__serena__initial_instructions` ONCE at session start. Use Serena for all code navigation — not grep_search, glob, or run_shell_command:
 
-| Task | Tool |
-|------|------|
-| Symbol search | `mcp__serena__jet_brains_find_symbol` |
-| File overview | `mcp__serena__jet_brains_get_symbols_overview` |
-| References | `mcp__serena__jet_brains_find_referencing_symbols` |
-| Declaration | `mcp__serena__jet_brains_find_declaration` |
-| Implementations | `mcp__serena__jet_brains_find_implementations` |
+| Task            | Tool                                               |
+| --------------- | -------------------------------------------------- |
+| Symbol search   | `mcp__serena__jet_brains_find_symbol`              |
+| File overview   | `mcp__serena__jet_brains_get_symbols_overview`     |
+| References      | `mcp__serena__jet_brains_find_referencing_symbols` |
+| Declaration     | `mcp__serena__jet_brains_find_declaration`         |
+| Implementations | `mcp__serena__jet_brains_find_implementations`     |
 
 grep_search / glob = fallback only when Serena returns empty.
 
 ## Commands
 
-| Task | Command |
-|------|---------|
-| Backend test (domain) | `./gradlew test --tests "mn.tasky.DOMAIN.*"` |
-| Backend test (class) | `./gradlew test --tests "mn.tasky.DOMAIN.ClassName"` |
-| Gate (required pre-PR) | `./gradlew gateSmoke` |
-| Validate API contract | `./gradlew openApiValidate` |
-| Regen TypeScript SDK | `pnpm sdk:generate` |
-| Typecheck all | `pnpm -r typecheck` |
-| Frontend tests | `pnpm -r test` |
+| Task                   | Command                                              |
+| ---------------------- | ---------------------------------------------------- |
+| Backend test (domain)  | `./gradlew test --tests "mn.tasky.DOMAIN.*"`         |
+| Backend test (class)   | `./gradlew test --tests "mn.tasky.DOMAIN.ClassName"` |
+| Gate (required pre-PR) | `./gradlew gateSmoke`                                |
+| Validate API contract  | `./gradlew openApiValidate`                          |
+| Regen TypeScript SDK   | `pnpm sdk:generate`                                  |
+| Typecheck all          | `pnpm -r typecheck`                                  |
+| Frontend tests         | `pnpm -r test`                                       |
 
 Always use `./gradlew`, never system `gradle`.
 
@@ -34,6 +34,13 @@ Always use `./gradlew`, never system `gradle`.
 - **Web:** React 18 + TypeScript + Vite, Radix UI + Tailwind (shadcn conventions, no CLI)
 - **Mobile:** React Native (Expo) + TypeScript + shared design tokens
 - **API client:** consume `@tasky/sdk` (generated from `docs/API.yaml`) — never hand-write fetch types
+
+### Module System
+
+`apps/mobile` intentionally omits `"type": "module"` in its `package.json`. Expo's Metro bundler
+and `babel-preset-expo` expect CommonJS module resolution. All other workspaces use ESM
+(`"type": "module"`). Do not add `"type": "module"` to the mobile app without verifying
+Metro/Expo compatibility.
 
 ## Workflow
 
@@ -54,11 +61,11 @@ Before writing any test: check `tests/registry.yaml` for an existing scenario. R
 - Never use `@DirtiesContext` — `IntegrationTestBase` handles truncation
 - PIT survived mutation: fix the assertion, not production code; if no scenario covers it → report gap
 
-| Gate | Command | Blocks |
-|------|---------|--------|
-| Smoke | `./gradlew gateSmoke` | Merge to main |
-| Regression | `./gradlew gateRegression` | Deploy |
-| Full | `./gradlew gateFull` | Nightly alerts |
+| Gate       | Command                    | Blocks         |
+| ---------- | -------------------------- | -------------- |
+| Smoke      | `./gradlew gateSmoke`      | Merge to main  |
+| Regression | `./gradlew gateRegression` | Deploy         |
+| Full       | `./gradlew gateFull`       | Nightly alerts |
 
 Frontend: Web uses Vitest + RTL; Mobile uses Jest + RNTL. For auth / payments / wallet / migrations / SecurityConfig changes: write positive and negative tests and call it out in the PR.
 
