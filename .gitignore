@@ -4,7 +4,11 @@
 .superpowers/
 .idea/*
 !.idea/codeStyles
-.vscode/
+# VS Code — track workspace settings, ignore user-specific state
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
 
 # Serena (AI agent config — project.yml is intentionally tracked)
 .serena/project.local.yml
