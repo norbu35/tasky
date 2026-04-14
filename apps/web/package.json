@@ -78,6 +78,7 @@
     "prettier": "^3.8.1",
     "tailwindcss": "^4.2.2",
     "typescript": "6.0.2",
+    "@tasky/tooling-config": "workspace:*",
     "vite": "8.0.8",
     "vitest": "4.1.4"
   }

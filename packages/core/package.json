@@ -30,6 +30,7 @@
     "react": "^19.0.0"
   },
   "devDependencies": {
+    "@tasky/tooling-config": "workspace:*",
     "@types/react": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "8.56.0",
     "@typescript-eslint/parser": "8.56.0",

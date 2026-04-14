@@ -27,6 +27,7 @@
     "format:check": "prettier --check \"src/**/*.ts\""
   },
   "devDependencies": {
+    "@tasky/tooling-config": "workspace:*",
     "@typescript-eslint/eslint-plugin": "8.56.0",
     "@typescript-eslint/parser": "8.56.0",
     "eslint": "9.39.2",
