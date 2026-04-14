@@ -31,3 +31,12 @@ indent_size = 4
 # Markdown and plain text — preserve intentional trailing spaces
 [*.{md,txt}]
 trim_trailing_whitespace = false
+
+# JavaScript modules (ESLint flat configs, build scripts)
+[*.{js,mjs,cjs,ts,tsx}]
+indent_style = space
+indent_size = 2
+
+# Dockerfiles
+[Dockerfile*]
+indent_style = tab

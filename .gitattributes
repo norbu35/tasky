@@ -1,0 +1,43 @@
+# Auto-detect text files and normalize line endings
+* text=auto
+
+# Force LF on all text files
+*.java text eol=lf
+*.kt text eol=lf
+*.kts text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.xml text eol=lf
+*.sql text eol=lf
+*.sh text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+
+# Binary files — no diff, no merge, no LF conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
+*.jar binary
+
+# Lockfiles — treat as binary for merge (regenerate on conflict)
+pnpm-lock.yaml merge=binary -diff
+gradle/wrapper/gradle-wrapper.jar binary
+
+# Linguist overrides — exclude generated code from language stats
+packages/sdk/src/generated/** linguist-generated=true
+**/build/generated-sources/** linguist-generated=true

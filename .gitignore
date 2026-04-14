@@ -54,6 +54,15 @@ apps/*/test-results/
 # Local env overrides
 .env
 
+# Web app local env (may contain real Facebook App ID)
+apps/web/.env.local
+
+# Generated artifacts (stale session outputs)
+baseline.json
+postflight-cascade.json
+apps/mobile/out.css
+repomix-output.*
+
 # Test result dumps (generated, not source)
 test-results.json
 
