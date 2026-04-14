@@ -22,7 +22,7 @@
     "lint": "echo 'SDK is generated — lint skipped.'",
     "format": "prettier --write \"src/**/*.ts\" --ignore-path ../../.prettierignore",
     "format:check": "prettier --check \"src/**/*.ts\" --ignore-path ../../.prettierignore",
-    "test": "echo 'No SDK tests configured yet.'"
+    "test": "tsc --noEmit"
   },
   "devDependencies": {
     "@tasky/tooling-config": "workspace:*",

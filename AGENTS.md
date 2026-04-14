@@ -67,7 +67,18 @@ Before writing any test: check `tests/registry.yaml` for an existing scenario. R
 | Regression | `./gradlew gateRegression` | Deploy         |
 | Full       | `./gradlew gateFull`       | Nightly alerts |
 
-Frontend: Web uses Vitest + RTL; Mobile uses Jest + RNTL. For auth / payments / wallet / migrations / SecurityConfig changes: write positive and negative tests and call it out in the PR.
+Frontend: Web uses Vitest + RTL; Mobile uses Vitest + RNTL. For auth / payments / wallet / migrations / SecurityConfig changes: write positive and negative tests and call it out in the PR.
+
+### Testing
+
+- **Framework:** Vitest everywhere (web, mobile, packages). Do not introduce Jest.
+- **Shared test utilities:** `@tasky/test-utils` provides `createTestQueryClient()`,
+  `renderWithProviders()`, and common mocks (Reanimated, AsyncStorage, SafeAreaContext).
+  Import from `@tasky/test-utils` or `@tasky/test-utils/mocks` — do not duplicate mocks.
+- **Coverage floors:** 60% lines, 55% functions/branches, 60% statements (enforced per-workspace).
+  `packages/core` starts at 0% until tests are written.
+- **Generated packages** (`sdk`, `design-tokens`): Use `tsc --noEmit` as test script.
+  Unit tests are not needed for generated/static code.
 
 ## Guard Rails
 

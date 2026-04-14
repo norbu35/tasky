@@ -24,7 +24,8 @@
     "build": "pnpm run clean && tsc -p tsconfig.json",
     "lint": "eslint \"src/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.ts\""
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "test": "tsc --noEmit"
   },
   "devDependencies": {
     "@tasky/tooling-config": "workspace:*",

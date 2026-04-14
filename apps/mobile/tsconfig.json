@@ -8,7 +8,7 @@
     },
     "strict": true,
     "skipLibCheck": true,
-    "types": ["jest", "node"]
+    "types": ["vitest/globals", "node"]
   },
   "include": [
     "nativewind-env.d.ts",
