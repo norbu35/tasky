@@ -1,0 +1,11 @@
+node_modules
+dist
+coverage
+playwright-report
+test-results
+.env*
+*.md
+.eslintrc.*
+eslint.config.*
+vitest.config.*
+tsconfig.json
