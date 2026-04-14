@@ -38,10 +38,7 @@ function TaskCardHeader({ task }: { task: PublicTask }) {
 function TaskCardBody({ task }: { task: PublicTask }) {
   return (
     <View className="gap-sm">
-      <Text
-        className="text-body font-sans-medium text-foreground"
-        numberOfLines={2}
-      >
+      <Text className="text-body font-sans-medium text-foreground" numberOfLines={2}>
         {task.description}
       </Text>
       <View className="flex-row flex-wrap items-center gap-sm mt-xs">
@@ -88,10 +85,7 @@ function TaskerBrowseScreen() {
       id: cat.name?.toLowerCase() ?? cat.id,
       label: cat.name_mn ?? cat.name ?? cat.id,
     }));
-    return [
-      { id: 'all', label: t('TaskerBrowseScreen.all') },
-      ...apiCategories,
-    ];
+    return [{ id: 'all', label: t('TaskerBrowseScreen.all') }, ...apiCategories];
   }, [categoriesData, t]);
 
   const handleClearFilters = useCallback(() => {
@@ -164,9 +158,7 @@ function TaskerBrowseScreen() {
         ListHeaderComponent={
           <View className="gap-md mb-md">
             <ScreenHeader title={t('tasker.browse.title')} subtitle={t('tasker.browse.subtitle')} />
-            {hasPending && oldestPending && (
-              <ReviewGateBanner pendingReview={oldestPending} />
-            )}
+            {hasPending && oldestPending && <ReviewGateBanner pendingReview={oldestPending} />}
             <SearchBar
               value={searchQuery}
               onChangeText={setSearchQuery}

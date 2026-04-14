@@ -216,10 +216,7 @@ export default function LocationScreen() {
       </View>
 
       {/* mapShell: overflow hidden, shadow → imperative */}
-      <View
-        className="rounded-lg overflow-hidden bg-muted min-h-[280px]"
-        style={elevations.soft}
-      >
+      <View className="rounded-lg overflow-hidden bg-muted min-h-[280px]" style={elevations.soft}>
         {/* map: MapView always imperative */}
         <MapView
           ref={mapRef}
@@ -247,10 +244,7 @@ export default function LocationScreen() {
         </MapView>
 
         {/* mapOverlay: absolute position → imperative */}
-        <View
-          pointerEvents="none"
-          className="absolute inset-0 items-center justify-center gap-xs"
-        >
+        <View pointerEvents="none" className="absolute inset-0 items-center justify-center gap-xs">
           <View className="px-lg py-sm rounded-md bg-primary-deep">
             <Text className="text-label font-bold text-primary-foreground">
               {t('LocationScreen.pickHere')}
@@ -328,10 +322,7 @@ export default function LocationScreen() {
           {loadingRecent ? (
             <View className="flex-row gap-sm">
               {[1, 2, 3].map((i) => (
-                <View
-                  key={i}
-                  className="h-8 rounded-full bg-muted w-[100px] opacity-50"
-                />
+                <View key={i} className="h-8 rounded-full bg-muted w-[100px] opacity-50" />
               ))}
             </View>
           ) : recentLocations && recentLocations.length > 0 ? (

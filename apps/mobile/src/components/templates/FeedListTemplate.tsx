@@ -115,12 +115,13 @@ export function FeedListTemplate<T>({
     );
   }, [isLoadingMore]);
 
-  const combinedHeader = ListHeaderComponent || filterBar ? (
-    <View className="pb-md gap-sm">
-      {ListHeaderComponent}
-      {filterBar}
-    </View>
-  ) : null;
+  const combinedHeader =
+    ListHeaderComponent || filterBar ? (
+      <View className="pb-md gap-sm">
+        {ListHeaderComponent}
+        {filterBar}
+      </View>
+    ) : null;
 
   if (isLoading) {
     return (

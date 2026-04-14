@@ -35,11 +35,7 @@ export function ReviewGateProvider({ children }: { children: React.ReactNode }) 
     return { isLocked, hasPending: true, oldestPending };
   }, [pendingReviews]);
 
-  return (
-    <ReviewGateContext.Provider value={value}>
-      {children}
-    </ReviewGateContext.Provider>
-  );
+  return <ReviewGateContext.Provider value={value}>{children}</ReviewGateContext.Provider>;
 }
 
 export function useReviewGate() {

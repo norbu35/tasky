@@ -23,7 +23,10 @@ const { colors, spacing } = mobileTheme;
 export default function BookingConfirmedScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { bookingId, taskerName } = useLocalSearchParams<{ bookingId: string; taskerName?: string }>();
+  const { bookingId, taskerName } = useLocalSearchParams<{
+    bookingId: string;
+    taskerName?: string;
+  }>();
   const [canAddToCalendar, setCanAddToCalendar] = React.useState(false);
   const canAddToCalendarRef = React.useRef(canAddToCalendar);
 

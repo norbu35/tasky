@@ -148,9 +148,7 @@ function Header({
         }
       />
 
-      {hasPending && oldestPending && (
-        <ReviewGateBanner pendingReview={oldestPending} />
-      )}
+      {hasPending && oldestPending && <ReviewGateBanner pendingReview={oldestPending} />}
 
       <View className="rounded-lg p-card gap-item bg-card" style={elevations.soft}>
         <Text className="text-subtitle font-extrabold text-primary-deep">

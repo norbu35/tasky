@@ -56,9 +56,7 @@ export default function TaskPostedSuccessScreen() {
               className="px-md py-xs rounded-full"
               style={{ backgroundColor: `${colors.verified}1A` }}
             >
-              <Text
-                className="text-caption font-sans-bold text-verified tracking-[0.8px]"
-              >
+              <Text className="text-caption font-sans-bold text-verified tracking-[0.8px]">
                 {t('TaskPostedSuccessScreen.successBadge')}
               </Text>
             </View>
@@ -82,9 +80,7 @@ export default function TaskPostedSuccessScreen() {
           </View>
 
           <View className="rounded-md bg-muted p-2xl gap-sm" style={elevations.soft}>
-            <Text
-              className="text-caption font-sans-bold uppercase text-primary-deep mb-xs tracking-[0.8px]"
-            >
+            <Text className="text-caption font-sans-bold uppercase text-primary-deep mb-xs tracking-[0.8px]">
               {t('TaskPostedSuccessScreen.successNextLabel')}
             </Text>
             <Text className="text-body font-sans-bold text-primary-deep">

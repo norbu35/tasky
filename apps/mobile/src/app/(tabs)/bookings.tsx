@@ -24,10 +24,14 @@ interface BookingItem {
 
 function mapStatus(status: BookingStatus): 'assigned' | 'completed' | 'cancelled' | 'no_show' {
   switch (status) {
-    case 'ASSIGNED': return 'assigned';
-    case 'COMPLETED': return 'completed';
-    case 'CANCELLED': return 'cancelled';
-    case 'NO_SHOW': return 'no_show';
+    case 'ASSIGNED':
+      return 'assigned';
+    case 'COMPLETED':
+      return 'completed';
+    case 'CANCELLED':
+      return 'cancelled';
+    case 'NO_SHOW':
+      return 'no_show';
   }
 }
 
@@ -36,9 +40,7 @@ function formatMoney(amount: number) {
 }
 
 function BookingCardHeader({ booking, isCustomer }: { booking: BookingItem; isCustomer: boolean }) {
-  const counterpartyName = isCustomer
-    ? booking.tasker?.full_name
-    : booking.customer?.full_name;
+  const counterpartyName = isCustomer ? booking.tasker?.full_name : booking.customer?.full_name;
 
   return (
     <View className="flex-row items-center justify-between">

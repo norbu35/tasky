@@ -45,9 +45,7 @@ export function ActionRow({
         {icon}
       </View>
       <Text className="flex-1 text-body font-sans-medium text-foreground">{label}</Text>
-      {trailing != null ? trailing : (
-        <ChevronRight size={20} color={colors.navInactive} />
-      )}
+      {trailing != null ? trailing : <ChevronRight size={20} color={colors.navInactive} />}
     </Pressable>
   );
 }

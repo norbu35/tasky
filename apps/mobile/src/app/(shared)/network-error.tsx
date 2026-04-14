@@ -46,30 +46,30 @@ export default function NetworkErrorScreen() {
 
   return (
     <ScreenContainer testID="SCR-INFRA-001">
-    <View className="flex-1 justify-center items-center px-xl">
-      <View
-        className="w-[72px] h-[72px] rounded-full items-center justify-center mb-lg"
-        style={{ backgroundColor: `${colors.danger}1A` }}
-      >
-        <WifiOff size={40} color={colors.danger} />
-      </View>
-      <Text className="text-title font-bold text-foreground text-center">{headline}</Text>
-      <Text className="text-body text-text-secondary text-center mt-sm leading-6">
-        {description}
-      </Text>
-      <Button
-        label={t('infra.networkError.retry')}
-        onPress={handleRetry}
-        isLoading={isRetrying}
-        className="self-stretch mt-xl"
-        testID="network-error-screen-retry"
-      />
-      {isRestored ? (
-        <View className="absolute left-lg right-lg bottom-2xl">
-          <Toast message={t('infra.networkError.restored')} variant="success" />
+      <View className="flex-1 justify-center items-center px-xl">
+        <View
+          className="w-[72px] h-[72px] rounded-full items-center justify-center mb-lg"
+          style={{ backgroundColor: `${colors.danger}1A` }}
+        >
+          <WifiOff size={40} color={colors.danger} />
         </View>
-      ) : null}
-    </View>
+        <Text className="text-title font-bold text-foreground text-center">{headline}</Text>
+        <Text className="text-body text-text-secondary text-center mt-sm leading-6">
+          {description}
+        </Text>
+        <Button
+          label={t('infra.networkError.retry')}
+          onPress={handleRetry}
+          isLoading={isRetrying}
+          className="self-stretch mt-xl"
+          testID="network-error-screen-retry"
+        />
+        {isRestored ? (
+          <View className="absolute left-lg right-lg bottom-2xl">
+            <Toast message={t('infra.networkError.restored')} variant="success" />
+          </View>
+        ) : null}
+      </View>
     </ScreenContainer>
   );
 }

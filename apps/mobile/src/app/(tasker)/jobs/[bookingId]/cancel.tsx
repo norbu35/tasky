@@ -26,10 +26,7 @@ export default function TaskerCancelBookingScreen() {
       setIsOpen(false);
       router.back();
     } catch {
-      Alert.alert(
-        t('common.error'),
-        t('tasker.jobs.cancelError'),
-      );
+      Alert.alert(t('common.error'), t('tasker.jobs.cancelError'));
     }
   }, [bookingId, cancelBooking, router, t]);
 

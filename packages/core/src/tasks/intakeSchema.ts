@@ -230,7 +230,10 @@ function resolveSelectableValue(
   return prettifyIntakeToken(value);
 }
 
-export function normalizeIntakeSchema(rawSchema: unknown, version = DEFAULT_SCHEMA_VERSION): IntakeSchema | null {
+export function normalizeIntakeSchema(
+  rawSchema: unknown,
+  version = DEFAULT_SCHEMA_VERSION,
+): IntakeSchema | null {
   const parsed = parseRawSchema(rawSchema);
   if (!Array.isArray(parsed) || parsed.length === 0) {
     return null;
@@ -250,7 +253,9 @@ export function normalizeIntakeSchema(rawSchema: unknown, version = DEFAULT_SCHE
   };
 }
 
-export function normalizeCategoryIntakeSchema(category?: IntakeSchemaSource | null): IntakeSchema | null {
+export function normalizeCategoryIntakeSchema(
+  category?: IntakeSchemaSource | null,
+): IntakeSchema | null {
   if (!category?.intake_enabled) {
     return null;
   }

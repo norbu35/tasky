@@ -114,7 +114,9 @@ export default function EditProfileScreen() {
         <Touchable
           testID="edit-profile-change-photo"
           className="flex-row items-center gap-xs"
-          onPress={() => { void handleChangePhoto(); }}
+          onPress={() => {
+            void handleChangePhoto();
+          }}
           disabled={isUploadingAvatar}
         >
           {isUploadingAvatar ? (

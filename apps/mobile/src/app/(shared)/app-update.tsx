@@ -36,28 +36,28 @@ export default function AppUpdateScreen() {
 
   return (
     <ScreenContainer testID="SCR-INFRA-002">
-    <View className="flex-1 justify-center items-center px-xl">
-      <View className="w-[72px] h-[72px] rounded-full bg-muted items-center justify-center mb-lg">
-        <Download size={32} color={colors.primary} />
-      </View>
-      <Text className="text-title font-bold text-foreground text-center">{title}</Text>
-      <Text className="text-body text-text-secondary text-center mt-sm leading-6">{body}</Text>
-      <Button
-        label={t('infra.appUpdate.softUpdate')}
-        onPress={handleUpdate}
-        className="self-stretch mt-xl"
-        testID="app-update-screen-update"
-      />
-      {!isForce && (
+      <View className="flex-1 justify-center items-center px-xl">
+        <View className="w-[72px] h-[72px] rounded-full bg-muted items-center justify-center mb-lg">
+          <Download size={32} color={colors.primary} />
+        </View>
+        <Text className="text-title font-bold text-foreground text-center">{title}</Text>
+        <Text className="text-body text-text-secondary text-center mt-sm leading-6">{body}</Text>
         <Button
-          label={t('infra.appUpdate.softDismiss')}
-          variant="ghost"
-          onPress={handleDismiss}
-          className="self-stretch mt-md"
-          testID="app-update-screen-dismiss"
+          label={t('infra.appUpdate.softUpdate')}
+          onPress={handleUpdate}
+          className="self-stretch mt-xl"
+          testID="app-update-screen-update"
         />
-      )}
-    </View>
+        {!isForce && (
+          <Button
+            label={t('infra.appUpdate.softDismiss')}
+            variant="ghost"
+            onPress={handleDismiss}
+            className="self-stretch mt-md"
+            testID="app-update-screen-dismiss"
+          />
+        )}
+      </View>
     </ScreenContainer>
   );
 }

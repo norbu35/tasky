@@ -66,9 +66,7 @@ export function ListItemCard({
           </Text>
         )}
       </View>
-      {trailing != null && (
-        <View className="shrink-0 self-center">{trailing}</View>
-      )}
+      {trailing != null && <View className="shrink-0 self-center">{trailing}</View>}
     </Pressable>
   );
 }

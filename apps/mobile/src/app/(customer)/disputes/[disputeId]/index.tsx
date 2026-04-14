@@ -51,9 +51,7 @@ type DisputeLike = {
 
 type TimelineState = 'done' | 'current' | 'future';
 
-function buildStatusMeta(
-  t: (key: string) => string,
-): Record<
+function buildStatusMeta(t: (key: string) => string): Record<
   DisputeStatus,
   {
     label: string;

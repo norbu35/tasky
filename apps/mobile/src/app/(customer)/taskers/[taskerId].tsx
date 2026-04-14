@@ -120,7 +120,9 @@ export default function TaskerProfileScreen() {
                     className="px-md py-sm rounded-full"
                     style={{ backgroundColor: `${colors.primary}12` }}
                   >
-                    <Text className="text-caption text-primary-deep font-sans-bold">{category}</Text>
+                    <Text className="text-caption text-primary-deep font-sans-bold">
+                      {category}
+                    </Text>
                   </View>
                 ))
               ) : (

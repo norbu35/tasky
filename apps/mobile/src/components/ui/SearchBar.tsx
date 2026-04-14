@@ -14,10 +14,7 @@ const { colors, spacing } = mobileTheme;
 export function SearchBar({ className, containerClassName, ...props }: SearchBarProps) {
   return (
     <View
-      className={cn(
-        'flex-row items-center bg-muted rounded-xl px-md py-sm',
-        containerClassName
-      )}
+      className={cn('flex-row items-center bg-muted rounded-xl px-md py-sm', containerClassName)}
     >
       <Search size={20} color={colors.textTertiary} style={{ marginRight: spacing.sm }} />
       <TextInput

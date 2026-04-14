@@ -170,7 +170,9 @@ export default function PhotoUploadScreen() {
 
       <View className="flex-row items-center gap-sm px-xs">
         <Info size={16} color={colors.secondary} />
-        <Text className="flex-1 text-caption text-text-secondary">{t('Photos.photosOptional')}</Text>
+        <Text className="flex-1 text-caption text-text-secondary">
+          {t('Photos.photosOptional')}
+        </Text>
       </View>
 
       <View className="rounded-lg p-lg bg-muted gap-sm mt-xs">

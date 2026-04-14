@@ -232,9 +232,7 @@ function PhotosCard({ photos, onEdit }: { photos: string[]; onEdit: () => void }
             key={`empty-${idx}`}
             className="w-32 h-32 rounded-md overflow-hidden items-center justify-center border-2 border-dashed border-chip-inactive bg-card"
           >
-            <Text className="text-heading text-text-secondary leading-[24px]">
-              +
-            </Text>
+            <Text className="text-heading text-text-secondary leading-[24px]">+</Text>
           </View>
         ))}
       </View>

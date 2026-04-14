@@ -132,7 +132,6 @@ function AuthenticatedProfile() {
             />
           </View>
 
-
           {/* Stats Link for Taskers — now accessible via secondary CTA */}
         </View>
       )}

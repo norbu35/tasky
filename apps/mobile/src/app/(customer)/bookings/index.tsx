@@ -118,9 +118,7 @@ function BookingCard({
       style={elevations.soft}
       testID={`booking-card-${booking.id}`}
     >
-      <View
-        className="flex-row items-start justify-between gap-item"
-      >
+      <View className="flex-row items-start justify-between gap-item">
         <View className="flex-row items-center flex-1 gap-item">
           <ProfileAvatar
             uri={booking.tasker?.avatar_url}

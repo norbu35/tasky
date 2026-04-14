@@ -68,7 +68,9 @@ export default function TaskerCreditsIndexScreen() {
             testID="tasker-credits-referrals"
           >
             <Text className="text-label font-bold text-primary">{t('tasker.referrals.title')}</Text>
-            <Text className="text-body text-text-secondary">{t('tasker.referrals.inviteBody')}</Text>
+            <Text className="text-body text-text-secondary">
+              {t('tasker.referrals.inviteBody')}
+            </Text>
           </Pressable>
         </View>
 

@@ -369,10 +369,7 @@ export function BookingSafetyPage() {
           <DialogHeader>
             <DialogTitle>{t('bookingSafety.completeTitle', 'Complete Booking')}</DialogTitle>
             <DialogDescription>
-              {t(
-                'bookingSafety.completeDesc',
-                'Mark this booking as successfully completed.',
-              )}
+              {t('bookingSafety.completeDesc', 'Mark this booking as successfully completed.')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4">

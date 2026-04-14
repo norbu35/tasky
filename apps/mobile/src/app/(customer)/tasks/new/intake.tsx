@@ -299,11 +299,7 @@ export default function IntakeFormScreen() {
       const boolVal = val === true ? true : val === false ? false : null;
       return (
         <FormField key={fieldKey} label={fieldLabel} errorText={error}>
-          <YesNo
-            value={boolVal}
-            onChange={(v) => setField(fieldKey, v)}
-            testIDPrefix={fieldKey}
-          />
+          <YesNo value={boolVal} onChange={(v) => setField(fieldKey, v)} testIDPrefix={fieldKey} />
         </FormField>
       );
     }

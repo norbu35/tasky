@@ -69,7 +69,10 @@ export default function MyJobsScreen() {
       return bookings.filter((booking) => booking.status === 'NO_SHOW');
     }
     return bookings.filter(
-      (booking) => booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED' && booking.status !== 'NO_SHOW',
+      (booking) =>
+        booking.status !== 'COMPLETED' &&
+        booking.status !== 'CANCELLED' &&
+        booking.status !== 'NO_SHOW',
     );
   }, [activeFilters, bookings]);
 

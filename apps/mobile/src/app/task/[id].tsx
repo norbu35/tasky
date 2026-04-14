@@ -111,11 +111,7 @@ export default function TaskDetailScreen() {
           <View className="gap-lg">
             {/* Customer hero — avatar, name, rating */}
             <View className="flex-row items-center gap-md bg-muted rounded-md p-lg">
-              <ProfileAvatar
-                uri={undefined}
-                name={task.customer.full_name}
-                size="lg"
-              />
+              <ProfileAvatar uri={undefined} name={task.customer.full_name} size="lg" />
               <View className="flex-1 gap-xs">
                 <Text className="text-subtitle font-sans-bold text-foreground">
                   {task.customer.full_name}

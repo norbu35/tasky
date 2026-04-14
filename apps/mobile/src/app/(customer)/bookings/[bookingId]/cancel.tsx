@@ -26,10 +26,7 @@ export default function CustomerCancelBookingScreen() {
       setIsOpen(false);
       router.back();
     } catch {
-      Alert.alert(
-        t('common.error'),
-        t('customer.bookings.cancelError'),
-      );
+      Alert.alert(t('common.error'), t('customer.bookings.cancelError'));
     }
   }, [bookingId, cancelBooking, router, t]);
 

@@ -4,10 +4,7 @@ import i18n from 'i18next';
  * Format a date string using the current app locale.
  * Respects the user's language preference (mn-MN or en-US).
  */
-export function formatDate(
-  value: string | Date,
-  options?: Intl.DateTimeFormatOptions,
-): string {
+export function formatDate(value: string | Date, options?: Intl.DateTimeFormatOptions): string {
   const date = typeof value === 'string' ? new Date(value) : value;
   if (Number.isNaN(date.getTime())) return typeof value === 'string' ? value : '';
 
@@ -18,10 +15,7 @@ export function formatDate(
 /**
  * Format a date with time for display in task cards and detail screens.
  */
-export function formatDateTime(
-  value: string | Date,
-  options?: Intl.DateTimeFormatOptions,
-): string {
+export function formatDateTime(value: string | Date, options?: Intl.DateTimeFormatOptions): string {
   return formatDate(value, {
     month: 'short',
     day: 'numeric',

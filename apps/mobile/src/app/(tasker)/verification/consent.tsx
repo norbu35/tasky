@@ -35,8 +35,11 @@ export default function ConsentScreen() {
   const contentRef = React.useRef(0);
 
   const checkIfContentFits = () => {
-    if (viewportRef.current > 0 && contentRef.current > 0 &&
-        viewportRef.current >= contentRef.current - spacing.lg) {
+    if (
+      viewportRef.current > 0 &&
+      contentRef.current > 0 &&
+      viewportRef.current >= contentRef.current - spacing.lg
+    ) {
       setHasScrolledToEnd(true);
     }
   };

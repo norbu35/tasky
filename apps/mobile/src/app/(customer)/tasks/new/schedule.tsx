@@ -296,9 +296,7 @@ export default function ScheduleBudgetScreen() {
             testID="schedule-ios-picker-card"
           >
             <View className="gap-xs">
-              <Text
-                className="text-label font-bold text-primary-deep uppercase tracking-[0.6px]"
-              >
+              <Text className="text-label font-bold text-primary-deep uppercase tracking-[0.6px]">
                 {activePicker.mode === 'date'
                   ? t('ScheduleBudgetScreen.scheduleDate')
                   : t('ScheduleBudgetScreen.scheduleTime')}
