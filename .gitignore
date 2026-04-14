@@ -21,6 +21,8 @@
 # Misc local files
 .ignore
 postflight.json
+monorepo-hardening-report.md
+.pi/
 
 # Generated audit / analysis snapshots (session artifacts)
 docs/DEPENDENCY_VERSION_MATRIX.md

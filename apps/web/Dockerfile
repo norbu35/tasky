@@ -33,7 +33,7 @@ FROM caddy:2.9-alpine
 COPY apps/web/Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /workspace/apps/web/dist /srv
 
-RUN addgroup --system caddy && adduser --system --ingroup caddy caddy
+RUN addgroup -S caddy && adduser -S -G caddy caddy
 USER caddy
 
 EXPOSE 80

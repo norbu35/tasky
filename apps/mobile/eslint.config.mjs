@@ -1,5 +1,5 @@
 import expoFlat from 'eslint-config-expo/flat.js';
-import { mobileOverrides } from '@tasky/tooling-config/eslint/react-native';
+import { baseConfig, mobileOverrides } from '@tasky/tooling-config/eslint/react-native';
 
 // Filter out Expo's top-level typescript-eslint config entry to avoid
 // plugin redefinition conflict with our shared base config.
@@ -13,6 +13,7 @@ const expoWithoutTs = expoFlat.filter(
 
 export default [
   ...expoWithoutTs,
+  ...baseConfig,
   ...mobileOverrides,
   { ignores: ['.expo/', 'dist/', 'coverage/'] },
 ];
