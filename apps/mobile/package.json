@@ -13,7 +13,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,json}\" \"__tests__/**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\" \"__tests__/**/*.{ts,tsx}\"",
     "test": "pnpm run test:unit",
-    "test:unit": "vitest run",
+    "test:unit": "jest --runInBand --forceExit",
     "test:e2e:smoke": "bash scripts/run-e2e-smoke.sh",
     "test:e2e": "bash scripts/run-e2e.sh"
   },
@@ -81,9 +81,6 @@
     "prettier": "^3.8.1",
     "react-test-renderer": "19.2.5",
     "tailwindcss": "3.4.17",
-    "typescript": "6.0.2",
-    "vitest": "^4.1.4",
-    "vitest-react-native": "^0.1.5",
-    "@bunchtogether/vite-plugin-flow": "^1.0.2"
+    "typescript": "6.0.2"
   }
 }
