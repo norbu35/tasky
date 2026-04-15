@@ -11,6 +11,12 @@ on:
         options:
           - staging
           - production
+  workflow_call:
+    inputs:
+      target_env:
+        description: 'Deployment target environment'
+        required: true
+        type: string
 
 jobs:
   migration-safety:
@@ -45,10 +51,10 @@ jobs:
           POSTGRES_PASSWORD: tasky
           POSTGRES_DB: tasky
           POSTGRES_HOST: localhost
-          TASKY_JWT_SECRET: test-jwt-secret-32-chars-minimum!!
-          TASKY_ENCRYPTION_KEY: MDEyMzQ1Njc4OUFCQ0RFRjAxMjM0NTY3ODlBQkNERUY=
-          TASKY_BLIND_INDEX_KEY: RkVEQ0JBOTg3NjU0MzIxMEZFRENCQTk4NzY1NDMyMTA=
-          TASKY_QPAY_WEBHOOK_SECRET: test-qpay-secret
+          TASKY_JWT_SECRET: ${{ secrets.CI_JWT_SECRET }}
+          TASKY_ENCRYPTION_KEY: ${{ secrets.CI_ENCRYPTION_KEY }}
+          TASKY_BLIND_INDEX_KEY: ${{ secrets.CI_BLIND_INDEX_KEY }}
+          TASKY_QPAY_WEBHOOK_SECRET: ${{ secrets.CI_QPAY_WEBHOOK_SECRET }}
 
   rollback-readiness:
     runs-on: ubuntu-latest
@@ -112,10 +118,10 @@ jobs:
           POSTGRES_PASSWORD: tasky
           APP_DB_USER: tasky
           APP_DB_PASSWORD: tasky
-          TASKY_JWT_SECRET: test-jwt-secret-32-chars-minimum!!
-          TASKY_ENCRYPTION_KEY: MDEyMzQ1Njc4OUFCQ0RFRjAxMjM0NTY3ODlBQkNERUY=
-          TASKY_BLIND_INDEX_KEY: RkVEQ0JBOTg3NjU0MzIxMEZFRENCQTk4NzY1NDMyMTA=
-          TASKY_QPAY_WEBHOOK_SECRET: test-qpay-secret
+          TASKY_JWT_SECRET: ${{ secrets.CI_JWT_SECRET }}
+          TASKY_ENCRYPTION_KEY: ${{ secrets.CI_ENCRYPTION_KEY }}
+          TASKY_BLIND_INDEX_KEY: ${{ secrets.CI_BLIND_INDEX_KEY }}
+          TASKY_QPAY_WEBHOOK_SECRET: ${{ secrets.CI_QPAY_WEBHOOK_SECRET }}
 
   web-e2e-smoke:
     runs-on: ubuntu-latest
@@ -174,6 +180,10 @@ jobs:
         env:
           FACEBOOK_TEST_APP_ID: ${{ secrets.FACEBOOK_TEST_APP_ID }}
           FACEBOOK_TEST_APP_SECRET: ${{ secrets.FACEBOOK_TEST_APP_SECRET }}
+          TASKY_JWT_SECRET: ${{ secrets.CI_JWT_SECRET }}
+          TASKY_ENCRYPTION_KEY: ${{ secrets.CI_ENCRYPTION_KEY }}
+          TASKY_BLIND_INDEX_KEY: ${{ secrets.CI_BLIND_INDEX_KEY }}
+          TASKY_QPAY_WEBHOOK_SECRET: ${{ secrets.CI_QPAY_WEBHOOK_SECRET }}
 
       - name: Install Playwright Chromium
         run: pnpm --filter @tasky/web exec playwright install --with-deps chromium
@@ -237,6 +247,10 @@ jobs:
         env:
           FACEBOOK_TEST_APP_ID: ${{ secrets.FACEBOOK_TEST_APP_ID }}
           FACEBOOK_TEST_APP_SECRET: ${{ secrets.FACEBOOK_TEST_APP_SECRET }}
+          TASKY_JWT_SECRET: ${{ secrets.CI_JWT_SECRET }}
+          TASKY_ENCRYPTION_KEY: ${{ secrets.CI_ENCRYPTION_KEY }}
+          TASKY_BLIND_INDEX_KEY: ${{ secrets.CI_BLIND_INDEX_KEY }}
+          TASKY_QPAY_WEBHOOK_SECRET: ${{ secrets.CI_QPAY_WEBHOOK_SECRET }}
 
       - name: Install Maestro CLI
         run: |

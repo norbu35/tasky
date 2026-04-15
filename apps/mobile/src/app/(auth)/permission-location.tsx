@@ -1,11 +1,12 @@
-import React from 'react';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { MapPin } from 'lucide-react-native';
-import { PermissionPrimer } from '../../components/ui';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+
 import { ScreenContainer } from '../../components/shells';
-import { requestLocationPermission } from '../../utils/permissions';
+import { PermissionPrimer } from '../../components/ui';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { requestLocationPermission } from '../../utils/permissions';
 
 const { colors } = mobileTheme;
 

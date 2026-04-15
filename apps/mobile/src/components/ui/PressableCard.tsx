@@ -1,9 +1,10 @@
+import { cva } from 'class-variance-authority';
 import React from 'react';
 import { Pressable, StyleProp, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { cva } from 'class-variance-authority';
-import { cn } from '../../lib/cn';
+
 import { interactiveStates } from '../../design/animations';
+import { cn } from '../../lib/cn';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 

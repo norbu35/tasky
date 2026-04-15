@@ -28,6 +28,13 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
 
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
+
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v6
 
@@ -72,13 +79,20 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: '22'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
 
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v6
@@ -112,6 +126,10 @@ jobs:
         env:
           FACEBOOK_TEST_APP_ID: ${{ secrets.FACEBOOK_TEST_APP_ID }}
           FACEBOOK_TEST_APP_SECRET: ${{ secrets.FACEBOOK_TEST_APP_SECRET }}
+          TASKY_JWT_SECRET: ${{ secrets.CI_JWT_SECRET }}
+          TASKY_ENCRYPTION_KEY: ${{ secrets.CI_ENCRYPTION_KEY }}
+          TASKY_BLIND_INDEX_KEY: ${{ secrets.CI_BLIND_INDEX_KEY }}
+          TASKY_QPAY_WEBHOOK_SECRET: ${{ secrets.CI_QPAY_WEBHOOK_SECRET }}
 
       - name: Install Playwright Chromium
         run: pnpm --filter @tasky/web exec playwright install --with-deps chromium

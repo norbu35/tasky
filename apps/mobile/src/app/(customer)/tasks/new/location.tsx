@@ -1,18 +1,19 @@
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { LocateFixed, Minus, Navigation, Plus } from 'lucide-react-native';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT, Region, UrlTile } from 'react-native-maps';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { LocateFixed, Minus, Navigation, Plus } from 'lucide-react-native';
+
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
-import { getCurrentLocation } from '../../../../utils/permissions';
+import { useRecentLocations } from '../../../../features/tasks/hooks/useRecentLocations';
 import { createMobileApiClient } from '../../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../../store/authStore';
-import { useRecentLocations } from '../../../../features/tasks/hooks/useRecentLocations';
+import { getCurrentLocation } from '../../../../utils/permissions';
 
 const api = createMobileApiClient();
 

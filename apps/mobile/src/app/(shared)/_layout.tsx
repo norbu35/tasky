@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+
 import { defaultStackScreenOptions, modalStackScreenOptions } from '../../design/navigationOptions';
 
 export default function SharedLayout() {

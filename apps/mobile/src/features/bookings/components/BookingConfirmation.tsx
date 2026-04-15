@@ -1,11 +1,12 @@
+import { LinearGradient } from 'expo-linear-gradient';
+import { Shield, Star } from 'lucide-react-native';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Shield, Star } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useTranslation } from 'react-i18next';
-import { mobileTheme } from '../../../design/tokenAdapter';
+
 import { Button, Card, CardContent, ProfileAvatar } from '../../../components/ui';
+import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, radius, spacing, typography } = mobileTheme;
 

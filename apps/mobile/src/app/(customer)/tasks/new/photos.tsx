@@ -1,12 +1,13 @@
-import React, { useMemo, useState } from 'react';
-import { Alert, Image, Pressable, Text, View } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import * as ImagePicker from 'expo-image-picker';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { CircleX, Info, Loader, Plus } from 'lucide-react-native';
+import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Alert, Image, Pressable, Text, View } from 'react-native';
+
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
-import { useTaskPhotoUpload } from '../../../../features/tasks/hooks/useTaskPhotoUpload';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { useTaskPhotoUpload } from '../../../../features/tasks/hooks/useTaskPhotoUpload';
 
 const { colors } = mobileTheme;
 

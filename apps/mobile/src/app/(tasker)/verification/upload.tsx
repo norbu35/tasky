@@ -1,14 +1,15 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { Camera, ImageIcon } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { useRouter } from 'expo-router';
+import { Camera, ImageIcon } from 'lucide-react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Image, Pressable, Text, View } from 'react-native';
+
 import { FormWizardTemplate } from '../../../components/templates/FormWizardTemplate';
+import { Button } from '../../../components/ui/Button';
+import { mobileTheme } from '../../../design/tokenAdapter';
 import { useVerification } from '../../../features/verification/hooks/useVerification';
 import { useVerificationUpload } from '../../../features/verification/hooks/useVerificationUpload';
-import { mobileTheme } from '../../../design/tokenAdapter';
-import { Button } from '../../../components/ui/Button';
 
 const { colors } = mobileTheme;
 

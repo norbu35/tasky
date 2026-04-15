@@ -1,12 +1,13 @@
-import React from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ChevronLeft, SlidersHorizontal, Star } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { ProfileAvatar, StatCard, ReviewCard } from '../../../components/ui';
 import { mobileTheme, elevations } from '../../../design/tokenAdapter';
-import { useTranslation } from 'react-i18next';
 import { useTaskerProfile } from '../hooks/useTaskerProfile';
 
 const { colors, radius, typography } = mobileTheme;

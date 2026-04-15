@@ -1,6 +1,7 @@
+import { cva } from 'class-variance-authority';
 import React from 'react';
 import { Pressable, ScrollView, Text } from 'react-native';
-import { cva } from 'class-variance-authority';
+
 import { cn } from '../../lib/cn';
 
 const chipVariants = cva('px-lg py-sm rounded-full', {

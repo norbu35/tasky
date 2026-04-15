@@ -1,13 +1,6 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  ViewProps,
-  TextProps,
-  type StyleProp,
-  type ViewStyle,
-  type TextStyle,
-} from 'react-native';
+import { View, Text, ViewProps, TextProps } from 'react-native';
+
 import { elevations } from '../../design/elevations';
 import { cn } from '../../lib/cn';
 

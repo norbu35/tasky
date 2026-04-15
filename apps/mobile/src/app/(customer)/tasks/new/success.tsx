@@ -1,12 +1,13 @@
-import React from 'react';
-import { Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { CheckCircle2 } from 'lucide-react-native';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
-import { Button } from '../../../../components/ui/Button';
+
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../../components/shells';
+import { Button } from '../../../../components/ui/Button';
+import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
 
 const { colors, spacing, typography } = mobileTheme;
 

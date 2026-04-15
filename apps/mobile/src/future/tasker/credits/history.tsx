@@ -1,7 +1,8 @@
-import { useTranslation } from 'react-i18next';
-import React from 'react';
-import { Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { EmptyStateTemplate } from '../../../components/templates/EmptyStateTemplate';
 import { elevations } from '../../../design/tokenAdapter';

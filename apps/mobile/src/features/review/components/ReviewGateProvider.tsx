@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useMemo } from 'react';
-import { usePendingReviews } from '../hooks/usePendingReviews';
+
 import type { PendingReview } from '../../../lib/mobileApiClient';
+import { usePendingReviews } from '../hooks/usePendingReviews';
 
 interface ReviewGateContextValue {
   isLocked: boolean;

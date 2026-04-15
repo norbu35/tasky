@@ -1,4 +1,5 @@
 import { Platform, type ViewStyle } from 'react-native';
+
 import { nativeTokens, semanticTokens } from '@tasky/design-tokens';
 
 const { shadows } = nativeTokens;

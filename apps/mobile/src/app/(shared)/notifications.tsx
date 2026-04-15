@@ -1,16 +1,17 @@
-import React, { useMemo } from 'react';
-import { FlatList, Pressable, RefreshControl, Text, View, type ListRenderItem } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Bell, Briefcase, MessageSquare, ShieldAlert, Star } from 'lucide-react-native';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FlatList, Pressable, RefreshControl, Text, View, type ListRenderItem } from 'react-native';
+
+import { ScreenContainer } from '../../components/shells/ScreenContainer';
+import { EmptyStateTemplate } from '../../components/templates/EmptyStateTemplate';
+import { Button } from '../../components/ui/Button';
+import { mobileTheme } from '../../design/tokenAdapter';
 import {
   useNotifications,
   type Notification,
 } from '../../features/notifications/hooks/useNotifications';
-import { EmptyStateTemplate } from '../../components/templates/EmptyStateTemplate';
-import { Button } from '../../components/ui/Button';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { ScreenContainer } from '../../components/shells/ScreenContainer';
 
 const { colors, spacing } = mobileTheme;
 

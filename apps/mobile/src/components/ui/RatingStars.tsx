@@ -1,6 +1,7 @@
+import { Star } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import { Star } from 'lucide-react-native';
+
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 

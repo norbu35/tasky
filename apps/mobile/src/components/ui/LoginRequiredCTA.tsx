@@ -1,11 +1,13 @@
-import React from 'react';
-import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Button } from './Button';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { useTranslation } from 'react-i18next';
 import { Lock } from 'lucide-react-native';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { View, Text } from 'react-native';
+
+import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
+
+import { Button } from './Button';
 
 interface LoginRequiredCTAProps {
   message?: string;

@@ -1,5 +1,6 @@
 // apps/mobile/src/design/tailwind-screen-typography.ts
 import plugin from 'tailwindcss/plugin';
+
 import { nativeTokens } from '@tasky/design-tokens';
 
 const scale = nativeTokens.typography.scale;

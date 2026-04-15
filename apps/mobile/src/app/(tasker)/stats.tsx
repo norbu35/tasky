@@ -1,10 +1,11 @@
 import React from 'react';
-import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
 import { StatCard } from '../../components/ui/StatCard';
-import { useMyStats } from '../../features/profile/hooks/useMyStats';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { useMyStats } from '../../features/profile/hooks/useMyStats';
 
 const { spacing } = mobileTheme;
 

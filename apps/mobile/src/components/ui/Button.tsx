@@ -1,3 +1,4 @@
+import { cva } from 'class-variance-authority';
 import React from 'react';
 import {
   ActivityIndicator,
@@ -8,10 +9,10 @@ import {
   type ViewStyle,
 } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '../../lib/cn';
+
 import { elevations } from '../../design/elevations';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { cn } from '../../lib/cn';
 
 const { colors } = mobileTheme;
 

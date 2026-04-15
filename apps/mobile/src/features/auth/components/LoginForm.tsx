@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View, Alert } from 'react-native';
+
 import { Button, FormField, Input } from '../../../components/ui';
+import { mobileTheme } from '../../../design/tokenAdapter';
 import {
   DEV_LOGIN_CUSTOMER_PHONE,
   DEV_LOGIN_TASKER_PHONE,
@@ -8,8 +11,6 @@ import {
   useVerifyOtp,
   useDevLogin,
 } from '../hooks/useAuth';
-import { useTranslation } from 'react-i18next';
-import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography } = mobileTheme;
 

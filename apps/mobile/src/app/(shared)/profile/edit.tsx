@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { Camera } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { useRouter } from 'expo-router';
+import { Camera } from 'lucide-react-native';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, Alert, Text, View } from 'react-native';
+
 import { FormWizardTemplate } from '../../../components/templates/FormWizardTemplate';
 import { FormField } from '../../../components/ui/FormField';
 import { Input } from '../../../components/ui/Input';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { Touchable } from '../../../components/ui/Touchable';
-import { useMyProfile, useUpdateProfile } from '../../../features/profile/hooks/useProfile';
 import { mobileTheme } from '../../../design/tokenAdapter';
+import { useMyProfile, useUpdateProfile } from '../../../features/profile/hooks/useProfile';
 import { createMobileApiClient } from '../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../store/authStore';
 

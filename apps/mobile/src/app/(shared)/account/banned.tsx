@@ -1,11 +1,12 @@
-import React from 'react';
-import { Linking, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ban } from 'lucide-react-native';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Linking, Text, View } from 'react-native';
+
+import { ScreenContainer } from '../../../components/shells/ScreenContainer';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
-import { ScreenContainer } from '../../../components/shells/ScreenContainer';
 
 const { colors } = mobileTheme;
 

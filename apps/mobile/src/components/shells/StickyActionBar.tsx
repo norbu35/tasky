@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { screenLayout } from '../../design/screenLayout';
 import { cn } from '../../lib/cn';
 

@@ -1,7 +1,8 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+
 import { FeedListTemplate } from '../../../components/templates/FeedListTemplate';
 import { FilterBar } from '../../../components/ui/FilterBar';
 import { SplitCard } from '../../../components/ui/SplitCard';

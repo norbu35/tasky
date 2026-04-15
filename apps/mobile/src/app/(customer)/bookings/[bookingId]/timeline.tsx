@@ -1,12 +1,13 @@
-import React from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { CircleHelp, Clock } from 'lucide-react-native';
-import { useBookingTimeline } from '../../../../features/bookings/hooks/useBookingTimeline';
-import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
-import { mobileTheme } from '../../../../design/tokenAdapter';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, ScrollView, Text, View } from 'react-native';
+
 import { ScreenContainer } from '../../../../components/shells';
+import { mobileTheme } from '../../../../design/tokenAdapter';
+import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
+import { useBookingTimeline } from '../../../../features/bookings/hooks/useBookingTimeline';
 
 const { colors } = mobileTheme;
 

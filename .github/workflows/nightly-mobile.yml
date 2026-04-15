@@ -58,6 +58,10 @@ jobs:
         env:
           FACEBOOK_TEST_APP_ID: ${{ secrets.FACEBOOK_TEST_APP_ID }}
           FACEBOOK_TEST_APP_SECRET: ${{ secrets.FACEBOOK_TEST_APP_SECRET }}
+          TASKY_JWT_SECRET: ${{ secrets.CI_JWT_SECRET }}
+          TASKY_ENCRYPTION_KEY: ${{ secrets.CI_ENCRYPTION_KEY }}
+          TASKY_BLIND_INDEX_KEY: ${{ secrets.CI_BLIND_INDEX_KEY }}
+          TASKY_QPAY_WEBHOOK_SECRET: ${{ secrets.CI_QPAY_WEBHOOK_SECRET }}
 
       - name: Install Maestro CLI
         run: |

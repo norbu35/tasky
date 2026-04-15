@@ -1,6 +1,7 @@
+import { ChevronRight } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { ChevronRight } from 'lucide-react-native';
+
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 

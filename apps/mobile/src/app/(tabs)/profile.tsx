@@ -1,22 +1,22 @@
-import React from 'react';
-import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { UserPen, Settings, BarChart2 } from 'lucide-react-native';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
-import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
-import { VerifiedBadge } from '../../components/ui/VerifiedBadge';
-import { StatCard } from '../../components/ui/StatCard';
-import { RatingStars } from '../../components/ui/RatingStars';
-import { TrustBanner } from '../../components/ui/TrustBanner';
 import { ActionRow } from '../../components/ui/ActionRow';
+import { LoginRequiredCTA } from '../../components/ui/LoginRequiredCTA';
+import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
+import { RatingStars } from '../../components/ui/RatingStars';
+import { StatCard } from '../../components/ui/StatCard';
+import { VerifiedBadge } from '../../components/ui/VerifiedBadge';
+import { screenLayout } from '../../design/screenLayout';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { useMyProfile } from '../../features/profile/hooks/useProfile';
 import { useRole } from '../../providers/RoleProvider';
 import { useAuthStore } from '../../store/authStore';
-import { LoginRequiredCTA } from '../../components/ui/LoginRequiredCTA';
-import { screenLayout } from '../../design/screenLayout';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { colors } = mobileTheme;
 

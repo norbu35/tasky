@@ -1,4 +1,5 @@
 import { Easing } from 'react-native-reanimated';
+
 import { motionTokens } from '@tasky/design-tokens';
 
 const motionCurvePattern = /^cubic-bezier\(([^)]+)\)$/;

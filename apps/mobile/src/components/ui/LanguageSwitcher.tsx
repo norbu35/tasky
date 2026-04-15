@@ -1,9 +1,10 @@
-import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { useTranslation } from 'react-i18next';
-import { mobileTheme } from '../../design/tokenAdapter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+
 import { elevations } from '../../design/elevations';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
 const { colors, spacing, typography } = mobileTheme;

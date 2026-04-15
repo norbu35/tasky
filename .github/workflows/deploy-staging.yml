@@ -1,0 +1,136 @@
+name: deploy-staging
+
+on:
+  workflow_run:
+    workflows: [build-and-push]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: read
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository }}
+
+jobs:
+  pre-deploy-checks:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Ensure scripts are executable
+        run: chmod +x tooling/scripts/*.sh tooling/scripts/*.py
+
+      - name: Validate migration safety
+        run: python3 tooling/scripts/validate-migrations.py
+
+  deploy:
+    needs: pre-deploy-checks
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Determine image tag
+        id: tag
+        run: echo "sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy to staging VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: ${{ secrets.STAGING_SSH_PORT || 22 }}
+          script: |
+            set -euo pipefail
+
+            cd ${{ secrets.STAGING_DEPLOY_PATH || '~/tasky' }}
+
+            # Pull latest compose and config from the repo
+            git fetch origin main
+            git reset --hard origin/main
+
+            # Login to GHCR
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # Export image references for compose
+            export TASKY_API_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/api:${{ steps.tag.outputs.sha }}"
+            export TASKY_WEB_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/web:${{ steps.tag.outputs.sha }}"
+
+            # Pre-deploy backup
+            ./docker/backup.sh || echo "WARNING: backup failed (may be first deploy)"
+
+            # Pull new images
+            docker pull "$TASKY_API_IMAGE"
+            docker pull "$TASKY_WEB_IMAGE"
+
+            # Tag for compose
+            docker tag "$TASKY_API_IMAGE" tasky-server:private-staging
+            docker tag "$TASKY_WEB_IMAGE" tasky-web:private-staging
+
+            # Rolling restart: infra stays up, app containers restart
+            docker compose -f docker-compose.private-staging.yml up -d --no-build --remove-orphans
+
+            # Wait for backend health
+            echo "Waiting for backend health..."
+            for i in $(seq 1 30); do
+              if curl -sf http://localhost:8080/actuator/health/liveness > /dev/null 2>&1; then
+                echo "Backend healthy after ${i}0s"
+                break
+              fi
+              if [ "$i" -eq 30 ]; then
+                echo "ERROR: Backend failed to become healthy"
+                docker compose -f docker-compose.private-staging.yml logs app --tail=50
+                exit 1
+              fi
+              sleep 10
+            done
+
+  smoke-test:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Smoke test staging endpoints
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: ${{ secrets.STAGING_SSH_PORT || 22 }}
+          script: |
+            set -euo pipefail
+
+            echo "=== Staging Smoke Tests ==="
+
+            # Health check
+            curl -sf http://localhost:8080/actuator/health | jq .status
+            echo "Health: OK"
+
+            # Readiness check
+            curl -sf http://localhost:8080/actuator/health/readiness | jq .status
+            echo "Readiness: OK"
+
+            # API version endpoint
+            curl -sf http://localhost:8080/api/v1/system/version | jq .
+            echo "Version: OK"
+
+            # Web frontend serves HTML
+            HTTP_STATUS=$(curl -so /dev/null -w '%{http_code}' http://localhost:80/ 2>/dev/null || echo "000")
+            if [ "$HTTP_STATUS" = "200" ] || [ "$HTTP_STATUS" = "304" ]; then
+              echo "Web frontend: OK ($HTTP_STATUS)"
+            else
+              echo "WARNING: Web frontend returned $HTTP_STATUS"
+            fi
+
+            echo "=== All smoke tests passed ==="

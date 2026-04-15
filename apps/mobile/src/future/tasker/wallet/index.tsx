@@ -1,7 +1,8 @@
-import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ScrollView, Text, View } from 'react-native';
+
 import { Button } from '../../../components/ui/Button';
 
 export default function WalletScreen() {

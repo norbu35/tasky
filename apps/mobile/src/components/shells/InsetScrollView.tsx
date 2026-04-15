@@ -7,6 +7,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { mobileTheme } from '../../design/tokenAdapter';
 
 type InsetScrollViewProps = ScrollViewProps & {

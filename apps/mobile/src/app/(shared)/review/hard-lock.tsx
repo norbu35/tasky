@@ -1,6 +1,7 @@
-import React from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+
 import { ScreenContainer } from '../../../components/shells';
 import { ErrorStateTemplate } from '../../../components/templates/ErrorStateTemplate';
 

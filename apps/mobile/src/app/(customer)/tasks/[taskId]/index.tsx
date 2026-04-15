@@ -1,15 +1,16 @@
-import React, { useMemo, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { MapPin, Star } from 'lucide-react-native';
+import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, Text, View } from 'react-native';
+
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
-import { StatusBadge } from '../../../../components/ui/StatusBadge';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
+import { StatusBadge } from '../../../../components/ui/StatusBadge';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
-import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCustomerTaskDetail';
 import { TaskCancelSheet } from '../../../../features/tasks/components/TaskCancelSheet';
+import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCustomerTaskDetail';
 
 const { colors } = mobileTheme;
 

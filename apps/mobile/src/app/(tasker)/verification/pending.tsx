@@ -1,8 +1,9 @@
-import React from 'react';
-import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { Clock, CircleCheck, CircleDashed } from 'lucide-react-native';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 

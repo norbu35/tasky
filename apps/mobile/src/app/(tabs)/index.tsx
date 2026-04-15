@@ -1,26 +1,27 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { Clock } from 'lucide-react-native';
-import { useRole } from '../../providers/RoleProvider';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+
 import CustomerMyTasks from '../(customer)/tasks/index';
 import { FeedListTemplate } from '../../components/templates/FeedListTemplate';
-import { useReviewGate } from '../../features/review/components/ReviewGateProvider';
-import { ReviewGateBanner } from '../../features/review/components/ReviewGateBanner';
-import { SplitCard } from '../../components/ui/SplitCard';
-import { FilterBar } from '../../components/ui/FilterBar';
-import { SearchBar } from '../../components/ui/SearchBar';
-import { PriceTag } from '../../components/ui/PriceTag';
 import { CategoryChip } from '../../components/ui/CategoryChip';
+import { FilterBar } from '../../components/ui/FilterBar';
 import { LocationPin } from '../../components/ui/LocationPin';
-import { TrustBanner } from '../../components/ui/TrustBanner';
+import { PriceTag } from '../../components/ui/PriceTag';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
-import { useTasks } from '../../features/tasks/hooks/useTasks';
-import { useCategories } from '../../features/tasks/hooks/useCategories';
-import type { PublicTask } from '../../lib/mobileApiClient';
-import { formatShortDate } from '../../utils/formatDate';
+import { SearchBar } from '../../components/ui/SearchBar';
+import { SplitCard } from '../../components/ui/SplitCard';
+import { TrustBanner } from '../../components/ui/TrustBanner';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { ReviewGateBanner } from '../../features/review/components/ReviewGateBanner';
+import { useReviewGate } from '../../features/review/components/ReviewGateProvider';
+import { useCategories } from '../../features/tasks/hooks/useCategories';
+import { useTasks } from '../../features/tasks/hooks/useTasks';
+import type { PublicTask } from '../../lib/mobileApiClient';
+import { useRole } from '../../providers/RoleProvider';
+import { formatShortDate } from '../../utils/formatDate';
 
 const { colors } = mobileTheme;
 

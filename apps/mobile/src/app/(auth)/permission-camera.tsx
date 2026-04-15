@@ -1,11 +1,12 @@
-import React from 'react';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { Camera } from 'lucide-react-native';
-import { PermissionPrimer } from '../../components/ui';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+
 import { ScreenContainer } from '../../components/shells';
-import { requestCameraPermission } from '../../utils/permissions';
+import { PermissionPrimer } from '../../components/ui';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { requestCameraPermission } from '../../utils/permissions';
 
 const { colors } = mobileTheme;
 

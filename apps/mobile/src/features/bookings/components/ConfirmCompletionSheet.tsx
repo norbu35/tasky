@@ -1,13 +1,14 @@
-import React, { useCallback } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { Check, ArrowRight } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import { Check, ArrowRight } from 'lucide-react-native';
+import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
 import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
-import { useCompleteBooking } from '../hooks/useCompleteBooking';
-import { mobileTheme } from '../../../design/tokenAdapter';
 import { elevations } from '../../../design/elevations';
+import { mobileTheme } from '../../../design/tokenAdapter';
+import { useCompleteBooking } from '../hooks/useCompleteBooking';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 

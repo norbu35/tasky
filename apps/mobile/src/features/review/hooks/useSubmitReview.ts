@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAuthStore } from '../../../store/authStore';
+
 import { createMobileApiClient } from '../../../lib/mobileApiClient';
-import type { Review } from '../../../lib/mobileApiClient';
+import { useAuthStore } from '../../../store/authStore';
+
 import { PENDING_REVIEWS_QUERY_KEY } from './usePendingReviews';
 
 const api = createMobileApiClient();

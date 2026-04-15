@@ -1,4 +1,7 @@
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { ChevronLeft, Send } from 'lucide-react-native';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   FlatList,
@@ -10,21 +13,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { ChevronLeft, Send } from 'lucide-react-native';
-import { formatLastActive } from '../../../lib/formatLastActive';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { ScreenContainer } from '../../../components/shells/ScreenContainer';
+import { ErrorStateTemplate } from '../../../components/templates/ErrorStateTemplate';
+import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
+import { screenLayout } from '../../../design/screenLayout';
+import { mobileTheme } from '../../../design/tokenAdapter';
 import { useConversations } from '../../../features/chat/hooks/useConversations';
 import { useMessages } from '../../../features/chat/hooks/useMessages';
 import { useSendMessage } from '../../../features/chat/hooks/useSendMessage';
-import { ErrorStateTemplate } from '../../../components/templates/ErrorStateTemplate';
-
-import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
+import { formatLastActive } from '../../../lib/formatLastActive';
 import { useAuthStore } from '../../../store/authStore';
-import { mobileTheme } from '../../../design/tokenAdapter';
-import { ScreenContainer } from '../../../components/shells/ScreenContainer';
-import { screenLayout } from '../../../design/screenLayout';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { colors, spacing, radius } = mobileTheme;
 

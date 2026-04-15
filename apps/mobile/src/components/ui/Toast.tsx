@@ -1,4 +1,5 @@
 import { Text, View } from 'react-native';
+
 import { cn } from '../../lib/cn';
 
 type Variant = 'info' | 'success' | 'error';

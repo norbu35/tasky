@@ -1,15 +1,16 @@
-import React from 'react';
-import { Text, View } from 'react-native';
 import { Sparkles } from 'lucide-react-native';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { CategoryChip } from '../../../components/ui/CategoryChip';
 import { Input } from '../../../components/ui/Input';
 import { SkeletonLoader } from '../../../components/ui/SkeletonLoader';
 import { Toast } from '../../../components/ui/Toast';
+import { elevations, mobileTheme } from '../../../design/tokenAdapter';
 import { useMyProfile, useUpdateProfile } from '../../../features/profile/hooks/useProfile';
 import { useProfilePolishPreview } from '../../../features/profile/hooks/useProfilePolish';
-import { elevations, mobileTheme } from '../../../design/tokenAdapter';
 import {
   createConsoleClientAnalyticsTracker,
   resolveClientLocale,

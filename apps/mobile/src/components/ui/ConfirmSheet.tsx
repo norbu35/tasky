@@ -1,12 +1,14 @@
-import React from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { AlertTriangle } from 'lucide-react-native';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { mobileTheme } from '../../design/tokenAdapter';
+
 import { overlays } from '../../design/elevations';
-import { Button } from './Button';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
+
+import { Button } from './Button';
 
 const { colors, spacing } = mobileTheme;
 

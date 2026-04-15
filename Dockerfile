@@ -16,9 +16,14 @@ WORKDIR /app
 
 COPY --from=build /workspace/services/api/build/libs/*.jar app.jar
 
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+
 RUN groupadd --system tasky && useradd --system --gid tasky --create-home tasky
 USER tasky
 
 EXPOSE 8080
+
+HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:8080/actuator/health/liveness || exit 1
 
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

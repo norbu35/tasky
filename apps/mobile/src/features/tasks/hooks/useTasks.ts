@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { useAuthStore } from '../../../store/authStore';
+
 import { createMobileApiClient, type PublicTask } from '../../../lib/mobileApiClient';
+import { useAuthStore } from '../../../store/authStore';
 import { getCurrentLocation } from '../../../utils/permissions';
 
 const api = createMobileApiClient();

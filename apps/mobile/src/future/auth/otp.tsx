@@ -1,13 +1,13 @@
-/* eslint-disable no-restricted-imports */
-import React from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { ShieldCheck, RefreshCw } from 'lucide-react-native';
-import { Button } from '../../components/ui/Button';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { elevations } from '../../design/elevations';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, Text, TextInput, View } from 'react-native';
+
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../components/shells';
+import { Button } from '../../components/ui/Button';
+import { elevations } from '../../design/elevations';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
 const { colors, radius } = mobileTheme;

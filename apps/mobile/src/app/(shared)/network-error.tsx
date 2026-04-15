@@ -1,12 +1,13 @@
-import React, { useCallback, useState } from 'react';
-import { Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { WifiOff } from 'lucide-react-native';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { Text, View } from 'react-native';
+
 import { ScreenContainer } from '../../components/shells/ScreenContainer';
 import { Button } from '../../components/ui/Button';
 import { Toast } from '../../components/ui/Toast';
+import { mobileTheme } from '../../design/tokenAdapter';
 
 const { colors } = mobileTheme;
 

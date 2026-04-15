@@ -1,0 +1,223 @@
+services:
+  app:
+    image: tasky-server:production
+    container_name: tasky-app
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      SPRING_PROFILES_ACTIVE: prod
+      POSTGRES_HOST: pgbouncer
+      POSTGRES_PORT: 5432
+      FLYWAY_HOST: postgres
+      FLYWAY_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      APP_DB_USER: ${APP_DB_USER}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD}
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      TASKY_JWT_SECRET: ${TASKY_JWT_SECRET}
+      TASKY_ENCRYPTION_KEY: ${TASKY_ENCRYPTION_KEY}
+      TASKY_BLIND_INDEX_KEY: ${TASKY_BLIND_INDEX_KEY}
+      TASKY_QPAY_WEBHOOK_SECRET: ${TASKY_QPAY_WEBHOOK_SECRET}
+      TASKY_CORS_ALLOWED_ORIGINS: ${TASKY_CORS_ALLOWED_ORIGINS}
+      TASKY_WEBSOCKET_ALLOWED_ORIGINS: ${TASKY_WEBSOCKET_ALLOWED_ORIGINS}
+      TASKY_DEV_AUTH_ENABLED: 'false'
+      TASKY_OTP_ENABLED: ${TASKY_OTP_ENABLED:-false}
+      TASKY_OTP_TEST_CODE: ''
+      TASKY_FEATURE_MONETIZATION_ENABLED: ${TASKY_FEATURE_MONETIZATION_ENABLED:-false}
+      TASKY_PUSH_PROVIDER: ${TASKY_PUSH_PROVIDER:-firebase}
+      TASKY_FACEBOOK_APP_ID: ${TASKY_FACEBOOK_APP_ID}
+      TASKY_FACEBOOK_APP_SECRET: ${TASKY_FACEBOOK_APP_SECRET}
+      TASKY_FACEBOOK_GRAPH_API_BASE_URL: ${TASKY_FACEBOOK_GRAPH_API_BASE_URL:-https://graph.facebook.com}
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${FIREBASE_SERVICE_ACCOUNT_JSON}
+      HIKARI_MAX_POOL: ${HIKARI_MAX_POOL:-20}
+      HIKARI_MIN_IDLE: ${HIKARI_MIN_IDLE:-5}
+      TASKY_STORAGE_UPLOAD_TTL_SECONDS: ${TASKY_STORAGE_UPLOAD_TTL_SECONDS:-900}
+      TASKY_STORAGE_DOWNLOAD_TTL_SECONDS: ${TASKY_STORAGE_DOWNLOAD_TTL_SECONDS:-3600}
+      TASKY_ACCESS_TOKEN_TTL_SECONDS: ${TASKY_ACCESS_TOKEN_TTL_SECONDS:-900}
+      TASKY_REFRESH_TOKEN_TTL_SECONDS: ${TASKY_REFRESH_TOKEN_TTL_SECONDS:-1209600}
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      minio-bootstrap:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/actuator/health/liveness']
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+  web:
+    image: tasky-web:production
+    container_name: tasky-web
+    restart: unless-stopped
+    environment:
+      TASKY_BACKEND_UPSTREAM: app:8080
+      TASKY_DOMAIN: ${TASKY_DOMAIN:-localhost}
+    volumes:
+      - ./apps/web/Caddyfile.production:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+    ports:
+      - '${PUBLIC_HTTP_PORT:-80}:80'
+      - '${PUBLIC_HTTPS_PORT:-443}:443'
+
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: tasky-postgres
+    restart: unless-stopped
+    command:
+      - 'postgres'
+      - '-c'
+      - 'shared_buffers=512MB'
+      - '-c'
+      - 'work_mem=8MB'
+      - '-c'
+      - 'maintenance_work_mem=128MB'
+      - '-c'
+      - 'max_connections=200'
+      - '-c'
+      - 'effective_cache_size=1536MB'
+      - '-c'
+      - 'log_min_duration_statement=100'
+      - '-c'
+      - 'autovacuum_naptime=30s'
+      - '-c'
+      - 'autovacuum_vacuum_scale_factor=0.05'
+      - '-c'
+      - 'autovacuum_analyze_scale_factor=0.02'
+      - '-c'
+      - 'password_encryption=scram-sha-256'
+      - '-c'
+      - 'wal_level=replica'
+      - '-c'
+      - 'archive_mode=on'
+      - '-c'
+      - 'archive_command=test ! -f /var/lib/postgresql/wal_archive/%f && cp %p /var/lib/postgresql/wal_archive/%f'
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+    volumes:
+      - production_postgres_data:/var/lib/postgresql/data
+      - production_wal_archive:/var/lib/postgresql/wal_archive
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/10-init-db.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    container_name: tasky-pgbouncer
+    restart: unless-stopped
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${APP_DB_USER}
+      DB_PASSWORD: ${APP_DB_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+      PGBOUNCER_POOL_MODE: transaction
+      PGBOUNCER_DEFAULT_POOL_SIZE: 30
+      PGBOUNCER_MAX_CLIENT_CONN: 200
+      PGBOUNCER_MIN_POOL_SIZE: 10
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h 127.0.0.1 -p 5432 -U ${APP_DB_USER} -d ${POSTGRES_DB}']
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  postgres-exporter:
+    platform: linux/amd64
+    image: prometheuscommunity/postgres-exporter:v0.16.0
+    container_name: tasky-postgres-exporter
+    restart: unless-stopped
+    environment:
+      DATA_SOURCE_NAME: 'postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable'
+    ports:
+      - '127.0.0.1:9187:9187'
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  minio:
+    image: minio/minio:latest
+    container_name: tasky-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - production_minio_data:/data
+    healthcheck:
+      test: ['CMD-SHELL', 'ls /data >/dev/null 2>&1']
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  backup-cron:
+    image: postgis/postgis:16-3.4
+    container_name: tasky-backup-cron
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./docker/backups:/backups
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: >
+      /bin/bash -c "
+      while true; do
+        TIMESTAMP=$$(date +%Y%m%dT%H%M%S);
+        echo \"[$$TIMESTAMP] Starting scheduled backup...\";
+        pg_dump -h postgres -U $${POSTGRES_USER} -d $${POSTGRES_DB} -Fc --clean --if-exists > /backups/tasky-$${TIMESTAMP}.dump;
+        if [ $$? -eq 0 ]; then
+          SIZE=$$(du -h /backups/tasky-$${TIMESTAMP}.dump | cut -f1);
+          echo \"[$$TIMESTAMP] Backup complete: tasky-$${TIMESTAMP}.dump ($$SIZE)\";
+        else
+          echo \"[$$TIMESTAMP] ERROR: Backup failed\";
+        fi;
+        find /backups -name 'tasky-*.dump' -mtime +7 -delete 2>/dev/null || true;
+        echo \"Pruned backups older than 7 days. Sleeping 1 hour...\";
+        sleep 3600;
+      done
+      "
+
+  minio-bootstrap:
+    image: minio/mc:latest
+    container_name: tasky-minio-bootstrap
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set tasky http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      mc mb --ignore-existing tasky/${MINIO_BUCKET};
+      mc anonymous set none tasky/${MINIO_BUCKET};
+      "
+
+volumes:
+  production_postgres_data:
+  production_wal_archive:
+  production_minio_data:
+  caddy_data:
+  caddy_config:

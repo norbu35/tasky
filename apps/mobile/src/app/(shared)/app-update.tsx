@@ -1,12 +1,13 @@
-import React, { useCallback } from 'react';
-import { Platform, Text, View } from 'react-native';
+import { openURL } from 'expo-linking';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Download } from 'lucide-react-native';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { openURL } from 'expo-linking';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { Platform, Text, View } from 'react-native';
+
 import { ScreenContainer } from '../../components/shells/ScreenContainer';
 import { Button } from '../../components/ui/Button';
+import { mobileTheme } from '../../design/tokenAdapter';
 
 const { colors } = mobileTheme;
 

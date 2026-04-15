@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+
 import { mobileTheme } from './tokenAdapter';
 
 const { spacing, typography } = mobileTheme;

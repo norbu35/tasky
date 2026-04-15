@@ -1,15 +1,16 @@
-import React from 'react';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft, Star, Award, Inbox } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { ProfileAvatar } from '../../../components/ui';
 import { mobileTheme, elevations } from '../../../design/tokenAdapter';
-import { useTranslation } from 'react-i18next';
-import { useApplications } from '../hooks/useApplications';
-import { useAcceptApplication } from '../../bookings/hooks/useAcceptApplication';
 import { generateIdempotencyKey } from '../../../utils/uuid';
+import { useAcceptApplication } from '../../bookings/hooks/useAcceptApplication';
+import { useApplications } from '../hooks/useApplications';
 
 const { colors, radius, typography } = mobileTheme;
 

@@ -1,10 +1,11 @@
-import { useTranslation } from 'react-i18next';
-import React from 'react';
-import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, Text, View } from 'react-native';
+
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
-import { InfoRow } from '../../components/ui/InfoRow';
 import { Button } from '../../components/ui/Button';
+import { InfoRow } from '../../components/ui/InfoRow';
 
 export default function TaskerReferralsScreen() {
   const { t } = useTranslation();

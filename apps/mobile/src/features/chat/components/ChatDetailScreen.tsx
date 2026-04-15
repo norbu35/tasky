@@ -1,4 +1,7 @@
+import { Client } from '@stomp/stompjs';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   FlatList,
@@ -10,13 +13,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+
+import { mobileTheme } from '../../../design/tokenAdapter';
 import { buildBaseUrl, createMobileApiClient, Message } from '../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../store/authStore';
-import { mobileTheme } from '../../../design/tokenAdapter';
-import { useTranslation } from 'react-i18next';
 
 const { colors } = mobileTheme;
 

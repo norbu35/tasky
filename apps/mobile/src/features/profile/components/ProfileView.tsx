@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { useMyProfile, useSignOut, useUpdateProfile } from '../hooks/useProfile';
-import { Button, FormField, Input } from '../../../components/ui';
-import { LanguageSwitcher } from '../../../components/ui/LanguageSwitcher';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Button, FormField, Input } from '../../../components/ui';
+import { LanguageSwitcher } from '../../../components/ui/LanguageSwitcher';
+import { useMyProfile, useSignOut, useUpdateProfile } from '../hooks/useProfile';
 
 export function ProfileView() {
   const { t } = useTranslation();

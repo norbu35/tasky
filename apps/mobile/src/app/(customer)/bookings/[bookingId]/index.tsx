@@ -1,18 +1,19 @@
-import React, { useCallback, useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Alert, Pressable, Text, View } from 'react-native';
+
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
+import { ConfirmSheet } from '../../../../components/ui/ConfirmSheet';
+import { PriceTag } from '../../../../components/ui/PriceTag';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { StatusBadge } from '../../../../components/ui/StatusBadge';
-import { PriceTag } from '../../../../components/ui/PriceTag';
-import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { ConfirmCompletionSheet } from '../../../../features/bookings/components/ConfirmCompletionSheet';
 import {
   CustomerCancelSheet,
   type CancelType,
 } from '../../../../features/bookings/components/CustomerCancelSheet';
-import { ConfirmSheet } from '../../../../components/ui/ConfirmSheet';
+import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { useFlagNoShow } from '../../../../features/bookings/hooks/useFlagNoShow';
 
 function mapStatus(status: string): 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show' {

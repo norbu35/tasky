@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { Text, View } from 'react-native';
 import { CheckCircle } from 'lucide-react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+
 import { mobileTheme } from '../../design/tokenAdapter';
-import { cn } from '../../lib/cn';
-import { Button } from '../ui/Button';
 import { InsetScrollView, ScreenContainer } from '../shells';
+import { Button } from '../ui/Button';
 
 const { colors } = mobileTheme;
 
