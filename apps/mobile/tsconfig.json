@@ -6,7 +6,7 @@
     "paths": {
       "@tasky/core": ["../../packages/core/src/index.ts"]
     },
-    "types": ["vitest/globals", "node"],
+    "types": ["jest", "node"],
     "verbatimModuleSyntax": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
