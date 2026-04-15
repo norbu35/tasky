@@ -62,9 +62,7 @@ describe('RoleSelectScreen (SCR-SHARED-006)', () => {
   it('renders the Figma heading and subtitle', () => {
     render(<RoleSelectScreen />);
     expect(screen.getByText('Баталгаажуулалт хийж, ажил аваарай!')).toBeTruthy();
-    expect(
-      screen.getByText('Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой.'),
-    ).toBeTruthy();
+    expect(screen.getByText('Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой.')).toBeTruthy();
   });
 
   it('renders customer and tasker cards from Figma', () => {

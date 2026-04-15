@@ -1,6 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
+import {
+  resetTestI18n,
+  setTestLanguage,
+} from '../../../test-utils/mockI18n';
 
 import { CustomerCancelSheet } from '../../../../src/features/bookings/components/CustomerCancelSheet';
 

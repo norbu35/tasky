@@ -52,9 +52,7 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
     mockUseCategories.mockReturnValue({ data: { data: [] }, isLoading: false, isError: false });
     render(<CategorySelectionScreen />);
     expect(
-      screen.getByText(
-        'Select the area where you need help. We will suggest professional taskers for you.',
-      ),
+      screen.getByText('Select the area where you need help. We will suggest professional taskers for you.'),
     ).toBeTruthy();
     expect(screen.getByText('Professional Advice')).toBeTruthy();
   });
@@ -88,7 +86,9 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
   it('selecting a category navigates directly to intake with category params', () => {
     mockUseCategories.mockReturnValue({
       data: {
-        data: [{ id: 'cat-1', name: 'Cleaning', intake_enabled: true, intake_schema_version: 2 }],
+        data: [
+          { id: 'cat-1', name: 'Cleaning', intake_enabled: true, intake_schema_version: 2 },
+        ],
       },
       isLoading: false,
       isError: false,
