@@ -22,9 +22,7 @@ public class MarketplaceCommandHandler implements MarketplaceCommandPort {
     private final TaskPhotoService taskPhotoService;
 
     public MarketplaceCommandHandler(
-            TaskService taskService,
-            TaskApplicationService taskApplicationService,
-            TaskPhotoService taskPhotoService) {
+            TaskService taskService, TaskApplicationService taskApplicationService, TaskPhotoService taskPhotoService) {
         this.taskService = taskService;
         this.taskApplicationService = taskApplicationService;
         this.taskPhotoService = taskPhotoService;

@@ -5,7 +5,7 @@
 **Product Name:** Tasky  
 **Version:** 1.4 (Launch Baseline Realignment)  
 **Status:** Phase 1 launch baseline only  
-**Sources of truth:** `docs/quality/launch-baseline-2026-04.md`, `docs/quality/capability-matrix.md`, `docs/LAUNCH_ROADMAP.md`
+**Sources of truth:** `docs/maintenance/PRODUCTION_READINESS.md`, `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`, `docs/LAUNCH_ROADMAP.md`
 
 This PRD defines the verified launch product, not the full long-term roadmap. Phase 1 is a controlled pilot with zero monetization and founder concierge backstop. Later-phase items remain conditional until they are explicitly verified and promoted out of dormant, deferred, or implemented-gated status.
 
@@ -167,8 +167,8 @@ The launch baseline deliberately excludes all monetization that depends on later
 ## 8. Latent Capabilities Appendix
 
 This appendix is the canonical PRD view of dormant and deferred capabilities. Status values come from
-`docs/quality/capability-matrix.md` and `docs/quality/launch-baseline-2026-04.md`; if implementation evidence changes,
-update those artifacts first and then update this appendix.
+`docs/maintenance/FEATURE_ACTIVATION_POLICY.md`; if implementation evidence changes,
+update that artifact first and then update this appendix.
 
 | Surface | Current verified status | Product implication |
 |---|---|---|

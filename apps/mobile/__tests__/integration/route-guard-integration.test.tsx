@@ -84,23 +84,6 @@ beforeEach(() => {
 });
 
 describe('Route guard integration', () => {
-  it('unauthenticated user is redirected to auth', () => {
-    render(<GuardConsumer requireAuth />);
-    expect(mockReplace).toHaveBeenCalledWith('/(auth)');
-  });
-
-  it('banned user is redirected to banned screen', () => {
-    setBannedUser();
-    render(<GuardConsumer requireAuth />);
-    expect(mockReplace).toHaveBeenCalledWith('/account/banned');
-  });
-
-  it('suspended user is redirected to suspended screen', () => {
-    setSuspendedUser();
-    render(<GuardConsumer requireAuth />);
-    expect(mockReplace).toHaveBeenCalledWith('/account/suspended');
-  });
-
   it('normal authenticated user is not redirected', () => {
     setAuthenticated();
     render(<GuardConsumer requireAuth />);

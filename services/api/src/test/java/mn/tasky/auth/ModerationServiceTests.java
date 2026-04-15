@@ -41,25 +41,34 @@ class ModerationServiceTests {
     private static final String USER_ID = UUID.randomUUID().toString();
     private static final String ADMIN_ID = "admin-001";
 
-    @Mock private StrikeDao strikeDao;
-    @Mock private SuspensionEventDao suspensionEventDao;
-    @Mock private ModerationPolicyDao moderationPolicyDao;
-    @Mock private UserDao userDao;
-    @Mock private AuditEventDao auditEventDao;
-    @Mock private UserStatusResolver userStatusResolver;
+    @Mock
+    private StrikeDao strikeDao;
+
+    @Mock
+    private SuspensionEventDao suspensionEventDao;
+
+    @Mock
+    private ModerationPolicyDao moderationPolicyDao;
+
+    @Mock
+    private UserDao userDao;
+
+    @Mock
+    private AuditEventDao auditEventDao;
+
+    @Mock
+    private UserStatusResolver userStatusResolver;
 
     private ModerationService service;
 
     private AuthUser activeUser() {
-        return new AuthUser(USER_ID, null, null, "CUSTOMER", "ACTIVE", "FACEBOOK",
-                Instant.now(), Instant.now());
+        return new AuthUser(USER_ID, null, null, "CUSTOMER", "ACTIVE", "FACEBOOK", Instant.now(), Instant.now());
     }
 
     @BeforeEach
     void setUp() {
         service = new ModerationService(
-                strikeDao, suspensionEventDao, moderationPolicyDao,
-                userDao, auditEventDao, userStatusResolver);
+                strikeDao, suspensionEventDao, moderationPolicyDao, userDao, auditEventDao, userStatusResolver);
     }
 
     // ── addStrike ──────────────────────────────────────────────────────────
@@ -114,8 +123,8 @@ class ModerationServiceTests {
         void bannedUserNotSuspended() {
             when(moderationPolicyDao.findActive()).thenReturn(Optional.of(ModerationPolicy.DEFAULT));
             when(strikeDao.countSince(eq(USER_ID), any(Instant.class))).thenReturn(5L);
-            AuthUser bannedUser = new AuthUser(USER_ID, null, null, "CUSTOMER", "BANNED", "FACEBOOK",
-                    Instant.now(), Instant.now());
+            AuthUser bannedUser =
+                    new AuthUser(USER_ID, null, null, "CUSTOMER", "BANNED", "FACEBOOK", Instant.now(), Instant.now());
             when(userDao.findById(USER_ID)).thenReturn(Optional.of(bannedUser));
             when(userStatusResolver.resolve(USER_ID, "BANNED")).thenReturn("BANNED");
 
@@ -129,8 +138,8 @@ class ModerationServiceTests {
         void suspendedUserNotDoubled() {
             when(moderationPolicyDao.findActive()).thenReturn(Optional.of(ModerationPolicy.DEFAULT));
             when(strikeDao.countSince(eq(USER_ID), any(Instant.class))).thenReturn(5L);
-            AuthUser suspendedUser = new AuthUser(USER_ID, null, null, "CUSTOMER", "SUSPENDED", "FACEBOOK",
-                    Instant.now(), Instant.now());
+            AuthUser suspendedUser = new AuthUser(
+                    USER_ID, null, null, "CUSTOMER", "SUSPENDED", "FACEBOOK", Instant.now(), Instant.now());
             when(userDao.findById(USER_ID)).thenReturn(Optional.of(suspendedUser));
             when(userStatusResolver.resolve(USER_ID, "SUSPENDED")).thenReturn("SUSPENDED");
 
@@ -181,8 +190,8 @@ class ModerationServiceTests {
         @Test
         @DisplayName("unbanUser restores ACTIVE status and writes audit event")
         void unbanRestoresActiveAndAudits() {
-            AuthUser bannedUser = new AuthUser(USER_ID, null, null, "CUSTOMER", "BANNED", "FACEBOOK",
-                    Instant.now(), Instant.now());
+            AuthUser bannedUser =
+                    new AuthUser(USER_ID, null, null, "CUSTOMER", "BANNED", "FACEBOOK", Instant.now(), Instant.now());
             when(userDao.findById(USER_ID)).thenReturn(Optional.of(bannedUser));
 
             boolean result = service.unbanUser(ADMIN_ID, USER_ID, "appeal granted");
@@ -203,7 +212,8 @@ class ModerationServiceTests {
         @DisplayName("Valid policy values are persisted and returned")
         void validPolicyIsPersisted() {
             ModerationPolicy expected = new ModerationPolicy(60, 5, 14, 30, 365, true, Instant.now());
-            when(moderationPolicyDao.update(60, 5, 14, 30, 365, true, any(Instant.class))).thenReturn(1);
+            when(moderationPolicyDao.update(60, 5, 14, 30, 365, true, any(Instant.class)))
+                    .thenReturn(1);
             when(moderationPolicyDao.findActive()).thenReturn(Optional.of(expected));
 
             ModerationPolicy result = service.updateModerationPolicy(60, 5, 14, 30, 365, true);
@@ -247,7 +257,8 @@ class ModerationServiceTests {
         @Test
         @DisplayName("Missing moderation policy row throws ISE")
         void missingPolicyRowThrowsISE() {
-            when(moderationPolicyDao.update(anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), any(Boolean.class), any(Instant.class)))
+            when(moderationPolicyDao.update(
+                            anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), any(Boolean.class), any(Instant.class)))
                     .thenReturn(0);
 
             assertThatThrownBy(() -> service.updateModerationPolicy(30, 3, 7, 14, 180, true))
@@ -268,8 +279,8 @@ class ModerationServiceTests {
             service.requestAccountDeletion(USER_ID);
 
             verify(userDao).updateStatus(USER_ID, "DELETED");
-            verify(auditEventDao).insert(
-                    eq(USER_ID), eq("USER_SELF_DELETE_REQUEST"), eq("USER"), eq(USER_ID), anyString());
+            verify(auditEventDao)
+                    .insert(eq(USER_ID), eq("USER_SELF_DELETE_REQUEST"), eq("USER"), eq(USER_ID), anyString());
         }
     }
 }

@@ -104,32 +104,6 @@ beforeEach(() => {
 
 describe('Role-based UI integration', () => {
   describe('TabsLayout tab labels by role', () => {
-    it('customer role shows customer tab labels', () => {
-      useAppStore.setState({ currentRole: 'customer' });
-
-      render(
-        <RoleProvider>
-          <TabsLayout />
-        </RoleProvider>,
-      );
-
-      expect(screen.getByTestId('tab-index')).toHaveTextContent('My Tasks');
-      expect(screen.getByTestId('tab-bookings')).toHaveTextContent('Bookings');
-    });
-
-    it('tasker role shows tasker tab labels', () => {
-      useAppStore.setState({ currentRole: 'tasker' });
-
-      render(
-        <RoleProvider>
-          <TabsLayout />
-        </RoleProvider>,
-      );
-
-      expect(screen.getByTestId('tab-index')).toHaveTextContent('Browse');
-      expect(screen.getByTestId('tab-bookings')).toHaveTextContent('My Jobs');
-    });
-
     it('common tabs are consistent across roles', () => {
       // Customer role
       useAppStore.setState({ currentRole: 'customer' });

@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-Tasky is a launch-first marketplace. The current business commitment is the Phase 1 controlled pilot described in `docs/quality/launch-baseline-2026-04.md`. The strategy is to prove trust, liquidity, and operational reliability before expanding into paid rails or adjacent product lines.
+Tasky is a launch-first marketplace. The current business commitment is the Phase 1 controlled pilot described in `docs/LAUNCH_ROADMAP.md`. The strategy is to prove trust, liquidity, and operational reliability before expanding into paid rails or adjacent product lines.
 
 Later phases are not automatic next steps. They are conditional paths that require verified implementation status, test coverage, and an explicit rollout decision. The launch team should treat docs, UI shells, and seeded toggles as research signals, not as proof that a later phase is ready.
 

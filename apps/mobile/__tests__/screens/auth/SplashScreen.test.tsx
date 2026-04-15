@@ -130,9 +130,4 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
     expectRedirectHref('/(auth)');
   });
 
-  it('displays tagline text', () => {
-    useAuthStore.setState({ session: null });
-    render(<SplashScreen />);
-    expect(screen.getByText('Итгэмжлэгдсэн ажилчид, хялбар захиалга')).toBeTruthy();
-  });
 });

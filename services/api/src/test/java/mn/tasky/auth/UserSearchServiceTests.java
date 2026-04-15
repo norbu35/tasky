@@ -2,11 +2,8 @@ package mn.tasky.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,11 +35,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class UserSearchServiceTests {
 
-    @Mock private UserDao userDao;
-    @Mock private ProfileDao profileDao;
-    @Mock private CryptoService cryptoService;
-    @Mock private BadgeDao badgeDao;
-    @Mock private UserStatusResolver userStatusResolver;
+    @Mock
+    private UserDao userDao;
+
+    @Mock
+    private ProfileDao profileDao;
+
+    @Mock
+    private CryptoService cryptoService;
+
+    @Mock
+    private BadgeDao badgeDao;
+
+    @Mock
+    private UserStatusResolver userStatusResolver;
 
     private UserSearchService service;
 
@@ -52,8 +58,7 @@ class UserSearchServiceTests {
     }
 
     private AuthUser testUser(String id) {
-        return new AuthUser(id, "encrypted-phone", null, "CUSTOMER", "ACTIVE", "PHONE",
-                Instant.now(), Instant.now());
+        return new AuthUser(id, "encrypted-phone", null, "CUSTOMER", "ACTIVE", "PHONE", Instant.now(), Instant.now());
     }
 
     // ── searchUsersByPhone ────────────────────────────────────────────────

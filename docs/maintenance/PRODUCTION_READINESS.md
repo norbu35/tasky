@@ -8,11 +8,9 @@ This document defines the production go/no-go rules for the verified Phase 1 lau
 
 It uses the tranche outcomes from:
 
-- `docs/quality/launch-baseline-2026-04.md`
-- `docs/quality/capability-matrix.md`
-- `docs/quality/test-trust-audit.md`
-- `docs/quality/verification-matrix.md`
-- `docs/quality/staging-rehearsal-2026-04.md`
+- `docs/LAUNCH_ROADMAP.md`
+- `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`
+- `docs/maintenance/STAGING_RUNBOOK.md`
 
 ## Decision States
 

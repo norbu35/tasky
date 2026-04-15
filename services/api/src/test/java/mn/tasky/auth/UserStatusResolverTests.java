@@ -1,7 +1,6 @@
 package mn.tasky.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -11,7 +10,6 @@ import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.auth.application.UserStatusResolver;
@@ -24,6 +22,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -37,9 +37,14 @@ class UserStatusResolverTests {
 
     private static final String USER_ID = UUID.randomUUID().toString();
 
-    @Mock private ModerationPolicyDao moderationPolicyDao;
-    @Mock private UserDao userDao;
-    @Mock private SuspensionEventDao suspensionEventDao;
+    @Mock
+    private ModerationPolicyDao moderationPolicyDao;
+
+    @Mock
+    private UserDao userDao;
+
+    @Mock
+    private SuspensionEventDao suspensionEventDao;
 
     private UserStatusResolver resolver;
 
@@ -54,28 +59,11 @@ class UserStatusResolverTests {
     @DisplayName("passthrough for non-SUSPENDED statuses")
     class Passthrough {
 
-        @Test
-        @DisplayName("ACTIVE status passes through unchanged")
-        void activePassesThrough() {
-            assertThat(resolver.resolve(USER_ID, "ACTIVE")).isEqualTo("ACTIVE");
-        }
-
-        @Test
-        @DisplayName("BANNED status passes through unchanged")
-        void bannedPassesThrough() {
-            assertThat(resolver.resolve(USER_ID, "BANNED")).isEqualTo("BANNED");
-        }
-
-        @Test
-        @DisplayName("VERIFIED status passes through unchanged")
-        void verifiedPassesThrough() {
-            assertThat(resolver.resolve(USER_ID, "VERIFIED")).isEqualTo("VERIFIED");
-        }
-
-        @Test
-        @DisplayName("DELETED status passes through unchanged")
-        void deletedPassesThrough() {
-            assertThat(resolver.resolve(USER_ID, "DELETED")).isEqualTo("DELETED");
+        @ParameterizedTest
+        @ValueSource(strings = {"ACTIVE", "BANNED", "VERIFIED", "DELETED"})
+        @DisplayName("Non-SUSPENDED statuses pass through unchanged")
+        void nonSuspendedStatusesPassThrough(String status) {
+            assertThat(resolver.resolve(USER_ID, status)).isEqualTo(status);
         }
     }
 

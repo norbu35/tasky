@@ -11,6 +11,5 @@ public record ModerationPolicy(
         boolean autoUnsuspendEnabled,
         Instant updatedAt) {
 
-    public static final ModerationPolicy DEFAULT =
-            new ModerationPolicy(30, 3, 7, 14, 180, true, Instant.EPOCH);
+    public static final ModerationPolicy DEFAULT = new ModerationPolicy(30, 3, 7, 14, 180, true, Instant.EPOCH);
 }

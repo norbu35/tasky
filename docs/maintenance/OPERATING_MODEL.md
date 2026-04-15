@@ -13,9 +13,7 @@ Tasky is now operated as a maintenance-and-extension monorepo, not a greenfield 
 - Design: canonical sources under `docs/design/`
 - Operational runbooks: `docs/maintenance/STAGING_RUNBOOK.md`, `docs/maintenance/STAGING_TOGGLE_POSTURE.md`,
   `docs/maintenance/STAGING_SEED_DATA.md`
-- Quality canonical: `docs/quality/document-taxonomy.md`, `docs/quality/document-inventory-2026-04.md`
-- Quality derived-active: `docs/quality/README.md`, `docs/quality/verification-matrix.md`,
-  `docs/quality/cleanup-gate.md`, and other maintained controls under `docs/quality/`
+- Launch readiness: `docs/maintenance/PRODUCTION_READINESS.md`, `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`
 - Active execution plans: `docs/plans/`
 - Historical plans/specs: `archive/greenfield-docs/`
 
@@ -26,9 +24,8 @@ When a maintenance task spans multiple document families, read them in this orde
 1. Product intent and constraints from `docs/PRD.md`.
 2. Technical baseline from `docs/ARCHITECTURE.md`, then the API contract in `docs/API.yaml`.
 3. Design authority from canonical `docs/design/` sources.
-4. Quality classification and inventory from `docs/quality/document-taxonomy.md` and
-   `docs/quality/document-inventory-2026-04.md`.
-5. Derived-active operating docs such as `docs/ARCHITECTURE_INDEX.md`, `docs/quality/README.md`, and `docs/plans/`
+4. Launch readiness from `docs/maintenance/PRODUCTION_READINESS.md` and `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`.
+5. Derived-active operating docs such as `docs/ARCHITECTURE_INDEX.md` and `docs/plans/`
    only after the canonical sources above.
 
 ## Planning Workflow
@@ -68,8 +65,8 @@ pnpm sdk:drift
 
 - Keep live operational docs in `docs/`.
 - Move superseded plan/spec material to `archive/greenfield-docs/`.
-- Use the document taxonomy and inventory to decide whether a `docs/` surface is canonical, derived-active,
-  historical, or generated-local before reclassifying or editing it.
+- Decide whether a `docs/` surface is canonical, derived-active, historical, or generated-local before
+  reclassifying or editing it.
 - When a doc is archived, update references in root guidance (`README.md`, `AGENTS.md`, `CLAUDE.md`).
 
 ## Archive Policy

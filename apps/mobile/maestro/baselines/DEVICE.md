@@ -42,7 +42,7 @@ Map the following screens to their Maestro flows:
 
 ## Naming Conventions
 
-Per `docs/quality/mobile-maestro-authoring-rules.md`:
+Naming rules:
 
 - Journey flows: `JRN-<ID>-<slug>.yaml` (e.g., `JRN-CUST-01-post-a-task.yaml`)
 - Screen smoke/state flows: `SCR-<ID>-<state-or-purpose>.yaml` (e.g., `SCR-INFRA-004-terms-of-service.yaml`)

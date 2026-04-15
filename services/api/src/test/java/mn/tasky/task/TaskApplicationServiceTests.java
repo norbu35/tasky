@@ -2,11 +2,8 @@ package mn.tasky.task;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,47 +50,120 @@ class TaskApplicationServiceTests {
     private static final String TASK_ID = UUID.randomUUID().toString();
     private static final String APPLICATION_ID = UUID.randomUUID().toString();
 
-    @Mock private UserProfileService userProfileService;
-    @Mock private BookingCommandPort bookingCommandPort;
-    @Mock private MessagingService messagingService;
-    @Mock private NotificationService notificationService;
-    @Mock private AnalyticsService analyticsService;
-    @Mock private DomainEventOutboxService domainEventOutboxService;
-    @Mock private ReviewEnforcementService reviewEnforcementService;
-    @Mock private TaskDao taskDao;
-    @Mock private TaskApplicationDao taskApplicationDao;
+    @Mock
+    private UserProfileService userProfileService;
+
+    @Mock
+    private BookingCommandPort bookingCommandPort;
+
+    @Mock
+    private MessagingService messagingService;
+
+    @Mock
+    private NotificationService notificationService;
+
+    @Mock
+    private AnalyticsService analyticsService;
+
+    @Mock
+    private DomainEventOutboxService domainEventOutboxService;
+
+    @Mock
+    private ReviewEnforcementService reviewEnforcementService;
+
+    @Mock
+    private TaskDao taskDao;
+
+    @Mock
+    private TaskApplicationDao taskApplicationDao;
 
     private TaskApplicationService service;
 
     @BeforeEach
     void setUp() {
         service = new TaskApplicationService(
-                userProfileService, bookingCommandPort, messagingService, notificationService,
-                analyticsService, domainEventOutboxService, reviewEnforcementService,
-                taskDao, taskApplicationDao);
+                userProfileService,
+                bookingCommandPort,
+                messagingService,
+                notificationService,
+                analyticsService,
+                domainEventOutboxService,
+                reviewEnforcementService,
+                taskDao,
+                taskApplicationDao);
     }
 
     private TaskState openTask() {
-        return new TaskState(TASK_ID, CUSTOMER_ID, "cat-1", "Fix my sink", 5000,
-                47.9, 106.9, "Ulaanbaatar", "OPEN", Instant.now(),
-                null, null, null, null, Instant.now(), Instant.now());
+        return new TaskState(
+                TASK_ID,
+                CUSTOMER_ID,
+                "cat-1",
+                "Fix my sink",
+                5000,
+                47.9,
+                106.9,
+                "Ulaanbaatar",
+                "OPEN",
+                Instant.now(),
+                null,
+                null,
+                null,
+                null,
+                Instant.now(),
+                Instant.now());
     }
 
     private TaskState assignedTask() {
-        return new TaskState(TASK_ID, CUSTOMER_ID, "cat-1", "Fix my sink", 5000,
-                47.9, 106.9, "Ulaanbaatar", "ASSIGNED", Instant.now(),
-                null, null, null, null, Instant.now(), Instant.now());
+        return new TaskState(
+                TASK_ID,
+                CUSTOMER_ID,
+                "cat-1",
+                "Fix my sink",
+                5000,
+                47.9,
+                106.9,
+                "Ulaanbaatar",
+                "ASSIGNED",
+                Instant.now(),
+                null,
+                null,
+                null,
+                null,
+                Instant.now(),
+                Instant.now());
     }
 
     private UserProfile verifiedTaskerProfile() {
-        return new UserProfile(TASKER_ID, "+97699001122", "TASKER", "VERIFIED",
-                "Tasker Name", null, 4.5, 10, false, Instant.now().toString());
+        return new UserProfile(
+                TASKER_ID,
+                "+97699001122",
+                "TASKER",
+                "VERIFIED",
+                "Tasker Name",
+                null,
+                4.5,
+                10,
+                false,
+                Instant.now().toString());
     }
 
     private TaskApplicationState appliedApplication() {
-        return new TaskApplicationState(APPLICATION_ID, TASK_ID, TASKER_ID, "Tasker Name",
-                null, 4.5, 10, false, "I can do this", "APPLIED",
-                null, null, null, null, Instant.now());
+        return new TaskApplicationState(
+                APPLICATION_ID,
+                TASK_ID,
+                TASKER_ID,
+                "Tasker Name",
+                null,
+                4.5,
+                10,
+                false,
+                "I can do this",
+                "APPLIED",
+                null,
+                null,
+                null,
+                null,
+                Instant.now());
     }
 
     // ── applyToTask ───────────────────────────────────────────────────────
@@ -162,8 +232,17 @@ class TaskApplicationServiceTests {
             when(reviewEnforcementService.isUserLocked(TASKER_ID)).thenReturn(false);
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(openTask()));
             when(taskApplicationDao.hasAccepted(TASK_ID)).thenReturn(false);
-            UserProfile unverified = new UserProfile(TASKER_ID, null, "TASKER", "ACTIVE",
-                    "Name", null, 0, 0, false, Instant.now().toString());
+            UserProfile unverified = new UserProfile(
+                    TASKER_ID,
+                    null,
+                    "TASKER",
+                    "ACTIVE",
+                    "Name",
+                    null,
+                    0,
+                    0,
+                    false,
+                    Instant.now().toString());
             when(userProfileService.getProfile(TASKER_ID)).thenReturn(Optional.of(unverified));
 
             TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "msg");
@@ -178,7 +257,8 @@ class TaskApplicationServiceTests {
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(openTask()));
             when(taskApplicationDao.hasAccepted(TASK_ID)).thenReturn(false);
             when(userProfileService.getProfile(TASKER_ID)).thenReturn(Optional.of(verifiedTaskerProfile()));
-            when(taskApplicationDao.existsByTaskIdAndTaskerId(TASK_ID, TASKER_ID)).thenReturn(true);
+            when(taskApplicationDao.existsByTaskIdAndTaskerId(TASK_ID, TASKER_ID))
+                    .thenReturn(true);
 
             TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "msg");
 
@@ -192,15 +272,18 @@ class TaskApplicationServiceTests {
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(openTask()));
             when(taskApplicationDao.hasAccepted(TASK_ID)).thenReturn(false);
             when(userProfileService.getProfile(TASKER_ID)).thenReturn(Optional.of(verifiedTaskerProfile()));
-            when(taskApplicationDao.existsByTaskIdAndTaskerId(TASK_ID, TASKER_ID)).thenReturn(false);
-            when(messagingService.startConversation(TASK_ID, TASKER_ID, CUSTOMER_ID)).thenReturn("conv-123");
+            when(taskApplicationDao.existsByTaskIdAndTaskerId(TASK_ID, TASKER_ID))
+                    .thenReturn(false);
+            when(messagingService.startConversation(TASK_ID, TASKER_ID, CUSTOMER_ID))
+                    .thenReturn("conv-123");
 
             TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "I can do this");
 
             assertThat(result.isSuccess()).isTrue();
             assertThat(result.application().taskerId()).isEqualTo(TASKER_ID);
             assertThat(result.application().status()).isEqualTo("APPLIED");
-            verify(taskApplicationDao).insert(anyString(), eq(TASK_ID), eq(TASKER_ID), anyString(), eq("APPLIED"), any(Instant.class));
+            verify(taskApplicationDao)
+                    .insert(anyString(), eq(TASK_ID), eq(TASKER_ID), anyString(), eq("APPLIED"), any(Instant.class));
             verify(notificationService).sendPush(eq(CUSTOMER_ID), anyString(), anyString(), eq("TASKER_APPLIED"));
             verify(analyticsService).track(eq(AnalyticsService.EVENT_APPLICATION_SUBMITTED), eq(TASKER_ID), any());
         }
@@ -236,8 +319,7 @@ class TaskApplicationServiceTests {
         @DisplayName("Owner receives application list")
         void ownerGetsApplications() {
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(openTask()));
-            when(taskApplicationDao.findByTaskId(TASK_ID, null, 50))
-                    .thenReturn(List.of(appliedApplication()));
+            when(taskApplicationDao.findByTaskId(TASK_ID, null, 50)).thenReturn(List.of(appliedApplication()));
 
             TaskApplicationsListResult result = service.listTaskApplications(CUSTOMER_ID, TASK_ID, null, 50);
 
@@ -321,8 +403,21 @@ class TaskApplicationServiceTests {
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(openTask()));
             when(taskApplicationDao.hasAccepted(TASK_ID)).thenReturn(false);
             TaskApplicationState wrongTaskApp = new TaskApplicationState(
-                    APPLICATION_ID, "other-task", TASKER_ID, "Name", null, 4.0, 5, false,
-                    "msg", "APPLIED", null, null, null, null, Instant.now());
+                    APPLICATION_ID,
+                    "other-task",
+                    TASKER_ID,
+                    "Name",
+                    null,
+                    4.0,
+                    5,
+                    false,
+                    "msg",
+                    "APPLIED",
+                    null,
+                    null,
+                    null,
+                    null,
+                    Instant.now());
             when(taskApplicationDao.findById(APPLICATION_ID)).thenReturn(Optional.of(wrongTaskApp));
 
             TaskAcceptResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
@@ -336,8 +431,21 @@ class TaskApplicationServiceTests {
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(openTask()));
             when(taskApplicationDao.hasAccepted(TASK_ID)).thenReturn(false);
             TaskApplicationState rejectedApp = new TaskApplicationState(
-                    APPLICATION_ID, TASK_ID, TASKER_ID, "Name", null, 4.0, 5, false,
-                    "msg", "REJECTED", null, null, null, null, Instant.now());
+                    APPLICATION_ID,
+                    TASK_ID,
+                    TASKER_ID,
+                    "Name",
+                    null,
+                    4.0,
+                    5,
+                    false,
+                    "msg",
+                    "REJECTED",
+                    null,
+                    null,
+                    null,
+                    null,
+                    Instant.now());
             when(taskApplicationDao.findById(APPLICATION_ID)).thenReturn(Optional.of(rejectedApp));
 
             TaskAcceptResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
@@ -354,11 +462,23 @@ class TaskApplicationServiceTests {
             when(taskApplicationDao.findById(APPLICATION_ID)).thenReturn(Optional.of(appliedApplication()));
 
             String bookingId = UUID.randomUUID().toString();
-            BookingState booking = new BookingState(bookingId, TASK_ID, TASKER_ID, CUSTOMER_ID,
-                    5000, "ASSIGNED", null, true, task.scheduledAt(), "STANDARD", false,
-                    Instant.now(), Instant.now(), Instant.now());
+            BookingState booking = new BookingState(
+                    bookingId,
+                    TASK_ID,
+                    TASKER_ID,
+                    CUSTOMER_ID,
+                    5000,
+                    "ASSIGNED",
+                    null,
+                    true,
+                    task.scheduledAt(),
+                    "STANDARD",
+                    false,
+                    Instant.now(),
+                    Instant.now(),
+                    Instant.now());
             when(bookingCommandPort.createBooking(
-                    eq(TASK_ID), eq(TASKER_ID), eq(CUSTOMER_ID), eq(5000), eq(true), any()))
+                            eq(TASK_ID), eq(TASKER_ID), eq(CUSTOMER_ID), eq(5000), eq(true), any()))
                     .thenReturn(booking);
 
             TaskAcceptResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
@@ -374,9 +494,12 @@ class TaskApplicationServiceTests {
             verify(taskDao).updateStatus(eq(TASK_ID), eq("ASSIGNED"), any(Instant.class));
 
             // Verify outbox event published
-            verify(domainEventOutboxService).publish(
-                    eq(OutboxEventTypes.TASK_APPLICATION_ACCEPTED),
-                    eq("BOOKING"), eq(bookingId), any(Map.class));
+            verify(domainEventOutboxService)
+                    .publish(
+                            eq(OutboxEventTypes.TASK_APPLICATION_ACCEPTED),
+                            eq("BOOKING"),
+                            eq(bookingId),
+                            any(Map.class));
         }
     }
 

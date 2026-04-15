@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,29 +48,52 @@ class UserProfileServiceTests {
     private static final String TEST_JWT_SECRET = "test-jwt-secret-key-minimum-32-chars-long-xxx";
     private static final String USER_ID = UUID.randomUUID().toString();
 
-    @Mock private UserDao userDao;
-    @Mock private ProfileDao profileDao;
-    @Mock private BadgeDao badgeDao;
-    @Mock private S3PresignedUrlService storageService;
-    @Mock private StorageKeyPolicy storageKeyPolicy;
-    @Mock private UserStatusResolver userStatusResolver;
-    @Mock private CryptoService cryptoService;
-    @Mock private RefreshSessionDao refreshSessionDao;
+    @Mock
+    private UserDao userDao;
+
+    @Mock
+    private ProfileDao profileDao;
+
+    @Mock
+    private BadgeDao badgeDao;
+
+    @Mock
+    private S3PresignedUrlService storageService;
+
+    @Mock
+    private StorageKeyPolicy storageKeyPolicy;
+
+    @Mock
+    private UserStatusResolver userStatusResolver;
+
+    @Mock
+    private CryptoService cryptoService;
+
+    @Mock
+    private RefreshSessionDao refreshSessionDao;
 
     private UserProfileService service;
 
     private AuthUser activeCustomer() {
-        return new AuthUser(USER_ID, "encrypted-phone", "fb-123", "CUSTOMER", "ACTIVE", "FACEBOOK",
-                Instant.now(), Instant.now());
+        return new AuthUser(
+                USER_ID, "encrypted-phone", "fb-123", "CUSTOMER", "ACTIVE", "FACEBOOK", Instant.now(), Instant.now());
     }
 
     @BeforeEach
     void setUp() {
         JwtTokenService jwtTokenService = new JwtTokenService(TEST_JWT_SECRET, 900L, 1209600L);
         service = new UserProfileService(
-                userDao, profileDao, badgeDao, storageService, storageKeyPolicy,
-                userStatusResolver, cryptoService, jwtTokenService, refreshSessionDao,
-                false, false);
+                userDao,
+                profileDao,
+                badgeDao,
+                storageService,
+                storageKeyPolicy,
+                userStatusResolver,
+                cryptoService,
+                jwtTokenService,
+                refreshSessionDao,
+                false,
+                false);
     }
 
     // ── getProfile ──────────────────────────────────────────────────────────
@@ -155,7 +177,8 @@ class UserProfileServiceTests {
         @DisplayName("Returns empty when user does not exist")
         void returnsEmptyForMissingUser() {
             when(userDao.findById(USER_ID)).thenReturn(Optional.empty());
-            assertThat(service.updateProfile(USER_ID, new ProfileUpdate("New Name", null))).isEmpty();
+            assertThat(service.updateProfile(USER_ID, new ProfileUpdate("New Name", null)))
+                    .isEmpty();
         }
 
         @Test
@@ -262,8 +285,8 @@ class UserProfileServiceTests {
         @Test
         @DisplayName("Returns empty when user is already TASKER")
         void alreadyTaskerReturnsEmpty() {
-            AuthUser tasker = new AuthUser(USER_ID, null, "fb-123", "TASKER", "ACTIVE", "FACEBOOK",
-                    Instant.now(), Instant.now());
+            AuthUser tasker =
+                    new AuthUser(USER_ID, null, "fb-123", "TASKER", "ACTIVE", "FACEBOOK", Instant.now(), Instant.now());
             when(userDao.findById(USER_ID)).thenReturn(Optional.of(tasker));
 
             assertThat(service.activateTaskerRole(USER_ID)).isEmpty();
@@ -273,8 +296,8 @@ class UserProfileServiceTests {
         @Test
         @DisplayName("Returns empty when user is ADMIN")
         void adminReturnsEmpty() {
-            AuthUser admin = new AuthUser(USER_ID, null, null, "ADMIN", "ACTIVE", "FACEBOOK",
-                    Instant.now(), Instant.now());
+            AuthUser admin =
+                    new AuthUser(USER_ID, null, null, "ADMIN", "ACTIVE", "FACEBOOK", Instant.now(), Instant.now());
             when(userDao.findById(USER_ID)).thenReturn(Optional.of(admin));
 
             assertThat(service.activateTaskerRole(USER_ID)).isEmpty();
@@ -338,7 +361,8 @@ class UserProfileServiceTests {
         void unsupportedMimeTypeReturnsEmpty() {
             when(userDao.findById(USER_ID)).thenReturn(Optional.of(activeCustomer()));
 
-            assertThat(service.createAvatarUploadUrl(USER_ID, "application/pdf")).isEmpty();
+            assertThat(service.createAvatarUploadUrl(USER_ID, "application/pdf"))
+                    .isEmpty();
         }
 
         @Test
@@ -420,12 +444,20 @@ class UserProfileServiceTests {
             // Reconstruct with OTP enabled
             JwtTokenService jwtTokenService = new JwtTokenService(TEST_JWT_SECRET, 900L, 1209600L);
             UserProfileService otpService = new UserProfileService(
-                    userDao, profileDao, badgeDao, storageService, storageKeyPolicy,
-                    userStatusResolver, cryptoService, jwtTokenService, refreshSessionDao,
-                    true, false);
+                    userDao,
+                    profileDao,
+                    badgeDao,
+                    storageService,
+                    storageKeyPolicy,
+                    userStatusResolver,
+                    cryptoService,
+                    jwtTokenService,
+                    refreshSessionDao,
+                    true,
+                    false);
 
-            AuthUser facebookOnlyUser = new AuthUser(USER_ID, null, "fb-123", "CUSTOMER", "ACTIVE",
-                    "FACEBOOK", Instant.now(), Instant.now());
+            AuthUser facebookOnlyUser = new AuthUser(
+                    USER_ID, null, "fb-123", "CUSTOMER", "ACTIVE", "FACEBOOK", Instant.now(), Instant.now());
             when(userDao.findById(USER_ID)).thenReturn(Optional.of(facebookOnlyUser));
 
             assertThat(otpService.requiresOtpMigration(USER_ID)).isTrue();

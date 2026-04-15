@@ -104,7 +104,6 @@ The authoritative readiness posture now lives in:
 
 - `docs/maintenance/STAGING_RUNBOOK.md`
 - `docs/maintenance/PRODUCTION_READINESS.md`
-- `docs/quality/final-launch-readiness-report-2026-04.md`
 
 Current recommendation:
 

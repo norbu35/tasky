@@ -16,9 +16,7 @@ public class UserStatusResolver {
     private final SuspensionEventDao suspensionEventDao;
 
     public UserStatusResolver(
-            ModerationPolicyDao moderationPolicyDao,
-            UserDao userDao,
-            SuspensionEventDao suspensionEventDao) {
+            ModerationPolicyDao moderationPolicyDao, UserDao userDao, SuspensionEventDao suspensionEventDao) {
         this.moderationPolicyDao = moderationPolicyDao;
         this.userDao = userDao;
         this.suspensionEventDao = suspensionEventDao;

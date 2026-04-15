@@ -27,7 +27,9 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
     private final UserProfileService userProfileService;
 
     public ChannelInterceptorConfig(
-            JwtTokenService jwtTokenService, @Lazy MessagingService messagingService, UserProfileService userProfileService) {
+            JwtTokenService jwtTokenService,
+            @Lazy MessagingService messagingService,
+            UserProfileService userProfileService) {
         this.jwtTokenService = jwtTokenService;
         this.messagingService = messagingService;
         this.userProfileService = userProfileService;

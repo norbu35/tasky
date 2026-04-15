@@ -12,7 +12,7 @@ that the product surface is activation-ready.
 ## Activation Principles
 
 1. The capability matrix is the entry gate. No feature may be activated unless its current classification and evidence
-   are explicitly recorded in `docs/quality/capability-matrix.md`.
+   are explicitly recorded in this document's eligibility ledger below.
 2. `implemented-gated` is the only classification that may be considered for near-term activation.
 3. `partial`, `contract-only`, and `deferred` surfaces are implementation work, not rollout candidates.
 4. Product, engineering, verification, and rollback evidence must all exist before any toggle change in production.
@@ -77,7 +77,7 @@ note.
 
 ## Activation Sequence
 
-1. Reclassify the capability in `docs/quality/capability-matrix.md` if new evidence exists.
+1. Reclassify the capability in this document's eligibility ledger if new evidence exists.
 2. Update the PRD appendix and any canonical docs affected by the activation.
 3. Exercise the capability in staging with the feature off, then on.
 4. Run the targeted smoke and regression suite for that capability.

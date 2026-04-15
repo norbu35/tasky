@@ -3,7 +3,6 @@ package mn.tasky.task;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
@@ -40,8 +39,11 @@ class TaskQueryServiceTests {
     private static final String CUSTOMER_ID = UUID.randomUUID().toString();
     private static final String TASK_ID = UUID.randomUUID().toString();
 
-    @Mock private TaskDao taskDao;
-    @Mock private TaskPhotoDao taskPhotoDao;
+    @Mock
+    private TaskDao taskDao;
+
+    @Mock
+    private TaskPhotoDao taskPhotoDao;
 
     private TaskQueryService service;
 
@@ -51,10 +53,23 @@ class TaskQueryServiceTests {
     }
 
     private TaskState openTask(String id) {
-        return new TaskState(id, CUSTOMER_ID, "cat-1", "Fix sink", 5000,
-                47.9, 106.9, "UB", "OPEN", Instant.now(),
-                null, null, null, null,
-                Instant.parse("2026-04-10T00:00:00Z"), Instant.now());
+        return new TaskState(
+                id,
+                CUSTOMER_ID,
+                "cat-1",
+                "Fix sink",
+                5000,
+                47.9,
+                106.9,
+                "UB",
+                "OPEN",
+                Instant.now(),
+                null,
+                null,
+                null,
+                null,
+                Instant.parse("2026-04-10T00:00:00Z"),
+                Instant.now());
     }
 
     // ── getTask ──────────────────────────────────────────────────────────
@@ -87,9 +102,23 @@ class TaskQueryServiceTests {
         @Test
         @DisplayName("Skips photo population when keys already present")
         void skipsPopulationWhenKeysPresent() {
-            TaskState taskWithPhotos = new TaskState(TASK_ID, CUSTOMER_ID, "cat-1", "Fix sink", 5000,
-                    47.9, 106.9, "UB", "OPEN", Instant.now(),
-                    List.of("existing-key"), null, null, null, Instant.now(), Instant.now());
+            TaskState taskWithPhotos = new TaskState(
+                    TASK_ID,
+                    CUSTOMER_ID,
+                    "cat-1",
+                    "Fix sink",
+                    5000,
+                    47.9,
+                    106.9,
+                    "UB",
+                    "OPEN",
+                    Instant.now(),
+                    List.of("existing-key"),
+                    null,
+                    null,
+                    null,
+                    Instant.now(),
+                    Instant.now());
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(taskWithPhotos));
 
             Optional<TaskState> result = service.getTask(TASK_ID);
@@ -110,8 +139,7 @@ class TaskQueryServiceTests {
             TaskState task1 = openTask(UUID.randomUUID().toString());
             TaskState task2 = openTask(UUID.randomUUID().toString());
             // 2 results for limit=1 → hasMore=true
-            when(taskDao.findOpen(isNull(), isNull(), isNull(), eq(2)))
-                    .thenReturn(List.of(task1, task2));
+            when(taskDao.findOpen(isNull(), isNull(), isNull(), eq(2))).thenReturn(List.of(task1, task2));
             when(taskPhotoDao.findKeysByTaskId(any())).thenReturn(List.of());
 
             TaskPage page = service.listTasks(null, null, null, null, null, 1);
@@ -124,8 +152,7 @@ class TaskQueryServiceTests {
         @Test
         @DisplayName("Returns empty page when no open tasks")
         void noTasksReturnsEmptyPage() {
-            when(taskDao.findOpen(isNull(), isNull(), isNull(), eq(11)))
-                    .thenReturn(List.of());
+            when(taskDao.findOpen(isNull(), isNull(), isNull(), eq(11))).thenReturn(List.of());
 
             TaskPage page = service.listTasks(null, null, null, null, null, 10);
 
@@ -230,7 +257,8 @@ class TaskQueryServiceTests {
         @Test
         @DisplayName("Malformed cursor payload throws IAE")
         void malformedPayloadThrows() {
-            String badPayload = Base64.getUrlEncoder().withoutPadding()
+            String badPayload = Base64.getUrlEncoder()
+                    .withoutPadding()
                     .encodeToString("no-pipe-separator".getBytes(StandardCharsets.UTF_8));
 
             assertThatThrownBy(() -> service.listTasks(null, null, null, null, badPayload, 10))
@@ -249,9 +277,10 @@ class TaskQueryServiceTests {
         void returnsDistinctLocations() {
             List<RecentLocation> candidates = List.of(
                     new RecentLocation(47.900, 106.900, "Location A"),
-                    new RecentLocation(47.950, 106.950, "Location B"),  // >200m from A
+                    new RecentLocation(47.950, 106.950, "Location B"), // >200m from A
                     new RecentLocation(47.990, 106.990, "Location C")); // >200m from B
-            when(taskDao.findRecentLocationCandidates(UUID.fromString(CUSTOMER_ID))).thenReturn(candidates);
+            when(taskDao.findRecentLocationCandidates(UUID.fromString(CUSTOMER_ID)))
+                    .thenReturn(candidates);
 
             List<RecentLocation> result = service.recentLocations(CUSTOMER_ID, 2);
 
@@ -265,7 +294,8 @@ class TaskQueryServiceTests {
                     new RecentLocation(47.900000, 106.900000, "Loc A"),
                     new RecentLocation(47.900001, 106.900001, "Loc B (too close to A)"),
                     new RecentLocation(47.950000, 106.950000, "Loc C (far from A)"));
-            when(taskDao.findRecentLocationCandidates(UUID.fromString(CUSTOMER_ID))).thenReturn(candidates);
+            when(taskDao.findRecentLocationCandidates(UUID.fromString(CUSTOMER_ID)))
+                    .thenReturn(candidates);
 
             List<RecentLocation> result = service.recentLocations(CUSTOMER_ID, 10);
 

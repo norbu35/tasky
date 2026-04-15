@@ -4,15 +4,14 @@ Historical synthesis prepared ahead of the PRD v1.3 rewrite. Use this document a
 
 ## 1. Purpose
 
-This document compiles PRD-relevant findings from the four market research outputs in `docs/research/` so `docs/PRD.md`
+This document compiles PRD-relevant findings from the market research outputs in `docs/research/` so `docs/PRD.md`
 can be updated with evidence-backed decisions.
 
 ## 2. Source Files Distilled
 
 1. `docs/research/MONGOLIA_MARKET_RESEARCH.md`
 2. `docs/research/PAYMENT_BEHAVIOUR_ANALYSIS.md`
-3. `docs/research/Gemini1.docx`
-4. `docs/research/Gemini2.docx`
+3. `docs/research/unegui_market_report_2026-03-03.md`
 
 Associated raw market snapshots and scraper assets now live under:
 - `research/market-data/`
@@ -54,9 +53,9 @@ Associated raw market snapshots and scraper assets now live under:
 
 | Topic              | Contradiction observed                                                                                                                                                        | Resolution for PRD update                                                                                                                                                       |
 |--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Payment timing     | `MONGOLIA_MARKET_RESEARCH.md` pushes QPay/escrow in phase-1; `PAYMENT_BEHAVIOUR_ANALYSIS.md` warns upfront escrow will hurt adoption; `Gemini1.docx` supports cash/P2P early. | Adopt **graduated settlement**: phase-1 direct settlement permitted, phase-2 incentivized digital, phase-3 escrow default after trust/habit thresholds.                         |
-| Auth channel       | Current PRD: Facebook OAuth primary; research: phone-first needed for blue-collar supply; `Gemini1.docx` warns SMS cost.                                                      | Adopt **dual-lane auth**: demand can use social-first; taskers get phone-first path. Control SMS cost via scoped OTP usage/rate limits; keep alternative channels where viable. |
-| Monetization model | `Gemini2.docx` proposes lead-fee race model; current PRD/strategy defer monetization; other findings stress trust before extraction.                                          | Keep **trust/liquidity first** for MVP. Treat lead-fee model as post-MVP experiment, not baseline requirement.                                                                  |
+| Payment timing     | `MONGOLIA_MARKET_RESEARCH.md` pushes QPay/escrow in phase-1; `PAYMENT_BEHAVIOUR_ANALYSIS.md` warns upfront escrow will hurt adoption; additional research supports cash/P2P early. | Adopt **graduated settlement**: phase-1 direct settlement permitted, phase-2 incentivized digital, phase-3 escrow default after trust/habit thresholds.                         |
+| Auth channel       | Current PRD: Facebook OAuth primary; research: phone-first needed for blue-collar supply; additional research warns SMS cost.                                                      | Adopt **dual-lane auth**: demand can use social-first; taskers get phone-first path. Control SMS cost via scoped OTP usage/rate limits; keep alternative channels where viable. |
+| Monetization model | Additional research proposes lead-fee race model; current PRD/strategy defer monetization; other findings stress trust before extraction.                                          | Keep **trust/liquidity first** for MVP. Treat lead-fee model as post-MVP experiment, not baseline requirement.                                                                  |
 | Category breadth   | Some docs suggest larger category surface; multiple reports stress constrained launch.                                                                                        | Use **tight category + geography constraint** in MVP (small set of high-frequency, low-complexity categories first).                                                            |
 | Automation level   | Some docx content assumes heavy AI-first operations replacing teams.                                                                                                          | Keep AI assistive where useful, but PRD should prioritize reliable human-reviewed trust/safety operations in early stages.                                                      |
 | Verification mode  | Manual verification vs rapid DAN/e-government integration.                                                                                                                    | Keep **manual verification MVP + SLA**, design interface for future DAN fast-path integration when integration and compliance are ready.                                        |

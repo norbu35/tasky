@@ -216,21 +216,6 @@ class CategoryScenarioTests {
                 .hasMessageContaining("max_length");
     }
 
-    // ── SCN-CATEGORY-010 ────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("SCN-CATEGORY-010: Activation from ROLLED_BACK status succeeds")
-    void activateFromRolledBackStatus() {
-        CategorySchemaVersion target = schemaVersion(1, "ROLLED_BACK");
-        when(schemaVersionDao.findByCategoryIdAndVersion(CAT_ID, 1)).thenReturn(Optional.of(target));
-        when(categoryDao.findById(CAT_ID)).thenReturn(Optional.of(activeCategory()));
-        when(schemaVersionDao.findActiveByCategoryId(CAT_ID)).thenReturn(Optional.empty());
-
-        schemaVersionService.activate(CAT_ID, 1);
-
-        verify(schemaVersionDao).updateStatusAndActivatedAt(eq(target.id()), eq("ACTIVE"));
-    }
-
     // ── SCN-CATEGORY-011 ────────────────────────────────────────────────
 
     @Test

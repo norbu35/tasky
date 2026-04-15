@@ -212,8 +212,7 @@ class AuthScenarioTests {
         when(environment.getActiveProfiles()).thenReturn(activeProfiles);
 
         UserStatusResolver statusResolver = mock(UserStatusResolver.class);
-        when(statusResolver.resolve(anyString(), anyString()))
-                .thenAnswer(invocation -> invocation.getArgument(1));
+        when(statusResolver.resolve(anyString(), anyString())).thenAnswer(invocation -> invocation.getArgument(1));
 
         return new AuthService(
                 jwtTokenService,

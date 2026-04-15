@@ -129,16 +129,6 @@ describe('LoginScreen (SCR-SHARED-002)', () => {
     expect(screen.getByTestId('SCR-SHARED-002')).toBeTruthy();
   });
 
-  it('has a testID on the screen container', () => {
-    render(<LoginScreen />);
-    expect(screen.getByTestId('SCR-SHARED-002')).toBeTruthy();
-  });
-
-  it('shows Facebook button label text', () => {
-    render(<LoginScreen />);
-    expect(screen.getByText('Facebook-ээр нэвтрэх')).toBeTruthy();
-  });
-
   it('renders the Figma footer links', () => {
     render(<LoginScreen />);
     expect(screen.getByText('Үйлчилгээний нөхцөл')).toBeTruthy();
@@ -146,8 +136,4 @@ describe('LoginScreen (SCR-SHARED-002)', () => {
     expect(screen.getByText('© 2026 Tasky. Бүх эрх хуулиар хамгаалагдсан.')).toBeTruthy();
   });
 
-  it('renders the Figma section divider', () => {
-    render(<LoginScreen />);
-    expect(screen.queryByText('Эсвэл')).toBeNull();
-  });
 });

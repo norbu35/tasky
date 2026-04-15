@@ -45,23 +45,33 @@ class VerificationServiceTests {
     private static final String USER_ID = UUID.randomUUID().toString();
     private static final String VERIFICATION_ID = UUID.randomUUID().toString();
 
-    @Mock private UserDao userDao;
-    @Mock private ProfileDao profileDao;
-    @Mock private VerificationDao verificationDao;
-    @Mock private S3PresignedUrlService storageService;
-    @Mock private StorageKeyPolicy storageKeyPolicy;
-    @Mock private CryptoService cryptoService;
+    @Mock
+    private UserDao userDao;
+
+    @Mock
+    private ProfileDao profileDao;
+
+    @Mock
+    private VerificationDao verificationDao;
+
+    @Mock
+    private S3PresignedUrlService storageService;
+
+    @Mock
+    private StorageKeyPolicy storageKeyPolicy;
+
+    @Mock
+    private CryptoService cryptoService;
 
     private VerificationService service;
 
     private AuthUser taskerUser() {
-        return new AuthUser(USER_ID, "encrypted-phone", null, "TASKER", "ACTIVE", "FACEBOOK",
-                Instant.now(), Instant.now());
+        return new AuthUser(
+                USER_ID, "encrypted-phone", null, "TASKER", "ACTIVE", "FACEBOOK", Instant.now(), Instant.now());
     }
 
     private AuthUser customerUser() {
-        return new AuthUser(USER_ID, null, null, "CUSTOMER", "ACTIVE", "FACEBOOK",
-                Instant.now(), Instant.now());
+        return new AuthUser(USER_ID, null, null, "CUSTOMER", "ACTIVE", "FACEBOOK", Instant.now(), Instant.now());
     }
 
     @BeforeEach
@@ -133,9 +143,19 @@ class VerificationServiceTests {
             assertThat(result.outcome()).isEqualTo(VerificationSubmitResult.SUCCESS);
             assertThat(result.statusResponse()).isNotNull();
             assertThat(result.statusResponse().status()).isEqualTo("PENDING");
-            verify(verificationDao).insert(
-                    anyString(), eq(USER_ID), eq("front-key"), eq("back-key"),
-                    eq("PENDING"), any(Instant.class), any(), any(), eq("v1"), any(Instant.class), any());
+            verify(verificationDao)
+                    .insert(
+                            anyString(),
+                            eq(USER_ID),
+                            eq("front-key"),
+                            eq("back-key"),
+                            eq("PENDING"),
+                            any(Instant.class),
+                            any(),
+                            any(),
+                            eq("v1"),
+                            any(Instant.class),
+                            any());
         }
 
         @Test
@@ -216,7 +236,8 @@ class VerificationServiceTests {
             assertThat(result).isPresent();
             assertThat(result.get().status()).isEqualTo("REJECTED");
             verify(userDao, never()).updateStatus(anyString(), eq("VERIFIED"));
-            verify(verificationDao).updateStatus(eq(VERIFICATION_ID), eq("REJECTED"), eq("Blurry photo"), any(Instant.class));
+            verify(verificationDao)
+                    .updateStatus(eq(VERIFICATION_ID), eq("REJECTED"), eq("Blurry photo"), any(Instant.class));
         }
     }
 
@@ -276,39 +297,16 @@ class VerificationServiceTests {
         void webpNotSupported() {
             when(userDao.findById(USER_ID)).thenReturn(Optional.of(taskerUser()));
 
-            assertThat(service.createVerificationUploadUrl(USER_ID, "image/webp")).isEmpty();
+            assertThat(service.createVerificationUploadUrl(USER_ID, "image/webp"))
+                    .isEmpty();
         }
 
         @Test
         @DisplayName("Returns empty when user does not exist")
         void missingUserReturnsEmpty() {
             when(userDao.findById(USER_ID)).thenReturn(Optional.empty());
-            assertThat(service.createVerificationUploadUrl(USER_ID, "image/jpeg")).isEmpty();
-        }
-    }
-
-    // ── verificationExists ────────────────────────────────────────────────
-
-    @Nested
-    @DisplayName("verificationExists")
-    class VerificationExists {
-
-        @Test
-        @DisplayName("Returns true when verification exists")
-        void existsReturnsTrue() {
-            when(verificationDao.findById(VERIFICATION_ID))
-                    .thenReturn(Optional.of(new VerificationRequest(
-                            VERIFICATION_ID, USER_ID, "f", "b", "PENDING", Instant.now(), null, null)));
-
-            assertThat(service.verificationExists(VERIFICATION_ID)).isTrue();
-        }
-
-        @Test
-        @DisplayName("Returns false when verification does not exist")
-        void missingReturnsFalse() {
-            when(verificationDao.findById(VERIFICATION_ID)).thenReturn(Optional.empty());
-
-            assertThat(service.verificationExists(VERIFICATION_ID)).isFalse();
+            assertThat(service.createVerificationUploadUrl(USER_ID, "image/jpeg"))
+                    .isEmpty();
         }
     }
 

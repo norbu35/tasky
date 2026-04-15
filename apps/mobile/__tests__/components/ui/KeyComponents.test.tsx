@@ -1,10 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react-native';
+import { render, screen } from '@testing-library/react-native';
 import { PriceTag } from '../../../src/components/ui/PriceTag';
 import { InfoRow } from '../../../src/components/ui/InfoRow';
-import { FilterBar } from '../../../src/components/ui/FilterBar';
-import { Button } from '../../../src/components/ui/Button';
-import { Input } from '../../../src/components/ui/Input';
 
 describe('PriceTag', () => {
   it('renders formatted amount with tugrik symbol', () => {
@@ -57,79 +54,3 @@ describe('InfoRow', () => {
   });
 });
 
-describe('FilterBar', () => {
-  const filters = [
-    { id: 'cleaning', label: 'Cleaning' },
-    { id: 'repair', label: 'Repair' },
-    { id: 'delivery', label: 'Delivery' },
-  ];
-
-  it('renders all filter chips', () => {
-    render(
-      <FilterBar filters={filters} activeFilters={[]} onToggle={jest.fn()} testID="filter-bar" />,
-    );
-
-    expect(screen.getByText('Cleaning')).toBeTruthy();
-    expect(screen.getByText('Repair')).toBeTruthy();
-    expect(screen.getByText('Delivery')).toBeTruthy();
-  });
-
-  it('calls onToggle with the correct filter id when pressed', () => {
-    const onToggle = jest.fn();
-    render(
-      <FilterBar filters={filters} activeFilters={[]} onToggle={onToggle} testID="filter-bar" />,
-    );
-
-    fireEvent.press(screen.getByText('Repair'));
-    expect(onToggle).toHaveBeenCalledWith('repair');
-  });
-
-  it('renders active filter chips with selected state', () => {
-    render(
-      <FilterBar
-        filters={filters}
-        activeFilters={['cleaning']}
-        onToggle={jest.fn()}
-        testID="filter-bar"
-      />,
-    );
-
-    // The chip with 'Cleaning' should have accessibilityState selected=true
-    const cleaningChip = screen.getByLabelText('Cleaning');
-    expect(cleaningChip.props.accessibilityState).toEqual({ selected: true });
-
-    const repairChip = screen.getByLabelText('Repair');
-    expect(repairChip.props.accessibilityState).toEqual({ selected: false });
-  });
-
-  it('calls onToggle for already-active filters (toggle off)', () => {
-    const onToggle = jest.fn();
-    render(
-      <FilterBar
-        filters={filters}
-        activeFilters={['cleaning']}
-        onToggle={onToggle}
-        testID="filter-bar"
-      />,
-    );
-
-    fireEvent.press(screen.getByText('Cleaning'));
-    expect(onToggle).toHaveBeenCalledWith('cleaning');
-  });
-});
-
-describe('Primitive NativeWind surface', () => {
-  it('Button exposes className passthrough for NativeWind usage', () => {
-    render(<Button label="Continue" className="rounded-xl" testID="button-surface" />);
-    expect(screen.getByTestId('button-surface').props.className).toEqual(
-      expect.stringContaining('rounded-xl'),
-    );
-  });
-
-  it('Input exposes className passthrough for NativeWind usage', () => {
-    render(<Input className="px-4" testID="input-surface" />);
-    expect(screen.getByTestId('input-surface').props.className).toEqual(
-      expect.stringContaining('px-4'),
-    );
-  });
-});

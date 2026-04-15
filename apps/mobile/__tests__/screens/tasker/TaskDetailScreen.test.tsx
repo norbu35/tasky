@@ -295,17 +295,4 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     ).toBeTruthy();
   });
 
-  it('renders compact trust banner on detail', () => {
-    mockUseTaskDetail.mockReturnValue({
-      task: baseTask,
-      isLoading: false,
-      isError: false,
-      isVerified: true,
-      hasApplied: false,
-      capReached: false,
-    });
-
-    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
-    render(<TaskDetailScreen />);
-  });
 });

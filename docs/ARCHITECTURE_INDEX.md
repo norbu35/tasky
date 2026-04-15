@@ -14,8 +14,8 @@ share authority with canonical sources.
 3. Read the canonical source first, then consult derived-active support docs only for routing, summaries, or execution
    context.
 
-For current launch posture and activation readiness, start with `docs/quality/launch-baseline-2026-04.md` and
-`docs/quality/capability-matrix.md`.
+For current launch posture and activation readiness, start with `docs/maintenance/PRODUCTION_READINESS.md` and
+`docs/maintenance/FEATURE_ACTIVATION_POLICY.md`.
 
 ## 2. Authoritative Read Order
 
@@ -25,8 +25,7 @@ Use this order when a topic spans multiple doc families:
 2. Technical: `docs/ARCHITECTURE.md`, then `docs/API.yaml`, then module `AGENTS.md` files.
 3. Design: canonical design sources under `docs/design/`, especially `docs/design/journey-catalog.yaml` and
    `docs/design/screen-specs/`.
-4. Quality: `docs/quality/document-taxonomy.md`, then `docs/quality/document-inventory-2026-04.md`, then the
-   maintained quality controls in `docs/quality/`.
+4. Operational readiness: `docs/maintenance/PRODUCTION_READINESS.md`, `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`.
 
 When a derived-active doc conflicts with a canonical source, the canonical source wins.
 
@@ -37,9 +36,9 @@ When a derived-active doc conflicts with a canonical source, the canonical sourc
 | Product scope, MVP boundaries, success metrics                        | `docs/PRD.md`                               | `docs/METRICS.md`, `docs/STRATEGY.md`           |
 | API contract (request/response schema, endpoint shape)                | `docs/API.yaml`                             | Module `AGENTS.md` for implementation notes     |
 | System architecture baseline (stack, data architecture, NFR approach) | `docs/ARCHITECTURE.md`                      | `docs/design/domain-lifecycles.yaml`, `docs/design/journey-catalog.yaml` |
-| Current launch posture and activation readiness                        | `docs/quality/launch-baseline-2026-04.md`, `docs/quality/capability-matrix.md` | `docs/PRD.md`, `docs/STRATEGY.md` |
+| Current launch posture and activation readiness                        | `docs/maintenance/PRODUCTION_READINESS.md`, `docs/maintenance/FEATURE_ACTIVATION_POLICY.md` | `docs/PRD.md`, `docs/STRATEGY.md` |
 | Module runtime behavior (auth, errors, idempotency, side effects)     | `services/api/src/main/java/mn/tasky/<module>/AGENTS.md` | Module controllers/services                     |
-| Quality gates and self-verification guidance                          | `docs/quality/document-taxonomy.md`         | `docs/quality/document-inventory-2026-04.md`, `docs/quality/README.md` |
+| Quality gates and self-verification guidance                          | `docs/maintenance/OPERATING_MODEL.md`       | `AGENTS.md`                                     |
 | Agent workflow and maintenance execution                              | `AGENTS.md`                                 | `docs/plans/`, `archive/legacy-task-system/`    |
 | Project policy and conflict resolution                                | `AGENTS.md`                                 | ADRs under `docs/adr/`                          |
 

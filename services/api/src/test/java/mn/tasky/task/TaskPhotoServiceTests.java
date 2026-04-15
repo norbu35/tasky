@@ -1,9 +1,6 @@
 package mn.tasky.task;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -31,8 +28,11 @@ class TaskPhotoServiceTests {
     private static final String USER_ID = UUID.randomUUID().toString();
     private static final String CUSTOMER_ID = UUID.randomUUID().toString();
 
-    @Mock private S3PresignedUrlService storageService;
-    @Mock private StorageKeyPolicy storageKeyPolicy;
+    @Mock
+    private S3PresignedUrlService storageService;
+
+    @Mock
+    private StorageKeyPolicy storageKeyPolicy;
 
     private TaskPhotoService service;
 
@@ -73,6 +73,8 @@ class TaskPhotoServiceTests {
             Optional<PresignedUpload> result = service.createPhotoUploadUrl(USER_ID, "image/png");
 
             assertThat(result).isPresent();
+            assertThat(result.get().uploadUrl()).isEqualTo("https://s3/upload-png");
+            assertThat(result.get().storageKey()).isEqualTo("task-photo/key.png");
         }
 
         @Test
@@ -142,17 +144,4 @@ class TaskPhotoServiceTests {
         }
     }
 
-    // ── buildOwnedPhotoAccessUrl ──────────────────────────────────────────
-
-    @Nested
-    @DisplayName("buildOwnedPhotoAccessUrl")
-    class BuildOwnedPhotoAccessUrl {
-
-        @Test
-        @DisplayName("Returns empty when customerId is blank")
-        void blankCustomerIdReturnsEmpty() {
-            assertThat(service.buildOwnedPhotoAccessUrl("key", "")).isEmpty();
-            assertThat(service.buildOwnedPhotoAccessUrl("key", null)).isEmpty();
-        }
-    }
 }

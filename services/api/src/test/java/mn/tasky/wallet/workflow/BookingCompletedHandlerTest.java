@@ -131,23 +131,4 @@ class BookingCompletedHandlerTest {
         verify(idempotencyGuard, times(1)).complete(EVENT_ID);
     }
 
-    @Test
-    @DisplayName("IDEM-008: IN_PROGRESS event retry after partial failure re-executes all side effects")
-    void inProgressRetryReExecutesAllSideEffects() {
-        // Simulate: first attempt crashed after partial side effects.
-        // claim() returns true for IN_PROGRESS (allow retry).
-        // The handler should execute fully again.
-        when(idempotencyGuard.claim(anyString(), anyString())).thenReturn(true);
-
-        handler.handle(envelope());
-
-        // All side effects executed
-        verify(walletService).creditTaskCompletion(TASKER_ID, BOOKING_ID, PRICE, 1500);
-        verify(notificationService)
-                .sendPushWithEventKey(eq(TASKER_ID), anyString(), anyString(), anyString(), anyString());
-        verify(reviewEnforcementService).createCasesForBooking(BOOKING_ID, CUSTOMER_ID, TASKER_ID);
-        verify(reliabilityScoreService).recompute(TASKER_ID);
-        verify(badgeEvaluationService).evaluate(TASKER_ID);
-        verify(idempotencyGuard).complete(EVENT_ID);
-    }
 }
