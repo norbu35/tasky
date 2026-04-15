@@ -1,13 +1,14 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useConversations } from '../../../features/chat/hooks/useConversations';
+import { Pressable, Text, View } from 'react-native';
+
 import { FeedListTemplate } from '../../../components/templates/FeedListTemplate';
-import { SearchBar } from '../../../components/ui/SearchBar';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { ScreenHeader } from '../../../components/ui/ScreenHeader';
-import { elevations, mobileTheme } from '../../../design/tokenAdapter';
+import { SearchBar } from '../../../components/ui/SearchBar';
+import { mobileTheme } from '../../../design/tokenAdapter';
+import { useConversations } from '../../../features/chat/hooks/useConversations';
 import { formatLastActive } from '../../../lib/formatLastActive';
 
 const { colors } = mobileTheme;

@@ -1,1 +1,6 @@
+# Secret scanning on staged files (requires gitleaks installed)
+if command -v gitleaks &> /dev/null; then
+  gitleaks git --pre-commit --staged --config .gitleaks.toml
+fi
+
 npx lint-staged

@@ -1,14 +1,14 @@
 import '../../lib/i18n';
 
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
+import { describe, expect, it, vi } from 'vitest';
 
 import { AppContext, type AppContextValue } from '../../context/AppContext';
-import { ProfilePage } from '../ProfilePage';
 import { avatarValueToApiPayload, avatarValueToPreviewUrl } from '../../lib/avatarHelpers';
-import { createMockApiClient } from '../../test/mocks';
 import { makeProfile, makeSession } from '../../test/factories';
+import { createMockApiClient } from '../../test/mocks';
+import { ProfilePage } from '../ProfilePage';
 
 function renderProfilePage(profileOverrides: Partial<AppContextValue['profile']> = {}) {
   const apiClient = createMockApiClient();

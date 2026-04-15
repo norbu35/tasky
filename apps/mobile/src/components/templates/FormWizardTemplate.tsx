@@ -1,4 +1,8 @@
+import { BlurView } from 'expo-blur';
+import { useRouter } from 'expo-router';
+import { X } from 'lucide-react-native';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -6,16 +10,13 @@ import {
   View,
   type LayoutChangeEvent,
 } from 'react-native';
-import { BlurView } from 'expo-blur';
-import { useTranslation } from 'react-i18next';
-import { useRouter } from 'expo-router';
-import { X } from 'lucide-react-native';
+
+import { screenLayout } from '../../design/screenLayout';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
+import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 import { Button } from '../ui/Button';
 import { ScreenHeader } from '../ui/ScreenHeader';
-import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
-import { screenLayout } from '../../design/screenLayout';
 
 const { colors, spacing, radius } = mobileTheme;
 

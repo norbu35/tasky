@@ -1,7 +1,4 @@
-import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
   Shield,
@@ -17,12 +14,16 @@ import {
   Camera,
   User,
 } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { LanguageSwitcher } from '../layout/LanguageSwitcher';
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useNavigate } from 'react-router-dom';
+
 import {
   CustomerAdvantageVisual,
   TaskerAdvantageVisual,
 } from '../components/feature/landing/ComparisonVisuals';
+import { Button } from '../components/ui/button';
+import { LanguageSwitcher } from '../layout/LanguageSwitcher';
 
 interface SampleTask {
   title: string;
@@ -187,8 +188,6 @@ export function LandingPage() {
               transition={{ duration: 0.8, ease: 'easeOut' }}
               className="space-y-8 text-center lg:text-left"
             >
-
-
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tighter leading-[1.05] text-white drop-shadow-sm">
                 {t('landing.heroTitle1', 'Trusted help,')}
                 <br />
@@ -280,7 +279,8 @@ export function LandingPage() {
                     )}
                   </p>
                   <span className="text-accent font-bold tracking-widest uppercase text-sm flex items-center gap-2">
-                    {t('landing.postTask', 'Post a Task')} <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
+                    {t('landing.postTask', 'Post a Task')}{' '}
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
                   </span>
                 </div>
               </div>
@@ -573,7 +573,10 @@ export function LandingPage() {
                   {t('landing.trustReality', 'The reality')}
                 </p>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-6 text-white">
-                  {t('landing.trustPainLine', '10 phone calls. 3 no-shows. 1 stranger at your door.')}
+                  {t(
+                    'landing.trustPainLine',
+                    '10 phone calls. 3 no-shows. 1 stranger at your door.',
+                  )}
                 </h2>
                 <p className="text-lg text-primary-foreground/50 max-w-md">
                   {t('landing.trustPainDesc', "That's the Facebook group experience.")}

@@ -1,12 +1,13 @@
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Dimensions, Image, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { createMobileApiClient, PublicTask } from '../../../lib/mobileApiClient';
+import { Alert, Dimensions, Image, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
+
 import { Button } from '../../../components/ui';
 import { mobileTheme } from '../../../design/tokenAdapter';
+import { createMobileApiClient, PublicTask } from '../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../store/authStore';
 import { VerificationModal } from '../../verification/components/VerificationModal';
-import { useRouter } from 'expo-router';
 
 const { colors } = mobileTheme;
 const { width } = Dimensions.get('window');

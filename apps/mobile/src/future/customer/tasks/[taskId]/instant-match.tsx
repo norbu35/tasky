@@ -1,14 +1,15 @@
-import React from 'react';
-import { Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
 import { Button } from '../../../../components/ui/Button';
 import { PriceTag } from '../../../../components/ui/PriceTag';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { Toast } from '../../../../components/ui/Toast';
-import { useCreateBookingIntent } from '../../../../features/bookings/hooks/useCreateBookingIntent';
 import { elevations } from '../../../../design/elevations';
+import { useCreateBookingIntent } from '../../../../features/bookings/hooks/useCreateBookingIntent';
 
 type InstantMatchState =
   | 'matching_spinner'

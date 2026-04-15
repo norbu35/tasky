@@ -2,6 +2,9 @@
   "name": "@tasky/sdk",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -19,9 +22,10 @@
     "lint": "echo 'SDK is generated — lint skipped.'",
     "format": "prettier --write \"src/**/*.ts\" --ignore-path ../../.prettierignore",
     "format:check": "prettier --check \"src/**/*.ts\" --ignore-path ../../.prettierignore",
-    "test": "echo 'No SDK tests configured yet.'"
+    "test": "tsc --noEmit"
   },
   "devDependencies": {
+    "@tasky/tooling-config": "workspace:*",
     "openapi-typescript": "7.13.0",
     "prettier": "^3.8.1",
     "typescript": "6.0.2"

@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Pressable, Text, View } from 'react-native';
+
 import {
   getIntakeFieldLabel,
   getIntakeOptionLabel,
@@ -9,6 +10,7 @@ import {
   type IntakeField,
   type IntakeFieldOption,
 } from '@tasky/core';
+
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
@@ -299,11 +301,7 @@ export default function IntakeFormScreen() {
       const boolVal = val === true ? true : val === false ? false : null;
       return (
         <FormField key={fieldKey} label={fieldLabel} errorText={error}>
-          <YesNo
-            value={boolVal}
-            onChange={(v) => setField(fieldKey, v)}
-            testIDPrefix={fieldKey}
-          />
+          <YesNo value={boolVal} onChange={(v) => setField(fieldKey, v)} testIDPrefix={fieldKey} />
         </FormField>
       );
     }

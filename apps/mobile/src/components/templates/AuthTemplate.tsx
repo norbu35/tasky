@@ -9,7 +9,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { cn } from '../../lib/cn';
+
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 
 export interface AuthTemplateProps {

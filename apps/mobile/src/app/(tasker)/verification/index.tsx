@@ -1,5 +1,6 @@
-import React from 'react';
 import { useRouter } from 'expo-router';
+import React from 'react';
+
 import { VerificationGate } from '../../../features/tasks/components/VerificationGate';
 
 export default function VerificationIndexScreen() {

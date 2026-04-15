@@ -1,0 +1,7 @@
+# Trivy CVE suppressions — each entry must have an expiry date and justification.
+# Run: tooling/scripts/check-trivyignore-expiry.sh to verify no expired entries.
+#
+# Format:
+#   CVE-YYYY-NNNNN  # expires: YYYY-MM-DD  reason: <short justification>
+#
+# No suppressions yet — add as needed when trivy is integrated.

@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { ResponsiveDetailShell } from '../../layout/parity';
+
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Textarea } from '../../components/ui/textarea';
+import { ResponsiveDetailShell } from '../../layout/parity';
 
 export function ChatDetailPage() {
   const { t } = useTranslation();

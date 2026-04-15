@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { Alert, Image, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Alert, Image, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
+
 import { Button } from '../../../components/ui';
+import { mobileTheme } from '../../../design/tokenAdapter';
 import { createMobileApiClient } from '../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../store/authStore';
-import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors } = mobileTheme;
 

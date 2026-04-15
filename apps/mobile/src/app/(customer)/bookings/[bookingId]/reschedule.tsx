@@ -1,7 +1,5 @@
-import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
   CalendarDays,
@@ -11,13 +9,16 @@ import {
   Info,
   CalendarRange,
 } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, Text, View } from 'react-native';
+
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../../components/shells';
 import { Input } from '../../../../components/ui/Input';
-import { useReschedule } from '../../../../features/bookings/hooks/useReschedule';
-import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
-import { mobileTheme } from '../../../../design/tokenAdapter';
 import { elevations } from '../../../../design/elevations';
+import { mobileTheme } from '../../../../design/tokenAdapter';
+import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
+import { useReschedule } from '../../../../features/bookings/hooks/useReschedule';
 import { cn } from '../../../../lib/cn';
 
 const { colors, spacing, typography } = mobileTheme;

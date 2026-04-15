@@ -1,5 +1,5 @@
-import { useTranslation } from 'react-i18next';
 import { RefreshCcw } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { ResponsiveFeedShell, StatePanel } from '../../layout/parity';
 

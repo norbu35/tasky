@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { ArrowRight, Briefcase, Check, User } from 'lucide-react-native';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, Text, View } from 'react-native';
+
 import { AuthTemplate } from '../../components/templates/AuthTemplate';
 import { Button, ModalSheet } from '../../components/ui';
-import { useAppStore } from '../../store/appStore';
-import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
+import { useAppStore } from '../../store/appStore';
 
 const { colors } = mobileTheme;
 

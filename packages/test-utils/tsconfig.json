@@ -1,0 +1,7 @@
+{
+  "extends": "@tasky/tooling-config/tsconfig/react",
+  "compilerOptions": {
+    "types": ["vitest/globals", "node"]
+  },
+  "include": ["src"]
+}

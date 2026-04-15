@@ -1,18 +1,19 @@
-import React, { useCallback, useMemo } from 'react';
-import { FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { Bell, Hammer, Leaf, Package, Plus, Sparkles, Wrench, Zap } from 'lucide-react-native';
+import React, { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { ScreenContainer } from '../../../components/shells';
 import { ListItemCard, PriceTag, StatusBadge } from '../../../components/ui';
 import { ScreenHeader } from '../../../components/ui/ScreenHeader';
-import { useMyTasks } from '../../../features/tasks/hooks/useMyTasks';
 import { elevations } from '../../../design/elevations';
-import { mobileTheme } from '../../../design/tokenAdapter';
 import { screenLayout } from '../../../design/screenLayout';
-import { ScreenContainer } from '../../../components/shells';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useReviewGate } from '../../../features/review/components/ReviewGateProvider';
+import { mobileTheme } from '../../../design/tokenAdapter';
 import { ReviewGateBanner } from '../../../features/review/components/ReviewGateBanner';
+import { useReviewGate } from '../../../features/review/components/ReviewGateProvider';
+import { useMyTasks } from '../../../features/tasks/hooks/useMyTasks';
 
 const { colors } = mobileTheme;
 
@@ -148,9 +149,7 @@ function Header({
         }
       />
 
-      {hasPending && oldestPending && (
-        <ReviewGateBanner pendingReview={oldestPending} />
-      )}
+      {hasPending && oldestPending && <ReviewGateBanner pendingReview={oldestPending} />}
 
       <View className="rounded-lg p-card gap-item bg-card" style={elevations.soft}>
         <Text className="text-subtitle font-extrabold text-primary-deep">

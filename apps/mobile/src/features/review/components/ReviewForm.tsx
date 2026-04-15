@@ -1,4 +1,8 @@
+import { BlurView } from 'expo-blur';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { ArrowLeft, ArrowRight, CheckCircle, Star } from 'lucide-react-native';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Animated,
   KeyboardAvoidingView,
@@ -10,16 +14,13 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { BlurView } from 'expo-blur';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { ArrowLeft, ArrowRight, CheckCircle, Star } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { mobileTheme, elevations } from '../../../design/tokenAdapter';
+
 import { Button } from '../../../components/ui/Button';
-import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
-import { useSubmitReview } from '../hooks/useSubmitReview';
 import { ConfirmSheet } from '../../../components/ui/ConfirmSheet';
+import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
+import { mobileTheme, elevations } from '../../../design/tokenAdapter';
+import { useSubmitReview } from '../hooks/useSubmitReview';
 
 const { colors, radius, spacing, typography } = mobileTheme;
 

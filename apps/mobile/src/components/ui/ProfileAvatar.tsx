@@ -1,8 +1,9 @@
+import { CheckCircle } from 'lucide-react-native';
 import React from 'react';
 import { Image, Text, View } from 'react-native';
-import { CheckCircle } from 'lucide-react-native';
-import { mobileTheme } from '../../design/tokenAdapter';
+
 import { elevations } from '../../design/elevations';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
 const { colors, radius } = mobileTheme;

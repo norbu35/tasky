@@ -1,10 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { StyleSheet, Text, View } from 'react-native';
+
 import { elevations, overlays } from '../../design/elevations';
-import { Button } from './Button';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
+
+import { Button } from './Button';
 
 const { colors, spacing, typography } = mobileTheme;
 

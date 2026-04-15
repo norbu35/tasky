@@ -122,6 +122,7 @@ public class SecurityConfig {
                 "X-Trace-Id",
                 "X-Client-Platform"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

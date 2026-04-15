@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+
 import type { AuthTokens, Profile } from '../lib/mobileApiClient';
 
 interface AuthState {

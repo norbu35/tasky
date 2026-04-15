@@ -1,8 +1,7 @@
 import type { AdminApiClient } from '../../../lib/adminApiClient';
+
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { ApiClient, User, Message } from '../../../lib/apiClient';
 
 // ── Mock AppContext ──────────────────────────────────────────────────
 const mockAdminApiClient: Partial<AdminApiClient> = {
@@ -33,6 +32,9 @@ vi.mock('sonner', () => ({
 }));
 
 import { toast } from 'sonner';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+import type { ApiClient, User, Message } from '../../../lib/apiClient';
 import { AdminUsersPage } from '../AdminUsersPage';
 
 // ── Test Data ────────────────────────────────────────────────────────

@@ -1,12 +1,13 @@
-import React, { useMemo, useState } from 'react';
-import { Alert, Image, Pressable, Text, View } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import * as ImagePicker from 'expo-image-picker';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { CircleX, Info, Loader, Plus } from 'lucide-react-native';
+import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Alert, Image, Pressable, Text, View } from 'react-native';
+
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
-import { useTaskPhotoUpload } from '../../../../features/tasks/hooks/useTaskPhotoUpload';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { useTaskPhotoUpload } from '../../../../features/tasks/hooks/useTaskPhotoUpload';
 
 const { colors } = mobileTheme;
 
@@ -170,7 +171,9 @@ export default function PhotoUploadScreen() {
 
       <View className="flex-row items-center gap-sm px-xs">
         <Info size={16} color={colors.secondary} />
-        <Text className="flex-1 text-caption text-text-secondary">{t('Photos.photosOptional')}</Text>
+        <Text className="flex-1 text-caption text-text-secondary">
+          {t('Photos.photosOptional')}
+        </Text>
       </View>
 
       <View className="rounded-lg p-lg bg-muted gap-sm mt-xs">

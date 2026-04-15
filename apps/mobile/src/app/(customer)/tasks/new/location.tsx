@@ -1,18 +1,19 @@
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { LocateFixed, Minus, Navigation, Plus } from 'lucide-react-native';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT, Region, UrlTile } from 'react-native-maps';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { LocateFixed, Minus, Navigation, Plus } from 'lucide-react-native';
+
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
-import { getCurrentLocation } from '../../../../utils/permissions';
+import { useRecentLocations } from '../../../../features/tasks/hooks/useRecentLocations';
 import { createMobileApiClient } from '../../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../../store/authStore';
-import { useRecentLocations } from '../../../../features/tasks/hooks/useRecentLocations';
+import { getCurrentLocation } from '../../../../utils/permissions';
 
 const api = createMobileApiClient();
 
@@ -216,10 +217,7 @@ export default function LocationScreen() {
       </View>
 
       {/* mapShell: overflow hidden, shadow → imperative */}
-      <View
-        className="rounded-lg overflow-hidden bg-muted min-h-[280px]"
-        style={elevations.soft}
-      >
+      <View className="rounded-lg overflow-hidden bg-muted min-h-[280px]" style={elevations.soft}>
         {/* map: MapView always imperative */}
         <MapView
           ref={mapRef}
@@ -247,10 +245,7 @@ export default function LocationScreen() {
         </MapView>
 
         {/* mapOverlay: absolute position → imperative */}
-        <View
-          pointerEvents="none"
-          className="absolute inset-0 items-center justify-center gap-xs"
-        >
+        <View pointerEvents="none" className="absolute inset-0 items-center justify-center gap-xs">
           <View className="px-lg py-sm rounded-md bg-primary-deep">
             <Text className="text-label font-bold text-primary-foreground">
               {t('LocationScreen.pickHere')}
@@ -328,10 +323,7 @@ export default function LocationScreen() {
           {loadingRecent ? (
             <View className="flex-row gap-sm">
               {[1, 2, 3].map((i) => (
-                <View
-                  key={i}
-                  className="h-8 rounded-full bg-muted w-[100px] opacity-50"
-                />
+                <View key={i} className="h-8 rounded-full bg-muted w-[100px] opacity-50" />
               ))}
             </View>
           ) : recentLocations && recentLocations.length > 0 ? (

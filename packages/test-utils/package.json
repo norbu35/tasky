@@ -1,0 +1,30 @@
+{
+  "name": "@tasky/test-utils",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./mocks": "./src/mocks/index.ts"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "vitest": "^4.0.0"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.28.0",
+    "@testing-library/react": "^16.3.0"
+  },
+  "devDependencies": {
+    "@tasky/tooling-config": "workspace:*",
+    "@types/react": "^19.0.0",
+    "react": "19.2.5",
+    "typescript": "6.0.2",
+    "vitest": "4.1.4"
+  }
+}

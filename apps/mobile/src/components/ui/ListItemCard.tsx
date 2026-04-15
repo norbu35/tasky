@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
+
 import { elevations } from '../../design/elevations';
 import { cn } from '../../lib/cn';
 
@@ -66,9 +67,7 @@ export function ListItemCard({
           </Text>
         )}
       </View>
-      {trailing != null && (
-        <View className="shrink-0 self-center">{trailing}</View>
-      )}
+      {trailing != null && <View className="shrink-0 self-center">{trailing}</View>}
     </Pressable>
   );
 }

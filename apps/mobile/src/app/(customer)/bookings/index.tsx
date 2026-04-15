@@ -1,15 +1,16 @@
-import React from 'react';
-import { Pressable, RefreshControl, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { ClipboardList, Menu, Search, CalendarDays } from 'lucide-react-native';
-import { useBookings } from '../../../features/bookings/hooks/useBookings';
-import { elevations } from '../../../design/elevations';
-import { mobileTheme } from '../../../design/tokenAdapter';
-import { screenLayout } from '../../../design/screenLayout';
-import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
-import { PriceTag } from '../../../components/ui/PriceTag';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, RefreshControl, Text, View } from 'react-native';
+
 import { InsetScrollView, ScreenContainer } from '../../../components/shells';
+import { PriceTag } from '../../../components/ui/PriceTag';
+import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
+import { elevations } from '../../../design/elevations';
+import { screenLayout } from '../../../design/screenLayout';
+import { mobileTheme } from '../../../design/tokenAdapter';
+import { useBookings } from '../../../features/bookings/hooks/useBookings';
 
 const { colors } = mobileTheme;
 
@@ -118,9 +119,7 @@ function BookingCard({
       style={elevations.soft}
       testID={`booking-card-${booking.id}`}
     >
-      <View
-        className="flex-row items-start justify-between gap-item"
-      >
+      <View className="flex-row items-start justify-between gap-item">
         <View className="flex-row items-center flex-1 gap-item">
           <ProfileAvatar
             uri={booking.tasker?.avatar_url}

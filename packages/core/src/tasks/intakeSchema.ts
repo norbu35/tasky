@@ -161,19 +161,36 @@ function normalizeField(field: unknown): IntakeField | null {
         .filter((option): option is IntakeFieldOption => option !== null)
     : undefined;
 
-  return {
+  const normalizedField: IntakeField = {
     name,
     key,
     label: coerceString(record.label, record.label_mn) ?? fallbackLabel,
     label_mn: coerceString(record.label_mn, record.label) ?? fallbackLabel,
     type: normalizeFieldType(record.type),
     required: Boolean(record.required),
-    options: options && options.length > 0 ? options : undefined,
-    min: coerceNumber(record.min),
-    max: coerceNumber(record.max),
-    min_length: coerceNumber(record.min_length),
-    max_length: coerceNumber(record.max_length),
   };
+
+  if (options && options.length > 0) {
+    normalizedField.options = options;
+  }
+  const min = coerceNumber(record.min);
+  if (min !== undefined) {
+    normalizedField.min = min;
+  }
+  const max = coerceNumber(record.max);
+  if (max !== undefined) {
+    normalizedField.max = max;
+  }
+  const min_length = coerceNumber(record.min_length);
+  if (min_length !== undefined) {
+    normalizedField.min_length = min_length;
+  }
+  const max_length = coerceNumber(record.max_length);
+  if (max_length !== undefined) {
+    normalizedField.max_length = max_length;
+  }
+
+  return normalizedField;
 }
 
 function parseRawSchema(rawSchema: unknown): unknown {
@@ -230,7 +247,10 @@ function resolveSelectableValue(
   return prettifyIntakeToken(value);
 }
 
-export function normalizeIntakeSchema(rawSchema: unknown, version = DEFAULT_SCHEMA_VERSION): IntakeSchema | null {
+export function normalizeIntakeSchema(
+  rawSchema: unknown,
+  version = DEFAULT_SCHEMA_VERSION,
+): IntakeSchema | null {
   const parsed = parseRawSchema(rawSchema);
   if (!Array.isArray(parsed) || parsed.length === 0) {
     return null;
@@ -250,7 +270,9 @@ export function normalizeIntakeSchema(rawSchema: unknown, version = DEFAULT_SCHE
   };
 }
 
-export function normalizeCategoryIntakeSchema(category?: IntakeSchemaSource | null): IntakeSchema | null {
+export function normalizeCategoryIntakeSchema(
+  category?: IntakeSchemaSource | null,
+): IntakeSchema | null {
   if (!category?.intake_enabled) {
     return null;
   }

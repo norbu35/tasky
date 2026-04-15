@@ -1,0 +1,20 @@
+{$TASKY_DOMAIN:localhost} {
+    @backend {
+        path /api/* /actuator /actuator/* /ws /ws/*
+    }
+    reverse_proxy @backend {$TASKY_BACKEND_UPSTREAM:app:8080}
+    root * /srv
+    encode zstd gzip
+
+    header {
+        # Security headers
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=(self)"
+    }
+
+    try_files {path} /index.html
+    file_server
+}

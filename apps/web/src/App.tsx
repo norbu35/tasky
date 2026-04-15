@@ -1,13 +1,14 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+import { AppShell } from './AppShell';
 import { type ApiClient, type AuthTokens, createApiClient } from './lib/apiClient';
 import {
   type ClientAnalyticsTracker,
   createConsoleClientAnalyticsTracker,
   resolveClientLocale,
 } from './lib/clientAnalytics';
-import { AppShell } from './AppShell';
 
 export interface AppProps {
   apiClient?: ApiClient;

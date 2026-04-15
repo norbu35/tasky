@@ -4,7 +4,11 @@
 .superpowers/
 .idea/*
 !.idea/codeStyles
-.vscode/
+# VS Code — track workspace settings, ignore user-specific state
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
 
 # Serena (AI agent config — project.yml is intentionally tracked)
 .serena/project.local.yml
@@ -17,6 +21,8 @@
 # Misc local files
 .ignore
 postflight.json
+monorepo-hardening-report.md
+.pi/
 
 # Generated audit / analysis snapshots (session artifacts)
 docs/DEPENDENCY_VERSION_MATRIX.md
@@ -53,6 +59,15 @@ apps/*/test-results/
 
 # Local env overrides
 .env
+
+# Web app local env (may contain real Facebook App ID)
+apps/web/.env.local
+
+# Generated artifacts (stale session outputs)
+baseline.json
+postflight-cascade.json
+apps/mobile/out.css
+repomix-output.*
 
 # Test result dumps (generated, not source)
 test-results.json

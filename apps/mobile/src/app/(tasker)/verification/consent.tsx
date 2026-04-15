@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ExternalLink } from 'lucide-react-native';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+
+import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../components/shells';
 import { Button } from '../../../components/ui/Button';
 import { Touchable } from '../../../components/ui/Touchable';
-import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../components/shells';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography } = mobileTheme;
@@ -35,8 +36,11 @@ export default function ConsentScreen() {
   const contentRef = React.useRef(0);
 
   const checkIfContentFits = () => {
-    if (viewportRef.current > 0 && contentRef.current > 0 &&
-        viewportRef.current >= contentRef.current - spacing.lg) {
+    if (
+      viewportRef.current > 0 &&
+      contentRef.current > 0 &&
+      viewportRef.current >= contentRef.current - spacing.lg
+    ) {
       setHasScrolledToEnd(true);
     }
   };

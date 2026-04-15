@@ -1,4 +1,4 @@
-FROM node:20-bookworm AS build
+FROM node:22-bookworm AS build
 WORKDIR /workspace
 
 ENV PNPM_HOME="/pnpm"
@@ -32,5 +32,8 @@ FROM caddy:2.9-alpine
 
 COPY apps/web/Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /workspace/apps/web/dist /srv
+
+RUN addgroup -S caddy && adduser -S -G caddy caddy
+USER caddy
 
 EXPOSE 80

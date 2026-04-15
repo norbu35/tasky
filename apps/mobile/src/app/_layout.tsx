@@ -1,21 +1,44 @@
-import { Stack } from 'expo-router';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '../lib/react-query';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { NotificationProvider } from '../store/NotificationContext';
-import { useEffect } from 'react';
 import Constants from 'expo-constants';
-import { RoleProvider } from '../providers/RoleProvider';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import { LogBox } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 import { ReviewGateProvider } from '../features/review/components/ReviewGateProvider';
+import { getSharedApiClient } from '../lib/mobileApiClient';
+import { queryClient } from '../lib/react-query';
+import { RoleProvider } from '../providers/RoleProvider';
+import { NotificationProvider } from '../store/NotificationContext';
+import { useAuthStore } from '../store/authStore';
 
 import '../utils/i18n';
 import '../design/nativewind-interop';
 
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import '../../global.css';
 
-import { LogBox } from 'react-native';
+// Wire token refresh delegate so 401s trigger silent refresh
+const apiClient = getSharedApiClient();
+apiClient.setTokenRefreshDelegate({
+  getRefreshToken() {
+    return useAuthStore.getState().session?.refreshToken ?? null;
+  },
+  onTokensRefreshed(accessToken, refreshToken) {
+    const current = useAuthStore.getState().session;
+    if (current) {
+      useAuthStore.getState().setSession({
+        ...current,
+        accessToken,
+        refreshToken,
+      });
+    }
+  },
+  onRefreshFailed() {
+    useAuthStore.getState().signOut();
+  },
+});
 
 // Suppress all LogBox warnings to prevent the yellow dev bar from
 // overlaying UI elements during Maestro E2E tests.

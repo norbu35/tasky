@@ -1,12 +1,13 @@
-import React from 'react';
-import { Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { CalendarDays, ShieldCheck, Star } from 'lucide-react-native';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
-import { mobileTheme } from '../../../design/tokenAdapter';
 import { elevations } from '../../../design/elevations';
+import { mobileTheme } from '../../../design/tokenAdapter';
 import { useTaskerProfile } from '../../../features/profile/hooks/useTaskerProfile';
 
 const { colors } = mobileTheme;
@@ -120,7 +121,9 @@ export default function TaskerProfileScreen() {
                     className="px-md py-sm rounded-full"
                     style={{ backgroundColor: `${colors.primary}12` }}
                   >
-                    <Text className="text-caption text-primary-deep font-sans-bold">{category}</Text>
+                    <Text className="text-caption text-primary-deep font-sans-bold">
+                      {category}
+                    </Text>
                   </View>
                 ))
               ) : (

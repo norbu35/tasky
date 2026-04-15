@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { mobileTheme, overlays } from '../../../design/tokenAdapter';
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+
 import { Button, Input } from '../../../components/ui';
+import { mobileTheme, overlays } from '../../../design/tokenAdapter';
 
 const { colors, radius, spacing, typography } = mobileTheme;
 

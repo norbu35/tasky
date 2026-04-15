@@ -1,7 +1,8 @@
 import { expect, test, describe, vi } from 'vitest';
-import { parseError } from './errorHandling';
+
 import { ApiError } from './apiClient';
 import type { ClientAnalyticsTracker } from './clientAnalytics';
+import { parseError } from './errorHandling';
 
 describe('errorHandling', () => {
   describe('parseError', () => {

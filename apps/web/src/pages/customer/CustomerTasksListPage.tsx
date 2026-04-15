@@ -1,14 +1,14 @@
-import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 import { CalendarDays, MapPin, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
-import { ResponsiveFeedShell, StatePanel } from '../../layout/parity';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Skeleton } from '../../components/ui/skeleton';
 import { useAppContext } from '../../context/AppContext';
+import { ResponsiveFeedShell, StatePanel } from '../../layout/parity';
 import type { Task } from '../../lib/apiClient';
 
 export function CustomerTasksListPage() {
@@ -21,7 +21,7 @@ export function CustomerTasksListPage() {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['customerTasksList', session?.accessToken],
+    queryKey: ['customerTasksList', session, apiClient],
     queryFn: async () => {
       if (!session) {
         throw new Error('Not authenticated');

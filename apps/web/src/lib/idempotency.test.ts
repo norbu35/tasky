@@ -1,4 +1,5 @@
 import { expect, test, describe } from 'vitest';
+
 import { createIdempotencyKey } from './idempotency';
 
 describe('idempotency', () => {

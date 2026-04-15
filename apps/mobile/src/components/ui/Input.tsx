@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 import type { TextInputProps } from 'react-native';
 import { TextInput } from 'react-native';
+
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 

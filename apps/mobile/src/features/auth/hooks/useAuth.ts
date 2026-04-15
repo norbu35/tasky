@@ -1,8 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import { useAuthStore } from '../../../store/authStore';
-import { useAppStore } from '../../../store/appStore';
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
 import { router } from 'expo-router';
+
+import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { useAppStore } from '../../../store/appStore';
+import { useAuthStore } from '../../../store/authStore';
 import { resolvePostAuthHref } from '../../../utils/authRouting';
 
 const api = createMobileApiClient();

@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
-import { Text } from 'react-native';
 import { WifiOff } from 'lucide-react-native';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Text } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { mobileTheme } from '../../design/tokenAdapter';
+
 import { animationPresets } from '../../design/animations';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
 const { colors, typography } = mobileTheme;

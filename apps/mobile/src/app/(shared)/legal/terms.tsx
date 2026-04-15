@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../../../components/ui/Button';
+import { Text, View } from 'react-native';
+
 import { InsetScrollView, ScreenContainer } from '../../../components/shells';
+import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, radius, spacing } = mobileTheme;

@@ -1,15 +1,16 @@
-import React, { useMemo, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { Award, ChevronLeft, Star } from 'lucide-react-native';
-import { ModalSheetTemplate } from '../../../../components/templates/ModalSheetTemplate';
+import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { FlatList, Text, View } from 'react-native';
+
 import { ScreenContainer } from '../../../../components/shells';
+import { ModalSheetTemplate } from '../../../../components/templates/ModalSheetTemplate';
 import { Button } from '../../../../components/ui/Button';
-import { Touchable } from '../../../../components/ui/Touchable';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
-import { mobileTheme } from '../../../../design/tokenAdapter';
+import { Touchable } from '../../../../components/ui/Touchable';
 import { elevations } from '../../../../design/elevations';
+import { mobileTheme } from '../../../../design/tokenAdapter';
 import { useApplications } from '../../../../features/tasks/hooks/useApplications';
 import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCustomerTaskDetail';
 

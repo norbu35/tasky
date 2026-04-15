@@ -34,7 +34,7 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 - Java 21
 - Docker + Docker Compose
 - Python 3.10+
-- Node.js 20+ and pnpm 10+
+- Node.js 22+ and pnpm 10+
 
 ## Quick Start
 

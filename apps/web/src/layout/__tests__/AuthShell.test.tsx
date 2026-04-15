@@ -1,6 +1,7 @@
 import '../../lib/i18n';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+
 import { App } from '../../App';
 import { createMockApiClient } from '../../test/mocks';
 

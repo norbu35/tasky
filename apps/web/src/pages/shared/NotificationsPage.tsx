@@ -1,5 +1,6 @@
-import { useTranslation } from 'react-i18next';
 import { Bell } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
 import { ResponsiveFeedShell, StatePanel } from '../../layout/parity';
 
 export function NotificationsPage() {

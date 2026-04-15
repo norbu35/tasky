@@ -1,7 +1,4 @@
-import React, { useState } from 'react';
-import { View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import {
   Bell,
   Globe,
@@ -11,11 +8,15 @@ import {
   ArrowLeftRight,
   Trash2,
 } from 'lucide-react-native';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { View } from 'react-native';
+
 import { SettingsTemplate } from '../../../components/templates/SettingsTemplate';
 import { ConfirmSheet } from '../../../components/ui/ConfirmSheet';
 import { LanguageSwitcher } from '../../../components/ui/LanguageSwitcher';
-import { useRole } from '../../../providers/RoleProvider';
 import { mobileTheme } from '../../../design/tokenAdapter';
+import { useRole } from '../../../providers/RoleProvider';
 
 const { colors } = mobileTheme;
 

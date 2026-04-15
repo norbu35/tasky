@@ -1,7 +1,8 @@
-import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { CheckCircle } from 'lucide-react-native';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 

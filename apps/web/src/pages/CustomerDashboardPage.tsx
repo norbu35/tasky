@@ -1,16 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
+import { AlertCircle, MapPin, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import type { Task } from '../lib/apiClient';
-import { useAppContext } from '../context/AppContext';
-import { ScreenFrame } from '../layout/ScreenFrame';
+
+import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
+import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
 import { Skeleton } from '../components/ui/skeleton';
-import { Badge } from '../components/ui/badge';
-import { AlertCircle, MapPin, Plus } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { useTranslation } from 'react-i18next';
+import { useAppContext } from '../context/AppContext';
+import { ScreenFrame } from '../layout/ScreenFrame';
+import type { Task } from '../lib/apiClient';
 
 function TaskCard({ task }: { task: Task }) {
   const navigate = useNavigate();
@@ -66,7 +67,7 @@ export function CustomerDashboardPage() {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['customerTasks', session?.accessToken],
+    queryKey: ['customerTasks', session, apiClient],
     queryFn: async () => {
       if (!session) throw new Error('Not authenticated');
       return apiClient.listMyTasks(session.accessToken);

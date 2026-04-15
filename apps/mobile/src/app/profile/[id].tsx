@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+
 import { TaskerPublicProfile } from '../../features/profile/components/TaskerPublicProfile';
 
 export default function TaskerProfileRoute() {

@@ -1,0 +1,11 @@
+title = "Tasky gitleaks config"
+
+[allowlist]
+  description = "Allow test/example files with placeholder secrets"
+  paths = [
+    '''.env\.example$''',
+    '''.env\.private-staging\.example$''',
+    '''application-test\.yml$''',
+    '''jest\.setup\.ts$''',
+    '''vitest\.setup\.ts$''',
+  ]

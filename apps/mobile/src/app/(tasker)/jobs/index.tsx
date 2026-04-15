@@ -1,7 +1,8 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+
 import { FeedListTemplate } from '../../../components/templates/FeedListTemplate';
 import { FilterBar } from '../../../components/ui/FilterBar';
 import { SplitCard } from '../../../components/ui/SplitCard';
@@ -69,7 +70,10 @@ export default function MyJobsScreen() {
       return bookings.filter((booking) => booking.status === 'NO_SHOW');
     }
     return bookings.filter(
-      (booking) => booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED' && booking.status !== 'NO_SHOW',
+      (booking) =>
+        booking.status !== 'COMPLETED' &&
+        booking.status !== 'CANCELLED' &&
+        booking.status !== 'NO_SHOW',
     );
   }, [activeFilters, bookings]);
 

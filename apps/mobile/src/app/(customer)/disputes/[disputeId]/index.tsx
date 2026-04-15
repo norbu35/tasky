@@ -1,7 +1,4 @@
-import React from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import {
   AlertTriangle,
   ChevronLeft,
@@ -10,11 +7,15 @@ import {
   Circle,
   Scale,
 } from 'lucide-react-native';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+
 import { InsetScrollView, ScreenContainer } from '../../../../components/shells';
-import { useDisputeDetail } from '../../../../features/disputes/hooks/useDisputeDetail';
-import { mobileTheme } from '../../../../design/tokenAdapter';
 import { elevations } from '../../../../design/elevations';
 import { screenLayout } from '../../../../design/screenLayout';
+import { mobileTheme } from '../../../../design/tokenAdapter';
+import { useDisputeDetail } from '../../../../features/disputes/hooks/useDisputeDetail';
 import { cn } from '../../../../lib/cn';
 
 const { colors, spacing } = mobileTheme;
@@ -51,9 +52,7 @@ type DisputeLike = {
 
 type TimelineState = 'done' | 'current' | 'future';
 
-function buildStatusMeta(
-  t: (key: string) => string,
-): Record<
+function buildStatusMeta(t: (key: string) => string): Record<
   DisputeStatus,
   {
     label: string;

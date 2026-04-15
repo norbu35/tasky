@@ -1,4 +1,16 @@
+#!/usr/bin/env bash
 echo "Running pre-push checks..."
+
+# Detect docs-only changes — skip heavy checks
+CHANGED_FILES=$(git diff --name-only @{push}.. 2>/dev/null || git diff --name-only HEAD~1)
+NON_DOC_FILES=$(echo "$CHANGED_FILES" | grep -v -E '\.(md|txt)$|^docs/|^research/|^README' || true)
+
+if [ -z "$NON_DOC_FILES" ]; then
+  echo "Docs-only change detected — running format check only."
+  pnpm -r format:check || exit 1
+  echo "All pre-push checks passed (docs-only fast path)."
+  exit 0
+fi
 
 # === Structural checks (~15s) ===
 
@@ -9,6 +21,8 @@ pnpm workspace:boundaries || exit 1
 python3 tooling/scripts/validate-migrations.py || exit 1
 
 ./gradlew openApiValidate -q || exit 1
+
+bash tooling/scripts/check-trivyignore-expiry.sh || exit 1
 
 # === Lint + SDK drift (~13s) ===
 

@@ -1,7 +1,8 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useBookings } from '../hooks/useBookings';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+
 import { mobileTheme, elevations } from '../../../design/tokenAdapter';
+import { useBookings } from '../hooks/useBookings';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 

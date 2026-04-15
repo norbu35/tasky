@@ -1,14 +1,16 @@
 import { render, RenderResult } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { ReactElement } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { vi } from 'vitest';
+
 import { AppContext } from '../context/AppContext';
 import type { AppContextValue } from '../context/AppContext';
-import type { ApiClient, AuthTokens } from '../lib/apiClient';
 import type { AdminApiClient } from '../lib/adminApiClient';
 import { AdminApiClientContext } from '../lib/adminApiClient';
+import type { ApiClient, AuthTokens } from '../lib/apiClient';
+
 import { createMockApiClient, createMockAdminApiClient } from './mocks';
-import { ReactElement } from 'react';
-import userEvent from '@testing-library/user-event';
 
 export type RenderWithAppContextOptions = {
   apiClient?: Partial<ApiClient>;

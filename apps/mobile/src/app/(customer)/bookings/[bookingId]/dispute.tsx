@@ -1,12 +1,13 @@
-import React, { useCallback, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Pressable, Text, View } from 'react-native';
+
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { Input } from '../../../../components/ui/Input';
 import { PhotoGrid } from '../../../../components/ui/PhotoGrid';
-import { useDisputeCreate } from '../../../../features/disputes/hooks/useDisputeCreate';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { useDisputeCreate } from '../../../../features/disputes/hooks/useDisputeCreate';
 
 const { colors } = mobileTheme;
 

@@ -1,8 +1,9 @@
-import { useTranslation } from 'react-i18next';
 import { MessageSquare } from 'lucide-react';
-import { ResponsiveFeedShell } from '../../layout/parity';
+import { useTranslation } from 'react-i18next';
+
 import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
+import { ResponsiveFeedShell } from '../../layout/parity';
 
 export function InboxPage() {
   const { t } = useTranslation();

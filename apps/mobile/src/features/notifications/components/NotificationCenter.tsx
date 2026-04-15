@@ -1,8 +1,9 @@
-import React, { useCallback } from 'react';
-import { FlatList, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { AlertTriangle, Bell, CheckCircle, MessageSquare } from 'lucide-react-native';
 import type { TFunction } from 'i18next';
+import { AlertTriangle, Bell, CheckCircle, MessageSquare } from 'lucide-react-native';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FlatList, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+
 import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, radius, spacing, typography } = mobileTheme;

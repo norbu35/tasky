@@ -1,14 +1,15 @@
-import React from 'react';
-import { Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Shield } from 'lucide-react-native';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+
+import { InsetScrollView, ScreenContainer } from '../../components/shells';
 import { Button } from '../../components/ui/Button';
 import { FormField } from '../../components/ui/FormField';
 import { Input } from '../../components/ui/Input';
-import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
-import { InsetScrollView, ScreenContainer } from '../../components/shells';
+import { mobileTheme } from '../../design/tokenAdapter';
 
 const { colors, radius, spacing } = mobileTheme;
 

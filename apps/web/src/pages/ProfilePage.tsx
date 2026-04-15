@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
 import { Camera, Loader2, Save, ShieldAlert, ShieldCheck, Sparkles, User } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
@@ -7,11 +9,8 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { useAppContext } from '../context/AppContext';
 import { ResponsiveDetailShell } from '../layout/parity';
-import { parseError } from '../lib/errorHandling';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
-
 import { avatarValueToPreviewUrl, avatarValueToApiPayload } from '../lib/avatarHelpers';
+import { parseError } from '../lib/errorHandling';
 
 export function ProfilePage() {
   const { apiClient, session, profile, setProfile, refreshProfile, updateSessionUser } =

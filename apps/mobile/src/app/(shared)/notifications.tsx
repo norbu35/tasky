@@ -1,16 +1,17 @@
-import React, { useMemo } from 'react';
-import { FlatList, Pressable, RefreshControl, Text, View, type ListRenderItem } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Bell, Briefcase, MessageSquare, ShieldAlert, Star } from 'lucide-react-native';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FlatList, Pressable, RefreshControl, Text, View, type ListRenderItem } from 'react-native';
+
+import { ScreenContainer } from '../../components/shells/ScreenContainer';
+import { EmptyStateTemplate } from '../../components/templates/EmptyStateTemplate';
+import { Button } from '../../components/ui/Button';
+import { mobileTheme } from '../../design/tokenAdapter';
 import {
   useNotifications,
   type Notification,
 } from '../../features/notifications/hooks/useNotifications';
-import { EmptyStateTemplate } from '../../components/templates/EmptyStateTemplate';
-import { Button } from '../../components/ui/Button';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { ScreenContainer } from '../../components/shells/ScreenContainer';
 
 const { colors, spacing } = mobileTheme;
 
@@ -127,9 +128,7 @@ export default function NotificationCenterScreen() {
   const renderRow: ListRenderItem<Row> = ({ item }) => {
     if (item.type === 'section') {
       return (
-        <Text
-          className="text-caption font-bold text-text-tertiary uppercase mt-lg mb-sm tracking-[1.2px]"
-        >
+        <Text className="text-caption font-bold text-text-tertiary uppercase mt-lg mb-sm tracking-[1.2px]">
           {item.label}
         </Text>
       );
@@ -169,10 +168,7 @@ export default function NotificationCenterScreen() {
               ) : null}
             </View>
           </View>
-          <Text
-            className="mt-xs text-body text-text-secondary leading-[22px]"
-            numberOfLines={2}
-          >
+          <Text className="mt-xs text-body text-text-secondary leading-[22px]" numberOfLines={2}>
             {notification.body}
           </Text>
         </View>
@@ -196,9 +192,7 @@ export default function NotificationCenterScreen() {
           <Text className="text-title font-bold text-foreground text-center">
             {t('shared.notifications.errorTitle')}
           </Text>
-          <Text
-            className="mt-sm text-body text-text-secondary text-center leading-[24px]"
-          >
+          <Text className="mt-sm text-body text-text-secondary text-center leading-[24px]">
             {t('shared.notifications.errorBody')}
           </Text>
           <Button
@@ -224,9 +218,7 @@ export default function NotificationCenterScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl }}
           ListFooterComponent={
-            <View
-              className="mt-xl bg-primary-deep rounded-lg p-lg justify-end h-[128px]"
-            >
+            <View className="mt-xl bg-primary-deep rounded-lg p-lg justify-end h-[128px]">
               <Text className="text-subtitle font-extrabold text-primary-foreground">
                 {t('shared.notifications.promoBannerTitle')}
               </Text>

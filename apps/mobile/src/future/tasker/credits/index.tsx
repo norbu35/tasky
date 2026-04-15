@@ -1,10 +1,11 @@
-import { useTranslation } from 'react-i18next';
-import React from 'react';
-import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, Text, View } from 'react-native';
+
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
-import { InfoRow } from '../../../components/ui/InfoRow';
 import { Button } from '../../../components/ui/Button';
+import { InfoRow } from '../../../components/ui/InfoRow';
 import { LowBalanceAlert } from '../../../features/credits/components/LowBalanceAlert';
 
 const balanceText = '12,400 ₮';
@@ -68,7 +69,9 @@ export default function TaskerCreditsIndexScreen() {
             testID="tasker-credits-referrals"
           >
             <Text className="text-label font-bold text-primary">{t('tasker.referrals.title')}</Text>
-            <Text className="text-body text-text-secondary">{t('tasker.referrals.inviteBody')}</Text>
+            <Text className="text-body text-text-secondary">
+              {t('tasker.referrals.inviteBody')}
+            </Text>
           </Pressable>
         </View>
 

@@ -1,20 +1,21 @@
-import React, { useCallback, useState } from 'react';
-import { Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { Star } from 'lucide-react-native';
+import React, { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
-import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
-import { PriceTag } from '../../components/ui/PriceTag';
 import { CategoryChip } from '../../components/ui/CategoryChip';
 import { LocationPin } from '../../components/ui/LocationPin';
 import { PhotoGrid } from '../../components/ui/PhotoGrid';
-import { useTaskDetail } from '../../features/tasks/hooks/useTasks';
+import { PriceTag } from '../../components/ui/PriceTag';
+import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { ApplicationSentSuccess } from '../../features/tasks/components/ApplicationSentSuccess';
+import { useTaskDetail } from '../../features/tasks/hooks/useTasks';
 import { createMobileApiClient } from '../../lib/mobileApiClient';
 import { useAuthStore } from '../../store/authStore';
 import { formatFullDate } from '../../utils/formatDate';
-import { mobileTheme } from '../../design/tokenAdapter';
 
 const api = createMobileApiClient();
 const { colors } = mobileTheme;
@@ -111,11 +112,7 @@ export default function TaskDetailScreen() {
           <View className="gap-lg">
             {/* Customer hero — avatar, name, rating */}
             <View className="flex-row items-center gap-md bg-muted rounded-md p-lg">
-              <ProfileAvatar
-                uri={undefined}
-                name={task.customer.full_name}
-                size="lg"
-              />
+              <ProfileAvatar uri={undefined} name={task.customer.full_name} size="lg" />
               <View className="flex-1 gap-xs">
                 <Text className="text-subtitle font-sans-bold text-foreground">
                   {task.customer.full_name}

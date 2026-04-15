@@ -1,18 +1,13 @@
-import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { Booking } from '../lib/apiClient';
+import { CheckCircle, MoreVertical, ShieldAlert, Star, XCircle } from 'lucide-react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+
+import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
+import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Textarea } from '../components/ui/textarea';
-import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../components/ui/dropdown-menu';
 import {
   Dialog,
   DialogContent,
@@ -21,16 +16,22 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../components/ui/dropdown-menu';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Skeleton } from '../components/ui/skeleton';
+import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Textarea } from '../components/ui/textarea';
 import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
-import { toast } from 'sonner';
+import type { Booking } from '../lib/apiClient';
 import { parseError } from '../lib/errorHandling';
 import { createIdempotencyKey } from '../lib/idempotency';
-import { useTranslation } from 'react-i18next';
-import { CheckCircle, MoreVertical, ShieldAlert, Star, XCircle } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
-import { Badge } from '../components/ui/badge';
-import { Skeleton } from '../components/ui/skeleton';
 
 export function BookingSafetyPage() {
   const { apiClient, session, trackClientEvent } = useAppContext();
@@ -59,7 +60,7 @@ export function BookingSafetyPage() {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['bookings', session?.accessToken, activeTab],
+    queryKey: ['bookings', session, activeTab, apiClient],
     queryFn: async () => {
       if (!session) throw new Error('Not authenticated');
       const res = await apiClient.listBookings(session.accessToken, {
@@ -369,10 +370,7 @@ export function BookingSafetyPage() {
           <DialogHeader>
             <DialogTitle>{t('bookingSafety.completeTitle', 'Complete Booking')}</DialogTitle>
             <DialogDescription>
-              {t(
-                'bookingSafety.completeDesc',
-                'Mark this booking as successfully completed.',
-              )}
+              {t('bookingSafety.completeDesc', 'Mark this booking as successfully completed.')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4">

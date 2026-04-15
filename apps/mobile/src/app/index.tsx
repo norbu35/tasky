@@ -1,12 +1,13 @@
-import React from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
-import { Redirect } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useAuthStore } from '../store/authStore';
-import { useAppStore } from '../store/appStore';
+import { Redirect } from 'expo-router';
 import { CircleCheckBig } from 'lucide-react-native';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, Text, View } from 'react-native';
+
 import { mobileTheme } from '../design/tokenAdapter';
+import { useAppStore } from '../store/appStore';
+import { useAuthStore } from '../store/authStore';
 import { resolvePostAuthHref } from '../utils/authRouting';
 
 const { colors, spacing, typography } = mobileTheme;

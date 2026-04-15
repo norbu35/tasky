@@ -7,8 +7,5 @@ import { useConversations } from './useConversations';
 export function useUnreadCount(): number {
   const { data } = useConversations();
   const conversations = data?.data ?? [];
-  return conversations.reduce(
-    (total: number, conv: any) => total + (conv.unread_count ?? 0),
-    0,
-  );
+  return conversations.reduce((total: number, conv: any) => total + (conv.unread_count ?? 0), 0);
 }

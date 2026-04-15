@@ -1,5 +1,5 @@
-import React from 'react';
 import { Redirect, useLocalSearchParams } from 'expo-router';
+import React from 'react';
 
 export default function TaskerTaskDetailRouteAlias() {
   const { taskId } = useLocalSearchParams<{ taskId: string }>();

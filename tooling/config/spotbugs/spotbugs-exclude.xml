@@ -23,15 +23,25 @@
     </Match>
 
     <!--
-        DTO and API records are immutable transfer shapes in this codebase.
-        SpotBugs reports EI_EXPOSE_REP* on record accessors that intentionally expose
-        already-owned values.
+        DTO and API records are immutable transfer shapes.
+        EI_EXPOSE_REP* on record accessors that return String, primitives, or
+        other immutable types are false positives. Scoped to DTO/response packages.
     -->
     <Match>
         <Bug pattern="EI_EXPOSE_REP"/>
+        <Or>
+            <Class name="~mn\.tasky\..*\.dto\..*"/>
+            <Class name="~mn\.tasky\..*\.response\..*"/>
+            <Class name="~mn\.tasky\.api\.generated\.model\..*"/>
+        </Or>
     </Match>
     <Match>
         <Bug pattern="EI_EXPOSE_REP2"/>
+        <Or>
+            <Class name="~mn\.tasky\..*\.dto\..*"/>
+            <Class name="~mn\.tasky\..*\.response\..*"/>
+            <Class name="~mn\.tasky\.api\.generated\.model\..*"/>
+        </Or>
     </Match>
 
     <!-- Structured logger placeholders are fixed; this taint path is a known false positive. -->

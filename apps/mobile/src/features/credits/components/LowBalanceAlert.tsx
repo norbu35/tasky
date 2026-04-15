@@ -1,9 +1,10 @@
-import { useTranslation } from 'react-i18next';
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AlertTriangle } from 'lucide-react-native';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
 import { Button } from '../../../components/ui/Button';
+import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 

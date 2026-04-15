@@ -4,9 +4,9 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 import { AppContext, type AppContextValue } from '../../context/AppContext';
-import { CustomerTaskDetailsPage } from '../CustomerTaskDetailsPage';
-import { createMockApiClient } from '../../test/mocks';
 import { makeCategory, makeProfile, makeSession } from '../../test/factories';
+import { createMockApiClient } from '../../test/mocks';
+import { CustomerTaskDetailsPage } from '../CustomerTaskDetailsPage';
 
 function createContext(overrides: Partial<AppContextValue> = {}): AppContextValue {
   const apiClient = overrides.apiClient ?? createMockApiClient();

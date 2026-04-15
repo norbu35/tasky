@@ -1,10 +1,11 @@
 import React from 'react';
-import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
 import { StatCard } from '../../components/ui/StatCard';
-import { useMyStats } from '../../features/profile/hooks/useMyStats';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { useMyStats } from '../../features/profile/hooks/useMyStats';
 
 const { spacing } = mobileTheme;
 
@@ -42,85 +43,95 @@ export default function TaskerStatsScreen() {
 
   return (
     <DetailTemplate testID="SCR-TASK-016" isLoading={isLoading} isError={isError} onRetry={refetch}>
-      {data && (() => {
-        const isNewTasker = (jobsCompleted ?? 0) === 0;
-        return (
-        <View className="gap-lg">
-          <View
-            className="bg-primary-deep rounded-lg gap-xs"
-            style={{ padding: spacing.xl }}
-            testID="tasker-stats-hero"
-          >
-            <Text className="text-label text-primary-foreground opacity-90">
-              {t('tasker.stats.heroLabel')}
-            </Text>
-            <Text className="text-heroTitle font-bold text-secondary">
-              {isNewTasker ? '🆕' : formatRating(averageRating)}
-            </Text>
-            <Text className="text-caption text-primary-foreground">
-              {isNewTasker ? t('tasker.stats.newTaskerHint') : t('tasker.stats.heroMeta')}
-            </Text>
-          </View>
+      {data &&
+        (() => {
+          const isNewTasker = (jobsCompleted ?? 0) === 0;
+          return (
+            <View className="gap-lg">
+              <View
+                className="bg-primary-deep rounded-lg gap-xs"
+                style={{ padding: spacing.xl }}
+                testID="tasker-stats-hero"
+              >
+                <Text className="text-label text-primary-foreground opacity-90">
+                  {t('tasker.stats.heroLabel')}
+                </Text>
+                <Text className="text-heroTitle font-bold text-secondary">
+                  {isNewTasker ? '🆕' : formatRating(averageRating)}
+                </Text>
+                <Text className="text-caption text-primary-foreground">
+                  {isNewTasker ? t('tasker.stats.newTaskerHint') : t('tasker.stats.heroMeta')}
+                </Text>
+              </View>
 
-          {/* Your Performance */}
-          <Text className="text-heading font-bold text-primary-deep">
-            {t('tasker.stats.sectionHeading')}
-          </Text>
+              {/* Your Performance */}
+              <Text className="text-heading font-bold text-primary-deep">
+                {t('tasker.stats.sectionHeading')}
+              </Text>
 
-          <View className="flex-row gap-md">
-            <StatCard value={String(jobsCompleted ?? 0)} label={t('tasker.stats.jobsCompleted')} />
-            <StatCard value={isNewTasker ? '—' : formatRating(averageRating)} label={t('tasker.stats.averageRating')} />
-          </View>
-          <View className="flex-row gap-md">
-            <StatCard
-              value={isNewTasker ? '—' : formatPercent(completionRate)}
-              label={t('tasker.stats.completionRate')}
-            />
-            <StatCard
-              value={responseTimeMinutes == null ? '—' : `${responseTimeMinutes} мин`}
-              label={t('tasker.stats.responseTime')}
-            />
-          </View>
-
-          {/* Rating Breakdown — hidden for new taskers */}
-          {!isNewTasker && (
-            <View className="gap-xs pt-md">
-              <Text className="text-subtitle font-semibold text-primary-deep">
-                {t('tasker.stats.ratingBreakdown')}
-              </Text>
-              <Text className="text-body text-foreground leading-relaxed">
-                {t('tasker.stats.taskClarity')}: {taskClarity ?? averageRating ?? '—'}
-              </Text>
-              <Text className="text-body text-foreground leading-relaxed">
-                {t('tasker.stats.respectfulness')}: {respectfulness ?? averageRating ?? '—'}
-              </Text>
-              <Text className="text-body text-foreground leading-relaxed">
-                {t('tasker.stats.punctuality')}: {punctuality ?? averageRating ?? '—'}
-              </Text>
-            </View>
-          )}
-
-          {/* Your Reliability — hidden for new taskers */}
-          {!isNewTasker && (
-            <View className="gap-xs pt-md">
-              <Text className="text-subtitle font-semibold text-primary-deep">
-                {t('tasker.stats.reliabilityHeading')}
-              </Text>
               <View className="flex-row gap-md">
-                <StatCard value={String(cancellations30d)} label={t('tasker.stats.cancellations30d')} />
                 <StatCard
-                  value={formatPercent(reliabilityScore)}
-                  label={t('tasker.stats.reliabilityScore')}
+                  value={String(jobsCompleted ?? 0)}
+                  label={t('tasker.stats.jobsCompleted')}
+                />
+                <StatCard
+                  value={isNewTasker ? '—' : formatRating(averageRating)}
+                  label={t('tasker.stats.averageRating')}
                 />
               </View>
-              <Text className="text-body text-foreground leading-relaxed mt-sm">
-                {isPro ? t('tasker.stats.proBadgeEarned') : t('TaskerStatsScreen.copy2')}
-              </Text>
+              <View className="flex-row gap-md">
+                <StatCard
+                  value={isNewTasker ? '—' : formatPercent(completionRate)}
+                  label={t('tasker.stats.completionRate')}
+                />
+                <StatCard
+                  value={responseTimeMinutes == null ? '—' : `${responseTimeMinutes} мин`}
+                  label={t('tasker.stats.responseTime')}
+                />
+              </View>
+
+              {/* Rating Breakdown — hidden for new taskers */}
+              {!isNewTasker && (
+                <View className="gap-xs pt-md">
+                  <Text className="text-subtitle font-semibold text-primary-deep">
+                    {t('tasker.stats.ratingBreakdown')}
+                  </Text>
+                  <Text className="text-body text-foreground leading-relaxed">
+                    {t('tasker.stats.taskClarity')}: {taskClarity ?? averageRating ?? '—'}
+                  </Text>
+                  <Text className="text-body text-foreground leading-relaxed">
+                    {t('tasker.stats.respectfulness')}: {respectfulness ?? averageRating ?? '—'}
+                  </Text>
+                  <Text className="text-body text-foreground leading-relaxed">
+                    {t('tasker.stats.punctuality')}: {punctuality ?? averageRating ?? '—'}
+                  </Text>
+                </View>
+              )}
+
+              {/* Your Reliability — hidden for new taskers */}
+              {!isNewTasker && (
+                <View className="gap-xs pt-md">
+                  <Text className="text-subtitle font-semibold text-primary-deep">
+                    {t('tasker.stats.reliabilityHeading')}
+                  </Text>
+                  <View className="flex-row gap-md">
+                    <StatCard
+                      value={String(cancellations30d)}
+                      label={t('tasker.stats.cancellations30d')}
+                    />
+                    <StatCard
+                      value={formatPercent(reliabilityScore)}
+                      label={t('tasker.stats.reliabilityScore')}
+                    />
+                  </View>
+                  <Text className="text-body text-foreground leading-relaxed mt-sm">
+                    {isPro ? t('tasker.stats.proBadgeEarned') : t('TaskerStatsScreen.copy2')}
+                  </Text>
+                </View>
+              )}
             </View>
-          )}
-        </View>
-        );
-      })()}
+          );
+        })()}
     </DetailTemplate>
   );
 }

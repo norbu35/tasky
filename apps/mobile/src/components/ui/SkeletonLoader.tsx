@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react';
-import type { ViewStyle } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import type { ViewStyle } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import { mobileTheme } from '../../design/tokenAdapter';
+
 import { animationPresets } from '../../design/animations';
+import { mobileTheme } from '../../design/tokenAdapter';
 
 const { radius } = mobileTheme;
 

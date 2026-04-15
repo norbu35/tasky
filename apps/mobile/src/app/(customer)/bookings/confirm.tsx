@@ -1,10 +1,11 @@
-import React, { useCallback, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Pressable, Text, View } from 'react-native';
+
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
-import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { PriceTag } from '../../../components/ui/PriceTag';
+import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { useAcceptApplication } from '../../../features/bookings/hooks/useAcceptApplication';
 import { useConfirmBookingIntent } from '../../../features/bookings/hooks/useConfirmBookingIntent';
 

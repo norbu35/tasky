@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ApiError } from './apiClient';
+
 import { HttpAdminApiClient } from './adminApiClient';
+import { ApiError } from './apiClient';
 
 const adminToken = 'admin-jwt-test-token';
 const BASE = 'http://localhost:8080/api/v1';

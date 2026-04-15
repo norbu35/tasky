@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+
+import { GlobalErrorFallback } from './components/feature/GlobalErrorFallback';
+import { Toaster } from './components/ui/sonner';
+import { AppContext } from './context/AppContext';
+import type { AppContextValue } from './context/AppContext';
 import type { ApiClient, AuthTokens, Profile, User } from './lib/apiClient';
 import type { ActorRole, ClientAnalyticsTracker, ClientEventName } from './lib/clientAnalytics';
-import { AppContext } from './context/AppContext';
-import { AppRoutes } from './router/AppRoutes';
-import { Toaster } from './components/ui/sonner';
-import { toast } from 'sonner';
-import { ErrorBoundary } from 'react-error-boundary';
-import { GlobalErrorFallback } from './components/feature/GlobalErrorFallback';
-import type { AppContextValue } from './context/AppContext';
 import { parseError } from './lib/errorHandling';
-import { useTranslation } from 'react-i18next';
+import { AppRoutes } from './router/AppRoutes';
 
 export function AppShell({
   apiClient,

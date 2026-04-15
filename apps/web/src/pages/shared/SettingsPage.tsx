@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { ResponsiveDetailShell } from '../../layout/parity';
+
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
+import { ResponsiveDetailShell } from '../../layout/parity';
 
 export function SettingsPage() {
   const { t } = useTranslation();

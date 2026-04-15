@@ -1,6 +1,7 @@
+import { ChevronRight } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { ChevronRight } from 'lucide-react-native';
+
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
@@ -35,7 +36,7 @@ function SettingsRowItem({ row, testID }: { row: SettingsRow; testID?: string })
       onPress={row.onPress}
       className={cn(
         'flex-row items-center p-md border-b border-border/50',
-        !isInteractive && 'bg-transparent'
+        !isInteractive && 'bg-transparent',
       )}
       style={(state) => {
         const pressed = isInteractive && (state as any).pressed;
@@ -48,7 +49,7 @@ function SettingsRowItem({ row, testID }: { row: SettingsRow; testID?: string })
         <View
           className={cn(
             'w-10 h-10 rounded-full items-center justify-center mr-md',
-            row.destructive ? 'bg-danger/10' : 'bg-primary/10'
+            row.destructive ? 'bg-danger/10' : 'bg-primary/10',
           )}
         >
           {row.icon}
@@ -57,7 +58,7 @@ function SettingsRowItem({ row, testID }: { row: SettingsRow; testID?: string })
       <Text
         className={cn(
           'flex-1 text-body font-sans-medium',
-          row.destructive ? 'text-danger' : 'text-foreground'
+          row.destructive ? 'text-danger' : 'text-foreground',
         )}
       >
         {row.label}
@@ -84,7 +85,7 @@ export function SettingsTemplate({ sections, testID, className }: SettingsTempla
       contentContainerStyle={{
         paddingHorizontal: spacing.lg,
         paddingTop: spacing.lg,
-        paddingBottom: spacing['2xl'] + spacing.xl
+        paddingBottom: spacing['2xl'] + spacing.xl,
       }}
       testID={testID}
     >

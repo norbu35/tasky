@@ -1,12 +1,13 @@
-import React from 'react';
-import { Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { CheckCircle2 } from 'lucide-react-native';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
-import { Button } from '../../../../components/ui/Button';
+
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../../components/shells';
+import { Button } from '../../../../components/ui/Button';
+import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
 
 const { colors, spacing, typography } = mobileTheme;
 
@@ -56,9 +57,7 @@ export default function TaskPostedSuccessScreen() {
               className="px-md py-xs rounded-full"
               style={{ backgroundColor: `${colors.verified}1A` }}
             >
-              <Text
-                className="text-caption font-sans-bold text-verified tracking-[0.8px]"
-              >
+              <Text className="text-caption font-sans-bold text-verified tracking-[0.8px]">
                 {t('TaskPostedSuccessScreen.successBadge')}
               </Text>
             </View>
@@ -82,9 +81,7 @@ export default function TaskPostedSuccessScreen() {
           </View>
 
           <View className="rounded-md bg-muted p-2xl gap-sm" style={elevations.soft}>
-            <Text
-              className="text-caption font-sans-bold uppercase text-primary-deep mb-xs tracking-[0.8px]"
-            >
+            <Text className="text-caption font-sans-bold uppercase text-primary-deep mb-xs tracking-[0.8px]">
               {t('TaskPostedSuccessScreen.successNextLabel')}
             </Text>
             <Text className="text-body font-sans-bold text-primary-deep">

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+
 import { loginThroughDevAuth, nextLocalDateTimeInput } from './support/mockApi';
 
 test.describe('Customer happy path', () => {
@@ -12,9 +13,7 @@ test.describe('Customer happy path', () => {
 
     await page.getByLabel('Description').fill('Deep clean a two-bedroom apartment');
     await page.getByLabel('Scheduled at').fill(nextLocalDateTimeInput(24));
-    await page
-      .getByLabel('Address description')
-      .fill('HUD, 15-r khoroo, Olimpiin khotkhon');
+    await page.getByLabel('Address description').fill('HUD, 15-r khoroo, Olimpiin khotkhon');
 
     const createTaskResponse = page.waitForResponse(
       (response) =>

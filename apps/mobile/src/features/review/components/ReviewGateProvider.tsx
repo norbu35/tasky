@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useMemo } from 'react';
-import { usePendingReviews } from '../hooks/usePendingReviews';
+
 import type { PendingReview } from '../../../lib/mobileApiClient';
+import { usePendingReviews } from '../hooks/usePendingReviews';
 
 interface ReviewGateContextValue {
   isLocked: boolean;
@@ -35,11 +36,7 @@ export function ReviewGateProvider({ children }: { children: React.ReactNode }) 
     return { isLocked, hasPending: true, oldestPending };
   }, [pendingReviews]);
 
-  return (
-    <ReviewGateContext.Provider value={value}>
-      {children}
-    </ReviewGateContext.Provider>
-  );
+  return <ReviewGateContext.Provider value={value}>{children}</ReviewGateContext.Provider>;
 }
 
 export function useReviewGate() {

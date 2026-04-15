@@ -7,8 +7,8 @@ vi.mock('../../context/AppContext', () => ({
   useAppContext: vi.fn(() => ({ profile: { role: 'CUSTOMER' } })),
 }));
 
-import { BottomNavBar } from '../BottomNavBar';
 import { useAppContext } from '../../context/AppContext';
+import { BottomNavBar } from '../BottomNavBar';
 
 describe('BottomNavBar', () => {
   beforeEach(() => {

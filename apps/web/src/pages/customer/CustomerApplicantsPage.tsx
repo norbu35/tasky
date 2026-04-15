@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
+import { ArrowRight, Star, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowRight, Star, Users } from 'lucide-react';
 
-import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../layout/parity';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { useAppContext } from '../../context/AppContext';
+import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../layout/parity';
 
 export function CustomerApplicantsPage() {
   const { apiClient, session } = useAppContext();
@@ -17,7 +17,7 @@ export function CustomerApplicantsPage() {
   const { taskId } = useParams<{ taskId: string }>();
 
   const { data: tasksPage, isLoading: tasksLoading } = useQuery({
-    queryKey: ['customerTasks', session?.accessToken],
+    queryKey: ['customerTasks', session, apiClient],
     queryFn: async () => {
       if (!session) {
         throw new Error('Not authenticated');
@@ -35,7 +35,7 @@ export function CustomerApplicantsPage() {
     isLoading: applicationsLoading,
     error: applicationsError,
   } = useQuery({
-    queryKey: ['taskApplications', taskId, session?.accessToken],
+    queryKey: ['taskApplications', taskId, session, apiClient],
     queryFn: async () => {
       if (!session || !taskId) {
         throw new Error('Missing task route');

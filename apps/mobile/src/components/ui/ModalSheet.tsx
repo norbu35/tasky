@@ -1,10 +1,12 @@
-import { useTranslation } from 'react-i18next';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { mobileTheme } from '../../design/tokenAdapter';
+
 import { overlays } from '../../design/elevations';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
+
 import { Button } from './Button';
 
 type Props = {

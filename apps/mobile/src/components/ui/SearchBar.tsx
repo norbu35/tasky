@@ -1,6 +1,7 @@
+import { Search } from 'lucide-react-native';
 import React from 'react';
 import { View, TextInput, TextInputProps } from 'react-native';
-import { Search } from 'lucide-react-native';
+
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
@@ -14,10 +15,7 @@ const { colors, spacing } = mobileTheme;
 export function SearchBar({ className, containerClassName, ...props }: SearchBarProps) {
   return (
     <View
-      className={cn(
-        'flex-row items-center bg-muted rounded-xl px-md py-sm',
-        containerClassName
-      )}
+      className={cn('flex-row items-center bg-muted rounded-xl px-md py-sm', containerClassName)}
     >
       <Search size={20} color={colors.textTertiary} style={{ marginRight: spacing.sm }} />
       <TextInput

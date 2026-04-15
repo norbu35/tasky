@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+
 import { Card, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 
 export function LoadingCard({ message }: { message: string }) {

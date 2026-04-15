@@ -1,10 +1,10 @@
-import { useTranslation } from 'react-i18next';
 import { MessageSquareText, Star } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
-import { ActionRail, ResponsiveDetailShell } from '../../layout/parity';
 import { Avatar, AvatarFallback } from '../../components/ui/avatar';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { ActionRail, ResponsiveDetailShell } from '../../layout/parity';
 
 export function CustomerTaskerProfilePage() {
   const { t } = useTranslation();

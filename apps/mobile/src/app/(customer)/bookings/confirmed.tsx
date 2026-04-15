@@ -1,29 +1,24 @@
-import React from 'react';
-import { Linking, Platform, Text, View } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
-import {
-  ArrowRight,
-  CalendarPlus2,
-  Check,
-  ChevronLeft,
-  MessageSquare,
-  UserRound,
-} from 'lucide-react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { CalendarPlus2, Check, ChevronLeft, MessageSquare, UserRound } from 'lucide-react-native';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Linking, Platform, Text, View } from 'react-native';
+
 import { InsetScrollView, ScreenContainer } from '../../../components/shells';
-import { Button } from '../../../components/ui/Button';
 import { Touchable } from '../../../components/ui/Touchable';
-import { mobileTheme } from '../../../design/tokenAdapter';
 import { elevations } from '../../../design/elevations';
-import { cn } from '../../../lib/cn';
+import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing } = mobileTheme;
 
 export default function BookingConfirmedScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { bookingId, taskerName } = useLocalSearchParams<{ bookingId: string; taskerName?: string }>();
+  const { bookingId, taskerName } = useLocalSearchParams<{
+    bookingId: string;
+    taskerName?: string;
+  }>();
   const [canAddToCalendar, setCanAddToCalendar] = React.useState(false);
   const canAddToCalendarRef = React.useRef(canAddToCalendar);
 

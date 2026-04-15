@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
-import { useAuthStore } from './authStore';
-import { registerForPushNotificationsAsync } from '../lib/notifications';
+
 import { createMobileApiClient } from '../lib/mobileApiClient';
+import { registerForPushNotificationsAsync } from '../lib/notifications';
+
+import { useAuthStore } from './authStore';
 
 interface NotificationContextValue {
   pushToken: string | null;

@@ -43,7 +43,7 @@ export function createMemoryClientAnalyticsTracker(): MemoryClientAnalytics {
 export function createConsoleClientAnalyticsTracker(): ClientAnalyticsTracker {
   return (event) => {
     // Keep payload logging deterministic for local observability and test/debug parity.
-    // eslint-disable-next-line no-console
+
     console.info('CLIENT_ANALYTICS event=%s payload=%o', event.event_name, event);
   };
 }

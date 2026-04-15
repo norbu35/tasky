@@ -3,17 +3,17 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
     java
-    id("org.springframework.boot") version "3.5.13"
-    id("io.spring.dependency-management") version "1.1.7"
-    id("org.openapi.generator") version "7.21.0"
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.openapi.generator)
     jacoco
     checkstyle
     pmd
-    id("com.github.spotbugs") version "6.1.11"
-    id("net.ltgt.errorprone") version "4.1.0"
-    id("org.owasp.dependencycheck") version "12.1.0"
-    id("com.diffplug.spotless") version "6.25.0"
-    id("info.solidsoft.pitest") version "1.15.0"
+    alias(libs.plugins.spotbugs)
+    alias(libs.plugins.errorprone)
+    alias(libs.plugins.owasp)
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.pitest)
 }
 
 group = "mn.tasky"
@@ -29,10 +29,6 @@ repositories {
     mavenCentral()
 }
 
-val jdbiVersion = "3.52.1"
-val testcontainersVersion = "1.21.4"
-val jjwtVersion = "0.13.0"
-
 dependencies {
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -45,15 +41,15 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus")
 
     // JDBI
-    implementation("org.jdbi:jdbi3-core:$jdbiVersion")
-    implementation("org.jdbi:jdbi3-sqlobject:$jdbiVersion")
-    implementation("org.jdbi:jdbi3-postgres:$jdbiVersion")
-    implementation("org.jdbi:jdbi3-jackson2:$jdbiVersion")
-    implementation("org.jdbi:jdbi3-spring5:$jdbiVersion")
+    implementation(libs.jdbi.core)
+    implementation(libs.jdbi.sqlobject)
+    implementation(libs.jdbi.postgres)
+    implementation(libs.jdbi.jackson2)
+    implementation(libs.jdbi.spring5)
 
     // ShedLock — distributed scheduler locks
-    implementation("net.javacrumbs.shedlock:shedlock-spring:7.7.0")
-    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:7.7.0")
+    implementation(libs.shedlock.spring)
+    implementation(libs.shedlock.jdbc)
 
     // Database
     runtimeOnly("org.postgresql:postgresql")
@@ -61,39 +57,39 @@ dependencies {
     implementation("org.flywaydb:flyway-database-postgresql")
 
     // JWT
-    implementation("io.jsonwebtoken:jjwt-api:$jjwtVersion")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:$jjwtVersion")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:$jjwtVersion")
+    implementation(libs.jjwt.api)
+    runtimeOnly(libs.jjwt.impl)
+    runtimeOnly(libs.jjwt.jackson)
 
     // AWS S3 / MinIO
-    implementation("software.amazon.awssdk:s3:2.29.46")
+    implementation(libs.aws.s3)
 
     // Logging
-    implementation("net.logstash.logback:logstash-logback-encoder:8.0")
+    implementation(libs.logstash.logback)
 
     // Jackson
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-    implementation("org.jsoup:jsoup:1.18.3")
+    implementation(libs.jsoup)
 
     // Firebase
-    implementation("com.google.firebase:firebase-admin:9.4.2")
+    implementation(libs.firebase.admin)
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
-    testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
-    testImplementation("org.testcontainers:jdbc:$testcontainersVersion")
-    testImplementation("org.testcontainers:database-commons:$testcontainersVersion")
-    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
-    testImplementation("com.tngtech.archunit:archunit-junit5:1.4.1")
-    testImplementation("com.atlassian.oai:swagger-request-validator-mockmvc:2.46.1")
+    testImplementation(libs.testcontainers.core)
+    testImplementation(libs.testcontainers.junit)
+    testImplementation(libs.testcontainers.jdbc)
+    testImplementation(libs.testcontainers.db.commons)
+    testImplementation(libs.testcontainers.postgres)
+    testImplementation(libs.archunit)
+    testImplementation(libs.swagger.validator)
 
     // Static analysis
-    errorprone("com.google.errorprone:error_prone_core:2.36.0")
-    spotbugsPlugins("com.h3xstream.findsecbugs:findsecbugs-plugin:1.13.0")
-    compileOnly("com.github.spotbugs:spotbugs-annotations:4.8.6")
-    testCompileOnly("com.github.spotbugs:spotbugs-annotations:4.8.6")
+    errorprone(libs.errorprone.core)
+    spotbugsPlugins(libs.findsecbugs)
+    compileOnly(libs.spotbugs.annotations)
+    testCompileOnly(libs.spotbugs.annotations)
 }
 
 // OpenAPI Generator
@@ -160,7 +156,7 @@ tasks.named<BootRun>("bootRun") {
 
 // JaCoCo
 jacoco {
-    toolVersion = "0.8.12"
+    toolVersion = libs.versions.jacoco.get()
 }
 
 tasks.jacocoTestReport {
@@ -197,7 +193,7 @@ tasks.jacocoTestCoverageVerification {
 
 // Checkstyle
 checkstyle {
-    toolVersion = "10.21.2"
+    toolVersion = libs.versions.checkstyle.get()
     configFile = file("${rootProject.projectDir}/tooling/config/checkstyle/checkstyle.xml")
     isIgnoreFailures = false
 }
@@ -208,7 +204,7 @@ checkstyle {
 spotless {
     java {
         target("src/main/java/**/*.java", "src/test/java/**/*.java")
-        palantirJavaFormat("2.47.0").style("PALANTIR") // 4-space indent, 120-char line limit
+        palantirJavaFormat(libs.versions.palantir.java.format.get()).style("PALANTIR") // 4-space indent, 120-char line limit
         removeUnusedImports()
         // Import ordering is handled by palantir-java-format (static → blank → non-static).
         trimTrailingWhitespace()
@@ -218,7 +214,7 @@ spotless {
 
 // PMD
 pmd {
-    toolVersion = "7.9.0"
+    toolVersion = libs.versions.pmd.get()
     isConsoleOutput = true
     ruleSets = mutableListOf()   // clear defaults; use our ruleset only
     ruleSetFiles = files("${rootProject.projectDir}/tooling/config/pmd/pmd-ruleset.xml")
@@ -315,6 +311,7 @@ tasks.register<Exec>("gateRegression") {
     dependsOn(
         tasks.test,
         tasks.jacocoTestReport,
+        "jacocoTestCoverageVerification",
         "openApiValidate",
     )
     workingDir(rootProject.projectDir)
@@ -330,7 +327,7 @@ tasks.register<Exec>("gateRegression") {
 tasks.register<Exec>("gateFull") {
     description = "Gate 3: all scenarios + PIT floors. Runs nightly."
     group = "verification"
-    dependsOn(tasks.test, tasks.jacocoTestReport, "pitest")
+    dependsOn(tasks.test, tasks.jacocoTestReport, "pitest", "dependencyCheckAnalyze")
     workingDir(rootProject.projectDir)
     doFirst {
         exec {

@@ -1,7 +1,8 @@
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useTranslation } from 'react-i18next';
 import { Banknote, CalendarDays, Headphones, Sparkles } from 'lucide-react-native';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
 import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
 import { mobileTheme } from '../../../design/tokenAdapter';
 

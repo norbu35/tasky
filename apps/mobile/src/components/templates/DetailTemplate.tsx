@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { Pressable, View, type LayoutChangeEvent } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { cn } from '../../lib/cn';
-import { Button } from '../ui/Button';
-import { ErrorStateTemplate } from './ErrorStateTemplate';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
+import { Pressable, View, type LayoutChangeEvent } from 'react-native';
+
 import { screenLayout } from '../../design/screenLayout';
+import { mobileTheme } from '../../design/tokenAdapter';
+import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
+import { Button } from '../ui/Button';
+
+import { ErrorStateTemplate } from './ErrorStateTemplate';
 
 const { colors } = mobileTheme;
 

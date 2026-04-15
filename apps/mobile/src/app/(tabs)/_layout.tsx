@@ -1,6 +1,5 @@
-import { Tabs, useSegments } from 'expo-router';
 import { BlurView } from 'expo-blur';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Tabs, useSegments } from 'expo-router';
 import {
   Briefcase,
   ClipboardList,
@@ -9,13 +8,15 @@ import {
   Search,
   User,
 } from 'lucide-react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { screenLayout } from '../../design/screenLayout';
-import { FAB } from '../../components/ui/FAB';
 import { useTranslation } from 'react-i18next';
-import { useRole } from '../../providers/RoleProvider';
+import { Platform, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { FAB } from '../../components/ui/FAB';
+import { screenLayout } from '../../design/screenLayout';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { useUnreadCount } from '../../features/chat/hooks/useUnreadCount';
+import { useRole } from '../../providers/RoleProvider';
 
 const { colors, spacing, radius, typography } = mobileTheme;
 

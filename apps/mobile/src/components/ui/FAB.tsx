@@ -1,4 +1,6 @@
 // apps/mobile/src/components/ui/FAB.tsx
+import { useRouter } from 'expo-router';
+import { Plus } from 'lucide-react-native';
 import React from 'react';
 import { useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -8,14 +10,13 @@ import Animated, {
   withSpring,
   runOnJS,
 } from 'react-native-reanimated';
-import { Plus } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useAuthStore } from '../../store/authStore';
-import { mobileTheme } from '../../design/tokenAdapter';
+
 import { elevations } from '../../design/elevations';
 import { screenLayout } from '../../design/screenLayout';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
+import { useAuthStore } from '../../store/authStore';
 
 const { colors } = mobileTheme;
 const { fabSize, fabInsetRight, fabBottom, tabBarHeight, tabBarBottom } = screenLayout.chrome;

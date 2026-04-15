@@ -1,14 +1,21 @@
-import { type AdminApiClient, AdminApiClientContext } from '../../../lib/adminApiClient';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, it, expect, vi } from 'vitest';
+
 import { AppContext } from '../../../context/AppContext';
 import type { AppContextValue } from '../../../context/AppContext';
-import type { ApiClient, CursorPage, AdminDisputeDetail } from '../../../lib/apiClient';
-import { AdminDisputesPage } from '../AdminDisputesPage';
+import { type AdminApiClient, AdminApiClientContext } from '../../../lib/adminApiClient';
+import type {
+  ApiClient,
+  CursorPage,
+  AdminDisputeDetail,
+  Dispute,
+  Booking,
+  Message,
+} from '../../../lib/apiClient';
 import { AdminDisputeDetailPage } from '../AdminDisputeDetailPage';
-import type { Dispute, Booking, Message } from '../../../lib/apiClient';
+import { AdminDisputesPage } from '../AdminDisputesPage';
 
 // ─── Fixtures ──────────────────────────────────────────────────────────────
 

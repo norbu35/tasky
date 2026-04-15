@@ -1,8 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
+import type { TFunction } from 'i18next';
+import { Calendar, ChevronLeft, Clock, MapPin, Star, UserCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import type { TaskApplication } from '../lib/apiClient';
-import { useAppContext } from '../context/AppContext';
-import { ScreenFrame } from '../layout/ScreenFrame';
+
+import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
+import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import {
   Card,
@@ -13,12 +17,9 @@ import {
   CardTitle,
 } from '../components/ui/card';
 import { Skeleton } from '../components/ui/skeleton';
-import { Badge } from '../components/ui/badge';
-import { Calendar, ChevronLeft, Clock, MapPin, Star, UserCheck } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
-import { useTranslation } from 'react-i18next';
-import type { TFunction } from 'i18next';
+import { useAppContext } from '../context/AppContext';
+import { ScreenFrame } from '../layout/ScreenFrame';
+import type { TaskApplication } from '../lib/apiClient';
 
 function formatTimeAgo(value: string, t: TFunction): string {
   const timestamp = new Date(value).getTime();
@@ -48,7 +49,7 @@ export function CustomerTaskDetailsPage() {
   const navigate = useNavigate();
 
   const { data: tasksPage, isLoading: tasksLoading } = useQuery({
-    queryKey: ['customerTasks', session?.accessToken],
+    queryKey: ['customerTasks', session, apiClient],
     queryFn: async () => {
       if (!session) throw new Error('Not authenticated');
       return apiClient.listMyTasks(session.accessToken);
@@ -65,7 +66,7 @@ export function CustomerTaskDetailsPage() {
     isLoading: applicationsLoading,
     error: applicationsError,
   } = useQuery({
-    queryKey: ['taskApplications', taskId, session?.accessToken],
+    queryKey: ['taskApplications', taskId, session, apiClient],
     queryFn: async () => {
       if (!session || !taskId) throw new Error('Missing requirements');
       return apiClient.listTaskApplications(session.accessToken, taskId);

@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
+
 import { useAuthStore } from '../store/authStore';
 import { isRestricted } from '../utils/routeGuard';
 

@@ -1,7 +1,8 @@
-import React from 'react';
-import { Text, View } from 'react-native';
 import { AlertTriangle } from 'lucide-react-native';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
+
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';

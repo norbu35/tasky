@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     environment:
       PORT: 8080
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-local}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
       POSTGRES_HOST: pgbouncer
       POSTGRES_PORT: 5432
       FLYWAY_HOST: postgres
@@ -27,9 +27,9 @@ services:
       TASKY_QPAY_WEBHOOK_SECRET: ${TASKY_QPAY_WEBHOOK_SECRET}
       TASKY_CORS_ALLOWED_ORIGINS: ${TASKY_CORS_ALLOWED_ORIGINS:-http://127.0.0.1:${STAGING_HTTP_PORT:-8080},http://localhost:${STAGING_HTTP_PORT:-8080}}
       TASKY_WEBSOCKET_ALLOWED_ORIGINS: ${TASKY_WEBSOCKET_ALLOWED_ORIGINS:-http://127.0.0.1:${STAGING_HTTP_PORT:-8080},http://localhost:${STAGING_HTTP_PORT:-8080}}
-      TASKY_DEV_AUTH_ENABLED: ${TASKY_DEV_AUTH_ENABLED:-true}
+      TASKY_DEV_AUTH_ENABLED: ${TASKY_DEV_AUTH_ENABLED:-false}
       TASKY_OTP_ENABLED: ${TASKY_OTP_ENABLED:-false}
-      TASKY_OTP_TEST_CODE: ""
+      TASKY_OTP_TEST_CODE: ''
       TASKY_FEATURE_MONETIZATION_ENABLED: ${TASKY_FEATURE_MONETIZATION_ENABLED:-false}
       TASKY_PUSH_PROVIDER: ${TASKY_PUSH_PROVIDER:-logging}
       TASKY_FACEBOOK_APP_ID: ${TASKY_FACEBOOK_APP_ID:-}
@@ -63,45 +63,41 @@ services:
       app:
         condition: service_started
     ports:
-      - "127.0.0.1:${STAGING_HTTP_PORT:-8080}:80"
+      - '127.0.0.1:${STAGING_HTTP_PORT:-8080}:80'
 
   postgres:
     image: postgis/postgis:16-3.4
     restart: unless-stopped
     command:
-      - "postgres"
-      - "-c"
-      - "shared_buffers=256MB"
-      - "-c"
-      - "work_mem=4MB"
-      - "-c"
-      - "maintenance_work_mem=64MB"
-      - "-c"
-      - "max_connections=100"
-      - "-c"
-      - "log_min_duration_statement=200"
-      - "-c"
-      - "autovacuum_naptime=30s"
-      - "-c"
-      - "autovacuum_vacuum_scale_factor=0.05"
-      - "-c"
-      - "autovacuum_analyze_scale_factor=0.02"
-      - "-c"
-      - "password_encryption=md5"
+      - 'postgres'
+      - '-c'
+      - 'shared_buffers=256MB'
+      - '-c'
+      - 'work_mem=4MB'
+      - '-c'
+      - 'maintenance_work_mem=64MB'
+      - '-c'
+      - 'max_connections=100'
+      - '-c'
+      - 'log_min_duration_statement=200'
+      - '-c'
+      - 'autovacuum_naptime=30s'
+      - '-c'
+      - 'autovacuum_vacuum_scale_factor=0.05'
+      - '-c'
+      - 'autovacuum_analyze_scale_factor=0.02'
+      - '-c'
+      - 'password_encryption=scram-sha-256'
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-tasky}
       POSTGRES_USER: ${POSTGRES_USER:-tasky}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tasky}
-      POSTGRES_HOST_AUTH_METHOD: md5
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
     volumes:
       - private_staging_postgres_data:/var/lib/postgresql/data
       - ./docker/init-db.sql:/docker-entrypoint-initdb.d/10-init-db.sql:ro
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-tasky} -d ${POSTGRES_DB:-tasky}",
-        ]
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-tasky} -d ${POSTGRES_DB:-tasky}']
       interval: 10s
       timeout: 5s
       retries: 6
@@ -125,8 +121,8 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
-          "pg_isready -h 127.0.0.1 -p 5432 -U ${APP_DB_USER:-tasky_app} -d ${POSTGRES_DB:-tasky}",
+          'CMD-SHELL',
+          'pg_isready -h 127.0.0.1 -p 5432 -U ${APP_DB_USER:-tasky_app} -d ${POSTGRES_DB:-tasky}',
         ]
       interval: 10s
       timeout: 5s
@@ -142,7 +138,7 @@ services:
     volumes:
       - private_staging_minio_data:/data
     healthcheck:
-      test: ["CMD-SHELL", "ls /data >/dev/null 2>&1"]
+      test: ['CMD-SHELL', 'ls /data >/dev/null 2>&1']
       interval: 10s
       timeout: 5s
       retries: 6

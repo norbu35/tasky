@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+
 import { loginThroughDevAuth } from './support/mockApi';
 
 test.describe('Admin happy path', () => {

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Auto-install dependencies when pnpm-lock.yaml changes between branches
+
+PREV_HEAD=$1
+POST_HEAD=$2
+IS_BRANCH_CHECKOUT=$3
+
+# Only run on branch checkout (not file checkout)
+if [ "$IS_BRANCH_CHECKOUT" != "1" ]; then
+  exit 0
+fi
+
+# Check if lockfile changed between old and new HEAD
+if ! git diff --quiet "$PREV_HEAD" "$POST_HEAD" -- pnpm-lock.yaml 2>/dev/null; then
+  echo "pnpm-lock.yaml changed — running pnpm install..."
+  pnpm install --frozen-lockfile
+fi

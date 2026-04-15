@@ -1,4 +1,6 @@
+import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   FlatList,
@@ -8,11 +10,10 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
+
+import { mobileTheme } from '../../../design/tokenAdapter';
 import { Conversation, createMobileApiClient } from '../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../store/authStore';
-import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors } = mobileTheme;
 

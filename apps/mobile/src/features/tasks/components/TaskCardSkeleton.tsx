@@ -7,6 +7,7 @@ import Animated, {
   withTiming,
   withSequence,
 } from 'react-native-reanimated';
+
 import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 
 const { colors, spacing, radius } = mobileTheme;

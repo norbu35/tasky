@@ -2,11 +2,12 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+import type { IntakeSchema } from '../../components/feature/task-creation/IntakeFormRenderer';
 import { AppContext } from '../../context/AppContext';
 import type { AppContextValue } from '../../context/AppContext';
 import type { ApiClient, Category, CursorPage, Task } from '../../lib/apiClient';
 import { CustomerTaskPage } from '../CustomerTaskPage';
-import type { IntakeSchema } from '../../components/feature/task-creation/IntakeFormRenderer';
 
 // ─── Intake Schema Fixtures ────────────────────────────────────────────────
 

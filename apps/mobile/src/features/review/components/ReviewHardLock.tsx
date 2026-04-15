@@ -1,8 +1,9 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { Lock } from 'lucide-react-native';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { StyleSheet, Text, View } from 'react-native';
+
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 

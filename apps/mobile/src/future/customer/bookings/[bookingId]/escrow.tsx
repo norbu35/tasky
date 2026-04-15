@@ -1,9 +1,10 @@
-import React from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, ScrollView, Text, View } from 'react-native';
+
 import { Button } from '../../../../components/ui/Button';
 import { elevations } from '../../../../design/elevations';
-import { useTranslation } from 'react-i18next';
 
 type EscrowState = 'shell' | 'confirm' | 'success' | 'error';
 

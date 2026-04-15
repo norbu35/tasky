@@ -1,7 +1,9 @@
-import React, { useMemo, useState } from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { CalendarDays, CircleAlert, CircleDollarSign, MapPin, Sparkles } from 'lucide-react-native';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Image, Pressable, Text, View } from 'react-native';
+
 import {
   normalizeIntakeSchema,
   prettifyIntakeToken,
@@ -9,11 +11,11 @@ import {
   type IntakeAnswerSummaryItem,
   type IntakeSchema,
 } from '@tasky/core';
-import { CalendarDays, CircleAlert, CircleDollarSign, MapPin, Sparkles } from 'lucide-react-native';
+
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { Toast } from '../../../../components/ui/Toast';
-import { useCreateTask } from '../../../../features/tasks/hooks/useCreateTask';
 import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
+import { useCreateTask } from '../../../../features/tasks/hooks/useCreateTask';
 import { parseError } from '../../../../utils/errorHandling';
 
 const { colors } = mobileTheme;
@@ -232,9 +234,7 @@ function PhotosCard({ photos, onEdit }: { photos: string[]; onEdit: () => void }
             key={`empty-${idx}`}
             className="w-32 h-32 rounded-md overflow-hidden items-center justify-center border-2 border-dashed border-chip-inactive bg-card"
           >
-            <Text className="text-heading text-text-secondary leading-[24px]">
-              +
-            </Text>
+            <Text className="text-heading text-text-secondary leading-[24px]">+</Text>
           </View>
         ))}
       </View>

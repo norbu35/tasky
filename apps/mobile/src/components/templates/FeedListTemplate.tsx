@@ -1,17 +1,19 @@
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import { useTranslation } from 'react-i18next';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { screenLayout } from '../../design/screenLayout';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { animationPresets } from '../../design/animations';
+import { screenLayout } from '../../design/screenLayout';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { ScreenContainer } from '../shells/ScreenContainer';
+
 import { EmptyStateTemplate } from './EmptyStateTemplate';
 import { ErrorStateTemplate } from './ErrorStateTemplate';
 
@@ -115,12 +117,13 @@ export function FeedListTemplate<T>({
     );
   }, [isLoadingMore]);
 
-  const combinedHeader = ListHeaderComponent || filterBar ? (
-    <View className="pb-md gap-sm">
-      {ListHeaderComponent}
-      {filterBar}
-    </View>
-  ) : null;
+  const combinedHeader =
+    ListHeaderComponent || filterBar ? (
+      <View className="pb-md gap-sm">
+        {ListHeaderComponent}
+        {filterBar}
+      </View>
+    ) : null;
 
   if (isLoading) {
     return (

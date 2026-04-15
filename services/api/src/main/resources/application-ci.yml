@@ -1,17 +1,17 @@
 # CI profile — used by E2E jobs (e2e-web, e2e-android, e2e-ios)
 # Expects: docker-compose Postgres on localhost:5432, MinIO on localhost:9000
-# Expects: FACEBOOK_TEST_APP_ID and FACEBOOK_TEST_APP_SECRET from GitHub secrets
+# Expects: secrets via environment variables from GitHub Actions
 
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/tasky
-    username: tasky_app
-    password: tasky_app
+    username: ${APP_DB_USER:tasky_app}
+    password: ${APP_DB_PASSWORD:tasky_app}
 
   flyway:
     url: jdbc:postgresql://localhost:5432/tasky
-    user: tasky
-    password: tasky
+    user: ${POSTGRES_USER:tasky}
+    password: ${POSTGRES_PASSWORD:tasky}
 
 tasky:
   dev-auth:
@@ -22,18 +22,18 @@ tasky:
     app-secret: ${FACEBOOK_TEST_APP_SECRET:}
 
   auth:
-    jwt-secret: ci-test-jwt-secret-32-chars-minimum!!
-    encryption-key: MDEyMzQ1Njc4OUFCQ0RFRjAxMjM0NTY3ODlBQkNERUY=
-    blind-index-key: RkVEQ0JBOTg3NjU0MzIxMEZFRENCQTk4NzY1NDMyMTA=
+    jwt-secret: ${TASKY_JWT_SECRET}
+    encryption-key: ${TASKY_ENCRYPTION_KEY}
+    blind-index-key: ${TASKY_BLIND_INDEX_KEY}
 
   qpay:
-    webhook-secret: ci-test-qpay-secret
+    webhook-secret: ${TASKY_QPAY_WEBHOOK_SECRET}
 
   storage:
     endpoint: http://localhost:9000
-    access-key: minioadmin
-    secret-key: minioadmin
-    bucket: tasky-local
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:minioadmin}
+    bucket: ${MINIO_BUCKET:tasky-local}
     upload-ttl-seconds: 900
     download-ttl-seconds: 3600
 

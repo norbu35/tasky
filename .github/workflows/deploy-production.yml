@@ -1,0 +1,185 @@
+name: deploy-production
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Image tag to deploy (SHA or semver). Defaults to latest main.'
+        required: false
+        default: 'latest'
+      skip_backup:
+        description: 'Skip pre-deploy backup (NOT recommended)'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: read
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository }}
+
+jobs:
+  # Gate 1: Run the full release-gate checks
+  release-gate:
+    uses: ./.github/workflows/release-gate.yml
+    with:
+      target_env: production
+    secrets: inherit
+
+  # Gate 2: Verify the image exists and was scanned
+  verify-image:
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.resolve.outputs.tag }}
+    steps:
+      - name: Login to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve image tag
+        id: resolve
+        run: |
+          TAG="${{ github.event.inputs.image_tag }}"
+          if [ "$TAG" = "latest" ]; then
+            TAG="main"
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+          # Verify both images exist
+          docker manifest inspect "${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/api:${TAG}" > /dev/null
+          echo "Backend image verified: ${TAG}"
+
+          docker manifest inspect "${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/web:${TAG}" > /dev/null
+          echo "Web image verified: ${TAG}"
+
+  # Gate 3: Manual approval via GitHub environment protection rules
+  deploy:
+    needs: [release-gate, verify-image]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Deploy to production
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_SSH_PORT || 22 }}
+          script: |
+            set -euo pipefail
+            TAG="${{ needs.verify-image.outputs.image-tag }}"
+
+            cd ${{ secrets.PRODUCTION_DEPLOY_PATH || '~/tasky' }}
+
+            # ---- Pre-deploy backup ----
+            SKIP_BACKUP="${{ github.event.inputs.skip_backup }}"
+            if [ "$SKIP_BACKUP" != "true" ]; then
+              echo "==> Running pre-deploy backup..."
+              ./docker/backup.sh
+            else
+              echo "WARNING: Skipping pre-deploy backup (manual override)"
+            fi
+
+            # ---- Capture rollback state ----
+            PREV_API_IMAGE=$(docker inspect --format='{{.Config.Image}}' tasky-app 2>/dev/null || echo "none")
+            PREV_WEB_IMAGE=$(docker inspect --format='{{.Config.Image}}' tasky-web 2>/dev/null || echo "none")
+            echo "Rollback targets: api=${PREV_API_IMAGE} web=${PREV_WEB_IMAGE}" | tee deploy-rollback.txt
+
+            # ---- Pull new images ----
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            API_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/api:${TAG}"
+            WEB_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/web:${TAG}"
+
+            docker pull "$API_IMAGE"
+            docker pull "$WEB_IMAGE"
+
+            # Tag for compose
+            docker tag "$API_IMAGE" tasky-server:production
+            docker tag "$WEB_IMAGE" tasky-web:production
+
+            # ---- Deploy ----
+            docker compose -f docker-compose.production.yml up -d --no-build --remove-orphans
+
+            # ---- Health verification ----
+            echo "Waiting for backend health..."
+            HEALTHY=false
+            for i in $(seq 1 30); do
+              if curl -sf http://localhost:8080/actuator/health/liveness > /dev/null 2>&1; then
+                echo "Backend healthy after ${i}0s"
+                HEALTHY=true
+                break
+              fi
+              sleep 10
+            done
+
+            if [ "$HEALTHY" != "true" ]; then
+              echo "ERROR: Backend failed health check — initiating rollback"
+              if [ "$PREV_API_IMAGE" != "none" ]; then
+                docker tag "$PREV_API_IMAGE" tasky-server:production
+                docker tag "$PREV_WEB_IMAGE" tasky-web:production
+                docker compose -f docker-compose.production.yml up -d --no-build
+                echo "Rollback completed"
+              fi
+              exit 1
+            fi
+
+  post-deploy-smoke:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Production smoke tests
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_SSH_PORT || 22 }}
+          script: |
+            set -euo pipefail
+
+            echo "=== Production Smoke Tests ==="
+
+            # Health + readiness
+            curl -sf http://localhost:8080/actuator/health | jq .status
+            curl -sf http://localhost:8080/actuator/health/readiness | jq .status
+
+            # API version
+            curl -sf http://localhost:8080/api/v1/system/version | jq .
+
+            # Verify dev-auth is DISABLED
+            DEV_AUTH_STATUS=$(curl -so /dev/null -w '%{http_code}' -X POST http://localhost:8080/api/v1/auth/dev/login 2>/dev/null || echo "000")
+            if [ "$DEV_AUTH_STATUS" = "404" ] || [ "$DEV_AUTH_STATUS" = "403" ]; then
+              echo "Dev-auth correctly disabled: $DEV_AUTH_STATUS"
+            else
+              echo "CRITICAL: Dev-auth may be enabled! Status: $DEV_AUTH_STATUS"
+              exit 1
+            fi
+
+            # Prometheus metrics available
+            curl -sf http://localhost:8080/actuator/prometheus > /dev/null
+            echo "Prometheus: OK"
+
+            # Web frontend
+            HTTP_STATUS=$(curl -so /dev/null -w '%{http_code}' http://localhost:80/ 2>/dev/null || echo "000")
+            if [ "$HTTP_STATUS" = "200" ] || [ "$HTTP_STATUS" = "304" ]; then
+              echo "Web frontend: OK"
+            else
+              echo "WARNING: Web frontend returned $HTTP_STATUS"
+            fi
+
+            echo "=== All production smoke tests passed ==="
+            echo "Deploy timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
