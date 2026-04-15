@@ -7,15 +7,15 @@
 ## 1. Market Size & Category Breakdown
 
 | Category     | Listings | % of Total | Daily Rate (last 30d) |
-|--------------|----------|------------|-----------------------|
-| Construction | 600*     | 25.3%      | 16.7/day              |
-| Painting     | 600*     | 25.3%      | 8.9/day               |
+| ------------ | -------- | ---------- | --------------------- |
+| Construction | 600\*    | 25.3%      | 16.7/day              |
+| Painting     | 600\*    | 25.3%      | 8.9/day               |
 | Moving       | 513      | 21.6%      | 7.8/day               |
 | Plumbing     | 398      | 16.8%      | 5.9/day               |
 | Cleaning     | 147      | 6.2%       | 1.8/day               |
 | Electrical   | 116      | 4.9%       | 1.6/day               |
 
-*\*Hit 600-listing scraper cap -- actual supply is larger.*
+_\*Hit 600-listing scraper cap -- actual supply is larger._
 
 Overall velocity: **~43 listings/day** (last 30 days), spiking to **~143/day** in the last week of February, signaling
 the start of spring renovation season.
@@ -33,7 +33,7 @@ accounted for 47% of all scraped listings.
 **UB district distribution** (with caveats):
 
 | District         | %     | Notes                                                                                                           |
-|------------------|-------|-----------------------------------------------------------------------------------------------------------------|
+| ---------------- | ----- | --------------------------------------------------------------------------------------------------------------- |
 | Sukhbaatar       | 62.9% | Heavily inflated -- 43% of all listings use a single Sukhbaatar Khoroo 1 address (likely a default/placeholder) |
 | Bayanzurkh       | 10.5% |                                                                                                                 |
 | Bayangol         | 7.5%  |                                                                                                                 |
@@ -54,7 +54,7 @@ proper location-based matching.
 ### Price transparency is poor
 
 | Pricing Type                    | % of Listings |
-|---------------------------------|---------------|
+| ------------------------------- | ------------- |
 | "Negotiable" (Үнэ тохирно)      | 51.3%         |
 | Numeric price                   | 48.7%         |
 | Of numeric: placeholder (1 MNT) | 10.3%         |
@@ -64,7 +64,7 @@ Over **60%** of listings effectively hide their price. This is a massive pain po
 ### Actual prices by category (cleaned, >= 1,000 MNT)
 
 | Category     | Median Price | Mean Price | Range       |
-|--------------|--------------|------------|-------------|
+| ------------ | ------------ | ---------- | ----------- |
 | Cleaning     | 4,000 ₮      | 43,006 ₮   | 1K - 850K   |
 | Painting     | 15,000 ₮     | 52,728 ₮   | 1K - 899K   |
 | Electrical   | 30,000 ₮     | 53,163 ₮   | 1K - 300K   |
@@ -92,7 +92,7 @@ per-sqm rate, flat fee with scope) would be a major differentiator.
 ### Category-level concentration
 
 | Category     | Top 5 Seller Share | Fragmentation                                  |
-|--------------|--------------------|------------------------------------------------|
+| ------------ | ------------------ | ---------------------------------------------- |
 | Plumbing     | 61.3%              | Highly concentrated (1 seller = 33% of market) |
 | Construction | 33.5%              | Moderately concentrated                        |
 | Painting     | 15.5%              | Moderate                                       |
@@ -127,7 +127,7 @@ plumbing is the most monopolized (hardest to disrupt but highest switching poten
 ### Listing tier (paid promotion)
 
 | Tier           | %     | Median Views | Effect             |
-|----------------|-------|--------------|--------------------|
+| -------------- | ----- | ------------ | ------------------ |
 | Regular (free) | 92.3% | 5            | Baseline           |
 | Top (paid)     | 6.1%  | 26           | **5x** more views  |
 | VIP (paid)     | 1.6%  | 117          | **23x** more views |
@@ -138,7 +138,7 @@ must pay for visibility, which means unegui.mn is primarily monetizing supply-si
 ### Content quality is low
 
 | Metric                     | Value         |
-|----------------------------|---------------|
+| -------------------------- | ------------- |
 | Median description length  | 52 characters |
 | Median images              | 2             |
 | Listings with 1 image only | 42.6%         |
@@ -163,7 +163,7 @@ structured service listings, and review systems would provide a vastly better co
 ## 6. Demand Signals (Views)
 
 | Metric          | Value       |
-|-----------------|-------------|
+| --------------- | ----------- |
 | Median views    | 5           |
 | Mean views      | 38          |
 | 96% of listings | < 100 views |
@@ -206,7 +206,7 @@ need supply elasticity strategies for peak season.
 **Language:** ~15-20% of listings use romanized Mongolian (Latin script) instead of Cyrillic. This is notable for
 search/matching -- Tasky would need to handle both scripts.
 
-**Title patterns:** Sellers describe what they *do* rather than what they *are*. Titles are action-oriented ("will do
+**Title patterns:** Sellers describe what they _do_ rather than what they _are_. Titles are action-oriented ("will do
 X") rather than identity-oriented ("professional X service"). This reflects the informal, gig-economy nature of the
 market.
 
