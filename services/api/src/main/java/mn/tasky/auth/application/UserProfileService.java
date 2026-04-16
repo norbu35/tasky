@@ -187,12 +187,10 @@ public class UserProfileService {
         profileDao.updateStats(userId, newRating, newCompleted);
     }
 
-    /**
-     * Returns effective status for a user id if id format and user are valid.
-     *
-     * @param userId User identifier.
-     * @return Effective status when user exists and id is valid UUID; otherwise empty.
-     */
+    @org.springframework.cache.annotation.Cacheable(
+            value = mn.tasky.common.config.CacheConfig.USER_STATUS_CACHE,
+            key = "#userId",
+            unless = "#result.isEmpty()")
     public Optional<String> currentUserStatus(String userId) {
         try {
             UUID.fromString(userId);
@@ -284,7 +282,7 @@ public class UserProfileService {
 
     private AuthSession issueSession(AuthUser user) {
         String effectiveStatus = userStatusResolver.resolve(user.id(), user.status());
-        JwtPrincipal principal = new JwtPrincipal(user.id(), user.role(), effectiveStatus);
+        JwtPrincipal principal = new JwtPrincipal(user.id(), user.role(), effectiveStatus, null);
         String accessToken = jwtTokenService.issueAccessToken(principal);
         mn.tasky.common.security.dto.RefreshToken refreshToken = jwtTokenService.issueRefreshToken(user.id());
 

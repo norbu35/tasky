@@ -1,7 +1,10 @@
 package mn.tasky.auth.application;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.auth.dao.ModerationPolicyDao;
@@ -27,6 +30,7 @@ public class ModerationService {
     private final UserDao userDao;
     private final AuditEventDao auditEventDao;
     private final UserStatusResolver userStatusResolver;
+    private final ObjectMapper objectMapper;
 
     public ModerationService(
             StrikeDao strikeDao,
@@ -34,13 +38,15 @@ public class ModerationService {
             ModerationPolicyDao moderationPolicyDao,
             UserDao userDao,
             AuditEventDao auditEventDao,
-            UserStatusResolver userStatusResolver) {
+            UserStatusResolver userStatusResolver,
+            ObjectMapper objectMapper) {
         this.strikeDao = strikeDao;
         this.suspensionEventDao = suspensionEventDao;
         this.moderationPolicyDao = moderationPolicyDao;
         this.userDao = userDao;
         this.auditEventDao = auditEventDao;
         this.userStatusResolver = userStatusResolver;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -92,14 +98,6 @@ public class ModerationService {
         addStrike(userId);
     }
 
-    /**
-     * Bans a user and writes an admin audit log entry.
-     *
-     * @param adminId Admin identifier.
-     * @param userId  Target user identifier.
-     * @param reason  Ban reason.
-     * @return {@code true} when user exists and was updated.
-     */
     public boolean banUser(String adminId, String userId, String reason) {
         Optional<AuthUser> userOpt = userDao.findById(userId);
         if (userOpt.isEmpty()) {
@@ -107,18 +105,15 @@ public class ModerationService {
         }
 
         userDao.updateStatusAndSuspensionEnd(userId, "BANNED", null);
-        auditEventDao.insert(adminId, "BAN_USER", "USER", userId, "{\"reason\":\"" + reason + "\"}");
+        try {
+            auditEventDao.insert(
+                    adminId, "BAN_USER", "USER", userId, objectMapper.writeValueAsString(Map.of("reason", reason)));
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Failed to serialize audit metadata", e);
+        }
         return true;
     }
 
-    /**
-     * Removes ban/suspension status from a user and writes an admin audit log entry.
-     *
-     * @param adminId Admin identifier.
-     * @param userId  Target user identifier.
-     * @param reason  Unban reason.
-     * @return {@code true} when user exists and was updated.
-     */
     public boolean unbanUser(String adminId, String userId, String reason) {
         Optional<AuthUser> userOpt = userDao.findById(userId);
         if (userOpt.isEmpty()) {
@@ -126,7 +121,12 @@ public class ModerationService {
         }
 
         userDao.updateStatusAndSuspensionEnd(userId, "ACTIVE", null);
-        auditEventDao.insert(adminId, "UNBAN_USER", "USER", userId, "{\"reason\":\"" + reason + "\"}");
+        try {
+            auditEventDao.insert(
+                    adminId, "UNBAN_USER", "USER", userId, objectMapper.writeValueAsString(Map.of("reason", reason)));
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Failed to serialize audit metadata", e);
+        }
         return true;
     }
 

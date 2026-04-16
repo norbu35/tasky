@@ -344,7 +344,7 @@ public class AuthService {
 
     private AuthSession issueSession(AuthUser user) {
         String effectiveStatus = userStatusResolver.resolve(user.id(), user.status());
-        JwtPrincipal principal = new JwtPrincipal(user.id(), user.role(), effectiveStatus);
+        JwtPrincipal principal = new JwtPrincipal(user.id(), user.role(), effectiveStatus, null);
         String accessToken = jwtTokenService.issueAccessToken(principal);
         RefreshToken refreshToken = jwtTokenService.issueRefreshToken(user.id());
 
