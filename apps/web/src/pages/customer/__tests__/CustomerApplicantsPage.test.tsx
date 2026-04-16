@@ -113,5 +113,4 @@ describe('CustomerApplicantsPage', () => {
     await user.click(screen.getByRole('button', { name: 'View profile' }));
     expect(await screen.findByText('Profile route reached')).toBeInTheDocument();
   });
-
 });

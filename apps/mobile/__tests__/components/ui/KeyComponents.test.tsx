@@ -53,4 +53,3 @@ describe('InfoRow', () => {
     expect(screen.getByText('Custom Value')).toBeTruthy();
   });
 });
-

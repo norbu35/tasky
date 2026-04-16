@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, within } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react-native';
 import { FilterBar } from '../../../src/components/ui/FilterBar';
 
 const filters = [

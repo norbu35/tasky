@@ -129,5 +129,4 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
     render(<SplashScreen />);
     expectRedirectHref('/(auth)');
   });
-
 });

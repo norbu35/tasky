@@ -269,8 +269,8 @@ export function CustomerTaskPage() {
                       'Auto-generated from your answers above',
                     )}
                   />
-                  {errorMap.description && (
-                    <p className="text-xs text-destructive">{errorMap.description}</p>
+                  {errorMap['description'] && (
+                    <p className="text-xs text-destructive">{errorMap['description']}</p>
                   )}
                 </div>
               </>
@@ -288,8 +288,8 @@ export function CustomerTaskPage() {
                     '1-bedroom apartment deep cleaning',
                   )}
                 />
-                {errorMap.description && (
-                  <p className="text-xs text-destructive">{errorMap.description}</p>
+                {errorMap['description'] && (
+                  <p className="text-xs text-destructive">{errorMap['description']}</p>
                 )}
               </div>
             )}
@@ -303,7 +303,9 @@ export function CustomerTaskPage() {
                   value={budget}
                   onChange={(event) => setBudget(event.target.value)}
                 />
-                {errorMap.budget && <p className="text-xs text-destructive">{errorMap.budget}</p>}
+                {errorMap['budget'] && (
+                  <p className="text-xs text-destructive">{errorMap['budget']}</p>
+                )}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="task-scheduled-at">
@@ -315,8 +317,8 @@ export function CustomerTaskPage() {
                   value={scheduledAt}
                   onChange={(event) => setScheduledAt(event.target.value)}
                 />
-                {errorMap.scheduled_at && (
-                  <p className="text-xs text-destructive">{errorMap.scheduled_at}</p>
+                {errorMap['scheduled_at'] && (
+                  <p className="text-xs text-destructive">{errorMap['scheduled_at']}</p>
                 )}
               </div>
             </div>
@@ -336,8 +338,8 @@ export function CustomerTaskPage() {
                   'ХУД, 15-р хороо, Олимп хотхон',
                 )}
               />
-              {errorMap.location_text && (
-                <p className="text-xs text-destructive">{errorMap.location_text}</p>
+              {errorMap['location_text'] && (
+                <p className="text-xs text-destructive">{errorMap['location_text']}</p>
               )}
             </div>
 
@@ -349,7 +351,7 @@ export function CustomerTaskPage() {
                 setLocationLng(lng);
               }}
             />
-            {errorMap.location_lat && (
+            {errorMap['location_lat'] && (
               <p className="text-xs text-destructive">
                 {t('customerTask.locationRequired', 'Location is required')}
               </p>

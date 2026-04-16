@@ -294,5 +294,4 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
       ),
     ).toBeTruthy();
   });
-
 });

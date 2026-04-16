@@ -331,13 +331,13 @@ export default function HelpScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const params = useLocalSearchParams();
-  const [state, setState] = useState<ScreenState>(() => resolveState(params.state));
+  const [state, setState] = useState<ScreenState>(() => resolveState(params['state']));
   const [query, setQuery] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    setState(resolveState(params.state));
-  }, [params.state]);
+    setState(resolveState(params['state']));
+  }, [params['state']]);
 
   const sections = useMemo(() => buildFaqSections(t), [t]);
   const visibleSections = useMemo(() => filterSections(sections, query), [sections, query]);

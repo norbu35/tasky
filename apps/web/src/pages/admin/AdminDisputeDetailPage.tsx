@@ -123,9 +123,9 @@ export function AdminDisputeDetailPage() {
 
   const dispute = detail.dispute as unknown as Dispute;
   const booking = detail.booking as Record<string, unknown>;
-  const task = booking.task as Record<string, unknown> | undefined;
-  const customer = booking.customer as Record<string, unknown> | undefined;
-  const tasker = booking.tasker as Record<string, unknown> | undefined;
+  const task = booking['task'] as Record<string, unknown> | undefined;
+  const customer = booking['customer'] as Record<string, unknown> | undefined;
+  const tasker = booking['tasker'] as Record<string, unknown> | undefined;
   const evidenceMessages = detail.evidence_messages as Array<{
     id: string;
     sender_id: string;
@@ -174,36 +174,36 @@ export function AdminDisputeDetailPage() {
             <>
               <p>
                 <strong>{t('admin.disputeDetail.taskDescription', 'Task')}:</strong>{' '}
-                {String(task.description ?? '')}
+                {String(task['description'] ?? '')}
               </p>
               <p>
                 <strong>{t('admin.disputeDetail.budget', 'Budget')}:</strong>{' '}
-                {Number(task.budget ?? booking.price ?? 0).toLocaleString()}
+                {Number(task['budget'] ?? booking['price'] ?? 0).toLocaleString()}
               </p>
-              {task.scheduled_at && (
+              {task['scheduled_at'] && (
                 <p>
                   <strong>{t('admin.disputeDetail.schedule', 'Schedule')}:</strong>{' '}
-                  {new Date(String(task.scheduled_at)).toLocaleString()}
+                  {new Date(String(task['scheduled_at'])).toLocaleString()}
                 </p>
               )}
             </>
           )}
-          {!task && booking.price !== undefined && (
+          {!task && booking['price'] !== undefined && (
             <p>
               <strong>{t('admin.disputeDetail.budget', 'Budget')}:</strong>{' '}
-              {Number(booking.price).toLocaleString()}
+              {Number(booking['price']).toLocaleString()}
             </p>
           )}
           {customer && (
             <p>
               <strong>{t('admin.disputeDetail.customer', 'Customer')}:</strong>{' '}
-              {String(customer.full_name ?? t('common.unknown', 'Unknown'))}
+              {String(customer['full_name'] ?? t('common.unknown', 'Unknown'))}
             </p>
           )}
           {tasker && (
             <p>
               <strong>{t('admin.disputeDetail.tasker', 'Tasker')}:</strong>{' '}
-              {String(tasker.full_name ?? t('common.unknown', 'Unknown'))}
+              {String(tasker['full_name'] ?? t('common.unknown', 'Unknown'))}
             </p>
           )}
         </CardContent>

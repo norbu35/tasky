@@ -7,7 +7,7 @@ import { elevations } from '../../design/elevations';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
-const { radius, spacing } = mobileTheme;
+const { spacing } = mobileTheme;
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 interface SplitCardProps {

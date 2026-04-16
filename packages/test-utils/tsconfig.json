@@ -1,5 +1,5 @@
 {
-  "extends": "@tasky/tooling-config/tsconfig/react",
+  "extends": ["@tasky/tooling-config/tsconfig/react", "@tasky/tooling-config/tsconfig/strict"],
   "compilerOptions": {
     "types": ["vitest/globals", "node"]
   },

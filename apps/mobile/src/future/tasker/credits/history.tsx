@@ -25,7 +25,7 @@ function resolveState(value: string | string[] | undefined): RouteState {
 export default function TaskerCreditsHistoryScreen() {
   const { t } = useTranslation();
   const params = useLocalSearchParams();
-  const state = resolveState(params.state);
+  const state = resolveState(params['state']);
 
   const transactions: Transaction[] = [
     {

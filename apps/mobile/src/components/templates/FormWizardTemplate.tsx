@@ -18,7 +18,7 @@ import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 import { Button } from '../ui/Button';
 import { ScreenHeader } from '../ui/ScreenHeader';
 
-const { colors, spacing, radius } = mobileTheme;
+const { colors, radius } = mobileTheme;
 
 const BAR_HEIGHT = 6;
 

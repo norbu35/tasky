@@ -20,8 +20,8 @@ describe('NativeWind configuration', () => {
     const globalCssSource = readFileSync(resolve(process.cwd(), 'global.css'), 'utf8');
     const nativewindEnvSource = readFileSync(resolve(process.cwd(), 'nativewind-env.d.ts'), 'utf8');
 
-    expect(packageJson.dependencies?.nativewind).toBeDefined();
-    expect(packageJson.devDependencies?.tailwindcss).toBeDefined();
+    expect(packageJson.dependencies?.['nativewind']).toBeDefined();
+    expect(packageJson.devDependencies?.['tailwindcss']).toBeDefined();
     expect(packageJson.dependencies?.['expo-font']).toBeDefined();
     expect(babelSource).toContain('jsxImportSource');
     expect(babelSource).toContain('nativewind');

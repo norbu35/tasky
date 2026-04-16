@@ -63,8 +63,8 @@ function FacebookIcon({ className }: { className?: string }) {
 
 export function AuthPage() {
   const contractLoaded: boolean = typeof ({} as paths) === 'object';
-  const devAuthEnabled = import.meta.env.VITE_DEV_AUTH_ENABLED === 'true';
-  const facebookAppId = import.meta.env.VITE_FACEBOOK_APP_ID;
+  const devAuthEnabled = import.meta.env['VITE_DEV_AUTH_ENABLED'] === 'true';
+  const facebookAppId = import.meta.env['VITE_FACEBOOK_APP_ID'];
 
   const { apiClient, session, setSession, setProfile, refreshProfile } = useAppContext();
   const navigate = useNavigate();
@@ -154,7 +154,7 @@ export function AuthPage() {
 
   useEffect(() => {
     const apiBase =
-      (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ?? '';
+      (import.meta.env['VITE_API_BASE_URL'] as string | undefined)?.replace(/\/$/, '') ?? '';
     const check = async () => {
       try {
         const res = await fetch(`${apiBase}/api/v1/auth/facebook/status`);

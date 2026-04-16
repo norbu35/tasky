@@ -26,7 +26,7 @@ export default function LoginScreen() {
   const devLogin = useDevLogin();
   const runtimeEnv = typeof process !== 'undefined' ? process.env : undefined;
 
-  const devAuthEnabled = runtimeEnv?.EXPO_PUBLIC_DEV_AUTH_ENABLED === 'true';
+  const devAuthEnabled = runtimeEnv?.['EXPO_PUBLIC_DEV_AUTH_ENABLED'] === 'true';
   const isFacebookLoading = state === 'facebook_loading';
   const busy = devLogin.isPending;
 

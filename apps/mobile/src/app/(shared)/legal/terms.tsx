@@ -215,11 +215,11 @@ function TermsContent() {
 export default function TermsScreen() {
   const { t } = useTranslation();
   const params = useLocalSearchParams();
-  const [state, setState] = useState<ScreenState>(() => resolveState(params.state));
+  const [state, setState] = useState<ScreenState>(() => resolveState(params['state']));
 
   useEffect(() => {
-    setState(resolveState(params.state));
-  }, [params.state]);
+    setState(resolveState(params['state']));
+  }, [params['state']]);
 
   return (
     <ScreenContainer testID="SCR-INFRA-004">

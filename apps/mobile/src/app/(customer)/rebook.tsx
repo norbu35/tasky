@@ -7,11 +7,8 @@ import { FormWizardTemplate } from '../../components/templates/FormWizardTemplat
 import { Input } from '../../components/ui/Input';
 import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
 import { elevations } from '../../design/elevations';
-import { mobileTheme } from '../../design/tokenAdapter';
 import { useCreateBookingIntent } from '../../features/bookings/hooks/useCreateBookingIntent';
 import { useCreateTask } from '../../features/tasks/hooks/useCreateTask';
-
-const { colors } = mobileTheme;
 
 function formatDateTime(value: Date): string {
   const y = value.getFullYear();

@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import importPlugin from 'eslint-plugin-import-x';
+import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
 import unusedImports from 'eslint-plugin-unused-imports';
 import security from 'eslint-plugin-security';
 import noSecrets from 'eslint-plugin-no-secrets';
@@ -15,6 +16,9 @@ export default [
       'unused-imports': unusedImports,
       security,
       'no-secrets': noSecrets,
+    },
+    settings: {
+      'import-x/resolver-next': [createTypeScriptImportResolver({ alwaysTryTypes: true })],
     },
     rules: {
       // Import sorting

@@ -26,20 +26,17 @@ export default function TaskerStatsScreen() {
   const { data, isLoading, isError, refetch } = useMyStats();
 
   const rawStats = (data ?? {}) as Record<string, unknown>;
-  const jobsCompleted = readNumber(rawStats.jobs_completed);
-  const averageRating = readNumber(rawStats.average_rating);
-  const responseTimeMinutes = readNumber(rawStats.response_time_minutes);
-  const reliabilityScore = readNumber(rawStats.reliability_score);
-  const completionRate = readNumber(rawStats.completion_rate);
-  const applicationSuccessRate = readNumber(rawStats.application_success_rate) ?? completionRate;
-  const unlockConversionRate =
-    readNumber(rawStats.unlock_conversion_rate) ?? applicationSuccessRate;
-  const cancellations30d = readNumber(rawStats.cancellations_30d) ?? 0;
-  const ratingBreakdown = (rawStats.rating_breakdown ?? {}) as Record<string, unknown>;
-  const taskClarity = readNumber(ratingBreakdown.task_clarity);
-  const respectfulness = readNumber(ratingBreakdown.respectfulness);
-  const punctuality = readNumber(ratingBreakdown.punctuality);
-  const isPro = Boolean(rawStats.is_pro);
+  const jobsCompleted = readNumber(rawStats['jobs_completed']);
+  const averageRating = readNumber(rawStats['average_rating']);
+  const responseTimeMinutes = readNumber(rawStats['response_time_minutes']);
+  const reliabilityScore = readNumber(rawStats['reliability_score']);
+  const completionRate = readNumber(rawStats['completion_rate']);
+  const cancellations30d = readNumber(rawStats['cancellations_30d']) ?? 0;
+  const ratingBreakdown = (rawStats['rating_breakdown'] ?? {}) as Record<string, unknown>;
+  const taskClarity = readNumber(ratingBreakdown['task_clarity']);
+  const respectfulness = readNumber(ratingBreakdown['respectfulness']);
+  const punctuality = readNumber(ratingBreakdown['punctuality']);
+  const isPro = Boolean(rawStats['is_pro']);
 
   return (
     <DetailTemplate testID="SCR-TASK-016" isLoading={isLoading} isError={isError} onRetry={refetch}>

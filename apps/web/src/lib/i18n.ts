@@ -20,7 +20,7 @@ const normalizeLanguage = (language: string | undefined): 'en' | 'mn' => {
 };
 
 const fallbackLanguage = normalizeLanguage(
-  import.meta.env.VITE_DEFAULT_LOCALE as string | undefined,
+  import.meta.env['VITE_DEFAULT_LOCALE'] as string | undefined,
 );
 
 i18n

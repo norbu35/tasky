@@ -26,9 +26,6 @@ export default function BookingDetailTaskerScreen() {
   const isAssigned = bookingStatus === 'ASSIGNED';
   const isMarkedDone = bookingStatus === 'TASKER_MARKED_DONE';
   const isCompleted = bookingStatus === 'COMPLETED';
-  const _isCancelled = bookingStatus === 'CANCELLED';
-  const _isNoShow = bookingStatus === 'NO_SHOW';
-
   const handleMarkDone = useCallback(() => {
     if (!bookingId) return;
     markDone.mutate({

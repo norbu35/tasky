@@ -65,13 +65,6 @@ export default function BookingConfirmedScreen() {
     router.push(bookingId ? `/inbox/${bookingId}` : '/inbox');
   }, [bookingId, router]);
 
-  const handleCalendar = React.useCallback(() => {
-    const url = Platform.OS === 'ios' ? 'calshow:0' : 'content://com.android.calendar/time';
-    void Linking.openURL(url).catch(() => {
-      // Ignore platform-specific failures; the CTA is conditional.
-    });
-  }, []);
-
   return (
     <ScreenContainer testID="SCR-CUST-015">
       <View className="flex-row items-center justify-between px-lg pt-sm pb-md">

@@ -8,7 +8,6 @@ import {
   resetStores,
   setAuthenticated,
   setBannedUser,
-  setSuspendedUser,
 } from './fixtures';
 import { useRouteGuard } from '../../src/hooks/useRouteGuard';
 import { isRestricted } from '../../src/utils/routeGuard';

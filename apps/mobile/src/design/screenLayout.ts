@@ -2,7 +2,7 @@ import { Platform } from 'react-native';
 
 import { mobileTheme } from './tokenAdapter';
 
-const { spacing, typography } = mobileTheme;
+const { spacing } = mobileTheme;
 
 export const screenLayout = {
   /** Horizontal padding for all screen content */

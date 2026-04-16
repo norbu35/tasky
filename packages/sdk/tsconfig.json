@@ -1,8 +1,10 @@
 {
-  "extends": "@tasky/tooling-config/tsconfig/base",
+  "extends": "@tasky/tooling-config/tsconfig/strict",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "declaration": true,
+    "composite": true
   },
   "include": ["src/**/*.ts"]
 }

@@ -266,10 +266,10 @@ export function buildBaseUrl(): string {
   }
   const runtimeEnv = typeof process !== 'undefined' ? process.env : undefined;
   if (
-    typeof runtimeEnv?.EXPO_PUBLIC_API_BASE_URL === 'string' &&
-    runtimeEnv.EXPO_PUBLIC_API_BASE_URL.trim().length > 0
+    typeof runtimeEnv?.['EXPO_PUBLIC_API_BASE_URL'] === 'string' &&
+    runtimeEnv['EXPO_PUBLIC_API_BASE_URL'].trim().length > 0
   ) {
-    return normalizeBaseUrl(runtimeEnv.EXPO_PUBLIC_API_BASE_URL);
+    return normalizeBaseUrl(runtimeEnv['EXPO_PUBLIC_API_BASE_URL']);
   }
   return normalizeBaseUrl(resolveDefaultLocalApiBaseUrl(Platform.OS));
 }

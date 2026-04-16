@@ -69,7 +69,7 @@ beforeEach(() => {
 
 describe('LoginScreen (SCR-SHARED-002)', () => {
   it('uses the seeded customer persona for dev quick login', () => {
-    process.env.EXPO_PUBLIC_DEV_AUTH_ENABLED = 'true';
+    process.env['EXPO_PUBLIC_DEV_AUTH_ENABLED'] = 'true';
 
     render(<LoginScreen />);
     fireEvent.press(screen.getByTestId('dev-login-customer'));
@@ -81,7 +81,7 @@ describe('LoginScreen (SCR-SHARED-002)', () => {
   });
 
   it('uses the seeded tasker persona for dev quick login', () => {
-    process.env.EXPO_PUBLIC_DEV_AUTH_ENABLED = 'true';
+    process.env['EXPO_PUBLIC_DEV_AUTH_ENABLED'] = 'true';
 
     render(<LoginScreen />);
     fireEvent.press(screen.getByTestId('dev-login-tasker'));
@@ -135,5 +135,4 @@ describe('LoginScreen (SCR-SHARED-002)', () => {
     expect(screen.getByText('Нууцлалын бодлого')).toBeTruthy();
     expect(screen.getByText('© 2026 Tasky. Бүх эрх хуулиар хамгаалагдсан.')).toBeTruthy();
   });
-
 });

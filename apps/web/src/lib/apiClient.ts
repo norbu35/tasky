@@ -193,7 +193,7 @@ function inferRuntimeOrigin(): string | null {
 }
 
 function buildBaseUrl(): string {
-  const configured = import.meta.env.VITE_API_BASE_URL;
+  const configured = import.meta.env['VITE_API_BASE_URL'];
   const rawBaseUrl =
     typeof configured === 'string' && configured.trim().length > 0
       ? configured

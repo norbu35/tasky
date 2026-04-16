@@ -20,7 +20,7 @@ export default function TaskerCreditsPayScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const params = useLocalSearchParams();
-  const state = resolveState(params.state);
+  const state = resolveState(params['state']);
 
   if (state === 'error') {
     return (

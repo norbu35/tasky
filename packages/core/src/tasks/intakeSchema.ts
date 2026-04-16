@@ -129,7 +129,7 @@ function normalizeOption(option: unknown): IntakeFieldOption | null {
     return null;
   }
 
-  const value = coerceString(record.value);
+  const value = coerceString(record['value']);
   if (!value) {
     return null;
   }
@@ -137,8 +137,8 @@ function normalizeOption(option: unknown): IntakeFieldOption | null {
   const fallbackLabel = prettifyIntakeToken(value);
   return {
     value,
-    label: coerceString(record.label, record.label_mn) ?? fallbackLabel,
-    label_mn: coerceString(record.label_mn, record.label) ?? fallbackLabel,
+    label: coerceString(record['label'], record['label_mn']) ?? fallbackLabel,
+    label_mn: coerceString(record['label_mn'], record['label']) ?? fallbackLabel,
   };
 }
 
@@ -148,15 +148,15 @@ function normalizeField(field: unknown): IntakeField | null {
     return null;
   }
 
-  const name = coerceString(record.name, record.key);
+  const name = coerceString(record['name'], record['key']);
   if (!name) {
     return null;
   }
 
-  const key = coerceString(record.key, record.name) ?? name;
+  const key = coerceString(record['key'], record['name']) ?? name;
   const fallbackLabel = prettifyIntakeToken(name);
-  const options = Array.isArray(record.options)
-    ? record.options
+  const options = Array.isArray(record['options'])
+    ? record['options']
         .map((option) => normalizeOption(option))
         .filter((option): option is IntakeFieldOption => option !== null)
     : undefined;
@@ -164,28 +164,28 @@ function normalizeField(field: unknown): IntakeField | null {
   const normalizedField: IntakeField = {
     name,
     key,
-    label: coerceString(record.label, record.label_mn) ?? fallbackLabel,
-    label_mn: coerceString(record.label_mn, record.label) ?? fallbackLabel,
-    type: normalizeFieldType(record.type),
-    required: Boolean(record.required),
+    label: coerceString(record['label'], record['label_mn']) ?? fallbackLabel,
+    label_mn: coerceString(record['label_mn'], record['label']) ?? fallbackLabel,
+    type: normalizeFieldType(record['type']),
+    required: Boolean(record['required']),
   };
 
   if (options && options.length > 0) {
     normalizedField.options = options;
   }
-  const min = coerceNumber(record.min);
+  const min = coerceNumber(record['min']);
   if (min !== undefined) {
     normalizedField.min = min;
   }
-  const max = coerceNumber(record.max);
+  const max = coerceNumber(record['max']);
   if (max !== undefined) {
     normalizedField.max = max;
   }
-  const min_length = coerceNumber(record.min_length);
+  const min_length = coerceNumber(record['min_length']);
   if (min_length !== undefined) {
     normalizedField.min_length = min_length;
   }
-  const max_length = coerceNumber(record.max_length);
+  const max_length = coerceNumber(record['max_length']);
   if (max_length !== undefined) {
     normalizedField.max_length = max_length;
   }

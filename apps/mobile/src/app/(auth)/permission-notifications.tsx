@@ -15,7 +15,6 @@ export default function PermissionNotificationsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const completeOnboarding = useAppStore((state) => state.completeOnboarding);
-  const currentRole = useAppStore((state) => state.currentRole);
 
   const [isDenied, setIsDenied] = React.useState(false);
 

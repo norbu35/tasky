@@ -10,8 +10,6 @@ import { Button } from '../ui/Button';
 
 import { ErrorStateTemplate } from './ErrorStateTemplate';
 
-const { colors } = mobileTheme;
-
 export interface DetailTemplateProps {
   children: React.ReactNode;
   ctaLabel?: string;

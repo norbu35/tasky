@@ -5,7 +5,7 @@ import {
 
 describe('mobileApiClient boundary wiring', () => {
   const runtimeEnv = typeof process !== 'undefined' ? process.env : undefined;
-  const originalApiBaseUrl = runtimeEnv?.EXPO_PUBLIC_API_BASE_URL;
+  const originalApiBaseUrl = runtimeEnv?.['EXPO_PUBLIC_API_BASE_URL'];
 
   afterEach(() => {
     jest.restoreAllMocks();
@@ -13,9 +13,9 @@ describe('mobileApiClient boundary wiring', () => {
       return;
     }
     if (originalApiBaseUrl === undefined) {
-      delete runtimeEnv.EXPO_PUBLIC_API_BASE_URL;
+      delete runtimeEnv['EXPO_PUBLIC_API_BASE_URL'];
     } else {
-      runtimeEnv.EXPO_PUBLIC_API_BASE_URL = originalApiBaseUrl;
+      runtimeEnv['EXPO_PUBLIC_API_BASE_URL'] = originalApiBaseUrl;
     }
   });
 
@@ -113,7 +113,7 @@ describe('mobileApiClient boundary wiring', () => {
     if (!runtimeEnv) {
       throw new Error('runtime env is not available in this Jest environment');
     }
-    runtimeEnv.EXPO_PUBLIC_API_BASE_URL = 'http://127.0.0.1:8080';
+    runtimeEnv['EXPO_PUBLIC_API_BASE_URL'] = 'http://127.0.0.1:8080';
 
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
