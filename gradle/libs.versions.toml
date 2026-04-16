@@ -16,6 +16,8 @@ firebase-admin = "9.4.2"
 logstash-logback = "8.0"
 jsoup = "1.18.3"
 shedlock = "7.7.0"
+bucket4j = "8.10.1"
+caffeine = "3.2.0"
 archunit = "1.4.1"
 swagger-validator = "2.46.1"
 checkstyle = "10.21.2"
@@ -39,6 +41,12 @@ jdbi-spring5 = { module = "org.jdbi:jdbi3-spring5", version.ref = "jdbi" }
 # ShedLock
 shedlock-spring = { module = "net.javacrumbs.shedlock:shedlock-spring", version.ref = "shedlock" }
 shedlock-jdbc = { module = "net.javacrumbs.shedlock:shedlock-provider-jdbc-template", version.ref = "shedlock" }
+
+# Rate limiting
+bucket4j = { module = "com.bucket4j:bucket4j-core", version.ref = "bucket4j" }
+
+# Caching
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 
 # JWT
 jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }

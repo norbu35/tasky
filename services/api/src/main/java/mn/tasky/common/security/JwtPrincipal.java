@@ -1,3 +1,3 @@
 package mn.tasky.common.security;
 
-public record JwtPrincipal(String userId, String role, String status) {}
+public record JwtPrincipal(String userId, String role, String status, String jti) {}

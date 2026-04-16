@@ -36,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenService jwtTokenService;
     private final JsonSecurityResponseWriter responseWriter;
     private final UserProfileService userProfileService;
+    private final TokenBlacklistService tokenBlacklistService;
     private final boolean devAuthEnabled;
     private final boolean otpMigrationEnforced;
 
@@ -43,11 +44,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             JwtTokenService jwtTokenService,
             JsonSecurityResponseWriter responseWriter,
             UserProfileService userProfileService,
+            TokenBlacklistService tokenBlacklistService,
             @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled,
             @Value("${tasky.auth.otp-migration-enforced:false}") boolean otpMigrationEnforced) {
         this.jwtTokenService = jwtTokenService;
         this.responseWriter = responseWriter;
         this.userProfileService = userProfileService;
+        this.tokenBlacklistService = tokenBlacklistService;
         this.devAuthEnabled = devAuthEnabled;
         this.otpMigrationEnforced = otpMigrationEnforced;
     }
@@ -77,6 +80,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     HttpStatus.UNAUTHORIZED.value(),
                     "INVALID_TOKEN",
                     "The provided JWT is invalid or expired.");
+            return;
+        }
+
+        if (tokenBlacklistService.isRevoked(principal.jti())) {
+            responseWriter.write(
+                    request,
+                    response,
+                    HttpStatus.UNAUTHORIZED.value(),
+                    "TOKEN_REVOKED",
+                    "This token has been revoked.");
             return;
         }
 

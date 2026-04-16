@@ -51,6 +51,13 @@ dependencies {
     implementation(libs.shedlock.spring)
     implementation(libs.shedlock.jdbc)
 
+    // Rate limiting — Bucket4j for WebSocket STOMP message throttling
+    implementation(libs.bucket4j)
+
+    // Caching — Caffeine for token blacklist and user status cache
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation(libs.caffeine)
+
     // Database
     runtimeOnly("org.postgresql:postgresql")
     implementation("org.flywaydb:flyway-core")

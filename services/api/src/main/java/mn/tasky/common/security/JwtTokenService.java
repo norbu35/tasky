@@ -64,6 +64,7 @@ public class JwtTokenService {
             String userId = claims.getSubject();
             String role = claims.get("role", String.class);
             String status = claims.get("status", String.class);
+            String jti = claims.getId();
 
             if (!StringUtils.hasText(userId) || !StringUtils.hasText(role)) {
                 return Optional.empty();
@@ -71,17 +72,19 @@ public class JwtTokenService {
 
             String normalizedStatus = StringUtils.hasText(status) ? status.toUpperCase(Locale.ROOT) : "ACTIVE";
 
-            return Optional.of(new JwtPrincipal(userId, role.toUpperCase(Locale.ROOT), normalizedStatus));
+            return Optional.of(new JwtPrincipal(userId, role.toUpperCase(Locale.ROOT), normalizedStatus, jti));
         } catch (JwtException | IllegalArgumentException ex) {
             return Optional.empty();
         }
     }
 
     private Claims parseClaims(String token) {
-        // TODO PHASE-B: add .requireIssuer("tasky-server").requireAudience("tasky-api")
-        // after all pre-existing tokens have expired (~2026-04-22)
+        // Deploy note: requireIssuer/requireAudience added after 2026-04-22 when
+        // all pre-existing tokens (issued without iss/aud) have expired.
         return Jwts.parser()
                 .verifyWith(signingKey)
+                .requireIssuer("tasky-server")
+                .requireAudience("tasky-api")
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
@@ -95,6 +98,7 @@ public class JwtTokenService {
                 .audience()
                 .add("tasky-api")
                 .and()
+                .id(java.util.UUID.randomUUID().toString())
                 .claim("role", principal.role())
                 .claim("status", principal.status())
                 .claim(TOKEN_TYPE_CLAIM, ACCESS_TOKEN_TYPE)
