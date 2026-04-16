@@ -227,14 +227,15 @@ Fake tokens and react-query cache seeding have been removed.
 
 ### What must change before real users
 
-| Item | Dev-auth behavior | Required for staging/production | Status |
-| --- | --- | --- | --- |
-| Access token | Real JWT from backend dev-login endpoint | Real JWT from Facebook OAuth or OTP | **Done** (dev-login returns real JWTs) |
-| Token refresh | Access tokens expire after configured TTL | **Must be implemented.** Without a refresh interceptor the app silently breaks after token expiry. | **Not implemented** |
-| Session invalidation on 401 | Not needed in local sandbox | App must detect 401 from expired/revoked tokens and either refresh or sign the user out. | **Not implemented** |
-| `EXPO_PUBLIC_API_BASE_URL` | Unset (defaults to `http://localhost:8080`) | Must point to the staging/production origin | Set per-environment |
-| App Transport Security | `NSAllowsLocalNetworking: true` covers localhost | Production URLs **must use HTTPS**. `NSAllowsArbitraryLoads` is `false`. | iOS plist is correct; just needs HTTPS origin |
-| CORS allowed origins | Backend defaults to `http://localhost:5173` | Must include the production web origin. (Not relevant for native mobile, but relevant for web client.) | Configured via `tasky.cors.allowed-origins` |
+| Item                        | Dev-auth behavior                                | Required for staging/production                                                                                                                                                                     | Status                                        |
+| --------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Access token                | Real JWT from backend dev-login endpoint         | Real JWT from Facebook OAuth or OTP                                                                                                                                                                 | **Done** (dev-login returns real JWTs)        |
+| Token refresh               | Access tokens expire after configured TTL        | **Must be implemented.** Without a refresh interceptor the app silently breaks after token expiry.                                                                                                  | **Not implemented**                           |
+| Session invalidation on 401 | Not needed in local sandbox                      | App must detect `INVALID_TOKEN` (expired), `TOKEN_REVOKED` (explicit revocation), and `USER_BANNED` error codes — call `signOut()` and navigate to login. Retry logic must not loop on these codes. | **Not implemented**                           |
+| `EXPO_PUBLIC_API_BASE_URL`  | Unset (defaults to `http://localhost:8080`)      | Must point to the staging/production origin                                                                                                                                                         | Set per-environment                           |
+| App Transport Security      | `NSAllowsLocalNetworking: true` covers localhost | Production URLs **must use HTTPS**. `NSAllowsArbitraryLoads` is `false`.                                                                                                                            | iOS plist is correct; just needs HTTPS origin |
+| CORS allowed origins        | Backend defaults to `http://localhost:5173`      | Must include the production web origin. (Not relevant for native mobile, but relevant for web client.)                                                                                              | Configured via `tasky.cors.allowed-origins`   |
+| JWT `iss`/`aud` validation  | Not enforced in dev profile                      | Production enforces `iss: tasky-server`, `aud: tasky-api`. Tokens issued before 2026-04-22 without these claims are rejected.                                                                       | **Live** — deploy window is post-2026-04-22   |
 
 ### Token refresh implementation checklist
 
@@ -259,9 +260,15 @@ order means JWT rejections may not appear in the observability log depending on 
 auto-configuration order.
 
 During the inbox-error investigation (2026-04-10), 401 responses from expired tokens were confirmed
-invisible in `docker logs`. This makes debugging auth failures in staging/production harder. Consider
-adding explicit logging inside the JWT filter for rejected tokens, or verifying the filter
-registration order so the observability filter always wraps the security chain.
+invisible in `docker logs`. This makes debugging auth failures in staging/production harder.
+
+**Current mitigations (2026-04-17):**
+
+- `TOKEN_REVOKED` rejections are logged at WARN by `JwtAuthenticationFilter` before the response is written
+- `StompRateLimitInterceptor` logs WARN on WebSocket rate limit hits including `user=<userId>`
+- The error code in the response body (`INVALID_TOKEN`, `TOKEN_REVOKED`, `USER_BANNED`) identifies the rejection reason for client-side debugging
+
+Remaining gap: generic `INVALID_TOKEN` (expired signature, malformed) is still silent in the request log. Consider adding `log.warn("JWT rejected: {}", errorCode)` inside the filter for full visibility.
 
 ## Pre-Deploy Verification
 

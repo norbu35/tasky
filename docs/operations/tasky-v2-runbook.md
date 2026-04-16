@@ -1,7 +1,7 @@
 # Tasky V2 Operations Runbook
 
 > **Target audience:** solo engineer operating Tasky v2 in production
-> **Last updated:** 2026-04-13
+> **Last updated:** 2026-04-17
 
 ## Quick Reference
 
@@ -162,6 +162,71 @@ All logs include these fields when available:
 | `locale`         | Accept-Language header        | `mn`       |
 | `platform`       | X-Client-Platform or UA sniff | `WEB`      |
 
+## Security Operations
+
+### Revoke a specific access token
+
+If a token is suspected compromised but the user account should remain active:
+
+```bash
+# Call the revoke endpoint (requires ADMIN token) — if exposed, or inject via admin tooling
+# TokenBlacklistService.revoke(jti) — jti is the `jti` claim inside the JWT payload
+
+# To inspect a JWT's jti without a library:
+echo "<token>" | cut -d. -f2 | base64 -d 2>/dev/null | python3 -m json.tool | grep '"jti"'
+```
+
+The blacklist is **in-memory with 15-minute TTL**. For longer-lived revocation, ban the user:
+
+```bash
+curl -X POST -H "Authorization: Bearer $ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"reason": "compromised account"}' \
+  http://localhost:8080/api/v1/admin/users/<user-id>/ban
+```
+
+### Monitor WebSocket rate limiting
+
+`StompRateLimitInterceptor` logs a WARN when a user is throttled:
+
+```bash
+docker logs tasky-app 2>&1 | grep "STOMP rate limit exceeded"
+```
+
+Each entry includes `user=<userId>`. Sustained throttling from a single user ID is a signal of client malfunction or intentional abuse.
+
+### JWT validation timeline
+
+| Date              | State                                                                                                                                  |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Before 2026-04-22 | Tokens issued without `iss`/`aud` may still be in circulation                                                                          |
+| 2026-04-22        | All pre-existing tokens have expired (15-min TTL × grace window). `requireIssuer` + `requireAudience` validation is now fully enforced |
+
+After 2026-04-22, any token lacking `iss: tasky-server` and `aud: tasky-api` will be rejected with `INVALID_TOKEN`.
+
+### Security headers reference
+
+Production Caddy serves the following security headers on every response:
+
+| Header                      | Value                                                                                                                                                      |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Content-Security-Policy`   | `default-src 'self'`; `script-src` allows Facebook CDN + inline polyfill hash; `style-src` allows Google Fonts; see `Caddyfile.production` for full policy |
+| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains; preload`                                                                                                             |
+| `X-Content-Type-Options`    | `nosniff`                                                                                                                                                  |
+| `X-Frame-Options`           | `DENY`                                                                                                                                                     |
+| `Referrer-Policy`           | `strict-origin-when-cross-origin`                                                                                                                          |
+| `Permissions-Policy`        | `camera=(), microphone=(), geolocation=(self)`                                                                                                             |
+
+To verify headers on a running instance:
+
+```bash
+curl -sI https://<domain> | grep -iE "content-security|strict-transport|x-frame|x-content"
+```
+
+### User status cache
+
+`currentUserStatus()` is cached in Caffeine with a **60-second TTL**. Bans take effect within 60 seconds on existing requests. If immediate enforcement is required (e.g., active fraud), restart the application to flush the cache — the per-request DB check resumes until the cache warms again.
+
 ## Deployment Checklist
 
 1. PostgreSQL is running and accessible
@@ -173,6 +238,7 @@ All logs include these fields when available:
    - `TASKY_BLIND_INDEX_KEY`
 5. Health probes return healthy
 6. Admin endpoint returns summary: `curl /api/v1/admin/outbox/summary`
+7. Verify security headers are present: `curl -sI https://<domain> | grep content-security-policy`
 
 ## Rollback Procedure
 
@@ -181,3 +247,4 @@ All logs include these fields when available:
 3. Do NOT roll back Flyway migrations (they are forward-only and additive)
 4. If broker was newly enabled and causing issues, set `TASKY_AUTOMATION_BROKER_ENABLED=false`
 5. Restart; the outbox processor will continue polling and relaying events
+6. Note: the token blacklist is in-memory and will be empty after restart; any tokens revoked before the restart will become valid again until their natural 15-min expiry

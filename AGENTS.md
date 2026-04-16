@@ -111,6 +111,61 @@ Frontend: Web uses Vitest + RTL; Mobile uses Jest + RNTL. For auth / payments / 
 - **Component libraries** — Radix + Tailwind only; no MUI, Chakra, or Ant Design
 - **Secrets** — environment variables only; never hardcode
 
+## Security Compliance
+
+### Security-critical files — do not restructure without a security review
+
+| File                             | Risk if changed carelessly                                 |
+| -------------------------------- | ---------------------------------------------------------- |
+| `SecurityConfig.java`            | Filter chain order, role enforcement, public path list     |
+| `JwtAuthenticationFilter.java`   | Token validation, blacklist check, ban enforcement order   |
+| `JwtTokenService.java`           | Token signing, iss/aud validation, jti stamping            |
+| `TokenBlacklistService.java`     | Revocation logic; eviction TTL must match access token TTL |
+| `StompRateLimitInterceptor.java` | WebSocket rate limit; removing breaks DoS protection       |
+| `ChannelInterceptorConfig.java`  | STOMP auth, subscription authorization, interceptor order  |
+| `Caddyfile.production`           | CSP header; editing `script-src` can open XSS vectors      |
+
+For any of these files: **read the current body before editing**, verify the compile gate, and call it out explicitly in the PR.
+
+### Token revocation
+
+To revoke an access token explicitly (e.g., on user ban, admin logout, or compromise):
+
+```java
+// Inject TokenBlacklistService and call:
+tokenBlacklistService.revoke(principal.jti());
+```
+
+The jti is available from `JwtPrincipal.jti()` on any authenticated request. The blacklist entry auto-expires after 15 minutes (matching the access token TTL). There is no persistence across restarts — if the server restarts, previously-revoked tokens resume working until their natural expiry. For persistent revocation across restarts, use the existing `userDao.updateStatusAndSuspensionEnd(..., "BANNED", ...)` path, which is checked per-request via the Caffeine-cached `currentUserStatus`.
+
+### CSP maintenance
+
+The `Content-Security-Policy` header lives in `apps/web/Caddyfile.production`. When adding a new external script or stylesheet:
+
+1. Add the origin to the appropriate directive (`script-src`, `style-src`, `connect-src`, etc.)
+2. If loading a **static asset** (pinnable hash): compute `sha256-<base64>` and add it to `script-src` instead of trusting the whole domain
+3. For inline scripts in `apps/web/index.html`: recompute the hash after any change:
+   ```bash
+   python3 -c "
+   import hashlib, base64
+   with open('apps/web/index.html') as f: content = f.read()
+   start = content.index('<script>') + len('<script>')
+   end = content.index('</script>')
+   print('sha256-' + base64.b64encode(hashlib.sha256(content[start:end].encode()).digest()).decode())
+   "
+   ```
+4. Never add `'unsafe-eval'` or widen `default-src`
+
+### Security testing requirements
+
+For changes to auth, payments, wallet, SecurityConfig, or any file in the security-critical list above: write **both positive and negative tests** and include them in the PR. Specifically:
+
+- **Role enforcement**: test that the wrong role gets 403, not just that the right role gets 200
+- **Token blacklist**: test that a revoked jti is rejected with `TOKEN_REVOKED`
+- **WebSocket rate limit**: test that the 31st message in a window is rejected
+
+Frontend: SecurityConfig and auth flow changes require `test:e2e:smoke` to pass before merge.
+
 ## Commit Attribution
 
 ```
