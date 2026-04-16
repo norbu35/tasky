@@ -1,6 +1,7 @@
 import React from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import type { EntryOrExitLayoutType } from 'react-native-reanimated';
 
 import { animationPresets } from '../../design/animations';
 
@@ -13,6 +14,29 @@ export interface RevealProps {
   testID?: string;
 }
 
+type LayoutAnimationBuilder = {
+  delay?: (delayMs: number) => LayoutAnimationBuilder;
+  springify?: () => LayoutAnimationBuilder;
+  withInitialValues?: (values: {
+    opacity: number;
+    transform: Array<{ translateY: number }>;
+  }) => LayoutAnimationBuilder;
+};
+
+function createRevealAnimation(duration: number, delay: number) {
+  const fadeIn = FadeInDown as unknown as
+    | {
+        duration?: (value: number) => LayoutAnimationBuilder;
+      }
+    | undefined;
+
+  if (!fadeIn || typeof fadeIn.duration !== 'function') {
+    return undefined;
+  }
+
+  return fadeIn.duration(duration).delay?.(delay);
+}
+
 export function Reveal({
   children,
   delay = 0,
@@ -21,23 +45,16 @@ export function Reveal({
   className,
   testID,
 }: RevealProps) {
+  const revealAnimation = createRevealAnimation(animationPresets.enter.duration, delay);
+  const rootEntering = revealAnimation?.springify?.() as EntryOrExitLayoutType | undefined;
+  const childEntering = revealAnimation?.withInitialValues?.({
+    opacity: 0,
+    transform: [{ translateY: distance }],
+  }) as EntryOrExitLayoutType | undefined;
+
   return (
-    <Animated.View
-      entering={FadeInDown.duration(animationPresets.enter.duration).delay(delay).springify()}
-      style={style}
-      className={className}
-      testID={testID}
-    >
-      <Animated.View
-        entering={FadeInDown.duration(animationPresets.enter.duration)
-          .delay(delay)
-          .withInitialValues({
-            opacity: 0,
-            transform: [{ translateY: distance }],
-          })}
-      >
-        {children}
-      </Animated.View>
+    <Animated.View entering={rootEntering} style={style} className={className} testID={testID}>
+      <Animated.View entering={childEntering}>{children}</Animated.View>
     </Animated.View>
   );
 }
