@@ -60,6 +60,13 @@ const Animated = {
 const useEvent = jest.fn((handler) => handler);
 const useHandler = jest.fn((handlers) => ({ context: {}, doDependenciesDiffer: false, useWeb: false }));
 
+const createLayoutAnimation = () => ({
+  duration: jest.fn(() => createLayoutAnimation()),
+  delay: jest.fn(() => createLayoutAnimation()),
+  springify: jest.fn(() => createLayoutAnimation()),
+  withInitialValues: jest.fn(() => createLayoutAnimation()),
+});
+
 const Reanimated = {
   ...Animated,
   useSharedValue,
@@ -102,11 +109,12 @@ module.exports = {
   createAnimatedComponent,
   useEvent,
   useHandler,
-  FadeIn: {},
-  FadeOut: {},
-  SlideInLeft: {},
-  SlideOutRight: {},
+  FadeIn: createLayoutAnimation(),
+  FadeInDown: createLayoutAnimation(),
+  FadeOut: createLayoutAnimation(),
+  SlideInLeft: createLayoutAnimation(),
+  SlideOutRight: createLayoutAnimation(),
   Layout: {},
-  ZoomIn: {},
-  ZoomOut: {},
+  ZoomIn: createLayoutAnimation(),
+  ZoomOut: createLayoutAnimation(),
 };

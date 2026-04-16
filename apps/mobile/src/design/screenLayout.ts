@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 
-import { mobileTheme } from './tokenAdapter';
+import { mobileTheme } from './theme';
 
 const { spacing } = mobileTheme;
 

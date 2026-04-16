@@ -1,4 +1,4 @@
-import { mobileTheme } from './tokenAdapter';
+import { mobileTheme } from './theme';
 
 export const defaultStackScreenOptions = {
   headerStyle: {

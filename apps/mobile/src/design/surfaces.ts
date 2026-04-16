@@ -1,4 +1,4 @@
-import { mobileTheme, withAlpha } from './tokenAdapter';
+import { mobileTheme, withAlpha } from './theme';
 
 const { colors, radius, spacing } = mobileTheme;
 
