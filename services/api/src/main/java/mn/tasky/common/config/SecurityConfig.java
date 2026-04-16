@@ -99,6 +99,41 @@ public class SecurityConfig {
                         .hasRole("TASKER")
                         .requestMatchers("/api/v1/security/admin/**", "/api/v1/admin/**")
                         .hasRole("ADMIN")
+                        // Task drafts — CUSTOMER only
+                        .requestMatchers("/api/v1/tasks/drafts", "/api/v1/tasks/drafts/**")
+                        .hasRole("CUSTOMER")
+                        // Verification — TASKER only
+                        .requestMatchers("/api/v1/verification/**")
+                        .hasRole("TASKER")
+                        // Bookings and booking-intents — either role (ownership enforced in service)
+                        .requestMatchers("/api/v1/bookings/**")
+                        .hasAnyRole("CUSTOMER", "TASKER")
+                        .requestMatchers("/api/v1/booking-intents/**")
+                        .hasAnyRole("CUSTOMER", "TASKER")
+                        // Payments — CUSTOMER initiates; QPay callback is public (listed above)
+                        .requestMatchers("/api/v1/payments/**")
+                        .hasRole("CUSTOMER")
+                        // Credits — CUSTOMER only
+                        .requestMatchers("/api/v1/credits/**")
+                        .hasRole("CUSTOMER")
+                        // Wallet — TASKER only
+                        .requestMatchers("/api/v1/wallet", "/api/v1/wallet/**")
+                        .hasRole("TASKER")
+                        // Subscriptions — TASKER only
+                        .requestMatchers("/api/v1/subscriptions/**")
+                        .hasRole("TASKER")
+                        // Business accounts — TASKER only
+                        .requestMatchers("/api/v1/business/**")
+                        .hasRole("TASKER")
+                        // Disputes — either role
+                        .requestMatchers("/api/v1/disputes/**")
+                        .hasAnyRole("CUSTOMER", "TASKER")
+                        // Reviews — either role
+                        .requestMatchers("/api/v1/me/pending-reviews")
+                        .hasAnyRole("CUSTOMER", "TASKER")
+                        // Messaging — either role
+                        .requestMatchers("/api/v1/conversations", "/api/v1/conversations/**")
+                        .hasAnyRole("CUSTOMER", "TASKER")
                         .anyRequest()
                         .authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
