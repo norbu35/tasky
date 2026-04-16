@@ -9,7 +9,11 @@ import { PriceTag } from '../../../../components/ui/PriceTag';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { Toast } from '../../../../components/ui/Toast';
 import { elevations } from '../../../../design/elevations';
+import { mobileSurfaces, mobileTheme } from '../../../../design/tokenAdapter';
 import { useCreateBookingIntent } from '../../../../features/bookings/hooks/useCreateBookingIntent';
+
+const { colors } = mobileTheme;
+const { instantMatch } = mobileSurfaces;
 
 type InstantMatchState =
   | 'matching_spinner'
@@ -143,7 +147,7 @@ export default function CustomerInstantMatchScreen() {
 
   return (
     <DetailTemplate testID="SCR-CUST-027">
-      <View className="gap-lg" style={{ minHeight: 480 }}>
+      <View className="gap-lg" style={{ minHeight: instantMatch.minHeight }}>
         <View className="gap-sm">
           <Text className="text-heading font-bold text-primary-deep">{heroTitle}</Text>
           <Text className="text-body text-text-secondary leading-relaxed">{heroSubtitle}</Text>
@@ -152,42 +156,45 @@ export default function CustomerInstantMatchScreen() {
         {(matchState === 'matching_spinner' || matchState === 'tasker_declined_retry') && (
           <View
             className="items-center justify-center"
-            style={{ height: 220 }}
+            style={{ height: instantMatch.ringStackHeight }}
             testID="instant-match-rings"
           >
             {/* rings: absolute positioning + precise pixel sizes → imperative */}
             <View
               style={{
                 position: 'absolute',
-                width: 180,
-                height: 180,
+                width: instantMatch.ringOuter,
+                height: instantMatch.ringOuter,
                 borderRadius: 9999,
                 borderWidth: 1,
-                borderColor: '#C7D0D9',
+                borderColor: colors.border,
               }}
             />
             <View
               style={{
                 position: 'absolute',
-                width: 132,
-                height: 132,
+                width: instantMatch.ringMiddle,
+                height: instantMatch.ringMiddle,
                 borderRadius: 9999,
                 borderWidth: 1,
-                borderColor: '#C7D0D9',
+                borderColor: colors.border,
               }}
             />
             <View
               style={{
                 position: 'absolute',
-                width: 88,
-                height: 88,
+                width: instantMatch.ringInner,
+                height: instantMatch.ringInner,
                 borderRadius: 9999,
                 borderWidth: 1,
-                borderColor: '#C7D0D9',
+                borderColor: colors.border,
               }}
             />
             <View className="w-14 h-14 rounded-lg bg-primary items-center justify-center">
-              <View className="w-[14px] h-[14px] rounded-full bg-primary-foreground" />
+              <View
+                className="rounded-full bg-primary-foreground"
+                style={{ width: instantMatch.ringDot, height: instantMatch.ringDot }}
+              />
             </View>
           </View>
         )}

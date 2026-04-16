@@ -6,11 +6,12 @@ import { ScrollView, Text, View } from 'react-native';
 
 import { ScreenContainer } from '../../../../components/shells';
 import { Touchable } from '../../../../components/ui/Touchable';
-import { mobileTheme } from '../../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../../design/tokenAdapter';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { useBookingTimeline } from '../../../../features/bookings/hooks/useBookingTimeline';
 
 const { colors } = mobileTheme;
+const { bookingTimeline } = mobileSurfaces;
 
 function formatTimestamp(ts: string): string {
   const d = new Date(ts);
@@ -79,13 +80,32 @@ function TimelineEventRow({
       {/* timelineRail */}
       <View className="w-6 items-center">
         <View
-          className="w-6 h-6 rounded-full border-[3px] z-[1]"
-          style={{ borderColor: colors.background, backgroundColor: dotBg }}
+          className="rounded-full border-[3px] z-[1]"
+          style={{
+            width: bookingTimeline.dotSize,
+            height: bookingTimeline.dotSize,
+            borderColor: colors.background,
+            backgroundColor: dotBg,
+          }}
         />
         {!isFuture ? (
-          <View className="w-[2px] flex-1 min-h-[28px] -mt-[1px] bg-border" />
+          <View
+            className="flex-1 bg-border"
+            style={{
+              width: bookingTimeline.railWidth,
+              minHeight: bookingTimeline.railMinHeight,
+              marginTop: bookingTimeline.railOffset,
+            }}
+          />
         ) : (
-          <View className="w-[2px] flex-1 min-h-[28px] -mt-[1px] bg-border opacity-50" />
+          <View
+            className="flex-1 bg-border opacity-50"
+            style={{
+              width: bookingTimeline.railWidth,
+              minHeight: bookingTimeline.railMinHeight,
+              marginTop: bookingTimeline.railOffset,
+            }}
+          />
         )}
       </View>
       <View className="flex-1 gap-xs">
@@ -149,7 +169,7 @@ export default function BookingTimelineScreen() {
             <View className="flex-1" style={{ gap: 2 }}>
               <Text
                 className="text-micro font-bold text-secondary uppercase"
-                style={{ letterSpacing: 0.8 }}
+                style={{ letterSpacing: bookingTimeline.titleTracking }}
               >
                 {t(
                   'customer.bookings.timelineId',
@@ -204,7 +224,8 @@ export default function BookingTimelineScreen() {
             <Touchable
               accessibilityRole="button"
               onPress={() => router.push('/(shared)/help')}
-              className="min-h-[48px] rounded-md bg-secondary items-center justify-center px-lg"
+              className="rounded-md bg-secondary items-center justify-center px-lg"
+              style={{ minHeight: bookingTimeline.helpCtaHeight }}
               testID="booking-timeline-help-cta"
             >
               <Text className="text-label font-bold text-secondary-foreground">

@@ -7,10 +7,11 @@ import { Pressable, Text, TextInput, View } from 'react-native';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../components/shells';
 import { Button } from '../../components/ui/Button';
 import { elevations } from '../../design/elevations';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
 const { colors, radius } = mobileTheme;
+const { otp } = mobileSurfaces;
 
 type OtpState = 'default' | 'wrong_code' | 'expired' | 'verifying';
 
@@ -45,11 +46,11 @@ export default function OtpScreen() {
         className="flex-1"
         contentContainerStyle={{
           paddingHorizontal: 24,
-          paddingTop: 72,
-          paddingBottom: 32,
-          gap: 24,
+          paddingTop: otp.contentTopInset,
+          paddingBottom: otp.contentBottomInset,
+          gap: otp.contentGap,
         }}
-        extraBottomInset={96}
+        extraBottomInset={otp.stickyInset}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
@@ -63,7 +64,7 @@ export default function OtpScreen() {
           </Text>
           <Text
             className="text-body text-center"
-            style={{ color: colors.textSecondary, lineHeight: 26 }}
+            style={{ color: colors.textSecondary, lineHeight: otp.descriptionLineHeight }}
             testID="otp-description"
           >
             <Text style={{ color: colors.textSecondary }}>{descriptionPrefix}</Text>
@@ -77,6 +78,7 @@ export default function OtpScreen() {
             'self-center flex-row gap-sm py-md items-center',
             isWrongCode && 'opacity-[0.96]',
           )}
+          style={isWrongCode ? { opacity: otp.wrongCodeOpacity } : undefined}
           testID="otp-code-input"
         >
           <TextInput
@@ -98,9 +100,11 @@ export default function OtpScreen() {
               <View
                 key={`${digit}-${index}`}
                 testID="otp-code-cell"
-                className={cn('w-[48px] h-[48px] items-center justify-center border-2')}
+                className="items-center justify-center border-2"
                 style={[
                   {
+                    width: otp.codeCellSize,
+                    height: otp.codeCellSize,
                     borderRadius: radius.md,
                     backgroundColor: isActive ? colors.card : colors.muted,
                     borderColor: isWrongCode
@@ -133,7 +137,11 @@ export default function OtpScreen() {
           onPress={() => {}}
           disabled={!isExpired}
           style={({ pressed }) => ({
-            opacity: !isExpired ? 0.8 : pressed ? 0.75 : 1,
+            opacity: !isExpired
+              ? otp.resendDisabledOpacity
+              : pressed
+                ? otp.resendPressedOpacity
+                : 1,
           })}
           className="self-center flex-row items-center gap-sm py-sm px-md"
         >
@@ -150,7 +158,7 @@ export default function OtpScreen() {
           <View className="self-center px-md" style={isExpired ? { marginTop: -8 } : undefined}>
             <Text
               className="text-caption text-center"
-              style={{ color: colors.danger, lineHeight: 20 }}
+              style={{ color: colors.danger, lineHeight: otp.errorLineHeight }}
             >
               {isWrongCode ? t('auth.otp.errorWrongCode') : t('auth.otp.errorExpired')}
             </Text>
@@ -163,8 +171,13 @@ export default function OtpScreen() {
           testID="otp-security-card"
         >
           <View
-            className="w-[36px] h-[36px] items-center justify-center"
-            style={{ borderRadius: radius.md, backgroundColor: colors.card }}
+            className="items-center justify-center"
+            style={{
+              width: otp.securityIconBox,
+              height: otp.securityIconBox,
+              borderRadius: radius.md,
+              backgroundColor: colors.card,
+            }}
           >
             <ShieldCheck size={22} color={colors.primaryDeep} />
           </View>
@@ -172,7 +185,10 @@ export default function OtpScreen() {
             <Text className="text-label font-sans-bold" style={{ color: colors.primaryDeep }}>
               {t('auth.otp.securityTitle')}
             </Text>
-            <Text className="text-caption" style={{ color: colors.textSecondary, lineHeight: 21 }}>
+            <Text
+              className="text-caption"
+              style={{ color: colors.textSecondary, lineHeight: otp.securityLineHeight }}
+            >
               {t('OtpScreen.copy2')}
             </Text>
           </View>
@@ -187,7 +203,11 @@ export default function OtpScreen() {
             isLoading={isVerifying}
             disabled={sanitizedCode.length !== 4 || isVerifying}
             style={[
-              { minHeight: 56, borderRadius: radius.md, backgroundColor: colors.primaryDeep },
+              {
+                minHeight: otp.verifyButtonHeight,
+                borderRadius: radius.md,
+                backgroundColor: colors.primaryDeep,
+              },
               elevations.soft,
             ]}
           />

@@ -8,9 +8,10 @@ import { InsetScrollView, ScreenContainer } from '../../components/shells';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Touchable } from '../../components/ui/Touchable';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
 
 const { colors, spacing, radius, typography } = mobileTheme;
+const { help } = mobileSurfaces;
 
 type ScreenState = 'loaded' | 'loading' | 'error';
 
@@ -122,13 +123,13 @@ function HelpLoading({ searchPlaceholder }: { searchPlaceholder: string }) {
         className="min-h-[44px] flex-row items-center gap-sm px-md mb-md"
         style={{ borderRadius: radius.md, backgroundColor: colors.muted }}
       >
-        <Search size={18} color={colors.textSecondary} />
+        <Search size={help.searchIconSize} color={colors.textSecondary} />
         <Text className="flex-1 text-body" style={{ color: colors.textSecondary }}>
           {searchPlaceholder}
         </Text>
       </View>
       <View className="gap-md">
-        {Array.from({ length: 6 }).map((_, index) => (
+        {Array.from({ length: help.loadingRows }).map((_, index) => (
           <View
             key={index}
             className="min-h-[44px] flex-row items-center justify-between px-md py-md"
@@ -160,25 +161,26 @@ function HelpLoading({ searchPlaceholder }: { searchPlaceholder: string }) {
 function HelpErrorVisual() {
   return (
     <View
-      className="w-[132px] h-[132px] items-center justify-center mb-lg"
+      className="items-center justify-center mb-lg"
+      style={{ width: help.errorVisual.canvas, height: help.errorVisual.canvas }}
       accessibilityRole="image"
     >
       <View
         style={{
           position: 'absolute',
-          width: 108,
-          height: 108,
+          width: help.errorVisual.halo,
+          height: help.errorVisual.halo,
           borderRadius: radius.full,
           backgroundColor: colors.muted,
-          opacity: 0.55,
+          opacity: help.errorVisual.haloOpacity,
         }}
       />
       <View
         style={{
-          width: 92,
-          height: 92,
+          width: help.errorVisual.ring,
+          height: help.errorVisual.ring,
           borderRadius: radius.full,
-          borderWidth: 2,
+          borderWidth: help.errorVisual.ringBorderWidth,
           borderColor: colors.primary,
           alignItems: 'center',
           justifyContent: 'center',
@@ -186,24 +188,24 @@ function HelpErrorVisual() {
       >
         <View
           style={{
-            width: 58,
-            height: 40,
-            borderRadius: 18,
+            width: help.errorVisual.bubblePrimary.width,
+            height: help.errorVisual.bubblePrimary.height,
+            borderRadius: help.errorVisual.bubblePrimary.radius,
             backgroundColor: colors.card,
             borderWidth: 1,
             borderColor: colors.border,
             position: 'absolute',
-            left: 8,
-            top: 18,
+            left: help.errorVisual.bubblePrimary.left,
+            top: help.errorVisual.bubblePrimary.top,
           }}
         >
           <View
             style={{
               position: 'absolute',
-              left: 12,
-              bottom: -5,
-              width: 10,
-              height: 10,
+              left: help.errorVisual.bubblePrimary.tailLeft,
+              bottom: help.errorVisual.bubblePrimary.tailBottom,
+              width: help.errorVisual.bubblePrimary.tailSize,
+              height: help.errorVisual.bubblePrimary.tailSize,
               backgroundColor: colors.card,
               borderLeftWidth: 1,
               borderBottomWidth: 1,
@@ -214,22 +216,22 @@ function HelpErrorVisual() {
         </View>
         <View
           style={{
-            width: 44,
-            height: 30,
-            borderRadius: 14,
+            width: help.errorVisual.bubbleSecondary.width,
+            height: help.errorVisual.bubbleSecondary.height,
+            borderRadius: help.errorVisual.bubbleSecondary.radius,
             backgroundColor: colors.primary,
             position: 'absolute',
-            right: 10,
-            bottom: 14,
+            right: help.errorVisual.bubbleSecondary.right,
+            bottom: help.errorVisual.bubbleSecondary.bottom,
           }}
         >
           <View
             style={{
               position: 'absolute',
-              right: 10,
-              bottom: -4,
-              width: 8,
-              height: 8,
+              right: help.errorVisual.bubbleSecondary.tailRight,
+              bottom: help.errorVisual.bubbleSecondary.tailBottom,
+              width: help.errorVisual.bubbleSecondary.tailSize,
+              height: help.errorVisual.bubbleSecondary.tailSize,
               backgroundColor: colors.primary,
               transform: [{ rotate: '45deg' }],
             }}
@@ -237,8 +239,8 @@ function HelpErrorVisual() {
         </View>
         <View
           style={{
-            width: 28,
-            height: 28,
+            width: help.errorVisual.marker.size,
+            height: help.errorVisual.marker.size,
             borderRadius: radius.full,
             backgroundColor: colors.danger,
             alignItems: 'center',
@@ -311,7 +313,7 @@ function FaqItemRow({
         <Text className="flex-1 text-body mr-sm" style={{ color: colors.foreground }}>
           {item.question}
         </Text>
-        <Icon size={20} color={colors.textSecondary} />
+        <Icon size={help.faqIconSize} color={colors.textSecondary} />
       </Touchable>
       {isExpanded ? (
         <View
@@ -358,7 +360,10 @@ export default function HelpScreen() {
 
   return (
     <ScreenContainer testID="help-screen">
-      <View className="h-[56px] flex-row items-center justify-between px-md">
+      <View
+        className="flex-row items-center justify-between px-md"
+        style={{ height: help.headerHeight }}
+      >
         <Touchable
           onPress={() => router.back()}
           className="min-h-[44px] px-xs flex-row items-center gap-xs"
@@ -397,7 +402,7 @@ export default function HelpScreen() {
             className="min-h-[44px] flex-row items-center gap-sm px-md mx-lg mt-xl mb-md"
             style={{ borderRadius: radius.md, backgroundColor: colors.muted }}
           >
-            <Search size={18} color={colors.textSecondary} />
+            <Search size={help.searchIconSize} color={colors.textSecondary} />
             <Input
               placeholder={searchPlaceholder}
               placeholderTextColor={colors.textSecondary}

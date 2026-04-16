@@ -1,4 +1,4 @@
-import { Easing } from 'react-native-reanimated';
+import { Easing, withSpring } from 'react-native-reanimated';
 
 import { motionTokens } from '@tasky/design-tokens';
 
@@ -40,3 +40,11 @@ export const interactiveStates = {
   disabled: { opacity: 0.4 },
   hover: { opacity: 0.92 },
 } as const;
+
+export const springs = motionTokens.spring;
+
+export const withInteractiveSpring = (toValue: number) => withSpring(toValue, springs.interactive);
+
+export const withFloatingSpring = (toValue: number) => withSpring(toValue, springs.floating);
+
+export const withEmphasisSpring = (toValue: number) => withSpring(toValue, springs.emphasis);

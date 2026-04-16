@@ -3,12 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { elevations, overlays } from '../../design/elevations';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
 import { Button } from './Button';
 
 const { colors, spacing, typography } = mobileTheme;
+const { permissionPrimer } = mobileSurfaces;
 
 interface PermissionPrimerProps {
   icon: React.ReactNode;
@@ -62,8 +63,10 @@ export function PermissionPrimer({
         pointerEvents="none"
       >
         <View
-          className="w-32 h-32 rounded-full items-center justify-center"
+          className="rounded-full items-center justify-center"
           style={{
+            width: permissionPrimer.topIllustrationSize,
+            height: permissionPrimer.topIllustrationSize,
             backgroundColor: colors.card,
             ...elevations.elevated,
           }}
@@ -75,12 +78,35 @@ export function PermissionPrimer({
         className="bg-background rounded-tl-lg rounded-tr-lg px-xl pt-md pb-xl items-center"
         style={elevations.card}
       >
-        <View className="w-10 h-[4px] rounded-full bg-border mb-lg" />
+        <View
+          className="rounded-full bg-border mb-lg"
+          style={{
+            width: permissionPrimer.sheetHandleWidth,
+            height: permissionPrimer.sheetHandleHeight,
+          }}
+        />
         <View className="mt-sm mb-lg items-center">
-          <View className="w-24 h-24 rounded-md items-center justify-center bg-muted">{icon}</View>
           <View
-            className="absolute -top-2 -right-2 w-8 h-8 rounded-md items-center justify-center bg-accent border-[4px] border-background"
-            style={elevations.card}
+            className="rounded-md items-center justify-center bg-muted"
+            style={{
+              width: permissionPrimer.iconPreviewSize,
+              height: permissionPrimer.iconPreviewSize,
+            }}
+          >
+            {icon}
+          </View>
+          <View
+            className="absolute rounded-md items-center justify-center bg-accent border-background"
+            style={[
+              elevations.card,
+              {
+                top: permissionPrimer.badgeOffset,
+                right: permissionPrimer.badgeOffset,
+                width: permissionPrimer.badgeSize,
+                height: permissionPrimer.badgeSize,
+                borderWidth: permissionPrimer.badgeBorder,
+              },
+            ]}
           >
             <Text style={{ color: colors.primaryDeep, fontSize: 14, fontWeight: '700' }}>
               {badgeLabel}
@@ -90,17 +116,17 @@ export function PermissionPrimer({
         <Text
           className="text-center mb-sm"
           style={{
-            fontSize: 24,
+            fontSize: permissionPrimer.titleSize,
             fontWeight: '800',
             color: colors.primaryDeep,
-            letterSpacing: -0.5,
+            letterSpacing: permissionPrimer.titleTracking,
           }}
         >
           {title}
         </Text>
         <Text
           className="text-body text-muted-foreground text-center mb-md"
-          style={{ lineHeight: 24 }}
+          style={{ lineHeight: permissionPrimer.bodyLineHeight }}
         >
           {isDenied && deniedMessage ? deniedMessage : description}
         </Text>
@@ -110,7 +136,7 @@ export function PermissionPrimer({
             style={{
               fontSize: typography.label,
               color: colors.textSecondary,
-              lineHeight: 20,
+              lineHeight: permissionPrimer.hintLineHeight,
             }}
           >
             {settingsHint}
@@ -123,7 +149,7 @@ export function PermissionPrimer({
               label={resolvedContinueLabel}
               variant="default"
               onPress={onContinue ?? onSkip}
-              style={{ alignSelf: 'stretch', minHeight: 56 }}
+              style={{ alignSelf: 'stretch', minHeight: permissionPrimer.buttonHeight }}
               accessibilityLabel={resolvedContinueLabel}
             />
           ) : (
@@ -133,7 +159,7 @@ export function PermissionPrimer({
                 label={resolvedAllowLabel}
                 variant="default"
                 onPress={onGrant}
-                style={{ alignSelf: 'stretch', minHeight: 56 }}
+                style={{ alignSelf: 'stretch', minHeight: permissionPrimer.buttonHeight }}
                 accessibilityLabel={resolvedAllowLabel}
               />
               <Button
@@ -153,7 +179,7 @@ export function PermissionPrimer({
               marginTop: spacing.lg,
               fontSize: typography.caption,
               color: colors.textSecondary,
-              lineHeight: 18,
+              lineHeight: permissionPrimer.footerLineHeight,
             }}
           >
             {footerNote}

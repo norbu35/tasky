@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
+import { Reveal } from '../ui/Reveal';
 
 const { colors } = mobileTheme;
 
@@ -30,26 +31,34 @@ export function ErrorStateTemplate({
 
   return (
     <View className={cn('flex-1 justify-center items-center px-lg', className)} testID={testID}>
-      <AlertTriangle size={48} color={colors.danger} />
-      <Text className="text-body text-primary text-center mt-lg leading-relaxed">
-        {message ?? t('error.generic')}
-      </Text>
+      <Reveal delay={20}>
+        <AlertTriangle size={48} color={colors.danger} />
+      </Reveal>
+      <Reveal delay={60}>
+        <Text className="text-body text-primary text-center mt-lg leading-relaxed">
+          {message ?? t('error.generic')}
+        </Text>
+      </Reveal>
       {onRetry && (
-        <Button
-          label={retryLabel ?? t('error.retry')}
-          onPress={onRetry}
-          style={{ marginTop: 24, alignSelf: 'stretch' }}
-          testID={testID ? `${testID}-retry` : undefined}
-        />
+        <Reveal delay={100} className="self-stretch">
+          <Button
+            label={retryLabel ?? t('error.retry')}
+            onPress={onRetry}
+            style={{ marginTop: 24, alignSelf: 'stretch' }}
+            testID={testID ? `${testID}-retry` : undefined}
+          />
+        </Reveal>
       )}
       {onBack && (
-        <Button
-          label={t('error.goBack')}
-          variant="outline"
-          onPress={onBack}
-          style={{ marginTop: 12, alignSelf: 'stretch' }}
-          testID={testID ? `${testID}-back` : undefined}
-        />
+        <Reveal delay={140} className="self-stretch">
+          <Button
+            label={t('error.goBack')}
+            variant="outline"
+            onPress={onBack}
+            style={{ marginTop: 12, alignSelf: 'stretch' }}
+            testID={testID ? `${testID}-back` : undefined}
+          />
+        </Reveal>
       )}
     </View>
   );

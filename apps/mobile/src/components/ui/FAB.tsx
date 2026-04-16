@@ -4,24 +4,19 @@ import { Plus } from 'lucide-react-native';
 import React from 'react';
 import { useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  runOnJS,
-} from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, runOnJS } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { elevations } from '../../design/elevations';
 import { screenLayout } from '../../design/screenLayout';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileTheme, withFloatingSpring } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 import { useAuthStore } from '../../store/authStore';
 
 const { colors } = mobileTheme;
-const { fabSize, fabInsetRight, tabBarHeight, tabBarBottom } = screenLayout.chrome;
+const { fabIconSize, fabInsetRight, fabInsetTop, fabSize, tabBarHeight, tabBarBottom } =
+  screenLayout.chrome;
 const DRAG_THRESHOLD = 8;
-const SPRING_CONFIG = { damping: 18, stiffness: 220 };
 
 type FABProps = {
   testID?: string;
@@ -38,7 +33,7 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
   // Boundaries
   const minX = fabInsetRight;
   const maxX = screenWidth - fabSize - fabInsetRight;
-  const minY = insets.top + mobileTheme.spacing.md;
+  const minY = insets.top + fabInsetTop;
   const maxY = screenHeight - insets.bottom - tabBarHeight - tabBarBottom - fabSize;
 
   // Default position: bottom-right, resting at the lowest safe position above the tab bar
@@ -72,7 +67,7 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
       startX.value = translateX.value;
       startY.value = translateY.value;
       isDragging.value = false;
-      scale.value = withSpring(0.95, SPRING_CONFIG);
+      scale.value = withFloatingSpring(0.95);
     })
     .onUpdate((event) => {
       isDragging.value = true;
@@ -85,8 +80,8 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
       // Snap to nearest horizontal edge
       const midX = screenWidth / 2;
       const snapX = translateX.value + fabSize / 2 < midX ? minX : maxX;
-      translateX.value = withSpring(snapX, SPRING_CONFIG);
-      scale.value = withSpring(1, SPRING_CONFIG);
+      translateX.value = withFloatingSpring(snapX);
+      scale.value = withFloatingSpring(1);
       isDragging.value = false;
     });
 
@@ -122,7 +117,7 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
         className={cn(className)}
         testID={testID}
       >
-        <Plus color={colors.primaryForeground} size={28} />
+        <Plus color={colors.primaryForeground} size={fabIconSize} />
       </Animated.View>
     </GestureDetector>
   );

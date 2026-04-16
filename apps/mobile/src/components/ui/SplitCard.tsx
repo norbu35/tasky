@@ -1,8 +1,8 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
-import { interactiveStates } from '../../design/animations';
+import { interactiveStates, withInteractiveSpring } from '../../design/animations';
 import { elevations } from '../../design/elevations';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
@@ -35,14 +35,14 @@ export function SplitCard({
 
   const handlePressIn = () => {
     if (!onPress) return;
-    scale.value = withSpring(interactiveStates.pressed.scale, { damping: 15, stiffness: 300 });
-    opacity.value = withSpring(interactiveStates.pressed.opacity, { damping: 15, stiffness: 300 });
+    scale.value = withInteractiveSpring(interactiveStates.pressed.scale);
+    opacity.value = withInteractiveSpring(interactiveStates.pressed.opacity);
   };
 
   const handlePressOut = () => {
     if (!onPress) return;
-    scale.value = withSpring(1, { damping: 15, stiffness: 300 });
-    opacity.value = withSpring(1, { damping: 15, stiffness: 300 });
+    scale.value = withInteractiveSpring(1);
+    opacity.value = withInteractiveSpring(1);
   };
 
   const containerClassName = cn('rounded-lg overflow-hidden', className);

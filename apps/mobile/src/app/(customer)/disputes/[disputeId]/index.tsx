@@ -15,11 +15,12 @@ import { InsetScrollView, ScreenContainer } from '../../../../components/shells'
 import { Touchable } from '../../../../components/ui/Touchable';
 import { elevations } from '../../../../design/elevations';
 import { screenLayout } from '../../../../design/screenLayout';
-import { mobileTheme } from '../../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../../design/tokenAdapter';
 import { useDisputeDetail } from '../../../../features/disputes/hooks/useDisputeDetail';
 import { cn } from '../../../../lib/cn';
 
 const { colors, spacing } = mobileTheme;
+const { dispute: disputeSurface, tint } = mobileSurfaces;
 
 type DisputeStatus =
   | 'OPEN'
@@ -181,8 +182,12 @@ function TimelineDot({ state }: { state: TimelineState }) {
     return (
       <View
         testID="SCR-CUST-025"
-        className="w-[24px] h-[24px] rounded-full bg-primary-deep items-center justify-center border-[4px] border-background"
-        style={{ zIndex: 2 }}
+        className="rounded-full bg-primary-deep items-center justify-center border-[4px] border-background"
+        style={{
+          width: disputeSurface.timeline.dotSize,
+          height: disputeSurface.timeline.dotSize,
+          zIndex: 2,
+        }}
       >
         <CircleCheckBig size={10} color={colors.primaryForeground} />
       </View>
@@ -191,17 +196,31 @@ function TimelineDot({ state }: { state: TimelineState }) {
   if (state === 'current') {
     return (
       <View
-        className="w-[24px] h-[24px] rounded-full border-[2px] border-secondary bg-background items-center justify-center"
-        style={{ zIndex: 2 }}
+        className="rounded-full border-[2px] border-secondary bg-background items-center justify-center"
+        style={{
+          width: disputeSurface.timeline.dotSize,
+          height: disputeSurface.timeline.dotSize,
+          zIndex: 2,
+        }}
       >
-        <View className="w-[8px] h-[8px] rounded-full bg-secondary" />
+        <View
+          className="rounded-full bg-secondary"
+          style={{
+            width: disputeSurface.timeline.innerDotSize,
+            height: disputeSurface.timeline.innerDotSize,
+          }}
+        />
       </View>
     );
   }
   return (
     <View
-      className="w-[24px] h-[24px] rounded-full border-[2px] border-border bg-background items-center justify-center"
-      style={{ zIndex: 2 }}
+      className="rounded-full border-[2px] border-border bg-background items-center justify-center"
+      style={{
+        width: disputeSurface.timeline.dotSize,
+        height: disputeSurface.timeline.dotSize,
+        zIndex: 2,
+      }}
     >
       <Circle size={8} color={colors.border} fill={colors.border} />
     </View>
@@ -377,15 +396,19 @@ export default function DisputeStatusScreen() {
                   const isLast = index === timeline.length - 1;
                   return (
                     <View key={item.title} className="flex-row gap-item">
-                      <View className="w-[24px] items-center" style={{ position: 'relative' }}>
+                      <View
+                        className="items-center"
+                        style={{ width: disputeSurface.timeline.dotSize, position: 'relative' }}
+                      >
                         <TimelineDot state={state} />
                         {!isLast ? (
                           <View
-                            className="absolute w-[2px]"
+                            className="absolute"
                             style={{
-                              top: 24,
+                              width: disputeSurface.timeline.lineWidth,
+                              top: disputeSurface.timeline.dotSize,
                               bottom: -spacing.lg,
-                              backgroundColor: 'rgba(195,198,207,0.5)',
+                              backgroundColor: tint.borderSoft,
                             }}
                           />
                         ) : null}
@@ -425,7 +448,13 @@ export default function DisputeStatusScreen() {
                 {t('customer.disputes.sectionResolution')}
               </Text>
               <View className="items-center gap-sm">
-                <View className="w-[64px] h-[64px] rounded-lg bg-chip-inactive items-center justify-center">
+                <View
+                  className="rounded-lg bg-chip-inactive items-center justify-center"
+                  style={{
+                    width: disputeSurface.timeline.resolutionIconBox,
+                    height: disputeSurface.timeline.resolutionIconBox,
+                  }}
+                >
                   <AlertTriangle size={22} color={colors.secondary} />
                 </View>
                 <Text className="text-body font-sans-bold text-primary-deep text-center">
@@ -454,7 +483,13 @@ export default function DisputeStatusScreen() {
                     key={`${index}-${typeof item === 'string' ? item : item.type}-${typeof item === 'string' ? 'string' : (item.storage_key ?? 'item')}`}
                     className="flex-row items-start gap-sm"
                   >
-                    <View className="w-[8px] h-[8px] rounded-full bg-primary-deep mt-sm" />
+                    <View
+                      className="rounded-full bg-primary-deep mt-sm"
+                      style={{
+                        width: disputeSurface.timeline.evidenceBullet,
+                        height: disputeSurface.timeline.evidenceBullet,
+                      }}
+                    />
                     <Text className="flex-1 text-body text-primary-deep leading-snug">
                       {getEvidenceLabel(item, t)}
                     </Text>
@@ -469,8 +504,8 @@ export default function DisputeStatusScreen() {
 
             {/* Decorative icon */}
             <View
-              className="h-[192px] rounded-lg overflow-hidden items-center justify-center"
-              style={{ opacity: 0.4 }}
+              className="rounded-lg overflow-hidden items-center justify-center"
+              style={{ height: disputeSurface.timeline.decorativeScaleHeight, opacity: 0.4 }}
             >
               <Scale size={64} color={colors.textSecondary} />
             </View>

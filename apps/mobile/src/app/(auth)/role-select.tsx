@@ -8,11 +8,12 @@ import { AuthTemplate } from '../../components/templates/AuthTemplate';
 import { Button, ModalSheet } from '../../components/ui';
 import { Touchable } from '../../components/ui/Touchable';
 import { elevations } from '../../design/elevations';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 import { useAppStore } from '../../store/appStore';
 
 const { colors } = mobileTheme;
+const { roleSelect } = mobileSurfaces;
 
 type RoleOption = 'customer' | 'tasker' | null;
 
@@ -74,8 +75,11 @@ export default function RoleSelectScreen() {
       >
         <View className="flex-row items-center gap-md p-lg">
           <View
-            className="w-[56px] h-[56px] rounded-[18px] items-center justify-center"
+            className="items-center justify-center"
             style={{
+              width: roleSelect.roleIconBox,
+              height: roleSelect.roleIconBox,
+              borderRadius: roleSelect.roleIconRadius,
               backgroundColor: isSelected ? colors.secondary : colors.chipInactive,
             }}
           >
@@ -87,7 +91,7 @@ export default function RoleSelectScreen() {
             </Text>
             <Text
               className="text-label mt-xs"
-              style={{ color: colors.textSecondary, lineHeight: 20 }}
+              style={{ color: colors.textSecondary, lineHeight: roleSelect.descriptionLineHeight }}
             >
               {t(descriptionKey, roleCopy[role])}
             </Text>
@@ -95,8 +99,12 @@ export default function RoleSelectScreen() {
           {isSelected ? (
             <View
               testID={`role-card-${role}-check`}
-              className="w-[20px] h-[20px] rounded-full items-center justify-center"
-              style={{ backgroundColor: colors.primaryDeep }}
+              className="rounded-full items-center justify-center"
+              style={{
+                width: roleSelect.checkSize,
+                height: roleSelect.checkSize,
+                backgroundColor: colors.primaryDeep,
+              }}
             >
               <Check size={14} color={colors.primaryForeground} />
             </View>
@@ -111,13 +119,13 @@ export default function RoleSelectScreen() {
       <View className="mb-xl">
         <Text
           className="text-heading font-sans-bold text-center"
-          style={{ color: colors.primaryDeep, lineHeight: undefined }}
+          style={{ color: colors.primaryDeep, lineHeight: roleSelect.headingLineHeight }}
         >
           {t('auth.roleSelection.heading')}
         </Text>
         <Text
           className="text-body text-center"
-          style={{ color: colors.textSecondary, lineHeight: 24 }}
+          style={{ color: colors.textSecondary, lineHeight: roleSelect.bodyLineHeight }}
         >
           {t('RoleSelectScreen.copy5')}
         </Text>
@@ -129,7 +137,7 @@ export default function RoleSelectScreen() {
         testID="role-confirm-button"
         onPress={handleConfirm}
         disabled={!selectedRole}
-        style={{ minHeight: 56, borderRadius: 12 }}
+        style={{ minHeight: roleSelect.confirmHeight, borderRadius: roleSelect.confirmRadius }}
       >
         <View className="flex-row items-center justify-center gap-sm">
           <Text className="text-label font-sans-bold text-primary-foreground">
@@ -155,7 +163,10 @@ export default function RoleSelectScreen() {
           testID: 'role-sheet-cancel',
         }}
       >
-        <Text className="text-body" style={{ color: colors.textSecondary, lineHeight: 24 }}>
+        <Text
+          className="text-body"
+          style={{ color: colors.textSecondary, lineHeight: roleSelect.bodyLineHeight }}
+        >
           {t('auth.roleSelection.confirmSheetMessage', {
             role: roleLabel,
             defaultValue: `${roleLabel} болохоо баталгаажуулна уу. Тохиргооноос дараа солих боломжтой.`,

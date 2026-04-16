@@ -1,9 +1,9 @@
 import { cva } from 'class-variance-authority';
 import React from 'react';
 import { Pressable, StyleProp, ViewStyle } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
-import { interactiveStates } from '../../design/animations';
+import { interactiveStates, withInteractiveSpring } from '../../design/animations';
 import { cn } from '../../lib/cn';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -41,14 +41,14 @@ export function PressableCard({
   }));
 
   const handlePressIn = () => {
-    scale.value = withSpring(interactiveStates.pressed.scale, { damping: 15, stiffness: 300 });
-    opacity.value = withSpring(interactiveStates.pressed.opacity, { damping: 15, stiffness: 300 });
+    scale.value = withInteractiveSpring(interactiveStates.pressed.scale);
+    opacity.value = withInteractiveSpring(interactiveStates.pressed.opacity);
     onPressIn?.();
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 300 });
-    opacity.value = withSpring(1, { damping: 15, stiffness: 300 });
+    scale.value = withInteractiveSpring(1);
+    opacity.value = withInteractiveSpring(1);
     onPressOut?.();
   };
 

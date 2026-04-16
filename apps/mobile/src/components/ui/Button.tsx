@@ -9,10 +9,10 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
 import { elevations } from '../../design/elevations';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileTheme, withInteractiveSpring } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
 const { colors } = mobileTheme;
@@ -109,12 +109,12 @@ export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, Butto
     }));
 
     const handlePressIn = (e: GestureResponderEvent) => {
-      scale.value = withSpring(0.96, { damping: 15, stiffness: 300 });
+      scale.value = withInteractiveSpring(0.96);
       props.onPressIn?.(e);
     };
 
     const handlePressOut = (e: GestureResponderEvent) => {
-      scale.value = withSpring(1, { damping: 15, stiffness: 300 });
+      scale.value = withInteractiveSpring(1);
       props.onPressOut?.(e);
     };
 

@@ -15,10 +15,11 @@ import {
 import { ScreenContainer } from '../components/shells';
 import { Button } from '../components/ui/Button';
 import { Touchable } from '../components/ui/Touchable';
-import { mobileTheme } from '../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../design/tokenAdapter';
 
 const { width } = Dimensions.get('window');
 const { colors, spacing } = mobileTheme;
+const { illustrationCard, pagination, skipSpacer } = mobileSurfaces.onboarding;
 
 export default function OnboardingScreen() {
   const { t } = useTranslation();
@@ -99,19 +100,30 @@ export default function OnboardingScreen() {
         <View
           className="mb-[32px] items-center justify-center"
           style={{
-            width: 326,
-            height: 407,
-            borderRadius: 32,
+            width: illustrationCard.width,
+            height: illustrationCard.height,
+            borderRadius: illustrationCard.radius,
             backgroundColor: colors.muted,
-            transform: [{ rotate: '-3deg' }],
+            transform: [{ rotate: illustrationCard.rotation }],
           }}
         >
-          <View style={StyleSheet.absoluteFill} className="rounded-[32px] bg-muted" />
           <View
-            className="self-stretch h-full rounded-[32px] overflow-hidden items-center justify-center"
-            style={{ backgroundColor: `${item.iconColor}15` }}
+            style={[StyleSheet.absoluteFill, { borderRadius: illustrationCard.radius }]}
+            className="bg-muted"
+          />
+          <View
+            className="self-stretch h-full overflow-hidden items-center justify-center"
+            style={{
+              borderRadius: illustrationCard.radius,
+              backgroundColor:
+                item.id === '3'
+                  ? mobileSurfaces.tint.verifiedSoft
+                  : item.id === '2'
+                    ? mobileSurfaces.tint.primarySubtle
+                    : mobileSurfaces.tint.primaryStrong,
+            }}
           >
-            <item.icon size={80} color={item.iconColor} />
+            <item.icon size={illustrationCard.iconSize} color={item.iconColor} />
             {item.id === '1' ? (
               <View
                 className="absolute bottom-6 left-6 rounded-xl px-lg py-sm"
@@ -150,7 +162,7 @@ export default function OnboardingScreen() {
           <ArrowLeft size={24} color={colors.primaryDeep} />
         </Touchable>
         {isLastSlide ? (
-          <View style={{ width: 56, height: 24 }} />
+          <View style={skipSpacer} />
         ) : (
           <Touchable testID="onboarding-skip" onPress={handleSkip} hitSlop={12}>
             <Text className="text-label font-sans-bold" style={{ color: colors.primaryDeep }}>
@@ -182,10 +194,10 @@ export default function OnboardingScreen() {
               key={index}
               testID={`pagination-dot-${index}`}
               style={{
-                height: 3,
+                height: pagination.height,
                 borderRadius: 999,
                 backgroundColor: currentIndex === index ? colors.primary : colors.border,
-                width: currentIndex === index ? 10 : 6,
+                width: currentIndex === index ? pagination.activeWidth : pagination.inactiveWidth,
               }}
             />
           ))}

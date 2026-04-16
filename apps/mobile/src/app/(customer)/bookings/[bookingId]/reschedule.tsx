@@ -17,12 +17,13 @@ import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../../c
 import { Input } from '../../../../components/ui/Input';
 import { Touchable } from '../../../../components/ui/Touchable';
 import { elevations } from '../../../../design/elevations';
-import { mobileTheme } from '../../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../../design/tokenAdapter';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { useReschedule } from '../../../../features/bookings/hooks/useReschedule';
 import { cn } from '../../../../lib/cn';
 
 const { colors, spacing, typography } = mobileTheme;
+const { reschedule: rescheduleSurface } = mobileSurfaces;
 
 type RescheduleState = 'request_form' | 'awaiting_response' | 'accepted' | 'declined' | 'expired';
 
@@ -139,7 +140,13 @@ export default function RescheduleScreen() {
               <Text className="text-body font-sans-bold text-primary-deep">{scheduledAtLabel}</Text>
             </View>
           </View>
-          <View className="w-[34px] h-[34px] rounded-md bg-card items-center justify-center">
+          <View
+            className="rounded-md bg-card items-center justify-center"
+            style={{
+              width: rescheduleSurface.currentScheduleIconBox,
+              height: rescheduleSurface.currentScheduleIconBox,
+            }}
+          >
             <Clock3 size={16} color={colors.secondary} />
           </View>
         </View>
@@ -147,7 +154,10 @@ export default function RescheduleScreen() {
         {/* Step indicator */}
         <View className="flex-row items-center justify-between px-sm">
           <View className="items-center gap-xs">
-            <View className="w-[32px] h-[32px] rounded-md bg-primary-deep items-center justify-center">
+            <View
+              className="rounded-md bg-primary-deep items-center justify-center"
+              style={{ width: rescheduleSurface.stepBadge, height: rescheduleSurface.stepBadge }}
+            >
               <Text className="text-micro font-sans-bold text-primary-foreground">1</Text>
             </View>
             <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-wide">
@@ -156,7 +166,10 @@ export default function RescheduleScreen() {
           </View>
           <View className="flex-1 h-[2px] mx-sm bg-border" />
           <View className="items-center gap-xs opacity-[0.45]">
-            <View className="w-[32px] h-[32px] rounded-md bg-muted items-center justify-center">
+            <View
+              className="rounded-md bg-muted items-center justify-center"
+              style={{ width: rescheduleSurface.stepBadge, height: rescheduleSurface.stepBadge }}
+            >
               <Text className="text-micro font-sans-bold text-primary-deep">2</Text>
             </View>
             <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-wide">
@@ -173,16 +186,27 @@ export default function RescheduleScreen() {
             </Text>
             <View className="flex-row gap-xs">
               <Touchable
-                className="w-[32px] h-[32px] rounded-sm bg-muted items-center justify-center"
+                className="rounded-sm bg-muted items-center justify-center"
+                style={{
+                  width: rescheduleSurface.navIconBox,
+                  height: rescheduleSurface.navIconBox,
+                }}
                 accessibilityRole="button"
               >
-                <ChevronLeftIcon size={18} color={colors.primaryDeep} />
+                <ChevronLeftIcon
+                  size={rescheduleSurface.calendarNavIcon}
+                  color={colors.primaryDeep}
+                />
               </Touchable>
               <Touchable
-                className="w-[32px] h-[32px] rounded-sm bg-muted items-center justify-center"
+                className="rounded-sm bg-muted items-center justify-center"
+                style={{
+                  width: rescheduleSurface.navIconBox,
+                  height: rescheduleSurface.navIconBox,
+                }}
                 accessibilityRole="button"
               >
-                <ChevronRight size={18} color={colors.primaryDeep} />
+                <ChevronRight size={rescheduleSurface.calendarNavIcon} color={colors.primaryDeep} />
               </Touchable>
             </View>
           </View>
@@ -212,7 +236,8 @@ export default function RescheduleScreen() {
                 return (
                   <View
                     key={`empty-${index}`}
-                    className="w-[14.2857%] aspect-square items-center justify-center rounded-sm"
+                    className="aspect-square items-center justify-center rounded-sm"
+                    style={{ width: rescheduleSurface.calendarCellWidth }}
                   />
                 );
               }
@@ -225,11 +250,14 @@ export default function RescheduleScreen() {
                   key={cell.toISOString()}
                   onPress={() => updateSelectedDay(cell)}
                   className={cn(
-                    'w-[14.2857%] aspect-square items-center justify-center rounded-sm',
+                    'aspect-square items-center justify-center rounded-sm',
                     isSelected && 'bg-primary-deep',
                     isPast && 'opacity-25',
                   )}
-                  style={isSelected ? elevations.soft : undefined}
+                  style={[
+                    { width: rescheduleSurface.calendarCellWidth },
+                    isSelected ? elevations.soft : undefined,
+                  ]}
                   testID={isSelected ? 'reschedule-screen-date-picker' : undefined}
                   accessibilityRole="button"
                   accessibilityState={{ selected: isSelected, disabled: isPast }}
@@ -272,10 +300,16 @@ export default function RescheduleScreen() {
                   key={time}
                   onPress={() => updateSelectedTime(time)}
                   className={cn(
-                    'min-w-[72px] min-h-[40px] rounded-md bg-muted items-center justify-center px-lg',
+                    'rounded-md bg-muted items-center justify-center px-lg',
                     isSelected && 'bg-primary-deep',
                   )}
-                  style={isSelected ? elevations.soft : undefined}
+                  style={[
+                    {
+                      minWidth: rescheduleSurface.timeChipMinWidth,
+                      minHeight: rescheduleSurface.timeChipMinHeight,
+                    },
+                    isSelected ? elevations.soft : undefined,
+                  ]}
                   accessibilityRole="button"
                   accessibilityState={{ selected: isSelected }}
                 >
@@ -298,10 +332,13 @@ export default function RescheduleScreen() {
           <Text className="text-body font-sans-bold text-primary-deep">
             {t('customer.bookings.labelReason')}
           </Text>
-          <View className="min-h-[120px] bg-muted rounded-md p-md">
+          <View
+            className="bg-muted rounded-md p-md"
+            style={{ minHeight: rescheduleSurface.reasonMinHeight }}
+          >
             <Input
               style={{
-                minHeight: 96,
+                minHeight: rescheduleSurface.reasonInputMinHeight,
                 color: colors.primaryDeep,
                 fontSize: typography.body,
                 textAlignVertical: 'top',
@@ -335,7 +372,13 @@ export default function RescheduleScreen() {
         {/* State card */}
         {requestState !== 'request_form' ? (
           <View className="bg-muted rounded-lg p-lg gap-sm items-start">
-            <View className="w-[40px] h-[40px] rounded-md bg-card items-center justify-center">
+            <View
+              className="rounded-md bg-card items-center justify-center"
+              style={{
+                width: rescheduleSurface.stateIconBox,
+                height: rescheduleSurface.stateIconBox,
+              }}
+            >
               <CalendarRange size={18} color={colors.secondary} />
             </View>
             <Text className="text-body font-sans-bold text-primary-deep">
@@ -378,7 +421,7 @@ export default function RescheduleScreen() {
               end={{ x: 1, y: 1 }}
               style={[
                 {
-                  minHeight: 56,
+                  minHeight: rescheduleSurface.ctaHeight,
                   borderRadius: 8,
                   flexDirection: 'row',
                   alignItems: 'center',

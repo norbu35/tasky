@@ -8,9 +8,10 @@ import { Linking, Platform, Text, View } from 'react-native';
 import { InsetScrollView, ScreenContainer } from '../../../components/shells';
 import { Touchable } from '../../../components/ui/Touchable';
 import { elevations } from '../../../design/elevations';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing } = mobileTheme;
+const { bookingConfirmed } = mobileSurfaces;
 
 export default function BookingConfirmedScreen() {
   const { t } = useTranslation();
@@ -71,7 +72,8 @@ export default function BookingConfirmedScreen() {
         <Touchable
           accessibilityRole="button"
           onPress={handleDone}
-          className="w-[40px] h-[40px] rounded-md items-center justify-center bg-card"
+          className="rounded-md items-center justify-center bg-card"
+          style={{ width: bookingConfirmed.navIconBox, height: bookingConfirmed.navIconBox }}
           testID="booking-confirmed-screen-close"
         >
           <ChevronLeft size={22} color={colors.primaryDeep} />
@@ -91,7 +93,10 @@ export default function BookingConfirmedScreen() {
         extraBottomInset={spacing.xl}
       >
         <View className="pt-2xl">
-          <View className="w-[96px] h-[96px] rounded-full bg-muted items-center justify-center">
+          <View
+            className="rounded-full bg-muted items-center justify-center"
+            style={{ width: bookingConfirmed.heroSize, height: bookingConfirmed.heroSize }}
+          >
             <Check size={36} color={colors.verified} strokeWidth={3} />
           </View>
         </View>
@@ -116,7 +121,13 @@ export default function BookingConfirmedScreen() {
           className="self-stretch flex-row rounded-md bg-muted p-lg gap-md"
           style={{ ...elevations.soft }}
         >
-          <View className="w-[40px] h-[40px] rounded-md items-center justify-center bg-card">
+          <View
+            className="rounded-md items-center justify-center bg-card"
+            style={{
+              width: bookingConfirmed.nextStepIconBox,
+              height: bookingConfirmed.nextStepIconBox,
+            }}
+          >
             <CalendarPlus2 size={20} color={colors.primaryDeep} />
           </View>
           <View className="flex-1 gap-xs">
@@ -134,7 +145,13 @@ export default function BookingConfirmedScreen() {
           style={{ ...elevations.soft }}
         >
           <View className="flex-row items-center flex-1 gap-md">
-            <View className="w-[48px] h-[48px] rounded-md overflow-hidden bg-muted items-center justify-center">
+            <View
+              className="rounded-md overflow-hidden bg-muted items-center justify-center"
+              style={{
+                width: bookingConfirmed.providerAvatarBox,
+                height: bookingConfirmed.providerAvatarBox,
+              }}
+            >
               <UserRound size={28} color={colors.textSecondary} />
             </View>
             <View className="flex-1 gap-[2px]">
@@ -160,7 +177,7 @@ export default function BookingConfirmedScreen() {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={{
-                minHeight: 52,
+                minHeight: bookingConfirmed.primaryCtaHeight,
                 paddingHorizontal: spacing.xl,
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -190,7 +207,12 @@ export default function BookingConfirmedScreen() {
 
       <View
         pointerEvents="none"
-        className="absolute left-0 right-0 bottom-0 h-[80px] bg-background rounded-tl-[40px] rounded-tr-[40px] opacity-70"
+        className="absolute left-0 right-0 bottom-0 bg-background opacity-70"
+        style={{
+          height: bookingConfirmed.bottomGlowHeight,
+          borderTopLeftRadius: bookingConfirmed.bottomGlowRadius,
+          borderTopRightRadius: bookingConfirmed.bottomGlowRadius,
+        }}
       />
     </ScreenContainer>
   );

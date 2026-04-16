@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
+import { mobileSurfaces } from '../../../design/tokenAdapter';
+
+const { legal } = mobileSurfaces;
 
 export default function PrivacyPolicyScreen() {
   const { t } = useTranslation();
@@ -19,7 +22,10 @@ export default function PrivacyPolicyScreen() {
         <Text className="text-subtitle font-semibold text-primary-deep mb-sm text-left">
           {t('shared.legal.dataCollection')}
         </Text>
-        <Text className="text-body text-text-secondary text-left" style={{ lineHeight: 24 }}>
+        <Text
+          className="text-body text-text-secondary text-left"
+          style={{ lineHeight: legal.paragraphLineHeight }}
+        >
           {t('PrivacyPolicyScreen.copy1')}
         </Text>
       </View>
@@ -28,7 +34,10 @@ export default function PrivacyPolicyScreen() {
         <Text className="text-subtitle font-semibold text-primary-deep mb-sm text-left">
           {t('shared.legal.dataUsage')}
         </Text>
-        <Text className="text-body text-text-secondary text-left" style={{ lineHeight: 24 }}>
+        <Text
+          className="text-body text-text-secondary text-left"
+          style={{ lineHeight: legal.paragraphLineHeight }}
+        >
           {t('PrivacyPolicyScreen.copy2')}
         </Text>
       </View>
@@ -37,7 +46,10 @@ export default function PrivacyPolicyScreen() {
         <Text className="text-subtitle font-semibold text-primary-deep mb-sm text-left">
           {t('shared.legal.dataStorage')}
         </Text>
-        <Text className="text-body text-text-secondary text-left" style={{ lineHeight: 24 }}>
+        <Text
+          className="text-body text-text-secondary text-left"
+          style={{ lineHeight: legal.paragraphLineHeight }}
+        >
           {t('PrivacyPolicyScreen.copy3')}
         </Text>
       </View>
@@ -46,7 +58,10 @@ export default function PrivacyPolicyScreen() {
         <Text className="text-subtitle font-semibold text-primary-deep mb-sm text-left">
           {t('shared.legal.dataSharing')}
         </Text>
-        <Text className="text-body text-text-secondary text-left" style={{ lineHeight: 24 }}>
+        <Text
+          className="text-body text-text-secondary text-left"
+          style={{ lineHeight: legal.paragraphLineHeight }}
+        >
           {t('PrivacyPolicyScreen.copy4')}
         </Text>
       </View>
@@ -55,7 +70,10 @@ export default function PrivacyPolicyScreen() {
         <Text className="text-subtitle font-semibold text-primary-deep mb-sm text-left">
           {t('shared.legal.identityData')}
         </Text>
-        <Text className="text-body text-text-secondary text-left" style={{ lineHeight: 24 }}>
+        <Text
+          className="text-body text-text-secondary text-left"
+          style={{ lineHeight: legal.paragraphLineHeight }}
+        >
           {t('PrivacyPolicyScreen.copy5')}
         </Text>
       </View>
@@ -64,7 +82,10 @@ export default function PrivacyPolicyScreen() {
         <Text className="text-subtitle font-semibold text-primary-deep mb-sm text-left">
           {t('shared.legal.userRights')}
         </Text>
-        <Text className="text-body text-text-secondary text-left" style={{ lineHeight: 24 }}>
+        <Text
+          className="text-body text-text-secondary text-left"
+          style={{ lineHeight: legal.paragraphLineHeight }}
+        >
           {t('PrivacyPolicyScreen.copy6')}
         </Text>
       </View>
@@ -73,7 +94,10 @@ export default function PrivacyPolicyScreen() {
         <Text className="text-subtitle font-semibold text-primary-deep mb-sm text-left">
           {t('shared.legal.dataRetention')}
         </Text>
-        <Text className="text-body text-text-secondary text-left" style={{ lineHeight: 24 }}>
+        <Text
+          className="text-body text-text-secondary text-left"
+          style={{ lineHeight: legal.paragraphLineHeight }}
+        >
           {t('PrivacyPolicyScreen.copy7')}
         </Text>
       </View>
@@ -82,7 +106,10 @@ export default function PrivacyPolicyScreen() {
         <Text className="text-subtitle font-semibold text-primary-deep mb-sm text-left">
           {t('shared.legal.contact')}
         </Text>
-        <Text className="text-body text-text-secondary text-left" style={{ lineHeight: 24 }}>
+        <Text
+          className="text-body text-text-secondary text-left"
+          style={{ lineHeight: legal.paragraphLineHeight }}
+        >
           {t('PrivacyPolicyScreen.copy8')}
         </Text>
         <View className="mt-md bg-card rounded-md p-md gap-xs">

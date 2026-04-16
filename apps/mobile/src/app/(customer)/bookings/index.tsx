@@ -10,10 +10,11 @@ import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { Touchable } from '../../../components/ui/Touchable';
 import { elevations } from '../../../design/elevations';
 import { screenLayout } from '../../../design/screenLayout';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
 import { useBookings } from '../../../features/bookings/hooks/useBookings';
 
 const { colors } = mobileTheme;
+const { bookingList } = mobileSurfaces;
 
 type BookingTab = 'active' | 'completed';
 
@@ -145,14 +146,14 @@ function BookingCard({
         >
           <Text
             className="text-micro font-bold uppercase tracking-[0.6px]"
-            style={{ color: statusColors.text }}
+            style={{ letterSpacing: bookingList.statusTracking, color: statusColors.text }}
           >
             {getBookingStatusLabel(booking.status, t)}
           </Text>
         </View>
       </View>
 
-      <View className="h-[1px] bg-border opacity-40" />
+      <View className="bg-border opacity-40" style={{ height: bookingList.railHeight }} />
 
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center gap-xs flex-1">
@@ -169,17 +170,35 @@ function LoadingSkeletonCard() {
   return (
     <View className="bg-card rounded-lg p-lg gap-md" style={elevations.soft}>
       <View className="flex-row items-center gap-md">
-        <View className="w-10 h-10 rounded-md bg-muted" />
+        <View
+          className="rounded-md bg-muted"
+          style={{ width: bookingList.skeletonAvatar, height: bookingList.skeletonAvatar }}
+        />
         <View className="flex-1 gap-xs">
-          <View className="h-3 rounded-xs bg-muted w-[72%]" />
-          <View className="h-[10px] rounded-xs bg-muted w-[48%]" />
+          <View
+            className="h-3 rounded-xs bg-muted"
+            style={{ width: bookingList.skeletonTitleWidth }}
+          />
+          <View
+            className="rounded-xs bg-muted"
+            style={{ height: 10, width: bookingList.skeletonSubtitleWidth }}
+          />
         </View>
-        <View className="w-[72px] h-6 rounded-full bg-muted" />
+        <View
+          className="rounded-full bg-muted"
+          style={{ width: bookingList.skeletonPillWidth, height: bookingList.skeletonPillHeight }}
+        />
       </View>
-      <View className="h-[1px] bg-border opacity-40" />
+      <View className="bg-border opacity-40" style={{ height: bookingList.railHeight }} />
       <View className="flex-row justify-between items-center">
-        <View className="h-[10px] rounded-xs bg-muted w-[42%]" />
-        <View className="h-4 w-[72px] rounded-xs bg-muted" />
+        <View
+          className="rounded-xs bg-muted"
+          style={{ height: 10, width: bookingList.skeletonMetaWidth }}
+        />
+        <View
+          className="rounded-xs bg-muted"
+          style={{ height: bookingList.skeletonPriceHeight, width: bookingList.skeletonPriceWidth }}
+        />
       </View>
     </View>
   );
@@ -200,7 +219,8 @@ function EmptyState({ onPress }: { onPress: () => void }) {
       </Text>
       <Touchable
         onPress={onPress}
-        className="min-h-[48px] px-xl rounded-md bg-secondary items-center justify-center"
+        className="px-xl rounded-md bg-secondary items-center justify-center"
+        style={{ minHeight: bookingList.ctaHeight }}
         testID="bookings-empty-cta"
       >
         <Text className="text-label font-bold text-secondary-foreground">
@@ -252,7 +272,8 @@ export default function BookingsListScreen() {
       <View className="flex-1 bg-background">
         <View className="flex-row items-center justify-between py-md">
           <Touchable
-            className="w-10 h-10 rounded-md items-center justify-center bg-card"
+            className="rounded-md items-center justify-center bg-card"
+            style={{ width: bookingList.headerIconBox, height: bookingList.headerIconBox }}
             accessibilityRole="button"
           >
             <Menu size={22} color={colors.primaryDeep} />
@@ -261,7 +282,8 @@ export default function BookingsListScreen() {
             {t('customer.bookings.pageTitle')}
           </Text>
           <Touchable
-            className="w-10 h-10 rounded-md items-center justify-center bg-card"
+            className="rounded-md items-center justify-center bg-card"
+            style={{ width: bookingList.headerIconBox, height: bookingList.headerIconBox }}
             accessibilityRole="button"
           >
             <Search size={20} color={colors.primaryDeep} />

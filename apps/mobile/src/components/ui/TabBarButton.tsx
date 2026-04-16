@@ -1,10 +1,15 @@
 import React from 'react';
 import type { AccessibilityState, GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
 import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
+import { interactiveStates, withInteractiveSpring } from '../../design/animations';
+import { screenLayout } from '../../design/screenLayout';
 import { mobileTheme } from '../../design/tokenAdapter';
 
 const { colors, spacing } = mobileTheme;
+const { tabButtonHeight, tabButtonInsetX, tabButtonRadius } = screenLayout.chrome;
+const AnimatedView = Animated.View;
 
 interface TabBarButtonProps {
   children?: React.ReactNode;
@@ -26,6 +31,10 @@ export function TabBarButton({
   testID,
 }: TabBarButtonProps) {
   const focused = accessibilityState?.selected ?? ariaSelected ?? false;
+  const scale = useSharedValue(1);
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   return (
     <Pressable
@@ -35,8 +44,16 @@ export function TabBarButton({
       accessibilityState={accessibilityState}
       android_ripple={null}
       style={styles.pressable}
+      onPressIn={() => {
+        scale.value = withInteractiveSpring(interactiveStates.pressed.scale);
+      }}
+      onPressOut={() => {
+        scale.value = withInteractiveSpring(1);
+      }}
     >
-      <View style={[styles.content, focused && styles.contentFocused]}>{children}</View>
+      <AnimatedView style={animatedStyle}>
+        <View style={[styles.content, focused && styles.contentFocused]}>{children}</View>
+      </AnimatedView>
     </Pressable>
   );
 }
@@ -46,13 +63,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignSelf: 'stretch',
     justifyContent: 'center',
-    marginHorizontal: spacing.md,
+    marginHorizontal: tabButtonInsetX,
     marginVertical: spacing.sm,
   },
   content: {
-    height: 72,
+    height: tabButtonHeight,
     alignSelf: 'stretch',
-    borderRadius: 20,
+    borderRadius: tabButtonRadius,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',

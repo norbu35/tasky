@@ -6,6 +6,9 @@ import { Pressable, Text, View } from 'react-native';
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
 import { Button } from '../../components/ui/Button';
 import { InfoRow } from '../../components/ui/InfoRow';
+import { mobileSurfaces } from '../../design/tokenAdapter';
+
+const { referrals } = mobileSurfaces;
 
 export default function TaskerReferralsScreen() {
   const { t } = useTranslation();
@@ -17,23 +20,23 @@ export default function TaskerReferralsScreen() {
         <View className="p-lg rounded-lg bg-primary-deep gap-md">
           <Text
             className="font-extrabold text-card"
-            style={{ fontSize: 28, lineHeight: 28 * (17 / 14) }}
+            style={{ fontSize: referrals.heroSize, lineHeight: referrals.heroLineHeight }}
           >
             {t('tasker.referrals.heroTitle')}
           </Text>
           <Text
             className="text-body text-primary-foreground leading-relaxed"
-            style={{ opacity: 0.85 }}
+            style={{ opacity: referrals.bodyOpacity }}
           >
             {t('TaskerReferralsScreen.copy1')}
           </Text>
           <View
             className="p-md rounded-md gap-xs"
-            style={{ backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
+            style={{ backgroundColor: referrals.codeSurface }}
           >
             <Text
               className="text-caption text-primary-foreground uppercase"
-              style={{ letterSpacing: 0.4 }}
+              style={{ letterSpacing: referrals.codeTracking }}
             >
               {t('tasker.referrals.codeLabel')}
             </Text>
@@ -78,7 +81,7 @@ export default function TaskerReferralsScreen() {
 
         <Pressable
           className="p-lg rounded-lg gap-xs"
-          style={{ backgroundColor: 'rgba(255, 221, 184, 0.22)' }}
+          style={{ backgroundColor: referrals.bonusSurface }}
         >
           <Text className="text-body font-bold text-foreground">
             {t('tasker.referrals.bonusPending')}

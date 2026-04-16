@@ -44,10 +44,28 @@ export const screenLayout = {
     tabBarHeight: Platform.OS === 'ios' ? 64 : 58,
     /** Tab bar fixed gap above safe area zone (components add insets.bottom on top) */
     tabBarBottom: 8,
+    /** Tab icon size */
+    tabIconSize: 22,
+    /** Tab button pill height */
+    tabButtonHeight: 72,
+    /** Tab button pill radius */
+    tabButtonRadius: 20,
+    /** Tab button horizontal margin */
+    tabButtonInsetX: spacing.md,
+    /** Tab bar horizontal padding */
+    tabBarInsetX: spacing.sm,
+    /** Tab bar top/bottom padding before safe-area adjustment */
+    tabBarInsetY: spacing.xs,
+    /** Tab bar frosted surface tint */
+    tabBarSurfaceOpacity: 0.92,
     /** FAB diameter */
     fabSize: 60,
+    /** FAB icon size */
+    fabIconSize: 28,
     /** FAB distance from right edge */
     fabInsetRight: spacing.lg,
+    /** FAB distance from top edge */
+    fabInsetTop: spacing.md,
     /** FAB bottom position — derived from tab bar geometry */
     get fabBottom() {
       return this.tabBarHeight + this.tabBarBottom + spacing.sm;

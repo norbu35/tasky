@@ -1,10 +1,10 @@
 import type { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
-import { QueryClientProvider } from '@tanstack/react-query';
+import { focusManager, QueryClientProvider } from '@tanstack/react-query';
 import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { LogBox } from 'react-native';
+import { AppState, LogBox, Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -73,6 +73,16 @@ if (!isExpoGo) {
 }
 
 export default function RootLayout() {
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (status) => {
+      if (Platform.OS !== 'web') {
+        focusManager.setFocused(status === 'active');
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
   useEffect(() => {
     if (isExpoGo) return;
     try {

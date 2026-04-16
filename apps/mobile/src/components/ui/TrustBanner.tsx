@@ -2,10 +2,13 @@ import { ShieldCheck } from 'lucide-react-native';
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
+import { Reveal } from './Reveal';
+
 const { colors } = mobileTheme;
+const { tint } = mobileSurfaces;
 
 interface TrustBannerProps {
   title: string;
@@ -22,11 +25,12 @@ export function TrustBanner({
 }: TrustBannerProps) {
   const isCompact = variant === 'compact';
   return (
-    <View
+    <Reveal
+      delay={90}
       style={
         isCompact
           ? { backgroundColor: colors.trust }
-          : { backgroundColor: 'rgba(255,221,184,0.3)', borderColor: colors.trust }
+          : { backgroundColor: tint.trustSoft, borderColor: colors.trust }
       }
       className={cn(
         'flex-row items-center gap-[16px] p-[17px] rounded-md',
@@ -36,7 +40,7 @@ export function TrustBanner({
     >
       <View
         style={
-          isCompact ? { backgroundColor: 'rgba(101,62,0,0.1)' } : { backgroundColor: colors.trust }
+          isCompact ? { backgroundColor: tint.primarySubtle } : { backgroundColor: colors.trust }
         }
         className={cn(
           'items-center justify-center',
@@ -51,6 +55,6 @@ export function TrustBanner({
         </Text>
         <Text className="text-label text-trust-foreground leading-[20px]">{description}</Text>
       </View>
-    </View>
+    </Reveal>
   );
 }

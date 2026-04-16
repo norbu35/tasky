@@ -9,9 +9,10 @@ import { Button } from '../../components/ui/Button';
 import { FormField } from '../../components/ui/FormField';
 import { Input } from '../../components/ui/Input';
 import { elevations } from '../../design/elevations';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme, withAlpha } from '../../design/tokenAdapter';
 
 const { colors, radius, spacing } = mobileTheme;
+const { otpMigration } = mobileSurfaces;
 
 type MigrationState = 'default' | 'invalid_phone' | 'verifying' | 'error_network';
 
@@ -63,7 +64,7 @@ export default function OtpMigrationScreen() {
         contentContainerStyle={{
           flex: 1,
           paddingHorizontal: spacing.lg,
-          paddingTop: 72,
+          paddingTop: otpMigration.heroTopInset,
           paddingBottom: spacing.lg,
           justifyContent: 'space-between',
         }}
@@ -72,23 +73,30 @@ export default function OtpMigrationScreen() {
       >
         <View className="items-center gap-lg">
           <View
-            className="w-[40px] h-[40px] items-center justify-center"
-            style={{ borderRadius: radius.md }}
+            className="items-center justify-center"
+            style={{
+              width: otpMigration.iconButton,
+              height: otpMigration.iconButton,
+              borderRadius: radius.md,
+            }}
           >
             <ArrowLeft size={18} color={colors.primaryDeep} />
           </View>
-          <View className="w-[96px] h-[96px] items-center justify-center">
+          <View
+            className="items-center justify-center"
+            style={{ width: otpMigration.heroCard, height: otpMigration.heroCard }}
+          >
             <View
               style={{
                 position: 'absolute',
-                width: 144,
-                height: 144,
+                width: otpMigration.halo,
+                height: otpMigration.halo,
                 borderRadius: radius.lg,
-                backgroundColor: 'rgba(171, 201, 242, 0.2)',
+                backgroundColor: withAlpha(colors.accent, 0.2),
               }}
             />
             <View
-              className="w-[96px] h-[96px] items-center justify-center bg-muted"
+              className="items-center justify-center bg-muted"
               style={{ borderRadius: radius.lg, ...elevations.soft }}
             >
               <Shield size={28} color={colors.primaryDeep} />
@@ -97,14 +105,14 @@ export default function OtpMigrationScreen() {
 
           <Text
             className="text-heading font-extrabold text-center text-primary-deep"
-            style={{ letterSpacing: -0.6, lineHeight: undefined }}
+            style={{ letterSpacing: otpMigration.headingTracking }}
           >
             {t('auth.otpMigration.heading')}
           </Text>
           {!isLoading ? (
             <Text
               className="text-body text-text-secondary text-center"
-              style={{ maxWidth: 320, lineHeight: undefined }}
+              style={{ maxWidth: otpMigration.bodyMaxWidth }}
             >
               {t('OtpMigrationScreen.copy1')}
             </Text>
@@ -145,7 +153,7 @@ export default function OtpMigrationScreen() {
                 maxLength={8}
                 editable={!isLoading}
                 invalid={showError}
-                style={{ paddingLeft: 64 }}
+                style={{ paddingLeft: otpMigration.phonePrefixInset }}
               />
             </View>
           </FormField>
@@ -156,7 +164,11 @@ export default function OtpMigrationScreen() {
             isLoading={isLoading}
             disabled={isSubmitDisabled}
             onPress={handleSubmit}
-            style={{ minHeight: 56, borderRadius: radius.md, ...elevations.soft }}
+            style={{
+              minHeight: otpMigration.submitHeight,
+              borderRadius: radius.md,
+              ...elevations.soft,
+            }}
           />
 
           {!isLoading ? (
@@ -165,7 +177,7 @@ export default function OtpMigrationScreen() {
               label={t('auth.otpMigration.skip')}
               variant="ghost"
               onPress={handleSkip}
-              style={{ minHeight: 44 }}
+              style={{ minHeight: otpMigration.skipHeight }}
             />
           ) : null}
         </View>

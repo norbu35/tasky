@@ -13,6 +13,7 @@ import { animationPresets } from '../../design/animations';
 import { screenLayout } from '../../design/screenLayout';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { ScreenContainer } from '../shells/ScreenContainer';
+import { Reveal } from '../ui/Reveal';
 
 import { EmptyStateTemplate } from './EmptyStateTemplate';
 import { ErrorStateTemplate } from './ErrorStateTemplate';
@@ -104,7 +105,9 @@ export function FeedListTemplate<T>({
   const insets = useSafeAreaInsets();
 
   const renderListItem = useCallback(
-    ({ item, index }: { item: T; index: number }) => renderItem(item, index),
+    ({ item, index }: { item: T; index: number }) => (
+      <Reveal delay={Math.min(index * 35, 180)}>{renderItem(item, index)}</Reveal>
+    ),
     [renderItem],
   );
 
@@ -120,8 +123,8 @@ export function FeedListTemplate<T>({
   const combinedHeader =
     ListHeaderComponent || filterBar ? (
       <View className="pb-md gap-sm">
-        {ListHeaderComponent}
-        {filterBar}
+        {ListHeaderComponent ? <Reveal delay={20}>{ListHeaderComponent}</Reveal> : null}
+        {filterBar ? <Reveal delay={60}>{filterBar}</Reveal> : null}
       </View>
     ) : null;
 

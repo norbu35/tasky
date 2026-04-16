@@ -2,13 +2,14 @@ import { CheckCircle } from 'lucide-react-native';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
-import { mobileTheme } from '../../design/tokenAdapter';
+import { screenLayout } from '../../design/screenLayout';
+import { mobileTheme, withEmphasisSpring } from '../../design/tokenAdapter';
 import { InsetScrollView, ScreenContainer } from '../shells';
 import { Button } from '../ui/Button';
 
-const { colors } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 
 export interface SuccessCelebrationTemplateProps {
   headline: string;
@@ -26,11 +27,7 @@ function AnimatedCheckmark() {
   const scale = useSharedValue(0);
 
   useEffect(() => {
-    scale.value = withSpring(1, {
-      damping: 12,
-      stiffness: 180,
-      mass: 0.8,
-    });
+    scale.value = withEmphasisSpring(1);
   }, [scale]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -63,9 +60,9 @@ export function SuccessCelebrationTemplate({
         className="flex-1 bg-background"
         contentContainerStyle={{
           alignItems: 'center',
-          paddingTop: 40,
-          paddingHorizontal: 16,
-          paddingBottom: 24,
+          paddingTop: spacing['2xl'],
+          paddingHorizontal: screenLayout.insetX,
+          paddingBottom: spacing.xl,
         }}
         showsVerticalScrollIndicator={false}
       >
@@ -91,7 +88,7 @@ export function SuccessCelebrationTemplate({
         <Button
           label={ctaLabel}
           onPress={ctaOnPress}
-          style={{ alignSelf: 'stretch', marginTop: 24 }}
+          style={{ alignSelf: 'stretch', marginTop: spacing.xl }}
           testID={testID ? `${testID}-cta` : undefined}
         />
 
@@ -100,7 +97,7 @@ export function SuccessCelebrationTemplate({
             label={secondaryCtaLabel}
             variant="outline"
             onPress={secondaryCtaOnPress}
-            style={{ alignSelf: 'stretch', marginTop: 12 }}
+            style={{ alignSelf: 'stretch', marginTop: spacing.md }}
             testID={testID ? `${testID}-secondary-cta` : undefined}
           />
         )}

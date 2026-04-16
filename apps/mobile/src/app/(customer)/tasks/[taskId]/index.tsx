@@ -9,7 +9,7 @@ import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { StatusBadge } from '../../../../components/ui/StatusBadge';
 import { Touchable } from '../../../../components/ui/Touchable';
 import { elevations } from '../../../../design/elevations';
-import { mobileTheme } from '../../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../../design/tokenAdapter';
 import { TaskCancelSheet } from '../../../../features/tasks/components/TaskCancelSheet';
 import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCustomerTaskDetail';
 import type { Task as SdkTask } from '../../../../lib/mobileApiClient';
@@ -28,6 +28,7 @@ interface CustomerTask extends SdkTask {
 }
 
 const { colors, typography } = mobileTheme;
+const { taskDetail, tint } = mobileSurfaces;
 
 function formatBudget(value?: number | null) {
   if (typeof value !== 'number') {
@@ -48,7 +49,7 @@ function DetailRow({ label, value }: { label: string; value: string }) {
     <View className="flex-row justify-between gap-md">
       <Text
         className="flex-1 text-label font-bold text-text-secondary uppercase"
-        style={{ letterSpacing: 0.4 }}
+        style={{ letterSpacing: taskDetail.labelTracking }}
       >
         {label}
       </Text>
@@ -83,7 +84,7 @@ function IntakeAnswersSection({
     <View className="bg-muted rounded-sm p-lg gap-md">
       <Text
         className="text-caption font-bold text-text-secondary uppercase"
-        style={{ letterSpacing: 0.8 }}
+        style={{ letterSpacing: taskDetail.sectionTracking }}
       >
         {t('TaskDetailCustomerScreen.intakeTitle')}
       </Text>
@@ -245,13 +246,16 @@ export default function TaskDetailCustomerScreen() {
               <View className="flex-row items-center justify-between">
                 <Text
                   className="text-caption font-bold uppercase"
-                  style={{ letterSpacing: 0.8, color: `${colors.primaryForeground}99` }}
+                  style={{
+                    letterSpacing: taskDetail.sectionTracking,
+                    color: tint.primaryForegroundMuted,
+                  }}
                 >
                   {t('TaskDetailCustomerScreen.budgetLabel')}
                 </Text>
                 <View
                   className="px-sm py-xs rounded-full"
-                  style={{ backgroundColor: `${colors.primaryForeground}1A` }}
+                  style={{ backgroundColor: tint.primaryForegroundSoft }}
                 >
                   <Text className="text-micro font-bold text-primary-foreground">
                     {Number((task as CustomerTask)?.applicant_count ?? 0)}{' '}
@@ -261,7 +265,7 @@ export default function TaskDetailCustomerScreen() {
               </View>
               <Text
                 className="text-secondary font-extrabold"
-                style={{ fontSize: typography.heroTitle, lineHeight: 40 }}
+                style={{ fontSize: typography.heroTitle, lineHeight: taskDetail.budgetLineHeight }}
               >
                 {formatBudget(task.budget)}
               </Text>
@@ -275,11 +279,11 @@ export default function TaskDetailCustomerScreen() {
                 <Text
                   className="text-caption font-extrabold text-center text-primary-deep"
                   style={{
-                    minWidth: 28,
-                    paddingHorizontal: 8,
-                    paddingVertical: 4,
+                    minWidth: taskDetail.pillMinWidth,
+                    paddingHorizontal: taskDetail.pillInsetX,
+                    paddingVertical: taskDetail.pillInsetY,
                     borderRadius: 9999,
-                    backgroundColor: `${colors.primary}12`,
+                    backgroundColor: tint.primarySoft,
                   }}
                 >
                   {Number((task as CustomerTask)?.applicant_count ?? 0)}
@@ -304,11 +308,11 @@ export default function TaskDetailCustomerScreen() {
                 <Text
                   className="text-caption font-extrabold text-center text-primary-deep"
                   style={{
-                    minWidth: 28,
-                    paddingHorizontal: 8,
-                    paddingVertical: 4,
+                    minWidth: taskDetail.pillMinWidth,
+                    paddingHorizontal: taskDetail.pillInsetX,
+                    paddingVertical: taskDetail.pillInsetY,
                     borderRadius: 9999,
-                    backgroundColor: `${colors.primary}12`,
+                    backgroundColor: tint.primarySoft,
                   }}
                 >
                   {photos.length}
@@ -321,9 +325,9 @@ export default function TaskDetailCustomerScreen() {
                       key={`${photoKey}-${index}`}
                       className="rounded-md items-center justify-center"
                       style={{
-                        width: '48%',
-                        height: 163,
-                        backgroundColor: `${colors.primary}12`,
+                        width: taskDetail.photoTileWidth,
+                        height: taskDetail.photoTileHeight,
+                        backgroundColor: tint.primarySoft,
                       }}
                     >
                       <Text className="text-body font-extrabold text-primary-deep">
@@ -342,7 +346,7 @@ export default function TaskDetailCustomerScreen() {
             {/* locationCard: rgba background → imperative */}
             <View
               className="rounded-lg p-lg gap-sm"
-              style={{ backgroundColor: `${colors.primary}0F` }}
+              style={{ backgroundColor: tint.primarySubtle }}
             >
               <View className="flex-row items-center gap-sm">
                 <MapPin size={16} color={colors.primaryDeep} />
@@ -389,10 +393,7 @@ export default function TaskDetailCustomerScreen() {
             ) : null}
 
             {isCompleted ? (
-              <View
-                className="p-lg rounded-lg gap-xs"
-                style={{ backgroundColor: `${colors.muted}80` }}
-              >
+              <View className="p-lg rounded-lg gap-xs" style={{ backgroundColor: tint.borderSoft }}>
                 <Text className="text-body font-extrabold text-primary-deep">
                   {t('TaskDetailCustomerScreen.completedTitle')}
                 </Text>
@@ -403,10 +404,7 @@ export default function TaskDetailCustomerScreen() {
             ) : null}
 
             {isCancelled ? (
-              <View
-                className="p-lg rounded-lg gap-xs"
-                style={{ backgroundColor: `${colors.muted}80` }}
-              >
+              <View className="p-lg rounded-lg gap-xs" style={{ backgroundColor: tint.borderSoft }}>
                 <Text className="text-body font-extrabold text-primary-deep">
                   {t('TaskDetailCustomerScreen.cancelledTitle')}
                 </Text>

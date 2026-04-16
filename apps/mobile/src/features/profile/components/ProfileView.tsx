@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
+import { ScreenContainer } from '../../../components/shells';
 import { Button, FormField, Input } from '../../../components/ui';
+import { Card, CardContent } from '../../../components/ui/Card';
 import { LanguageSwitcher } from '../../../components/ui/LanguageSwitcher';
+import { ScreenHeader } from '../../../components/ui/ScreenHeader';
+import { elevations } from '../../../design/elevations';
+import { screenLayout } from '../../../design/screenLayout';
 import { useMyProfile, useSignOut, useUpdateProfile } from '../hooks/useProfile';
 
 export function ProfileView() {
@@ -18,49 +23,42 @@ export function ProfileView() {
     if (profile) setName(profile.full_name);
   }, [profile]);
 
-  if (isLoading) return <Text style={styles.loadingText}>{t('common.loading')}</Text>;
+  if (isLoading) {
+    return (
+      <ScreenContainer>
+        <View className="px-screen-x pt-header-top">
+          <Text className="text-body text-text-secondary">{t('common.loading')}</Text>
+        </View>
+      </ScreenContainer>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>{t('profile.title')}</Text>
+    <ScreenContainer>
+      <View className="flex-1 px-screen-x pt-header-top gap-section">
+        <ScreenHeader title={t('profile.title')} subtitle={t('profile.fullName')} />
 
-      <FormField label={t('profile.fullName')}>
-        <Input value={name} onChangeText={setName} />
-      </FormField>
+        <Card style={elevations.soft}>
+          <CardContent className="gap-block">
+            <FormField label={t('profile.fullName')}>
+              <Input value={name} onChangeText={setName} />
+            </FormField>
 
-      <View style={styles.spacer} />
+            <FormField label={t('profile.language')}>
+              <LanguageSwitcher />
+            </FormField>
+          </CardContent>
+        </Card>
 
-      <FormField label={t('profile.language')}>
-        <LanguageSwitcher />
-      </FormField>
-
-      <View style={styles.spacer} />
-
-      <Button
-        label={t('profile.saveChanges')}
-        onPress={() => updateMutation.mutate({ full_name: name })}
-        isLoading={updateMutation.isPending}
-      />
-      <View style={styles.spacer} />
-      <Button label={t('profile.signOut')} variant="secondary" onPress={signOut} />
-    </View>
+        <View style={{ gap: screenLayout.actions.buttonGap }}>
+          <Button
+            label={t('profile.saveChanges')}
+            onPress={() => updateMutation.mutate({ full_name: name })}
+            isLoading={updateMutation.isPending}
+          />
+          <Button label={t('profile.signOut')} variant="secondary" onPress={signOut} />
+        </View>
+      </View>
+    </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    flex: 1,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  spacer: {
-    height: 20,
-  },
-  loadingText: {
-    padding: 20,
-  },
-});

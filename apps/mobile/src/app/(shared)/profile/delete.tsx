@@ -7,10 +7,11 @@ import { Text, View } from 'react-native';
 import { ScreenContainer } from '../../../components/shells/ScreenContainer';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
 import { useDeleteAccount } from '../../../features/profile/hooks/useDeleteAccount';
 
 const { colors } = mobileTheme;
+const { accountDeletion } = mobileSurfaces;
 
 export default function AccountDeletionScreen() {
   const { t } = useTranslation();
@@ -35,8 +36,11 @@ export default function AccountDeletionScreen() {
     <ScreenContainer testID="SCR-SHARED-015">
       <View className="flex-1 justify-center">
         <View className="px-lg items-center">
-          <View className="w-[72px] h-[72px] rounded-full bg-muted items-center justify-center mb-lg">
-            <AlertTriangle size={48} color={colors.danger} />
+          <View
+            className="rounded-full bg-muted items-center justify-center mb-lg"
+            style={{ width: accountDeletion.iconBox, height: accountDeletion.iconBox }}
+          >
+            <AlertTriangle size={accountDeletion.iconSize} color={colors.danger} />
           </View>
 
           <Text className="text-title font-bold text-foreground text-center mb-md">
@@ -47,7 +51,7 @@ export default function AccountDeletionScreen() {
             <>
               <Text
                 className="text-body text-text-secondary text-center mb-xl"
-                style={{ lineHeight: 24 }}
+                style={{ lineHeight: accountDeletion.bodyLineHeight }}
               >
                 {t('AccountDeletionScreen.copy1')}
               </Text>
@@ -62,7 +66,7 @@ export default function AccountDeletionScreen() {
             <>
               <Text
                 className="text-body text-text-secondary text-center mb-xl"
-                style={{ lineHeight: 24 }}
+                style={{ lineHeight: accountDeletion.bodyLineHeight }}
               >
                 {t('AccountDeletionScreen.copy2')}
               </Text>
@@ -77,7 +81,7 @@ export default function AccountDeletionScreen() {
             <>
               <Text
                 className="text-body text-text-secondary text-center mb-xl"
-                style={{ lineHeight: 24 }}
+                style={{ lineHeight: accountDeletion.bodyLineHeight }}
               >
                 {t('AccountDeletionScreen.copy3')}
               </Text>

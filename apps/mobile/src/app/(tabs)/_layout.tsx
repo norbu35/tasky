@@ -1,3 +1,4 @@
+import { BlurView } from 'expo-blur';
 import { Tabs, useSegments } from 'expo-router';
 import {
   Briefcase,
@@ -13,14 +14,20 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FAB } from '../../components/ui/FAB';
 import { TabBarButton } from '../../components/ui/TabBarButton';
+import { elevations } from '../../design/elevations';
 import { screenLayout } from '../../design/screenLayout';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileTheme, withAlpha } from '../../design/tokenAdapter';
 import { useUnreadCount } from '../../features/chat/hooks/useUnreadCount';
 import { useRole } from '../../providers/RoleProvider';
 
-const { colors, spacing, typography } = mobileTheme;
-
-const TAB_ICON_SIZE = 22;
+const { colors, typography } = mobileTheme;
+const {
+  tabBarHeight: baseTabBarHeight,
+  tabBarInsetX,
+  tabBarInsetY,
+  tabBarSurfaceOpacity,
+  tabIconSize,
+} = screenLayout.chrome;
 
 export default function TabsLayout() {
   const { t } = useTranslation();
@@ -31,23 +38,18 @@ export default function TabsLayout() {
 
   const inboxIdx = segments.indexOf('inbox');
   const isChatDetail = inboxIdx >= 0 && inboxIdx < segments.length - 1;
-  const baseTabBarHeight = screenLayout.chrome.tabBarHeight;
   const tabBarHeight =
     Platform.OS === 'android' ? baseTabBarHeight + insets.bottom : baseTabBarHeight;
   const tabBarStyle = isChatDetail
     ? { display: 'none' as const }
     : {
         height: tabBarHeight,
-        paddingTop: spacing.xs,
-        paddingBottom: Platform.OS === 'android' ? insets.bottom + spacing.xs : spacing.xs,
-        paddingHorizontal: spacing.sm,
-        backgroundColor: colors.card,
+        paddingTop: tabBarInsetY,
+        paddingBottom: Platform.OS === 'android' ? insets.bottom + tabBarInsetY : tabBarInsetY,
+        paddingHorizontal: tabBarInsetX,
+        backgroundColor: withAlpha(colors.card, tabBarSurfaceOpacity),
         borderTopWidth: 0,
-        elevation: 12,
-        shadowColor: '#1A1C1C',
-        shadowOffset: { width: 0, height: -4 },
-        shadowOpacity: 0.08,
-        shadowRadius: 20,
+        ...elevations.navBar,
       };
 
   return (
@@ -63,6 +65,8 @@ export default function TabsLayout() {
           tabBarItemStyle: {
             flex: 1,
           },
+          tabBarBackground: () =>
+            isChatDetail ? null : <BlurView intensity={28} tint="light" className="flex-1" />,
           tabBarLabelStyle: {
             fontSize: typography.navLabel,
             lineHeight: typography.navLabel + 2,
@@ -78,9 +82,9 @@ export default function TabsLayout() {
             tabBarButton: (props) => <TabBarButton {...props} />,
             tabBarIcon: ({ color }) =>
               isCustomer ? (
-                <ListChecks color={color} size={TAB_ICON_SIZE} />
+                <ListChecks color={color} size={tabIconSize} />
               ) : (
-                <Search color={color} size={TAB_ICON_SIZE} />
+                <Search color={color} size={tabIconSize} />
               ),
           }}
         />
@@ -92,9 +96,9 @@ export default function TabsLayout() {
             tabBarButton: (props) => <TabBarButton {...props} />,
             tabBarIcon: ({ color }) =>
               isCustomer ? (
-                <ClipboardList color={color} size={TAB_ICON_SIZE} />
+                <ClipboardList color={color} size={tabIconSize} />
               ) : (
-                <Briefcase color={color} size={TAB_ICON_SIZE} />
+                <Briefcase color={color} size={tabIconSize} />
               ),
           }}
         />
@@ -106,7 +110,7 @@ export default function TabsLayout() {
             tabBarButton: (props) => <TabBarButton {...props} />,
             tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
             tabBarBadgeStyle: { backgroundColor: colors.danger, fontSize: typography.micro },
-            tabBarIcon: ({ color }) => <MessageSquare color={color} size={TAB_ICON_SIZE} />,
+            tabBarIcon: ({ color }) => <MessageSquare color={color} size={tabIconSize} />,
           }}
         />
         <Tabs.Screen
@@ -115,7 +119,7 @@ export default function TabsLayout() {
             title: t('nav.profile'),
             tabBarButtonTestID: 'tab-profile',
             tabBarButton: (props) => <TabBarButton {...props} />,
-            tabBarIcon: ({ color }) => <User color={color} size={TAB_ICON_SIZE} />,
+            tabBarIcon: ({ color }) => <User color={color} size={tabIconSize} />,
           }}
         />
       </Tabs>

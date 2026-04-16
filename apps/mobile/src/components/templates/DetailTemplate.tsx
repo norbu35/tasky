@@ -4,11 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, View, type LayoutChangeEvent } from 'react-native';
 
 import { screenLayout } from '../../design/screenLayout';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 import { Button } from '../ui/Button';
 
 import { ErrorStateTemplate } from './ErrorStateTemplate';
+
+const { detailTemplate } = mobileSurfaces;
 
 export interface DetailTemplateProps {
   children: React.ReactNode;
@@ -35,10 +37,19 @@ function DetailSkeleton() {
   return (
     <View className="flex-1 pt-header-top gap-block">
       {/* Large skeleton block — dynamic size, kept imperative */}
-      <View className="bg-muted rounded-md" style={{ height: 200 }} />
-      <View className="bg-muted rounded-md" style={{ height: 32, width: '70%' }} />
-      <View className="bg-muted rounded-md" style={{ height: 24, width: '45%' }} />
-      <View className="bg-muted rounded-md" style={{ height: 32, width: '70%' }} />
+      <View className="bg-muted rounded-md" style={{ height: detailTemplate.skeletonHeroHeight }} />
+      <View
+        className="bg-muted rounded-md"
+        style={{ height: detailTemplate.skeletonTitleHeight, width: '70%' }}
+      />
+      <View
+        className="bg-muted rounded-md"
+        style={{ height: detailTemplate.skeletonBodyHeight, width: '45%' }}
+      />
+      <View
+        className="bg-muted rounded-md"
+        style={{ height: detailTemplate.skeletonTitleHeight, width: '70%' }}
+      />
     </View>
   );
 }
@@ -92,7 +103,11 @@ export function DetailTemplate({
             <Pressable
               key={i}
               onPress={action.onPress}
-              className="w-11 h-11 items-center justify-center"
+              className="items-center justify-center"
+              style={{
+                width: detailTemplate.rightActionSize,
+                height: detailTemplate.rightActionSize,
+              }}
               testID={(action as { testID?: string }).testID}
               hitSlop={8}
             >

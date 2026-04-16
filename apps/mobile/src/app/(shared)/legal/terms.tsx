@@ -5,9 +5,10 @@ import { Text, View } from 'react-native';
 
 import { InsetScrollView, ScreenContainer } from '../../../components/shells';
 import { Button } from '../../../components/ui/Button';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, radius, spacing } = mobileTheme;
+const { errorDocument, skeletonHeroHeight } = mobileSurfaces.terms;
 
 type ScreenState = 'loaded' | 'loading' | 'error';
 
@@ -19,7 +20,13 @@ function resolveState(value: string | string[] | undefined): ScreenState {
 function TermsLoading() {
   return (
     <View className="flex-1 px-lg pt-xl gap-lg">
-      <View style={{ height: 200, backgroundColor: colors.muted, borderRadius: radius.md }} />
+      <View
+        style={{
+          height: skeletonHeroHeight,
+          backgroundColor: colors.muted,
+          borderRadius: radius.md,
+        }}
+      />
       <View
         style={{
           height: spacing['3xl'],
@@ -56,12 +63,12 @@ function TermsErrorVisual() {
     >
       <View
         style={{
-          width: 88,
-          height: 108,
+          width: errorDocument.width,
+          height: errorDocument.height,
           borderRadius: radius.lg,
           backgroundColor: colors.muted,
-          padding: 12,
-          gap: 8,
+          padding: errorDocument.innerPadding,
+          gap: errorDocument.rowGap,
           position: 'relative',
         }}
       >
@@ -70,8 +77,8 @@ function TermsErrorVisual() {
             position: 'absolute',
             top: 0,
             right: 0,
-            width: 28,
-            height: 28,
+            width: errorDocument.foldSize,
+            height: errorDocument.foldSize,
             backgroundColor: colors.border,
             borderTopRightRadius: radius.lg,
             borderBottomLeftRadius: radius.md,
@@ -79,7 +86,7 @@ function TermsErrorVisual() {
         />
         <View
           style={{
-            height: 8,
+            height: errorDocument.rowHeight,
             width: '60%',
             borderRadius: radius.xs,
             backgroundColor: colors.border,
@@ -88,7 +95,7 @@ function TermsErrorVisual() {
         />
         <View
           style={{
-            height: 8,
+            height: errorDocument.rowHeight,
             alignSelf: 'stretch',
             borderRadius: radius.xs,
             backgroundColor: colors.border,
@@ -96,7 +103,7 @@ function TermsErrorVisual() {
         />
         <View
           style={{
-            height: 8,
+            height: errorDocument.rowHeight,
             alignSelf: 'stretch',
             borderRadius: radius.xs,
             backgroundColor: colors.border,
@@ -108,9 +115,9 @@ function TermsErrorVisual() {
           position: 'absolute',
           bottom: 6,
           right: 6,
-          width: 28,
-          height: 28,
-          borderRadius: 14,
+          width: errorDocument.exclamationSize,
+          height: errorDocument.exclamationSize,
+          borderRadius: errorDocument.markerRadius,
           backgroundColor: colors.danger,
           alignItems: 'center',
           justifyContent: 'center',

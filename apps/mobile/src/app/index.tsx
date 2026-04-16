@@ -5,15 +5,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Text, View } from 'react-native';
 
-import { mobileTheme } from '../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../design/tokenAdapter';
 import { useAppStore } from '../store/appStore';
 import { useAuthStore } from '../store/authStore';
 import { resolvePostAuthHref } from '../utils/authRouting';
 
 const { colors, spacing, typography } = mobileTheme;
-
-/** Brand splash logo size — intentionally larger than the token scale */
-const SPLASH_BRAND_SIZE = 56;
+const { splash } = mobileSurfaces;
 
 export default function SplashScreen() {
   const { t } = useTranslation();
@@ -31,22 +29,22 @@ export default function SplashScreen() {
       <View style={{ alignItems: 'center', paddingHorizontal: spacing['2xl'] }}>
         <View
           style={{
-            width: 64,
-            height: 64,
-            borderRadius: 16,
+            width: splash.markBox,
+            height: splash.markBox,
+            borderRadius: splash.markRadius,
             borderWidth: 1,
-            borderColor: 'rgba(255,255,255,0.12)',
-            backgroundColor: 'rgba(255,255,255,0.08)',
+            borderColor: splash.markBorder,
+            backgroundColor: splash.markSurface,
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: spacing.lg,
           }}
         >
-          <CircleCheckBig size={28} color={colors.primaryForeground} />
+          <CircleCheckBig size={splash.markIcon} color={colors.primaryForeground} />
         </View>
         <Text
           style={{
-            fontSize: SPLASH_BRAND_SIZE, // eslint-disable-line no-restricted-syntax -- branded splash, no token equivalent
+            fontSize: splash.brandSize,
             fontWeight: '700',
             color: colors.primaryForeground,
             fontFamily: 'Manrope_700Bold',
@@ -74,25 +72,31 @@ export default function SplashScreen() {
       <View
         style={{
           position: 'absolute',
-          bottom: 64,
+          bottom: splash.footerBottom,
           alignItems: 'center',
           gap: spacing.lg,
         }}
       >
         <View
           style={{
-            width: 136,
-            height: 2,
-            backgroundColor: 'rgba(255,255,255,0.16)',
+            width: splash.progressRailWidth,
+            height: splash.progressRailHeight,
+            backgroundColor: splash.progressSurface,
             overflow: 'hidden',
           }}
         >
-          <View style={{ width: 42, height: 2, backgroundColor: colors.secondary }} />
+          <View
+            style={{
+              width: splash.progressFillWidth,
+              height: splash.progressRailHeight,
+              backgroundColor: colors.secondary,
+            }}
+          />
         </View>
         <Text
           style={{
             fontSize: typography.micro,
-            color: 'rgba(255,255,255,0.72)',
+            color: splash.footerText,
             letterSpacing: 1.2,
             textTransform: 'uppercase',
           }}
@@ -104,7 +108,7 @@ export default function SplashScreen() {
         testID="splash-loading"
         size="small"
         color={colors.secondary}
-        style={{ position: 'absolute', bottom: 28 }}
+        style={{ position: 'absolute', bottom: splash.loaderBottom }}
       />
     </LinearGradient>
   );

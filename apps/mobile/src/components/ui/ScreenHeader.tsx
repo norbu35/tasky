@@ -3,6 +3,8 @@ import { Text, View } from 'react-native';
 
 import { cn } from '../../lib/cn';
 
+import { Reveal } from './Reveal';
+
 interface ScreenHeaderProps {
   greeting?: string;
   title: string;
@@ -21,7 +23,11 @@ export function ScreenHeader({
   className,
 }: ScreenHeaderProps) {
   return (
-    <View className={cn('flex-row items-start justify-between', className)} testID={testID}>
+    <Reveal
+      delay={20}
+      testID={testID}
+      className={cn('flex-row items-start justify-between', className)}
+    >
       <View className="flex-1 gap-header-greeting">
         {greeting && <Text className="font-screen-greeting text-primary">{greeting}</Text>}
         <Text className="font-screen-title text-primary-deep">{title}</Text>
@@ -30,6 +36,6 @@ export function ScreenHeader({
         )}
       </View>
       {rightSlot}
-    </View>
+    </Reveal>
   );
 }

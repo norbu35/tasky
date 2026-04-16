@@ -14,6 +14,21 @@ export const motionTokens = {
     accelerate: 'cubic-bezier(0.4, 0, 1, 1)',
     spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
   },
+  spring: {
+    interactive: {
+      damping: 15,
+      stiffness: 300,
+    },
+    floating: {
+      damping: 18,
+      stiffness: 220,
+    },
+    emphasis: {
+      damping: 12,
+      stiffness: 180,
+      mass: 0.8,
+    },
+  },
 } as const;
 
 export type MotionTokens = typeof motionTokens;

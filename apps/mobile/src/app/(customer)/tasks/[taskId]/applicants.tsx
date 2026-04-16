@@ -10,11 +10,12 @@ import { Button } from '../../../../components/ui/Button';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { Touchable } from '../../../../components/ui/Touchable';
 import { elevations } from '../../../../design/elevations';
-import { mobileTheme } from '../../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../../design/tokenAdapter';
 import { useApplications } from '../../../../features/tasks/hooks/useApplications';
 import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCustomerTaskDetail';
 
 const { colors, spacing } = mobileTheme;
+const { applicant: applicantSurface, tint } = mobileSurfaces;
 
 interface ApplicantItem {
   id: string;
@@ -43,16 +44,16 @@ function ApplicantCard({
     <View
       testID="SCR-CUST-011"
       className="rounded-lg bg-card p-lg"
-      style={{ gap: spacing.md, ...elevations.soft }}
+      style={{ gap: applicantSurface.recommendedRowGap, ...elevations.soft }}
     >
-      <View className="flex-row items-center" style={{ gap: spacing.md }}>
+      <View className="flex-row items-center" style={{ gap: applicantSurface.recommendedRowGap }}>
         <ProfileAvatar
           uri={applicant.avatarUrl}
           name={applicant.name}
           size="md"
           showVerified={applicant.isVerified}
         />
-        <View className="flex-1" style={{ gap: spacing.xs / 2 }}>
+        <View className="flex-1" style={{ gap: applicantSurface.titleClusterGap }}>
           <Text className="text-subtitle font-sans-bold text-foreground">{applicant.name}</Text>
           <View className="flex-row items-center" style={{ gap: spacing.xs }}>
             <Star size={12} color={colors.accent} fill={colors.accent} />
@@ -74,7 +75,7 @@ function ApplicantCard({
         {applicant.isRecommended ? (
           <View
             className="flex-row items-center rounded-full px-sm py-xs"
-            style={{ gap: spacing.xs, backgroundColor: `${colors.trust}22` }}
+            style={{ gap: applicantSurface.recommendedAwardGap, backgroundColor: tint.trustSoft }}
           >
             <Award size={12} color={colors.trustMuted} />
             <Text className="text-caption font-sans-bold text-trust-muted">
@@ -88,7 +89,10 @@ function ApplicantCard({
         <Text className="text-label text-muted-foreground leading-snug">{applicant.message}</Text>
       ) : null}
 
-      <View className="flex-row items-center pt-xs" style={{ gap: spacing.md }}>
+      <View
+        className="flex-row items-center pt-xs"
+        style={{ gap: applicantSurface.recommendedRowGap }}
+      >
         <Touchable
           className="flex-1 min-h-[44px] bg-primary rounded-md items-center justify-center"
           onPress={() => onAccept(applicant)}
@@ -192,7 +196,7 @@ export default function ApplicantsListScreen() {
           <View
             testID="SCR-CUST-012"
             className="flex-row items-center justify-between mx-lg mb-sm p-md rounded-md"
-            style={{ backgroundColor: `${colors.danger}14` }}
+            style={{ backgroundColor: tint.dangerSoft }}
           >
             <Text className="flex-1 text-caption font-sans-semibold text-danger leading-snug">
               {declineNotification}
@@ -278,7 +282,7 @@ export default function ApplicantsListScreen() {
                 size="lg"
                 showVerified={selectedApplicant.isVerified}
               />
-              <View className="flex-1" style={{ gap: spacing.xs / 2 }}>
+              <View className="flex-1" style={{ gap: applicantSurface.titleClusterGap }}>
                 <Text className="text-subtitle font-sans-bold text-primary-deep">
                   {selectedApplicant.name}
                 </Text>
