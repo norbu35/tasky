@@ -43,6 +43,14 @@ public interface ConversationDao {
     @SqlQuery("SELECT * FROM conversations WHERE id = :id")
     Optional<Conversation> findById(@Bind("id") UUID id);
 
+    default boolean isParticipant(String userId, String conversationId) {
+        return isParticipant(required(userId, "userId"), required(conversationId, "conversationId"));
+    }
+
+    @SqlQuery(
+            "SELECT EXISTS(SELECT 1 FROM conversations WHERE id = :id AND (customer_id = :userId OR tasker_id = :userId))")
+    boolean isParticipant(@Bind("userId") UUID userId, @Bind("id") UUID conversationId);
+
     default Optional<Conversation> findByTaskAndParticipants(String taskId, String customerId, String taskerId) {
         UUID taskUuid = required(taskId, "taskId");
         UUID customerUuid = required(customerId, "customerId");

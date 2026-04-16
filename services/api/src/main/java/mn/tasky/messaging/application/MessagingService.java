@@ -199,6 +199,10 @@ public class MessagingService {
         return conversationDao.findByTaskAndParticipants(taskId, customerId, taskerId);
     }
 
+    public boolean isParticipant(String userId, String conversationId) {
+        return conversationDao.isParticipant(userId, conversationId);
+    }
+
     public List<Message> listMessagesForConversation(String conversationId, String cursor, int limit) {
         return messageDao.findByConversationId(conversationId, cursor, limit);
     }

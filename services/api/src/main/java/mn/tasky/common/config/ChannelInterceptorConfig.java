@@ -4,6 +4,7 @@ import java.util.List;
 import mn.tasky.auth.application.UserProfileService;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.common.security.JwtTokenService;
+import mn.tasky.common.security.StompRateLimitInterceptor;
 import mn.tasky.messaging.application.MessagingService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -25,19 +26,22 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
     private final JwtTokenService jwtTokenService;
     private final MessagingService messagingService;
     private final UserProfileService userProfileService;
+    private final StompRateLimitInterceptor stompRateLimitInterceptor;
 
     public ChannelInterceptorConfig(
             JwtTokenService jwtTokenService,
             @Lazy MessagingService messagingService,
-            UserProfileService userProfileService) {
+            UserProfileService userProfileService,
+            StompRateLimitInterceptor stompRateLimitInterceptor) {
         this.jwtTokenService = jwtTokenService;
         this.messagingService = messagingService;
         this.userProfileService = userProfileService;
+        this.stompRateLimitInterceptor = stompRateLimitInterceptor;
     }
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new ChannelInterceptor() {
+        registration.interceptors(stompRateLimitInterceptor, new ChannelInterceptor() {
             @Override
             public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
@@ -88,9 +92,7 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
             String conversationId = destination.substring("/topic/conversations/".length());
             JwtPrincipal principal = requireJwtPrincipal(accessor);
             assertUserNotRestricted(principal);
-            boolean isParticipant = messagingService.listConversations(principal.userId()).stream()
-                    .anyMatch(c -> c.id().equals(conversationId));
-            if (!isParticipant) {
+            if (!messagingService.isParticipant(principal.userId(), conversationId)) {
                 throw new IllegalArgumentException("Forbidden");
             }
             return;
