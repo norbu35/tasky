@@ -7,7 +7,6 @@ import {
   FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  Pressable,
   StyleSheet,
   Text,
   View,
@@ -15,6 +14,7 @@ import {
 
 import { ScreenContainer } from '../components/shells';
 import { Button } from '../components/ui/Button';
+import { Touchable } from '../components/ui/Touchable';
 import { mobileTheme } from '../design/tokenAdapter';
 
 const { width } = Dimensions.get('window');
@@ -146,17 +146,17 @@ export default function OnboardingScreen() {
         className="absolute z-10 flex-row items-center justify-between"
         style={{ top: spacing.lg, left: spacing.lg, right: spacing.lg }}
       >
-        <Pressable onPress={() => router.back()} hitSlop={12} accessibilityLabel={t('common.back')}>
+        <Touchable onPress={() => router.back()} hitSlop={12} accessibilityLabel={t('common.back')}>
           <ArrowLeft size={24} color={colors.primaryDeep} />
-        </Pressable>
+        </Touchable>
         {isLastSlide ? (
           <View style={{ width: 56, height: 24 }} />
         ) : (
-          <Pressable testID="onboarding-skip" onPress={handleSkip} hitSlop={12}>
+          <Touchable testID="onboarding-skip" onPress={handleSkip} hitSlop={12}>
             <Text className="text-label font-sans-bold" style={{ color: colors.primaryDeep }}>
               {t('auth.onboarding.skip')}
             </Text>
-          </Pressable>
+          </Touchable>
         )}
       </View>
       <FlatList

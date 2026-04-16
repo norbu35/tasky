@@ -1,12 +1,13 @@
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { FeedListTemplate } from '../../../components/templates/FeedListTemplate';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { ScreenHeader } from '../../../components/ui/ScreenHeader';
 import { SearchBar } from '../../../components/ui/SearchBar';
+import { Touchable } from '../../../components/ui/Touchable';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { useConversations } from '../../../features/chat/hooks/useConversations';
 import { formatLastActive } from '../../../lib/formatLastActive';
@@ -85,7 +86,7 @@ export default function ConversationListScreen() {
       const isUnread = (item.unread_count ?? 0) > 0;
       const activity = formatLastActive(item.counterparty_last_active_at);
       return (
-        <Pressable
+        <Touchable
           testID={`conversation-row-${item.id}`}
           className={`flex-row items-center rounded-lg p-item ${isUnread ? 'bg-muted' : 'bg-background'}`}
           onPress={() => router.push(`/inbox/${item.id}`)}
@@ -127,7 +128,7 @@ export default function ConversationListScreen() {
               <View className="w-[10px] h-[10px] rounded-full bg-secondary" />
             </View>
           )}
-        </Pressable>
+        </Touchable>
       );
     },
     [formatTimestamp, router, t],

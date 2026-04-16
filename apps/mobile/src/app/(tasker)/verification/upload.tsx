@@ -3,10 +3,11 @@ import { useRouter } from 'expo-router';
 import { Camera, ImageIcon } from 'lucide-react-native';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
 import { FormWizardTemplate } from '../../../components/templates/FormWizardTemplate';
 import { Button } from '../../../components/ui/Button';
+import { Touchable } from '../../../components/ui/Touchable';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { useVerification } from '../../../features/verification/hooks/useVerification';
 import { useVerificationUpload } from '../../../features/verification/hooks/useVerificationUpload';
@@ -187,23 +188,23 @@ export default function UploadScreen() {
       ) : null}
 
       <View className="flex-row gap-md justify-center">
-        <Pressable
+        <Touchable
           className="flex-row items-center gap-sm py-sm px-md rounded-md border border-border bg-card"
           onPress={captureFromCamera}
           testID="capture-camera-btn"
         >
           <Camera size={20} color={colors.primary} />
           <Text className="text-body text-primary">{t('tasker.verification.uploadCapture')}</Text>
-        </Pressable>
+        </Touchable>
 
-        <Pressable
+        <Touchable
           className="flex-row items-center gap-sm py-sm px-md rounded-md border border-border bg-card"
           onPress={captureFromGallery}
           testID="capture-gallery-btn"
         >
           <ImageIcon size={20} color={colors.primary} />
           <Text className="text-body text-primary">{t('tasker.verification.uploadGallery')}</Text>
-        </Pressable>
+        </Touchable>
       </View>
     </FormWizardTemplate>
   );

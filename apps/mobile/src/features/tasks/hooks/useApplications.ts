@@ -10,7 +10,7 @@ export function useApplications(taskId: string) {
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['applications', taskId],
+    queryKey: ['applications', token, taskId],
     queryFn: () => api.listApplications(token!, taskId),
     enabled: !!token && !!taskId,
   });

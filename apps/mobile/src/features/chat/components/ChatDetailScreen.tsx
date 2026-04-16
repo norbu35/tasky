@@ -75,7 +75,7 @@ export function ChatDetailScreen() {
         client.deactivate();
       };
     }
-  }, [id, loadMessages, session]);
+  }, [id, loadMessages, session, t]);
 
   const sendMessage = async () => {
     if (!session || !id || draft.trim().length === 0) return;

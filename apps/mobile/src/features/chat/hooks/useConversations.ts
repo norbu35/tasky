@@ -10,7 +10,7 @@ export function useConversations() {
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['conversations'],
+    queryKey: ['conversations', token],
     queryFn: () => api.listConversations(token!),
     enabled: !!token,
   });

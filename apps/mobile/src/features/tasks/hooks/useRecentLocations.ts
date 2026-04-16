@@ -10,7 +10,7 @@ export function useRecentLocations() {
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['recent-locations'],
+    queryKey: ['recent-locations', token],
     queryFn: () => api.listRecentLocations(token!),
     enabled: !!token,
     select: (data) => data.locations,

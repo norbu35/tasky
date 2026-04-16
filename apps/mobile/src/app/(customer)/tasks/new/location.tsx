@@ -2,12 +2,13 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LocateFixed, Minus, Navigation, Plus } from 'lucide-react-native';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT, Region, UrlTile } from 'react-native-maps';
 
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
+import { Touchable } from '../../../../components/ui/Touchable';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { useRecentLocations } from '../../../../features/tasks/hooks/useRecentLocations';
@@ -258,7 +259,7 @@ export default function LocationScreen() {
 
         {/* mapControls: absolute position → imperative */}
         <View className="absolute right-3 bottom-3 gap-sm">
-          <Pressable
+          <Touchable
             className="w-[42px] h-[42px] rounded-sm items-center justify-center bg-card border border-border"
             accessibilityRole="button"
             testID="location-locate-button"
@@ -269,23 +270,23 @@ export default function LocationScreen() {
             ) : (
               <LocateFixed size={18} color={colors.primaryDeep} />
             )}
-          </Pressable>
-          <Pressable
+          </Touchable>
+          <Touchable
             className="w-[42px] h-[42px] rounded-sm items-center justify-center bg-card border border-border"
             accessibilityRole="button"
             testID="location-zoom-in-button"
             onPress={handleZoomIn}
           >
             <Plus size={18} color={colors.primaryDeep} />
-          </Pressable>
-          <Pressable
+          </Touchable>
+          <Touchable
             className="w-[42px] h-[42px] rounded-sm items-center justify-center bg-card border border-border"
             accessibilityRole="button"
             testID="location-zoom-out-button"
             onPress={handleZoomOut}
           >
             <Minus size={18} color={colors.primaryDeep} />
-          </Pressable>
+          </Touchable>
         </View>
       </View>
 
@@ -329,7 +330,7 @@ export default function LocationScreen() {
           ) : recentLocations && recentLocations.length > 0 ? (
             <View className="flex-row flex-wrap gap-sm">
               {recentLocations.map((loc, idx) => (
-                <Pressable
+                <Touchable
                   key={idx}
                   onPress={() => {
                     const coord = { latitude: loc.location_lat, longitude: loc.location_lng };
@@ -357,7 +358,7 @@ export default function LocationScreen() {
                   >
                     {loc.location_text}
                   </Text>
-                </Pressable>
+                </Touchable>
               ))}
             </View>
           ) : (

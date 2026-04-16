@@ -10,7 +10,7 @@ export function useMyTasks() {
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['myTasks'],
+    queryKey: ['myTasks', token],
     queryFn: () => api.listMyTasks(token!),
     enabled: !!token,
   });

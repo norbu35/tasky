@@ -10,7 +10,7 @@ export function useBookingTimeline(bookingId: string | undefined) {
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['bookingTimeline', bookingId],
+    queryKey: ['bookingTimeline', token, bookingId],
     queryFn: () => api.getBookingTimeline(token!, bookingId!),
     enabled: !!token && !!bookingId,
   });

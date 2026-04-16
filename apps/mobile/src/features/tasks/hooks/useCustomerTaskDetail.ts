@@ -17,7 +17,7 @@ export function useCustomerTaskDetail(taskId: string): CustomerTaskDetailState {
   const token = session?.accessToken;
 
   const query = useQuery({
-    queryKey: ['myTasks'],
+    queryKey: ['myTasks', token],
     queryFn: () => api.listMyTasks(token!),
     enabled: !!token,
   });

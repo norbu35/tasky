@@ -2,7 +2,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { CalendarDays, CircleAlert, CircleDollarSign, MapPin, Sparkles } from 'lucide-react-native';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
 import {
   normalizeIntakeSchema,
@@ -14,6 +14,7 @@ import {
 
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { Toast } from '../../../../components/ui/Toast';
+import { Touchable } from '../../../../components/ui/Touchable';
 import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
 import { useCreateTask } from '../../../../features/tasks/hooks/useCreateTask';
 import { parseError } from '../../../../utils/errorHandling';
@@ -167,13 +168,13 @@ function SectionCard({
           {label}
         </Text>
         {onEdit ? (
-          <Pressable onPress={onEdit} accessibilityRole="button">
+          <Touchable onPress={onEdit} accessibilityRole="button">
             <Text
               className={`text-caption font-bold${featured ? ' text-accent' : ' text-primary-deep'}`}
             >
               {t('ReviewSubmitScreen.edit')}
             </Text>
-          </Pressable>
+          </Touchable>
         ) : null}
       </View>
 
@@ -209,11 +210,11 @@ function PhotosCard({ photos, onEdit }: { photos: string[]; onEdit: () => void }
         <Text className="text-caption font-bold text-text-secondary">
           {t('ReviewSubmitScreen.sectionPhotos')} {photos.length > 0 ? `(${photos.length})` : ''}
         </Text>
-        <Pressable onPress={onEdit} accessibilityRole="button">
+        <Touchable onPress={onEdit} accessibilityRole="button">
           <Text className="text-caption font-bold text-primary-deep">
             {t('ReviewSubmitScreen.edit')}
           </Text>
-        </Pressable>
+        </Touchable>
       </View>
 
       <View className="flex-row gap-sm">
@@ -438,7 +439,7 @@ export default function ReviewSubmitScreen() {
           <Text className="text-caption font-bold text-text-secondary">
             {t('ReviewSubmitScreen.sectionDetails')}
           </Text>
-          <Pressable
+          <Touchable
             onPress={() =>
               router.push({
                 pathname: '/(customer)/tasks/new/intake',
@@ -453,13 +454,13 @@ export default function ReviewSubmitScreen() {
             <Text className="text-caption font-bold text-primary-deep">
               {t('ReviewSubmitScreen.edit')}
             </Text>
-          </Pressable>
+          </Touchable>
         </View>
         <Text className="text-body text-foreground leading-loose">
           {showFullDescription ? description : shortDescription}
         </Text>
         {description.length > 140 ? (
-          <Pressable
+          <Touchable
             onPress={() => setShowFullDescription((prev) => !prev)}
             accessibilityRole="button"
           >
@@ -468,7 +469,7 @@ export default function ReviewSubmitScreen() {
                 ? t('ReviewSubmitScreen.viewLess')
                 : t('ReviewSubmitScreen.viewMore')}
             </Text>
-          </Pressable>
+          </Touchable>
         ) : null}
       </View>
 

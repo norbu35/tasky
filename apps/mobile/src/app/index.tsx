@@ -12,6 +12,9 @@ import { resolvePostAuthHref } from '../utils/authRouting';
 
 const { colors, spacing, typography } = mobileTheme;
 
+/** Brand splash logo size — intentionally larger than the token scale */
+const SPLASH_BRAND_SIZE = 56;
+
 export default function SplashScreen() {
   const { t } = useTranslation();
   const session = useAuthStore((state) => state.session);
@@ -43,7 +46,7 @@ export default function SplashScreen() {
         </View>
         <Text
           style={{
-            fontSize: 56,
+            fontSize: SPLASH_BRAND_SIZE, // eslint-disable-line no-restricted-syntax -- branded splash, no token equivalent
             fontWeight: '700',
             color: colors.primaryForeground,
             fontFamily: 'Manrope_700Bold',

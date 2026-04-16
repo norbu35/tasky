@@ -10,7 +10,7 @@ export function useMyProfile() {
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['me'],
+    queryKey: ['me', token],
     queryFn: () => api.getMyProfile(token!),
     enabled: !!token,
   });

@@ -2,9 +2,10 @@ import { useRouter } from 'expo-router';
 import { Bolt, ChevronRight, Hammer, Leaf, Package, Shirt, Sparkles } from 'lucide-react-native';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
+import { Touchable } from '../../../../components/ui/Touchable';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { useCategories } from '../../../../features/tasks/hooks/useCategories';
@@ -137,7 +138,7 @@ export default function CategorySelectionScreen() {
           <Text className="text-caption text-text-secondary leading-[18px]">
             {t('CategorySelectionScreen.loadHint')}
           </Text>
-          <Pressable
+          <Touchable
             onPress={() => refetch()}
             className="min-h-[44px] self-start px-md items-center justify-center rounded-md bg-secondary"
             testID="category-selection-retry"
@@ -145,7 +146,7 @@ export default function CategorySelectionScreen() {
             <Text className="text-caption font-sans-bold text-secondary-foreground">
               {t('CategorySelectionScreen.retry')}
             </Text>
-          </Pressable>
+          </Touchable>
         </View>
       ) : categories.length === 0 ? (
         <View className="p-xl gap-sm rounded-md bg-card">
@@ -159,7 +160,7 @@ export default function CategorySelectionScreen() {
             const visual = getCategoryVisual(category.name);
             const Icon = visual.icon;
             return (
-              <Pressable
+              <Touchable
                 key={category.id}
                 testID={`category-item-${category.id}`}
                 accessibilityRole="button"
@@ -186,7 +187,7 @@ export default function CategorySelectionScreen() {
                   </Text>
                 </View>
                 <ChevronRight size={20} color={colors.textSecondary} />
-              </Pressable>
+              </Touchable>
             );
           })}
         </View>

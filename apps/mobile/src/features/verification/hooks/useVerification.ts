@@ -10,7 +10,7 @@ export function useVerificationStatus() {
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['verificationStatus'],
+    queryKey: ['verificationStatus', token],
     queryFn: () => api.getVerificationStatus(token!),
     enabled: !!token,
   });

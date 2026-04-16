@@ -1,11 +1,12 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { FormWizardTemplate } from '../../components/templates/FormWizardTemplate';
 import { Input } from '../../components/ui/Input';
 import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
+import { Touchable } from '../../components/ui/Touchable';
 import { elevations } from '../../design/elevations';
 import { useCreateBookingIntent } from '../../features/bookings/hooks/useCreateBookingIntent';
 import { useCreateTask } from '../../features/tasks/hooks/useCreateTask';
@@ -154,9 +155,9 @@ export default function RebookScreen() {
         <Text className="text-screen-section-title font-sans-bold text-primary-deep mb-item">
           {t('customer.bookings.labelNewSchedule')}
         </Text>
-        <Pressable className="rounded-md p-card bg-muted" testID="rebook-screen-date-picker">
+        <Touchable className="rounded-md p-card bg-muted" testID="rebook-screen-date-picker">
           <Text className="text-body text-primary-deep">{formatDateTime(selectedDate)}</Text>
-        </Pressable>
+        </Touchable>
       </View>
 
       {/* Budget */}

@@ -2,12 +2,13 @@ import { useRouter } from 'expo-router';
 import { Bell, Hammer, Leaf, Package, Plus, Sparkles, Wrench, Zap } from 'lucide-react-native';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
+import { FlatList, RefreshControl, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ScreenContainer } from '../../../components/shells';
 import { ListItemCard, PriceTag, StatusBadge } from '../../../components/ui';
 import { ScreenHeader } from '../../../components/ui/ScreenHeader';
+import { Touchable } from '../../../components/ui/Touchable';
 import { elevations } from '../../../design/elevations';
 import { screenLayout } from '../../../design/screenLayout';
 import { mobileTheme } from '../../../design/tokenAdapter';
@@ -136,7 +137,7 @@ function Header({
         greeting={t('customer.taskList.greeting')}
         title={t('customer.taskList.title')}
         rightSlot={
-          <Pressable
+          <Touchable
             className="w-11 h-11 rounded-full items-center justify-center bg-muted"
             style={elevations.soft}
             onPress={onNotificationsPress}
@@ -145,7 +146,7 @@ function Header({
             accessibilityLabel={t('shared.notifications.title')}
           >
             <Bell size={20} color={colors.primary} />
-          </Pressable>
+          </Touchable>
         }
       />
 
@@ -202,7 +203,7 @@ function EmptyState({ onPostTask }: { onPostTask: () => void }) {
       <Text className="text-body text-text-secondary text-center leading-relaxed">
         {t('customer.taskList.emptyDescription')}
       </Text>
-      <Pressable
+      <Touchable
         onPress={onPostTask}
         className="min-h-[48px] px-xl rounded-md items-center justify-center bg-primary"
         accessibilityRole="button"
@@ -211,7 +212,7 @@ function EmptyState({ onPostTask }: { onPostTask: () => void }) {
         <Text className="text-body font-bold text-primary-foreground">
           {t('customer.taskList.emptyCta')}
         </Text>
-      </Pressable>
+      </Touchable>
     </View>
   );
 }
@@ -231,7 +232,7 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
       <Text className="text-body text-text-secondary leading-relaxed">
         {t('customer.taskList.errorNetwork')}
       </Text>
-      <Pressable
+      <Touchable
         onPress={onRetry}
         className="min-h-[48px] rounded-md items-center justify-center bg-secondary"
         accessibilityRole="button"
@@ -240,7 +241,7 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
         <Text className="text-body font-bold text-secondary-foreground">
           {t('common.tryAgain')}
         </Text>
-      </Pressable>
+      </Touchable>
     </View>
   );
 }
@@ -342,7 +343,7 @@ export default function MyTasksListScreen() {
             testID="my-tasks-feed"
           />
           {tasks.length > 0 && (
-            <Pressable
+            <Touchable
               testID="my-tasks-feed-fab"
               onPress={handleFabPress}
               accessibilityRole="button"
@@ -364,7 +365,7 @@ export default function MyTasksListScreen() {
               ]}
             >
               <Plus color={colors.primaryForeground} size={28} />
-            </Pressable>
+            </Touchable>
           )}
         </>
       )}

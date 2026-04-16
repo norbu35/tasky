@@ -2,17 +2,18 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MapPin, Star } from 'lucide-react-native';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { StatusBadge } from '../../../../components/ui/StatusBadge';
+import { Touchable } from '../../../../components/ui/Touchable';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { TaskCancelSheet } from '../../../../features/tasks/components/TaskCancelSheet';
 import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCustomerTaskDetail';
 
-const { colors } = mobileTheme;
+const { colors, typography } = mobileTheme;
 
 function formatBudget(value?: number | null) {
   if (typeof value !== 'number') {
@@ -244,7 +245,7 @@ export default function TaskDetailCustomerScreen() {
               </View>
               <Text
                 className="text-secondary font-extrabold"
-                style={{ fontSize: 36, lineHeight: 40 }}
+                style={{ fontSize: typography.heroTitle, lineHeight: 40 }}
               >
                 {formatBudget(task.budget)}
               </Text>
@@ -339,7 +340,7 @@ export default function TaskDetailCustomerScreen() {
             </View>
 
             {(isAssigned || isTaskerMarkedDone) && tasker ? (
-              <Pressable
+              <Touchable
                 className="bg-card rounded-lg p-lg"
                 style={elevations.soft}
                 onPress={() => router.push(`/(customer)/taskers/${tasker.id}`)}
@@ -368,7 +369,7 @@ export default function TaskDetailCustomerScreen() {
                     </Text>
                   </View>
                 </View>
-              </Pressable>
+              </Touchable>
             ) : null}
 
             {isCompleted ? (

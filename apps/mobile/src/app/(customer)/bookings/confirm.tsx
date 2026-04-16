@@ -1,11 +1,12 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { PriceTag } from '../../../components/ui/PriceTag';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
+import { Touchable } from '../../../components/ui/Touchable';
 import { useAcceptApplication } from '../../../features/bookings/hooks/useAcceptApplication';
 import { useConfirmBookingIntent } from '../../../features/bookings/hooks/useConfirmBookingIntent';
 
@@ -113,7 +114,7 @@ export default function BookingConfirmScreen() {
         <Text className="text-caption text-text-secondary leading-[20px] mb-md">
           {t('BookingConfirmScreen.copy1')}
         </Text>
-        <Pressable
+        <Touchable
           className="flex-row items-center gap-sm"
           onPress={() => setDisclaimerChecked(!disclaimerChecked)}
           testID="booking-confirm-screen-disclaimer"
@@ -134,7 +135,7 @@ export default function BookingConfirmScreen() {
           <Text className="text-body text-primary-deep flex-1">
             {t('customer.bookings.disclaimerAcknowledge')}
           </Text>
-        </Pressable>
+        </Touchable>
       </View>
 
       {/* Calendar Prompt */}

@@ -2,11 +2,12 @@ import { useRouter } from 'expo-router';
 import { ClipboardList, Menu, Search, CalendarDays } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, RefreshControl, Text, View } from 'react-native';
+import { RefreshControl, Text, View } from 'react-native';
 
 import { InsetScrollView, ScreenContainer } from '../../../components/shells';
 import { PriceTag } from '../../../components/ui/PriceTag';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
+import { Touchable } from '../../../components/ui/Touchable';
 import { elevations } from '../../../design/elevations';
 import { screenLayout } from '../../../design/screenLayout';
 import { mobileTheme } from '../../../design/tokenAdapter';
@@ -79,7 +80,7 @@ function FilterTab({
   onPress: () => void;
 }) {
   return (
-    <Pressable
+    <Touchable
       onPress={onPress}
       className="pb-xs items-start"
       accessibilityRole="button"
@@ -91,7 +92,7 @@ function FilterTab({
         {label}
       </Text>
       {active ? <View className="mt-xs w-12 h-1 rounded-full bg-primary-deep" /> : null}
-    </Pressable>
+    </Touchable>
   );
 }
 
@@ -113,7 +114,7 @@ function BookingCard({
   const statusColors = getBookingStatusColors(booking.status);
 
   return (
-    <Pressable
+    <Touchable
       onPress={onPress}
       className="bg-card rounded-lg p-card gap-item"
       style={elevations.soft}
@@ -160,7 +161,7 @@ function BookingCard({
         </View>
         <PriceTag amount={booking.task?.budget ?? 0} size="sm" />
       </View>
-    </Pressable>
+    </Touchable>
   );
 }
 
@@ -197,7 +198,7 @@ function EmptyState({ onPress }: { onPress: () => void }) {
       <Text className="text-body text-text-secondary text-center leading-relaxed">
         {t('customer.bookings.emptyDescription')}
       </Text>
-      <Pressable
+      <Touchable
         onPress={onPress}
         className="min-h-[48px] px-xl rounded-md bg-secondary items-center justify-center"
         testID="bookings-empty-cta"
@@ -205,7 +206,7 @@ function EmptyState({ onPress }: { onPress: () => void }) {
         <Text className="text-label font-bold text-secondary-foreground">
           {t('customer.bookings.emptyCta')}
         </Text>
-      </Pressable>
+      </Touchable>
     </View>
   );
 }
@@ -250,21 +251,21 @@ export default function BookingsListScreen() {
     <ScreenContainer testID="SCR-CUST-016">
       <View className="flex-1 bg-background">
         <View className="flex-row items-center justify-between py-md">
-          <Pressable
+          <Touchable
             className="w-10 h-10 rounded-md items-center justify-center bg-card"
             accessibilityRole="button"
           >
             <Menu size={22} color={colors.primaryDeep} />
-          </Pressable>
+          </Touchable>
           <Text className="flex-1 mx-md text-subtitle font-bold text-primary-deep">
             {t('customer.bookings.pageTitle')}
           </Text>
-          <Pressable
+          <Touchable
             className="w-10 h-10 rounded-md items-center justify-center bg-card"
             accessibilityRole="button"
           >
             <Search size={20} color={colors.primaryDeep} />
-          </Pressable>
+          </Touchable>
         </View>
 
         <View className="flex-row gap-section px-screen-x mb-block">

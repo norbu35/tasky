@@ -10,13 +10,13 @@ export function useTaskerProfile(userId: string | undefined) {
   const token = session?.accessToken;
 
   const profileQuery = useQuery({
-    queryKey: ['taskerProfile', userId],
+    queryKey: ['taskerProfile', token, userId],
     queryFn: () => api.getPublicProfile(token!, userId!),
     enabled: !!token && !!userId,
   });
 
   const reviewsQuery = useQuery({
-    queryKey: ['taskerReviews', userId],
+    queryKey: ['taskerReviews', token, userId],
     queryFn: () => api.getUserReviews(token!, userId!),
     enabled: !!token && !!userId,
   });

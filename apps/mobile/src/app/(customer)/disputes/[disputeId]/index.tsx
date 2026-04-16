@@ -9,9 +9,10 @@ import {
 } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 import { InsetScrollView, ScreenContainer } from '../../../../components/shells';
+import { Touchable } from '../../../../components/ui/Touchable';
 import { elevations } from '../../../../design/elevations';
 import { screenLayout } from '../../../../design/screenLayout';
 import { mobileTheme } from '../../../../design/tokenAdapter';
@@ -248,7 +249,7 @@ export default function DisputeStatusScreen() {
   return (
     <ScreenContainer testID="dispute-status-screen">
       <View className="min-h-[56px] flex-row items-center justify-between pb-micro">
-        <Pressable
+        <Touchable
           accessibilityRole="button"
           onPress={() => router.back()}
           className="w-3xl h-3xl items-start justify-center"
@@ -256,7 +257,7 @@ export default function DisputeStatusScreen() {
           testID="dispute-status-back"
         >
           <ChevronLeft size={22} color={colors.primary} />
-        </Pressable>
+        </Touchable>
         <Text className="flex-1 text-subtitle font-sans-bold text-primary-deep text-center mx-sm">
           {t('customer.disputes.pageTitle')}
         </Text>
@@ -283,14 +284,14 @@ export default function DisputeStatusScreen() {
             <Text className="text-body text-primary-deep text-center leading-relaxed">
               {t('customer.disputes.errorToast')}
             </Text>
-            <Pressable
+            <Touchable
               onPress={() => void refetch()}
               className="px-lg py-sm rounded-md border border-primary-deep"
             >
               <Text className="text-body text-primary-deep font-sans-bold">
                 {t('customer.disputes.retry')}
               </Text>
-            </Pressable>
+            </Touchable>
           </View>
         ) : dispute ? (
           <>

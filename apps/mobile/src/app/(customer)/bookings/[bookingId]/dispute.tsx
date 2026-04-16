@@ -1,11 +1,12 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { Input } from '../../../../components/ui/Input';
 import { PhotoGrid } from '../../../../components/ui/PhotoGrid';
+import { Touchable } from '../../../../components/ui/Touchable';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { useDisputeCreate } from '../../../../features/disputes/hooks/useDisputeCreate';
 
@@ -89,7 +90,7 @@ export default function DisputeRaiseScreen() {
           </Text>
           <View className="gap-sm">
             {disputeReasons.map((reason) => (
-              <Pressable
+              <Touchable
                 key={reason}
                 className={
                   selectedReason === reason
@@ -108,7 +109,7 @@ export default function DisputeRaiseScreen() {
                 >
                   {reason}
                 </Text>
-              </Pressable>
+              </Touchable>
             ))}
           </View>
         </View>

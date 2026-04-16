@@ -10,7 +10,7 @@ export function useMyStats() {
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['myStats'],
+    queryKey: ['myStats', token],
     queryFn: () => api.getMyStats(token!),
     enabled: !!token,
   });

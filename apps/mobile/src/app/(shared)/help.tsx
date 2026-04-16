@@ -2,11 +2,12 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronDown, ChevronLeft, ChevronUp, Search } from 'lucide-react-native';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { InsetScrollView, ScreenContainer } from '../../components/shells';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { Touchable } from '../../components/ui/Touchable';
 import { mobileTheme } from '../../design/tokenAdapter';
 
 const { colors, spacing, radius, typography } = mobileTheme;
@@ -301,7 +302,7 @@ function FaqItemRow({
 
   return (
     <View>
-      <Pressable
+      <Touchable
         className="min-h-[44px] flex-row items-center justify-between p-lg mb-sm"
         style={{ backgroundColor: colors.muted, borderRadius: radius.md }}
         onPress={onToggle}
@@ -311,7 +312,7 @@ function FaqItemRow({
           {item.question}
         </Text>
         <Icon size={20} color={colors.textSecondary} />
-      </Pressable>
+      </Touchable>
       {isExpanded ? (
         <View
           className="p-lg mb-sm"
@@ -331,13 +332,14 @@ export default function HelpScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const params = useLocalSearchParams();
-  const [state, setState] = useState<ScreenState>(() => resolveState(params['state']));
+  const paramsState = params['state'];
+  const [state, setState] = useState<ScreenState>(() => resolveState(paramsState));
   const [query, setQuery] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    setState(resolveState(params['state']));
-  }, [params['state']]);
+    setState(resolveState(paramsState));
+  }, [paramsState]);
 
   const sections = useMemo(() => buildFaqSections(t), [t]);
   const visibleSections = useMemo(() => filterSections(sections, query), [sections, query]);
@@ -357,7 +359,7 @@ export default function HelpScreen() {
   return (
     <ScreenContainer testID="help-screen">
       <View className="h-[56px] flex-row items-center justify-between px-md">
-        <Pressable
+        <Touchable
           onPress={() => router.back()}
           className="min-h-[44px] px-xs flex-row items-center gap-xs"
           hitSlop={spacing.sm}
@@ -367,7 +369,7 @@ export default function HelpScreen() {
           <Text className="text-body font-sans-medium" style={{ color: colors.primary }}>
             {t('infra.help.backLabel')}
           </Text>
-        </Pressable>
+        </Touchable>
         <Text
           className="flex-1 text-subtitle font-sans-semibold text-center mx-sm"
           style={{ color: colors.primaryDeep }}

@@ -10,7 +10,7 @@ export function useMessages(conversationId: string) {
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['messages', conversationId],
+    queryKey: ['messages', token, conversationId],
     queryFn: () => api.listMessages(token!, conversationId),
     enabled: !!token && !!conversationId,
   });

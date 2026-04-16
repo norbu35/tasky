@@ -10,7 +10,7 @@ export function useDisputeDetail(disputeId: string | undefined) {
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['dispute', disputeId],
+    queryKey: ['dispute', token, disputeId],
     queryFn: () => api.getDispute(token!, disputeId!),
     enabled: !!token && !!disputeId,
   });

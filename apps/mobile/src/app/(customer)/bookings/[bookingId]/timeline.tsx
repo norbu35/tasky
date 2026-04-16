@@ -2,9 +2,10 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { CircleHelp, Clock } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { ScreenContainer } from '../../../../components/shells';
+import { Touchable } from '../../../../components/ui/Touchable';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { useBookingTimeline } from '../../../../features/bookings/hooks/useBookingTimeline';
@@ -200,7 +201,7 @@ export default function BookingTimelineScreen() {
             <Text className="text-body text-accent leading-relaxed">
               {t('customer.bookings.helpDescription')}
             </Text>
-            <Pressable
+            <Touchable
               accessibilityRole="button"
               onPress={() => router.push('/(shared)/help')}
               className="min-h-[48px] rounded-md bg-secondary items-center justify-center px-lg"
@@ -209,11 +210,11 @@ export default function BookingTimelineScreen() {
               <Text className="text-label font-bold text-secondary-foreground">
                 {t('customer.bookings.helpCta')}
               </Text>
-            </Pressable>
+            </Touchable>
           </View>
 
           {isError ? (
-            <Pressable
+            <Touchable
               accessibilityRole="button"
               onPress={() => void refetch()}
               className="bg-danger rounded-md p-md"
@@ -222,7 +223,7 @@ export default function BookingTimelineScreen() {
               <Text className="text-label font-semibold text-danger-foreground">
                 {t('BookingTimelineScreen.copy2')}
               </Text>
-            </Pressable>
+            </Touchable>
           ) : null}
         </ScrollView>
       </View>

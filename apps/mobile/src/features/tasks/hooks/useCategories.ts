@@ -10,7 +10,7 @@ export function useCategories() {
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['categories'],
+    queryKey: ['categories', token],
     queryFn: () => api.listCategories(token!),
     enabled: !!token,
     staleTime: 1000 * 60 * 30,

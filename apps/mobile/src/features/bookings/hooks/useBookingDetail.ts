@@ -10,7 +10,7 @@ export function useBookingDetail(bookingId: string | undefined) {
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['booking', bookingId],
+    queryKey: ['booking', token, bookingId],
     queryFn: () => api.getBooking(token!, bookingId!),
     enabled: !!token && !!bookingId,
   });

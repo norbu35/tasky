@@ -1,7 +1,7 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import {
   getIntakeFieldLabel,
@@ -14,6 +14,7 @@ import {
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
+import { Touchable } from '../../../../components/ui/Touchable';
 import { elevations } from '../../../../design/elevations';
 
 const DESCRIPTION_MIN_LENGTH = 10;
@@ -85,7 +86,7 @@ function ChipGroup({
         const active = selected.includes(opt.value);
         const displayLabel = getIntakeOptionLabel(opt, locale === 'mn' ? 'mn' : 'en');
         return (
-          <Pressable
+          <Touchable
             key={opt.value}
             onPress={() => toggle(opt.value)}
             className={`px-md py-sm rounded-sm justify-center items-center min-h-[40px] ${active ? 'bg-primary-deep' : 'bg-muted'}`}
@@ -102,7 +103,7 @@ function ChipGroup({
             >
               {displayLabel}
             </Text>
-          </Pressable>
+          </Touchable>
         );
       })}
     </View>
@@ -125,7 +126,7 @@ function YesNo({
         const label = opt ? t('Intake.yes') : t('Intake.no');
         const active = value === opt;
         return (
-          <Pressable
+          <Touchable
             key={label}
             onPress={() => onChange(opt)}
             className={`px-md py-sm rounded-sm justify-center items-center min-h-[40px] ${active ? 'bg-primary-deep' : 'bg-muted'}`}
@@ -142,7 +143,7 @@ function YesNo({
             >
               {label}
             </Text>
-          </Pressable>
+          </Touchable>
         );
       })}
     </View>

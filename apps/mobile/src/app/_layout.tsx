@@ -11,8 +11,8 @@ import { ReviewGateProvider } from '../features/review/components/ReviewGateProv
 import { getSharedApiClient } from '../lib/mobileApiClient';
 import { queryClient } from '../lib/react-query';
 import { RoleProvider } from '../providers/RoleProvider';
-import { NotificationProvider } from '../store/NotificationContext';
 import { useAuthStore } from '../store/authStore';
+import { NotificationProvider } from '../store/NotificationContext';
 
 import '../utils/i18n';
 import '../design/nativewind-interop';

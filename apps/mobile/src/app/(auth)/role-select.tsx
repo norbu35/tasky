@@ -2,10 +2,11 @@ import { useRouter } from 'expo-router';
 import { ArrowRight, Briefcase, Check, User } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { AuthTemplate } from '../../components/templates/AuthTemplate';
 import { Button, ModalSheet } from '../../components/ui';
+import { Touchable } from '../../components/ui/Touchable';
 import { elevations } from '../../design/elevations';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
@@ -55,7 +56,7 @@ export default function RoleSelectScreen() {
         : 'auth.roleSelection.taskerDescription';
 
     return (
-      <Pressable
+      <Touchable
         key={role}
         testID={`role-card-${role}`}
         onPress={() => setSelectedRole(role)}
@@ -101,7 +102,7 @@ export default function RoleSelectScreen() {
             </View>
           ) : null}
         </View>
-      </Pressable>
+      </Touchable>
     );
   };
 

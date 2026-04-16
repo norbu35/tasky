@@ -3,9 +3,10 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { CircleX, Info, Loader, Plus } from 'lucide-react-native';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Image, Pressable, Text, View } from 'react-native';
+import { Alert, Image, Text, View } from 'react-native';
 
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
+import { Touchable } from '../../../../components/ui/Touchable';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { useTaskPhotoUpload } from '../../../../features/tasks/hooks/useTaskPhotoUpload';
 
@@ -128,7 +129,7 @@ export default function PhotoUploadScreen() {
               className="rounded-lg overflow-hidden bg-muted w-[31.5%] aspect-square"
             >
               <Image source={{ uri: photoUri }} className="self-stretch h-full" />
-              <Pressable
+              <Touchable
                 onPress={() => handleRemovePhoto(index)}
                 className="absolute top-1 right-1 w-6 h-6 items-center justify-center rounded-full"
                 style={{ backgroundColor: `${colors.primaryDeep}99` }}
@@ -137,10 +138,10 @@ export default function PhotoUploadScreen() {
                 accessibilityLabel={t('Photos.removePhoto')}
               >
                 <CircleX size={16} color={colors.primaryForeground} />
-              </Pressable>
+              </Touchable>
             </View>
           ) : (
-            <Pressable
+            <Touchable
               key={`add-${index}`}
               className="rounded-lg border-2 border-dashed border-chip-inactive bg-muted items-center justify-center gap-xs p-sm w-[31.5%] aspect-square"
               onPress={() => handleAddPhoto(index)}
@@ -164,7 +165,7 @@ export default function PhotoUploadScreen() {
                   </Text>
                 </>
               )}
-            </Pressable>
+            </Touchable>
           ),
         )}
       </View>

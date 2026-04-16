@@ -136,7 +136,7 @@ export default function TabsLayout() {
             title: t('nav.inbox'),
             tabBarButtonTestID: 'tab-inbox',
             tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
-            tabBarBadgeStyle: { backgroundColor: colors.danger, fontSize: 10 },
+            tabBarBadgeStyle: { backgroundColor: colors.danger, fontSize: typography.micro },
             tabBarIcon: ({ color }) => <MessageSquare color={color} size={TAB_ICON_SIZE} />,
           }}
         />

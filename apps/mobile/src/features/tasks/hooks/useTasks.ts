@@ -11,7 +11,7 @@ export function useTasks() {
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['tasks'],
+    queryKey: ['tasks', token],
     queryFn: async () => {
       const location = await getCurrentLocation();
       const filters = location
@@ -39,7 +39,7 @@ export function useTaskDetail(taskId: string): TaskDetailState {
   const token = session?.accessToken;
 
   const tasksQuery = useQuery({
-    queryKey: ['tasks'],
+    queryKey: ['tasks', token],
     queryFn: () => api.listTasks(token!, {}),
     enabled: !!token,
   });

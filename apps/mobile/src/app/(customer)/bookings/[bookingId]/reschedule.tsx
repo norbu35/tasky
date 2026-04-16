@@ -11,10 +11,11 @@ import {
 } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../../components/shells';
 import { Input } from '../../../../components/ui/Input';
+import { Touchable } from '../../../../components/ui/Touchable';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
@@ -171,18 +172,18 @@ export default function RescheduleScreen() {
               {formatMonthTitle(visibleMonth)}
             </Text>
             <View className="flex-row gap-xs">
-              <Pressable
+              <Touchable
                 className="w-[32px] h-[32px] rounded-sm bg-muted items-center justify-center"
                 accessibilityRole="button"
               >
                 <ChevronLeftIcon size={18} color={colors.primaryDeep} />
-              </Pressable>
-              <Pressable
+              </Touchable>
+              <Touchable
                 className="w-[32px] h-[32px] rounded-sm bg-muted items-center justify-center"
                 accessibilityRole="button"
               >
                 <ChevronRight size={18} color={colors.primaryDeep} />
-              </Pressable>
+              </Touchable>
             </View>
           </View>
 
@@ -220,7 +221,7 @@ export default function RescheduleScreen() {
               const isPast = cell < tomorrow;
               const isWeekend = cell.getDay() === 0 || cell.getDay() === 6;
               return (
-                <Pressable
+                <Touchable
                   key={cell.toISOString()}
                   onPress={() => updateSelectedDay(cell)}
                   className={cn(
@@ -244,7 +245,7 @@ export default function RescheduleScreen() {
                   >
                     {cell.getDate()}
                   </Text>
-                </Pressable>
+                </Touchable>
               );
             })}
           </View>
@@ -267,7 +268,7 @@ export default function RescheduleScreen() {
                 formatDateTime(selectedDateTime).endsWith(` ${time}`) ||
                 (time === '10:00' && formatDateTime(selectedDateTime).endsWith(' 10:00'));
               return (
-                <Pressable
+                <Touchable
                   key={time}
                   onPress={() => updateSelectedTime(time)}
                   className={cn(
@@ -286,7 +287,7 @@ export default function RescheduleScreen() {
                   >
                     {time}
                   </Text>
-                </Pressable>
+                </Touchable>
               );
             })}
           </View>
@@ -364,7 +365,7 @@ export default function RescheduleScreen() {
 
       <StickyActionBar>
         <View className="pt-md pb-lg px-lg">
-          <Pressable
+          <Touchable
             accessibilityRole="button"
             onPress={() => void handleSubmit()}
             className="rounded-md overflow-hidden"
@@ -392,7 +393,7 @@ export default function RescheduleScreen() {
               </Text>
               <ArrowRight size={18} color={colors.primaryForeground} />
             </LinearGradient>
-          </Pressable>
+          </Touchable>
         </View>
       </StickyActionBar>
     </ScreenContainer>

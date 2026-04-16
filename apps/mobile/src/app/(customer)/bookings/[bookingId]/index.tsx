@@ -1,13 +1,14 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
 import { ConfirmSheet } from '../../../../components/ui/ConfirmSheet';
 import { PriceTag } from '../../../../components/ui/PriceTag';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { StatusBadge } from '../../../../components/ui/StatusBadge';
+import { Touchable } from '../../../../components/ui/Touchable';
 import { ConfirmCompletionSheet } from '../../../../features/bookings/components/ConfirmCompletionSheet';
 import {
   CustomerCancelSheet,
@@ -183,7 +184,7 @@ export default function BookingDetailScreen() {
             <Text className="text-heading font-bold text-primary-deep mb-md">
               {t('customer.bookings.sectionTasker')}
             </Text>
-            <Pressable
+            <Touchable
               className="flex-row items-center gap-md bg-muted rounded-md p-md mt-xs"
               onPress={() => router.push(`/(customer)/taskers/${booking.tasker?.id}`)}
               testID="booking-detail-screen-tasker-card"
@@ -199,7 +200,7 @@ export default function BookingDetailScreen() {
                   {booking.tasker?.full_name}
                 </Text>
               </View>
-            </Pressable>
+            </Touchable>
           </View>
 
           {/* Task Summary */}
@@ -230,7 +231,7 @@ export default function BookingDetailScreen() {
 
           {/* Action Buttons */}
           <View className="gap-md mb-xl">
-            <Pressable
+            <Touchable
               className="py-sm"
               onPress={handleTimeline}
               testID="booking-detail-screen-timeline-link"
@@ -238,11 +239,11 @@ export default function BookingDetailScreen() {
               <Text className="text-body text-primary font-medium">
                 {t('customer.bookings.ctaTimeline')}
               </Text>
-            </Pressable>
+            </Touchable>
 
             {status === 'ASSIGNED' && (
               <>
-                <Pressable
+                <Touchable
                   className="py-sm"
                   onPress={handleReschedule}
                   testID="booking-detail-screen-reschedule-link"
@@ -250,8 +251,8 @@ export default function BookingDetailScreen() {
                   <Text className="text-body text-primary font-medium">
                     {t('customer.bookings.ctaReschedule')}
                   </Text>
-                </Pressable>
-                <Pressable
+                </Touchable>
+                <Touchable
                   className="py-sm"
                   onPress={() => setShowCancelSheet(true)}
                   testID="booking-detail-screen-cancel-btn"
@@ -259,12 +260,12 @@ export default function BookingDetailScreen() {
                   <Text className="text-body text-danger font-medium">
                     {t('customer.bookings.ctaCancel')}
                   </Text>
-                </Pressable>
+                </Touchable>
               </>
             )}
 
             {status === 'ASSIGNED' && (
-              <Pressable
+              <Touchable
                 className="py-sm"
                 onPress={() => setShowNoShowSheet(true)}
                 testID="booking-detail-screen-no-show-btn"
@@ -272,11 +273,11 @@ export default function BookingDetailScreen() {
                 <Text className="text-body text-danger font-medium">
                   {t('customer.bookings.noShowTitle')}
                 </Text>
-              </Pressable>
+              </Touchable>
             )}
 
             {status === 'TASKER_MARKED_DONE' && (
-              <Pressable
+              <Touchable
                 className="py-sm"
                 onPress={handleReportIssue}
                 testID="booking-detail-screen-report-issue-link"
@@ -284,11 +285,11 @@ export default function BookingDetailScreen() {
                 <Text className="text-body text-danger font-medium">
                   {t('customer.bookings.ctaReportIssue')}
                 </Text>
-              </Pressable>
+              </Touchable>
             )}
 
             {status === 'COMPLETED' && !hasSubmittedReview(booking) && (
-              <Pressable
+              <Touchable
                 className="py-sm"
                 onPress={handleLeaveReview}
                 testID="booking-detail-screen-review-link"
@@ -296,11 +297,11 @@ export default function BookingDetailScreen() {
                 <Text className="text-body text-primary font-medium">
                   {t('shared.review.title')}
                 </Text>
-              </Pressable>
+              </Touchable>
             )}
 
             {(status === 'CANCELLED' || status === 'NO_SHOW') && (
-              <Pressable
+              <Touchable
                 className="py-sm"
                 onPress={handleReportIssue}
                 testID="booking-detail-screen-report-issue-link"
@@ -308,7 +309,7 @@ export default function BookingDetailScreen() {
                 <Text className="text-body text-danger font-medium">
                   {t('customer.bookings.ctaReportIssue')}
                 </Text>
-              </Pressable>
+              </Touchable>
             )}
           </View>
 

@@ -2,10 +2,11 @@ import { useRouter } from 'expo-router';
 import { LogIn, Zap } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { AuthTemplate } from '../../components/templates/AuthTemplate';
 import { Button } from '../../components/ui/Button';
+import { Touchable } from '../../components/ui/Touchable';
 import { elevations } from '../../design/elevations';
 import { mobileTheme } from '../../design/tokenAdapter';
 import {
@@ -57,7 +58,7 @@ export default function LoginScreen() {
       showLogo
       headline={t('auth.login.title')}
       topRightSlot={
-        <Pressable
+        <Touchable
           testID="language-switcher"
           onPress={toggleLanguage}
           className="rounded-md px-md bg-background border border-[rgba(195,198,207,0.2)] py-xs"
@@ -67,7 +68,7 @@ export default function LoginScreen() {
           <Text className="text-caption font-sans-bold text-primary-deep tracking-[0.35px]">
             {t('LoginScreen.copy2')}
           </Text>
-        </Pressable>
+        </Touchable>
       }
       bottomSlot={
         <View className="gap-lg px-screen-x">
@@ -125,20 +126,20 @@ export default function LoginScreen() {
       }
       footerSlot={
         <View className="items-center gap-md">
-          <Pressable
+          <Touchable
             testID="login-footer-terms"
             onPress={() => router.push('/(shared)/legal/terms')}
             accessibilityRole="link"
           >
             <Text className="text-body text-text-secondary">{t('auth.login.terms')}</Text>
-          </Pressable>
-          <Pressable
+          </Touchable>
+          <Touchable
             testID="login-footer-privacy"
             onPress={() => router.push('/(shared)/legal/privacy')}
             accessibilityRole="link"
           >
             <Text className="text-body text-text-secondary">{t('auth.login.privacy')}</Text>
-          </Pressable>
+          </Touchable>
           <Text className="text-body text-center text-text-secondary opacity-60">
             {t('auth.login.copyright')}
           </Text>

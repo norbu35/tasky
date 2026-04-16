@@ -7,17 +7,16 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ScreenContainer } from '../../../components/shells/ScreenContainer';
 import { ErrorStateTemplate } from '../../../components/templates/ErrorStateTemplate';
+import { Input } from '../../../components/ui/Input';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
+import { Touchable } from '../../../components/ui/Touchable';
 import { screenLayout } from '../../../design/screenLayout';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { useConversations } from '../../../features/chat/hooks/useConversations';
@@ -26,7 +25,7 @@ import { useSendMessage } from '../../../features/chat/hooks/useSendMessage';
 import { formatLastActive } from '../../../lib/formatLastActive';
 import { useAuthStore } from '../../../store/authStore';
 
-const { colors, spacing, radius } = mobileTheme;
+const { colors, spacing, radius, typography } = mobileTheme;
 
 const PHONE_REGEX = /(\+?976)?[\s-]?\d{4}[\s-]?\d{4}|\d{8,}/;
 
@@ -136,13 +135,13 @@ export default function ChatDetailScreen() {
           keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         >
           <View className="flex-row items-center justify-between pb-md px-lg bg-card">
-            <Pressable
+            <Touchable
               onPress={() => router.back()}
               className="w-10 h-10 justify-center items-center"
               testID="chat-back"
             >
               <ChevronLeft size={24} color={colors.primary} />
-            </Pressable>
+            </Touchable>
             <View className="flex-1 items-center">
               <Text className="text-subtitle font-bold text-foreground" numberOfLines={1}>
                 {conversation?.counterparty_name ?? t('shared.inbox.chatTitle')}
@@ -183,13 +182,13 @@ export default function ChatDetailScreen() {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
         <View className="flex-row items-center justify-between pb-md px-lg bg-card">
-          <Pressable
+          <Touchable
             onPress={() => router.back()}
             className="w-10 h-10 justify-center items-center"
             testID="chat-back"
           >
             <ChevronLeft size={24} color={colors.primary} />
-          </Pressable>
+          </Touchable>
           <View className="flex-1 items-center">
             <Text className="text-subtitle font-bold text-foreground" numberOfLines={1}>
               {conversation?.counterparty_name ?? t('shared.inbox.chatTitle')}
@@ -241,7 +240,7 @@ export default function ChatDetailScreen() {
             borderTopColor: colors.border,
           }}
         >
-          <TextInput
+          <Input
             testID="chat-input"
             style={{
               flex: 1,
@@ -249,7 +248,7 @@ export default function ChatDetailScreen() {
               borderRadius: radius.lg,
               paddingHorizontal: spacing.lg,
               paddingVertical: spacing.sm + 2,
-              fontSize: 16,
+              fontSize: typography.body,
               color: colors.foreground,
               maxHeight: spacing['3xl'] * 2.5,
             }}
@@ -260,11 +259,10 @@ export default function ChatDetailScreen() {
             maxLength={500}
             multiline
           />
-          <TouchableOpacity
+          <Touchable
             testID="chat-send-button"
             onPress={handleSend}
             disabled={draft.trim().length === 0 || isPending}
-            activeOpacity={0.85}
             style={{
               width: spacing['3xl'],
               height: spacing['3xl'],
@@ -276,7 +274,7 @@ export default function ChatDetailScreen() {
             }}
           >
             <Send size={18} color={colors.primaryForeground} />
-          </TouchableOpacity>
+          </Touchable>
         </View>
       </KeyboardAvoidingView>
     </ScreenContainer>
