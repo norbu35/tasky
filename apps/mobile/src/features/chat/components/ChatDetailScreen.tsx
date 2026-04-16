@@ -58,6 +58,9 @@ export function ChatDetailScreen() {
 
       const client = new Client({
         webSocketFactory: () => new SockJS(socketUrl),
+        connectHeaders: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
         onConnect: () => {
           console.log(t('ChatDetailScreen.copy1'));
           client.subscribe(`/topic/conversations/${id}`, (msg) => {

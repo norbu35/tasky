@@ -68,7 +68,7 @@ export function MessagingNotificationsPage() {
   );
 
   useEffect(() => {
-    if (selectedConvId) {
+    if (selectedConvId && session) {
       void loadMessages(selectedConvId);
 
       // Skip STOMP client setup in test environment if it causes protocol errors
@@ -81,8 +81,10 @@ export function MessagingNotificationsPage() {
 
       const client = new Client({
         webSocketFactory: () => new SockJS(socketUrl),
+        connectHeaders: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
         onConnect: () => {
-          console.log('STOMP Connected');
           client.subscribe(`/topic/conversations/${selectedConvId}`, (msg) => {
             const newMsg = JSON.parse(msg.body) as Message;
             setMessages((prev) => [...prev, newMsg]);
