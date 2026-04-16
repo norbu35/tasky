@@ -3,11 +3,6 @@ import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { renderWithAppContext as render } from '../../test/render-helpers';
-
-vi.mock('../../src/layout/ScreenFrame', () => ({
-  ScreenFrame: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-}));
-
 import {
   ActionRail,
   ResponsiveDetailShell,
@@ -16,6 +11,10 @@ import {
   StatePanel,
   TimelineList,
 } from '../parity';
+
+vi.mock('../../src/layout/ScreenFrame', () => ({
+  ScreenFrame: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+}));
 
 describe('Parity shells', () => {
   it('renders the responsive feed shell with content and side rail slots', () => {

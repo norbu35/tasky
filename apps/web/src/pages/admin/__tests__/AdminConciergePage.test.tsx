@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import type { AdminApiClient } from '../../../lib/adminApiClient';
 import type { ApiClient, PublicTask, User, Booking, CursorPage } from '../../../lib/apiClient';
+import { AdminConciergePage } from '../AdminConciergePage';
 
 // ── Mock AppContext ──────────────────────────────────────────────────
 const mockAdminApiClient: Partial<AdminApiClient> = {
@@ -39,8 +40,6 @@ vi.mock('sonner', () => ({
 vi.stubGlobal('crypto', {
   randomUUID: vi.fn(() => 'test-uuid-1234'),
 });
-
-import { AdminConciergePage } from '../AdminConciergePage';
 
 // ── Test Data ────────────────────────────────────────────────────────
 const MOCK_TASKS: CursorPage<PublicTask> = {

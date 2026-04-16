@@ -1,8 +1,10 @@
 import { screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { toast } from 'sonner';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { makeFeatureToggle } from '../../../test/factories';
 import { renderWithAppContext } from '../../../test/render-helpers';
+import { AdminFeaturesPage } from '../AdminFeaturesPage';
 
 // ── Mock sonner toast ────────────────────────────────────────────────
 vi.mock('sonner', () => ({
@@ -11,10 +13,6 @@ vi.mock('sonner', () => ({
     error: vi.fn(),
   },
 }));
-
-import { toast } from 'sonner';
-
-import { AdminFeaturesPage } from '../AdminFeaturesPage';
 
 // ── Test Data ────────────────────────────────────────────────────────
 const MOCK_TOGGLES = [

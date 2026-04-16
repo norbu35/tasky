@@ -1,8 +1,10 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { toast } from 'sonner';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import type { AdminApiClient } from '../../../lib/adminApiClient';
 import type { ApiClient, StrikePolicy } from '../../../lib/apiClient';
+import { AdminModerationPage } from '../AdminModerationPage';
 
 const MOCK_POLICY: StrikePolicy = {
   strikeWindowDays: 28,
@@ -34,10 +36,6 @@ vi.mock('../../../lib/adminApiClient', () => ({
 vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
-
-import { toast } from 'sonner';
-
-import { AdminModerationPage } from '../AdminModerationPage';
 
 function renderPage() {
   return render(<AdminModerationPage />);

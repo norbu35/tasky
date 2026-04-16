@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import type { VerificationDetail } from '../../../lib/apiClient';
+import { AdminVerificationsPage } from '../AdminVerificationsPage';
 
 // ── Mock i18n ────────────────────────────────────────────────────────
 vi.mock('react-i18next', () => ({
@@ -36,8 +37,6 @@ vi.mock('../../../lib/adminApiClient', () => ({
     adminRejectVerification: mockAdminRejectVerification,
   })),
 }));
-
-import { AdminVerificationsPage } from '../AdminVerificationsPage';
 
 // ── Test Data ────────────────────────────────────────────────────────
 function makeVerification(overrides: Partial<VerificationDetail> = {}): VerificationDetail {

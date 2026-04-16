@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { toast } from 'sonner';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import type { AdminApiClient } from '../../../lib/adminApiClient';
@@ -8,6 +9,7 @@ import type {
   CursorPage,
   CategorySchemaVersion,
 } from '../../../lib/apiClient';
+import { AdminCategoriesPage } from '../AdminCategoriesPage';
 
 // ── Mock AppContext ──────────────────────────────────────────────────
 const mockAdminApiClient: Partial<AdminApiClient> = {
@@ -44,10 +46,6 @@ vi.mock('sonner', () => ({
     error: vi.fn(),
   },
 }));
-
-import { toast } from 'sonner';
-
-import { AdminCategoriesPage } from '../AdminCategoriesPage';
 
 // ── Test Data ────────────────────────────────────────────────────────
 const MOCK_CATEGORIES: Category[] = [
