@@ -1,8 +1,8 @@
 export const baseTestConfig = {
-  environment: 'jsdom' as const,
+  environment: 'jsdom',
   globals: true,
   coverage: {
-    provider: 'v8' as const,
+    provider: 'v8',
     thresholds: { lines: 60, functions: 55, branches: 55, statements: 60 },
     reporter: ['text', 'json'],
   },

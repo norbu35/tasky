@@ -1,18 +1,41 @@
 # Agent Instructions
 
-## Serena — LSP-First Navigation
+## Code Navigation
 
-Call `mcp__serena__initial_instructions` ONCE at session start. Use Serena for all code navigation — not grep_search, glob, or run_shell_command:
+### Serena (semantic, preferred when available)
 
-| Task            | Tool                                               |
-| --------------- | -------------------------------------------------- |
-| Symbol search   | `mcp__serena__jet_brains_find_symbol`              |
-| File overview   | `mcp__serena__jet_brains_get_symbols_overview`     |
-| References      | `mcp__serena__jet_brains_find_referencing_symbols` |
-| Declaration     | `mcp__serena__jet_brains_find_declaration`         |
-| Implementations | `mcp__serena__jet_brains_find_implementations`     |
+When Serena is connected (requires JetBrains IDE running with the project open), use its semantic tools for all code navigation — symbol search, references, declarations, implementations, type hierarchies, and refactors (rename, move, inline, safe-delete). These understand the AST, types, and cross-file references.
 
-grep_search / glob = fallback only when Serena returns empty.
+If Serena returns empty results or errors, fall back to grep/glob.
+
+Client-specific Serena setup and tool names are documented in each client's own instructions:
+
+- **Claude Code** → `CLAUDE.md`
+- **pi** → Serena tools are auto-discovered by the `.pi/extensions/serena` extension
+
+### Repomix (full-context snapshot)
+
+`repomix` packs the entire codebase into a single `repomix-output.xml` file. Use it when you need broad context that semantic tools can't efficiently provide — architecture overviews, cross-cutting concerns, or when the IDE/Serena isn't available.
+
+```bash
+npx repomix                                 # full codebase
+npx repomix --include "services/api/**"      # backend only
+npx repomix --include "apps/web/**"          # web only
+```
+
+Do **not** use repomix when Serena can answer your question with a targeted symbol or reference lookup. Repomix is expensive in tokens; Serena is surgical.
+
+### Decision guide
+
+| Situation                                           | Use                                          |
+| --------------------------------------------------- | -------------------------------------------- |
+| Find a symbol, navigate code, trace references      | Serena                                       |
+| Rename / move / delete a symbol across the codebase | Serena refactoring tools                     |
+| Get a file's top-level symbols                      | Serena `get_symbols_overview`                |
+| Understand architecture you've never seen before    | Repomix (scoped), then Serena for drill-down |
+| IDE not running / Serena unavailable                | Repomix or grep/glob                         |
+| Quick grep for a string pattern                     | `bash` grep or Serena `search_for_pattern`   |
+| Edit non-code files (YAML, Markdown, configs)       | Native file tools (edit/write)               |
 
 ## Commands
 

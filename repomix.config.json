@@ -1,0 +1,94 @@
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "input": {
+    "maxFileSize": 5242880
+  },
+  "output": {
+    "filePath": "repomix-output.xml",
+    "style": "xml",
+    "parsableStyle": false,
+    "headerText": "Tasky Monorepo — Full Context Pack\n\nStructure: services/api (Java/Spring Boot) | apps/web (React/Vite) | apps/mobile (Expo/React Native) | packages/{sdk,core,design-tokens,test-utils} | docs\n\nUse 'include' to scope to a single service:\n  npx repomix --include \"services/api/**\"\n  npx repomix --include \"apps/web/**\"\n  npx repomix --include \"apps/mobile/**\"\n  npx repomix --include \"packages/**\"",
+    "fileSummary": true,
+    "directoryStructure": true,
+    "files": true,
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "compress": false,
+    "topFilesLength": 20,
+    "showLineNumbers": false,
+    "truncateBase64": true,
+    "copyToClipboard": false,
+    "includeEmptyDirectories": false,
+    "includeFullDirectoryStructure": true,
+
+    "tokenCountTree": false,
+    "git": {
+      "sortByChanges": true,
+      "sortByChangesMaxCommits": 100,
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 20
+    }
+  },
+  "include": [],
+  "ignore": {
+    "useGitignore": true,
+    "useDotIgnore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      ".gradle-home/**",
+      "**/*.class",
+      "**/*.jar",
+      "**/*.war",
+
+      "**/*.png",
+      "**/*.jpg",
+      "**/*.jpeg",
+      "**/*.gif",
+      "**/*.ico",
+      "**/*.webp",
+      "**/*.svg",
+      "**/*.ttf",
+      "**/*.otf",
+      "**/*.woff",
+      "**/*.woff2",
+
+      "**/Podfile.lock",
+
+      "apps/mobile/ios/**",
+      "apps/mobile/screenshots/**",
+      "apps/mobile/.expo/**",
+      "apps/mobile/out.css",
+
+      "archive/**",
+      "research/**",
+
+      "docs/superpowers/**",
+      "docs/research/**",
+      "docs/plans/**",
+
+      "tooling/agent/skills/**",
+      "tooling/agent/workflows/**",
+
+      "**/locales/**/translation.json",
+
+      "**/seed_test_data.sql",
+
+      ".env.local",
+      ".env.*.local",
+      "apps/web/.env.local",
+
+      "repomix-output.*",
+      "baseline.json",
+      "postflight*.json",
+      "test-results.json",
+      ".codex"
+    ]
+  },
+  "security": {
+    "enableSecurityCheck": true
+  },
+  "tokenCount": {
+    "encoding": "o200k_base"
+  }
+}

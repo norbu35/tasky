@@ -68,6 +68,9 @@ baseline.json
 postflight-cascade.json
 apps/mobile/out.css
 repomix-output.*
+repomix-backend.xml
+repomix-web.xml
+repomix-mobile.xml
 
 # Test result dumps (generated, not source)
 test-results.json

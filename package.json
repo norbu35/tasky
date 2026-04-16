@@ -28,6 +28,10 @@
     "sdk:drift": "bash tooling/scripts/validate-sdk-contract-drift.sh",
     "generated:verify": "pnpm sdk:generate && pnpm --filter @tasky/design-tokens build && pnpm -r typecheck",
     "workspace:boundaries": "node tooling/scripts/validate-workspace-boundaries.mjs",
+    "pack": "npx repomix",
+    "pack:backend": "npx repomix --include 'services/api/**,docs/API.yaml,docs/ARCHITECTURE.md,AGENTS.md,tests/**,tooling/config/**,build.gradle.kts,settings.gradle.kts,gradle.properties' -o repomix-backend.xml",
+    "pack:web": "npx repomix --include 'apps/web/**,packages/**,docs/API.yaml,docs/ARCHITECTURE.md,AGENTS.md,tsconfig.json' -o repomix-web.xml",
+    "pack:mobile": "npx repomix --include 'apps/mobile/**,packages/**,docs/API.yaml,docs/ARCHITECTURE.md,AGENTS.md' -o repomix-mobile.xml",
     "prepare": "husky"
   },
   "devDependencies": {
