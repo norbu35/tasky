@@ -50,8 +50,9 @@ export function TaskDetailsModal({ task, visible, onClose }: Props) {
       await client.applyToTask(session.accessToken, task.id, t('TaskDetailsModal.copy1'));
       Alert.alert(t('taskDetails.success'), t('taskDetails.applied'));
       onClose();
-    } catch (err: any) {
-      Alert.alert(t('taskDetails.failed'), err.message || t('common.error'));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      Alert.alert(t('taskDetails.failed'), message || t('common.error'));
     } finally {
       setIsApplying(false);
     }

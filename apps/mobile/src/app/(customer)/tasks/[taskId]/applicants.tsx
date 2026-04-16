@@ -125,11 +125,11 @@ export default function ApplicantsListScreen() {
 
   const applicants: ApplicantItem[] = useMemo(
     () =>
-      (data?.data ?? []).map((a: any, index: number) => ({
+      (data?.data ?? []).map((a, index: number) => ({
         id: a.id,
-        taskerId: a.tasker?.id ?? a.tasker_id ?? '',
+        taskerId: a.tasker?.id ?? a.task_id ?? '',
         name: a.tasker?.full_name ?? '',
-        avatarUrl: a.tasker?.avatar_url,
+        avatarUrl: a.tasker?.avatar_url ?? undefined,
         rating: a.tasker?.rating_avg ?? 0,
         reviewCount: a.tasker?.completed_tasks ?? 0,
         isVerified: a.tasker?.is_pro ?? false,

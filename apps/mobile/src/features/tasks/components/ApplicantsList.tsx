@@ -150,10 +150,10 @@ export function ApplicantsList() {
   const router = useRouter();
   const { data, isLoading } = useApplications(taskId);
   const acceptApplication = useAcceptApplication();
-  const applicants: Applicant[] = (data?.data ?? []).map((a: any) => ({
+  const applicants: Applicant[] = (data?.data ?? []).map((a) => ({
     id: a.id,
     name: a.tasker?.full_name ?? '',
-    avatarUrl: a.tasker?.avatar_url,
+    avatarUrl: a.tasker?.avatar_url ?? undefined,
     rating: a.tasker?.rating_avg ?? 0,
     reviewCount: a.tasker?.completed_tasks ?? 0,
     isVerified: a.tasker?.is_pro ?? false,

@@ -9,6 +9,12 @@ import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { elevations } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { useTaskerProfile } from '../../../features/profile/hooks/useTaskerProfile';
+import type { Profile, Review } from '../../../lib/mobileApiClient';
+
+interface TaskerProfileDetail extends Profile {
+  bio?: string;
+  categories?: string[];
+}
 
 const { colors } = mobileTheme;
 
@@ -22,7 +28,7 @@ export default function TaskerProfileScreen() {
   const reviews = reviewsQuery.data?.data ?? [];
   const isLoading = profileQuery.isLoading;
   const isError = profileQuery.isError;
-  const categories = ((profile as any)?.categories ?? []) as string[];
+  const categories = ((profile as TaskerProfileDetail)?.categories ?? []) as string[];
 
   return (
     <DetailTemplate
@@ -42,7 +48,7 @@ export default function TaskerProfileScreen() {
               uri={profile.avatar_url}
               name={profile.full_name}
               size="xl"
-              showVerified={(profile as any).is_pro}
+              showVerified={(profile as TaskerProfileDetail).is_pro}
             />
             <Text className="text-heroTitle font-sans-bold text-foreground mt-sm">
               {profile.full_name}
@@ -50,10 +56,10 @@ export default function TaskerProfileScreen() {
             <View className="flex-row items-center gap-[8px]">
               <Star size={16} color={colors.accent} fill={colors.accent} />
               <Text className="text-subtitle font-sans-bold text-foreground">
-                {((profile as any).rating_avg ?? 0).toFixed(1)}
+                {((profile as TaskerProfileDetail).rating_avg ?? 0).toFixed(1)}
               </Text>
             </View>
-            {(profile as any).is_pro ? (
+            {(profile as TaskerProfileDetail).is_pro ? (
               <View className="flex-row items-center gap-[8px] bg-trust px-md py-xs rounded-full">
                 <ShieldCheck size={16} color={colors.trustMuted} />
                 <Text className="text-label font-sans-bold text-trust-muted">
@@ -66,7 +72,9 @@ export default function TaskerProfileScreen() {
               <Text className="text-caption text-text-secondary">
                 {t('customer.taskerProfile.memberSince').replace(
                   '{date}',
-                  new Date((profile as any).created_at ?? Date.now()).toLocaleDateString(),
+                  new Date(
+                    (profile as TaskerProfileDetail).created_at ?? Date.now(),
+                  ).toLocaleDateString(),
                 )}
               </Text>
             </View>
@@ -79,7 +87,7 @@ export default function TaskerProfileScreen() {
               style={elevations.soft}
             >
               <Text className="text-heroTitle font-sans-bold text-foreground">
-                {(profile as any).completed_tasks ?? 0}
+                {(profile as TaskerProfileDetail).completed_tasks ?? 0}
               </Text>
               <Text className="text-caption text-text-secondary text-center">
                 {t('customer.taskerProfile.completedJobs')}
@@ -90,7 +98,7 @@ export default function TaskerProfileScreen() {
               style={elevations.soft}
             >
               <Text className="text-heroTitle font-sans-bold text-foreground">
-                {((profile as any).rating_avg ?? 0).toFixed(1)}
+                {((profile as TaskerProfileDetail).rating_avg ?? 0).toFixed(1)}
               </Text>
               <Text className="text-caption text-text-secondary text-center">
                 {t('customer.taskerProfile.rating')}
@@ -104,7 +112,7 @@ export default function TaskerProfileScreen() {
               {t('customer.taskerProfile.about')}
             </Text>
             <Text className="text-body text-text-secondary leading-[24px]">
-              {(profile as any).bio ?? t('customer.taskerProfile.noBio')}
+              {(profile as TaskerProfileDetail).bio ?? t('customer.taskerProfile.noBio')}
             </Text>
           </View>
 
@@ -146,7 +154,7 @@ export default function TaskerProfileScreen() {
               </Text>
             ) : (
               <View className="gap-md">
-                {reviews.map((review: any) => (
+                {reviews.map((review: Review) => (
                   <View key={review.id} className="bg-muted rounded-lg p-lg gap-sm">
                     <View className="flex-row justify-between items-center">
                       <Text className="text-label font-sans-bold text-foreground">

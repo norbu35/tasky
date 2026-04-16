@@ -86,9 +86,9 @@ export default function BookingsScreen() {
   const handlePress = useCallback(
     (booking: BookingItem) => {
       if (isCustomer) {
-        router.push(`/(customer)/bookings/${booking.id}` as any);
+        router.push(`/(customer)/bookings/${booking.id}` as `${string}`);
       } else {
-        router.push(`/(tasker)/jobs/${booking.id}` as any);
+        router.push(`/(tasker)/jobs/${booking.id}` as `${string}`);
       }
     },
     [isCustomer, router],

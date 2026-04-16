@@ -82,10 +82,12 @@ function TaskerBrowseScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const { data: categoriesData } = useCategories();
   const categories = useMemo(() => {
-    const apiCategories = (categoriesData?.data ?? []).map((cat: any) => ({
-      id: cat.name?.toLowerCase() ?? cat.id,
-      label: cat.name_mn ?? cat.name ?? cat.id,
-    }));
+    const apiCategories = (categoriesData?.data ?? []).map(
+      (cat: { id: string; name?: string; name_mn?: string }) => ({
+        id: cat.name?.toLowerCase() ?? cat.id,
+        label: cat.name_mn ?? cat.name ?? cat.id,
+      }),
+    );
     return [{ id: 'all', label: t('TaskerBrowseScreen.all') }, ...apiCategories];
   }, [categoriesData, t]);
 
@@ -123,7 +125,7 @@ function TaskerBrowseScreen() {
   const handleTaskPress = useCallback(
     (task: PublicTask) => {
       if (isLocked) return;
-      router.push(`/task/${task.id}` as any);
+      router.push(`/task/${task.id}` as `${string}`);
     },
     [router, isLocked],
   );

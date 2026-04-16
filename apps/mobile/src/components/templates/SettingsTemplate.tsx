@@ -1,6 +1,6 @@
 import { ChevronRight } from 'lucide-react-native';
 import React from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { type PressableStateCallbackType, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
@@ -39,7 +39,7 @@ function SettingsRowItem({ row, testID }: { row: SettingsRow; testID?: string })
         !isInteractive && 'bg-transparent',
       )}
       style={(state) => {
-        const pressed = isInteractive && (state as any).pressed;
+        const pressed = isInteractive && (state as PressableStateCallbackType).pressed;
         return [pressed && { backgroundColor: 'rgba(0,0,0,0.05)' }];
       }}
       testID={testID}

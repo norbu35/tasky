@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ProfileAvatar, StatCard, ReviewCard } from '../../../components/ui';
 import { mobileTheme, elevations } from '../../../design/tokenAdapter';
+import type { Review } from '../../../lib/mobileApiClient';
 import { useTaskerProfile } from '../hooks/useTaskerProfile';
 
 const { colors, radius, typography } = mobileTheme;
@@ -125,7 +126,7 @@ export function TaskerPublicProfile() {
             </Pressable>
           </View>
           <View style={styles.reviewsList}>
-            {reviews.map((review: any, index: number) => {
+            {reviews.map((review: Review, index: number) => {
               const reviewerName = review.reviewer?.full_name ?? '';
               const initials = reviewerName
                 .split(' ')
@@ -138,7 +139,7 @@ export function TaskerPublicProfile() {
                   key={review.id}
                   reviewerInitials={initials}
                   reviewerName={reviewerName}
-                  rating={review.quality_rating}
+                  rating={review.quality_rating ?? 0}
                   comment={review.comment ?? ''}
                   timeAgo={formatTimeAgo(review.created_at)}
                   featured={index === 0}

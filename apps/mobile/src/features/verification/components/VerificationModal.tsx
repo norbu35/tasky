@@ -107,8 +107,9 @@ export function VerificationModal({ visible, onClose, onSuccess }: Props) {
 
       Alert.alert(t('verification.success'), t('verification.uploadSuccess'));
       onSuccess();
-    } catch (err: any) {
-      Alert.alert(t('verification.uploadFailed'), err.message || t('verification.uploadError'));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      Alert.alert(t('verification.uploadFailed'), message || t('verification.uploadError'));
     } finally {
       setIsUploading(false);
     }

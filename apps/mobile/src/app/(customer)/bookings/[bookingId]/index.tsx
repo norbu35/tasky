@@ -16,6 +16,7 @@ import {
 } from '../../../../features/bookings/components/CustomerCancelSheet';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { useFlagNoShow } from '../../../../features/bookings/hooks/useFlagNoShow';
+import { type Booking } from '../../../../lib/mobileApiClient';
 
 function mapStatus(status: string): 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show' {
   const lower = status.toLowerCase();
@@ -43,8 +44,18 @@ function getStatusLabel(status: string, t: (key: string) => string): string {
   }
 }
 
+interface CustomerBooking extends Omit<Booking, 'status' | 'customer'> {
+  status: Booking['status'] | 'TASKER_MARKED_DONE';
+  customer_review_submitted_at?: string;
+  review_submitted_at?: string;
+  review?: { submitted_at?: string };
+  customer_incidents_28d?: number;
+  incidents_28d?: number;
+  customer?: { incidents_28d?: number } & Booking['customer'];
+}
+
 function getCtaConfig(
-  booking: any,
+  booking: CustomerBooking | undefined,
   t: (key: string) => string,
 ): { label: string; action: string } | null {
   switch (booking?.status) {
@@ -64,7 +75,7 @@ function getCtaConfig(
   }
 }
 
-function hasSubmittedReview(booking: any): boolean {
+function hasSubmittedReview(booking: CustomerBooking | undefined): boolean {
   return Boolean(
     booking?.customer_review_submitted_at ??
     booking?.review_submitted_at ??
@@ -72,7 +83,7 @@ function hasSubmittedReview(booking: any): boolean {
   );
 }
 
-function getCancelType(booking: any): CancelType {
+function getCancelType(booking: CustomerBooking | undefined): CancelType {
   const scheduledAt = booking?.task?.scheduled_at;
   if (!scheduledAt) return 'free_cancel';
 

@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { ChevronLeft, ExternalLink } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { Text, View } from 'react-native';
 
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../components/shells';
@@ -23,7 +24,7 @@ export default function ConsentScreen() {
     t('ConsentScreen.copy3'),
   ];
 
-  const handleScroll = (event: any) => {
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
     const reachedBottom =
       contentOffset.y + layoutMeasurement.height >= contentSize.height - spacing.lg;
@@ -49,7 +50,7 @@ export default function ConsentScreen() {
     contentRef.current = contentHeight;
     checkIfContentFits();
   };
-  const handleLayout = (event: any) => {
+  const handleLayout = (event: NativeSyntheticEvent<{ layout: { height: number } }>) => {
     viewportRef.current = event.nativeEvent.layout.height;
     checkIfContentFits();
   };

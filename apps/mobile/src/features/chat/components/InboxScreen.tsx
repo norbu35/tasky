@@ -32,8 +32,9 @@ export function InboxScreen() {
       const res = await client.listConversations(session.accessToken);
       setConversations(res.data);
       setError(null);
-    } catch (err: any) {
-      setError(err.message || t('shared.inbox.errorLoading'));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message || t('shared.inbox.errorLoading'));
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +79,9 @@ export function InboxScreen() {
                 {item.task_title || t('messaging.taskDiscussion')}
               </Text>
               <Text style={styles.subtext}>
-                {t('messaging.bookingRef', { id: (item as any).booking_id?.substring(0, 8) })}
+                {t('messaging.bookingRef', {
+                  id: (item as { booking_id?: string }).booking_id?.substring(0, 8),
+                })}
               </Text>
             </View>
           </TouchableOpacity>

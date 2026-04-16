@@ -12,6 +12,20 @@ import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { TaskCancelSheet } from '../../../../features/tasks/components/TaskCancelSheet';
 import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCustomerTaskDetail';
+import type { Task as SdkTask } from '../../../../lib/mobileApiClient';
+
+interface CustomerTask extends SdkTask {
+  tasker?: {
+    id: string;
+    full_name?: string;
+    avatar_url?: string | null;
+    rating_avg?: number;
+    is_pro?: boolean;
+  };
+  applicant_count?: number;
+  photo_keys?: string[];
+  booking?: { id: string };
+}
 
 const { colors, typography } = mobileTheme;
 
@@ -113,9 +127,9 @@ export default function TaskDetailCustomerScreen() {
   const isCompleted = status === 'COMPLETED';
   const isCancelled = status === 'CANCELLED';
 
-  const tasker = (task as any)?.tasker;
-  const hasApplicants = Number((task as any)?.applicant_count ?? 0) > 0;
-  const photos = useMemo(() => ((task as any)?.photo_keys ?? []) as string[], [task]);
+  const tasker = (task as CustomerTask)?.tasker;
+  const hasApplicants = Number((task as CustomerTask)?.applicant_count ?? 0) > 0;
+  const photos = useMemo(() => ((task as CustomerTask)?.photo_keys ?? []) as string[], [task]);
 
   const ctaLabel = useMemo(() => {
     if (isOpen && hasApplicants) {
@@ -138,13 +152,13 @@ export default function TaskDetailCustomerScreen() {
       return () => router.push(`/(customer)/tasks/${taskId}/applicants`);
     }
     if (isTaskerMarkedDone) {
-      const bookingId = (task as any)?.booking?.id;
+      const bookingId = (task as CustomerTask)?.booking?.id;
       return () => {
         if (bookingId) router.push(`/(customer)/bookings/${bookingId}`);
       };
     }
     if (isAssigned && tasker) {
-      const bookingId = (task as any)?.booking?.id;
+      const bookingId = (task as CustomerTask)?.booking?.id;
       return () => router.push(bookingId ? `/inbox/${bookingId}` : '/inbox');
     }
     if (isOpen) {
@@ -207,7 +221,9 @@ export default function TaskDetailCustomerScreen() {
             <View className="bg-muted rounded-sm p-lg gap-md">
               <DetailRow
                 label={t('TaskDetailCustomerScreen.categoryLabel')}
-                value={(task as any)?.category?.name ?? t('TaskDetailCustomerScreen.notSet')}
+                value={
+                  (task as CustomerTask)?.category?.name ?? t('TaskDetailCustomerScreen.notSet')
+                }
               />
               <DetailRow
                 label={t('TaskDetailCustomerScreen.scheduleDate')}
@@ -238,7 +254,7 @@ export default function TaskDetailCustomerScreen() {
                   style={{ backgroundColor: `${colors.primaryForeground}1A` }}
                 >
                   <Text className="text-micro font-bold text-primary-foreground">
-                    {Number((task as any)?.applicant_count ?? 0)}{' '}
+                    {Number((task as CustomerTask)?.applicant_count ?? 0)}{' '}
                     {t('TaskDetailCustomerScreen.applicants')}
                   </Text>
                 </View>
@@ -266,7 +282,7 @@ export default function TaskDetailCustomerScreen() {
                     backgroundColor: `${colors.primary}12`,
                   }}
                 >
-                  {Number((task as any)?.applicant_count ?? 0)}
+                  {Number((task as CustomerTask)?.applicant_count ?? 0)}
                 </Text>
               </View>
               {hasApplicants ? (
@@ -331,7 +347,7 @@ export default function TaskDetailCustomerScreen() {
               <View className="flex-row items-center gap-sm">
                 <MapPin size={16} color={colors.primaryDeep} />
                 <Text className="flex-1 text-body font-bold text-primary-deep">
-                  {(task as any).location_text ?? ''}
+                  {(task as CustomerTask).location_text ?? ''}
                 </Text>
               </View>
               <Text className="text-caption text-text-secondary leading-relaxed">
@@ -408,7 +424,7 @@ export default function TaskDetailCustomerScreen() {
         onClose={() => setShowCancelSheet(false)}
         taskId={taskId}
         taskStatus={status}
-        bookingId={(task as any)?.booking?.id}
+        bookingId={(task as CustomerTask)?.booking?.id}
       />
     </>
   );

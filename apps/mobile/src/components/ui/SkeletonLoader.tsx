@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ViewStyle } from 'react-native';
+import type { DimensionValue, ViewStyle } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -49,7 +49,7 @@ export function SkeletonLoader({
   return (
     <Animated.View
       className="bg-muted"
-      style={[{ width: width as any, height, borderRadius }, animatedStyle, style]}
+      style={[{ width: width as DimensionValue, height, borderRadius }, animatedStyle, style]}
       testID={testID}
       accessibilityLabel={t('common.loading')}
     />

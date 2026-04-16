@@ -50,11 +50,11 @@ export default function TaskDetailScreen() {
   }, [session, taskId]);
 
   const handleGetVerified = useCallback(() => {
-    router.push('/(tasker)/verification' as any);
+    router.push('/(tasker)/verification' as `${string}`);
   }, [router]);
 
   const handleBrowseMore = useCallback(() => {
-    router.replace('/(tabs)' as any);
+    router.replace('/(tabs)' as `${string}`);
   }, [router]);
 
   const handleViewTask = useCallback(() => {
@@ -62,7 +62,7 @@ export default function TaskDetailScreen() {
   }, []);
 
   const handleMessageCustomer = useCallback(() => {
-    router.push(`/inbox/${taskId}` as any);
+    router.push(`/inbox/${taskId}` as `${string}`);
   }, [router, taskId]);
 
   // Show success celebration inline after applying

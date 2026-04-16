@@ -61,7 +61,7 @@ export function SplitCard({
     : { style: elevations.card, className: containerClassName, testID };
 
   return (
-    <Wrapper {...(wrapperProps as any)}>
+    <Wrapper {...(wrapperProps as Record<string, unknown>)}>
       <View
         style={{ minHeight: 56, paddingHorizontal: spacing.md, paddingVertical: spacing.sm }}
         className="bg-primary rounded-tl-lg rounded-tr-lg justify-center"

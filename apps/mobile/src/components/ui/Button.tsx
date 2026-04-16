@@ -2,6 +2,7 @@ import { cva } from 'class-variance-authority';
 import React from 'react';
 import {
   ActivityIndicator,
+  type GestureResponderEvent,
   Pressable,
   PressableProps,
   Text,
@@ -107,12 +108,12 @@ export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, Butto
       transform: [{ scale: scale.value }],
     }));
 
-    const handlePressIn = (e: any) => {
+    const handlePressIn = (e: GestureResponderEvent) => {
       scale.value = withSpring(0.96, { damping: 15, stiffness: 300 });
       props.onPressIn?.(e);
     };
 
-    const handlePressOut = (e: any) => {
+    const handlePressOut = (e: GestureResponderEvent) => {
       scale.value = withSpring(1, { damping: 15, stiffness: 300 });
       props.onPressOut?.(e);
     };

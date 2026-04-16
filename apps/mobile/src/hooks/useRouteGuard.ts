@@ -20,9 +20,9 @@ export function useRouteGuard(options: GuardOptions = { requireAuth: true }) {
     }
     if (profile && isRestricted(profile)) {
       if (profile.status === 'BANNED') {
-        router.replace('/account/banned' as any);
+        router.replace('/account/banned' as `${string}`);
       } else {
-        router.replace('/account/suspended' as any);
+        router.replace('/account/suspended' as `${string}`);
       }
       return;
     }

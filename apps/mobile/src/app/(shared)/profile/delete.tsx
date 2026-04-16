@@ -18,8 +18,9 @@ export default function AccountDeletionScreen() {
   const { mutate: deleteAccount, isPending, error } = useDeleteAccount();
   const [confirmationText, setConfirmationText] = React.useState('');
 
-  const isBlocked = error && (error as any)?.code === 'ACTIVE_BOOKINGS';
-  const isDisputeBlocked = error && (error as any)?.code === 'OPEN_DISPUTES';
+  const errCode = (error as { code?: string } | undefined)?.code;
+  const isBlocked = error && errCode === 'ACTIVE_BOOKINGS';
+  const isDisputeBlocked = error && errCode === 'OPEN_DISPUTES';
   const canDelete = confirmationText.trim().toUpperCase() === 'DELETE';
 
   const handleDelete = () => {
