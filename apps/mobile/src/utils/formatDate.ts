@@ -4,7 +4,11 @@ import i18n from 'i18next';
  * Format a date string using the current app locale.
  * Respects the user's language preference (mn-MN or en-US).
  */
-export function formatDate(value: string | Date, options?: Intl.DateTimeFormatOptions): string {
+export function formatDate(
+  value: string | Date | undefined | null,
+  options?: Intl.DateTimeFormatOptions,
+): string {
+  if (value == null) return '';
   const date = typeof value === 'string' ? new Date(value) : value;
   if (Number.isNaN(date.getTime())) return typeof value === 'string' ? value : '';
 
@@ -15,7 +19,10 @@ export function formatDate(value: string | Date, options?: Intl.DateTimeFormatOp
 /**
  * Format a date with time for display in task cards and detail screens.
  */
-export function formatDateTime(value: string | Date, options?: Intl.DateTimeFormatOptions): string {
+export function formatDateTime(
+  value: string | Date | undefined | null,
+  options?: Intl.DateTimeFormatOptions,
+): string {
   return formatDate(value, {
     month: 'short',
     day: 'numeric',
@@ -28,14 +35,14 @@ export function formatDateTime(value: string | Date, options?: Intl.DateTimeForm
 /**
  * Format a short date for compact display (e.g., feed cards).
  */
-export function formatShortDate(value: string | Date): string {
+export function formatShortDate(value: string | Date | undefined | null): string {
   return formatDate(value, { month: 'short', day: 'numeric' });
 }
 
 /**
  * Format a full date for detail screens.
  */
-export function formatFullDate(value: string | Date): string {
+export function formatFullDate(value: string | Date | undefined | null): string {
   return formatDate(value, {
     weekday: 'long',
     month: 'long',

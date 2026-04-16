@@ -883,18 +883,19 @@ export class HttpMobileApiClient implements MobileApiClient {
       description?: string;
     }[]
   > {
-    return this.requestJson<BookingScheduleEvent[]>(
+    return this.requestJson<{ data: BookingScheduleEvent[] }>(
       `/bookings/${bookingId}/schedule-events`,
       { method: 'GET' },
       accessToken,
-    ).then((events) =>
-      events.map((event) => ({
+    ).then((response) => {
+      const events = response?.data ?? [];
+      return events.map((event) => ({
         event: mapBookingScheduleEventType(event.event_type),
         timestamp: event.created_at,
         actor: event.actor_user_id,
         description: event.reason ?? undefined,
-      })),
-    );
+      }));
+    });
   }
 
   private async requestJson<T>(

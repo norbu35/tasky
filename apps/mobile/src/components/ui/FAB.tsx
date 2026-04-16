@@ -19,7 +19,7 @@ import { cn } from '../../lib/cn';
 import { useAuthStore } from '../../store/authStore';
 
 const { colors } = mobileTheme;
-const { fabSize, fabInsetRight, fabBottom, tabBarHeight, tabBarBottom } = screenLayout.chrome;
+const { fabSize, fabInsetRight, tabBarHeight, tabBarBottom } = screenLayout.chrome;
 const DRAG_THRESHOLD = 8;
 const SPRING_CONFIG = { damping: 18, stiffness: 220 };
 
@@ -35,15 +35,15 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
   const insets = useSafeAreaInsets();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
-  // Default position: bottom-right, above tab bar
-  const defaultX = screenWidth - fabSize - fabInsetRight;
-  const defaultY = screenHeight - insets.bottom - fabBottom - fabSize;
-
   // Boundaries
   const minX = fabInsetRight;
   const maxX = screenWidth - fabSize - fabInsetRight;
   const minY = insets.top + mobileTheme.spacing.md;
   const maxY = screenHeight - insets.bottom - tabBarHeight - tabBarBottom - fabSize;
+
+  // Default position: bottom-right, resting at the lowest safe position above the tab bar
+  const defaultX = maxX;
+  const defaultY = maxY;
 
   const translateX = useSharedValue(defaultX);
   const translateY = useSharedValue(defaultY);

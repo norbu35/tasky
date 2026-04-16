@@ -4,6 +4,10 @@ import static mn.tasky.common.api.ApiResponseSupport.errorBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import mn.tasky.auth.dao.ProfileDao;
+import mn.tasky.auth.dao.ReliabilityScoreDao;
+import mn.tasky.auth.dto.ReliabilityScore;
+import mn.tasky.auth.dto.UserProfileState;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.identity.publicapi.IdentityCommandPort;
 import mn.tasky.identity.publicapi.IdentityQueryPort;
@@ -13,6 +17,7 @@ import mn.tasky.runtime.publicapi.composition.UserProfileUpdateService;
 import mn.tasky.runtime.user.composition.UserAccountDeletionService;
 import mn.tasky.user.dto.AvatarUploadUrlRequest;
 import mn.tasky.user.dto.UpdateProfileRequest;
+import mn.tasky.user.dto.UserStatsResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,18 +40,24 @@ public class UserProfileController {
     private final UserProfileCompositionService userProfileCompositionService;
     private final UserProfileUpdateService userProfileUpdateService;
     private final UserAccountDeletionService userAccountDeletionService;
+    private final ProfileDao profileDao;
+    private final ReliabilityScoreDao reliabilityScoreDao;
 
     public UserProfileController(
             IdentityCommandPort identityCommandPort,
             IdentityQueryPort identityQueryPort,
             UserProfileCompositionService userProfileCompositionService,
             UserProfileUpdateService userProfileUpdateService,
-            UserAccountDeletionService userAccountDeletionService) {
+            UserAccountDeletionService userAccountDeletionService,
+            ProfileDao profileDao,
+            ReliabilityScoreDao reliabilityScoreDao) {
         this.identityCommandPort = identityCommandPort;
         this.identityQueryPort = identityQueryPort;
         this.userProfileCompositionService = userProfileCompositionService;
         this.userProfileUpdateService = userProfileUpdateService;
         this.userAccountDeletionService = userAccountDeletionService;
+        this.profileDao = profileDao;
+        this.reliabilityScoreDao = reliabilityScoreDao;
     }
 
     @GetMapping("/me")
@@ -98,6 +109,22 @@ public class UserProfileController {
                         upload -> ResponseEntity.ok(userProfileCompositionService.avatarUploadResponse(upload)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(errorBody("USER_NOT_FOUND", "Authenticated user could not be resolved.", request)));
+    }
+
+    @GetMapping("/me/stats")
+    public ResponseEntity<?> getMyStats(@AuthenticationPrincipal JwtPrincipal principal) {
+        UserProfileState profile = profileDao.findByUserId(principal.userId()).orElse(UserProfileState.defaultState());
+
+        Double reliabilityScore = reliabilityScoreDao
+                .findByTaskerId(principal.userId())
+                .map(ReliabilityScore::score)
+                .orElse(null);
+
+        return ResponseEntity.ok(new UserStatsResponse(
+                profile.completedTasks(),
+                profile.ratingAvg(),
+                null, // response_time_minutes: not yet tracked
+                reliabilityScore));
     }
 
     @DeleteMapping("/me")

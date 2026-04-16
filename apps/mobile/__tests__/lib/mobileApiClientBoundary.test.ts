@@ -70,17 +70,19 @@ describe('mobileApiClient boundary wiring', () => {
   it('TID-TASK-151-MOBILE-API-BOOKING-TIMELINE maps schedule-events into mobile timeline rows', async () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
-      json: async () => [
-        {
-          id: 'evt-1',
-          booking_id: 'booking-3',
-          event_type: 'REQUESTED',
-          actor_user_id: 'user-1',
-          proposed_scheduled_at: '2026-04-10T09:00:00Z',
-          reason: 'Need a later slot',
-          created_at: '2026-04-09T10:00:00Z',
-        },
-      ],
+      json: async () => ({
+        data: [
+          {
+            id: 'evt-1',
+            booking_id: 'booking-3',
+            event_type: 'REQUESTED',
+            actor_user_id: 'user-1',
+            proposed_scheduled_at: '2026-04-10T09:00:00Z',
+            reason: 'Need a later slot',
+            created_at: '2026-04-09T10:00:00Z',
+          },
+        ],
+      }),
     });
 
     Object.defineProperty(globalThis, 'fetch', {

@@ -39,7 +39,11 @@ export default function TaskDetailScreen() {
     if (!session?.accessToken || !taskId) return;
     setIsApplying(true);
     try {
-      await api.applyToTask(session.accessToken, taskId, '');
+      await api.applyToTask(
+        session.accessToken,
+        taskId,
+        'I am interested in this task. Please consider my application.',
+      );
       setLocalApplied(true);
       setShowSuccess(true);
     } catch {

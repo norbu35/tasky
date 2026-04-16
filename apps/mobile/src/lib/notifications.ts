@@ -14,7 +14,7 @@ async function ensureAndroidChannel(): Promise<void> {
     name: 'Default',
     importance: AndroidImportance.HIGH,
     vibration: true,
-    vibrationPattern: [0, 250, 250, 250],
+    vibrationPattern: [250, 250, 250, 250],
     lights: true,
     lightColor: '#FF231F7C',
   });

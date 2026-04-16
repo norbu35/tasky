@@ -34,3 +34,4 @@ export * from './HandDrawnCheck';
 export * from './Touchable';
 export * from './ListItemCard';
 export * from './ActionRow';
+export * from './TabBarButton';
