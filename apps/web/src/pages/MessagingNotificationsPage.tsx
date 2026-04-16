@@ -101,7 +101,7 @@ export function MessagingNotificationsPage() {
         client.deactivate();
       };
     }
-  }, [selectedConvId, loadMessages]);
+  }, [selectedConvId, loadMessages, session]);
 
   const scrollToBottom = () => {
     setTimeout(() => {

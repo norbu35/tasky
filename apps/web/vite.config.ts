@@ -1,8 +1,9 @@
 import path from 'node:path';
 
 import react from '@vitejs/plugin-react';
-import sri from 'vite-plugin-sri3';
 import { defineConfig } from 'vite';
+
+import sri from 'vite-plugin-sri3';
 
 export default defineConfig({
   plugins: [react(), sri()],
