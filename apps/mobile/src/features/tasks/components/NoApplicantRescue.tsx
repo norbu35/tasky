@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
-import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces } from '../../../design/surfaces';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 

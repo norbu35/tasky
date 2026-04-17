@@ -8,19 +8,11 @@ function camelToKebab(str: string) {
 }
 
 const colorsWithKebab = Object.fromEntries(
-  Object.entries(nativeTokens.colors).map(([key, value]) => [
-    camelToKebab(key), value,
-  ])
+  Object.entries(nativeTokens.colors).map(([key, value]) => [camelToKebab(key), value]),
 );
 
 const config: Config = {
-  content: [
-    './src/app/**/*.{ts,tsx}',
-    './src/components/**/*.{ts,tsx}',
-    './src/features/**/*.{ts,tsx}',
-    './src/providers/**/*.{ts,tsx}',
-    './src/store/**/*.{ts,tsx}',
-  ],
+  content: ['./src/**/*.{ts,tsx}'],
   presets: [require('nativewind/preset')],
   theme: {
     extend: {

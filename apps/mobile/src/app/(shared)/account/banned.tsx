@@ -6,7 +6,8 @@ import { Linking, Text, View } from 'react-native';
 
 import { ScreenContainer } from '../../../components/shells/ScreenContainer';
 import { Button } from '../../../components/ui/Button';
-import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces } from '../../../design/surfaces';
 
 const { colors } = mobileTheme;
 

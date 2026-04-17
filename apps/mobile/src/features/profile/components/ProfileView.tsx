@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { ScreenContainer } from '../../../components/shells';
-import { Button, FormField, Input } from '../../../components/ui';
-import { Card, CardContent } from '../../../components/ui/Card';
-import { LanguageSwitcher } from '../../../components/ui/LanguageSwitcher';
-import { ScreenHeader } from '../../../components/ui/ScreenHeader';
-import { elevations } from '../../../design/elevations';
-import { screenLayout } from '../../../design/screenLayout';
+import { ScreenContainer } from '@/components/shells';
+import { Button, FormField, Input } from '@/components/ui';
+import { Card, CardContent } from '@/components/ui/Card';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { ScreenHeader } from '@/components/ui/ScreenHeader';
+import { elevations } from '@/design/elevations';
+import { screenLayout } from '@/design/screenLayout';
 import { useMyProfile, useSignOut, useUpdateProfile } from '../hooks/useProfile';
 
 export function ProfileView() {

@@ -1,6 +1,6 @@
 import { mobileTheme, withAlpha } from './theme';
 
-const { colors, radius, spacing } = mobileTheme;
+const { colors, radius } = mobileTheme;
 
 export const mobileSurfaces = {
   tint: {
@@ -35,56 +35,6 @@ export const mobileSurfaces = {
       height: 24,
     },
   },
-  terms: {
-    skeletonHeroHeight: 200,
-    errorDocument: {
-      width: 88,
-      height: 108,
-      foldSize: 28,
-      exclamationSize: 28,
-      markerRadius: 14,
-      innerPadding: 12,
-      rowHeight: 8,
-      rowGap: 8,
-    },
-  },
-  help: {
-    searchBarHeight: 44,
-    headerHeight: 56,
-    faqIconSize: 20,
-    searchIconSize: 18,
-    loadingRows: 6,
-    errorVisual: {
-      canvas: 132,
-      halo: 108,
-      haloOpacity: 0.55,
-      ring: 92,
-      ringBorderWidth: 2,
-      bubblePrimary: {
-        width: 58,
-        height: 40,
-        radius: 18,
-        left: 8,
-        top: 18,
-        tailSize: 10,
-        tailLeft: 12,
-        tailBottom: -5,
-      },
-      bubbleSecondary: {
-        width: 44,
-        height: 30,
-        radius: 14,
-        right: 10,
-        bottom: 14,
-        tailSize: 8,
-        tailRight: 10,
-        tailBottom: -4,
-      },
-      marker: {
-        size: 28,
-      },
-    },
-  },
   otp: {
     contentTopInset: 72,
     contentBottomInset: 32,
@@ -111,43 +61,20 @@ export const mobileSurfaces = {
     submitHeight: 56,
     skipHeight: 44,
   },
-  reschedule: {
-    navIconBox: 32,
-    currentScheduleIconBox: 34,
-    stepBadge: 32,
-    calendarCellWidth: '14.2857%',
-    calendarNavIcon: 18,
-    timeChipMinWidth: 72,
-    timeChipMinHeight: 40,
-    reasonMinHeight: 120,
-    reasonInputMinHeight: 96,
-    stateIconBox: 40,
-    ctaHeight: 56,
-  },
   splash: {
     brandSize: 56,
     markBox: 64,
     markRadius: 16,
     markIcon: 28,
-    markBorder: withAlpha('#FFFFFF', 0.12),
-    markSurface: withAlpha('#FFFFFF', 0.08),
+    markBorder: withAlpha(colors.primaryForeground, 0.12),
+    markSurface: withAlpha(colors.primaryForeground, 0.08),
     progressRailWidth: 136,
     progressRailHeight: 2,
     progressFillWidth: 42,
-    progressSurface: withAlpha('#FFFFFF', 0.16),
-    footerText: withAlpha('#FFFFFF', 0.72),
+    progressSurface: withAlpha(colors.primaryForeground, 0.16),
+    footerText: withAlpha(colors.primaryForeground, 0.72),
     footerBottom: 64,
     loaderBottom: 28,
-  },
-  roleSelect: {
-    roleIconBox: 56,
-    roleIconRadius: 18,
-    checkSize: 20,
-    headingLineHeight: 32,
-    bodyLineHeight: 24,
-    descriptionLineHeight: 20,
-    confirmHeight: 56,
-    confirmRadius: 12,
   },
   taskDetail: {
     labelTracking: 0.4,
@@ -206,12 +133,6 @@ export const mobileSurfaces = {
     helpCtaHeight: 48,
     titleTracking: 0.8,
   },
-  detailTemplate: {
-    skeletonHeroHeight: 200,
-    skeletonTitleHeight: 32,
-    skeletonBodyHeight: 24,
-    rightActionSize: 44,
-  },
   bookingConfirmed: {
     navIconBox: 40,
     heroSize: 96,
@@ -225,24 +146,9 @@ export const mobileSurfaces = {
     heroSize: 28,
     heroLineHeight: 34,
     bodyOpacity: 0.85,
-    codeSurface: withAlpha('#FFFFFF', 0.08),
+    codeSurface: withAlpha(colors.primaryForeground, 0.08),
     codeTracking: 0.4,
-    bonusSurface: '#FFDDB838',
-  },
-  dispute: {
-    timeline: {
-      dotSize: 24,
-      innerDotSize: 8,
-      lineWidth: 2,
-      resolutionIconBox: 64,
-      evidenceBullet: 8,
-      decorativeScaleHeight: 192,
-    },
-  },
-  applicant: {
-    recommendedAwardGap: spacing.xs,
-    recommendedRowGap: spacing.md,
-    titleClusterGap: spacing.xs / 2,
+    bonusSurface: withAlpha(colors.secondary, 0.22),
   },
   iconButton: {
     sm: 40,

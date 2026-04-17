@@ -4,12 +4,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, View } from 'react-native';
 
-import { ScreenContainer } from '../../../../components/shells';
-import { Touchable } from '../../../../components/ui/Touchable';
-import { mobileSurfaces, mobileTheme } from '../../../../design/tokenAdapter';
-import { screenLayout } from '../../../../design/screenLayout';
-import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
-import { useBookingTimeline } from '../../../../features/bookings/hooks/useBookingTimeline';
+import { ScreenContainer } from '@/components/shells';
+import { Touchable } from '@/components/ui/Touchable';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileSurfaces } from '@/design/surfaces';
+import { screenLayout } from '@/design/screenLayout';
+import { useBookingDetail } from '@/features/bookings/hooks/useBookingDetail';
+import { useBookingTimeline } from '@/features/bookings/hooks/useBookingTimeline';
 
 const { colors, spacing } = mobileTheme;
 const { bookingTimeline } = mobileSurfaces;

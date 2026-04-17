@@ -4,14 +4,15 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshControl, Text, View } from 'react-native';
 
-import { InsetScrollView, ScreenContainer } from '../../../components/shells';
-import { PriceTag } from '../../../components/ui/PriceTag';
-import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
-import { Touchable } from '../../../components/ui/Touchable';
-import { elevations } from '../../../design/elevations';
-import { screenLayout } from '../../../design/screenLayout';
-import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
-import { useBookings } from '../../../features/bookings/hooks/useBookings';
+import { InsetScrollView, ScreenContainer } from '@/components/shells';
+import { PriceTag } from '@/components/ui/PriceTag';
+import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
+import { Touchable } from '@/components/ui/Touchable';
+import { elevations } from '@/design/elevations';
+import { screenLayout } from '@/design/screenLayout';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileSurfaces } from '@/design/surfaces';
+import { useBookings } from '@/features/bookings/hooks/useBookings';
 
 const { colors, spacing } = mobileTheme;
 const { bookingList } = mobileSurfaces;

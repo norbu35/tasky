@@ -5,16 +5,17 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Text, View } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT, Region, UrlTile } from 'react-native-maps';
 
-import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
-import { FormField } from '../../../../components/ui/FormField';
-import { Input } from '../../../../components/ui/Input';
-import { Touchable } from '../../../../components/ui/Touchable';
-import { elevations } from '../../../../design/elevations';
-import { mobileSurfaces, mobileTheme } from '../../../../design/tokenAdapter';
-import { useRecentLocations } from '../../../../features/tasks/hooks/useRecentLocations';
-import { createMobileApiClient } from '../../../../lib/mobileApiClient';
-import { useAuthStore } from '../../../../store/authStore';
-import { getCurrentLocation } from '../../../../utils/permissions';
+import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
+import { FormField } from '@/components/ui/FormField';
+import { Input } from '@/components/ui/Input';
+import { Touchable } from '@/components/ui/Touchable';
+import { elevations } from '@/design/elevations';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileSurfaces } from '@/design/surfaces';
+import { useRecentLocations } from '@/features/tasks/hooks/useRecentLocations';
+import { createMobileApiClient } from '@/lib/mobileApiClient';
+import { useAuthStore } from '@/store/authStore';
+import { getCurrentLocation } from '@/utils/permissions';
 
 const api = createMobileApiClient();
 

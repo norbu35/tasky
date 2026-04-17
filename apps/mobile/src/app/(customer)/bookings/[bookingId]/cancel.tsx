@@ -4,11 +4,11 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Text, View } from 'react-native';
 
-import { ScreenContainer } from '../../../../components/shells';
-import { ModalSheetTemplate } from '../../../../components/templates/ModalSheetTemplate';
-import { Button } from '../../../../components/ui/Button';
-import { mobileTheme } from '../../../../design/tokenAdapter';
-import { useCancelBooking } from '../../../../features/bookings/hooks/useCancelBooking';
+import { ScreenContainer } from '@/components/shells';
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
+import { Button } from '@/components/ui/Button';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { useCancelBooking } from '@/features/bookings/hooks/useCancelBooking';
 
 const { colors } = mobileTheme;
 

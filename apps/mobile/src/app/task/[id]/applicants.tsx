@@ -1,12 +1,12 @@
 import { Stack } from 'expo-router';
 
-import { ApplicantsList } from '../../../features/tasks/components/ApplicantsList';
+import ApplicantsSelectionScreen from '../../../features/tasks/screens/ApplicantsSelectionScreen';
 
 export default function ApplicantsRoute() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <ApplicantsList />
+      <ApplicantsSelectionScreen />
     </>
   );
 }

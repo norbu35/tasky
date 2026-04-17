@@ -6,8 +6,8 @@ React Native (Expo) mobile client for the Tasky domestic services marketplace.
 
 | Component          | Version / Library                                               |
 | ------------------ | --------------------------------------------------------------- |
-| Framework          | Expo SDK 52, React Native 0.76.7                                |
-| Navigation         | Expo Router 4 (file-based routing)                              |
+| Framework          | Expo SDK 55, React Native 0.83.4                                |
+| Navigation         | Expo Router 5 (file-based routing)                              |
 | State Management   | Zustand 5                                                       |
 | Server State       | TanStack React Query 5                                          |
 | Realtime           | STOMP.js + SockJS (WebSocket chat)                              |
@@ -32,8 +32,9 @@ src/
     task/             Task detail screens
   components/
     ui/               Reusable UI primitives
+    shells/           Safe-area and sticky action ownership boundaries
     templates/        Screen-level layout templates
-  design/             Design system (theme, typography)
+  design/             Mobile token adapters, layout constants, and motion helpers
   features/           Feature modules by domain
     auth/             Auth logic and components
     bookings/         Booking management
@@ -54,19 +55,22 @@ src/
     authStore.ts      Auth state (token, user, role)
     appStore.ts       App-wide state
   utils/              Helper functions
+  future/             Deferred or staged routes still using the shared design system
 ```
 
 ## Navigation
 
 Expo Router with group-based layouts:
 
-| Route Group  | Description                         |
-| ------------ | ----------------------------------- |
-| `(auth)`     | Login, OTP verification, onboarding |
-| `(customer)` | Customer dashboard, task creation   |
-| `(tasker)`   | Tasker feed, task acceptance        |
-| `(tabs)`     | Main tab bar (shared)               |
-| `(shared)`   | Profile, settings                   |
+| Route Group  | Description                        |
+| ------------ | ---------------------------------- |
+| `(auth)`     | Login, role selection, permissions |
+| `(customer)` | Customer dashboard, task creation  |
+| `(tasker)`   | Tasker feed, task acceptance       |
+| `(tabs)`     | Main tab bar (shared)              |
+| `(shared)`   | Profile, settings, legal, help     |
+
+Root-level routes outside grouped stacks handle launch/onboarding scaffolding and shared task detail entry points.
 
 ## Internationalization
 

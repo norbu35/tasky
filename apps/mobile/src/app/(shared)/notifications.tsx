@@ -8,7 +8,8 @@ import { ScreenContainer } from '../../components/shells/ScreenContainer';
 import { EmptyStateTemplate } from '../../components/templates/EmptyStateTemplate';
 import { Button } from '../../components/ui/Button';
 import { Touchable } from '../../components/ui/Touchable';
-import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
+import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileSurfaces } from '../../design/surfaces';
 import {
   useNotifications,
   type Notification,

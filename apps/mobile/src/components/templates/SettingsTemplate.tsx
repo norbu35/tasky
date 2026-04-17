@@ -1,11 +1,11 @@
-import { ChevronRight } from 'lucide-react-native';
 import React from 'react';
-import { type PressableStateCallbackType, Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
+import { ActionRow } from '../ui/ActionRow';
 
-const { colors, spacing } = mobileTheme;
+const { spacing } = mobileTheme;
 
 export interface SettingsRow {
   label: string;
@@ -25,56 +25,6 @@ export interface SettingsTemplateProps {
   sections: SettingsSection[];
   testID?: string;
   className?: string;
-}
-
-function SettingsRowItem({ row, testID }: { row: SettingsRow; testID?: string }) {
-  const isInteractive = !!row.onPress;
-  const Wrapper = isInteractive ? Pressable : View;
-
-  return (
-    <Wrapper
-      onPress={row.onPress}
-      className={cn(
-        'flex-row items-center p-md border-b border-border/50',
-        !isInteractive && 'bg-transparent',
-      )}
-      style={(state) => {
-        const pressed = isInteractive && (state as PressableStateCallbackType).pressed;
-        return [pressed && { backgroundColor: 'rgba(0,0,0,0.05)' }];
-      }}
-      testID={testID}
-      {...(isInteractive ? { accessibilityRole: 'button' as const } : {})}
-    >
-      {row.icon && (
-        <View
-          className={cn(
-            'w-10 h-10 rounded-full items-center justify-center mr-md',
-            row.destructive ? 'bg-danger/10' : 'bg-primary/10',
-          )}
-        >
-          {row.icon}
-        </View>
-      )}
-      <Text
-        className={cn(
-          'flex-1 text-body font-sans-medium',
-          row.destructive ? 'text-danger' : 'text-foreground',
-        )}
-      >
-        {row.label}
-      </Text>
-      <View className="flex-row items-center">
-        {row.rightElement ? (
-          row.rightElement
-        ) : row.value ? (
-          <Text className="text-body text-text-secondary mr-xs">{row.value}</Text>
-        ) : null}
-        {isInteractive && !row.rightElement && (
-          <ChevronRight size={20} color={colors.navInactive} />
-        )}
-      </View>
-    </Wrapper>
-  );
 }
 
 export function SettingsTemplate({ sections, testID, className }: SettingsTemplateProps) {
@@ -98,9 +48,15 @@ export function SettingsTemplate({ sections, testID, className }: SettingsTempla
           ) : null}
           <View className="bg-muted rounded-md overflow-hidden">
             {section.rows.map((row, rowIndex) => (
-              <SettingsRowItem
+              <ActionRow
                 key={`${row.label}-${rowIndex}`}
-                row={row}
+                icon={row.icon ?? <View />}
+                label={row.label}
+                onPress={row.onPress}
+                value={row.value}
+                trailing={row.rightElement}
+                destructive={row.destructive}
+                showDivider={rowIndex < section.rows.length - 1}
                 testID={testID ? `${testID}-row-${rowIndex}` : undefined}
               />
             ))}

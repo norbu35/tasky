@@ -6,7 +6,8 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button, Card, CardContent, ProfileAvatar } from '../../../components/ui';
-import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces } from '../../../design/surfaces';
 
 const { colors, radius, spacing, typography } = mobileTheme;
 

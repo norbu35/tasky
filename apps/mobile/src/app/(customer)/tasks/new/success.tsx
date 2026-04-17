@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../../components/shells';
-import { Button } from '../../../../components/ui/Button';
-import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
+import { InsetScrollView, ScreenContainer, StickyActionBar } from '@/components/shells';
+import { Button } from '@/components/ui/Button';
+import { mobileTheme, elevations } from '@/design/tokenAdapter';
 
 const { colors, spacing, typography } = mobileTheme;
 

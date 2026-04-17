@@ -9,7 +9,8 @@ import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../comp
 import { Button } from '../../../components/ui/Button';
 import { Touchable } from '../../../components/ui/Touchable';
 import { screenLayout } from '../../../design/screenLayout';
-import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces } from '../../../design/surfaces';
 
 const { colors, spacing, typography } = mobileTheme;
 

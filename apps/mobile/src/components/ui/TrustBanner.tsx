@@ -2,7 +2,8 @@ import { ShieldCheck } from 'lucide-react-native';
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
+import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileSurfaces } from '../../design/surfaces';
 import { cn } from '../../lib/cn';
 
 import { Reveal } from './Reveal';

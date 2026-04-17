@@ -3,14 +3,14 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { FeedListTemplate } from '../../../components/templates/FeedListTemplate';
-import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
-import { ScreenHeader } from '../../../components/ui/ScreenHeader';
-import { SearchBar } from '../../../components/ui/SearchBar';
-import { Touchable } from '../../../components/ui/Touchable';
-import { mobileTheme } from '../../../design/tokenAdapter';
-import { useConversations } from '../../../features/chat/hooks/useConversations';
-import { formatLastActive } from '../../../lib/formatLastActive';
+import { FeedListTemplate } from '@/components/templates/FeedListTemplate';
+import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
+import { ScreenHeader } from '@/components/ui/ScreenHeader';
+import { SearchBar } from '@/components/ui/SearchBar';
+import { Touchable } from '@/components/ui/Touchable';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { useConversations } from '@/features/chat/hooks/useConversations';
+import { formatLastActive } from '@/lib/formatLastActive';
 
 const { colors } = mobileTheme;
 

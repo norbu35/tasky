@@ -2,8 +2,8 @@ import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { LoginRequiredCTA } from '../../../components/ui/LoginRequiredCTA';
-import { useAuthStore } from '../../../store/authStore';
+import { LoginRequiredCTA } from '@/components/ui/LoginRequiredCTA';
+import { useAuthStore } from '@/store/authStore';
 
 export default function InboxLayout() {
   const session = useAuthStore((state) => state.session);

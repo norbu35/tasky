@@ -5,7 +5,8 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
 import { Button } from '../../../components/ui/Button';
-import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces } from '../../../design/surfaces';
 import { useCancelBooking } from '../hooks/useCancelBooking';
 
 const { colors, spacing, typography, radius } = mobileTheme;

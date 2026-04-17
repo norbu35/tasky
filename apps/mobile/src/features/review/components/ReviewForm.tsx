@@ -7,19 +7,21 @@ import {
   Animated,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
   Text,
-  TextInput,
   View,
+  type LayoutChangeEvent,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button } from '../../../components/ui/Button';
-import { ConfirmSheet } from '../../../components/ui/ConfirmSheet';
-import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
-import { mobileTheme, elevations } from '../../../design/tokenAdapter';
+import { InsetScrollView, ScreenContainer, StickyActionBar } from '@/components/shells';
+import { Button } from '@/components/ui/Button';
+import { FormField } from '@/components/ui/FormField';
+import { Input } from '@/components/ui/Input';
+import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
+import { Touchable } from '@/components/ui/Touchable';
+import { elevations } from '@/design/elevations';
+import { screenLayout } from '@/design/screenLayout';
+import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
+
 import { useSubmitReview } from '../hooks/useSubmitReview';
 
 const { colors, radius, spacing, typography } = mobileTheme;
@@ -74,6 +76,14 @@ function createCategories(role: ReviewRole) {
   return base.map((category) => ({ ...category }));
 }
 
+function getMutationErrorMessage(error: unknown, fallback: string) {
+  if (error instanceof Error && error.message.trim().length > 0) {
+    return error.message;
+  }
+
+  return fallback;
+}
+
 function StarRatingInput({
   categoryKey,
   value,
@@ -84,26 +94,26 @@ function StarRatingInput({
   onChange: (rating: number) => void;
 }) {
   return (
-    <View style={styles.starsRow}>
+    <View className="flex-row items-center gap-md">
       {Array.from({ length: STAR_COUNT }).map((_, i) => {
         const starIndex = i + 1;
         const isActive = starIndex <= value;
         return (
-          <Pressable
+          <Touchable
             key={starIndex}
             testID={`rating-${categoryKey}-star-${starIndex}`}
             onPress={() => onChange(starIndex)}
+            className="p-[2px]"
             hitSlop={6}
             accessibilityRole="button"
             accessibilityLabel={`${starIndex} star${starIndex > 1 ? 's' : ''}`}
-            style={styles.starHit}
           >
             <Star
               size={STAR_SIZE}
               color={isActive ? colors.secondary : colors.chipInactive}
               fill={isActive ? colors.secondary : 'none'}
             />
-          </Pressable>
+          </Touchable>
         );
       })}
     </View>
@@ -119,7 +129,7 @@ export default function ReviewFormScreen() {
   const role: ReviewRole = params.role === 'tasker' ? 'tasker' : 'customer';
 
   const [showSuccess, setShowSuccess] = useState(false);
-  const [showReminderSheet, setShowReminderSheet] = useState(false);
+  const [actionBarHeight, setActionBarHeight] = useState(112);
   const successScale = useMemo(() => new Animated.Value(0.88), []);
 
   const [categories, setCategories] = useState<CategoryRating[]>(() => createCategories(role));
@@ -136,6 +146,7 @@ export default function ReviewFormScreen() {
   const avatarUrl = params.avatarUrl ?? 'https://cdn.tasky.mn/avatars/counterparty.jpg';
 
   const allRated = categories.every((category) => category.value > 0);
+  const submitLabel = t('shared.review.cta_submit');
 
   useEffect(() => {
     if (!showSuccess) return undefined;
@@ -177,64 +188,112 @@ export default function ReviewFormScreen() {
     router.back();
   }, [router]);
 
-  const submitLabel = t('shared.review.cta_submit');
+  const handleActionBarLayout = useCallback((event: LayoutChangeEvent) => {
+    const height = event.nativeEvent.layout.height;
+    if (height > 0) {
+      setActionBarHeight(height);
+    }
+  }, []);
+
+  const errorMessage = submitReview.isError
+    ? getMutationErrorMessage(submitReview.error, t('ReviewFormScreen.copy2'))
+    : null;
 
   return (
-    <SafeAreaView style={styles.safeArea} testID="SCR-SHARED-017">
-      <View style={styles.screen}>
-        <View style={styles.header} testID="review-form-header">
-          <Pressable
+    <ScreenContainer testID="SCR-SHARED-017" padded={false}>
+      <View className="flex-1 bg-background">
+        <View
+          className="flex-row items-center gap-md px-screen-x py-lg bg-background"
+          testID="review-form-header"
+        >
+          <Touchable
+            testID="review-form-close"
+            onPress={handleClose}
+            className="w-12 h-12 rounded-full items-center justify-center"
             accessibilityRole="button"
             accessibilityLabel={t('common.close')}
-            onPress={handleClose}
-            style={styles.closeButton}
-            testID="review-form-close"
           >
             <ArrowLeft size={22} color={colors.primaryDeep} />
-          </Pressable>
-          <Text style={styles.headerTitle}>{t('shared.review.navTitle')}</Text>
+          </Touchable>
+          <Text
+            className="flex-1 text-title font-sans-bold text-primary-deep"
+            style={{ lineHeight: Math.round(typography.title * 1.4), letterSpacing: -0.5 }}
+          >
+            {t('shared.review.navTitle')}
+          </Text>
         </View>
 
         <KeyboardAvoidingView
-          style={styles.keyboardAvoid}
+          className="flex-1"
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         >
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollContent}
+          <InsetScrollView
+            className="flex-1"
+            contentContainerStyle={{
+              paddingHorizontal: screenLayout.insetX,
+              paddingTop: spacing['2xl'],
+              gap: spacing['3xl'],
+            }}
+            extraBottomInset={showSuccess ? 0 : actionBarHeight}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
             {showSuccess ? (
               <Animated.View
-                style={[styles.successState, { transform: [{ scale: successScale }] }]}
+                style={{ transform: [{ scale: successScale }] }}
+                className="items-center justify-center py-[48px] gap-md"
                 testID="review-success-state"
               >
-                <View style={styles.successIcon}>
+                <View
+                  className="w-20 h-20 rounded-full items-center justify-center bg-muted"
+                  style={{ borderRadius: radius.full }}
+                >
                   <CheckCircle size={34} color={colors.primary} fill={colors.verified} />
                 </View>
-                <Text style={styles.successTitle}>{t('shared.review.successTitle')}</Text>
-                <Text style={styles.successBody}>{t('shared.review.successBody')}</Text>
+                <Text className="text-title font-sans-bold text-primary-deep">
+                  {t('shared.review.successTitle')}
+                </Text>
+                <Text
+                  className="max-w-[320px] text-center text-body text-text-secondary"
+                  style={{ lineHeight: Math.round(typography.body * 1.6) }}
+                >
+                  {t('shared.review.successBody')}
+                </Text>
               </Animated.View>
             ) : (
               <>
-                <View style={styles.counterpartyRow}>
-                  <ProfileAvatar uri={avatarUrl} name={counterpartyName} size="lg" showVerified />
-                  <View style={styles.counterpartyCopy}>
-                    <Text style={styles.counterpartyName}>{counterpartyName}</Text>
-                    <Text style={styles.counterpartyRole}>{counterpartyRole}</Text>
+                <View className="flex-row items-center gap-xl">
+                  <ProfileAvatar
+                    uri={avatarUrl}
+                    name={counterpartyName}
+                    size="lg"
+                    showVerified={true}
+                  />
+                  <View className="flex-1 gap-xs">
+                    <Text className="text-subtitle font-sans-bold text-primary-deep">
+                      {counterpartyName}
+                    </Text>
+                    <Text
+                      className="self-start rounded-full px-md py-[2px] text-caption font-sans-bold text-text-secondary"
+                      style={{ backgroundColor: colors.statusOpen }}
+                    >
+                      {counterpartyRole}
+                    </Text>
                   </View>
                 </View>
 
-                <View style={styles.categoriesSection}>
+                <View className="rounded-md bg-muted p-xl gap-[20px]">
                   {categories.map((category) => (
-                    <View key={category.key} style={styles.categoryRow}>
-                      <View style={styles.categoryHeader}>
-                        <Text style={styles.categoryLabel}>
+                    <View key={category.key} className="gap-md">
+                      <View className="flex-row items-center justify-between gap-lg">
+                        <Text
+                          className="flex-1 text-body font-sans-semibold text-primary-deep"
+                          style={{ lineHeight: Math.round(typography.body * 1.6) }}
+                        >
                           {getCategoryLabel(role, category.key, t)}
                         </Text>
-                        <Text style={styles.categoryValue}>
+                        <Text className="text-label font-sans-bold text-secondary">
                           {category.value > 0
                             ? category.value.toFixed(1)
                             : t('ReviewFormScreen.copy13')}
@@ -249,286 +308,85 @@ export default function ReviewFormScreen() {
                   ))}
                 </View>
 
-                <View style={styles.commentSection}>
-                  <Text style={styles.commentLabel}>{t('shared.review.label_comment')}</Text>
-                  <View style={styles.commentCard}>
-                    <TextInput
+                <FormField label={t('shared.review.label_comment')}>
+                  <View className="relative rounded-md bg-muted p-xl pb-[32px] min-h-[168px]">
+                    <Input
                       testID="review-comment-input"
-                      style={styles.commentInput}
-                      placeholder={t('ReviewFormScreen.copy1')}
-                      placeholderTextColor={colors.textTertiary}
                       multiline
                       textAlignVertical="top"
                       value={comment}
                       onChangeText={setComment}
                       maxLength={COMMENT_MAX_LENGTH}
+                      placeholder={t('ReviewFormScreen.copy1')}
+                      className="min-h-[100px] border-0 bg-transparent px-0 py-0 text-body font-sans text-primary-deep"
                     />
                     <Text
-                      style={styles.counter}
+                      className="absolute right-lg bottom-md text-micro font-sans-bold text-text-secondary"
+                      style={{ letterSpacing: 1 }}
                     >{`${comment.length} / ${COMMENT_MAX_LENGTH}`}</Text>
                   </View>
-                </View>
+                </FormField>
               </>
             )}
-          </ScrollView>
+          </InsetScrollView>
         </KeyboardAvoidingView>
 
-        {!showSuccess && submitReview.isError ? (
-          <View style={styles.errorToast} testID="review-submit-error">
-            <Text style={styles.errorText}>{t('ReviewFormScreen.copy2')}</Text>
-            <Button
-              label={t('common.retry')}
-              variant="ghost"
-              onPress={handleSubmit}
-              style={styles.errorAction}
-              testID="review-submit-retry"
-            />
-          </View>
-        ) : null}
-
         {!showSuccess ? (
-          <View style={styles.footer} testID="review-form-footer">
-            <BlurView
-              intensity={80}
-              tint="light"
-              style={StyleSheet.absoluteFill}
-              testID="review-form-footer-blur"
-            />
-            <View style={styles.footerOverlay}>
-              <Button
-                testID="review-form-next"
-                onPress={handleSubmit}
-                disabled={!allRated}
-                isLoading={submitReview.isPending}
-                style={styles.submitButton}
+          <StickyActionBar testID="review-form-footer">
+            {errorMessage ? (
+              <View
+                testID="review-submit-error"
+                className="mb-sm rounded-md bg-card p-lg gap-sm"
+                style={elevations.card}
               >
-                <Text style={styles.submitText}>{submitLabel}</Text>
-                <ArrowRight size={16} color={colors.primaryForeground} />
-              </Button>
+                <Text
+                  className="text-body text-danger"
+                  style={{ lineHeight: Math.round(typography.body * 1.5) }}
+                >
+                  {errorMessage}
+                </Text>
+                <Button
+                  label={t('common.retry')}
+                  variant="ghost"
+                  onPress={handleSubmit}
+                  style={{ alignSelf: 'flex-start', paddingHorizontal: 0 }}
+                  testID="review-submit-retry"
+                />
+              </View>
+            ) : null}
+
+            <View onLayout={handleActionBarLayout}>
+              <BlurView
+                intensity={80}
+                tint="light"
+                style={{
+                  borderRadius: radius.lg,
+                  overflow: 'hidden',
+                  backgroundColor: withAlpha(colors.card, 0.8),
+                  ...elevations.navBar,
+                }}
+              >
+                <View className="pt-action-bar">
+                  <Button
+                    testID="review-form-next"
+                    onPress={handleSubmit}
+                    disabled={!allRated}
+                    isLoading={submitReview.isPending}
+                    style={{ alignSelf: 'stretch', justifyContent: 'center' }}
+                  >
+                    <View className="flex-row items-center justify-center gap-sm">
+                      <Text className="text-body font-sans-bold text-primary-foreground">
+                        {submitLabel}
+                      </Text>
+                      <ArrowRight size={16} color={colors.primaryForeground} />
+                    </View>
+                  </Button>
+                </View>
+              </BlurView>
             </View>
-          </View>
+          </StickyActionBar>
         ) : null}
       </View>
-      <ConfirmSheet
-        testID="SCR-SHARED-018"
-        isOpen={showReminderSheet}
-        onClose={() => setShowReminderSheet(false)}
-        title={t('review.reminder.title')}
-        description={t('ReviewFormScreen.copy3')}
-        confirmLabel={t('review.reminder.confirm')}
-        onConfirm={() => setShowReminderSheet(false)}
-      />
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    minHeight: spacing['3xl'] + spacing.lg,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    backgroundColor: colors.background,
-  },
-  closeButton: {
-    width: spacing['3xl'],
-    height: spacing['3xl'],
-    borderRadius: spacing['3xl'],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    lineHeight: Math.round(typography.title * 1.4),
-    letterSpacing: -0.5,
-  },
-  keyboardAvoid: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing['2xl'],
-    paddingBottom: spacing['3xl'] * 2 + spacing.xl,
-    gap: spacing['3xl'],
-  },
-  counterpartyRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xl,
-  },
-  counterpartyCopy: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  counterpartyName: {
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  counterpartyRole: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.statusOpen,
-    color: colors.textSecondary,
-    fontSize: typography.caption,
-    fontWeight: '700',
-    paddingHorizontal: spacing.md,
-    paddingVertical: 2,
-    borderRadius: radius.full,
-    overflow: 'hidden',
-  },
-  categoriesSection: {
-    gap: spacing.xl + spacing.sm,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.xl,
-  },
-  categoryRow: {
-    gap: spacing.md,
-  },
-  categoryHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.lg,
-  },
-  categoryLabel: {
-    flex: 1,
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-    lineHeight: Math.round(typography.body * 1.6),
-  },
-  categoryValue: {
-    fontSize: typography.label,
-    fontWeight: '700',
-    color: colors.secondary,
-  },
-  starsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  starHit: {
-    padding: 2,
-  },
-  commentSection: {
-    gap: spacing.md,
-  },
-  commentLabel: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-    lineHeight: Math.round(typography.body * 1.6),
-  },
-  commentCard: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    minHeight: 168,
-    padding: spacing.xl,
-    paddingBottom: spacing.xl + spacing.md,
-    position: 'relative',
-  },
-  commentInput: {
-    flex: 1,
-    minHeight: 100,
-    fontSize: typography.body,
-    lineHeight: Math.round(typography.body * 1.6),
-    color: colors.primaryDeep,
-    padding: 0,
-    margin: 0,
-  },
-  counter: {
-    position: 'absolute',
-    right: spacing.lg,
-    bottom: spacing.md,
-    fontSize: typography.micro,
-    fontWeight: '700',
-    letterSpacing: 1,
-    color: colors.textSecondary,
-  },
-  footer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.xl,
-    backgroundColor: 'rgba(255,255,255,0.8)',
-    ...elevations.navBar,
-  },
-  footerOverlay: {
-    flex: 1,
-  },
-  submitButton: {
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-    gap: spacing.sm,
-  },
-  submitText: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryForeground,
-  },
-  successState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing['3xl'],
-    gap: spacing.md,
-  },
-  successIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.muted,
-  },
-  successTitle: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  successBody: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: Math.round(typography.body * 1.6),
-    maxWidth: 320,
-  },
-  errorToast: {
-    position: 'absolute',
-    left: spacing.xl,
-    right: spacing.xl,
-    bottom: spacing['3xl'] * 2 + spacing.xl,
-    backgroundColor: colors.card,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-    gap: spacing.sm,
-    ...elevations.card,
-  },
-  errorText: {
-    fontSize: typography.body,
-    color: colors.danger,
-    lineHeight: Math.round(typography.body * 1.5),
-  },
-  errorAction: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 0,
-  },
-});

@@ -5,15 +5,15 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, Text, View } from 'react-native';
 
-import { FormWizardTemplate } from '../../../components/templates/FormWizardTemplate';
-import { FormField } from '../../../components/ui/FormField';
-import { Input } from '../../../components/ui/Input';
-import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
-import { Touchable } from '../../../components/ui/Touchable';
-import { mobileTheme } from '../../../design/tokenAdapter';
-import { useMyProfile, useUpdateProfile } from '../../../features/profile/hooks/useProfile';
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
-import { useAuthStore } from '../../../store/authStore';
+import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
+import { FormField } from '@/components/ui/FormField';
+import { Input } from '@/components/ui/Input';
+import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
+import { Touchable } from '@/components/ui/Touchable';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { useMyProfile, useUpdateProfile } from '@/features/profile/hooks/useProfile';
+import { createMobileApiClient } from '@/lib/mobileApiClient';
+import { useAuthStore } from '@/store/authStore';
 
 const api = createMobileApiClient();
 

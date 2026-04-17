@@ -12,18 +12,18 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ScreenContainer } from '../../../components/shells/ScreenContainer';
-import { ErrorStateTemplate } from '../../../components/templates/ErrorStateTemplate';
-import { Input } from '../../../components/ui/Input';
-import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
-import { Touchable } from '../../../components/ui/Touchable';
-import { screenLayout } from '../../../design/screenLayout';
-import { mobileTheme } from '../../../design/tokenAdapter';
-import { useConversations } from '../../../features/chat/hooks/useConversations';
-import { useMessages } from '../../../features/chat/hooks/useMessages';
-import { useSendMessage } from '../../../features/chat/hooks/useSendMessage';
-import { formatLastActive } from '../../../lib/formatLastActive';
-import { useAuthStore } from '../../../store/authStore';
+import { ScreenContainer } from '@/components/shells/ScreenContainer';
+import { ErrorStateTemplate } from '@/components/templates/ErrorStateTemplate';
+import { Input } from '@/components/ui/Input';
+import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
+import { Touchable } from '@/components/ui/Touchable';
+import { screenLayout } from '@/design/screenLayout';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { useConversations } from '@/features/chat/hooks/useConversations';
+import { useMessages } from '@/features/chat/hooks/useMessages';
+import { useSendMessage } from '@/features/chat/hooks/useSendMessage';
+import { formatLastActive } from '@/lib/formatLastActive';
+import { useAuthStore } from '@/store/authStore';
 
 const { colors, spacing, radius, typography } = mobileTheme;
 

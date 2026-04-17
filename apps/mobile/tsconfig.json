@@ -2,7 +2,8 @@
   "extends": ["expo/tsconfig.base", "@tasky/tooling-config/tsconfig/react-native"],
   "compilerOptions": {
     "paths": {
-      "@tasky/core": ["../../packages/core/src/index.ts"]
+      "@tasky/core": ["../../packages/core/src/index.ts"],
+      "@/*": ["./src/*"]
     },
     "types": ["jest", "node"],
     "verbatimModuleSyntax": false

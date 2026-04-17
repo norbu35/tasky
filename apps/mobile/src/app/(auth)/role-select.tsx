@@ -8,12 +8,21 @@ import { AuthTemplate } from '../../components/templates/AuthTemplate';
 import { Button, ModalSheet } from '../../components/ui';
 import { Touchable } from '../../components/ui/Touchable';
 import { elevations } from '../../design/elevations';
-import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 import { useAppStore } from '../../store/appStore';
 
 const { colors } = mobileTheme;
-const { roleSelect } = mobileSurfaces;
+const ROLE_SELECT_SURFACE = {
+  roleIconBox: 56,
+  roleIconRadius: 18,
+  checkSize: 20,
+  headingLineHeight: 32,
+  bodyLineHeight: 24,
+  descriptionLineHeight: 20,
+  confirmHeight: 56,
+  confirmRadius: 12,
+} as const;
 
 type RoleOption = 'customer' | 'tasker' | null;
 
@@ -77,9 +86,9 @@ export default function RoleSelectScreen() {
           <View
             className="items-center justify-center"
             style={{
-              width: roleSelect.roleIconBox,
-              height: roleSelect.roleIconBox,
-              borderRadius: roleSelect.roleIconRadius,
+              width: ROLE_SELECT_SURFACE.roleIconBox,
+              height: ROLE_SELECT_SURFACE.roleIconBox,
+              borderRadius: ROLE_SELECT_SURFACE.roleIconRadius,
               backgroundColor: isSelected ? colors.secondary : colors.chipInactive,
             }}
           >
@@ -91,7 +100,10 @@ export default function RoleSelectScreen() {
             </Text>
             <Text
               className="text-label mt-xs"
-              style={{ color: colors.textSecondary, lineHeight: roleSelect.descriptionLineHeight }}
+              style={{
+                color: colors.textSecondary,
+                lineHeight: ROLE_SELECT_SURFACE.descriptionLineHeight,
+              }}
             >
               {t(descriptionKey, roleCopy[role])}
             </Text>
@@ -101,8 +113,8 @@ export default function RoleSelectScreen() {
               testID={`role-card-${role}-check`}
               className="rounded-full items-center justify-center"
               style={{
-                width: roleSelect.checkSize,
-                height: roleSelect.checkSize,
+                width: ROLE_SELECT_SURFACE.checkSize,
+                height: ROLE_SELECT_SURFACE.checkSize,
                 backgroundColor: colors.primaryDeep,
               }}
             >
@@ -119,13 +131,13 @@ export default function RoleSelectScreen() {
       <View className="mb-xl">
         <Text
           className="text-heading font-sans-bold text-center"
-          style={{ color: colors.primaryDeep, lineHeight: roleSelect.headingLineHeight }}
+          style={{ color: colors.primaryDeep, lineHeight: ROLE_SELECT_SURFACE.headingLineHeight }}
         >
           {t('auth.roleSelection.heading')}
         </Text>
         <Text
           className="text-body text-center"
-          style={{ color: colors.textSecondary, lineHeight: roleSelect.bodyLineHeight }}
+          style={{ color: colors.textSecondary, lineHeight: ROLE_SELECT_SURFACE.bodyLineHeight }}
         >
           {t('RoleSelectScreen.copy5')}
         </Text>
@@ -137,7 +149,10 @@ export default function RoleSelectScreen() {
         testID="role-confirm-button"
         onPress={handleConfirm}
         disabled={!selectedRole}
-        style={{ minHeight: roleSelect.confirmHeight, borderRadius: roleSelect.confirmRadius }}
+        style={{
+          minHeight: ROLE_SELECT_SURFACE.confirmHeight,
+          borderRadius: ROLE_SELECT_SURFACE.confirmRadius,
+        }}
       >
         <View className="flex-row items-center justify-center gap-sm">
           <Text className="text-label font-sans-bold text-primary-foreground">
@@ -165,7 +180,7 @@ export default function RoleSelectScreen() {
       >
         <Text
           className="text-body"
-          style={{ color: colors.textSecondary, lineHeight: roleSelect.bodyLineHeight }}
+          style={{ color: colors.textSecondary, lineHeight: ROLE_SELECT_SURFACE.bodyLineHeight }}
         >
           {t('auth.roleSelection.confirmSheetMessage', {
             role: roleLabel,

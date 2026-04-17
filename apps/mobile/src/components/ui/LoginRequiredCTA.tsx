@@ -4,7 +4,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View, Text } from 'react-native';
 
-import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
+import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileSurfaces } from '../../design/surfaces';
 import { cn } from '../../lib/cn';
 
 import { Button } from './Button';

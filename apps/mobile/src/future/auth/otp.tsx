@@ -7,7 +7,8 @@ import { Pressable, Text, TextInput, View } from 'react-native';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../components/shells';
 import { Button } from '../../components/ui/Button';
 import { elevations } from '../../design/elevations';
-import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
+import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileSurfaces } from '../../design/surfaces';
 import { cn } from '../../lib/cn';
 
 const { colors, radius } = mobileTheme;

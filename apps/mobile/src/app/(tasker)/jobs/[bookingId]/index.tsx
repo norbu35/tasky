@@ -3,14 +3,14 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Text, View } from 'react-native';
 
-import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
-import { Button } from '../../../../components/ui/Button';
-import { ConfirmSheet } from '../../../../components/ui/ConfirmSheet';
-import { StatusBadge } from '../../../../components/ui/StatusBadge';
-import { TaskerCancelSheet } from '../../../../features/bookings/components/TaskerCancelSheet';
-import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
-import { useFlagNoShow } from '../../../../features/bookings/hooks/useFlagNoShow';
-import { useMarkBookingDone } from '../../../../features/bookings/hooks/useMarkBookingDone';
+import { DetailTemplate } from '@/components/templates/DetailTemplate';
+import { Button } from '@/components/ui/Button';
+import { ConfirmSheet } from '@/components/ui/ConfirmSheet';
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import { TaskerCancelSheet } from '@/features/bookings/components/TaskerCancelSheet';
+import { useBookingDetail } from '@/features/bookings/hooks/useBookingDetail';
+import { useFlagNoShow } from '@/features/bookings/hooks/useFlagNoShow';
+import { useMarkBookingDone } from '@/features/bookings/hooks/useMarkBookingDone';
 
 export default function BookingDetailTaskerScreen() {
   const { t } = useTranslation();

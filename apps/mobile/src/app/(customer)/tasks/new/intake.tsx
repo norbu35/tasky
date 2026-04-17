@@ -11,11 +11,11 @@ import {
   type IntakeFieldOption,
 } from '@tasky/core';
 
-import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
-import { FormField } from '../../../../components/ui/FormField';
-import { Input } from '../../../../components/ui/Input';
-import { Touchable } from '../../../../components/ui/Touchable';
-import { elevations } from '../../../../design/elevations';
+import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
+import { FormField } from '@/components/ui/FormField';
+import { Input } from '@/components/ui/Input';
+import { Touchable } from '@/components/ui/Touchable';
+import { elevations } from '@/design/elevations';
 
 const DESCRIPTION_MIN_LENGTH = 10;
 const DESCRIPTION_MAX_LENGTH = 2000;

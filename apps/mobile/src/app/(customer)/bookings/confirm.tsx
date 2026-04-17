@@ -3,12 +3,12 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { DetailTemplate } from '../../../components/templates/DetailTemplate';
-import { PriceTag } from '../../../components/ui/PriceTag';
-import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
-import { Touchable } from '../../../components/ui/Touchable';
-import { useAcceptApplication } from '../../../features/bookings/hooks/useAcceptApplication';
-import { useConfirmBookingIntent } from '../../../features/bookings/hooks/useConfirmBookingIntent';
+import { DetailTemplate } from '@/components/templates/DetailTemplate';
+import { PriceTag } from '@/components/ui/PriceTag';
+import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
+import { Touchable } from '@/components/ui/Touchable';
+import { useAcceptApplication } from '@/features/bookings/hooks/useAcceptApplication';
+import { useConfirmBookingIntent } from '@/features/bookings/hooks/useConfirmBookingIntent';
 
 export default function BookingConfirmScreen() {
   const { t } = useTranslation();

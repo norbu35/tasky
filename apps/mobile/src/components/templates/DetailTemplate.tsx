@@ -4,13 +4,18 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, View, type LayoutChangeEvent } from 'react-native';
 
 import { screenLayout } from '../../design/screenLayout';
-import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
+import { mobileTheme } from '../../design/tokenAdapter';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 import { Button } from '../ui/Button';
 
 import { ErrorStateTemplate } from './ErrorStateTemplate';
 
-const { detailTemplate } = mobileSurfaces;
+const DETAIL_TEMPLATE_SURFACE = {
+  skeletonHeroHeight: 200,
+  skeletonTitleHeight: 32,
+  skeletonBodyHeight: 24,
+  rightActionSize: 44,
+} as const;
 
 export interface DetailTemplateProps {
   children: React.ReactNode;
@@ -37,18 +42,21 @@ function DetailSkeleton() {
   return (
     <View className="flex-1 pt-header-top gap-block">
       {/* Large skeleton block — dynamic size, kept imperative */}
-      <View className="bg-muted rounded-md" style={{ height: detailTemplate.skeletonHeroHeight }} />
       <View
         className="bg-muted rounded-md"
-        style={{ height: detailTemplate.skeletonTitleHeight, width: '70%' }}
+        style={{ height: DETAIL_TEMPLATE_SURFACE.skeletonHeroHeight }}
       />
       <View
         className="bg-muted rounded-md"
-        style={{ height: detailTemplate.skeletonBodyHeight, width: '45%' }}
+        style={{ height: DETAIL_TEMPLATE_SURFACE.skeletonTitleHeight, width: '70%' }}
       />
       <View
         className="bg-muted rounded-md"
-        style={{ height: detailTemplate.skeletonTitleHeight, width: '70%' }}
+        style={{ height: DETAIL_TEMPLATE_SURFACE.skeletonBodyHeight, width: '45%' }}
+      />
+      <View
+        className="bg-muted rounded-md"
+        style={{ height: DETAIL_TEMPLATE_SURFACE.skeletonTitleHeight, width: '70%' }}
       />
     </View>
   );
@@ -105,8 +113,8 @@ export function DetailTemplate({
               onPress={action.onPress}
               className="items-center justify-center"
               style={{
-                width: detailTemplate.rightActionSize,
-                height: detailTemplate.rightActionSize,
+                width: DETAIL_TEMPLATE_SURFACE.rightActionSize,
+                height: DETAIL_TEMPLATE_SURFACE.rightActionSize,
               }}
               testID={(action as { testID?: string }).testID}
               hitSlop={8}

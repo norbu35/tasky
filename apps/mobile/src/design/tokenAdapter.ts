@@ -13,4 +13,3 @@ export {
   withInteractiveSpring,
 } from './animations';
 export { elevations, overlays } from './elevations';
-export { mobileSurfaces } from './surfaces';

@@ -1,7 +1,10 @@
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
+import { mobileTheme } from '../design/theme';
+
 const isExpoGo = Constants.executionEnvironment === 'storeClient';
+const { colors } = mobileTheme;
 
 async function ensureAndroidChannel(): Promise<void> {
   if (Platform.OS !== 'android' || isExpoGo) return;
@@ -16,7 +19,7 @@ async function ensureAndroidChannel(): Promise<void> {
     vibration: true,
     vibrationPattern: [250, 250, 250, 250],
     lights: true,
-    lightColor: '#FF231F7C',
+    lightColor: colors.trust,
   });
 }
 

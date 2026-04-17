@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { Alert, Dimensions, Image, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '../../../components/ui';
-import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces } from '../../../design/surfaces';
 import { createMobileApiClient, PublicTask } from '../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../store/authStore';
 import { VerificationModal } from '../../verification/components/VerificationModal';

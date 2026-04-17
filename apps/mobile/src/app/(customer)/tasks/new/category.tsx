@@ -4,12 +4,12 @@ import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Text, View } from 'react-native';
 
-import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
-import { Touchable } from '../../../../components/ui/Touchable';
-import { elevations } from '../../../../design/elevations';
-import { mobileTheme } from '../../../../design/tokenAdapter';
-import { useCategories } from '../../../../features/tasks/hooks/useCategories';
-import type { Category } from '../../../../lib/mobileApiClient';
+import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
+import { Touchable } from '@/components/ui/Touchable';
+import { elevations } from '@/design/elevations';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { useCategories } from '@/features/tasks/hooks/useCategories';
+import type { Category } from '@/lib/mobileApiClient';
 
 const { colors, spacing } = mobileTheme;
 

@@ -6,7 +6,7 @@ import { Pressable, Text, View } from 'react-native';
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
 import { Button } from '../../components/ui/Button';
 import { InfoRow } from '../../components/ui/InfoRow';
-import { mobileSurfaces } from '../../design/tokenAdapter';
+import { mobileSurfaces } from '../../design/surfaces';
 
 const { referrals } = mobileSurfaces;
 

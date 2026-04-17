@@ -5,16 +5,17 @@ import { useTranslation } from 'react-i18next';
 import { FlatList, RefreshControl, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ScreenContainer } from '../../../components/shells';
-import { ListItemCard, PriceTag, StatusBadge } from '../../../components/ui';
-import { ScreenHeader } from '../../../components/ui/ScreenHeader';
-import { Touchable } from '../../../components/ui/Touchable';
-import { elevations } from '../../../design/elevations';
-import { screenLayout } from '../../../design/screenLayout';
-import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
-import { ReviewGateBanner } from '../../../features/review/components/ReviewGateBanner';
-import { useReviewGate } from '../../../features/review/components/ReviewGateProvider';
-import { useMyTasks } from '../../../features/tasks/hooks/useMyTasks';
+import { ScreenContainer } from '@/components/shells';
+import { ListItemCard, PriceTag, StatusBadge } from '@/components/ui';
+import { ScreenHeader } from '@/components/ui/ScreenHeader';
+import { Touchable } from '@/components/ui/Touchable';
+import { elevations } from '@/design/elevations';
+import { screenLayout } from '@/design/screenLayout';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileSurfaces } from '@/design/surfaces';
+import { ReviewGateBanner } from '@/features/review/components/ReviewGateBanner';
+import { useReviewGate } from '@/features/review/components/ReviewGateProvider';
+import { useMyTasks } from '@/features/tasks/hooks/useMyTasks';
 
 const { colors } = mobileTheme;
 

@@ -9,7 +9,8 @@ import { Button } from '../../components/ui/Button';
 import { FormField } from '../../components/ui/FormField';
 import { Input } from '../../components/ui/Input';
 import { elevations } from '../../design/elevations';
-import { mobileSurfaces, mobileTheme, withAlpha } from '../../design/tokenAdapter';
+import { mobileTheme, withAlpha } from '../../design/tokenAdapter';
+import { mobileSurfaces } from '../../design/surfaces';
 
 const { colors, radius, spacing } = mobileTheme;
 const { otpMigration } = mobileSurfaces;

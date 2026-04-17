@@ -3,12 +3,12 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { FeedListTemplate } from '../../../components/templates/FeedListTemplate';
-import { FilterBar } from '../../../components/ui/FilterBar';
-import { SplitCard } from '../../../components/ui/SplitCard';
-import { StatusBadge } from '../../../components/ui/StatusBadge';
-import { useBookings } from '../../../features/bookings/hooks/useBookings';
-import type { Booking } from '../../../lib/mobileApiClient';
+import { FeedListTemplate } from '@/components/templates/FeedListTemplate';
+import { FilterBar } from '@/components/ui/FilterBar';
+import { SplitCard } from '@/components/ui/SplitCard';
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import { useBookings } from '@/features/bookings/hooks/useBookings';
+import type { Booking } from '@/lib/mobileApiClient';
 
 function BookingCardHeader({ booking }: { booking: Booking }) {
   const customerName = booking.customer?.full_name ?? '';

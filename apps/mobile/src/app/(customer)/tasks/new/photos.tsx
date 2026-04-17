@@ -5,10 +5,10 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Image, Text, View } from 'react-native';
 
-import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
-import { Touchable } from '../../../../components/ui/Touchable';
-import { mobileTheme } from '../../../../design/tokenAdapter';
-import { useTaskPhotoUpload } from '../../../../features/tasks/hooks/useTaskPhotoUpload';
+import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
+import { Touchable } from '@/components/ui/Touchable';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { useTaskPhotoUpload } from '@/features/tasks/hooks/useTaskPhotoUpload';
 
 const { colors } = mobileTheme;
 

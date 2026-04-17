@@ -9,7 +9,8 @@ import { PriceTag } from '../../../../components/ui/PriceTag';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { Toast } from '../../../../components/ui/Toast';
 import { elevations } from '../../../../design/elevations';
-import { mobileSurfaces, mobileTheme } from '../../../../design/tokenAdapter';
+import { mobileTheme } from '../../../../design/tokenAdapter';
+import { mobileSurfaces } from '../../../../design/surfaces';
 import { useCreateBookingIntent } from '../../../../features/bookings/hooks/useCreateBookingIntent';
 
 const { colors } = mobileTheme;

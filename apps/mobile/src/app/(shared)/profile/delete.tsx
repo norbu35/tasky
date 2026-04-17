@@ -4,11 +4,12 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { ScreenContainer } from '../../../components/shells/ScreenContainer';
-import { Button } from '../../../components/ui/Button';
-import { Input } from '../../../components/ui/Input';
-import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
-import { useDeleteAccount } from '../../../features/profile/hooks/useDeleteAccount';
+import { ScreenContainer } from '@/components/shells/ScreenContainer';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileSurfaces } from '@/design/surfaces';
+import { useDeleteAccount } from '@/features/profile/hooks/useDeleteAccount';
 
 const { colors } = mobileTheme;
 const { statusHero, paragraphLineHeight } = mobileSurfaces;

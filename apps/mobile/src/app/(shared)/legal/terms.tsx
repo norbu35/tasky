@@ -5,10 +5,23 @@ import { Text, View } from 'react-native';
 
 import { InsetScrollView, ScreenContainer } from '../../../components/shells';
 import { Button } from '../../../components/ui/Button';
-import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces } from '../../../design/surfaces';
 
 const { colors, radius, spacing } = mobileTheme;
-const { errorDocument, skeletonHeroHeight } = mobileSurfaces.terms;
+const TERMS_SURFACE = {
+  skeletonHeroHeight: 200,
+  errorDocument: {
+    width: 88,
+    height: 108,
+    foldSize: 28,
+    exclamationSize: 28,
+    markerRadius: 14,
+    innerPadding: 12,
+    rowHeight: 8,
+    rowGap: 8,
+  },
+} as const;
 
 type ScreenState = 'loaded' | 'loading' | 'error';
 
@@ -22,7 +35,7 @@ function TermsLoading() {
     <View className="flex-1 px-lg pt-xl gap-lg">
       <View
         style={{
-          height: skeletonHeroHeight,
+          height: TERMS_SURFACE.skeletonHeroHeight,
           backgroundColor: colors.muted,
           borderRadius: radius.md,
         }}
@@ -63,12 +76,12 @@ function TermsErrorVisual() {
     >
       <View
         style={{
-          width: errorDocument.width,
-          height: errorDocument.height,
+          width: TERMS_SURFACE.errorDocument.width,
+          height: TERMS_SURFACE.errorDocument.height,
           borderRadius: radius.lg,
           backgroundColor: colors.muted,
-          padding: errorDocument.innerPadding,
-          gap: errorDocument.rowGap,
+          padding: TERMS_SURFACE.errorDocument.innerPadding,
+          gap: TERMS_SURFACE.errorDocument.rowGap,
           position: 'relative',
         }}
       >
@@ -77,8 +90,8 @@ function TermsErrorVisual() {
             position: 'absolute',
             top: 0,
             right: 0,
-            width: errorDocument.foldSize,
-            height: errorDocument.foldSize,
+            width: TERMS_SURFACE.errorDocument.foldSize,
+            height: TERMS_SURFACE.errorDocument.foldSize,
             backgroundColor: colors.border,
             borderTopRightRadius: radius.lg,
             borderBottomLeftRadius: radius.md,
@@ -86,7 +99,7 @@ function TermsErrorVisual() {
         />
         <View
           style={{
-            height: errorDocument.rowHeight,
+            height: TERMS_SURFACE.errorDocument.rowHeight,
             width: '60%',
             borderRadius: radius.xs,
             backgroundColor: colors.border,
@@ -95,7 +108,7 @@ function TermsErrorVisual() {
         />
         <View
           style={{
-            height: errorDocument.rowHeight,
+            height: TERMS_SURFACE.errorDocument.rowHeight,
             alignSelf: 'stretch',
             borderRadius: radius.xs,
             backgroundColor: colors.border,
@@ -103,7 +116,7 @@ function TermsErrorVisual() {
         />
         <View
           style={{
-            height: errorDocument.rowHeight,
+            height: TERMS_SURFACE.errorDocument.rowHeight,
             alignSelf: 'stretch',
             borderRadius: radius.xs,
             backgroundColor: colors.border,
@@ -115,9 +128,9 @@ function TermsErrorVisual() {
           position: 'absolute',
           bottom: 6,
           right: 6,
-          width: errorDocument.exclamationSize,
-          height: errorDocument.exclamationSize,
-          borderRadius: errorDocument.markerRadius,
+          width: TERMS_SURFACE.errorDocument.exclamationSize,
+          height: TERMS_SURFACE.errorDocument.exclamationSize,
+          borderRadius: TERMS_SURFACE.errorDocument.markerRadius,
           backgroundColor: colors.danger,
           alignItems: 'center',
           justifyContent: 'center',
@@ -138,28 +151,28 @@ function TermsContent() {
     () => [
       {
         title: t('infra.terms.section0Title'),
-        lead: t('TermsScreen.copy1'),
+        lead: t('infra.terms.section0Body'),
         points: [t('infra.terms.section0Note')],
       },
       {
         title: t('infra.terms.section1Title'),
-        lead: t('TermsScreen.copy2'),
-        points: [t('TermsScreen.copy3')],
+        lead: t('infra.terms.section1Body'),
+        points: [t('infra.terms.section1Note')],
       },
       {
         title: t('infra.terms.section2Title'),
-        lead: t('TermsScreen.copy4'),
+        lead: t('infra.terms.section2Body'),
         points: [t('infra.terms.section2Note')],
       },
       {
         title: t('infra.terms.section3Title'),
-        lead: t('TermsScreen.copy5'),
-        points: [t('TermsScreen.copy6')],
+        lead: t('infra.terms.section3Body'),
+        points: [t('infra.terms.section3Note')],
       },
       {
         title: t('infra.terms.section4Title'),
-        lead: t('TermsScreen.copy7'),
-        points: [t('TermsScreen.copy8')],
+        lead: t('infra.terms.section4Body'),
+        points: [t('infra.terms.section4Note')],
       },
     ],
     [t],
@@ -261,7 +274,7 @@ export default function TermsScreen() {
             className="text-body text-center"
             style={{ color: colors.textSecondary, lineHeight: 26 }}
           >
-            {t('TermsScreen.copy9')}
+            {t('infra.terms.errorDescription')}
           </Text>
           <Button
             label={t('infra.terms.errorRetry')}

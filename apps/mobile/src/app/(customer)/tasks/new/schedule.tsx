@@ -5,14 +5,15 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, Text, View } from 'react-native';
 
-import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
-import { Button } from '../../../../components/ui/Button';
-import { FormField } from '../../../../components/ui/FormField';
-import { Input } from '../../../../components/ui/Input';
-import { Touchable } from '../../../../components/ui/Touchable';
-import { elevations } from '../../../../design/elevations';
-import { mobileSurfaces, mobileTheme } from '../../../../design/tokenAdapter';
-import { cn } from '../../../../lib/cn';
+import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
+import { Button } from '@/components/ui/Button';
+import { FormField } from '@/components/ui/FormField';
+import { Input } from '@/components/ui/Input';
+import { Touchable } from '@/components/ui/Touchable';
+import { elevations } from '@/design/elevations';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileSurfaces } from '@/design/surfaces';
+import { cn } from '@/lib/cn';
 
 const { colors } = mobileTheme;
 
