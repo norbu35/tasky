@@ -7,10 +7,11 @@ import { ScrollView, Text, View } from 'react-native';
 import { ScreenContainer } from '../../../../components/shells';
 import { Touchable } from '../../../../components/ui/Touchable';
 import { mobileSurfaces, mobileTheme } from '../../../../design/tokenAdapter';
+import { screenLayout } from '../../../../design/screenLayout';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { useBookingTimeline } from '../../../../features/bookings/hooks/useBookingTimeline';
 
-const { colors } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 const { bookingTimeline } = mobileSurfaces;
 
 function formatTimestamp(ts: string): string {
@@ -159,7 +160,11 @@ export default function BookingTimelineScreen() {
       <View className="flex-1 bg-background">
         <ScrollView
           className="flex-1"
-          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40, gap: 16 }}
+          contentContainerStyle={{
+            paddingHorizontal: screenLayout.insetX,
+            paddingBottom: spacing['3xl'],
+            gap: spacing.lg,
+          }}
           showsVerticalScrollIndicator={false}
         >
           <View className="flex-row items-center gap-md bg-muted rounded-lg p-lg">

@@ -62,7 +62,7 @@ export default function SplashScreen() {
               textAlign: 'center',
               letterSpacing: 2.1,
               textTransform: 'uppercase',
-              lineHeight: 24,
+              lineHeight: mobileSurfaces.paragraphLineHeight,
             }}
           >
             {t('SplashScreen.tagline')}

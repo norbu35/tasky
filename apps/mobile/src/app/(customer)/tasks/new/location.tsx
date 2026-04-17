@@ -10,7 +10,7 @@ import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
 import { Touchable } from '../../../../components/ui/Touchable';
 import { elevations } from '../../../../design/elevations';
-import { mobileTheme } from '../../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../../design/tokenAdapter';
 import { useRecentLocations } from '../../../../features/tasks/hooks/useRecentLocations';
 import { createMobileApiClient } from '../../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../../store/authStore';
@@ -260,7 +260,8 @@ export default function LocationScreen() {
         {/* mapControls: absolute position → imperative */}
         <View className="absolute right-3 bottom-3 gap-sm">
           <Touchable
-            className="w-[42px] h-[42px] rounded-sm items-center justify-center bg-card border border-border"
+            className="rounded-sm items-center justify-center bg-card border border-border"
+            style={{ width: mobileSurfaces.iconButton.md, height: mobileSurfaces.iconButton.md }}
             accessibilityRole="button"
             testID="location-locate-button"
             onPress={handleLocate}
@@ -272,7 +273,8 @@ export default function LocationScreen() {
             )}
           </Touchable>
           <Touchable
-            className="w-[42px] h-[42px] rounded-sm items-center justify-center bg-card border border-border"
+            className="rounded-sm items-center justify-center bg-card border border-border"
+            style={{ width: mobileSurfaces.iconButton.md, height: mobileSurfaces.iconButton.md }}
             accessibilityRole="button"
             testID="location-zoom-in-button"
             onPress={handleZoomIn}
@@ -280,7 +282,8 @@ export default function LocationScreen() {
             <Plus size={18} color={colors.primaryDeep} />
           </Touchable>
           <Touchable
-            className="w-[42px] h-[42px] rounded-sm items-center justify-center bg-card border border-border"
+            className="rounded-sm items-center justify-center bg-card border border-border"
+            style={{ width: mobileSurfaces.iconButton.md, height: mobileSurfaces.iconButton.md }}
             accessibilityRole="button"
             testID="location-zoom-out-button"
             onPress={handleZoomOut}

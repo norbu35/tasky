@@ -11,7 +11,7 @@ import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
 import { useDeleteAccount } from '../../../features/profile/hooks/useDeleteAccount';
 
 const { colors } = mobileTheme;
-const { accountDeletion } = mobileSurfaces;
+const { statusHero, paragraphLineHeight } = mobileSurfaces;
 
 export default function AccountDeletionScreen() {
   const { t } = useTranslation();
@@ -38,9 +38,9 @@ export default function AccountDeletionScreen() {
         <View className="px-lg items-center">
           <View
             className="rounded-full bg-muted items-center justify-center mb-lg"
-            style={{ width: accountDeletion.iconBox, height: accountDeletion.iconBox }}
+            style={{ width: statusHero.iconBox, height: statusHero.iconBox }}
           >
-            <AlertTriangle size={accountDeletion.iconSize} color={colors.danger} />
+            <AlertTriangle size={48} color={colors.danger} />
           </View>
 
           <Text className="text-title font-bold text-foreground text-center mb-md">
@@ -51,7 +51,7 @@ export default function AccountDeletionScreen() {
             <>
               <Text
                 className="text-body text-text-secondary text-center mb-xl"
-                style={{ lineHeight: accountDeletion.bodyLineHeight }}
+                style={{ lineHeight: paragraphLineHeight }}
               >
                 {t('AccountDeletionScreen.copy1')}
               </Text>
@@ -66,7 +66,7 @@ export default function AccountDeletionScreen() {
             <>
               <Text
                 className="text-body text-text-secondary text-center mb-xl"
-                style={{ lineHeight: accountDeletion.bodyLineHeight }}
+                style={{ lineHeight: paragraphLineHeight }}
               >
                 {t('AccountDeletionScreen.copy2')}
               </Text>
@@ -81,7 +81,7 @@ export default function AccountDeletionScreen() {
             <>
               <Text
                 className="text-body text-text-secondary text-center mb-xl"
-                style={{ lineHeight: accountDeletion.bodyLineHeight }}
+                style={{ lineHeight: paragraphLineHeight }}
               >
                 {t('AccountDeletionScreen.copy3')}
               </Text>

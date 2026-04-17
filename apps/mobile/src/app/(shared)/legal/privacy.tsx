@@ -5,8 +5,6 @@ import { Text, View } from 'react-native';
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { mobileSurfaces } from '../../../design/tokenAdapter';
 
-const { legal } = mobileSurfaces;
-
 export default function PrivacyPolicyScreen() {
   const { t } = useTranslation();
 
@@ -24,7 +22,7 @@ export default function PrivacyPolicyScreen() {
         </Text>
         <Text
           className="text-body text-text-secondary text-left"
-          style={{ lineHeight: legal.paragraphLineHeight }}
+          style={{ lineHeight: mobileSurfaces.paragraphLineHeight }}
         >
           {t('PrivacyPolicyScreen.copy1')}
         </Text>
@@ -36,7 +34,7 @@ export default function PrivacyPolicyScreen() {
         </Text>
         <Text
           className="text-body text-text-secondary text-left"
-          style={{ lineHeight: legal.paragraphLineHeight }}
+          style={{ lineHeight: mobileSurfaces.paragraphLineHeight }}
         >
           {t('PrivacyPolicyScreen.copy2')}
         </Text>
@@ -48,7 +46,7 @@ export default function PrivacyPolicyScreen() {
         </Text>
         <Text
           className="text-body text-text-secondary text-left"
-          style={{ lineHeight: legal.paragraphLineHeight }}
+          style={{ lineHeight: mobileSurfaces.paragraphLineHeight }}
         >
           {t('PrivacyPolicyScreen.copy3')}
         </Text>
@@ -60,7 +58,7 @@ export default function PrivacyPolicyScreen() {
         </Text>
         <Text
           className="text-body text-text-secondary text-left"
-          style={{ lineHeight: legal.paragraphLineHeight }}
+          style={{ lineHeight: mobileSurfaces.paragraphLineHeight }}
         >
           {t('PrivacyPolicyScreen.copy4')}
         </Text>
@@ -72,7 +70,7 @@ export default function PrivacyPolicyScreen() {
         </Text>
         <Text
           className="text-body text-text-secondary text-left"
-          style={{ lineHeight: legal.paragraphLineHeight }}
+          style={{ lineHeight: mobileSurfaces.paragraphLineHeight }}
         >
           {t('PrivacyPolicyScreen.copy5')}
         </Text>
@@ -84,7 +82,7 @@ export default function PrivacyPolicyScreen() {
         </Text>
         <Text
           className="text-body text-text-secondary text-left"
-          style={{ lineHeight: legal.paragraphLineHeight }}
+          style={{ lineHeight: mobileSurfaces.paragraphLineHeight }}
         >
           {t('PrivacyPolicyScreen.copy6')}
         </Text>
@@ -96,7 +94,7 @@ export default function PrivacyPolicyScreen() {
         </Text>
         <Text
           className="text-body text-text-secondary text-left"
-          style={{ lineHeight: legal.paragraphLineHeight }}
+          style={{ lineHeight: mobileSurfaces.paragraphLineHeight }}
         >
           {t('PrivacyPolicyScreen.copy7')}
         </Text>
@@ -108,7 +106,7 @@ export default function PrivacyPolicyScreen() {
         </Text>
         <Text
           className="text-body text-text-secondary text-left"
-          style={{ lineHeight: legal.paragraphLineHeight }}
+          style={{ lineHeight: mobileSurfaces.paragraphLineHeight }}
         >
           {t('PrivacyPolicyScreen.copy8')}
         </Text>

@@ -143,5 +143,4 @@ class TaskPhotoServiceTests {
             assertThat(urls).containsExactly("https://s3/download/valid");
         }
     }
-
 }

@@ -11,7 +11,7 @@ import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 import type { Review } from '../../../lib/mobileApiClient';
 import { useTaskerProfile } from '../hooks/useTaskerProfile';
 
-const { colors, radius, typography } = mobileTheme;
+const { colors, radius, typography, spacing } = mobileTheme;
 
 function formatTimeAgo(dateString: string): string {
   const now = Date.now();
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: colors.trust,
     borderRadius: radius.full,
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
     paddingVertical: 8,
     marginTop: 16,
     ...elevations.card,
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
 
   // Reviews
   reviewsList: {
-    gap: 16,
+    gap: spacing.lg,
   },
 
   // CTA

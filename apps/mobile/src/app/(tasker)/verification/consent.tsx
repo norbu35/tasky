@@ -8,7 +8,8 @@ import { Text, View } from 'react-native';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../components/shells';
 import { Button } from '../../../components/ui/Button';
 import { Touchable } from '../../../components/ui/Touchable';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { screenLayout } from '../../../design/screenLayout';
+import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography } = mobileTheme;
 
@@ -57,10 +58,14 @@ export default function ConsentScreen() {
 
   return (
     <ScreenContainer testID="SCR-TASK-004">
-      <View className="min-h-[56px] flex-row items-center justify-between px-md">
+      <View
+        className="flex-row items-center justify-between px-md"
+        style={{ minHeight: screenLayout.header.minHeight }}
+      >
         <Touchable
           onPress={() => router.back()}
-          className="w-[40px] h-[40px] justify-center items-center"
+          className="justify-center items-center"
+          style={{ width: mobileSurfaces.iconButton.sm, height: mobileSurfaces.iconButton.sm }}
           hitSlop={spacing.sm}
           testID="consent-screen-back"
         >
@@ -69,7 +74,9 @@ export default function ConsentScreen() {
         <Text className="flex-1 text-subtitle font-sans-semibold text-primary text-center mx-sm">
           {t('tasker.verification.consentTitle')}
         </Text>
-        <View className="w-[40px] h-[40px]" />
+        <View
+          style={{ width: mobileSurfaces.iconButton.sm, height: mobileSurfaces.iconButton.sm }}
+        />
       </View>
 
       <InsetScrollView

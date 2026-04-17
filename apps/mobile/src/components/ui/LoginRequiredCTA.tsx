@@ -43,7 +43,7 @@ export function LoginRequiredCTA({ message, testID, className }: LoginRequiredCT
       <Reveal delay={100}>
         <Text
           className="text-body text-muted-foreground text-center mb-8"
-          style={{ lineHeight: 24 }}
+          style={{ lineHeight: mobileSurfaces.paragraphLineHeight }}
         >
           {message || t('auth.loginReason') || t('LoginRequiredCTA.copy2')}
         </Text>

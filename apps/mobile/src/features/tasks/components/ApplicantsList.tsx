@@ -12,7 +12,7 @@ import { generateIdempotencyKey } from '../../../utils/uuid';
 import { useAcceptApplication } from '../../bookings/hooks/useAcceptApplication';
 import { useApplications } from '../hooks/useApplications';
 
-const { colors, radius, typography } = mobileTheme;
+const { colors, radius, typography, spacing } = mobileTheme;
 
 // ---------- Types ----------
 
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: 24,
     paddingBottom: 128,
-    gap: 16,
+    gap: spacing.lg,
     paddingTop: 16,
   },
 
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
   cardActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.lg,
     paddingTop: 2,
   },
   acceptButton: {

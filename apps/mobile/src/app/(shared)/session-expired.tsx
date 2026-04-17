@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ModalSheet } from '../../components/ui/ModalSheet';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { overlays } from '../../design/elevations';
+import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
 import { useAuthStore } from '../../store/authStore';
 
 const { colors } = mobileTheme;
@@ -26,7 +27,7 @@ export default function SessionExpiredScreen() {
       style={{ position: 'relative', zIndex: 30 }}
       testID="SCR-INFRA-003"
     >
-      <View style={StyleSheet.absoluteFill} className="bg-[rgba(16,38,56,0.35)]" />
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: overlays.sheet }]} />
       <ModalSheet
         visible
         title={t('infra.sessionExpired.title')}
@@ -39,7 +40,13 @@ export default function SessionExpiredScreen() {
         }}
       >
         <View className="items-center pt-sm">
-          <View className="w-[72px] h-[72px] rounded-full items-center justify-center bg-muted mb-lg">
+          <View
+            className="rounded-full items-center justify-center bg-muted mb-lg"
+            style={{
+              width: mobileSurfaces.statusHero.iconBox,
+              height: mobileSurfaces.statusHero.iconBox,
+            }}
+          >
             <LogIn size={28} color={colors.primary} />
           </View>
           <Text className="text-body text-text-secondary text-center leading-6">

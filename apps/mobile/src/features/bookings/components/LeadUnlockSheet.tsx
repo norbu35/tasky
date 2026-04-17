@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '../../../components/ui/Button';
+import { overlays } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -146,7 +147,7 @@ export function LeadUnlockSheet({
 
 const styles = StyleSheet.create({
   scrim: {
-    backgroundColor: 'rgba(0, 36, 68, 0.35)',
+    backgroundColor: overlays.sheet,
     justifyContent: 'flex-end',
   },
   sheet: {

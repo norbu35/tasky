@@ -184,13 +184,19 @@ function TermsContent() {
           >
             {section.title}
           </Text>
-          <Text className="text-body" style={{ color: colors.textSecondary, lineHeight: 24 }}>
+          <Text
+            className="text-body"
+            style={{ color: colors.textSecondary, lineHeight: mobileSurfaces.paragraphLineHeight }}
+          >
             {section.lead}
           </Text>
           {index === 0 ? (
             <Text
               className="text-body mb-lg"
-              style={{ color: colors.textSecondary, lineHeight: 24 }}
+              style={{
+                color: colors.textSecondary,
+                lineHeight: mobileSurfaces.paragraphLineHeight,
+              }}
             >
               <Text className="font-sans-bold" style={{ color: colors.primaryDeep }}>
                 {t('shared.legal.noteLabel')}
@@ -201,12 +207,21 @@ function TermsContent() {
           <View className="mt-sm gap-sm">
             {section.points.map((point) => (
               <View key={point} className="flex-row items-start gap-sm">
-                <Text className="text-body" style={{ color: colors.primaryDeep, lineHeight: 24 }}>
+                <Text
+                  className="text-body"
+                  style={{
+                    color: colors.primaryDeep,
+                    lineHeight: mobileSurfaces.paragraphLineHeight,
+                  }}
+                >
                   •
                 </Text>
                 <Text
                   className="text-body flex-1"
-                  style={{ color: colors.foreground, lineHeight: 24 }}
+                  style={{
+                    color: colors.foreground,
+                    lineHeight: mobileSurfaces.paragraphLineHeight,
+                  }}
                 >
                   {point}
                 </Text>

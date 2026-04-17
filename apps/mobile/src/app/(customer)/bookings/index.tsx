@@ -13,7 +13,7 @@ import { screenLayout } from '../../../design/screenLayout';
 import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
 import { useBookings } from '../../../features/bookings/hooks/useBookings';
 
-const { colors } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 const { bookingList } = mobileSurfaces;
 
 type BookingTab = 'active' | 'completed';
@@ -306,7 +306,7 @@ export default function BookingsListScreen() {
           contentContainerStyle={[
             {
               paddingHorizontal: screenLayout.insetX,
-              paddingBottom: 40,
+              paddingBottom: spacing['3xl'],
             },
             showList && { gap: screenLayout.body.blockGap },
             showEmptyState && { flexGrow: 1, justifyContent: 'center' },

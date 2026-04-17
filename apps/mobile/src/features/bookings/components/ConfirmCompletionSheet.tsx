@@ -7,7 +7,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
 import { elevations } from '../../../design/elevations';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
 import { useCompleteBooking } from '../hooks/useCompleteBooking';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     color: colors.primaryForeground,
   },
   secondaryButton: {
-    minHeight: 48,
+    minHeight: mobileSurfaces.touchTarget.ctaHeight,
     borderRadius: radius.md,
     borderWidth: 2,
     borderColor: colors.primaryDeep,

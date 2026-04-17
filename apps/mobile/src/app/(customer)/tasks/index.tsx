@@ -11,7 +11,7 @@ import { ScreenHeader } from '../../../components/ui/ScreenHeader';
 import { Touchable } from '../../../components/ui/Touchable';
 import { elevations } from '../../../design/elevations';
 import { screenLayout } from '../../../design/screenLayout';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
 import { ReviewGateBanner } from '../../../features/review/components/ReviewGateBanner';
 import { useReviewGate } from '../../../features/review/components/ReviewGateProvider';
 import { useMyTasks } from '../../../features/tasks/hooks/useMyTasks';
@@ -205,7 +205,8 @@ function EmptyState({ onPostTask }: { onPostTask: () => void }) {
       </Text>
       <Touchable
         onPress={onPostTask}
-        className="min-h-[48px] px-xl rounded-md items-center justify-center bg-primary"
+        className="px-xl rounded-md items-center justify-center bg-primary"
+        style={{ minHeight: mobileSurfaces.touchTarget.ctaHeight }}
         accessibilityRole="button"
         testID="my-tasks-feed-empty-cta"
       >
@@ -234,7 +235,8 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
       </Text>
       <Touchable
         onPress={onRetry}
-        className="min-h-[48px] rounded-md items-center justify-center bg-secondary"
+        className="rounded-md items-center justify-center bg-secondary"
+        style={{ minHeight: mobileSurfaces.touchTarget.ctaHeight }}
         accessibilityRole="button"
         testID="my-tasks-feed-error-cta"
       >

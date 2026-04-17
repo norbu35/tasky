@@ -7,7 +7,7 @@ import { Platform, Text, View } from 'react-native';
 
 import { ScreenContainer } from '../../components/shells/ScreenContainer';
 import { Button } from '../../components/ui/Button';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
 
 const { colors } = mobileTheme;
 
@@ -38,7 +38,13 @@ export default function AppUpdateScreen() {
   return (
     <ScreenContainer testID="SCR-INFRA-002">
       <View className="flex-1 justify-center items-center px-xl">
-        <View className="w-[72px] h-[72px] rounded-full bg-muted items-center justify-center mb-lg">
+        <View
+          className="rounded-full bg-muted items-center justify-center mb-lg"
+          style={{
+            width: mobileSurfaces.statusHero.iconBox,
+            height: mobileSurfaces.statusHero.iconBox,
+          }}
+        >
           <Download size={32} color={colors.primary} />
         </View>
         <Text className="text-title font-bold text-foreground text-center">{title}</Text>

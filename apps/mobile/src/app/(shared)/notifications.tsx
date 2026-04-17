@@ -8,7 +8,7 @@ import { ScreenContainer } from '../../components/shells/ScreenContainer';
 import { EmptyStateTemplate } from '../../components/templates/EmptyStateTemplate';
 import { Button } from '../../components/ui/Button';
 import { Touchable } from '../../components/ui/Touchable';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
 import {
   useNotifications,
   type Notification,
@@ -187,7 +187,13 @@ export default function NotificationCenterScreen() {
         </View>
       ) : isError ? (
         <View className="flex-1 items-center justify-center px-xl" testID="notifications-error">
-          <View className="w-[72px] h-[72px] rounded-full items-center justify-center bg-muted mb-lg">
+          <View
+            className="rounded-full items-center justify-center bg-muted mb-lg"
+            style={{
+              width: mobileSurfaces.statusHero.iconBox,
+              height: mobileSurfaces.statusHero.iconBox,
+            }}
+          >
             <Bell size={32} color={colors.danger} />
           </View>
           <Text className="text-title font-bold text-foreground text-center">

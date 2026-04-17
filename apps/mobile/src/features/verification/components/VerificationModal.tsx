@@ -8,7 +8,7 @@ import { mobileTheme } from '../../../design/tokenAdapter';
 import { createMobileApiClient } from '../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../store/authStore';
 
-const { colors } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 
 interface Props {
   visible: boolean;
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   scrollContent: {
-    padding: 24,
+    padding: spacing.xl,
   },
   description: {
     fontSize: 14,

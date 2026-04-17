@@ -8,7 +8,7 @@ import { CategoryChip } from '../../../components/ui/CategoryChip';
 import { Input } from '../../../components/ui/Input';
 import { SkeletonLoader } from '../../../components/ui/SkeletonLoader';
 import { Toast } from '../../../components/ui/Toast';
-import { elevations, mobileTheme } from '../../../design/tokenAdapter';
+import { elevations, mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
 import { useMyProfile, useUpdateProfile } from '../../../features/profile/hooks/useProfile';
 import { useProfilePolishPreview } from '../../../features/profile/hooks/useProfilePolish';
 import {
@@ -226,7 +226,7 @@ export default function ProfilePolishScreen() {
         <View className="gap-md">
           <Text
             className="text-caption font-bold text-text-secondary uppercase"
-            style={{ letterSpacing: 0.8 }}
+            style={{ letterSpacing: mobileSurfaces.taskDetail.sectionTracking }}
           >
             {t('tasker.profilePolish.sourceLabel')}
           </Text>
@@ -255,7 +255,7 @@ export default function ProfilePolishScreen() {
         <View className="gap-md">
           <Text
             className="text-caption font-bold text-text-secondary uppercase"
-            style={{ letterSpacing: 0.8 }}
+            style={{ letterSpacing: mobileSurfaces.taskDetail.sectionTracking }}
           >
             {t('tasker.profilePolish.toneLabel')}
           </Text>
@@ -282,7 +282,7 @@ export default function ProfilePolishScreen() {
         <View className="gap-md">
           <Text
             className="text-caption font-bold text-text-secondary uppercase"
-            style={{ letterSpacing: 0.8 }}
+            style={{ letterSpacing: mobileSurfaces.taskDetail.sectionTracking }}
           >
             {t('tasker.profilePolish.polishedLabel')}
           </Text>

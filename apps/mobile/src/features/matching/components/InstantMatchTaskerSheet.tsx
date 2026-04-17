@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '../../../components/ui/Button';
+import { overlays } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -91,7 +92,7 @@ export function InstantMatchTaskerSheet({
 }
 
 const styles = StyleSheet.create({
-  scrim: { backgroundColor: 'rgba(0, 36, 68, 0.35)', justifyContent: 'flex-end' },
+  scrim: { backgroundColor: overlays.sheet, justifyContent: 'flex-end' },
   sheet: {
     backgroundColor: colors.background,
     borderTopLeftRadius: radius.lg,

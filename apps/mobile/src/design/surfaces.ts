@@ -197,11 +197,6 @@ export const mobileSurfaces = {
     footerLineHeight: 18,
     buttonHeight: 56,
   },
-  accountDeletion: {
-    iconBox: 72,
-    iconSize: 48,
-    bodyLineHeight: 24,
-  },
   bookingTimeline: {
     dotSize: 24,
     railWidth: 2,
@@ -216,9 +211,6 @@ export const mobileSurfaces = {
     skeletonTitleHeight: 32,
     skeletonBodyHeight: 24,
     rightActionSize: 44,
-  },
-  legal: {
-    paragraphLineHeight: 24,
   },
   bookingConfirmed: {
     navIconBox: 40,
@@ -259,6 +251,13 @@ export const mobileSurfaces = {
   },
   artwork: {
     mutedHeroRadius: radius.lg,
+  },
+  statusHero: {
+    iconBox: 72,
+  },
+  paragraphLineHeight: 24,
+  touchTarget: {
+    ctaHeight: 48,
   },
 } as const;
 

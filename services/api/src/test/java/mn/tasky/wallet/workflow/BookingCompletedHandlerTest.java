@@ -130,5 +130,4 @@ class BookingCompletedHandlerTest {
         verify(badgeEvaluationService, times(1)).evaluate(anyString());
         verify(idempotencyGuard, times(1)).complete(EVENT_ID);
     }
-
 }

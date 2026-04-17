@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
 import { Button } from '../../../components/ui/Button';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
 import { useCancelBooking } from '../hooks/useCancelBooking';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   secondaryButton: {
-    minHeight: 48,
+    minHeight: mobileSurfaces.touchTarget.ctaHeight,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.md,

@@ -11,7 +11,7 @@ import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
 import { Touchable } from '../../../../components/ui/Touchable';
 import { elevations } from '../../../../design/elevations';
-import { mobileTheme } from '../../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../../design/tokenAdapter';
 import { cn } from '../../../../lib/cn';
 
 const { colors } = mobileTheme;
@@ -216,8 +216,9 @@ export default function ScheduleBudgetScreen() {
           <View className="flex-row gap-sm">
             <Touchable
               onPress={() => openPicker('date')}
-              className="flex-1 min-h-[48px] justify-center rounded-md px-md py-sm"
+              className="flex-1 justify-center rounded-md px-md py-sm"
               style={({ pressed }) => ({
+                minHeight: mobileSurfaces.touchTarget.ctaHeight,
                 borderWidth: 1,
                 borderColor: selectedDate ? colors.primaryDeep : colors.input,
                 backgroundColor: selectedDate ? colors.primaryDeep : colors.background,
@@ -237,8 +238,9 @@ export default function ScheduleBudgetScreen() {
 
             <Touchable
               onPress={() => openPicker('time')}
-              className="flex-1 min-h-[48px] justify-center rounded-md px-md py-sm"
+              className="flex-1 justify-center rounded-md px-md py-sm"
               style={({ pressed }) => ({
+                minHeight: mobileSurfaces.touchTarget.ctaHeight,
                 borderWidth: 1,
                 borderColor: selectedTime ? colors.primaryDeep : colors.input,
                 backgroundColor: selectedTime ? colors.primaryDeep : colors.background,

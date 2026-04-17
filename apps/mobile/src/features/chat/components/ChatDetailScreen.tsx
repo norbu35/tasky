@@ -19,7 +19,7 @@ import { mobileTheme } from '../../../design/tokenAdapter';
 import { buildBaseUrl, createMobileApiClient, Message } from '../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../store/authStore';
 
-const { colors } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 
 // Base URL resolved from globalThis.__TASKY_API_BASE_URL__ (falls back to localhost:8080).
 const API_BASE_URL = buildBaseUrl();
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: 60,
     paddingBottom: 20,
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
     backgroundColor: colors.card,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   },
   messageBubble: {
     maxWidth: '75%',
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
     paddingVertical: 10,
     borderRadius: 20,
   },
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.muted + '40',
     borderRadius: 20,
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
     paddingVertical: 10,
     fontSize: 16,
     color: colors.foreground,
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   },
   sendBtn: {
     marginLeft: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
     paddingVertical: 10,
     backgroundColor: colors.primary,
     borderRadius: 20,

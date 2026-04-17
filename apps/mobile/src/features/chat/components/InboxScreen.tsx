@@ -15,7 +15,7 @@ import { mobileTheme } from '../../../design/tokenAdapter';
 import { Conversation, createMobileApiClient } from '../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../store/authStore';
 
-const { colors } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 
 export function InboxScreen() {
   const { t } = useTranslation();
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 20,
-    paddingBottom: 40,
+    paddingBottom: spacing['3xl'],
   },
   card: {
     flexDirection: 'row',

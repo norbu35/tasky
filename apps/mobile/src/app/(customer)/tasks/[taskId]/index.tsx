@@ -213,7 +213,7 @@ export default function TaskDetailCustomerScreen() {
               </Text>
               <Text
                 className="text-caption font-bold text-text-secondary uppercase"
-                style={{ letterSpacing: 0.8 }}
+                style={{ letterSpacing: mobileSurfaces.taskDetail.sectionTracking }}
               >
                 {t('TaskDetailCustomerScreen.sectionDetails')}
               </Text>

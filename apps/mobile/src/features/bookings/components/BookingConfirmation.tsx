@@ -6,7 +6,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button, Card, CardContent, ProfileAvatar } from '../../../components/ui';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, radius, spacing, typography } = mobileTheme;
 
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 48,
+    minHeight: mobileSurfaces.touchTarget.ctaHeight,
     borderRadius: radius.md,
   },
   gradientButtonText: {

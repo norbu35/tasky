@@ -267,7 +267,10 @@ export default function DisputeStatusScreen() {
 
   return (
     <ScreenContainer testID="dispute-status-screen">
-      <View className="min-h-[56px] flex-row items-center justify-between pb-micro">
+      <View
+        className="flex-row items-center justify-between pb-micro"
+        style={{ minHeight: screenLayout.header.minHeight }}
+      >
         <Touchable
           accessibilityRole="button"
           onPress={() => router.back()}

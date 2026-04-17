@@ -7,7 +7,7 @@ import { Text, View } from 'react-native';
 import { ScreenContainer } from '../../components/shells/ScreenContainer';
 import { Button } from '../../components/ui/Button';
 import { Toast } from '../../components/ui/Toast';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileSurfaces, mobileTheme } from '../../design/tokenAdapter';
 
 const { colors } = mobileTheme;
 
@@ -49,8 +49,12 @@ export default function NetworkErrorScreen() {
     <ScreenContainer testID="SCR-INFRA-001">
       <View className="flex-1 justify-center items-center px-xl">
         <View
-          className="w-[72px] h-[72px] rounded-full items-center justify-center mb-lg"
-          style={{ backgroundColor: `${colors.danger}1A` }}
+          className="rounded-full items-center justify-center mb-lg"
+          style={{
+            width: mobileSurfaces.statusHero.iconBox,
+            height: mobileSurfaces.statusHero.iconBox,
+            backgroundColor: `${colors.danger}1A`,
+          }}
         >
           <WifiOff size={40} color={colors.danger} />
         </View>

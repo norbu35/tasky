@@ -9,6 +9,8 @@ export const screenLayout = {
   insetX: spacing.lg,
 
   header: {
+    /** Minimum height for screen header rows */
+    minHeight: 56,
     /** Top of screen to first element */
     topInset: spacing['2xl'],
     /** Greeting label to screen title */

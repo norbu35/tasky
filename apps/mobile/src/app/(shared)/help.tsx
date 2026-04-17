@@ -321,7 +321,10 @@ function FaqItemRow({
           style={{ backgroundColor: colors.muted, borderRadius: radius.md }}
           testID={`faq-answer-${item.id}`}
         >
-          <Text className="text-body" style={{ color: colors.textSecondary, lineHeight: 24 }}>
+          <Text
+            className="text-body"
+            style={{ color: colors.textSecondary, lineHeight: mobileSurfaces.paragraphLineHeight }}
+          >
             {item.answer}
           </Text>
         </View>
