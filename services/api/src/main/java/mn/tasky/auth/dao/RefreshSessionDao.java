@@ -24,4 +24,7 @@ public interface RefreshSessionDao {
 
     @SqlQuery("DELETE FROM refresh_sessions WHERE token_id = :tokenId RETURNING user_id, " + "expires_at")
     Optional<RefreshSession> findAndDelete(@Bind("tokenId") String tokenId);
+
+    @SqlUpdate("DELETE FROM refresh_sessions WHERE expires_at < :now")
+    void deleteExpired(@Bind("now") Instant now);
 }

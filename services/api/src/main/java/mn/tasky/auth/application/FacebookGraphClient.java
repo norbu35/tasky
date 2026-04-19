@@ -2,8 +2,10 @@ package mn.tasky.auth.application;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.annotation.PostConstruct;
 import mn.tasky.auth.FacebookAuthException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
@@ -27,17 +29,33 @@ public class FacebookGraphClient {
     private final String appId;
     private final String appSecret;
     private final FacebookCircuitBreaker circuitBreaker;
+    private final Environment environment;
 
     public FacebookGraphClient(
             RestClient.Builder restClientBuilder,
             @Value("${tasky.facebook.app-id:}") String appId,
             @Value("${tasky.facebook.app-secret:}") String appSecret,
             @Value("${tasky.facebook.graph-api-base-url:https://graph.facebook.com}") String graphApiBaseUrl,
-            FacebookCircuitBreaker circuitBreaker) {
+            FacebookCircuitBreaker circuitBreaker,
+            Environment environment) {
         this.restClient = restClientBuilder.baseUrl(graphApiBaseUrl).build();
         this.appId = appId;
         this.appSecret = appSecret;
         this.circuitBreaker = circuitBreaker;
+        this.environment = environment;
+    }
+
+    @PostConstruct
+    void validateConfig() {
+        if (!StringUtils.hasText(appId) || !StringUtils.hasText(appSecret)) {
+            for (String profile : environment.getActiveProfiles()) {
+                if ("local".equals(profile)) {
+                    return;
+                }
+            }
+            throw new IllegalStateException(
+                    "tasky.facebook.app-id and tasky.facebook.app-secret must be set in non-local profiles");
+        }
     }
 
     /**

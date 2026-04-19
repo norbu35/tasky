@@ -23,6 +23,8 @@ spring:
     password: ${POSTGRES_PASSWORD:tasky}
     placeholders:
       tasky_blind_index_key: ${TASKY_BLIND_INDEX_KEY:}
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
   messages:
     basename: i18n/messages
     encoding: UTF-8
@@ -30,6 +32,7 @@ spring:
 
 server:
   port: ${PORT:8080}
+  shutdown: graceful
   error:
     include-message: never
     include-stacktrace: never

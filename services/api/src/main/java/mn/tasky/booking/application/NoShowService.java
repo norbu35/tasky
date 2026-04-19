@@ -110,7 +110,7 @@ public class NoShowService {
     @Transactional
     public NoShowFlagResult flagNoShow(String bookingId, String flaggingUserId) {
         // 1. Booking exists and status is ASSIGNED
-        Optional<BookingState> bookingOpt = bookingDao.findById(bookingId);
+        Optional<BookingState> bookingOpt = bookingDao.findByIdForUpdate(bookingId);
         if (bookingOpt.isEmpty()) {
             return NoShowFlagResult.error("NOT_FOUND");
         }

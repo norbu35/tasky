@@ -86,6 +86,7 @@ public class BookingService {
      * @param confirmedScheduledAt        The initial confirmed schedule from the task's scheduledAt.
      * @return The newly created {@link BookingState}.
      */
+    @Transactional
     public BookingState createBooking(
             String taskId,
             String taskerId,
@@ -201,12 +202,13 @@ public class BookingService {
      * @param bookingId The ID of the booking to transition.
      * @return The {@link BookingTransitionResult} describing success or failure.
      */
+    @Transactional
     public BookingTransitionResult transitionToPaid(String bookingId) {
         return transition(bookingId, "PAID", List.of("ASSIGNED"));
     }
 
     private BookingTransitionResult transition(String bookingId, String newStatus, List<String> allowedFrom) {
-        Optional<BookingState> currentOpt = bookingDao.findById(bookingId);
+        Optional<BookingState> currentOpt = bookingDao.findByIdForUpdate(bookingId);
         if (currentOpt.isEmpty()) {
             return BookingTransitionResult.NOT_FOUND_RESULT;
         }

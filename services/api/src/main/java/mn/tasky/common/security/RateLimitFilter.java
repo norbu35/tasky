@@ -90,7 +90,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
         Instant cutoff = now.minus(WINDOW);
         Instant expiresAt = now.plus(WINDOW);
 
-        rateLimitCounterDao.deleteExpired(now);
         int attempts = rateLimitCounterDao.incrementAndGet(rateKey, now, cutoff, expiresAt);
 
         if (attempts > limit) {

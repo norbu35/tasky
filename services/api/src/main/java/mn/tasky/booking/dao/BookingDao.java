@@ -80,6 +80,13 @@ public interface BookingDao {
     @SqlQuery("SELECT * FROM bookings WHERE id = :id")
     Optional<BookingState> findById(@Bind("id") UUID id);
 
+    default Optional<BookingState> findByIdForUpdate(String id) {
+        return findByIdForUpdate(required(id, "id"));
+    }
+
+    @SqlQuery("SELECT * FROM bookings WHERE id = :id FOR UPDATE")
+    Optional<BookingState> findByIdForUpdate(@Bind("id") UUID id);
+
     default void update(
             String id, String status, Integer cancellationFee, boolean liabilityDisclaimerAccepted, Instant updatedAt) {
         update(required(id, "id"), status, cancellationFee, liabilityDisclaimerAccepted, updatedAt);
