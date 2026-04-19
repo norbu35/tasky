@@ -170,7 +170,7 @@ export default function BookingTimelineScreen() {
         >
           <View className="flex-row items-center gap-md bg-muted rounded-lg p-lg">
             <View className="w-16 h-16 rounded-md overflow-hidden bg-card items-center justify-center">
-              <Clock size={32} color={colors.secondary} />
+              <Clock size={24} color={colors.secondary} />
             </View>
             <View className="flex-1" style={{ gap: 2 }}>
               <Text
@@ -222,7 +222,7 @@ export default function BookingTimelineScreen() {
               <Text className="text-title font-bold text-primary-foreground">
                 {t('customer.bookings.helpTitle')}
               </Text>
-              <CircleHelp size={18} color={colors.secondary} />
+              <CircleHelp size={20} color={colors.secondary} />
             </View>
             <Text className="text-body text-accent leading-relaxed">
               {t('customer.bookings.helpDescription')}

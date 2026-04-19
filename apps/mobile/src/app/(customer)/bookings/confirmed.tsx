@@ -77,7 +77,7 @@ export default function BookingConfirmedScreen() {
           style={{ width: bookingConfirmed.navIconBox, height: bookingConfirmed.navIconBox }}
           testID="booking-confirmed-screen-close"
         >
-          <ChevronLeft size={22} color={colors.primaryDeep} />
+          <ChevronLeft size={20} color={colors.primaryDeep} />
         </Touchable>
         <View className="flex-1" />
       </View>
@@ -98,7 +98,7 @@ export default function BookingConfirmedScreen() {
             className="rounded-full bg-muted items-center justify-center"
             style={{ width: bookingConfirmed.heroSize, height: bookingConfirmed.heroSize }}
           >
-            <Check size={36} color={colors.verified} strokeWidth={3} />
+            <Check size={24} color={colors.verified} strokeWidth={3} />
           </View>
         </View>
 
@@ -153,7 +153,7 @@ export default function BookingConfirmedScreen() {
                 height: bookingConfirmed.providerAvatarBox,
               }}
             >
-              <UserRound size={28} color={colors.textSecondary} />
+              <UserRound size={24} color={colors.textSecondary} />
             </View>
             <View className="flex-1 gap-[2px]">
               <Text className="text-micro text-text-secondary">
@@ -186,7 +186,7 @@ export default function BookingConfirmedScreen() {
                 gap: spacing.sm,
               }}
             >
-              <MessageSquare size={18} color={colors.primaryForeground} />
+              <MessageSquare size={20} color={colors.primaryForeground} />
               <Text className="text-body font-sans-bold text-primary-foreground">
                 {t('TaskDetailCustomerScreen.messageTasker')}
               </Text>

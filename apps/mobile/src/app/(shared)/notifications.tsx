@@ -91,27 +91,27 @@ function buildRows(notifications: Notification[], todayLabel: string, earlierLab
 function getNotificationMeta(title: string): { icon: React.ReactNode; shellColor: string } {
   if (/message/i.test(title)) {
     return {
-      icon: <MessageSquare size={18} color={colors.foreground} />,
+      icon: <MessageSquare size={20} color={colors.foreground} />,
       shellColor: colors.chipInactive,
     };
   }
   if (/booking/i.test(title)) {
     return {
-      icon: <Briefcase size={18} color={colors.primaryDeep} />,
+      icon: <Briefcase size={20} color={colors.primaryDeep} />,
       shellColor: colors.statusOpen,
     };
   }
   if (/dispute/i.test(title)) {
     return {
-      icon: <ShieldAlert size={18} color={colors.primaryForeground} />,
+      icon: <ShieldAlert size={20} color={colors.primaryForeground} />,
       shellColor: colors.danger,
     };
   }
   if (/review/i.test(title)) {
-    return { icon: <Star size={18} color={colors.primaryDeep} />, shellColor: colors.muted };
+    return { icon: <Star size={20} color={colors.primaryDeep} />, shellColor: colors.muted };
   }
   return {
-    icon: <Bell size={18} color={colors.primaryForeground} />,
+    icon: <Bell size={20} color={colors.primaryForeground} />,
     shellColor: colors.primaryDeep,
   };
 }
@@ -195,7 +195,7 @@ export default function NotificationCenterScreen() {
               height: mobileSurfaces.statusHero.iconBox,
             }}
           >
-            <Bell size={32} color={colors.danger} />
+            <Bell size={24} color={colors.danger} />
           </View>
           <Text className="text-title font-bold text-foreground text-center">
             {t('shared.notifications.errorTitle')}
@@ -217,7 +217,7 @@ export default function NotificationCenterScreen() {
           testID="notifications-empty"
           title={t('shared.notifications.emptyTitle')}
           description={t('shared.notifications.emptyDescription')}
-          icon={<Bell size={32} color={colors.textSecondary} />}
+          icon={<Bell size={24} color={colors.textSecondary} />}
         />
       ) : (
         <FlatList

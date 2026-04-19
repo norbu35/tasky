@@ -270,7 +270,7 @@ export default function LocationScreen() {
             {locating ? (
               <ActivityIndicator size="small" color={colors.primaryDeep} />
             ) : (
-              <LocateFixed size={18} color={colors.primaryDeep} />
+              <LocateFixed size={20} color={colors.primaryDeep} />
             )}
           </Touchable>
           <Touchable
@@ -280,7 +280,7 @@ export default function LocationScreen() {
             testID="location-zoom-in-button"
             onPress={handleZoomIn}
           >
-            <Plus size={18} color={colors.primaryDeep} />
+            <Plus size={20} color={colors.primaryDeep} />
           </Touchable>
           <Touchable
             className="rounded-sm items-center justify-center bg-card border border-border"
@@ -289,7 +289,7 @@ export default function LocationScreen() {
             testID="location-zoom-out-button"
             onPress={handleZoomOut}
           >
-            <Minus size={18} color={colors.primaryDeep} />
+            <Minus size={20} color={colors.primaryDeep} />
           </Touchable>
         </View>
       </View>

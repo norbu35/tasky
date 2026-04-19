@@ -176,7 +176,7 @@ export default function CategorySelectionScreen() {
                   className="rounded-md items-center justify-center overflow-hidden shrink-0"
                   style={{ width: 120, height: 80, backgroundColor: visual.tone }}
                 >
-                  <Icon color={visual.tint} size={36} />
+                  <Icon color={visual.tint} size={24} />
                 </View>
                 <View className="flex-1 gap-xs min-w-0">
                   <Text className="font-screen-card-title text-primary-deep" numberOfLines={1}>

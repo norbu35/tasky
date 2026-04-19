@@ -31,7 +31,7 @@ export default function PermissionLocationScreen() {
   return (
     <ScreenContainer testID="SCR-SHARED-008">
       <PermissionPrimer
-        icon={<MapPin size={48} color={colors.primaryDeep} />}
+        icon={<MapPin size={24} color={colors.primaryDeep} />}
         title={t('auth.permissions.location.title')}
         description={t('PermissionLocationScreen.copy1')}
         deniedMessage={t('auth.permissions.location.denied')}

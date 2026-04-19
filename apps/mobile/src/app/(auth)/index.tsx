@@ -61,7 +61,7 @@ export default function LoginScreen() {
         <Touchable
           testID="language-switcher"
           onPress={toggleLanguage}
-          className="rounded-md px-md bg-background border border-[rgba(195,198,207,0.2)] py-xs"
+          className="rounded-md px-md bg-background border border-border/20 py-xs"
           accessibilityRole="button"
           accessibilityLabel={t('auth.login.languageSwitcher')}
         >
@@ -152,7 +152,7 @@ export default function LoginScreen() {
           className="w-[80px] h-[80px] rounded-sm items-center justify-center bg-primary-deep"
           style={{ ...elevations.card }}
         >
-          <Zap size={32} color={colors.primaryForeground} />
+          <Zap size={24} color={colors.primaryForeground} />
         </View>
       </View>
       {/* Subtitle — rendered at screen level with explicit wrap to prevent mid-word break (DEF-007) */}

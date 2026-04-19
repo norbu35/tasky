@@ -46,7 +46,7 @@ export default function AppUpdateScreen() {
             height: mobileSurfaces.statusHero.iconBox,
           }}
         >
-          <Download size={32} color={colors.primary} />
+          <Download size={24} color={colors.primary} />
         </View>
         <Text className="text-title font-bold text-foreground text-center">{title}</Text>
         <Text className="text-body text-text-secondary text-center mt-sm leading-6">{body}</Text>

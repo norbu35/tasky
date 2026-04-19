@@ -69,7 +69,7 @@ export default function TaskerProfileScreen() {
               </View>
             ) : null}
             <View className="flex-row items-center gap-[8px]">
-              <CalendarDays size={14} color={colors.textSecondary} />
+              <CalendarDays size={16} color={colors.textSecondary} />
               <Text className="text-caption text-text-secondary">
                 {t('customer.taskerProfile.memberSince').replace(
                   '{date}',
@@ -162,7 +162,7 @@ export default function TaskerProfileScreen() {
                         {review.reviewer?.full_name ?? ''}
                       </Text>
                       <View className="flex-row items-center gap-xs">
-                        <Star size={12} color={colors.accent} fill={colors.accent} />
+                        <Star size={16} color={colors.accent} fill={colors.accent} />
                         <Text className="text-label font-sans-bold text-foreground">
                           {review.quality_rating}
                         </Text>

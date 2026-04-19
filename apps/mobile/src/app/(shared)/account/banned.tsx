@@ -26,7 +26,7 @@ export default function BannedAccountScreen() {
             backgroundColor: `${colors.danger}1A`,
           }}
         >
-          <Ban size={32} color={colors.danger} />
+          <Ban size={24} color={colors.danger} />
         </View>
         <Text className="text-title font-bold text-foreground text-center mb-md">
           {t('shared.account.bannedTitle')}

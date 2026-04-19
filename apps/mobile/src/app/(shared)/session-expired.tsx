@@ -48,7 +48,7 @@ export default function SessionExpiredScreen() {
               height: mobileSurfaces.statusHero.iconBox,
             }}
           >
-            <LogIn size={28} color={colors.primary} />
+            <LogIn size={24} color={colors.primary} />
           </View>
           <Text className="text-body text-text-secondary text-center leading-6">
             {t('SessionExpiredScreen.copy1')}

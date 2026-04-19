@@ -277,7 +277,7 @@ export default function ChatDetailScreen() {
               opacity: draft.trim().length === 0 ? 0.4 : 1,
             }}
           >
-            <Send size={18} color={colors.primaryForeground} />
+            <Send size={20} color={colors.primaryForeground} />
           </Touchable>
         </View>
       </KeyboardAvoidingView>

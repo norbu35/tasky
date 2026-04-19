@@ -143,7 +143,7 @@ export default function UploadScreen() {
         </View>
       ) : (
         <View className="items-center justify-center h-[200px] bg-muted rounded-md mb-lg">
-          <Camera size={48} color={colors.muted} />
+          <Camera size={24} color={colors.muted} />
           <Text className="text-body text-text-secondary mt-sm">
             {t('tasker.verification.uploadCapture')}
           </Text>

@@ -34,7 +34,7 @@ export default function SuspendedAccountScreen() {
             backgroundColor: `${colors.danger}1A`,
           }}
         >
-          <TriangleAlert size={32} color={colors.danger} />
+          <TriangleAlert size={24} color={colors.danger} />
         </View>
         <Text className="text-title font-bold text-foreground text-center mb-md">
           {t('shared.account.suspendedTitle')}

@@ -46,7 +46,7 @@ function TaskCardBody({ task }: { task: PublicTask }) {
         {task.approximate_location && <LocationPin text={task.approximate_location} compact />}
         {task.scheduled_at && (
           <View className="flex-row items-center gap-xs">
-            <Clock size={14} color={colors.textSecondary} />
+            <Clock size={16} color={colors.textSecondary} />
             <Text className="text-caption text-text-secondary">
               {formatShortDate(task.scheduled_at)}
             </Text>
