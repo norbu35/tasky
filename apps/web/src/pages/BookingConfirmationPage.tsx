@@ -118,9 +118,9 @@ export function BookingConfirmationPage() {
       <ScreenFrame maxWidth="narrow">
         <div className="flex flex-col items-center justify-center text-center py-12">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-            <CheckCircle2 className="w-10 h-10 text-green-600" />
+            <CheckCircle2 className="w-6 h-6 text-green-600" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">
+          <h1 className="text-3xl font-bold font-display tracking-tight mb-2">
             {t('bookingConfirmation.bookingConfirmedTitle', 'Booking Confirmed!')}
           </h1>
           <p className="text-muted-foreground mb-8">
@@ -154,7 +154,9 @@ export function BookingConfirmationPage() {
                   <span className="text-muted-foreground">
                     {t('bookingConfirmation.totalBudget', 'Total Budget')}
                   </span>
-                  <span className="font-semibold text-lg">₮{task.budget.toLocaleString()}</span>
+                  <span className="font-semibold font-display text-lg">
+                    ₮{task.budget.toLocaleString()}
+                  </span>
                 </div>
               )}
             </CardContent>
@@ -189,14 +191,14 @@ export function BookingConfirmationPage() {
           {t('bookingConfirmation.back', 'Back')}
         </Button>
 
-        <h1 className="text-3xl font-bold tracking-tight mb-8">
+        <h1 className="text-3xl font-bold font-display tracking-tight mb-8">
           {t('bookingConfirmation.confirmBookingTitle', 'Confirm Booking')}
         </h1>
 
         <div className="grid gap-8 md:grid-cols-[1fr_350px]">
           <div className="space-y-6">
             <section>
-              <h2 className="text-xl font-semibold mb-4">
+              <h2 className="text-xl font-semibold font-display mb-4">
                 {t('bookingConfirmation.taskDetailsTitle', 'Task Details')}
               </h2>
               {loadingTask ? (
@@ -204,7 +206,9 @@ export function BookingConfirmationPage() {
               ) : task ? (
                 <Card>
                   <CardContent className="p-4">
-                    <h3 className="font-medium text-lg leading-tight mb-1">{task.description}</h3>
+                    <h3 className="font-medium font-display text-lg leading-tight mb-1">
+                      {task.description}
+                    </h3>
                     <p className="text-muted-foreground text-sm">{task.location_text}</p>
                     <div className="mt-3 text-sm font-medium">
                       {t('bookingConfirmation.scheduledFor', 'Scheduled for {{date}}', {
@@ -221,7 +225,7 @@ export function BookingConfirmationPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-4">
+              <h2 className="text-xl font-semibold font-display mb-4">
                 {t('bookingConfirmation.selectedTaskerTitle', 'Selected Tasker')}
               </h2>
               {loadingApp ? (
@@ -237,7 +241,9 @@ export function BookingConfirmationPage() {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <div className="font-semibold text-lg">{application.tasker.full_name}</div>
+                    <div className="font-semibold font-display text-lg">
+                      {application.tasker.full_name}
+                    </div>
                     <div className="text-sm text-muted-foreground">
                       ⭐ {application.tasker.rating_avg.toFixed(1)} •{' '}
                       {t('bookingConfirmation.completedTasks', '{{count}} completed tasks', {

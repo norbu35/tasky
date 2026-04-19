@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--color-background); font-family: var(--font-sans); padding: 20px; }
+.grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.swatch { border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-card); }
+.chip { height: 60px; }
+.label { background: white; padding: 6px 8px; }
+.name { font-size: 11px; font-weight: 600; color: #102638; }
+.hex  { font-size: 10px; color: #808D99; font-family: monospace; margin-top: 1px; }
+</style>
+</head>
+<body>
+<div class="grid">
+  <div class="swatch"><div class="chip" style="background:#1B3A5C"></div><div class="label"><div class="name">ink / primary</div><div class="hex">#1B3A5C</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#102638"></div><div class="label"><div class="name">ink-deep</div><div class="hex">#102638</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#3568A1"></div><div class="label"><div class="name">trust</div><div class="hex">#3568A1</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#6BA3BE"></div><div class="label"><div class="name">sky / accent</div><div class="hex">#6BA3BE</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#B3C4D6"></div><div class="label"><div class="name">trust-muted</div><div class="hex">#B3C4D6</div></div></div>
+
+  <div class="swatch"><div class="chip" style="background:#8B6914"></div><div class="label"><div class="name">sun / secondary</div><div class="hex">#8B6914</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#C49A3C"></div><div class="label"><div class="name">sun-light</div><div class="hex">#C49A3C</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#FDCE6A"></div><div class="label"><div class="name">sun-wash</div><div class="hex">#FDCE6A</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#469178"></div><div class="label"><div class="name">verified</div><div class="hex">#469178</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#EF4444"></div><div class="label"><div class="name">danger</div><div class="hex">#EF4444</div></div></div>
+</div>
+</body>
+</html>

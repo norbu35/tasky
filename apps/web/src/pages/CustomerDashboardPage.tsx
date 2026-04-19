@@ -40,7 +40,7 @@ function TaskCard({ task }: { task: Task }) {
         </div>
         <p className="text-sm font-semibold truncate">{task.description}</p>
         <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-          <MapPin className="w-3 h-3" />
+          <MapPin className="w-4 h-4" />
           <span className="truncate">{task.location_text}</span>
         </div>
       </div>
@@ -89,7 +89,7 @@ export function CustomerDashboardPage() {
         {/* Greeting header */}
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            <p className="text-xs font-semibold uppercase tracking-[0.075em] text-muted-foreground">
               {new Date().toLocaleDateString(locale, {
                 weekday: 'long',
                 month: 'long',

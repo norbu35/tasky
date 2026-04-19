@@ -81,7 +81,7 @@ export default function OtpMigrationScreen() {
               borderRadius: radius.md,
             }}
           >
-            <ArrowLeft size={18} color={colors.primaryDeep} />
+            <ArrowLeft size={20} color={colors.primaryDeep} />
           </View>
           <View
             className="items-center justify-center"
@@ -100,7 +100,7 @@ export default function OtpMigrationScreen() {
               className="items-center justify-center bg-muted"
               style={{ borderRadius: radius.lg, ...elevations.soft }}
             >
-              <Shield size={28} color={colors.primaryDeep} />
+              <Shield size={24} color={colors.primaryDeep} />
             </View>
           </View>
 

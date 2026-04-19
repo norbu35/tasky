@@ -1,0 +1,284 @@
+/*
+ * Tasky Design System — Colors & Typography
+ * Generated from tasky/packages/design-tokens/
+ * Palette: "Тэнгэр" (Sky) — Deep Sky Blue · Steppe Gold · Open Sky · Clean Off-White
+ */
+
+/* ─── Webfonts ─────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Manrope';
+  font-weight: 600;
+  font-style: normal;
+  src: url('./fonts/Manrope_600SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Manrope';
+  font-weight: 700;
+  font-style: normal;
+  src: url('./fonts/Manrope_700Bold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 400;
+  font-style: normal;
+  src: url('./fonts/PlusJakartaSans_400Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 500;
+  font-style: normal;
+  src: url('./fonts/PlusJakartaSans_500Medium.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 600;
+  font-style: normal;
+  src: url('./fonts/PlusJakartaSans_600SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-weight: 700;
+  font-style: normal;
+  src: url('./fonts/PlusJakartaSans_700Bold.ttf') format('truetype');
+}
+
+/* ─── Primitive Color Tokens ───────────────────────────────────── */
+:root {
+  /* Brand palette */
+  --tasky-canvas: #f9f8f5; /* off-white background */
+  --tasky-ink: #1b3a5c; /* deep sky blue — primary authority color */
+  --tasky-ink-deep: #102638; /* deeper sky — hero text, prominent headers */
+  --tasky-surface: #ffffff; /* card / popover backgrounds */
+  --tasky-sun: #8b6914; /* steppe gold — ratings, pricing, CTAs */
+  --tasky-sun-light: #c49a3c; /* lighter gold for fills */
+  --tasky-sun-wash: #fdce6a; /* gold tint wash */
+  --tasky-sky: #6ba3be; /* open sky — links, accents */
+  --tasky-sky-soft: #abd1e8; /* soft sky — trust banner tint */
+  --tasky-line: #c7d0d9; /* borders */
+  --tasky-field: #dbe0e5; /* input backgrounds */
+  --tasky-subtle: #f3f1ec; /* subtle surface, muted chips */
+  --tasky-muted-text: #576473; /* muted body text */
+  --tasky-text-secondary: #5e6b78; /* secondary text */
+  --tasky-text-tertiary: #808d99; /* tertiary / placeholder */
+  --tasky-verified: #469178; /* sage emerald — verification, success */
+  --tasky-trust: #3568a1; /* trust badges, authority indicators */
+  --tasky-trust-muted: #b3c4d6; /* trust muted tint */
+  --tasky-danger: #ef4444; /* errors and destructive only */
+  --tasky-nav-inactive: #6c7b89; /* inactive nav tab */
+  --tasky-chip-inactive: #d8dde2; /* inactive filter chip */
+
+  /* Status colors */
+  --tasky-status-open: #ede9e2;
+  --tasky-status-open-fg: #657381;
+  --tasky-status-assigned: #1b3a5c;
+  --tasky-status-assigned-fg: #ffffff;
+  --tasky-status-completed: #469178;
+  --tasky-status-completed-fg: #ffffff;
+  --tasky-status-cancelled: #f3f1ec;
+  --tasky-status-cancelled-fg: #576473;
+
+  /* ─── Semantic Tokens ──────────────────────────────────────────── */
+  --color-background: var(--tasky-canvas);
+  --color-foreground: var(--tasky-ink);
+  --color-foreground-deep: var(--tasky-ink-deep);
+  --color-card: var(--tasky-surface);
+  --color-card-fg: var(--tasky-ink);
+  --color-primary: var(--tasky-ink);
+  --color-primary-fg: var(--tasky-surface);
+  --color-primary-deep: var(--tasky-ink-deep);
+  --color-secondary: var(--tasky-sun);
+  --color-secondary-fg: var(--tasky-surface);
+  --color-accent: var(--tasky-sky);
+  --color-accent-fg: var(--tasky-surface);
+  --color-muted: var(--tasky-subtle);
+  --color-muted-fg: var(--tasky-muted-text);
+  --color-border: var(--tasky-line);
+  --color-input: var(--tasky-field);
+  --color-verified: var(--tasky-verified);
+  --color-verified-fg: var(--tasky-surface);
+  --color-trust: var(--tasky-trust);
+  --color-trust-fg: var(--tasky-surface);
+  --color-danger: var(--tasky-danger);
+  --color-danger-fg: var(--tasky-surface);
+  --color-text-secondary: var(--tasky-text-secondary);
+  --color-text-tertiary: var(--tasky-text-tertiary);
+  --color-nav-inactive: var(--tasky-nav-inactive);
+
+  /* ─── Spacing Scale (4px base) ─────────────────────────────────── */
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ─── Border Radius ─────────────────────────────────────────────── */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* ─── Shadows ───────────────────────────────────────────────────── */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-elevated: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-fab: 0 4px 6px -4px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-nav: 0 -4px 24px rgba(26, 28, 26, 0.04);
+  --shadow-deep: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  /* ─── Typography ────────────────────────────────────────────────── */
+  --font-display: 'Manrope', Roboto, system-ui, -apple-system, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', Roboto, system-ui, -apple-system, sans-serif;
+
+  --font-size-hero: 30px;
+  --font-size-heading: 24px;
+  --font-size-title: 20px;
+  --font-size-subtitle: 18px;
+  --font-size-body: 16px; /* hard floor for Mongolian mobile reading */
+  --font-size-label: 14px;
+  --font-size-caption: 12px;
+  --font-size-micro: 10px;
+  --font-size-nav: 11px;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.3;
+  --line-height-normal: 1.6;
+  --line-height-loose: 1.8;
+
+  --letter-spacing-tight: -0.01em;
+  --letter-spacing-normal: 0em;
+  --letter-spacing-caps: 0.075em; /* ALL-CAPS Cyrillic badge text only */
+
+  /* ─── Motion ────────────────────────────────────────────────────── */
+  --duration-instant: 80ms;
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --duration-skeleton: 1500ms;
+
+  --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ─── Dark Theme ────────────────────────────────────────────────── */
+.dark {
+  --color-background: hsl(212, 35%, 6%);
+  --color-foreground: hsl(40, 30%, 88%);
+  --color-card: hsl(212, 28%, 10%);
+  --color-card-fg: hsl(40, 30%, 88%);
+  --color-primary: hsl(200, 35%, 58%);
+  --color-primary-fg: hsl(212, 35%, 6%);
+  --color-secondary: hsl(42, 48%, 55%);
+  --color-secondary-fg: #ffffff;
+  --color-accent: hsl(200, 32%, 55%);
+  --color-accent-fg: #ffffff;
+  --color-muted: hsl(212, 15%, 13%);
+  --color-muted-fg: hsl(210, 12%, 55%);
+  --color-border: hsl(212, 12%, 18%);
+  --color-input: hsl(212, 12%, 18%);
+  --color-verified: hsl(160, 32%, 55%);
+  --color-verified-fg: #ffffff;
+  --color-trust: hsl(211, 45%, 58%);
+  --color-trust-fg: #ffffff;
+  --color-danger: hsl(0, 72%, 55%);
+  --color-danger-fg: #ffffff;
+  --color-text-secondary: hsl(210, 12%, 62%);
+  --color-text-tertiary: hsl(210, 10%, 50%);
+  --color-nav-inactive: hsl(210, 10%, 50%);
+}
+
+/* ─── Semantic Type Styles ──────────────────────────────────────── */
+.t-hero {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-hero);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-foreground-deep);
+}
+.t-heading {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-heading);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-foreground-deep);
+}
+.t-title {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-title);
+  line-height: var(--line-height-tight);
+  color: var(--color-foreground);
+}
+.t-subtitle {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-subtitle);
+  line-height: var(--line-height-tight);
+  color: var(--color-foreground);
+}
+.t-body {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-normal);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
+  color: var(--color-foreground);
+}
+.t-body-medium {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
+  color: var(--color-foreground);
+}
+.t-label {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-label);
+  line-height: var(--line-height-tight);
+  color: var(--color-foreground);
+}
+.t-label-bold {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-label);
+  line-height: var(--line-height-tight);
+  color: var(--color-foreground);
+}
+.t-caption {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-normal);
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-secondary);
+}
+.t-caption-bold {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-secondary);
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+}
+.t-micro {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-micro);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
