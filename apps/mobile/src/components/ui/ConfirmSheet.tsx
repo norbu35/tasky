@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { overlays } from '../../design/elevations';
+import { elevations, overlays } from '../../design/elevations';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
@@ -49,12 +49,12 @@ export function ConfirmSheet({
         />
         <View
           className={cn('bg-card rounded-tl-lg rounded-tr-lg px-lg py-xl items-center', className)}
-          style={{ paddingBottom: insets.bottom + spacing.xl }}
+          style={[elevations.elevated, { paddingBottom: insets.bottom + spacing.xl }]}
           testID={testID}
         >
           {isDestructive && (
             <View className="mb-md">
-              <AlertTriangle size={32} color={colors.danger} />
+              <AlertTriangle size={24} color={colors.danger} />
             </View>
           )}
           <Text className="text-title font-sans-bold text-foreground text-center mb-sm">

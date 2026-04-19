@@ -37,8 +37,8 @@ export function RatingStars({
           <Star
             key={star}
             size={size}
-            color={isFilled ? colors.secondary : colors.chipInactive}
-            fill={isFilled ? colors.secondary : 'transparent'}
+            color={isFilled ? colors.sunLight : colors.chipInactive}
+            fill={isFilled ? colors.sunLight : 'transparent'}
           />
         );
 

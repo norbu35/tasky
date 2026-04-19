@@ -11,7 +11,7 @@ export function Card({ style, className, ...props }: CardViewProps) {
   return (
     <View
       style={[elevations.card, style]}
-      className={cn('bg-card rounded-lg border border-border overflow-hidden', className)}
+      className={cn('bg-card rounded-md overflow-hidden', className)}
       {...props}
     />
   );

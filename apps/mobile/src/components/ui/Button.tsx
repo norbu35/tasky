@@ -17,30 +17,33 @@ import { cn } from '../../lib/cn';
 
 const { colors } = mobileTheme;
 
-const buttonVariants = cva('flex-row items-center justify-center rounded-md', {
-  variants: {
-    variant: {
-      default: 'bg-primary',
-      secondary: 'bg-secondary',
-      outline: 'bg-transparent border border-input',
-      ghost: 'bg-transparent',
-      destructive: 'bg-danger',
+const buttonVariants = cva(
+  'flex-row items-center justify-center rounded-md active:opacity-85 active:scale-[0.98]',
+  {
+    variants: {
+      variant: {
+        default: 'bg-primary',
+        secondary: 'bg-sun-light',
+        outline: 'bg-transparent border-[1.5px] border-border',
+        ghost: 'bg-transparent',
+        destructive: 'bg-danger',
+      },
+      size: {
+        default: 'px-lg py-sm min-h-[48px]',
+        sm: 'px-md min-h-[40px]',
+        lg: 'px-xl min-h-[56px]',
+        icon: 'w-[36px] h-[36px] p-0',
+      },
     },
-    size: {
-      default: 'px-lg py-sm min-h-[48px]',
-      sm: 'px-md min-h-[44px]',
-      lg: 'px-xl min-h-[52px]',
-      icon: 'w-[36px] h-[36px] p-0',
-    },
+    defaultVariants: { variant: 'default', size: 'default' },
   },
-  defaultVariants: { variant: 'default', size: 'default' },
-});
+);
 
 const textVariants = cva('text-center font-sans-bold', {
   variants: {
     variant: {
       default: 'text-primary-foreground',
-      secondary: 'text-secondary-foreground',
+      secondary: 'text-card',
       outline: 'text-foreground',
       ghost: 'text-foreground',
       destructive: 'text-danger-foreground',
@@ -72,7 +75,7 @@ export interface ButtonProps extends Omit<PressableProps, 'style'> {
 function getTextColor(variant: ButtonVariant): string {
   switch (variant) {
     case 'secondary':
-      return colors.secondaryForeground;
+      return colors.card;
     case 'outline':
     case 'ghost':
       return colors.foreground;
@@ -115,7 +118,7 @@ export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, Butto
       <Pressable
         ref={ref}
         style={[variant === 'default' && elevations.card, style]}
-        className={cn(buttonVariants({ variant, size }), !isInteractive && 'opacity-50', className)}
+        className={cn(buttonVariants({ variant, size }), !isInteractive && 'opacity-40', className)}
         disabled={!isInteractive}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}

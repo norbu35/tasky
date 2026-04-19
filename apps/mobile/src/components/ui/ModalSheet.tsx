@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { overlays } from '../../design/elevations';
+import { elevations, overlays } from '../../design/elevations';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
@@ -55,8 +55,8 @@ export function ModalSheet({
           <View style={StyleSheet.absoluteFill} pointerEvents="none" />
         )}
         <View
-          className={cn('bg-background rounded-tl-lg rounded-tr-lg px-lg py-xl gap-md', className)}
-          style={{ paddingBottom: insets.bottom + mobileTheme.spacing.xl }}
+          className={cn('bg-card rounded-tl-lg rounded-tr-lg px-lg py-xl gap-md', className)}
+          style={[elevations.elevated, { paddingBottom: insets.bottom + mobileTheme.spacing.xl }]}
         >
           <View className="self-center w-11 h-[5px] rounded-full bg-muted" />
           <Text className="text-body font-sans-bold text-foreground">{title}</Text>

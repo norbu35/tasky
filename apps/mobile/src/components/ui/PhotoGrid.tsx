@@ -3,7 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileTheme, withAlpha } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
 const { colors } = mobileTheme;
@@ -38,7 +38,7 @@ export function PhotoGrid({
           {index === maxPhotos - 1 && remainingCount > 0 && (
             <View
               style={StyleSheet.absoluteFill}
-              className="bg-[rgba(16,38,56,0.5)] items-center justify-center"
+              className="bg-primary-deep/50 items-center justify-center"
             >
               <Text className="text-heading font-sans-bold text-primary-foreground">
                 +{remainingCount}
@@ -50,8 +50,11 @@ export function PhotoGrid({
       {Array.from({ length: placeholderCount }).map((_, index) => (
         <Pressable
           key={`placeholder-${index}`}
-          style={{ borderColor: colors.chipInactive, backgroundColor: colors.primary + '12' }}
-          className="w-[48%] aspect-square rounded-md border-2 border-dashed bg-muted items-center justify-center gap-sm p-md"
+          style={{
+            borderColor: colors.chipInactive,
+            backgroundColor: withAlpha(colors.primary, 0.07),
+          }}
+          className="w-[48%] aspect-square rounded-md border-2 border-dashed items-center justify-center gap-sm p-md"
           onPress={onAddPhoto}
           accessibilityRole="button"
           accessibilityLabel={t('Photos.addPhoto')}
@@ -59,7 +62,7 @@ export function PhotoGrid({
         >
           <View
             className="w-[36px] h-[36px] rounded-full items-center justify-center"
-            style={{ backgroundColor: colors.primary + '12' }}
+            style={{ backgroundColor: withAlpha(colors.primary, 0.07) }}
           >
             <Plus size={20} color={colors.primary} />
           </View>

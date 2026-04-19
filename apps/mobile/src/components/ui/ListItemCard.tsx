@@ -45,9 +45,9 @@ export function ListItemCard({
       testID={testID}
       accessibilityRole="button"
       onPress={onPress}
-      className={cn('flex-row items-center gap-md p-lg rounded-lg bg-card', className)}
+      className={cn('flex-row items-center gap-md p-lg rounded-md bg-card', className)}
       style={({ pressed }) => [
-        elevations.soft,
+        elevations.card,
         pressed && { opacity: 0.92, transform: [{ scale: 0.98 }] },
       ]}
     >

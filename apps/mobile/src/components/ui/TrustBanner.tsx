@@ -51,10 +51,10 @@ export function TrustBanner({
         <ShieldCheck size={isCompact ? 16 : 20} color={colors.trustMuted} />
       </View>
       <View className="flex-1">
-        <Text className="text-caption font-sans-bold text-trust-muted uppercase tracking-[0.6px]">
+        <Text className="text-caption font-sans-bold text-trust-muted uppercase tracking-[0.075em]">
           {title}
         </Text>
-        <Text className="text-label text-trust-foreground leading-[20px]">{description}</Text>
+        <Text className="text-label text-foreground leading-[20px]">{description}</Text>
       </View>
     </Reveal>
   );

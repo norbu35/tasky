@@ -14,6 +14,17 @@ const badgeVariants = cva(
         destructive:
           'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
         outline: 'text-foreground',
+        statusOpen:
+          'border-transparent bg-status-open text-status-open-fg font-sans uppercase tracking-[0.075em]',
+        statusAssigned:
+          'border-transparent bg-status-assigned text-status-assigned-fg font-sans uppercase tracking-[0.075em]',
+        statusCompleted:
+          'border-transparent bg-status-completed text-status-completed-fg font-sans uppercase tracking-[0.075em]',
+        statusCancelled:
+          'border-transparent bg-status-cancelled text-status-cancelled-fg font-sans uppercase tracking-[0.075em]',
+        noShow:
+          'border-transparent bg-destructive text-destructive-foreground font-sans uppercase tracking-[0.075em]',
+        verified: 'border-transparent bg-verified text-white font-sans',
       },
     },
     defaultVariants: {

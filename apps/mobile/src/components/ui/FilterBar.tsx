@@ -7,8 +7,8 @@ import { cn } from '../../lib/cn';
 const chipVariants = cva('px-lg py-sm rounded-full', {
   variants: {
     active: {
-      true: 'bg-primary',
-      false: 'bg-muted',
+      true: 'bg-foreground',
+      false: 'bg-muted border border-border',
     },
   },
   defaultVariants: { active: false },
@@ -17,8 +17,8 @@ const chipVariants = cva('px-lg py-sm rounded-full', {
 const textVariants = cva('text-label font-sans-semibold', {
   variants: {
     active: {
-      true: 'text-primary-foreground',
-      false: 'text-primary',
+      true: 'text-background',
+      false: 'text-foreground',
     },
   },
   defaultVariants: { active: false },

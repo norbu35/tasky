@@ -19,7 +19,7 @@ interface VerifiedBadgeProps {
 }
 
 const iconSizeMap: Record<BadgeSize, number> = {
-  sm: 12,
+  sm: 16,
   md: 16,
 };
 
@@ -34,13 +34,11 @@ export function VerifiedBadge({ status, size = 'sm', testID, className }: Verifi
 
   return (
     <View
-      style={{
-        backgroundColor: isVerified ? colors.verified : colors.accent,
-        paddingVertical: size === 'sm' ? 2 : undefined,
-      }}
       className={cn(
         'flex-row items-center rounded-full self-start',
+        isVerified ? 'bg-verified' : 'bg-accent',
         size === 'md' ? 'px-md py-xs gap-xs' : 'px-sm gap-xs',
+        size === 'sm' ? 'py-[2px]' : '',
         className,
       )}
       testID={testID}
