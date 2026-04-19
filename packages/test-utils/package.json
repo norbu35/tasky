@@ -24,7 +24,7 @@
     "@tasky/tooling-config": "workspace:*",
     "@types/react": "^19.0.0",
     "react": "19.2.5",
-    "typescript": "6.0.2",
+    "typescript": "~5.9.2",
     "vitest": "4.1.4"
   }
 }

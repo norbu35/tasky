@@ -74,7 +74,7 @@
     "postcss": "^8.5.9",
     "prettier": "^3.8.1",
     "tailwindcss": "^4.2.2",
-    "typescript": "6.0.2",
+    "typescript": "~5.9.2",
     "vite": "8.0.8",
     "vite-plugin-sri3": "^2.0.0",
     "vitest": "4.1.4"
