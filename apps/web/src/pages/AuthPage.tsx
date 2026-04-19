@@ -357,15 +357,15 @@ export function AuthPage() {
                   {t('auth.continuePhone', 'Phone verification disabled for MVP')}
                 </Button>
 
-                {!facebookReady && (
+                {!facebookReady && !facebookOutage && (
                   <p className="text-sm text-muted-foreground text-center">
                     {t('auth.initializing', 'Initializing Facebook login...')}
                   </p>
                 )}
 
-                {!facebookAppId && !facebookReady && (
+                {!facebookAppId && !facebookReady && import.meta.env.DEV && (
                   <p className="text-sm text-muted-foreground text-center">
-                    {t('auth.missingConfig', 'Missing `VITE_FACEBOOK_APP_ID` configuration.')}
+                    {t('auth.loginUnavailable', 'Facebook login is unavailable right now.')}
                   </p>
                 )}
               </CardContent>

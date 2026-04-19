@@ -2,6 +2,7 @@ import { Client } from '@stomp/stompjs';
 import { Bell, BellOff, MessageSquareText, Search, Send } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import SockJS from 'sockjs-client';
 
 import { Avatar, AvatarFallback } from '../components/ui/avatar';
@@ -23,7 +24,6 @@ export function MessagingNotificationsPage() {
   const [messageDraft, setMessageDraft] = useState('');
   const [pushEnabled, setPushEnabled] = useState(false);
   const [working, setWorking] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const stompClientRef = useRef<Client | null>(null);
@@ -31,7 +31,6 @@ export function MessagingNotificationsPage() {
   const loadConversations = useCallback(async (): Promise<void> => {
     if (!session) return;
     setWorking(true);
-    setStatusMessage(null);
     try {
       const response = await apiClient.listConversations(session.accessToken);
       setConversations(response.data);
@@ -39,7 +38,7 @@ export function MessagingNotificationsPage() {
         setSelectedConvId(response.data[0].id);
       }
     } catch (error) {
-      setStatusMessage(parseError(error));
+      toast.error(parseError(error));
     } finally {
       setWorking(false);
     }
@@ -53,13 +52,12 @@ export function MessagingNotificationsPage() {
     async (convId: string): Promise<void> => {
       if (!session) return;
       setWorking(true);
-      setStatusMessage(null);
       try {
         const response = await apiClient.listMessages(session.accessToken, convId);
         setMessages(response.data);
         scrollToBottom();
       } catch (error) {
-        setStatusMessage(parseError(error));
+        toast.error(parseError(error));
       } finally {
         setWorking(false);
       }
@@ -125,7 +123,7 @@ export function MessagingNotificationsPage() {
       setMessageDraft('');
       scrollToBottom();
     } catch (error) {
-      setStatusMessage(parseError(error));
+      toast.error(parseError(error));
     } finally {
       setWorking(false);
     }
@@ -137,13 +135,13 @@ export function MessagingNotificationsPage() {
     setWorking(true);
     try {
       if (checked) {
-        setStatusMessage(t('messaging.pushEnabled', 'Push notifications enabled.'));
+        toast.success(t('messaging.pushEnabled', 'Push notifications enabled.'));
       } else {
-        setStatusMessage(t('messaging.pushDisabled', 'Push notifications disabled.'));
+        toast.success(t('messaging.pushDisabled', 'Push notifications disabled.'));
       }
     } catch (error) {
-      setStatusMessage(parseError(error));
-      setPushEnabled(!checked); // revert UI
+      toast.error(parseError(error));
+      setPushEnabled(!checked);
     } finally {
       setWorking(false);
     }
@@ -181,12 +179,6 @@ export function MessagingNotificationsPage() {
             'Browser notifications keep you updated on new messages and booking changes.',
           )}
         </p>
-
-        {statusMessage && (
-          <div className="w-full mb-4 px-4 py-2 bg-primary/10 text-primary rounded-md text-sm border-primary/20 border">
-            {statusMessage}
-          </div>
-        )}
 
         <div className="w-full flex-1 border rounded-lg overflow-hidden bg-card flex shadow-sm">
           {/* Sidebar / Left Pane */}

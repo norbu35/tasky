@@ -1,6 +1,7 @@
 import { Coins, Loader2, MapPin, Search, Calendar, Users, ImageIcon, Star } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 import { useCategoriesQuery, useTasksQuery } from '@tasky/core';
 
@@ -43,7 +44,6 @@ export function TaskerFeedPage() {
 
   const [applyDrafts, setApplyDrafts] = useState<Record<string, string>>({});
   const [working, setWorking] = useState(false);
-  const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [sentTaskId, setSentTaskId] = useState<string | null>(null);
   const [openDialogId, setOpenDialogId] = useState<string | null>(null);
 
@@ -68,24 +68,22 @@ export function TaskerFeedPage() {
 
     const draft = (applyDrafts[taskId] ?? '').trim();
     if (draft.length < 10) {
-      setActionMessage(
+      toast.error(
         t('taskerFeed.msgMinLength', 'Application message must be at least 10 characters.'),
       );
       return;
     }
 
     setWorking(true);
-    setActionMessage(null);
     try {
       await apiClient.applyToTask(session.accessToken, taskId, draft);
       setApplyDrafts((prev) => ({ ...prev, [taskId]: '' }));
       setOpenDialogId(null);
       setSentTaskId(taskId);
       trackClientEvent('APPLICATION_SUBMITTED', { taskId });
-      setActionMessage(null);
       void refetchTasks();
     } catch (error) {
-      setActionMessage(parseError(error));
+      toast.error(parseError(error));
     } finally {
       setWorking(false);
     }
@@ -164,11 +162,6 @@ export function TaskerFeedPage() {
             {parseError(tasksError)}
           </p>
         )}
-        {actionMessage && (
-          <p className="text-sm text-primary font-medium p-4 bg-primary/10 rounded-xl">
-            {actionMessage}
-          </p>
-        )}
 
         {sentTaskId ? (
           <Card className="border-primary/30 bg-primary/5 shadow-sm">
@@ -194,7 +187,6 @@ export function TaskerFeedPage() {
                 variant="secondary"
                 onClick={() => {
                   setSentTaskId(null);
-                  setActionMessage(null);
                 }}
               >
                 {t('taskerPages.applicationSent.backToFeed', 'Back to feed')}
