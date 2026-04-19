@@ -49,7 +49,7 @@ The **Тэнгэр (Sky)** design system governs all UI across mobile and web.
 
 - Tailwind utilities resolve through `--color-*` → Tailwind config → generated classes
 - Components use Tailwind classes (`bg-primary`, `text-foreground`) — never reference `--tenger-*` primitives directly
-- Shadows (`--tenger-shadow-*`) are the exception: referenced directly via `var(--tenger-shadow-nav)` in inline styles
+- Shadows: `--shadow-*` aliases in `styles.css` bridge `--tenger-shadow-*` primitives; components use `var(--shadow-card)` etc.
 - Motion: `--duration-*` and `--easing-*` (no namespace prefix)
 - Mobile: NativeWind classes backed by `@tasky/design-tokens` native outputs (hex values, not HSL)
 
