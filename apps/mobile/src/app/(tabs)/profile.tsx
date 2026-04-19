@@ -105,6 +105,11 @@ function AuthenticatedProfile() {
                 {new Date(profile.created_at).toLocaleDateString()}
               </Text>
             </View>
+            <View className="pt-sm border-t border-border">
+              <Text className="text-body text-text-secondary leading-relaxed">
+                {profile.bio?.trim() ? profile.bio : t('shared.profile.noBio')}
+              </Text>
+            </View>
           </View>
 
           {/* Action Rows */}

@@ -21,7 +21,7 @@ public class UserProfileUpdateService {
         this.userProfileCompositionService = userProfileCompositionService;
     }
 
-    public UserProfileUpdateOutcome updateProfile(String userId, String fullName, String avatarUrl) {
+    public UserProfileUpdateOutcome updateProfile(String userId, String fullName, String avatarUrl, String bio) {
         if (avatarUrl != null) {
             try {
                 storageKeyPolicy.validateOwnedKey(
@@ -33,7 +33,7 @@ public class UserProfileUpdateService {
             }
         }
 
-        ProfileUpdate update = new ProfileUpdate(fullName, avatarUrl);
+        ProfileUpdate update = new ProfileUpdate(fullName, avatarUrl, bio);
         return identityCommandPort
                 .updateProfile(userId, update)
                 .map(profile ->

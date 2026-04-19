@@ -214,6 +214,10 @@ components:
           type: string
           format: uri
           nullable: true
+        bio:
+          type: string
+          nullable: true
+          maxLength: 200
         rating_avg:
           type: number
           format: double
@@ -1880,6 +1884,9 @@ paths:
                   type: string
                   format: uri
                   nullable: true
+                bio:
+                  type: string
+                  maxLength: 200
       responses:
         '200':
           description: Profile updated.

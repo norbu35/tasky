@@ -118,8 +118,9 @@ public class UserProfileService {
 
         String fullName = update.fullName() != null ? update.fullName().trim() : current.fullName();
         String avatarUrl = update.avatarUrl() != null ? update.avatarUrl().trim() : current.avatarUrl();
+        String bio = update.bio() != null ? update.bio().trim() : current.bio();
 
-        profileDao.updateNameAndAvatar(user.id(), fullName, avatarUrl);
+        profileDao.updateProfileDetails(user.id(), fullName, avatarUrl, bio);
 
         return getProfile(user.id());
     }
@@ -274,6 +275,7 @@ public class UserProfileService {
                 user.status(),
                 profile.fullName(),
                 profile.avatarUrl(),
+                profile.bio(),
                 profile.ratingAvg(),
                 profile.completedTasks(),
                 isPro,

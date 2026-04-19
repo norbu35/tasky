@@ -9,6 +9,7 @@ public record ProfileResponse(
         String status,
         @JsonProperty("full_name") String fullName,
         @JsonProperty("avatar_url") String avatarUrl,
+        @JsonProperty("bio") String bio,
         @JsonProperty("rating_avg") double ratingAvg,
         @JsonProperty("completed_tasks") int completedTasks,
         @JsonProperty("is_pro") boolean isPro,

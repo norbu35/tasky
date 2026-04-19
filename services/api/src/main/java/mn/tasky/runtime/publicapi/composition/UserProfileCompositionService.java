@@ -19,6 +19,7 @@ public class UserProfileCompositionService {
                 profile.status(),
                 profile.fullName(),
                 profile.avatarUrl(),
+                profile.bio(),
                 profile.ratingAvg(),
                 profile.completedTasks(),
                 profile.isPro(),

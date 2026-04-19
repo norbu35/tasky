@@ -2078,6 +2078,7 @@ export interface components {
             full_name: string;
             /** Format: uri */
             avatar_url: string | null;
+            bio?: string | null;
             /**
              * Format: double
              * @example 4.7
@@ -3141,6 +3142,7 @@ export interface operations {
                     full_name?: string;
                     /** Format: uri */
                     avatar_url?: string | null;
+                    bio?: string;
                 };
             };
         };

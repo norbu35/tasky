@@ -195,6 +195,7 @@ public class UserSearchService {
                 user.status(),
                 profile.fullName(),
                 profile.avatarUrl(),
+                profile.bio(),
                 profile.ratingAvg(),
                 profile.completedTasks(),
                 isPro,

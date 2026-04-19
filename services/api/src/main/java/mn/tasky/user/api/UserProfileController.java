@@ -75,8 +75,8 @@ public class UserProfileController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @Valid @RequestBody UpdateProfileRequest body,
             HttpServletRequest request) {
-        UserProfileUpdateOutcome outcome =
-                userProfileUpdateService.updateProfile(principal.userId(), body.fullName(), body.avatarUrl());
+        UserProfileUpdateOutcome outcome = userProfileUpdateService.updateProfile(
+                principal.userId(), body.fullName(), body.avatarUrl(), body.bio());
         return switch (outcome.status()) {
             case SUCCESS -> ResponseEntity.ok(outcome.profile());
             case INVALID_AVATAR_KEY -> ResponseEntity.status(HttpStatus.BAD_REQUEST)

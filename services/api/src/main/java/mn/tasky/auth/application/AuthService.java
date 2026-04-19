@@ -442,7 +442,7 @@ public class AuthService {
                 StringUtils.hasText(profile.pictureUrl()) ? profile.pictureUrl().trim() : null;
         profileDao.ensureExists(id, fullName);
         if (StringUtils.hasText(profile.name()) || avatarUrl != null) {
-            profileDao.updateNameAndAvatar(id, fullName, avatarUrl);
+            profileDao.updateProfileDetails(id, fullName, avatarUrl, null);
         }
 
         return new AuthUser(id, null, facebookId, "CUSTOMER", "PENDING", "FACEBOOK", now, now);

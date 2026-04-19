@@ -7,6 +7,7 @@ public record UserProfile(
         String status,
         String fullName,
         String avatarUrl,
+        String bio,
         double ratingAvg,
         int completedTasks,
         boolean isPro,
