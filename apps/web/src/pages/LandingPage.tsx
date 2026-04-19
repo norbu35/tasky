@@ -118,7 +118,7 @@ function AnimatedTaskFeed() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="flex items-center gap-4 rounded-xl border border-white/20 bg-white/10 shadow-[var(--tenger-shadow-elevated)] backdrop-blur-md px-5 py-4 hover:bg-white/20 transition-colors cursor-pointer"
+            className="flex items-center gap-4 rounded-xl border border-white/20 bg-white/10 shadow-[var(--shadow-elevated)] backdrop-blur-md px-5 py-4 hover:bg-white/20 transition-colors cursor-pointer"
           >
             <div
               className={`w-3 h-3 rounded-full flex-shrink-0 ${CATEGORY_COLORS[task.category]}`}
@@ -259,7 +259,7 @@ export function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Deep Cleaning */}
               <div
-                className="md:col-span-2 group relative overflow-hidden rounded-xl aspect-[16/9] md:aspect-auto md:h-[500px] bg-card transition-all hover:shadow-[var(--tenger-shadow-deep)] hover:-translate-y-1 cursor-pointer"
+                className="md:col-span-2 group relative overflow-hidden rounded-xl aspect-[16/9] md:aspect-auto md:h-[500px] bg-card transition-all hover:shadow-[var(--shadow-deep)] hover:-translate-y-1 cursor-pointer"
                 onClick={() => navigate('/auth')}
               >
                 <img
@@ -287,7 +287,7 @@ export function LandingPage() {
 
               {/* Handyman & Repairs */}
               <div
-                className="group relative overflow-hidden rounded-xl bg-card hover:shadow-[var(--tenger-shadow-elevated)] transition-all hover:-translate-y-1 cursor-pointer border border-border/50"
+                className="group relative overflow-hidden rounded-xl bg-card hover:shadow-[var(--shadow-elevated)] transition-all hover:-translate-y-1 cursor-pointer border border-border/50"
                 onClick={() => navigate('/auth')}
               >
                 <div className="p-8 sm:p-10 h-full flex flex-col justify-between">
@@ -315,7 +315,7 @@ export function LandingPage() {
 
               {/* Electrician */}
               <div
-                className="group relative overflow-hidden rounded-xl bg-card border border-border/50 text-foreground hover:shadow-[var(--tenger-shadow-elevated)] transition-all hover:-translate-y-1 cursor-pointer"
+                className="group relative overflow-hidden rounded-xl bg-card border border-border/50 text-foreground hover:shadow-[var(--shadow-elevated)] transition-all hover:-translate-y-1 cursor-pointer"
                 onClick={() => navigate('/auth')}
               >
                 <div className="p-8 sm:p-10">
@@ -342,7 +342,7 @@ export function LandingPage() {
 
               {/* Movers & Help */}
               <div
-                className="md:col-span-2 group relative overflow-hidden rounded-xl bg-primary text-primary-foreground hover:shadow-[var(--tenger-shadow-deep)] transition-all hover:-translate-y-1 cursor-pointer"
+                className="md:col-span-2 group relative overflow-hidden rounded-xl bg-primary text-primary-foreground hover:shadow-[var(--shadow-deep)] transition-all hover:-translate-y-1 cursor-pointer"
                 onClick={() => navigate('/auth')}
               >
                 <div className="p-8 sm:p-10 grid md:grid-cols-2 gap-8 items-center h-full">
@@ -400,7 +400,7 @@ export function LandingPage() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
-                className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-[var(--tenger-shadow-deep)] ring-1 ring-inset ring-primary/10 relative overflow-hidden transition-shadow hover:shadow-[var(--tenger-shadow-deep)]"
+                className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-[var(--shadow-deep)] ring-1 ring-inset ring-primary/10 relative overflow-hidden transition-shadow hover:shadow-[var(--shadow-deep)]"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[100px] -z-0" />
                 <div className="relative z-10 space-y-3 mb-8">
@@ -479,7 +479,7 @@ export function LandingPage() {
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
-                className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-[var(--tenger-shadow-deep)] ring-1 ring-inset ring-secondary/20 relative overflow-hidden lg:mt-12 transition-shadow hover:shadow-[var(--tenger-shadow-deep)]"
+                className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-[var(--shadow-deep)] ring-1 ring-inset ring-secondary/20 relative overflow-hidden lg:mt-12 transition-shadow hover:shadow-[var(--shadow-deep)]"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-bl-[100px] -z-0" />
                 <div className="relative z-10 space-y-3 mb-8">
@@ -590,7 +590,7 @@ export function LandingPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
-              className="bg-background text-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28 relative z-10 lg:-ml-6 shadow-[var(--tenger-shadow-elevated)] rounded-l-3xl lg:rounded-l-[3rem]"
+              className="bg-background text-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28 relative z-10 lg:-ml-6 shadow-[var(--shadow-elevated)] rounded-l-3xl lg:rounded-l-[3rem]"
             >
               <h3 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-10">
                 {t('landing.trustRelief', 'Or just use Tasky.')}
@@ -643,7 +643,7 @@ export function LandingPage() {
 
               <Button
                 size="lg"
-                className="w-fit h-14 px-10 text-lg font-bold shadow-[var(--tenger-shadow-fab)] bg-gradient-to-r from-primary-deep to-primary"
+                className="w-fit h-14 px-10 text-lg font-bold shadow-[var(--shadow-fab)] bg-gradient-to-r from-primary-deep to-primary"
                 onClick={() => navigate('/auth')}
               >
                 {t('landing.joinTrust', 'Join the Trusted Network')}

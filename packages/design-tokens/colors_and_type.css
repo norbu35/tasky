@@ -1,7 +1,11 @@
 /*
  * Tasky Design System — Colors & Typography
- * Generated from tasky/packages/design-tokens/
+ * Reference file generated from the design tool handoff.
  * Palette: "Тэнгэр" (Sky) — Deep Sky Blue · Steppe Gold · Open Sky · Clean Off-White
+ *
+ * NOTE: This file uses --tasky-* primitive names (design tool export format).
+ * The live runtime file is tokens.css, which uses --tenger-* for primitives
+ * and --color-* for semantic aliases. Do not import this file into the build.
  */
 
 /* ─── Webfonts ─────────────────────────────────────────────────── */

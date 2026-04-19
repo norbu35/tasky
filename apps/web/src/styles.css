@@ -49,6 +49,12 @@
   --sky-soft: var(--color-sky-soft);
   --font-sans: var(--font-family-sans);
   --font-display: var(--font-family-display);
+  /* Shadow semantic aliases — bridge from --tenger-shadow-* primitives */
+  --shadow-card: var(--tenger-shadow-card);
+  --shadow-elevated: var(--tenger-shadow-elevated);
+  --shadow-fab: var(--tenger-shadow-fab);
+  --shadow-nav: var(--tenger-shadow-nav);
+  --shadow-deep: var(--tenger-shadow-deep);
 }
 
 * {

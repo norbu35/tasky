@@ -240,7 +240,7 @@ export function AuthPage() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-secondary/20 blur-[100px] z-0 mix-blend-screen" />
 
         <div className="relative z-10 flex items-center gap-4">
-          <div className="p-3.5 bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-[var(--tenger-shadow-elevated)]">
+          <div className="p-3.5 bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-[var(--shadow-elevated)]">
             <Shield className="w-6 h-6 text-accent" strokeWidth={2.5} />
           </div>
           <span className="text-3xl font-display font-extrabold tracking-tight">Tasky</span>
@@ -296,7 +296,7 @@ export function AuthPage() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Card className="border-none shadow-[var(--tenger-shadow-deep)] rounded-[2rem] overflow-hidden backdrop-blur-3xl bg-white/90 ring-1 ring-black/5">
+            <Card className="border-none shadow-[var(--shadow-deep)] rounded-[2rem] overflow-hidden backdrop-blur-3xl bg-white/90 ring-1 ring-black/5">
               <CardHeader className="space-y-3 pb-8 pt-10 px-10 border-b border-border/40 bg-gradient-to-b from-muted/50 to-transparent">
                 <h1 className="sr-only">{t('auth.facebookLoginTitle', 'Facebook login')}</h1>
                 <CardTitle className="text-3xl font-display font-bold tracking-tight">
@@ -323,7 +323,7 @@ export function AuthPage() {
                   </div>
                 )}
                 <Button
-                  className="w-full h-14 text-base rounded-2xl font-bold shadow-[var(--tenger-shadow-fab)] transition-all duration-300 hover:scale-[1.02] bg-gradient-to-r from-primary-deep to-primary"
+                  className="w-full h-14 text-base rounded-2xl font-bold shadow-[var(--shadow-fab)] transition-all duration-300 hover:scale-[1.02] bg-gradient-to-r from-primary-deep to-primary"
                   disabled={loading || !facebookReady || facebookOutage}
                   onClick={handleFacebookLogin}
                   type="button"
