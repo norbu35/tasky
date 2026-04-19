@@ -34,7 +34,7 @@ export function InsetScrollView({
 
   return (
     <ScrollView
-      className={className ?? 'flex-1'}
+      className={className ?? 'flex-1 bg-background'}
       {...scrollProps}
       contentContainerStyle={[
         { flexGrow: 1 },

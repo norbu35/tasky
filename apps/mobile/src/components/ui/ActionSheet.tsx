@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { overlays } from '../../design/elevations';
+import { elevations, overlays } from '../../design/elevations';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
@@ -37,7 +37,7 @@ export function ActionSheet({ isOpen, onClose, actions, testID, className }: Act
         />
         <View
           className={cn('bg-card rounded-tl-lg rounded-tr-lg pt-sm', className)}
-          style={{ paddingBottom: insets.bottom + mobileTheme.spacing.lg }}
+          style={[elevations.elevated, { paddingBottom: insets.bottom + mobileTheme.spacing.lg }]}
           testID={testID}
         >
           {actions.map((action, index) => (

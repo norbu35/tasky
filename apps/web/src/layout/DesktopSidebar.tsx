@@ -38,10 +38,10 @@ export function DesktopSidebar() {
     profile?.role === 'CUSTOMER' ? CUSTOMER_NAV : profile?.role === 'TASKER' ? TASKER_NAV : null;
 
   return (
-    <aside className="hidden md:flex md:flex-col md:w-56 md:shrink-0 border-r border-border/40 bg-muted/20 min-h-screen sticky top-0 h-screen">
+    <aside className="hidden md:flex md:flex-col md:w-56 md:shrink-0 border-r border-border bg-surface min-h-screen sticky top-0 h-screen">
       {/* Logo */}
       <div
-        className="flex items-center gap-2.5 px-4 h-16 cursor-pointer group border-b border-border/40"
+        className="flex items-center gap-2.5 px-4 h-16 cursor-pointer group border-b border-border"
         onClick={() => navigate('/')}
       >
         <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-deep to-primary flex items-center justify-center text-primary-foreground shadow-sm group-hover:shadow-md transition-all">
@@ -76,7 +76,7 @@ export function DesktopSidebar() {
       )}
 
       {/* Footer */}
-      <div className="flex flex-col gap-2 p-3 border-t border-border/40">
+      <div className="flex flex-col gap-2 p-3 border-t border-border">
         <LanguageSwitcher className="w-full justify-start" />
         {profile && (
           <Button

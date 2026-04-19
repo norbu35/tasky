@@ -27,7 +27,7 @@ export function CustomerTaskSuccessPage() {
       }
     >
       <StatePanel
-        icon={<CheckCircle2 className="h-5 w-5 text-emerald-600" />}
+        icon={<CheckCircle2 className="h-5 w-5 text-status-completed" />}
         title={t('customerPages.taskSuccess.panelTitle', 'Task live')}
         description={t(
           'customerPages.taskSuccess.panelDesc',

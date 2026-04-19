@@ -8,9 +8,10 @@ import { cn } from '../../lib/cn';
 
 const { colors, radius } = mobileTheme;
 
-type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';
+type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 const sizeMap: Record<AvatarSize, number> = {
+  xs: 24,
   sm: 32,
   md: 40,
   lg: 64,
@@ -54,7 +55,7 @@ export function ProfileAvatar({
       ) : (
         <View
           style={{ width: dim, height: dim, borderRadius }}
-          className="bg-subtle-violet items-center justify-center"
+          className="bg-muted items-center justify-center"
         >
           <Text style={{ fontSize: dim * 0.35 }} className="font-sans-bold text-primary-deep">
             {initials}

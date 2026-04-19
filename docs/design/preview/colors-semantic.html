@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--color-background); font-family: var(--font-sans); padding: 20px; }
+.row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.chip { height: 32px; border-radius: var(--radius-sm); flex: 1; display: flex; align-items: center; padding: 0 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.token { font-family: monospace; font-size: 10px; color: var(--color-text-tertiary); width: 140px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+  <div class="row"><div class="chip" style="background:#1B3A5C;color:#F9F8F5">primary / foreground</div><div class="token">--color-primary</div></div>
+  <div class="row"><div class="chip" style="background:#8B6914;color:#FFFFFF">secondary / gold</div><div class="token">--color-secondary</div></div>
+  <div class="row"><div class="chip" style="background:#6BA3BE;color:#FFFFFF">accent / sky</div><div class="token">--color-accent</div></div>
+  <div class="row"><div class="chip" style="background:#469178;color:#FFFFFF">verified / success</div><div class="token">--color-verified</div></div>
+  <div class="row"><div class="chip" style="background:#3568A1;color:#FFFFFF">trust / authority</div><div class="token">--color-trust</div></div>
+  <div class="row"><div class="chip" style="background:#EF4444;color:#FFFFFF">danger / destructive</div><div class="token">--color-danger</div></div>
+  <div class="row"><div class="chip" style="background:#EDE9E2;color:#657381">status: open</div><div class="token">--tasky-status-open</div></div>
+  <div class="row"><div class="chip" style="background:#1B3A5C;color:#FFFFFF">status: assigned</div><div class="token">--tasky-status-assigned</div></div>
+  <div class="row"><div class="chip" style="background:#469178;color:#FFFFFF">status: completed</div><div class="token">--tasky-status-completed</div></div>
+  <div class="row"><div class="chip" style="background:#F3F1EC;color:#576473">status: cancelled</div><div class="token">--tasky-status-cancelled</div></div>
+</body>
+</html>

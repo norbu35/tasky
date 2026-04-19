@@ -30,15 +30,23 @@ export function InboxPage() {
         />
         <Card>
           <CardContent className="flex items-start gap-3 p-4">
-            <MessageSquare className="mt-0.5 h-4 w-4 text-primary" />
-            <div className="space-y-1">
-              <div className="font-semibold">
-                {t('sharedPages.inbox.sampleThreadTitle', 'Apartment cleaning')}
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-muted">
+              <MessageSquare className="h-4 w-4 text-primary" />
+            </div>
+            <div className="min-w-0 flex-1 space-y-1">
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-semibold text-foreground">
+                  {t('sharedPages.inbox.sampleThreadTitle', 'Apartment cleaning')}
+                </span>
+                <span className="shrink-0 text-[11px] text-text-tertiary">10:30</span>
               </div>
               <div className="text-sm text-muted-foreground">
                 {t('sharedPages.inbox.sampleThreadPreview', 'Tasker confirmed the Saturday slot.')}
               </div>
             </div>
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-foreground text-[11px] font-semibold text-card">
+              2
+            </span>
           </CardContent>
         </Card>
       </div>

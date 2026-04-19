@@ -135,7 +135,7 @@ export function NotificationCenter({ onPressNotification }: NotificationCenterPr
     () => (
       <View style={styles.emptyContainer}>
         <View style={styles.emptyIconWrapper}>
-          <Bell size={48} color={colors.mutedForeground} />
+          <Bell size={24} color={colors.mutedForeground} />
         </View>
         <Text style={styles.emptyTitle}>{t('notifications.emptyTitle')}</Text>
         <Text style={styles.emptySubtitle}>{t('notifications.emptySubtitle')}</Text>
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: radius.full,
-    backgroundColor: colors.primaryDeep,
+    backgroundColor: colors.foreground,
     marginLeft: spacing.sm,
   },
   notificationBody: {

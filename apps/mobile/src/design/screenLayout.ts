@@ -47,7 +47,7 @@ export const screenLayout = {
     /** Tab bar fixed gap above safe area zone (components add insets.bottom on top) */
     tabBarBottom: 8,
     /** Tab icon size */
-    tabIconSize: 22,
+    tabIconSize: 24,
     /** Tab button pill height */
     tabButtonHeight: 72,
     /** Tab button pill radius */
@@ -61,9 +61,9 @@ export const screenLayout = {
     /** Tab bar frosted surface tint */
     tabBarSurfaceOpacity: 0.92,
     /** FAB diameter */
-    fabSize: 60,
+    fabSize: 52,
     /** FAB icon size */
-    fabIconSize: 28,
+    fabIconSize: 24,
     /** FAB distance from right edge */
     fabInsetRight: spacing.lg,
     /** FAB distance from top edge */

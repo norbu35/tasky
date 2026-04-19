@@ -22,10 +22,10 @@ export function InfoRow({ label, value, icon, testID, className }: InfoRowProps)
     >
       <View className="flex-row items-center shrink">
         {icon && <View className="mr-sm">{icon}</View>}
-        <Text className="text-label font-sans text-muted-foreground">{label}</Text>
+        <Text className="text-label font-sans text-text-tertiary">{label}</Text>
       </View>
       {isStringValue ? (
-        <Text className="text-label font-sans-semibold text-primary">{value}</Text>
+        <Text className="text-label font-sans-semibold text-foreground">{value}</Text>
       ) : (
         <View>{value}</View>
       )}

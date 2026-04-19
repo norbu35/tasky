@@ -8,7 +8,7 @@ const chipVariants = cva('px-xl py-sm rounded-full', {
   variants: {
     active: {
       true: 'bg-primary',
-      false: 'bg-chip-inactive',
+      false: 'bg-muted',
     },
   },
   defaultVariants: { active: false },
@@ -18,7 +18,7 @@ const textVariants = cva('text-label font-sans-semibold', {
   variants: {
     active: {
       true: 'text-primary-foreground',
-      false: 'text-muted-foreground',
+      false: 'text-foreground',
     },
   },
   defaultVariants: { active: false },

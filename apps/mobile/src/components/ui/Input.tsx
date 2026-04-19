@@ -21,10 +21,10 @@ export const Input = forwardRef<TextInput, Props>(function Input(
     <TextInput
       ref={ref}
       editable={isEditable}
-      placeholderTextColor={mobileTheme.colors.mutedForeground}
+      placeholderTextColor={mobileTheme.colors.textTertiary}
       style={style}
       className={cn(
-        'min-h-[44px] rounded-md border border-input bg-card text-foreground px-md py-sm text-body font-sans',
+        'h-12 rounded-sm border-[1.5px] border-border bg-background px-md py-sm text-body font-sans text-foreground',
         invalid && 'border-danger',
         !isEditable && 'opacity-60',
         className,

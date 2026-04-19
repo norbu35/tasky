@@ -31,7 +31,7 @@ export default function PermissionCameraScreen() {
   return (
     <ScreenContainer testID="SCR-SHARED-007">
       <PermissionPrimer
-        icon={<Camera size={48} color={colors.primaryDeep} />}
+        icon={<Camera size={24} color={colors.primaryDeep} />}
         title={t('auth.permissions.camera.title')}
         description={t('PermissionCameraScreen.copy1')}
         deniedMessage={t('auth.permissions.camera.denied')}

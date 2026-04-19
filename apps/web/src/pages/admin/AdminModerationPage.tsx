@@ -82,7 +82,7 @@ export function AdminModerationPage() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold flex items-center gap-2">
+        <h1 className="text-2xl font-bold font-display flex items-center gap-2">
           <Scale className="h-6 w-6" />
           {t('admin.moderation.title', 'Moderation')}
         </h1>
@@ -100,7 +100,7 @@ export function AdminModerationPage() {
   if (error || !policy) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold flex items-center gap-2">
+        <h1 className="text-2xl font-bold font-display flex items-center gap-2">
           <Scale className="h-6 w-6" />
           {t('admin.moderation.title', 'Moderation')}
         </h1>
@@ -168,7 +168,7 @@ export function AdminModerationPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold flex items-center gap-2">
+        <h1 className="text-2xl font-bold font-display flex items-center gap-2">
           <Scale className="h-6 w-6" />
           {t('admin.moderation.title', 'Moderation')}
         </h1>

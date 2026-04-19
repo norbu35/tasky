@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #E8E6E1; font-family: var(--font-sans); padding: 20px; }
+.grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.swatch { border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-card); }
+.chip { height: 60px; border-bottom: 1px solid rgba(0,0,0,0.06); }
+.label { background: white; padding: 6px 8px; }
+.name { font-size: 11px; font-weight: 600; color: #102638; }
+.hex  { font-size: 10px; color: #808D99; font-family: monospace; margin-top: 1px; }
+</style>
+</head>
+<body>
+<div class="grid">
+  <div class="swatch"><div class="chip" style="background:#F9F8F5"></div><div class="label"><div class="name">canvas / bg</div><div class="hex">#F9F8F5</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#FFFFFF"></div><div class="label"><div class="name">surface / card</div><div class="hex">#FFFFFF</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#F3F1EC"></div><div class="label"><div class="name">subtle / muted</div><div class="hex">#F3F1EC</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#EDE9E2"></div><div class="label"><div class="name">status-open</div><div class="hex">#EDE9E2</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#D8DDE2"></div><div class="label"><div class="name">chip-inactive</div><div class="hex">#D8DDE2</div></div></div>
+
+  <div class="swatch"><div class="chip" style="background:#C7D0D9"></div><div class="label"><div class="name">line / border</div><div class="hex">#C7D0D9</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#DBE0E5"></div><div class="label"><div class="name">field / input</div><div class="hex">#DBE0E5</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#576473"></div><div class="label"><div class="name">muted-text</div><div class="hex">#576473</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#5E6B78"></div><div class="label"><div class="name">text-secondary</div><div class="hex">#5E6B78</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#808D99"></div><div class="label"><div class="name">text-tertiary</div><div class="hex">#808D99</div></div></div>
+</div>
+</body>
+</html>

@@ -21,7 +21,7 @@ export function LocationPin({ text, compact = false, testID, className }: Locati
       testID={testID}
       accessibilityLabel={text}
     >
-      <MapPin size={compact ? 14 : 16} color={colors.accent} />
+      <MapPin size={16} color={colors.accent} />
       <Text
         className={cn('text-label text-text-secondary shrink', compact && 'text-caption')}
         numberOfLines={compact ? 1 : undefined}

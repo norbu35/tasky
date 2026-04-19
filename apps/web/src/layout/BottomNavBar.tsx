@@ -28,7 +28,8 @@ export function BottomNavBar() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-background/95 backdrop-blur-md md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/60 backdrop-blur-lg md:hidden"
+      style={{ boxShadow: 'var(--shadow-nav)' }}
       aria-label={t('nav.bottomNavigation', 'Bottom navigation')}
     >
       <div className="mx-auto flex w-full max-w-lg items-center justify-around px-2 py-2">
@@ -39,12 +40,12 @@ export function BottomNavBar() {
             className={({ isActive }) =>
               [
                 'flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-colors min-w-0',
-                isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
+                isActive ? 'text-foreground' : 'text-nav-inactive hover:text-foreground',
               ].join(' ')
             }
           >
             <Icon className="w-5 h-5" />
-            <span className="text-[10px] font-semibold tracking-wide truncate">
+            <span className="text-[10px] font-semibold tracking-wide truncate font-display">
               {t(label, fallback)}
             </span>
           </NavLink>

@@ -19,7 +19,7 @@ export default function NoApplicantRescueScreen() {
   return (
     <DetailTemplate testID="SCR-CUST-026">
       <View className="items-center py-xl gap-lg">
-        <Lightbulb size={48} color={colors.secondary} />
+        <Lightbulb size={24} color={colors.secondary} />
         <Text className="text-heading font-semibold text-primary-deep text-center">
           {t('customer.rescue.headline')}
         </Text>

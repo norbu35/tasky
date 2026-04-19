@@ -145,7 +145,7 @@ export function AdminUsersPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">{t('admin.users.title', 'Users')}</h1>
+      <h1 className="text-2xl font-bold font-display">{t('admin.users.title', 'Users')}</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>

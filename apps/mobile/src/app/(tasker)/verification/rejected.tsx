@@ -20,7 +20,7 @@ export default function RejectedScreen() {
         className="w-18 h-18 rounded-full justify-center items-center mb-xl"
         style={{ backgroundColor: `${colors.danger}1A` }}
       >
-        <AlertTriangle size={48} color={colors.danger} />
+        <AlertTriangle size={24} color={colors.danger} />
       </View>
       <Text className="text-title font-bold text-danger text-center">
         {t('tasker.verification.rejectedTitle')}

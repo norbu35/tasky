@@ -29,7 +29,7 @@ export function PriceTag({ amount, size = 'md', testID, className }: PriceTagPro
   return (
     <Text
       style={{ fontSize: fontSizeMap[size] }}
-      className={cn('text-secondary font-sans-bold', className)}
+      className={cn('text-sun-light font-display-bold', className)}
       testID={testID}
       accessibilityLabel={`${formatAmount(amount)} tugrik`}
     >

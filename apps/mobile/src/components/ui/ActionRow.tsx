@@ -71,10 +71,10 @@ export function ActionRow({
       ) : value ? (
         <View className="flex-row items-center">
           <Text className="mr-xs text-body text-text-secondary">{value}</Text>
-          {isInteractive ? <ChevronRight size={20} color={colors.navInactive} /> : null}
+          {isInteractive ? <ChevronRight size={16} color={colors.textTertiary} /> : null}
         </View>
       ) : isInteractive ? (
-        <ChevronRight size={20} color={colors.navInactive} />
+        <ChevronRight size={16} color={colors.textTertiary} />
       ) : null}
     </Touchable>
   );

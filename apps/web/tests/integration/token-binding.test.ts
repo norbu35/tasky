@@ -17,17 +17,17 @@ describe('Token Binding', () => {
     const tailwindConfigSource = readFileSync(resolve(process.cwd(), 'tailwind.config.ts'), 'utf8');
 
     expect(stylesSource).toContain("@import '@tasky/design-tokens/tokens.css'");
-    expect(stylesSource).toContain('--background: var(--tasky-color-background);');
-    expect(stylesSource).toContain('--text-secondary: var(--tasky-color-text-secondary);');
-    expect(sharedTokenSource).toContain('--tasky-color-primary:');
+    expect(stylesSource).toContain('--background: var(--color-background);');
+    expect(stylesSource).toContain('--text-secondary: var(--color-text-secondary);');
+    expect(sharedTokenSource).toContain('--color-primary:');
     expect(tailwindConfigSource).toContain('webTokens');
-    expect(tailwindConfigSource).toContain("background: 'hsl(var(--background))'");
+    expect(tailwindConfigSource).toContain("background: 'hsl(var(--color-background))'");
   });
 
   it('TID-TASK-115-WEB-TOKEN-PLATFORM-OUTPUTS derive web bindings from the canonical semantic graph', () => {
     expect(webTokens.colors.primary.hsl).toBe(semanticTokens.colors.primary.hsl);
-    expect(webTokens.cssVariables['--tasky-color-primary']).toBe(semanticTokens.colors.primary.hsl);
-    expect(webTokens.cssVariables['--tasky-font-family-sans']).toBe(
+    expect(webTokens.cssVariables['--color-primary']).toBe(semanticTokens.colors.primary.hsl);
+    expect(webTokens.cssVariables['--font-family-sans']).toBe(
       semanticTokens.typography.families.sans.web,
     );
     expect(webTokens.spacing.lg).toBe('16px');

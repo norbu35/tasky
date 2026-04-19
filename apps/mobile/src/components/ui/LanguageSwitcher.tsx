@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 
 import { elevations } from '../../design/elevations';
 import { mobileTheme } from '../../design/tokenAdapter';
@@ -55,7 +55,7 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
         </Text>
       </Pressable>
 
-      <View style={{ width: StyleSheet.hairlineWidth, backgroundColor: colors.border }} />
+      <View className="w-px bg-border" />
 
       <Pressable
         style={({ pressed }) => [

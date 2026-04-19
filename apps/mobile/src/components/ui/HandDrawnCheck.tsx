@@ -2,9 +2,9 @@ import { CheckCircle } from 'lucide-react-native';
 import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-import { animationPresets } from '../../design/animations';
+import { springs } from '../../design/animations';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
@@ -30,10 +30,7 @@ export function HandDrawnCheck({
 
   useEffect(() => {
     if (animated) {
-      scale.value = withTiming(1, {
-        duration: animationPresets.celebration.duration,
-        easing: animationPresets.celebration.easing,
-      });
+      scale.value = withSpring(1, springs.emphasis);
     }
   }, [animated, scale]);
 
@@ -49,7 +46,7 @@ export function HandDrawnCheck({
       accessibilityRole="image"
     >
       <View className={cn(className)}>
-        <CheckCircle size={size} color={color} />
+        <CheckCircle size={size} color={color} strokeWidth={3} />
       </View>
     </Animated.View>
   );

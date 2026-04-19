@@ -24,7 +24,7 @@ export function ReviewHardLock({ bookingId }: ReviewHardLockProps) {
   return (
     <View style={styles.container} testID="review-hard-lock">
       <View style={styles.iconShell}>
-        <Lock size={30} color={colors.primary} />
+        <Lock size={24} color={colors.primary} />
       </View>
       <Text style={styles.title}>{t('shared.review.hardLockTitle')}</Text>
       <Text style={styles.body}>{t('ReviewHardLock.copy1')}</Text>

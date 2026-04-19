@@ -45,7 +45,7 @@ export function SplitCard({
     opacity.value = withInteractiveSpring(1);
   };
 
-  const containerClassName = cn('rounded-lg overflow-hidden', className);
+  const containerClassName = cn('rounded-md overflow-hidden', className);
 
   const Wrapper = onPress ? AnimatedPressable : View;
   const wrapperProps = onPress

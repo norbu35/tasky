@@ -110,8 +110,8 @@ function StarRatingInput({
           >
             <Star
               size={STAR_SIZE}
-              color={isActive ? colors.secondary : colors.chipInactive}
-              fill={isActive ? colors.secondary : 'none'}
+              color={isActive ? colors.sunLight : colors.chipInactive}
+              fill={isActive ? colors.sunLight : 'none'}
             />
           </Touchable>
         );
@@ -213,7 +213,7 @@ export default function ReviewFormScreen() {
             accessibilityRole="button"
             accessibilityLabel={t('common.close')}
           >
-            <ArrowLeft size={22} color={colors.primaryDeep} />
+            <ArrowLeft size={20} color={colors.primaryDeep} />
           </Touchable>
           <Text
             className="flex-1 text-title font-sans-bold text-primary-deep"
@@ -249,7 +249,7 @@ export default function ReviewFormScreen() {
                   className="w-20 h-20 rounded-full items-center justify-center bg-muted"
                   style={{ borderRadius: radius.full }}
                 >
-                  <CheckCircle size={34} color={colors.primary} fill={colors.verified} />
+                  <CheckCircle size={24} color={colors.primary} fill={colors.verified} />
                 </View>
                 <Text className="text-title font-sans-bold text-primary-deep">
                   {t('shared.review.successTitle')}

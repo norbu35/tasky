@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View, Alert } from 'react-native';
 
 import { Button, FormField, Input } from '../../../components/ui';
+import { elevations } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import {
   DEV_LOGIN_CUSTOMER_PHONE,
@@ -162,8 +163,9 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   fbButton: {
-    backgroundColor: colors.accent, // Facebook-style CTA
+    backgroundColor: colors.foreground,
     marginBottom: spacing.xl,
+    ...elevations.card,
   },
   devButton: {
     marginTop: spacing['2xl'],
@@ -185,8 +187,9 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     marginHorizontal: spacing.md,
-    color: colors.mutedForeground,
+    color: colors.textTertiary,
     fontWeight: '500',
+    letterSpacing: 0.075,
   },
   actions: {
     marginTop: spacing.xl,
@@ -197,6 +200,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   backButton: {
-    marginTop: 8,
+    marginTop: spacing.xs,
   },
 });

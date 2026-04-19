@@ -1,10 +1,8 @@
-import { BlurView } from 'expo-blur';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View, type LayoutChangeEvent } from 'react-native';
 
 import { screenLayout } from '../../design/screenLayout';
-import { mobileTheme } from '../../design/tokenAdapter';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 import { Button } from '../ui/Button';
 
@@ -156,35 +154,27 @@ export function DetailTemplate({
           testID={testID ? `${testID}-bottom-bar` : undefined}
           insideTabNavigator={insideTabNavigator}
         >
-          <View onLayout={handleActionBarLayout}>
-            {/* BlurView does not reliably accept className in NativeWind v4 — kept imperative */}
-            <BlurView
-              intensity={40}
-              tint="light"
-              style={{
-                padding: screenLayout.actions.barPadding,
-                borderRadius: mobileTheme.radius.lg,
-                overflow: 'hidden',
-              }}
-            >
-              {secondaryCtaLabel && secondaryCtaOnPress && (
-                <Button
-                  label={secondaryCtaLabel}
-                  variant="outline"
-                  onPress={secondaryCtaOnPress}
-                  style={{ alignSelf: 'stretch', marginBottom: screenLayout.actions.buttonGap }}
-                  testID={testID ? `${testID}-secondary-cta` : undefined}
-                />
-              )}
+          <View
+            onLayout={handleActionBarLayout}
+            style={{ padding: screenLayout.actions.barPadding }}
+          >
+            {secondaryCtaLabel && secondaryCtaOnPress && (
               <Button
-                label={ctaLabel}
-                onPress={ctaOnPress}
-                isLoading={ctaLoading}
-                disabled={ctaDisabled}
-                style={{ alignSelf: 'stretch' }}
-                testID={testID ? `${testID}-cta` : undefined}
+                label={secondaryCtaLabel}
+                variant="outline"
+                onPress={secondaryCtaOnPress}
+                style={{ alignSelf: 'stretch', marginBottom: screenLayout.actions.buttonGap }}
+                testID={testID ? `${testID}-secondary-cta` : undefined}
               />
-            </BlurView>
+            )}
+            <Button
+              label={ctaLabel}
+              onPress={ctaOnPress}
+              isLoading={ctaLoading}
+              disabled={ctaDisabled}
+              style={{ alignSelf: 'stretch' }}
+              testID={testID ? `${testID}-cta` : undefined}
+            />
           </View>
         </StickyActionBar>
       )}

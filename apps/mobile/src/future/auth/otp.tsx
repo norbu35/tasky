@@ -146,7 +146,7 @@ export default function OtpScreen() {
           })}
           className="self-center flex-row items-center gap-sm py-sm px-md"
         >
-          <RefreshCw size={12} color={isExpired ? colors.primaryDeep : colors.mutedForeground} />
+          <RefreshCw size={16} color={isExpired ? colors.primaryDeep : colors.mutedForeground} />
           <Text
             className="text-label font-sans-semibold"
             style={{ color: isExpired ? colors.primaryDeep : colors.mutedForeground }}
@@ -180,7 +180,7 @@ export default function OtpScreen() {
               backgroundColor: colors.card,
             }}
           >
-            <ShieldCheck size={22} color={colors.primaryDeep} />
+            <ShieldCheck size={20} color={colors.primaryDeep} />
           </View>
           <View className="flex-1 gap-xs">
             <Text className="text-label font-sans-bold" style={{ color: colors.primaryDeep }}>

@@ -56,7 +56,7 @@ export function CustomerTaskerProfilePage() {
         </CardHeader>
         <CardContent className="grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
           <div className="flex items-center gap-2">
-            <Star className="h-4 w-4 text-amber-500" />
+            <Star className="h-4 w-4 text-sun-light" />
             {t('customerPages.taskerProfile.ratingText', '4.9 rating from 37 jobs')}
           </div>
           <div className="flex items-center gap-2">

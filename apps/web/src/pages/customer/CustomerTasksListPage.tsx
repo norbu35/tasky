@@ -143,7 +143,7 @@ function TaskCard({ task, onOpen }: { task: Task; onOpen: () => void }) {
             <Badge variant={task.status === 'OPEN' ? 'default' : 'secondary'}>
               {t(`sharedPages.status.${task.status}`, task.status)}
             </Badge>
-            <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+            <span className="text-xs uppercase tracking-[0.075em] text-muted-foreground">
               {t('customerPages.tasksList.cardType', 'Customer task')}
             </span>
           </div>
@@ -160,7 +160,7 @@ function TaskCard({ task, onOpen }: { task: Task; onOpen: () => void }) {
           </div>
         </div>
         <div className="text-right">
-          <div className="text-lg font-semibold">
+          <div className="text-lg font-semibold font-display">
             {task.budget.toLocaleString()} {t('sharedPages.currencyMNT', 'MNT')}
           </div>
           <Button type="button" variant="outline" size="sm" className="mt-2" onClick={onOpen}>

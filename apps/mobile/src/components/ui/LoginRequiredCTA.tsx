@@ -33,11 +33,11 @@ export function LoginRequiredCTA({ message, testID, className }: LoginRequiredCT
           className="w-[100px] h-[100px] rounded-full justify-center items-center mb-6"
           style={{ backgroundColor: tint.primaryStrong }}
         >
-          <Lock color={mobileTheme.colors.primary} size={48} />
+          <Lock color={mobileTheme.colors.primary} size={24} />
         </View>
       </Reveal>
       <Reveal delay={60}>
-        <Text className="text-[24px] font-bold text-foreground mb-3 text-center">
+        <Text className="text-[24px] font-display-bold text-foreground mb-3 text-center">
           {t('auth.loginRequired') || t('LoginRequiredCTA.copy1')}
         </Text>
       </Reveal>

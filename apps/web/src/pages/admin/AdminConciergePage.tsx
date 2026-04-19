@@ -99,7 +99,9 @@ export function AdminConciergePage() {
   if (pageState === 'error') {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">{t('admin.concierge.title', 'Concierge Dispatch')}</h1>
+        <h1 className="text-2xl font-bold font-display">
+          {t('admin.concierge.title', 'Concierge Dispatch')}
+        </h1>
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
             <p className="text-destructive">
@@ -115,10 +117,12 @@ export function AdminConciergePage() {
   if (pageState === 'success' && booking) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">{t('admin.concierge.title', 'Concierge Dispatch')}</h1>
+        <h1 className="text-2xl font-bold font-display">
+          {t('admin.concierge.title', 'Concierge Dispatch')}
+        </h1>
         <Card>
           <CardContent className="p-6 space-y-2" data-testid="assignment-success">
-            <h2 className="text-lg font-semibold">
+            <h2 className="text-lg font-semibold font-display">
               {t('admin.concierge.assignmentSuccess', 'Assignment Successful')}
             </h2>
             <p>
@@ -136,7 +140,9 @@ export function AdminConciergePage() {
   if (pageState === 'loading' || pageState === 'idle') {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">{t('admin.concierge.title', 'Concierge Dispatch')}</h1>
+        <h1 className="text-2xl font-bold font-display">
+          {t('admin.concierge.title', 'Concierge Dispatch')}
+        </h1>
         <div data-testid="concierge-loading" className="space-y-3">
           {[1, 2, 3].map((i) => (
             <Card key={i}>
@@ -152,11 +158,13 @@ export function AdminConciergePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">{t('admin.concierge.title', 'Concierge Dispatch')}</h1>
+      <h1 className="text-2xl font-bold font-display">
+        {t('admin.concierge.title', 'Concierge Dispatch')}
+      </h1>
 
       {/* Section 1: Open Tasks */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">
+        <h2 className="text-lg font-semibold font-display">
           {t('admin.concierge.selectTask', 'Select an Open Task')}
         </h2>
         <div className="space-y-2">
@@ -184,7 +192,7 @@ export function AdminConciergePage() {
 
       {/* Section 2: Find a Tasker */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">
+        <h2 className="text-lg font-semibold font-display">
           {t('admin.concierge.findTasker', 'Find a Tasker')}
         </h2>
         <div className="flex gap-2">
@@ -225,7 +233,7 @@ export function AdminConciergePage() {
 
       {/* Section 3: Assignment Form */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">
+        <h2 className="text-lg font-semibold font-display">
           {t('admin.concierge.assignmentForm', 'Assignment')}
         </h2>
         <Input

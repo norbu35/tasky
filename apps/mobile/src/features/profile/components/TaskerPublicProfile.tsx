@@ -71,7 +71,7 @@ export function TaskerPublicProfile() {
         </Pressable>
         <Text style={styles.headerTitle}>{t('profile.title')}</Text>
         <Pressable style={styles.headerButton}>
-          <SlidersHorizontal size={18} color={colors.foreground} />
+          <SlidersHorizontal size={20} color={colors.textTertiary} />
         </Pressable>
       </View>
 
@@ -100,7 +100,7 @@ export function TaskerPublicProfile() {
         </View>
 
         {/* Stats Grid */}
-        <View style={styles.statsRow}>
+        <View className="flex-row gap-3">
           <StatCard value={`${profile.completed_tasks ?? 0}+`} label={t('profile.tasks')} />
           <StatCard value={`${profile.is_pro ? 'Pro' : '-'}`} label={t('profile.response')} />
           <StatCard
@@ -239,12 +239,6 @@ const styles = StyleSheet.create({
     color: colors.trustMuted,
   },
 
-  // Stats
-  statsRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-
   // Sections
   section: {
     gap: 12,
@@ -299,7 +293,7 @@ const styles = StyleSheet.create({
     fontSize: typography.subtitle,
     fontWeight: '700',
     color: colors.primaryForeground,
-    letterSpacing: 0.9,
+    letterSpacing: 1.35,
     textTransform: 'uppercase',
   },
 });

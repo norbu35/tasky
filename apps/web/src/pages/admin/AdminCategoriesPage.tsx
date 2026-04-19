@@ -512,7 +512,9 @@ export function AdminCategoriesPage() {
   if (loading) {
     return (
       <div data-testid="categories-loading" className="space-y-4">
-        <h1 className="text-2xl font-bold">{t('admin.categories.title', 'Categories')}</h1>
+        <h1 className="text-2xl font-bold font-display">
+          {t('admin.categories.title', 'Categories')}
+        </h1>
         {[1, 2, 3].map((i) => (
           <Card key={i}>
             <CardContent className="flex items-center justify-between p-6">
@@ -532,7 +534,9 @@ export function AdminCategoriesPage() {
   if (error) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">{t('admin.categories.title', 'Categories')}</h1>
+        <h1 className="text-2xl font-bold font-display">
+          {t('admin.categories.title', 'Categories')}
+        </h1>
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
             <p className="text-destructive">
@@ -548,7 +552,9 @@ export function AdminCategoriesPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('admin.categories.title', 'Categories')}</h1>
+        <h1 className="text-2xl font-bold font-display">
+          {t('admin.categories.title', 'Categories')}
+        </h1>
         <Button onClick={handleCreate}>{t('admin.categories.create', 'Create Category')}</Button>
       </div>
 

@@ -16,7 +16,7 @@ const HELP_SURFACE = {
   searchBarHeight: 44,
   headerHeight: 56,
   faqIconSize: 20,
-  searchIconSize: 18,
+  searchIconSize: 16,
   loadingRows: 6,
   errorVisual: {
     canvas: 132,
@@ -461,10 +461,7 @@ export default function HelpCenterScreen() {
           >
             {visibleSections.map((section) => (
               <View key={section.id} className="mb-xl">
-                <Text
-                  className="text-subtitle font-sans-semibold mb-md"
-                  style={{ color: colors.primaryDeep }}
-                >
+                <Text className="text-[13px] font-display-bold text-primary-deep mb-md">
                   {section.title}
                 </Text>
                 {section.items.map((item) => (

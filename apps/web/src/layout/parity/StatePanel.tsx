@@ -20,8 +20,8 @@ type StatePanelProps = {
 
 const toneStyles: Record<NonNullable<StatePanelProps['tone']>, string> = {
   default: 'border-border/60 bg-card',
-  muted: 'border-border/60 bg-muted/30',
-  warning: 'border-amber-200 bg-amber-50 text-amber-950',
+  muted: 'border-border/60 bg-muted/30 text-text-secondary',
+  warning: 'border-sun-light/60 bg-sun-wash/40 text-foreground',
   destructive: 'border-destructive/30 bg-destructive/5 text-destructive-foreground',
 };
 
@@ -38,7 +38,7 @@ export function StatePanel({
       <CardHeader className="space-y-4">
         {icon ? <div className="flex items-center gap-3">{icon}</div> : null}
         <div className="space-y-1">
-          <CardTitle>{title}</CardTitle>
+          <CardTitle className="font-display">{title}</CardTitle>
           {description ? <CardDescription>{description}</CardDescription> : null}
         </div>
       </CardHeader>

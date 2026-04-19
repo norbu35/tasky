@@ -123,7 +123,7 @@ export default function TaskDetailScreen() {
                 </Text>
                 {task.customer.rating_avg > 0 && (
                   <View className="flex-row items-center gap-xs">
-                    <Star size={14} color={colors.accent} fill={colors.accent} />
+                    <Star size={16} color={colors.accent} fill={colors.accent} />
                     <Text className="text-label font-sans-bold text-foreground">
                       {task.customer.rating_avg.toFixed(1)}
                     </Text>

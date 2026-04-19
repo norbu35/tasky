@@ -158,7 +158,7 @@ function BookingCard({
 
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center gap-xs flex-1">
-          <CalendarDays size={14} color={colors.textSecondary} />
+          <CalendarDays size={16} color={colors.textSecondary} />
           <Text className="text-caption text-text-secondary flex-1">{schedule ?? '—'}</Text>
         </View>
         <PriceTag amount={booking.task?.budget ?? 0} size="sm" />
@@ -210,7 +210,7 @@ function EmptyState({ onPress }: { onPress: () => void }) {
   return (
     <View className="items-center gap-md py-2xl px-xl">
       <View className="w-16 h-16 rounded-lg items-center justify-center bg-muted">
-        <ClipboardList size={28} color={colors.secondary} />
+        <ClipboardList size={24} color={colors.secondary} />
       </View>
       <Text className="text-title font-bold text-primary-deep text-center">
         {t('customer.bookings.emptyTitle')}
@@ -277,7 +277,7 @@ export default function BookingsListScreen() {
             style={{ width: bookingList.headerIconBox, height: bookingList.headerIconBox }}
             accessibilityRole="button"
           >
-            <Menu size={22} color={colors.primaryDeep} />
+            <Menu size={20} color={colors.primaryDeep} />
           </Touchable>
           <Text className="flex-1 mx-md text-subtitle font-bold text-primary-deep">
             {t('customer.bookings.pageTitle')}

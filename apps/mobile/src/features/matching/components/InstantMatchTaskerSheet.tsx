@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '../../../components/ui/Button';
-import { overlays } from '../../../design/elevations';
+import { elevations, overlays } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -80,6 +80,7 @@ export function InstantMatchTaskerSheet({
           testID="instant-match-accept"
           label={t('matching.instantMatch.acceptButton')}
           onPress={handleAccept}
+          style={elevations.fab}
         />
         <Button
           label={t('matching.instantMatch.declineButton')}
@@ -94,6 +95,7 @@ export function InstantMatchTaskerSheet({
 const styles = StyleSheet.create({
   scrim: { backgroundColor: overlays.sheet, justifyContent: 'flex-end' },
   sheet: {
+    ...elevations.elevated,
     backgroundColor: colors.background,
     borderTopLeftRadius: radius.lg,
     borderTopRightRadius: radius.lg,
@@ -115,7 +117,8 @@ const styles = StyleSheet.create({
   },
   description: { fontSize: typography.body, color: colors.textSecondary, textAlign: 'center' },
   card: {
-    backgroundColor: colors.muted,
+    ...elevations.card,
+    backgroundColor: colors.card,
     borderRadius: radius.md,
     padding: spacing.lg,
     gap: spacing.sm,

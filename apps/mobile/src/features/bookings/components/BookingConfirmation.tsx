@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.primaryDeep,
     textTransform: 'uppercase',
-    letterSpacing: 1,
+    letterSpacing: 0.9,
     marginBottom: spacing.xs,
   },
   taskTitle: {

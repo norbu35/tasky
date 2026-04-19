@@ -211,7 +211,7 @@ export default function ProfilePolishScreen() {
             className="self-start flex-row items-center gap-xs px-md py-xs rounded-full"
             style={{ backgroundColor: 'rgba(253, 206, 106, 0.24)' }}
           >
-            <Sparkles size={14} color={colors.secondary} />
+            <Sparkles size={16} color={colors.secondary} />
             <Text className="text-micro font-bold text-secondary" style={{ letterSpacing: 0.5 }}>
               {t('tasker.polish.aiPowered')}
             </Text>

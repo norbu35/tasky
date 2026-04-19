@@ -1,9 +1,12 @@
+import { BlurView } from 'expo-blur';
 import React from 'react';
 import { View, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { elevations } from '../../design/elevations';
 import { screenLayout } from '../../design/screenLayout';
 import { cn } from '../../lib/cn';
+import { mobileTheme, withAlpha } from '../../design/tokenAdapter';
 
 type StickyActionBarProps = {
   children: React.ReactNode;
@@ -13,6 +16,8 @@ type StickyActionBarProps = {
   /** When true, adds tab bar clearance to bottom padding automatically. */
   insideTabNavigator?: boolean;
 };
+
+const { colors } = mobileTheme;
 
 export function StickyActionBar({
   children,
@@ -28,18 +33,25 @@ export function StickyActionBar({
 
   return (
     <View
-      className={cn('absolute left-0 right-0 bottom-0 px-action-bar pt-action-bar', className)}
+      className={cn('absolute left-0 right-0 bottom-0', className)}
       style={[
         {
           paddingBottom: insets.bottom + screenLayout.actions.barPadding + tabClearance,
           zIndex: 10,
-          elevation: 10,
         },
         style,
       ]}
       testID={testID}
     >
-      {children}
+      <BlurView
+        intensity={48}
+        tint="light"
+        className="absolute inset-0"
+        style={[{ backgroundColor: withAlpha(colors.background, 0.8) }]}
+      />
+      <View className="px-action-bar pt-action-bar" style={[elevations.navBar]}>
+        {children}
+      </View>
     </View>
   );
 }

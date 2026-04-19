@@ -12,20 +12,20 @@ const badgeVariants = cva('self-start px-md py-xs rounded-full', {
     status: {
       open: 'bg-status-open',
       assigned: 'bg-status-assigned',
-      completed: 'bg-verified',
-      cancelled: 'bg-muted',
+      completed: 'bg-status-completed',
+      cancelled: 'bg-status-cancelled',
       no_show: 'bg-danger',
     },
   },
 });
 
-const textVariants = cva('text-micro font-sans-bold uppercase tracking-widest', {
+const textVariants = cva('text-micro font-sans-bold uppercase tracking-[0.075em]', {
   variants: {
     status: {
       open: 'text-status-open-foreground',
       assigned: 'text-status-assigned-foreground',
-      completed: 'text-verified-foreground',
-      cancelled: 'text-muted-foreground',
+      completed: 'text-status-completed-foreground',
+      cancelled: 'text-status-cancelled-foreground',
       no_show: 'text-danger-foreground',
     },
   },

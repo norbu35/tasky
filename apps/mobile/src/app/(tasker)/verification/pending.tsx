@@ -16,7 +16,7 @@ export default function PendingScreen() {
   return (
     <View testID="SCR-TASK-007" className="flex-1 justify-center items-center px-lg">
       <View className="w-24 h-24 rounded-full bg-muted justify-center items-center mb-xl">
-        <Clock size={40} color={colors.accent} />
+        <Clock size={24} color={colors.accent} />
       </View>
       <Text className="text-title font-bold text-foreground text-center">
         {t('tasker.verification.pendingTitle')}
@@ -34,13 +34,13 @@ export default function PendingScreen() {
         testID="pending-progress"
       >
         <View className="flex-row items-center gap-sm">
-          <CircleCheck size={18} color={colors.verified} />
+          <CircleCheck size={20} color={colors.verified} />
           <Text className="text-body text-primary leading-relaxed">
             {t('tasker.verification.pendingSubmitted')}
           </Text>
         </View>
         <View className="flex-row items-center gap-sm">
-          <CircleDashed size={18} color={colors.accent} />
+          <CircleDashed size={20} color={colors.accent} />
           <Text className="text-body text-primary leading-relaxed">
             {t('tasker.verification.pendingReviewing')}
           </Text>

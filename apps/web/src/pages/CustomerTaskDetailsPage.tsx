@@ -113,7 +113,7 @@ export function CustomerTaskDetailsPage() {
           <Button variant="ghost" onClick={() => navigate('/customer/tasks')}>
             <ChevronLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground truncate">
+          <h1 className="text-2xl font-bold font-display tracking-tight text-foreground truncate">
             {task.description}
           </h1>
         </div>
@@ -156,10 +156,10 @@ export function CustomerTaskDetailsPage() {
                   </div>
                 </div>
                 <div className="space-y-3 sm:text-right">
-                  <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">
+                  <div className="text-sm text-muted-foreground uppercase tracking-[0.075em] font-semibold">
                     {t('customerTaskDetails.budgetLabel', 'Budget')}
                   </div>
-                  <div className="text-2xl font-bold text-foreground">
+                  <div className="text-2xl font-bold font-display text-foreground">
                     ₮{task.budget.toLocaleString()}
                   </div>
                 </div>
@@ -168,14 +168,14 @@ export function CustomerTaskDetailsPage() {
           </div>
           <div className="lg:w-2/5">
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold mt-4 lg:mt-0">
+              <h2 className="text-xl font-semibold font-display mt-4 lg:mt-0">
                 {t('customerTaskDetails.applicantsTitle', 'Applicants')}
               </h2>
 
               {isAssigned ? (
                 <Card className="border-primary bg-primary/5">
                   <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-                    <UserCheck className="w-12 h-12 text-primary mb-4" />
+                    <UserCheck className="w-6 h-6 text-primary mb-4" />
                     <CardTitle className="mb-2">
                       {t('customerTaskDetails.taskAssignedTitle', 'Task is assigned')}
                     </CardTitle>
@@ -247,7 +247,7 @@ function ApplicationCard({
               <AvatarFallback>{application.tasker.full_name?.charAt(0) ?? 'T'}</AvatarFallback>
             </Avatar>
             <div>
-              <div className="font-semibold text-lg flex items-center gap-2">
+              <div className="font-semibold font-display text-lg flex items-center gap-2">
                 {application.tasker.full_name}
                 {application.tasker.is_pro && (
                   <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
@@ -257,7 +257,7 @@ function ApplicationCard({
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground mt-0.5">
                 <span className="flex items-center gap-1 font-medium text-foreground">
-                  <Star className="w-3.5 h-3.5 fill-primary text-primary" />
+                  <Star className="w-4 h-4 fill-primary text-primary" />
                   {application.tasker.rating_avg.toFixed(1)}
                 </span>
                 <span>•</span>

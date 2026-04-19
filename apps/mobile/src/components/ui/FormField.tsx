@@ -22,7 +22,7 @@ export function FormField({ label, helperText, errorText, children, className, s
       {hasError ? (
         <Text className="text-caption font-sans text-danger">{errorText}</Text>
       ) : helperText ? (
-        <Text className="text-caption font-sans text-muted-foreground">{helperText}</Text>
+        <Text className="text-caption font-sans text-text-tertiary">{helperText}</Text>
       ) : null}
     </View>
   );

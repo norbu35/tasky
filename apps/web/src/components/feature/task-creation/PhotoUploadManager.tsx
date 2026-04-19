@@ -101,7 +101,7 @@ export function PhotoUploadManager({
         {photoKeys.map((key, index) => (
           <div
             key={index}
-            className="relative h-24 w-24 rounded-md border border-border bg-muted flex flex-col items-center justify-center p-2 text-center overflow-hidden"
+            className="relative h-24 w-24 rounded-sm border border-border bg-muted flex flex-col items-center justify-center p-2 text-center overflow-hidden shadow-[var(--shadow-card)]"
           >
             <span className="text-[10px] text-muted-foreground w-full truncate break-all">
               {key.split('/').pop()}
@@ -109,12 +109,12 @@ export function PhotoUploadManager({
             <Button
               variant="secondary"
               size="sm"
-              className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 bg-red-500 hover:bg-red-600 text-white"
+              className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 bg-destructive hover:bg-destructive/90 text-destructive-foreground"
               onClick={() => removePhoto(index)}
               disabled={uploading}
               type="button"
             >
-              <X className="h-3 w-3" />
+              <X className="h-4 w-4" />
             </Button>
           </div>
         ))}

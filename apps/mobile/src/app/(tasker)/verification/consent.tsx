@@ -129,7 +129,7 @@ export default function ConsentScreen() {
           <Text className="text-body text-accent font-sans-medium">
             {t('tasker.verification.consentPrivacy')}
           </Text>
-          <ExternalLink size={18} color={colors.accent} />
+          <ExternalLink size={20} color={colors.accent} />
         </Touchable>
       </InsetScrollView>
 

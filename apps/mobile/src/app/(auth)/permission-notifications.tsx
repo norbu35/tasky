@@ -35,7 +35,7 @@ export default function PermissionNotificationsScreen() {
   return (
     <ScreenContainer testID="SCR-SHARED-009">
       <PermissionPrimer
-        icon={<Bell size={48} color={colors.primaryDeep} />}
+        icon={<Bell size={24} color={colors.primaryDeep} />}
         title={t('auth.permissions.notifications.title')}
         description={t('PermissionNotificationsScreen.copy1')}
         deniedMessage={t('auth.permissions.notifications.denied')}

@@ -116,7 +116,7 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
           style={styles.surface}
           pointerEvents="none"
         >
-          <Plus color={colors.primaryForeground} size={fabIconSize} />
+          <Plus color="#FFFFFF" size={fabIconSize} />
         </View>
       </Animated.View>
     </GestureDetector>
@@ -125,8 +125,8 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
 
 const styles = StyleSheet.create({
   surface: {
-    borderRadius: fabSize / 2,
-    backgroundColor: colors.primary,
+    borderRadius: 12,
+    backgroundColor: colors.sunLight,
     ...elevations.elevated,
   },
 });

@@ -1,4 +1,3 @@
-import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import { X } from 'lucide-react-native';
 import React, { useState } from 'react';
@@ -18,7 +17,7 @@ import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 import { Button } from '../ui/Button';
 import { ScreenHeader } from '../ui/ScreenHeader';
 
-const { colors, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 const BAR_HEIGHT = 6;
 
@@ -87,10 +86,7 @@ export function FormWizardTemplate({
           {Array.from({ length: totalSteps }).map((_, i) => (
             <View
               key={i}
-              className={cn(
-                'flex-1 rounded-md',
-                i <= currentStep ? 'bg-primary' : 'bg-chip-inactive',
-              )}
+              className={cn('flex-1 rounded-md', i <= currentStep ? 'bg-foreground' : 'bg-border')}
               style={{ height: BAR_HEIGHT }}
             />
           ))}
@@ -131,47 +127,40 @@ export function FormWizardTemplate({
         {!hideNext && (
           <StickyActionBar testID="wizard-bottom-bar">
             <View onLayout={handleActionBarLayout}>
-              {/* BlurView does not reliably accept className in NativeWind v4 — kept imperative */}
-              <BlurView
-                intensity={40}
-                tint="light"
-                style={{ borderRadius: radius.lg, overflow: 'hidden' }}
+              <View
+                style={{
+                  paddingTop: screenLayout.actions.barPadding,
+                }}
               >
-                <View
-                  style={{
-                    paddingTop: screenLayout.actions.barPadding,
-                  }}
-                >
-                  {showBackButton ? (
-                    <View className="flex-row gap-md">
-                      <Button
-                        label={t('wizard.back')}
-                        variant="outline"
-                        onPress={onBack}
-                        style={{ flex: 1 }}
-                        testID={testID ? `${testID}-back` : undefined}
-                      />
-                      <Button
-                        label={nextLabel ?? t('wizard.next')}
-                        onPress={onNext}
-                        disabled={nextDisabled}
-                        isLoading={nextLoading}
-                        style={{ flex: 2 }}
-                        testID={effectiveNextTestID}
-                      />
-                    </View>
-                  ) : (
+                {showBackButton ? (
+                  <View className="flex-row gap-md">
+                    <Button
+                      label={t('wizard.back')}
+                      variant="outline"
+                      onPress={onBack}
+                      style={{ flex: 1 }}
+                      testID={testID ? `${testID}-back` : undefined}
+                    />
                     <Button
                       label={nextLabel ?? t('wizard.next')}
                       onPress={onNext}
                       disabled={nextDisabled}
                       isLoading={nextLoading}
-                      style={{ alignSelf: 'stretch' }}
+                      style={{ flex: 2 }}
                       testID={effectiveNextTestID}
                     />
-                  )}
-                </View>
-              </BlurView>
+                  </View>
+                ) : (
+                  <Button
+                    label={nextLabel ?? t('wizard.next')}
+                    onPress={onNext}
+                    disabled={nextDisabled}
+                    isLoading={nextLoading}
+                    style={{ alignSelf: 'stretch' }}
+                    testID={effectiveNextTestID}
+                  />
+                )}
+              </View>
             </View>
           </StickyActionBar>
         )}

@@ -51,7 +51,7 @@ export default function TaskPostedSuccessScreen() {
               style={[{ backgroundColor: `${colors.verified}1A` }, animatedCheckStyle]}
             >
               <View className="w-24 h-24 rounded-full items-center justify-center">
-                <CheckCircle2 size={50} color={colors.verified} />
+                <CheckCircle2 size={24} color={colors.verified} />
               </View>
             </Animated.View>
             <View

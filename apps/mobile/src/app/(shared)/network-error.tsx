@@ -57,7 +57,7 @@ export default function NetworkErrorScreen() {
             backgroundColor: `${colors.danger}1A`,
           }}
         >
-          <WifiOff size={40} color={colors.danger} />
+          <WifiOff size={24} color={colors.danger} />
         </View>
         <Text className="text-title font-bold text-foreground text-center">{headline}</Text>
         <Text className="text-body text-text-secondary text-center mt-sm leading-6">

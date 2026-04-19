@@ -103,7 +103,7 @@ describe('SettingsScreen (SCR-SHARED-014)', () => {
     const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
     // Legal section header is rendered
-    expect(screen.getByText('ХУУЛИЙН МЭДЭЭЛЭЛ')).toBeTruthy();
+    expect(screen.getByText('Хуулийн мэдээлэл')).toBeTruthy();
     // Terms and Privacy are rendered within legal
     expect(screen.getByText('Үйлчилгээний нөхцөл')).toBeTruthy();
     expect(screen.getByText('Нууцлалын бодлого')).toBeTruthy();
@@ -121,9 +121,9 @@ describe('SettingsScreen (SCR-SHARED-014)', () => {
     render(<SettingsScreen />);
     // SectionList virtualizes, so first 3 section headers render; Danger Zone
     // is in the data but may be beyond the initial render window.
-    expect(screen.getByText('ТОХИРУУЛГА')).toBeTruthy();
-    expect(screen.getByText('БҮРТГЭЛ')).toBeTruthy();
-    expect(screen.getByText('ХУУЛИЙН МЭДЭЭЛЭЛ')).toBeTruthy();
+    expect(screen.getByText('Тохируулга')).toBeTruthy();
+    expect(screen.getByText('Бүртгэл')).toBeTruthy();
+    expect(screen.getByText('Хуулийн мэдээлэл')).toBeTruthy();
   });
 
   it('navigates to terms, privacy, and help screens from legal rows', () => {

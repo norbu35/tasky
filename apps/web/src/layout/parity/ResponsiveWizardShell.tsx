@@ -28,12 +28,12 @@ export function ResponsiveWizardShell({
       <section aria-labelledby={titleId} className={cn('space-y-5', className)}>
         <header className="space-y-3">
           {stepLabel ? (
-            <div className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+            <div className="text-xs font-semibold uppercase tracking-[0.075em] text-text-secondary">
               {stepLabel}
             </div>
           ) : null}
           <div className="space-y-1.5">
-            <h1 id={titleId} className="text-3xl font-semibold tracking-tight">
+            <h1 id={titleId} className="font-display text-3xl font-semibold tracking-tight">
               {title}
             </h1>
             {description ? (

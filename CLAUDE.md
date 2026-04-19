@@ -22,6 +22,36 @@ Requires the JetBrains IDE running with this project open and the Serena plugin 
 - `docs/maintenance/OPERATING_MODEL.md` — maintenance execution model and trusted gates
 - `docs/ARCHITECTURE.md` — system design and domain structure
 - `docs/API.yaml` — OpenAPI contract (source of truth for all clients)
+- `docs/design/DESIGN_SYSTEM.md` — canonical design system spec (Тэнгэр palette, typography, motion)
+- `docs/BRAND.md` — brand identity, voice, color roles, and logo principles
+
+## Design System
+
+The **Тэнгэр (Sky)** design system governs all UI across mobile and web.
+
+| Resource                          | Location                                     |
+| --------------------------------- | -------------------------------------------- |
+| Canonical spec                    | `docs/design/DESIGN_SYSTEM.md`               |
+| CSS custom properties (reference) | `packages/design-tokens/colors_and_type.css` |
+| Token source (web runtime)        | `packages/design-tokens/tokens.css`          |
+| Mobile tailwind config            | `apps/mobile/tailwind.config.ts`             |
+| Web tailwind config               | `apps/web/tailwind.config.ts`                |
+| SVG assets                        | `apps/mobile/assets/` · `apps/web/public/`   |
+| UI kit reference                  | `docs/design/ui_kits/mobile/`                |
+
+**Token naming — three-tier system (web):**
+
+| Tier          | Prefix       | Example                                 | Defined in                          |
+| ------------- | ------------ | --------------------------------------- | ----------------------------------- |
+| Primitive     | `--tenger-*` | `--tenger-ink`, `--tenger-shadow-nav`   | `packages/design-tokens/tokens.css` |
+| Semantic      | `--color-*`  | `--color-primary`, `--color-background` | `packages/design-tokens/tokens.css` |
+| shadcn bridge | unprefixed   | `--primary`, `--background`             | `apps/web/src/styles.css`           |
+
+- Tailwind utilities resolve through `--color-*` → Tailwind config → generated classes
+- Components use Tailwind classes (`bg-primary`, `text-foreground`) — never reference `--tenger-*` primitives directly
+- Shadows: `--shadow-*` aliases in `styles.css` bridge `--tenger-shadow-*` primitives; components use `var(--shadow-card)` etc.
+- Motion: `--duration-*` and `--easing-*` (no namespace prefix)
+- Mobile: NativeWind classes backed by `@tasky/design-tokens` native outputs (hex values, not HSL)
 
 ## Common Commands
 

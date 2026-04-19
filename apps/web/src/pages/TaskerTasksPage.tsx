@@ -34,7 +34,7 @@ function TaskerBookingCard({ task }: { task: Task }) {
           </Badge>
         </div>
         <CardDescription className="flex items-center gap-1 mt-1 text-xs">
-          <Calendar className="w-3 h-3" />
+          <Calendar className="w-4 h-4" />
           {new Date(task.scheduled_at).toLocaleDateString()}
         </CardDescription>
       </CardHeader>
@@ -108,7 +108,7 @@ export function TaskerTasksPage() {
       <div className="flex flex-col gap-6">
         <div className="flex justify-between items-end gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">
+            <h1 className="text-3xl font-bold font-display tracking-tight">
               {t('taskerTasks.title', 'My Bookings')}
             </h1>
             <p className="text-muted-foreground mt-1">

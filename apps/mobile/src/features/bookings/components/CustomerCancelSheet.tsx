@@ -5,12 +5,12 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
 import { Button } from '../../../components/ui/Button';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme, withAlpha } from '../../../design/tokenAdapter';
 import { mobileSurfaces } from '../../../design/surfaces';
 import { useCancelBooking } from '../hooks/useCancelBooking';
 
 const { colors, spacing, typography, radius } = mobileTheme;
-const dangerTint = `${colors.danger}1a`;
+const dangerTint = withAlpha(colors.danger, 0.1);
 
 export type CancelType = 'free_cancel' | 'late_cancel_warning' | 'late_cancel_incident_count';
 
@@ -82,7 +82,7 @@ export function CustomerCancelSheet({
     >
       <View style={styles.iconWrap}>
         <View style={styles.iconOuter}>
-          <AlertTriangle size={28} color={colors.danger} />
+          <AlertTriangle size={24} color={colors.danger} />
         </View>
       </View>
 

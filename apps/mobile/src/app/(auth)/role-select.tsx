@@ -118,7 +118,7 @@ export default function RoleSelectScreen() {
                 backgroundColor: colors.primaryDeep,
               }}
             >
-              <Check size={14} color={colors.primaryForeground} />
+              <Check size={16} color={colors.primaryForeground} />
             </View>
           ) : null}
         </View>

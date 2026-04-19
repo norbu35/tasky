@@ -11,7 +11,7 @@ export function GlobalErrorFallback({ error, resetErrorBoundary }: FallbackProps
     <ScreenFrame>
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-6 space-y-6">
         <div className="bg-destructive/10 p-4 rounded-full">
-          <AlertTriangle className="w-12 h-12 text-destructive" />
+          <AlertTriangle className="w-6 h-6 text-destructive" />
         </div>
 
         <div className="space-y-2 max-w-md">

@@ -2,7 +2,7 @@ const palette = {
   canvas: { hsl: '40 25% 97%', hex: '#F9F8F5' },
   ink: { hsl: '211.5 48% 23.3%', hex: '#1B3A5C' },
   surface: { hsl: '0 0% 100%', hex: '#FFFFFF' },
-  primaryDeep: { hsl: '212 55% 14%', hex: '#102638' },
+  inkDeep: { hsl: '212 55% 14%', hex: '#102638' },
   sun: { hsl: '42.9 74.8% 31.2%', hex: '#8B6914' },
   sky: { hsl: '199.6 38.9% 58.2%', hex: '#6BA3BE' },
   line: { hsl: '210 18% 82%', hex: '#C7D0D9' },
@@ -10,7 +10,7 @@ const palette = {
   danger: { hsl: '0 84% 60%', hex: '#EF4444' },
   trust: { hsl: '211 50% 42%', hex: '#3568A1' },
   trustMuted: { hsl: '211 30% 78%', hex: '#B3C4D6' },
-  subtleSurface: { hsl: '40 20% 94%', hex: '#F3F1EC' },
+  subtle: { hsl: '40 20% 94%', hex: '#F3F1EC' },
   mutedText: { hsl: '211 15% 40%', hex: '#576473' },
   statusOpen: { hsl: '40 18% 91%', hex: '#EDE9E2' },
   statusOpenForeground: { hsl: '211 12% 45%', hex: '#657381' },
@@ -21,6 +21,13 @@ const palette = {
   textSecondary: { hsl: '211 12% 42%', hex: '#5E6B78' },
   textTertiary: { hsl: '210 10% 55%', hex: '#808D99' },
   navInactive: { hsl: '210 12% 48%', hex: '#6C7B89' },
+  sunLight: { hsl: '38 52% 50%', hex: '#C49A3C' },
+  sunWash: { hsl: '42 97% 71%', hex: '#FDCE6A' },
+  skySoft: { hsl: '205 51% 80%', hex: '#ABD1E8' },
+  statusCompleted: { hsl: '160 34% 42%', hex: '#469178' },
+  statusCompletedForeground: { hsl: '0 0% 100%', hex: '#FFFFFF' },
+  statusCancelled: { hsl: '36 20% 94%', hex: '#F3F1EC' },
+  statusCancelledForeground: { hsl: '210 13% 39%', hex: '#576473' },
 } as const;
 
 const spacingScale = {
@@ -123,6 +130,20 @@ const shadows = {
     opacity: 0.04,
     radius: 24,
     elevation: 4,
+  },
+  fab: {
+    color: '#000000',
+    offset: { width: 0, height: 4 },
+    opacity: 0.1,
+    radius: 6,
+    elevation: 4,
+  },
+  deep: {
+    color: '#000000',
+    offset: { width: 0, height: 25 },
+    opacity: 0.25,
+    radius: 50,
+    elevation: 24,
   },
 } as const;
 

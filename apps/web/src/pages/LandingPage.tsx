@@ -118,7 +118,7 @@ function AnimatedTaskFeed() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="flex items-center gap-4 rounded-xl border border-white/20 bg-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-md px-5 py-4 hover:bg-white/20 transition-colors cursor-pointer"
+            className="flex items-center gap-4 rounded-xl border border-white/20 bg-white/10 shadow-[var(--shadow-elevated)] backdrop-blur-md px-5 py-4 hover:bg-white/20 transition-colors cursor-pointer"
           >
             <div
               className={`w-3 h-3 rounded-full flex-shrink-0 ${CATEGORY_COLORS[task.category]}`}
@@ -129,8 +129,8 @@ function AnimatedTaskFeed() {
                 {task.price} · {task.district}
               </p>
             </div>
-            <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full flex items-center gap-1 flex-shrink-0 backdrop-blur-md">
-              <BadgeCheck className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-bold bg-verified/10 text-verified border border-verified/20 px-2.5 py-1 rounded-full flex items-center gap-1 flex-shrink-0 backdrop-blur-md">
+              <BadgeCheck className="w-4 h-4" />
               {t('landing.verified', 'Verified')}
             </span>
           </motion.div>
@@ -150,7 +150,7 @@ export function LandingPage() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/5 backdrop-blur-xl border-b border-white/[0.02] shadow-sm px-6 py-4 transition-all duration-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Shield className="w-8 h-8 text-accent" />
+            <Shield className="w-6 h-6 text-accent" />
             <span className="text-2xl font-display font-bold tracking-tight text-primary-foreground">
               Tasky
             </span>
@@ -170,7 +170,7 @@ export function LandingPage() {
 
       <main className="pb-20">
         {/* Hero Section — Dynamic Premium Gradient Mesh */}
-        <section className="relative min-h-screen flex items-center bg-[#071318] overflow-hidden">
+        <section className="relative min-h-screen flex items-center bg-primary-deep overflow-hidden">
           {/* Animated Background Mesh */}
           <div className="absolute inset-0 z-0">
             <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary rounded-full blur-[120px] mix-blend-screen opacity-40 animate-pulse" />
@@ -259,7 +259,7 @@ export function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Deep Cleaning */}
               <div
-                className="md:col-span-2 group relative overflow-hidden rounded-xl aspect-[16/9] md:aspect-auto md:h-[500px] bg-card transition-all hover:shadow-[0_20px_50px_rgba(59,155,122,0.15)] hover:-translate-y-1 cursor-pointer"
+                className="md:col-span-2 group relative overflow-hidden rounded-xl aspect-[16/9] md:aspect-auto md:h-[500px] bg-card transition-all hover:shadow-[var(--shadow-deep)] hover:-translate-y-1 cursor-pointer"
                 onClick={() => navigate('/auth')}
               >
                 <img
@@ -269,7 +269,7 @@ export function LandingPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/40 to-transparent"></div>
                 <div className="absolute bottom-0 left-0 p-8 sm:p-10 w-full">
-                  <h3 className="text-3xl font-bold text-primary-foreground mb-2">
+                  <h3 className="text-3xl font-bold font-display text-primary-foreground mb-2">
                     {t('landing.featCleaning', 'Deep Cleaning')}
                   </h3>
                   <p className="text-primary-foreground/80 max-w-sm mb-6">
@@ -278,7 +278,7 @@ export function LandingPage() {
                       'Apartments, offices, move-out cleans. Set your budget, pick a time, get matched.',
                     )}
                   </p>
-                  <span className="text-accent font-bold tracking-widest uppercase text-sm flex items-center gap-2">
+                  <span className="text-accent font-bold tracking-[0.075em] uppercase text-sm flex items-center gap-2">
                     {t('landing.postTask', 'Post a Task')}{' '}
                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
                   </span>
@@ -287,7 +287,7 @@ export function LandingPage() {
 
               {/* Handyman & Repairs */}
               <div
-                className="group relative overflow-hidden rounded-xl bg-card hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-1 cursor-pointer border border-border/50"
+                className="group relative overflow-hidden rounded-xl bg-card hover:shadow-[var(--shadow-elevated)] transition-all hover:-translate-y-1 cursor-pointer border border-border/50"
                 onClick={() => navigate('/auth')}
               >
                 <div className="p-8 sm:p-10 h-full flex flex-col justify-between">
@@ -295,7 +295,7 @@ export function LandingPage() {
                     <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-8">
                       <Wrench className="w-6 h-6 text-accent" />
                     </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-4">
+                    <h3 className="text-2xl font-bold font-display text-foreground mb-4">
                       {t('landing.featRepair', 'Handyman & Repairs')}
                     </h3>
                     <p className="text-muted-foreground text-sm leading-relaxed mb-8">
@@ -315,12 +315,12 @@ export function LandingPage() {
 
               {/* Electrician */}
               <div
-                className="group relative overflow-hidden rounded-xl bg-card border border-border/50 text-foreground hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-1 cursor-pointer"
+                className="group relative overflow-hidden rounded-xl bg-card border border-border/50 text-foreground hover:shadow-[var(--shadow-elevated)] transition-all hover:-translate-y-1 cursor-pointer"
                 onClick={() => navigate('/auth')}
               >
                 <div className="p-8 sm:p-10">
-                  <Wrench className="w-10 h-10 mb-6 text-accent" />
-                  <h3 className="text-2xl font-bold mb-4">
+                  <Wrench className="w-6 h-6 mb-6 text-accent" />
+                  <h3 className="text-2xl font-bold font-display mb-4">
                     {t('landing.featElectric', 'Electrician')}
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed mb-10">
@@ -330,10 +330,10 @@ export function LandingPage() {
                     )}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-wider">
+                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-[0.075em]">
                       {t('landing.tagVerified', 'ID Verified')}
                     </span>
-                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-wider">
+                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-[0.075em]">
                       {t('landing.tagFixed', 'Fixed Price')}
                     </span>
                   </div>
@@ -342,12 +342,12 @@ export function LandingPage() {
 
               {/* Movers & Help */}
               <div
-                className="md:col-span-2 group relative overflow-hidden rounded-xl bg-primary text-primary-foreground hover:shadow-[0_20px_50px_rgba(59,155,122,0.2)] transition-all hover:-translate-y-1 cursor-pointer"
+                className="md:col-span-2 group relative overflow-hidden rounded-xl bg-primary text-primary-foreground hover:shadow-[var(--shadow-deep)] transition-all hover:-translate-y-1 cursor-pointer"
                 onClick={() => navigate('/auth')}
               >
                 <div className="p-8 sm:p-10 grid md:grid-cols-2 gap-8 items-center h-full">
                   <div>
-                    <h3 className="text-3xl font-black tracking-tighter uppercase mb-4">
+                    <h3 className="text-3xl font-black tracking-[0.075em] uppercase mb-4">
                       {t('landing.featMoving', 'Movers & Help')}
                     </h3>
                     <p className="text-primary-foreground/80 mb-6 leading-relaxed">
@@ -400,7 +400,7 @@ export function LandingPage() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
-                className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-[0_30px_60px_rgba(59,155,122,0.1)] ring-1 ring-inset ring-primary/10 relative overflow-hidden transition-shadow hover:shadow-[0_30px_60px_rgba(59,155,122,0.15)]"
+                className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-[var(--shadow-deep)] ring-1 ring-inset ring-primary/10 relative overflow-hidden transition-shadow hover:shadow-[var(--shadow-deep)]"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[100px] -z-0" />
                 <div className="relative z-10 space-y-3 mb-8">
@@ -479,7 +479,7 @@ export function LandingPage() {
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
-                className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-[0_30px_60px_rgba(242,166,90,0.1)] ring-1 ring-inset ring-secondary/20 relative overflow-hidden lg:mt-12 transition-shadow hover:shadow-[0_30px_60px_rgba(242,166,90,0.15)]"
+                className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-[var(--shadow-deep)] ring-1 ring-inset ring-secondary/20 relative overflow-hidden lg:mt-12 transition-shadow hover:shadow-[var(--shadow-deep)]"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-bl-[100px] -z-0" />
                 <div className="relative z-10 space-y-3 mb-8">
@@ -557,7 +557,7 @@ export function LandingPage() {
         </section>
 
         {/* Trust & Safety Section — Split Screen */}
-        <section className="w-full border-t border-border/30 bg-gradient-to-br from-[#0A1A1F] via-primary-deep to-primary-deep relative overflow-hidden">
+        <section className="w-full border-t border-border/30 bg-gradient-to-br from-primary-deep via-primary-deep to-primary-deep relative overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(105deg,transparent_20%,rgba(255,255,255,0.05)_35%,rgba(255,255,255,0.05)_40%,transparent_55%)] pointer-events-none" />
           <div className="grid md:grid-cols-2 min-h-[500px] relative z-10">
             {/* Left — The Pain */}
@@ -569,7 +569,7 @@ export function LandingPage() {
               className="text-primary-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28"
             >
               <div className="relative z-10">
-                <p className="text-sm font-bold uppercase tracking-widest text-accent mb-8">
+                <p className="text-sm font-bold uppercase tracking-[0.075em] text-accent mb-8">
                   {t('landing.trustReality', 'The reality')}
                 </p>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-6 text-white">
@@ -590,7 +590,7 @@ export function LandingPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
-              className="bg-background text-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28 relative z-10 lg:-ml-6 shadow-[-20px_0_40px_rgba(0,0,0,0.1)] rounded-l-3xl lg:rounded-l-[3rem]"
+              className="bg-background text-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28 relative z-10 lg:-ml-6 shadow-[var(--shadow-elevated)] rounded-l-3xl lg:rounded-l-[3rem]"
             >
               <h3 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-10">
                 {t('landing.trustRelief', 'Or just use Tasky.')}
@@ -643,7 +643,7 @@ export function LandingPage() {
 
               <Button
                 size="lg"
-                className="w-fit h-14 px-10 text-lg font-bold shadow-xl shadow-primary/20 bg-gradient-to-r from-primary-deep to-primary"
+                className="w-fit h-14 px-10 text-lg font-bold shadow-[var(--shadow-fab)] bg-gradient-to-r from-primary-deep to-primary"
                 onClick={() => navigate('/auth')}
               >
                 {t('landing.joinTrust', 'Join the Trusted Network')}
@@ -695,7 +695,7 @@ export function LandingPage() {
                   className="flex gap-4 sm:gap-5 bg-card/60 rounded-2xl p-5 sm:p-6 border border-border/50 hover:bg-card hover:shadow-sm transition-all items-start"
                 >
                   <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-verified/10 text-verified rounded-xl flex items-center justify-center">
-                    <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7" />
+                    <ShieldCheck className="w-6 h-6" />
                   </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-display font-bold mb-1">
@@ -719,7 +719,7 @@ export function LandingPage() {
                   className="flex gap-4 sm:gap-5 bg-card/60 rounded-2xl p-5 sm:p-6 border border-border/50 hover:bg-card hover:shadow-sm transition-all items-start"
                 >
                   <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-accent/10 text-accent rounded-xl flex items-center justify-center">
-                    <Star className="w-6 h-6 sm:w-7 sm:h-7" />
+                    <Star className="w-6 h-6" />
                   </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-display font-bold mb-1">
@@ -743,7 +743,7 @@ export function LandingPage() {
                   className="flex gap-4 sm:gap-5 bg-card/60 rounded-2xl p-5 sm:p-6 border border-border/50 hover:bg-card hover:shadow-sm transition-all items-start"
                 >
                   <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-secondary/10 text-secondary rounded-xl flex items-center justify-center">
-                    <Shield className="w-6 h-6 sm:w-7 sm:h-7" />
+                    <Shield className="w-6 h-6" />
                   </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-display font-bold mb-1">
@@ -826,7 +826,7 @@ export function LandingPage() {
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-6">
             <div className="flex items-center gap-2 text-foreground">
-              <Shield className="w-8 h-8 text-primary" />
+              <Shield className="w-6 h-6 text-primary" />
               <span className="font-display font-bold text-2xl tracking-tight">Tasky</span>
             </div>
             <p className="text-sm leading-relaxed max-w-sm">
@@ -859,7 +859,7 @@ export function LandingPage() {
 
           {/* Services Column */}
           <div className="space-y-4">
-            <h4 className="text-foreground font-bold font-display tracking-wide uppercase text-sm">
+            <h4 className="text-foreground font-bold font-display tracking-[0.075em] uppercase text-sm">
               {t('landing.footerServices', 'Services')}
             </h4>
             <ul className="space-y-3 text-sm">
@@ -888,7 +888,7 @@ export function LandingPage() {
 
           {/* Company Column */}
           <div className="space-y-4">
-            <h4 className="text-foreground font-bold font-display tracking-wide uppercase text-sm">
+            <h4 className="text-foreground font-bold font-display tracking-[0.075em] uppercase text-sm">
               {t('landing.footerCompany', 'Company')}
             </h4>
             <ul className="space-y-3 text-sm">
@@ -917,7 +917,7 @@ export function LandingPage() {
 
           {/* Legal Column */}
           <div className="space-y-4">
-            <h4 className="text-foreground font-bold font-display tracking-wide uppercase text-sm">
+            <h4 className="text-foreground font-bold font-display tracking-[0.075em] uppercase text-sm">
               {t('landing.footerLegal', 'Legal')}
             </h4>
             <ul className="space-y-3 text-sm">

@@ -62,7 +62,7 @@ function ApplicantCard({
         <View className="flex-1" style={{ gap: APPLICANT_SURFACE.titleClusterGap }}>
           <Text className="text-subtitle font-sans-bold text-foreground">{applicant.name}</Text>
           <View className="flex-row items-center" style={{ gap: spacing.xs }}>
-            <Star size={12} color={colors.accent} fill={colors.accent} />
+            <Star size={16} color={colors.accent} fill={colors.accent} />
             <Text className="text-label font-sans-bold text-foreground">{applicant.rating}</Text>
             <Text className="text-caption text-text-secondary">·</Text>
             <Text className="text-caption text-text-secondary">
@@ -83,7 +83,7 @@ function ApplicantCard({
             className="flex-row items-center rounded-full px-sm py-xs"
             style={{ gap: APPLICANT_SURFACE.recommendedAwardGap, backgroundColor: tint.trustSoft }}
           >
-            <Award size={12} color={colors.trustMuted} />
+            <Award size={16} color={colors.trustMuted} />
             <Text className="text-caption font-sans-bold text-trust-muted">
               {t('applicants.recommended')}
             </Text>
@@ -186,7 +186,7 @@ export default function ApplicantsSelectionScreen() {
             accessibilityRole="button"
             style={{ gap: spacing.xs }}
           >
-            <ChevronLeft size={22} color={colors.primary} />
+            <ChevronLeft size={20} color={colors.primary} />
             <Text className="text-body font-sans-semibold text-primary">{t('common.back')}</Text>
           </Touchable>
           <View className="flex-1" style={{ gap: spacing.xs / 2 }}>

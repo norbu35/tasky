@@ -63,7 +63,7 @@ describe('Button', () => {
   it('applies secondary variant classes', () => {
     render(<Button label="Go" variant="secondary" testID="button" />);
     const el = screen.getByTestId('button');
-    expect(el.props.className).toContain('bg-secondary');
+    expect(el.props.className).toContain('bg-sun-light');
   });
 
   it('applies outline variant classes', () => {
@@ -106,13 +106,13 @@ describe('Button', () => {
   it('applies opacity-50 class when disabled', () => {
     render(<Button label="Go" disabled testID="button" />);
     const el = screen.getByTestId('button');
-    expect(el.props.className).toContain('opacity-50');
+    expect(el.props.className).toContain('opacity-40');
   });
 
-  it('applies opacity-50 class when loading', () => {
+  it('applies opacity-40 class when loading', () => {
     render(<Button label="Go" isLoading testID="button" />);
     const el = screen.getByTestId('button');
-    expect(el.props.className).toContain('opacity-50');
+    expect(el.props.className).toContain('opacity-40');
   });
 
   it('does not have textStyle prop (removed in cva migration)', () => {

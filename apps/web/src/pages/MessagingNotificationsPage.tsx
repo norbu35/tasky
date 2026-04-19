@@ -204,7 +204,7 @@ export function MessagingNotificationsPage() {
             <div className="flex-1 overflow-y-auto">
               {conversations.length === 0 ? (
                 <div className="p-6 text-center text-muted-foreground text-sm flex flex-col items-center gap-2">
-                  <MessageSquareText className="w-8 h-8 opacity-20" />
+                  <MessageSquareText className="w-6 h-6 opacity-20" />
                   {t('messaging.noConversations', 'No conversations found.')}
                 </div>
               ) : (
@@ -303,7 +303,7 @@ export function MessagingNotificationsPage() {
               </>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground">
-                <MessageSquareText className="w-16 h-16 opacity-10 mb-4" />
+                <MessageSquareText className="w-6 h-6 opacity-10 mb-4" />
                 <p>
                   {t(
                     'messaging.selectConversationPrompt',

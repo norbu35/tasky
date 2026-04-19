@@ -9,7 +9,7 @@ export function CustomerTaskCancelDialog() {
 
   return (
     <StatePanel
-      icon={<AlertTriangle className="h-5 w-5 text-amber-600" />}
+      icon={<AlertTriangle className="h-5 w-5 text-sun-light" />}
       title={t('customerPages.taskCancel.title', 'Cancel task?')}
       description={t(
         'customerPages.taskCancel.description',

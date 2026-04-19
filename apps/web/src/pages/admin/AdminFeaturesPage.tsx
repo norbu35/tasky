@@ -118,7 +118,7 @@ export function AdminFeaturesPage() {
   if (loading) {
     return (
       <div data-testid="features-loading" className="space-y-4">
-        <h1 className="text-2xl font-bold">{t('admin.features.title', 'Features')}</h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.features.title', 'Features')}</h1>
         {[1, 2, 3, 4].map((i) => (
           <Card key={i}>
             <CardContent className="flex items-center justify-between p-6">
@@ -138,7 +138,7 @@ export function AdminFeaturesPage() {
   if (error) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">{t('admin.features.title', 'Features')}</h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.features.title', 'Features')}</h1>
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
             <p className="text-destructive">
@@ -153,7 +153,7 @@ export function AdminFeaturesPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">{t('admin.features.title', 'Features')}</h1>
+      <h1 className="text-2xl font-bold font-display">{t('admin.features.title', 'Features')}</h1>
 
       {toggles.map((toggle) => (
         <Card key={toggle.feature_name} data-testid={`toggle-row-${toggle.feature_name}`}>

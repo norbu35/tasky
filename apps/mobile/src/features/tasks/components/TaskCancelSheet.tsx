@@ -72,7 +72,7 @@ export function TaskCancelSheet({
     >
       <View style={styles.content}>
         <View style={styles.iconWrap}>
-          <AlertTriangle size={22} color={colors.danger} />
+          <AlertTriangle size={20} color={colors.danger} />
         </View>
         <Text style={styles.body}>{body}</Text>
 

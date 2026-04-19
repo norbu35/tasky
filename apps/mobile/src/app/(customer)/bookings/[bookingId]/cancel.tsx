@@ -43,7 +43,7 @@ export default function CustomerCancelBookingScreen() {
         testID="cancel-booking-sheet"
       >
         <View className="items-center gap-lg">
-          <AlertTriangle size={32} color={colors.danger} />
+          <AlertTriangle size={24} color={colors.danger} />
           <Text className="text-body text-muted-foreground text-center leading-6">
             {t('customer.cancelBooking.warning')}
           </Text>

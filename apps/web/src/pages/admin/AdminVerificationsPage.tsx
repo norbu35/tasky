@@ -31,7 +31,7 @@ function computeSla(submittedAt: string, now: Date, t: TFunction): SlaInfo {
   if (remainingMs <= 0) {
     return {
       label: t('admin.verifications.overdue', 'Overdue'),
-      colorClass: 'bg-red-700 text-white',
+      colorClass: 'bg-destructive text-destructive-foreground',
     };
   }
 
@@ -43,12 +43,12 @@ function computeSla(submittedAt: string, now: Date, t: TFunction): SlaInfo {
   });
 
   if (hoursLeft >= 12) {
-    return { label, colorClass: 'bg-green-100 text-green-800 border-green-300' };
+    return { label, colorClass: 'bg-verified/15 text-verified border-verified/30' };
   }
   if (hoursLeft >= 4) {
-    return { label, colorClass: 'bg-yellow-100 text-yellow-800 border-yellow-300' };
+    return { label, colorClass: 'bg-sun-wash/30 text-sun-light border-sun-wash/50' };
   }
-  return { label, colorClass: 'bg-red-100 text-red-800 border-red-300' };
+  return { label, colorClass: 'bg-destructive/15 text-destructive border-destructive/30' };
 }
 
 // ── Component ────────────────────────────────────────────────────────
@@ -159,7 +159,9 @@ export function AdminVerificationsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">{t('admin.verifications.title', 'Verifications')}</h1>
+        <h1 className="text-2xl font-bold font-display">
+          {t('admin.verifications.title', 'Verifications')}
+        </h1>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-20 w-full" />
@@ -173,7 +175,9 @@ export function AdminVerificationsPage() {
   if (error && verifications.length === 0) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">{t('admin.verifications.title', 'Verifications')}</h1>
+        <h1 className="text-2xl font-bold font-display">
+          {t('admin.verifications.title', 'Verifications')}
+        </h1>
         <Card>
           <CardContent className="py-12 text-center space-y-4">
             <p className="text-destructive">{error}</p>
@@ -191,7 +195,9 @@ export function AdminVerificationsPage() {
   if (verifications.length === 0) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">{t('admin.verifications.title', 'Verifications')}</h1>
+        <h1 className="text-2xl font-bold font-display">
+          {t('admin.verifications.title', 'Verifications')}
+        </h1>
         <Card>
           <CardContent className="py-16 text-center">
             <p className="text-muted-foreground">
@@ -207,7 +213,9 @@ export function AdminVerificationsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('admin.verifications.title', 'Verifications')}</h1>
+        <h1 className="text-2xl font-bold font-display">
+          {t('admin.verifications.title', 'Verifications')}
+        </h1>
         <Button variant="secondary" size="sm" onClick={fetchVerifications}>
           <RefreshCw className="mr-2 h-4 w-4" />
           {t('admin.verifications.refresh', 'Refresh')}
@@ -319,7 +327,7 @@ export function AdminVerificationsPage() {
                       <div className="flex gap-2">
                         <Button
                           size="sm"
-                          className="bg-red-600 hover:bg-red-700 text-white"
+                          className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                           disabled={!rejectReason.trim() || confirmingRejectId === v.id}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -350,7 +358,7 @@ export function AdminVerificationsPage() {
                     <div className="flex gap-3">
                       <Button
                         size="sm"
-                        className="bg-green-600 hover:bg-green-700 text-white"
+                        className="bg-verified hover:bg-verified/90 text-white"
                         disabled={approvingId === v.id}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -364,7 +372,7 @@ export function AdminVerificationsPage() {
                       </Button>
                       <Button
                         size="sm"
-                        className="bg-red-600 hover:bg-red-700 text-white"
+                        className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleRejectClick(v.id);

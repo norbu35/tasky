@@ -41,7 +41,7 @@ export default function AccountDeletionScreen() {
             className="rounded-full bg-muted items-center justify-center mb-lg"
             style={{ width: statusHero.iconBox, height: statusHero.iconBox }}
           >
-            <AlertTriangle size={48} color={colors.danger} />
+            <AlertTriangle size={24} color={colors.danger} />
           </View>
 
           <Text className="text-title font-bold text-foreground text-center mb-md">

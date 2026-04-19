@@ -29,7 +29,7 @@ export function ResponsiveFeedShell({
         <section aria-labelledby={titleId} className="space-y-5">
           <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div className="space-y-1.5">
-              <h1 id={titleId} className="text-3xl font-semibold tracking-tight">
+              <h1 id={titleId} className="font-display text-3xl font-semibold tracking-tight">
                 {title}
               </h1>
               {description ? (
@@ -41,10 +41,10 @@ export function ResponsiveFeedShell({
             ) : null}
           </header>
 
-          <div className="space-y-4">{children}</div>
+          <div className="flex flex-col gap-3">{children}</div>
         </section>
 
-        {sideRail ? <aside className="space-y-4">{sideRail}</aside> : null}
+        {sideRail ? <aside className="space-y-3">{sideRail}</aside> : null}
       </div>
     </ScreenFrame>
   );
