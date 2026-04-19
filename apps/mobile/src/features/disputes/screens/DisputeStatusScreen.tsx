@@ -293,7 +293,7 @@ export default function DisputeStatusScreen() {
           hitSlop={spacing.sm}
           testID="dispute-status-back"
         >
-          <ChevronLeft size={22} color={colors.primary} />
+          <ChevronLeft size={20} color={colors.primary} />
         </Touchable>
         <Text className="flex-1 text-subtitle font-sans-bold text-primary-deep text-center mx-sm">
           {t('customer.disputes.pageTitle')}
@@ -317,7 +317,7 @@ export default function DisputeStatusScreen() {
           </View>
         ) : isError ? (
           <View className="bg-card rounded-lg p-lg items-center gap-sm">
-            <CircleAlert size={28} color={colors.danger} />
+            <CircleAlert size={24} color={colors.danger} />
             <Text className="text-body text-primary-deep text-center leading-relaxed">
               {t('customer.disputes.errorToast')}
             </Text>
@@ -366,7 +366,7 @@ export default function DisputeStatusScreen() {
                 {t('customer.disputes.sectionSummary')}
               </Text>
               <View className="gap-xs">
-                <Text className="text-caption text-text-secondary uppercase tracking-widest">
+                <Text className="text-caption text-text-secondary uppercase tracking-[0.075em]">
                   {t('customer.disputes.detailType')}
                 </Text>
                 <Text className="text-body font-sans-bold text-primary-deep leading-snug">
@@ -374,7 +374,7 @@ export default function DisputeStatusScreen() {
                 </Text>
               </View>
               <View className="gap-xs">
-                <Text className="text-caption text-text-secondary uppercase tracking-widest">
+                <Text className="text-caption text-text-secondary uppercase tracking-[0.075em]">
                   {t('customer.disputes.detailBooking')}
                 </Text>
                 <Text className="text-body font-sans-bold text-primary-deep leading-snug">
@@ -382,7 +382,7 @@ export default function DisputeStatusScreen() {
                 </Text>
               </View>
               <View className="gap-xs" style={{ paddingBottom: spacing.xs / 2 }}>
-                <Text className="text-caption text-text-secondary uppercase tracking-widest">
+                <Text className="text-caption text-text-secondary uppercase tracking-[0.075em]">
                   {t('customer.disputes.detailSubmitted')}
                 </Text>
                 <Text className="text-body font-sans-bold text-primary-deep leading-snug">
@@ -392,7 +392,7 @@ export default function DisputeStatusScreen() {
                 </Text>
               </View>
               <View className="gap-xs">
-                <Text className="text-caption text-text-secondary uppercase tracking-widest">
+                <Text className="text-caption text-text-secondary uppercase tracking-[0.075em]">
                   {t('customer.disputes.detailReason')}
                 </Text>
                 <Text className="text-body font-sans-bold text-primary-deep leading-snug">
@@ -472,7 +472,7 @@ export default function DisputeStatusScreen() {
                     height: DISPUTE_STATUS_SURFACE.timeline.resolutionIconBox,
                   }}
                 >
-                  <AlertTriangle size={22} color={colors.secondary} />
+                  <AlertTriangle size={20} color={colors.secondary} />
                 </View>
                 <Text className="text-body font-sans-bold text-primary-deep text-center">
                   {meta.label}
@@ -525,7 +525,7 @@ export default function DisputeStatusScreen() {
                 opacity: 0.4,
               }}
             >
-              <Scale size={64} color={colors.textSecondary} />
+              <Scale size={24} color={colors.textSecondary} />
             </View>
           </>
         ) : null}

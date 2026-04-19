@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     marginBottom: spacing.md,
     borderRadius: radius.md,
-    ...elevations.soft,
+    ...elevations.card,
   },
   status: {
     fontSize: typography.body,

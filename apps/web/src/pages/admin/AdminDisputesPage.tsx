@@ -64,7 +64,7 @@ export function AdminDisputesPage() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">{t('admin.disputes.title', 'Disputes')}</h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title', 'Disputes')}</h1>
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <Card key={i}>
@@ -81,7 +81,7 @@ export function AdminDisputesPage() {
   if (error) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">{t('admin.disputes.title', 'Disputes')}</h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title', 'Disputes')}</h1>
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
             <p className="text-destructive">
@@ -97,7 +97,7 @@ export function AdminDisputesPage() {
   if (disputes.length === 0) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">{t('admin.disputes.title', 'Disputes')}</h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title', 'Disputes')}</h1>
         <Card>
           <CardContent className="p-6 text-center">
             <p className="text-muted-foreground">
@@ -111,7 +111,7 @@ export function AdminDisputesPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">{t('admin.disputes.title', 'Disputes')}</h1>
+      <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title', 'Disputes')}</h1>
       <div className="overflow-x-auto rounded-lg border">
         <table className="w-full text-sm">
           <thead>

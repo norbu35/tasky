@@ -1,18 +1,23 @@
 import { AlertTriangle } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { Button } from '../../../components/ui/Button';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme, withAlpha } from '../../../design/tokenAdapter';
+import { mobileSurfaces } from '../../../design/surfaces';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors, radius } = mobileTheme;
+const { tint } = mobileSurfaces;
+
+type Severity = 'critical' | 'warning';
 
 interface LowBalanceAlertProps {
   balanceText: string;
   description: string;
   primaryActionLabel: string;
   onPrimaryActionPress: () => void;
+  severity?: Severity;
   secondaryActionLabel?: string;
   onSecondaryActionPress?: () => void;
   primaryActionTestID?: string;
@@ -20,11 +25,29 @@ interface LowBalanceAlertProps {
   testID?: string;
 }
 
+const severityConfig = {
+  critical: {
+    surfaceBg: tint.dangerSoft,
+    border: colors.danger,
+    iconBg: tint.dangerSubtle,
+    iconColor: colors.danger,
+    balanceColor: colors.danger,
+  },
+  warning: {
+    surfaceBg: withAlpha(colors.sunLight, 0.12),
+    border: colors.sunLight,
+    iconBg: withAlpha(colors.sunLight, 0.1),
+    iconColor: colors.sunLight,
+    balanceColor: colors.sunLight,
+  },
+} as const;
+
 export function LowBalanceAlert({
   balanceText,
   description,
   primaryActionLabel,
   onPrimaryActionPress,
+  severity = 'critical',
   secondaryActionLabel,
   onSecondaryActionPress,
   primaryActionTestID,
@@ -32,30 +55,52 @@ export function LowBalanceAlert({
   testID,
 }: LowBalanceAlertProps) {
   const { t } = useTranslation();
+  const cfg = severityConfig[severity];
 
   return (
-    <View style={styles.container} testID={testID} accessibilityRole="alert">
-      <View style={styles.iconShell}>
-        <AlertTriangle size={20} color={colors.danger} />
+    <View
+      style={{ backgroundColor: cfg.surfaceBg, borderColor: cfg.border }}
+      className="flex-row gap-md p-lg rounded-lg border"
+      testID={testID}
+      accessibilityRole="alert"
+    >
+      <View
+        style={{
+          backgroundColor: cfg.iconBg,
+          width: 36,
+          height: 36,
+          borderRadius: radius.full,
+        }}
+        className="items-center justify-center"
+      >
+        <AlertTriangle size={20} color={cfg.iconColor} />
       </View>
-      <View style={styles.content}>
-        <Text style={styles.title}>{t('tasker.credits.balanceLow')}</Text>
-        <Text style={styles.balance}>{balanceText}</Text>
-        <Text style={styles.description}>{description}</Text>
-        <View style={styles.actions}>
+      <View className="flex-1 gap-xs">
+        <Text className="font-sans-bold text-label text-foreground">
+          {t('tasker.credits.balanceLow')}
+        </Text>
+        <Text className="font-sans-bold text-label" style={{ color: cfg.balanceColor }}>
+          {balanceText}
+        </Text>
+        <Text className="font-sans text-label text-text-secondary leading-[20px]">
+          {description}
+        </Text>
+        <View className="gap-sm mt-sm">
           <Button
             label={primaryActionLabel}
             onPress={onPrimaryActionPress}
             testID={primaryActionTestID}
-            style={styles.primaryButton}
+            style={{ alignSelf: 'stretch' }}
           />
           {secondaryActionLabel && onSecondaryActionPress ? (
             <Pressable
               onPress={onSecondaryActionPress}
               testID={secondaryActionTestID}
-              style={styles.secondaryButton}
+              className="self-start py-xs px-xs"
             >
-              <Text style={styles.secondaryText}>{secondaryActionLabel}</Text>
+              <Text className="font-sans-semibold text-label text-primary">
+                {secondaryActionLabel}
+              </Text>
             </Pressable>
           ) : null}
         </View>
@@ -63,59 +108,3 @@ export function LowBalanceAlert({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: 'rgba(255, 221, 184, 0.28)',
-    borderWidth: 1,
-    borderColor: colors.danger,
-  },
-  iconShell: {
-    width: 36,
-    height: 36,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(198, 44, 27, 0.1)',
-  },
-  content: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  title: {
-    fontSize: typography.label,
-    fontWeight: '700',
-    color: colors.foreground,
-  },
-  balance: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.danger,
-  },
-  description: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.4,
-  },
-  actions: {
-    gap: spacing.sm,
-    marginTop: spacing.sm,
-  },
-  primaryButton: {
-    alignSelf: 'stretch',
-  },
-  secondaryButton: {
-    alignSelf: 'flex-start',
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.xs,
-  },
-  secondaryText: {
-    fontSize: typography.label,
-    fontWeight: '600',
-    color: colors.primary,
-  },
-});

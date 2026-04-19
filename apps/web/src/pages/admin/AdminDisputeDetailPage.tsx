@@ -89,7 +89,9 @@ export function AdminDisputeDetailPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">{t('admin.disputeDetail.title', 'Dispute Detail')}</h1>
+        <h1 className="text-2xl font-bold font-display">
+          {t('admin.disputeDetail.title', 'Dispute Detail')}
+        </h1>
         <p className="sr-only">{t('common.loading', 'Loading...')}</p>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
@@ -107,7 +109,9 @@ export function AdminDisputeDetailPage() {
   if (error && !detail) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">{t('admin.disputeDetail.title', 'Dispute Detail')}</h1>
+        <h1 className="text-2xl font-bold font-display">
+          {t('admin.disputeDetail.title', 'Dispute Detail')}
+        </h1>
         <Card>
           <CardContent className="p-6 text-center space-y-4">
             <p className="text-destructive">
@@ -139,13 +143,15 @@ export function AdminDisputeDetailPage() {
         <Button variant="outline" size="sm" onClick={() => navigate('/admin/disputes')}>
           {t('common.back', 'Back')}
         </Button>
-        <h1 className="text-2xl font-bold">{t('admin.disputeDetail.title', 'Dispute Detail')}</h1>
+        <h1 className="text-2xl font-bold font-display">
+          {t('admin.disputeDetail.title', 'Dispute Detail')}
+        </h1>
       </div>
 
       {/* Dispute Info */}
       <Card>
         <CardContent className="space-y-2 p-6">
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-lg font-semibold font-display">
             {t('admin.disputeDetail.disputeInfo', 'Dispute Info')}
           </h2>
           <p>
@@ -167,7 +173,7 @@ export function AdminDisputeDetailPage() {
       {/* Booking Context */}
       <Card>
         <CardContent className="space-y-2 p-6">
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-lg font-semibold font-display">
             {t('admin.disputeDetail.bookingContext', 'Booking Context')}
           </h2>
           {task && (
@@ -213,7 +219,7 @@ export function AdminDisputeDetailPage() {
       {evidenceMessages.length > 0 && (
         <Card>
           <CardContent className="space-y-3 p-6">
-            <h2 className="text-lg font-semibold">
+            <h2 className="text-lg font-semibold font-display">
               {t('admin.disputeDetail.evidence', 'Evidence Messages')}
             </h2>
             {evidenceMessages.map((msg) => (
@@ -231,7 +237,7 @@ export function AdminDisputeDetailPage() {
       {/* Resolution */}
       <Card>
         <CardContent className="space-y-4 p-6">
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-lg font-semibold font-display">
             {t('admin.disputeDetail.resolution', 'Resolution')}
           </h2>
           <div>

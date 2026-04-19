@@ -240,8 +240,8 @@ export function AuthPage() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-secondary/20 blur-[100px] z-0 mix-blend-screen" />
 
         <div className="relative z-10 flex items-center gap-4">
-          <div className="p-3.5 bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl">
-            <Shield className="w-8 h-8 text-accent" strokeWidth={2.5} />
+          <div className="p-3.5 bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-[var(--tenger-shadow-elevated)]">
+            <Shield className="w-6 h-6 text-accent" strokeWidth={2.5} />
           </div>
           <span className="text-3xl font-display font-extrabold tracking-tight">Tasky</span>
         </div>
@@ -296,7 +296,7 @@ export function AuthPage() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Card className="border-none shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] overflow-hidden backdrop-blur-3xl bg-white/90 ring-1 ring-black/5">
+            <Card className="border-none shadow-[var(--tenger-shadow-deep)] rounded-[2rem] overflow-hidden backdrop-blur-3xl bg-white/90 ring-1 ring-black/5">
               <CardHeader className="space-y-3 pb-8 pt-10 px-10 border-b border-border/40 bg-gradient-to-b from-muted/50 to-transparent">
                 <h1 className="sr-only">{t('auth.facebookLoginTitle', 'Facebook login')}</h1>
                 <CardTitle className="text-3xl font-display font-bold tracking-tight">
@@ -323,7 +323,7 @@ export function AuthPage() {
                   </div>
                 )}
                 <Button
-                  className="w-full h-14 text-base rounded-2xl font-bold shadow-xl shadow-primary/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-primary/30 bg-gradient-to-r from-primary-deep to-primary"
+                  className="w-full h-14 text-base rounded-2xl font-bold shadow-[var(--tenger-shadow-fab)] transition-all duration-300 hover:scale-[1.02] bg-gradient-to-r from-primary-deep to-primary"
                   disabled={loading || !facebookReady || facebookOutage}
                   onClick={handleFacebookLogin}
                   type="button"
@@ -332,7 +332,7 @@ export function AuthPage() {
                   {loading ? (
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   ) : (
-                    <FacebookIcon className="mr-2 h-5 w-5 text-[#1877F2]" />
+                    <FacebookIcon className="mr-2 h-5 w-5 text-primary-foreground" />
                   )}
                   {t('auth.continueFacebook', 'Continue with Facebook')}
                   {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
@@ -340,10 +340,10 @@ export function AuthPage() {
 
                 <div className="relative my-4">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border/50"></div>
+                    <div className="w-full border-t border-border"></div>
                   </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground font-medium tracking-wider">
+                  <div className="relative flex justify-center text-xs uppercase tracking-[0.075em]">
+                    <span className="bg-card px-2 text-text-tertiary font-medium tracking-[0.075em]">
                       {t('auth.later', 'Later')}
                     </span>
                   </div>
@@ -383,7 +383,7 @@ export function AuthPage() {
             >
               <div className="flex items-center gap-4">
                 <div className="h-px bg-border flex-1" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <span className="text-xs font-semibold uppercase tracking-[0.075em] text-muted-foreground">
                   {t('auth.devLogin', 'Local dev login')}
                 </span>
                 <div className="h-px bg-border flex-1" />

@@ -4,7 +4,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 
 import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
 import { Button } from '../../../components/ui/Button';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme, withAlpha } from '../../../design/tokenAdapter';
 import { useCancelBooking } from '../hooks/useCancelBooking';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.mutedForeground,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 0.75,
   },
   reasonList: {
     gap: spacing.sm,
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   },
   reasonChipSelected: {
     borderColor: colors.primary,
-    backgroundColor: colors.primary + '12',
+    backgroundColor: withAlpha(colors.primary, 0.07),
   },
   reasonChipText: {
     fontSize: typography.body,

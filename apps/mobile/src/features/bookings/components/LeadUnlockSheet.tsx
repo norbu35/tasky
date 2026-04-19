@@ -74,7 +74,7 @@ export function LeadUnlockSheet({
           </View>
         ) : isAccepted ? (
           <View style={styles.stateStack}>
-            <CheckCircle size={64} color={colors.verified} />
+            <CheckCircle size={24} color={colors.verified} />
             <Text style={styles.title}>{t('LeadUnlockSheet.copy3')}</Text>
             <Text style={styles.subtitle}>
               {`Захиалагчийн холбоо барих мэдээлэл нээгдлээ. ${creditCost} кредит зарцуулагдлаа.`}
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.card,
     borderTopLeftRadius: radius.lg,
     borderTopRightRadius: radius.lg,
     padding: spacing.xl,

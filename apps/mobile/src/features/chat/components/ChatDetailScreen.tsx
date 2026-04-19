@@ -15,7 +15,8 @@ import {
 } from 'react-native';
 import SockJS from 'sockjs-client';
 
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
+import { mobileTheme, withAlpha } from '../../../design/tokenAdapter';
 import { buildBaseUrl, createMobileApiClient, Message } from '../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../store/authStore';
 
@@ -127,6 +128,10 @@ export function ChatDetailScreen() {
         onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
         renderItem={({ item }) => {
           const isMe = item.sender_id === profile?.id;
+          const date = new Date(item.created_at);
+          const timestamp = isNaN(date.getTime())
+            ? ''
+            : date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
           return (
             <View
               style={[
@@ -134,12 +139,20 @@ export function ChatDetailScreen() {
                 isMe ? styles.messageBubbleRight : styles.messageBubbleLeft,
               ]}
             >
+              {!isMe && <ProfileAvatar name="?" size="xs" />}
               <View style={[styles.messageBubble, isMe ? styles.messageMe : styles.messageThem]}>
                 <Text
                   style={[styles.messageText, isMe ? styles.messageTextMe : styles.messageTextThem]}
                 >
                   {item.content}
                 </Text>
+                {timestamp !== '' && (
+                  <Text
+                    style={[styles.timestamp, isMe ? styles.timestampMe : styles.timestampThem]}
+                  >
+                    {timestamp}
+                  </Text>
+                )}
               </View>
             </View>
           );
@@ -210,6 +223,8 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     marginBottom: 12,
     flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 8,
   },
   messageBubbleRight: {
     justifyContent: 'flex-end',
@@ -224,11 +239,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   messageMe: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.foreground,
     borderBottomRightRadius: 4,
   },
   messageThem: {
-    backgroundColor: colors.muted,
+    backgroundColor: colors.card,
     borderBottomLeftRadius: 4,
   },
   messageText: {
@@ -236,10 +251,22 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   messageTextMe: {
-    color: colors.primaryForeground,
+    color: colors.card,
   },
   messageTextThem: {
     color: colors.foreground,
+  },
+  timestamp: {
+    fontSize: 11,
+    marginTop: 4,
+  },
+  timestampMe: {
+    color: colors.card,
+    opacity: 0.7,
+    textAlign: 'right',
+  },
+  timestampThem: {
+    color: colors.textTertiary,
   },
   inputBox: {
     flexDirection: 'row',
@@ -252,7 +279,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: colors.muted + '40',
+    backgroundColor: withAlpha(colors.muted, 0.25),
     borderRadius: 20,
     paddingHorizontal: spacing.lg,
     paddingVertical: 10,

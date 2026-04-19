@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { Conversation, createMobileApiClient } from '../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../store/authStore';
@@ -71,8 +72,8 @@ export function InboxScreen() {
         contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.card} onPress={() => router.push(`/inbox/${item.id}`)}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{item.task_title?.charAt(0) || 'T'}</Text>
+            <View style={styles.avatarWrapper}>
+              <ProfileAvatar name={item.task_title || 'T'} size="md" />
             </View>
             <View style={styles.content}>
               <Text style={styles.taskTitle}>
@@ -123,19 +124,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     alignItems: 'center',
   },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.primary + '20', // 20% opacity
-    justifyContent: 'center',
-    alignItems: 'center',
+  avatarWrapper: {
+    width: 44,
+    height: 44,
     marginRight: 16,
-  },
-  avatarText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.primary,
   },
   content: {
     flex: 1,

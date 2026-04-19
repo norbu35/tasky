@@ -50,7 +50,7 @@ export function ConfirmCompletionSheet({
       <View style={styles.iconWrap}>
         <View style={styles.iconOuter}>
           <View style={styles.iconInner}>
-            <Check size={30} color={colors.verified} strokeWidth={3} />
+            <Check size={24} color={colors.verified} strokeWidth={3} />
           </View>
         </View>
       </View>
@@ -74,7 +74,7 @@ export function ConfirmCompletionSheet({
             style={[styles.primaryButton, isPending && styles.buttonDisabled]}
           >
             <Text style={styles.primaryButtonText}>{t('ConfirmCompletionSheet.confirmLabel')}</Text>
-            <ArrowRight size={18} color={colors.primaryForeground} />
+            <ArrowRight size={20} color={colors.primaryForeground} />
           </LinearGradient>
         </Pressable>
 

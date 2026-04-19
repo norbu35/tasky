@@ -49,7 +49,7 @@ export const CustomerAdvantageVisual = () => {
             x="150"
             y="-15"
             textAnchor="middle"
-            className="text-sm font-bold uppercase tracking-wider fill-red-800/60"
+            className="text-sm font-bold uppercase tracking-[0.075em] fill-red-800/60"
           >
             {t('landing.vizChaos', 'Social Media Noise')}
           </text>
@@ -135,7 +135,14 @@ export const CustomerAdvantageVisual = () => {
                 fill="currentColor"
                 className="text-muted-foreground/30"
               />
-              <circle cx="180" cy="85" r="8" fill="#ef4444" opacity="0.6" />
+              <circle
+                cx="180"
+                cy="85"
+                r="8"
+                fill="currentColor"
+                opacity="0.6"
+                className="text-destructive"
+              />
               <text x="180" y="88" fontSize="10" fill="white" textAnchor="middle" fontWeight="bold">
                 !
               </text>
@@ -228,15 +235,34 @@ export const CustomerAdvantageVisual = () => {
                 x="130"
                 y="200"
                 fontSize="14"
-                fill="#ef4444"
+                fill="currentColor"
                 opacity="0.7"
                 textAnchor="middle"
                 fontWeight="bold"
+                className="text-destructive"
               >
                 ???
               </text>
-              <rect x="70" y="190" width="40" height="8" rx="4" fill="#ef4444" opacity="0.3" />
-              <rect x="150" y="190" width="40" height="8" rx="4" fill="#ef4444" opacity="0.3" />
+              <rect
+                x="70"
+                y="190"
+                width="40"
+                height="8"
+                rx="4"
+                fill="currentColor"
+                opacity="0.3"
+                className="text-destructive"
+              />
+              <rect
+                x="150"
+                y="190"
+                width="40"
+                height="8"
+                rx="4"
+                fill="currentColor"
+                opacity="0.3"
+                className="text-destructive"
+              />
             </g>
           </g>
 
@@ -244,17 +270,18 @@ export const CustomerAdvantageVisual = () => {
           <path
             d="M 180 220 C 150 230, 200 250, 160 260 S 210 280, 180 290"
             fill="none"
-            stroke="#ef4444"
+            stroke="currentColor"
             strokeWidth="4"
             strokeLinecap="round"
-            className="chaos-flash"
+            className="text-destructive chaos-flash"
           />
           <path
             d="M 160 210 L 195 240 M 195 210 L 160 240"
-            stroke="#ef4444"
+            stroke="currentColor"
             strokeWidth="5"
             strokeLinecap="round"
             opacity="0.8"
+            className="text-destructive"
           />
 
           {/* Scroll indicator */}
@@ -308,7 +335,7 @@ export const CustomerAdvantageVisual = () => {
             x="150"
             y="-15"
             textAnchor="middle"
-            className="text-sm font-bold fill-primary uppercase tracking-wider"
+            className="text-sm font-bold fill-primary uppercase tracking-[0.075em]"
           >
             {t('landing.vizTasky', 'The Tasky Way')}
           </text>
@@ -329,7 +356,13 @@ export const CustomerAdvantageVisual = () => {
           {/* Verified Header */}
           <g className="tasky-fade-1">
             <circle cx="80" cy="40" r="15" fill="currentColor" className="text-primary/20" />
-            <circle cx="90" cy="50" r="6" fill="#469178" className="verified-dot" />
+            <circle
+              cx="90"
+              cy="50"
+              r="6"
+              fill="currentColor"
+              className="text-verified verified-dot"
+            />
             <rect
               x="105"
               y="32"
@@ -344,7 +377,8 @@ export const CustomerAdvantageVisual = () => {
                 <polygon
                   key={i}
                   points="10,1 12,7 19,7 13,11 15,18 10,14 5,18 7,11 1,7 8,7"
-                  fill="#C49A3C"
+                  fill="currentColor"
+                  className="text-trust"
                   transform={`translate(${i * 20}, 0)`}
                 />
               ))}
@@ -402,7 +436,12 @@ export const CustomerAdvantageVisual = () => {
               fill="currentColor"
               className="text-card stroke-border stroke-1"
             />
-            <path d="M 85 175 L 80 180 L 85 195 L 95 185 L 90 175 Z" fill="#469178" opacity="0.8" />
+            <path
+              d="M 85 175 L 80 180 L 85 195 L 95 185 L 90 175 Z"
+              fill="currentColor"
+              opacity="0.8"
+              className="text-verified"
+            />
             <rect
               x="105"
               y="180"
@@ -488,7 +527,7 @@ export const TaskerAdvantageVisual = () => {
             x="150"
             y="-15"
             textAnchor="middle"
-            className="text-sm font-bold uppercase tracking-wider fill-red-800/60"
+            className="text-sm font-bold uppercase tracking-[0.075em] fill-red-800/60"
           >
             {t('landing.vizLeadless', 'Leadless Searching')}
           </text>
@@ -557,10 +596,11 @@ export const TaskerAdvantageVisual = () => {
                 x="170"
                 y="25"
                 fontSize="10"
-                fill="#ef4444"
+                fill="currentColor"
                 opacity="0.8"
                 textAnchor="end"
                 fontWeight="bold"
+                className="text-destructive"
               >
                 {t('landing.vizTooFar', '90km!')}
               </text>
@@ -569,9 +609,10 @@ export const TaskerAdvantageVisual = () => {
                 y1="10"
                 x2="170"
                 y2="40"
-                stroke="#ef4444"
+                stroke="currentColor"
                 strokeWidth="2"
                 opacity="0.4"
+                className="text-destructive"
               />
             </g>
           </g>
@@ -602,10 +643,11 @@ export const TaskerAdvantageVisual = () => {
                 x="155"
                 y="25"
                 fontSize="14"
-                fill="#ef4444"
+                fill="currentColor"
                 opacity="0.7"
                 textAnchor="end"
                 fontWeight="bold"
+                className="text-destructive"
               >
                 ???
               </text>
@@ -653,17 +695,18 @@ export const TaskerAdvantageVisual = () => {
               />
               <path
                 d="M 10 10 L 150 50 M 150 10 L 10 50"
-                stroke="#ef4444"
+                stroke="currentColor"
                 strokeWidth="1"
                 opacity="0.3"
+                className="text-destructive"
               />
             </g>
           </g>
 
           {/* Dead End overlays */}
           <g transform="translate(100, 220)">
-            <g className="no-match-flash">
-              <rect x="0" y="0" width="110" height="30" rx="6" fill="#ef4444" opacity="0.1" />
+            <g className="no-match-flash text-destructive">
+              <rect x="0" y="0" width="110" height="30" rx="6" fill="currentColor" opacity="0.1" />
               <rect
                 x="0"
                 y="0"
@@ -671,7 +714,7 @@ export const TaskerAdvantageVisual = () => {
                 height="30"
                 rx="6"
                 fill="transparent"
-                stroke="#ef4444"
+                stroke="currentColor"
                 strokeWidth="2"
                 opacity="0.5"
               />
@@ -679,7 +722,7 @@ export const TaskerAdvantageVisual = () => {
                 x="55"
                 y="20"
                 fontSize="11"
-                fill="#ef4444"
+                fill="currentColor"
                 textAnchor="middle"
                 fontWeight="bold"
               >
@@ -689,8 +732,8 @@ export const TaskerAdvantageVisual = () => {
           </g>
 
           <g transform="translate(60, 260) rotate(-5)">
-            <g className="no-match-flash" style={{ animationDelay: '0.5s' }}>
-              <rect x="0" y="0" width="90" height="25" rx="6" fill="#ef4444" opacity="0.1" />
+            <g className="no-match-flash text-destructive" style={{ animationDelay: '0.5s' }}>
+              <rect x="0" y="0" width="90" height="25" rx="6" fill="currentColor" opacity="0.1" />
               <rect
                 x="0"
                 y="0"
@@ -698,7 +741,7 @@ export const TaskerAdvantageVisual = () => {
                 height="25"
                 rx="6"
                 fill="transparent"
-                stroke="#ef4444"
+                stroke="currentColor"
                 strokeWidth="2"
                 strokeDasharray="4 2"
                 opacity="0.5"
@@ -707,7 +750,7 @@ export const TaskerAdvantageVisual = () => {
                 x="45"
                 y="17"
                 fontSize="10"
-                fill="#ef4444"
+                fill="currentColor"
                 textAnchor="middle"
                 fontWeight="bold"
               >
@@ -748,10 +791,11 @@ export const TaskerAdvantageVisual = () => {
                 x="-35"
                 y="-15"
                 fontSize="16"
-                fill="#ef4444"
+                fill="currentColor"
                 opacity="0.6"
                 fontWeight="bold"
                 transform="rotate(-20)"
+                className="text-destructive"
               >
                 ?
               </text>
@@ -759,10 +803,11 @@ export const TaskerAdvantageVisual = () => {
                 x="25"
                 y="-20"
                 fontSize="14"
-                fill="#ef4444"
+                fill="currentColor"
                 opacity="0.5"
                 fontWeight="bold"
                 transform="rotate(15)"
+                className="text-destructive"
               >
                 ?
               </text>
@@ -785,7 +830,7 @@ export const TaskerAdvantageVisual = () => {
             x="150"
             y="-15"
             textAnchor="middle"
-            className="text-sm font-bold fill-accent uppercase tracking-wider"
+            className="text-sm font-bold fill-accent uppercase tracking-[0.075em]"
           >
             {t('landing.vizMatching', 'Precision Matching')}
           </text>
@@ -857,7 +902,7 @@ export const TaskerAdvantageVisual = () => {
             strokeWidth="2"
             className="text-accent/60 line-1"
           />
-          <circle cx="100" cy="90" r="6" fill="#469178" className="node-1" />
+          <circle cx="100" cy="90" r="6" fill="currentColor" className="text-verified node-1" />
           <rect
             x="110"
             y="80"
@@ -886,7 +931,7 @@ export const TaskerAdvantageVisual = () => {
             strokeWidth="2"
             className="text-accent/60 line-2"
           />
-          <circle cx="210" cy="110" r="6" fill="#469178" className="node-2" />
+          <circle cx="210" cy="110" r="6" fill="currentColor" className="text-verified node-2" />
 
           <line
             x1="150"
@@ -897,7 +942,7 @@ export const TaskerAdvantageVisual = () => {
             strokeWidth="2"
             className="text-accent/60 line-3"
           />
-          <circle cx="170" cy="230" r="6" fill="#469178" className="node-3" />
+          <circle cx="170" cy="230" r="6" fill="currentColor" className="text-verified node-3" />
 
           {/* Pop-up Match Card — slides in last */}
           <g className="match-card">

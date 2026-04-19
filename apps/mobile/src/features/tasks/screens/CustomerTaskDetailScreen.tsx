@@ -209,7 +209,7 @@ export default function CustomerTaskDetailScreen() {
                     | 'no_show'
                 }
               />
-              <Text className="text-heading font-bold text-primary-deep leading-tight">
+              <Text className="text-heading font-display-bold text-primary-deep leading-tight">
                 {task.description}
               </Text>
               <Text
@@ -378,7 +378,7 @@ export default function CustomerTaskDetailScreen() {
                       {tasker.full_name}
                     </Text>
                     <View className="flex-row items-center gap-xs">
-                      <Star size={14} color={colors.accent} fill={colors.accent} />
+                      <Star size={16} color={colors.accent} fill={colors.accent} />
                       <Text className="text-label font-bold text-foreground">
                         {tasker.rating_avg ?? 0}
                       </Text>

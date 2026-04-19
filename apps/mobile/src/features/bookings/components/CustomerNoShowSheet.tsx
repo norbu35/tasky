@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   },
   successText: {
     fontSize: typography.body,
-    color: colors.trust,
+    color: colors.verified,
     fontWeight: '600',
     textAlign: 'center',
     marginVertical: spacing.lg,

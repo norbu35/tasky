@@ -32,7 +32,7 @@ function RescueButton({
   return (
     <Pressable onPress={onPress} style={styles.optionButton} accessibilityRole="button">
       <View style={styles.optionIconWrap}>
-        <Icon size={18} color={colors.secondary} />
+        <Icon size={20} color={colors.secondary} />
       </View>
       <View style={styles.optionCopy}>
         <Text style={styles.optionLabel}>{label}</Text>
@@ -61,7 +61,7 @@ export function NoApplicantRescue({
     >
       <View style={styles.iconWrap}>
         <View style={styles.iconOuter}>
-          <Sparkles size={28} color={colors.secondary} />
+          <Sparkles size={24} color={colors.secondary} />
         </View>
       </View>
 

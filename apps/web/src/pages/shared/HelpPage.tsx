@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 
-import { Card, CardContent } from '../../components/ui/card';
 import { ResponsiveFeedShell } from '../../layout/parity';
 
 export function HelpPage() {
@@ -14,19 +13,24 @@ export function HelpPage() {
         'FAQs and next-step guidance for common marketplace issues.',
       )}
     >
-      <Card>
-        <CardContent className="space-y-2 p-4">
-          <div className="font-semibold">
-            {t('sharedPages.help.faq1Question', 'How do I reschedule a booking?')}
+      <div className="space-y-6">
+        <section>
+          <p className="mb-2 text-[13px] font-bold font-display text-primary-deep uppercase tracking-[0.075em]">
+            {t('sharedPages.help.sectionGeneral', 'General')}
+          </p>
+          <div className="rounded-md bg-card p-4 shadow-sm space-y-2">
+            <div className="font-medium text-foreground">
+              {t('sharedPages.help.faq1Question', 'How do I reschedule a booking?')}
+            </div>
+            <div className="text-sm text-text-secondary">
+              {t(
+                'sharedPages.help.faq1Answer',
+                'Open the booking detail and choose the new time before the task starts.',
+              )}
+            </div>
           </div>
-          <div className="text-sm text-muted-foreground">
-            {t(
-              'sharedPages.help.faq1Answer',
-              'Open the booking detail and choose the new time before the task starts.',
-            )}
-          </div>
-        </CardContent>
-      </Card>
+        </section>
+      </div>
     </ResponsiveFeedShell>
   );
 }

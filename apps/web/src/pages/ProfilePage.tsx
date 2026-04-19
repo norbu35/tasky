@@ -148,7 +148,7 @@ export function ProfilePage() {
           <CardContent className="space-y-4 pt-5">
             <div className="flex items-start gap-4 rounded-2xl border border-border/60 bg-muted/30 p-4">
               <div
-                className={`mt-1 rounded-xl p-2 ${statusVerified ? 'bg-emerald-500/20 text-emerald-600' : 'bg-accent/20 text-accent-foreground'}`}
+                className={`mt-1 rounded-xl p-2 ${statusVerified ? 'bg-verified/20 text-verified' : 'bg-accent/20 text-accent-foreground'}`}
               >
                 {statusVerified ? (
                   <ShieldCheck className="h-6 w-6" />
@@ -207,11 +207,11 @@ export function ProfilePage() {
               </CardDescription>
             </div>
             <div className="flex flex-col items-start gap-1 sm:items-end">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <span className="text-xs font-semibold uppercase tracking-[0.075em] text-muted-foreground">
                 {t('profile.networkRole', 'Network Role')}
               </span>
               <div
-                className={`rounded-full border px-3 py-1 text-xs font-bold uppercase ${isCustomer ? 'border-primary/20 bg-secondary text-secondary-foreground' : 'border-accent/30 bg-accent/10 text-accent-foreground'}`}
+                className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-[0.075em] ${isCustomer ? 'border-primary/20 bg-secondary text-secondary-foreground' : 'border-accent/30 bg-accent/10 text-accent-foreground'}`}
               >
                 {profile?.role ?? 'UNKNOWN'}
               </div>
@@ -236,10 +236,10 @@ export function ProfilePage() {
                   }}
                 />
               ) : (
-                <User className="h-12 w-12 text-primary/40" />
+                <User className="h-6 w-6 text-primary/40" />
               )}
               <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                <Camera className="h-8 w-8 text-white" />
+                <Camera className="h-6 w-6 text-white" />
               </div>
               {working ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
@@ -270,7 +270,7 @@ export function ProfilePage() {
             <div className="space-y-2">
               <Label
                 htmlFor="full-name"
-                className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                className="text-xs font-semibold uppercase tracking-[0.075em] text-muted-foreground"
               >
                 {t('profile.displayName', 'Display Name')}
               </Label>

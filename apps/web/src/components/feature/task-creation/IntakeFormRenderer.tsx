@@ -6,6 +6,8 @@ import {
   type IntakeSchema,
 } from '@tasky/core';
 
+import { cn } from '../../../lib/utils';
+
 export type { IntakeField, IntakeSchema } from '@tasky/core';
 
 export interface IntakeFormRendererProps {
@@ -70,7 +72,7 @@ function SingleSelectField({
           );
         })}
       </div>
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p className="text-destructive text-sm mt-1">{error}</p>}
     </div>
   );
 }
@@ -123,7 +125,7 @@ function MultiSelectField({
           );
         })}
       </div>
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p className="text-destructive text-sm mt-1">{error}</p>}
     </div>
   );
 }
@@ -153,6 +155,12 @@ function DropdownField({
         value={typeof value === 'string' ? value : ''}
         onChange={(e) => onChange(field.name, e.target.value)}
         required={field.required}
+        aria-invalid={!!error}
+        className={cn(
+          'w-full rounded-sm border-[1.5px] border-border bg-background px-3 py-2 text-sm',
+          'focus-visible:outline-none focus-visible:border-foreground',
+          'aria-invalid:border-destructive',
+        )}
       >
         <option value="" disabled>
           {locale === 'mn' ? 'Сонгох...' : 'Select...'}
@@ -163,7 +171,7 @@ function DropdownField({
           </option>
         ))}
       </select>
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p className="text-destructive text-sm mt-1">{error}</p>}
     </div>
   );
 }
@@ -210,7 +218,7 @@ function YesNoField({
           {locale === 'mn' ? 'Үгүй' : 'No'}
         </label>
       </div>
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p className="text-destructive text-sm mt-1">{error}</p>}
     </div>
   );
 }
@@ -255,6 +263,12 @@ function NumericCounterField({
           min={field.min !== undefined ? String(field.min) : undefined}
           max={field.max !== undefined ? String(field.max) : undefined}
           aria-required={field.required ? 'true' : undefined}
+          aria-invalid={!!error}
+          className={cn(
+            'w-20 rounded-sm border-[1.5px] border-border bg-background px-3 py-2 text-sm text-center',
+            'focus-visible:outline-none focus-visible:border-foreground',
+            'aria-invalid:border-destructive',
+          )}
           onChange={(e) => {
             const num = Number(e.target.value);
             onChange(field.name, num);
@@ -271,7 +285,7 @@ function NumericCounterField({
           +
         </button>
       </div>
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p className="text-destructive text-sm mt-1">{error}</p>}
     </div>
   );
 }
@@ -302,9 +316,15 @@ function TextField({
         value={typeof value === 'string' ? value : ''}
         maxLength={field.max_length}
         aria-required={field.required ? 'true' : undefined}
+        aria-invalid={!!error}
+        className={cn(
+          'w-full rounded-sm border-[1.5px] border-border bg-background px-3 py-2 text-sm',
+          'focus-visible:outline-none focus-visible:border-foreground',
+          'aria-invalid:border-destructive',
+        )}
         onChange={(e) => onChange(field.name, e.target.value)}
       />
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p className="text-destructive text-sm mt-1">{error}</p>}
     </div>
   );
 }
@@ -335,9 +355,15 @@ function TextareaField({
         maxLength={field.max_length}
         rows={4}
         aria-required={field.required ? 'true' : undefined}
+        aria-invalid={!!error}
+        className={cn(
+          'w-full rounded-sm border-[1.5px] border-border bg-background px-3 py-2 text-sm',
+          'focus-visible:outline-none focus-visible:border-foreground',
+          'aria-invalid:border-destructive',
+        )}
         onChange={(e) => onChange(field.name, e.target.value)}
       />
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p className="text-destructive text-sm mt-1">{error}</p>}
     </div>
   );
 }

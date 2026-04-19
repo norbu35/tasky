@@ -28,7 +28,7 @@ const RESCHEDULE_SURFACE = {
   currentScheduleIconBox: 34,
   stepBadge: 32,
   calendarCellWidth: '14.2857%',
-  calendarNavIcon: 18,
+  calendarNavIcon: 20,
   timeChipMinWidth: 72,
   timeChipMinHeight: 40,
   reasonMinHeight: 120,
@@ -185,7 +185,7 @@ export default function BookingRescheduleScreen() {
             >
               <Text className="text-micro font-sans-bold text-primary-foreground">1</Text>
             </View>
-            <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-wide">
+            <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-[0.075em]">
               {t('customer.bookings.stepChooseDay')}
             </Text>
           </View>
@@ -200,7 +200,7 @@ export default function BookingRescheduleScreen() {
             >
               <Text className="text-micro font-sans-bold text-primary-deep">2</Text>
             </View>
-            <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-wide">
+            <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-[0.075em]">
               {t('customer.bookings.stepConfirm')}
             </Text>
           </View>
@@ -309,7 +309,7 @@ export default function BookingRescheduleScreen() {
 
         <View className="gap-md">
           <View className="flex-row items-center gap-xs">
-            <Clock3 size={14} color={colors.primaryDeep} />
+            <Clock3 size={16} color={colors.primaryDeep} />
             <Text
               className="text-heading font-sans-bold text-primary-deep"
               style={{ fontWeight: '800' }}
@@ -404,7 +404,7 @@ export default function BookingRescheduleScreen() {
                 height: RESCHEDULE_SURFACE.stateIconBox,
               }}
             >
-              <CalendarRange size={18} color={colors.secondary} />
+              <CalendarRange size={20} color={colors.secondary} />
             </View>
             <Text className="text-body font-sans-bold text-primary-deep">
               {requestState === 'awaiting_response'
@@ -459,7 +459,7 @@ export default function BookingRescheduleScreen() {
               <Text className="text-body font-sans-bold text-primary-foreground">
                 {t('customer.bookings.ctaSubmitReschedule')}
               </Text>
-              <ArrowRight size={18} color={colors.primaryForeground} />
+              <ArrowRight size={20} color={colors.primaryForeground} />
             </LinearGradient>
           </Touchable>
         </View>

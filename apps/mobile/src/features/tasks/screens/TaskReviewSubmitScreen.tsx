@@ -190,7 +190,7 @@ function SectionCard({
           </View>
         ) : null}
         <Text
-          className={`flex-1 text-body font-bold leading-snug${featured ? ' text-primary-foreground text-[36px] font-extrabold leading-[40px]' : ' text-foreground'}`}
+          className={`flex-1 text-body font-bold leading-snug${featured ? ' text-primary-foreground text-[36px] font-display-bold leading-[40px]' : ' text-foreground'}`}
         >
           {value}
         </Text>
@@ -393,10 +393,10 @@ export default function TaskReviewSubmitScreen() {
       nextButtonTestID="SCR-CUST-007-cta"
     >
       <View className="gap-xs mb-sm">
-        <Text className="text-caption font-bold text-text-secondary uppercase tracking-widest">
+        <Text className="text-caption font-bold text-text-secondary uppercase tracking-[0.075em]">
           {t('ReviewSubmitScreen.finalStep')}
         </Text>
-        <Text className="text-heading font-extrabold text-primary-deep">
+        <Text className="text-heading font-display-bold text-primary-deep">
           {t('ReviewSubmitScreen.reviewTitle')}
         </Text>
       </View>
