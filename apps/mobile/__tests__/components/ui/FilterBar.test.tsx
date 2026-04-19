@@ -37,7 +37,7 @@ describe('FilterBar', () => {
       />,
     );
     const cleaningBtn = screen.getByLabelText('Cleaning');
-    expect(cleaningBtn.props.className).toContain('bg-primary');
+    expect(cleaningBtn.props.className).toContain('bg-foreground');
   });
 
   it('marks inactive filter chip with inactive cva classes', () => {

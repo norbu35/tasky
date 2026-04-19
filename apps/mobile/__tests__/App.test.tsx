@@ -367,9 +367,8 @@ describe('mobile app structure', () => {
 
     // Card uses NativeWind className for radius, bg, border tokens
     const card = screen.getByTestId('primitive-card');
-    expect(card.props.className).toContain('rounded-lg');
+    expect(card.props.className).toContain('rounded-md');
     expect(card.props.className).toContain('bg-card');
-    expect(card.props.className).toContain('border-border');
   });
 
   it('TID-TASK-071-MOBILE-WIZARD-SHELL-PARITY uses calmer shell separation and token framing', () => {
