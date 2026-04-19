@@ -137,7 +137,7 @@ describe('Accessibility and parity gates', () => {
       resolve(process.cwd(), '../mobile/src/design/tokenAdapter.ts'),
       'utf8',
     );
-    expect(webStyles).toContain('--primary: var(--tasky-color-primary);');
+    expect(webStyles).toContain('--primary: var(--color-primary);');
     expect(webButton).toContain('secondary');
     expect(webButton).toContain('ghost');
     expect(mobileButton).toContain('isLoading');

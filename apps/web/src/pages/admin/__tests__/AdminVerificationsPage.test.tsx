@@ -146,9 +146,9 @@ describe('AdminVerificationsPage', () => {
     const overdueBadge = screen.getByTestId('sla-badge-v-overdue');
 
     // Check color classes
-    expect(greenBadge.className).toMatch(/green/);
-    expect(yellowBadge.className).toMatch(/yellow/);
-    expect(redBadge.className).toMatch(/red/);
+    expect(greenBadge.className).toMatch(/verified/);
+    expect(yellowBadge.className).toMatch(/sun-wash|sun/);
+    expect(redBadge.className).toMatch(/destructive/);
     expect(overdueBadge.textContent).toMatch(/overdue/i);
   });
 
