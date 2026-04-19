@@ -56,7 +56,7 @@ export default function ChatDetailScreen() {
   const [draft, setDraft] = useState('');
   const flatListRef = useRef<FlatList>(null);
 
-  const messages: MessageItem[] = data?.data ?? [];
+  const messages: MessageItem[] = useMemo(() => [...(data?.data ?? [])].reverse(), [data?.data]);
   const showPhoneWarning = PHONE_REGEX.test(draft);
 
   const handleSend = useCallback(() => {

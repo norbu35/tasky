@@ -87,7 +87,7 @@ export function MessagingNotificationsPage() {
         onConnect: () => {
           client.subscribe(`/topic/conversations/${selectedConvId}`, (msg) => {
             const newMsg = JSON.parse(msg.body) as Message;
-            setMessages((prev) => [...prev, newMsg]);
+            setMessages((prev) => [newMsg, ...prev]);
             scrollToBottom();
           });
         },
@@ -121,7 +121,7 @@ export function MessagingNotificationsPage() {
       );
       // If STOMP isn't connected or is slow, optimistically add it.
       // Better checking would look for duplicates, but we simplify for MVP
-      setMessages((prev) => [...prev, sent]);
+      setMessages((prev) => [sent, ...prev]);
       setMessageDraft('');
       scrollToBottom();
     } catch (error) {

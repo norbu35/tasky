@@ -43,7 +43,7 @@ export function ChatDetailScreen() {
     try {
       const client = createMobileApiClient();
       const res = await client.listMessages(session.accessToken, id);
-      setMessages(res.data);
+      setMessages([...res.data].reverse());
     } catch (err) {
       console.error(t('shared.inbox.errorMessages'), err);
     } finally {
