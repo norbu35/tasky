@@ -28,25 +28,31 @@ export function AppShell({
   const [profileBusy, setProfileBusy] = useState(Boolean(initialSession));
   const [profileError, setProfileError] = useState<string | null>(null);
 
+  const loadProfile = useCallback(
+    async (accessToken: string): Promise<void> => {
+      setProfileBusy(true);
+      setProfileError(null);
+
+      try {
+        const loaded = await apiClient.getMyProfile(accessToken);
+        setProfile(loaded);
+      } catch (error) {
+        setProfileError(parseError(error, analyticsTracker));
+      } finally {
+        setProfileBusy(false);
+      }
+    },
+    [analyticsTracker, apiClient],
+  );
+
   const refreshProfile = useCallback(async (): Promise<void> => {
     if (!session) {
       setProfile(null);
       setProfileBusy(false);
       return;
     }
-
-    setProfileBusy(true);
-    setProfileError(null);
-
-    try {
-      const loaded = await apiClient.getMyProfile(session.accessToken);
-      setProfile(loaded);
-    } catch (error) {
-      setProfileError(parseError(error, analyticsTracker));
-    } finally {
-      setProfileBusy(false);
-    }
-  }, [analyticsTracker, apiClient, session]);
+    await loadProfile(session.accessToken);
+  }, [loadProfile, session]);
 
   useEffect(() => {
     void refreshProfile();
@@ -111,6 +117,7 @@ export function AppShell({
       setProfile,
       setProfileError,
       refreshProfile,
+      loadProfile,
       updateSessionUser,
       signOut,
       trackClientEvent,
@@ -118,6 +125,7 @@ export function AppShell({
     [
       apiClient,
       locale,
+      loadProfile,
       profile,
       profileBusy,
       profileError,

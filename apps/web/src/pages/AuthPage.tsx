@@ -66,7 +66,7 @@ export function AuthPage() {
   const devAuthEnabled = import.meta.env['VITE_DEV_AUTH_ENABLED'] === 'true';
   const facebookAppId = import.meta.env['VITE_FACEBOOK_APP_ID'];
 
-  const { apiClient, session, setSession, setProfile, refreshProfile } = useAppContext();
+  const { apiClient, session, setSession, setProfile, loadProfile } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
@@ -197,7 +197,7 @@ export function AuthPage() {
       const session = await apiClient.loginWithFacebook(accessToken);
       setSession(session);
       setProfile(null);
-      await refreshProfile();
+      await loadProfile(session.accessToken);
       // Fresh logins (returnPath '/') land on profile setup so new users
       // can complete their profile before entering the main app.
       navigate(returnPath === '/' ? '/profile' : returnPath, { replace: true });
@@ -216,7 +216,7 @@ export function AuthPage() {
       const session = await apiClient.devLogin(devPhone, role as 'CUSTOMER' | 'TASKER');
       setSession(session);
       setProfile(null);
-      await refreshProfile();
+      await loadProfile(session.accessToken);
       navigate(returnPath, { replace: true });
     } catch (error) {
       toast.error(parseError(error));

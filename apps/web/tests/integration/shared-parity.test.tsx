@@ -39,6 +39,7 @@ function renderWithAppContext(ui: ReactNode) {
     setProfile: vi.fn(),
     setProfileError: vi.fn(),
     refreshProfile: vi.fn().mockResolvedValue(undefined),
+    loadProfile: vi.fn().mockResolvedValue(undefined),
     updateSessionUser: vi.fn(),
     signOut: vi.fn(),
     trackClientEvent: vi.fn(),

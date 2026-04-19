@@ -15,7 +15,14 @@ export type AppContextValue = {
   setSession: (session: AuthTokens | null) => void;
   setProfile: (profile: Profile | null) => void;
   setProfileError: (message: string | null) => void;
+  /** Fetch the profile using the current session (stale-closure safe via `session` dep). */
   refreshProfile: () => Promise<void>;
+  /**
+   * Fetch the profile using an explicitly provided access token.
+   * Use this when you need to load the profile immediately after setting a new
+   * session, before React has re-rendered and updated the `session` closure.
+   */
+  loadProfile: (accessToken: string) => Promise<void>;
   updateSessionUser: (user: User) => void;
   signOut: () => void;
   trackClientEvent: (

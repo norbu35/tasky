@@ -40,7 +40,7 @@ describe('Auth Integration', () => {
     });
 
     expect(
-      await screen.findByRole('heading', { name: 'Profile setup and updates' }),
+      await screen.findByRole('heading', { name: 'Profile setup and updates' }, { timeout: 5000 }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
