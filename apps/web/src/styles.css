@@ -6,44 +6,49 @@
 
 :root {
   color-scheme: light;
-  --background: var(--tasky-color-background);
-  --foreground: var(--tasky-color-foreground);
-  --card: var(--tasky-color-card);
-  --card-foreground: var(--tasky-color-card-foreground);
-  --popover: var(--tasky-color-popover);
-  --popover-foreground: var(--tasky-color-popover-foreground);
-  --primary: var(--tasky-color-primary);
-  --primary-foreground: var(--tasky-color-primary-foreground);
-  --secondary: var(--tasky-color-secondary);
-  --secondary-foreground: var(--tasky-color-secondary-foreground);
-  --muted: var(--tasky-color-muted);
-  --muted-foreground: var(--tasky-color-muted-foreground);
-  --accent: var(--tasky-color-accent);
-  --accent-foreground: var(--tasky-color-accent-foreground);
-  --border: var(--tasky-color-border);
-  --input: var(--tasky-color-input);
-  --ring: var(--tasky-color-ring);
-  --radius: var(--tasky-radius);
-  --destructive: var(--tasky-color-destructive);
-  --destructive-foreground: var(--tasky-color-destructive-foreground);
-
-  /* Figma semantic bridges */
-  --primary-deep: var(--tasky-color-primary-deep);
-  --trust: var(--tasky-color-trust);
-  --trust-foreground: var(--tasky-color-trust-foreground);
-  --trust-muted: var(--tasky-color-trust-muted);
-  --status-open: var(--tasky-color-status-open);
-  --status-open-foreground: var(--tasky-color-status-open-foreground);
-  --status-assigned: var(--tasky-color-status-assigned);
-  --status-assigned-foreground: var(--tasky-color-status-assigned-foreground);
-  --verified: var(--tasky-color-verified);
-  --subtle-violet: var(--tasky-color-subtle-violet);
-  --chip-inactive: var(--tasky-color-chip-inactive);
-  --text-secondary: var(--tasky-color-text-secondary);
-  --text-tertiary: var(--tasky-color-text-tertiary);
-  --nav-inactive: var(--tasky-color-nav-inactive);
-  --font-sans: var(--tasky-font-family-sans);
-  --font-display: var(--tasky-font-family-display);
+  --background: var(--color-background);
+  --foreground: var(--color-foreground);
+  --card: var(--color-card);
+  --card-foreground: var(--color-card-fg);
+  --popover: var(--color-popover);
+  --popover-foreground: var(--color-popover-fg);
+  --primary: var(--color-primary);
+  --primary-foreground: var(--color-primary-fg);
+  --secondary: var(--color-secondary);
+  --secondary-foreground: var(--color-secondary-fg);
+  --muted: var(--color-muted);
+  --muted-foreground: var(--color-muted-fg);
+  --accent: var(--color-accent);
+  --accent-foreground: var(--color-accent-fg);
+  --border: var(--color-border);
+  --input: var(--color-input);
+  --ring: var(--color-ring);
+  --radius: var(--radius-md);
+  --destructive: var(--color-destructive);
+  --destructive-foreground: var(--color-destructive-fg);
+  --primary-deep: var(--color-primary-deep);
+  --trust: var(--color-trust);
+  --trust-foreground: var(--color-trust-fg);
+  --trust-muted: var(--color-trust-muted);
+  --status-open: var(--color-status-open);
+  --status-open-foreground: var(--color-status-open-fg);
+  --status-assigned: var(--color-status-assigned);
+  --status-assigned-foreground: var(--color-status-assigned-fg);
+  --verified: var(--color-verified);
+  --subtle-violet: var(--color-subtle-violet);
+  --chip-inactive: var(--color-chip-inactive);
+  --text-secondary: var(--color-text-secondary);
+  --text-tertiary: var(--color-text-tertiary);
+  --nav-inactive: var(--color-nav-inactive);
+  --status-completed: var(--color-status-completed);
+  --status-completed-fg: var(--color-status-completed-fg);
+  --status-cancelled: var(--color-status-cancelled);
+  --status-cancelled-fg: var(--color-status-cancelled-fg);
+  --sun-light: var(--color-sun-light);
+  --sun-wash: var(--color-sun-wash);
+  --sky-soft: var(--color-sky-soft);
+  --font-sans: var(--font-family-sans);
+  --font-display: var(--font-family-display);
 }
 
 * {
