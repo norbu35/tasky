@@ -65,7 +65,7 @@ class AuthScenarioTests {
         // Safe defaults: no active suspension
         when(userDao.findSuspensionEndAt(anyString())).thenReturn(Optional.empty());
         when(profileDao.findByUserId(anyString()))
-                .thenReturn(Optional.of(new UserProfileState("Test User", null, 0.0, 0, null)));
+                .thenReturn(Optional.of(new UserProfileState("Test User", null, null, 0.0, 0, null)));
     }
 
     // ── SCN-AUTH-001 ─────────────────────────────────────────────────────────

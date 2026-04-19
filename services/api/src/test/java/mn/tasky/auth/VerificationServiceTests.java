@@ -324,7 +324,7 @@ class VerificationServiceTests {
             when(verificationDao.findPending(null, 10)).thenReturn(List.of(request));
             when(userDao.findById(USER_ID)).thenReturn(Optional.of(taskerUser()));
             when(profileDao.findByUserId(USER_ID))
-                    .thenReturn(Optional.of(new UserProfileState("Test User", null, 0.0, 0, null)));
+                    .thenReturn(Optional.of(new UserProfileState("Test User", null, null, 0.0, 0, null)));
             when(cryptoService.decrypt("encrypted-phone")).thenReturn("+97699001122");
             when(storageService.generateDownloadUrl("front-key", StorageKeyPolicy.Namespace.VERIFICATION))
                     .thenReturn("https://s3/front");

@@ -119,8 +119,8 @@ class AdminTaskConciergeAssignmentServiceTest {
         when(marketplaceQueryPort.getTask(taskId)).thenReturn(Optional.of(task));
 
         // Tasker verification
-        UserProfile tasker =
-                new UserProfile(taskerId, "+97699112233", "TASKER", "VERIFIED", "Test User", null, 0.0, 0, false, null);
+        UserProfile tasker = new UserProfile(
+                taskerId, "+97699112233", "TASKER", "VERIFIED", "Test User", null, null, 0.0, 0, false, null);
         when(identityQueryPort.getProfile(taskerId)).thenReturn(Optional.of(tasker));
 
         // Booking creation

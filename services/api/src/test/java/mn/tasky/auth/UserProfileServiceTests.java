@@ -115,7 +115,7 @@ class UserProfileServiceTests {
             AuthUser user = activeCustomer();
             when(userDao.findById(USER_ID)).thenReturn(Optional.of(user));
             when(profileDao.findByUserId(USER_ID))
-                    .thenReturn(Optional.of(new UserProfileState("Test User", null, 4.5, 10, null)));
+                    .thenReturn(Optional.of(new UserProfileState("Test User", null, "Reliable helper", 4.5, 10, null)));
             when(userStatusResolver.resolve(USER_ID, "ACTIVE")).thenReturn("ACTIVE");
             when(badgeDao.findActiveByTaskerId(USER_ID)).thenReturn(List.of());
             when(cryptoService.decrypt("encrypted-phone")).thenReturn("+97699001122");
@@ -128,6 +128,7 @@ class UserProfileServiceTests {
             assertThat(profile.role()).isEqualTo("CUSTOMER");
             assertThat(profile.status()).isEqualTo("ACTIVE");
             assertThat(profile.fullName()).isEqualTo("Test User");
+            assertThat(profile.bio()).isEqualTo("Reliable helper");
             assertThat(profile.ratingAvg()).isEqualTo(4.5);
             assertThat(profile.completedTasks()).isEqualTo(10);
             assertThat(profile.phone()).isEqualTo("+97699001122");
@@ -177,23 +178,24 @@ class UserProfileServiceTests {
         @DisplayName("Returns empty when user does not exist")
         void returnsEmptyForMissingUser() {
             when(userDao.findById(USER_ID)).thenReturn(Optional.empty());
-            assertThat(service.updateProfile(USER_ID, new ProfileUpdate("New Name", null)))
+            assertThat(service.updateProfile(USER_ID, new ProfileUpdate("New Name", null, null)))
                     .isEmpty();
         }
 
         @Test
-        @DisplayName("Updates name and preserves existing avatar when avatarUrl is null")
-        void updatesNamePreservesAvatar() {
+        @DisplayName("Updates name and bio and preserves existing avatar when avatarUrl is null")
+        void updatesNameAndBioPreservesAvatar() {
             AuthUser user = activeCustomer();
             when(userDao.findById(USER_ID)).thenReturn(Optional.of(user));
             when(profileDao.findByUserId(USER_ID))
-                    .thenReturn(Optional.of(new UserProfileState("Old Name", "old-avatar.jpg", 0.0, 0, null)));
+                    .thenReturn(
+                            Optional.of(new UserProfileState("Old Name", "old-avatar.jpg", "Old bio", 0.0, 0, null)));
             when(userStatusResolver.resolve(USER_ID, "ACTIVE")).thenReturn("ACTIVE");
             when(badgeDao.findActiveByTaskerId(USER_ID)).thenReturn(List.of());
 
-            service.updateProfile(USER_ID, new ProfileUpdate("New Name", null));
+            service.updateProfile(USER_ID, new ProfileUpdate("New Name", null, "New bio"));
 
-            verify(profileDao).updateNameAndAvatar(USER_ID, "New Name", "old-avatar.jpg");
+            verify(profileDao).updateProfileDetails(USER_ID, "New Name", "old-avatar.jpg", "New bio");
         }
     }
 
@@ -207,7 +209,7 @@ class UserProfileServiceTests {
         @DisplayName("First rating sets the average directly")
         void firstRatingSetsAverage() {
             when(profileDao.findByUserId(USER_ID))
-                    .thenReturn(Optional.of(new UserProfileState("User", null, 0.0, 0, null)));
+                    .thenReturn(Optional.of(new UserProfileState("User", null, null, 0.0, 0, null)));
 
             service.updateUserStats(USER_ID, 4.0, false);
 
@@ -218,7 +220,7 @@ class UserProfileServiceTests {
         @DisplayName("Subsequent rating computes weighted average")
         void subsequentRatingComputesAverage() {
             when(profileDao.findByUserId(USER_ID))
-                    .thenReturn(Optional.of(new UserProfileState("User", null, 4.0, 2, null)));
+                    .thenReturn(Optional.of(new UserProfileState("User", null, null, 4.0, 2, null)));
 
             service.updateUserStats(USER_ID, 5.0, false);
 
@@ -230,7 +232,7 @@ class UserProfileServiceTests {
         @DisplayName("Increment completed tasks when requested")
         void incrementsCompletedTasks() {
             when(profileDao.findByUserId(USER_ID))
-                    .thenReturn(Optional.of(new UserProfileState("User", null, 4.0, 5, null)));
+                    .thenReturn(Optional.of(new UserProfileState("User", null, null, 4.0, 5, null)));
 
             service.updateUserStats(USER_ID, 0, true);
 
@@ -241,7 +243,7 @@ class UserProfileServiceTests {
         @DisplayName("Zero rating does not change average")
         void zeroRatingPreservesAverage() {
             when(profileDao.findByUserId(USER_ID))
-                    .thenReturn(Optional.of(new UserProfileState("User", null, 4.5, 3, null)));
+                    .thenReturn(Optional.of(new UserProfileState("User", null, null, 4.5, 3, null)));
 
             service.updateUserStats(USER_ID, 0, false);
 
@@ -252,7 +254,7 @@ class UserProfileServiceTests {
         @DisplayName("Perfect 5.0 stays 5.0 when existing average is also 5.0")
         void perfectRatingStaysPerfect() {
             when(profileDao.findByUserId(USER_ID))
-                    .thenReturn(Optional.of(new UserProfileState("User", null, 5.0, 3, null)));
+                    .thenReturn(Optional.of(new UserProfileState("User", null, null, 5.0, 3, null)));
 
             service.updateUserStats(USER_ID, 5.0, false);
 
@@ -391,7 +393,7 @@ class UserProfileServiceTests {
         @DisplayName("isInstantMatchAllowed returns true when no revocation exists")
         void allowedWhenNoRevocation() {
             when(profileDao.findByUserId(USER_ID))
-                    .thenReturn(Optional.of(new UserProfileState("User", null, 0.0, 0, null)));
+                    .thenReturn(Optional.of(new UserProfileState("User", null, null, 0.0, 0, null)));
 
             assertThat(service.isInstantMatchAllowed(USER_ID)).isTrue();
         }
@@ -401,7 +403,7 @@ class UserProfileServiceTests {
         void blockedWhenRevocationInFuture() {
             Instant futureRevocation = Instant.now().plus(Duration.ofDays(15));
             when(profileDao.findByUserId(USER_ID))
-                    .thenReturn(Optional.of(new UserProfileState("User", null, 0.0, 0, futureRevocation)));
+                    .thenReturn(Optional.of(new UserProfileState("User", null, null, 0.0, 0, futureRevocation)));
 
             assertThat(service.isInstantMatchAllowed(USER_ID)).isFalse();
         }
@@ -411,7 +413,7 @@ class UserProfileServiceTests {
         void allowedWhenRevocationExpired() {
             Instant pastRevocation = Instant.now().minus(Duration.ofDays(1));
             when(profileDao.findByUserId(USER_ID))
-                    .thenReturn(Optional.of(new UserProfileState("User", null, 0.0, 0, pastRevocation)));
+                    .thenReturn(Optional.of(new UserProfileState("User", null, null, 0.0, 0, pastRevocation)));
 
             assertThat(service.isInstantMatchAllowed(USER_ID)).isTrue();
         }
