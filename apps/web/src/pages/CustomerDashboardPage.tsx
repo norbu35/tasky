@@ -27,6 +27,14 @@ function TaskCard({ task }: { task: Task }) {
     NO_SHOW: t('customerDashboard.statusNoShow', 'No-show'),
   };
 
+  const statusBadgeVariant: Record<string, React.ComponentProps<typeof Badge>['variant']> = {
+    OPEN: 'statusOpen',
+    ASSIGNED: 'statusAssigned',
+    COMPLETED: 'statusCompleted',
+    CANCELLED: 'statusCancelled',
+    NO_SHOW: 'noShow',
+  };
+
   return (
     <Card
       className="flex flex-row items-center gap-3 p-4 hover:border-primary/40 transition-colors cursor-pointer"
@@ -34,7 +42,7 @@ function TaskCard({ task }: { task: Task }) {
     >
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
-          <Badge variant={task.status === 'OPEN' ? 'default' : 'secondary'} className="text-xs">
+          <Badge variant={statusBadgeVariant[task.status] ?? 'default'} className="text-xs">
             {statusLabelMap[task.status] ?? task.status}
           </Badge>
         </div>

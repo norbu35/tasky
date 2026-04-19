@@ -44,10 +44,16 @@ export function BottomNavBar() {
               ].join(' ')
             }
           >
-            <Icon className="w-5 h-5" />
-            <span className="text-[10px] font-semibold tracking-wide truncate font-display">
-              {t(label, fallback)}
-            </span>
+            {({ isActive }) => (
+              <>
+                <Icon className="w-5 h-5" />
+                <span
+                  className={`text-[11px] tracking-wide truncate font-sans ${isActive ? 'font-semibold' : 'font-medium'}`}
+                >
+                  {t(label, fallback)}
+                </span>
+              </>
+            )}
           </NavLink>
         ))}
       </div>

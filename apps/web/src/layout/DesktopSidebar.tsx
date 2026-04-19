@@ -61,9 +61,9 @@ export function DesktopSidebar() {
               to={to}
               className={({ isActive }) =>
                 [
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium font-sans transition-colors',
                   isActive
-                    ? 'bg-primary/10 text-primary'
+                    ? 'bg-primary/[0.08] text-foreground'
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground',
                 ].join(' ')
               }

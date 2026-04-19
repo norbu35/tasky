@@ -17,9 +17,9 @@ const buttonVariants = cva(
         ghost: 'bg-transparent text-primary hover:bg-muted',
       },
       size: {
-        default: 'h-12 px-4 py-2',
-        sm: 'h-10 rounded-md px-3',
-        lg: 'h-14 rounded-md px-8',
+        default: 'h-12 rounded-xl px-4 py-2',
+        sm: 'h-10 rounded-lg px-3',
+        lg: 'h-14 rounded-xl px-8',
       },
     },
     defaultVariants: {

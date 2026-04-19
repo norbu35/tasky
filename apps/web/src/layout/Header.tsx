@@ -89,7 +89,7 @@ export function Header() {
             </Button>
           ) : (
             <Button
-              className="text-sm font-semibold h-9 px-5 rounded-xl bg-foreground text-background hover:bg-foreground/90 transition-colors shadow-sm"
+              className="text-sm font-bold h-9 px-4 rounded-xl"
               onClick={() => navigate('/auth')}
             >
               {t('auth.login', 'Login')}
