@@ -34,8 +34,7 @@ export function Header() {
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed top-0 left-0 right-0 z-50 rounded-b-xl border-b border-border bg-background/70 backdrop-blur-xl md:hidden"
-      style={{ boxShadow: 'var(--shadow-nav)' }}
+      className="fixed top-0 left-0 right-0 z-50 rounded-b-xl border-b border-border bg-background/70 backdrop-blur-xl md:hidden shadow-[var(--shadow-nav)]"
     >
       <div className="flex items-center justify-between px-4 md:px-6 h-14 md:h-16">
         {/* Logo */}

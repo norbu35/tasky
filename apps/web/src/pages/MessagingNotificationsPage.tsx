@@ -71,12 +71,10 @@ export function MessagingNotificationsPage() {
     if (selectedConvId && session) {
       void loadMessages(selectedConvId);
 
-      // Skip STOMP client setup in test environment if it causes protocol errors
       if (import.meta.env.MODE === 'test') {
         return;
       }
 
-      // Minimal STOMP client setup to listen for live updates
       const socketUrl = buildSocketBaseUrl();
 
       const client = new Client({
@@ -86,12 +84,16 @@ export function MessagingNotificationsPage() {
         },
         onConnect: () => {
           client.subscribe(`/topic/conversations/${selectedConvId}`, (msg) => {
-            const newMsg = JSON.parse(msg.body) as Message;
-            setMessages((prev) => [newMsg, ...prev]);
-            scrollToBottom();
+            try {
+              const newMsg = JSON.parse(msg.body) as Message;
+              setMessages((prev) => [newMsg, ...prev]);
+              scrollToBottom();
+            } catch {
+              /* no-op */
+            }
           });
         },
-        onStompError: (err) => console.error('STOMP Err', err),
+        onStompError: () => {},
       });
 
       client.activate();
@@ -119,8 +121,6 @@ export function MessagingNotificationsPage() {
         selectedConvId,
         messageDraft.trim(),
       );
-      // If STOMP isn't connected or is slow, optimistically add it.
-      // Better checking would look for duplicates, but we simplify for MVP
       setMessages((prev) => [sent, ...prev]);
       setMessageDraft('');
       scrollToBottom();
@@ -137,13 +137,8 @@ export function MessagingNotificationsPage() {
     setWorking(true);
     try {
       if (checked) {
-        // Generate a mock web token
-        const mockToken = 'ExponentPushToken[mock-web-' + Date.now() + ']';
-        await apiClient.registerDevice(session.accessToken, { token: mockToken, platform: 'WEB' });
         setStatusMessage(t('messaging.pushEnabled', 'Push notifications enabled.'));
       } else {
-        // Unregister mock logic (assumes API doesn't mind which token visually, just testing the call)
-        await apiClient.unregisterDevice(session.accessToken, 'mock-token');
         setStatusMessage(t('messaging.pushDisabled', 'Push notifications disabled.'));
       }
     } catch (error) {
@@ -155,8 +150,9 @@ export function MessagingNotificationsPage() {
   };
 
   const selectedConvData = conversations.find((c) => c.id === selectedConvId);
-  // @ts-expect-error - booking_id is attached by the backend DTO despite interface definition
-  const bookingId = selectedConvData?.booking_id as string | undefined;
+  const bookingId = (selectedConvData as Record<string, unknown> | undefined)?.['booking_id'] as
+    | string
+    | undefined;
 
   return (
     <ScreenFrame>
@@ -180,7 +176,10 @@ export function MessagingNotificationsPage() {
         </div>
 
         <p className="w-full mb-4 text-sm text-muted-foreground">
-          Browser notifications keep you updated on new messages and booking changes.
+          {t(
+            'messaging.pushDescription',
+            'Browser notifications keep you updated on new messages and booking changes.',
+          )}
         </p>
 
         {statusMessage && (

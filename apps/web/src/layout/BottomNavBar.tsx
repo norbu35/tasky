@@ -28,8 +28,7 @@ export function BottomNavBar() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/60 backdrop-blur-lg md:hidden"
-      style={{ boxShadow: 'var(--shadow-nav)' }}
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/60 backdrop-blur-lg md:hidden shadow-[var(--shadow-nav)]"
       aria-label={t('nav.bottomNavigation', 'Bottom navigation')}
     >
       <div className="mx-auto flex w-full max-w-lg items-center justify-around px-2 py-2">

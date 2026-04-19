@@ -293,7 +293,6 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
           ? err.message
           : t('admin.categories.createSchemaError', 'Failed to create schema'),
       );
-      throw err;
     }
   };
 
@@ -479,7 +478,6 @@ export function AdminCategoriesPage() {
           ? err.message
           : t('admin.categories.saveError', 'Failed to save category'),
       );
-      throw err;
     }
   };
 
