@@ -40,8 +40,8 @@ export function AdminLayout() {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Sidebar */}
-      <aside className="hidden w-64 shrink-0 border-r border-border/40 bg-muted/30 md:block">
-        <div className="flex h-16 items-center gap-2 border-b border-border/40 px-6">
+      <aside className="hidden w-56 shrink-0 border-r border-border bg-surface md:block">
+        <div className="flex h-16 items-center gap-2 border-b border-border px-6">
           <ShieldCheck className="h-6 w-6 text-primary" />
           <span className="text-lg font-extrabold tracking-tight text-primary">
             {t('admin.title', 'Tasky Admin')}
@@ -71,7 +71,7 @@ export function AdminLayout() {
       {/* Main content area */}
       <div className="flex flex-1 flex-col">
         {/* Top header */}
-        <header className="flex h-16 items-center justify-between border-b border-border/40 bg-background/80 px-6 backdrop-blur-md">
+        <header className="flex h-16 items-center justify-between border-b border-border bg-background/70 backdrop-blur-md px-6">
           <span className="text-lg font-extrabold tracking-tight text-primary md:hidden">
             {t('admin.title', 'Tasky Admin')}
           </span>
@@ -84,7 +84,7 @@ export function AdminLayout() {
 
         {/* Mobile nav */}
         <nav
-          className="flex gap-1 overflow-x-auto border-b border-border/40 px-4 py-2 md:hidden"
+          className="flex gap-1 overflow-x-auto border-b border-border px-4 py-2 md:hidden"
           aria-label="Admin navigation mobile"
         >
           {NAV_ITEMS.map(({ to, icon: Icon, label, fallback }) => (
@@ -100,7 +100,7 @@ export function AdminLayout() {
                 ].join(' ')
               }
             >
-              <Icon className="h-3.5 w-3.5" />
+              <Icon className="h-4 w-4" />
               {t(label, fallback)}
             </NavLink>
           ))}

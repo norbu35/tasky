@@ -37,7 +37,7 @@ function AnimatedCheckmark() {
   return (
     <Animated.View style={animatedStyle}>
       <View className="mb-xl">
-        <CheckCircle size={64} color={colors.verified} />
+        <CheckCircle size={24} color={colors.verified} />
       </View>
     </Animated.View>
   );
@@ -70,18 +70,26 @@ export function SuccessCelebrationTemplate({
       >
         <AnimatedCheckmark />
 
-        <Text className="text-heading font-semibold text-primary-deep text-center">{headline}</Text>
-        <Text className="text-body text-primary text-center mt-md leading-relaxed">{body}</Text>
+        <Text className="text-heading font-display-bold text-primary-deep text-center">
+          {headline}
+        </Text>
+        <Text className="text-body font-sans text-foreground text-center mt-md leading-relaxed">
+          {body}
+        </Text>
 
         {nextSteps && nextSteps.length > 0 && (
           <View className="self-stretch mt-xl px-sm">
-            <Text className="text-subtitle font-semibold text-primary mb-md">
+            <Text className="text-subtitle font-sans-semibold text-foreground mb-md">
               {t('success.whatHappensNext')}
             </Text>
             {nextSteps.map((step, index) => (
               <View key={index} className="flex-row mb-sm pl-xs">
-                <Text className="text-body text-accent mr-sm leading-relaxed">{'\u2022'}</Text>
-                <Text className="flex-1 text-body text-accent leading-relaxed">{step}</Text>
+                <Text className="text-body font-sans text-text-secondary mr-sm leading-relaxed">
+                  {'\u2022'}
+                </Text>
+                <Text className="flex-1 text-body font-sans text-text-secondary leading-relaxed">
+                  {step}
+                </Text>
               </View>
             ))}
           </View>

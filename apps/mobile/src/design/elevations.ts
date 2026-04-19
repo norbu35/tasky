@@ -37,6 +37,13 @@ export const elevations = {
     shadowRadius: shadows.elevated.radius,
     ...(Platform.OS === 'android' && { elevation: shadows.elevated.elevation }),
   },
+  fab: {
+    shadowColor: shadows.fab.color,
+    shadowOffset: shadows.fab.offset,
+    shadowOpacity: shadows.fab.opacity,
+    shadowRadius: shadows.fab.radius,
+    ...(Platform.OS === 'android' && { elevation: shadows.fab.elevation }),
+  },
   navBar: {
     shadowColor: shadows.navBar.color,
     shadowOffset: shadows.navBar.offset,

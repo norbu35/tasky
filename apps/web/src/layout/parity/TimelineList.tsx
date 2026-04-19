@@ -15,8 +15,8 @@ type TimelineListProps = {
 const toneDotStyles: Record<NonNullable<TimelineItem['tone']>, string> = {
   muted: 'bg-muted-foreground',
   active: 'bg-primary',
-  completed: 'bg-emerald-500',
-  warning: 'bg-amber-500',
+  completed: 'bg-status-completed',
+  warning: 'bg-sun-light',
 };
 
 export function TimelineList({ items, className }: TimelineListProps) {
@@ -33,11 +33,11 @@ export function TimelineList({ items, className }: TimelineListProps) {
           </div>
           <div className="min-w-0 flex-1 pb-4">
             <div className="flex items-baseline justify-between gap-3">
-              <div className="font-semibold text-foreground">{item.label}</div>
-              {item.time ? <div className="text-xs text-muted-foreground">{item.time}</div> : null}
+              <div className="font-display font-semibold text-foreground">{item.label}</div>
+              {item.time ? <div className="text-xs text-text-tertiary">{item.time}</div> : null}
             </div>
             {item.detail ? (
-              <div className="mt-1 text-sm text-muted-foreground">{item.detail}</div>
+              <div className="mt-1 text-sm text-text-secondary">{item.detail}</div>
             ) : null}
           </div>
         </li>

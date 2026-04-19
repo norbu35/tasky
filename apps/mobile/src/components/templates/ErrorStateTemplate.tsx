@@ -32,10 +32,10 @@ export function ErrorStateTemplate({
   return (
     <View className={cn('flex-1 justify-center items-center px-lg', className)} testID={testID}>
       <Reveal delay={20}>
-        <AlertTriangle size={48} color={colors.danger} />
+        <AlertTriangle size={24} color={colors.danger} />
       </Reveal>
       <Reveal delay={60}>
-        <Text className="text-body text-primary text-center mt-lg leading-relaxed">
+        <Text className="text-body font-sans text-foreground text-center mt-lg leading-relaxed">
           {message ?? t('error.generic')}
         </Text>
       </Reveal>

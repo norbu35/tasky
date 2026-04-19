@@ -23,7 +23,7 @@ export const mobileSurfaces = {
       height: 407,
       radius: 32,
       rotation: '-3deg',
-      iconSize: 80,
+      iconSize: 24,
       badgeOffset: 24,
     },
     pagination: {
@@ -66,7 +66,7 @@ export const mobileSurfaces = {
     brandSize: 56,
     markBox: 64,
     markRadius: 16,
-    markIcon: 28,
+    markIcon: 24,
     markBorder: withAlpha(colors.primaryForeground, 0.12),
     markSurface: withAlpha(colors.primaryForeground, 0.08),
     progressRailWidth: 136,
@@ -78,8 +78,8 @@ export const mobileSurfaces = {
     loaderBottom: 28,
   },
   taskDetail: {
-    labelTracking: 0.4,
-    sectionTracking: 0.8,
+    labelTracking: 1.05,
+    sectionTracking: 0.9,
     budgetLineHeight: 40,
     pillMinWidth: 28,
     pillInsetX: 8,
@@ -144,7 +144,7 @@ export const mobileSurfaces = {
     bottomGlowRadius: 40,
   },
   referrals: {
-    heroSize: 28,
+    heroSize: 24,
     heroLineHeight: 34,
     bodyOpacity: 0.85,
     codeSurface: withAlpha(colors.primaryForeground, 0.08),

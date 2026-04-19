@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { overlays } from '../../design/elevations';
+import { elevations, overlays } from '../../design/elevations';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
@@ -81,9 +81,10 @@ export function ModalSheetTemplate({
           backgroundColor: colors.card,
           borderTopLeftRadius: radius.lg,
           borderTopRightRadius: radius.lg,
+          ...elevations.elevated,
         }}
         handleIndicatorStyle={{
-          backgroundColor: colors.chipInactive,
+          backgroundColor: colors.border,
           width: HANDLE_WIDTH,
           height: HANDLE_HEIGHT,
           borderRadius: radius.full,
@@ -92,7 +93,9 @@ export function ModalSheetTemplate({
         <BottomSheetView
           style={{ paddingHorizontal: spacing.lg, paddingBottom: insets.bottom + spacing.lg }}
         >
-          {title && <Text className="text-title font-semibold text-primary mb-lg">{title}</Text>}
+          {title && (
+            <Text className="text-title font-display-bold text-foreground mb-lg">{title}</Text>
+          )}
           <View className="gap-md">{children}</View>
         </BottomSheetView>
       </BottomSheet>

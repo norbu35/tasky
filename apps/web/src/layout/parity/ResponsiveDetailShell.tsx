@@ -38,7 +38,7 @@ export function ResponsiveDetailShell({
                 </Button>
               ) : null}
               <div className="space-y-1.5">
-                <h1 id={titleId} className="text-3xl font-semibold tracking-tight">
+                <h1 id={titleId} className="font-display text-3xl font-semibold tracking-tight">
                   {title}
                 </h1>
                 {description ? (
@@ -51,10 +51,10 @@ export function ResponsiveDetailShell({
             ) : null}
           </header>
 
-          <div className="space-y-4">{children}</div>
+          <div className="flex flex-col gap-3">{children}</div>
         </section>
 
-        {detailRail ? <aside className="space-y-4">{detailRail}</aside> : null}
+        {detailRail ? <aside className="space-y-3 lg:sticky lg:top-20">{detailRail}</aside> : null}
       </div>
     </ScreenFrame>
   );

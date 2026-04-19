@@ -2,6 +2,7 @@ import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
 import { mobileTheme } from '../../design/tokenAdapter';
+import { elevations } from '../../design/elevations';
 import { cn } from '../../lib/cn';
 import { ActionRow } from '../ui/ActionRow';
 
@@ -42,11 +43,11 @@ export function SettingsTemplate({ sections, testID, className }: SettingsTempla
       {sections.map((section, sectionIndex) => (
         <View key={section.title ?? `section-${sectionIndex}`} className="mb-xl">
           {section.title ? (
-            <Text className="text-caption font-bold text-primary-deep tracking-widest uppercase mb-sm">
-              {section.title.toUpperCase()}
+            <Text className="text-[13px] font-display-bold text-primary-deep mb-sm">
+              {section.title}
             </Text>
           ) : null}
-          <View className="bg-muted rounded-md overflow-hidden">
+          <View className="bg-card rounded-md overflow-hidden" style={elevations.card}>
             {section.rows.map((row, rowIndex) => (
               <ActionRow
                 key={`${row.label}-${rowIndex}`}

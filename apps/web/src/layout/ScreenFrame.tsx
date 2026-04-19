@@ -20,7 +20,7 @@ export function ScreenFrame({
   maxWidth?: MaxWidth;
 }) {
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen bg-background text-foreground">
       <DesktopSidebar />
 
       <div className="flex flex-1 flex-col min-w-0">

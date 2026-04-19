@@ -12,6 +12,8 @@ import { useTranslation } from 'react-i18next';
 import { Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { nativeTokens } from '@tasky/design-tokens';
+
 import { FAB } from '../../components/ui/FAB';
 import { TabBarButton } from '../../components/ui/TabBarButton';
 import { elevations } from '../../design/elevations';
@@ -28,6 +30,9 @@ const {
   tabBarSurfaceOpacity,
   tabIconSize,
 } = screenLayout.chrome;
+
+const TAB_BAR_TINT = withAlpha(colors.background, tabBarSurfaceOpacity);
+const TAB_BAR_TOP_RADIUS = nativeTokens.radius.md;
 
 export default function TabsLayout() {
   const { t } = useTranslation();
@@ -47,8 +52,10 @@ export default function TabsLayout() {
         paddingTop: tabBarInsetY,
         paddingBottom: Platform.OS === 'android' ? insets.bottom + tabBarInsetY : tabBarInsetY,
         paddingHorizontal: tabBarInsetX,
-        backgroundColor: withAlpha(colors.card, tabBarSurfaceOpacity),
+        backgroundColor: TAB_BAR_TINT,
         borderTopWidth: 0,
+        borderTopLeftRadius: TAB_BAR_TOP_RADIUS,
+        borderTopRightRadius: TAB_BAR_TOP_RADIUS,
         ...elevations.navBar,
       };
 
@@ -59,18 +66,19 @@ export default function TabsLayout() {
         screenOptions={{
           headerShown: false,
           tabBarHideOnKeyboard: true,
-          tabBarActiveTintColor: colors.primaryForeground,
+          tabBarActiveTintColor: colors.primary,
           tabBarInactiveTintColor: colors.navInactive,
           tabBarStyle,
           tabBarItemStyle: {
             flex: 1,
           },
           tabBarBackground: () =>
-            isChatDetail ? null : <BlurView intensity={28} tint="light" className="flex-1" />,
+            isChatDetail ? null : <BlurView intensity={20} tint="light" className="flex-1" />,
           tabBarLabelStyle: {
-            fontSize: typography.navLabel,
-            lineHeight: typography.navLabel + 2,
-            fontWeight: '600',
+            fontSize: typography.micro,
+            lineHeight: typography.micro + 2,
+            fontWeight: '600' as const,
+            fontFamily: nativeTokens.typography.families.display,
           },
         }}
       >

@@ -34,7 +34,7 @@ export function EmptyStateTemplate({
         </Reveal>
       )}
       <Reveal delay={60}>
-        <Text className="text-title font-bold text-primary text-center">{title}</Text>
+        <Text className="text-title font-display-bold text-foreground text-center">{title}</Text>
       </Reveal>
       {description && (
         <Reveal delay={100}>

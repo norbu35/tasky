@@ -68,7 +68,7 @@ export function AuthTemplate({
       >
         <InsetScrollView
           contentContainerStyle={[
-            { flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 40 },
+            { flexGrow: 1, justifyContent: 'center', paddingVertical: 40 },
             contentStyle,
           ]}
           showsVerticalScrollIndicator={false}
@@ -84,7 +84,7 @@ export function AuthTemplate({
 
           {/* Headline */}
           {headline && (
-            <Text className="text-heading font-semibold text-primary-deep text-center">
+            <Text className="text-heading font-display-bold text-primary-deep text-center">
               {headline}
             </Text>
           )}
