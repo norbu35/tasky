@@ -1,6 +1,6 @@
 # Tasky Design System
 
-**Version:** 2.0 | **Status:** Canonical | **Updated:** 2026-03-22
+**Version:** 2.1 | **Status:** Canonical | **Updated:** 2026-04-20
 
 > Mongolia's trust-first domestic service marketplace — where verified identity meets community reputation.
 
@@ -22,11 +22,11 @@ Tasky solves what Facebook groups and Unegui.mn structurally cannot: verified id
 
 ## Products
 
-| Product            | Tech                                      | Notes                                         |
-| ------------------ | ----------------------------------------- | --------------------------------------------- |
-| **Mobile App**     | Expo React Native + NativeWind + Tailwind | Primary product. Customer + Tasker dual-role. |
-| **Web**            | `tasky/apps/web/`                         | Secondary surface (not in Figma scope)        |
-| **Services / API** | `tasky/services/`                         | Backend (not a UI surface)                    |
+| Product            | Tech                                      | Notes                                            |
+| ------------------ | ----------------------------------------- | ------------------------------------------------ |
+| **Mobile App**     | Expo React Native + NativeWind + Tailwind | Primary product. Customer + Tasker dual-role.    |
+| **Web**            | `tasky/apps/web/`                         | Web client — design directives in `ui_kits/web/` |
+| **Services / API** | `tasky/services/`                         | Backend (not a UI surface)                       |
 
 ---
 
@@ -63,23 +63,33 @@ Four anchors: Deep Sky Blue · Steppe Gold · Open Sky · Clean Off-White
 | `--color-primary` / ink       | `#1B3A5C` | Authority, trust. Body text, primary buttons, nav active. Evokes "Мөнх хөх тэнгэр" (Eternal Blue Sky). |
 | `--color-primary-deep`        | `#102638` | Hero text, prominent headers, high-authority UI                                                        |
 | `--color-secondary` / sun     | `#8B6914` | Steppe Gold — star ratings, pricing, warm CTAs. Evokes the Mongolian steppe.                           |
+| `--color-sun-light`           | `#C49A3C` | Lighter gold fill — secondary buttons                                                                  |
+| `--color-sun-wash`            | `#FDCE6A` | Gold tint wash — highlights                                                                            |
 | `--color-accent` / sky        | `#6BA3BE` | Open Sky — highlights, links, interactive accents                                                      |
+| `--color-sky-soft`            | `#ABD1E8` | Soft sky tint — trust banner backgrounds                                                               |
 | `--color-background` / canvas | `#F9F8F5` | Clean off-white — professional without being sterile                                                   |
 | `--color-card` / surface      | `#FFFFFF` | Card backgrounds                                                                                       |
 | `--color-muted`               | `#F3F1EC` | Subtle surface, chip backgrounds                                                                       |
+| `--color-border` / line       | `#C7D0D9` | Borders and dividers                                                                                   |
+| `--color-input` / field       | `#DBE0E5` | Input backgrounds                                                                                      |
 | `--color-verified`            | `#469178` | Sage Emerald — verification badges, success states                                                     |
 | `--color-trust`               | `#3568A1` | Trust badges, authority indicators                                                                     |
-| `--color-danger`              | `#EF4444` | Errors and destructive actions only — never branding                                                   |
+| `--color-trust-muted`         | `#B3C4D6` | Trust background tint                                                                                  |
+| `--color-destructive`         | `#EF4444` | Errors and destructive actions only — never branding                                                   |
+| `--color-text-secondary`      | `#5E6B78` | Secondary body text                                                                                    |
+| `--color-text-tertiary`       | `#808D99` | Tertiary text, placeholders                                                                            |
+| `--color-nav-inactive`        | `#6C7B89` | Inactive navigation icons/labels                                                                       |
+| `--color-chip-inactive`       | `#D8DDE2` | Inactive filter chip backgrounds                                                                       |
 
-**Dark theme:** Deep sky base (HSL 212 35% 6%) with warm foreground (HSL 40 30% 88%). Brand colors increase lightness to ~55–60% and slightly desaturate. Dark theme values live in the `.dark` CSS class.
+**Dark theme:** Deep sky base (HSL 212 35% 6%) with warm foreground (HSL 40 30% 88%). Brand colors increase lightness to ~55–60% and slightly desaturate. Dark theme values live in the `.dark` CSS class using HSL channel format (for Tailwind `hsl()` consumption).
 
 ### Typography
 
-| Role                | Font                  | Weight  | Sizes                                                                                  |
-| ------------------- | --------------------- | ------- | -------------------------------------------------------------------------------------- |
-| Display / Headlines | **Manrope**           | 600–700 | 30px hero, 24px heading, 20px title, 18px subtitle                                     |
-| Body / UI           | **Plus Jakarta Sans** | 400–700 | 16px body (hard floor for Mongolian readability), 14px label, 12px caption, 10px micro |
-| Cyrillic fallback   | Roboto                | system  | —                                                                                      |
+| Role                | Font                  | Weight  | Sizes                                                                                                                                          |
+| ------------------- | --------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Display / Headlines | **Manrope**           | 600–700 | 48px display-xl, 36px display-lg, 28px heading-1, 22px heading-2, 18px heading-3                                                               |
+| Body / UI           | **Plus Jakarta Sans** | 400–700 | 18px body-lg, 16px body (hard floor for Mongolian readability), 14px body-sm/label, 13px label-ui, 12px caption, 11px overline/nav, 10px micro |
+| Cyrillic fallback   | Roboto                | system  | —                                                                                                                                              |
 
 - **Line-height:** 1.6 for body paragraphs; 1.3 (tight) for UI controls/buttons
 - **Letter-spacing:** Prohibited on sentence-case. +1px only on ALL-CAPS microcopy
@@ -98,8 +108,10 @@ Cards use `md` (12px). Buttons use `sm` (8px). Avatar initials: `md`. Circular b
 ### Shadows / Elevation
 
 - **card:** `0 1px 2px rgba(0,0,0,0.05)` — default card
-- **elevated:** `0 4px 6px rgba(0,0,0,0.1)` — modals, FABs
-- **navBar:** `0 -4px 24px rgba(26,28,26,0.04)` — bottom nav bar (upward shadow)
+- **elevated:** `0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.05)` — modals, dropdowns
+- **fab:** `0 4px 6px -4px rgba(0,0,0,0.1), 0 10px 15px -3px rgba(0,0,0,0.1)` — floating action buttons, primary CTAs
+- **nav:** `0 -4px 24px rgba(26,28,26,0.04)` — bottom nav bar (upward shadow)
+- **deep:** `0 25px 50px -12px rgba(0,0,0,0.25)` — dialogs, overlays
 
 ### Backgrounds
 
@@ -121,7 +133,7 @@ Off-white canvas `#F9F8F5` is universal. Cards sit on pure white. Subtle section
 
 ### Cards
 
-White background (`#FFFFFF`), radius `md` (12px), card shadow (`0 1px 2px rgba(0,0,0,0.05)`). No border by default. Pressable cards shrink slightly on press.
+White background (`#FFFFFF`), radius `md` (12px), card shadow (`0 1px 2px rgba(0,0,0,0.05)`), subtle border (`border-border/60`). Pressable cards shrink slightly on press.
 
 ### Bottom Navigation Bar
 
@@ -166,7 +178,7 @@ Assets copied:
 ```
 README.md                    ← This file
 SKILL.md                     ← Agent skill definition
-colors_and_type.css          ← All CSS custom properties (colors + typography)
+colors_and_type.css          ← All CSS custom properties (colors + typography + semantic type styles)
 fonts/                       ← .ttf font files (Manrope, Plus Jakarta Sans)
 assets/                      ← Logos, icons, SVG assets
 preview/                     ← Design system card HTML files
@@ -175,6 +187,14 @@ ui_kits/
     index.html               ← Interactive mobile app UI kit
     components.jsx           ← Shared React components
     README.md                ← Mobile UI kit notes
+  web/
+    Web UI Kit.html          ← Interactive web app UI kit
+    foundation.jsx           ← Colors, typography, spacing, radius, shadows, motion tokens
+    primitives.jsx           ← Buttons, inputs, badges, checkbox, switch, filter chips
+    compositions.jsx         ← Cards, tabs, alerts, dialog, avatar, skeleton, toast
+    patterns.jsx             ← Navigation, auth layout, page templates, empty states, dashboard
+    assets/                  ← Web-specific assets
+    fonts/                   ← Web-embedded font files
 ```
 
 ---

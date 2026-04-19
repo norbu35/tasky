@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tasky Web UI Kit</title>
+<style>
+@font-face { font-family: 'Manrope'; src: url('fonts/Manrope_600SemiBold.ttf'); font-weight: 600; }
+@font-face { font-family: 'Manrope'; src: url('fonts/Manrope_700Bold.ttf'); font-weight: 700 800; }
+@font-face { font-family: 'Plus Jakarta Sans'; src: url('fonts/PlusJakartaSans_400Regular.ttf'); font-weight: 400; }
+@font-face { font-family: 'Plus Jakarta Sans'; src: url('fonts/PlusJakartaSans_500Medium.ttf'); font-weight: 500; }
+@font-face { font-family: 'Plus Jakarta Sans'; src: url('fonts/PlusJakartaSans_600SemiBold.ttf'); font-weight: 600; }
+@font-face { font-family: 'Plus Jakarta Sans'; src: url('fonts/PlusJakartaSans_700Bold.ttf'); font-weight: 700; }
+
+:root {
+  /* Primitives */
+  --tenger-canvas:      hsl(40,22%,96%);
+  --tenger-ink:         hsl(212,43%,23%);
+  --tenger-ink-deep:    hsl(210,55%,14%);
+  --tenger-surface:     hsl(0,0%,100%);
+  --tenger-sun:         hsl(40,72%,31%);
+  --tenger-sun-light:   hsl(38,52%,50%);
+  --tenger-sun-wash:    hsl(42,97%,71%);
+  --tenger-sky:         hsl(200,34%,58%);
+  --tenger-sky-soft:    hsl(205,51%,80%);
+  --tenger-line:        hsl(210,16%,80%);
+  --tenger-field:       hsl(210,13%,88%);
+  --tenger-subtle:      hsl(36,20%,94%);
+  --tenger-muted-text:  hsl(210,13%,39%);
+  --tenger-verified:    hsl(160,34%,42%);
+  --tenger-trust:       hsl(212,49%,42%);
+  --tenger-danger:      hsl(0,84%,60%);
+  /* Semantic aliases */
+  --color-background:   var(--tenger-canvas);
+  --color-foreground:   var(--tenger-ink);
+  --color-card:         var(--tenger-surface);
+  --color-primary:      var(--tenger-ink);
+  --color-primary-deep: var(--tenger-ink-deep);
+  --color-secondary:    var(--tenger-sun);
+  --color-accent:       var(--tenger-sky);
+  --color-muted:        var(--tenger-subtle);
+  --color-border:       var(--tenger-line);
+  --color-text-secondary: hsl(208,13%,40%);
+  --color-text-tertiary:  hsl(208,12%,55%);
+  --color-verified:     var(--tenger-verified);
+  --color-trust:        var(--tenger-trust);
+  --color-destructive:  var(--tenger-danger);
+  /* Typography */
+  --font-display: 'Manrope', system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  /* Shadows */
+  --shadow-card:     0 1px 2px rgba(0,0,0,0.05);
+  --shadow-elevated: 0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.05);
+  --shadow-fab:      0 4px 6px -4px rgba(0,0,0,0.1),0 10px 15px -3px rgba(0,0,0,0.1);
+  --shadow-nav:      0 -4px 24px rgba(26,28,26,0.04);
+  --shadow-deep:     0 25px 50px -12px rgba(0,0,0,0.25);
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  min-height: 100vh;
+}
+
+/* Nav */
+#kit-nav {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 200px;
+  background: hsl(0,0%,100%);
+  border-right: 1px solid var(--color-border);
+  display: flex; flex-direction: column;
+  z-index: 100; overflow-y: auto;
+  box-shadow: var(--shadow-card);
+}
+#kit-nav .nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+#kit-nav .nav-logo .logo-mark {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: linear-gradient(135deg, hsl(210,55%,14%), hsl(212,43%,23%));
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+#kit-nav .wordmark {
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 800;
+  color: var(--color-foreground);
+  letter-spacing: -0.02em;
+}
+#kit-nav .nav-label {
+  padding: 16px 20px 8px;
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--color-text-tertiary);
+}
+#kit-nav a {
+  display: block; padding: 8px 20px;
+  font-size: 13px; font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-radius: 0;
+  transition: all 150ms;
+}
+#kit-nav a:hover { color: var(--color-foreground); background: var(--color-muted); }
+#kit-nav a.active { color: var(--color-foreground); font-weight: 600; background: hsl(212,43%,23%,0.07); border-right: 2px solid var(--color-foreground); }
+
+/* Main */
+#kit-main {
+  margin-left: 200px;
+  padding: 48px 56px;
+  max-width: 1200px;
+}
+
+/* Page header */
+.kit-page-header {
+  margin-bottom: 48px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--color-border);
+}
+.kit-badge {
+  display: inline-flex; align-items: center;
+  padding: 4px 12px; border-radius: 9999px;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.07em;
+  background: hsl(160,34%,42%,0.1); color: hsl(160,34%,38%);
+  margin-bottom: 12px;
+}
+.kit-page-title {
+  font-family: var(--font-display);
+  font-size: 40px; font-weight: 800;
+  color: var(--color-foreground);
+  letter-spacing: -0.02em; line-height: 1.1;
+  margin-bottom: 10px;
+}
+.kit-page-sub {
+  font-size: 16px; color: var(--color-text-secondary);
+  line-height: 1.6; max-width: 560px;
+}
+
+/* Section divider */
+.kit-divider {
+  height: 1px; background: var(--color-border);
+  margin: 48px 0;
+}
+
+/* Tab strip */
+#kit-tabs {
+  display: flex; gap: 2px;
+  background: var(--color-muted);
+  border-radius: 10px; padding: 4px;
+  margin-bottom: 40px;
+  width: fit-content;
+}
+.kit-tab-btn {
+  padding: 8px 20px; border-radius: 7px;
+  font-size: 13px; font-weight: 500;
+  font-family: var(--font-sans);
+  border: none; cursor: pointer;
+  background: transparent;
+  color: var(--color-text-secondary);
+  transition: all 150ms;
+}
+.kit-tab-btn.active {
+  background: #fff;
+  color: var(--color-foreground);
+  font-weight: 600;
+  box-shadow: var(--shadow-card);
+}
+
+/* Scroll sections */
+.kit-section-anchor { scroll-margin-top: 24px; }
+
+/* Animations */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar nav -->
+<nav id="kit-nav">
+  <div class="nav-logo">
+    <div class="logo-mark">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="hsl(40,22%,96%)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <span class="wordmark">Tasky</span>
+  </div>
+  <div class="nav-label">Web UI Kit</div>
+  <a href="#foundation" class="active" onclick="setActive(this)">Foundation</a>
+  <a href="#primitives" onclick="setActive(this)">Primitives</a>
+  <a href="#compositions" onclick="setActive(this)">Compositions</a>
+  <a href="#patterns" onclick="setActive(this)">Patterns</a>
+  <div class="nav-label" style="margin-top:8px">Foundation</div>
+  <a href="#colors" onclick="setActive(this)">Colors</a>
+  <a href="#typography" onclick="setActive(this)">Typography</a>
+  <a href="#spacing" onclick="setActive(this)">Spacing</a>
+  <a href="#motion" onclick="setActive(this)">Motion</a>
+  <div class="nav-label" style="margin-top:8px">Components</div>
+  <a href="#buttons" onclick="setActive(this)">Buttons</a>
+  <a href="#badges" onclick="setActive(this)">Badges</a>
+  <a href="#inputs" onclick="setActive(this)">Inputs</a>
+  <a href="#cards" onclick="setActive(this)">Cards</a>
+  <a href="#dialogs" onclick="setActive(this)">Dialogs</a>
+  <a href="#navigation" onclick="setActive(this)">Navigation</a>
+  <a href="#auth" onclick="setActive(this)">Auth Layout</a>
+  <a href="#empty-states" onclick="setActive(this)">Empty States</a>
+  <a href="#dashboard" onclick="setActive(this)">Dashboard</a>
+</nav>
+
+<!-- Main content -->
+<main id="kit-main">
+  <header class="kit-page-header">
+    <div class="kit-badge">Web UI Kit · v1.0</div>
+    <h1 class="kit-page-title">Tasky Web<br/>Component Library</h1>
+    <p class="kit-page-sub">
+      All components, tokens and layout patterns used in the Tasky web application.
+      Built from the live codebase — tokens, variants and exact measurements are production-accurate.
+    </p>
+    <div style="display:flex;gap:24px;margin-top:20px;flex-wrap:wrap">
+      <div style="font-size:13px;color:var(--color-text-secondary)"><strong style="color:var(--color-foreground);font-weight:600">Framework:</strong> React + Vite + Tailwind</div>
+      <div style="font-size:13px;color:var(--color-text-secondary)"><strong style="color:var(--color-foreground);font-weight:600">Components:</strong> shadcn/ui base + custom</div>
+      <div style="font-size:13px;color:var(--color-text-secondary)"><strong style="color:var(--color-foreground);font-weight:600">Fonts:</strong> Manrope · Plus Jakarta Sans</div>
+      <div style="font-size:13px;color:var(--color-text-secondary)"><strong style="color:var(--color-foreground);font-weight:600">Icons:</strong> Lucide</div>
+    </div>
+  </header>
+
+  <div id="kit-root"></div>
+</main>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="foundation.jsx"></script>
+<script type="text/babel" src="primitives.jsx"></script>
+<script type="text/babel" src="compositions.jsx"></script>
+<script type="text/babel" src="patterns.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const SECTION_IDS = {
+  foundation:   ['colors', 'typography', 'spacing', 'motion'],
+  primitives:   ['buttons', 'badges', 'inputs', 'chips'],
+  compositions: ['avatar', 'cards', 'tabs', 'alerts', 'dialogs', 'toasts'],
+  patterns:     ['navigation', 'auth', 'empty-states', 'dashboard'],
+};
+
+const SECTION_ANCHORS = [
+  { id: 'colors',       label: 'Brand Palette' },
+  { id: 'typography',   label: 'Typography Scale' },
+  { id: 'spacing',      label: 'Spacing & Radius' },
+  { id: 'motion',       label: 'Motion Tokens' },
+  { id: 'buttons',      label: 'Buttons' },
+  { id: 'badges',       label: 'Badges' },
+  { id: 'inputs',       label: 'Form Inputs' },
+  { id: 'chips',        label: 'Filter Chips' },
+  { id: 'avatar',       label: 'Avatar' },
+  { id: 'cards',        label: 'Task Cards' },
+  { id: 'tabs',         label: 'Tabs' },
+  { id: 'alerts',       label: 'Alerts' },
+  { id: 'dialogs',      label: 'Dialog' },
+  { id: 'toasts',       label: 'Toasts' },
+  { id: 'navigation',   label: 'Navigation' },
+  { id: 'auth',         label: 'Auth Layout' },
+  { id: 'empty-states', label: 'Empty States' },
+  { id: 'dashboard',    label: 'Dashboard' },
+];
+
+// Wrap each top-level section with an id anchor
+function Anchored({ id, children }) {
+  return <div id={id} className="kit-section-anchor">{children}</div>;
+}
+
+// Section heading with divider
+function SectionHeading({ id, title, group }) {
+  return (
+    <div style={{ display:'flex', alignItems:'center', gap:16, marginBottom:32, marginTop: group ? 0 : 16 }}>
+      <div style={{ flex:1 }}>
+        <span style={{ fontSize:11, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', color:'var(--color-text-tertiary)', fontFamily:'var(--font-sans)' }}>{group}</span>
+        <h2 style={{ fontFamily:'var(--font-display)', fontSize:28, fontWeight:700, color:'var(--color-foreground)', margin:'2px 0 0', letterSpacing:'-0.01em' }}>{title}</h2>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [tab, setTab] = useState('all');
+
+  const showFoundation    = tab === 'all' || tab === 'foundation';
+  const showPrimitives    = tab === 'all' || tab === 'primitives';
+  const showCompositions  = tab === 'all' || tab === 'compositions';
+  const showPatterns      = tab === 'all' || tab === 'patterns';
+
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{"darkMode": false, "accentColor": "#1B3A5C", "compact": false}/*EDITMODE-END*/;
+  const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
+  const [showTweaks, setShowTweaks] = useState(false);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.data?.type === '__activate_edit_mode') setShowTweaks(true);
+      if (e.data?.type === '__deactivate_edit_mode') setShowTweaks(false);
+    };
+    window.addEventListener('message', handler);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', handler);
+  }, []);
+
+  const updateTweak = (key, val) => {
+    const next = { ...tweaks, [key]: val };
+    setTweaks(next);
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits: next }, '*');
+  };
+
+  return (
+    <>
+      {/* Tab filter strip */}
+      <div id="kit-tabs">
+        {[['all','All'], ['foundation','Foundation'], ['primitives','Primitives'], ['compositions','Compositions'], ['patterns','Patterns']].map(([v,l]) => (
+          <button key={v} className={`kit-tab-btn${tab===v?' active':''}`} onClick={() => setTab(v)}>{l}</button>
+        ))}
+      </div>
+
+      {/* Foundation */}
+      {showFoundation && (
+        <>
+          <SectionHeading group="Foundation" title="Design Tokens" />
+          <Anchored id="colors"><FoundationSection /></Anchored>
+        </>
+      )}
+
+      {/* Primitives */}
+      {showPrimitives && (
+        <>
+          {tab === 'all' && <div className="kit-divider" />}
+          <SectionHeading group="Primitives" title="Buttons, Badges & Inputs" />
+          <Anchored id="buttons"><PrimitivesSection /></Anchored>
+        </>
+      )}
+
+      {/* Compositions */}
+      {showCompositions && (
+        <>
+          {tab === 'all' && <div className="kit-divider" />}
+          <SectionHeading group="Compositions" title="Cards, Dialogs & Feedback" />
+          <Anchored id="avatar"><CompositionsSection /></Anchored>
+        </>
+      )}
+
+      {/* Patterns */}
+      {showPatterns && (
+        <>
+          {tab === 'all' && <div className="kit-divider" />}
+          <SectionHeading group="Patterns" title="Navigation, Auth & Page Templates" />
+          <Anchored id="navigation"><PatternsSection /></Anchored>
+        </>
+      )}
+
+      {/* Tweaks panel */}
+      {showTweaks && (
+        <div style={{ position:'fixed', bottom:24, right:24, background:'#fff', borderRadius:16, padding:24, boxShadow:'0 25px 50px -12px rgba(0,0,0,0.25)', border:'1px solid var(--color-border)', width:260, zIndex:999, fontFamily:'var(--font-sans)' }}>
+          <p style={{ fontSize:13, fontWeight:700, color:'var(--color-foreground)', margin:'0 0 16px', fontFamily:'var(--font-display)' }}>Tweaks</p>
+          <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+            <label style={{ display:'flex', alignItems:'center', justifyContent:'space-between', fontSize:13 }}>
+              <span style={{ color:'var(--color-text-secondary)' }}>Compact density</span>
+              <div onClick={() => updateTweak('compact', !tweaks.compact)} style={{ width:36, height:20, borderRadius:10, background: tweaks.compact ? 'hsl(212,43%,23%)' : 'hsl(210,16%,80%)', position:'relative', cursor:'pointer', transition:'background 200ms' }}>
+                <div style={{ position:'absolute', top:2, left: tweaks.compact ? 18 : 2, width:16, height:16, borderRadius:'50%', background:'#fff', transition:'left 200ms', boxShadow:'0 1px 3px rgba(0,0,0,0.2)' }} />
+              </div>
+            </label>
+            <div>
+              <p style={{ fontSize:12, color:'var(--color-text-secondary)', margin:'0 0 8px' }}>Primary color</p>
+              <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                {['#1B3A5C','#469178','#8B6914','#3568A1','#6BA3BE'].map(c => (
+                  <div key={c} onClick={() => updateTweak('accentColor', c)} style={{ width:28, height:28, borderRadius:8, background:c, cursor:'pointer', border: tweaks.accentColor === c ? '3px solid #fff' : '2px solid transparent', boxShadow: tweaks.accentColor === c ? `0 0 0 2px ${c}` : 'none', transition:'all 150ms' }} />
+                ))}
+              </div>
+            </div>
+            <p style={{ fontSize:11, color:'var(--color-text-tertiary)', margin:0, lineHeight:1.5 }}>Tweaks are cosmetic only — they don't affect the live codebase.</p>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('kit-root')).render(<App />);
+</script>
+
+<script>
+function setActive(el) {
+  document.querySelectorAll('#kit-nav a').forEach(a => a.classList.remove('active'));
+  el.classList.add('active');
+}
+// Highlight nav on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      const link = document.querySelector(`#kit-nav a[href="#${id}"]`);
+      if (link) {
+        document.querySelectorAll('#kit-nav a').forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+      }
+    }
+  });
+}, { threshold: 0.1, rootMargin: '-10% 0px -80% 0px' });
+
+setTimeout(() => {
+  document.querySelectorAll('.kit-section-anchor').forEach(el => observer.observe(el));
+}, 1500);
+</script>
+
+</body>
+</html>
