@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { Bell, Hammer, Leaf, Package, Plus, Sparkles, Wrench, Zap } from 'lucide-react-native';
+import { Bell, Hammer, Leaf, Package, Sparkles, Wrench, Zap } from 'lucide-react-native';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, RefreshControl, Text, View } from 'react-native';
@@ -301,8 +301,6 @@ export default function MyTasksListScreen() {
     [counts, handleNotificationsPress],
   );
 
-  const fabSize = screenLayout.chrome.fabSize;
-
   return (
     <ScreenContainer testID="SCR-CUST-001" padded={false}>
       {isLoading ? (
@@ -345,31 +343,6 @@ export default function MyTasksListScreen() {
             showsVerticalScrollIndicator={false}
             testID="my-tasks-feed"
           />
-          {tasks.length > 0 && (
-            <Touchable
-              testID="my-tasks-feed-fab"
-              onPress={handleFabPress}
-              accessibilityRole="button"
-              accessibilityLabel="Post new task"
-              style={[
-                {
-                  position: 'absolute',
-                  right: screenLayout.chrome.fabInsetRight,
-                  bottom: screenLayout.chrome.contentBottomClearance + insets.bottom,
-                  width: fabSize,
-                  height: fabSize,
-                  borderRadius: fabSize / 2,
-                  backgroundColor: colors.primary,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  opacity: isLocked ? 0.5 : 1,
-                },
-                elevations.elevated,
-              ]}
-            >
-              <Plus color={colors.primaryForeground} size={28} />
-            </Touchable>
-          )}
         </>
       )}
     </ScreenContainer>

@@ -1,5 +1,6 @@
 import { CheckCircle } from 'lucide-react-native';
 import React, { useEffect } from 'react';
+import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
@@ -43,12 +44,13 @@ export function HandDrawnCheck({
   return (
     <Animated.View
       style={animatedStyle}
-      className={cn(className)}
       testID={testID}
       accessibilityLabel={t('common.success')}
       accessibilityRole="image"
     >
-      <CheckCircle size={size} color={color} />
+      <View className={cn(className)}>
+        <CheckCircle size={size} color={color} />
+      </View>
     </Animated.View>
   );
 }

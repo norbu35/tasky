@@ -1,5 +1,5 @@
 import React from 'react';
-import type { StyleProp, ViewStyle } from 'react-native';
+import { View, type StyleProp, type ViewStyle } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import type { EntryOrExitLayoutType } from 'react-native-reanimated';
 
@@ -53,8 +53,10 @@ export function Reveal({
   }) as EntryOrExitLayoutType | undefined;
 
   return (
-    <Animated.View entering={rootEntering} style={style} className={className} testID={testID}>
-      <Animated.View entering={childEntering}>{children}</Animated.View>
+    <Animated.View entering={rootEntering} style={style} testID={testID}>
+      <View className={className}>
+        <Animated.View entering={childEntering}>{children}</Animated.View>
+      </View>
     </Animated.View>
   );
 }

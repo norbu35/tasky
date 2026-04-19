@@ -1,8 +1,7 @@
-// apps/mobile/src/components/ui/FAB.tsx
 import { useRouter } from 'expo-router';
 import { Plus } from 'lucide-react-native';
 import React from 'react';
-import { useWindowDimensions } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, runOnJS } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,7 +15,8 @@ import { useAuthStore } from '../../store/authStore';
 const { colors } = mobileTheme;
 const { fabIconSize, fabInsetRight, fabInsetTop, fabSize, tabBarHeight, tabBarBottom } =
   screenLayout.chrome;
-const DRAG_THRESHOLD = 8;
+const FAB_DRAG_THRESHOLD = 8;
+const FAB_Z_INDEX = 999;
 
 type FABProps = {
   testID?: string;
@@ -62,7 +62,7 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
   });
 
   const pan = Gesture.Pan()
-    .minDistance(DRAG_THRESHOLD)
+    .minDistance(FAB_DRAG_THRESHOLD)
     .onStart(() => {
       startX.value = translateX.value;
       startY.value = translateY.value;
@@ -105,20 +105,28 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
             top: 0,
             width: fabSize,
             height: fabSize,
-            borderRadius: fabSize / 2,
-            backgroundColor: colors.primary,
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 999,
-            ...elevations.elevated,
+            zIndex: FAB_Z_INDEX,
           },
           animatedStyle,
         ]}
-        className={cn(className)}
         testID={testID}
       >
-        <Plus color={colors.primaryForeground} size={fabIconSize} />
+        <View
+          className={cn('h-full w-full items-center justify-center', className)}
+          style={styles.surface}
+          pointerEvents="none"
+        >
+          <Plus color={colors.primaryForeground} size={fabIconSize} />
+        </View>
       </Animated.View>
     </GestureDetector>
   );
 }
+
+const styles = StyleSheet.create({
+  surface: {
+    borderRadius: fabSize / 2,
+    backgroundColor: colors.primary,
+    ...elevations.elevated,
+  },
+});

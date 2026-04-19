@@ -35,8 +35,10 @@ function AnimatedCheckmark() {
   }));
 
   return (
-    <Animated.View className="mb-xl" style={animatedStyle}>
-      <CheckCircle size={64} color={colors.verified} />
+    <Animated.View style={animatedStyle}>
+      <View className="mb-xl">
+        <CheckCircle size={64} color={colors.verified} />
+      </View>
     </Animated.View>
   );
 }

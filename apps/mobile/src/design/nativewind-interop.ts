@@ -1,12 +1,5 @@
-import { cssInterop } from 'nativewind';
-import Animated from 'react-native-reanimated';
-
-// NativeWind v4 requires cssInterop() for third-party components.
-// Without this, className on Animated.View/Text/ScrollView is silently ignored.
-
-cssInterop(Animated.View, { className: 'style' });
-cssInterop(Animated.Text, { className: 'style' });
-cssInterop(Animated.ScrollView, {
-  className: 'style',
-  contentContainerClassName: 'contentContainerStyle',
-});
+// Intentionally empty.
+//
+// Reanimated views should not receive NativeWind className props directly.
+// Keep utility classes on regular React Native nodes and reserve object styles
+// for animated transforms/elevation/inset-driven layout.

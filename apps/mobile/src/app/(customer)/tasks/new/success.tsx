@@ -48,10 +48,11 @@ export default function TaskPostedSuccessScreen() {
         <View className="px-lg pt-lg gap-2xl">
           <View className="items-center gap-md pt-lg">
             <Animated.View
-              className="w-24 h-24 rounded-full items-center justify-center"
               style={[{ backgroundColor: `${colors.verified}1A` }, animatedCheckStyle]}
             >
-              <CheckCircle2 size={50} color={colors.verified} />
+              <View className="w-24 h-24 rounded-full items-center justify-center">
+                <CheckCircle2 size={50} color={colors.verified} />
+              </View>
             </Animated.View>
             <View
               className="px-md py-xs rounded-full"

@@ -1,7 +1,7 @@
 import { WifiOff } from 'lucide-react-native';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import { animationPresets } from '../../design/animations';
@@ -34,18 +34,21 @@ export function OfflineBanner({ visible, testID, className }: OfflineBannerProps
   return (
     <Animated.View
       style={animatedStyle}
-      className={cn(
-        'flex-row items-center justify-center bg-secondary py-sm px-lg gap-sm',
-        className,
-      )}
       testID={testID}
       accessibilityLabel={t('offline.banner')}
       accessibilityRole="alert"
     >
-      <WifiOff size={16} color={colors.primaryDeep} />
-      <Text style={{ fontSize: typography.label, fontWeight: '600', color: colors.primaryDeep }}>
-        {t('offline.banner')}
-      </Text>
+      <View
+        className={cn(
+          'flex-row items-center justify-center bg-secondary py-sm px-lg gap-sm',
+          className,
+        )}
+      >
+        <WifiOff size={16} color={colors.primaryDeep} />
+        <Text style={{ fontSize: typography.label, fontWeight: '600', color: colors.primaryDeep }}>
+          {t('offline.banner')}
+        </Text>
+      </View>
     </Animated.View>
   );
 }

@@ -1,15 +1,7 @@
 import React from 'react';
 import type { AccessibilityState, GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
-import { Pressable, StyleSheet, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
-
-import { interactiveStates, withInteractiveSpring } from '../../design/animations';
-import { screenLayout } from '../../design/screenLayout';
-import { mobileTheme } from '../../design/tokenAdapter';
-
-const { colors, spacing } = mobileTheme;
-const { tabButtonHeight, tabButtonInsetX, tabButtonRadius } = screenLayout.chrome;
-const AnimatedView = Animated.View;
+import { Pressable, View } from 'react-native';
+import { cn } from '../../lib/cn';
 
 interface TabBarButtonProps {
   children?: React.ReactNode;
@@ -31,10 +23,6 @@ export function TabBarButton({
   testID,
 }: TabBarButtonProps) {
   const focused = accessibilityState?.selected ?? ariaSelected ?? false;
-  const scale = useSharedValue(1);
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
 
   return (
     <Pressable
@@ -43,38 +31,16 @@ export function TabBarButton({
       onLongPress={onLongPress ?? undefined}
       accessibilityState={accessibilityState}
       android_ripple={null}
-      style={styles.pressable}
-      onPressIn={() => {
-        scale.value = withInteractiveSpring(interactiveStates.pressed.scale);
-      }}
-      onPressOut={() => {
-        scale.value = withInteractiveSpring(1);
-      }}
+      className="flex-1 self-stretch justify-center mx-md my-sm"
     >
-      <AnimatedView style={animatedStyle}>
-        <View style={[styles.content, focused && styles.contentFocused]}>{children}</View>
-      </AnimatedView>
+      <View
+        className={cn(
+          'h-[72px] self-stretch rounded-[20px] items-center justify-center',
+          focused && 'bg-primary-deep',
+        )}
+      >
+        {children}
+      </View>
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  pressable: {
-    flex: 1,
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-    marginHorizontal: tabButtonInsetX,
-    marginVertical: spacing.sm,
-  },
-  content: {
-    height: tabButtonHeight,
-    alignSelf: 'stretch',
-    borderRadius: tabButtonRadius,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  contentFocused: {
-    backgroundColor: colors.primaryDeep,
-  },
-});

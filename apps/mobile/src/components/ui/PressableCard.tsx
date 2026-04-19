@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority';
 import React from 'react';
-import { Pressable, StyleProp, ViewStyle } from 'react-native';
+import { Pressable, StyleProp, View, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
 import { interactiveStates, withInteractiveSpring } from '../../design/animations';
@@ -59,10 +59,9 @@ export function PressableCard({
       onPressOut={handlePressOut}
       style={[style, animatedStyle]}
       testID={testID}
-      className={cn(cardVariants(), className)}
       accessibilityRole="button"
     >
-      {children}
+      <View className={cn(cardVariants(), className)}>{children}</View>
     </AnimatedPressable>
   );
 }

@@ -63,13 +63,15 @@ function SkeletonCard() {
   }));
 
   return (
-    <Animated.View
-      className="bg-muted rounded-md gap-sm"
-      style={[animatedStyle, { padding: screenLayout.body.cardPadding }]}
-    >
-      <View className="h-lg bg-chip-inactive rounded-xs self-stretch" />
-      <View className="h-md bg-chip-inactive rounded-xs" style={{ width: '60%' }} />
-      <View className="h-md bg-chip-inactive rounded-xs" style={{ width: '80%' }} />
+    <Animated.View style={animatedStyle}>
+      <View
+        className="bg-muted rounded-md gap-sm"
+        style={{ padding: screenLayout.body.cardPadding }}
+      >
+        <View className="h-lg bg-chip-inactive rounded-xs self-stretch" />
+        <View className="h-md bg-chip-inactive rounded-xs" style={{ width: '60%' }} />
+        <View className="h-md bg-chip-inactive rounded-xs" style={{ width: '80%' }} />
+      </View>
     </Animated.View>
   );
 }
