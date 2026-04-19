@@ -7,6 +7,7 @@ import { Text, View } from 'react-native';
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { elevations } from '../../../design/elevations';
+import { mobileSurfaces } from '../../../design/surfaces';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { useTaskerProfile } from '../../../features/profile/hooks/useTaskerProfile';
 import type { Profile, Review } from '../../../lib/mobileApiClient';
@@ -127,7 +128,7 @@ export default function TaskerProfileScreen() {
                   <View
                     key={category}
                     className="px-md py-sm rounded-full"
-                    style={{ backgroundColor: `${colors.primary}12` }}
+                    style={{ backgroundColor: mobileSurfaces.tint.categoryPill }}
                   >
                     <Text className="text-caption text-primary-deep font-sans-bold">
                       {category}

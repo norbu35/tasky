@@ -14,6 +14,7 @@ export const mobileSurfaces = {
     dangerMedium: withAlpha(colors.danger, 0.12),
     trustSoft: withAlpha(colors.trust, 0.13),
     verifiedSoft: withAlpha(colors.verified, 0.1),
+    categoryPill: withAlpha(colors.primary, 0.12),
     borderSoft: withAlpha(colors.border, 0.5),
   },
   onboarding: {
