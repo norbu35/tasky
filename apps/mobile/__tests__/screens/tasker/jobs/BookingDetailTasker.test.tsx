@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { useBookingDetail } from '../../../../src/features/bookings/hooks/useBookingDetail';
-import type { Booking } from '../../../../src/lib/mobileApiClient';
+import type { Booking } from '../../../../src/lib/api/types';
 import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 const mockPush = jest.fn();

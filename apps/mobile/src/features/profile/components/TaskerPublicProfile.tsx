@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ProfileAvatar, StatCard, ReviewCard } from '@/components/ui';
 import { mobileTheme, elevations } from '@/design/tokenAdapter';
-import type { Review } from '@/lib/mobileApiClient';
+import type { Review } from '@/lib/api/types';
 import { useTaskerProfile } from '../hooks/useTaskerProfile';
 
 const { colors } = mobileTheme;

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import type { CursorPage } from '../../../lib/mobileApiClient';
+import type { CursorPage } from '@/lib/api/types';
 
 export interface Notification {
   id: string;

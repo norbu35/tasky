@@ -1,4 +1,4 @@
-import type { AuthTokens } from '../../src/lib/mobileApiClient';
+import type { AuthTokens } from '../../src/lib/api/types';
 import { resolvePostAuthHref } from '../../src/utils/authRouting';
 
 const baseSession: AuthTokens = {

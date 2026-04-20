@@ -1,4 +1,4 @@
-import { type Booking } from '@/lib/mobileApiClient';
+import { type Booking } from '@/lib/api/types';
 import { type CancelType } from '@/features/bookings/components/CustomerCancelSheet';
 import { mapStatus as sharedMapStatus } from '@/utils/statusMapping';
 

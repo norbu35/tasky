@@ -10,7 +10,7 @@ import { elevations } from '@/design/elevations';
 import { mobileSurfaces } from '@/design/surfaces';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { useTaskerProfile } from '@/features/profile/hooks/useTaskerProfile';
-import type { Profile, Review } from '@/lib/mobileApiClient';
+import type { Profile, Review } from '@/lib/api/types';
 
 interface TaskerProfileDetail extends Profile {
   bio?: string;

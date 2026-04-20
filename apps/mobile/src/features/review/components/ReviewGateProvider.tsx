@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo } from 'react';
 
-import type { PendingReview } from '../../../lib/mobileApiClient';
+import type { PendingReview } from '@/lib/api/types';
 import { usePendingReviews } from '../hooks/usePendingReviews';
 
 interface ReviewGateContextValue {

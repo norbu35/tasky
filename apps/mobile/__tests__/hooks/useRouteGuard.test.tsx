@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import { render, screen } from '@testing-library/react-native';
 import { useRouteGuard } from '../../src/hooks/useRouteGuard';
 import { useAuthStore } from '../../src/store/authStore';
-import type { AuthTokens, Profile, User } from '../../src/lib/mobileApiClient';
+import type { AuthTokens, Profile, User } from '../../src/lib/api/types';
 
 const mockReplace = jest.fn();
 const mockBack = jest.fn();

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
-import type { PublicTask } from '../../../src/lib/mobileApiClient';
+import type { PublicTask } from '../../../src/lib/api/types';
 
 const mockPush = jest.fn();
 const mockBack = jest.fn();

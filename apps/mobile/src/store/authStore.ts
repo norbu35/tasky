@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import type { AuthTokens, Profile } from '../lib/mobileApiClient';
+import type { AuthTokens, Profile } from '../lib/api/types';
 
 interface AuthState {
   session: AuthTokens | null;

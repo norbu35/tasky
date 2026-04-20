@@ -7,7 +7,7 @@ const render = (ui: React.ReactElement, options?: any) =>
   rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
 
 import { useTasks } from '../../../src/features/tasks/hooks/useTasks';
-import type { PublicTask } from '../../../src/lib/mobileApiClient';
+import type { PublicTask } from '../../../src/lib/api/types';
 import { RoleProvider } from '../../../src/providers/RoleProvider';
 import { useAppStore } from '../../../src/store/appStore';
 

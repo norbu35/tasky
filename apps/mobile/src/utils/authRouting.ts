@@ -1,4 +1,4 @@
-import type { AuthTokens } from '../lib/mobileApiClient';
+import type { AuthTokens } from '../lib/api/types';
 
 export function resolvePostAuthHref(
   session: AuthTokens | null,

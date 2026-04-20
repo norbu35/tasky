@@ -19,7 +19,7 @@ import { ReviewGateBanner } from '@/features/review/components/ReviewGateBanner'
 import { useReviewGate } from '@/features/review/components/ReviewGateProvider';
 import { useCategories } from '@/features/tasks/hooks/useCategories';
 import { useTasks } from '@/features/tasks/hooks/useTasks';
-import type { PublicTask } from '@/lib/mobileApiClient';
+import type { PublicTask } from '@/lib/api/types';
 import { useRole } from '@/providers/RoleProvider';
 import { formatShortDate } from '@/utils/formatDate';
 

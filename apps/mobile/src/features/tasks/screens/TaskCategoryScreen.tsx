@@ -10,7 +10,7 @@ import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { useTaskDraftStore } from '@/features/tasks/draft';
 import { useCategories } from '@/features/tasks/hooks/useCategories';
-import type { Category } from '@/lib/mobileApiClient';
+import type { Category } from '@/lib/api/types';
 
 const { colors, spacing } = mobileTheme;
 

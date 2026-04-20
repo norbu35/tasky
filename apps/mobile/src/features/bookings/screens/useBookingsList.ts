@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 
 import { useBookings } from '@/features/bookings/hooks/useBookings';
-import type { Booking } from '@/lib/mobileApiClient';
+import type { Booking } from '@/lib/api/types';
 
 import { type BookingTab, isActiveStatus, isCompletedStatus } from './BookingsList.model';
 

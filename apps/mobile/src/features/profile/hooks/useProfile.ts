@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 import { getMyProfile, updateMyProfile } from '../api';
-import type { Profile } from '../../../lib/mobileApiClient';
+import type { Profile } from '@/lib/api/types';
 import { useAuthStore } from '../../../store/authStore';
 
 export function useMyProfile() {

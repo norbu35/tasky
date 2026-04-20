@@ -8,7 +8,7 @@ import { FilterBar } from '@/components/ui/FilterBar';
 import { SplitCard } from '@/components/ui/SplitCard';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { useBookings } from '@/features/bookings/hooks/useBookings';
-import type { Booking } from '@/lib/mobileApiClient';
+import type { Booking } from '@/lib/api/types';
 
 function BookingCardHeader({ booking }: { booking: Booking }) {
   const customerName = booking.customer?.full_name ?? '';

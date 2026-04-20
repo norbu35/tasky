@@ -5,7 +5,7 @@ import { View, Text } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
 import { elevations } from '@/design/tokenAdapter';
-import type { PendingReview } from '@/lib/mobileApiClient';
+import type { PendingReview } from '@/lib/api/types';
 
 interface ReviewGateBannerProps {
   pendingReview: PendingReview;

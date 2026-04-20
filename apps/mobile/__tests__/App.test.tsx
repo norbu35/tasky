@@ -36,12 +36,12 @@ import {
   ApiError,
   type AuthTokens,
   type Booking,
-  createMobileApiClient,
   type Message,
   type Profile,
   type PublicTask,
   type User,
-} from '../src/lib/mobileApiClient';
+} from '../src/lib/api/types';
+import { createMobileApiClient } from '../src/lib/mobileApiClient';
 import { useAuthStore } from '../src/store/authStore';
 import { useAppStore } from '../src/store/appStore';
 import { parseError } from '../src/utils/errorHandling';
