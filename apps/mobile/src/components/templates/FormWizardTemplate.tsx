@@ -10,9 +10,9 @@ import {
   type LayoutChangeEvent,
 } from 'react-native';
 
-import { screenLayout } from '../../design/screenLayout';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { cn } from '../../lib/cn';
+import { screenLayout } from '@/design/screenLayout';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { cn } from '@/lib/cn';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 import { Button } from '../ui/Button';
 import { ScreenHeader } from '../ui/ScreenHeader';

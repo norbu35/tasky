@@ -14,7 +14,7 @@ import {
   IntakeAnswersSummary,
   DescriptionCard,
 } from './TaskReviewSubmit.SummarySections';
-import { useTaskReviewSubmit } from './useTaskReviewSubmit';
+import { useTaskReviewSubmitScreen } from './useTaskReviewSubmitScreen';
 
 const { colors } = mobileTheme;
 
@@ -35,7 +35,7 @@ export default function TaskReviewSubmitScreen() {
     navigateToPhotos,
     navigateToLocation,
     navigateToSchedule,
-  } = useTaskReviewSubmit();
+  } = useTaskReviewSubmitScreen();
 
   return (
     <FormWizardTemplate

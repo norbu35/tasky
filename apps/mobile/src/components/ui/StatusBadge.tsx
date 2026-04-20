@@ -3,7 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { cn } from '../../lib/cn';
+import { cn } from '@/lib/cn';
 
 type StatusType = 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show';
 

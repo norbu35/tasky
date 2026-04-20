@@ -3,7 +3,7 @@ import { View, type StyleProp, type ViewStyle } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import type { EntryOrExitLayoutType } from 'react-native-reanimated';
 
-import { animationPresets } from '../../design/animations';
+import { animationPresets } from '@/design/animations';
 
 export interface RevealProps {
   children: React.ReactNode;

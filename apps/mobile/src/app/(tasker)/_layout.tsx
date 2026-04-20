@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
-import { defaultStackScreenOptions } from '../../design/navigationOptions';
+import { defaultStackScreenOptions } from '@/design/navigationOptions';
 
 export default function TaskerLayout() {
   const { t } = useTranslation();

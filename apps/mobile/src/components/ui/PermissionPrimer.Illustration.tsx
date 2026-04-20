@@ -1,9 +1,9 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { elevations } from '../../design/elevations';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { mobileSurfaces } from '../../design/surfaces';
+import { elevations } from '@/design/elevations';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileSurfaces } from '@/design/surfaces';
 
 const { colors } = mobileTheme;
 const { permissionPrimer } = mobileSurfaces;

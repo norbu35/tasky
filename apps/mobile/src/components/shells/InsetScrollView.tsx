@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { mobileTheme } from '../../design/tokenAdapter';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 type InsetScrollViewProps = ScrollViewProps & {
   extraBottomInset?: number;

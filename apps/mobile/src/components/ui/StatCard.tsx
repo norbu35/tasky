@@ -1,8 +1,8 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { elevations } from '../../design/elevations';
-import { cn } from '../../lib/cn';
+import { elevations } from '@/design/elevations';
+import { cn } from '@/lib/cn';
 
 interface StatCardProps {
   value: string;

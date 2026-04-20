@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { listMessages } from '../api';
-import { useAuthStore } from '../../../store/authStore';
-import { queryKeys } from '../../../lib/queryKeys';
+import { useAuthStore } from '@/store/authStore';
+import { queryKeys } from '@/lib/queryKeys';
 
 export function useMessages(conversationId: string) {
   const session = useAuthStore((s) => s.session);

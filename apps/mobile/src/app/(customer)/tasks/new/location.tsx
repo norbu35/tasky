@@ -1,1 +1,1 @@
-export { default } from '@/features/tasks/screens/TaskLocationScreen';
+export { default } from '@/features/tasks/screens/TaskLocation';

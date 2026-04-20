@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { getVerificationStatus, submitVerification } from '../api';
-import { useAuthStore } from '../../../store/authStore';
+import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
 
 export function useVerificationStatus() {

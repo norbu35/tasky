@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { listRecentLocations } from '../api';
-import { useAuthStore } from '../../../store/authStore';
+import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
 
 export function useRecentLocations() {

@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 
 import { getTaskPhotoUploadUrl } from '../api';
-import { useAuthStore } from '../../../store/authStore';
+import { useAuthStore } from '@/store/authStore';
 
 export function useTaskPhotoUpload() {
   const session = useAuthStore((s) => s.session);

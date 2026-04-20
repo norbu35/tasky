@@ -7,7 +7,7 @@ import { FormField } from '@/components/ui/FormField';
 import { Input } from '@/components/ui/Input';
 
 import { SchemaFieldRenderer } from './TaskIntake.SchemaFieldRenderer';
-import { useTaskIntake } from './useTaskIntake';
+import { useTaskIntakeScreen } from './useTaskIntakeScreen';
 
 export default function TaskIntakeScreen() {
   const { t } = useTranslation();
@@ -24,7 +24,7 @@ export default function TaskIntakeScreen() {
     handleDescriptionChange,
     handleNext,
     goBack,
-  } = useTaskIntake();
+  } = useTaskIntakeScreen();
 
   return (
     <FormWizardTemplate

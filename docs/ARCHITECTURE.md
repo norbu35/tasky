@@ -686,10 +686,12 @@ Do not treat dated plan or remediation docs as competing sources of truth. If a 
 The mobile app follows a strict unidirectional dependency flow:
 
 ```
-src/app → src/features/*/screens → src/features/*/{hooks,components,model,api} → shared src/components, src/design, src/lib, src/utils
+src/app → src/features/*/screens → src/features/*/{hooks,components,api} → shared src/components, src/design, src/lib, src/utils
 ```
 
 One-way flow matters more than directory names. Logic should move downward into bounded feature modules, not upward into routes, shared UI, or the root app shell.
+
+`*.model.ts` / folder-form `model.ts` files are screen-private and live inside `screens/` (§7.7.5.9); they are not a separate importable layer and are consumed only by the Screen, its orchestration hook, and its sibling sections. Cross-feature imports traverse `features/<domain>/index.ts` only (§7.7.2.1).
 
 #### 7.7.2 Layer Contract
 
@@ -706,6 +708,22 @@ One-way flow matters more than directory names. Logic should move downward into 
 | `src/lib/**`                | Shared infrastructure, transport helpers, generated SDK type adapters, platform service wrappers           | Feature modules, route files, store ownership                                        |
 | `src/utils/**`              | Pure helpers, formatters, small platform wrappers, and type-safe non-React utilities                       | React hooks, store mutation, feature modules, transport access                       |
 | `archive/mobile-future/**`  | N/A — archived deferred prototypes                                                                         | Imports into production surfaces                                                     |
+
+##### §7.7.2.1 — Feature-to-feature imports go through the feature index only
+
+`features/A/**` may import from `features/B/**` only via `features/B/index.ts` (the feature's published surface). Direct imports into `features/B/api.ts`, `features/B/screens/**`, `features/B/hooks/**`, or `features/B/draft/**` are forbidden. **Rationale:** features are bounded contexts; the index is the contract. **Enforcement:** checker rule 19.
+
+##### §7.7.2.2 — `features/<domain>/hooks/**` may not import `features/<domain>/screens/**`
+
+The dependency flow is one-way: screens consume hooks, never the reverse. Implicit in §7.7.1 but not previously gated. **Enforcement:** extension to the feature-layer checks.
+
+##### §7.7.2.3 — Route files import the Screen component only
+
+`src/app/**` route files may import a feature's `<Screen>Screen` default export (via the feature's published surface) and nothing else from `features/<domain>/screens/**`. Sections, models, and orchestration hooks are not route-reachable. **Enforcement:** extension to the existing route banned-imports check (rule 2).
+
+##### §7.7.2.4 — No cross-screen imports within the same feature
+
+`screens/ScreenA.*` may not import `screens/ScreenB.*`. Shared presentation goes to `features/<domain>/components/`; shared logic goes to `features/<domain>/hooks/` or a feature-level `model.ts`. **Enforcement:** checker rule 20.
 
 #### 7.7.3 Runtime Ownership
 
@@ -752,45 +770,105 @@ New routes in this class may be tolerated only when they carry no business-flow 
 
 #### 7.7.5 Screen-Family Contract
 
-Large or high-churn screens should converge on a bounded family shape:
+A screen family is the bounded grammar of files that together realize one UI screen. Every rule in this section carries a stable ID and a machine-enforceable gate in `apps/mobile/scripts/structure-check.js`.
+
+Two forms are permitted: flat (siblings in `features/<domain>/screens/`) and folder (a screen-local directory `features/<domain>/screens/<Screen>/`). Promotion from flat to folder is mandatory at a defined threshold (§7.7.5.2). Mixing the two forms for the same screen is forbidden.
+
+**Flat form:**
 
 ```text
 features/<domain>/screens/
-  <ScreenName>Screen.tsx          # assembly/composition only
-  <ScreenName>.model.ts           # parsing, formatting, derived state helpers
-  use<ScreenName>.ts              # orchestration/effects
-  <ScreenName>.<SectionName>.tsx  # semantic screen-local presentational section
+  <Screen>Screen.tsx          # composition only
+  use<Screen>Screen.ts        # orchestration/effects
+  <Screen>.model.ts           # pure types + pure transforms
+  <Screen>.<Section>.tsx      # presentational section, screen-private
 ```
 
-A screen-local folder is also valid when a family grows beyond a few adjacent files:
+**Folder form:**
 
 ```text
-features/<domain>/screens/<ScreenName>/
+features/<domain>/screens/<Screen>/
   Screen.tsx
+  use<Screen>Screen.ts
   model.ts
-  use<ScreenName>.ts
-  <SectionName>.tsx
+  <Section>.tsx
+  index.ts        # re-exports Screen as default + route-param types only
 ```
 
-Legacy `*.parts.tsx` files are tolerated only as migration artifacts. New code must use semantic section filenames.
+##### §7.7.5.1 — Screen-family file membership is fixed
 
-Decomposition is required when a screen exceeds `220` lines or mixes three or more of:
+The only file roles allowed inside `screens/` (or a screen-local folder) are: composition, orchestration hook, model, section, and folder entry point. Loose files (`useFoo.ts` that is not an orchestration hook, `Utils.ts`, `constants.ts`, `types.ts`) are forbidden in `screens/`. Shared logic goes to `features/<domain>/hooks/`; shared UI goes to `features/<domain>/components/`; shared types/selectors go to a feature-level `model.ts` if and when one exists. **Enforcement:** checker rule 15.
 
-- route param parsing
-- async side effects
-- domain mutations
-- local presentational subcomponents
-- formatting or parsing helpers
+##### §7.7.5.2 — Folder promotion is mandatory at threshold
+
+A screen family must use folder form when any of the following is true:
+
+- ≥ 4 section files for the same screen, OR
+- total file count for the family (Screen + hook + model + sections) ≥ 6, OR
+- combined line count for the family ≥ 600
+
+**Enforcement:** checker rule 18 (screen-family aggregation). **Rationale:** flat siblings stop being readable past a handful of files per screen.
+
+##### §7.7.5.3 — Sections are screen-private
+
+A section file may be imported only by its sibling `<Screen>Screen.tsx` / `Screen.tsx` or by other sibling sections in the same screen family. Any cross-screen or cross-feature consumer requires promoting the section to `features/<domain>/components/` and dropping the `<Screen>.` prefix. **Enforcement:** checker rules 19 (cross-feature) and 20 (cross-screen within a feature).
+
+##### §7.7.5.4 — No barrel at the `screens/` directory root
+
+`features/<domain>/screens/index.ts` is forbidden. A `screens/<Screen>/index.ts` is permitted only inside a screen-local folder and may only re-export the Screen as default plus named route-param types. **Enforcement:** checker rule 21. **Rationale:** directory-root barrels break dead-code analysis and make imports opaque.
+
+##### §7.7.5.5 — Legacy `*.parts.tsx` completion deadline
+
+Existing `*.parts.tsx` files remain tolerated until the `2026-04-20-mobile-screen-section-naming-remediation-plan.md` tranches complete. New `*.parts.tsx` files are not permitted and fail CI. Existing files flip from warn to fail as each migration tranche lands. **Enforcement:** existing check 12 plus a diff-based new-file veto.
+
+##### §7.7.5.6 — Screen names are PascalCase root nouns
+
+The Screen root is shared by route file, `<Screen>Screen.tsx`, orchestration hook, model, and sections. Singular for detail screens (`CustomerTaskDetail`), plural for list screens (`CustomerTasks`). No abbreviations. Implicit via §7.7.5.1 allowlist.
+
+##### §7.7.5.7 — Orchestration hooks carry the `Screen` suffix
+
+`use<Screen>Screen.ts` is required in both flat and folder form. Without the suffix the checker cannot distinguish a screen-orchestration hook from a reusable domain hook in `features/<domain>/hooks/` (e.g., `useCustomerTaskDetail.ts`), and callers cannot tell at the import site which class of hook they are consuming. **Enforcement:** checker rule 13.
+
+##### §7.7.5.8 — Section filenames are `<PascalScreen>.<PascalSection>.tsx`
+
+Both segments must be PascalCase. Exactly one internal dot. Forbidden: lowercase first-letter segments (`BookingReschedule.datePicker.tsx`), multi-dot chains, kebab-case. **Enforcement:** checker rule 14. **Rationale:** eliminates the current regex-heuristic fragility.
+
+##### §7.7.5.9 — `.model.ts` is pure
+
+`<Screen>.model.ts` (flat) or `model.ts` (folder) may contain TypeScript types, pure parsing/formatting functions, and pure selectors over props. Forbidden imports: `react`, `react-native`, `@tanstack/react-query`, any `@/features/*/api`, `mobileApiClient`, any store module. No side effects, no React Hooks, no mutations. Impure logic belongs in the orchestration hook. **Enforcement:** checker rule 16.
+
+##### §7.7.5.10 — Domain hooks do not carry the `Screen` suffix
+
+Hooks in `features/<domain>/hooks/` never end in `Screen.ts`. The suffix is exclusive to orchestration hooks inside `screens/`. **Enforcement:** checker rule 13 (complementary half).
+
+##### §7.7.5.11 — Decomposition trigger
+
+Decomposition is required when a screen exceeds `220` lines or mixes three or more of: route param parsing, async side effects, domain mutations, local presentational subcomponents, formatting or parsing helpers. This trigger is advisory at the line-level but gateable via §7.7.6.1 (Screen warn > 220, fail > 280).
 
 #### 7.7.6 Role-Aware File Budgets
 
-| Role (filename pattern)                                                                                                          | Target | Soft Warning | Hard Fail |
-| -------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------ | --------- |
-| `*Screen.tsx`                                                                                                                    | ≤ 180  | > 220        | > 280     |
-| Semantic section file (`<ScreenName>.<SectionName>.tsx`, screen-local folder sections, or legacy `*.parts.tsx` during migration) | ≤ 200  | > 260        | > 340     |
-| `*.model.ts`                                                                                                                     | ≤ 120  | > 180        | > 240     |
-| `use*.ts`                                                                                                                        | ≤ 120  | > 180        | > 240     |
-| Other screen-family files                                                                                                        | ≤ 180  | > 220        | > 280     |
+Only warn and fail thresholds are normative. Aspirational "target" numbers are not written into the contract because rules without gates drift (§7.7.11.3).
+
+##### §7.7.6.1 — Enforced line budgets
+
+| Role                                                       | Warn  | Fail  |
+| ---------------------------------------------------------- | ----- | ----- |
+| Route (`src/app/**`, non-layout)                           | > 60  | > 100 |
+| Screen (`<Screen>Screen.tsx`, folder `Screen.tsx`)         | > 220 | > 280 |
+| Section (`<Screen>.<Section>.tsx`, folder `<Section>.tsx`) | > 260 | > 340 |
+| Model (`<Screen>.model.ts`, folder `model.ts`)             | > 180 | > 240 |
+| Orchestration hook (`use<Screen>Screen.ts`)                | > 180 | > 240 |
+| Legacy `*.parts.tsx` (transitional)                        | > 260 | > 340 |
+
+**Enforcement:** existing checks 1 (routes) and 11 (screen family); classification updated for the §7.7.5.1 allowlist.
+
+##### §7.7.6.2 — Screen-family section cap
+
+A single screen family may not contain more than **8 section files**. Above 8 is a hard fail. Applies to both flat and folder forms. **Rationale:** a screen that needs more than 8 sections is usually two screens sharing a route. **Enforcement:** checker rule 18.
+
+##### §7.7.6.3 — Deep relative imports banned
+
+No `../../` or deeper in any `src/**` file. Use path aliases (`@/…`). **Enforcement:** checker rule 17.
 
 #### 7.7.7 Data Access And SDK Contract
 
@@ -830,22 +908,34 @@ Deferred code must be excluded from runtime entrypoints, excluded from Tailwind 
 
 #### 7.7.10 Enforcement
 
-`pnpm --filter @tasky/mobile structure:check` is the structural gate for this contract.
+`pnpm --filter @tasky/mobile structure:check` is the structural gate for this contract. Every rule below names the contract ID it enforces.
 
-Current checker behavior:
+| #   | Check                                                     | Rule ID             | Severity                 |
+| --- | --------------------------------------------------------- | ------------------- | ------------------------ |
+| 1   | Route budget                                              | §7.7.4, §7.7.6.1    | warn > 60, fail > 100    |
+| 2   | Route banned imports                                      | §7.7.2.3, §7.7.4    | fail                     |
+| 3   | Route-to-route imports                                    | §7.7.4              | warn                     |
+| 4   | Component layer imports `@/features/**`                   | §7.7.2              | fail                     |
+| 5   | Design layer imports `@/app/**`, `@/features/**`          | §7.7.2              | fail                     |
+| 6   | Future import violations                                  | §7.7.9              | fail                     |
+| 7   | Provider layer boundaries                                 | §7.7.2              | fail                     |
+| 8   | Store layer boundaries                                    | §7.7.2, §7.7.3      | fail                     |
+| 9   | Lib layer boundaries                                      | §7.7.2              | fail                     |
+| 10  | Utils layer boundaries                                    | §7.7.2              | fail                     |
+| 11  | Screen-family role-aware budgets                          | §7.7.6.1            | warn/fail by role        |
+| 12  | Legacy `*.parts.tsx` files                                | §7.7.5.5            | warn (fail on new files) |
+| 13  | Orchestration-hook naming (`Screen` suffix)               | §7.7.5.7, §7.7.5.10 | warn → fail (Phase 4)    |
+| 14  | Section-file name pattern                                 | §7.7.5.8            | warn → fail (Phase 4)    |
+| 15  | Screen-family file-role allowlist                         | §7.7.5.1            | warn → fail (Phase 4)    |
+| 16  | Model purity (banned imports in `*.model.ts`)             | §7.7.5.9            | warn → fail (Phase 4)    |
+| 17  | Deep relative-import ban                                  | §7.7.6.3            | warn → fail (Phase 4)    |
+| 18  | Screen-family aggregation (folder threshold, section cap) | §7.7.5.2, §7.7.6.2  | warn → fail (Phase 4)    |
+| 19  | Feature-to-feature boundary                               | §7.7.2.1, §7.7.5.3  | warn → fail (Phase 4)    |
+| 20  | Cross-screen ban within a feature                         | §7.7.2.4, §7.7.5.3  | warn → fail (Phase 4)    |
+| 21  | `screens/` barrel ban                                     | §7.7.5.4            | warn → fail (Phase 4)    |
+| 22  | Test-path mirror                                          | §7.7.12.1           | warn                     |
 
-1. Route budget: warns at `> 60`, fails at `> 100`
-2. Route banned imports: `createMobileApiClient`, `@/features/*/api`, `@/future`
-3. Route-to-route imports: warning
-4. Component layer violations: fail
-5. Design layer violations: fail
-6. Future import violations: fail
-7. Provider layer boundaries: fail
-8. Store layer boundaries: fail
-9. Lib layer boundaries: fail
-10. Utils layer boundaries: fail
-11. Screen-family role-aware budgets: warning/fail by file role
-12. Legacy `*.parts.tsx` files: warning
+Checks 13–22 land at `warn` severity when the checker is extended; each flips to `fail` as the corresponding remediation tranche lands (see `docs/plans/2026-04-21-mobile-structure-contract-patch-plan.md`).
 
 When the contract and tooling diverge, fix both in the same change. Do not leave unstated severities or contradictory thresholds in the repo.
 
@@ -855,6 +945,32 @@ When the contract and tooling diverge, fix both in the same change. Do not leave
 - Any change to a mobile boundary rule must update both this section and `apps/mobile/scripts/structure-check.js` in the same change.
 - A contract change is incomplete if it changes wording without updating enforcement, or updates enforcement without updating this section.
 - Runtime rules that cannot yet be machine-enforced must be written narrowly and accompanied by a verification strategy in tests or review notes. Do not hide aspirational guidance inside normative wording.
+
+##### §7.7.11.1 — All rules have stable IDs
+
+Every normative rule carries an ID of the form `§7.7.<section>.<number>`. Violation reports, commit messages, and PR reviews cite the ID, never a paragraph reference.
+
+##### §7.7.11.2 — `CLAUDE.md` carries an AI-facing quick reference
+
+A Structural Contract Quick Reference is maintained in `CLAUDE.md`, listing the rules most likely to be violated by an AI agent edit, each tagged with its rule ID. The quick reference is rebuilt whenever §7.7 changes. The full §7.7 remains the normative source; the quick reference is a navigation aid.
+
+##### §7.7.11.3 — Target tier is not used
+
+The contract exposes only warn and fail thresholds. Aspirational "target" numbers are not written into the contract, because rules without gates drift.
+
+#### 7.7.12 Test Organization
+
+##### §7.7.12.1 — Tests mirror source paths
+
+A test at `apps/mobile/__tests__/<path>` corresponds to `apps/mobile/src/<path>`. Integration tests live under `apps/mobile/__tests__/integration/`. Fixtures live under `apps/mobile/__tests__/integration/fixtures.ts` or equivalent. **Enforcement:** checker rule 22.
+
+##### §7.7.12.2 — Test file budget
+
+Individual test files: warn > 400 lines, fail > 500 lines. **Enforcement:** extension to existing budget checks.
+
+##### §7.7.12.3 — No production imports from `__tests__/`
+
+Source files under `src/**` may not import from `__tests__/**`. **Enforcement:** new banned-import check applied globally to `src/**`.
 
 ---
 

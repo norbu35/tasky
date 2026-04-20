@@ -1,9 +1,9 @@
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
-import { mobileTheme } from '../../design/tokenAdapter';
-import { elevations } from '../../design/elevations';
-import { cn } from '../../lib/cn';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { elevations } from '@/design/elevations';
+import { cn } from '@/lib/cn';
 import { ActionRow } from '../ui/ActionRow';
 
 const { spacing } = mobileTheme;

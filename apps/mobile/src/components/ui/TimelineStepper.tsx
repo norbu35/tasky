@@ -1,8 +1,8 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { mobileTheme } from '../../design/tokenAdapter';
-import { cn } from '../../lib/cn';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { cn } from '@/lib/cn';
 
 const { colors, spacing, typography } = mobileTheme;
 

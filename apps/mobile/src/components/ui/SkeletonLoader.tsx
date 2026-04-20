@@ -8,8 +8,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { animationPresets } from '../../design/animations';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { animationPresets } from '@/design/animations';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 const { radius } = mobileTheme;
 

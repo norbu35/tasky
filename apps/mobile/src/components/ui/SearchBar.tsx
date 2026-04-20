@@ -2,8 +2,8 @@ import { Search } from 'lucide-react-native';
 import React from 'react';
 import { View, TextInput, TextInputProps } from 'react-native';
 
-import { mobileTheme } from '../../design/tokenAdapter';
-import { cn } from '../../lib/cn';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { cn } from '@/lib/cn';
 
 export interface SearchBarProps extends TextInputProps {
   className?: string;

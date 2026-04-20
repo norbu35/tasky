@@ -46,6 +46,9 @@ jobs:
       - name: Validate workspace boundaries
         run: pnpm workspace:boundaries
 
+      - name: Validate mobile structural contract
+        run: pnpm --filter @tasky/mobile structure:check
+
       - name: Validate migration safety
         run: python3 tooling/scripts/validate-migrations.py
 

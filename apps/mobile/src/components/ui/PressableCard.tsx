@@ -3,8 +3,8 @@ import React from 'react';
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
-import { interactiveStates, withInteractiveSpring } from '../../design/animations';
-import { cn } from '../../lib/cn';
+import { interactiveStates, withInteractiveSpring } from '@/design/animations';
+import { cn } from '@/lib/cn';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 

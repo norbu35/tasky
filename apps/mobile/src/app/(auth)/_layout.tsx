@@ -1,8 +1,8 @@
 import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
-import { defaultStackScreenOptions } from '../../design/navigationOptions';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { defaultStackScreenOptions } from '@/design/navigationOptions';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 export default function AuthLayout() {
   const { t } = useTranslation();

@@ -2,8 +2,8 @@ import { ChevronRight } from 'lucide-react-native';
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { mobileTheme, withAlpha } from '../../design/tokenAdapter';
-import { cn } from '../../lib/cn';
+import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
+import { cn } from '@/lib/cn';
 import { Touchable } from './Touchable';
 
 const { colors } = mobileTheme;

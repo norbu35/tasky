@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--color-background); font-family: var(--font-sans); padding: 20px; display: flex; flex-direction: column; gap: 12px; max-width: 360px; }
+
+/* Task Card */
+.task-card {
+  background: white; border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card); overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.card-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.card-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.card-title { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--tasky-ink-deep); line-height: 1.35; }
+.price { font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--tasky-sun); white-space: nowrap; }
+.meta-row { display: flex; align-items: center; gap: 8px; }
+.cat-chip { background: var(--tasky-subtle); border-radius: var(--radius-full); padding: 3px 9px; font-size: 11px; font-weight: 600; color: var(--tasky-ink); }
+.time-text { font-size: 11px; color: var(--tasky-text-tertiary); }
+.poster-row { display: flex; align-items: center; gap: 7px; }
+.avatar { width: 24px; height: 24px; border-radius: var(--radius-sm); background: var(--tasky-subtle); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--tasky-ink); }
+.poster-name { font-size: 12px; color: var(--tasky-text-secondary); font-weight: 500; }
+
+/* Trust Banner */
+.trust-banner {
+  background: rgba(171,201,242,0.25); border: 1px solid rgba(107,163,190,0.3);
+  border-radius: var(--radius-sm); padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.trust-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--tasky-trust); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.trust-body .trust-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--tasky-trust-muted); }
+.trust-body .trust-desc { font-size: 13px; font-weight: 500; color: var(--tasky-ink); line-height: 1.4; margin-top: 2px; }
+</style>
+</head>
+<body>
+  <!-- Task Card -->
+  <div class="task-card">
+    <div class="card-body">
+      <div class="card-row">
+        <div class="cat-chip">Засвар</div>
+        <span class="price">₮80,000</span>
+      </div>
+      <div class="card-title">Гал тогооны угаалтуур засуулах</div>
+      <div class="meta-row">
+        <div class="poster-row">
+          <div class="avatar">ГС</div>
+          <span class="poster-name">Г. Сарнай</span>
+        </div>
+        <span class="time-text">28 мин өмнө</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Second task card -->
+  <div class="task-card">
+    <div class="card-body">
+      <div class="card-row">
+        <div class="cat-chip">Зөөвөрлөлт</div>
+        <span class="price">₮120,000</span>
+      </div>
+      <div class="card-title">Тавилга ачиж хүргэх (Хан-Уул)</div>
+      <div class="meta-row">
+        <div class="poster-row">
+          <div class="avatar">ТТ</div>
+          <span class="poster-name">Т. Тэмүүлэн</span>
+        </div>
+        <span class="time-text">45 мин өмнө</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trust Banner -->
+  <div class="trust-banner">
+    <div class="trust-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B3C4D6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+    </div>
+    <div class="trust-body">
+      <div class="trust-label">Итгэлтэй платформ</div>
+      <div class="trust-desc">1,200+ баталгаажсан гүйцэтгэгч</div>
+    </div>
+  </div>
+</body>
+</html>

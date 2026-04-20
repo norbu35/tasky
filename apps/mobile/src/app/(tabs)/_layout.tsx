@@ -14,13 +14,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { nativeTokens } from '@tasky/design-tokens';
 
-import { FAB } from '../../components/ui/FAB';
-import { TabBarButton } from '../../components/ui/TabBarButton';
-import { elevations } from '../../design/elevations';
-import { screenLayout } from '../../design/screenLayout';
-import { mobileTheme, withAlpha } from '../../design/tokenAdapter';
-import { useUnreadCount } from '../../features/chat/hooks/useUnreadCount';
-import { useRole } from '../../providers/RoleProvider';
+import { FAB } from '@/components/ui/FAB';
+import { TabBarButton } from '@/components/ui/TabBarButton';
+import { elevations } from '@/design/elevations';
+import { screenLayout } from '@/design/screenLayout';
+import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
+import { useUnreadCount } from '@/features/chat/hooks/useUnreadCount';
+import { useRole } from '@/providers/RoleProvider';
 
 const { colors, typography } = mobileTheme;
 const {

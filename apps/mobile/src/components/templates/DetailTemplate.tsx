@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View, type LayoutChangeEvent } from 'react-native';
 
-import { screenLayout } from '../../design/screenLayout';
+import { screenLayout } from '@/design/screenLayout';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 import { Button } from '../ui/Button';
 

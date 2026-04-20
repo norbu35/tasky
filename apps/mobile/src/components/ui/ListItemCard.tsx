@@ -1,8 +1,8 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import { elevations } from '../../design/elevations';
-import { cn } from '../../lib/cn';
+import { elevations } from '@/design/elevations';
+import { cn } from '@/lib/cn';
 
 type IconSize = 'sm' | 'md';
 

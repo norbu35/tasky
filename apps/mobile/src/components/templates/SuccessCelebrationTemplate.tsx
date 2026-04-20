@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
-import { screenLayout } from '../../design/screenLayout';
-import { mobileTheme, withEmphasisSpring } from '../../design/tokenAdapter';
+import { screenLayout } from '@/design/screenLayout';
+import { mobileTheme, withEmphasisSpring } from '@/design/tokenAdapter';
 import { InsetScrollView, ScreenContainer } from '../shells';
 import { Button } from '../ui/Button';
 

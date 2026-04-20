@@ -2,10 +2,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { elevations, overlays } from '../../design/elevations';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { mobileSurfaces } from '../../design/surfaces';
-import { cn } from '../../lib/cn';
+import { elevations, overlays } from '@/design/elevations';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileSurfaces } from '@/design/surfaces';
+import { cn } from '@/lib/cn';
 
 import { Button } from './Button';
 import { IllustrationArea, IconPreview } from './PermissionPrimer.Illustration';

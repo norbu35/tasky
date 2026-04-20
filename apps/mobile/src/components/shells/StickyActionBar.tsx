@@ -3,10 +3,10 @@ import React from 'react';
 import { View, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { elevations } from '../../design/elevations';
-import { screenLayout } from '../../design/screenLayout';
-import { cn } from '../../lib/cn';
-import { mobileTheme, withAlpha } from '../../design/tokenAdapter';
+import { elevations } from '@/design/elevations';
+import { screenLayout } from '@/design/screenLayout';
+import { cn } from '@/lib/cn';
+import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
 
 type StickyActionBarProps = {
   children: React.ReactNode;

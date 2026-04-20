@@ -1,1 +1,1 @@
-export { default } from '@/features/tasks/screens/CustomerTasksScreen';
+export { default } from '@/features/tasks/screens/CustomerTasks';

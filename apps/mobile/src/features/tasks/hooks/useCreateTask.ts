@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { createTask } from '../api';
 import type { CreateTaskRequest } from '@/lib/api/types';
-import { useAuthStore } from '../../../store/authStore';
+import { useAuthStore } from '@/store/authStore';
 
 export function useCreateTask() {
   const session = useAuthStore((s) => s.session);

@@ -10,14 +10,14 @@ import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
 
-import { useBookingConfirmed } from './useBookingConfirmed';
+import { useBookingConfirmedScreen } from './useBookingConfirmedScreen';
 
 const { colors, spacing } = mobileTheme;
 const { bookingConfirmed } = mobileSurfaces;
 
 export default function BookingConfirmedScreen() {
   const { t } = useTranslation();
-  const { taskerName, handleViewBooking, handleDone, handleMessage } = useBookingConfirmed();
+  const { taskerName, handleViewBooking, handleDone, handleMessage } = useBookingConfirmedScreen();
 
   return (
     <ScreenContainer testID="SCR-CUST-015">

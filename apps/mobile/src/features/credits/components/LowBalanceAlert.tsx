@@ -3,9 +3,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
-import { Button } from '../../../components/ui/Button';
-import { mobileTheme, withAlpha } from '../../../design/tokenAdapter';
-import { mobileSurfaces } from '../../../design/surfaces';
+import { Button } from '@/components/ui/Button';
+import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
+import { mobileSurfaces } from '@/design/surfaces';
 
 const { colors, radius } = mobileTheme;
 const { tint } = mobileSurfaces;

@@ -314,6 +314,467 @@ for (const f of allRouteFiles) {
   }
 }
 
+// ── Additional Collectors for Checks 13–22 ───────────────────────────────
+
+// Feature hook files (for check 13 complementary half)
+const featureHookFiles = [];
+if (fs.existsSync(featuresDir)) {
+  for (const feat of fs.readdirSync(featuresDir, { withFileTypes: true })) {
+    if (!feat.isDirectory()) continue;
+    const hooksDir = path.join(featuresDir, feat.name, 'hooks');
+    if (fs.existsSync(hooksDir)) {
+      featureHookFiles.push(
+        ...walk(hooksDir, ['.ts', '.tsx']).map((f) => ({
+          file: f,
+          feature: feat.name,
+        })),
+      );
+    }
+  }
+}
+
+// Helper: check if a file path is directly under screens/ (flat form) or inside screens/<Screen>/ (folder form)
+function getScreenPathInfo(filePath, screensDir) {
+  const relToScreens = path.relative(screensDir, filePath);
+  const parts = relToScreens.split(path.sep);
+  if (parts.length === 1) {
+    // Flat form: directly under screens/
+    return { form: 'flat', screenName: null };
+  } else if (parts.length === 2) {
+    // Folder form: inside screens/<Screen>/
+    return { form: 'folder', screenName: parts[0] };
+  }
+  // Deeper nesting — skip
+  return { form: 'deep', screenName: null };
+}
+
+// Helper: extract screen root name from a flat-form filename
+function extractScreenRoot(filename) {
+  // <Screen>Screen.tsx → Screen root
+  if (filename.endsWith('Screen.tsx')) {
+    return filename.slice(0, -'Screen.tsx'.length);
+  }
+  // use<Screen>Screen.ts → Screen root
+  const hookMatch = filename.match(/^use(.+)Screen\.ts$/);
+  if (hookMatch) return hookMatch[1];
+  // <Screen>.model.ts → Screen root
+  const modelMatch = filename.match(/^(.+)\.model\.ts$/);
+  if (modelMatch) return modelMatch[1];
+  // <Screen>.<Section>.tsx → Screen root
+  const sectionMatch = filename.match(/^([A-Z][A-Za-z0-9]*)\.[A-Z][A-Za-z0-9]*\.tsx$/);
+  if (sectionMatch) return sectionMatch[1];
+  // <Screen>.<anything>.tsx (relaxed for section check)
+  const dotSection = filename.match(/^([A-Z][A-Za-z0-9]*)\..+\.tsx$/);
+  if (dotSection) return dotSection[1];
+  return null;
+}
+
+// 13. Orchestration-hook naming (§7.7.5.7, §7.7.5.10)
+for (const { file, feature } of featureScreenFiles) {
+  const filename = path.basename(file);
+  // Determine if this file is directly under screens/ or inside screens/<Screen>/
+  const screensDir = path.join(featuresDir, feature, 'screens');
+  const info = getScreenPathInfo(file, screensDir);
+  if (info.form === 'deep') continue; // skip deeply nested
+
+  // use*.ts files under screens/ MUST end in Screen.ts
+  if (/^use.*\.ts$/.test(filename) && !filename.endsWith('Screen.ts')) {
+    report(
+      'warn',
+      'orchestration-hook-naming',
+      `${rel(file)}: orchestration hook missing Screen suffix (§7.7.5.7)`,
+    );
+  }
+}
+
+for (const { file, feature } of featureHookFiles) {
+  const filename = path.basename(file);
+  // use*.ts files under hooks/ MUST NOT end in Screen.ts
+  if (/^use.*\.ts$/.test(filename) && filename.endsWith('Screen.ts')) {
+    report(
+      'warn',
+      'orchestration-hook-naming',
+      `${rel(file)}: domain hook incorrectly carries Screen suffix (§7.7.5.10)`,
+    );
+  }
+}
+
+// 14. Section-file name pattern (§7.7.5.8)
+for (const { file, feature } of featureScreenFiles) {
+  const filename = path.basename(file);
+  const screensDir = path.join(featuresDir, feature, 'screens');
+  const info = getScreenPathInfo(file, screensDir);
+  if (info.form === 'deep') continue;
+
+  // Skip non-tsx files
+  if (!filename.endsWith('.tsx')) continue;
+  // Skip *.parts.tsx (tracked by check 12)
+  if (filename.endsWith('.parts.tsx')) continue;
+
+  if (info.form === 'flat') {
+    // Skip Screen.tsx and <Screen>Screen.tsx (compositions)
+    if (filename === 'Screen.tsx' || filename.endsWith('Screen.tsx')) continue;
+    // Check flat section pattern: <Pascal>.<Pascal>.tsx
+    // Must have exactly one internal dot before .tsx and both segments start uppercase
+    const flatSectionRe = /^[A-Z][A-Za-z0-9]*\.[A-Z][A-Za-z0-9]*\.tsx$/;
+    // If it has dots (potential section file)
+    const dotCount = (filename.match(/\./g) || []).length;
+    if (dotCount >= 2) {
+      // Has internal dots — could be a section file
+      if (!flatSectionRe.test(filename)) {
+        report(
+          'warn',
+          'section-file-naming',
+          `${rel(file)}: section file violates PascalCase.PascalCase.tsx pattern (§7.7.5.8)`,
+        );
+      }
+    }
+  } else if (info.form === 'folder') {
+    // Inside screens/<Screen>/, section files are just <PascalCase>.tsx
+    // Skip Screen.tsx, model.ts, index.ts — those are folder-form roles, not sections
+    if (filename === 'Screen.tsx' || filename === 'model.ts' || filename === 'index.ts') continue;
+    // Skip use<Screen>Screen.ts
+    if (/^use.+Screen\.ts$/.test(filename)) continue;
+    // Skip *.parts.tsx
+    if (filename.endsWith('.parts.tsx')) continue;
+    // Remaining .tsx files are sections — must be PascalCase
+    if (!/^[A-Z][A-Za-z0-9]*\.tsx$/.test(filename)) {
+      report(
+        'warn',
+        'section-file-naming',
+        `${rel(file)}: section file violates PascalCase.tsx pattern (§7.7.5.8)`,
+      );
+    }
+  }
+}
+
+// 15. File-role allowlist under screens/ (§7.7.5.1)
+for (const { file, feature } of featureScreenFiles) {
+  const filename = path.basename(file);
+  const screensDir = path.join(featuresDir, feature, 'screens');
+  const info = getScreenPathInfo(file, screensDir);
+  if (info.form === 'deep') continue;
+
+  let allowed = false;
+
+  if (info.form === 'flat') {
+    // Flat form allowed roles:
+    // <Screen>Screen.tsx
+    if (/^[A-Z][A-Za-z0-9]*Screen\.tsx$/.test(filename)) allowed = true;
+    // use<Screen>Screen.ts
+    if (/^use[A-Z][A-Za-z0-9]*Screen\.ts$/.test(filename)) allowed = true;
+    // <Screen>.model.ts
+    if (/^[A-Z][A-Za-z0-9]*\.model\.ts$/.test(filename)) allowed = true;
+    // <Screen>.<Section>.tsx (Pascal.Pascal.tsx)
+    if (/^[A-Z][A-Za-z0-9]*\.[A-Z][A-Za-z0-9]*\.tsx$/.test(filename)) allowed = true;
+    // *.parts.tsx (legacy, tracked by check 12)
+    if (filename.endsWith('.parts.tsx')) allowed = true;
+  } else if (info.form === 'folder') {
+    // Folder form allowed roles:
+    // Screen.tsx
+    if (filename === 'Screen.tsx') allowed = true;
+    // use<Screen>Screen.ts
+    if (/^use[A-Z][A-Za-z0-9]*Screen\.ts$/.test(filename)) allowed = true;
+    // model.ts
+    if (filename === 'model.ts') allowed = true;
+    // <Section>.tsx
+    if (/^[A-Z][A-Za-z0-9]*\.tsx$/.test(filename)) allowed = true;
+    // index.ts
+    if (filename === 'index.ts') allowed = true;
+    // *.parts.tsx (legacy)
+    if (filename.endsWith('.parts.tsx')) allowed = true;
+  }
+
+  if (!allowed) {
+    report(
+      'warn',
+      'screen-file-role',
+      `${rel(file)}: file does not match an allowed screen-family role (§7.7.5.1)`,
+    );
+  }
+}
+
+// 16. Model purity (§7.7.5.9)
+const modelBannedImports = [
+  { pattern: /from\s+['"]react['"]/, label: 'react' },
+  { pattern: /from\s+['"]react-native['"]/, label: 'react-native' },
+  { pattern: /from\s+['"]@tanstack\/react-query['"]/, label: '@tanstack/react-query' },
+  { pattern: /from\s+['"]@\/features\/[^'"]*\/api['"]/, label: '@/features/*/api' },
+  { pattern: /mobileApiClient/, label: 'mobileApiClient' },
+  { pattern: /from\s+['"]@\/store\//, label: '@/store/*' },
+  { pattern: /from\s+['"][^'"]*\/store\//, label: '*/store/*' },
+];
+
+for (const { file, feature } of featureScreenFiles) {
+  const filename = path.basename(file);
+  const isModel =
+    filename.endsWith('.model.ts') || filename === 'model.ts';
+  if (!isModel) continue;
+
+  const lines = readLines(file);
+  const p = rel(file);
+  for (let i = 0; i < lines.length; i++) {
+    for (const { pattern, label } of modelBannedImports) {
+      if (pattern.test(lines[i])) {
+        report(
+          'warn',
+          'model-purity',
+          `${p}:${i + 1} model file imports ${label} (§7.7.5.9)`,
+        );
+      }
+    }
+  }
+}
+
+// 17. Deep relative-import ban (§7.7.6.3)
+for (const f of allSrcFiles) {
+  const lines = readLines(f);
+  const p = rel(f);
+  for (let i = 0; i < lines.length; i++) {
+    if (/from\s+['"][^'"]*\.\.\/\.\.\/(.*\.\.\/)?[^'"]*['"]/.test(lines[i])) {
+      // Matches any import with ../../ or deeper
+      const importMatch = lines[i].match(/from\s+['"]([^'"]*)['"]/);
+      const importPath = importMatch ? importMatch[1] : lines[i].trim();
+      report(
+        'warn',
+        'deep-relative-import',
+        `${p}:${i + 1} uses deep relative import: ${importPath} (§7.7.6.3)`,
+      );
+    }
+  }
+}
+
+// 18. Screen-family aggregation (§7.7.5.2, §7.7.6.2)
+const screenFamilies = new Map(); // key: "feature:screenRoot" → { files, totalLines, sectionCount, isFolder }
+
+for (const { file, feature } of featureScreenFiles) {
+  const filename = path.basename(file);
+  const screensDir = path.join(featuresDir, feature, 'screens');
+  const info = getScreenPathInfo(file, screensDir);
+
+  let familyKey;
+  let isFolder = false;
+
+  if (info.form === 'folder') {
+    familyKey = `${feature}:${info.screenName}`;
+    isFolder = true;
+  } else if (info.form === 'flat') {
+    const root = extractScreenRoot(filename);
+    if (root) {
+      familyKey = `${feature}:${root}`;
+    } else {
+      continue; // Can't determine family
+    }
+  } else {
+    continue;
+  }
+
+  if (!screenFamilies.has(familyKey)) {
+    screenFamilies.set(familyKey, {
+      files: [],
+      totalLines: 0,
+      sectionCount: 0,
+      isFolder,
+      feature,
+    });
+  }
+  const family = screenFamilies.get(familyKey);
+  family.files.push(file);
+
+  const lines = lineCount(file);
+  family.totalLines += lines;
+
+  // Count section files
+  const isSection =
+    info.form === 'flat'
+      ? /^[A-Z][A-Za-z0-9]*\.[A-Z][A-Za-z0-9]*\.tsx$/.test(filename) ||
+        (/^[A-Z][A-Za-z0-9]*\..+\.tsx$/.test(filename) &&
+          !filename.endsWith('Screen.tsx') &&
+          !filename.endsWith('.parts.tsx'))
+      : info.form === 'folder' &&
+        filename !== 'Screen.tsx' &&
+        filename !== 'model.ts' &&
+        filename !== 'index.ts' &&
+        !/^use.+Screen\.ts$/.test(filename) &&
+        !filename.endsWith('.parts.tsx') &&
+        filename.endsWith('.tsx');
+  if (isSection) family.sectionCount++;
+}
+
+for (const [familyKey, family] of screenFamilies) {
+  const [feature, screenRoot] = familyKey.split(':');
+
+  // Section cap (≥ 8)
+  if (family.sectionCount >= 8) {
+    report(
+      'warn',
+      'screen-family-section-cap',
+      `${feature}/${screenRoot} has ${family.sectionCount} sections (cap 8) (§7.7.6.2)`,
+    );
+  }
+
+  // Folder promotion thresholds (only warn for flat form)
+  if (!family.isFolder) {
+    const fileCount = family.files.length;
+    if (family.sectionCount >= 4) {
+      report(
+        'warn',
+        'screen-family-aggregation',
+        `${feature}/${screenRoot}: ${family.sectionCount} sections in flat form (promote at ≥ 4) (§7.7.5.2)`,
+      );
+    }
+    if (fileCount >= 6) {
+      report(
+        'warn',
+        'screen-family-aggregation',
+        `${feature}/${screenRoot}: ${fileCount} files in flat form (promote at ≥ 6) (§7.7.5.2)`,
+      );
+    }
+    if (family.totalLines >= 600) {
+      report(
+        'warn',
+        'screen-family-aggregation',
+        `${feature}/${screenRoot}: ${family.totalLines} total lines in flat form (promote at ≥ 600) (§7.7.5.2)`,
+      );
+    }
+  }
+}
+
+// 19. Feature-to-feature boundary (§7.7.2.1)
+for (const f of allSrcFiles) {
+  const relPath = path.relative(ROOT, f);
+  const featuresMatch = relPath.match(/^features[/\\]([^/\\]+)[/\\]/);
+  if (!featuresMatch) continue;
+  const ownDomain = featuresMatch[1];
+
+  const lines = readLines(f);
+  const p = rel(f);
+  for (let i = 0; i < lines.length; i++) {
+    // Check for direct imports into another feature's internal structure
+    const importMatch = lines[i].match(
+      /from\s+['"]@\/features\/([^/]+)\/(api|screens|hooks|draft)[/'"]/,
+    );
+    if (importMatch && importMatch[1] !== ownDomain) {
+      report(
+        'warn',
+        'feature-boundary',
+        `${p}:${i + 1} directly imports internal of feature "${importMatch[1]}" (§7.7.2.1)`,
+      );
+    }
+  }
+}
+
+// 20. Cross-screen ban within a feature (§7.7.2.4, §7.7.5.3)
+for (const { file, feature } of featureScreenFiles) {
+  const filename = path.basename(file);
+  const screensDir = path.join(featuresDir, feature, 'screens');
+  const info = getScreenPathInfo(file, screensDir);
+
+  // Determine own screen root
+  let ownScreenRoot;
+  if (info.form === 'folder') {
+    ownScreenRoot = info.screenName;
+  } else if (info.form === 'flat') {
+    ownScreenRoot = extractScreenRoot(filename);
+  }
+  if (!ownScreenRoot) continue;
+
+  const lines = readLines(file);
+  const p = rel(file);
+  for (let i = 0; i < lines.length; i++) {
+    if (info.form === 'flat') {
+      // Flat form: ./<DifferentScreenRoot>.* imports are cross-screen
+      const importMatch = lines[i].match(
+        /from\s+['"]\.\/([A-Z][A-Za-z0-9]*)/,
+      );
+      if (importMatch) {
+        const importedRoot = importMatch[1];
+        if (importedRoot !== ownScreenRoot) {
+          report(
+            'warn',
+            'cross-screen-import',
+            `${p}:${i + 1} imports from sibling screen "${importedRoot}" (§7.7.2.4)`,
+          );
+        }
+      }
+    }
+    if (info.form === 'folder') {
+      // Folder form: ../<DifferentScreen> or imports outside own folder
+      const relativeOutMatch = lines[i].match(
+        /from\s+['"]\.\.\/([A-Z][A-Za-z0-9]*)/,
+      );
+      if (relativeOutMatch) {
+        const importedName = relativeOutMatch[1];
+        // ../<Name> could be another screen folder or a flat-form sibling
+        if (importedName !== ownScreenRoot) {
+          report(
+            'warn',
+            'cross-screen-import',
+            `${p}:${i + 1} imports from sibling screen "${importedName}" (§7.7.2.4)`,
+          );
+        }
+      }
+    }
+    // Both forms: check @/features/<domain>/screens/<OtherScreen> patterns
+    const absImportMatch = lines[i].match(
+      new RegExp(
+        `from\\s+['"]@/features/${feature}/screens/([A-Z][A-Za-z0-9]*)`,
+      ),
+    );
+    if (absImportMatch) {
+      const importedRoot = absImportMatch[1];
+      if (importedRoot !== ownScreenRoot) {
+        report(
+          'warn',
+          'cross-screen-import',
+          `${p}:${i + 1} imports from sibling screen "${importedRoot}" (§7.7.2.4)`,
+        );
+      }
+    }
+  }
+}
+
+// 21. screens/ barrel ban (§7.7.5.4)
+if (fs.existsSync(featuresDir)) {
+  for (const feat of fs.readdirSync(featuresDir, { withFileTypes: true })) {
+    if (!feat.isDirectory()) continue;
+    const screensIndex = path.join(featuresDir, feat.name, 'screens', 'index.ts');
+    if (fs.existsSync(screensIndex)) {
+      report(
+        'warn',
+        'screen-barrel-ban',
+        `${rel(screensIndex)}: screens/ barrel file is forbidden (§7.7.5.4)`,
+      );
+    }
+  }
+}
+
+// 22. Test-path mirror (§7.7.12.1)
+const testRoot = path.resolve(__dirname, '..', '__tests__');
+if (fs.existsSync(testRoot)) {
+  const testFiles = walk(testRoot, ['.ts', '.tsx']).filter(
+    (f) => !f.includes(path.join('__tests__', 'integration') + path.sep),
+  );
+
+  for (const testFile of testFiles) {
+    const relToTestRoot = path.relative(testRoot, testFile);
+    // Strip .test. or .spec. from filename to find source path
+    const sourceRelPath = relToTestRoot.replace(/\.(test|spec)\./, '.');
+    const sourcePath = path.join(ROOT, sourceRelPath);
+
+    // Also try the original path in case there's no .test./.spec. in the name
+    const sourcePathOriginal = path.join(ROOT, relToTestRoot);
+
+    if (!fs.existsSync(sourcePath) && !fs.existsSync(sourcePathOriginal)) {
+      report(
+        'warn',
+        'test-path-mirror',
+        `${rel(testFile)}: no corresponding source file at src/${sourceRelPath} (§7.7.12.1)`,
+      );
+    }
+  }
+}
+
 // ── Summary ──────────────────────────────────────────────────────────────
 const failCount = results.filter((r) => r.status === 'fail').length;
 const warnCount = results.filter((r) => r.status === 'warn').length;
@@ -337,6 +798,17 @@ const categoryOrder = [
   'lib-layer-violation',
   'utils-layer-violation',
   'future-import',
+  'orchestration-hook-naming',
+  'section-file-naming',
+  'screen-file-role',
+  'model-purity',
+  'deep-relative-import',
+  'screen-family-aggregation',
+  'screen-family-section-cap',
+  'feature-boundary',
+  'cross-screen-import',
+  'screen-barrel-ban',
+  'test-path-mirror',
 ];
 
 const categoryLabels = {
@@ -357,6 +829,17 @@ const categoryLabels = {
   'lib-layer-violation': 'Lib Layer Violations',
   'utils-layer-violation': 'Utils Layer Violations',
   'future-import': 'Future Import Violations',
+  'orchestration-hook-naming': 'Orchestration Hook Naming',
+  'section-file-naming': 'Section File Naming',
+  'screen-file-role': 'Screen File Role',
+  'model-purity': 'Model Purity',
+  'deep-relative-import': 'Deep Relative Imports',
+  'screen-family-aggregation': 'Screen Family Aggregation',
+  'screen-family-section-cap': 'Screen Family Section Cap',
+  'feature-boundary': 'Feature-to-Feature Boundary',
+  'cross-screen-import': 'Cross-Screen Import',
+  'screen-barrel-ban': 'Screen Barrel Ban',
+  'test-path-mirror': 'Test Path Mirror',
 };
 
 function formatResult(r) {

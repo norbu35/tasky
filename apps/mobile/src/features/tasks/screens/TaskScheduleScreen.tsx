@@ -5,7 +5,7 @@ import { Text, View } from 'react-native';
 import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 
 import { DateCard, BudgetField, PickerSection } from './TaskSchedule.ScheduleForm';
-import { useTaskSchedule } from './useTaskSchedule';
+import { useTaskScheduleScreen } from './useTaskScheduleScreen';
 
 export default function TaskScheduleScreen() {
   const { t } = useTranslation();
@@ -25,7 +25,7 @@ export default function TaskScheduleScreen() {
     handleBudgetBlur,
     handleNext,
     goBack,
-  } = useTaskSchedule();
+  } = useTaskScheduleScreen();
 
   return (
     <FormWizardTemplate

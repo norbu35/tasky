@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, ViewProps, TextProps } from 'react-native';
 
-import { elevations } from '../../design/elevations';
-import { cn } from '../../lib/cn';
+import { elevations } from '@/design/elevations';
+import { cn } from '@/lib/cn';
 
 type CardViewProps = ViewProps & { className?: string };
 type CardTextProps = TextProps & { className?: string };

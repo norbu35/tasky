@@ -9,9 +9,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { animationPresets } from '../../design/animations';
-import { screenLayout } from '../../design/screenLayout';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { animationPresets } from '@/design/animations';
+import { screenLayout } from '@/design/screenLayout';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { ScreenContainer } from '../shells/ScreenContainer';
 import { Reveal } from '../ui/Reveal';
 

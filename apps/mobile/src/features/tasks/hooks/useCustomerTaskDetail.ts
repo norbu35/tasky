@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { listMyTasks } from '../api';
 import type { Task } from '@/lib/api/types';
-import { useAuthStore } from '../../../store/authStore';
+import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
 
 export interface CustomerTaskDetailState {

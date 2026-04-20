@@ -12,7 +12,7 @@ import { mobileSurfaces } from '@/design/surfaces';
 
 import { ApplicantCard } from './ApplicantsSelection.ApplicantCard';
 import { ConfirmationSheet } from './ApplicantsSelection.ConfirmationSheet';
-import { useApplicantsSelection } from './useApplicantsSelection';
+import { useApplicantsSelectionScreen } from './useApplicantsSelectionScreen';
 
 const { colors, spacing } = mobileTheme;
 const { tint } = mobileSurfaces;
@@ -32,7 +32,7 @@ export default function ApplicantsSelectionScreen() {
     handleViewProfile,
     dismissSheet,
     goBack,
-  } = useApplicantsSelection();
+  } = useApplicantsSelectionScreen();
 
   return (
     <>

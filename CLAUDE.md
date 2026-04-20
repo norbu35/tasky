@@ -115,3 +115,39 @@ archive/legacy-task-system/tasks/  Archived task files from greenfield phase
 - **Auth:** Facebook OAuth primary. SMS OTP feature-gated. Dev auth local-only.
 - **Storage:** Presigned upload URLs (S3/MinIO). Private buckets.
 - **Runtime DB user:** `tasky_app` (least-privilege). Flyway uses owner account.
+
+## Structural Contract Quick Reference (§7.7)
+
+> AI-agent-facing cheat sheet. The normative source is `docs/ARCHITECTURE.md` §7.7. Rebuilt when §7.7 changes.
+
+### Screen-family layout (§7.7.5.\*)
+
+| Rule ID   | Rule                                                                                           | Violation example                         |
+| --------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| §7.7.5.1  | Only composition, orchestration hook, model, section, and index files allowed under `screens/` | `features/tasks/screens/utils.ts`         |
+| §7.7.5.2  | ≥4 sections, ≥6 files, or ≥600 lines → must use folder form                                    | Flat `CustomerTaskDetail*` with 12 files  |
+| §7.7.5.3  | Sections are screen-private; no cross-screen or cross-feature imports                          | `ScreenA` importing `ScreenB.Section.tsx` |
+| §7.7.5.4  | No `screens/index.ts` barrel at directory root                                                 | `features/tasks/screens/index.ts`         |
+| §7.7.5.7  | Orchestration hooks must end `Screen.ts` (`use<Screen>Screen.ts`)                              | `useTaskIntake.ts` under `screens/`       |
+| §7.7.5.8  | Section filenames: `<PascalScreen>.<PascalSection>.tsx` — both PascalCase                      | `BookingReschedule.datePicker.tsx`        |
+| §7.7.5.9  | `.model.ts` must be pure — no react, react-native, react-query, api, store imports             | `*.model.ts` importing `react`            |
+| §7.7.5.10 | Domain hooks (`hooks/`) must NOT end in `Screen.ts`                                            | `useFooScreen.ts` under `hooks/`          |
+
+### Cross-module boundary (§7.7.2.\*)
+
+| Rule ID  | Rule                                                             | Violation example                           |
+| -------- | ---------------------------------------------------------------- | ------------------------------------------- |
+| §7.7.2.1 | Feature-to-feature imports go through `features/B/index.ts` only | `features/A/` importing `features/B/api.ts` |
+| §7.7.2.2 | `hooks/**` may not import `screens/**`                           | Hook importing a screen section             |
+| §7.7.2.3 | Route files import the Screen component only                     | Route importing a screen section or model   |
+| §7.7.2.4 | No cross-screen imports within the same feature                  | `ScreenA` importing `ScreenB.*`             |
+
+### File budgets and imports (§7.7.6.\*)
+
+| Rule ID  | Limit                                                                                            |
+| -------- | ------------------------------------------------------------------------------------------------ |
+| §7.7.6.1 | Screen warn >220, fail >280 lines; Section warn >260, fail >340; Model/Hook warn >180, fail >240 |
+| §7.7.6.2 | Max 8 sections per screen family                                                                 |
+| §7.7.6.3 | No `../../` or deeper relative imports in `src/**` — use `@/…` aliases                           |
+
+Run `pnpm --filter @tasky/mobile structure:check` after any mobile structural change.

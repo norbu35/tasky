@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
 import { Text, View } from 'react-native';
 
-import { cn } from '../../lib/cn';
+import { cn } from '@/lib/cn';
 
 type Props = {
   label: string;

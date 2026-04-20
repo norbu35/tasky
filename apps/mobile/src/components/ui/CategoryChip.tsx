@@ -2,7 +2,7 @@ import { cva } from 'class-variance-authority';
 import React from 'react';
 import { Pressable, Text } from 'react-native';
 
-import { cn } from '../../lib/cn';
+import { cn } from '@/lib/cn';
 
 const chipVariants = cva('px-xl py-sm rounded-full', {
   variants: {

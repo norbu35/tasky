@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-import { defaultStackScreenOptions } from '../../design/navigationOptions';
+import { defaultStackScreenOptions } from '@/design/navigationOptions';
 
 export default function TaskLayout() {
   return (

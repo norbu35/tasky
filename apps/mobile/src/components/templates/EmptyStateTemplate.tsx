@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { cn } from '../../lib/cn';
+import { cn } from '@/lib/cn';
 import { Button } from '../ui/Button';
 import { Reveal } from '../ui/Reveal';
 

@@ -4,7 +4,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import CustomerTasksScreen from '@/features/tasks/screens/CustomerTasksScreen';
+import CustomerTasksScreen from '@/features/tasks/screens/CustomerTasks';
 import { FeedListTemplate } from '@/components/templates/FeedListTemplate';
 import { CategoryChip } from '@/components/ui/CategoryChip';
 import { FilterBar } from '@/components/ui/FilterBar';

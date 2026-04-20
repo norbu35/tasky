@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--color-background); font-family: var(--font-sans); padding: 20px; display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
+
+.avatar-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.avatar { position: relative; border-radius: var(--radius-md); background: var(--tasky-subtle); display: flex; align-items: center; justify-content: center; color: var(--tasky-ink-deep); font-weight: 700; font-family: var(--font-display); overflow: visible; }
+.avatar img { border-radius: inherit; object-fit: cover; }
+.avatar.circle { border-radius: var(--radius-full); }
+
+/* Verified badge overlay */
+.v-badge { position: absolute; bottom: -3px; right: -3px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-card); }
+.v-inner { background: var(--tasky-verified); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+.size-label { font-size: 10px; color: var(--tasky-text-tertiary); }
+
+/* Rating stars */
+.stars-row { display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+.star { color: var(--tasky-sun); font-size: 14px; }
+.star-empty { color: var(--tasky-chip-inactive); font-size: 14px; }
+</style>
+</head>
+<body>
+  <!-- sm 32px -->
+  <div class="avatar-wrap">
+    <div class="avatar" style="width:32px;height:32px;font-size:11px;border-radius:10px">БТ</div>
+    <div class="size-label">sm / 32</div>
+  </div>
+
+  <!-- md 40px -->
+  <div class="avatar-wrap">
+    <div class="avatar" style="width:40px;height:40px;font-size:14px">МС</div>
+    <div class="size-label">md / 40</div>
+  </div>
+
+  <!-- lg 64px with verified -->
+  <div class="avatar-wrap">
+    <div class="avatar" style="width:64px;height:64px;font-size:22px">ГС
+      <div class="v-badge" style="width:20px;height:20px">
+        <div class="v-inner" style="width:14px;height:14px">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="size-label">lg / 64 + badge</div>
+  </div>
+
+  <!-- xl 128px circle -->
+  <div class="avatar-wrap">
+    <div class="avatar circle" style="width:80px;height:80px;font-size:28px;border-radius:9999px">ББ
+      <div class="v-badge" style="width:26px;height:26px">
+        <div class="v-inner" style="width:18px;height:18px">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="size-label">xl / 80</div>
+  </div>
+
+  <!-- Rating stars -->
+  <div class="avatar-wrap" style="align-items:flex-start">
+    <div class="stars-row">
+      <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star-empty">★</span>
+    </div>
+    <div class="size-label" style="margin-top:4px">4.0 / 5 · 12 үнэлгээ</div>
+    <div class="stars-row" style="margin-top:8px">
+      <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+    </div>
+    <div class="size-label" style="margin-top:4px">5.0 / 5 · perfect</div>
+  </div>
+</body>
+</html>

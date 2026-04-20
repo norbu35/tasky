@@ -6,11 +6,11 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, runOnJS } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { elevations } from '../../design/elevations';
-import { screenLayout } from '../../design/screenLayout';
-import { mobileTheme, withFloatingSpring } from '../../design/tokenAdapter';
-import { cn } from '../../lib/cn';
-import { useAuthStore } from '../../store/authStore';
+import { elevations } from '@/design/elevations';
+import { screenLayout } from '@/design/screenLayout';
+import { mobileTheme, withFloatingSpring } from '@/design/tokenAdapter';
+import { cn } from '@/lib/cn';
+import { useAuthStore } from '@/store/authStore';
 
 const { colors } = mobileTheme;
 const { fabIconSize, fabInsetRight, fabInsetTop, fabSize, tabBarHeight, tabBarBottom } =

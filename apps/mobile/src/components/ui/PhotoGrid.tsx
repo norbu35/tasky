@@ -3,8 +3,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { mobileTheme, withAlpha } from '../../design/tokenAdapter';
-import { cn } from '../../lib/cn';
+import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
+import { cn } from '@/lib/cn';
 
 const { colors } = mobileTheme;
 

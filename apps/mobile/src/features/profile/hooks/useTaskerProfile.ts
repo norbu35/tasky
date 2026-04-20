@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { getPublicProfile } from '../api';
-import { getUserReviews } from '../../review/api';
-import { useAuthStore } from '../../../store/authStore';
-import { queryKeys } from '../../../lib/queryKeys';
+import { getUserReviews } from '@/features/review/api';
+import { useAuthStore } from '@/store/authStore';
+import { queryKeys } from '@/lib/queryKeys';
 
 export function useTaskerProfile(userId: string | undefined) {
   const session = useAuthStore((s) => s.session);

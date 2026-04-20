@@ -4,9 +4,9 @@ import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-import { springs } from '../../design/animations';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { cn } from '../../lib/cn';
+import { springs } from '@/design/animations';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { cn } from '@/lib/cn';
 
 const { colors } = mobileTheme;
 

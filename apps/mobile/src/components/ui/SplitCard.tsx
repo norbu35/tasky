@@ -2,10 +2,10 @@ import React from 'react';
 import { Pressable, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
-import { interactiveStates, withInteractiveSpring } from '../../design/animations';
-import { elevations } from '../../design/elevations';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { cn } from '../../lib/cn';
+import { interactiveStates, withInteractiveSpring } from '@/design/animations';
+import { elevations } from '@/design/elevations';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { cn } from '@/lib/cn';
 
 const { spacing } = mobileTheme;
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);

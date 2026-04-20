@@ -11,9 +11,9 @@ import {
   type ViewStyle,
 } from 'react-native';
 
-import { elevations } from '../../design/elevations';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { cn } from '../../lib/cn';
+import { elevations } from '@/design/elevations';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { cn } from '@/lib/cn';
 
 const { colors } = mobileTheme;
 
