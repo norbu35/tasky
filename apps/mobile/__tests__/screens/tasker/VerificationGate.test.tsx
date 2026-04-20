@@ -36,7 +36,9 @@ beforeEach(() => {
 
 describe('VerificationGate (SCR-TASK-003)', () => {
   it('renders verification benefits text', () => {
-    const { VerificationGate } = require('../../../src/features/tasks/components/VerificationGate');
+    const {
+      VerificationGate,
+    } = require('../../../src/features/verification/components/VerificationGate');
     render(<VerificationGate onStartVerification={jest.fn()} onMaybeLater={jest.fn()} />);
 
     expect(screen.getByText('tasker.verification.gateTitle')).toBeTruthy();
@@ -45,7 +47,9 @@ describe('VerificationGate (SCR-TASK-003)', () => {
 
   it('CTA navigates to verification flow', () => {
     const onStart = jest.fn();
-    const { VerificationGate } = require('../../../src/features/tasks/components/VerificationGate');
+    const {
+      VerificationGate,
+    } = require('../../../src/features/verification/components/VerificationGate');
     render(<VerificationGate onStartVerification={onStart} onMaybeLater={jest.fn()} />);
 
     fireEvent.press(screen.getByText('tasker.verification.gateCta'));
@@ -54,7 +58,9 @@ describe('VerificationGate (SCR-TASK-003)', () => {
 
   it('maybe later dismisses the gate', () => {
     const onLater = jest.fn();
-    const { VerificationGate } = require('../../../src/features/tasks/components/VerificationGate');
+    const {
+      VerificationGate,
+    } = require('../../../src/features/verification/components/VerificationGate');
     render(<VerificationGate onStartVerification={jest.fn()} onMaybeLater={onLater} />);
 
     fireEvent.press(screen.getByTestId('verification-gate-secondary-cta'));
@@ -62,7 +68,9 @@ describe('VerificationGate (SCR-TASK-003)', () => {
   });
 
   it('renders benefit list items', () => {
-    const { VerificationGate } = require('../../../src/features/tasks/components/VerificationGate');
+    const {
+      VerificationGate,
+    } = require('../../../src/features/verification/components/VerificationGate');
     render(<VerificationGate onStartVerification={jest.fn()} onMaybeLater={jest.fn()} />);
 
     expect(screen.getByTestId('verification-gate')).toBeTruthy();
