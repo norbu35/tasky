@@ -40,6 +40,12 @@ Production remains blocked until these are closed:
    - admin feature-toggle management (`REQ-P1-ADMIN-03`)
    - admin ban/unban (`REQ-P1-ADMIN-04`)
    - concierge dispatch backend proof inside `REQ-P1-ADMIN-05`
+
+   **Status**: No scenario files exist in `tests/scenarios/` for any of these families
+   (`verification.md` and `admin.md` have not been authored). Per AGENTS.md, scenario
+   files are QA-authored and must not be modified by engineering. These remain blocked
+   on QA scenario authoring before implementation tests can be written.
+
 4. Live alert routing, dashboard wiring, and incident evidence are not yet proven against a real deployed stack.
 
 ## Required Runtime Controls
