@@ -221,6 +221,12 @@ export interface MobileApiClient {
       description?: string;
     }[]
   >;
+
+  reverseGeocode(
+    accessToken: string | undefined,
+    lat: number,
+    lng: number,
+  ): Promise<{ formatted_address: string }>;
 }
 
 const API_PATH_PREFIX = '/api/v1';
@@ -861,6 +867,19 @@ export class HttpMobileApiClient implements MobileApiClient {
         description: event.reason ?? undefined,
       }));
     });
+  }
+
+  async reverseGeocode(
+    accessToken: string | undefined,
+    lat: number,
+    lng: number,
+  ): Promise<{ formatted_address: string }> {
+    return this.requestJson<{ formatted_address: string }>(
+      '/location/reverse-geocode',
+      { method: 'GET' },
+      accessToken,
+      { lat, lng },
+    );
   }
 
   private async requestJson<T>(

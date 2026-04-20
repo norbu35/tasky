@@ -10,6 +10,7 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { useBookings } from '@/features/bookings/hooks/useBookings';
 import { useRole } from '@/providers/RoleProvider';
 import { formatDateTime } from '@/utils/formatDate';
+import { mapStatus } from '@/utils/statusMapping';
 
 type BookingStatus = 'ASSIGNED' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW';
 
@@ -24,17 +25,8 @@ interface BookingItem {
   task?: { description?: string; category?: { name?: string } | null } | null;
 }
 
-function mapStatus(status: BookingStatus): 'assigned' | 'completed' | 'cancelled' | 'no_show' {
-  switch (status) {
-    case 'ASSIGNED':
-      return 'assigned';
-    case 'COMPLETED':
-      return 'completed';
-    case 'CANCELLED':
-      return 'cancelled';
-    case 'NO_SHOW':
-      return 'no_show';
-  }
+function mapBookingStatus(status: BookingStatus): ReturnType<typeof mapStatus> {
+  return mapStatus(status);
 }
 
 function formatMoney(amount: number) {
@@ -46,7 +38,7 @@ function BookingCardHeader({ booking, isCustomer }: { booking: BookingItem; isCu
 
   return (
     <View className="flex-row items-center justify-between">
-      <StatusBadge status={mapStatus(booking.status)} />
+      <StatusBadge status={mapBookingStatus(booking.status)} />
       {counterpartyName && (
         <Text className="text-label font-sans-medium text-text-secondary" numberOfLines={1}>
           {counterpartyName}

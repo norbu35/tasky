@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 
-import { VerificationGate } from '../../../features/tasks/components/VerificationGate';
+import { VerificationGate } from '@/features/verification/components/VerificationGate';
 
 export default function VerificationIndexScreen() {
   const router = useRouter();

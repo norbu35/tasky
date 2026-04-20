@@ -1,13 +1,13 @@
 import { CheckCircle } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { AuthTemplate } from '../../../components/templates/AuthTemplate';
-import { Button } from '../../../components/ui/Button';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { AuthTemplate } from '@/components/templates/AuthTemplate';
+import { Button } from '@/components/ui/Button';
+import { mobileTheme } from '@/design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 interface VerificationGateProps {
   onStartVerification: () => void;
@@ -34,11 +34,11 @@ export function VerificationGate({
       subtitle={t('tasker.verification.gateBody')}
       testID={testID}
     >
-      <View style={styles.benefitsContainer}>
+      <View className="gap-md mb-lg">
         {BENEFITS.map((benefitKey, index) => (
-          <View key={index} style={styles.benefitRow}>
+          <View key={index} className="flex-row items-center gap-sm">
             <CheckCircle size={20} color={colors.verified} />
-            <Text style={styles.benefitText}>{t(benefitKey)}</Text>
+            <Text className="flex-1 text-body text-primary leading-relaxed">{t(benefitKey)}</Text>
           </View>
         ))}
       </View>
@@ -46,7 +46,7 @@ export function VerificationGate({
       <Button
         label={t('tasker.verification.gateCta')}
         onPress={onStartVerification}
-        style={styles.primaryCta}
+        style={{ alignSelf: 'stretch' }}
         testID={`${testID}-cta`}
       />
 
@@ -54,33 +54,9 @@ export function VerificationGate({
         label={t('tasker.verification.maybeLater')}
         variant="ghost"
         onPress={onMaybeLater}
-        style={styles.secondaryCta}
+        style={{ alignSelf: 'stretch' }}
         testID={`${testID}-secondary-cta`}
       />
     </AuthTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  benefitsContainer: {
-    gap: spacing.md,
-    marginBottom: spacing.lg,
-  },
-  benefitRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  benefitText: {
-    flex: 1,
-    fontSize: typography.body,
-    color: colors.primary,
-    lineHeight: typography.body * 1.6,
-  },
-  primaryCta: {
-    alignSelf: 'stretch',
-  },
-  secondaryCta: {
-    alignSelf: 'stretch',
-  },
-});

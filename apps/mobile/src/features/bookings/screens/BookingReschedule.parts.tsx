@@ -17,7 +17,7 @@ import {
   isTimeSelected,
   AVAILABLE_TIMES,
 } from './BookingReschedule.model';
-import { DatePicker } from './BookingReschedule.DatePicker';
+import { DatePicker } from './BookingReschedule.datePicker';
 
 const { colors, spacing, typography } = mobileTheme;
 

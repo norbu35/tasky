@@ -1,1 +1,1 @@
-export { default } from '@/features/tasks/screens/TaskerStatsScreen';
+export { default } from '@/features/profile/screens/TaskerStatsScreen';

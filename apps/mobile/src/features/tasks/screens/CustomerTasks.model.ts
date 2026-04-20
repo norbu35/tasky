@@ -1,4 +1,10 @@
-export type TaskState = 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { Sparkles, Hammer, Leaf, Package, Wrench, Zap } from 'lucide-react-native';
+import { type TaskStatus, mapStatus } from '@/utils/statusMapping';
+
+export type { TaskStatus };
+export type TaskState = TaskStatus;
+export { mapStatus };
 
 export type TaskLike = {
   id: string;
@@ -8,18 +14,6 @@ export type TaskLike = {
   scheduled_at?: string | null;
   category?: { name?: string | null } | null;
 };
-
-export function mapStatus(status: string): TaskState {
-  const lower = status.toLowerCase();
-  if (lower === 'assigned' || lower === 'tasker_marked_done') return 'assigned';
-  if (lower === 'completed') return 'completed';
-  if (lower === 'cancelled') return 'cancelled';
-  if (lower === 'no_show') return 'no_show';
-  return 'open';
-}
-
-import { mobileTheme } from '@/design/tokenAdapter';
-import { Sparkles, Hammer, Leaf, Package, Wrench, Zap } from 'lucide-react-native';
 
 const { colors } = mobileTheme;
 

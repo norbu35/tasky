@@ -64,20 +64,5 @@ export async function reverseGeocode(
   lat: number,
   lng: number,
 ): Promise<{ formatted_address: string }> {
-  const client = getClient();
-  return (
-    client as unknown as {
-      requestJson: <T>(
-        path: string,
-        init: RequestInit,
-        accessToken?: string,
-        query?: Record<string, string | number | undefined>,
-      ) => Promise<T>;
-    }
-  ).requestJson<{ formatted_address: string }>(
-    '/location/reverse-geocode',
-    { method: 'GET' },
-    accessToken,
-    { lat, lng },
-  );
+  return getClient().reverseGeocode(accessToken, lat, lng);
 }

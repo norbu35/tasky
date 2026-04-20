@@ -1,5 +1,6 @@
 import { type Booking } from '@/lib/mobileApiClient';
 import { type CancelType } from '@/features/bookings/components/CustomerCancelSheet';
+import { mapStatus as sharedMapStatus } from '@/utils/statusMapping';
 
 export interface CustomerBooking extends Omit<Booking, 'status' | 'customer'> {
   status: Booking['status'] | 'TASKER_MARKED_DONE';
@@ -14,12 +15,7 @@ export interface CustomerBooking extends Omit<Booking, 'status' | 'customer'> {
 export function mapStatus(
   status: string,
 ): 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show' {
-  const lower = status.toLowerCase();
-  if (lower === 'assigned' || lower === 'tasker_marked_done') return 'assigned';
-  if (lower === 'completed') return 'completed';
-  if (lower === 'cancelled') return 'cancelled';
-  if (lower === 'no_show') return 'no_show';
-  return 'assigned';
+  return sharedMapStatus(status);
 }
 
 export function getStatusLabel(status: string, t: (key: string) => string): string {
