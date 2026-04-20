@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -14,12 +15,13 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 /**
  * Per-user STOMP SEND rate limiter using Bucket4j token-bucket algorithm.
  *
  * <p>Allows up to 30 messages per minute per user. Buckets are lazily created and held
- * in-memory; they are evicted when the server restarts or the user reconnects.
+ * in-memory; they are evicted when the STOMP session disconnects.
  * Upgrade to a distributed bucket store (e.g. bucket4j-redis) if multi-instance.
  */
 @Component
@@ -49,6 +51,18 @@ public class StompRateLimitInterceptor implements ChannelInterceptor {
             throw new IllegalStateException("Rate limit exceeded: slow down message sending");
         }
         return message;
+    }
+
+    @EventListener
+    public void onSessionDisconnect(SessionDisconnectEvent event) {
+        if (event.getUser()
+                        instanceof org.springframework.security.authentication.UsernamePasswordAuthenticationToken auth
+                && auth.getPrincipal() instanceof JwtPrincipal principal) {
+            String userId = principal.userId();
+            if (buckets.remove(userId) != null) {
+                log.debug("Evicted rate-limit bucket for user={}", userId);
+            }
+        }
     }
 
     private String resolveUserId(StompHeaderAccessor accessor) {
