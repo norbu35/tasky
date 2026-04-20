@@ -74,7 +74,9 @@ public class RateLimitFilter extends OncePerRequestFilter {
         String rateKey;
         int limit;
         if (authenticated) {
-            rateKey = "api-user:" + authentication.getName();
+            String userId =
+                    authentication.getPrincipal() instanceof JwtPrincipal jwt ? jwt.userId() : authentication.getName();
+            rateKey = "api-user:" + userId;
             limit = authenticatedRpm;
         } else {
             rateKey = "api-ip:" + clientIpResolver.resolve(request);
