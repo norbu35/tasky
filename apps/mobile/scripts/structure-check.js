@@ -40,6 +40,12 @@ const routeFiles = walk(path.join(ROOT, 'app'), ['.ts', '.tsx']).filter(
 
 const componentFiles = walk(path.join(ROOT, 'components'), ['.ts', '.tsx']);
 const designFiles = walk(path.join(ROOT, 'design'), ['.ts', '.tsx']);
+const providerFiles = walk(path.join(ROOT, 'providers'), ['.ts', '.tsx']);
+const storeFiles = walk(path.join(ROOT, 'store'), ['.ts', '.tsx']);
+const libFiles = walk(path.join(ROOT, 'lib'), ['.ts', '.tsx']).filter(
+  (f) => !f.includes(path.join('src', 'lib', '__tests__') + path.sep),
+);
+const utilsFiles = walk(path.join(ROOT, 'utils'), ['.ts', '.tsx']);
 const allSrcFiles = walk(ROOT, ['.ts', '.tsx']).filter(
   (f) => !f.includes(path.join('src', 'future') + path.sep),
 );
@@ -66,6 +72,12 @@ const results = [];
 
 function report(status, category, message) {
   results.push({ status, category, message });
+}
+
+function lineViolates(lines, predicate, reporter) {
+  for (let i = 0; i < lines.length; i++) {
+    if (predicate(lines[i])) reporter(i);
+  }
 }
 
 // 1. Route file line budgets
@@ -142,31 +154,129 @@ for (const f of allSrcFiles) {
   }
 }
 
-// 6. Feature screen-family size budgets (role-aware)
+// 6. Providers importing from routes or feature screens
+for (const f of providerFiles) {
+  const lines = readLines(f);
+  const p = rel(f);
+  lineViolates(
+    lines,
+    (line) =>
+      /from\s+['"]@\/app\//.test(line) ||
+      /from\s+['"][^'"]*\/app\//.test(line) ||
+      /from\s+['"]@\/features\/[^'"]*\/screens\//.test(line) ||
+      /from\s+['"][^'"]*\/features\/[^'"]*\/screens\//.test(line),
+    (i) => report('fail', 'provider-layer-violation', `${p}:${i + 1} violates provider boundary`),
+  );
+}
+
+// 7. Stores importing feature code, transport, or query ownership
+for (const f of storeFiles) {
+  const lines = readLines(f);
+  const p = rel(f);
+  lineViolates(
+    lines,
+    (line) =>
+      /from\s+['"]@\/app\//.test(line) ||
+      /from\s+['"][^'"]*\/app\//.test(line) ||
+      /from\s+['"]@\/features\//.test(line) ||
+      /from\s+['"][^'"]*\/features\//.test(line) ||
+      /from\s+['"]@\/providers\//.test(line) ||
+      /from\s+['"][^'"]*\/providers\//.test(line) ||
+      /mobileApiClient/.test(line) ||
+      /@tanstack\/react-query/.test(line) ||
+      /\buseQuery\(/.test(line) ||
+      /\buseMutation\(/.test(line) ||
+      /\buseInfiniteQuery\(/.test(line),
+    (i) => report('fail', 'store-layer-violation', `${p}:${i + 1} violates store boundary`),
+  );
+}
+
+// 8. Shared lib importing feature, route, or store code
+for (const f of libFiles) {
+  const lines = readLines(f);
+  const p = rel(f);
+  lineViolates(
+    lines,
+    (line) =>
+      /from\s+['"]@\/app\//.test(line) ||
+      /from\s+['"][^'"]*\/app\//.test(line) ||
+      /from\s+['"]@\/features\//.test(line) ||
+      /from\s+['"][^'"]*\/features\//.test(line) ||
+      /from\s+['"]@\/store\//.test(line) ||
+      /from\s+['"][^'"]*\/store\//.test(line),
+    (i) => report('fail', 'lib-layer-violation', `${p}:${i + 1} violates lib boundary`),
+  );
+}
+
+// 9. Utils importing React/query/store/feature/transport code
+for (const f of utilsFiles) {
+  const lines = readLines(f);
+  const p = rel(f);
+  lineViolates(
+    lines,
+    (line) =>
+      /from\s+['"]react['"]/.test(line) ||
+      /from\s+['"]@tanstack\/react-query['"]/.test(line) ||
+      /from\s+['"]@\/app\//.test(line) ||
+      /from\s+['"][^'"]*\/app\//.test(line) ||
+      /from\s+['"]@\/features\//.test(line) ||
+      /from\s+['"][^'"]*\/features\//.test(line) ||
+      /from\s+['"]@\/store\//.test(line) ||
+      /from\s+['"][^'"]*\/store\//.test(line) ||
+      /mobileApiClient/.test(line) ||
+      /\buseQuery\(/.test(line) ||
+      /\buseMutation\(/.test(line) ||
+      /\buseInfiniteQuery\(/.test(line),
+    (i) => report('fail', 'utils-layer-violation', `${p}:${i + 1} violates utils boundary`),
+  );
+}
+
+// 10. Feature screen-family size budgets (role-aware)
 function getRoleBudget(filename) {
   if (filename.endsWith('Screen.tsx')) return { warn: 220, fail: 280, role: 'Screen' };
-  if (filename.endsWith('.parts.tsx')) return { warn: 260, fail: 340, role: 'Parts' };
+  // Semantic section files: <ScreenName>.<SectionName>.tsx (e.g. CustomerTaskDetail.Header.tsx)
+  // Match files with at least two dot-separated segments before .tsx, excluding known roles
+  if (
+    !filename.endsWith('.model.ts') &&
+    !filename.endsWith('.parts.tsx') &&
+    !/^use.*\.ts$/.test(filename) &&
+    /\.tsx$/.test(filename) &&
+    filename.includes('.')
+  ) {
+    return { warn: 260, fail: 340, role: 'Section' };
+  }
+  if (filename.endsWith('.parts.tsx')) return { warn: 260, fail: 340, role: 'Parts (legacy)' };
   if (filename.endsWith('.model.ts')) return { warn: 180, fail: 240, role: 'Model' };
   if (/^use.*\.ts$/.test(filename)) return { warn: 180, fail: 240, role: 'Hook' };
   return { warn: 220, fail: Infinity, role: 'Other' };
 }
 
 let screenFamilyWithinBudget = 0;
+let legacyPartsFiles = 0;
 for (const { file, feature } of featureScreenFiles) {
   const lines = lineCount(file);
   const p = rel(file);
   const filename = path.basename(file);
   const { warn, fail, role } = getRoleBudget(filename);
+  // Track legacy *.parts.tsx files as migration artifacts
+  if (filename.endsWith('.parts.tsx')) {
+    report(
+      'warn',
+      'legacy-parts-file',
+      `${p} is a legacy *.parts.tsx file — migrate to semantic section filenames`,
+    );
+    legacyPartsFiles++;
+  }
   if (lines > fail) {
     report(
       'fail',
-      `screen-family-${role.toLowerCase()}`,
+      `screen-family-${role.toLowerCase().replace(/[^a-z]/g, '')}`,
       `${p} is ${lines} lines (fail limit ${fail}, role: ${role}, feature: ${feature})`,
     );
   } else if (lines > warn) {
     report(
       'warn',
-      `screen-family-${role.toLowerCase()}`,
+      `screen-family-${role.toLowerCase().replace(/[^a-z]/g, '')}`,
       `${p} is ${lines} lines (warn threshold ${warn}, role: ${role}, feature: ${feature})`,
     );
   } else {
@@ -176,8 +286,15 @@ for (const { file, feature } of featureScreenFiles) {
 if (screenFamilyWithinBudget > 0) {
   report('pass', 'screen-family', `${screenFamilyWithinBudget} screen-family files within budget`);
 }
+if (legacyPartsFiles > 0) {
+  report(
+    'warn',
+    'legacy-parts-file',
+    `${legacyPartsFiles} legacy *.parts.tsx file(s) remain — see remediation spec`,
+  );
+}
 
-// 7. Route-to-route import check (route files should not import @/app/)
+// 11. Route-to-route import check (route files should not import @/app/)
 const allRouteFiles = walk(path.join(ROOT, 'app'), ['.ts', '.tsx']);
 for (const f of allRouteFiles) {
   if (path.basename(f).startsWith('_layout.')) continue;
@@ -206,13 +323,19 @@ const categoryOrder = [
   'route-budget',
   'route-banned-import',
   'route-to-route-import',
+  'legacy-parts-file',
   'screen-family',
   'screen-family-screen',
-  'screen-family-parts',
+  'screen-family-section',
+  'screen-family-partslegacy',
   'screen-family-model',
   'screen-family-hook',
   'component-layer-violation',
   'design-layer-violation',
+  'provider-layer-violation',
+  'store-layer-violation',
+  'lib-layer-violation',
+  'utils-layer-violation',
   'future-import',
 ];
 
@@ -220,13 +343,19 @@ const categoryLabels = {
   'route-budget': 'Route Budget',
   'route-banned-import': 'Route Banned Imports',
   'route-to-route-import': 'Route-to-Route Imports',
+  'legacy-parts-file': 'Legacy Parts Files',
   'screen-family': 'Screen Family',
   'screen-family-screen': 'Screen Family — Screen',
-  'screen-family-parts': 'Screen Family — Parts',
+  'screen-family-section': 'Screen Family — Section',
+  'screen-family-partslegacy': 'Screen Family — Parts (Legacy)',
   'screen-family-model': 'Screen Family — Model',
   'screen-family-hook': 'Screen Family — Hook',
   'component-layer-violation': 'Layer Violations',
   'design-layer-violation': 'Design Layer Violations',
+  'provider-layer-violation': 'Provider Layer Violations',
+  'store-layer-violation': 'Store Layer Violations',
+  'lib-layer-violation': 'Lib Layer Violations',
+  'utils-layer-violation': 'Utils Layer Violations',
   'future-import': 'Future Import Violations',
 };
 

@@ -678,157 +678,183 @@ it('TID-TASK-080-WEB-AUTH-OAUTH-FLOW should allow user to continue with Facebook
 
 ### 7.7 Mobile Layer Model and Structural Contract
 
-This section defines the enforced architecture for `apps/mobile`. It is the authoritative reference for
-layer boundaries, route contracts, screen decomposition, and deferred-surface policy.
-
-Sources:
-
-- `docs/plans/2026-04-20-mobile-agentic-hardening-design.md` (foundational pass)
-- `docs/plans/2026-04-20-mobile-agentic-hardening-followup-design.md` (follow-up pass)
+This section is the only normative architecture contract for `apps/mobile`.
+Do not treat dated plan or remediation docs as competing sources of truth. If a mobile rule changes, update this section and the enforcing tooling in the same change.
 
 #### 7.7.1 Dependency Flow
 
 The mobile app follows a strict unidirectional dependency flow:
 
 ```
-src/app → src/features/*/screens → src/features/*/{hooks,components,model,api} → shared src/components, src/design, src/lib
+src/app → src/features/*/screens → src/features/*/{hooks,components,model,api} → shared src/components, src/design, src/lib, src/utils
 ```
 
-#### 7.7.2 Allowed Imports by Layer
+One-way flow matters more than directory names. Logic should move downward into bounded feature modules, not upward into routes, shared UI, or the root app shell.
 
-| Layer                       | May import                                                                           | Must not import                                                                         |
-| --------------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
-| `src/app/**`                | Route-safe screen modules, route-param codecs, navigation helpers, Expo Router APIs  | `createMobileApiClient`, feature `api.ts`, reusable business UI, transport internals    |
-| `src/features/*/screens/**` | Feature hooks, feature components, shared templates, shared primitives               | Raw transport client (`mobileApiClient`)                                                |
-| `src/features/*/hooks/**`   | Feature API modules, shared state/query utilities                                    | Route files (`src/app/**`)                                                              |
-| `src/features/*/api/**`     | Domain endpoint calls, response mapping, mobile transport client                     | This is the **only** feature-local layer that may depend on the mobile transport client |
-| `src/components/**`         | Shared UI only                                                                       | Feature data fetching, `src/features/**`                                                |
-| `src/design/**`             | Cross-cutting visual foundation                                                      | `src/app/**`, `src/features/**`                                                         |
-| `archive/mobile-future/**`  | N/A — archived deferred prototypes; must not be imported from any production surface |
+#### 7.7.2 Layer Contract
 
-#### 7.7.3 Route Adapter Contract
+| Layer                       | May import                                                                                                 | Must not import                                                                      |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `src/app/**`                | Expo Router APIs, route-param codecs, navigation helpers, route-safe feature screens                       | `createMobileApiClient`, feature `api.ts`, reusable business UI, transport internals |
+| `src/features/*/screens/**` | Feature hooks, feature components, screen-local model helpers, shared templates, shared primitives         | Raw transport client (`mobileApiClient`), route files                                |
+| `src/features/*/hooks/**`   | Feature `api.ts`, React Query, stores, shared utilities                                                    | Route files (`src/app/**`)                                                           |
+| `src/features/*/api/**`     | Domain endpoint calls, response mapping, shared transport, generated SDK types                             | Route files, shared UI                                                               |
+| `src/components/**`         | Shared UI only                                                                                             | Feature data fetching, `src/features/**`                                             |
+| `src/design/**`             | Cross-cutting visual foundation                                                                            | `src/app/**`, `src/features/**`                                                      |
+| `src/providers/**`          | Shared stores, shared libs, and app-wide feature hooks, APIs, or providers used for cross-cutting concerns | Route files, feature screen modules, route-specific orchestration                    |
+| `src/store/**`              | Session, bootstrap/app-shell state, explicit client-only workflow state                                    | Network access, React Query ownership, duplicated server state                       |
+| `src/lib/**`                | Shared infrastructure, transport helpers, generated SDK type adapters, platform service wrappers           | Feature modules, route files, store ownership                                        |
+| `src/utils/**`              | Pure helpers, formatters, small platform wrappers, and type-safe non-React utilities                       | React hooks, store mutation, feature modules, transport access                       |
+| `archive/mobile-future/**`  | N/A — archived deferred prototypes                                                                         | Imports into production surfaces                                                     |
 
-Non-layout route files in `src/app/**` must be thin adapters:
+#### 7.7.3 Runtime Ownership
 
-- **Preferred target size**: ≤ 40 lines
-- **Tiered thresholds**:
-  - **Hard fail**: > 100 lines — must be fixed before merge
-  - **Warning (primary)**: > 60 lines — business-flow routes should thin below this
-  - **Warning (tolerated tier)**: 61–100 lines — acceptable for near-static state screens (error, update, suspended, cancel confirmation) documented below
-- **Allowed responsibilities**: `Stack.Screen` options, route param decoding / aliasing, rendering a feature screen
-- **Forbidden**: importing `createMobileApiClient`, importing `@/features/*/api`, defining local UI sections for reuse, implementing upload flows, parsing business payloads beyond route-param decoding, importing from other route files
+- `src/app/_layout.tsx` owns app-wide provider composition, platform lifecycle bridges, and one-time bootstrap wiring.
+- `src/providers/**` owns reusable cross-cutting context that is consumed by multiple routes or features.
+- Providers may call feature APIs or hooks only when the concern is genuinely app-wide, such as notifications, auth bootstrap, or review gating.
+- Feature-local side effects belong in feature hooks or feature-local providers, not in route files.
+- React Query owns server state. Zustand owns session/bootstrap/app-shell state and explicit client-only workflow state only.
+- Global stores must not mirror data that already has a stable query key and cache lifecycle in React Query.
+- Store files must not call feature APIs, import the mobile transport client, or own query lifecycles.
 
-**Tolerated secondary-state routes** (61–100 line warning tier):
+#### 7.7.4 Route Adapter Contract
 
-These routes are near-static state screens that carry no business-flow logic. They are intentionally tolerated in the warning band:
+Non-layout route files in `src/app/**` must be thin adapters.
 
-- `(shared)/network-error.tsx` — static error state
-- `(shared)/app-update.tsx` — static update prompt
-- `(shared)/account/suspended.tsx` — static suspension notice
-- `(shared)/session-expired.tsx` — static session expiry
-- `(customer)/bookings/[bookingId]/cancel.tsx` — cancel confirmation
-- `(tasker)/jobs/[bookingId]/cancel.tsx` — cancel confirmation
-- `(tasker)/verification/pending.tsx` — static pending state
-- `(tasker)/verification/rejected.tsx` — static rejection state
+- Preferred target size: `<= 40` lines
+- Soft warning: `> 60` lines
+- Hard fail: `> 100` lines
+- Allowed responsibilities:
+  - `Stack.Screen` options
+  - route param decoding or aliasing
+  - rendering a feature screen
+- Not allowed:
+  - direct domain API calls
+  - transport imports
+  - upload or mutation flow implementation
+  - parsing business payloads beyond route-param decoding
+  - reusable business UI definitions
 
-New state screens in this class may be added to the tolerated tier. Business-flow routes that grow above 60 lines must still be thinned regardless.
+Route-to-route imports are discouraged and should trend to zero. The current structure checker reports them as warnings.
 
-#### 7.7.4 Screen-Family Role-Aware Budgets
+The following near-static state routes are tolerated in the `61-100` warning band when they remain mostly declarative:
 
-Screen-family files under `src/features/*/screens/**` are budgeted by role, not uniformly:
+- `(shared)/network-error.tsx`
+- `(shared)/app-update.tsx`
+- `(shared)/account/suspended.tsx`
+- `(shared)/session-expired.tsx`
+- `(customer)/bookings/[bookingId]/cancel.tsx`
+- `(tasker)/jobs/[bookingId]/cancel.tsx`
+- `(tasker)/verification/pending.tsx`
+- `(tasker)/verification/rejected.tsx`
 
-| Role (filename pattern)         | Target | Soft Warning | Hard Fail |
-| ------------------------------- | ------ | ------------ | --------- |
-| `*Screen.tsx` (assembly)        | ≤ 180  | > 220        | > 280     |
-| `*.parts.tsx` (presentational)  | ≤ 200  | > 260        | > 340     |
-| `*.model.ts` (pure functions)   | ≤ 120  | > 180        | > 240     |
-| `use*.ts` (orchestration hook)  | ≤ 120  | > 180        | > 240     |
-| Other (content, sections, etc.) | ≤ 180  | > 220        | > 280     |
+New routes in this class may be tolerated only when they carry no business-flow logic.
 
-#### 7.7.5 Standard Screen Decomposition Shape
+#### 7.7.5 Screen-Family Contract
 
-Large or high-churn screens should converge on:
+Large or high-churn screens should converge on a bounded family shape:
 
-```
+```text
 features/<domain>/screens/
   <ScreenName>Screen.tsx          # assembly/composition only
   <ScreenName>.model.ts           # parsing, formatting, derived state helpers
-  <ScreenName>.parts.tsx          # screen-local presentational sections
   use<ScreenName>.ts              # orchestration/effects
+  <ScreenName>.<SectionName>.tsx  # semantic screen-local presentational section
 ```
 
-Not every screen needs all four files. The rule is bounded ownership. Decomposition is required when a screen exceeds **220 lines** or mixes three or more of: route param parsing, async side effects, domain mutations, local presentational subcomponents, formatting/parsing helpers.
+A screen-local folder is also valid when a family grows beyond a few adjacent files:
 
-#### 7.7.6 Structure Checker
-
-`apps/mobile/scripts/structure-check.js` enforces the structural contract. Run via `pnpm --filter @tasky/mobile structure:check`.
-
-**Checks performed:**
-
-1. Route budget (≤100 hard fail, >60 warn, with tolerated tier for state screens)
-2. Route banned imports (`createMobileApiClient`, `@/features/*/api`, `@/future`)
-3. Route-to-route imports (warns on `@/app/` imports within route files)
-4. Component layer violations (`src/components` importing from `src/features`)
-5. Design layer violations (`src/design` importing from `src/app` or `src/features`)
-6. Future import violations (production code importing `@/future`)
-7. Screen-family role-aware budgets (by filename pattern)
-
-Output is grouped by category with pass/warn/fail counts. The gate requires zero fail items to pass.
-
-#### 7.7.7 Domain API Contract
-
-`src/lib/mobileApiClient.ts` is the shared transport layer responsible for: base URL resolution, auth header composition, token refresh handling, shared `requestJson` / `requestVoid` primitives, and transport-level error mapping.
-
-Domain methods live in feature-local API modules:
-
-```
-src/features/tasks/api.ts
-src/features/bookings/api.ts
-src/features/profile/api.ts
-src/features/chat/api.ts
-src/features/disputes/api.ts
-src/features/review/api.ts
-src/features/verification/api.ts
-src/features/notifications/api.ts
-src/features/auth/api.ts
+```text
+features/<domain>/screens/<ScreenName>/
+  Screen.tsx
+  model.ts
+  use<ScreenName>.ts
+  <SectionName>.tsx
 ```
 
-The transport client must not be imported from route files or shared UI.
+Legacy `*.parts.tsx` files are tolerated only as migration artifacts. New code must use semantic section filenames.
+
+Decomposition is required when a screen exceeds `220` lines or mixes three or more of:
+
+- route param parsing
+- async side effects
+- domain mutations
+- local presentational subcomponents
+- formatting or parsing helpers
+
+#### 7.7.6 Role-Aware File Budgets
+
+| Role (filename pattern)                                                                                                          | Target | Soft Warning | Hard Fail |
+| -------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------ | --------- |
+| `*Screen.tsx`                                                                                                                    | ≤ 180  | > 220        | > 280     |
+| Semantic section file (`<ScreenName>.<SectionName>.tsx`, screen-local folder sections, or legacy `*.parts.tsx` during migration) | ≤ 200  | > 260        | > 340     |
+| `*.model.ts`                                                                                                                     | ≤ 120  | > 180        | > 240     |
+| `use*.ts`                                                                                                                        | ≤ 120  | > 180        | > 240     |
+| Other screen-family files                                                                                                        | ≤ 180  | > 220        | > 280     |
+
+#### 7.7.7 Data Access And SDK Contract
+
+`@tasky/sdk` is the source of truth for generated API schema types. Mobile code must consume generated SDK types instead of hand-writing fetch types.
+
+Runtime networking remains split into:
+
+- feature-local `api.ts` modules that own domain endpoint calls and response mapping
+- `src/lib/mobileApiClient.ts`, which is transport-only infrastructure
+
+The shared transport layer is limited to:
+
+- base URL resolution
+- auth header composition
+- token refresh handling
+- shared request primitives
+- transport-level error mapping
+
+Route files and shared UI must not import the transport client.
 
 #### 7.7.8 Workflow Draft Contract
 
-Multi-step customer task creation uses a typed draft boundary instead of serialized route-param threading:
+Multi-step customer task creation uses a typed draft boundary under `src/features/tasks/draft/`.
 
-```
-src/features/tasks/draft/
-  taskDraft.store.ts
-  taskDraft.types.ts
-  taskDraft.validation.ts
-  useTaskDraft.ts
-```
-
-Navigation passes only `draftId` — never serialized intake answers, uploaded photo arrays, or repeated copies of category/location/scheduling payloads. The draft store is the sole supported runtime path; legacy serialized-param fallback branches have been removed.
+Navigation passes only `draftId` and route-safe step identifiers when needed. It must not pass serialized intake answers, uploaded photo arrays, or repeated copies of category, location, or scheduling payloads.
 
 #### 7.7.9 Deferred Surface Policy
 
-Deferred or prototype mobile surfaces must not live in the default active edit surface under `src/`. Acceptable locations:
+Deferred or prototype mobile surfaces must not live in the active production source tree under `src/`.
 
-1. `archive/mobile-future/` (preferred)
-2. Outside `src/` with explicit no-import enforcement
+Acceptable locations:
 
-Deferred code must be excluded from runtime entrypoints, excluded from Tailwind content scanning unless intentionally active, and blocked by lint from being imported into production surfaces.
+1. `archive/mobile-future/`
+2. outside `src/` with explicit no-import enforcement
 
-#### 7.7.10 File Budget Policy
+Deferred code must be excluded from runtime entrypoints, excluded from Tailwind content scanning unless intentionally active, and blocked from import into production surfaces.
 
-| Surface             | Target      | Warning Threshold | Expected Action                       |
-| ------------------- | ----------- | ----------------- | ------------------------------------- |
-| Route file          | ≤ 40 lines  | > 60 lines        | Move logic into feature screen        |
-| Screen file         | ≤ 180 lines | > 220 lines       | Split into model/parts/hook           |
-| Feature hook        | ≤ 120 lines | > 160 lines       | Split concerns or extract helpers     |
-| Shared UI primitive | ≤ 140 lines | > 180 lines       | Extract variants or helper utils      |
-| Domain API module   | ≤ 180 lines | > 220 lines       | Split by subdomain or endpoint family |
+#### 7.7.10 Enforcement
 
-Exceptions allowed only for intentionally generated files or documented inline exceptions that still respect architecture boundaries.
+`pnpm --filter @tasky/mobile structure:check` is the structural gate for this contract.
+
+Current checker behavior:
+
+1. Route budget: warns at `> 60`, fails at `> 100`
+2. Route banned imports: `createMobileApiClient`, `@/features/*/api`, `@/future`
+3. Route-to-route imports: warning
+4. Component layer violations: fail
+5. Design layer violations: fail
+6. Future import violations: fail
+7. Provider layer boundaries: fail
+8. Store layer boundaries: fail
+9. Lib layer boundaries: fail
+10. Utils layer boundaries: fail
+11. Screen-family role-aware budgets: warning/fail by file role
+12. Legacy `*.parts.tsx` files: warning
+
+When the contract and tooling diverge, fix both in the same change. Do not leave unstated severities or contradictory thresholds in the repo.
+
+#### 7.7.11 Governance
+
+- This section is normative. Historical plans may explain why a rule exists, but they do not override this contract.
+- Any change to a mobile boundary rule must update both this section and `apps/mobile/scripts/structure-check.js` in the same change.
+- A contract change is incomplete if it changes wording without updating enforcement, or updates enforcement without updating this section.
+- Runtime rules that cannot yet be machine-enforced must be written narrowly and accompanied by a verification strategy in tests or review notes. Do not hide aspirational guidance inside normative wording.
 
 ---
 
