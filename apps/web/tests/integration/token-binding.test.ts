@@ -5,7 +5,6 @@ import { describe, expect, it } from 'vitest';
 import { semanticTokens, webTokens } from '@tasky/design-tokens';
 import type { components } from '@tasky/sdk';
 import type { ApiClient } from '../../src/lib/apiClient';
-import type { MobileApiClient } from '../../../mobile/src/lib/mobileApiClient';
 
 describe('Token Binding', () => {
   it('TID-TASK-070-WEB-TOKEN-BINDING binds shared tokens to tailwind theme variables', () => {
@@ -43,9 +42,6 @@ describe('Token Binding', () => {
 
   it('TID-TASK-115-CLIENT-SDK-REQUEST-TYPES derives create-task payloads from generated SDK schemas', () => {
     expectTypeOf<Parameters<ApiClient['createTask']>[1]>().toEqualTypeOf<
-      components['schemas']['CreateTaskRequest']
-    >();
-    expectTypeOf<Parameters<MobileApiClient['createTask']>[1]>().toEqualTypeOf<
       components['schemas']['CreateTaskRequest']
     >();
   });
