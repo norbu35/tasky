@@ -4,8 +4,10 @@ import java.util.Optional;
 import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.marketplace.publicapi.MarketplaceCommandPort;
 import mn.tasky.task.application.TaskApplicationService;
+import mn.tasky.task.application.TaskCreationService;
+import mn.tasky.task.application.TaskLifecycleService;
+import mn.tasky.task.application.TaskMutationService;
 import mn.tasky.task.application.TaskPhotoService;
-import mn.tasky.task.application.TaskService;
 import mn.tasky.task.dto.CreateTask;
 import mn.tasky.task.dto.TaskAcceptResult;
 import mn.tasky.task.dto.TaskApplyResult;
@@ -17,30 +19,38 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MarketplaceCommandHandler implements MarketplaceCommandPort {
-    private final TaskService taskService;
+    private final TaskCreationService taskCreationService;
+    private final TaskMutationService taskMutationService;
+    private final TaskLifecycleService taskLifecycleService;
     private final TaskApplicationService taskApplicationService;
     private final TaskPhotoService taskPhotoService;
 
     public MarketplaceCommandHandler(
-            TaskService taskService, TaskApplicationService taskApplicationService, TaskPhotoService taskPhotoService) {
-        this.taskService = taskService;
+            TaskCreationService taskCreationService,
+            TaskMutationService taskMutationService,
+            TaskLifecycleService taskLifecycleService,
+            TaskApplicationService taskApplicationService,
+            TaskPhotoService taskPhotoService) {
+        this.taskCreationService = taskCreationService;
+        this.taskMutationService = taskMutationService;
+        this.taskLifecycleService = taskLifecycleService;
         this.taskApplicationService = taskApplicationService;
         this.taskPhotoService = taskPhotoService;
     }
 
     @Override
     public TaskCreateResult createTask(String customerId, CreateTask command) {
-        return taskService.createTask(customerId, command);
+        return taskCreationService.createTask(customerId, command);
     }
 
     @Override
     public TaskUpdateResult updateTask(String customerId, String taskId, UpdateTask command) {
-        return taskService.updateTask(customerId, taskId, command);
+        return taskMutationService.updateTask(customerId, taskId, command);
     }
 
     @Override
     public TaskCancelResult cancelTask(String customerId, String taskId) {
-        return taskService.cancelTask(customerId, taskId);
+        return taskMutationService.cancelTask(customerId, taskId);
     }
 
     @Override
@@ -61,6 +71,6 @@ public class MarketplaceCommandHandler implements MarketplaceCommandPort {
 
     @Override
     public void updateTaskStatus(String taskId, String status) {
-        taskService.updateTaskStatus(taskId, status);
+        taskLifecycleService.updateTaskStatus(taskId, status);
     }
 }

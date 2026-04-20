@@ -15,7 +15,6 @@ import mn.tasky.category.application.CategoryService;
 import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.category.dto.CategorySchemaVersion;
 import mn.tasky.category.dto.CategoryState;
-import mn.tasky.common.storage.StorageKeyPolicy;
 import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
@@ -24,12 +23,9 @@ import mn.tasky.task.dao.TaskDao;
 import mn.tasky.task.dao.TaskDraftDao;
 import mn.tasky.task.dao.TaskPhotoDao;
 import mn.tasky.task.dto.CreateTask;
-import mn.tasky.task.dto.TaskCancelResult;
 import mn.tasky.task.dto.TaskCreateResult;
 import mn.tasky.task.dto.TaskDraft;
 import mn.tasky.task.dto.TaskState;
-import mn.tasky.task.dto.TaskUpdateResult;
-import mn.tasky.task.dto.UpdateTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,13 +33,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 /**
- * Service for task lifecycle operations: creation, update, cancellation, state transitions,
- * and task-photo upload/access URL generation.
+ * Handles task creation: validates category, schedule, description, photo
+ * constraints, and intake answers before persisting. Emits analytics and
+ * notifies nearby taskers on success.
  */
 @Service
-public class TaskService {
+public class TaskCreationService {
 
-    private static final Logger log = LoggerFactory.getLogger(TaskService.class);
+    private static final Logger log = LoggerFactory.getLogger(TaskCreationService.class);
 
     private final CategoryService categoryService;
     private final NotificationService notificationService;
@@ -55,24 +52,24 @@ public class TaskService {
     private final CategorySchemaVersionDao categorySchemaVersionDao;
     private final TaskDraftDao taskDraftDao;
     private final ObjectMapper objectMapper;
-    private final StorageKeyPolicy storageKeyPolicy;
     private final ReviewEnforcementService reviewEnforcementService;
+    private final TaskPhotoKeyHelper taskPhotoKeyHelper;
     private final double taskMatchNotificationRadiusKm;
     private final int taskMatchNotificationLimit;
 
-    public TaskService(
+    public TaskCreationService(
             CategoryService categoryService,
             NotificationService notificationService,
             AnalyticsService analyticsService,
             ReviewEnforcementService reviewEnforcementService,
             ScopeSummaryGenerator scopeSummaryGenerator,
-            StorageKeyPolicy storageKeyPolicy,
             TaskDao taskDao,
             TaskPhotoDao taskPhotoDao,
             TaskApplicationDao taskApplicationDao,
             CategorySchemaVersionDao categorySchemaVersionDao,
             TaskDraftDao taskDraftDao,
             ObjectMapper objectMapper,
+            TaskPhotoKeyHelper taskPhotoKeyHelper,
             @Value("${tasky.notifications.task-match-radius-km:10}") double taskMatchNotificationRadiusKm,
             @Value("${tasky.notifications.task-match-limit:50}") int taskMatchNotificationLimit) {
         this.categoryService = categoryService;
@@ -80,13 +77,13 @@ public class TaskService {
         this.analyticsService = analyticsService;
         this.reviewEnforcementService = reviewEnforcementService;
         this.scopeSummaryGenerator = scopeSummaryGenerator;
-        this.storageKeyPolicy = storageKeyPolicy;
         this.taskDao = taskDao;
         this.taskPhotoDao = taskPhotoDao;
         this.taskApplicationDao = taskApplicationDao;
         this.categorySchemaVersionDao = categorySchemaVersionDao;
         this.taskDraftDao = taskDraftDao;
         this.objectMapper = objectMapper;
+        this.taskPhotoKeyHelper = taskPhotoKeyHelper;
         this.taskMatchNotificationRadiusKm = taskMatchNotificationRadiusKm;
         this.taskMatchNotificationLimit = taskMatchNotificationLimit;
     }
@@ -116,7 +113,7 @@ public class TaskService {
         if (command.photoKeys().size() > 3) {
             return TaskCreateResult.error(TaskCreateResult.TOO_MANY_PHOTOS, "Maximum 3 photos allowed.");
         }
-        if (!areOwnedTaskPhotoKeys(command.photoKeys(), customerId)) {
+        if (!taskPhotoKeyHelper.areOwnedTaskPhotoKeys(command.photoKeys(), customerId)) {
             return TaskCreateResult.error(
                     TaskCreateResult.INVALID_PHOTO_KEY, "Photo keys must belong to the caller's task-photo namespace.");
         }
@@ -138,29 +135,24 @@ public class TaskService {
             return TaskCreateResult.error(TaskCreateResult.INVALID_SCHEDULE, "Invalid schedule date format.");
         }
 
-        // --- Intake validation ---
         String intakeAnswersJson = command.intakeAnswersJson();
         Integer intakeSchemaVersion = command.intakeSchemaVersion();
         String scopeSummarySource = command.scopeSummary();
         TaskDraft draft;
 
-        // If draftId is provided, resolve schema version from the draft
         if (StringUtils.hasText(command.draftId())) {
             Optional<TaskDraft> draftOpt = taskDraftDao.findById(command.draftId());
             if (draftOpt.isEmpty()) {
                 return TaskCreateResult.error(TaskCreateResult.DRAFT_NOT_FOUND, "Draft not found.");
             }
             draft = draftOpt.get();
-            // Draft's bound version takes precedence
             intakeSchemaVersion = draft.intakeSchemaVersion();
             if (intakeAnswersJson == null && draft.intakeAnswersJson() != null) {
                 intakeAnswersJson = draft.intakeAnswersJson();
             }
         }
 
-        // Validate intake if schema version is specified
         if (intakeSchemaVersion != null) {
-            // Check intake is enabled for this category
             if (!Boolean.TRUE.equals(category.intakeEnabled())) {
                 return TaskCreateResult.error(
                         TaskCreateResult.INTAKE_NOT_ENABLED, "Intake is not enabled for this category.");
@@ -175,7 +167,6 @@ public class TaskService {
             }
             CategorySchemaVersion schemaVersion = schemaOpt.get();
 
-            // Validate intake answers against schema
             String validationError = StringUtils.hasText(intakeAnswersJson)
                     ? validateIntakeAnswers(schemaVersion.schemaJson(), intakeAnswersJson)
                     : null;
@@ -183,11 +174,9 @@ public class TaskService {
                 return TaskCreateResult.error(TaskCreateResult.INTAKE_VALIDATION_FAILED, validationError);
             }
 
-            // Generate scope summary
             ScopeSummaryGenerator.SummaryResult summaryResult = scopeSummaryGenerator.generate(
                     schemaVersion.schemaJson(), intakeAnswersJson, command.categoryId(), intakeSchemaVersion);
 
-            // User-provided summary override
             if (StringUtils.hasText(command.scopeSummary())) {
                 scopeSummarySource = "USER_EDITED";
             } else {
@@ -215,7 +204,6 @@ public class TaskService {
                 now,
                 now);
 
-        // Insert photo keys
         List<String> photoKeys = List.copyOf(command.photoKeys());
         for (int i = 0; i < photoKeys.size(); i++) {
             taskPhotoDao.insert(UUID.randomUUID().toString(), id, photoKeys.get(i), i);
@@ -276,18 +264,15 @@ public class TaskService {
                 Object answerValue = answers.get(key);
                 JsonNode answerNode = answersNode.get(key);
 
-                // Required field check
                 if (required && (answerValue == null || (answerValue instanceof String s && s.isBlank()))) {
                     errors.add(label + " is required.");
                     continue;
                 }
 
-                // Skip further validation if answer is not provided
                 if (answerValue == null) {
                     continue;
                 }
 
-                // Type-specific validation
                 switch (type) {
                     case "single_select", "dropdown" -> {
                         if (field.has("options") && field.get("options").isArray()) {
@@ -402,264 +387,5 @@ public class TaskService {
                     "A new task matching your recent work area is available.",
                     "MATCHING_TASK_NEARBY");
         }
-    }
-
-    /**
-     * Retrieves a task by id and populates photo keys when needed.
-     *
-     * @param id Task identifier.
-     * @return The task if found.
-     */
-    public Optional<TaskState> getTask(String id) {
-        return taskDao.findById(id).map(this::populatePhotoKeys);
-    }
-
-    private TaskState populatePhotoKeys(TaskState task) {
-        if (task.photoKeys() != null && !task.photoKeys().isEmpty()) {
-            return task;
-        }
-        List<String> keys = taskPhotoDao.findKeysByTaskId(task.id());
-        return new TaskState(
-                task.id(),
-                task.customerId(),
-                task.categoryId(),
-                task.description(),
-                task.budget(),
-                task.locationLat(),
-                task.locationLng(),
-                task.locationText(),
-                task.status(),
-                task.scheduledAt(),
-                keys,
-                task.intakeAnswersJson(),
-                task.intakeSchemaVersion(),
-                task.scopeSummarySource(),
-                task.createdAt(),
-                task.updatedAt());
-    }
-
-    /**
-     * Sets task status to {@code ASSIGNED} when task exists.
-     *
-     * @param taskId Task identifier.
-     * @return Updated task when found.
-     */
-    public Optional<TaskState> transitionToAssigned(String taskId) {
-        Optional<TaskState> existing = taskDao.findById(taskId);
-        if (existing.isEmpty()) {
-            return Optional.empty();
-        }
-        taskDao.updateStatus(taskId, "ASSIGNED", Instant.now());
-        return taskDao.findById(taskId).map(this::populatePhotoKeys);
-    }
-
-    /**
-     * Sets task status back to {@code OPEN} when task exists.
-     *
-     * @param taskId Task identifier.
-     * @return Updated task when found.
-     */
-    public Optional<TaskState> reopenTask(String taskId) {
-        Optional<TaskState> existing = taskDao.findById(taskId);
-        if (existing.isEmpty()) {
-            return Optional.empty();
-        }
-        taskDao.updateStatus(taskId, "OPEN", Instant.now());
-        return taskDao.findById(taskId).map(this::populatePhotoKeys);
-    }
-
-    /**
-     * Sets task status to {@code COMPLETED} when task exists.
-     *
-     * @param taskId Task identifier.
-     * @return Updated task when found.
-     */
-    public Optional<TaskState> transitionToCompleted(String taskId) {
-        Optional<TaskState> existing = taskDao.findById(taskId);
-        if (existing.isEmpty()) {
-            return Optional.empty();
-        }
-        taskDao.updateStatus(taskId, "COMPLETED", Instant.now());
-        return taskDao.findById(taskId).map(this::populatePhotoKeys);
-    }
-
-    /**
-     * Sets task status to {@code CANCELLED} when task exists.
-     *
-     * @param taskId Task identifier.
-     * @return Updated task when found.
-     */
-    public Optional<TaskState> transitionToCancelled(String taskId) {
-        Optional<TaskState> existing = taskDao.findById(taskId);
-        if (existing.isEmpty()) {
-            return Optional.empty();
-        }
-        taskDao.updateStatus(taskId, "CANCELLED", Instant.now());
-        return taskDao.findById(taskId).map(this::populatePhotoKeys);
-    }
-
-    /**
-     * Sets task status to {@code NO_SHOW} when task exists.
-     *
-     * @param taskId Task identifier.
-     * @return Updated task when found.
-     */
-    public Optional<TaskState> transitionToNoShow(String taskId) {
-        Optional<TaskState> existing = taskDao.findById(taskId);
-        if (existing.isEmpty()) {
-            return Optional.empty();
-        }
-        taskDao.updateStatus(taskId, "NO_SHOW", Instant.now());
-        return taskDao.findById(taskId).map(this::populatePhotoKeys);
-    }
-
-    /**
-     * Cancels an open task when requested by its owning customer.
-     *
-     * @param customerId Customer identifier.
-     * @param taskId     Task identifier.
-     * @return Result with success or reason for rejection.
-     */
-    public TaskCancelResult cancelTask(String customerId, String taskId) {
-        Optional<TaskState> taskOpt = taskDao.findById(taskId);
-        if (taskOpt.isEmpty()) {
-            return TaskCancelResult.NOT_FOUND_RESULT;
-        }
-        TaskState task = taskOpt.get();
-
-        if (!task.customerId().equals(customerId)) {
-            return TaskCancelResult.FORBIDDEN_RESULT;
-        }
-
-        if (!"OPEN".equals(task.status())) {
-            return TaskCancelResult.INVALID_STATUS_RESULT;
-        }
-
-        taskDao.updateStatus(taskId, "CANCELLED", Instant.now());
-        TaskState cancelled =
-                taskDao.findById(taskId).map(this::populatePhotoKeys).orElse(task);
-        return TaskCancelResult.success(cancelled);
-    }
-
-    /**
-     * Partially updates an open task owned by the requesting customer.
-     * Supports replacing photo keys when provided.
-     *
-     * @param customerId Task owner identifier.
-     * @param taskId     Task identifier.
-     * @param command    Partial update payload.
-     * @return Updated task or validation/authorization failure details.
-     */
-    public TaskUpdateResult updateTask(String customerId, String taskId, UpdateTask command) {
-        Optional<TaskState> existingOpt = taskDao.findById(taskId).map(this::populatePhotoKeys);
-        if (existingOpt.isEmpty()) {
-            return TaskUpdateResult.NOT_FOUND_RESULT;
-        }
-
-        TaskState existing = existingOpt.get();
-        if (!existing.customerId().equals(customerId)) {
-            return TaskUpdateResult.FORBIDDEN_RESULT;
-        }
-        if (!"OPEN".equals(existing.status())) {
-            return TaskUpdateResult.INVALID_STATUS_RESULT;
-        }
-
-        String description = existing.description();
-        if (command.description() != null) {
-            description = TextSanitizer.plainText(command.description());
-            if (!StringUtils.hasText(description)) {
-                return TaskUpdateResult.INVALID_DESCRIPTION_RESULT;
-            }
-        }
-
-        String locationText = existing.locationText();
-        if (command.locationText() != null) {
-            locationText = TextSanitizer.plainText(command.locationText());
-            if (!StringUtils.hasText(locationText)) {
-                return TaskUpdateResult.INVALID_LOCATION_RESULT;
-            }
-        }
-
-        int budget = command.budget() != null ? command.budget() : existing.budget();
-        double locationLat = command.locationLat() != null ? command.locationLat() : existing.locationLat();
-        double locationLng = command.locationLng() != null ? command.locationLng() : existing.locationLng();
-
-        Instant scheduledAt = existing.scheduledAt();
-        if (command.scheduledAt() != null) {
-            try {
-                scheduledAt = Instant.parse(command.scheduledAt());
-            } catch (Exception exception) {
-                return TaskUpdateResult.INVALID_SCHEDULE_RESULT;
-            }
-            if (scheduledAt.isBefore(Instant.now())) {
-                return TaskUpdateResult.INVALID_SCHEDULE_RESULT;
-            }
-        }
-
-        boolean replacePhotos = command.photoKeys() != null;
-        List<String> photoKeys = replacePhotos
-                ? List.copyOf(command.photoKeys())
-                : (existing.photoKeys() == null ? List.of() : List.copyOf(existing.photoKeys()));
-        if (replacePhotos) {
-            if (photoKeys.size() > 3) {
-                return TaskUpdateResult.TOO_MANY_PHOTOS_RESULT;
-            }
-            if (!areOwnedTaskPhotoKeys(photoKeys, customerId)) {
-                return TaskUpdateResult.INVALID_PHOTO_KEY_RESULT;
-            }
-        }
-
-        Instant now = Instant.now();
-        taskDao.updateDetails(taskId, description, budget, locationLat, locationLng, locationText, scheduledAt, now);
-
-        if (replacePhotos) {
-            taskPhotoDao.deleteByTaskId(taskId);
-            for (int i = 0; i < photoKeys.size(); i++) {
-                taskPhotoDao.insert(UUID.randomUUID().toString(), taskId, photoKeys.get(i), i);
-            }
-        }
-
-        String finalDescription = description;
-        String finalLocationText = locationText;
-        Instant finalScheduledAt = scheduledAt;
-
-        TaskState updated = taskDao.findById(taskId)
-                .map(this::populatePhotoKeys)
-                .orElseGet(() -> new TaskState(
-                        existing.id(),
-                        existing.customerId(),
-                        existing.categoryId(),
-                        finalDescription,
-                        budget,
-                        locationLat,
-                        locationLng,
-                        finalLocationText,
-                        existing.status(),
-                        finalScheduledAt,
-                        photoKeys,
-                        existing.intakeAnswersJson(),
-                        existing.intakeSchemaVersion(),
-                        existing.scopeSummarySource(),
-                        existing.createdAt(),
-                        now));
-        return TaskUpdateResult.success(updated);
-    }
-
-    private boolean areOwnedTaskPhotoKeys(List<String> photoKeys, String customerId) {
-        for (String photoKey : photoKeys) {
-            try {
-                storageKeyPolicy.validateOwnedKey(photoKey, StorageKeyPolicy.Namespace.TASK_PHOTO, customerId);
-            } catch (IllegalArgumentException exception) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Directly update task status (used by admin concierge assignment through MarketplaceCommandPort).
-     */
-    public void updateTaskStatus(String taskId, String status) {
-        taskDao.updateStatus(taskId, status, Instant.now());
     }
 }

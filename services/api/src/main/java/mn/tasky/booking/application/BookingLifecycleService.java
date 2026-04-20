@@ -6,7 +6,8 @@ import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.outbox.OutboxEventTypes;
-import mn.tasky.task.application.TaskService;
+import mn.tasky.task.application.TaskLifecycleService;
+import mn.tasky.task.application.TaskQueryService;
 import mn.tasky.task.dto.TaskState;
 import mn.tasky.trust.publicapi.TrustQueryPort;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,8 @@ public class BookingLifecycleService {
 
     private final BookingService bookingService;
     private final BookingTimelineService timelineService;
-    private final TaskService taskService;
+    private final TaskQueryService taskQueryService;
+    private final TaskLifecycleService taskLifecycleService;
     private final ModerationService moderationService;
     private final DomainEventOutboxService domainEventOutboxService;
     private final TrustQueryPort trustQueryPort;
@@ -25,13 +27,15 @@ public class BookingLifecycleService {
     public BookingLifecycleService(
             BookingService bookingService,
             BookingTimelineService timelineService,
-            TaskService taskService,
+            TaskQueryService taskQueryService,
+            TaskLifecycleService taskLifecycleService,
             ModerationService moderationService,
             DomainEventOutboxService domainEventOutboxService,
             TrustQueryPort trustQueryPort) {
         this.bookingService = bookingService;
         this.timelineService = timelineService;
-        this.taskService = taskService;
+        this.taskQueryService = taskQueryService;
+        this.taskLifecycleService = taskLifecycleService;
         this.moderationService = moderationService;
         this.domainEventOutboxService = domainEventOutboxService;
         this.trustQueryPort = trustQueryPort;
@@ -52,7 +56,7 @@ public class BookingLifecycleService {
             return BookingTransitionResult.OPEN_DISPUTE_RESULT;
         }
 
-        TaskState task = taskService
+        TaskState task = taskQueryService
                 .getTask(booking.taskId())
                 .orElseThrow(
                         () -> new IllegalStateException("Task not found when cancelling booking " + bookingId + "."));
@@ -63,7 +67,8 @@ public class BookingLifecycleService {
 
         BookingState updated = result.booking();
         if (updated.taskerId().equals(actorUserId)) {
-            requireTaskUpdate(taskService.reopenTask(updated.taskId()), "reopening", bookingId, updated.taskId());
+            requireTaskUpdate(
+                    taskLifecycleService.reopenTask(updated.taskId()), "reopening", bookingId, updated.taskId());
             boolean isSafetyOrFraud =
                     reason != null && reason.toLowerCase(java.util.Locale.ROOT).contains("safety");
             if (!isSafetyOrFraud) {
@@ -71,7 +76,10 @@ public class BookingLifecycleService {
             }
         } else if (updated.customerId().equals(actorUserId)) {
             requireTaskUpdate(
-                    taskService.transitionToCancelled(updated.taskId()), "cancelling", bookingId, updated.taskId());
+                    taskLifecycleService.transitionToCancelled(updated.taskId()),
+                    "cancelling",
+                    bookingId,
+                    updated.taskId());
         }
         timelineService.recordEvent(bookingId, BookingTimelineService.BOOKING_CANCELLED, actorUserId, null);
         return bookingService
@@ -92,7 +100,10 @@ public class BookingLifecycleService {
 
         BookingState updated = result.booking();
         requireTaskUpdate(
-                taskService.transitionToCompleted(updated.taskId()), "completing", bookingId, updated.taskId());
+                taskLifecycleService.transitionToCompleted(updated.taskId()),
+                "completing",
+                bookingId,
+                updated.taskId());
         timelineService.recordEvent(bookingId, BookingTimelineService.BOOKING_COMPLETED, actorUserId, null);
         domainEventOutboxService.publish(
                 OutboxEventTypes.BOOKING_COMPLETED,

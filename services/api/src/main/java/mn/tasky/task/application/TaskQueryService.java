@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import mn.tasky.task.dao.TaskDao;
-import mn.tasky.task.dao.TaskPhotoDao;
 import mn.tasky.task.dto.RecentLocation;
 import mn.tasky.task.dto.TaskPage;
 import mn.tasky.task.dto.TaskState;
@@ -26,11 +25,11 @@ public class TaskQueryService {
     private static final Set<String> TASK_STATUSES = Set.of("OPEN", "ASSIGNED", "COMPLETED", "CANCELLED");
 
     private final TaskDao taskDao;
-    private final TaskPhotoDao taskPhotoDao;
+    private final TaskPhotoKeyHelper taskPhotoKeyHelper;
 
-    public TaskQueryService(TaskDao taskDao, TaskPhotoDao taskPhotoDao) {
+    public TaskQueryService(TaskDao taskDao, TaskPhotoKeyHelper taskPhotoKeyHelper) {
         this.taskDao = taskDao;
-        this.taskPhotoDao = taskPhotoDao;
+        this.taskPhotoKeyHelper = taskPhotoKeyHelper;
     }
 
     /**
@@ -40,7 +39,7 @@ public class TaskQueryService {
      * @return The task if found.
      */
     public Optional<TaskState> getTask(String id) {
-        return taskDao.findById(id).map(this::populatePhotoKeys);
+        return taskDao.findById(id).map(taskPhotoKeyHelper::populatePhotoKeys);
     }
 
     /**
@@ -70,7 +69,7 @@ public class TaskQueryService {
 
         boolean hasMore = tasks.size() > limit;
         List<TaskState> pageData = hasMore ? tasks.subList(0, limit) : tasks;
-        pageData = pageData.stream().map(this::populatePhotoKeys).toList();
+        pageData = pageData.stream().map(taskPhotoKeyHelper::populatePhotoKeys).toList();
         String nextCursor = hasMore ? encodeCursor(pageData.getLast()) : null;
 
         return new TaskPage(List.copyOf(pageData), nextCursor, hasMore);
@@ -102,7 +101,7 @@ public class TaskQueryService {
 
         boolean hasMore = tasks.size() > limit;
         List<TaskState> pageData = hasMore ? tasks.subList(0, limit) : tasks;
-        pageData = pageData.stream().map(this::populatePhotoKeys).toList();
+        pageData = pageData.stream().map(taskPhotoKeyHelper::populatePhotoKeys).toList();
         String nextCursor = hasMore ? encodeCursor(pageData.getLast()) : null;
 
         return new TaskPage(List.copyOf(pageData), nextCursor, hasMore);
@@ -123,30 +122,6 @@ public class TaskQueryService {
             }
         }
         return accepted;
-    }
-
-    private TaskState populatePhotoKeys(TaskState task) {
-        if (task.photoKeys() != null && !task.photoKeys().isEmpty()) {
-            return task;
-        }
-        List<String> keys = taskPhotoDao.findKeysByTaskId(task.id());
-        return new TaskState(
-                task.id(),
-                task.customerId(),
-                task.categoryId(),
-                task.description(),
-                task.budget(),
-                task.locationLat(),
-                task.locationLng(),
-                task.locationText(),
-                task.status(),
-                task.scheduledAt(),
-                keys,
-                task.intakeAnswersJson(),
-                task.intakeSchemaVersion(),
-                task.scopeSummarySource(),
-                task.createdAt(),
-                task.updatedAt());
     }
 
     private TaskCursor decodeCursor(String cursor) {

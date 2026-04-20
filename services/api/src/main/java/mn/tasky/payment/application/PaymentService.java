@@ -11,7 +11,7 @@ import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.payment.dao.PaymentIntentDao;
 import mn.tasky.payment.dto.PaymentIntent;
 import mn.tasky.payment.provider.PaymentProvider;
-import mn.tasky.task.application.TaskService;
+import mn.tasky.task.application.TaskLifecycleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class PaymentService {
 
     private final PaymentProvider paymentProvider;
     private final BookingService bookingService;
-    private final TaskService taskService;
+    private final TaskLifecycleService taskLifecycleService;
     private final DomainEventOutboxService domainEventOutboxService;
     private final AnalyticsService analyticsService;
     private final PaymentIntentDao paymentIntentDao;
@@ -39,14 +39,14 @@ public class PaymentService {
     public PaymentService(
             PaymentProvider paymentProvider,
             BookingService bookingService,
-            TaskService taskService,
+            TaskLifecycleService taskLifecycleService,
             DomainEventOutboxService domainEventOutboxService,
             AnalyticsService analyticsService,
             PaymentIntentDao paymentIntentDao,
             FeatureToggleService featureToggleService) {
         this.paymentProvider = paymentProvider;
         this.bookingService = bookingService;
-        this.taskService = taskService;
+        this.taskLifecycleService = taskLifecycleService;
         this.domainEventOutboxService = domainEventOutboxService;
         this.analyticsService = analyticsService;
         this.paymentIntentDao = paymentIntentDao;
@@ -140,7 +140,7 @@ public class PaymentService {
         BookingState booking = bookingOpt.get();
         if ("ASSIGNED".equals(booking.status())) {
             bookingService.transitionToPaid(bookingId);
-            if (taskService.transitionToAssigned(booking.taskId()).isEmpty()) {
+            if (taskLifecycleService.transitionToAssigned(booking.taskId()).isEmpty()) {
                 log.warn(
                         "Task not found when assigning after payment: bookingId={} taskId={}",
                         bookingId,

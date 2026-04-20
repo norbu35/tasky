@@ -16,7 +16,7 @@ import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
 import mn.tasky.messaging.dto.Conversation;
 import mn.tasky.notification.application.NotificationService;
-import mn.tasky.task.application.TaskService;
+import mn.tasky.task.application.TaskLifecycleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -44,7 +44,7 @@ public class NoShowService {
     private final BookingScheduleEventDao bookingScheduleEventDao;
     private final MessageDao messageDao;
     private final ConversationDao conversationDao;
-    private final TaskService taskService;
+    private final TaskLifecycleService taskLifecycleService;
     private final ModerationService moderationService;
     private final NotificationService notificationService;
     private final AuditEventDao auditEventDao;
@@ -56,7 +56,7 @@ public class NoShowService {
             BookingScheduleEventDao bookingScheduleEventDao,
             MessageDao messageDao,
             ConversationDao conversationDao,
-            TaskService taskService,
+            TaskLifecycleService taskLifecycleService,
             ModerationService moderationService,
             NotificationService notificationService,
             AuditEventDao auditEventDao) {
@@ -66,7 +66,7 @@ public class NoShowService {
         this.bookingScheduleEventDao = bookingScheduleEventDao;
         this.messageDao = messageDao;
         this.conversationDao = conversationDao;
-        this.taskService = taskService;
+        this.taskLifecycleService = taskLifecycleService;
         this.moderationService = moderationService;
         this.notificationService = notificationService;
         this.auditEventDao = auditEventDao;
@@ -166,7 +166,7 @@ public class NoShowService {
         bookingDao.updateStatus(bookingId, "NO_SHOW", now);
 
         // b. Update task status
-        taskService.transitionToNoShow(booking.taskId());
+        taskLifecycleService.transitionToNoShow(booking.taskId());
 
         // c. Write timeline event
         String metadata =
