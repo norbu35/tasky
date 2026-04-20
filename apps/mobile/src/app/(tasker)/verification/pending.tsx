@@ -4,8 +4,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { Button } from '../../../components/ui/Button';
-import { mobileTheme, elevations } from '../../../design/tokenAdapter';
+import { Button } from '@/components/ui/Button';
+import { mobileTheme, elevations } from '@/design/tokenAdapter';
 
 const { colors } = mobileTheme;
 

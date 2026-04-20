@@ -2,8 +2,8 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { ScreenContainer } from '../../../components/shells';
-import { ErrorStateTemplate } from '../../../components/templates/ErrorStateTemplate';
+import { ScreenContainer } from '@/components/shells';
+import { ErrorStateTemplate } from '@/components/templates/ErrorStateTemplate';
 
 export default function ReviewHardLockScreen() {
   const { t } = useTranslation();

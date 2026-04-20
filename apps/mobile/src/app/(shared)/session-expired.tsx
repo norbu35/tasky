@@ -4,11 +4,11 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { ModalSheet } from '../../components/ui/ModalSheet';
-import { overlays } from '../../design/elevations';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { mobileSurfaces } from '../../design/surfaces';
-import { useAuthStore } from '../../store/authStore';
+import { ModalSheet } from '@/components/ui/ModalSheet';
+import { overlays } from '@/design/elevations';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileSurfaces } from '@/design/surfaces';
+import { useAuthStore } from '@/store/authStore';
 
 const { colors } = mobileTheme;
 

@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { SuccessCelebrationTemplate } from '../../../components/templates/SuccessCelebrationTemplate';
+import { SuccessCelebrationTemplate } from '@/components/templates/SuccessCelebrationTemplate';
 
 export default function ApplicationSubmittedScreen() {
   const { t } = useTranslation();

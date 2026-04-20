@@ -4,11 +4,11 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { ScreenContainer } from '../../components/shells/ScreenContainer';
-import { Button } from '../../components/ui/Button';
-import { Toast } from '../../components/ui/Toast';
-import { mobileTheme } from '../../design/tokenAdapter';
-import { mobileSurfaces } from '../../design/surfaces';
+import { ScreenContainer } from '@/components/shells/ScreenContainer';
+import { Button } from '@/components/ui/Button';
+import { Toast } from '@/components/ui/Toast';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileSurfaces } from '@/design/surfaces';
 
 const { colors } = mobileTheme;
 

@@ -1,1 +1,1 @@
-export { default } from '../../../features/review/components/ReviewForm';
+export { default } from '@/features/review/components/ReviewForm';
