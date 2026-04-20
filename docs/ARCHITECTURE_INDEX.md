@@ -31,20 +31,21 @@ When a derived-active doc conflicts with a canonical source, the canonical sourc
 
 ## 3. Source-of-Truth Matrix
 
-| Topic                                                                 | Canonical Source                            | Supplementary                                   |
-|-----------------------------------------------------------------------|---------------------------------------------|-------------------------------------------------|
-| Product scope, MVP boundaries, success metrics                        | `docs/PRD.md`                               | `docs/METRICS.md`, `docs/STRATEGY.md`           |
-| API contract (request/response schema, endpoint shape)                | `docs/API.yaml`                             | Module `AGENTS.md` for implementation notes     |
-| System architecture baseline (stack, data architecture, NFR approach) | `docs/ARCHITECTURE.md`                      | `docs/design/domain-lifecycles.yaml`, `docs/design/journey-catalog.yaml` |
-| Current launch posture and activation readiness                        | `docs/maintenance/PRODUCTION_READINESS.md`, `docs/maintenance/FEATURE_ACTIVATION_POLICY.md` | `docs/PRD.md`, `docs/STRATEGY.md` |
-| Module runtime behavior (auth, errors, idempotency, side effects)     | `services/api/src/main/java/mn/tasky/<module>/AGENTS.md` | Module controllers/services                     |
-| Quality gates and self-verification guidance                          | `docs/maintenance/OPERATING_MODEL.md`       | `AGENTS.md`                                     |
-| Agent workflow and maintenance execution                              | `AGENTS.md`                                 | `docs/plans/`, `archive/legacy-task-system/`    |
-| Project policy and conflict resolution                                | `AGENTS.md`                                 | ADRs under `docs/adr/`                          |
+| Topic                                                                 | Canonical Source                                                                            | Supplementary                                                            |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Product scope, MVP boundaries, success metrics                        | `docs/PRD.md`                                                                               | `docs/METRICS.md`, `docs/STRATEGY.md`                                    |
+| API contract (request/response schema, endpoint shape)                | `docs/API.yaml`                                                                             | Module `AGENTS.md` for implementation notes                              |
+| System architecture baseline (stack, data architecture, NFR approach) | `docs/ARCHITECTURE.md`                                                                      | `docs/design/domain-lifecycles.yaml`, `docs/design/journey-catalog.yaml` |
+| Current launch posture and activation readiness                       | `docs/maintenance/PRODUCTION_READINESS.md`, `docs/maintenance/FEATURE_ACTIVATION_POLICY.md` | `docs/PRD.md`, `docs/STRATEGY.md`                                        |
+| Module runtime behavior (auth, errors, idempotency, side effects)     | `services/api/src/main/java/mn/tasky/<module>/AGENTS.md`                                    | Module controllers/services                                              |
+| Quality gates and self-verification guidance                          | `docs/maintenance/OPERATING_MODEL.md`                                                       | `AGENTS.md`                                                              |
+| Agent workflow and maintenance execution                              | `AGENTS.md`                                                                                 | `docs/plans/`, `archive/legacy-task-system/`                             |
+| Project policy and conflict resolution                                | `AGENTS.md`                                                                                 | ADRs under `docs/adr/`                                                   |
 
 ## 4. Module Contract Index
 
 Repository zones:
+
 - Runtime: `apps/`, `services/`, `packages/`
 - Support: `tooling/`, `research/`, `archive/`, `docs/`
 
@@ -74,7 +75,7 @@ Use these docs for end-to-end flow understanding; this index intentionally avoid
 - Marketplace, booking, verification, dispute, and user state machines: `docs/design/domain-lifecycles.yaml`
 - Journey-level business flow and alternate paths: `docs/design/journey-catalog.yaml`
 - Screen and navigation graph: `docs/design/screen-graph.yaml`
-- State coverage and screen-level parity context: `docs/design/state-matrix.yaml`, `docs/design/screen-inventory.yaml`
+- Per-screen canonical specs (layout, components, states, endpoints): `docs/design/screen-specs/`
 - Implementation-specific flow details: module `AGENTS.md` + `common/AGENTS.md` (outbox/idempotency/security)
 
 ## 6. Anti-Duplication Rule

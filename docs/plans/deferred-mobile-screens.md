@@ -4,7 +4,7 @@ Excluded from 2026-04-02 mobile design refresh to keep initial scope on primary 
 
 **Figma file key:** `IljfnTQPkq7vpkmK1NN1NC`
 
-To pick up: read the design spec, review each `SCR-*.yaml` in `docs/design/screen-specs/`, and follow the three-source workflow in the spec. B2B and unspec'd screens need `docs/design/screen-specs/` entries written first (see `docs/design/prompts/generation-tracker.md`).
+To pick up: read the design spec, review each `SCR-*.yaml` in `docs/design/screen-specs/`, and follow the three-source workflow in the spec. B2B and unspec'd screens need `docs/design/screen-specs/` entries written first.
 
 ## Tasker Verification & KYC (SCR-TASK-003–010)
 

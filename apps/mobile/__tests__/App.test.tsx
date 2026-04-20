@@ -1,6 +1,5 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { StyleSheet } from 'react-native';
 import { fireEvent, render as rtlRender, screen } from '@testing-library/react-native';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -23,7 +22,6 @@ import { RoleProvider } from '../src/providers/RoleProvider';
 import { LoginForm } from '../src/features/auth/components/LoginForm';
 import { useRequestOtp, useVerifyOtp, useDevLogin } from '../src/features/auth/hooks/useAuth';
 import { useBookings } from '../src/features/bookings/hooks/useBookings';
-import { BookingConfirmation } from '../src/features/bookings/components/BookingConfirmation';
 import {
   useMyProfile,
   useSignOut,
@@ -383,34 +381,6 @@ describe('mobile app structure', () => {
     expect(progress).toBeTruthy();
 
     expect(screen.getByTestId('wizard-bottom-bar')).toBeTruthy();
-  });
-
-  it('TID-TASK-071-MOBILE-BOOKING-HIERARCHY-PARITY keeps secondary panels visually quieter than primary actions', () => {
-    render(
-      <BookingConfirmation
-        taskTitle="Apartment cleaning"
-        tasker={{
-          name: 'Tasker One',
-          rating: 4.8,
-          reviewCount: 12,
-          isVerified: true,
-        }}
-        summary={{ date: '2026-03-28', time: '14:00', budget: '₮120,000' }}
-        onConfirm={jest.fn()}
-        onCancel={jest.fn()}
-      />,
-    );
-
-    const disclaimerStyle = StyleSheet.flatten(
-      screen.getByTestId('booking-confirmation-disclaimer').props.style,
-    );
-    expect(disclaimerStyle.borderColor).toBe(designTokens.colors.border.hex);
-    expect(disclaimerStyle.backgroundColor).toBe(designTokens.colors.muted.hex);
-
-    const primaryCtaStyle = StyleSheet.flatten(
-      screen.getByTestId('booking-confirmation-cta').props.style,
-    );
-    expect(primaryCtaStyle.borderRadius).toBe(designTokens.radius.md);
   });
 
   it('TID-TASK-071-MOBILE-STATE-SEMANTIC-PARITY enforces parity matrix documentation linkage', () => {

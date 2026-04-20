@@ -12,7 +12,7 @@ import { useBookingDetail } from '@/features/bookings/hooks/useBookingDetail';
 import { useFlagNoShow } from '@/features/bookings/hooks/useFlagNoShow';
 import { useMarkBookingDone } from '@/features/bookings/hooks/useMarkBookingDone';
 
-export default function BookingDetailTaskerScreen() {
+export default function TaskerJobDetailScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
