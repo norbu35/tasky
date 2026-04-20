@@ -1,5 +1,8 @@
 package mn.tasky.notification.api;
 
+import static mn.tasky.common.api.ApiResponseSupport.errorBody;
+
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import mn.tasky.common.security.JwtPrincipal;
@@ -24,9 +27,10 @@ public class ServiceAreaController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getServiceAreas(@AuthenticationPrincipal JwtPrincipal principal) {
+    public ResponseEntity<?> getServiceAreas(
+            @AuthenticationPrincipal JwtPrincipal principal, HttpServletRequest request) {
         if (!"TASKER".equals(principal.role())) {
-            return ResponseEntity.status(403).body(Map.of("code", "FORBIDDEN"));
+            return ResponseEntity.status(403).body(errorBody("FORBIDDEN", "Tasker role required.", request));
         }
         List<District> areas = notificationCommandPort.getServiceAreas(principal.userId());
         List<Map<String, Object>> data = areas.stream()
@@ -41,9 +45,11 @@ public class ServiceAreaController {
 
     @PutMapping
     public ResponseEntity<?> setServiceAreas(
-            @AuthenticationPrincipal JwtPrincipal principal, @RequestBody Map<String, List<String>> body) {
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @RequestBody Map<String, List<String>> body,
+            HttpServletRequest request) {
         if (!"TASKER".equals(principal.role())) {
-            return ResponseEntity.status(403).body(Map.of("code", "FORBIDDEN"));
+            return ResponseEntity.status(403).body(errorBody("FORBIDDEN", "Tasker role required.", request));
         }
         List<String> slugs = body.getOrDefault("district_slugs", List.of());
         notificationCommandPort.setServiceAreas(principal.userId(), slugs);

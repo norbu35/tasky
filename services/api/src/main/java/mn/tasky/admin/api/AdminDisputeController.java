@@ -1,5 +1,8 @@
 package mn.tasky.admin.api;
 
+import static mn.tasky.common.api.ApiResponseSupport.errorBody;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import mn.tasky.admin.dto.ResolveRequest;
 import mn.tasky.common.api.CursorPagination;
@@ -44,11 +47,12 @@ public class AdminDisputeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getDispute(@PathVariable String id) {
+    public ResponseEntity<?> getDispute(@PathVariable String id, HttpServletRequest request) {
         return disputeCompositionService
                 .disputeDetail(id)
                 .<ResponseEntity<?>>map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(
+                        () -> ResponseEntity.status(404).body(errorBody("NOT_FOUND", "Dispute not found.", request)));
     }
 
     @PostMapping("/{id}/resolve")
@@ -56,14 +60,15 @@ public class AdminDisputeController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
             @Valid @RequestBody ResolveRequest body,
-            @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey) {
+            @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
+            HttpServletRequest request) {
         AdminDisputeResolutionOutcome outcome = disputeResolutionService.resolveDispute(
                 principal.userId(), id, body.outcome(), body.notes(), idempotencyKey);
 
         return switch (outcome.status()) {
             case IN_PROGRESS, REPLAY_MISSING -> ResponseEntity.status(409).body(outcome.body());
             case SUCCESS -> ResponseEntity.ok(outcome.body());
-            case NOT_FOUND -> ResponseEntity.notFound().build();
+            case NOT_FOUND -> ResponseEntity.status(404).body(errorBody("NOT_FOUND", "Dispute not found.", request));
             case BAD_REQUEST -> ResponseEntity.badRequest().body(outcome.body());
         };
     }

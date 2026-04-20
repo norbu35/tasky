@@ -1,5 +1,8 @@
 package mn.tasky.review.api;
 
+import static mn.tasky.common.api.ApiResponseSupport.errorBody;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -46,19 +49,21 @@ public class ReviewController {
     public ResponseEntity<?> submitReview(
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
-            @Valid @RequestBody ReviewRequest body) {
+            @Valid @RequestBody ReviewRequest body,
+            HttpServletRequest request) {
         ReviewSubmissionOutcome outcome = reviewSubmissionService.submitReview(principal.userId(), id, body);
         return switch (outcome.status()) {
             case SUCCESS -> ResponseEntity.status(201).body(outcome.body());
             case INVALID_RATING, BOOKING_NOT_COMPLETED -> ResponseEntity.badRequest()
-                    .body(Map.of("code", outcome.errorCode(), "message", outcome.errorMessage()));
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
             case NOT_FOUND -> ResponseEntity.status(404)
-                    .body(Map.of("code", outcome.errorCode(), "message", outcome.errorMessage()));
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
             case FORBIDDEN -> ResponseEntity.status(403)
-                    .body(Map.of("code", outcome.errorCode(), "message", outcome.errorMessage()));
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
             case ALREADY_REVIEWED -> ResponseEntity.status(409)
-                    .body(Map.of("code", outcome.errorCode(), "message", outcome.errorMessage()));
-            case INTERNAL_ERROR -> ResponseEntity.internalServerError().build();
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
+            case INTERNAL_ERROR -> ResponseEntity.status(500)
+                    .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
         };
     }
 

@@ -1,5 +1,8 @@
 package mn.tasky.admin.api;
 
+import static mn.tasky.common.api.ApiResponseSupport.errorBody;
+
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -41,12 +44,12 @@ public class OutboxReplayController {
     }
 
     @GetMapping("/events/{id}")
-    public ResponseEntity<OutboxEvent> getEvent(@PathVariable String id) {
+    public ResponseEntity<?> getEvent(@PathVariable String id, HttpServletRequest request) {
         UUID uuid = UUID.fromString(id);
         OutboxEvent event = outboxEventDao.findById(uuid);
         return event != null
                 ? ResponseEntity.ok(event)
-                : ResponseEntity.notFound().build();
+                : ResponseEntity.status(404).body(errorBody("NOT_FOUND", "Event not found.", request));
     }
 
     @PostMapping("/events/{id}/replay")

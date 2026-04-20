@@ -1,5 +1,6 @@
 package mn.tasky.task.api;
 
+import static mn.tasky.common.api.ApiResponseSupport.errorBody;
 import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
 import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
 import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
@@ -292,7 +293,8 @@ public class TaskController {
                             "Photo keys must belong to the caller's task-photo namespace.",
                             "trace_id",
                             resolveTraceId(request)));
-            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
         };
     }
 
@@ -325,7 +327,8 @@ public class TaskController {
                             "Task cannot be cancelled in its current status.",
                             "trace_id",
                             resolveTraceId(request)));
-            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
         };
     }
 
@@ -371,7 +374,8 @@ public class TaskController {
                             "You have already applied to this task.",
                             "trace_id",
                             resolveTraceId(request)));
-            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
         };
     }
 
@@ -418,7 +422,8 @@ public class TaskController {
                             "Only the task owner can view applications.",
                             "trace_id",
                             resolveTraceId(request)));
-            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
         };
     }
 
@@ -462,7 +467,7 @@ public class TaskController {
                             "message", outcome.errorMessage(),
                             "trace_id", resolveTraceId(request)));
             case INTERNAL_ERROR -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
+                    .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
         };
     }
 

@@ -1,9 +1,11 @@
 package mn.tasky.messaging.api;
 
+import static mn.tasky.common.api.ApiResponseSupport.errorBody;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import java.util.Map;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.security.JwtPrincipal;
@@ -61,13 +63,14 @@ public class MessagingController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
             @RequestParam(required = false) String cursor,
-            @RequestParam(defaultValue = "50") @Min(1) @Max(100) int limit) {
+            @RequestParam(defaultValue = "50") @Min(1) @Max(100) int limit,
+            HttpServletRequest request) {
         try {
             var page = messagingPublicCompositionService.listMessages(principal.userId(), id, cursor, limit);
             return ResponseEntity.ok(
                     new PagedResponse<>(page.data(), new CursorPagination(page.nextCursor(), page.hasMore())));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(403).body(Map.of("code", "FORBIDDEN", "message", "Access denied."));
+            return ResponseEntity.status(403).body(errorBody("FORBIDDEN", "Access denied.", request));
         }
     }
 
@@ -75,16 +78,17 @@ public class MessagingController {
     public ResponseEntity<?> sendMessage(
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
-            @Valid @RequestBody MessageRequest body) {
+            @Valid @RequestBody MessageRequest body,
+            HttpServletRequest request) {
 
         try {
             var messageOpt = messagingCommandPort.sendMessage(principal.userId(), id, body.content());
             if (messageOpt.isEmpty()) {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(404).body(errorBody("NOT_FOUND", "Conversation not found.", request));
             }
             return ResponseEntity.status(201).body(messagingPublicCompositionService.messageResponse(messageOpt.get()));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(403).body(Map.of("code", "FORBIDDEN", "message", "Access denied."));
+            return ResponseEntity.status(403).body(errorBody("FORBIDDEN", "Access denied.", request));
         }
     }
 }

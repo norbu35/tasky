@@ -1,5 +1,6 @@
 package mn.tasky.wallet.api;
 
+import static mn.tasky.common.api.ApiResponseSupport.errorBody;
 import static mn.tasky.common.api.ApiResponseSupport.featureDeferred;
 import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
 import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
@@ -72,7 +73,8 @@ public class WalletController {
             case REPLAY_MISSING -> idempotencyReplayMissing(request);
             case FEATURE_DEFERRED -> featureDeferred(request, outcome.errorMessage());
             case SUCCESS -> ResponseEntity.ok(outcome.body());
-            case BAD_REQUEST -> ResponseEntity.badRequest().body(Map.of("error", outcome.errorMessage()));
+            case BAD_REQUEST -> ResponseEntity.badRequest()
+                    .body(errorBody("BAD_REQUEST", outcome.errorMessage(), request));
         };
     }
 

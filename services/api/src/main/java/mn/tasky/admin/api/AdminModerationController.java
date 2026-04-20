@@ -1,7 +1,9 @@
 package mn.tasky.admin.api;
 
+import static mn.tasky.common.api.ApiResponseSupport.errorBody;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.util.Map;
 import mn.tasky.admin.dto.StrikePolicyRequest;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.runtime.adminapi.composition.AdminModerationCompositionService;
@@ -38,13 +40,15 @@ public class AdminModerationController {
 
     @PutMapping("/strike-policy")
     public ResponseEntity<?> updateStrikePolicy(
-            @AuthenticationPrincipal JwtPrincipal principal, @Valid @RequestBody StrikePolicyRequest body) {
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @Valid @RequestBody StrikePolicyRequest body,
+            HttpServletRequest request) {
         AdminModerationPolicyUpdateOutcome outcome =
                 adminModerationPolicyUpdateService.updatePolicy(principal.userId(), body);
         return switch (outcome.status()) {
             case SUCCESS -> ResponseEntity.ok(outcome.body());
             case INVALID_POLICY -> ResponseEntity.badRequest()
-                    .body(Map.of("code", outcome.errorCode(), "message", outcome.errorMessage()));
+                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
         };
     }
 }

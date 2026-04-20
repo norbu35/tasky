@@ -1,5 +1,8 @@
 package mn.tasky.admin.api;
 
+import static mn.tasky.common.api.ApiResponseSupport.errorBody;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.Map;
 import mn.tasky.admin.dto.AdminActionRequest;
@@ -36,7 +39,8 @@ public class AdminUserController {
             @RequestParam(value = "facebook_id", required = false) String facebookId,
             @RequestParam(required = false) String phone,
             @RequestParam(required = false) String cursor,
-            @RequestParam(defaultValue = "50") int limit) {
+            @RequestParam(defaultValue = "50") int limit,
+            HttpServletRequest request) {
         int clampedLimit = Math.max(1, Math.min(limit, 100));
         try {
             UserProfilePage page;
@@ -48,15 +52,14 @@ public class AdminUserController {
                 page = adminUserCompositionService.searchByPhone(phone, cursor, clampedLimit);
             } else {
                 return ResponseEntity.badRequest()
-                        .body(Map.of(
-                                "code", "MISSING_SEARCH_PARAM",
-                                "message", "Provide at least one of: name, facebook_id, phone."));
+                        .body(errorBody(
+                                "MISSING_SEARCH_PARAM", "Provide at least one of: name, facebook_id, phone.", request));
             }
             CursorPagination pagination = new CursorPagination(page.nextCursor(), page.hasMore());
             return ResponseEntity.ok(new PagedResponse<>(page.data(), pagination));
         } catch (IllegalArgumentException exception) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("code", "INVALID_CURSOR", "message", "Cursor parameter is invalid."));
+                    .body(errorBody("INVALID_CURSOR", "Cursor parameter is invalid.", request));
         }
     }
 
@@ -64,10 +67,11 @@ public class AdminUserController {
     public ResponseEntity<?> ban(
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
-            @Valid @RequestBody AdminActionRequest body) {
+            @Valid @RequestBody AdminActionRequest body,
+            HttpServletRequest request) {
         boolean success = adminUserCompositionService.banUser(principal.userId(), id, body.reason());
         if (!success) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(errorBody("NOT_FOUND", "User not found.", request));
         }
         return ResponseEntity.ok(Map.of("status", "BANNED"));
     }
@@ -76,10 +80,11 @@ public class AdminUserController {
     public ResponseEntity<?> unban(
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
-            @Valid @RequestBody AdminActionRequest body) {
+            @Valid @RequestBody AdminActionRequest body,
+            HttpServletRequest request) {
         boolean success = adminUserCompositionService.unbanUser(principal.userId(), id, body.reason());
         if (!success) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(errorBody("NOT_FOUND", "User not found.", request));
         }
         return ResponseEntity.ok(Map.of("status", "ACTIVE"));
     }
