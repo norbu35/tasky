@@ -86,7 +86,7 @@ Any addition to the exception set requires deliberate justification in code revi
 
 ### 3.2 Frontend Stack
 
-- **Web**: React 18, Vite, TailwindCSS, TanStack Query, Radix UI primitives + Tailwind (shadcn file conventions; not CLI-managed).
+- **Web**: React 19, Vite 8, Tailwind CSS 4, TanStack Query, Radix UI primitives + Tailwind (shadcn file conventions; not CLI-managed).
 - **Mobile**: React Native (Expo) with Expo Router-owned navigation chrome, NativeWind-first styling, and a layered token contract (`primitive` -> `semantic` -> `platform outputs`); shared shell components own safe areas and screen chrome, and Radix/shadcn remain web-only.
 - **API Client**: TypeScript SDK generated from OpenAPI.
 

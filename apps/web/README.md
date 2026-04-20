@@ -4,23 +4,22 @@ React web client for the Tasky domestic services marketplace.
 
 ## Tech Stack
 
-| Component | Version / Library |
-|-----------|------------------|
-| Framework | React 18.3 + Vite 5.4 |
-| Routing | React Router DOM 6 |
-| Styling | Tailwind CSS 3.4 + tailwind-merge |
-| UI Components | Radix UI primitives + shadcn/ui patterns (CVA + clsx) |
-| Animations | Framer Motion 12 |
-| Server State | TanStack React Query 5 |
-| Realtime | STOMP.js + SockJS (WebSocket chat) |
-| Maps | pigeon-maps |
-| i18n | i18next + browser language detector |
-| Theme | next-themes (light/dark) |
-| Toasts | Sonner |
-| Icons | Lucide React |
-| Error Handling | react-error-boundary |
-| Date Utils | date-fns |
-| Shared Packages | `@tasky/core`, `@tasky/sdk` |
+| Component       | Version / Library                                     |
+| --------------- | ----------------------------------------------------- |
+| Framework       | React 19 + Vite 8                                     |
+| Routing         | React Router DOM 7                                    |
+| Styling         | Tailwind CSS 4 + tailwind-merge                       |
+| UI Components   | Radix UI primitives + shadcn/ui patterns (CVA + clsx) |
+| Animations      | Framer Motion 12                                      |
+| Server State    | TanStack React Query 5                                |
+| Realtime        | STOMP.js + SockJS (WebSocket chat)                    |
+| Maps            | pigeon-maps                                           |
+| i18n            | i18next + browser language detector                   |
+| Toasts          | Sonner                                                |
+| Icons           | Lucide React                                          |
+| Error Handling  | react-error-boundary                                  |
+| Date Utils      | date-fns                                              |
+| Shared Packages | `@tasky/core`, `@tasky/sdk`                           |
 
 ## Project Structure
 
@@ -50,21 +49,18 @@ src/
 
 ## Pages
 
-| Page | Route | Description |
-|------|-------|-------------|
-| LandingPage | `/` | Public marketing page |
-| AuthPage | `/auth` | Login / registration |
-| CustomerDashboardPage | `/dashboard` | Customer home |
-| CustomerTaskPage | `/tasks` | Browse/create tasks |
-| CustomerTaskDetailsPage | `/tasks/:id` | Task detail view |
-| BookingConfirmationPage | `/booking/confirm` | Confirm a booking |
-| BookingSafetyPage | `/booking/safety` | Safety information |
-| TaskerFeedPage | `/tasker/feed` | Tasker task feed |
-| TaskerTasksPage | `/tasker/tasks` | Tasker's accepted tasks |
-| ProfilePage | `/profile` | User profile |
-| MessagingNotificationsPage | `/messages` | Chat and notifications |
-| RestrictedAccountPage | `/restricted` | Account restriction notice |
-| Admin pages | `/admin/*` | Admin dashboard |
+| Page                | Route             | Description                                                                   |
+| ------------------- | ----------------- | ----------------------------------------------------------------------------- |
+| LandingPage         | `/`               | Public marketing page (redirects to dashboard/feed if authenticated)          |
+| AuthPage            | `/auth`           | Login / registration                                                          |
+| **Customer routes** | `/customer/*`     | Dashboard, tasks (CRUD + applicants), bookings (lifecycle + disputes), rebook |
+| **Tasker routes**   | `/tasker/*`       | Feed, my-tasks, jobs, bookings, stats, privacy, verification flow             |
+| **Profile routes**  | `/profile/*`      | View, edit, settings, delete                                                  |
+| InboxPage           | `/inbox`          | Chat list and conversation detail                                             |
+| BookingSafetyPage   | `/booking/safety` | Safety information                                                            |
+| Admin pages         | `/admin/*`        | Verifications, disputes, users, categories, features, concierge, moderation   |
+
+See `src/router/AppRoutes.tsx` for the full route tree (~40 routes).
 
 ## Internationalization
 
@@ -72,12 +68,12 @@ Two locales: English (`en`) and Mongolian (`mn`) with browser language auto-dete
 
 ## Testing
 
-| Type | Tool | Command |
-|------|------|---------|
-| Unit / Component | Vitest + React Testing Library | `pnpm test:unit` |
-| Coverage | Vitest + v8 | `pnpm test:coverage` |
-| E2E | Playwright (Chromium) | `pnpm test:e2e` |
-| E2E Smoke | Playwright (@smoke tag) | `pnpm test:e2e:smoke` |
+| Type             | Tool                           | Command               |
+| ---------------- | ------------------------------ | --------------------- |
+| Unit / Component | Vitest + React Testing Library | `pnpm test:unit`      |
+| Coverage         | Vitest + v8                    | `pnpm test:coverage`  |
+| E2E              | Playwright (Chromium)          | `pnpm test:e2e`       |
+| E2E Smoke        | Playwright (@smoke tag)        | `pnpm test:e2e:smoke` |
 
 ## Development
 
@@ -90,15 +86,15 @@ pnpm --filter @tasky/web preview   # Preview production build
 
 ## Scripts
 
-| Script | Purpose |
-|--------|---------|
-| `dev` | Vite dev server with HMR |
-| `build` | TypeScript check + Vite production build |
-| `preview` | Serve production build locally |
-| `typecheck` | TypeScript type checking |
-| `lint` | ESLint |
-| `format` | Prettier auto-format |
-| `test:unit` | Run Vitest unit tests |
-| `test:coverage` | Unit tests with coverage report |
-| `test:e2e` | Full Playwright E2E suite |
-| `test:e2e:smoke` | Smoke E2E tests only |
+| Script           | Purpose                                  |
+| ---------------- | ---------------------------------------- |
+| `dev`            | Vite dev server with HMR                 |
+| `build`          | TypeScript check + Vite production build |
+| `preview`        | Serve production build locally           |
+| `typecheck`      | TypeScript type checking                 |
+| `lint`           | ESLint                                   |
+| `format`         | Prettier auto-format                     |
+| `test:unit`      | Run Vitest unit tests                    |
+| `test:coverage`  | Unit tests with coverage report          |
+| `test:e2e`       | Full Playwright E2E suite                |
+| `test:e2e:smoke` | Smoke E2E tests only                     |

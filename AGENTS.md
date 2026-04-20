@@ -54,7 +54,7 @@ Always use `./gradlew`, never system `gradle`.
 ## Tech Stack
 
 - **Backend:** Java 21, Spring Boot 3, JDBI 3 (explicit SQL — not JPA), PostgreSQL + PostGIS, Flyway
-- **Web:** React 18 + TypeScript + Vite, Radix UI + Tailwind (shadcn conventions, no CLI)
+- **Web:** React 19 + TypeScript + Vite 8, Radix UI + Tailwind 4 (shadcn conventions, no CLI)
 - **Mobile:** React Native (Expo) + TypeScript + shared design tokens
 - **API client:** consume `@tasky/sdk` (generated from `docs/API.yaml`) — never hand-write fetch types
 
@@ -174,4 +174,4 @@ Co-Authored-By: <agent name and noreply address>
 
 ## Deferred Work
 
-Mobile screens deferred from 2026-04-02 refresh: `docs/plans/deferred-mobile-screens.md`
+Mobile screens deferred from 2026-04-02 refresh: see `docs/plans/` (archived).

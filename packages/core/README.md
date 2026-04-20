@@ -13,7 +13,7 @@ This package provides platform-agnostic domain logic so that web (`@tasky/web`) 
 Zod validation schema for task creation:
 
 ```typescript
-import { createTaskSchema, type CreateTaskFormValues } from "@tasky/core";
+import { createTaskSchema, type CreateTaskFormValues } from '@tasky/core';
 ```
 
 Validates: `category_id`, `description` (10-2000 chars), `budget` (5,000-10,000,000 MNT), `scheduled_at`, `location_text`, `location_lat`, `location_lng`, `photo_keys` (max 3).
@@ -21,7 +21,7 @@ Validates: `category_id`, `description` (10-2000 chars), `budget` (5,000-10,000,
 ### Task Query Hook (`tasks/useTasks.ts`)
 
 ```typescript
-import { useTasksQuery, type PublicTask, type TaskFilters } from "@tasky/core";
+import { useTasksQuery, type PublicTask, type TaskFilters } from '@tasky/core';
 ```
 
 - `useTasksQuery(apiClient, accessToken, filters?)` -- React Query hook for fetching paginated tasks
@@ -31,7 +31,7 @@ import { useTasksQuery, type PublicTask, type TaskFilters } from "@tasky/core";
 ### Category Query Hook (`tasks/useCategories.ts`)
 
 ```typescript
-import { useCategoriesQuery, type Category } from "@tasky/core";
+import { useCategoriesQuery, type Category } from '@tasky/core';
 ```
 
 - `useCategoriesQuery(apiClient, accessToken)` -- React Query hook for fetching categories
@@ -41,8 +41,7 @@ import { useCategoriesQuery, type Category } from "@tasky/core";
 - `zod` -- schema validation
 - `@tanstack/react-query` -- server state management
 - `@tasky/sdk` -- OpenAPI-generated types
-- `zustand` -- state management primitives
-- `react` (peer) -- React 18+
+- `react` (peer) -- React 19+
 
 ## Scripts
 
