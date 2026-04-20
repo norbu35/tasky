@@ -10,9 +10,9 @@ import jakarta.validation.Valid;
 import java.util.Map;
 import mn.tasky.common.feature.FeatureToggleService;
 import mn.tasky.common.security.JwtPrincipal;
-import mn.tasky.payment.application.PaymentService;
 import mn.tasky.payment.dto.InitiatePaymentRequest;
 import mn.tasky.payment.dto.QpayCallbackRequest;
+import mn.tasky.payment.publicapi.PaymentCommandPort;
 import mn.tasky.runtime.publicapi.composition.PaymentInitiationOutcome;
 import mn.tasky.runtime.publicapi.composition.PaymentInitiationService;
 import org.springframework.http.HttpStatus;
@@ -31,15 +31,15 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class PaymentController {
 
-    private final PaymentService paymentService;
+    private final PaymentCommandPort paymentCommandPort;
     private final PaymentInitiationService paymentInitiationService;
     private final FeatureToggleService featureToggleService;
 
     public PaymentController(
-            PaymentService paymentService,
+            PaymentCommandPort paymentCommandPort,
             PaymentInitiationService paymentInitiationService,
             FeatureToggleService featureToggleService) {
-        this.paymentService = paymentService;
+        this.paymentCommandPort = paymentCommandPort;
         this.paymentInitiationService = paymentInitiationService;
         this.featureToggleService = featureToggleService;
     }
@@ -73,7 +73,7 @@ public class PaymentController {
             return featureDeferred(request, "Payments are deferred during the liquidity-first MVP phase.");
         }
         boolean success =
-                paymentService.processCallback(body.paymentId(), body.status(), body.timestamp(), body.signature());
+                paymentCommandPort.processCallback(body.paymentId(), body.status(), body.timestamp(), body.signature());
 
         if (success) {
             return ResponseEntity.ok(Map.of("status", "ok"));

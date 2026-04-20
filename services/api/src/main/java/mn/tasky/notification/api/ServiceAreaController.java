@@ -3,8 +3,8 @@ package mn.tasky.notification.api;
 import java.util.List;
 import java.util.Map;
 import mn.tasky.common.security.JwtPrincipal;
-import mn.tasky.notification.dao.TaskerServiceAreaDao;
 import mn.tasky.notification.dto.District;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/taskers/me/service-areas")
 public class ServiceAreaController {
 
-    private final TaskerServiceAreaDao serviceAreaDao;
+    private final NotificationCommandPort notificationCommandPort;
 
-    public ServiceAreaController(TaskerServiceAreaDao serviceAreaDao) {
-        this.serviceAreaDao = serviceAreaDao;
+    public ServiceAreaController(NotificationCommandPort notificationCommandPort) {
+        this.notificationCommandPort = notificationCommandPort;
     }
 
     @GetMapping
@@ -28,7 +28,7 @@ public class ServiceAreaController {
         if (!"TASKER".equals(principal.role())) {
             return ResponseEntity.status(403).body(Map.of("code", "FORBIDDEN"));
         }
-        List<District> areas = serviceAreaDao.findByUserId(principal.userId());
+        List<District> areas = notificationCommandPort.getServiceAreas(principal.userId());
         List<Map<String, Object>> data = areas.stream()
                 .map(d -> Map.<String, Object>of(
                         "id", d.id(),
@@ -46,10 +46,7 @@ public class ServiceAreaController {
             return ResponseEntity.status(403).body(Map.of("code", "FORBIDDEN"));
         }
         List<String> slugs = body.getOrDefault("district_slugs", List.of());
-        serviceAreaDao.deleteByUserId(principal.userId());
-        for (String slug : slugs) {
-            serviceAreaDao.insertBySlug(principal.userId(), slug);
-        }
+        notificationCommandPort.setServiceAreas(principal.userId(), slugs);
         return ResponseEntity.noContent().build();
     }
 }

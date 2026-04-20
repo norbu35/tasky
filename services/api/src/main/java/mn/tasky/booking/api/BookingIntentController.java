@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import mn.tasky.booking.application.BookingIntentService;
 import mn.tasky.booking.dto.ConfirmBookingIntentRequest;
 import mn.tasky.booking.dto.CreateBookingIntentRequest;
+import mn.tasky.booking.publicapi.BookingIntentCommandPort;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.runtime.publicapi.composition.BookingIntentCompositionService;
 import mn.tasky.runtime.publicapi.composition.BookingIntentConfirmationOutcome;
@@ -30,15 +31,15 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class BookingIntentController {
 
-    private final BookingIntentService bookingIntentService;
+    private final BookingIntentCommandPort bookingIntentCommandPort;
     private final BookingIntentCompositionService bookingIntentCompositionService;
     private final BookingIntentConfirmationService bookingIntentConfirmationService;
 
     public BookingIntentController(
-            BookingIntentService bookingIntentService,
+            BookingIntentCommandPort bookingIntentCommandPort,
             BookingIntentCompositionService bookingIntentCompositionService,
             BookingIntentConfirmationService bookingIntentConfirmationService) {
-        this.bookingIntentService = bookingIntentService;
+        this.bookingIntentCommandPort = bookingIntentCommandPort;
         this.bookingIntentCompositionService = bookingIntentCompositionService;
         this.bookingIntentConfirmationService = bookingIntentConfirmationService;
     }
@@ -49,7 +50,7 @@ public class BookingIntentController {
             @PathVariable String id,
             @Valid @RequestBody CreateBookingIntentRequest body,
             HttpServletRequest request) {
-        BookingIntentService.CreateResult result = bookingIntentService.createIntent(
+        BookingIntentService.CreateResult result = bookingIntentCommandPort.createIntent(
                 principal.userId(), id, body.source(), body.taskerId(), body.originalBookingId(), body.offerId());
         if (result.isSuccess()) {
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -79,7 +80,7 @@ public class BookingIntentController {
     @GetMapping("/booking-intents/{id}")
     public ResponseEntity<?> getBookingIntent(
             @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id, HttpServletRequest request) {
-        return bookingIntentService
+        return bookingIntentCommandPort
                 .getIntent(id)
                 .filter(intent -> principal.userId().equals(intent.customerId()))
                 .<ResponseEntity<?>>map(

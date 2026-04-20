@@ -24,4 +24,9 @@ public class PaymentCommandHandler implements PaymentCommandPort {
     public Optional<PaymentIntent> findPaymentIntent(String paymentId) {
         return paymentService.findPaymentIntent(paymentId);
     }
+
+    @Override
+    public boolean processCallback(String paymentId, String status, long timestamp, String signature) {
+        return paymentService.processCallback(paymentId, status, timestamp, signature);
+    }
 }

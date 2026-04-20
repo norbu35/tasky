@@ -7,6 +7,7 @@ import mn.tasky.auth.dto.UserProfile;
 import mn.tasky.auth.dto.UserProfilePage;
 import mn.tasky.auth.dto.VerificationDetail;
 import mn.tasky.auth.dto.VerificationStatusResponse;
+import mn.tasky.user.dto.UserStatsResponse;
 
 public interface IdentityQueryPort {
     Optional<UserProfile> getProfile(String userId);
@@ -26,4 +27,6 @@ public interface IdentityQueryPort {
     UserProfilePage searchUsersByFacebookId(String facebookId, String cursor, int limit);
 
     ModerationPolicy getModerationPolicy();
+
+    Optional<UserStatsResponse> getUserStats(String userId);
 }

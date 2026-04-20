@@ -1,5 +1,8 @@
 package mn.tasky.notification.publicapi;
 
+import java.util.List;
+import mn.tasky.notification.dto.District;
+
 public interface NotificationCommandPort {
     /**
      * Register a device token for push notifications.
@@ -15,4 +18,14 @@ public interface NotificationCommandPort {
      * Send a push notification to a user.
      */
     void sendPush(String userId, String title, String body, String type);
+
+    /**
+     * Get service areas for a tasker.
+     */
+    List<District> getServiceAreas(String userId);
+
+    /**
+     * Replace service areas for a tasker.
+     */
+    void setServiceAreas(String userId, List<String> districtSlugs);
 }
