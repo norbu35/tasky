@@ -17,7 +17,8 @@ import SockJS from 'sockjs-client';
 
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { mobileTheme, withAlpha } from '../../../design/tokenAdapter';
-import { buildBaseUrl, createMobileApiClient, Message } from '../../../lib/mobileApiClient';
+import { buildBaseUrl, listMessages, sendMessage as sendChatMessage } from '../api';
+import type { Message } from '@/lib/api/types';
 import { useAuthStore } from '../../../store/authStore';
 
 const { colors, spacing } = mobileTheme;
@@ -41,8 +42,7 @@ export function ChatDetailScreen() {
   const loadMessages = useCallback(async () => {
     if (!session || !id) return;
     try {
-      const client = createMobileApiClient();
-      const res = await client.listMessages(session.accessToken, id);
+      const res = await listMessages(session.accessToken, id);
       setMessages([...res.data].reverse());
     } catch (err) {
       console.error(t('shared.inbox.errorMessages'), err);
@@ -88,8 +88,7 @@ export function ChatDetailScreen() {
     setDraft('');
 
     try {
-      const client = createMobileApiClient();
-      const sent = await client.sendMessage(session.accessToken, id, payload);
+      const sent = await sendChatMessage(session.accessToken, id, payload);
       setMessages((prev) => [...prev, sent]);
     } catch (err) {
       console.error(t('ChatDetailScreen.copy3'), err);

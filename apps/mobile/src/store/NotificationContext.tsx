@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 
-import { createMobileApiClient } from '../lib/mobileApiClient';
+import { registerDevice } from '../features/notifications/api';
 import { registerForPushNotificationsAsync } from '../lib/notifications';
 
 import { useAuthStore } from './authStore';
@@ -42,8 +42,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
           // Register the token with the Tasky backend
           try {
-            const apiClient = createMobileApiClient();
-            await apiClient.registerDevice(session.accessToken, {
+            await registerDevice(session.accessToken, {
               token: result.token,
               platform: Platform.OS === 'ios' ? 'IOS' : 'ANDROID',
             });

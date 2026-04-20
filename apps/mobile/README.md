@@ -55,7 +55,6 @@ src/
     authStore.ts      Auth state (token, user, role)
     appStore.ts       App-wide state
   utils/              Helper functions
-  future/             Deferred or staged routes still using the shared design system
 ```
 
 ## Navigation

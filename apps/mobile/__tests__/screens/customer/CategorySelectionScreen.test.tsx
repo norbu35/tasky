@@ -35,6 +35,17 @@ jest.mock('../../../src/features/tasks/hooks/useCategories', () => ({
   useCategories: () => mockUseCategories(),
 }));
 
+const mockCreateDraft = jest.fn().mockReturnValue('test-draft-id');
+const mockUpdateDraft = jest.fn();
+jest.mock('../../../src/features/tasks/draft', () => ({
+  useTaskDraftStore: (selector: any) =>
+    selector({
+      createDraft: mockCreateDraft,
+      updateDraft: mockUpdateDraft,
+      drafts: {},
+    }),
+}));
+
 beforeEach(() => {
   jest.clearAllMocks();
   resetTestI18n();
@@ -85,7 +96,7 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
     expect(screen.getByText('Moving')).toBeTruthy();
   });
 
-  it('selecting a category navigates directly to intake with category params', () => {
+  it('selecting a category creates a draft and navigates to intake with draftId', () => {
     mockUseCategories.mockReturnValue({
       data: {
         data: [{ id: 'cat-1', name: 'Cleaning', intake_enabled: true, intake_schema_version: 2 }],
@@ -95,16 +106,21 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
     });
     render(<CategorySelectionScreen />);
     fireEvent.press(screen.getByTestId('category-item-cat-1'));
-    expect(mockPush).toHaveBeenCalledWith(
+    expect(mockCreateDraft).toHaveBeenCalledTimes(1);
+    expect(mockUpdateDraft).toHaveBeenCalledWith(
+      'test-draft-id',
       expect.objectContaining({
-        pathname: '/(customer)/tasks/new/intake',
-        params: expect.objectContaining({
-          categoryId: 'cat-1',
-          intakeEnabled: '1',
-          intakeSchemaVersion: '2',
-        }),
+        categoryId: 'cat-1',
+        categoryName: 'Cleaning',
+        intakeEnabled: true,
+        intakeSchemaVersion: 2,
+        currentStep: 0,
       }),
     );
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/(customer)/tasks/new/intake',
+      params: { draftId: 'test-draft-id' },
+    });
   });
 
   it('shows loading state', () => {

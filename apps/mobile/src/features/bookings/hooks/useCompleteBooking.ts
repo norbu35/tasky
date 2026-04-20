@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { completeBooking } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 interface CompleteBookingParams {
   bookingId: string;
@@ -17,7 +15,7 @@ export function useCompleteBooking() {
 
   return useMutation({
     mutationFn: (params: CompleteBookingParams) =>
-      api.completeBooking(token!, params.bookingId, params.idempotencyKey),
+      completeBooking(token!, params.bookingId, params.idempotencyKey),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['bookings'] });
       void queryClient.invalidateQueries({ queryKey: ['booking'] });

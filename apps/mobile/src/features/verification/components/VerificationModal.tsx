@@ -5,7 +5,7 @@ import { Alert, Image, Modal, ScrollView, StyleSheet, Text, View } from 'react-n
 
 import { Button } from '../../../components/ui';
 import { mobileTheme } from '../../../design/tokenAdapter';
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { getVerificationUploadUrl, submitVerification } from '../api';
 import { useAuthStore } from '../../../store/authStore';
 
 const { colors, spacing } = mobileTheme;
@@ -74,19 +74,18 @@ export function VerificationModal({ visible, onClose, onSuccess }: Props) {
     if (!session?.accessToken) return;
 
     setIsUploading(true);
-    const client = createMobileApiClient();
 
     try {
       // 1. Get Presigned URLs
-      const frontReq = await client.getVerificationUploadUrl(session.accessToken, {
+      const frontReq = await getVerificationUploadUrl(session.accessToken, {
         content_type: 'image/jpeg',
         document_side: 'FRONT',
       });
-      const backReq = await client.getVerificationUploadUrl(session.accessToken, {
+      const backReq = await getVerificationUploadUrl(session.accessToken, {
         content_type: 'image/jpeg',
         document_side: 'BACK',
       });
-      const selfieReq = await client.getVerificationUploadUrl(session.accessToken, {
+      const selfieReq = await getVerificationUploadUrl(session.accessToken, {
         content_type: 'image/jpeg',
         document_side: 'SELFIE',
       });
@@ -99,7 +98,7 @@ export function VerificationModal({ visible, onClose, onSuccess }: Props) {
       ]);
 
       // 3. Submit Verification
-      await client.submitVerification(session.accessToken, {
+      await submitVerification(session.accessToken, {
         id_card_front_key: frontReq.storage_key,
         id_card_back_key: backReq.storage_key,
         selfie_key: selfieReq.storage_key,

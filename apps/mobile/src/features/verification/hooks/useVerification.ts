@@ -1,9 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { getVerificationStatus, submitVerification } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 export function useVerificationStatus() {
   const session = useAuthStore((s) => s.session);
@@ -11,7 +9,7 @@ export function useVerificationStatus() {
 
   return useQuery({
     queryKey: ['verificationStatus', token],
-    queryFn: () => api.getVerificationStatus(token!),
+    queryFn: () => getVerificationStatus(token!),
     enabled: !!token,
   });
 }
@@ -26,7 +24,7 @@ export function useVerification() {
       id_card_back_key: string;
       selfie_key: string;
     }) => {
-      return api.submitVerification(token!, payload);
+      return submitVerification(token!, payload);
     },
   });
 

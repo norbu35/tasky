@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { rescheduleBooking } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 interface RescheduleParams {
   bookingId: string;
@@ -19,7 +17,7 @@ export function useReschedule() {
 
   return useMutation({
     mutationFn: (params: RescheduleParams) =>
-      api.rescheduleBooking(
+      rescheduleBooking(
         token!,
         params.bookingId,
         { proposed_scheduled_at: params.proposed_scheduled_at, reason: params.reason },

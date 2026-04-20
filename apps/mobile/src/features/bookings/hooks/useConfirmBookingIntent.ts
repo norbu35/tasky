@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { confirmBookingIntent } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 interface ConfirmBookingIntentParams {
   bookingIntentId: string;
@@ -18,7 +16,7 @@ export function useConfirmBookingIntent() {
 
   return useMutation({
     mutationFn: (params: ConfirmBookingIntentParams) =>
-      api.confirmBookingIntent(
+      confirmBookingIntent(
         token!,
         params.bookingIntentId,
         params.liabilityDisclaimerAccepted,

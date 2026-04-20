@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { raiseDispute } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 interface DisputeCreateParams {
   bookingId: string;
@@ -18,7 +16,7 @@ export function useDisputeCreate() {
 
   return useMutation({
     mutationFn: (params: DisputeCreateParams) =>
-      api.raiseDispute(token!, params.bookingId, params.reason, params.idempotencyKey),
+      raiseDispute(token!, params.bookingId, params.reason, params.idempotencyKey),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['bookings'] });
       void queryClient.invalidateQueries({ queryKey: ['booking'] });

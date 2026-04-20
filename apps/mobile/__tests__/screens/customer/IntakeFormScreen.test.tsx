@@ -62,14 +62,17 @@ const mockCleaningSchema = JSON.stringify([
 
 let mockSchemaJson = mockCleaningSchema;
 
+const mockDraftStoreState: any = {};
+
+const mockUpdateDraft = jest.fn();
+jest.mock('../../../src/features/tasks/draft', () => ({
+  useTaskDraftStore: (selector: any) =>
+    selector({ drafts: mockDraftStoreState, updateDraft: mockUpdateDraft }),
+}));
+
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: jest.fn(), back: mockBack }),
-  useLocalSearchParams: () => ({
-    categoryId: 'cat-123',
-    intakeEnabled: '1',
-    intakeSchemaVersion: '1',
-    intakeSchemaJson: mockSchemaJson,
-  }),
+  useLocalSearchParams: () => ({ draftId: 'test-draft-id' }),
 }));
 
 jest.mock('react-i18next', () => {
@@ -95,6 +98,14 @@ beforeEach(() => {
   resetTestI18n();
   setTestLanguage('en');
   mockSchemaJson = mockCleaningSchema;
+  mockDraftStoreState['test-draft-id'] = {
+    draftId: 'test-draft-id',
+    categoryId: 'cat-123',
+    intakeEnabled: true,
+    intakeSchemaVersion: 1,
+    intakeSchemaJson: mockSchemaJson,
+    currentStep: 0,
+  };
 });
 
 describe('IntakeFormScreen (SCR-CUST-003)', () => {
@@ -130,7 +141,7 @@ describe('IntakeFormScreen (SCR-CUST-003)', () => {
   });
 
   it('renders fallback labels when schema options are plain strings', () => {
-    mockSchemaJson = JSON.stringify([
+    const plainSchema = JSON.stringify([
       {
         key: 'property_type',
         label: 'Property type',
@@ -148,6 +159,10 @@ describe('IntakeFormScreen (SCR-CUST-003)', () => {
         options: ['standard', 'deep_clean', 'move_in_move_out', 'post_renovation'],
       },
     ]);
+    mockDraftStoreState['test-draft-id'] = {
+      ...mockDraftStoreState['test-draft-id'],
+      intakeSchemaJson: plainSchema,
+    };
 
     render(<IntakeFormScreen />);
 
@@ -184,16 +199,22 @@ describe('IntakeFormScreen (SCR-CUST-003)', () => {
     fireEvent.press(screen.getByTestId('intake-supplies_provided-yes'));
 
     fireEvent.press(screen.getByTestId('SCR-CUST-003-next'));
-    expect(mockPush).toHaveBeenCalledWith(
+    expect(mockUpdateDraft).toHaveBeenCalledWith(
+      'test-draft-id',
       expect.objectContaining({
-        pathname: '/(customer)/tasks/new/photos',
-        params: expect.objectContaining({
-          categoryId: 'cat-123',
-          description: 'Fix my leaky faucet',
-          intakeSchemaVersion: '1',
+        description: 'Fix my leaky faucet',
+        intakeAnswers: expect.objectContaining({
+          property_type: 'apartment',
+          cleaning_type: 'standard',
+          supplies_provided: true,
         }),
+        currentStep: 1,
       }),
     );
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/(customer)/tasks/new/photos',
+      params: { draftId: 'test-draft-id' },
+    });
   });
 
   it('renders as step 2 of 7 wizard', () => {

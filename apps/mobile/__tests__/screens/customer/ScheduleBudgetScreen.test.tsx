@@ -7,16 +7,26 @@ import ScheduleBudgetScreen from '../../../src/app/(customer)/tasks/new/schedule
 const mockPush = jest.fn();
 const mockBack = jest.fn();
 
-jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: mockPush, replace: jest.fn(), back: mockBack }),
-  useLocalSearchParams: () => ({
+const mockDraftStoreState: any = {
+  'test-draft-id': {
+    draftId: 'test-draft-id',
     categoryId: 'cat-123',
     description: 'Fix my sink',
-    photos: '[]',
-    location: 'Behind State Dept Store',
-    lat: '47.92123',
-    lng: '106.91876',
-  }),
+    photos: [],
+    location: { lat: 47.92123, lng: 106.91876, text: 'Behind State Dept Store' },
+    currentStep: 3,
+  },
+};
+
+const mockUpdateDraft = jest.fn();
+jest.mock('../../../src/features/tasks/draft', () => ({
+  useTaskDraftStore: (selector: any) =>
+    selector({ drafts: mockDraftStoreState, updateDraft: mockUpdateDraft }),
+}));
+
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ push: mockPush, replace: jest.fn(), back: mockBack }),
+  useLocalSearchParams: () => ({ draftId: 'test-draft-id' }),
 }));
 
 jest.mock('react-i18next', () => {
@@ -157,16 +167,18 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
 
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '50000');
     fireEvent.press(screen.getByTestId('SCR-CUST-006-next'));
-    expect(mockPush).toHaveBeenCalledWith(
+    expect(mockUpdateDraft).toHaveBeenCalledWith(
+      'test-draft-id',
       expect.objectContaining({
-        pathname: '/(customer)/tasks/new/review',
-        params: expect.objectContaining({
-          lat: '47.92123',
-          lng: '106.91876',
-          scheduledAt: expectedScheduledAt,
-        }),
+        scheduledAt: expectedScheduledAt,
+        budget: 50000,
+        currentStep: 4,
       }),
     );
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/(customer)/tasks/new/review',
+      params: { draftId: 'test-draft-id' },
+    });
   });
 
   it('keeps iOS picker visible while scrolling until user confirms', () => {

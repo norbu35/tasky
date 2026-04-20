@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { getPublicProfile } from '../api';
+import { getUserReviews } from '../../review/api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 export function useTaskerProfile(userId: string | undefined) {
   const session = useAuthStore((s) => s.session);
@@ -11,13 +10,13 @@ export function useTaskerProfile(userId: string | undefined) {
 
   const profileQuery = useQuery({
     queryKey: ['taskerProfile', token, userId],
-    queryFn: () => api.getPublicProfile(token!, userId!),
+    queryFn: () => getPublicProfile(token!, userId!),
     enabled: !!token && !!userId,
   });
 
   const reviewsQuery = useQuery({
     queryKey: ['taskerReviews', token, userId],
-    queryFn: () => api.getUserReviews(token!, userId!),
+    queryFn: () => getUserReviews(token!, userId!),
     enabled: !!token && !!userId,
   });
 

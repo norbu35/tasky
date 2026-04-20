@@ -1,11 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { submitReview } from '../api';
 import { useAuthStore } from '../../../store/authStore';
 
 import { PENDING_REVIEWS_QUERY_KEY } from './usePendingReviews';
-
-const api = createMobileApiClient();
 
 interface SubmitReviewPayload {
   bookingId: string;
@@ -21,7 +19,7 @@ export function useSubmitReview(onSuccessCb?: () => void) {
     mutationFn: async (payload: SubmitReviewPayload) => {
       if (!session?.accessToken) throw new Error('Unauthorized');
       const { bookingId, ratings, comment } = payload;
-      return api.submitReview(session.accessToken, bookingId, {
+      return submitReview(session.accessToken, bookingId, {
         quality_rating: ratings['qualityOfWork'],
         punctuality_rating: ratings['punctuality'],
         communication_rating: ratings['communication'],

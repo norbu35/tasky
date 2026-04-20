@@ -1,10 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { createMobileApiClient, type PublicTask } from '../../../lib/mobileApiClient';
+import { listTasks } from '../api';
+import type { PublicTask } from '@/lib/api/types';
 import { useAuthStore } from '../../../store/authStore';
 import { getCurrentLocation } from '../../../utils/permissions';
-
-const api = createMobileApiClient();
 
 export function useTasks() {
   const session = useAuthStore((s) => s.session);
@@ -17,7 +16,7 @@ export function useTasks() {
       const filters = location
         ? { lat: location.latitude, lng: location.longitude, radiusKm: 10 }
         : {};
-      return api.listTasks(token!, filters);
+      return listTasks(token!, filters);
     },
     enabled: !!token,
   });
@@ -40,7 +39,7 @@ export function useTaskDetail(taskId: string): TaskDetailState {
 
   const tasksQuery = useQuery({
     queryKey: ['tasks', token],
-    queryFn: () => api.listTasks(token!, {}),
+    queryFn: () => listTasks(token!, {}),
     enabled: !!token,
   });
 

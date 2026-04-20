@@ -1,9 +1,7 @@
 import { useState, useCallback } from 'react';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { getVerificationUploadUrl } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 export function useVerificationUpload() {
   const session = useAuthStore((s) => s.session);
@@ -13,7 +11,7 @@ export function useVerificationUpload() {
   const getUploadUrl = useCallback(
     async (documentSide: 'FRONT' | 'BACK' | 'SELFIE') => {
       if (!token) throw new Error('Not authenticated');
-      return api.getVerificationUploadUrl(token, {
+      return getVerificationUploadUrl(token, {
         content_type: 'image/jpeg',
         document_side: documentSide,
       });

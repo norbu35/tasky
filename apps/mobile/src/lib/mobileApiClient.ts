@@ -1,57 +1,60 @@
 import { Platform } from 'react-native';
 
-import type { components } from '@tasky/sdk';
+export type {
+  User,
+  Profile,
+  Category,
+  PublicTask,
+  Task,
+  CreateTaskRequest,
+  TaskApplication,
+  Booking,
+  BookingIntent,
+  Review,
+  PendingReview,
+  Dispute,
+  Conversation,
+  Message,
+  BookingScheduleEvent,
+  CursorPagination,
+} from './api/types';
 
-export type User = components['schemas']['User'];
-export type Profile = components['schemas']['Profile'];
-export type Category = components['schemas']['Category'];
-export type PublicTask = components['schemas']['PublicTask'];
-export type Task = components['schemas']['Task'];
-export type CreateTaskRequest = components['schemas']['CreateTaskRequest'];
-export type TaskApplication = components['schemas']['TaskApplication'];
-export type Booking = components['schemas']['Booking'];
-export type BookingIntent = components['schemas']['BookingIntent'];
-export type Review = components['schemas']['Review'];
-export type PendingReview = components['schemas']['PendingReview'];
-export type Dispute = components['schemas']['Dispute'];
-export type Conversation = components['schemas']['Conversation'];
-export type Message = components['schemas']['Message'];
-export type BookingScheduleEvent = components['schemas']['BookingScheduleEvent'];
-export type CursorPagination = components['schemas']['CursorPagination'];
+export type {
+  AuthTokens,
+  CursorPage,
+  TaskFilters,
+  RecentLocation,
+  BookingFilters,
+  ProfilePolishPreviewPayload,
+} from './api/types';
 
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-  user: User;
-}
+export { ApiError } from './api/types';
 
-export interface CursorPage<T> {
-  data: T[];
-  cursor: CursorPagination;
-}
+import { ApiError } from './api/types';
 
-export interface TaskFilters {
-  categoryId?: string;
-  lat?: number;
-  lng?: number;
-  radiusKm?: number;
-}
-
-export interface RecentLocation {
-  location_lat: number;
-  location_lng: number;
-  location_text: string;
-}
-
-export interface BookingFilters {
-  role?: 'customer' | 'tasker';
-  status?: 'ASSIGNED' | 'COMPLETED' | 'CANCELLED';
-}
-
-export interface ProfilePolishPreviewPayload {
-  bio: string;
-  tone: 'friendly' | 'professional' | 'concise';
-}
+import type {
+  AuthTokens,
+  CursorPage,
+  TaskFilters,
+  RecentLocation,
+  BookingFilters,
+  ProfilePolishPreviewPayload,
+  User,
+  Profile,
+  Category,
+  PublicTask,
+  Task,
+  CreateTaskRequest,
+  TaskApplication,
+  Booking,
+  BookingIntent,
+  Review,
+  PendingReview,
+  Dispute,
+  Conversation,
+  Message,
+  BookingScheduleEvent,
+} from './api/types';
 
 export interface MobileApiClient {
   requestOtp(phone: string): Promise<string>;
@@ -114,12 +117,6 @@ export interface MobileApiClient {
     liabilityDisclaimerAccepted: boolean,
     idempotencyKey: string,
   ): Promise<Booking>;
-
-  initiatePayment(
-    accessToken: string,
-    bookingId: string,
-    idempotencyKey: string,
-  ): Promise<{ paymentUrl: string; qrCode: string }>;
 
   listBookings(accessToken: string, filters?: BookingFilters): Promise<CursorPage<Booking>>;
 
@@ -224,15 +221,6 @@ export interface MobileApiClient {
       description?: string;
     }[]
   >;
-}
-
-export class ApiError extends Error {
-  readonly status: number;
-
-  constructor(status: number, message: string) {
-    super(message);
-    this.status = status;
-  }
 }
 
 const API_PATH_PREFIX = '/api/v1';
@@ -568,29 +556,6 @@ export class HttpMobileApiClient implements MobileApiClient {
       },
       accessToken,
     );
-  }
-
-  initiatePayment(
-    accessToken: string,
-    bookingId: string,
-    idempotencyKey: string,
-  ): Promise<{ paymentUrl: string; qrCode: string }> {
-    return this.requestJson<{ payment_url: string; qr_code: string }>(
-      `/payments/bookings/${bookingId}/initiate`,
-      {
-        method: 'POST',
-        headers: {
-          'Idempotency-Key': idempotencyKey,
-        },
-        body: JSON.stringify({
-          liability_disclaimer_accepted: true,
-        }),
-      },
-      accessToken,
-    ).then((response) => ({
-      paymentUrl: response.payment_url,
-      qrCode: response.qr_code,
-    }));
   }
 
   listBookings(accessToken: string, filters?: BookingFilters): Promise<CursorPage<Booking>> {

@@ -1,16 +1,29 @@
 import React from 'react';
-import { act, render, screen, fireEvent } from '@testing-library/react-native';
+import { render, screen, fireEvent } from '@testing-library/react-native';
 import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockPush = jest.fn();
 const mockBack = jest.fn();
-const mockRequestJson = jest.fn().mockResolvedValue({
-  formatted_address: 'Ulaanbaatar, Bayangol district',
-});
+
+const mockDraftStoreState: any = {
+  'test-draft-id': {
+    draftId: 'test-draft-id',
+    categoryId: 'cat-123',
+    description: 'Fix my sink',
+    photos: [],
+    currentStep: 2,
+  },
+};
+
+const mockUpdateDraft = jest.fn();
+jest.mock('../../../src/features/tasks/draft', () => ({
+  useTaskDraftStore: (selector: any) =>
+    selector({ drafts: mockDraftStoreState, updateDraft: mockUpdateDraft }),
+}));
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: jest.fn(), back: mockBack }),
-  useLocalSearchParams: () => ({ categoryId: 'cat-123', description: 'Fix my sink', photos: '[]' }),
+  useLocalSearchParams: () => ({ draftId: 'test-draft-id' }),
 }));
 
 jest.mock('react-i18next', () => {
@@ -52,7 +65,9 @@ jest.mock('lucide-react-native', () => {
 
 jest.mock('../../../src/lib/mobileApiClient', () => ({
   createMobileApiClient: () => ({
-    requestJson: mockRequestJson,
+    requestJson: jest
+      .fn()
+      .mockResolvedValue({ formatted_address: 'Ulaanbaatar, Bayangol district' }),
   }),
 }));
 
@@ -61,6 +76,35 @@ jest.mock('../../../src/features/tasks/hooks/useRecentLocations', () => ({
     data: [],
     isLoading: false,
   }),
+}));
+
+jest.mock('../../../src/utils/permissions', () => ({
+  getCurrentLocation: jest.fn(() => new Promise(() => {})),
+}));
+
+jest.mock('../../../src/features/tasks/api', () => ({
+  reverseGeocode: jest
+    .fn()
+    .mockResolvedValue({ formatted_address: 'Ulaanbaatar, Bayangol district' }),
+}));
+
+jest.mock('../../../src/store/authStore', () => ({
+  useAuthStore: (selector: any) => selector({ session: { accessToken: 'test-token' } }),
+}));
+
+jest.mock('../../../src/features/tasks/draft', () => ({
+  useTaskDraftStore: (selector: any) =>
+    selector({ drafts: mockDraftStoreState, updateDraft: mockUpdateDraft }),
+}));
+
+jest.mock('../../../src/features/tasks/api', () => ({
+  reverseGeocode: jest
+    .fn()
+    .mockResolvedValue({ formatted_address: 'Ulaanbaatar, Bayangol district' }),
+}));
+
+jest.mock('../../../src/store/authStore', () => ({
+  useAuthStore: (selector: any) => selector({ session: { accessToken: 'test-token' } }),
 }));
 
 const LocationScreen = require('../../../src/app/(customer)/tasks/new/location').default;
@@ -90,26 +134,26 @@ describe('LocationScreen (SCR-CUST-005)', () => {
     expect(screen.getByText('Location description')).toBeTruthy();
   });
 
-  it('navigates to schedule when next pressed with location', async () => {
+  it('navigates to schedule when next pressed with location', () => {
     render(<LocationScreen />);
     fireEvent.changeText(screen.getByTestId('location-text-input'), 'Behind State Dept Store');
-    await act(async () => {
-      fireEvent(screen.getByTestId('location-map'), 'onPress', {
-        nativeEvent: {
-          coordinate: { latitude: 47.92123, longitude: 106.91876 },
-        },
-      });
+    fireEvent(screen.getByTestId('location-map'), 'onPress', {
+      nativeEvent: {
+        coordinate: { latitude: 47.92123, longitude: 106.91876 },
+      },
     });
     fireEvent.press(screen.getByTestId('SCR-CUST-005-next'));
-    expect(mockPush).toHaveBeenCalledWith(
+    expect(mockUpdateDraft).toHaveBeenCalledWith(
+      'test-draft-id',
       expect.objectContaining({
-        pathname: '/(customer)/tasks/new/schedule',
-        params: expect.objectContaining({
-          lat: '47.92123',
-          lng: '106.91876',
-        }),
+        location: { lat: 47.92123, lng: 106.91876, text: 'Behind State Dept Store' },
+        currentStep: 3,
       }),
     );
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/(customer)/tasks/new/schedule',
+      params: { draftId: 'test-draft-id' },
+    });
   });
 
   it('renders as step 4 of 7 wizard', () => {
@@ -123,7 +167,7 @@ describe('LocationScreen (SCR-CUST-005)', () => {
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
 
-  it('keeps next disabled until a pin is placed', async () => {
+  it('keeps next disabled until a pin is placed', () => {
     render(<LocationScreen />);
     const nextButton = screen.getByTestId('SCR-CUST-005-next');
 
@@ -131,12 +175,10 @@ describe('LocationScreen (SCR-CUST-005)', () => {
     fireEvent.press(nextButton);
     expect(mockPush).not.toHaveBeenCalled();
 
-    await act(async () => {
-      fireEvent(screen.getByTestId('location-map'), 'onPress', {
-        nativeEvent: {
-          coordinate: { latitude: 47.92123, longitude: 106.91876 },
-        },
-      });
+    fireEvent(screen.getByTestId('location-map'), 'onPress', {
+      nativeEvent: {
+        coordinate: { latitude: 47.92123, longitude: 106.91876 },
+      },
     });
 
     expect(nextButton).not.toBeDisabled();

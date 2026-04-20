@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { listRecentLocations } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 export function useRecentLocations() {
   const session = useAuthStore((s) => s.session);
@@ -11,7 +9,7 @@ export function useRecentLocations() {
 
   return useQuery({
     queryKey: ['recent-locations', token],
-    queryFn: () => api.listRecentLocations(token!),
+    queryFn: () => listRecentLocations(token!),
     enabled: !!token,
     select: (data) => data.locations,
     staleTime: 5 * 60 * 1000, // 5 minutes

@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { getDispute } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 export function useDisputeDetail(disputeId: string | undefined) {
   const session = useAuthStore((s) => s.session);
@@ -11,7 +9,7 @@ export function useDisputeDetail(disputeId: string | undefined) {
 
   return useQuery({
     queryKey: ['dispute', token, disputeId],
-    queryFn: () => api.getDispute(token!, disputeId!),
+    queryFn: () => getDispute(token!, disputeId!),
     enabled: !!token && !!disputeId,
   });
 }

@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { flagNoShow } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 interface FlagNoShowParams {
   bookingId: string;
@@ -15,7 +13,7 @@ export function useFlagNoShow() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: FlagNoShowParams) => api.flagNoShow(token!, params.bookingId),
+    mutationFn: (params: FlagNoShowParams) => flagNoShow(token!, params.bookingId),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['bookings'] });
       void queryClient.invalidateQueries({ queryKey: ['booking'] });

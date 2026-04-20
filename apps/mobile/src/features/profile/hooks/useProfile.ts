@@ -1,9 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { getMyProfile, updateMyProfile } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 export function useMyProfile() {
   const session = useAuthStore((s) => s.session);
@@ -11,7 +9,7 @@ export function useMyProfile() {
 
   return useQuery({
     queryKey: ['me', token],
-    queryFn: () => api.getMyProfile(token!),
+    queryFn: () => getMyProfile(token!),
     enabled: !!token,
   });
 }
@@ -23,7 +21,7 @@ export function useUpdateProfile() {
 
   return useMutation({
     mutationFn: (payload: { full_name?: string; avatar_url?: string; bio?: string }) =>
-      api.updateMyProfile(token!, payload),
+      updateMyProfile(token!, payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['me'] });
     },

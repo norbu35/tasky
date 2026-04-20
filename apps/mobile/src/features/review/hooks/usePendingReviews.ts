@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { getMyPendingReviews } from '../api';
 import { useAuthStore } from '../../../store/authStore';
 
-const api = createMobileApiClient();
 export const PENDING_REVIEWS_QUERY_KEY = 'pending-reviews';
 
 export function usePendingReviews() {
@@ -13,7 +12,7 @@ export function usePendingReviews() {
     queryKey: [PENDING_REVIEWS_QUERY_KEY, token],
     queryFn: async () => {
       if (!token) return [];
-      return api.getMyPendingReviews(token);
+      return getMyPendingReviews(token);
     },
     enabled: !!token,
     staleTime: 1000 * 60 * 5, // 5 minutes

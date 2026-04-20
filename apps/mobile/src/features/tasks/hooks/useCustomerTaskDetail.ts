@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { createMobileApiClient, type Task } from '../../../lib/mobileApiClient';
+import { listMyTasks } from '../api';
+import type { Task } from '@/lib/api/types';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 export interface CustomerTaskDetailState {
   task: Task | null;
@@ -18,7 +17,7 @@ export function useCustomerTaskDetail(taskId: string): CustomerTaskDetailState {
 
   const query = useQuery({
     queryKey: ['myTasks', token],
-    queryFn: () => api.listMyTasks(token!),
+    queryFn: () => listMyTasks(token!),
     enabled: !!token,
   });
 

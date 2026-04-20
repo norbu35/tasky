@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { getBookingTimeline } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 export function useBookingTimeline(bookingId: string | undefined) {
   const session = useAuthStore((s) => s.session);
@@ -11,7 +9,7 @@ export function useBookingTimeline(bookingId: string | undefined) {
 
   return useQuery({
     queryKey: ['bookingTimeline', token, bookingId],
-    queryFn: () => api.getBookingTimeline(token!, bookingId!),
+    queryFn: () => getBookingTimeline(token!, bookingId!),
     enabled: !!token && !!bookingId,
   });
 }

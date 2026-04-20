@@ -1,9 +1,7 @@
 import { useState, useCallback } from 'react';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { getTaskPhotoUploadUrl } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 export function useTaskPhotoUpload() {
   const session = useAuthStore((s) => s.session);
@@ -15,7 +13,7 @@ export function useTaskPhotoUpload() {
       if (!token) throw new Error('Not authenticated');
       setIsUploading(true);
       try {
-        const { upload_url, storage_key } = await api.getTaskPhotoUploadUrl(token, 'image/jpeg');
+        const { upload_url, storage_key } = await getTaskPhotoUploadUrl(token, 'image/jpeg');
 
         const response = await fetch(uri);
         const blob = await response.blob();

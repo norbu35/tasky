@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { listMessages } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 export function useMessages(conversationId: string) {
   const session = useAuthStore((s) => s.session);
@@ -11,7 +9,7 @@ export function useMessages(conversationId: string) {
 
   return useQuery({
     queryKey: ['messages', token, conversationId],
-    queryFn: () => api.listMessages(token!, conversationId),
+    queryFn: () => listMessages(token!, conversationId),
     enabled: !!token && !!conversationId,
   });
 }

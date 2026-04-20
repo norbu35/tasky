@@ -6,7 +6,8 @@ import { Alert, Dimensions, Image, Modal, ScrollView, StyleSheet, Text, View } f
 import { Button } from '../../../components/ui';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { mobileSurfaces } from '../../../design/surfaces';
-import { createMobileApiClient, PublicTask } from '../../../lib/mobileApiClient';
+import { applyToTask } from '../api';
+import type { PublicTask } from '@/lib/api/types';
 import { useAuthStore } from '../../../store/authStore';
 import { VerificationModal } from '../../verification/components/VerificationModal';
 
@@ -47,8 +48,7 @@ export function TaskDetailsModal({ task, visible, onClose }: Props) {
 
     setIsApplying(true);
     try {
-      const client = createMobileApiClient();
-      await client.applyToTask(session.accessToken, task.id, t('TaskDetailsModal.copy1'));
+      await applyToTask(session.accessToken, task.id, t('TaskDetailsModal.copy1'));
       Alert.alert(t('taskDetails.success'), t('taskDetails.applied'));
       onClose();
     } catch (err: unknown) {

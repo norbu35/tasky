@@ -676,6 +676,160 @@ it('TID-TASK-080-WEB-AUTH-OAUTH-FLOW should allow user to continue with Facebook
    - Posting success cannot depend on LLM availability.
    - LLM output cannot mutate structured intake answers.
 
+### 7.7 Mobile Layer Model and Structural Contract
+
+This section defines the enforced architecture for `apps/mobile`. It is the authoritative reference for
+layer boundaries, route contracts, screen decomposition, and deferred-surface policy.
+
+Sources:
+
+- `docs/plans/2026-04-20-mobile-agentic-hardening-design.md` (foundational pass)
+- `docs/plans/2026-04-20-mobile-agentic-hardening-followup-design.md` (follow-up pass)
+
+#### 7.7.1 Dependency Flow
+
+The mobile app follows a strict unidirectional dependency flow:
+
+```
+src/app → src/features/*/screens → src/features/*/{hooks,components,model,api} → shared src/components, src/design, src/lib
+```
+
+#### 7.7.2 Allowed Imports by Layer
+
+| Layer                       | May import                                                                           | Must not import                                                                         |
+| --------------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| `src/app/**`                | Route-safe screen modules, route-param codecs, navigation helpers, Expo Router APIs  | `createMobileApiClient`, feature `api.ts`, reusable business UI, transport internals    |
+| `src/features/*/screens/**` | Feature hooks, feature components, shared templates, shared primitives               | Raw transport client (`mobileApiClient`)                                                |
+| `src/features/*/hooks/**`   | Feature API modules, shared state/query utilities                                    | Route files (`src/app/**`)                                                              |
+| `src/features/*/api/**`     | Domain endpoint calls, response mapping, mobile transport client                     | This is the **only** feature-local layer that may depend on the mobile transport client |
+| `src/components/**`         | Shared UI only                                                                       | Feature data fetching, `src/features/**`                                                |
+| `src/design/**`             | Cross-cutting visual foundation                                                      | `src/app/**`, `src/features/**`                                                         |
+| `archive/mobile-future/**`  | N/A — archived deferred prototypes; must not be imported from any production surface |
+
+#### 7.7.3 Route Adapter Contract
+
+Non-layout route files in `src/app/**` must be thin adapters:
+
+- **Preferred target size**: ≤ 40 lines
+- **Tiered thresholds**:
+  - **Hard fail**: > 100 lines — must be fixed before merge
+  - **Warning (primary)**: > 60 lines — business-flow routes should thin below this
+  - **Warning (tolerated tier)**: 61–100 lines — acceptable for near-static state screens (error, update, suspended, cancel confirmation) documented below
+- **Allowed responsibilities**: `Stack.Screen` options, route param decoding / aliasing, rendering a feature screen
+- **Forbidden**: importing `createMobileApiClient`, importing `@/features/*/api`, defining local UI sections for reuse, implementing upload flows, parsing business payloads beyond route-param decoding, importing from other route files
+
+**Tolerated secondary-state routes** (61–100 line warning tier):
+
+These routes are near-static state screens that carry no business-flow logic. They are intentionally tolerated in the warning band:
+
+- `(shared)/network-error.tsx` — static error state
+- `(shared)/app-update.tsx` — static update prompt
+- `(shared)/account/suspended.tsx` — static suspension notice
+- `(shared)/session-expired.tsx` — static session expiry
+- `(customer)/bookings/[bookingId]/cancel.tsx` — cancel confirmation
+- `(tasker)/jobs/[bookingId]/cancel.tsx` — cancel confirmation
+- `(tasker)/verification/pending.tsx` — static pending state
+- `(tasker)/verification/rejected.tsx` — static rejection state
+
+New state screens in this class may be added to the tolerated tier. Business-flow routes that grow above 60 lines must still be thinned regardless.
+
+#### 7.7.4 Screen-Family Role-Aware Budgets
+
+Screen-family files under `src/features/*/screens/**` are budgeted by role, not uniformly:
+
+| Role (filename pattern)         | Target | Soft Warning | Hard Fail |
+| ------------------------------- | ------ | ------------ | --------- |
+| `*Screen.tsx` (assembly)        | ≤ 180  | > 220        | > 280     |
+| `*.parts.tsx` (presentational)  | ≤ 200  | > 260        | > 340     |
+| `*.model.ts` (pure functions)   | ≤ 120  | > 180        | > 240     |
+| `use*.ts` (orchestration hook)  | ≤ 120  | > 180        | > 240     |
+| Other (content, sections, etc.) | ≤ 180  | > 220        | > 280     |
+
+#### 7.7.5 Standard Screen Decomposition Shape
+
+Large or high-churn screens should converge on:
+
+```
+features/<domain>/screens/
+  <ScreenName>Screen.tsx          # assembly/composition only
+  <ScreenName>.model.ts           # parsing, formatting, derived state helpers
+  <ScreenName>.parts.tsx          # screen-local presentational sections
+  use<ScreenName>.ts              # orchestration/effects
+```
+
+Not every screen needs all four files. The rule is bounded ownership. Decomposition is required when a screen exceeds **220 lines** or mixes three or more of: route param parsing, async side effects, domain mutations, local presentational subcomponents, formatting/parsing helpers.
+
+#### 7.7.6 Structure Checker
+
+`apps/mobile/scripts/structure-check.js` enforces the structural contract. Run via `pnpm --filter @tasky/mobile structure:check`.
+
+**Checks performed:**
+
+1. Route budget (≤100 hard fail, >60 warn, with tolerated tier for state screens)
+2. Route banned imports (`createMobileApiClient`, `@/features/*/api`, `@/future`)
+3. Route-to-route imports (warns on `@/app/` imports within route files)
+4. Component layer violations (`src/components` importing from `src/features`)
+5. Design layer violations (`src/design` importing from `src/app` or `src/features`)
+6. Future import violations (production code importing `@/future`)
+7. Screen-family role-aware budgets (by filename pattern)
+
+Output is grouped by category with pass/warn/fail counts. The gate requires zero fail items to pass.
+
+#### 7.7.7 Domain API Contract
+
+`src/lib/mobileApiClient.ts` is the shared transport layer responsible for: base URL resolution, auth header composition, token refresh handling, shared `requestJson` / `requestVoid` primitives, and transport-level error mapping.
+
+Domain methods live in feature-local API modules:
+
+```
+src/features/tasks/api.ts
+src/features/bookings/api.ts
+src/features/profile/api.ts
+src/features/chat/api.ts
+src/features/disputes/api.ts
+src/features/review/api.ts
+src/features/verification/api.ts
+src/features/notifications/api.ts
+src/features/auth/api.ts
+```
+
+The transport client must not be imported from route files or shared UI.
+
+#### 7.7.8 Workflow Draft Contract
+
+Multi-step customer task creation uses a typed draft boundary instead of serialized route-param threading:
+
+```
+src/features/tasks/draft/
+  taskDraft.store.ts
+  taskDraft.types.ts
+  taskDraft.validation.ts
+  useTaskDraft.ts
+```
+
+Navigation passes only `draftId` — never serialized intake answers, uploaded photo arrays, or repeated copies of category/location/scheduling payloads. The draft store is the sole supported runtime path; legacy serialized-param fallback branches have been removed.
+
+#### 7.7.9 Deferred Surface Policy
+
+Deferred or prototype mobile surfaces must not live in the default active edit surface under `src/`. Acceptable locations:
+
+1. `archive/mobile-future/` (preferred)
+2. Outside `src/` with explicit no-import enforcement
+
+Deferred code must be excluded from runtime entrypoints, excluded from Tailwind content scanning unless intentionally active, and blocked by lint from being imported into production surfaces.
+
+#### 7.7.10 File Budget Policy
+
+| Surface             | Target      | Warning Threshold | Expected Action                       |
+| ------------------- | ----------- | ----------------- | ------------------------------------- |
+| Route file          | ≤ 40 lines  | > 60 lines        | Move logic into feature screen        |
+| Screen file         | ≤ 180 lines | > 220 lines       | Split into model/parts/hook           |
+| Feature hook        | ≤ 120 lines | > 160 lines       | Split concerns or extract helpers     |
+| Shared UI primitive | ≤ 140 lines | > 180 lines       | Extract variants or helper utils      |
+| Domain API module   | ≤ 180 lines | > 220 lines       | Split by subdomain or endpoint family |
+
+Exceptions allowed only for intentionally generated files or documented inline exceptions that still respect architecture boundaries.
+
 ---
 
 ## 8. Development Workflow

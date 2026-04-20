@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { acceptApplication } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 interface AcceptApplicationParams {
   taskId: string;
@@ -19,7 +17,7 @@ export function useAcceptApplication() {
 
   return useMutation({
     mutationFn: (params: AcceptApplicationParams) =>
-      api.acceptApplication(
+      acceptApplication(
         token!,
         params.taskId,
         params.applicationId,

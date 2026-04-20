@@ -6,20 +6,41 @@ import ReviewSubmitScreen from '../../../src/app/(customer)/tasks/new/review';
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
 const mockBack = jest.fn();
-const mockParams = {
+
+const baseDraft = {
+  draftId: 'test-draft-id',
   categoryId: 'cat-123',
+  categoryName: 'Cleaning',
   description: 'Fix my sink',
-  photos: '[]',
-  location: 'Behind State Dept Store',
-  lat: '47.92123',
-  lng: '106.91876',
+  photos: [] as string[],
+  location: { lat: 47.92123, lng: 106.91876, text: 'Behind State Dept Store' },
   scheduledAt: new Date(2026, 3, 1, 10, 0).toISOString(),
-  budget: '50000',
+  budget: 50000,
+  intakeAnswers: {} as Record<string, unknown>,
+  intakeSchemaVersion: 1,
+  intakeSchemaJson: undefined as string | undefined,
+  intakeEnabled: undefined as boolean | undefined,
+  currentStep: 4,
 };
+
+const mockDraftStoreState: any = {};
+
+const mockUpdateDraft = jest.fn();
+jest.mock('../../../src/features/tasks/draft', () => ({
+  useTaskDraftStore: (selector: any) =>
+    selector({ drafts: mockDraftStoreState, updateDraft: mockUpdateDraft }),
+  isDraftComplete: (draft: any) =>
+    draft &&
+    draft.categoryId &&
+    draft.description &&
+    draft.location &&
+    draft.scheduledAt &&
+    draft.budget,
+}));
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: mockReplace, back: mockBack }),
-  useLocalSearchParams: () => mockParams,
+  useLocalSearchParams: () => ({ draftId: 'test-draft-id' }),
 }));
 
 jest.mock('react-i18next', () => {
@@ -50,19 +71,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   resetTestI18n();
   setTestLanguage('en');
-  Object.assign(mockParams, {
-    categoryId: 'cat-123',
-    description: 'Fix my sink',
-    intakeAnswers: undefined,
-    intakeSchemaVersion: undefined,
-    intakeSchemaJson: undefined,
-    photos: '[]',
-    location: 'Behind State Dept Store',
-    lat: '47.92123',
-    lng: '106.91876',
-    scheduledAt: new Date(2026, 3, 1, 10, 0).toISOString(),
-    budget: '50000',
-  });
+  mockDraftStoreState['test-draft-id'] = { ...baseDraft };
   mockUseCreateTask.mockReturnValue({
     mutateAsync: mockMutateAsync,
     isPending: false,
@@ -93,11 +102,12 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
   });
 
   it('renders structured intake answers with schema-backed labels in the review summary', () => {
-    Object.assign(mockParams, {
-      intakeAnswers: JSON.stringify({
+    mockDraftStoreState['test-draft-id'] = {
+      ...baseDraft,
+      intakeAnswers: {
         property_type: 'apartment',
         cleaning_type: 'deep_clean',
-      }),
+      },
       intakeSchemaJson: JSON.stringify([
         {
           key: 'property_type',
@@ -116,8 +126,8 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
           options: ['deep_clean'],
         },
       ]),
-      intakeSchemaVersion: '7',
-    });
+      intakeSchemaVersion: 7,
+    };
 
     render(<ReviewSubmitScreen />);
 
@@ -128,12 +138,13 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
   });
 
   it('falls back to prettified intake answers when schema is missing', () => {
-    Object.assign(mockParams, {
-      intakeAnswers: JSON.stringify({
+    mockDraftStoreState['test-draft-id'] = {
+      ...baseDraft,
+      intakeAnswers: {
         property_type: 'apartment',
         has_pets: true,
-      }),
-    });
+      },
+    };
 
     render(<ReviewSubmitScreen />);
 
@@ -190,7 +201,7 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith({
         pathname: '/(customer)/tasks/new/success',
-        params: { taskId: 'task-new-1' },
+        params: { taskId: 'task-new-1', draftId: 'test-draft-id' },
       });
     });
   });
@@ -204,7 +215,7 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith({
         pathname: '/(customer)/tasks/new/success',
-        params: { taskId: 'task-nested-2' },
+        params: { taskId: 'task-nested-2', draftId: 'test-draft-id' },
       });
     });
   });
@@ -223,11 +234,12 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
 
   it('TID-TASK-113-MOBILE-REVIEW-SUBMIT-PAYLOAD submits intake answers, schema version, and photo keys', async () => {
     mockMutateAsync.mockResolvedValue({ id: 'task-new-1' });
-    Object.assign(mockParams, {
-      photos: JSON.stringify(['photo-key-1', 'photo-key-2']),
-      intakeAnswers: JSON.stringify({ rooms: 2, supplies_provided: true }),
-      intakeSchemaVersion: '7',
-    });
+    mockDraftStoreState['test-draft-id'] = {
+      ...baseDraft,
+      photos: ['photo-key-1', 'photo-key-2'],
+      intakeAnswers: { rooms: 2, supplies_provided: true },
+      intakeSchemaVersion: 7,
+    };
 
     render(<ReviewSubmitScreen />);
     fireEvent.press(screen.getByText('Post Task'));

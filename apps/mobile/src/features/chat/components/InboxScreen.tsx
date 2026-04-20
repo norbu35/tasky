@@ -13,7 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { mobileTheme } from '../../../design/tokenAdapter';
-import { Conversation, createMobileApiClient } from '../../../lib/mobileApiClient';
+import { listConversations } from '../api';
+import type { Conversation } from '@/lib/api/types';
 import { useAuthStore } from '../../../store/authStore';
 
 const { colors, spacing } = mobileTheme;
@@ -29,8 +30,7 @@ export function InboxScreen() {
   const loadConversations = useCallback(async () => {
     if (!session) return;
     try {
-      const client = createMobileApiClient();
-      const res = await client.listConversations(session.accessToken);
+      const res = await listConversations(session.accessToken);
       setConversations(res.data);
       setError(null);
     } catch (err: unknown) {

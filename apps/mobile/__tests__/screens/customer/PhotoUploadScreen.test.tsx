@@ -6,11 +6,26 @@ import PhotoUploadScreen from '../../../src/app/(customer)/tasks/new/photos';
 
 const mockPush = jest.fn();
 const mockBack = jest.fn();
-const mockParams = { categoryId: 'cat-123', description: 'Fix my sink' };
+
+const mockDraftStoreState: any = {
+  'test-draft-id': {
+    draftId: 'test-draft-id',
+    categoryId: 'cat-123',
+    description: 'Fix my sink',
+    photos: [],
+    currentStep: 1,
+  },
+};
+
+const mockUpdateDraft = jest.fn();
+jest.mock('../../../src/features/tasks/draft', () => ({
+  useTaskDraftStore: (selector: any) =>
+    selector({ drafts: mockDraftStoreState, updateDraft: mockUpdateDraft }),
+}));
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: jest.fn(), back: mockBack }),
-  useLocalSearchParams: () => mockParams,
+  useLocalSearchParams: () => ({ draftId: 'test-draft-id' }),
 }));
 
 jest.mock('react-i18next', () => {
@@ -34,7 +49,13 @@ beforeEach(() => {
   jest.clearAllMocks();
   resetTestI18n();
   setTestLanguage('en');
-  Object.assign(mockParams, { categoryId: 'cat-123', description: 'Fix my sink' });
+  mockDraftStoreState['test-draft-id'] = {
+    draftId: 'test-draft-id',
+    categoryId: 'cat-123',
+    description: 'Fix my sink',
+    photos: [],
+    currentStep: 1,
+  };
 });
 
 describe('PhotoUploadScreen (SCR-CUST-004)', () => {
@@ -58,11 +79,10 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
   it('can skip photos and navigate to location', () => {
     render(<PhotoUploadScreen />);
     fireEvent.press(screen.getByTestId('SCR-CUST-004-next'));
-    expect(mockPush).toHaveBeenCalledWith(
-      expect.objectContaining({
-        pathname: '/(customer)/tasks/new/location',
-      }),
-    );
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/(customer)/tasks/new/location',
+      params: { draftId: 'test-draft-id' },
+    });
   });
 
   it('renders as step 3 of 7 wizard', () => {
@@ -82,57 +102,67 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
   });
 
   it('uses continue copy when uploaded photos already exist', () => {
-    Object.assign(mockParams, {
+    mockDraftStoreState['test-draft-id'] = {
+      draftId: 'test-draft-id',
       categoryId: 'cat-123',
       description: 'Fix my sink',
-      photos: JSON.stringify(['photo-key-1']),
-    });
+      photos: ['photo-key-1'],
+      currentStep: 1,
+    };
 
     render(<PhotoUploadScreen />);
 
     expect(screen.getByText('Continue')).toBeTruthy();
   });
 
-  it('shows remove action for uploaded photos and updates params payload after removal', () => {
-    Object.assign(mockParams, {
+  it('shows remove action for uploaded photos and updates draft after removal', () => {
+    mockDraftStoreState['test-draft-id'] = {
+      draftId: 'test-draft-id',
       categoryId: 'cat-123',
       description: 'Fix my sink',
-      photos: JSON.stringify(['photo-key-1', 'photo-key-2']),
-    });
+      photos: ['photo-key-1', 'photo-key-2'],
+      currentStep: 1,
+    };
 
     render(<PhotoUploadScreen />);
     fireEvent.press(screen.getByTestId('photo-upload-remove-0'));
     fireEvent.press(screen.getByTestId('SCR-CUST-004-next'));
 
-    expect(mockPush).toHaveBeenCalledWith(
+    expect(mockUpdateDraft).toHaveBeenCalledWith(
+      'test-draft-id',
       expect.objectContaining({
-        pathname: '/(customer)/tasks/new/location',
-        params: expect.objectContaining({
-          photos: JSON.stringify(['photo-key-2']),
-        }),
+        photos: ['photo-key-2'],
+        currentStep: 2,
       }),
     );
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/(customer)/tasks/new/location',
+      params: { draftId: 'test-draft-id' },
+    });
   });
 
   it('TID-TASK-113-MOBILE-PHOTO-KEYS-PERSIST preserves existing uploaded photo keys when continuing', () => {
-    Object.assign(mockParams, {
+    mockDraftStoreState['test-draft-id'] = {
+      draftId: 'test-draft-id',
       categoryId: 'cat-123',
       description: 'Fix my sink',
-      photos: JSON.stringify(['photo-key-1', 'photo-key-2']),
-    });
+      photos: ['photo-key-1', 'photo-key-2'],
+      currentStep: 1,
+    };
 
     render(<PhotoUploadScreen />);
     fireEvent.press(screen.getByTestId('SCR-CUST-004-next'));
 
-    expect(mockPush).toHaveBeenCalledWith(
+    expect(mockUpdateDraft).toHaveBeenCalledWith(
+      'test-draft-id',
       expect.objectContaining({
-        pathname: '/(customer)/tasks/new/location',
-        params: expect.objectContaining({
-          categoryId: 'cat-123',
-          description: 'Fix my sink',
-          photos: JSON.stringify(['photo-key-1', 'photo-key-2']),
-        }),
+        photos: ['photo-key-1', 'photo-key-2'],
+        currentStep: 2,
       }),
     );
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/(customer)/tasks/new/location',
+      params: { draftId: 'test-draft-id' },
+    });
   });
 });

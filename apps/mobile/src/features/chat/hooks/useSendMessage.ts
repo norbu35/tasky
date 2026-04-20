@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { sendMessage } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 interface SendMessageInput {
   conversationId: string;
@@ -17,7 +15,7 @@ export function useSendMessage() {
 
   return useMutation({
     mutationFn: (input: SendMessageInput) =>
-      api.sendMessage(token!, input.conversationId, input.content),
+      sendMessage(token!, input.conversationId, input.content),
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({
         queryKey: ['messages', variables.conversationId],

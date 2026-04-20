@@ -1,9 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { createMobileApiClient, type CreateTaskRequest } from '../../../lib/mobileApiClient';
+import { createTask } from '../api';
+import type { CreateTaskRequest } from '@/lib/api/types';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 export function useCreateTask() {
   const session = useAuthStore((s) => s.session);
@@ -11,7 +10,7 @@ export function useCreateTask() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: CreateTaskRequest) => api.createTask(token!, payload),
+    mutationFn: (payload: CreateTaskRequest) => createTask(token!, payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['tasks'] });
       void queryClient.invalidateQueries({ queryKey: ['myTasks'] });

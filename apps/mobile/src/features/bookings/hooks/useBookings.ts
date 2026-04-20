@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import { listBookings } from '../api';
 import { useAuthStore } from '../../../store/authStore';
-
-const api = createMobileApiClient();
 
 export function useBookings() {
   const session = useAuthStore((s) => s.session);
@@ -11,7 +9,7 @@ export function useBookings() {
 
   return useQuery({
     queryKey: ['bookings', token],
-    queryFn: () => api.listBookings(token!, {}),
+    queryFn: () => listBookings(token!, {}),
     enabled: !!token,
   });
 }
