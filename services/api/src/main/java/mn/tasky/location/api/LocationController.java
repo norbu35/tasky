@@ -2,11 +2,14 @@ package mn.tasky.location.api;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import mn.tasky.api.generated.LocationApi;
 import mn.tasky.location.application.LocationService;
 import mn.tasky.location.dto.LocationSearchResponse;
 import mn.tasky.location.dto.ReverseGeocodeResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/location")
 @Validated
-public class LocationController {
+@SuppressWarnings("unchecked")
+public class LocationController implements LocationApi {
 
     private final LocationService locationService;
 
@@ -27,18 +31,25 @@ public class LocationController {
         this.locationService = locationService;
     }
 
+    @Override
     @GetMapping("/reverse-geocode")
-    public ResponseEntity<ReverseGeocodeResponse> reverseGeocode(
-            @RequestParam @DecimalMin("-90.0") @DecimalMax("90.0") double lat,
-            @RequestParam @DecimalMin("-180.0") @DecimalMax("180.0") double lng) {
-        return ResponseEntity.ok(locationService.reverseGeocode(lat, lng));
+    public ResponseEntity<mn.tasky.api.generated.model.ReverseGeocodeResponse> reverseGeocode(
+            @NotNull @DecimalMin("-90.0") @DecimalMax("90.0") @RequestParam(value = "lat", required = true) Double lat,
+            @NotNull @DecimalMin("-180.0") @DecimalMax("180.0") @RequestParam(value = "lng", required = true)
+                    Double lng) {
+        ReverseGeocodeResponse result = locationService.reverseGeocode(lat, lng);
+        return (ResponseEntity<mn.tasky.api.generated.model.ReverseGeocodeResponse>)
+                (ResponseEntity<?>) ResponseEntity.ok(result);
     }
 
+    @Override
     @GetMapping("/search")
-    public ResponseEntity<LocationSearchResponse> search(
-            @RequestParam @NotBlank String q,
-            @RequestParam(value = "bias_lat", required = false) Double biasLat,
-            @RequestParam(value = "bias_lng", required = false) Double biasLng) {
-        return ResponseEntity.ok(locationService.search(q, biasLat, biasLng));
+    public ResponseEntity<mn.tasky.api.generated.model.LocationSearchResponse> searchLocations(
+            @NotNull @Size(min = 1) @RequestParam(value = "q", required = true) String q,
+            @RequestParam(value = "bias_lat", required = false) @Nullable Double biasLat,
+            @RequestParam(value = "bias_lng", required = false) @Nullable Double biasLng) {
+        LocationSearchResponse result = locationService.search(q, biasLat, biasLng);
+        return (ResponseEntity<mn.tasky.api.generated.model.LocationSearchResponse>)
+                (ResponseEntity<?>) ResponseEntity.ok(result);
     }
 }
