@@ -1,16 +1,11 @@
-import { AlertTriangle, CircleAlert, Scale } from 'lucide-react-native';
+import { AlertTriangle } from 'lucide-react-native';
 import React from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { Touchable } from '@/components/ui/Touchable';
-import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
-import { type DisputeLike, DISPUTE_STATUS_SURFACE, getEvidenceLabel } from './DisputeStatus.model';
-
-export { TimelineSection } from './DisputeStatus.timeline';
-export { DISPUTE_STATUS_SURFACE as SURFACE } from './DisputeStatus.model';
+import { DISPUTE_STATUS_SURFACE } from './DisputeStatus.model';
 
 const { colors } = mobileTheme;
 
@@ -141,90 +136,6 @@ export function PhaseNote({ text }: { text: string }) {
   return (
     <View className="bg-muted rounded-lg p-lg">
       <Text className="text-body text-text-secondary text-center leading-normal">{text}</Text>
-    </View>
-  );
-}
-
-export function EvidenceList({
-  items,
-  sectionTitle,
-  emptyLabel,
-  t,
-}: {
-  items: DisputeLike['evidence'];
-  sectionTitle: string;
-  emptyLabel: string;
-  t: (key: string) => string;
-}) {
-  const evidenceItems = Array.isArray(items) ? items : [];
-  return (
-    <View className="bg-card rounded-lg p-lg gap-sm" style={elevations.soft}>
-      <Text className="text-heading font-sans-bold text-primary-deep">{sectionTitle}</Text>
-      {evidenceItems.length > 0 ? (
-        evidenceItems.map((item, index) => (
-          <View
-            key={`${index}-${typeof item === 'string' ? item : item.type}-${typeof item === 'string' ? 'string' : (item.storage_key ?? 'item')}`}
-            className="flex-row items-start gap-sm"
-          >
-            <View
-              className="rounded-full bg-primary-deep mt-sm"
-              style={{
-                width: DISPUTE_STATUS_SURFACE.timeline.evidenceBullet,
-                height: DISPUTE_STATUS_SURFACE.timeline.evidenceBullet,
-              }}
-            />
-            <Text className="flex-1 text-body text-primary-deep leading-snug">
-              {getEvidenceLabel(item, t)}
-            </Text>
-          </View>
-        ))
-      ) : (
-        <Text className="text-body text-text-secondary">{emptyLabel}</Text>
-      )}
-    </View>
-  );
-}
-
-export function DecorativeScale() {
-  return (
-    <View
-      className="rounded-lg overflow-hidden items-center justify-center"
-      style={{
-        height: DISPUTE_STATUS_SURFACE.timeline.decorativeScaleHeight,
-        opacity: 0.4,
-      }}
-    >
-      <Scale size={24} color={colors.textSecondary} />
-    </View>
-  );
-}
-
-export function LoadingState() {
-  return (
-    <View className="items-center justify-center py-3xl">
-      <ActivityIndicator size="small" color={colors.primaryDeep} />
-    </View>
-  );
-}
-
-export function ErrorState({
-  errorMessage,
-  retryLabel,
-  onRetry,
-}: {
-  errorMessage: string;
-  retryLabel: string;
-  onRetry: () => void;
-}) {
-  return (
-    <View className="bg-card rounded-lg p-lg items-center gap-sm">
-      <CircleAlert size={24} color={colors.danger} />
-      <Text className="text-body text-primary-deep text-center leading-relaxed">
-        {errorMessage}
-      </Text>
-      <Touchable onPress={onRetry} className="px-lg py-sm rounded-md border border-primary-deep">
-        <Text className="text-body text-primary-deep font-sans-bold">{retryLabel}</Text>
-      </Touchable>
     </View>
   );
 }

@@ -5,7 +5,10 @@ import { ScreenContainer } from '@/components/shells/ScreenContainer';
 import { ErrorStateTemplate } from '@/components/templates/ErrorStateTemplate';
 import { mobileTheme } from '@/design/tokenAdapter';
 
-import { ChatHeader, InputBar, MessageBubble, PhoneWarning } from './ChatConversation.parts';
+import { ChatHeader } from './ChatConversation.Header';
+import { InputBar } from './ChatConversation.InputBar';
+import { MessageBubble } from './ChatConversation.MessageBubble';
+import { PhoneWarning } from './ChatConversation.PhoneWarning';
 import { useChatConversation } from './useChatConversation';
 
 const { colors, spacing } = mobileTheme;

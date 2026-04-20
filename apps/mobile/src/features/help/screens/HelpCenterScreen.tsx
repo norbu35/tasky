@@ -6,13 +6,9 @@ import { InsetScrollView, ScreenContainer } from '@/components/shells';
 import { Touchable } from '@/components/ui/Touchable';
 import { mobileTheme } from '@/design/tokenAdapter';
 
-import {
-  CategorySection,
-  HelpErrorState,
-  HelpLoading,
-  HelpSearchBar,
-  SURFACE,
-} from './HelpCenter.parts';
+import { CategorySection } from './HelpCenter.FaqList';
+import { HelpSearchBar, SURFACE } from './HelpCenter.SearchBar';
+import { HelpErrorState, HelpLoading } from './HelpCenter.States';
 import { useHelpCenter } from './useHelpCenter';
 
 const { colors, spacing } = mobileTheme;

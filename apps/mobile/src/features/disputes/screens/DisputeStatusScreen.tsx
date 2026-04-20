@@ -8,16 +8,14 @@ import { screenLayout } from '@/design/screenLayout';
 import { mobileTheme } from '@/design/tokenAdapter';
 
 import {
-  DecorativeScale,
-  DisputeSummary,
-  ErrorState,
-  EvidenceList,
-  LoadingState,
-  PhaseNote,
-  ResolutionSection,
   StatusBadge,
-  TimelineSection,
-} from './DisputeStatus.parts';
+  DisputeSummary,
+  ResolutionSection,
+  PhaseNote,
+} from './DisputeStatus.SummarySections';
+import { EvidenceList } from './DisputeStatus.EvidenceList';
+import { DecorativeScale, LoadingState, ErrorState } from './DisputeStatus.States';
+import { TimelineSection } from './DisputeStatus.timeline';
 import { useDisputeStatus } from './useDisputeStatus';
 
 const { colors, spacing } = mobileTheme;
