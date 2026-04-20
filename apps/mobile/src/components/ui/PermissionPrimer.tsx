@@ -8,6 +8,7 @@ import { mobileSurfaces } from '../../design/surfaces';
 import { cn } from '../../lib/cn';
 
 import { Button } from './Button';
+import { IllustrationArea, IconPreview } from './PermissionPrimer.Illustration';
 
 const { colors, spacing, typography } = mobileTheme;
 const { permissionPrimer } = mobileSurfaces;
@@ -58,23 +59,7 @@ export function PermissionPrimer({
     <View className={cn('flex-1 justify-end', className)} testID={testID}>
       <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.muted }]} />
       <View style={[StyleSheet.absoluteFill, { backgroundColor: overlays.sheet }]} />
-      {/* Illustration area — fills upper ~60% with a prominent centred icon */}
-      <View
-        className="absolute left-0 right-0 top-0 bottom-[40%] items-center justify-center"
-        pointerEvents="none"
-      >
-        <View
-          className="rounded-full items-center justify-center"
-          style={{
-            width: permissionPrimer.topIllustrationSize,
-            height: permissionPrimer.topIllustrationSize,
-            backgroundColor: colors.card,
-            ...elevations.elevated,
-          }}
-        >
-          {icon}
-        </View>
-      </View>
+      <IllustrationArea icon={icon} />
       <View
         className="bg-background rounded-tl-lg rounded-tr-lg px-xl pt-md pb-xl items-center"
         style={elevations.card}
@@ -86,34 +71,7 @@ export function PermissionPrimer({
             height: permissionPrimer.sheetHandleHeight,
           }}
         />
-        <View className="mt-sm mb-lg items-center">
-          <View
-            className="rounded-md items-center justify-center bg-muted"
-            style={{
-              width: permissionPrimer.iconPreviewSize,
-              height: permissionPrimer.iconPreviewSize,
-            }}
-          >
-            {icon}
-          </View>
-          <View
-            className="absolute rounded-md items-center justify-center bg-accent border-background"
-            style={[
-              elevations.card,
-              {
-                top: permissionPrimer.badgeOffset,
-                right: permissionPrimer.badgeOffset,
-                width: permissionPrimer.badgeSize,
-                height: permissionPrimer.badgeSize,
-                borderWidth: permissionPrimer.badgeBorder,
-              },
-            ]}
-          >
-            <Text style={{ color: colors.primaryDeep, fontSize: 14, fontWeight: '700' }}>
-              {badgeLabel}
-            </Text>
-          </View>
-        </View>
+        <IconPreview icon={icon} badgeLabel={badgeLabel} />
         <Text
           className="text-center mb-sm"
           style={{

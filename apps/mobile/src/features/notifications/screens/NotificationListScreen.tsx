@@ -10,83 +10,11 @@ import { Button } from '@/components/ui/Button';
 import { Touchable } from '@/components/ui/Touchable';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
-import {
-  useNotifications,
-  type Notification,
-} from '@/features/notifications/hooks/useNotifications';
+import { useNotifications } from '@/features/notifications/hooks/useNotifications';
+
+import { buildRows, formatRelativeTimestamp, type Row } from './NotificationList.model';
 
 const { colors, spacing } = mobileTheme;
-
-type Row =
-  | { type: 'section'; id: string; label: string }
-  | { type: 'notification'; id: string; notification: Notification };
-
-function formatRelativeTimestamp(timestamp: string, t: (key: string) => string): string {
-  const date = new Date(timestamp);
-  const diffMs = Date.now() - date.getTime();
-  const diffMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
-  const diffHours = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60)));
-
-  if (diffMinutes < 1) {
-    return t('NotificationCenterScreen.copy1');
-  }
-
-  if (diffMinutes < 60) {
-    return `${diffMinutes} мин өмнө`;
-  }
-
-  if (diffHours < 24) {
-    return `${diffHours} цагийн өмнө`;
-  }
-
-  return date.toLocaleDateString('en-CA');
-}
-
-function isSameDay(left: Date, right: Date): boolean {
-  return (
-    left.getFullYear() === right.getFullYear() &&
-    left.getMonth() === right.getMonth() &&
-    left.getDate() === right.getDate()
-  );
-}
-
-function buildRows(notifications: Notification[], todayLabel: string, earlierLabel: string): Row[] {
-  if (notifications.length === 0) return [];
-
-  const sorted = [...notifications].sort(
-    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-  );
-  const anchorDate = new Date(sorted[0].created_at);
-
-  const today = sorted.filter((item) => isSameDay(new Date(item.created_at), anchorDate));
-  const earlier = sorted.filter((item) => !isSameDay(new Date(item.created_at), anchorDate));
-
-  const rows: Row[] = [];
-
-  if (today.length > 0) {
-    rows.push({ type: 'section', id: 'today', label: todayLabel });
-    rows.push(
-      ...today.map((notification) => ({
-        type: 'notification' as const,
-        id: notification.id,
-        notification,
-      })),
-    );
-  }
-
-  if (earlier.length > 0) {
-    rows.push({ type: 'section', id: 'earlier', label: earlierLabel });
-    rows.push(
-      ...earlier.map((notification) => ({
-        type: 'notification' as const,
-        id: notification.id,
-        notification,
-      })),
-    );
-  }
-
-  return rows;
-}
 
 function getNotificationMeta(title: string): { icon: React.ReactNode; shellColor: string } {
   if (/message/i.test(title)) {

@@ -8,6 +8,7 @@ import { Touchable } from '@/components/ui/Touchable';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
 
+import { HelpErrorVisual } from './HelpCenter.ErrorVisual';
 import type { FaqItem, FaqSection } from './HelpCenter.model';
 
 const { colors, spacing, radius, typography } = mobileTheme;
@@ -18,36 +19,6 @@ const HELP_SURFACE = {
   faqIconSize: 20,
   searchIconSize: 16,
   loadingRows: 6,
-  errorVisual: {
-    canvas: 132,
-    halo: 108,
-    haloOpacity: 0.55,
-    ring: 92,
-    ringBorderWidth: 2,
-    bubblePrimary: {
-      width: 58,
-      height: 40,
-      radius: 18,
-      left: 8,
-      top: 18,
-      tailSize: 10,
-      tailLeft: 12,
-      tailBottom: -5,
-    },
-    bubbleSecondary: {
-      width: 44,
-      height: 30,
-      radius: 14,
-      right: 10,
-      bottom: 14,
-      tailSize: 8,
-      tailRight: 10,
-      tailBottom: -4,
-    },
-    marker: {
-      size: 28,
-    },
-  },
 } as const;
 
 export const SURFACE = HELP_SURFACE;
@@ -117,104 +88,6 @@ export function HelpLoading({ searchPlaceholder }: { searchPlaceholder: string }
             />
           </View>
         ))}
-      </View>
-    </View>
-  );
-}
-
-function HelpErrorVisual() {
-  return (
-    <View
-      className="items-center justify-center mb-lg"
-      style={{ width: HELP_SURFACE.errorVisual.canvas, height: HELP_SURFACE.errorVisual.canvas }}
-      accessibilityRole="image"
-    >
-      <View
-        style={{
-          position: 'absolute',
-          width: HELP_SURFACE.errorVisual.halo,
-          height: HELP_SURFACE.errorVisual.halo,
-          borderRadius: radius.full,
-          backgroundColor: colors.muted,
-          opacity: HELP_SURFACE.errorVisual.haloOpacity,
-        }}
-      />
-      <View
-        style={{
-          width: HELP_SURFACE.errorVisual.ring,
-          height: HELP_SURFACE.errorVisual.ring,
-          borderRadius: radius.full,
-          borderWidth: HELP_SURFACE.errorVisual.ringBorderWidth,
-          borderColor: colors.primary,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <View
-          style={{
-            width: HELP_SURFACE.errorVisual.bubblePrimary.width,
-            height: HELP_SURFACE.errorVisual.bubblePrimary.height,
-            borderRadius: HELP_SURFACE.errorVisual.bubblePrimary.radius,
-            backgroundColor: colors.card,
-            borderWidth: 1,
-            borderColor: colors.border,
-            position: 'absolute',
-            left: HELP_SURFACE.errorVisual.bubblePrimary.left,
-            top: HELP_SURFACE.errorVisual.bubblePrimary.top,
-          }}
-        >
-          <View
-            style={{
-              position: 'absolute',
-              left: HELP_SURFACE.errorVisual.bubblePrimary.tailLeft,
-              bottom: HELP_SURFACE.errorVisual.bubblePrimary.tailBottom,
-              width: HELP_SURFACE.errorVisual.bubblePrimary.tailSize,
-              height: HELP_SURFACE.errorVisual.bubblePrimary.tailSize,
-              backgroundColor: colors.card,
-              borderLeftWidth: 1,
-              borderBottomWidth: 1,
-              borderColor: colors.border,
-              transform: [{ rotate: '45deg' }],
-            }}
-          />
-        </View>
-        <View
-          style={{
-            width: HELP_SURFACE.errorVisual.bubbleSecondary.width,
-            height: HELP_SURFACE.errorVisual.bubbleSecondary.height,
-            borderRadius: HELP_SURFACE.errorVisual.bubbleSecondary.radius,
-            backgroundColor: colors.primary,
-            position: 'absolute',
-            right: HELP_SURFACE.errorVisual.bubbleSecondary.right,
-            bottom: HELP_SURFACE.errorVisual.bubbleSecondary.bottom,
-          }}
-        >
-          <View
-            style={{
-              position: 'absolute',
-              right: HELP_SURFACE.errorVisual.bubbleSecondary.tailRight,
-              bottom: HELP_SURFACE.errorVisual.bubbleSecondary.tailBottom,
-              width: HELP_SURFACE.errorVisual.bubbleSecondary.tailSize,
-              height: HELP_SURFACE.errorVisual.bubbleSecondary.tailSize,
-              backgroundColor: colors.primary,
-              transform: [{ rotate: '45deg' }],
-            }}
-          />
-        </View>
-        <View
-          style={{
-            width: HELP_SURFACE.errorVisual.marker.size,
-            height: HELP_SURFACE.errorVisual.marker.size,
-            borderRadius: radius.full,
-            backgroundColor: colors.danger,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Text className="text-caption font-sans-bold" style={{ color: colors.dangerForeground }}>
-            ?
-          </Text>
-        </View>
       </View>
     </View>
   );

@@ -150,56 +150,6 @@ export function ApplicantsSection({ hasApplicants, applicantCount, t }: Applican
   );
 }
 
-interface PhotosSectionProps {
-  photos: string[];
-  t: (k: string) => string;
-}
-
-export function PhotosSection({ photos, t }: PhotosSectionProps) {
-  return (
-    <View className="bg-muted rounded-sm p-lg gap-sm">
-      <View className="flex-row justify-between items-center">
-        <Text className="text-subtitle font-extrabold text-foreground">
-          {t('TaskDetailCustomerScreen.photos')}
-        </Text>
-        <Text
-          className="text-caption font-extrabold text-center text-primary-deep"
-          style={{
-            minWidth: taskDetail.pillMinWidth,
-            paddingHorizontal: taskDetail.pillInsetX,
-            paddingVertical: taskDetail.pillInsetY,
-            borderRadius: 9999,
-            backgroundColor: tint.primarySoft,
-          }}
-        >
-          {photos.length}
-        </Text>
-      </View>
-      <View className="flex-row flex-wrap gap-sm">
-        {photos.length > 0 ? (
-          photos.slice(0, 4).map((photoKey, index) => (
-            <View
-              key={`${photoKey}-${index}`}
-              className="rounded-md items-center justify-center"
-              style={{
-                width: taskDetail.photoTileWidth,
-                height: taskDetail.photoTileHeight,
-                backgroundColor: tint.primarySoft,
-              }}
-            >
-              <Text className="text-body font-extrabold text-primary-deep">{index + 1}</Text>
-            </View>
-          ))
-        ) : (
-          <Text className="text-body text-text-secondary leading-relaxed">
-            {t('TaskDetailCustomerScreen.noPhotos')}
-          </Text>
-        )}
-      </View>
-    </View>
-  );
-}
-
 interface LocationCardProps {
   locationText?: string;
   t: (k: string) => string;
@@ -256,40 +206,6 @@ export function TaskerCard({ tasker, onPress, t }: TaskerCardProps) {
   );
 }
 
-interface CompletedBannerProps {
-  t: (k: string) => string;
-}
-
-export function CompletedBanner({ t }: CompletedBannerProps) {
-  return (
-    <View className="p-lg rounded-lg gap-xs" style={{ backgroundColor: tint.borderSoft }}>
-      <Text className="text-body font-extrabold text-primary-deep">
-        {t('TaskDetailCustomerScreen.completedTitle')}
-      </Text>
-      <Text className="text-caption text-text-secondary">
-        {t('TaskDetailCustomerScreen.completedBody')}
-      </Text>
-    </View>
-  );
-}
-
-interface CancelledBannerProps {
-  t: (k: string) => string;
-}
-
-export function CancelledBanner({ t }: CancelledBannerProps) {
-  return (
-    <View className="p-lg rounded-lg gap-xs" style={{ backgroundColor: tint.borderSoft }}>
-      <Text className="text-body font-extrabold text-primary-deep">
-        {t('TaskDetailCustomerScreen.cancelledTitle')}
-      </Text>
-      <Text className="text-caption text-text-secondary">
-        {t('TaskDetailCustomerScreen.cancelledBody')}
-      </Text>
-    </View>
-  );
-}
-
 interface TaskHeaderProps {
   status: string;
   description: string;
@@ -324,3 +240,5 @@ export function TaskHeader({ status, description, t }: TaskHeaderProps) {
 
 export { DetailTemplate } from '@/components/templates/DetailTemplate';
 export { TaskCancelSheet } from '../components/TaskCancelSheet';
+export { CompletedBanner, CancelledBanner } from './CustomerTaskDetail.Banners';
+export { PhotosSection } from './CustomerTaskDetail.Photos';
