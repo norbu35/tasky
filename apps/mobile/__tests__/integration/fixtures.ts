@@ -143,8 +143,6 @@ export const baseBooking: Booking = {
 export function resetStores(): void {
   useAuthStore.setState({
     session: null,
-    profile: null,
-    deviceToken: null,
   });
   useAppStore.setState({
     hasSeenOnboarding: true,
@@ -152,22 +150,19 @@ export function resetStores(): void {
   });
 }
 
-export function setAuthenticated(
-  session: AuthTokens = baseSession,
-  profile: Profile = baseProfile,
-): void {
-  useAuthStore.setState({ session, profile });
+export function setAuthenticated(session: AuthTokens = baseSession): void {
+  useAuthStore.setState({ session });
 }
 
 export function setFirstTimeUser(): void {
-  useAuthStore.setState({ session: null, profile: null, deviceToken: null });
+  useAuthStore.setState({ session: null });
   useAppStore.setState({ hasSeenOnboarding: false, currentRole: 'customer' });
 }
 
 export function setBannedUser(): void {
-  useAuthStore.setState({ session: baseSession, profile: bannedProfile });
+  useAuthStore.setState({ session: baseSession });
 }
 
 export function setSuspendedUser(): void {
-  useAuthStore.setState({ session: baseSession, profile: suspendedProfile });
+  useAuthStore.setState({ session: baseSession });
 }

@@ -1,9 +1,11 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { render, screen } from '@testing-library/react-native';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { useRouteGuard } from '../../src/hooks/useRouteGuard';
 import { useAuthStore } from '../../src/store/authStore';
 import type { AuthTokens, Profile, User } from '../../src/lib/api/types';
+import { createTestQueryClient } from '../test-utils/queryClient';
 
 const mockReplace = jest.fn();
 const mockBack = jest.fn();
@@ -57,63 +59,112 @@ function GuardConsumer({ requireAuth }: { requireAuth?: boolean }) {
 
 beforeEach(() => {
   jest.clearAllMocks();
-  useAuthStore.setState({ session: null, profile: null, deviceToken: null });
+  useAuthStore.setState({ session: null });
 });
 
 describe('useRouteGuard', () => {
   it('returns isAuthenticated true when session exists', () => {
-    useAuthStore.setState({ session: baseSession, profile: baseProfile });
+    const queryClient = createTestQueryClient();
+    useAuthStore.setState({ session: baseSession });
+    queryClient.setQueryData(['me', baseSession.accessToken], baseProfile);
 
-    render(<GuardConsumer requireAuth />);
+    render(
+      <QueryClientProvider client={queryClient}>
+        <GuardConsumer requireAuth />
+      </QueryClientProvider>,
+    );
 
     expect(screen.getByTestId('is-authenticated')).toHaveTextContent('true');
+    queryClient.clear();
   });
 
   it('returns isAuthenticated false when no session', () => {
-    render(<GuardConsumer requireAuth />);
+    const queryClient = createTestQueryClient();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <GuardConsumer requireAuth />
+      </QueryClientProvider>,
+    );
 
     expect(screen.getByTestId('is-authenticated')).toHaveTextContent('false');
+    queryClient.clear();
   });
 
   it('redirects to /(auth) when requireAuth and no session', () => {
-    render(<GuardConsumer requireAuth />);
+    const queryClient = createTestQueryClient();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <GuardConsumer requireAuth />
+      </QueryClientProvider>,
+    );
 
     expect(mockReplace).toHaveBeenCalledWith('/(auth)');
+    queryClient.clear();
   });
 
   it('redirects to /account/banned when profile status is BANNED', () => {
-    useAuthStore.setState({
-      session: baseSession,
-      profile: { ...baseProfile, status: 'BANNED' },
+    const queryClient = createTestQueryClient();
+    useAuthStore.setState({ session: baseSession });
+    queryClient.setQueryData(['me', baseSession.accessToken], {
+      ...baseProfile,
+      status: 'BANNED',
     });
 
-    render(<GuardConsumer requireAuth />);
+    render(
+      <QueryClientProvider client={queryClient}>
+        <GuardConsumer requireAuth />
+      </QueryClientProvider>,
+    );
 
     expect(mockReplace).toHaveBeenCalledWith('/account/banned');
+    queryClient.clear();
   });
 
   it('redirects to /account/suspended when profile status is SUSPENDED', () => {
-    useAuthStore.setState({
-      session: baseSession,
-      profile: { ...baseProfile, status: 'SUSPENDED' },
+    const queryClient = createTestQueryClient();
+    useAuthStore.setState({ session: baseSession });
+    queryClient.setQueryData(['me', baseSession.accessToken], {
+      ...baseProfile,
+      status: 'SUSPENDED',
     });
 
-    render(<GuardConsumer requireAuth />);
+    render(
+      <QueryClientProvider client={queryClient}>
+        <GuardConsumer requireAuth />
+      </QueryClientProvider>,
+    );
 
     expect(mockReplace).toHaveBeenCalledWith('/account/suspended');
+    queryClient.clear();
   });
 
   it('does not redirect when authenticated and not restricted', () => {
-    useAuthStore.setState({ session: baseSession, profile: baseProfile });
+    const queryClient = createTestQueryClient();
+    useAuthStore.setState({ session: baseSession });
+    queryClient.setQueryData(['me', baseSession.accessToken], baseProfile);
 
-    render(<GuardConsumer requireAuth />);
+    render(
+      <QueryClientProvider client={queryClient}>
+        <GuardConsumer requireAuth />
+      </QueryClientProvider>,
+    );
 
     expect(mockReplace).not.toHaveBeenCalled();
+    queryClient.clear();
   });
 
   it('does not redirect to auth when requireAuth is false', () => {
-    render(<GuardConsumer requireAuth={false} />);
+    const queryClient = createTestQueryClient();
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <GuardConsumer requireAuth={false} />
+      </QueryClientProvider>,
+    );
 
     expect(mockReplace).not.toHaveBeenCalled();
+    queryClient.clear();
   });
 });

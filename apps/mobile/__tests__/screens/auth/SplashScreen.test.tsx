@@ -69,7 +69,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   resetTestI18n();
   setTestLanguage('mn');
-  useAuthStore.setState({ session: null, profile: null, deviceToken: null });
+  useAuthStore.setState({ session: null });
   useAppStore.setState({ hasSeenOnboarding: true, currentRole: 'customer' });
 });
 

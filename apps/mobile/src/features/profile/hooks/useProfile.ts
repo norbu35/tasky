@@ -1,16 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
 
 import { getMyProfile, updateMyProfile } from '../api';
-import type { Profile } from '@/lib/api/types';
 import { useAuthStore } from '../../../store/authStore';
+import { queryKeys } from '../../../lib/queryKeys';
 
 export function useMyProfile() {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['me', token],
+    queryKey: queryKeys.me.all(token!),
     queryFn: () => getMyProfile(token!),
     enabled: !!token,
   });
@@ -20,31 +19,34 @@ export function useUpdateProfile() {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
   const queryClient = useQueryClient();
-  const setProfile = useAuthStore((s) => s.setProfile);
 
   return useMutation({
     mutationFn: (payload: { full_name?: string; avatar_url?: string; bio?: string }) =>
       updateMyProfile(token!, payload),
     onSuccess: (updatedProfile) => {
-      setProfile(updatedProfile);
-      void queryClient.invalidateQueries({ queryKey: ['me'] });
+      if (token) {
+        queryClient.setQueryData(queryKeys.me.all(token), updatedProfile);
+      }
     },
   });
 }
 
-export function useProfileSync() {
-  const queryClient = useQueryClient();
-  const setProfile = useAuthStore((s) => s.setProfile);
+/** Returns the current user's ID from the React Query cache. */
+export function useMyUserId(): string | undefined {
+  const { data } = useMyProfile();
+  return data?.id;
+}
 
-  useEffect(() => {
-    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
-      if (event?.query.queryKey[0] === 'me') {
-        const data = event.query.state.data;
-        if (data) setProfile(data as Profile);
-      }
-    });
-    return unsubscribe;
-  }, [queryClient, setProfile]);
+/** Returns current user's status fields for guards and UI checks. */
+export function useCurrentUserStatus() {
+  const { data: profile, isLoading } = useMyProfile();
+  return {
+    status: profile?.status,
+    isBanned: profile?.status === 'BANNED',
+    isSuspended: profile?.status === 'SUSPENDED',
+    isVerified: profile?.status === 'VERIFIED',
+    isLoading,
+  };
 }
 
 export function useSignOut() {

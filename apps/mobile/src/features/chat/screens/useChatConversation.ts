@@ -6,8 +6,8 @@ import { FlatList } from 'react-native';
 import { useConversations } from '@/features/chat/hooks/useConversations';
 import { useMessages } from '@/features/chat/hooks/useMessages';
 import { useSendMessage } from '@/features/chat/hooks/useSendMessage';
+import { useMyUserId } from '@/features/profile/hooks/useProfile';
 import { formatLastActive } from '@/lib/formatLastActive';
-import { useAuthStore } from '@/store/authStore';
 
 import { type MessageItem, PHONE_REGEX } from './ChatConversation.model';
 
@@ -15,8 +15,7 @@ export function useChatConversation() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { t } = useTranslation();
-  const profile = useAuthStore((s) => s.profile);
-  const myId = profile?.id;
+  const myId = useMyUserId();
 
   const { data, isLoading, isError, refetch } = useMessages(id ?? '');
   const { mutate: sendMessage, isPending } = useSendMessage();

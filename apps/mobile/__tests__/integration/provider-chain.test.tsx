@@ -9,7 +9,7 @@ import {
   NotificationProvider,
   useNotificationContext,
 } from '../../src/providers/NotificationProvider';
-import { baseSession, baseProfile, resetStores } from './fixtures';
+import { baseSession, resetStores } from './fixtures';
 import { createTestQueryClient } from '../test-utils/queryClient';
 
 jest.mock('expo-router', () => {
@@ -201,18 +201,15 @@ describe('provider-chain', () => {
   it('signOut clears auth state', () => {
     useAuthStore.setState({
       session: baseSession,
-      profile: baseProfile,
     });
 
     // Verify state is set
     expect(useAuthStore.getState().session).toEqual(baseSession);
-    expect(useAuthStore.getState().profile).toEqual(baseProfile);
 
     // Call signOut
     useAuthStore.getState().signOut();
 
     // Verify state is cleared
     expect(useAuthStore.getState().session).toBeNull();
-    expect(useAuthStore.getState().profile).toBeNull();
   });
 });

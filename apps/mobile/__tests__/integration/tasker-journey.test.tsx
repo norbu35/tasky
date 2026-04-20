@@ -191,7 +191,7 @@ describe('Tasker journey integration', () => {
 
   describe('Tasker profile', () => {
     it('tasker profile shows verified badge content', () => {
-      setAuthenticated(taskerSession, taskerProfile);
+      setAuthenticated(taskerSession);
       useAppStore.setState({ currentRole: 'tasker' });
 
       mockUseMyProfile.mockReturnValue({

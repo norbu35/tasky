@@ -1,10 +1,11 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 
 import { requestOtp, verifyOtp, devLogin } from '../api';
 import { getMyProfile } from '../../profile/api';
 import { useAppStore } from '../../../store/appStore';
 import { useAuthStore } from '../../../store/authStore';
+import { queryKeys } from '../../../lib/queryKeys';
 import { resolvePostAuthHref } from '../../../utils/authRouting';
 
 export const DEV_LOGIN_CUSTOMER_PHONE = '+97692000001';
@@ -20,7 +21,7 @@ export function useRequestOtp() {
 
 export function useVerifyOtp() {
   const setSession = useAuthStore((state) => state.setSession);
-  const setProfile = useAuthStore((state) => state.setProfile);
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ phone, code }: { phone: string; code: string }) => {
@@ -28,13 +29,11 @@ export function useVerifyOtp() {
     },
     onSuccess: async (session) => {
       setSession(session);
-      // Fetch profile immediately
       try {
         const profile = await getMyProfile(session.accessToken);
-        setProfile(profile);
+        queryClient.setQueryData(queryKeys.me.all(session.accessToken), profile);
       } catch (e) {
         console.error('Failed to fetch profile after login', e);
-        // Still navigate, profile might be fetched later or retry.
       }
 
       router.replace(resolvePostAuthHref(session, useAppStore.getState().hasSeenOnboarding));
@@ -44,8 +43,8 @@ export function useVerifyOtp() {
 
 export function useDevLogin() {
   const setSession = useAuthStore((state) => state.setSession);
-  const setProfile = useAuthStore((state) => state.setProfile);
   const setRole = useAppStore((state) => state.setRole);
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ phone, role }: { phone: string; role: 'CUSTOMER' | 'TASKER' }) => {
@@ -56,7 +55,7 @@ export function useDevLogin() {
       setRole(variables.role.toLowerCase() as 'customer' | 'tasker');
       try {
         const profile = await getMyProfile(session.accessToken);
-        setProfile(profile);
+        queryClient.setQueryData(queryKeys.me.all(session.accessToken), profile);
       } catch (e) {
         console.error('Failed to fetch profile after dev login', e);
       }

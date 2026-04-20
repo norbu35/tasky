@@ -5,7 +5,7 @@ import { useAppStore } from '../../src/store/appStore';
 import { useAuthStore } from '../../src/store/authStore';
 import { createTestQueryClient } from '../test-utils/queryClient';
 
-const mockDevLogin = jest.fn();
+const mockRequestJson = jest.fn();
 const mockGetMyProfile = jest.fn();
 
 const mockRouter = {
@@ -36,9 +36,13 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 
 jest.mock('../../src/lib/mobileApiClient', () => ({
   createMobileApiClient: () => ({
-    devLogin: mockDevLogin,
-    getMyProfile: mockGetMyProfile,
+    requestJson: mockRequestJson,
+    requestVoid: jest.fn(),
   }),
+}));
+
+jest.mock('../../src/features/profile/api', () => ({
+  getMyProfile: (...args: unknown[]) => mockGetMyProfile(...args),
 }));
 
 type DevLoginMutation = {
@@ -70,9 +74,9 @@ describe('useDevLogin', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     latestMutation = null;
-    mockDevLogin.mockResolvedValue({
-      accessToken: 'dev-access-token',
-      refreshToken: 'dev-refresh-token',
+    mockRequestJson.mockResolvedValue({
+      access_token: 'dev-access-token',
+      refresh_token: 'dev-refresh-token',
       user: {
         id: 'customer-1',
         phone: '+97692000001',
@@ -94,7 +98,7 @@ describe('useDevLogin', () => {
       is_pro: false,
       created_at: '2026-02-14T00:00:00Z',
     });
-    useAuthStore.setState({ session: null, profile: null, deviceToken: null });
+    useAuthStore.setState({ session: null });
     useAppStore.setState({ hasSeenOnboarding: false, currentRole: 'customer' });
   });
 
@@ -114,10 +118,15 @@ describe('useDevLogin', () => {
       });
     });
 
-    expect(mockDevLogin).toHaveBeenCalledWith('+97692000001', 'CUSTOMER');
+    expect(mockRequestJson).toHaveBeenCalledWith('/auth/dev/login', {
+      method: 'POST',
+      body: JSON.stringify({ phone: '+97692000001', role: 'CUSTOMER' }),
+    });
     expect(mockGetMyProfile).toHaveBeenCalledWith('dev-access-token');
     expect(useAuthStore.getState().session?.user.role).toBe('CUSTOMER');
-    expect(useAuthStore.getState().profile?.full_name).toBe('Test Customer');
+    expect(queryClient.getQueryData(['me', 'dev-access-token'])).toEqual(
+      expect.objectContaining({ full_name: 'Test Customer' }),
+    );
     expect(useAppStore.getState().currentRole).toBe('customer');
     expect(mockRouter.replace).toHaveBeenCalledWith('/onboarding');
 

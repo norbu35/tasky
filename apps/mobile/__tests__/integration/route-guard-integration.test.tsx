@@ -1,6 +1,8 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { render, screen } from '@testing-library/react-native';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { createTestQueryClient } from '../test-utils/queryClient';
 import {
   baseProfile,
   bannedProfile,
@@ -77,6 +79,17 @@ function GuardConsumer({ requireAuth = true }: { requireAuth?: boolean }) {
   );
 }
 
+function renderWithProviders(
+  ui: React.ReactElement,
+  { profile }: { profile?: typeof baseProfile | null } = {},
+) {
+  const queryClient = createTestQueryClient();
+  if (profile !== undefined && profile !== null) {
+    queryClient.setQueryData(['me', 'access-token'], profile);
+  }
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
+}
+
 beforeEach(() => {
   jest.clearAllMocks();
   resetStores();
@@ -85,24 +98,24 @@ beforeEach(() => {
 describe('Route guard integration', () => {
   it('normal authenticated user is not redirected', () => {
     setAuthenticated();
-    render(<GuardConsumer requireAuth />);
+    renderWithProviders(<GuardConsumer requireAuth />, { profile: baseProfile });
     expect(mockReplace).not.toHaveBeenCalled();
   });
 
   it('guard returns correct isAuthenticated flag', () => {
     setAuthenticated();
-    render(<GuardConsumer requireAuth />);
+    renderWithProviders(<GuardConsumer requireAuth />, { profile: baseProfile });
     expect(screen.getByTestId('is-authenticated')).toHaveTextContent('true');
   });
 
   it('guard returns correct isRestricted flag for banned', () => {
     setBannedUser();
-    render(<GuardConsumer requireAuth />);
+    renderWithProviders(<GuardConsumer requireAuth />, { profile: bannedProfile });
     expect(screen.getByTestId('is-restricted')).toHaveTextContent('true');
   });
 
   it('requireAuth=false skips auth redirect', () => {
-    render(<GuardConsumer requireAuth={false} />);
+    renderWithProviders(<GuardConsumer requireAuth={false} />);
     expect(mockReplace).not.toHaveBeenCalled();
   });
 

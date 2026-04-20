@@ -170,7 +170,7 @@ describe('Role-based UI integration', () => {
     });
 
     it('shows authenticated content when logged in as customer', () => {
-      setAuthenticated(baseSession, baseProfile);
+      setAuthenticated(baseSession);
       useAppStore.setState({ currentRole: 'customer' });
 
       mockUseMyProfile.mockReturnValue({

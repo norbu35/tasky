@@ -2,15 +2,17 @@ import { useQuery } from '@tanstack/react-query';
 
 import { listTasks } from '../api';
 import type { PublicTask } from '@/lib/api/types';
+import { useMyProfile } from '@/features/profile/hooks/useProfile';
 import { useAuthStore } from '../../../store/authStore';
 import { getCurrentLocation } from '../../../utils/permissions';
+import { queryKeys } from '@/lib/queryKeys';
 
 export function useTasks() {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['tasks', token],
+    queryKey: queryKeys.tasks.all(token!),
     queryFn: async () => {
       const location = await getCurrentLocation();
       const filters = location
@@ -34,11 +36,11 @@ export interface TaskDetailState {
 
 export function useTaskDetail(taskId: string): TaskDetailState {
   const session = useAuthStore((s) => s.session);
-  const profile = useAuthStore((s) => s.profile);
+  const { data: profile } = useMyProfile();
   const token = session?.accessToken;
 
   const tasksQuery = useQuery({
-    queryKey: ['tasks', token],
+    queryKey: queryKeys.tasks.all(token!),
     queryFn: () => listTasks(token!, {}),
     enabled: !!token,
   });

@@ -72,8 +72,12 @@ jest.mock('../../../src/store/authStore', () => ({
   useAuthStore: (selector: any) =>
     selector({
       session: { accessToken: 'test-token' },
-      profile: { id: 'user-me' },
     }),
+}));
+
+jest.mock('../../../src/features/profile/hooks/useProfile', () => ({
+  useMyUserId: () => 'user-me',
+  useMyProfile: () => ({ data: { id: 'user-me' }, isLoading: false }),
 }));
 
 const mockUseMessages = useMessages as jest.MockedFunction<typeof useMessages>;

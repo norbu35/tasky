@@ -1,46 +1,22 @@
 import type { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
-import { focusManager, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import { AppState, LogBox, Platform } from 'react-native';
+import { LogBox } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ReviewGateProvider } from '../features/review/components/ReviewGateProvider';
-import { useProfileSync } from '../features/profile/hooks/useProfile';
-import { getSharedApiClient } from '../lib/mobileApiClient';
 import { queryClient } from '../lib/react-query';
+import { AppBootstrapProvider } from '../providers/AppBootstrapProvider';
 import { NotificationProvider } from '../providers/NotificationProvider';
 import { RoleProvider } from '../providers/RoleProvider';
-import { useAuthStore } from '../store/authStore';
 
 import '../utils/i18n';
 import '../design/nativewind-interop';
 
 import '../../global.css';
-
-// Wire token refresh delegate so 401s trigger silent refresh
-const apiClient = getSharedApiClient();
-apiClient.setTokenRefreshDelegate({
-  getRefreshToken() {
-    return useAuthStore.getState().session?.refreshToken ?? null;
-  },
-  onTokensRefreshed(accessToken, refreshToken) {
-    const current = useAuthStore.getState().session;
-    if (current) {
-      useAuthStore.getState().setSession({
-        ...current,
-        accessToken,
-        refreshToken,
-      });
-    }
-  },
-  onRefreshFailed() {
-    useAuthStore.getState().signOut();
-  },
-});
 
 // Suppress all LogBox warnings to prevent the yellow dev bar from
 // overlaying UI elements during Maestro E2E tests.
@@ -49,6 +25,7 @@ LogBox.ignoreAllLogs();
 // Firebase native modules only work in EAS/bare builds, not Expo Go.
 const isExpoGo = Constants.executionEnvironment === 'storeClient';
 
+// Firebase background handler must be registered at module scope for headless JS execution.
 if (!isExpoGo) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -74,53 +51,19 @@ if (!isExpoGo) {
 }
 
 export default function RootLayout() {
-  useProfileSync();
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', (status) => {
-      if (Platform.OS !== 'web') {
-        focusManager.setFocused(status === 'active');
-      }
-    });
-
-    return () => subscription.remove();
-  }, []);
-
-  useEffect(() => {
-    if (isExpoGo) return;
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const messaging = require('@react-native-firebase/messaging').default;
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const notifee = require('@notifee/react-native').default;
-
-      const unsubscribe = messaging().onMessage(
-        async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
-          await notifee.displayNotification({
-            title: remoteMessage.notification?.title ?? remoteMessage.data?.['title'],
-            body: remoteMessage.notification?.body ?? remoteMessage.data?.['body'],
-            android: { channelId: 'default' },
-            ios: {},
-          });
-        },
-      );
-      return unsubscribe;
-    } catch {
-      // Firebase not available
-    }
-  }, []);
-
   return (
     <GestureHandlerRootView className="flex-1">
       <SafeAreaProvider>
         <NotificationProvider>
           <QueryClientProvider client={queryClient}>
-            <RoleProvider>
-              <ReviewGateProvider>
-                <Stack screenOptions={{ headerShown: false }} />
-                <StatusBar style="auto" />
-              </ReviewGateProvider>
-            </RoleProvider>
+            <AppBootstrapProvider>
+              <RoleProvider>
+                <ReviewGateProvider>
+                  <Stack screenOptions={{ headerShown: false }} />
+                  <StatusBar style="auto" />
+                </ReviewGateProvider>
+              </RoleProvider>
+            </AppBootstrapProvider>
           </QueryClientProvider>
         </NotificationProvider>
       </SafeAreaProvider>

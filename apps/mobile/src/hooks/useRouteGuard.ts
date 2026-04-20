@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
+import { useMyProfile } from '../features/profile/hooks/useProfile';
 import { useAuthStore } from '../store/authStore';
 import { isRestricted } from '../utils/routeGuard';
 
@@ -11,7 +12,7 @@ interface GuardOptions {
 export function useRouteGuard(options: GuardOptions = { requireAuth: true }) {
   const router = useRouter();
   const session = useAuthStore((s) => s.session);
-  const profile = useAuthStore((s) => s.profile);
+  const { data: profile } = useMyProfile();
 
   useEffect(() => {
     if (options.requireAuth && !session) {
@@ -28,5 +29,5 @@ export function useRouteGuard(options: GuardOptions = { requireAuth: true }) {
     }
   }, [session, profile, options.requireAuth, router]);
 
-  return { isAuthenticated: !!session, isRestricted: isRestricted(profile) };
+  return { isAuthenticated: !!session, isRestricted: isRestricted(profile ?? null) };
 }
