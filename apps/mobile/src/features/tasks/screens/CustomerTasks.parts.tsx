@@ -1,4 +1,4 @@
-import { Bell } from 'lucide-react-native';
+import { Bell, Sparkles } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
@@ -7,11 +7,10 @@ import { ListItemCard, PriceTag, StatusBadge } from '@/components/ui';
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { ReviewGateBanner } from '@/features/review/components/ReviewGateBanner';
 import { useReviewGate } from '@/features/review/components/ReviewGateProvider';
-import { Sparkles } from 'lucide-react-native';
 
 import { type TaskLike, type TaskState, mapStatus, getTaskVisual } from './CustomerTasks.model';
 
