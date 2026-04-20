@@ -6,6 +6,7 @@ import jakarta.annotation.PostConstruct;
 import mn.tasky.auth.FacebookAuthException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
@@ -38,7 +39,13 @@ public class FacebookGraphClient {
             @Value("${tasky.facebook.graph-api-base-url:https://graph.facebook.com}") String graphApiBaseUrl,
             FacebookCircuitBreaker circuitBreaker,
             Environment environment) {
-        this.restClient = restClientBuilder.baseUrl(graphApiBaseUrl).build();
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(java.time.Duration.ofSeconds(5));
+        requestFactory.setReadTimeout(java.time.Duration.ofSeconds(10));
+        this.restClient = restClientBuilder
+                .baseUrl(graphApiBaseUrl)
+                .requestFactory(requestFactory)
+                .build();
         this.appId = appId;
         this.appSecret = appSecret;
         this.circuitBreaker = circuitBreaker;
