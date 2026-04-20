@@ -5,7 +5,10 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { useAppStore } from '../../src/store/appStore';
 import { useAuthStore } from '../../src/store/authStore';
 import { RoleProvider, useRole } from '../../src/providers/RoleProvider';
-import { NotificationProvider, useNotificationContext } from '../../src/store/NotificationContext';
+import {
+  NotificationProvider,
+  useNotificationContext,
+} from '../../src/providers/NotificationProvider';
 import { baseSession, baseProfile, resetStores } from './fixtures';
 import { createTestQueryClient } from '../test-utils/queryClient';
 

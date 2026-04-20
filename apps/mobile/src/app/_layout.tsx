@@ -9,11 +9,12 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ReviewGateProvider } from '../features/review/components/ReviewGateProvider';
+import { useProfileSync } from '../features/profile/hooks/useProfile';
 import { getSharedApiClient } from '../lib/mobileApiClient';
 import { queryClient } from '../lib/react-query';
+import { NotificationProvider } from '../providers/NotificationProvider';
 import { RoleProvider } from '../providers/RoleProvider';
 import { useAuthStore } from '../store/authStore';
-import { NotificationProvider } from '../store/NotificationContext';
 
 import '../utils/i18n';
 import '../design/nativewind-interop';
@@ -73,6 +74,8 @@ if (!isExpoGo) {
 }
 
 export default function RootLayout() {
+  useProfileSync();
+
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (status) => {
       if (Platform.OS !== 'web') {

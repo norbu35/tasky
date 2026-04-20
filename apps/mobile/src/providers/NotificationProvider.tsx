@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 import { registerDevice } from '../features/notifications/api';
 import { registerForPushNotificationsAsync } from '../lib/notifications';
 
-import { useAuthStore } from './authStore';
+import { useAuthStore } from '../store/authStore';
 
 interface NotificationContextValue {
   pushToken: string | null;
@@ -46,7 +46,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
               token: result.token,
               platform: Platform.OS === 'ios' ? 'IOS' : 'ANDROID',
             });
-            console.log('[Notifications] Registered push token with backend successfully.');
           } catch (e) {
             console.error('[Notifications] Failed to sync token to backend', e);
           }
