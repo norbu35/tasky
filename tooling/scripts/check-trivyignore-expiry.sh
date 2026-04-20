@@ -11,18 +11,12 @@ if [ ! -f "$TRIVYIGNORE" ]; then
 fi
 
 while IFS= read -r line; do
-  if [[ "$line" =~ ^#\ Expires:\ ([0-9]{4}-[0-9]{2}-[0-9]{2}) ]]; then
+  if [[ "$line" =~ ^[A-Za-z]+-[0-9-]+[[:space:]]+#.*expires:[[:space:]]*([0-9]{4}-[0-9]{2}-[0-9]{2}) ]]; then
     EXPIRY="${BASH_REMATCH[1]}"
+    CVE_ID=$(echo "$line" | awk '{print $1}')
     if [[ "$TODAY" > "$EXPIRY" || "$TODAY" == "$EXPIRY" ]]; then
-      # Read the next non-comment, non-empty line (the CVE ID)
-      while IFS= read -r cve_line; do
-        cve_line=$(echo "$cve_line" | xargs)
-        if [[ -n "$cve_line" && ! "$cve_line" =~ ^# ]]; then
-          echo "EXPIRED: $cve_line (was due $EXPIRY)"
-          EXPIRED=$((EXPIRED + 1))
-          break
-        fi
-      done
+      echo "EXPIRED: $CVE_ID (was due $EXPIRY)"
+      EXPIRED=$((EXPIRED + 1))
     fi
   fi
 done < "$TRIVYIGNORE"

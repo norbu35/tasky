@@ -52,6 +52,11 @@ jobs:
       - name: Run backend regression gate
         run: ./gradlew --no-daemon :services:api:gateRegression :services:api:openApiValidate
 
+      - name: Run OWASP dependency check
+        run: ./gradlew --no-daemon :services:api:dependencyCheck
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+
       - name: Build regression container image
         run: docker build -t tasky-server:nightly .
 
