@@ -227,29 +227,29 @@ Fake tokens and react-query cache seeding have been removed.
 
 ### What must change before real users
 
-| Item                        | Dev-auth behavior                                | Required for staging/production                                                                                                                                                                     | Status                                        |
-| --------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| Access token                | Real JWT from backend dev-login endpoint         | Real JWT from Facebook OAuth or OTP                                                                                                                                                                 | **Done** (dev-login returns real JWTs)        |
-| Token refresh               | Access tokens expire after configured TTL        | **Must be implemented.** Without a refresh interceptor the app silently breaks after token expiry.                                                                                                  | **Not implemented**                           |
-| Session invalidation on 401 | Not needed in local sandbox                      | App must detect `INVALID_TOKEN` (expired), `TOKEN_REVOKED` (explicit revocation), and `USER_BANNED` error codes — call `signOut()` and navigate to login. Retry logic must not loop on these codes. | **Not implemented**                           |
-| `EXPO_PUBLIC_API_BASE_URL`  | Unset (defaults to `http://localhost:8080`)      | Must point to the staging/production origin                                                                                                                                                         | Set per-environment                           |
-| App Transport Security      | `NSAllowsLocalNetworking: true` covers localhost | Production URLs **must use HTTPS**. `NSAllowsArbitraryLoads` is `false`.                                                                                                                            | iOS plist is correct; just needs HTTPS origin |
-| CORS allowed origins        | Backend defaults to `http://localhost:5173`      | Must include the production web origin. (Not relevant for native mobile, but relevant for web client.)                                                                                              | Configured via `tasky.cors.allowed-origins`   |
-| JWT `iss`/`aud` validation  | Not enforced in dev profile                      | Production enforces `iss: tasky-server`, `aud: tasky-api`. Tokens issued before 2026-04-22 without these claims are rejected.                                                                       | **Live** — deploy window is post-2026-04-22   |
+| Item                        | Dev-auth behavior                                | Required for staging/production                                                                                                                                                                     | Status                                                                          |
+| --------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Access token                | Real JWT from backend dev-login endpoint         | Real JWT from Facebook OAuth or OTP                                                                                                                                                                 | **Done** (dev-login returns real JWTs)                                          |
+| Token refresh               | Access tokens expire after configured TTL        | **Must be implemented.** Without a refresh interceptor the app silently breaks after token expiry.                                                                                                  | **Done** (mobileApiClient.ts 401 interceptor)                                   |
+| Session invalidation on 401 | Not needed in local sandbox                      | App must detect `INVALID_TOKEN` (expired), `TOKEN_REVOKED` (explicit revocation), and `USER_BANNED` error codes — call `signOut()` and navigate to login. Retry logic must not loop on these codes. | **Done** (mobileApiClient.ts handles INVALID_TOKEN, TOKEN_REVOKED, USER_BANNED) |
+| `EXPO_PUBLIC_API_BASE_URL`  | Unset (defaults to `http://localhost:8080`)      | Must point to the staging/production origin                                                                                                                                                         | Set per-environment                                                             |
+| App Transport Security      | `NSAllowsLocalNetworking: true` covers localhost | Production URLs **must use HTTPS**. `NSAllowsArbitraryLoads` is `false`.                                                                                                                            | iOS plist is correct; just needs HTTPS origin                                   |
+| CORS allowed origins        | Backend defaults to `http://localhost:5173`      | Must include the production web origin. (Not relevant for native mobile, but relevant for web client.)                                                                                              | Configured via `tasky.cors.allowed-origins`                                     |
+| JWT `iss`/`aud` validation  | Not enforced in dev profile                      | Production enforces `iss: tasky-server`, `aud: tasky-api`. Tokens issued before 2026-04-22 without these claims are rejected.                                                                       | **Live** — deploy window is post-2026-04-22                                     |
 
 ### Token refresh implementation checklist
 
-This is the highest-priority mobile auth gap. Without it, every user session silently dies after 1 hour.
+~All items completed (2026-04-21 verification).~
 
-1. Add a 401-interceptor to `requestJson` / `requestVoid` in `apps/mobile/src/lib/mobileApiClient.ts`:
-   - On 401 response, attempt `POST /api/v1/auth/token/refresh` with the stored `refreshToken`.
-   - On successful refresh, update the zustand session with the new `accessToken` and retry the
-     original request.
-   - On refresh failure (e.g., refresh token also expired), call `signOut()` and navigate to the
-     login screen.
-2. Ensure only one refresh attempt runs at a time (queue concurrent 401s behind a single refresh
-   promise).
-3. Add a test that exercises the refresh-then-retry path.
+1. ~~Add a 401-interceptor to `requestJson` / `requestVoid` in `apps/mobile/src/lib/mobileApiClient.ts`:~~
+   - ~~On 401 response, attempt `POST /api/v1/auth/token/refresh` with the stored `refreshToken`.~~
+   - ~~On successful refresh, update the zustand session with the new `accessToken` and retry the
+     original request.~~
+   - ~~On refresh failure (e.g., refresh token also expired), call `signOut()` and navigate to the
+     login screen.~~
+2. ~~Ensure only one refresh attempt runs at a time (queue concurrent 401s behind a single refresh
+   promise).~~
+3. ~~Add a test that exercises the refresh-then-retry path.~~
 
 ### Observability gap: JWT 401s invisible in backend logs
 
