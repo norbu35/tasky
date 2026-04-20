@@ -31,10 +31,18 @@ docs/QUALITY_GATES_AUDIT.md
 
 # Gradle
 .gradle/
+.gradle-home/
 build/
 /bin/
 services/api/bin/
 *.class
+
+# Android / Eclipse
+local.properties
+.project
+.classpath
+.factorypath
+.settings/
 
 # Python cache
 __pycache__/
@@ -45,6 +53,7 @@ __pycache__/
 
 # Generated codebase snapshots
 repomix-output.xml
+repomix-*.xml
 
 # JavaScript workspace
 node_modules/
@@ -68,9 +77,7 @@ baseline.json
 postflight-cascade.json
 apps/mobile/out.css
 repomix-output.*
-repomix-backend.xml
-repomix-web.xml
-repomix-mobile.xml
+repomix-*.xml
 
 # Test result dumps (generated, not source)
 test-results.json
