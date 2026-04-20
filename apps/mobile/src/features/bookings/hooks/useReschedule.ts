@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { rescheduleBooking } from '../api';
 import { useAuthStore } from '../../../store/authStore';
+import { queryKeys } from '@/lib/queryKeys';
 
 interface RescheduleParams {
   bookingId: string;
@@ -24,7 +25,9 @@ export function useReschedule() {
         params.idempotencyKey,
       ),
     onSuccess: (_data, variables) => {
-      void queryClient.invalidateQueries({ queryKey: ['booking', variables.bookingId] });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.bookings.detail(token!, variables.bookingId),
+      });
     },
   });
 }

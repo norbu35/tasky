@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { sendMessage } from '../api';
 import { useAuthStore } from '../../../store/authStore';
+import { queryKeys } from '../../../lib/queryKeys';
 
 interface SendMessageInput {
   conversationId: string;
@@ -17,9 +18,11 @@ export function useSendMessage() {
     mutationFn: (input: SendMessageInput) =>
       sendMessage(token!, input.conversationId, input.content),
     onSuccess: (_data, variables) => {
-      void queryClient.invalidateQueries({
-        queryKey: ['messages', variables.conversationId],
-      });
+      if (token) {
+        void queryClient.invalidateQueries({
+          queryKey: queryKeys.chat.messages(token, variables.conversationId),
+        });
+      }
       void queryClient.invalidateQueries({
         queryKey: ['conversations'],
       });

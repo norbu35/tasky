@@ -55,4 +55,10 @@ export const queryKeys = {
   notifications: {
     list: (token: string) => ['notifications', token] as const,
   },
+
+  // ── Disputes ────────────────────────────────────────────────────
+  disputes: {
+    all: (token: string) => ['disputes', token] as const,
+    detail: (token: string, disputeId: string) => ['dispute', token, disputeId] as const,
+  },
 } as const;

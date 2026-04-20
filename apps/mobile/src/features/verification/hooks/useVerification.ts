@@ -2,13 +2,14 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { getVerificationStatus, submitVerification } from '../api';
 import { useAuthStore } from '../../../store/authStore';
+import { queryKeys } from '@/lib/queryKeys';
 
 export function useVerificationStatus() {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
 
   return useQuery({
-    queryKey: ['verificationStatus', token],
+    queryKey: queryKeys.verification.status(token!),
     queryFn: () => getVerificationStatus(token!),
     enabled: !!token,
   });

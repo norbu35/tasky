@@ -3,8 +3,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { submitReview } from '../api';
 import { useAuthStore } from '../../../store/authStore';
 
-import { PENDING_REVIEWS_QUERY_KEY } from './usePendingReviews';
-
 interface SubmitReviewPayload {
   bookingId: string;
   ratings: Record<string, number>;
@@ -31,7 +29,7 @@ export function useSubmitReview(onSuccessCb?: () => void) {
     onSuccess: () => {
       if (onSuccessCb) onSuccessCb();
       // Invalidate pending reviews to clear the gate
-      queryClient.invalidateQueries({ queryKey: [PENDING_REVIEWS_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: ['pendingReviews'] });
       // Invalidate the specific booking to show updated review state
       queryClient.invalidateQueries({ queryKey: ['booking'] });
     },

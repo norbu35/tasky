@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { listMyTasks } from '../api';
 import type { Task } from '@/lib/api/types';
 import { useAuthStore } from '../../../store/authStore';
+import { queryKeys } from '@/lib/queryKeys';
 
 export interface CustomerTaskDetailState {
   task: Task | null;
@@ -16,7 +17,7 @@ export function useCustomerTaskDetail(taskId: string): CustomerTaskDetailState {
   const token = session?.accessToken;
 
   const query = useQuery({
-    queryKey: ['myTasks', token],
+    queryKey: queryKeys.tasks.my(token!),
     queryFn: () => listMyTasks(token!),
     enabled: !!token,
   });

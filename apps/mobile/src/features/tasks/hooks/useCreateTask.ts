@@ -14,7 +14,7 @@ export function useCreateTask() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['tasks'] });
       void queryClient.invalidateQueries({ queryKey: ['myTasks'] });
-      void queryClient.invalidateQueries({ queryKey: ['recent-locations'] });
+      void queryClient.invalidateQueries({ queryKey: ['recentLocations'] });
     },
   });
 }
