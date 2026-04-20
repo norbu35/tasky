@@ -1,13 +1,11 @@
 import { router } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 
-import { Button } from '../../../components/ui/Button';
-import { mobileTheme, elevations } from '../../../design/tokenAdapter';
-import type { PendingReview } from '../../../lib/mobileApiClient';
-
-const { colors, radius, spacing, typography } = mobileTheme;
+import { Button } from '@/components/ui/Button';
+import { elevations } from '@/design/tokenAdapter';
+import type { PendingReview } from '@/lib/mobileApiClient';
 
 interface ReviewGateBannerProps {
   pendingReview: PendingReview;
@@ -17,7 +15,6 @@ export function ReviewGateBanner({ pendingReview }: ReviewGateBannerProps) {
   const { t } = useTranslation();
 
   const handlePress = () => {
-    // Navigate to the review form
     router.push(`/(shared)/review/${pendingReview.booking_id}`);
   };
 
@@ -25,14 +22,17 @@ export function ReviewGateBanner({ pendingReview }: ReviewGateBannerProps) {
     Date.now() - new Date(pendingReview.triggered_at).getTime() > 72 * 60 * 60 * 1000;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>
+    <View
+      className="bg-card rounded-md p-xl gap-md mx-xl mb-lg border border-border"
+      style={elevations.card}
+    >
+      <View className="gap-xs">
+        <Text className="text-subtitle font-bold text-foreground">
           {isHardBlocked
             ? t('reviewGate.hardLockedTitle', 'Review Required')
             : t('reviewGate.softLockedTitle', 'Pending Review')}
         </Text>
-        <Text style={styles.body}>
+        <Text className="text-body text-text-secondary leading-normal">
           {isHardBlocked
             ? t(
                 'reviewGate.hardLockedBody',
@@ -48,38 +48,7 @@ export function ReviewGateBanner({ pendingReview }: ReviewGateBannerProps) {
         label={t('reviewGate.cta', 'Submit Review')}
         variant={isHardBlocked ? 'default' : 'outline'}
         onPress={handlePress}
-        style={styles.button}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.card,
-    borderRadius: radius.md,
-    padding: spacing.xl,
-    gap: spacing.md,
-    marginHorizontal: spacing.xl,
-    marginBottom: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...elevations.card,
-  },
-  content: {
-    gap: spacing.xs,
-  },
-  title: {
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.foreground,
-  },
-  body: {
-    fontSize: typography.body,
-    lineHeight: Math.round(typography.body * 1.5),
-    color: colors.textSecondary,
-  },
-  button: {
-    marginTop: spacing.xs,
-  },
-});

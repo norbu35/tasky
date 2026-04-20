@@ -1,13 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
-import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
-import { Button } from '../../../components/ui/Button';
-import { mobileTheme, withAlpha } from '../../../design/tokenAdapter';
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
+import { Button } from '@/components/ui/Button';
+import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
 import { useCancelBooking } from '../hooks/useCancelBooking';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 interface TaskerCancelSheetProps {
   isOpen: boolean;
@@ -63,54 +63,67 @@ export function TaskerCancelSheet({
       testID="tasker-cancel-sheet"
     >
       {cancelBooking.isPending ? (
-        <View style={styles.loadingContainer} testID="cancel-sheet-loading">
+        <View className="py-2xl items-center" testID="cancel-sheet-loading">
           <ActivityIndicator color={colors.primary} size="large" />
         </View>
       ) : (
-        <View style={styles.contentContainer}>
-          <Text style={styles.heading}>{t('tasker.jobs.cancel.heading')}</Text>
+        <View className="gap-md">
+          <Text className="text-subtitle font-semibold text-foreground">
+            {t('tasker.jobs.cancel.heading')}
+          </Text>
 
-          <Text style={styles.description}>
+          <Text className="text-body text-muted-foreground leading-[22px]">
             {t('tasker.jobs.cancel.description', t('TaskerCancelSheet.copy1'))}
           </Text>
 
           {strikeCount > 0 && !hasSuspensionRisk && (
-            <View style={styles.warningBox}>
-              <Text style={styles.warningText}>
+            <View className="bg-muted rounded-md p-md gap-xs">
+              <Text className="text-body text-foreground font-medium">
                 {t(
                   'tasker.jobs.cancel.strikeWarning',
                   `Анхааруулга: Та сүүлийн 30 хоногт ${strikeCount} удаа цуцалсан байна.`,
                 )}
               </Text>
-              <Text style={styles.strikeCount}>
+              <Text className="text-micro text-muted-foreground font-bold">
                 {`${strikeCount}/3`} {t('tasker.jobs.cancel.strikeCountLabel')}
               </Text>
             </View>
           )}
 
           {hasSuspensionRisk && (
-            <View style={styles.dangerBox}>
-              <Text style={styles.suspensionWarning}>{t('TaskerCancelSheet.copy2')}</Text>
-              <Text style={styles.strikeCount}>
+            <View className="bg-muted rounded-md border border-danger p-md gap-xs">
+              <Text className="text-body text-danger font-semibold">
+                {t('TaskerCancelSheet.copy2')}
+              </Text>
+              <Text className="text-micro text-muted-foreground font-bold">
                 {`${strikeCount}/3`} {t('tasker.jobs.cancel.strikeCountLabel')}
               </Text>
             </View>
           )}
 
-          <View style={styles.reasonSection}>
-            <Text style={styles.reasonLabel}>{t('tasker.jobs.cancel.reasonLabel')}</Text>
-            <View style={styles.reasonList}>
+          <View className="gap-sm">
+            <Text className="text-micro font-bold text-muted-foreground uppercase tracking-[0.75]">
+              {t('tasker.jobs.cancel.reasonLabel')}
+            </Text>
+            <View className="gap-sm">
               {reasons.map((reason) => {
                 const isSelected = selectedReason === reason;
                 return (
                   <Pressable
                     key={reason}
                     onPress={() => setSelectedReason(reason)}
-                    style={[styles.reasonChip, isSelected && styles.reasonChipSelected]}
+                    className={`border rounded-md px-md py-sm bg-background${
+                      isSelected ? ' border-primary' : ' border-border'
+                    }`}
+                    style={
+                      isSelected ? { backgroundColor: withAlpha(colors.primary, 0.07) } : undefined
+                    }
                     testID={`cancel-reason-${reason}`}
                   >
                     <Text
-                      style={[styles.reasonChipText, isSelected && styles.reasonChipTextSelected]}
+                      className={`text-body${
+                        isSelected ? ' text-primary-deep font-bold' : ' text-foreground'
+                      }`}
                     >
                       {reason}
                     </Text>
@@ -121,8 +134,10 @@ export function TaskerCancelSheet({
           </View>
 
           {!hasSuspensionRisk && strikeCount === 0 && (
-            <View style={styles.noteBox}>
-              <Text style={styles.noteText}>{t('TaskerCancelSheet.copy3')}</Text>
+            <View className="bg-muted rounded-md p-md">
+              <Text className="text-micro text-muted-foreground leading-[18px]">
+                {t('TaskerCancelSheet.copy3')}
+              </Text>
             </View>
           )}
 
@@ -144,95 +159,3 @@ export function TaskerCancelSheet({
     </ModalSheetTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  contentContainer: {
-    gap: spacing.md,
-  },
-  loadingContainer: {
-    paddingVertical: spacing.xl,
-    alignItems: 'center',
-  },
-  heading: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.foreground,
-  },
-  description: {
-    fontSize: typography.body,
-    color: colors.mutedForeground,
-    lineHeight: 22,
-  },
-  reasonSection: {
-    gap: spacing.sm,
-  },
-  reasonLabel: {
-    fontSize: typography.micro,
-    fontWeight: '700',
-    color: colors.mutedForeground,
-    textTransform: 'uppercase',
-    letterSpacing: 0.75,
-  },
-  reasonList: {
-    gap: spacing.sm,
-  },
-  reasonChip: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.background,
-  },
-  reasonChipSelected: {
-    borderColor: colors.primary,
-    backgroundColor: withAlpha(colors.primary, 0.07),
-  },
-  reasonChipText: {
-    fontSize: typography.body,
-    color: colors.foreground,
-  },
-  reasonChipTextSelected: {
-    color: colors.primaryDeep,
-    fontWeight: '700',
-  },
-  noteBox: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  noteText: {
-    fontSize: typography.micro,
-    color: colors.mutedForeground,
-    lineHeight: 18,
-  },
-  warningBox: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    gap: spacing.xs,
-  },
-  dangerBox: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.danger,
-    padding: spacing.md,
-    gap: spacing.xs,
-  },
-  warningText: {
-    fontSize: typography.body,
-    color: colors.foreground,
-    fontWeight: '500',
-  },
-  suspensionWarning: {
-    fontSize: typography.body,
-    color: colors.danger,
-    fontWeight: '600',
-  },
-  strikeCount: {
-    fontSize: typography.micro,
-    color: colors.mutedForeground,
-    fontWeight: '700',
-  },
-});

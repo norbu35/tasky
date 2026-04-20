@@ -13,7 +13,7 @@ import { useTaskPhotoUpload } from '@/features/tasks/hooks/useTaskPhotoUpload';
 
 const { colors } = mobileTheme;
 
-export default function PhotoUploadScreen() {
+export default function TaskPhotosScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { draftId } = useLocalSearchParams<{ draftId: string }>();

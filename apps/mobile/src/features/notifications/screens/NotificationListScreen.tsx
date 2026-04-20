@@ -116,7 +116,7 @@ function getNotificationMeta(title: string): { icon: React.ReactNode; shellColor
   };
 }
 
-export default function NotificationCenterScreen() {
+export default function NotificationListScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { data, isLoading, isError, isRefetching, refetch } = useNotifications();

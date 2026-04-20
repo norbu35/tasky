@@ -10,7 +10,7 @@ import { UB_CENTER, DEFAULT_DELTA } from './TaskLocation.model';
 import { MapControls, MapOverlay, LocationStatusCard } from './TaskLocation.parts';
 import { useTaskLocation } from './useTaskLocation';
 
-export default function LocationScreen() {
+export default function TaskLocationScreen() {
   const { t } = useTranslation();
   const {
     pin,

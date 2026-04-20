@@ -86,7 +86,7 @@ function getCategoryVisual(name: string): CategoryVisual {
   };
 }
 
-export default function CategorySelectionScreen() {
+export default function TaskCategoryScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { data, isLoading, isError, refetch } = useCategories();

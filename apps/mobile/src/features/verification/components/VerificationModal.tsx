@@ -1,14 +1,11 @@
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Image, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Modal, ScrollView, Text, View } from 'react-native';
 
-import { Button } from '../../../components/ui';
-import { mobileTheme } from '../../../design/tokenAdapter';
-import { getVerificationUploadUrl, submitVerification } from '../api';
-import { useAuthStore } from '../../../store/authStore';
-
-const { colors, spacing } = mobileTheme;
+import { Button } from '@/components/ui';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { useVerificationSubmit } from '../hooks/useVerificationSubmit';
 
 interface Props {
   visible: boolean;
@@ -20,12 +17,11 @@ type PhotoType = 'FRONT' | 'BACK' | 'SELFIE';
 
 export function VerificationModal({ visible, onClose, onSuccess }: Props) {
   const { t } = useTranslation();
-  const { session } = useAuthStore();
+  const submitMutation = useVerificationSubmit();
 
   const [frontUri, setFrontUri] = useState<string | null>(null);
   const [backUri, setBackUri] = useState<string | null>(null);
   const [selfieUri, setSelfieUri] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
 
   const pickImage = async (type: PhotoType) => {
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
@@ -48,70 +44,24 @@ export function VerificationModal({ visible, onClose, onSuccess }: Props) {
     }
   };
 
-  const uploadToPresignedUrl = async (uri: string, uploadUrl: string) => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-
-    const uploadRes = await fetch(uploadUrl, {
-      method: 'PUT',
-      body: blob,
-      headers: {
-        'Content-Type': 'image/jpeg',
-      },
-    });
-
-    if (!uploadRes.ok) {
-      throw new Error(`Upload failed to S3: ${uploadRes.statusText}`);
-    }
-  };
-
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!frontUri || !backUri || !selfieUri) {
       Alert.alert(t('verification.missingPhotos'), t('verification.allPhotosRequired'));
       return;
     }
 
-    if (!session?.accessToken) return;
-
-    setIsUploading(true);
-
-    try {
-      // 1. Get Presigned URLs
-      const frontReq = await getVerificationUploadUrl(session.accessToken, {
-        content_type: 'image/jpeg',
-        document_side: 'FRONT',
-      });
-      const backReq = await getVerificationUploadUrl(session.accessToken, {
-        content_type: 'image/jpeg',
-        document_side: 'BACK',
-      });
-      const selfieReq = await getVerificationUploadUrl(session.accessToken, {
-        content_type: 'image/jpeg',
-        document_side: 'SELFIE',
-      });
-
-      // 2. Upload Blobs to S3
-      await Promise.all([
-        uploadToPresignedUrl(frontUri, frontReq.upload_url),
-        uploadToPresignedUrl(backUri, backReq.upload_url),
-        uploadToPresignedUrl(selfieUri, selfieReq.upload_url),
-      ]);
-
-      // 3. Submit Verification
-      await submitVerification(session.accessToken, {
-        id_card_front_key: frontReq.storage_key,
-        id_card_back_key: backReq.storage_key,
-        selfie_key: selfieReq.storage_key,
-      });
-
-      Alert.alert(t('verification.success'), t('verification.uploadSuccess'));
-      onSuccess();
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      Alert.alert(t('verification.uploadFailed'), message || t('verification.uploadError'));
-    } finally {
-      setIsUploading(false);
-    }
+    submitMutation.mutate(
+      { frontUri, backUri, selfieUri },
+      {
+        onSuccess: () => {
+          Alert.alert(t('verification.success'), t('verification.uploadSuccess'));
+          onSuccess();
+        },
+        onError: (err: Error) => {
+          Alert.alert(t('verification.uploadFailed'), err.message || t('verification.uploadError'));
+        },
+      },
+    );
   };
 
   return (
@@ -121,11 +71,18 @@ export function VerificationModal({ visible, onClose, onSuccess }: Props) {
       presentationStyle="pageSheet"
       onRequestClose={onClose}
     >
-      <View style={styles.header}>
-        <Text style={styles.title}>{t('verification.title')}</Text>
+      <View className="pt-[60] pb-[20] px-[20] bg-card border-b border-border">
+        <Text className="text-[20] font-bold text-card-foreground text-center">
+          {t('verification.title')}
+        </Text>
       </View>
-      <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.description}>{t('verification.description')}</Text>
+      <ScrollView
+        className="flex-1 bg-background"
+        contentContainerStyle={{ padding: mobileTheme.spacing.xl }}
+      >
+        <Text className="text-[14] text-muted-foreground mb-[30] text-center leading-[20]">
+          {t('verification.description')}
+        </Text>
 
         <PhotoSection
           title={t('verification.frontId')}
@@ -148,15 +105,15 @@ export function VerificationModal({ visible, onClose, onSuccess }: Props) {
         <Button
           label={t('verification.submit')}
           onPress={handleSubmit}
-          isLoading={isUploading}
-          style={styles.submitBtn}
+          isLoading={submitMutation.isPending}
+          style={{ marginTop: 12 }}
         />
         <Button
           label={t('common.cancel')}
           variant="ghost"
           onPress={onClose}
-          disabled={isUploading}
-          style={styles.cancelBtn}
+          disabled={submitMutation.isPending}
+          style={{ marginTop: 8 }}
         />
       </ScrollView>
     </Modal>
@@ -174,17 +131,17 @@ function PhotoSection({
 }) {
   const { t } = useTranslation();
   return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+    <View className="mb-[24] bg-card p-[16] rounded-[12]">
+      <Text className="text-[16] font-semibold mb-[12] text-card-foreground">{title}</Text>
       {uri ? (
         <View>
-          <Image source={{ uri }} style={styles.preview} />
+          <Image source={{ uri }} className="self-stretch h-[200] rounded-[8] bg-muted mb-[12]" />
           <Button
             label={t('verification.retakePhoto')}
             variant="secondary"
             size="sm"
             onPress={onPress}
-            style={styles.retakeBtn}
+            style={{ alignSelf: 'center' }}
           />
         </View>
       ) : (
@@ -193,62 +150,3 @@ function PhotoSection({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    backgroundColor: colors.card,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.cardForeground,
-    textAlign: 'center',
-  },
-  content: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scrollContent: {
-    padding: spacing.xl,
-  },
-  description: {
-    fontSize: 14,
-    color: colors.mutedForeground,
-    marginBottom: 30,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  section: {
-    marginBottom: 24,
-    backgroundColor: colors.card,
-    padding: 16,
-    borderRadius: 12,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 12,
-    color: colors.cardForeground,
-  },
-  preview: {
-    alignSelf: 'stretch',
-    height: 200,
-    borderRadius: 8,
-    backgroundColor: colors.muted,
-    marginBottom: 12,
-  },
-  retakeBtn: {
-    alignSelf: 'center',
-  },
-  submitBtn: {
-    marginTop: 12,
-  },
-  cancelBtn: {
-    marginTop: 8,
-  },
-});

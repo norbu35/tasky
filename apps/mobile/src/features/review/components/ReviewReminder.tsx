@@ -1,13 +1,11 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
-import { Button } from '../../../components/ui/Button';
-import { mobileTheme } from '../../../design/tokenAdapter';
-
-const { colors, spacing, typography } = mobileTheme;
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
+import { Button } from '@/components/ui/Button';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 interface ReviewReminderProps {
   isOpen: boolean;
@@ -26,14 +24,18 @@ export function ReviewReminder({ isOpen, onDismiss, bookingId }: ReviewReminderP
 
   return (
     <ModalSheetTemplate isOpen={isOpen} onClose={onDismiss} testID="review-reminder">
-      <View style={styles.content}>
-        <Text style={styles.title}>{t('shared.review.reminderTitle')}</Text>
-        <Text style={styles.body}>{t('ReviewReminder.copy1')}</Text>
+      <View className="items-center gap-md">
+        <Text className="text-title font-bold text-foreground text-center">
+          {t('shared.review.reminderTitle')}
+        </Text>
+        <Text className="text-body text-muted-foreground text-center leading-normal">
+          {t('ReviewReminder.copy1')}
+        </Text>
 
         <Button
           label={t('shared.review.reminderCta')}
           onPress={handleReviewNow}
-          style={styles.ctaButton}
+          style={{ alignSelf: 'stretch', marginTop: mobileTheme.spacing.sm }}
           testID="review-reminder-cta"
         />
 
@@ -41,36 +43,10 @@ export function ReviewReminder({ isOpen, onDismiss, bookingId }: ReviewReminderP
           label={t('shared.review.reminderLater')}
           variant="ghost"
           onPress={onDismiss}
-          style={styles.laterButton}
+          style={{ alignSelf: 'stretch' }}
           testID="review-reminder-later"
         />
       </View>
     </ModalSheetTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  title: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
-    textAlign: 'center',
-  },
-  body: {
-    fontSize: typography.body,
-    color: colors.mutedForeground,
-    textAlign: 'center',
-    lineHeight: typography.body * 1.5,
-  },
-  ctaButton: {
-    alignSelf: 'stretch',
-    marginTop: spacing.sm,
-  },
-  laterButton: {
-    alignSelf: 'stretch',
-  },
-});

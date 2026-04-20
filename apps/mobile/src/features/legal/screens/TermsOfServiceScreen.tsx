@@ -13,7 +13,7 @@ import {
   TermsLoading,
   resolveState,
   type ScreenState,
-} from './terms.content';
+} from './Terms.content';
 
 const { colors, spacing } = mobileTheme;
 

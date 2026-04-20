@@ -3,15 +3,15 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ChevronLeft, SlidersHorizontal, Star } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ProfileAvatar, StatCard, ReviewCard } from '../../../components/ui';
-import { mobileTheme, elevations } from '../../../design/tokenAdapter';
-import type { Review } from '../../../lib/mobileApiClient';
+import { ProfileAvatar, StatCard, ReviewCard } from '@/components/ui';
+import { mobileTheme, elevations } from '@/design/tokenAdapter';
+import type { Review } from '@/lib/mobileApiClient';
 import { useTaskerProfile } from '../hooks/useTaskerProfile';
 
-const { colors, radius, typography, spacing } = mobileTheme;
+const { colors } = mobileTheme;
 
 function formatTimeAgo(dateString: string): string {
   const now = Date.now();
@@ -39,10 +39,8 @@ export function TaskerPublicProfile() {
   if (profileQuery.isLoading) {
     return (
       <View
-        style={[
-          styles.container,
-          { paddingTop: insets.top, alignItems: 'center', justifyContent: 'center' },
-        ]}
+        className="flex-1 bg-background items-center justify-center"
+        style={{ paddingTop: insets.top }}
       >
         <ActivityIndicator size="large" color={colors.primaryDeep} />
       </View>
@@ -52,10 +50,8 @@ export function TaskerPublicProfile() {
   if (!profile) {
     return (
       <View
-        style={[
-          styles.container,
-          { paddingTop: insets.top, alignItems: 'center', justifyContent: 'center' },
-        ]}
+        className="flex-1 bg-background items-center justify-center"
+        style={{ paddingTop: insets.top }}
       >
         <ActivityIndicator size="large" color={colors.primaryDeep} />
       </View>
@@ -63,22 +59,24 @@ export function TaskerPublicProfile() {
   }
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       {/* Header */}
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.headerButton}>
+      <View className="flex-row items-center justify-between h-16 px-6 bg-background">
+        <Pressable onPress={() => router.back()} className="w-10 h-10 items-center justify-center">
           <ChevronLeft size={16} color={colors.foreground} />
         </Pressable>
-        <Text style={styles.headerTitle}>{t('profile.title')}</Text>
-        <Pressable style={styles.headerButton}>
+        <Text className="text-2xl font-bold text-primary-deep" style={{ letterSpacing: -0.6 }}>
+          {t('profile.title')}
+        </Text>
+        <Pressable className="w-10 h-10 items-center justify-center">
           <SlidersHorizontal size={20} color={colors.textTertiary} />
         </Pressable>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerClassName="px-6 pb-24 gap-8" showsVerticalScrollIndicator={false}>
         {/* Profile Header */}
-        <View style={styles.profileHeader}>
-          <View style={styles.avatarCenter}>
+        <View className="items-center pt-4">
+          <View className="mb-4">
             <ProfileAvatar
               uri={profile.avatar_url}
               name={profile.full_name}
@@ -86,14 +84,26 @@ export function TaskerPublicProfile() {
               showVerified={profile.is_pro}
             />
           </View>
-          <Text style={styles.profileName}>{profile.full_name}</Text>
-          <Text style={styles.profileTitle}>{profile.role ?? ''}</Text>
+          <Text
+            className="text-hero-title font-extrabold text-foreground"
+            style={{ letterSpacing: -0.75 }}
+          >
+            {profile.full_name}
+          </Text>
+          <Text className="text-subtitle font-semibold text-primary-deep mt-1">
+            {profile.role ?? ''}
+          </Text>
 
           {/* Trust Badge Pill */}
-          <View style={styles.trustPill}>
+          <View
+            className="flex-row items-center gap-2 bg-trust rounded-full px-lg py-2 mt-4"
+            style={elevations.card}
+          >
             <Star size={16} color={colors.trustMuted} fill={colors.trustMuted} />
-            <Text style={styles.trustRating}>{(profile.rating_avg ?? 0).toFixed(1)}</Text>
-            <Text style={styles.trustReviews}>
+            <Text className="text-body font-bold text-trust-foreground">
+              {(profile.rating_avg ?? 0).toFixed(1)}
+            </Text>
+            <Text className="text-label font-medium text-trust-muted">
               ({profile.completed_tasks ?? 0} {t('profile.reviews')})
             </Text>
           </View>
@@ -110,22 +120,26 @@ export function TaskerPublicProfile() {
         </View>
 
         {/* Bio */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('profile.bio')}</Text>
-          <View style={styles.bioCard}>
-            <Text style={styles.bioText}>{profile.full_name}</Text>
+        <View className="gap-3">
+          <Text className="text-2xl font-bold text-primary-deep">{t('profile.bio')}</Text>
+          <View className="bg-muted rounded-md p-[25px]" style={elevations.soft}>
+            <Text className="text-body text-muted-foreground" style={{ lineHeight: 26 }}>
+              {profile.full_name}
+            </Text>
           </View>
         </View>
 
         {/* Reviews */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>{t('profile.recentReviews')}</Text>
+        <View className="gap-3">
+          <View className="flex-row justify-between items-center">
+            <Text className="text-2xl font-bold text-primary-deep">
+              {t('profile.recentReviews')}
+            </Text>
             <Pressable>
-              <Text style={styles.viewAllLink}>{t('profile.viewAll')}</Text>
+              <Text className="text-label font-bold text-primary-deep">{t('profile.viewAll')}</Text>
             </Pressable>
           </View>
-          <View style={styles.reviewsList}>
+          <View className="gap-lg">
             {reviews.map((review: Review, index: number) => {
               const reviewerName = review.reviewer?.full_name ?? '';
               const initials = reviewerName
@@ -150,150 +164,26 @@ export function TaskerPublicProfile() {
         </View>
 
         {/* CTA */}
-        <Pressable style={styles.ctaButton} onPress={() => router.push('/(customer)/tasks/new')}>
+        <Pressable
+          className="rounded-md overflow-hidden"
+          style={elevations.elevated}
+          onPress={() => router.push('/(customer)/tasks/new')}
+        >
           <LinearGradient
             colors={[colors.primaryDeep, colors.primary]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={styles.ctaGradient}
+            className="py-4 items-center justify-center rounded-md"
           >
-            <Text style={styles.ctaText}>{t('profile.bookSession')}</Text>
+            <Text
+              className="text-subtitle font-bold text-primary-foreground uppercase"
+              style={{ letterSpacing: 1.35 }}
+            >
+              {t('profile.bookSession')}
+            </Text>
           </LinearGradient>
         </Pressable>
       </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: 64,
-    paddingHorizontal: 24,
-    backgroundColor: colors.background,
-  },
-  headerButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    letterSpacing: -0.6,
-  },
-
-  scrollContent: {
-    paddingHorizontal: 24,
-    paddingBottom: 96,
-    gap: 32,
-  },
-
-  // Profile Header
-  profileHeader: {
-    alignItems: 'center',
-    paddingTop: 16,
-  },
-  avatarCenter: {
-    marginBottom: 16,
-  },
-  profileName: {
-    fontSize: typography.heroTitle,
-    fontWeight: '800',
-    color: colors.foreground,
-    letterSpacing: -0.75,
-  },
-  profileTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-    marginTop: 4,
-  },
-  trustPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: colors.trust,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: 8,
-    marginTop: 16,
-    ...elevations.card,
-  },
-  trustRating: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.trustForeground,
-  },
-  trustReviews: {
-    fontSize: typography.label,
-    fontWeight: '500',
-    color: colors.trustMuted,
-  },
-
-  // Sections
-  section: {
-    gap: 12,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  sectionHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  viewAllLink: {
-    fontSize: typography.label,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-
-  // Bio
-  bioCard: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: 25,
-    ...elevations.soft,
-  },
-  bioText: {
-    fontSize: typography.body,
-    color: colors.mutedForeground,
-    lineHeight: 26,
-  },
-
-  // Reviews
-  reviewsList: {
-    gap: spacing.lg,
-  },
-
-  // CTA
-  ctaButton: {
-    borderRadius: radius.md,
-    overflow: 'hidden',
-    ...elevations.elevated,
-  },
-  ctaGradient: {
-    paddingVertical: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.md,
-  },
-  ctaText: {
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.primaryForeground,
-    letterSpacing: 1.35,
-    textTransform: 'uppercase',
-  },
-});

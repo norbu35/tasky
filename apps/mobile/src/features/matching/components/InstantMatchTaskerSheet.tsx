@@ -1,12 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { Button } from '../../../components/ui/Button';
-import { elevations, overlays } from '../../../design/elevations';
-import { mobileTheme } from '../../../design/tokenAdapter';
-
-const { colors, spacing, typography, radius } = mobileTheme;
+import { Button } from '@/components/ui/Button';
+import { elevations, overlays } from '@/design/elevations';
 
 interface InstantMatchTaskerSheetProps {
   isOpen: boolean;
@@ -56,25 +53,41 @@ export function InstantMatchTaskerSheet({
 
   if (isAccepted) {
     return (
-      <View style={styles.scrim}>
-        <View style={styles.sheet} testID="instant-match-sheet">
-          <Text style={styles.title}>{t('matching.instantMatch.successTitle')}</Text>
-          <Text style={styles.description}>{t('InstantMatchTaskerSheet.copy2')}</Text>
+      <View className="justify-end" style={{ backgroundColor: overlays.sheet }}>
+        <View
+          className="bg-background rounded-t-lg p-xl gap-md"
+          style={elevations.elevated}
+          testID="instant-match-sheet"
+        >
+          <Text className="text-title font-bold text-primary-deep text-center">
+            {t('matching.instantMatch.successTitle')}
+          </Text>
+          <Text className="text-body text-text-secondary text-center">
+            {t('InstantMatchTaskerSheet.copy2')}
+          </Text>
         </View>
       </View>
     );
   }
 
   return (
-    <View style={styles.scrim}>
-      <View style={styles.sheet} testID="instant-match-sheet">
-        <View style={styles.handle} />
-        <Text style={styles.title}>{t('matching.instantMatch.newOfferTitle')}</Text>
-        <Text style={styles.description}>{t('matching.instantMatch.newOfferDescription')}</Text>
-        <View style={styles.card}>
-          <Text style={styles.taskTitle}>{resolvedTaskTitle}</Text>
-          <Text style={styles.budget}>{budgetLabel}</Text>
-          <Text style={styles.timer}>{DEFAULT_TIME_REMAINING}</Text>
+    <View className="justify-end" style={{ backgroundColor: overlays.sheet }}>
+      <View
+        className="bg-background rounded-t-lg p-xl gap-md"
+        style={elevations.elevated}
+        testID="instant-match-sheet"
+      >
+        <View className="w-12 h-[5px] rounded-full bg-border self-center" />
+        <Text className="text-title font-bold text-primary-deep text-center">
+          {t('matching.instantMatch.newOfferTitle')}
+        </Text>
+        <Text className="text-body text-text-secondary text-center">
+          {t('matching.instantMatch.newOfferDescription')}
+        </Text>
+        <View className="bg-card rounded-md p-lg gap-sm" style={elevations.card}>
+          <Text className="text-body font-bold text-primary-deep">{resolvedTaskTitle}</Text>
+          <Text className="text-label text-text-secondary">{budgetLabel}</Text>
+          <Text className="text-label font-bold text-primary-deep">{DEFAULT_TIME_REMAINING}</Text>
         </View>
         <Button
           testID="instant-match-accept"
@@ -91,39 +104,3 @@ export function InstantMatchTaskerSheet({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  scrim: { backgroundColor: overlays.sheet, justifyContent: 'flex-end' },
-  sheet: {
-    ...elevations.elevated,
-    backgroundColor: colors.background,
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
-    padding: spacing.xl,
-    gap: spacing.md,
-  },
-  handle: {
-    width: 48,
-    height: 5,
-    borderRadius: 999,
-    backgroundColor: colors.border,
-    alignSelf: 'center',
-  },
-  title: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-  },
-  description: { fontSize: typography.body, color: colors.textSecondary, textAlign: 'center' },
-  card: {
-    ...elevations.card,
-    backgroundColor: colors.card,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-    gap: spacing.sm,
-  },
-  taskTitle: { fontSize: typography.body, fontWeight: '700', color: colors.primaryDeep },
-  budget: { fontSize: typography.label, color: colors.textSecondary },
-  timer: { fontSize: typography.label, fontWeight: '700', color: colors.primaryDeep },
-});

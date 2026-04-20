@@ -1,15 +1,15 @@
 import { AlertTriangle } from 'lucide-react-native';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
 
-import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
-import { Button } from '../../../components/ui/Button';
-import { mobileTheme, withAlpha } from '../../../design/tokenAdapter';
-import { mobileSurfaces } from '../../../design/surfaces';
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
+import { Button } from '@/components/ui/Button';
+import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
+import { mobileSurfaces } from '@/design/surfaces';
 import { useCancelBooking } from '../hooks/useCancelBooking';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors, typography } = mobileTheme;
 const dangerTint = withAlpha(colors.danger, 0.1);
 
 export type CancelType = 'free_cancel' | 'late_cancel_warning' | 'late_cancel_incident_count';
@@ -32,10 +32,18 @@ function ReasonRow({
   onPress: () => void;
 }) {
   return (
-    <Pressable onPress={onPress} style={styles.reasonRow} accessibilityRole="button">
-      <Text style={styles.reasonLabel}>{label}</Text>
-      <View style={[styles.radioOuter, active && styles.radioOuterActive]}>
-        {active ? <View style={styles.radioInner} /> : null}
+    <Pressable
+      onPress={onPress}
+      className="flex-row items-center justify-between bg-muted rounded-md px-md py-md"
+      accessibilityRole="button"
+    >
+      <Text className="flex-1 text-body text-primary-deep">{label}</Text>
+      <View
+        className={`w-[22] h-[22] rounded-full border items-center justify-center${
+          active ? ' border-primary-deep bg-primary-deep' : ' border-border bg-card'
+        }`}
+      >
+        {active ? <View className="w-2 h-2 rounded-full bg-primary-foreground" /> : null}
       </View>
     </Pressable>
   );
@@ -80,20 +88,32 @@ export function CustomerCancelSheet({
       testID="customer-cancel-sheet"
       snapPoints={['88%']}
     >
-      <View style={styles.iconWrap}>
-        <View style={styles.iconOuter}>
+      <View className="items-center mt-sm mb-md">
+        <View
+          className="w-[64] h-[64] rounded-lg items-center justify-center"
+          style={{ backgroundColor: dangerTint }}
+        >
           <AlertTriangle size={24} color={colors.danger} />
         </View>
       </View>
 
-      <Text style={styles.title}>{t('customer.bookings.cancelQuestion')}</Text>
-      <Text style={styles.subtitle}>{t('customer.bookings.cancelPrompt')}</Text>
+      <Text className="text-title font-bold text-primary-deep text-center">
+        {t('customer.bookings.cancelQuestion')}
+      </Text>
+      <Text className="text-body text-text-secondary text-center mt-xs">
+        {t('customer.bookings.cancelPrompt')}
+      </Text>
 
-      <View style={styles.warningCard}>
-        <Text style={styles.warningText}>{warningText}</Text>
+      <View className="bg-muted rounded-md p-md">
+        <Text
+          className="text-label text-primary-deep text-center"
+          style={{ lineHeight: typography.label * 1.5 }}
+        >
+          {warningText}
+        </Text>
       </View>
 
-      <View style={styles.reasonList}>
+      <View className="gap-sm">
         {cancelReasons.map((reason) => (
           <ReasonRow
             key={reason.id}
@@ -104,9 +124,10 @@ export function CustomerCancelSheet({
         ))}
       </View>
 
-      <View style={styles.textAreaCard}>
+      <View className="min-h-[100] bg-muted rounded-md p-md">
         <TextInput
-          style={styles.textArea}
+          className="min-h-[80] text-body text-primary-deep"
+          style={{ textAlignVertical: 'top' }}
           placeholder={t('customer.bookings.cancelDetailsPlaceholder')}
           placeholderTextColor={colors.textSecondary}
           value={details}
@@ -118,145 +139,36 @@ export function CustomerCancelSheet({
         />
       </View>
 
-      <View style={styles.policyNote}>
-        <Text style={styles.policyNoteText}>{t('CustomerCancelSheet.copy4')}</Text>
+      <View className="bg-muted rounded-md p-md">
+        <Text
+          className="text-caption text-text-secondary"
+          style={{ lineHeight: typography.caption * 1.5 }}
+        >
+          {t('CustomerCancelSheet.copy4')}
+        </Text>
       </View>
 
-      <View style={styles.actions}>
+      <View className="gap-md">
         <Button
           label={t('customer.bookings.ctaCancelConfirm')}
           variant="destructive"
           onPress={() => void handleCancel()}
           isLoading={isPending}
           testID="cancel-confirm-btn"
-          style={styles.primaryButton}
+          className="self-stretch"
         />
         <Pressable
           accessibilityRole="button"
           onPress={onClose}
-          style={styles.secondaryButton}
+          className="rounded-md border-2 border-primary-deep items-center justify-center"
+          style={{ minHeight: mobileSurfaces.touchTarget.ctaHeight }}
           testID="cancel-go-back-btn"
         >
-          <Text style={styles.secondaryButtonText}>{t('customer.bookings.ctaGoBack')}</Text>
+          <Text className="text-body text-primary-deep font-bold">
+            {t('customer.bookings.ctaGoBack')}
+          </Text>
         </Pressable>
       </View>
     </ModalSheetTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  iconWrap: {
-    alignItems: 'center',
-    marginTop: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  iconOuter: {
-    width: 64,
-    height: 64,
-    borderRadius: radius.lg,
-    backgroundColor: dangerTint,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginTop: spacing.xs,
-  },
-  warningCard: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  warningText: {
-    fontSize: typography.label,
-    lineHeight: typography.label * 1.5,
-    color: colors.primaryDeep,
-    textAlign: 'center',
-  },
-  reasonList: {
-    gap: spacing.sm,
-  },
-  reasonRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-  },
-  reasonLabel: {
-    flex: 1,
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-  },
-  radioOuter: {
-    width: 22,
-    height: 22,
-    borderRadius: radius.full,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.card,
-  },
-  radioOuterActive: {
-    borderColor: colors.primaryDeep,
-    backgroundColor: colors.primaryDeep,
-  },
-  radioInner: {
-    width: 8,
-    height: 8,
-    borderRadius: radius.full,
-    backgroundColor: colors.primaryForeground,
-  },
-  textAreaCard: {
-    minHeight: 100,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  textArea: {
-    minHeight: 80,
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-    textAlignVertical: 'top',
-  },
-  policyNote: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  policyNoteText: {
-    fontSize: typography.caption,
-    lineHeight: typography.caption * 1.5,
-    color: colors.textSecondary,
-  },
-  actions: {
-    gap: spacing.md,
-  },
-  primaryButton: {
-    alignSelf: 'stretch',
-  },
-  secondaryButton: {
-    minHeight: mobileSurfaces.touchTarget.ctaHeight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.md,
-    borderWidth: 2,
-    borderColor: colors.primaryDeep,
-  },
-  secondaryButtonText: {
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-    fontWeight: '700',
-  },
-});

@@ -1,13 +1,13 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
-import { Button } from '../../../components/ui/Button';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
+import { Button } from '@/components/ui/Button';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { useFlagNoShow } from '../hooks/useFlagNoShow';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { typography } = mobileTheme;
 
 export type NoShowState = 'reminder_10min' | 'flag_available_15min' | 'flagging' | 'flagged';
 
@@ -42,7 +42,9 @@ export function CustomerNoShowSheet({
   if (state === 'flagged') {
     return (
       <ModalSheetTemplate isOpen={isOpen} onClose={onClose} testID="customer-no-show-sheet">
-        <Text style={styles.successText}>{t('customer.bookings.noShowFlaggedSuccess')}</Text>
+        <Text className="text-body text-verified font-semibold text-center my-lg">
+          {t('customer.bookings.noShowFlaggedSuccess')}
+        </Text>
       </ModalSheetTemplate>
     );
   }
@@ -55,7 +57,9 @@ export function CustomerNoShowSheet({
         title={t('customer.bookings.noShowReminderTitle')}
         testID="customer-no-show-sheet"
       >
-        <Text style={styles.description}>{t('CustomerNoShowSheet.copy1')}</Text>
+        <Text className="text-body text-accent mb-md" style={{ lineHeight: typography.body * 1.6 }}>
+          {t('CustomerNoShowSheet.copy1')}
+        </Text>
         <Button
           label={t('customer.bookings.ctaTaskerArrived')}
           onPress={handleArrived}
@@ -79,7 +83,9 @@ export function CustomerNoShowSheet({
       title={t('customer.bookings.noShowFlagTitle')}
       testID="customer-no-show-sheet"
     >
-      <Text style={styles.description}>{t('CustomerNoShowSheet.copy2')}</Text>
+      <Text className="text-body text-accent mb-md" style={{ lineHeight: typography.body * 1.6 }}>
+        {t('CustomerNoShowSheet.copy2')}
+      </Text>
       <Button
         label={t('customer.bookings.ctaFlagNoShow')}
         variant="destructive"
@@ -93,36 +99,14 @@ export function CustomerNoShowSheet({
         onPress={onClose}
         testID="no-show-dismiss-btn"
       />
-      <View style={styles.noteContainer}>
-        <Text style={styles.noteText}>{t('CustomerNoShowSheet.copy3')}</Text>
+      <View className="bg-muted rounded-md p-md mt-sm">
+        <Text
+          className="text-caption text-text-secondary"
+          style={{ lineHeight: typography.caption * 1.5 }}
+        >
+          {t('CustomerNoShowSheet.copy3')}
+        </Text>
       </View>
     </ModalSheetTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  description: {
-    fontSize: typography.body,
-    color: colors.accent,
-    lineHeight: typography.body * 1.6,
-    marginBottom: spacing.md,
-  },
-  successText: {
-    fontSize: typography.body,
-    color: colors.verified,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginVertical: spacing.lg,
-  },
-  noteContainer: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    marginTop: spacing.sm,
-  },
-  noteText: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    lineHeight: typography.caption * 1.5,
-  },
-});

@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View, Alert } from 'react-native';
+import { Text, View, Alert } from 'react-native';
 
-import { Button, FormField, Input } from '../../../components/ui';
-import { elevations } from '../../../design/elevations';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { Button, FormField, Input } from '@/components/ui';
+import { elevations } from '@/design/elevations';
 import {
   DEV_LOGIN_CUSTOMER_PHONE,
   DEV_LOGIN_TASKER_PHONE,
   useRequestOtp,
   useVerifyOtp,
   useDevLogin,
-} from '../hooks/useAuth';
-
-const { colors, spacing, typography } = mobileTheme;
+} from '@/features/auth/hooks/useAuth';
 
 export function LoginForm() {
   const runtimeEnv = typeof process !== 'undefined' ? process.env : undefined;
@@ -50,21 +47,26 @@ export function LoginForm() {
   const busy = requestOtp.isPending || verifyOtp.isPending || devLogin.isPending;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{t('auth.welcome')}</Text>
+    <View className="p-xl justify-center flex-1">
+      <Text className="text-heading font-bold mb-2xl text-center text-foreground">
+        {t('auth.welcome')}
+      </Text>
 
       {step === 'options' && (
-        <View style={styles.optionsContainer}>
+        <View className="self-stretch">
           <Button
             label={t('auth.continueFacebook')}
             onPress={handleFacebookLogin}
-            style={styles.fbButton}
+            className="bg-foreground mb-xl"
+            style={elevations.card}
           />
 
-          <View style={styles.divider}>
-            <View style={styles.line} />
-            <Text style={styles.dividerText}>{t('auth.or')}</Text>
-            <View style={styles.line} />
+          <View className="flex-row items-center my-xl">
+            <View className="flex-1 h-px bg-border" />
+            <Text className="mx-md text-text-tertiary font-medium" style={{ letterSpacing: 0.075 }}>
+              {t('auth.or')}
+            </Text>
+            <View className="flex-1 h-px bg-border" />
           </View>
 
           <Button
@@ -79,14 +81,14 @@ export function LoginForm() {
                 label={t('LoginForm.copy1')}
                 variant="secondary"
                 onPress={() => handleDevLoginAs('CUSTOMER')}
-                style={styles.devButton}
+                className="mt-2xl bg-secondary"
                 isLoading={busy}
               />
               <Button
                 label={t('LoginForm.copy2')}
                 variant="secondary"
                 onPress={() => handleDevLoginAs('TASKER')}
-                style={styles.devButtonTasker}
+                className="mt-sm bg-secondary"
                 isLoading={busy}
               />
             </>
@@ -117,7 +119,7 @@ export function LoginForm() {
         </FormField>
       )}
 
-      <View style={styles.actions}>
+      <View className="mt-xl">
         {step === 'phone' && (
           <Button label={t('auth.continue')} onPress={handleRequest} isLoading={busy} />
         )}
@@ -132,74 +134,16 @@ export function LoginForm() {
             variant="ghost"
             onPress={() => setStep(step === 'otp' ? 'phone' : 'options')}
             disabled={busy}
-            style={styles.backButton}
+            className="mt-xs"
           />
         )}
       </View>
 
       {(requestOtp.error || verifyOtp.error || devLogin.error) && (
-        <Text style={styles.error}>
+        <Text className="text-danger mt-md text-center">
           {requestOtp.error?.message || verifyOtp.error?.message || devLogin.error?.message}
         </Text>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: spacing.xl,
-    justifyContent: 'center',
-    flex: 1,
-  },
-  title: {
-    fontSize: typography.heading,
-    fontWeight: 'bold',
-    marginBottom: spacing['2xl'],
-    textAlign: 'center',
-    color: colors.foreground,
-  },
-  optionsContainer: {
-    alignSelf: 'stretch',
-  },
-  fbButton: {
-    backgroundColor: colors.foreground,
-    marginBottom: spacing.xl,
-    ...elevations.card,
-  },
-  devButton: {
-    marginTop: spacing['2xl'],
-    backgroundColor: colors.secondary,
-  },
-  devButtonTasker: {
-    marginTop: spacing.sm,
-    backgroundColor: colors.secondary,
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: spacing.xl,
-  },
-  line: {
-    flex: 1,
-    height: 1,
-    backgroundColor: colors.border,
-  },
-  dividerText: {
-    marginHorizontal: spacing.md,
-    color: colors.textTertiary,
-    fontWeight: '500',
-    letterSpacing: 0.075,
-  },
-  actions: {
-    marginTop: spacing.xl,
-  },
-  error: {
-    color: colors.danger,
-    marginTop: spacing.md,
-    textAlign: 'center',
-  },
-  backButton: {
-    marginTop: spacing.xs,
-  },
-});

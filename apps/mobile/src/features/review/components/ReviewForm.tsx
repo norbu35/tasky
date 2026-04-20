@@ -120,7 +120,7 @@ function StarRatingInput({
   );
 }
 
-export default function ReviewFormScreen() {
+export default function ReviewForm() {
   const { t } = useTranslation();
   const router = useRouter();
   const params = useLocalSearchParams<ReviewParams>();

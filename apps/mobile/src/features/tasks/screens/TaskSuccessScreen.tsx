@@ -12,7 +12,7 @@ import { useTaskDraftStore } from '@/features/tasks/draft';
 
 const { colors, spacing, typography } = mobileTheme;
 
-export default function TaskPostedSuccessScreen() {
+export default function TaskSuccessScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { taskId, draftId } = useLocalSearchParams<{ taskId?: string; draftId?: string }>();

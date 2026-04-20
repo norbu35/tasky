@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { SuccessCelebrationTemplate } from '../../../components/templates/SuccessCelebrationTemplate';
+import { SuccessCelebrationTemplate } from '@/components/templates/SuccessCelebrationTemplate';
 
 interface ApplicationSentSuccessProps {
   onBrowseMore: () => void;

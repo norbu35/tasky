@@ -10,7 +10,7 @@ import { useChatConversation } from './useChatConversation';
 
 const { colors, spacing } = mobileTheme;
 
-export default function ChatDetailScreen() {
+export default function ChatConversationScreen() {
   const {
     router,
     t,

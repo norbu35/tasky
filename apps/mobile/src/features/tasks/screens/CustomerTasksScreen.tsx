@@ -11,7 +11,7 @@ import { useCustomerTasks } from './useCustomerTasks';
 
 const { colors } = mobileTheme;
 
-export default function MyTasksListScreen() {
+export default function CustomerTasksScreen() {
   const {
     tasks,
     counts,

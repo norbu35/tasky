@@ -1,13 +1,13 @@
 import { Banknote, CalendarDays, Headphones, Sparkles } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
-import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
-import { mobileTheme } from '../../../design/tokenAdapter';
-import { mobileSurfaces } from '../../../design/surfaces';
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileSurfaces } from '@/design/surfaces';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 export interface NoApplicantRescueProps {
   isOpen: boolean;
@@ -30,13 +30,17 @@ function RescueButton({
   onPress: () => void;
 }) {
   return (
-    <Pressable onPress={onPress} style={styles.optionButton} accessibilityRole="button">
-      <View style={styles.optionIconWrap}>
+    <Pressable
+      onPress={onPress}
+      className="flex-row items-start gap-md bg-muted rounded-md p-md"
+      accessibilityRole="button"
+    >
+      <View className="w-[36] h-[36] rounded-md bg-card items-center justify-center">
         <Icon size={20} color={colors.secondary} />
       </View>
-      <View style={styles.optionCopy}>
-        <Text style={styles.optionLabel}>{label}</Text>
-        <Text style={styles.optionDescription}>{description}</Text>
+      <View className="flex-1 gap-[2]">
+        <Text className="text-body font-bold text-primary-deep">{label}</Text>
+        <Text className="text-caption text-text-secondary leading-normal">{description}</Text>
       </View>
     </Pressable>
   );
@@ -59,17 +63,21 @@ export function NoApplicantRescue({
       testID="no-applicant-rescue"
       snapPoints={['86%']}
     >
-      <View style={styles.iconWrap}>
-        <View style={styles.iconOuter}>
+      <View className="items-center mt-sm mb-md">
+        <View className="w-[64] h-[64] rounded-lg bg-muted items-center justify-center">
           <Sparkles size={24} color={colors.secondary} />
         </View>
       </View>
 
-      <Text style={styles.title}>{t('customer.noApplicantRescue.title')}</Text>
+      <Text className="text-subtitle font-bold text-primary-deep text-center">
+        {t('customer.noApplicantRescue.title')}
+      </Text>
 
-      <Text style={styles.description}>{t('NoApplicantRescue.copy1')}</Text>
+      <Text className="text-body text-text-secondary text-center mt-sm leading-relaxed">
+        {t('NoApplicantRescue.copy1')}
+      </Text>
 
-      <View style={styles.cardStack}>
+      <View className="gap-sm mt-sm">
         <RescueButton
           icon={Banknote}
           label={t('customer.noApplicantRescue.adjustBudget')}
@@ -92,97 +100,22 @@ export function NoApplicantRescue({
         />
       </View>
 
-      <View style={styles.noteCard}>
-        <Text style={styles.noteText}>{t('NoApplicantRescue.copy5')}</Text>
+      <View className="bg-primary-deep rounded-md p-md">
+        <Text className="text-caption text-accent text-center leading-normal">
+          {t('NoApplicantRescue.copy5')}
+        </Text>
       </View>
 
-      <Pressable onPress={onClose} style={styles.dismissButton} accessibilityRole="button">
-        <Text style={styles.dismissText}>{t('customer.noApplicantRescue.dismiss')}</Text>
+      <Pressable
+        onPress={onClose}
+        className="items-center justify-center"
+        style={{ minHeight: mobileSurfaces.touchTarget.ctaHeight }}
+        accessibilityRole="button"
+      >
+        <Text className="text-body font-bold text-text-secondary">
+          {t('customer.noApplicantRescue.dismiss')}
+        </Text>
       </Pressable>
     </ModalSheetTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  iconWrap: {
-    alignItems: 'center',
-    marginTop: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  iconOuter: {
-    width: 64,
-    height: 64,
-    borderRadius: radius.lg,
-    backgroundColor: colors.muted,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-  },
-  description: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: typography.body * 1.6,
-    marginTop: spacing.sm,
-  },
-  cardStack: {
-    gap: spacing.sm,
-    marginTop: spacing.sm,
-  },
-  optionButton: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.md,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  optionIconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: radius.md,
-    backgroundColor: colors.card,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  optionCopy: {
-    flex: 1,
-    gap: 2,
-  },
-  optionLabel: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  optionDescription: {
-    fontSize: typography.caption,
-    lineHeight: typography.caption * 1.5,
-    color: colors.textSecondary,
-  },
-  noteCard: {
-    backgroundColor: colors.primaryDeep,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  noteText: {
-    fontSize: typography.caption,
-    lineHeight: typography.caption * 1.5,
-    color: colors.accent,
-    textAlign: 'center',
-  },
-  dismissButton: {
-    minHeight: mobileSurfaces.touchTarget.ctaHeight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dismissText: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.textSecondary,
-  },
-});

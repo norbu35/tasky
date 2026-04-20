@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/Input';
 import { SchemaFieldRenderer } from './TaskIntake.parts';
 import { useTaskIntake } from './useTaskIntake';
 
-export default function IntakeFormScreen() {
+export default function TaskIntakeScreen() {
   const { t } = useTranslation();
   const {
     description,

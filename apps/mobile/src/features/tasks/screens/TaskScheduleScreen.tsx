@@ -7,7 +7,7 @@ import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 import { DateCard, BudgetField, PickerSection } from './TaskSchedule.parts';
 import { useTaskSchedule } from './useTaskSchedule';
 
-export default function ScheduleBudgetScreen() {
+export default function TaskScheduleScreen() {
   const { t } = useTranslation();
   const {
     selectedDate,

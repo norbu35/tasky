@@ -1,13 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 
-import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
-import { Button } from '../../../components/ui/Button';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
+import { Button } from '@/components/ui/Button';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { useFlagNoShow } from '../hooks/useFlagNoShow';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 interface TaskerNoShowSheetProps {
   isOpen: boolean;
@@ -46,13 +46,17 @@ export function TaskerNoShowSheet({
       testID="tasker-no-show-sheet"
     >
       {flagNoShow.isPending ? (
-        <View style={styles.loadingContainer} testID="no-show-sheet-loading">
+        <View className="py-2xl items-center" testID="no-show-sheet-loading">
           <ActivityIndicator color={colors.primary} size="large" />
         </View>
       ) : hasFlagged ? (
-        <View style={styles.contentContainer} testID="no-show-sheet-success">
-          <Text style={styles.heading}>{t('tasker.jobs.noShow.flaggedHeading')}</Text>
-          <Text style={styles.description}>{t('TaskerNoShowSheet.copy1')}</Text>
+        <View className="gap-md" testID="no-show-sheet-success">
+          <Text className="text-subtitle font-semibold text-foreground">
+            {t('tasker.jobs.noShow.flaggedHeading')}
+          </Text>
+          <Text className="text-body text-muted-foreground leading-[22px]">
+            {t('TaskerNoShowSheet.copy1')}
+          </Text>
           <Button
             label={t('tasker.jobs.noShow.doneButton')}
             onPress={onClose}
@@ -60,9 +64,13 @@ export function TaskerNoShowSheet({
           />
         </View>
       ) : isReminderPhase ? (
-        <View style={styles.contentContainer}>
-          <Text style={styles.heading}>{t('tasker.jobs.noShow.reminderHeading')}</Text>
-          <Text style={styles.description}>{t('TaskerNoShowSheet.copy2')}</Text>
+        <View className="gap-md">
+          <Text className="text-subtitle font-semibold text-foreground">
+            {t('tasker.jobs.noShow.reminderHeading')}
+          </Text>
+          <Text className="text-body text-muted-foreground leading-[22px]">
+            {t('TaskerNoShowSheet.copy2')}
+          </Text>
           <Button
             label={t('tasker.jobs.noShow.arrivedButton')}
             variant="outline"
@@ -77,11 +85,15 @@ export function TaskerNoShowSheet({
           />
         </View>
       ) : isFlagAvailable ? (
-        <View style={styles.contentContainer}>
-          <Text style={styles.heading}>{t('tasker.jobs.noShow.flagHeading')}</Text>
-          <Text style={styles.description}>{t('TaskerNoShowSheet.copy3')}</Text>
-          <View style={styles.warningBox}>
-            <Text style={styles.warningText}>
+        <View className="gap-md">
+          <Text className="text-subtitle font-semibold text-foreground">
+            {t('tasker.jobs.noShow.flagHeading')}
+          </Text>
+          <Text className="text-body text-muted-foreground leading-[22px]">
+            {t('TaskerNoShowSheet.copy3')}
+          </Text>
+          <View className="bg-muted rounded-md p-md">
+            <Text className="text-micro text-muted-foreground leading-[18px]">
               {t('tasker.jobs.noShow.warning', t('TaskerNoShowSheet.copy4'))}
             </Text>
           </View>
@@ -102,33 +114,3 @@ export function TaskerNoShowSheet({
     </ModalSheetTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  contentContainer: {
-    gap: spacing.md,
-  },
-  loadingContainer: {
-    paddingVertical: spacing.xl,
-    alignItems: 'center',
-  },
-  heading: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.foreground,
-  },
-  description: {
-    fontSize: typography.body,
-    color: colors.mutedForeground,
-    lineHeight: 22,
-  },
-  warningBox: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  warningText: {
-    fontSize: typography.micro,
-    color: colors.mutedForeground,
-    lineHeight: 18,
-  },
-});

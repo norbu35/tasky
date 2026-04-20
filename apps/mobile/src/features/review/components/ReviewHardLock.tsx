@@ -2,12 +2,12 @@ import { useRouter } from 'expo-router';
 import { Lock } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { Button } from '../../../components/ui/Button';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { Button } from '@/components/ui/Button';
+import { mobileTheme } from '@/design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 interface ReviewHardLockProps {
   bookingId: string;
@@ -22,54 +22,25 @@ export function ReviewHardLock({ bookingId }: ReviewHardLockProps) {
   };
 
   return (
-    <View style={styles.container} testID="review-hard-lock">
-      <View style={styles.iconShell}>
+    <View
+      className="flex-1 justify-center items-center px-lg bg-background"
+      testID="review-hard-lock"
+    >
+      <View className="w-[72] h-[72] rounded-[18] bg-accent items-center justify-center mb-md">
         <Lock size={24} color={colors.primary} />
       </View>
-      <Text style={styles.title}>{t('shared.review.hardLockTitle')}</Text>
-      <Text style={styles.body}>{t('ReviewHardLock.copy1')}</Text>
+      <Text className="text-title font-bold text-foreground text-center mb-md">
+        {t('shared.review.hardLockTitle')}
+      </Text>
+      <Text className="text-body text-muted-foreground text-center leading-normal">
+        {t('ReviewHardLock.copy1')}
+      </Text>
       <Button
         label={t('shared.review.submit')}
         onPress={handleSubmitReview}
-        style={styles.button}
+        style={{ marginTop: mobileTheme.spacing.xl, alignSelf: 'stretch' }}
         testID="review-hard-lock-cta"
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    backgroundColor: colors.background,
-  },
-  iconShell: {
-    width: 72,
-    height: 72,
-    borderRadius: 18,
-    backgroundColor: colors.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.md,
-  },
-  title: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
-  body: {
-    fontSize: typography.body,
-    color: colors.mutedForeground,
-    textAlign: 'center',
-    lineHeight: typography.body * 1.5,
-  },
-  button: {
-    marginTop: spacing.xl,
-    alignSelf: 'stretch',
-  },
-});

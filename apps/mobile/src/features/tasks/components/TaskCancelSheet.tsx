@@ -2,15 +2,15 @@ import { useRouter } from 'expo-router';
 import { AlertTriangle } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
-import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
-import { Button } from '../../../components/ui/Button';
-import { mobileTheme } from '../../../design/tokenAdapter';
-import { generateIdempotencyKey } from '../../../utils/uuid';
-import { useCancelBooking } from '../../bookings/hooks/useCancelBooking';
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
+import { Button } from '@/components/ui/Button';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { generateIdempotencyKey } from '@/utils/uuid';
+import { useCancelBooking } from '@/features/bookings/hooks/useCancelBooking';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 export interface TaskCancelSheetProps {
   isOpen: boolean;
@@ -70,15 +70,23 @@ export function TaskCancelSheet({
       testID="task-cancel-sheet"
       snapPoints={['45%']}
     >
-      <View style={styles.content}>
-        <View style={styles.iconWrap}>
+      <View className="gap-lg">
+        <View
+          className="w-[44] h-[44] rounded-full items-center justify-center"
+          style={{ backgroundColor: `${colors.danger}14` }}
+        >
           <AlertTriangle size={20} color={colors.danger} />
         </View>
-        <Text style={styles.body}>{body}</Text>
+        <Text className="text-body text-muted-foreground leading-relaxed">{body}</Text>
 
         {isLate ? (
-          <View style={styles.warningBox}>
-            <Text style={styles.warningText}>{t('TaskCancelSheet.copy3')}</Text>
+          <View
+            className="rounded-md p-md border-l-[3] border-l-danger"
+            style={{ backgroundColor: `${colors.danger}15` }}
+          >
+            <Text className="text-label text-danger leading-normal">
+              {t('TaskCancelSheet.copy3')}
+            </Text>
           </View>
         ) : null}
 
@@ -90,50 +98,12 @@ export function TaskCancelSheet({
           testID="task-cancel-confirm"
         />
 
-        <Pressable onPress={onClose} style={styles.goBackButton}>
-          <Text style={styles.goBackText}>{t('customer.cancelSheet.goBack')}</Text>
+        <Pressable onPress={onClose} className="py-sm items-center">
+          <Text className="text-body font-semibold text-text-secondary">
+            {t('customer.cancelSheet.goBack')}
+          </Text>
         </Pressable>
       </View>
     </ModalSheetTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    gap: spacing.lg,
-  },
-  iconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: `${colors.danger}14`,
-  },
-  body: {
-    fontSize: typography.body,
-    color: colors.mutedForeground,
-    lineHeight: typography.body * 1.6,
-  },
-  warningBox: {
-    backgroundColor: `${colors.danger}15`,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    borderLeftWidth: 3,
-    borderLeftColor: colors.danger,
-  },
-  warningText: {
-    fontSize: typography.label,
-    color: colors.danger,
-    lineHeight: typography.label * 1.5,
-  },
-  goBackButton: {
-    paddingVertical: spacing.sm,
-    alignItems: 'center',
-  },
-  goBackText: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.textSecondary,
-  },
-});

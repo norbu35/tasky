@@ -3,15 +3,15 @@ import { useRouter } from 'expo-router';
 import { Check, ArrowRight } from 'lucide-react-native';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
-import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
-import { elevations } from '../../../design/elevations';
-import { mobileTheme } from '../../../design/tokenAdapter';
-import { mobileSurfaces } from '../../../design/surfaces';
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
+import { elevations } from '@/design/elevations';
+import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileSurfaces } from '@/design/surfaces';
 import { useCompleteBooking } from '../hooks/useCompleteBooking';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors, typography } = mobileTheme;
 
 interface ConfirmCompletionSheetProps {
   isOpen: boolean;
@@ -47,23 +47,33 @@ export function ConfirmCompletionSheet({
       testID="confirm-completion-sheet"
       snapPoints={['58%']}
     >
-      <View style={styles.iconWrap}>
-        <View style={styles.iconOuter}>
-          <View style={styles.iconInner}>
+      <View className="items-center mt-sm mb-md">
+        <View
+          className="w-[80] h-[80] rounded-lg bg-card items-center justify-center"
+          style={{ ...elevations.soft }}
+        >
+          <View className="w-[56] h-[56] rounded-lg bg-trust-muted items-center justify-center">
             <Check size={24} color={colors.verified} strokeWidth={3} />
           </View>
         </View>
       </View>
 
-      <Text style={styles.title}>{t('customer.bookings.confirmCompletionTitle')}</Text>
+      <Text className="text-subtitle font-bold text-primary-deep text-center">
+        {t('customer.bookings.confirmCompletionTitle')}
+      </Text>
 
-      <Text style={styles.description}>{t('ConfirmCompletionSheet.copy1')}</Text>
+      <Text
+        className="text-body text-text-secondary text-center mt-sm mb-lg"
+        style={{ lineHeight: typography.body * 1.6 }}
+      >
+        {t('ConfirmCompletionSheet.copy1')}
+      </Text>
 
-      <View style={styles.actions}>
+      <View className="gap-md">
         <Pressable
           accessibilityRole="button"
           onPress={() => void handleConfirm()}
-          style={styles.primaryWrap}
+          className="rounded-md overflow-hidden"
           testID="confirm-completion-confirm-btn"
           disabled={isPending}
         >
@@ -71,9 +81,11 @@ export function ConfirmCompletionSheet({
             colors={[colors.verified, colors.trust]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={[styles.primaryButton, isPending && styles.buttonDisabled]}
+            className={`min-h-[52] flex-row items-center justify-center gap-sm${isPending ? ' opacity-70' : ''}`}
           >
-            <Text style={styles.primaryButtonText}>{t('ConfirmCompletionSheet.confirmLabel')}</Text>
+            <Text className="text-body font-bold text-primary-foreground">
+              {t('ConfirmCompletionSheet.confirmLabel')}
+            </Text>
             <ArrowRight size={20} color={colors.primaryForeground} />
           </LinearGradient>
         </Pressable>
@@ -81,86 +93,15 @@ export function ConfirmCompletionSheet({
         <Pressable
           accessibilityRole="button"
           onPress={onClose}
-          style={styles.secondaryButton}
+          className="rounded-md border-2 border-primary-deep items-center justify-center"
+          style={{ minHeight: mobileSurfaces.touchTarget.ctaHeight }}
           testID="confirm-completion-cancel-btn"
         >
-          <Text style={styles.secondaryButtonText}>{t('customer.bookings.ctaGoBack')}</Text>
+          <Text className="text-body font-bold text-primary-deep">
+            {t('customer.bookings.ctaGoBack')}
+          </Text>
         </Pressable>
       </View>
     </ModalSheetTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  iconWrap: {
-    alignItems: 'center',
-    marginTop: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  iconOuter: {
-    width: 80,
-    height: 80,
-    borderRadius: radius.lg,
-    backgroundColor: colors.card,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...elevations.soft,
-  },
-  iconInner: {
-    width: 56,
-    height: 56,
-    borderRadius: radius.lg,
-    backgroundColor: colors.trustMuted,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-  },
-  description: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: typography.body * 1.6,
-    marginTop: spacing.sm,
-    marginBottom: spacing.lg,
-  },
-  actions: {
-    gap: spacing.md,
-  },
-  primaryWrap: {
-    borderRadius: radius.md,
-    overflow: 'hidden',
-  },
-  primaryButton: {
-    minHeight: 52,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-  },
-  primaryButtonText: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryForeground,
-  },
-  secondaryButton: {
-    minHeight: mobileSurfaces.touchTarget.ctaHeight,
-    borderRadius: radius.md,
-    borderWidth: 2,
-    borderColor: colors.primaryDeep,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  secondaryButtonText: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  buttonDisabled: {
-    opacity: 0.7,
-  },
-});
