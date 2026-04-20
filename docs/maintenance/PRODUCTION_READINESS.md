@@ -31,7 +31,7 @@ Production remains blocked until these are closed:
 
 1. No release-grade staging environment exists yet. The repo now supports a private VPS sandbox, but there is still no
    public or allowlisted HTTPS environment with `dev-auth` disabled and real Facebook OAuth callback rehearsal.
-2. No live staging rehearsal evidence exists yet. `docs/quality/staging-rehearsal-2026-04.md` is still blocked on a
+2. No live staging rehearsal evidence exists yet — still blocked on a
    real host.
 3. The test-trust audit still records missing blocker-grade backend scenario families for:
    - verification-gated tasker activation (`REQ-P1-AUTH-04`)
@@ -41,9 +41,6 @@ Production remains blocked until these are closed:
    - admin ban/unban (`REQ-P1-ADMIN-04`)
    - concierge dispatch backend proof inside `REQ-P1-ADMIN-05`
 4. Live alert routing, dashboard wiring, and incident evidence are not yet proven against a real deployed stack.
-5. The mobile client has no token refresh mechanism. Access tokens expire after 1 hour; without a refresh
-   interceptor, every user session silently breaks — API calls return 401 but the app still shows authenticated UI.
-   See `docs/maintenance/STAGING_RUNBOOK.md` § "Mobile Client Auth Transition" for the implementation checklist.
 
 ## Required Runtime Controls
 
@@ -67,13 +64,13 @@ These controls already exist in the repo and must remain intact through staging 
 
 - `docs/PRD.md`, `docs/ARCHITECTURE.md`, and `docs/API.yaml` reflect the verified Phase 1 launch baseline.
 - Later-phase capabilities remain classified per the capability matrix, not by UI presence or seeded toggles.
-- All launch toggles remain in the Phase 1 dormant posture from `docs/quality/launch-baseline-2026-04.md`.
+- All launch toggles remain in the Phase 1 dormant posture (see `docs/API.yaml` `x-tasky-status` annotations).
 
 ### 2. Verification trust
 
 - `./gradlew --no-daemon gateRegression` passes.
 - `pnpm -r typecheck` passes.
-- Direct web and mobile unit/integration suites remain green per `docs/quality/test-trust-audit.md`.
+- Direct web and mobile unit/integration suites remain green.
 - Playwright smoke and Maestro smoke pass in CI or staging-equivalent infrastructure.
 - The unresolved missing blocker-grade backend scenario families listed above are either implemented or explicitly
   waived with documented product signoff.
@@ -87,7 +84,7 @@ These controls already exist in the repo and must remain intact through staging 
   - `VITE_DEV_AUTH_ENABLED=false`
   - `EXPO_PUBLIC_DEV_AUTH_ENABLED=false`
   - real Facebook callback reachability
-- Staging rehearsal evidence is attached in `docs/quality/staging-rehearsal-2026-04.md`.
+- Staging rehearsal evidence is pending a real host.
 
 ### 4. Secrets and dependency posture
 
