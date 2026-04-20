@@ -49,6 +49,11 @@ public class FirebasePushProvider implements PushNotificationProvider {
         this.messaging = messaging;
     }
 
+    private static String maskToken(String token) {
+        if (token == null || token.length() <= 8) return "***";
+        return token.substring(0, 8) + "...";
+    }
+
     @Override
     public NotificationResult sendPush(
             String deviceToken, String platform, String title, String body, Map<String, String> data) {
@@ -73,11 +78,11 @@ public class FirebasePushProvider implements PushNotificationProvider {
             }
 
             String messageId = messaging.send(builder.build());
-            log.debug("FCM push delivered: messageId={} token={}", messageId, deviceToken);
+            log.debug("FCM push delivered: messageId={} token={}", messageId, maskToken(deviceToken));
             return new NotificationResult(true, messageId, null);
 
         } catch (Exception e) {
-            log.error("FCM push failed for token={}: {}", deviceToken, e.getMessage());
+            log.error("FCM push failed for token={}: {}", maskToken(deviceToken), e.getMessage());
             return new NotificationResult(false, UUID.randomUUID().toString(), "DELIVERY_FAILURE");
         }
     }
@@ -91,13 +96,17 @@ public class FirebasePushProvider implements PushNotificationProvider {
                     log.warn(
                             "FCM topic subscription failed: topic={} token={} errors={}",
                             topic,
-                            deviceToken,
+                            maskToken(deviceToken),
                             response.getErrors());
                 } else {
-                    log.debug("FCM subscribed: topic={} token={}", topic, deviceToken);
+                    log.debug("FCM subscribed: topic={} token={}", topic, maskToken(deviceToken));
                 }
             } catch (Exception e) {
-                log.error("FCM subscribeToTopic error: topic={} token={}: {}", topic, deviceToken, e.getMessage());
+                log.error(
+                        "FCM subscribeToTopic error: topic={} token={}: {}",
+                        topic,
+                        maskToken(deviceToken),
+                        e.getMessage());
             }
         }
     }

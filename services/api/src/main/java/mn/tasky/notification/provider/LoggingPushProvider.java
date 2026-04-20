@@ -19,17 +19,22 @@ public class LoggingPushProvider implements PushNotificationProvider {
 
     private static final Logger log = LoggerFactory.getLogger(LoggingPushProvider.class);
 
+    private static String maskToken(String token) {
+        if (token == null || token.length() <= 8) return "***";
+        return token.substring(0, 8) + "...";
+    }
+
     @Override
     public NotificationResult sendPush(
             String deviceToken, String platform, String title, String body, Map<String, String> data) {
         String messageId = "LOG-" + UUID.randomUUID();
-        log.info("PUSH [{}] token={} title={} body={} data={}", platform, deviceToken, title, body, data);
+        log.info("PUSH [{}] token={} title={} body={} data={}", platform, maskToken(deviceToken), title, body, data);
         return new NotificationResult(true, messageId, null);
     }
 
     @Override
     public void subscribeToTopics(String deviceToken, List<String> topics) {
-        log.info("TOPIC-SUBSCRIBE token={} topics={}", deviceToken, topics);
+        log.info("TOPIC-SUBSCRIBE token={} topics={}", maskToken(deviceToken), topics);
     }
 
     @Override
