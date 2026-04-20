@@ -10,7 +10,7 @@ import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
 import { screenLayout } from '@/design/screenLayout';
 
-import { TimelineEventRow } from './BookingTimeline.parts';
+import { TimelineEventRow } from './BookingTimeline.TimelineRow';
 import { useBookingTimelineScreen } from './useBookingTimelineScreen';
 
 const { colors, spacing } = mobileTheme;

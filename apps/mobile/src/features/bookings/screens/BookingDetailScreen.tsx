@@ -7,13 +7,9 @@ import { ConfirmCompletionSheet } from '@/features/bookings/components/ConfirmCo
 import { CustomerCancelSheet } from '@/features/bookings/components/CustomerCancelSheet';
 
 import { getCancelType } from './BookingDetail.model';
-import {
-  StatusSection,
-  TaskerSection,
-  TaskSummarySection,
-  PaymentNote,
-  ActionButtons,
-} from './BookingDetail.parts';
+import { StatusSection } from './BookingDetail.StatusHeader';
+import { TaskerSection, TaskSummarySection, PaymentNote } from './BookingDetail.SummarySections';
+import { ActionButtons } from './BookingDetail.ActionToolbar';
 import { useBookingDetailScreen } from './useBookingDetailScreen';
 
 export default function BookingDetailScreen() {

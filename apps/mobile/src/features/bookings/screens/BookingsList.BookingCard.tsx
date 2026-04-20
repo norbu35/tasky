@@ -1,6 +1,5 @@
-import { ClipboardList, CalendarDays } from 'lucide-react-native';
+import { CalendarDays } from 'lucide-react-native';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { PriceTag } from '@/components/ui/PriceTag';
@@ -18,32 +17,6 @@ import {
 
 const { colors } = mobileTheme;
 const { bookingList } = mobileSurfaces;
-
-export function FilterTab({
-  label,
-  active,
-  onPress,
-}: {
-  label: string;
-  active: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <Touchable
-      onPress={onPress}
-      className="pb-xs items-start"
-      accessibilityRole="button"
-      accessibilityState={{ selected: active }}
-    >
-      <Text
-        className={`text-label font-semibold${active ? ' text-primary-deep' : ' text-text-secondary'}`}
-      >
-        {label}
-      </Text>
-      {active ? <View className="mt-xs w-12 h-1 rounded-full bg-primary-deep" /> : null}
-    </Touchable>
-  );
-}
 
 export function BookingCard({
   booking,
@@ -147,33 +120,6 @@ export function LoadingSkeletonCard() {
           style={{ height: bookingList.skeletonPriceHeight, width: bookingList.skeletonPriceWidth }}
         />
       </View>
-    </View>
-  );
-}
-
-export function EmptyState({ onPress }: { onPress: () => void }) {
-  const { t } = useTranslation();
-  return (
-    <View className="items-center gap-md py-2xl px-xl">
-      <View className="w-16 h-16 rounded-lg items-center justify-center bg-muted">
-        <ClipboardList size={24} color={colors.secondary} />
-      </View>
-      <Text className="text-title font-bold text-primary-deep text-center">
-        {t('customer.bookings.emptyTitle')}
-      </Text>
-      <Text className="text-body text-text-secondary text-center leading-relaxed">
-        {t('customer.bookings.emptyDescription')}
-      </Text>
-      <Touchable
-        onPress={onPress}
-        className="px-xl rounded-md bg-secondary items-center justify-center"
-        style={{ minHeight: bookingList.ctaHeight }}
-        testID="bookings-empty-cta"
-      >
-        <Text className="text-label font-bold text-secondary-foreground">
-          {t('customer.bookings.emptyCta')}
-        </Text>
-      </Touchable>
     </View>
   );
 }

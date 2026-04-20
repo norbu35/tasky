@@ -2,18 +2,14 @@ import React from 'react';
 
 import { mobileTheme } from '@/design/tokenAdapter';
 
-import {
-  ScreenContainer,
-  InsetScrollView,
-  CurrentScheduleCard,
-  StepIndicator,
-  DatePicker,
-  TimeSlotList,
-  ReasonInput,
-  PolicyNote,
-  RequestStateCard,
-  SubmitButton,
-} from './BookingReschedule.parts';
+import { ScreenContainer, InsetScrollView } from '@/components/shells';
+
+import { CurrentScheduleCard } from './BookingReschedule.CurrentSchedule';
+import { StepIndicator, PolicyNote } from './BookingReschedule.InfoBanners';
+import { DatePicker } from './BookingReschedule.datePicker';
+import { TimeSlotList } from './BookingReschedule.TimeSlots';
+import { ReasonInput } from './BookingReschedule.ReasonInput';
+import { RequestStateCard, SubmitButton } from './BookingReschedule.submitAction';
 import { useBookingReschedule } from './useBookingReschedule';
 
 const { spacing } = mobileTheme;

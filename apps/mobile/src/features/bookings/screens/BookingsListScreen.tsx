@@ -10,7 +10,9 @@ import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
 
 import { TAB_IDS } from './BookingsList.model';
-import { FilterTab, BookingCard, LoadingSkeletonCard, EmptyState } from './BookingsList.parts';
+import { FilterTab } from './BookingsList.FilterBar';
+import { BookingCard, LoadingSkeletonCard } from './BookingsList.BookingCard';
+import { EmptyState } from './BookingsList.EmptyState';
 import { useBookingsList } from './useBookingsList';
 
 const { colors, spacing } = mobileTheme;
