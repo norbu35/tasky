@@ -7,7 +7,9 @@ import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 import { elevations } from '@/design/elevations';
 
 import { UB_CENTER, DEFAULT_DELTA } from './TaskLocation.model';
-import { MapControls, MapOverlay, LocationStatusCard } from './TaskLocation.parts';
+import { MapControls } from './TaskLocation.MapControls';
+import { MapOverlay } from './TaskLocation.MapOverlay';
+import { LocationStatusCard } from './TaskLocation.LocationCard';
 import { useTaskLocation } from './useTaskLocation';
 
 export default function TaskLocationScreen() {

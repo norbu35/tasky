@@ -1,81 +1,13 @@
-import { LocateFixed, Minus, Navigation, Plus } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { FormField } from '@/components/ui/FormField';
 import { Input } from '@/components/ui/Input';
 import { Touchable } from '@/components/ui/Touchable';
 import { mobileTheme } from '@/design/tokenAdapter';
-import { mobileSurfaces } from '@/design/surfaces';
 
 const { colors } = mobileTheme;
-
-interface MapControlsProps {
-  locating: boolean;
-  onLocate: () => void;
-  onZoomIn: () => void;
-  onZoomOut: () => void;
-}
-
-export function MapControls({ locating, onLocate, onZoomIn, onZoomOut }: MapControlsProps) {
-  const btnStyle = {
-    width: mobileSurfaces.iconButton.md,
-    height: mobileSurfaces.iconButton.md,
-  };
-
-  return (
-    <View className="absolute right-3 bottom-3 gap-sm">
-      <Touchable
-        className="rounded-sm items-center justify-center bg-card border border-border"
-        style={btnStyle}
-        accessibilityRole="button"
-        testID="location-locate-button"
-        onPress={onLocate}
-      >
-        {locating ? (
-          <ActivityIndicator size="small" color={colors.primaryDeep} />
-        ) : (
-          <LocateFixed size={20} color={colors.primaryDeep} />
-        )}
-      </Touchable>
-      <Touchable
-        className="rounded-sm items-center justify-center bg-card border border-border"
-        style={btnStyle}
-        accessibilityRole="button"
-        testID="location-zoom-in-button"
-        onPress={onZoomIn}
-      >
-        <Plus size={20} color={colors.primaryDeep} />
-      </Touchable>
-      <Touchable
-        className="rounded-sm items-center justify-center bg-card border border-border"
-        style={btnStyle}
-        accessibilityRole="button"
-        testID="location-zoom-out-button"
-        onPress={onZoomOut}
-      >
-        <Minus size={20} color={colors.primaryDeep} />
-      </Touchable>
-    </View>
-  );
-}
-
-export function MapOverlay() {
-  const { t } = useTranslation();
-  return (
-    <View pointerEvents="none" className="absolute inset-0 items-center justify-center gap-xs">
-      <View className="px-lg py-sm rounded-md bg-primary-deep">
-        <Text className="text-label font-bold text-primary-foreground">
-          {t('LocationScreen.pickHere')}
-        </Text>
-      </View>
-      <View className="w-8 h-8 rounded-full items-center justify-center bg-primary">
-        <Navigation size={16} color={colors.primaryForeground} />
-      </View>
-    </View>
-  );
-}
 
 interface LocationStatusCardProps {
   pin: { latitude: number; longitude: number } | null;

@@ -6,7 +6,9 @@ import { ScreenContainer } from '@/components/shells';
 import { screenLayout } from '@/design/screenLayout';
 import { mobileTheme } from '@/design/tokenAdapter';
 
-import { TaskCard, SkeletonCard, Header, EmptyState, ErrorState } from './CustomerTasks.parts';
+import { TaskCard, SkeletonCard } from './CustomerTasks.TaskCard';
+import { Header } from './CustomerTasks.Header';
+import { EmptyState, ErrorState } from './CustomerTasks.States';
 import { useCustomerTasks } from './useCustomerTasks';
 
 const { colors } = mobileTheme;

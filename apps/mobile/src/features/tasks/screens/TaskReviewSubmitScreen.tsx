@@ -13,7 +13,7 @@ import {
   PhotosCard,
   IntakeAnswersSummary,
   DescriptionCard,
-} from './TaskReviewSubmit.parts';
+} from './TaskReviewSubmit.SummarySections';
 import { useTaskReviewSubmit } from './useTaskReviewSubmit';
 
 const { colors } = mobileTheme;

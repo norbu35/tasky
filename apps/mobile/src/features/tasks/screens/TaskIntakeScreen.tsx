@@ -6,7 +6,7 @@ import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 import { FormField } from '@/components/ui/FormField';
 import { Input } from '@/components/ui/Input';
 
-import { SchemaFieldRenderer } from './TaskIntake.parts';
+import { SchemaFieldRenderer } from './TaskIntake.SchemaFieldRenderer';
 import { useTaskIntake } from './useTaskIntake';
 
 export default function TaskIntakeScreen() {

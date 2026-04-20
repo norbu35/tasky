@@ -10,7 +10,8 @@ import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
 
-import { ApplicantCard, ConfirmationSheet } from './ApplicantsSelection.parts';
+import { ApplicantCard } from './ApplicantsSelection.ApplicantCard';
+import { ConfirmationSheet } from './ApplicantsSelection.ConfirmationSheet';
 import { useApplicantsSelection } from './useApplicantsSelection';
 
 const { colors, spacing } = mobileTheme;

@@ -2,22 +2,20 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
+import { DetailTemplate } from '@/components/templates/DetailTemplate';
+import { TaskCancelSheet } from '../components/TaskCancelSheet';
+import { CompletedBanner, CancelledBanner } from './CustomerTaskDetail.Banners';
+import { PhotosSection } from './CustomerTaskDetail.Photos';
+
 import { formatSchedule } from './CustomerTaskDetail.model';
 import type { CustomerTask } from './CustomerTaskDetail.model';
-import {
-  DetailTemplate,
-  TaskCancelSheet,
-  TaskHeader,
-  DetailRow,
-  IntakeAnswersSection,
-  BudgetCard,
-  ApplicantsSection,
-  PhotosSection,
-  LocationCard,
-  TaskerCard,
-  CompletedBanner,
-  CancelledBanner,
-} from './CustomerTaskDetail.parts';
+import { TaskHeader } from './CustomerTaskDetail.Header';
+import { DetailRow } from './CustomerTaskDetail.DetailRow';
+import { IntakeAnswersSection } from './CustomerTaskDetail.IntakeAnswers';
+import { BudgetCard } from './CustomerTaskDetail.BudgetCard';
+import { ApplicantsSection } from './CustomerTaskDetail.ApplicantsSection';
+import { LocationCard } from './CustomerTaskDetail.LocationCard';
+import { TaskerCard } from './CustomerTaskDetail.TaskerCard';
 import { useCustomerTaskDetailScreen } from './useCustomerTaskDetailScreen';
 
 export default function CustomerTaskDetailScreen() {
