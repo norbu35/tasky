@@ -4,11 +4,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from '../../src/store/authStore';
 import { createTestQueryClient } from '../test-utils/queryClient';
 
-const mockCreateTask = jest.fn();
+const mockRequestJson = jest.fn();
 
 jest.mock('../../src/lib/mobileApiClient', () => ({
   createMobileApiClient: () => ({
-    createTask: mockCreateTask,
+    requestJson: mockRequestJson,
+    requestVoid: jest.fn(),
   }),
 }));
 
@@ -41,7 +42,7 @@ describe('useCreateTask', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     latestMutation = null;
-    mockCreateTask.mockResolvedValue({ id: 'task-1' });
+    mockRequestJson.mockResolvedValue({ id: 'task-1' });
     useAuthStore.setState({
       session: {
         accessToken: 'access-token',
@@ -55,8 +56,6 @@ describe('useCreateTask', () => {
           created_at: '2026-02-14T00:00:00Z',
         },
       },
-      profile: null,
-      deviceToken: null,
     });
   });
 
@@ -85,18 +84,25 @@ describe('useCreateTask', () => {
       });
     });
 
-    expect(mockCreateTask).toHaveBeenCalledWith('access-token', {
-      category_id: 'cat-123',
-      description: 'Fix my sink',
-      budget: 50000,
-      intake_answers: { property_type: 'apartment' },
-      intake_schema_version: 7,
-      location_lat: 47.92123,
-      location_lng: 106.91876,
-      location_text: 'Behind State Dept Store',
-      scheduled_at: '2026-04-01T10:00:00Z',
-      photo_keys: [],
-    });
+    expect(mockRequestJson).toHaveBeenCalledWith(
+      '/tasks',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          category_id: 'cat-123',
+          description: 'Fix my sink',
+          budget: 50000,
+          intake_answers: { property_type: 'apartment' },
+          intake_schema_version: 7,
+          location_lat: 47.92123,
+          location_lng: 106.91876,
+          location_text: 'Behind State Dept Store',
+          scheduled_at: '2026-04-01T10:00:00Z',
+          photo_keys: [],
+        }),
+      },
+      'access-token',
+    );
     expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['myTasks'] });
 
     queryClient.clear();

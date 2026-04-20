@@ -13,22 +13,44 @@ import type {
 const getClient = () => createMobileApiClient();
 
 export async function createTask(accessToken: string, payload: CreateTaskRequest): Promise<Task> {
-  return getClient().createTask(accessToken, payload);
+  return getClient().requestJson<Task>(
+    '/tasks',
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+    accessToken,
+  );
 }
 
 export async function listTasks(
   accessToken: string,
   filters?: TaskFilters,
 ): Promise<CursorPage<PublicTask>> {
-  return getClient().listTasks(accessToken, filters);
+  return getClient().requestJson<CursorPage<PublicTask>>('/tasks', { method: 'GET' }, accessToken, {
+    category: filters?.categoryId,
+    lat: filters?.lat,
+    lng: filters?.lng,
+    radius_km: filters?.radiusKm,
+    limit: 100,
+  });
 }
 
 export async function listMyTasks(accessToken: string): Promise<CursorPage<Task>> {
-  return getClient().listMyTasks(accessToken);
+  return getClient().requestJson<CursorPage<Task>>('/tasks/mine', { method: 'GET' }, accessToken, {
+    limit: 100,
+  });
 }
 
 export async function listCategories(accessToken: string): Promise<CursorPage<Category>> {
-  return getClient().listCategories(accessToken);
+  return getClient().requestJson<CursorPage<Category>>(
+    '/categories',
+    { method: 'GET' },
+    accessToken,
+    {
+      limit: 100,
+    },
+  );
 }
 
 export async function applyToTask(
@@ -36,27 +58,50 @@ export async function applyToTask(
   taskId: string,
   message: string,
 ): Promise<TaskApplication> {
-  return getClient().applyToTask(accessToken, taskId, message);
+  return getClient().requestJson<TaskApplication>(
+    `/tasks/${taskId}/applications`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ message }),
+    },
+    accessToken,
+  );
 }
 
 export async function listApplications(
   accessToken: string,
   taskId: string,
 ): Promise<CursorPage<TaskApplication>> {
-  return getClient().listApplications(accessToken, taskId);
+  return getClient().requestJson<CursorPage<TaskApplication>>(
+    `/tasks/${taskId}/applications`,
+    { method: 'GET' },
+    accessToken,
+    { limit: 100 },
+  );
 }
 
 export async function getTaskPhotoUploadUrl(
   accessToken: string,
   contentType: 'image/jpeg' | 'image/png' | 'image/webp',
 ): Promise<{ upload_url: string; storage_key: string }> {
-  return getClient().getTaskPhotoUploadUrl(accessToken, contentType);
+  return getClient().requestJson<{ upload_url: string; storage_key: string }>(
+    '/tasks/photos/upload-url',
+    {
+      method: 'POST',
+      body: JSON.stringify({ content_type: contentType }),
+    },
+    accessToken,
+  );
 }
 
 export async function listRecentLocations(
   accessToken: string,
 ): Promise<{ locations: RecentLocation[] }> {
-  return getClient().listRecentLocations(accessToken);
+  return getClient().requestJson<{ locations: RecentLocation[] }>(
+    '/tasks/mine/recent-locations',
+    { method: 'GET' },
+    accessToken,
+  );
 }
 
 export async function reverseGeocode(
@@ -64,5 +109,10 @@ export async function reverseGeocode(
   lat: number,
   lng: number,
 ): Promise<{ formatted_address: string }> {
-  return getClient().reverseGeocode(accessToken, lat, lng);
+  return getClient().requestJson<{ formatted_address: string }>(
+    '/location/reverse-geocode',
+    { method: 'GET' },
+    accessToken,
+    { lat, lng },
+  );
 }

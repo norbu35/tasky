@@ -36,7 +36,6 @@ import {
   ApiError,
   type AuthTokens,
   type Booking,
-  type Message,
   type Profile,
   type PublicTask,
   type User,
@@ -242,8 +241,6 @@ const baseBooking: Booking = {
 function resetStores(): void {
   useAuthStore.setState({
     session: null,
-    profile: null,
-    deviceToken: null,
   });
   useAppStore.setState({
     hasSeenOnboarding: true,
@@ -522,7 +519,7 @@ describe('mobile app structure', () => {
     expect(signOut).toHaveBeenCalledTimes(1);
   });
 
-  it('TID-TASK-083-MOBILE-MSG-NOTIF-INTEGRATION supports notification and message API interactions', async () => {
+  it('TID-TASK-083-MOBILE-MSG-NOTIF-INTEGRATION supports transport-level API interactions', async () => {
     const fetchMock = jest
       .fn()
       .mockResolvedValueOnce({
@@ -531,14 +528,13 @@ describe('mobile app structure', () => {
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: async () =>
-          ({
-            id: 'message-1',
-            conversation_id: 'conversation-1',
-            sender_id: 'user-1',
-            content: 'Сайн байна уу',
-            created_at: '2026-02-14T00:00:00Z',
-          }) satisfies Message,
+        json: async () => ({
+          id: 'message-1',
+          conversation_id: 'conversation-1',
+          sender_id: 'user-1',
+          content: 'Сайн байна уу',
+          created_at: '2026-02-14T00:00:00Z',
+        }),
       })
       .mockResolvedValueOnce({
         ok: true,
@@ -552,14 +548,29 @@ describe('mobile app structure', () => {
 
     const client = createMobileApiClient('http://localhost:8080');
 
-    await client.registerDevice('access-token', {
-      token: 'device-token',
-      platform: 'ANDROID',
-    });
+    await client.requestJson<{ message: string }>(
+      '/notifications/devices',
+      {
+        method: 'POST',
+        body: JSON.stringify({ token: 'device-token', platform: 'ANDROID' }),
+      },
+      'access-token',
+    );
 
-    const message = await client.sendMessage('access-token', 'conversation-1', 'Сайн байна уу');
+    const message = await client.requestJson<{ content: string }>(
+      '/conversations/conversation-1/messages',
+      {
+        method: 'POST',
+        body: JSON.stringify({ content: 'Сайн байна уу' }),
+      },
+      'access-token',
+    );
 
-    await client.unregisterDevice('access-token', 'device-token');
+    await client.requestVoid(
+      '/notifications/devices/device-token',
+      { method: 'DELETE' },
+      'access-token',
+    );
 
     expect(message.content).toBe('Сайн байна уу');
     expect(fetchMock).toHaveBeenCalledTimes(3);

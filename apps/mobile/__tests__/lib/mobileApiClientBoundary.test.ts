@@ -19,7 +19,7 @@ describe('mobileApiClient boundary wiring', () => {
     }
   });
 
-  it('TID-TASK-149-MOBILE-API-MARK-DONE uses the booking mark-done contract', async () => {
+  it('TID-TASK-149-MOBILE-API-MARK-DONE uses requestJson for the booking mark-done contract', async () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
       json: async () => ({ id: 'booking-1' }),
@@ -32,7 +32,14 @@ describe('mobileApiClient boundary wiring', () => {
     });
 
     const client = createMobileApiClient('http://localhost:8080');
-    await client.markBookingDone('access-token', 'booking-1', 'idem-1');
+    await client.requestJson(
+      '/bookings/booking-1/mark-done',
+      {
+        method: 'POST',
+        headers: { 'Idempotency-Key': 'idem-1' },
+      },
+      'access-token',
+    );
 
     expect(fetchMock).toHaveBeenCalledWith(
       'http://localhost:8080/api/v1/bookings/booking-1/mark-done',
@@ -43,7 +50,7 @@ describe('mobileApiClient boundary wiring', () => {
     );
   });
 
-  it('TID-TASK-150-MOBILE-API-NO-SHOW uses the booking no-show contract', async () => {
+  it('TID-TASK-150-MOBILE-API-NO-SHOW uses requestVoid for the booking no-show contract', async () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
       text: async () => '',
@@ -56,7 +63,11 @@ describe('mobileApiClient boundary wiring', () => {
     });
 
     const client = createMobileApiClient('http://localhost:8080');
-    await client.flagNoShow('access-token', 'booking-2');
+    await client.requestVoid(
+      '/bookings/booking-2/no-show/flag',
+      { method: 'POST' },
+      'access-token',
+    );
 
     expect(fetchMock).toHaveBeenCalledWith(
       'http://localhost:8080/api/v1/bookings/booking-2/no-show/flag',
@@ -67,7 +78,7 @@ describe('mobileApiClient boundary wiring', () => {
     );
   });
 
-  it('TID-TASK-151-MOBILE-API-BOOKING-TIMELINE maps schedule-events into mobile timeline rows', async () => {
+  it('TID-TASK-151-MOBILE-API-BOOKING-TIMELINE uses requestJson for schedule-events', async () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -92,7 +103,11 @@ describe('mobileApiClient boundary wiring', () => {
     });
 
     const client = createMobileApiClient('http://localhost:8080');
-    const events = await client.getBookingTimeline('access-token', 'booking-3');
+    const result = await client.requestJson<{ data: any[] }>(
+      '/bookings/booking-3/schedule-events',
+      { method: 'GET' },
+      'access-token',
+    );
 
     expect(fetchMock).toHaveBeenCalledWith(
       'http://localhost:8080/api/v1/bookings/booking-3/schedule-events',
@@ -101,14 +116,8 @@ describe('mobileApiClient boundary wiring', () => {
         headers: expect.any(Headers),
       }),
     );
-    expect(events).toEqual([
-      {
-        event: 'reschedule_requested',
-        timestamp: '2026-04-09T10:00:00Z',
-        actor: 'user-1',
-        description: 'Need a later slot',
-      },
-    ]);
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0].event_type).toBe('REQUESTED');
   });
 
   it('uses EXPO_PUBLIC_API_BASE_URL when no explicit mobile base URL is provided', async () => {
@@ -129,7 +138,14 @@ describe('mobileApiClient boundary wiring', () => {
     });
 
     const client = createMobileApiClient();
-    await client.markBookingDone('access-token', 'booking-9', 'idem-9');
+    await client.requestJson(
+      '/bookings/booking-9/mark-done',
+      {
+        method: 'POST',
+        headers: { 'Idempotency-Key': 'idem-9' },
+      },
+      'access-token',
+    );
 
     expect(fetchMock).toHaveBeenCalledWith(
       'http://127.0.0.1:8080/api/v1/bookings/booking-9/mark-done',

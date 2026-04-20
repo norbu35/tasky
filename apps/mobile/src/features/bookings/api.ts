@@ -9,15 +9,34 @@ import type {
 
 const getClient = () => createMobileApiClient();
 
+function mapBookingScheduleEventType(eventType: BookingScheduleEvent['event_type']): string {
+  switch (eventType) {
+    case 'REQUESTED':
+      return 'reschedule_requested';
+    case 'ACCEPTED':
+      return 'reschedule_accepted';
+    case 'DECLINED':
+      return 'reschedule_declined';
+    case 'EXPIRED':
+      return 'reschedule_expired';
+    default:
+      return String(eventType).toLowerCase();
+  }
+}
+
 export async function listBookings(
   accessToken: string,
   filters?: BookingFilters,
 ): Promise<CursorPage<Booking>> {
-  return getClient().listBookings(accessToken, filters);
+  return getClient().requestJson<CursorPage<Booking>>('/bookings', { method: 'GET' }, accessToken, {
+    role: filters?.role,
+    status: filters?.status,
+    limit: 100,
+  });
 }
 
 export async function getBooking(accessToken: string, bookingId: string): Promise<Booking> {
-  return getClient().getBooking(accessToken, bookingId);
+  return getClient().requestJson<Booking>(`/bookings/${bookingId}`, { method: 'GET' }, accessToken);
 }
 
 export async function cancelBooking(
@@ -25,7 +44,14 @@ export async function cancelBooking(
   bookingId: string,
   idempotencyKey: string,
 ): Promise<Booking> {
-  return getClient().cancelBooking(accessToken, bookingId, idempotencyKey);
+  return getClient().requestJson<Booking>(
+    `/bookings/${bookingId}/cancel`,
+    {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey },
+    },
+    accessToken,
+  );
 }
 
 export async function completeBooking(
@@ -33,7 +59,14 @@ export async function completeBooking(
   bookingId: string,
   idempotencyKey: string,
 ): Promise<Booking> {
-  return getClient().completeBooking(accessToken, bookingId, idempotencyKey);
+  return getClient().requestJson<Booking>(
+    `/bookings/${bookingId}/complete`,
+    {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey },
+    },
+    accessToken,
+  );
 }
 
 export async function markBookingDone(
@@ -41,7 +74,14 @@ export async function markBookingDone(
   bookingId: string,
   idempotencyKey: string,
 ): Promise<Booking> {
-  return getClient().markBookingDone(accessToken, bookingId, idempotencyKey);
+  return getClient().requestJson<Booking>(
+    `/bookings/${bookingId}/mark-done`,
+    {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey },
+    },
+    accessToken,
+  );
 }
 
 export async function rescheduleBooking(
@@ -50,7 +90,15 @@ export async function rescheduleBooking(
   payload: { proposed_scheduled_at: string; reason?: string },
   idempotencyKey: string,
 ): Promise<BookingScheduleEvent> {
-  return getClient().rescheduleBooking(accessToken, bookingId, payload, idempotencyKey);
+  return getClient().requestJson<BookingScheduleEvent>(
+    `/bookings/${bookingId}/reschedule`,
+    {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey },
+      body: JSON.stringify(payload),
+    },
+    accessToken,
+  );
 }
 
 export async function acceptApplication(
@@ -60,12 +108,14 @@ export async function acceptApplication(
   liabilityDisclaimerAccepted: boolean,
   idempotencyKey: string,
 ): Promise<Booking> {
-  return getClient().acceptApplication(
+  return getClient().requestJson<Booking>(
+    `/tasks/${taskId}/applications/${applicationId}/accept`,
+    {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey },
+      body: JSON.stringify({ liability_disclaimer_accepted: liabilityDisclaimerAccepted }),
+    },
     accessToken,
-    taskId,
-    applicationId,
-    liabilityDisclaimerAccepted,
-    idempotencyKey,
   );
 }
 
@@ -77,13 +127,18 @@ export async function createBookingIntent(
   originalBookingId?: string,
   offerId?: string,
 ): Promise<BookingIntent> {
-  return getClient().createBookingIntent(
+  return getClient().requestJson<BookingIntent>(
+    `/tasks/${taskId}/booking-intents`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        source,
+        tasker_id: taskerId,
+        original_booking_id: originalBookingId,
+        offer_id: offerId,
+      }),
+    },
     accessToken,
-    taskId,
-    source,
-    taskerId,
-    originalBookingId,
-    offerId,
   );
 }
 
@@ -93,16 +148,23 @@ export async function confirmBookingIntent(
   liabilityDisclaimerAccepted: boolean,
   idempotencyKey: string,
 ): Promise<Booking> {
-  return getClient().confirmBookingIntent(
+  return getClient().requestJson<Booking>(
+    `/booking-intents/${bookingIntentId}/confirm`,
+    {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey },
+      body: JSON.stringify({ liability_disclaimer_accepted: liabilityDisclaimerAccepted }),
+    },
     accessToken,
-    bookingIntentId,
-    liabilityDisclaimerAccepted,
-    idempotencyKey,
   );
 }
 
 export async function flagNoShow(accessToken: string, bookingId: string): Promise<void> {
-  return getClient().flagNoShow(accessToken, bookingId);
+  return getClient().requestVoid(
+    `/bookings/${bookingId}/no-show/flag`,
+    { method: 'POST' },
+    accessToken,
+  );
 }
 
 export async function getBookingTimeline(
@@ -116,5 +178,19 @@ export async function getBookingTimeline(
     description?: string;
   }[]
 > {
-  return getClient().getBookingTimeline(accessToken, bookingId);
+  return getClient()
+    .requestJson<{ data: BookingScheduleEvent[] }>(
+      `/bookings/${bookingId}/schedule-events`,
+      { method: 'GET' },
+      accessToken,
+    )
+    .then((response) => {
+      const events = response?.data ?? [];
+      return events.map((event) => ({
+        event: mapBookingScheduleEventType(event.event_type),
+        timestamp: event.created_at,
+        actor: event.actor_user_id,
+        description: event.reason ?? undefined,
+      }));
+    });
 }

@@ -9,9 +9,19 @@ export async function raiseDispute(
   reason: string,
   idempotencyKey: string,
 ): Promise<Dispute> {
-  return getClient().raiseDispute(accessToken, bookingId, reason, idempotencyKey);
+  return getClient().requestJson<Dispute>(
+    `/bookings/${bookingId}/disputes`,
+    {
+      method: 'POST',
+      headers: {
+        'Idempotency-Key': idempotencyKey,
+      },
+      body: JSON.stringify({ reason }),
+    },
+    accessToken,
+  );
 }
 
 export async function getDispute(accessToken: string, disputeId: string): Promise<Dispute> {
-  return getClient().getDispute(accessToken, disputeId);
+  return getClient().requestJson<Dispute>(`/disputes/${disputeId}`, { method: 'GET' }, accessToken);
 }

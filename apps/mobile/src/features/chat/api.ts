@@ -6,14 +6,24 @@ const getClient = () => createMobileApiClient();
 export { buildBaseUrl };
 
 export async function listConversations(accessToken: string): Promise<CursorPage<Conversation>> {
-  return getClient().listConversations(accessToken);
+  return getClient().requestJson<CursorPage<Conversation>>(
+    '/conversations',
+    { method: 'GET' },
+    accessToken,
+    { limit: 100 },
+  );
 }
 
 export async function listMessages(
   accessToken: string,
   conversationId: string,
 ): Promise<CursorPage<Message>> {
-  return getClient().listMessages(accessToken, conversationId);
+  return getClient().requestJson<CursorPage<Message>>(
+    `/conversations/${conversationId}/messages`,
+    { method: 'GET' },
+    accessToken,
+    { limit: 100 },
+  );
 }
 
 export async function sendMessage(
@@ -21,5 +31,12 @@ export async function sendMessage(
   conversationId: string,
   content: string,
 ): Promise<Message> {
-  return getClient().sendMessage(accessToken, conversationId, content);
+  return getClient().requestJson<Message>(
+    `/conversations/${conversationId}/messages`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+    },
+    accessToken,
+  );
 }

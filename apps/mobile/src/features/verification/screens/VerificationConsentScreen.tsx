@@ -9,8 +9,8 @@ import { InsetScrollView, ScreenContainer, StickyActionBar } from '@/components/
 import { Button } from '@/components/ui/Button';
 import { Touchable } from '@/components/ui/Touchable';
 import { screenLayout } from '@/design/screenLayout';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 const { colors, spacing, typography } = mobileTheme;
 
@@ -20,10 +20,10 @@ export default function VerificationConsentScreen() {
   const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
   const dataItems = [
     t('ConsentScreen.copy1'),
-    t('tasker.verification.uploadSelfie'),
-    t('tasker.verification.consentPurpose'),
     t('ConsentScreen.copy2'),
     t('ConsentScreen.copy3'),
+    t('tasker.verification.uploadSelfie'),
+    t('tasker.verification.consentPurpose'),
   ];
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {

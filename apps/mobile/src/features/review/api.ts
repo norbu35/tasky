@@ -15,16 +15,30 @@ export async function submitReview(
     comment?: string | null;
   },
 ): Promise<Review> {
-  return getClient().submitReview(accessToken, bookingId, payload);
+  return getClient().requestJson<Review>(
+    `/bookings/${bookingId}/reviews`,
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+    accessToken,
+  );
 }
 
 export async function getMyPendingReviews(accessToken: string): Promise<PendingReview[]> {
-  return getClient().getMyPendingReviews(accessToken);
+  return getClient()
+    .requestJson<{ data: PendingReview[] }>('/me/pending-reviews', { method: 'GET' }, accessToken)
+    .then((r) => r.data);
 }
 
 export async function getUserReviews(
   accessToken: string,
   userId: string,
 ): Promise<CursorPage<Review>> {
-  return getClient().getUserReviews(accessToken, userId);
+  return getClient().requestJson<CursorPage<Review>>(
+    `/users/${userId}/reviews`,
+    { method: 'GET' },
+    accessToken,
+    { limit: 100 },
+  );
 }

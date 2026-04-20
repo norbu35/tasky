@@ -37,7 +37,7 @@ jest.mock('../../../src/features/tasks/hooks/useTasks', () => ({
 
 jest.mock('../../../src/lib/mobileApiClient', () => ({
   createMobileApiClient: () => ({
-    applyToTask: jest.fn().mockResolvedValue({
+    requestJson: jest.fn().mockResolvedValue({
       id: 'app-1',
       task_id: 'task-123',
       tasker_id: 'tasker-1',
@@ -45,6 +45,7 @@ jest.mock('../../../src/lib/mobileApiClient', () => ({
       status: 'PENDING',
       created_at: '2026-03-23T00:00:00Z',
     }),
+    requestVoid: jest.fn(),
   }),
   ApiError: class ApiError extends Error {
     status: number;
