@@ -22,14 +22,10 @@ import {
   getMutationErrorMessage,
   spacing,
 } from './ReviewForm.model';
-import {
-  CommentField,
-  CounterpartyCard,
-  RatingSection,
-  ReviewFormHeader,
-  SubmitFooter,
-  SuccessOverlay,
-} from './ReviewForm.parts';
+import { CommentField } from './ReviewForm.CommentField';
+import { CounterpartyCard, ReviewFormHeader } from './ReviewForm.Header';
+import { RatingSection } from './ReviewForm.RatingInput';
+import { SubmitFooter, SuccessOverlay } from './ReviewForm.SubmitSection';
 
 export default function ReviewForm() {
   const { t } = useTranslation();
