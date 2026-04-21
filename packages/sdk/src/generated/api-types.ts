@@ -2749,6 +2749,43 @@ export interface components {
             lng: number;
             district?: string | null;
         };
+        LeadUnlockPricePayload: {
+            category_id: string;
+            district_id: string;
+            credits_required: number;
+            /** Format: date-time */
+            effective_from: string;
+            /** Format: date-time */
+            effective_to?: string | null;
+        };
+        AdminDisputeDetail: {
+            dispute: {
+                [key: string]: unknown;
+            };
+            booking: {
+                [key: string]: unknown;
+            };
+            conversation_id?: string | null;
+            evidence_messages: unknown[];
+        };
+        CategorySchemaVersion: {
+            version: number;
+            status: string;
+            schema_json: {
+                [key: string]: unknown;
+            };
+            /** Format: date-time */
+            created_at: string;
+        };
+        AdminCategoryPayload: {
+            name: string;
+            name_mn: string;
+            /** Format: uri */
+            icon_url: string;
+            sort_order: number;
+            intake_enabled: boolean;
+            is_active?: boolean;
+        };
     };
     responses: {
         /** @description Invalid request parameters or body. */

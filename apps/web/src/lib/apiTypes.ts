@@ -14,103 +14,23 @@ export type Dispute = components['schemas']['Dispute'];
 export type Conversation = components['schemas']['Conversation'];
 export type Message = components['schemas']['Message'];
 
-export interface VerificationDetail {
-  id: string;
-  user_id: string;
-  user_phone: string;
-  user_name: string;
-  id_card_front_url: string;
-  id_card_back_url: string;
+export type VerificationDetail = components['schemas']['VerificationDetail'] & {
   selfie_url?: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  admin_notes: string | null;
-  submitted_at: string;
-  reviewed_at: string | null;
-}
-
-export interface VerificationStatus {
-  status: 'NOT_SUBMITTED' | 'PENDING' | 'APPROVED' | 'REJECTED';
-  admin_notes: string | null;
-  submitted_at: string | null;
-  reviewed_at: string | null;
-}
-
-export interface FeatureToggle {
+};
+export type VerificationStatus = components['schemas']['VerificationStatus'];
+export type FeatureToggle = Omit<components['schemas']['FeatureToggle'], 'feature_name'> & {
   feature_name: string;
-  is_enabled: boolean;
-  updated_by: string;
-  updated_at: string;
-}
-
-export interface StrikePolicy {
-  strikeWindowDays: number;
-  strikeThreshold: number;
-  firstSuspensionDays: number;
-  repeatSuspensionDays: number;
-  repeatOffenseWindowDays: number;
-  autoUnsuspendEnabled: boolean;
+};
+export type StrikePolicy = Omit<components['schemas']['StrikePolicy'], 'updatedAt'> & {
   updatedAt?: string;
-}
-
-export interface StrikePolicyUpdateRequest {
-  strikeWindowDays?: number;
-  strikeThreshold?: number;
-  firstSuspensionDays?: number;
-  repeatSuspensionDays?: number;
-  repeatOffenseWindowDays?: number;
-  autoUnsuspendEnabled?: boolean;
-}
-
-export interface PayoutRequest {
-  id: string;
-  user_id?: string;
-  amount: number;
-  bank_name: string;
-  bank_account: string;
-  status: 'PENDING' | 'PROCESSED' | 'REJECTED';
-  created_at: string;
-  processed_at: string | null;
-}
-
-export interface LeadUnlockPrice {
-  id: string;
-  category_id: string;
-  district_id: string;
-  credits_required: number;
-  effective_from: string;
-  effective_to: string | null;
-}
-
-export interface LeadUnlockPricePayload {
-  category_id: string;
-  district_id: string;
-  credits_required: number;
-  effective_from: string;
-  effective_to?: string | null;
-}
-
-export interface AdminDisputeDetail {
-  dispute: Record<string, unknown>;
-  booking: Record<string, unknown>;
-  conversation_id: string | null;
-  evidence_messages: unknown[];
-}
-
-export interface CategorySchemaVersion {
-  version: number;
-  status: string;
-  schema_json: Record<string, unknown>;
-  created_at: string;
-}
-
-export interface AdminCategoryPayload {
-  name: string;
-  name_mn: string;
-  icon_url: string;
-  sort_order: number;
-  intake_enabled: boolean;
-  is_active?: boolean;
-}
+};
+export type StrikePolicyUpdateRequest = components['schemas']['StrikePolicyUpdateRequest'];
+export type PayoutRequest = components['schemas']['PayoutRequest'];
+export type LeadUnlockPrice = components['schemas']['LeadUnlockPrice'];
+export type LeadUnlockPricePayload = components['schemas']['LeadUnlockPricePayload'];
+export type AdminDisputeDetail = components['schemas']['AdminDisputeDetail'];
+export type CategorySchemaVersion = components['schemas']['CategorySchemaVersion'];
+export type AdminCategoryPayload = components['schemas']['AdminCategoryPayload'];
 
 export interface AuthTokens {
   accessToken: string;
