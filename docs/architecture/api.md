@@ -286,121 +286,123 @@ Any addition to the exception set requires deliberate justification in code revi
 
 ## 4. Data Architecture
 
-> **Truth status: mixed** — Schema descriptions are being reconciled against Flyway migrations (P1 workstream E).
-> Tables marked _(implemented)_ are verified against `V1__initial_schema.sql` and DAO layer.
-> Tables marked _(planned)_ or _(Phase N+)_ have no current migration — treat as target design.
+> **Truth status: current state** — Schema descriptions verified against Flyway migrations V1–V27 and live DAO/DTO contracts.
+> Section 4.1 and 4.2 reflect the current-state schema; section 4.4 documents planned target-state tables separately.
 > For authoritative column definitions, consult the migrations directly.
 
-### 4.1 Core Schema (ERD)
+### 4.1 Current-state Domain Schema (authoritative)
 
-#### Identity Module
+> **Truth status: current state** — verified against Flyway migrations V1–V27 and live DAO/DTO contracts.
+> For column-level definitions, consult the migrations directly (`services/api/src/main/resources/db/migration/`).
 
-- `users`: `id (UUID)`, `facebook_id (nullable, UK)`, `phone (nullable, UK)`, `primary_auth` (FACEBOOK, PHONE_OTP),
-  `role`, `status` (PENDING, ACTIVE, VERIFIED, SUSPENDED, BANNED), `suspension_end_at`, `created_at`, `updated_at`
-- `profiles`: `user_id (FK)`, `full_name`, `avatar_url`, `rating_avg`
-- `verifications`: `user_id (FK)`, `id_card_front_key`, `id_card_back_key`, `status`, `admin_notes`, `submitted_at`,
-  `reviewed_at`, `consent_policy_version`, `consent_accepted_at`, `dan_reference` (nullable)
+#### Identity
+
+- `users`: `id (UUID PK)`, `phone`, `phone_blind_idx (UNIQUE)`, `primary_auth` (FACEBOOK, PHONE_OTP), `role` (CUSTOMER, TASKER, ADMIN), `status` (PENDING, ACTIVE, VERIFIED, SUSPENDED, BANNED), `suspension_end_at`, `created_at`, `updated_at`
+- `profiles`: `user_id (PK → users)`, `full_name`, `avatar_url`, `rating_avg`, `bio`, `completed_tasks`
+  — `instant_match_revoked_until` (behavior-affecting: gates instant-match eligibility when set to a future timestamp)
+  — `last_active_at` (updated on activity)
+- `verifications`: `id (UUID PK)`, `user_id (FK → users)`, `id_card_front_key`, `id_card_back_key`, `status` (PENDING, APPROVED, REJECTED), `submitted_at`, `admin_notes`, `reviewed_at`, `consent_policy_version`, `consent_accepted_at`, `dan_reference (nullable)`
   — columns store S3/MinIO object keys, not URLs; download links are generated via presigned GET URLs on demand
 
-#### Marketplace Module
+#### Marketplace
 
-- `tasks`: `id`, `customer_id`, `category_id (FK)`, `description`, `budget`, `location_point (GEOMETRY)`,
-  `location_text`, `status` (OPEN, ASSIGNED, COMPLETED, CANCELLED, NO*SHOW), `scheduled_at`, `intake_answers_json`
-  (JSONB), `intake_schema_version`, `scope_summary_source` (TEMPLATE, USER_EDITED, LLM),
-  `business_account_id (FK, nullable)` *(Phase 2+ B2B Lite — tags task as belonging to a business account)\_
-- `task_drafts`: `id`, `customer_id`, `category_id`, `intake_answers_json (JSONB)`, `intake_schema_version`,
-  `summary_draft`, `created_at`, `expires_at`
-- `task_photos`: `id`, `task_id (FK)`, `storage_key`, `sort_order`
-- `categories`: `id`, `name`, `name_mn`, `icon_url`, `is_active`, `sort_order`, `intake_enabled`,
-  `intake_schema_version`, `intake_schema_json (JSONB)`, `last_known_good_schema_version`
-- `category_schema_versions`: `id`, `category_id`, `version`, `schema_json (JSONB)`, `status` (DRAFT, CANARY, ACTIVE,
-  ROLLED_BACK), `is_last_known_good`, `created_by`, `created_at`, `activated_at`
-- `task_applications`: `task_id`, `tasker_id`, `status` (APPLIED, SELECTED, ACCEPTED, DECLINED, EXPIRED),
-  `relevance_score`, `recommended`, `selected_at`, `respond_by_at`, `created_at`
-- `instant_match_offers` _(Phase 3+ — not yet created)_: `id`, `task_id`, `tasker_id`, `offer_rank`, `expires_at`, `status`
-  (PENDING, ACCEPTED, DECLINED, EXPIRED), `created_at`
-- `bookings`: `id`, `task_id`, `tasker_id`, `status` (ASSIGNED, PAID, COMPLETED, CANCELLED, NO_SHOW), `price`,
-  `confirmed_scheduled_at`, `liability_disclaimer_accepted`, `liability_disclaimer_accepted_at`, `settlement_mode`
-  (DIRECT, LEAD_UNLOCK, ESCROW), `late_cancel_incident`, `created_at`
-- `booking_schedule_events`: `id`, `booking_id`, `actor_user_id`, `event_type` (REQUESTED, ACCEPTED, DECLINED, EXPIRED),
-  `proposed_scheduled_at`, `reason`, `created_at`
-- `booking_timeline_events`: `id`, `booking_id`, `event_type`, `actor_user_id`, `metadata_json (JSONB)`, `created_at`
-- `task_rescue_events`: `id`, `task_id`, `triggered_at`, `trigger_window` (DAYTIME, OFF_HOURS), `actions_json` (JSONB),
-  `created_at`
-- `booking_reviews`: `id`, `booking_id`, `reviewer_id`, `reviewee_id`, `quality_rating`, `punctuality_rating`,
-  `communication_rating`, `clarity_rating`, `respectfulness_rating`, `comment`, `created_at`
-- `tasker_reliability_scores`: `tasker_id`, `score`, `completion_rate`, `punctuality_rate`, `cancellation_rate`,
-  `review_avg`, `window_days`, `computed_at`
-- `tasker_badges`: `tasker_id`, `badge_type` (PRO), `assigned_at`, `revoked_at`
+- `tasks`: `id (UUID PK)`, `customer_id (FK → users)`, `category_id (FK → categories)`, `description`, `budget`, `location_lat`, `location_lng`, `location_text`, `location_point (GEOMETRY(Point, 4326))`, `status` (OPEN, ASSIGNED, COMPLETED, CANCELLED, NO_SHOW), `scheduled_at`, `created_at`, `updated_at`, `intake_answers_json (JSONB)`, `intake_schema_version`, `scope_summary_source` (TEMPLATE, USER_EDITED, LLM)
+- `task_drafts`: `id (UUID PK)`, `customer_id (FK → users)`, `category_id (FK → categories)`, `intake_answers_json (JSONB)`, `intake_schema_version`, `summary_draft`, `location_lat`, `location_lng`, `location_text`, `created_at`, `expires_at (default now()+7d)`
+  — Design constraint: drafts intentionally do NOT store `location_point`; geometry is materialized only on promotion to `tasks`
+- `task_photos`: `id (UUID PK)`, `task_id (FK → tasks)`, `storage_key`, `sort_order`
+- `categories`: `id (UUID PK)`, `name`, `name_mn`, `icon_url`, `is_active`, `sort_order`, `intake_enabled`, `intake_schema_version`, `intake_schema_json (JSONB)`
+- `category_schema_versions`: `id (UUID PK)`, `category_id (FK → categories)`, `version`, `schema_json (JSONB)`, `status` (DRAFT, CANARY, ACTIVE, ROLLED_BACK), `created_by`, `created_at`, `activated_at`; UNIQUE(category_id, version)
+- `task_applications`: `id (UUID PK)`, `task_id (FK → tasks)`, `tasker_id (FK → users)`, `message`, `status` (APPLIED, SELECTED, ACCEPTED, DECLINED, EXPIRED), `relevance_score`, `recommended`, `selected_at`, `respond_by_at`, `created_at`; UNIQUE(task_id, tasker_id)
+- `bookings`: `id (UUID PK)`, `task_id (FK → tasks)`, `tasker_id (FK → users)`, `customer_id (FK → users)`, `price`, `status` (ASSIGNED, PAID, COMPLETED, CANCELLED, NO_SHOW), `cancellation_fee`, `liability_disclaimer_accepted`, `liability_disclaimer_accepted_at`, `confirmed_scheduled_at`, `settlement_mode` (DIRECT, LEAD_UNLOCK, ESCROW; default DIRECT), `late_cancel_incident`, `created_at`, `updated_at`
+  — `PAID` is a live transitional state in the booking state machine
+- `booking_intents`: `id (UUID PK)`, `task_id (FK → tasks CASCADE)`, `tasker_id (FK → users)`, `customer_id (FK → users)`, `source` (REBOOK, INSTANT_MATCH), `status` (PENDING, CONFIRMED, EXPIRED, CANCELLED), `original_booking_id (FK → bookings)`, `offer_id`, `expires_at`, `confirmed_booking_id (FK → bookings)`, `confirmed_at`, `created_at`, `updated_at`
+- `booking_schedule_events`: `id (UUID PK)`, `booking_id (FK → bookings)`, `actor_user_id (FK → users)`, `event_type` (REQUESTED, ACCEPTED, DECLINED, EXPIRED), `proposed_scheduled_at`, `reason`, `created_at`
+- `booking_timeline_events`: `id (UUID PK)`, `booking_id (FK → bookings)`, `event_type`, `actor_user_id (FK → users)`, `metadata_json (JSONB)`, `created_at`
+- `task_rescue_events`: `id (UUID PK)`, `task_id (FK → tasks)`, `triggered_at`, `trigger_window` (DAYTIME, OFF_HOURS), `actions_json (JSONB)`, `created_at`
+- `booking_reviews`: `id (UUID PK)`, `booking_id (FK → bookings)`, `reviewer_id (FK → users)`, `reviewee_id (FK → users)`, `quality_rating (1-5)`, `punctuality_rating (1-5)`, `communication_rating (1-5)`, `clarity_rating (1-5)`, `respectfulness_rating (1-5)`, `comment`, `created_at`; UNIQUE(booking_id, reviewer_id)
+- `tasker_reliability_scores`: `tasker_id (PK → users)`, `score`, `completion_rate`, `punctuality_rate`, `cancellation_rate`, `review_avg`, `window_days`, `computed_at`
+- `tasker_badges`: `tasker_id (FK → users)`, `badge_type` (PRO), `assigned_at`, `revoked_at`; PK(tasker_id, badge_type)
 
-#### Wallet Module And Deferred Monetization Targets
+#### Wallet
 
-> **Truth status: mixed** — `wallets`, `ledger_entries`, and `payout_requests` are implemented (verified against migrations).
-> Column descriptions below may still drift from the actual schema; consult `V1__initial_schema.sql` for authoritative definitions.
-> All other tables in this section are target-model placeholders with no current migration.
+- `wallets`: `user_id (PK → users)`, `balance_mnt`, `held_balance_mnt`, `updated_at`
+- `ledger_entries`: `id (UUID PK)`, `user_id (FK → users)`, `amount`, `type` (DEPOSIT, FEE, HOLD, RELEASE, CONFISCATE, PAYOUT, REFUND), `reference_id`, `description`, `created_at`
+- `payout_requests`: `id (UUID PK)`, `user_id (FK → users)`, `amount`, `status` (PENDING, PROCESSED, REJECTED), `created_at`, `processed_at`
+- `credited_bookings`: `booking_id (PK → bookings)`
 
-Current schema evidence in this sweep confirms the escrow-path tables `wallets`, `ledger_entries`, and
-`payout_requests`. The credit, subscription, and B2B entries below are target-model placeholders for later phases;
-they are not all present in current migrations/runtime and must not be read as launch-live schema.
+#### Communication
 
-- `credit_balances` _(planned Phase 2 target model)_: `tasker_id (PK)`, `balance`, `total_purchased`, `total_spent`,
-  `total_refunded`, `updated_at`
-- `credit_transactions` _(planned Phase 2 target model)_: `id`, `tasker_id`, `amount`, `type`
-  (PURCHASE, SPEND, REFUND, SIGNUP_BONUS), `reference_id`, `idempotency_key`, `created_at`
-- `credit_packs` _(planned Phase 2 target model)_: `id`, `name`, `credit_count`, `price_mnt`, `is_active`
-- `lead_unlock_prices` _(planned Phase 2 target model)_: `id`, `category_id`, `district_id`, `credits_required`,
-  `effective_from`, `effective_to`, `updated_by`
-- `wallets` _(implemented-gated Phase 3 path)_: `user_id (PK)`, `balance_mnt`, `held_balance_mnt`,
-  `updated_at`
-- `ledger_entries` _(implemented-gated Phase 3 path)_: `id`, `user_id`, `amount`, `type`
-  (DEPOSIT, FEE, HOLD, RELEASE, CONFISCATE, PAYOUT, REFUND), `reference_id`, `description`, `created_at`
-- `payout_requests` _(implemented-gated Phase 3 path)_: `id`, `user_id`, `amount`, `status`
-  (PENDING, PROCESSED, REJECTED), `created_at`, `processed_at`
-- `tasker_subscriptions` _(planned Phase 3 target model)_: `id`, `tasker_id`, `status`, `started_at`, `expires_at`,
-  `plan_code`
-- `business_accounts` _(planned future B2B target model; no current migration/runtime evidence in this sweep)_: `id`,
-  `owner_user_id (FK)`, `name`, `plan_code`, `billing_cycle_day`, `status` (TRIAL, ACTIVE, SUSPENDED, CHURNED),
-  `created_at`
-- `business_locations` _(planned future B2B target model; no current migration/runtime evidence in this sweep)_: `id`,
-  `business_account_id (FK)`, `label`, `address_text`, `location_point (GEOMETRY)`, `is_active`
-- `business_members` _(planned future B2B target model; no current migration/runtime evidence in this sweep)_: `id`,
-  `business_account_id (FK)`, `user_id (FK)`, `role` (OWNER, MANAGER), `joined_at`,
-  UNIQUE(`business_account_id`, `user_id`)
+- `conversations`: `id (UUID PK)`, `task_id (FK → tasks)`, `customer_id (FK → users)`, `tasker_id (FK → users)`, `created_at`; UNIQUE(task_id, customer_id, tasker_id)
+- `messages`: `id (UUID PK)`, `conversation_id (FK → conversations)`, `sender_id (FK → users)`, `content`, `phone_number_flagged`, `content_hash`, `sent_at`
+- `device_tokens`: `user_id (FK → users)`, `token`, `platform`, `created_at`; UNIQUE(user_id, token)
+- `notification_log`: `id (UUID PK)`, `user_id (FK → users)`, `type`, `channel`, `status`, `event_key`, `provider_message_id`, `error_code`, `created_at`
 
-#### Communication Module
+#### Support
 
-- `conversations`: `id`, `task_id (FK)`, `customer_id (FK)`, `tasker_id (FK)`, `created_at`
-- `messages`: `id`, `conversation_id (FK)`, `sender_id (FK)`, `content`, `phone_number_flagged`, `content_hash`,
-  `sent_at`
-- `device_tokens`: `user_id (FK)`, `token`, `platform` CHECK (IOS, ANDROID, WEB), `created_at`
-- `notification_log`: `id`, `user_id`, `type`, `channel` (PUSH, SMS), `status`, `event_key`, `provider_message_id`,
-  `error_code`, `created_at`
-
-#### Support Module
-
-- `disputes`: `id`, `booking_id (FK)`, `raised_by (FK)`, `reason`, `status`, `resolution_action` (RESOLVE_CUSTOMER,
-  RESOLVE_TASKER, ESCALATE, REFUND, RELEASE), `wrongful_party_user_id`, `resolution_notes`, `created_at`
-- `dispute_evidence`: `id`, `dispute_id (FK)`, `type` (CHAT_EXCERPT, PHOTO, WRITTEN_TIMELINE), `storage_key`,
-  `text_payload`, `created_at`
-- `tasker_strikes`: `id`, `user_id (FK)`, `booking_id (FK)`, `reason`, `created_at`
+- `disputes`: `id (UUID PK)`, `booking_id (FK → bookings)`, `raised_by (FK → users)`, `reason`, `status` (OPEN, RESOLVED_TASKER, RESOLVED_CUSTOMER, ESCALATED, CLOSED_INSUFFICIENT_EVIDENCE), `resolution_action` (RESOLVE_CUSTOMER, RESOLVE_TASKER, ESCALATE, REFUND, RELEASE), `wrongful_party_user_id`, `resolution_notes`, `resolved_at`, `created_at`
+- `dispute_evidence`: `id (UUID PK)`, `dispute_id (FK → disputes)`, `type` (CHAT_EXCERPT, PHOTO, WRITTEN_TIMELINE), `storage_key`, `text_payload`, `created_at`
+- `tasker_strikes`: `id (UUID PK)`, `user_id (FK → users)`, `booking_id (FK → bookings)`, `reason`, `created_at`
 - `referrals`: `id`, `referrer_id`, `referred_id`, `conversion_event`, `converted_at`, `reward_type`, `reward_applied`
 - `referral_rewards`: `id`, `referral_id`, `phase`, `reward_type`, `reward_value`, `applied_at`
-- `review_enforcement_cases`: `id`, `booking_id`, `user_id`, `reason_code`, `status`, `triggered_at`, `resolved_at`
-- `audit_events`: `id`, `actor_user_id`, `action`, `resource_type`, `resource_id`, `metadata_json (JSONB)`,
-  `created_at`
+- `review_enforcement_cases`: `id (UUID PK)`, `booking_id (FK → bookings)`, `user_id (FK → users)`, `reason_code`, `status` (PENDING, REMINDED_24H, REMINDED_72H, COMPLETED, EXPIRED), `investigation_active` (behavior-affecting: drives hard-lock enforcement), `triggered_at`, `resolved_at`
+- `audit_events`: `id (UUID PK)`, `actor_user_id`, `action`, `resource_type`, `resource_id`, `metadata_json (JSONB)`, `created_at`
 
-#### Infrastructure Tables
+### 4.2 Current-state Operational / Support Schema (authoritative)
+
+> **Truth status: current state** — live tables that support auth, moderation, and infrastructure.
+> Not product-facing but materially affect backend behavior.
+
+#### Auth Operations
+
+- `otp_challenges`: `phone_blind_idx (PK)`, `code`, `expires_at`, `attempts`
+- `refresh_sessions`: `token_id (PK)`, `user_id (FK → users)`, `expires_at`
+
+#### Trust & Moderation
+
+- `moderation_policy`: `id (SMALLINT PK, singleton=1)`, `strike_window_days`, `strike_threshold`, `first_suspension_days`, `repeat_suspension_days`, `repeat_offense_window_days`, `auto_unsuspend_enabled`, `updated_at`
+- `suspension_events`: `id (UUID PK)`, `user_id (FK → users)`, `strike_count`, `suspension_days`, `suspended_at`, `unsuspended_at`
+- `booking_reliability_incidents`: `id (UUID PK)`, `booking_id (FK → bookings)`, `user_id (FK → users)`, `incident_type`, `details`, `recorded_at`; UNIQUE(booking_id, user_id, incident_type)
+
+#### Service Areas
+
+- `districts`: `id (UUID PK)`, `name`, `name_mn`, `slug (UNIQUE)`, `is_active`, `centroid_lat`, `centroid_lng`
+- `tasker_service_districts`: `user_id (FK → users CASCADE)`, `district_id (FK → districts CASCADE)`, `created_at`; PK(user_id, district_id)
+
+#### Event Infrastructure
 
 - `domain_outbox_events`: `id`, `type`, `payload (JSONB)`, `status` (PENDING, PROCESSING, PROCESSED, FAILED), `attempts`, `last_error`, `available_at`, `created_at`, `correlation_id`, `causation_id`, `command_id`, `workflow_id`, `actor_id`
-  — full outbox pattern with context propagation; events relayed to RabbitMQ and consumed by domain workflow handlers.
-- `feature_toggles`: `id`, `feature_name`, `is_enabled`, `activated_at`, `deactivated_at`, `updated_by`
-  — four toggles are currently seeded at migration time: `escrow_enabled` is the only implemented-gated monetization
-  path with confirmed runtime enforcement in this sweep; `lead_fee_enabled`, `subscription_enabled`, and
-  `ai_scope_summary_enabled` are seeded latent capabilities with no confirmed runtime consumer in this sweep.
-  `promoted_listings_enabled` and `b2b_enabled` remain documented future activation gaps; this sweep found no current
-  migration or runtime evidence that they are seeded or live gates.
+  — full outbox pattern with context propagation; events relayed to RabbitMQ and consumed by domain workflow handlers
+- `event_idempotency`: `event_id (PK)`, `event_type`, `handler`, `event_status` (IN_PROGRESS, COMPLETED), `processed_at`
 
-### 4.2 Data Flow Patterns
+#### Feature Flags
+
+- `feature_toggles`: `id (UUID PK)`, `feature_name (UNIQUE)`, `is_enabled`, `activated_at`, `deactivated_at`, `updated_by`, `updated_at`
+  — four toggles seeded at migration time: `escrow_enabled` is the only implemented-gated monetization path with confirmed runtime enforcement; `lead_fee_enabled`, `subscription_enabled`, and `ai_scope_summary_enabled` are seeded latent capabilities with no confirmed runtime consumer
+
+### 4.3 Read Models and Projections
+
+> **Truth status: current state** — admin read models in `projection.admin` package.
+
+_(No database views or materialized projections currently exist. Admin read models are composed in Java via composition services backed by publicapi query ports. This section is a placeholder for when SQL views or materialized query tables are introduced.)_
+
+### 4.4 Planned / Target-state Schema (non-authoritative)
+
+> **Truth status: target design only** — these tables have **no current migration or runtime**.
+> They are documented for roadmap and design reference. Do not read them as launch-live schema.
+> When any of these are implemented, move the entry to the current-state section above and add the migration reference.
+
+- `instant_match_offers`: `id`, `task_id`, `tasker_id`, `offer_rank`, `expires_at`, `status` (PENDING, ACCEPTED, DECLINED, EXPIRED), `created_at`
+- `credit_balances`: `tasker_id (PK)`, `balance`, `total_purchased`, `total_spent`, `total_refunded`, `updated_at`
+- `credit_transactions`: `id`, `tasker_id`, `amount`, `type` (PURCHASE, SPEND, REFUND, SIGNUP_BONUS), `reference_id`, `idempotency_key`, `created_at`
+- `credit_packs`: `id`, `name`, `credit_count`, `price_mnt`, `is_active`
+- `lead_unlock_prices`: `id`, `category_id`, `district_id`, `credits_required`, `effective_from`, `effective_to`, `updated_by`
+- `tasker_subscriptions`: `id`, `tasker_id`, `status`, `started_at`, `expires_at`, `plan_code`
+- `business_accounts`: `id`, `owner_user_id (FK)`, `name`, `plan_code`, `billing_cycle_day`, `status` (TRIAL, ACTIVE, SUSPENDED, CHURNED), `created_at`
+- `business_locations`: `id`, `business_account_id (FK)`, `label`, `address_text`, `location_point (GEOMETRY)`, `is_active`
+- `business_members`: `id`, `business_account_id (FK)`, `user_id (FK)`, `role` (OWNER, MANAGER), `joined_at`; UNIQUE(business_account_id, user_id)
+- `tasks.business_account_id` (Phase 2+ B2B Lite — tags task as belonging to a business account)
+
+### 4.5 Data Flow Patterns
 
 1. **Structured Task Intake & Posting Flow**:
    - Client loads active category schema (`intake_schema_json`, `intake_schema_version`).
