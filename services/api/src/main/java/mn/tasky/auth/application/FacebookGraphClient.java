@@ -56,7 +56,7 @@ public class FacebookGraphClient {
     void validateConfig() {
         if (!StringUtils.hasText(appId) || !StringUtils.hasText(appSecret)) {
             for (String profile : environment.getActiveProfiles()) {
-                if ("local".equals(profile)) {
+                if ("local".equals(profile) || "test".equals(profile)) {
                     return;
                 }
             }
