@@ -1,100 +1,45 @@
 # Tasky Web
 
-React web client for the Tasky domestic services marketplace.
+React web client for Tasky.
 
-## Tech Stack
+## Read Order
 
-| Component       | Version / Library                                     |
-| --------------- | ----------------------------------------------------- |
-| Framework       | React 19 + Vite 8                                     |
-| Routing         | React Router DOM 7                                    |
-| Styling         | Tailwind CSS 4 + tailwind-merge                       |
-| UI Components   | Radix UI primitives + shadcn/ui patterns (CVA + clsx) |
-| Animations      | Framer Motion 12                                      |
-| Server State    | TanStack React Query 5                                |
-| Realtime        | STOMP.js + SockJS (WebSocket chat)                    |
-| Maps            | pigeon-maps                                           |
-| i18n            | i18next + browser language detector                   |
-| Toasts          | Sonner                                                |
-| Icons           | Lucide React                                          |
-| Error Handling  | react-error-boundary                                  |
-| Date Utils      | date-fns                                              |
-| Shared Packages | `@tasky/core`, `@tasky/sdk`                           |
+1. `AGENTS.md`
+2. `apps/web/AGENTS.md`
+3. `docs/architecture/web.md`
+4. `docs/architecture/common.md`
+5. `docs/API.yaml` when contracts change
 
-## Project Structure
+## Local Layout
 
-```
-src/
-  App.tsx              Root component
-  AppShell.tsx          Authenticated app shell (layout + providers)
-  main.tsx             Entry point
-  styles.css           Global styles + Tailwind directives
-  components/
-    ui/                Reusable UI primitives (shadcn/ui pattern)
-    feature/           Feature-specific compound components
-    landing/           Landing page sections
-    task-creation/     Task creation wizard components
-  context/
-    AppContext.ts       App-wide React context
-  layout/              Layout components (nav, sidebar, responsive shell)
-  lib/                 API client, utility functions
-  locales/
-    en/                English translations
-    mn/                Mongolian translations
-  pages/               Page components (one per route)
-    admin/             Admin dashboard pages
-  router/              Route definitions and guards
-  test/                Test setup and utilities
+```text
+apps/web/
+  src/
+    components/
+    layout/
+    lib/
+    locales/
+    pages/
+    router/
+    test/
+  tests/
+  e2e/
 ```
 
-## Pages
+## Commands
 
-| Page                | Route             | Description                                                                   |
-| ------------------- | ----------------- | ----------------------------------------------------------------------------- |
-| LandingPage         | `/`               | Public marketing page (redirects to dashboard/feed if authenticated)          |
-| AuthPage            | `/auth`           | Login / registration                                                          |
-| **Customer routes** | `/customer/*`     | Dashboard, tasks (CRUD + applicants), bookings (lifecycle + disputes), rebook |
-| **Tasker routes**   | `/tasker/*`       | Feed, my-tasks, jobs, bookings, stats, privacy, verification flow             |
-| **Profile routes**  | `/profile/*`      | View, edit, settings, delete                                                  |
-| InboxPage           | `/inbox`          | Chat list and conversation detail                                             |
-| BookingSafetyPage   | `/booking/safety` | Safety information                                                            |
-| Admin pages         | `/admin/*`        | Verifications, disputes, users, categories, features, concierge, moderation   |
-
-See `src/router/AppRoutes.tsx` for the full route tree (~40 routes).
-
-## Internationalization
-
-Two locales: English (`en`) and Mongolian (`mn`) with browser language auto-detection.
+```bash
+pnpm --filter @tasky/web dev
+pnpm --filter @tasky/web build
+pnpm --filter @tasky/web preview
+pnpm --filter @tasky/web typecheck
+pnpm --filter @tasky/web lint
+pnpm --filter @tasky/web test:unit
+pnpm --filter @tasky/web test:e2e:smoke
+```
 
 ## Testing
 
-| Type             | Tool                           | Command               |
-| ---------------- | ------------------------------ | --------------------- |
-| Unit / Component | Vitest + React Testing Library | `pnpm test:unit`      |
-| Coverage         | Vitest + v8                    | `pnpm test:coverage`  |
-| E2E              | Playwright (Chromium)          | `pnpm test:e2e`       |
-| E2E Smoke        | Playwright (@smoke tag)        | `pnpm test:e2e:smoke` |
-
-## Development
-
-```bash
-pnpm install                       # Install dependencies (from monorepo root)
-pnpm --filter @tasky/web dev       # Start Vite dev server
-pnpm --filter @tasky/web build     # Production build (typecheck + bundle)
-pnpm --filter @tasky/web preview   # Preview production build
-```
-
-## Scripts
-
-| Script           | Purpose                                  |
-| ---------------- | ---------------------------------------- |
-| `dev`            | Vite dev server with HMR                 |
-| `build`          | TypeScript check + Vite production build |
-| `preview`        | Serve production build locally           |
-| `typecheck`      | TypeScript type checking                 |
-| `lint`           | ESLint                                   |
-| `format`         | Prettier auto-format                     |
-| `test:unit`      | Run Vitest unit tests                    |
-| `test:coverage`  | Unit tests with coverage report          |
-| `test:e2e`       | Full Playwright E2E suite                |
-| `test:e2e:smoke` | Smoke E2E tests only                     |
+- Unit/component: Vitest + React Testing Library
+- E2E: Playwright
+- Accessibility checks for touched flows belong in the test surface, not in ad hoc notes

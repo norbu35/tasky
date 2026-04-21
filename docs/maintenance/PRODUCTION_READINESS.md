@@ -72,7 +72,7 @@ These controls already exist in the repo and must remain intact through staging 
 
 ### 1. Product and scope truth
 
-- `docs/PRD.md`, `docs/ARCHITECTURE.md`, and `docs/API.yaml` reflect the verified Phase 1 launch baseline.
+- `docs/PRD.md`, `docs/architecture/common.md`, `docs/architecture/web.md`, `docs/architecture/mobile.md`, and `docs/API.yaml` reflect the verified Phase 1 launch baseline.
 - Later-phase capabilities remain classified per the capability matrix, not by UI presence or seeded toggles.
 - All launch toggles remain in the Phase 1 dormant posture (see `docs/API.yaml` `x-tasky-status` annotations).
 

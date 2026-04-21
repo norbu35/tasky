@@ -1,20 +1,18 @@
 # Maintenance Operating Model
 
-Last updated: 2026-04-09
+Last updated: 2026-04-21
 
 ## Scope
 
-Tasky is now operated as a maintenance-and-extension monorepo, not a greenfield task-queue project.
+Tasky is operated as a maintenance-and-extension monorepo, not a greenfield task-queue project.
 
 ## Source Of Truth
 
 - Product: `docs/PRD.md`
-- Technical: `docs/ARCHITECTURE.md`, `docs/API.yaml`
+- Technical: `docs/architecture/README.md`, `docs/architecture/common.md`, `docs/API.yaml`
 - Design: canonical sources under `docs/design/`
-- Operational runbooks: `docs/maintenance/STAGING_RUNBOOK.md`, `docs/maintenance/STAGING_TOGGLE_POSTURE.md`,
-  `docs/maintenance/STAGING_SEED_DATA.md`
+- Operational runbooks: `docs/maintenance/STAGING_RUNBOOK.md`, `docs/maintenance/STAGING_TOGGLE_POSTURE.md`, `docs/maintenance/STAGING_SEED_DATA.md`
 - Launch readiness: `docs/maintenance/PRODUCTION_READINESS.md`, `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`
-- Active execution plans: `docs/plans/`
 - Historical plans/specs: `archive/greenfield-docs/`
 
 ## Read Order
@@ -22,23 +20,22 @@ Tasky is now operated as a maintenance-and-extension monorepo, not a greenfield 
 When a maintenance task spans multiple document families, read them in this order:
 
 1. Product intent and constraints from `docs/PRD.md`.
-2. Technical baseline from `docs/ARCHITECTURE.md`, then the API contract in `docs/API.yaml`.
+2. Technical baseline from `docs/architecture/README.md`, then the smallest relevant split architecture document, then `docs/API.yaml`.
 3. Design authority from canonical `docs/design/` sources.
 4. Launch readiness from `docs/maintenance/PRODUCTION_READINESS.md` and `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`.
-5. Derived-active operating docs such as `docs/ARCHITECTURE_INDEX.md` and `docs/plans/`
-   only after the canonical sources above.
+5. Archive material only for historical context, never as live authority.
 
 ## Planning Workflow
 
-1. Capture requirement and constraints from user/product direction.
-2. Write or update a tranche-based implementation plan in `docs/plans/`.
-3. Define entry/exit criteria and explicit verification commands per tranche.
-4. Execute tranches in resumable checkpoints (small, reviewable commits).
+1. Capture requirement and constraints from user, product, or issue-tracker direction.
+2. Write or update a scoped execution brief in the active work surface used by the team.
+3. Define entry/exit criteria and explicit verification commands.
+4. Execute in resumable checkpoints with reviewable commits.
 
 ## Implementation Workflow
 
-1. Pick the next tranche from active `docs/plans/`.
-2. Apply changes across required layers (API-first when contracts change).
+1. Pick the next approved task from the active issue or execution brief.
+2. Apply changes across required layers, API-first when contracts change.
 3. Verify locally before claiming completion.
 4. Commit with explicit scope and evidence-backed verification notes.
 
@@ -64,13 +61,13 @@ pnpm sdk:drift
 ## Documentation Policy
 
 - Keep live operational docs in `docs/`.
+- Keep live architecture split by responsibility under `docs/architecture/`.
 - Move superseded plan/spec material to `archive/greenfield-docs/`.
-- Decide whether a `docs/` surface is canonical, derived-active, historical, or generated-local before
-  reclassifying or editing it.
-- When a doc is archived, update references in root guidance (`README.md`, `AGENTS.md`, `CLAUDE.md`).
+- Decide whether a document is canonical, local-router, compatibility alias, operational, or archive before editing it.
+- When a doc is archived or replaced, update root guidance and local agent discovery surfaces in the same change.
 
 ## Archive Policy
 
 - Archive is read-only context for history and audits.
 - No new active requirements should be introduced in archive paths.
-- If archived content becomes active again, it must be copied/re-authored back into live `docs/` locations.
+- If archived content becomes active again, copy or re-author it back into a live `docs/` location.

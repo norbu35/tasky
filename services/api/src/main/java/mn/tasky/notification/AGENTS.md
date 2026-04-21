@@ -4,10 +4,10 @@ Device token registration and push notification dispatch abstraction.
 
 ## Implemented API
 
-| Method   | Path                                    | Notes                                     |
-|----------|-----------------------------------------|-------------------------------------------|
+| Method   | Path                                    | Notes                                               |
+| -------- | --------------------------------------- | --------------------------------------------------- |
 | `POST`   | `/api/v1/notifications/devices`         | Register FCM registration token (IOS\|ANDROID\|WEB) |
-| `DELETE` | `/api/v1/notifications/devices/{token}` | Unregister token (call on logout)         |
+| `DELETE` | `/api/v1/notifications/devices/{token}` | Unregister token (call on logout)                   |
 
 ## Service Behavior
 
@@ -20,21 +20,22 @@ Device token registration and push notification dispatch abstraction.
 
 **Chosen provider: Firebase Cloud Messaging (FCM).** See ADR-0002.
 
-| Provider | Class | Activation |
-|---|---|---|
-| `FirebasePushProvider` | active production provider | `tasky.push.provider=firebase` |
-| `LoggingPushProvider` | local dev / default | `tasky.push.provider=logging` (default) |
+| Provider               | Class                      | Activation                              |
+| ---------------------- | -------------------------- | --------------------------------------- |
+| `FirebasePushProvider` | active production provider | `tasky.push.provider=firebase`          |
+| `LoggingPushProvider`  | local dev / default        | `tasky.push.provider=logging` (default) |
 
 **Current state**: `FirebasePushProvider` is active in production and topic subscription is performed during device registration. `ExpoPushProvider` is no longer part of the active runtime path.
 
 ## Topic Fan-out (Phase 1+)
 
 When a Tasker registers a device token, subscribe them server-side to:
+
 - `taskers.district.{districtSlug}`
 - `taskers.category.{categorySlug}`
 - `taskers.district.{districtSlug}.{categorySlug}` (primary supply activation topic)
 
-See full taxonomy in `docs/ARCHITECTURE.md §3.3`.
+See full taxonomy in `docs/architecture/common.md` §3.3.
 
 ## Token Format
 
