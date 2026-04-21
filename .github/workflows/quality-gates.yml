@@ -52,6 +52,9 @@ jobs:
       - name: Validate migration safety
         run: python3 tooling/scripts/validate-migrations.py
 
+      - name: Validate schema parity
+        run: python3 tooling/scripts/validate-schema-parity.py
+
   backend-quality:
     runs-on: ubuntu-latest
     permissions:
