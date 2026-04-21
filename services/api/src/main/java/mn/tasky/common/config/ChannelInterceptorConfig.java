@@ -5,6 +5,7 @@ import mn.tasky.auth.application.UserProfileService;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.common.security.JwtTokenService;
 import mn.tasky.common.security.StompRateLimitInterceptor;
+import mn.tasky.common.security.TokenBlacklistService;
 import mn.tasky.messaging.application.MessagingService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -27,16 +28,19 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
     private final MessagingService messagingService;
     private final UserProfileService userProfileService;
     private final StompRateLimitInterceptor stompRateLimitInterceptor;
+    private final TokenBlacklistService tokenBlacklistService;
 
     public ChannelInterceptorConfig(
             JwtTokenService jwtTokenService,
             @Lazy MessagingService messagingService,
             UserProfileService userProfileService,
-            StompRateLimitInterceptor stompRateLimitInterceptor) {
+            StompRateLimitInterceptor stompRateLimitInterceptor,
+            TokenBlacklistService tokenBlacklistService) {
         this.jwtTokenService = jwtTokenService;
         this.messagingService = messagingService;
         this.userProfileService = userProfileService;
         this.stompRateLimitInterceptor = stompRateLimitInterceptor;
+        this.tokenBlacklistService = tokenBlacklistService;
     }
 
     @Override
@@ -64,6 +68,9 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
                     JwtPrincipal principal = jwtTokenService
                             .parse(token)
                             .orElseThrow(() -> new IllegalArgumentException("Unauthorized"));
+                    if (tokenBlacklistService.isRevoked(principal.jti())) {
+                        throw new IllegalArgumentException("TOKEN_REVOKED");
+                    }
                     assertUserNotRestricted(principal);
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                             principal, null, List.of(new SimpleGrantedAuthority("ROLE_" + principal.role())));
@@ -112,7 +119,9 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
     private void assertUserNotRestricted(JwtPrincipal principal) {
         String effectiveStatus =
                 userProfileService.currentUserStatus(principal.userId()).orElse(principal.status());
-        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
+        if ("BANNED".equals(effectiveStatus)
+                || "SUSPENDED".equals(effectiveStatus)
+                || "DELETED".equals(effectiveStatus)) {
             throw new IllegalArgumentException("Forbidden");
         }
     }

@@ -27,6 +27,7 @@ import mn.tasky.auth.dto.UserProfileState;
 import mn.tasky.common.security.CryptoService;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.common.security.JwtTokenService;
+import mn.tasky.common.security.TokenBlacklistService;
 import mn.tasky.common.security.dto.ParsedRefreshToken;
 import mn.tasky.common.security.dto.RefreshToken;
 import mn.tasky.common.storage.S3PresignedUrlService;
@@ -67,6 +68,7 @@ public class AuthService {
     private final RefreshSessionDao refreshSessionDao;
     private final UserStatusResolver userStatusResolver;
     private final MeterRegistry meterRegistry;
+    private final TokenBlacklistService tokenBlacklistService;
 
     public AuthService(
             JwtTokenService jwtTokenService,
@@ -82,6 +84,7 @@ public class AuthService {
             RefreshSessionDao refreshSessionDao,
             UserStatusResolver userStatusResolver,
             MeterRegistry meterRegistry,
+            TokenBlacklistService tokenBlacklistService,
             @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled,
             @Value("${tasky.otp.enabled:false}") boolean otpEnabled,
             @Value("${tasky.auth.otp-ttl-seconds:300}") long otpTtlSeconds,
@@ -99,6 +102,7 @@ public class AuthService {
         this.refreshSessionDao = refreshSessionDao;
         this.userStatusResolver = userStatusResolver;
         this.meterRegistry = meterRegistry;
+        this.tokenBlacklistService = tokenBlacklistService;
         this.devAuthEnabled = devAuthEnabled;
         this.otpEnabled = otpEnabled;
         this.otpTtlSeconds = otpTtlSeconds;
@@ -273,7 +277,9 @@ public class AuthService {
         otpChallengeDao.delete(blindIndex);
         AuthUser user = resolveOtpUser(phone, blindIndex, facebookAccessToken);
         String effectiveStatus = userStatusResolver.resolve(user.id(), user.status());
-        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
+        if ("BANNED".equals(effectiveStatus)
+                || "SUSPENDED".equals(effectiveStatus)
+                || "DELETED".equals(effectiveStatus)) {
             meterRegistry
                     .counter("tasky.auth.login_attempts", "method", "otp", "result", "failure")
                     .increment();
@@ -391,7 +397,9 @@ public class AuthService {
 
             AuthUser user = ensureUserByFacebookId(profile.facebookId(), profile);
             String effectiveStatus = userStatusResolver.resolve(user.id(), user.status());
-            if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
+            if ("BANNED".equals(effectiveStatus)
+                    || "SUSPENDED".equals(effectiveStatus)
+                    || "DELETED".equals(effectiveStatus)) {
                 meterRegistry
                         .counter("tasky.auth.login_attempts", "method", "facebook", "result", "failure")
                         .increment();
@@ -479,7 +487,9 @@ public class AuthService {
         }
 
         String effectiveStatus = userStatusResolver.resolve(user.id(), user.status());
-        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
+        if ("BANNED".equals(effectiveStatus)
+                || "SUSPENDED".equals(effectiveStatus)
+                || "DELETED".equals(effectiveStatus)) {
             throw new AccountRestrictedException("This account is suspended or banned.");
         }
 
@@ -524,7 +534,9 @@ public class AuthService {
         }
         AuthUser user = userOpt.get();
         String effectiveStatus = userStatusResolver.resolve(user.id(), user.status());
-        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
+        if ("BANNED".equals(effectiveStatus)
+                || "SUSPENDED".equals(effectiveStatus)
+                || "DELETED".equals(effectiveStatus)) {
             return Optional.empty();
         }
 
@@ -539,5 +551,14 @@ public class AuthService {
                 user.updatedAt());
         AuthSession rotated = issueSession(effectiveUser);
         return Optional.of(new AuthTokens(rotated.accessToken(), rotated.refreshToken()));
+    }
+
+    /**
+     * Revokes the given access token JTI so it cannot be reused.
+     *
+     * @param jti the JWT ID claim from the access token being revoked
+     */
+    public void logout(String jti) {
+        tokenBlacklistService.revoke(jti);
     }
 }
