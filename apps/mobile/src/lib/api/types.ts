@@ -51,11 +51,4 @@ export interface ProfilePolishPreviewPayload {
   tone: 'friendly' | 'professional' | 'concise';
 }
 
-export class ApiError extends Error {
-  readonly status: number;
-
-  constructor(status: number, message: string) {
-    super(message);
-    this.status = status;
-  }
-}
+export { ApiError } from '@tasky/core/http';

@@ -19,6 +19,10 @@ import type {
   CreateTaskRequest,
 } from './apiTypes';
 export type * from './apiTypes';
+import { HttpTransport, normalizeBaseUrl } from '@tasky/core/http';
+export { ApiError } from '@tasky/core/http';
+export type { TokenRefreshDelegate } from '@tasky/core/http';
+
 export interface ApiClient {
   loginWithFacebook(accessToken: string): Promise<AuthTokens>;
 
@@ -154,37 +158,6 @@ export interface ApiClient {
   getVerificationStatus(accessToken: string): Promise<VerificationStatus>;
 }
 
-export class ApiError extends Error {
-  readonly status: number;
-
-  constructor(status: number, message: string) {
-    super(message);
-    this.status = status;
-  }
-}
-
-export interface TokenRefreshDelegate {
-  getRefreshToken(): string | null;
-  onTokensRefreshed(accessToken: string, refreshToken: string): void;
-  onRefreshFailed(): void;
-}
-
-const API_PATH_PREFIX = '/api/v1';
-
-function normalizeBaseUrl(rawBaseUrl: string): string {
-  const parsed = new URL(rawBaseUrl.trim());
-  const normalizedPath = parsed.pathname.replace(/\/+$/, '');
-  parsed.pathname =
-    normalizedPath === '' || normalizedPath === '/' ? API_PATH_PREFIX : normalizedPath;
-  return parsed.toString();
-}
-
-function resolveApiUrl(baseUrl: string, path: string): URL {
-  const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
-  const relativePath = path.startsWith('/') ? path.slice(1) : path;
-  return new URL(relativePath, normalizedBase);
-}
-
 function inferRuntimeOrigin(): string | null {
   const maybeLocation = globalThis.location;
   if (
@@ -215,68 +188,16 @@ export function buildSocketBaseUrl(): string {
   return socketUrl.toString().replace(/\/$/, '');
 }
 
-async function readErrorMessage(response: Response): Promise<string> {
-  try {
-    const body = await response.json();
-    if (body && typeof body.message === 'string' && body.message.length > 0) {
-      return body.message;
-    }
-    if (body && typeof body.error === 'string' && body.error.length > 0) {
-      return body.error;
-    }
-  } catch {
-    // Ignore parse errors and fall back to status text.
-  }
-  return `Request failed with status ${response.status}`;
-}
-
-export class HttpApiClient implements ApiClient {
-  private readonly baseUrl: string;
-  private tokenRefreshDelegate: TokenRefreshDelegate | null = null;
-  private refreshPromise: Promise<string> | null = null;
-
-  constructor(baseUrl = buildBaseUrl()) {
-    this.baseUrl = normalizeBaseUrl(baseUrl);
-  }
-
-  setTokenRefreshDelegate(delegate: TokenRefreshDelegate): void {
-    this.tokenRefreshDelegate = delegate;
-  }
-
-  private async refreshAccessToken(): Promise<string> {
-    const delegate = this.tokenRefreshDelegate;
-    if (!delegate) throw new ApiError(401, 'No token refresh delegate configured');
-
-    const refreshToken = delegate.getRefreshToken();
-    if (!refreshToken) {
-      delegate.onRefreshFailed();
-      throw new ApiError(401, 'No refresh token available');
-    }
-
-    const url = resolveApiUrl(this.baseUrl, '/auth/token/refresh');
-    const response = await fetch(url.toString(), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refresh_token: refreshToken }),
+export class HttpApiClient extends HttpTransport implements ApiClient {
+  constructor(baseUrl?: string) {
+    super({
+      baseUrl: normalizeBaseUrl(baseUrl ?? buildBaseUrl()),
+      onUnauthorized: () => {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('tasky:unauthorized'));
+        }
+      },
     });
-
-    if (!response.ok) {
-      delegate.onRefreshFailed();
-      throw new ApiError(response.status, 'Token refresh failed');
-    }
-
-    const body = (await response.json()) as { access_token: string; refresh_token: string };
-    delegate.onTokensRefreshed(body.access_token, body.refresh_token);
-    return body.access_token;
-  }
-
-  private async refreshAccessTokenOnce(): Promise<string> {
-    if (!this.refreshPromise) {
-      this.refreshPromise = this.refreshAccessToken().finally(() => {
-        this.refreshPromise = null;
-      });
-    }
-    return this.refreshPromise;
   }
 
   loginWithFacebook(accessToken: string): Promise<AuthTokens> {
@@ -701,109 +622,6 @@ export class HttpApiClient implements ApiClient {
       { method: 'GET' },
       accessToken,
     );
-  }
-
-  protected async requestJson<T>(
-    path: string,
-    init: RequestInit,
-    accessToken?: string,
-    query?: Record<string, string | number | undefined>,
-  ): Promise<T> {
-    const headers = new Headers(init.headers);
-    headers.set('Content-Type', 'application/json');
-    if (accessToken) {
-      headers.set('Authorization', `Bearer ${accessToken}`);
-    }
-
-    const url = resolveApiUrl(this.baseUrl, path);
-    if (query) {
-      Object.entries(query).forEach(([key, value]) => {
-        if (value !== undefined) {
-          url.searchParams.set(key, String(value));
-        }
-      });
-    }
-
-    const response = await fetch(url.toString(), {
-      ...init,
-      headers,
-    });
-
-    if (response.status === 401 && accessToken && this.tokenRefreshDelegate) {
-      try {
-        const newToken = await this.refreshAccessTokenOnce();
-        const retryHeaders = new Headers(init.headers);
-        retryHeaders.set('Content-Type', 'application/json');
-        retryHeaders.set('Authorization', `Bearer ${newToken}`);
-        const retryResponse = await fetch(url.toString(), { ...init, headers: retryHeaders });
-        if (!retryResponse.ok) {
-          throw new ApiError(retryResponse.status, await readErrorMessage(retryResponse));
-        }
-        return (await retryResponse.json()) as T;
-      } catch (refreshError) {
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new Event('tasky:unauthorized'));
-        }
-        throw refreshError instanceof ApiError
-          ? refreshError
-          : new ApiError(401, 'Token refresh failed');
-      }
-    }
-
-    if (!response.ok) {
-      if (response.status === 401 && typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('tasky:unauthorized'));
-      }
-      throw new ApiError(response.status, await readErrorMessage(response));
-    }
-
-    return (await response.json()) as T;
-  }
-
-  protected async requestVoid(
-    path: string,
-    init: RequestInit,
-    accessToken?: string,
-  ): Promise<void> {
-    const headers = new Headers(init.headers);
-    headers.set('Content-Type', 'application/json');
-    if (accessToken) {
-      headers.set('Authorization', `Bearer ${accessToken}`);
-    }
-
-    const response = await fetch(resolveApiUrl(this.baseUrl, path).toString(), {
-      ...init,
-      headers,
-    });
-
-    if (response.status === 401 && accessToken && this.tokenRefreshDelegate) {
-      try {
-        const newToken = await this.refreshAccessTokenOnce();
-        const retryHeaders = new Headers(init.headers);
-        retryHeaders.set('Content-Type', 'application/json');
-        retryHeaders.set('Authorization', `Bearer ${newToken}`);
-        const retryUrl = resolveApiUrl(this.baseUrl, path).toString();
-        const retryResponse = await fetch(retryUrl, { ...init, headers: retryHeaders });
-        if (!retryResponse.ok) {
-          throw new ApiError(retryResponse.status, await readErrorMessage(retryResponse));
-        }
-        return;
-      } catch (refreshError) {
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new Event('tasky:unauthorized'));
-        }
-        throw refreshError instanceof ApiError
-          ? refreshError
-          : new ApiError(401, 'Token refresh failed');
-      }
-    }
-
-    if (!response.ok) {
-      if (response.status === 401 && typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('tasky:unauthorized'));
-      }
-      throw new ApiError(response.status, await readErrorMessage(response));
-    }
   }
 }
 
