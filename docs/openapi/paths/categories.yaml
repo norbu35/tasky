@@ -1,0 +1,31 @@
+/categories:
+  get:
+    tags:
+      - Categories
+    summary: List active categories
+    description: Returns paginated active service categories, sorted by `sort_order`.
+    operationId: listCategories
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated list of active categories.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/categories.yaml#/Category
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized

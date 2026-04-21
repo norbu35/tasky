@@ -4,7 +4,7 @@ Use this file when the change touches `apps/mobile/**`.
 
 ## Read Next
 
-- `docs/architecture/mobile.md`, then `docs/architecture/common.md`
+- `docs/architecture/mobile.md`, then `docs/architecture/shared-frontend.md`, then `docs/architecture/common.md`
 - `docs/API.yaml` when the change touches API contracts or generated SDK usage
 - `docs/design/DESIGN_SYSTEM.md` for token and UI system rules
 - `apps/mobile/README.md` for local commands, test entrypoints, and Maestro notes

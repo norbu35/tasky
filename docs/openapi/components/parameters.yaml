@@ -1,0 +1,30 @@
+CursorParam:
+  name: cursor
+  in: query
+  description: Opaque cursor for pagination. Pass the `next` value from a previous response.
+  schema:
+    type: string
+LimitParam:
+  name: limit
+  in: query
+  description: Maximum number of items to return (default 20, max 100).
+  schema:
+    type: integer
+    minimum: 1
+    maximum: 100
+    default: 20
+PathId:
+  name: id
+  in: path
+  required: true
+  schema:
+    type: string
+    format: uuid
+IdempotencyKeyHeader:
+  name: Idempotency-Key
+  in: header
+  required: true
+  schema:
+    type: string
+    format: uuid
+  description: Unique key to ensure idempotent handling of critical state-changing requests.

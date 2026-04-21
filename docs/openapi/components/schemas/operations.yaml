@@ -1,0 +1,101 @@
+OutboxSummary:
+  type: object
+  required:
+    - pending
+    - failed
+    - processed
+    - processing
+  properties:
+    pending:
+      type: integer
+    failed:
+      type: integer
+    processed:
+      type: integer
+    processing:
+      type: integer
+OutboxEvent:
+  type: object
+  required:
+    - id
+    - event_type
+    - status
+  properties:
+    id:
+      type: string
+      format: uuid
+    event_type:
+      type: string
+    aggregate_type:
+      type: string
+    aggregate_id:
+      type: string
+      format: uuid
+      nullable: true
+    payload:
+      type: string
+      description: JSON payload
+    status:
+      type: string
+      enum:
+        - PENDING
+        - PROCESSING
+        - PROCESSED
+        - FAILED
+    attempts:
+      type: integer
+    available_at:
+      type: string
+      format: date-time
+    created_at:
+      type: string
+      format: date-time
+    processed_at:
+      type: string
+      format: date-time
+      nullable: true
+    last_error:
+      type: string
+      nullable: true
+    correlation_id:
+      type: string
+      nullable: true
+    trace_id:
+      type: string
+      nullable: true
+    causation_id:
+      type: string
+      nullable: true
+    command_id:
+      type: string
+      nullable: true
+    workflow_id:
+      type: string
+      nullable: true
+    actor_id:
+      type: string
+      nullable: true
+    locale:
+      type: string
+      nullable: true
+    platform:
+      type: string
+      nullable: true
+OutboxEventPage:
+  type: object
+  required:
+    - events
+    - total
+    - offset
+    - limit
+  properties:
+    events:
+      type: array
+      items:
+        $ref: '#/OutboxEvent'
+    total:
+      type: integer
+    offset:
+      type: integer
+    limit:
+      type: integer

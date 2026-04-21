@@ -1,0 +1,393 @@
+openapi: 3.0.3
+info:
+  title: Tasky API
+  description: |
+    REST API for Tasky — Mongolia's most trusted domestic service marketplace.
+
+    ## Authentication
+    All endpoints (unless noted) require a Bearer JWT in the `Authorization` header.
+    Phase 0-1 auth uses Facebook OAuth (`/auth/facebook`).
+    Phase 2+ adds phone OTP auth (`/auth/otp/request`, `/auth/otp/verify`) and OTP becomes primary for new signups.
+
+    ## Pagination
+    All list endpoints use **cursor-based pagination**.
+    Pass `cursor` (opaque string) and `limit` (default 20, max 100) as query parameters.
+    Responses wrap results in `{ data: [], cursor: { next, has_more } }`.
+
+    ## Errors
+    All errors return a standard JSON body: `{ code, message, trace_id }`.
+
+    ## Currency
+    All monetary amounts are integers in MNT (Mongolian Tugrik).
+
+    ## Idempotency
+    Critical state-changing endpoints require an `Idempotency-Key` header.
+
+    ## Phase Gating
+    Two classes of deferred endpoints exist in this spec:
+    - **Implemented and gated** (`wallet`, `payment`, `payout`): endpoints exist in the server and return `503` when
+      their feature toggle is disabled. Current toggles: `escrow_enabled` (Phase 3+).
+    - **Not yet implemented** (`lead-unlock`, `credits`, `referrals`, `subscription`, `business`,
+      `instant-match`, `/verification/dan/verify`): endpoints are specified here as forward references for Phase 2/3+
+      implementation. Until then they return `404`.
+      Each such endpoint is annotated with `x-tasky-status: deferred` and `x-tasky-target-phase`.
+    Current launch posture is Phase 1 zero monetization; seeded feature toggles may exist before their runtime
+     consumers are implemented. Current activation status is Phase 1 zero monetization;
+     see `docs/maintenance/PRODUCTION_READINESS.md` for the go/no-go checklist.
+  version: 1.3.0
+  contact:
+    name: Tasky Engineering
+servers:
+  - url: /api/v1
+    description: API v1
+tags:
+  - name: System
+    description: Service status and version metadata
+  - name: Auth
+    description: Facebook OAuth (Phase 0-1) and phone OTP auth flows
+  - name: Users
+    description: User profile management
+  - name: Verification
+    description: Tasker identity verification
+  - name: Categories
+    description: Service categories
+  - name: Tasks
+    description: Task posting and discovery
+  - name: Applications
+    description: Tasker applications to tasks
+  - name: Bookings
+    description: Booking lifecycle
+  - name: Payments
+    description: QPay payment integration (feature-toggled by phase)
+  - name: Credits
+    description: Phase 2 lead-unlock credit ledger and purchases
+  - name: Wallet
+    description: Tasker wallet and payouts (feature-toggled by phase)
+  - name: Reviews
+    description: Post-completion reviews
+  - name: Disputes
+    description: Booking disputes
+  - name: Referrals
+    description: Referral attribution and rewards
+  - name: Conversations
+    description: In-app messaging (REST fallback)
+  - name: Notifications
+    description: Push notification device management
+  - name: Admin
+    description: Admin operations
+  - name: Security
+    description: Auth scope smoke-test endpoints for integration testing
+components:
+  securitySchemes:
+    BearerAuth:
+      $ref: ./components/security-schemes.yaml#/BearerAuth
+  parameters:
+    CursorParam:
+      $ref: ./components/parameters.yaml#/CursorParam
+    LimitParam:
+      $ref: ./components/parameters.yaml#/LimitParam
+    PathId:
+      $ref: ./components/parameters.yaml#/PathId
+    IdempotencyKeyHeader:
+      $ref: ./components/parameters.yaml#/IdempotencyKeyHeader
+  schemas:
+    Error:
+      $ref: ./components/schemas/common.yaml#/Error
+    CursorPagination:
+      $ref: ./components/schemas/common.yaml#/CursorPagination
+    PresignedUrlResponse:
+      $ref: ./components/schemas/common.yaml#/PresignedUrlResponse
+    User:
+      $ref: ./components/schemas/identity.yaml#/User
+    Profile:
+      $ref: ./components/schemas/identity.yaml#/Profile
+    StrikePolicy:
+      $ref: ./components/schemas/identity.yaml#/StrikePolicy
+    StrikePolicyUpdateRequest:
+      $ref: ./components/schemas/identity.yaml#/StrikePolicyUpdateRequest
+    VerificationStatus:
+      $ref: ./components/schemas/identity.yaml#/VerificationStatus
+    VerificationDetail:
+      $ref: ./components/schemas/identity.yaml#/VerificationDetail
+    IntakeFieldOption:
+      $ref: ./components/schemas/categories.yaml#/IntakeFieldOption
+    IntakeFieldSchema:
+      $ref: ./components/schemas/categories.yaml#/IntakeFieldSchema
+    Category:
+      $ref: ./components/schemas/categories.yaml#/Category
+    PublicTask:
+      $ref: ./components/schemas/tasks.yaml#/PublicTask
+    Task:
+      $ref: ./components/schemas/tasks.yaml#/Task
+    RecentLocation:
+      $ref: ./components/schemas/tasks.yaml#/RecentLocation
+    CreateTaskRequest:
+      $ref: ./components/schemas/tasks.yaml#/CreateTaskRequest
+    UpdateTaskRequest:
+      $ref: ./components/schemas/tasks.yaml#/UpdateTaskRequest
+    TaskDraft:
+      $ref: ./components/schemas/tasks.yaml#/TaskDraft
+    TaskApplication:
+      $ref: ./components/schemas/tasks.yaml#/TaskApplication
+    Booking:
+      $ref: ./components/schemas/bookings.yaml#/Booking
+    BookingIntent:
+      $ref: ./components/schemas/bookings.yaml#/BookingIntent
+    BookingScheduleEvent:
+      $ref: ./components/schemas/bookings.yaml#/BookingScheduleEvent
+    CreditBalance:
+      $ref: ./components/schemas/monetization.yaml#/CreditBalance
+    CreditTransaction:
+      $ref: ./components/schemas/monetization.yaml#/CreditTransaction
+    CreditPack:
+      $ref: ./components/schemas/monetization.yaml#/CreditPack
+    WalletBalance:
+      $ref: ./components/schemas/monetization.yaml#/WalletBalance
+    LedgerEntry:
+      $ref: ./components/schemas/monetization.yaml#/LedgerEntry
+    PayoutRequest:
+      $ref: ./components/schemas/monetization.yaml#/PayoutRequest
+    PendingReview:
+      $ref: ./components/schemas/reviews.yaml#/PendingReview
+    Review:
+      $ref: ./components/schemas/reviews.yaml#/Review
+    Dispute:
+      $ref: ./components/schemas/disputes.yaml#/Dispute
+    DisputeEvidence:
+      $ref: ./components/schemas/disputes.yaml#/DisputeEvidence
+    Conversation:
+      $ref: ./components/schemas/messaging.yaml#/Conversation
+    Message:
+      $ref: ./components/schemas/messaging.yaml#/Message
+    FeatureToggle:
+      $ref: ./components/schemas/monetization.yaml#/FeatureToggle
+    LeadUnlockPrice:
+      $ref: ./components/schemas/monetization.yaml#/LeadUnlockPrice
+    TaskerSubscription:
+      $ref: ./components/schemas/monetization.yaml#/TaskerSubscription
+    BusinessAccount:
+      $ref: ./components/schemas/monetization.yaml#/BusinessAccount
+    ReferralSummary:
+      $ref: ./components/schemas/referrals.yaml#/ReferralSummary
+    ReverseGeocodeResponse:
+      $ref: ./components/schemas/location.yaml#/ReverseGeocodeResponse
+    LocationSearchResponse:
+      $ref: ./components/schemas/location.yaml#/LocationSearchResponse
+    OutboxSummary:
+      $ref: ./components/schemas/operations.yaml#/OutboxSummary
+    OutboxEvent:
+      $ref: ./components/schemas/operations.yaml#/OutboxEvent
+    OutboxEventPage:
+      $ref: ./components/schemas/operations.yaml#/OutboxEventPage
+    LocationSearchResult:
+      $ref: ./components/schemas/location.yaml#/LocationSearchResult
+    LeadUnlockPricePayload:
+      $ref: ./components/schemas/monetization.yaml#/LeadUnlockPricePayload
+    AdminDisputeDetail:
+      $ref: ./components/schemas/disputes.yaml#/AdminDisputeDetail
+    CategorySchemaVersion:
+      $ref: ./components/schemas/categories.yaml#/CategorySchemaVersion
+    AdminCategoryPayload:
+      $ref: ./components/schemas/categories.yaml#/AdminCategoryPayload
+  responses:
+    BadRequest:
+      $ref: ./components/responses.yaml#/BadRequest
+    Unauthorized:
+      $ref: ./components/responses.yaml#/Unauthorized
+    Forbidden:
+      $ref: ./components/responses.yaml#/Forbidden
+    NotFound:
+      $ref: ./components/responses.yaml#/NotFound
+    Conflict:
+      $ref: ./components/responses.yaml#/Conflict
+    TooManyRequests:
+      $ref: ./components/responses.yaml#/TooManyRequests
+paths:
+  /system/version:
+    $ref: ./paths/system.yaml#/~1system~1version
+  /auth/facebook:
+    $ref: ./paths/auth.yaml#/~1auth~1facebook
+  /auth/facebook/status:
+    $ref: ./paths/auth.yaml#/~1auth~1facebook~1status
+  /auth/otp/request:
+    $ref: ./paths/auth.yaml#/~1auth~1otp~1request
+  /auth/otp/verify:
+    $ref: ./paths/auth.yaml#/~1auth~1otp~1verify
+  /auth/dev/login:
+    $ref: ./paths/auth.yaml#/~1auth~1dev~1login
+  /auth/token/refresh:
+    $ref: ./paths/auth.yaml#/~1auth~1token~1refresh
+  /users/me:
+    $ref: ./paths/users.yaml#/~1users~1me
+  /users/me/role/tasker:
+    $ref: ./paths/users.yaml#/~1users~1me~1role~1tasker
+  /users/me/avatar/upload-url:
+    $ref: ./paths/users.yaml#/~1users~1me~1avatar~1upload-url
+  /verification/upload-url:
+    $ref: ./paths/verification.yaml#/~1verification~1upload-url
+  /verification/submit:
+    $ref: ./paths/verification.yaml#/~1verification~1submit
+  /verification/status:
+    $ref: ./paths/verification.yaml#/~1verification~1status
+  /verification/dan/verify:
+    $ref: ./paths/verification.yaml#/~1verification~1dan~1verify
+  /categories:
+    $ref: ./paths/categories.yaml#/~1categories
+  /tasks/drafts:
+    $ref: ./paths/tasks.yaml#/~1tasks~1drafts
+  /tasks/drafts/{id}:
+    $ref: ./paths/tasks.yaml#/~1tasks~1drafts~1{id}
+  /tasks/photos/upload-url:
+    $ref: ./paths/tasks.yaml#/~1tasks~1photos~1upload-url
+  /tasks:
+    $ref: ./paths/tasks.yaml#/~1tasks
+  /tasks/mine:
+    $ref: ./paths/tasks.yaml#/~1tasks~1mine
+  /tasks/mine/recent-locations:
+    $ref: ./paths/tasks.yaml#/~1tasks~1mine~1recent-locations
+  /tasks/{id}:
+    $ref: ./paths/tasks.yaml#/~1tasks~1{id}
+  /tasks/{id}/cancel:
+    $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1cancel
+  /tasks/{id}/photos/upload-url:
+    $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1photos~1upload-url
+  /tasks/{id}/applications:
+    $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications
+  /tasks/{id}/applications/{applicationId}/accept:
+    $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications~1{applicationId}~1accept
+  /tasks/{id}/booking-intents:
+    $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1booking-intents
+  /tasks/{id}/instant-match:
+    $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1instant-match
+  /bookings:
+    $ref: ./paths/bookings.yaml#/~1bookings
+  /bookings/{id}:
+    $ref: ./paths/bookings.yaml#/~1bookings~1{id}
+  /bookings/{id}/schedule-events:
+    $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1schedule-events
+  /bookings/{id}/lead-unlock:
+    $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1lead-unlock
+  /bookings/{id}/cancel:
+    $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1cancel
+  /bookings/{id}/complete:
+    $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1complete
+  /bookings/{id}/reschedule:
+    $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1reschedule
+  /bookings/{id}/reschedule/{eventId}/respond:
+    $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1reschedule~1{eventId}~1respond
+  /bookings/{id}/no-show/flag:
+    $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1no-show~1flag
+  /bookings/{id}/mark-done:
+    $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1mark-done
+  /bookings/{id}/rebook:
+    $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1rebook
+  /booking-intents/{id}:
+    $ref: ./paths/bookings.yaml#/~1booking-intents~1{id}
+  /booking-intents/{id}/confirm:
+    $ref: ./paths/bookings.yaml#/~1booking-intents~1{id}~1confirm
+  /payments/bookings/{id}/initiate:
+    $ref: ./paths/payments.yaml#/~1payments~1bookings~1{id}~1initiate
+  /payments/qpay/callback:
+    $ref: ./paths/payments.yaml#/~1payments~1qpay~1callback
+  /credits/balance:
+    $ref: ./paths/credits.yaml#/~1credits~1balance
+  /credits/transactions:
+    $ref: ./paths/credits.yaml#/~1credits~1transactions
+  /credits/packs:
+    $ref: ./paths/credits.yaml#/~1credits~1packs
+  /credits/purchase:
+    $ref: ./paths/credits.yaml#/~1credits~1purchase
+  /subscriptions/tasker:
+    $ref: ./paths/payments.yaml#/~1subscriptions~1tasker
+  /business/accounts:
+    $ref: ./paths/admin.yaml#/~1business~1accounts
+  /wallet:
+    $ref: ./paths/wallet.yaml#/~1wallet
+  /wallet/transactions:
+    $ref: ./paths/wallet.yaml#/~1wallet~1transactions
+  /wallet/payouts:
+    $ref: ./paths/wallet.yaml#/~1wallet~1payouts
+  /bookings/{id}/reviews:
+    $ref: ./paths/reviews.yaml#/~1bookings~1{id}~1reviews
+  /me/pending-reviews:
+    $ref: ./paths/reviews.yaml#/~1me~1pending-reviews
+  /users/{id}/reviews:
+    $ref: ./paths/reviews.yaml#/~1users~1{id}~1reviews
+  /referrals/me:
+    $ref: ./paths/referrals.yaml#/~1referrals~1me
+  /bookings/{id}/disputes:
+    $ref: ./paths/disputes.yaml#/~1bookings~1{id}~1disputes
+  /disputes/{id}:
+    $ref: ./paths/disputes.yaml#/~1disputes~1{id}
+  /conversations:
+    $ref: ./paths/conversations.yaml#/~1conversations
+  /conversations/{id}/messages:
+    $ref: ./paths/conversations.yaml#/~1conversations~1{id}~1messages
+  /notifications/devices:
+    $ref: ./paths/notifications.yaml#/~1notifications~1devices
+  /notifications/devices/{token}:
+    $ref: ./paths/notifications.yaml#/~1notifications~1devices~1{token}
+  /taskers/me/service-areas:
+    $ref: ./paths/users.yaml#/~1taskers~1me~1service-areas
+  /admin/messages/flagged:
+    $ref: ./paths/admin.yaml#/~1admin~1messages~1flagged
+  /admin/users:
+    $ref: ./paths/admin.yaml#/~1admin~1users
+  /admin/users/{id}/ban:
+    $ref: ./paths/admin.yaml#/~1admin~1users~1{id}~1ban
+  /admin/users/{id}/unban:
+    $ref: ./paths/admin.yaml#/~1admin~1users~1{id}~1unban
+  /admin/tasks/{id}/concierge-assign:
+    $ref: ./paths/admin.yaml#/~1admin~1tasks~1{id}~1concierge-assign
+  /admin/verifications/pending:
+    $ref: ./paths/admin.yaml#/~1admin~1verifications~1pending
+  /admin/verifications/{id}:
+    $ref: ./paths/admin.yaml#/~1admin~1verifications~1{id}
+  /admin/verifications/{id}/approve:
+    $ref: ./paths/admin.yaml#/~1admin~1verifications~1{id}~1approve
+  /admin/verifications/{id}/reject:
+    $ref: ./paths/admin.yaml#/~1admin~1verifications~1{id}~1reject
+  /admin/disputes:
+    $ref: ./paths/admin.yaml#/~1admin~1disputes
+  /admin/disputes/{id}:
+    $ref: ./paths/admin.yaml#/~1admin~1disputes~1{id}
+  /admin/disputes/{id}/resolve:
+    $ref: ./paths/admin.yaml#/~1admin~1disputes~1{id}~1resolve
+  /admin/moderation/strike-policy:
+    $ref: ./paths/admin.yaml#/~1admin~1moderation~1strike-policy
+  /admin/payouts/pending:
+    $ref: ./paths/admin.yaml#/~1admin~1payouts~1pending
+  /admin/payouts/{id}/process:
+    $ref: ./paths/admin.yaml#/~1admin~1payouts~1{id}~1process
+  /admin/features/toggles:
+    $ref: ./paths/admin.yaml#/~1admin~1features~1toggles
+  /admin/lead-unlock-prices:
+    $ref: ./paths/admin.yaml#/~1admin~1lead-unlock-prices
+  /admin/categories:
+    $ref: ./paths/admin.yaml#/~1admin~1categories
+  /admin/categories/{id}:
+    $ref: ./paths/admin.yaml#/~1admin~1categories~1{id}
+  /admin/categories/{id}/schemas:
+    $ref: ./paths/admin.yaml#/~1admin~1categories~1{id}~1schemas
+  /admin/categories/{id}/schemas/{version}/activate:
+    $ref: ./paths/admin.yaml#/~1admin~1categories~1{id}~1schemas~1{version}~1activate
+  /security/customer/ping:
+    $ref: ./paths/security.yaml#/~1security~1customer~1ping
+  /security/tasker/ping:
+    $ref: ./paths/security.yaml#/~1security~1tasker~1ping
+  /security/admin/ping:
+    $ref: ./paths/security.yaml#/~1security~1admin~1ping
+  /admin/outbox/summary:
+    $ref: ./paths/admin.yaml#/~1admin~1outbox~1summary
+  /admin/outbox/events:
+    $ref: ./paths/admin.yaml#/~1admin~1outbox~1events
+  /admin/outbox/events/{id}:
+    $ref: ./paths/admin.yaml#/~1admin~1outbox~1events~1{id}
+  /admin/outbox/events/{id}/replay:
+    $ref: ./paths/admin.yaml#/~1admin~1outbox~1events~1{id}~1replay
+  /admin/outbox/events/replay-all:
+    $ref: ./paths/admin.yaml#/~1admin~1outbox~1events~1replay-all
+  /location/reverse-geocode:
+    $ref: ./paths/location.yaml#/~1location~1reverse-geocode
+  /location/search:
+    $ref: ./paths/location.yaml#/~1location~1search

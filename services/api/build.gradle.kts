@@ -100,9 +100,17 @@ dependencies {
 }
 
 // OpenAPI Generator
+val bundleOpenApiSpec by tasks.registering(Exec::class) {
+    workingDir = rootProject.projectDir
+    commandLine("node", "tooling/scripts/bundle-openapi.mjs")
+    inputs.dir("${rootProject.projectDir}/docs/openapi")
+    inputs.file("${rootProject.projectDir}/tooling/scripts/bundle-openapi.mjs")
+    outputs.file("${rootProject.projectDir}/docs/API.yaml")
+}
+
 openApiGenerate {
     generatorName.set("spring")
-    inputSpec.set("${rootProject.projectDir}/docs/API.yaml")
+    inputSpec.set("${rootProject.projectDir}/docs/openapi/openapi.yaml")
     outputDir.set("${layout.buildDirectory.get()}/generated-sources/openapi")
     apiPackage.set("mn.tasky.api.generated")
     modelPackage.set("mn.tasky.api.generated.model")
@@ -118,8 +126,15 @@ openApiGenerate {
     ))
 }
 
+tasks.named("openApiGenerate") {
+    dependsOn(bundleOpenApiSpec)
+    inputs.dir("${rootProject.projectDir}/docs/openapi")
+}
+
 tasks.named<org.openapitools.generator.gradle.plugin.tasks.ValidateTask>("openApiValidate") {
-    inputSpec.set("${rootProject.projectDir}/docs/API.yaml")
+    dependsOn(bundleOpenApiSpec)
+    inputSpec.set("${rootProject.projectDir}/docs/openapi/openapi.yaml")
+    inputs.dir("${rootProject.projectDir}/docs/openapi")
 }
 
 sourceSets {
@@ -132,6 +147,10 @@ sourceSets {
 
 tasks.named("compileJava") {
     dependsOn("openApiGenerate")
+}
+
+tasks.named("test") {
+    dependsOn(bundleOpenApiSpec)
 }
 
 tasks.named<BootRun>("bootRun") {

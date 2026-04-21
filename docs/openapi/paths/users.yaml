@@ -1,0 +1,212 @@
+/users/me:
+  get:
+    tags:
+      - Users
+    summary: Get current user profile
+    description: Returns the full profile of the authenticated user.
+    operationId: getMyProfile
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: User profile.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/identity.yaml#/Profile
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+  put:
+    tags:
+      - Users
+    summary: Update current user profile
+    description: Updates profile fields for the authenticated user.
+    operationId: updateMyProfile
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              full_name:
+                type: string
+                minLength: 1
+                maxLength: 100
+              avatar_url:
+                type: string
+                format: uri
+                nullable: true
+              bio:
+                type: string
+                maxLength: 200
+    responses:
+      '200':
+        description: Profile updated.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/identity.yaml#/Profile
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+  delete:
+    tags:
+      - Users
+    summary: Request account deletion
+    description: |
+      Marks the account for deletion. Identity data is anonymized after 90-day retention period.
+    operationId: requestAccountDeletion
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Account deletion requested.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  example: Account deletion requested. Data will be removed after 90-day retention period.
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+/users/me/role/tasker:
+  post:
+    tags:
+      - Users
+    summary: Activate tasker role
+    description: |
+      Requests role transition from CUSTOMER to TASKER.
+      Verification status remains pending until admin approval.
+    operationId: activateTaskerRole
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Role updated to TASKER.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/identity.yaml#/User
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '409':
+        description: User is already TASKER or ADMIN.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/users/me/avatar/upload-url:
+  post:
+    tags:
+      - Users
+    summary: Get presigned URL for avatar upload
+    description: |
+      Returns a presigned URL to upload an avatar image directly to S3/MinIO.
+      URLs are constrained to image/jpeg, image/png, and image/webp with a 5MB max size.
+      After uploading, use the returned `storage_key` to update the profile.
+    operationId: getAvatarUploadUrl
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - content_type
+            properties:
+              content_type:
+                type: string
+                description: MIME type of the file.
+                enum:
+                  - image/jpeg
+                  - image/png
+                  - image/webp
+                example: image/jpeg
+    responses:
+      '200':
+        description: Presigned upload URL generated.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/PresignedUrlResponse
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+/taskers/me/service-areas:
+  get:
+    tags:
+      - Users
+    summary: List my tasker service areas
+    description: Returns the authenticated tasker's configured district coverage areas.
+    operationId: getTaskerServiceAreas
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Configured service areas.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - id
+                      - name
+                      - name_mn
+                      - slug
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      name_mn:
+                        type: string
+                      slug:
+                        type: string
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+  put:
+    tags:
+      - Users
+    summary: Replace my tasker service areas
+    description: Replaces the authenticated tasker's district coverage by district slug.
+    operationId: setTaskerServiceAreas
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              district_slugs:
+                type: array
+                items:
+                  type: string
+    responses:
+      '204':
+        description: Service areas updated.
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden

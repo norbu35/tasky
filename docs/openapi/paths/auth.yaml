@@ -1,0 +1,296 @@
+/auth/facebook:
+  post:
+    tags:
+      - Auth
+    summary: Authenticate with Facebook OAuth
+    description: |
+      Validates a Facebook user access token and returns JWT tokens.
+      Phase 0-1: primary authentication endpoint.
+      Phase 2+: available only for legacy identity linkage/migration flows.
+      Phase 0-1 behavior: creates a new user when `facebook_id` has not been seen before.
+      Phase 2+ behavior: does not create new users from Facebook-only identity.
+    operationId: loginWithFacebook
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - access_token
+            properties:
+              access_token:
+                type: string
+                description: Facebook user access token from the client SDK.
+                example: EAABsbCS1...
+    responses:
+      '200':
+        description: Authentication successful.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - refresh_token
+                - user
+              properties:
+                access_token:
+                  type: string
+                refresh_token:
+                  type: string
+                user:
+                  $ref: ../components/schemas/identity.yaml#/User
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        description: Invalid or mismatched Facebook token.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '409':
+        description: In Phase 2+, Facebook-only signup is disabled for new users.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '429':
+        $ref: ../components/responses.yaml#/TooManyRequests
+      '503':
+        description: OAuth provider unavailable in Phase 0-1 (`AUTH_PROVIDER_UNAVAILABLE`).
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/auth/facebook/status:
+  get:
+    tags:
+      - Auth
+    summary: Facebook OAuth circuit breaker status
+    description: |
+      Returns the current state of the Facebook OAuth circuit breaker.
+      Used by the web auth page to surface outage banners when the Facebook
+      OAuth provider is degraded or unavailable.
+    operationId: getFacebookStatus
+    security: []
+    responses:
+      '200':
+        description: Circuit breaker state.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - available
+                - state
+              properties:
+                available:
+                  type: boolean
+                state:
+                  type: string
+                  enum:
+                    - CLOSED
+                    - OPEN
+                    - HALF_OPEN
+/auth/otp/request:
+  post:
+    tags:
+      - Auth
+    summary: Request OTP code
+    description: |
+      Sends a one-time password (OTP) to a phone number.
+      Phase 2+ endpoint used for primary phone authentication and Facebook-user migration.
+    operationId: requestOtp
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - phone_number
+            properties:
+              phone_number:
+                type: string
+                example: '+97699001122'
+    responses:
+      '202':
+        description: OTP request accepted.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  example: OTP sent
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '403':
+        description: OTP authentication disabled for current rollout phase (`FEATURE_DISABLED`).
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '429':
+        $ref: ../components/responses.yaml#/TooManyRequests
+/auth/otp/verify:
+  post:
+    tags:
+      - Auth
+    summary: Verify OTP and authenticate
+    description: |
+      Verifies OTP code and issues JWT tokens.
+      In Phase 2+, this is the primary auth endpoint for new users and migrated Facebook users.
+    operationId: verifyOtp
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - phone_number
+              - otp_code
+            properties:
+              phone_number:
+                type: string
+                example: '+97699001122'
+              otp_code:
+                type: string
+                example: '123456'
+              facebook_access_token:
+                type: string
+                nullable: true
+                description: Optional token used during Phase 2 migration to link prior Facebook identity.
+    responses:
+      '200':
+        description: Authentication successful.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - refresh_token
+                - user
+              properties:
+                access_token:
+                  type: string
+                refresh_token:
+                  type: string
+                user:
+                  $ref: ../components/schemas/identity.yaml#/User
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        description: Invalid or expired OTP code.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '403':
+        description: OTP authentication disabled for current rollout phase (`FEATURE_DISABLED`).
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '429':
+        $ref: ../components/responses.yaml#/TooManyRequests
+/auth/dev/login:
+  post:
+    tags:
+      - Auth
+    summary: Dev login (development only)
+    description: |
+      Authenticate with a phone number and role without SMS OTP.
+      Only available when `tasky.dev-auth.enabled=true`. Never enabled in production.
+    operationId: devLogin
+    x-tasky-status: deferred
+    x-tasky-target-phase: phase_2
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - phone
+              - role
+            properties:
+              phone:
+                type: string
+                format: phone
+              role:
+                type: string
+                enum:
+                  - CUSTOMER
+                  - TASKER
+                  - ADMIN
+    responses:
+      '200':
+        description: Auth session with tokens.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - refresh_token
+                - user
+              properties:
+                access_token:
+                  type: string
+                refresh_token:
+                  type: string
+                user:
+                  $ref: ../components/schemas/identity.yaml#/User
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+/auth/token/refresh:
+  post:
+    tags:
+      - Auth
+    summary: Refresh access token
+    description: Exchange a valid refresh token for a new token pair.
+    operationId: refreshToken
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - refresh_token
+            properties:
+              refresh_token:
+                type: string
+    responses:
+      '200':
+        description: Tokens refreshed successfully.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - refresh_token
+              properties:
+                access_token:
+                  type: string
+                refresh_token:
+                  type: string
+      '401':
+        description: Invalid or expired refresh token.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error

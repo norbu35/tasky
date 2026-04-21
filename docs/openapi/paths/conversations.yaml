@@ -1,0 +1,110 @@
+/conversations:
+  get:
+    tags:
+      - Conversations
+    summary: List my conversations
+    description: Returns paginated list of conversations for the authenticated user, ordered by last message.
+    operationId: listConversations
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated conversations.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/messaging.yaml#/Conversation
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+/conversations/{id}/messages:
+  get:
+    tags:
+      - Conversations
+    summary: Get messages in a conversation
+    description: |
+      Returns paginated messages in a conversation, ordered by most recent first.
+      Only accessible by conversation participants and admins (for dispute resolution).
+    operationId: listMessages
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated messages.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/messaging.yaml#/Message
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+  post:
+    tags:
+      - Conversations
+    summary: Send a message (REST fallback)
+    description: |
+      Sends a message in a conversation. This is the REST fallback for clients that
+      cannot maintain a WebSocket connection. For real-time messaging, use the STOMP
+      WebSocket endpoint: SEND /app/conversations/{id}/messages.
+    operationId: sendMessage
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - content
+            properties:
+              content:
+                type: string
+                minLength: 1
+                maxLength: 2000
+    responses:
+      '201':
+        description: Message sent.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/messaging.yaml#/Message
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound

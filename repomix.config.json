@@ -71,7 +71,9 @@
 
       "**/locales/**/translation.json",
 
-      "**/seed_test_data.sql",
+      "**/*seed_test_data.sql",
+      "**/*.tsbuildinfo",
+      ".serena/**",
 
       ".env.local",
       ".env.*.local",

@@ -18,22 +18,19 @@ REQUIRED_FILES = [
     ROOT / "apps" / "web" / "AGENTS.md",
     ROOT / "apps" / "mobile" / "AGENTS.md",
     ROOT / "services" / "api" / "AGENTS.md",
+    ROOT / "docs" / "openapi" / "AGENTS.md",
+    ROOT / "docs" / "openapi" / "README.md",
+    ROOT / "docs" / "openapi" / "openapi.yaml",
+    ROOT / "tooling" / "agent" / "AGENTS.md",
     ROOT / "docs" / "architecture" / "AGENTS.md",
     ROOT / "docs" / "architecture" / "common.md",
+    ROOT / "docs" / "architecture" / "api.md",
     ROOT / "docs" / "architecture" / "web.md",
     ROOT / "docs" / "architecture" / "mobile.md",
+    ROOT / "docs" / "architecture" / "shared-frontend.md",
     ROOT / "docs" / "maintenance" / "DOCUMENTATION_GOVERNANCE.md",
-]
-
-TEXT_FILES = [
-    ROOT / "AGENTS.md",
-    ROOT / "CLAUDE.md",
-    ROOT / "CODEX.md",
-    ROOT / "GEMINI.md",
-    ROOT / ".github" / "copilot-instructions.md",
-    ROOT / "README.md",
-    ROOT / "docs" / "maintenance" / "OPERATING_MODEL.md",
-    ROOT / "tooling" / "agent" / "AGENTS.md",
+    ROOT / "tests" / "registry.yaml",
+    ROOT / "services" / "api" / "scripts" / "sync-registry.sh",
 ]
 
 ADAPTERS = [
@@ -44,13 +41,21 @@ ADAPTERS = [
 ]
 
 FORBIDDEN_ACTIVE_REF = "docs/plans/"
-ADAPTER_NAMES = {"CLAUDE.md", "CODEX.md", "GEMINI.md", "copilot-instructions.md"}
+ADAPTER_NAMES = {p.name for p in ADAPTERS}
+SKIP_DIRS = {"archive", "node_modules", "build", "bin", ".gradle", ".git"}
 
 for path in REQUIRED_FILES:
     if not path.exists():
         FAILURES.append(f"missing required file: {path.relative_to(ROOT)}")
 
-for path in TEXT_FILES:
+# Scan every live AGENTS.md plus the adapters and README for stale plan-dir refs.
+scan_targets: list[Path] = [
+    p for p in ROOT.rglob("AGENTS.md") if not SKIP_DIRS.intersection(p.parts)
+]
+scan_targets.extend(ADAPTERS)
+scan_targets.append(ROOT / "README.md")
+
+for path in scan_targets:
     if not path.exists():
         continue
     text = path.read_text(encoding="utf-8")
@@ -71,6 +76,8 @@ for required in [
     "apps/web/AGENTS.md",
     "apps/mobile/AGENTS.md",
     "services/api/AGENTS.md",
+    "docs/openapi/AGENTS.md",
+    "tooling/agent/AGENTS.md",
 ]:
     if required not in agents_text:
         FAILURES.append(f"AGENTS.md missing required discovery reference: {required}")
@@ -80,9 +87,9 @@ if pkg.exists():
     package_json = json.loads(pkg.read_text(encoding="utf-8"))
     scripts = package_json.get("scripts", {})
     for name, needle in {
-        "pack:backend": "docs/architecture/common.md",
-        "pack:web": "docs/architecture/web.md",
-        "pack:mobile": "docs/architecture/mobile.md",
+        "pack:backend": "docs/openapi/**",
+        "pack:web": "docs/openapi/**",
+        "pack:mobile": "docs/openapi/**",
     }.items():
         value = scripts.get(name, "")
         if needle not in value:

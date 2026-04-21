@@ -1,0 +1,128 @@
+/bookings/{id}/reviews:
+  post:
+    tags:
+      - Reviews
+    summary: Submit a review
+    description: |
+      Submit a review for a COMPLETED booking. Both customer and tasker can review each other.
+      Each party can only submit one review per booking.
+    operationId: submitReview
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            description: |
+              Role-specific validation: customers must provide quality + punctuality + communication; taskers must provide clarity + respectfulness + punctuality.
+            required:
+              - punctuality_rating
+            properties:
+              quality_rating:
+                type: integer
+                minimum: 1
+                maximum: 5
+              punctuality_rating:
+                type: integer
+                minimum: 1
+                maximum: 5
+              communication_rating:
+                type: integer
+                minimum: 1
+                maximum: 5
+              clarity_rating:
+                type: integer
+                minimum: 1
+                maximum: 5
+              respectfulness_rating:
+                type: integer
+                minimum: 1
+                maximum: 5
+              comment:
+                type: string
+                maxLength: 1000
+                nullable: true
+    responses:
+      '201':
+        description: Review submitted.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/reviews.yaml#/Review
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Review already submitted for this booking or booking is not COMPLETED.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/me/pending-reviews:
+  get:
+    tags:
+      - Reviews
+    summary: Get my pending reviews
+    description: Returns a list of the authenticated user's pending reviews (enforcement cases).
+    operationId: getMyPendingReviews
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Pending reviews for the authenticated user.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/reviews.yaml#/PendingReview
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+/users/{id}/reviews:
+  get:
+    tags:
+      - Reviews
+    summary: Get reviews for a user
+    description: Returns paginated reviews received by a user.
+    operationId: getUserReviews
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated reviews.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/reviews.yaml#/Review
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '404':
+        $ref: ../components/responses.yaml#/NotFound

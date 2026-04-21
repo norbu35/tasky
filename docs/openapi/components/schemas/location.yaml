@@ -1,0 +1,48 @@
+ReverseGeocodeResponse:
+  type: object
+  required:
+    - formatted_address
+    - district
+    - approximate_lat
+    - approximate_lng
+  properties:
+    formatted_address:
+      type: string
+    district:
+      type: string
+    district_mn:
+      type: string
+      nullable: true
+    approximate_lat:
+      type: number
+      format: double
+    approximate_lng:
+      type: number
+      format: double
+LocationSearchResponse:
+  type: object
+  required:
+    - results
+  properties:
+    results:
+      type: array
+      items:
+        $ref: '#/LocationSearchResult'
+LocationSearchResult:
+  type: object
+  required:
+    - formatted_address
+    - lat
+    - lng
+  properties:
+    formatted_address:
+      type: string
+    lat:
+      type: number
+      format: double
+    lng:
+      type: number
+      format: double
+    district:
+      type: string
+      nullable: true

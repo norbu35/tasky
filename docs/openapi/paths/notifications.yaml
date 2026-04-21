@@ -1,0 +1,65 @@
+/notifications/devices:
+  post:
+    tags:
+      - Notifications
+    summary: Register push notification device
+    description: Registers a device token for push notifications. Overwrites existing token for the same device.
+    operationId: registerDevice
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - token
+              - platform
+            properties:
+              token:
+                type: string
+                description: FCM registration token obtained via `@react-native-firebase/messaging` `getToken()`. Expo push tokens are not accepted.
+              platform:
+                type: string
+                enum:
+                  - IOS
+                  - ANDROID
+                  - WEB
+    responses:
+      '200':
+        description: Device registered.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Device registered successfully.
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+/notifications/devices/{token}:
+  delete:
+    tags:
+      - Notifications
+    summary: Unregister push notification device
+    description: Removes a device token. Typically called on logout.
+    operationId: unregisterDevice
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Device unregistered.
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '404':
+        $ref: ../components/responses.yaml#/NotFound

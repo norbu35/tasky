@@ -1,0 +1,28 @@
+/system/version:
+  get:
+    tags:
+      - System
+    summary: API version and status
+    description: Returns application name, API version, and a localized status string. No authentication required.
+    operationId: getSystemVersion
+    security: []
+    responses:
+      '200':
+        description: Version info
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                application:
+                  type: string
+                  example: tasky-server
+                api_version:
+                  type: string
+                  example: v1
+                status_localized:
+                  type: string
+                  example: OK
+                timestamp_utc:
+                  type: string
+                  format: date-time

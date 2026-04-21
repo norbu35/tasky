@@ -1,3 +1,5 @@
+# GENERATED FILE. Do not edit directly.
+# Edit docs/openapi/** and run `pnpm openapi:bundle`.
 openapi: 3.0.3
 info:
   title: Tasky API
@@ -40,7 +42,6 @@ info:
 servers:
   - url: /api/v1
     description: API v1
-
 tags:
   - name: System
     description: Service status and version metadata
@@ -78,14 +79,12 @@ tags:
     description: Admin operations
   - name: Security
     description: Auth scope smoke-test endpoints for integration testing
-
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-
   parameters:
     CursorParam:
       name: cursor
@@ -117,12 +116,13 @@ components:
         type: string
         format: uuid
       description: Unique key to ensure idempotent handling of critical state-changing requests.
-
   schemas:
-    # ─── Common ───────────────────────────────────────────────
     Error:
       type: object
-      required: [code, message, trace_id]
+      required:
+        - code
+        - message
+        - trace_id
       properties:
         code:
           type: string
@@ -133,10 +133,11 @@ components:
         trace_id:
           type: string
           example: abc-123-def
-
     CursorPagination:
       type: object
-      required: [next, has_more]
+      required:
+        - next
+        - has_more
       properties:
         next:
           type: string
@@ -146,10 +147,11 @@ components:
         has_more:
           type: boolean
           example: true
-
     PresignedUrlResponse:
       type: object
-      required: [upload_url, storage_key]
+      required:
+        - upload_url
+        - storage_key
       properties:
         upload_url:
           type: string
@@ -159,11 +161,14 @@ components:
           type: string
           description: Storage key to reference this file in subsequent API calls.
           example: uploads/avatars/550e8400-e29b-41d4-a716-446655440000.jpg
-
-    # ─── Identity ─────────────────────────────────────────────
     User:
       type: object
-      required: [id, role, status, primary_auth, created_at]
+      required:
+        - id
+        - role
+        - status
+        - primary_auth
+        - created_at
       properties:
         id:
           type: string
@@ -175,24 +180,40 @@ components:
         facebook_id:
           type: string
           nullable: true
-          example: 'fb-user-123'
+          example: fb-user-123
         primary_auth:
           type: string
-          enum: [FACEBOOK, PHONE_OTP]
+          enum:
+            - FACEBOOK
+            - PHONE_OTP
         role:
           type: string
-          enum: [CUSTOMER, TASKER, ADMIN]
+          enum:
+            - CUSTOMER
+            - TASKER
+            - ADMIN
         status:
           type: string
-          enum: [PENDING, VERIFIED, BANNED, SUSPENDED]
+          enum:
+            - PENDING
+            - VERIFIED
+            - BANNED
+            - SUSPENDED
         created_at:
           type: string
           format: date-time
-
     Profile:
       type: object
       required:
-        [id, role, status, full_name, avatar_url, rating_avg, completed_tasks, is_pro, created_at]
+        - id
+        - role
+        - status
+        - full_name
+        - avatar_url
+        - rating_avg
+        - completed_tasks
+        - is_pro
+        - created_at
       properties:
         id:
           type: string
@@ -200,13 +221,20 @@ components:
         phone_masked:
           type: string
           nullable: true
-          example: '+97699****22'
+          example: +97699****22
         role:
           type: string
-          enum: [CUSTOMER, TASKER, ADMIN]
+          enum:
+            - CUSTOMER
+            - TASKER
+            - ADMIN
         status:
           type: string
-          enum: [PENDING, VERIFIED, BANNED, SUSPENDED]
+          enum:
+            - PENDING
+            - VERIFIED
+            - BANNED
+            - SUSPENDED
         full_name:
           type: string
           example: Бат-Эрдэнэ
@@ -240,10 +268,7 @@ components:
           type: string
           format: date-time
           nullable: true
-          description: >-
-            Last time the user made an authenticated API request.
-            Updated at most every 2 minutes.
-
+          description: Last time the user made an authenticated API request. Updated at most every 2 minutes.
     StrikePolicy:
       type: object
       required:
@@ -280,7 +305,6 @@ components:
         updatedAt:
           type: string
           format: date-time
-
     StrikePolicyUpdateRequest:
       type: object
       required:
@@ -313,15 +337,18 @@ components:
           maximum: 730
         autoUnsuspendEnabled:
           type: boolean
-
-    # ─── Verification ─────────────────────────────────────────
     VerificationStatus:
       type: object
-      required: [status]
+      required:
+        - status
       properties:
         status:
           type: string
-          enum: [NOT_SUBMITTED, PENDING, APPROVED, REJECTED]
+          enum:
+            - NOT_SUBMITTED
+            - PENDING
+            - APPROVED
+            - REJECTED
         admin_notes:
           type: string
           nullable: true
@@ -334,10 +361,13 @@ components:
           type: string
           format: date-time
           nullable: true
-
     VerificationDetail:
       type: object
-      required: [id, user_id, status, submitted_at]
+      required:
+        - id
+        - user_id
+        - status
+        - submitted_at
       properties:
         id:
           type: string
@@ -357,7 +387,10 @@ components:
           format: uri
         status:
           type: string
-          enum: [PENDING, APPROVED, REJECTED]
+          enum:
+            - PENDING
+            - APPROVED
+            - REJECTED
         admin_notes:
           type: string
           nullable: true
@@ -372,11 +405,12 @@ components:
           type: string
           format: date-time
           nullable: true
-
-    # ─── Categories ───────────────────────────────────────────
     IntakeFieldOption:
       type: object
-      required: [value, label, label_mn]
+      required:
+        - value
+        - label
+        - label_mn
       properties:
         value:
           type: string
@@ -387,10 +421,14 @@ components:
         label_mn:
           type: string
           example: Гүнзгий цэвэрлэгээ
-
     IntakeFieldSchema:
       type: object
-      required: [key, label, label_mn, type, required]
+      required:
+        - key
+        - label
+        - label_mn
+        - type
+        - required
       properties:
         key:
           type: string
@@ -403,13 +441,20 @@ components:
           example: Цэвэрлэгээний төрөл
         type:
           type: string
-          enum: [single_select, multi_select, dropdown, yes_no, numeric_counter, text, textarea]
+          enum:
+            - single_select
+            - multi_select
+            - dropdown
+            - yes_no
+            - numeric_counter
+            - text
+            - textarea
         required:
           type: boolean
         options:
           type: array
           items:
-            $ref: '#/components/schemas/IntakeFieldOption'
+            $ref: '#/IntakeFieldOption'
           nullable: true
         min:
           type: integer
@@ -423,11 +468,17 @@ components:
         max_length:
           type: integer
           nullable: true
-
     Category:
       type: object
       required:
-        [id, name, name_mn, icon_url, is_active, sort_order, intake_enabled, intake_schema_version]
+        - id
+        - name
+        - name_mn
+        - icon_url
+        - is_active
+        - sort_order
+        - intake_enabled
+        - intake_schema_version
       properties:
         id:
           type: string
@@ -457,25 +508,21 @@ components:
               additionalProperties: true
             - type: array
               items:
-                $ref: '#/components/schemas/IntakeFieldSchema'
-
-    # ─── Tasks ────────────────────────────────────────────────
+                $ref: '#/IntakeFieldSchema'
     PublicTask:
       type: object
       required:
-        [
-          id,
-          category,
-          customer,
-          description,
-          budget,
-          approximate_location,
-          status,
-          scheduled_at,
-          photo_urls,
-          application_count,
-          created_at,
-        ]
+        - id
+        - category
+        - customer
+        - description
+        - budget
+        - approximate_location
+        - status
+        - scheduled_at
+        - photo_urls
+        - application_count
+        - created_at
       properties:
         id:
           type: string
@@ -484,7 +531,11 @@ components:
           $ref: '#/components/schemas/Category'
         customer:
           type: object
-          required: [id, full_name, avatar_url, rating_avg]
+          required:
+            - id
+            - full_name
+            - avatar_url
+            - rating_avg
           properties:
             id:
               type: string
@@ -518,7 +569,8 @@ components:
           description: Approximate longitude (fuzzed to ~500m).
         status:
           type: string
-          enum: [OPEN]
+          enum:
+            - OPEN
         scheduled_at:
           type: string
           format: date-time
@@ -533,24 +585,21 @@ components:
         created_at:
           type: string
           format: date-time
-
     Task:
       type: object
       required:
-        [
-          id,
-          category_id,
-          description,
-          budget,
-          location_lat,
-          location_lng,
-          location_text,
-          status,
-          scheduled_at,
-          photos,
-          intake_schema_version,
-          created_at,
-        ]
+        - id
+        - category_id
+        - description
+        - budget
+        - location_lat
+        - location_lng
+        - location_text
+        - status
+        - scheduled_at
+        - photos
+        - intake_schema_version
+        - created_at
       properties:
         id:
           type: string
@@ -581,7 +630,12 @@ components:
           example: Энхтайваны өргөн чөлөө 5-р байр, 301 тоот
         status:
           type: string
-          enum: [OPEN, ASSIGNED, COMPLETED, CANCELLED, NO_SHOW]
+          enum:
+            - OPEN
+            - ASSIGNED
+            - COMPLETED
+            - CANCELLED
+            - NO_SHOW
         scheduled_at:
           type: string
           format: date-time
@@ -594,7 +648,10 @@ components:
           minimum: 1
         scope_summary_source:
           type: string
-          enum: [TEMPLATE, USER_EDITED, LLM]
+          enum:
+            - TEMPLATE
+            - USER_EDITED
+            - LLM
         photos:
           type: array
           items:
@@ -614,10 +671,12 @@ components:
         updated_at:
           type: string
           format: date-time
-
     RecentLocation:
       type: object
-      required: [location_lat, location_lng, location_text]
+      required:
+        - location_lat
+        - location_lng
+        - location_text
       properties:
         location_lat:
           type: number
@@ -630,21 +689,18 @@ components:
         location_text:
           type: string
           description: Human-readable location description.
-
     CreateTaskRequest:
       type: object
       required:
-        [
-          category_id,
-          description,
-          budget,
-          location_lat,
-          location_lng,
-          location_text,
-          scheduled_at,
-          intake_answers,
-          intake_schema_version,
-        ]
+        - category_id
+        - description
+        - budget
+        - location_lat
+        - location_lng
+        - location_text
+        - scheduled_at
+        - intake_answers
+        - intake_schema_version
       properties:
         category_id:
           type: string
@@ -694,7 +750,6 @@ components:
           format: uuid
           nullable: true
           description: Optional task draft reference bound to intake schema version.
-
     UpdateTaskRequest:
       type: object
       properties:
@@ -722,10 +777,15 @@ components:
           items:
             type: string
           maxItems: 3
-
     TaskDraft:
       type: object
-      required: [id, category_id, intake_answers, intake_schema_version, created_at, expires_at]
+      required:
+        - id
+        - category_id
+        - intake_answers
+        - intake_schema_version
+        - created_at
+        - expires_at
       properties:
         id:
           type: string
@@ -758,11 +818,15 @@ components:
         expires_at:
           type: string
           format: date-time
-
-    # ─── Applications ─────────────────────────────────────────
     TaskApplication:
       type: object
-      required: [id, task_id, tasker, message, status, created_at]
+      required:
+        - id
+        - task_id
+        - tasker
+        - message
+        - status
+        - created_at
       properties:
         id:
           type: string
@@ -772,7 +836,13 @@ components:
           format: uuid
         tasker:
           type: object
-          required: [id, full_name, avatar_url, rating_avg, completed_tasks, is_pro]
+          required:
+            - id
+            - full_name
+            - avatar_url
+            - rating_avg
+            - completed_tasks
+            - is_pro
           properties:
             id:
               type: string
@@ -795,7 +865,12 @@ components:
           description: Tasker's cover message.
         status:
           type: string
-          enum: [APPLIED, SELECTED, ACCEPTED, DECLINED, EXPIRED]
+          enum:
+            - APPLIED
+            - SELECTED
+            - ACCEPTED
+            - DECLINED
+            - EXPIRED
         relevance_score:
           type: number
           format: double
@@ -806,12 +881,17 @@ components:
         created_at:
           type: string
           format: date-time
-
-    # ─── Bookings ─────────────────────────────────────────────
     Booking:
       type: object
       required:
-        [id, task_id, tasker_id, customer_id, price, status, confirmed_scheduled_at, created_at]
+        - id
+        - task_id
+        - tasker_id
+        - customer_id
+        - price
+        - status
+        - confirmed_scheduled_at
+        - created_at
       properties:
         id:
           type: string
@@ -836,7 +916,11 @@ components:
           description: Agreed price in MNT.
         status:
           type: string
-          enum: [ASSIGNED, COMPLETED, CANCELLED, NO_SHOW]
+          enum:
+            - ASSIGNED
+            - COMPLETED
+            - CANCELLED
+            - NO_SHOW
         confirmed_scheduled_at:
           type: string
           format: date-time
@@ -848,11 +932,18 @@ components:
           nullable: true
         settlement_mode:
           type: string
-          enum: [DIRECT, LEAD_UNLOCK, ESCROW]
+          enum:
+            - DIRECT
+            - LEAD_UNLOCK
+            - ESCROW
         escrow_status:
           type: string
           nullable: true
-          enum: [UNPAID, PAID, HELD, RELEASED]
+          enum:
+            - UNPAID
+            - PAID
+            - HELD
+            - RELEASED
         late_cancel_incident:
           type: boolean
         customer_contact_unlocked:
@@ -868,10 +959,17 @@ components:
         updated_at:
           type: string
           format: date-time
-
     BookingIntent:
       type: object
-      required: [id, task_id, tasker_id, customer_id, source, status, created_at, updated_at]
+      required:
+        - id
+        - task_id
+        - tasker_id
+        - customer_id
+        - source
+        - status
+        - created_at
+        - updated_at
       properties:
         id:
           type: string
@@ -887,10 +985,16 @@ components:
           format: uuid
         source:
           type: string
-          enum: [REBOOK, INSTANT_MATCH]
+          enum:
+            - REBOOK
+            - INSTANT_MATCH
         status:
           type: string
-          enum: [PENDING, CONFIRMED, EXPIRED, CANCELLED]
+          enum:
+            - PENDING
+            - CONFIRMED
+            - EXPIRED
+            - CANCELLED
         original_booking_id:
           type: string
           format: uuid
@@ -917,10 +1021,14 @@ components:
         updated_at:
           type: string
           format: date-time
-
     BookingScheduleEvent:
       type: object
-      required: [id, booking_id, event_type, actor_user_id, created_at]
+      required:
+        - id
+        - booking_id
+        - event_type
+        - actor_user_id
+        - created_at
       properties:
         id:
           type: string
@@ -930,7 +1038,11 @@ components:
           format: uuid
         event_type:
           type: string
-          enum: [REQUESTED, ACCEPTED, DECLINED, EXPIRED]
+          enum:
+            - REQUESTED
+            - ACCEPTED
+            - DECLINED
+            - EXPIRED
         actor_user_id:
           type: string
           format: uuid
@@ -944,11 +1056,13 @@ components:
         created_at:
           type: string
           format: date-time
-
-    # ─── Wallet ───────────────────────────────────────────────
     CreditBalance:
       type: object
-      required: [balance, total_purchased, total_spent, total_refunded]
+      required:
+        - balance
+        - total_purchased
+        - total_spent
+        - total_refunded
       properties:
         balance:
           type: integer
@@ -959,10 +1073,13 @@ components:
           type: integer
         total_refunded:
           type: integer
-
     CreditTransaction:
       type: object
-      required: [id, amount, type, created_at]
+      required:
+        - id
+        - amount
+        - type
+        - created_at
       properties:
         id:
           type: string
@@ -971,17 +1088,25 @@ components:
           type: integer
         type:
           type: string
-          enum: [PURCHASE, SPEND, REFUND, SIGNUP_BONUS]
+          enum:
+            - PURCHASE
+            - SPEND
+            - REFUND
+            - SIGNUP_BONUS
         reference_id:
           type: string
           nullable: true
         created_at:
           type: string
           format: date-time
-
     CreditPack:
       type: object
-      required: [id, name, credit_count, price_mnt, is_active]
+      required:
+        - id
+        - name
+        - credit_count
+        - price_mnt
+        - is_active
       properties:
         id:
           type: string
@@ -996,10 +1121,12 @@ components:
           minimum: 1
         is_active:
           type: boolean
-
     WalletBalance:
       type: object
-      required: [available_balance, pending_balance, currency]
+      required:
+        - available_balance
+        - pending_balance
+        - currency
       properties:
         available_balance:
           type: integer
@@ -1012,10 +1139,14 @@ components:
         currency:
           type: string
           example: MNT
-
     LedgerEntry:
       type: object
-      required: [id, amount, type, description, created_at]
+      required:
+        - id
+        - amount
+        - type
+        - description
+        - created_at
       properties:
         id:
           type: string
@@ -1025,7 +1156,11 @@ components:
           description: Signed amount in MNT. Positive = credit, negative = debit.
         type:
           type: string
-          enum: [DEPOSIT, FEE, PAYOUT, REFUND]
+          enum:
+            - DEPOSIT
+            - FEE
+            - PAYOUT
+            - REFUND
         reference_id:
           type: string
           format: uuid
@@ -1037,10 +1172,15 @@ components:
         created_at:
           type: string
           format: date-time
-
     PayoutRequest:
       type: object
-      required: [id, amount, bank_name, bank_account, status, created_at]
+      required:
+        - id
+        - amount
+        - bank_name
+        - bank_account
+        - status
+        - created_at
       properties:
         id:
           type: string
@@ -1059,7 +1199,10 @@ components:
           example: '5012345678'
         status:
           type: string
-          enum: [PENDING, PROCESSED, REJECTED]
+          enum:
+            - PENDING
+            - PROCESSED
+            - REJECTED
         created_at:
           type: string
           format: date-time
@@ -1067,11 +1210,14 @@ components:
           type: string
           format: date-time
           nullable: true
-
-    # ─── Reviews ──────────────────────────────────────────────
     PendingReview:
       type: object
-      required: [id, booking_id, user_id, status, triggered_at]
+      required:
+        - id
+        - booking_id
+        - user_id
+        - status
+        - triggered_at
       properties:
         id:
           type: string
@@ -1084,7 +1230,12 @@ components:
           format: uuid
         status:
           type: string
-          enum: [PENDING, REMINDED_24H, REMINDED_72H, COMPLETED, EXPIRED]
+          enum:
+            - PENDING
+            - REMINDED_24H
+            - REMINDED_72H
+            - COMPLETED
+            - EXPIRED
         triggered_at:
           type: string
           format: date-time
@@ -1094,10 +1245,15 @@ components:
           nullable: true
         investigation_active:
           type: boolean
-
     Review:
       type: object
-      required: [id, booking_id, reviewer_id, reviewee_id, punctuality_rating, created_at]
+      required:
+        - id
+        - booking_id
+        - reviewer_id
+        - reviewee_id
+        - punctuality_rating
+        - created_at
       properties:
         id:
           type: string
@@ -1139,11 +1295,15 @@ components:
         created_at:
           type: string
           format: date-time
-
-    # ─── Disputes ─────────────────────────────────────────────
     Dispute:
       type: object
-      required: [id, booking_id, raised_by, reason, status, created_at]
+      required:
+        - id
+        - booking_id
+        - raised_by
+        - reason
+        - status
+        - created_at
       properties:
         id:
           type: string
@@ -1160,10 +1320,20 @@ components:
           type: string
         status:
           type: string
-          enum: [OPEN, RESOLVED_TASKER, RESOLVED_CUSTOMER, ESCALATED, CLOSED_INSUFFICIENT_EVIDENCE]
+          enum:
+            - OPEN
+            - RESOLVED_TASKER
+            - RESOLVED_CUSTOMER
+            - ESCALATED
+            - CLOSED_INSUFFICIENT_EVIDENCE
         resolution_action:
           type: string
-          enum: [RESOLVE_CUSTOMER, RESOLVE_TASKER, ESCALATE, REFUND, RELEASE]
+          enum:
+            - RESOLVE_CUSTOMER
+            - RESOLVE_TASKER
+            - ESCALATE
+            - REFUND
+            - RELEASE
           nullable: true
         wrongful_party_user_id:
           type: string
@@ -1178,7 +1348,7 @@ components:
         evidence:
           type: array
           items:
-            $ref: '#/components/schemas/DisputeEvidence'
+            $ref: '#/DisputeEvidence'
         created_at:
           type: string
           format: date-time
@@ -1186,25 +1356,32 @@ components:
           type: string
           format: date-time
           nullable: true
-
     DisputeEvidence:
       type: object
-      required: [type]
+      required:
+        - type
       properties:
         type:
           type: string
-          enum: [CHAT_EXCERPT, PHOTO, WRITTEN_TIMELINE]
+          enum:
+            - CHAT_EXCERPT
+            - PHOTO
+            - WRITTEN_TIMELINE
         storage_key:
           type: string
           nullable: true
         text_payload:
           type: string
           nullable: true
-
-    # ─── Conversations / Messages ─────────────────────────────
     Conversation:
       type: object
-      required: [id, task_id, counterparty_id, counterparty_name, unread_count, created_at]
+      required:
+        - id
+        - task_id
+        - counterparty_id
+        - counterparty_name
+        - unread_count
+        - created_at
       properties:
         id:
           type: string
@@ -1243,10 +1420,14 @@ components:
         created_at:
           type: string
           format: date-time
-
     Message:
       type: object
-      required: [id, conversation_id, sender_id, content, created_at]
+      required:
+        - id
+        - conversation_id
+        - sender_id
+        - content
+        - created_at
       properties:
         id:
           type: string
@@ -1268,18 +1449,21 @@ components:
         created_at:
           type: string
           format: date-time
-
     FeatureToggle:
       type: object
-      required: [feature_name, is_enabled, updated_at]
+      required:
+        - feature_name
+        - is_enabled
+        - updated_at
       properties:
         feature_name:
           type: string
-          enum: [lead_fee_enabled, subscription_enabled, escrow_enabled, ai_scope_summary_enabled]
-          description:
-            Seeded feature toggle names; current runtime consumer status varies by toggle. Future-facing
-            names such as `promoted_listings_enabled` and `b2b_enabled` are not part of the current API toggle enum
-            because this sweep found no confirmed seeded runtime support for them.
+          enum:
+            - lead_fee_enabled
+            - subscription_enabled
+            - escrow_enabled
+            - ai_scope_summary_enabled
+          description: Seeded feature toggle names; current runtime consumer status varies by toggle. Future-facing names such as `promoted_listings_enabled` and `b2b_enabled` are not part of the current API toggle enum because this sweep found no confirmed seeded runtime support for them.
         is_enabled:
           type: boolean
         updated_by:
@@ -1289,10 +1473,14 @@ components:
         updated_at:
           type: string
           format: date-time
-
     LeadUnlockPrice:
       type: object
-      required: [id, category_id, district_id, credits_required, effective_from]
+      required:
+        - id
+        - category_id
+        - district_id
+        - credits_required
+        - effective_from
       properties:
         id:
           type: string
@@ -1312,10 +1500,13 @@ components:
           type: string
           format: date-time
           nullable: true
-
     TaskerSubscription:
       type: object
-      required: [id, tasker_id, status, started_at]
+      required:
+        - id
+        - tasker_id
+        - status
+        - started_at
       properties:
         id:
           type: string
@@ -1325,7 +1516,10 @@ components:
           format: uuid
         status:
           type: string
-          enum: [ACTIVE, CANCELLED, EXPIRED]
+          enum:
+            - ACTIVE
+            - CANCELLED
+            - EXPIRED
         started_at:
           type: string
           format: date-time
@@ -1333,10 +1527,13 @@ components:
           type: string
           format: date-time
           nullable: true
-
     BusinessAccount:
       type: object
-      required: [id, name, status, created_at]
+      required:
+        - id
+        - name
+        - status
+        - created_at
       properties:
         id:
           type: string
@@ -1345,17 +1542,21 @@ components:
           type: string
         status:
           type: string
-          enum: [ACTIVE, INACTIVE]
+          enum:
+            - ACTIVE
+            - INACTIVE
         billing_profile:
           type: object
           additionalProperties: true
         created_at:
           type: string
           format: date-time
-
     ReferralSummary:
       type: object
-      required: [referral_code, referral_link, successful_referrals_this_month]
+      required:
+        - referral_code
+        - referral_link
+        - successful_referrals_this_month
       properties:
         referral_code:
           type: string
@@ -1367,10 +1568,13 @@ components:
         remaining_reward_capacity_this_month:
           type: integer
           description: Remaining successful referrals eligible for rewards within monthly cap.
-
     ReverseGeocodeResponse:
       type: object
-      required: [formatted_address, district, approximate_lat, approximate_lng]
+      required:
+        - formatted_address
+        - district
+        - approximate_lat
+        - approximate_lng
       properties:
         formatted_address:
           type: string
@@ -1385,19 +1589,22 @@ components:
         approximate_lng:
           type: number
           format: double
-
     LocationSearchResponse:
       type: object
-      required: [results]
+      required:
+        - results
       properties:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/LocationSearchResult'
-
+            $ref: '#/LocationSearchResult'
     OutboxSummary:
       type: object
-      required: [pending, failed, processed, processing]
+      required:
+        - pending
+        - failed
+        - processed
+        - processing
       properties:
         pending:
           type: integer
@@ -1407,10 +1614,12 @@ components:
           type: integer
         processing:
           type: integer
-
     OutboxEvent:
       type: object
-      required: [id, event_type, status]
+      required:
+        - id
+        - event_type
+        - status
       properties:
         id:
           type: string
@@ -1428,7 +1637,11 @@ components:
           description: JSON payload
         status:
           type: string
-          enum: [PENDING, PROCESSING, PROCESSED, FAILED]
+          enum:
+            - PENDING
+            - PROCESSING
+            - PROCESSED
+            - FAILED
         attempts:
           type: integer
         available_at:
@@ -1468,25 +1681,30 @@ components:
         platform:
           type: string
           nullable: true
-
     OutboxEventPage:
       type: object
-      required: [events, total, offset, limit]
+      required:
+        - events
+        - total
+        - offset
+        - limit
       properties:
         events:
           type: array
           items:
-            $ref: '#/components/schemas/OutboxEvent'
+            $ref: '#/OutboxEvent'
         total:
           type: integer
         offset:
           type: integer
         limit:
           type: integer
-
     LocationSearchResult:
       type: object
-      required: [formatted_address, lat, lng]
+      required:
+        - formatted_address
+        - lat
+        - lng
       properties:
         formatted_address:
           type: string
@@ -1499,10 +1717,13 @@ components:
         district:
           type: string
           nullable: true
-
     LeadUnlockPricePayload:
       type: object
-      required: [category_id, district_id, credits_required, effective_from]
+      required:
+        - category_id
+        - district_id
+        - credits_required
+        - effective_from
       properties:
         category_id:
           type: string
@@ -1518,10 +1739,12 @@ components:
           type: string
           format: date-time
           nullable: true
-
     AdminDisputeDetail:
       type: object
-      required: [dispute, booking, evidence_messages]
+      required:
+        - dispute
+        - booking
+        - evidence_messages
       properties:
         dispute:
           type: object
@@ -1535,10 +1758,13 @@ components:
         evidence_messages:
           type: array
           items: {}
-
     CategorySchemaVersion:
       type: object
-      required: [version, status, schema_json, created_at]
+      required:
+        - version
+        - status
+        - schema_json
+        - created_at
       properties:
         version:
           type: integer
@@ -1550,10 +1776,14 @@ components:
         created_at:
           type: string
           format: date-time
-
     AdminCategoryPayload:
       type: object
-      required: [name, name_mn, icon_url, sort_order, intake_enabled]
+      required:
+        - name
+        - name_mn
+        - icon_url
+        - sort_order
+        - intake_enabled
       properties:
         name:
           type: string
@@ -1568,7 +1798,6 @@ components:
           type: boolean
         is_active:
           type: boolean
-
   responses:
     BadRequest:
       description: Invalid request parameters or body.
@@ -1608,15 +1837,11 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-
-# ═══════════════════════════════════════════════════════════════
-# PATHS
-# ═══════════════════════════════════════════════════════════════
 paths:
-  # ─── System ─────────────────────────────────────────────────
   /system/version:
     get:
-      tags: [System]
+      tags:
+        - System
       summary: API version and status
       description: Returns application name, API version, and a localized status string. No authentication required.
       operationId: getSystemVersion
@@ -1641,11 +1866,10 @@ paths:
                   timestamp_utc:
                     type: string
                     format: date-time
-
-  # ─── Auth ───────────────────────────────────────────────────
   /auth/facebook:
     post:
-      tags: [Auth]
+      tags:
+        - Auth
       summary: Authenticate with Facebook OAuth
       description: |
         Validates a Facebook user access token and returns JWT tokens.
@@ -1661,12 +1885,13 @@ paths:
           application/json:
             schema:
               type: object
-              required: [access_token]
+              required:
+                - access_token
               properties:
                 access_token:
                   type: string
                   description: Facebook user access token from the client SDK.
-                  example: 'EAABsbCS1...'
+                  example: EAABsbCS1...
       responses:
         '200':
           description: Authentication successful.
@@ -1674,7 +1899,10 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [access_token, refresh_token, user]
+                required:
+                  - access_token
+                  - refresh_token
+                  - user
                 properties:
                   access_token:
                     type: string
@@ -1690,24 +1918,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
         '409':
           description: In Phase 2+, Facebook-only signup is disabled for new users.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
         '503':
           description: OAuth provider unavailable in Phase 0-1 (`AUTH_PROVIDER_UNAVAILABLE`).
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /auth/facebook/status:
     get:
-      tags: [Auth]
+      tags:
+        - Auth
       summary: Facebook OAuth circuit breaker status
       description: |
         Returns the current state of the Facebook OAuth circuit breaker.
@@ -1722,17 +1950,22 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [available, state]
+                required:
+                  - available
+                  - state
                 properties:
                   available:
                     type: boolean
                   state:
                     type: string
-                    enum: [CLOSED, OPEN, HALF_OPEN]
-
+                    enum:
+                      - CLOSED
+                      - OPEN
+                      - HALF_OPEN
   /auth/otp/request:
     post:
-      tags: [Auth]
+      tags:
+        - Auth
       summary: Request OTP code
       description: |
         Sends a one-time password (OTP) to a phone number.
@@ -1745,7 +1978,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [phone_number]
+              required:
+                - phone_number
               properties:
                 phone_number:
                   type: string
@@ -1757,25 +1991,26 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [message]
+                required:
+                  - message
                 properties:
                   message:
                     type: string
                     example: OTP sent
         '400':
           $ref: '#/components/responses/BadRequest'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
         '403':
           description: OTP authentication disabled for current rollout phase (`FEATURE_DISABLED`).
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
   /auth/otp/verify:
     post:
-      tags: [Auth]
+      tags:
+        - Auth
       summary: Verify OTP and authenticate
       description: |
         Verifies OTP code and issues JWT tokens.
@@ -1788,7 +2023,9 @@ paths:
           application/json:
             schema:
               type: object
-              required: [phone_number, otp_code]
+              required:
+                - phone_number
+                - otp_code
               properties:
                 phone_number:
                   type: string
@@ -1807,7 +2044,10 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [access_token, refresh_token, user]
+                required:
+                  - access_token
+                  - refresh_token
+                  - user
                 properties:
                   access_token:
                     type: string
@@ -1823,18 +2063,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
         '403':
           description: OTP authentication disabled for current rollout phase (`FEATURE_DISABLED`).
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
   /auth/dev/login:
     post:
-      tags: [Auth]
+      tags:
+        - Auth
       summary: Dev login (development only)
       description: |
         Authenticate with a phone number and role without SMS OTP.
@@ -1849,14 +2089,19 @@ paths:
           application/json:
             schema:
               type: object
-              required: [phone, role]
+              required:
+                - phone
+                - role
               properties:
                 phone:
                   type: string
                   format: phone
                 role:
                   type: string
-                  enum: [CUSTOMER, TASKER, ADMIN]
+                  enum:
+                    - CUSTOMER
+                    - TASKER
+                    - ADMIN
       responses:
         '200':
           description: Auth session with tokens.
@@ -1864,7 +2109,10 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [access_token, refresh_token, user]
+                required:
+                  - access_token
+                  - refresh_token
+                  - user
                 properties:
                   access_token:
                     type: string
@@ -1874,10 +2122,10 @@ paths:
                     $ref: '#/components/schemas/User'
         '400':
           $ref: '#/components/responses/BadRequest'
-
   /auth/token/refresh:
     post:
-      tags: [Auth]
+      tags:
+        - Auth
       summary: Refresh access token
       description: Exchange a valid refresh token for a new token pair.
       operationId: refreshToken
@@ -1888,7 +2136,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [refresh_token]
+              required:
+                - refresh_token
               properties:
                 refresh_token:
                   type: string
@@ -1899,7 +2148,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [access_token, refresh_token]
+                required:
+                  - access_token
+                  - refresh_token
                 properties:
                   access_token:
                     type: string
@@ -1911,11 +2162,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
-  # ─── Users ──────────────────────────────────────────────────
   /users/me:
     get:
-      tags: [Users]
+      tags:
+        - Users
       summary: Get current user profile
       description: Returns the full profile of the authenticated user.
       operationId: getMyProfile
@@ -1930,9 +2180,9 @@ paths:
                 $ref: '#/components/schemas/Profile'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
     put:
-      tags: [Users]
+      tags:
+        - Users
       summary: Update current user profile
       description: Updates profile fields for the authenticated user.
       operationId: updateMyProfile
@@ -1967,9 +2217,9 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
     delete:
-      tags: [Users]
+      tags:
+        - Users
       summary: Request account deletion
       description: |
         Marks the account for deletion. Identity data is anonymized after 90-day retention period.
@@ -1983,17 +2233,18 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [message]
+                required:
+                  - message
                 properties:
                   message:
                     type: string
                     example: Account deletion requested. Data will be removed after 90-day retention period.
         '401':
           $ref: '#/components/responses/Unauthorized'
-
   /users/me/role/tasker:
     post:
-      tags: [Users]
+      tags:
+        - Users
       summary: Activate tasker role
       description: |
         Requests role transition from CUSTOMER to TASKER.
@@ -2016,10 +2267,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /users/me/avatar/upload-url:
     post:
-      tags: [Users]
+      tags:
+        - Users
       summary: Get presigned URL for avatar upload
       description: |
         Returns a presigned URL to upload an avatar image directly to S3/MinIO.
@@ -2034,12 +2285,16 @@ paths:
           application/json:
             schema:
               type: object
-              required: [content_type]
+              required:
+                - content_type
               properties:
                 content_type:
                   type: string
                   description: MIME type of the file.
-                  enum: [image/jpeg, image/png, image/webp]
+                  enum:
+                    - image/jpeg
+                    - image/png
+                    - image/webp
                   example: image/jpeg
       responses:
         '200':
@@ -2052,11 +2307,10 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
-  # ─── Verification ───────────────────────────────────────────
   /verification/upload-url:
     post:
-      tags: [Verification]
+      tags:
+        - Verification
       summary: Get presigned URL for verification image upload
       description: |
         Returns a presigned URL to upload government ID images used in verification submission.
@@ -2069,7 +2323,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [content_type]
+              required:
+                - content_type
               properties:
                 content_type:
                   type: string
@@ -2086,10 +2341,10 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
   /verification/submit:
     post:
-      tags: [Verification]
+      tags:
+        - Verification
       summary: Submit ID verification
       description: |
         Tasker submits government ID photos for manual verification.
@@ -2104,7 +2359,10 @@ paths:
             schema:
               type: object
               required:
-                [id_card_front_key, id_card_back_key, consent_policy_version, consent_accepted]
+                - id_card_front_key
+                - id_card_back_key
+                - consent_policy_version
+                - consent_accepted
               properties:
                 id_card_front_key:
                   type: string
@@ -2117,7 +2375,8 @@ paths:
                   description: Policy version accepted by the user before identity upload.
                 consent_accepted:
                   type: boolean
-                  enum: [true]
+                  enum:
+                    - true
       responses:
         '200':
           description: Verification submitted successfully.
@@ -2135,10 +2394,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /verification/status:
     get:
-      tags: [Verification]
+      tags:
+        - Verification
       summary: Check verification status
       description: Returns the current verification status for the authenticated user.
       operationId: getVerificationStatus
@@ -2153,12 +2412,12 @@ paths:
                 $ref: '#/components/schemas/VerificationStatus'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
   /verification/dan/verify:
     x-tasky-status: deferred
     x-tasky-target-phase: phase_2
     post:
-      tags: [Verification]
+      tags:
+        - Verification
       summary: Verify via E-Mongolia DAN (Phase 2+)
       description: |
         **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
@@ -2173,7 +2432,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [dan_token]
+              required:
+                - dan_token
               properties:
                 dan_token:
                   type: string
@@ -2192,11 +2452,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
-  # ─── Categories ─────────────────────────────────────────────
   /categories:
     get:
-      tags: [Categories]
+      tags:
+        - Categories
       summary: List active categories
       description: Returns paginated active service categories, sorted by `sort_order`.
       operationId: listCategories
@@ -2212,7 +2471,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -2222,10 +2483,10 @@ paths:
                     $ref: '#/components/schemas/CursorPagination'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
   /tasks/drafts:
     post:
-      tags: [Tasks]
+      tags:
+        - Tasks
       summary: Create task draft
       description: |
         Creates a draft bound to the currently active category intake schema version.
@@ -2239,7 +2500,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [category_id]
+              required:
+                - category_id
               properties:
                 category_id:
                   type: string
@@ -2261,10 +2523,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /tasks/drafts/{id}:
     get:
-      tags: [Tasks]
+      tags:
+        - Tasks
       summary: Get task draft
       operationId: getTaskDraft
       security:
@@ -2288,9 +2550,9 @@ paths:
                 $ref: '#/components/schemas/Error'
         '404':
           $ref: '#/components/responses/NotFound'
-
     put:
-      tags: [Tasks]
+      tags:
+        - Tasks
       summary: Update task draft
       operationId: updateTaskDraft
       security:
@@ -2333,11 +2595,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-
-  # ─── Tasks ──────────────────────────────────────────────────
   /tasks/photos/upload-url:
     post:
-      tags: [Tasks]
+      tags:
+        - Tasks
       summary: Get presigned URL for pre-create task photo upload
       description: |
         Returns a presigned URL to upload a task photo directly to S3/MinIO before task creation.
@@ -2351,7 +2612,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [content_type]
+              required:
+                - content_type
               properties:
                 content_type:
                   type: string
@@ -2367,10 +2629,10 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
   /tasks:
     get:
-      tags: [Tasks]
+      tags:
+        - Tasks
       summary: List open tasks
       description: |
         Returns a paginated list of OPEN tasks. Supports filtering by category and
@@ -2414,7 +2676,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -2426,9 +2690,9 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
     post:
-      tags: [Tasks]
+      tags:
+        - Tasks
       summary: Create a new task
       description: |
         Creates a new task in OPEN status using schema-driven intake payload.
@@ -2457,10 +2721,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /tasks/mine:
     get:
-      tags: [Tasks]
+      tags:
+        - Tasks
       summary: List my task ads/history
       description: |
         Returns authenticated user's task list with full task details.
@@ -2475,14 +2739,21 @@ paths:
           description: View scope for task history.
           schema:
             type: string
-            enum: [customer, tasker]
+            enum:
+              - customer
+              - tasker
             default: customer
         - name: status
           in: query
           description: Filter by task status.
           schema:
             type: string
-            enum: [OPEN, ASSIGNED, COMPLETED, CANCELLED, NO_SHOW]
+            enum:
+              - OPEN
+              - ASSIGNED
+              - COMPLETED
+              - CANCELLED
+              - NO_SHOW
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/LimitParam'
       responses:
@@ -2492,7 +2763,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -2504,10 +2777,10 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
   /tasks/mine/recent-locations:
     get:
-      tags: [Tasks]
+      tags:
+        - Tasks
       summary: Recent distinct task locations
       description: |
         Returns up to 3 of the authenticated customer's most recent distinct task
@@ -2523,7 +2796,8 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [locations]
+                required:
+                  - locations
                 properties:
                   locations:
                     type: array
@@ -2532,10 +2806,10 @@ paths:
                       $ref: '#/components/schemas/RecentLocation'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
   /tasks/{id}:
     get:
-      tags: [Tasks]
+      tags:
+        - Tasks
       summary: Get task details
       description: |
         Returns full task details. Exact location is only visible to the task owner
@@ -2562,9 +2836,9 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-
     put:
-      tags: [Tasks]
+      tags:
+        - Tasks
       summary: Update a task
       description: |
         Updates a task. Only the task owner can update, and only while the task is in OPEN status.
@@ -2600,10 +2874,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /tasks/{id}/cancel:
     post:
-      tags: [Tasks]
+      tags:
+        - Tasks
       summary: Cancel a task
       description: |
         Cancels an OPEN task. Only the task owner can cancel.
@@ -2632,10 +2906,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /tasks/{id}/photos/upload-url:
     post:
-      tags: [Tasks]
+      tags:
+        - Tasks
       summary: Get presigned URL for task photo upload
       description: |
         Returns a presigned URL to upload a task photo directly to S3/MinIO.
@@ -2651,7 +2925,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [content_type]
+              required:
+                - content_type
               properties:
                 content_type:
                   type: string
@@ -2671,11 +2946,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
-  # ─── Applications ───────────────────────────────────────────
   /tasks/{id}/applications:
     post:
-      tags: [Applications]
+      tags:
+        - Applications
       summary: Apply to a task
       description: |
         Tasker applies to an OPEN task. Only verified taskers can apply.
@@ -2691,7 +2965,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [message]
+              required:
+                - message
               properties:
                 message:
                   type: string
@@ -2730,9 +3005,9 @@ paths:
                     code: APPLICATION_CAP_REACHED
                     message: Maximum number of applications reached for this task.
                     trace_id: abc-123
-
     get:
-      tags: [Applications]
+      tags:
+        - Applications
       summary: List applications for a task
       description: |
         Returns paginated list of applications for a task.
@@ -2751,7 +3026,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -2765,10 +3042,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
   /tasks/{id}/applications/{applicationId}/accept:
     post:
-      tags: [Applications]
+      tags:
+        - Applications
       summary: Accept a tasker's application
       description: |
         Customer accepts a tasker's application. This creates a booking in ASSIGNED status.
@@ -2794,12 +3071,14 @@ paths:
           application/json:
             schema:
               type: object
-              required: [liability_disclaimer_accepted]
+              required:
+                - liability_disclaimer_accepted
               properties:
                 liability_disclaimer_accepted:
                   type: boolean
                   description: Must be `true` to confirm booking.
-                  enum: [true]
+                  enum:
+                    - true
       responses:
         '200':
           description: Application accepted, booking created.
@@ -2825,10 +3104,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /tasks/{id}/booking-intents:
     post:
-      tags: [Bookings]
+      tags:
+        - Bookings
       summary: Create booking intent for non-application confirmation sources
       description: |
         Creates a booking intent for a customer-owned OPEN task.
@@ -2844,11 +3123,15 @@ paths:
           application/json:
             schema:
               type: object
-              required: [source, tasker_id]
+              required:
+                - source
+                - tasker_id
               properties:
                 source:
                   type: string
-                  enum: [REBOOK, INSTANT_MATCH]
+                  enum:
+                    - REBOOK
+                    - INSTANT_MATCH
                 tasker_id:
                   type: string
                   format: uuid
@@ -2881,12 +3164,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /tasks/{id}/instant-match:
     x-tasky-status: deferred
     x-tasky-target-phase: phase_3
     post:
-      tags: [Applications]
+      tags:
+        - Applications
       summary: Start instant match (Phase 3+)
       description: |
         **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
@@ -2908,7 +3191,10 @@ paths:
                 properties:
                   mode:
                     type: string
-                    enum: [INSTANT_MATCH_STARTED, BOOKING_ASSIGNED, FALLBACK_TO_APPLICATIONS]
+                    enum:
+                      - INSTANT_MATCH_STARTED
+                      - BOOKING_ASSIGNED
+                      - FALLBACK_TO_APPLICATIONS
                   booking:
                     $ref: '#/components/schemas/Booking'
                     nullable: true
@@ -2924,11 +3210,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
-  # ─── Bookings ───────────────────────────────────────────────
   /bookings:
     get:
-      tags: [Bookings]
+      tags:
+        - Bookings
       summary: List my bookings
       description: |
         Returns paginated list of bookings for the authenticated user.
@@ -2942,13 +3227,19 @@ paths:
           description: View bookings as customer or tasker.
           schema:
             type: string
-            enum: [customer, tasker]
+            enum:
+              - customer
+              - tasker
         - name: status
           in: query
           description: Filter by booking status.
           schema:
             type: string
-            enum: [ASSIGNED, COMPLETED, CANCELLED, NO_SHOW]
+            enum:
+              - ASSIGNED
+              - COMPLETED
+              - CANCELLED
+              - NO_SHOW
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/LimitParam'
       responses:
@@ -2958,7 +3249,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -2970,10 +3263,10 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
   /bookings/{id}:
     get:
-      tags: [Bookings]
+      tags:
+        - Bookings
       summary: Get booking details
       description: Returns full booking details. Only accessible by the booking's customer or tasker.
       operationId: getBooking
@@ -2994,10 +3287,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
   /bookings/{id}/schedule-events:
     get:
-      tags: [Bookings]
+      tags:
+        - Bookings
       summary: List booking schedule events
       description: Returns immutable reschedule timeline events for auditability.
       operationId: listBookingScheduleEvents
@@ -3012,7 +3305,8 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data]
+                required:
+                  - data
                 properties:
                   data:
                     type: array
@@ -3024,12 +3318,12 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
   /bookings/{id}/lead-unlock:
     x-tasky-status: deferred
     x-tasky-target-phase: phase_2
     post:
-      tags: [Bookings]
+      tags:
+        - Bookings
       summary: Tasker accepts lead and unlocks customer contact
       description: |
         **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
@@ -3049,7 +3343,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [accept]
+              required:
+                - accept
               properties:
                 accept:
                   type: boolean
@@ -3062,33 +3357,46 @@ paths:
               schema:
                 oneOf:
                   - type: object
-                    required: [booking, accepted, credits_spent, customer_contact_unlocked]
+                    required:
+                      - booking
+                      - accepted
+                      - credits_spent
+                      - customer_contact_unlocked
                     properties:
                       booking:
                         $ref: '#/components/schemas/Booking'
                       accepted:
                         type: boolean
-                        enum: [true]
+                        enum:
+                          - true
                       credits_spent:
                         type: integer
                         example: 1
                       customer_contact_unlocked:
                         type: boolean
-                        enum: [true]
+                        enum:
+                          - true
                   - type: object
-                    required: [booking, accepted, credits_spent, customer_contact_unlocked]
+                    required:
+                      - booking
+                      - accepted
+                      - credits_spent
+                      - customer_contact_unlocked
                     properties:
                       booking:
                         $ref: '#/components/schemas/Booking'
                       accepted:
                         type: boolean
-                        enum: [false]
+                        enum:
+                          - false
                       credits_spent:
                         type: integer
-                        enum: [0]
+                        enum:
+                          - 0
                       customer_contact_unlocked:
                         type: boolean
-                        enum: [false]
+                        enum:
+                          - false
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -3107,10 +3415,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /bookings/{id}/cancel:
     post:
-      tags: [Bookings]
+      tags:
+        - Bookings
       summary: Cancel a booking
       description: |
         Cancels an active booking. Cancellation policy applies:
@@ -3152,10 +3460,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /bookings/{id}/complete:
     post:
-      tags: [Bookings]
+      tags:
+        - Bookings
       summary: Mark booking as complete
       description: |
         Customer marks an ASSIGNED booking as complete. This triggers:
@@ -3187,10 +3495,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /bookings/{id}/reschedule:
     post:
-      tags: [Bookings]
+      tags:
+        - Bookings
       summary: Request booking reschedule
       description: |
         Either booking party may request a reschedule while booking is ASSIGNED.
@@ -3208,7 +3516,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [proposed_scheduled_at]
+              required:
+                - proposed_scheduled_at
               properties:
                 proposed_scheduled_at:
                   type: string
@@ -3236,10 +3545,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /bookings/{id}/reschedule/{eventId}/respond:
     post:
-      tags: [Bookings]
+      tags:
+        - Bookings
       summary: Accept or decline reschedule request
       description: Responds to a pending reschedule request. Accepted response updates canonical schedule.
       operationId: respondBookingReschedule
@@ -3260,11 +3569,14 @@ paths:
           application/json:
             schema:
               type: object
-              required: [action]
+              required:
+                - action
               properties:
                 action:
                   type: string
-                  enum: [ACCEPT, DECLINE]
+                  enum:
+                    - ACCEPT
+                    - DECLINE
       responses:
         '200':
           description: Reschedule request responded.
@@ -3284,10 +3596,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /bookings/{id}/no-show/flag:
     post:
-      tags: [Bookings]
+      tags:
+        - Bookings
       summary: Flag and adjudicate no-show
       description: |
         No-show adjudication follows deterministic rules:
@@ -3320,10 +3632,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /bookings/{id}/mark-done:
     post:
-      tags: [Bookings]
+      tags:
+        - Bookings
       summary: Tasker marks booking as done
       description: |
         Tasker signals that work is finished while booking remains active.
@@ -3342,7 +3654,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [booking, tasker_marked_done_at]
+                required:
+                  - booking
+                  - tasker_marked_done_at
                 properties:
                   booking:
                     $ref: '#/components/schemas/Booking'
@@ -3361,10 +3675,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /bookings/{id}/rebook:
     post:
-      tags: [Bookings]
+      tags:
+        - Bookings
       summary: Rebook from completed booking
       description: |
         Creates a new OPEN task prefilled from a completed booking (same category, location, budget).
@@ -3393,10 +3707,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /booking-intents/{id}:
     get:
-      tags: [Bookings]
+      tags:
+        - Bookings
       summary: Get booking intent
       description: Returns booking intent details for the owner.
       operationId: getBookingIntent
@@ -3415,10 +3729,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-
   /booking-intents/{id}/confirm:
     post:
-      tags: [Bookings]
+      tags:
+        - Bookings
       summary: Confirm booking intent
       description: |
         Confirms a booking intent and creates an ASSIGNED booking.
@@ -3435,11 +3749,13 @@ paths:
           application/json:
             schema:
               type: object
-              required: [liability_disclaimer_accepted]
+              required:
+                - liability_disclaimer_accepted
               properties:
                 liability_disclaimer_accepted:
                   type: boolean
-                  enum: [true]
+                  enum:
+                    - true
       responses:
         '200':
           description: Booking created from intent.
@@ -3461,11 +3777,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
-  # ─── Payments ───────────────────────────────────────────────
   /payments/bookings/{id}/initiate:
     post:
-      tags: [Payments]
+      tags:
+        - Payments
       summary: Initiate QPay payment for a booking
       description: |
         Phase-gated endpoint. Enabled only when the current rollout phase activates this feature.
@@ -3485,12 +3800,14 @@ paths:
           application/json:
             schema:
               type: object
-              required: [liability_disclaimer_accepted]
+              required:
+                - liability_disclaimer_accepted
               properties:
                 liability_disclaimer_accepted:
                   type: boolean
                   description: Must be `true` to initiate payment.
-                  enum: [true]
+                  enum:
+                    - true
       responses:
         '200':
           description: Payment link generated.
@@ -3498,7 +3815,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [payment_url, qr_code]
+                required:
+                  - payment_url
+                  - qr_code
                 properties:
                   payment_url:
                     type: string
@@ -3525,10 +3844,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /payments/qpay/callback:
     post:
-      tags: [Payments]
+      tags:
+        - Payments
       summary: QPay payment webhook callback
       security: []
       description: |
@@ -3544,13 +3863,19 @@ paths:
             schema:
               type: object
               description: QPay callback payload. Schema defined by QPay integration.
-              required: [payment_id, status, timestamp, signature]
+              required:
+                - payment_id
+                - status
+                - timestamp
+                - signature
               properties:
                 payment_id:
                   type: string
                 object_type:
                   type: string
-                  enum: [BOOKING_ESCROW, CREDIT_PACK]
+                  enum:
+                    - BOOKING_ESCROW
+                    - CREDIT_PACK
                 object_id:
                   type: string
                   description: Booking ID or credit purchase intent ID passed during payment initiation.
@@ -3588,13 +3913,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
-  # ─── Credits (Phase 2+) ────────────────────────────────────
   /credits/balance:
     x-tasky-status: deferred
     x-tasky-target-phase: phase_2
     get:
-      tags: [Credits]
+      tags:
+        - Credits
       summary: Get lead-unlock credit balance
       description: |
         **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
@@ -3617,12 +3941,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /credits/transactions:
     x-tasky-status: deferred
     x-tasky-target-phase: phase_2
     get:
-      tags: [Credits]
+      tags:
+        - Credits
       summary: List credit transactions
       operationId: listCreditTransactions
       security:
@@ -3637,7 +3961,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -3653,12 +3979,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /credits/packs:
     x-tasky-status: deferred
     x-tasky-target-phase: phase_2
     get:
-      tags: [Credits]
+      tags:
+        - Credits
       summary: List available credit packs
       operationId: listCreditPacks
       security:
@@ -3670,7 +3996,8 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data]
+                required:
+                  - data
                 properties:
                   data:
                     type: array
@@ -3684,12 +4011,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /credits/purchase:
     x-tasky-status: deferred
     x-tasky-target-phase: phase_2
     post:
-      tags: [Credits]
+      tags:
+        - Credits
       summary: Purchase credit pack via QPay
       description: Creates a QPay checkout intent for selected credit pack.
       operationId: purchaseCreditPack
@@ -3703,7 +4030,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [pack_id]
+              required:
+                - pack_id
               properties:
                 pack_id:
                   type: string
@@ -3715,7 +4043,10 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [payment_url, qr_code, pack]
+                required:
+                  - payment_url
+                  - qr_code
+                  - pack
                 properties:
                   payment_url:
                     type: string
@@ -3734,12 +4065,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /subscriptions/tasker:
     x-tasky-status: deferred
     x-tasky-target-phase: phase_3
     post:
-      tags: [Payments]
+      tags:
+        - Payments
       summary: Activate tasker subscription (Phase 3+)
       description: |
         **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
@@ -3755,7 +4086,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [plan_code]
+              required:
+                - plan_code
               properties:
                 plan_code:
                   type: string
@@ -3776,12 +4108,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /business/accounts:
     x-tasky-status: deferred
     x-tasky-target-phase: phase_4
     post:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Create business account (future B2B path)
       description: |
         **Not yet implemented — future B2B forward reference. Returns 404 until implemented.**
@@ -3795,7 +4127,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [name]
+              required:
+                - name
               properties:
                 name:
                   type: string
@@ -3819,11 +4152,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
-  # ─── Wallet ─────────────────────────────────────────────────
   /wallet:
     get:
-      tags: [Wallet]
+      tags:
+        - Wallet
       summary: Get wallet balance
       description: Phase-gated endpoint. Returns wallet balance and pending payout amount.
       operationId: getWalletBalance
@@ -3844,10 +4176,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /wallet/transactions:
     get:
-      tags: [Wallet]
+      tags:
+        - Wallet
       summary: List wallet transactions
       description: Phase-gated endpoint. Returns paginated transaction history.
       operationId: listWalletTransactions
@@ -3863,7 +4195,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -3879,10 +4213,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /wallet/payouts:
     post:
-      tags: [Wallet]
+      tags:
+        - Wallet
       summary: Request payout
       description: |
         Phase-gated endpoint.
@@ -3900,7 +4234,10 @@ paths:
           application/json:
             schema:
               type: object
-              required: [amount, bank_name, bank_account]
+              required:
+                - amount
+                - bank_name
+                - bank_account
               properties:
                 amount:
                   type: integer
@@ -3935,11 +4272,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
-  # ─── Reviews ────────────────────────────────────────────────
   /bookings/{id}/reviews:
     post:
-      tags: [Reviews]
+      tags:
+        - Reviews
       summary: Submit a review
       description: |
         Submit a review for a COMPLETED booking. Both customer and tasker can review each other.
@@ -3955,10 +4291,10 @@ paths:
           application/json:
             schema:
               type: object
-              description: >
-                Role-specific validation: customers must provide quality + punctuality + communication;
-                taskers must provide clarity + respectfulness + punctuality.
-              required: [punctuality_rating]
+              description: |
+                Role-specific validation: customers must provide quality + punctuality + communication; taskers must provide clarity + respectfulness + punctuality.
+              required:
+                - punctuality_rating
               properties:
                 quality_rating:
                   type: integer
@@ -4005,10 +4341,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /me/pending-reviews:
     get:
-      tags: [Reviews]
+      tags:
+        - Reviews
       summary: Get my pending reviews
       description: Returns a list of the authenticated user's pending reviews (enforcement cases).
       operationId: getMyPendingReviews
@@ -4021,7 +4357,8 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data]
+                required:
+                  - data
                 properties:
                   data:
                     type: array
@@ -4029,10 +4366,10 @@ paths:
                       $ref: '#/components/schemas/PendingReview'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
   /users/{id}/reviews:
     get:
-      tags: [Reviews]
+      tags:
+        - Reviews
       summary: Get reviews for a user
       description: Returns paginated reviews received by a user.
       operationId: getUserReviews
@@ -4049,7 +4386,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -4061,12 +4400,12 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-
   /referrals/me:
     x-tasky-status: deferred
     x-tasky-target-phase: phase_2
     get:
-      tags: [Referrals]
+      tags:
+        - Referrals
       summary: Get my referral link and monthly reward status
       description: |
         **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
@@ -4090,11 +4429,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
-  # ─── Disputes ───────────────────────────────────────────────
   /bookings/{id}/disputes:
     post:
-      tags: [Disputes]
+      tags:
+        - Disputes
       summary: Raise a dispute
       description: |
         Either booking party (customer or tasker) may raise a dispute.
@@ -4115,7 +4453,9 @@ paths:
           application/json:
             schema:
               type: object
-              required: [reason, evidence]
+              required:
+                - reason
+                - evidence
               properties:
                 reason:
                   type: string
@@ -4147,10 +4487,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /disputes/{id}:
     get:
-      tags: [Disputes]
+      tags:
+        - Disputes
       summary: Get dispute details
       description: Returns dispute details. Accessible by the dispute raiser, the other booking party, and admins.
       operationId: getDispute
@@ -4171,11 +4511,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
-  # ─── Conversations ──────────────────────────────────────────
   /conversations:
     get:
-      tags: [Conversations]
+      tags:
+        - Conversations
       summary: List my conversations
       description: Returns paginated list of conversations for the authenticated user, ordered by last message.
       operationId: listConversations
@@ -4191,7 +4530,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -4201,10 +4542,10 @@ paths:
                     $ref: '#/components/schemas/CursorPagination'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
   /conversations/{id}/messages:
     get:
-      tags: [Conversations]
+      tags:
+        - Conversations
       summary: Get messages in a conversation
       description: |
         Returns paginated messages in a conversation, ordered by most recent first.
@@ -4223,7 +4564,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -4237,9 +4580,9 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
     post:
-      tags: [Conversations]
+      tags:
+        - Conversations
       summary: Send a message (REST fallback)
       description: |
         Sends a message in a conversation. This is the REST fallback for clients that
@@ -4256,7 +4599,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [content]
+              required:
+                - content
               properties:
                 content:
                   type: string
@@ -4277,11 +4621,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
-  # ─── Notifications ──────────────────────────────────────────
   /notifications/devices:
     post:
-      tags: [Notifications]
+      tags:
+        - Notifications
       summary: Register push notification device
       description: Registers a device token for push notifications. Overwrites existing token for the same device.
       operationId: registerDevice
@@ -4293,14 +4636,19 @@ paths:
           application/json:
             schema:
               type: object
-              required: [token, platform]
+              required:
+                - token
+                - platform
               properties:
                 token:
                   type: string
                   description: FCM registration token obtained via `@react-native-firebase/messaging` `getToken()`. Expo push tokens are not accepted.
                 platform:
                   type: string
-                  enum: [IOS, ANDROID, WEB]
+                  enum:
+                    - IOS
+                    - ANDROID
+                    - WEB
       responses:
         '200':
           description: Device registered.
@@ -4316,10 +4664,10 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
   /notifications/devices/{token}:
     delete:
-      tags: [Notifications]
+      tags:
+        - Notifications
       summary: Unregister push notification device
       description: Removes a device token. Typically called on logout.
       operationId: unregisterDevice
@@ -4338,10 +4686,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-
   /taskers/me/service-areas:
     get:
-      tags: [Users]
+      tags:
+        - Users
       summary: List my tasker service areas
       description: Returns the authenticated tasker's configured district coverage areas.
       operationId: getTaskerServiceAreas
@@ -4354,13 +4702,18 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data]
+                required:
+                  - data
                 properties:
                   data:
                     type: array
                     items:
                       type: object
-                      required: [id, name, name_mn, slug]
+                      required:
+                        - id
+                        - name
+                        - name_mn
+                        - slug
                       properties:
                         id:
                           type: string
@@ -4374,9 +4727,9 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
     put:
-      tags: [Users]
+      tags:
+        - Users
       summary: Replace my tasker service areas
       description: Replaces the authenticated tasker's district coverage by district slug.
       operationId: setTaskerServiceAreas
@@ -4400,11 +4753,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
-  # ─── Admin ──────────────────────────────────────────────────
   /admin/messages/flagged:
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: List phone-flagged messages
       description: Returns paginated messages where phone_number_flagged is true.
       operationId: adminListFlaggedMessages
@@ -4420,7 +4772,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -4432,10 +4786,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /admin/users:
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Search users
       description: |
         Search users by phone number (exact normalized match). Phase 0-1 implementation is phone-only.
@@ -4459,7 +4813,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -4471,10 +4827,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /admin/users/{id}/ban:
     post:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Ban a user
       description: |
         Bans a user, preventing them from logging in even with a valid JWT.
@@ -4490,7 +4846,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [reason]
+              required:
+                - reason
               properties:
                 reason:
                   type: string
@@ -4514,10 +4871,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /admin/users/{id}/unban:
     post:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Unban a user
       description: Removes the ban on a user, restoring their access.
       operationId: adminUnbanUser
@@ -4544,10 +4901,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /admin/tasks/{id}/concierge-assign:
     post:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Concierge assign task to tasker (Phase 0-1)
       description: |
         Founder/admin manual dispatch fallback for low-liquidity periods.
@@ -4565,7 +4922,10 @@ paths:
           application/json:
             schema:
               type: object
-              required: [tasker_id, override_reason, liability_disclaimer_accepted]
+              required:
+                - tasker_id
+                - override_reason
+                - liability_disclaimer_accepted
               properties:
                 tasker_id:
                   type: string
@@ -4576,7 +4936,8 @@ paths:
                   maxLength: 500
                 liability_disclaimer_accepted:
                   type: boolean
-                  enum: [true]
+                  enum:
+                    - true
       responses:
         '200':
           description: Concierge assignment completed.
@@ -4598,10 +4959,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /admin/verifications/pending:
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: List pending verifications
       description: Returns paginated list of verification submissions awaiting admin review.
       operationId: adminListPendingVerifications
@@ -4617,7 +4978,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -4629,10 +4992,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /admin/verifications/{id}:
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Get verification detail
       description: Returns a single verification submission with media URLs and review metadata for admin handling.
       operationId: adminGetVerificationDetail
@@ -4653,10 +5016,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
   /admin/verifications/{id}/approve:
     post:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Approve verification
       description: Approves a tasker's identity verification. User status changes to VERIFIED.
       operationId: adminApproveVerification
@@ -4683,10 +5046,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /admin/verifications/{id}/reject:
     post:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Reject verification
       description: Rejects a tasker's identity verification with a reason. Tasker can resubmit.
       operationId: adminRejectVerification
@@ -4700,7 +5063,8 @@ paths:
           application/json:
             schema:
               type: object
-              required: [reason]
+              required:
+                - reason
               properties:
                 reason:
                   type: string
@@ -4725,10 +5089,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /admin/disputes:
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: List open disputes
       description: Returns paginated list of open disputes for admin resolution.
       operationId: adminListDisputes
@@ -4744,7 +5108,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -4756,10 +5122,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /admin/disputes/{id}:
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Get dispute details with evidence context
       description: |
         Returns full dispute details, related booking context, and recent conversation messages
@@ -4795,10 +5161,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
   /admin/disputes/{id}/resolve:
     post:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Resolve a dispute
       description: |
         Admin resolves a dispute by selecting customer-favor, tasker-favor, or escalation outcome.
@@ -4816,11 +5182,15 @@ paths:
           application/json:
             schema:
               type: object
-              required: [resolution]
+              required:
+                - resolution
               properties:
                 resolution:
                   type: string
-                  enum: [RESOLVE_CUSTOMER, RESOLVE_TASKER, ESCALATE]
+                  enum:
+                    - RESOLVE_CUSTOMER
+                    - RESOLVE_TASKER
+                    - ESCALATE
                 notes:
                   type: string
                   maxLength: 2000
@@ -4846,10 +5216,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /admin/moderation/strike-policy:
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Get strike and suspension policy
       description: Returns current moderation policy used for tasker strike suspension logic.
       operationId: adminGetStrikePolicy
@@ -4866,9 +5236,9 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
     put:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Update strike and suspension policy
       description: |
         Updates moderation policy values used for suspension thresholds and repeat-offense escalation.
@@ -4894,10 +5264,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /admin/payouts/pending:
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: List pending payouts
       description: Phase-gated endpoint. Returns paginated pending payout requests.
       operationId: adminListPendingPayouts
@@ -4913,7 +5283,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -4931,10 +5303,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /admin/payouts/{id}/process:
     post:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Mark payout as processed
       description: |
         Phase-gated endpoint.
@@ -4973,10 +5345,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /admin/features/toggles:
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: List feature toggles
       description: Returns monetization and AI feature toggles. Changes are audit-logged.
       operationId: adminListFeatureToggles
@@ -4989,7 +5361,8 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data]
+                required:
+                  - data
                 properties:
                   data:
                     type: array
@@ -4999,9 +5372,9 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
     put:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Update feature toggle
       description: Enables or disables runtime feature flags without redeploy.
       operationId: adminUpdateFeatureToggle
@@ -5013,20 +5386,18 @@ paths:
           application/json:
             schema:
               type: object
-              required: [feature_name, is_enabled]
+              required:
+                - feature_name
+                - is_enabled
               properties:
                 feature_name:
                   type: string
                   enum:
-                    [
-                      lead_fee_enabled,
-                      subscription_enabled,
-                      escrow_enabled,
-                      ai_scope_summary_enabled,
-                    ]
-                  description:
-                    Seeded feature toggle names only; presence in this enum does not imply a confirmed
-                    runtime consumer in the current launch posture.
+                    - lead_fee_enabled
+                    - subscription_enabled
+                    - escrow_enabled
+                    - ai_scope_summary_enabled
+                  description: Seeded feature toggle names only; presence in this enum does not imply a confirmed runtime consumer in the current launch posture.
                 is_enabled:
                   type: boolean
       responses:
@@ -5042,12 +5413,12 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /admin/lead-unlock-prices:
     x-tasky-status: deferred
     x-tasky-target-phase: phase_2
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: List lead unlock prices
       description: Returns active and scheduled lead-unlock pricing rows by category and district.
       operationId: adminListLeadUnlockPrices
@@ -5063,7 +5434,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -5075,9 +5448,9 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
     post:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Create or schedule lead unlock price
       operationId: adminCreateLeadUnlockPrice
       security:
@@ -5088,7 +5461,11 @@ paths:
           application/json:
             schema:
               type: object
-              required: [category_id, district_id, credits_required, effective_from]
+              required:
+                - category_id
+                - district_id
+                - credits_required
+                - effective_from
               properties:
                 category_id:
                   type: string
@@ -5118,10 +5495,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /admin/categories:
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: List all categories
       description: Returns paginated categories including inactive ones. Admin only.
       operationId: adminListCategories
@@ -5137,7 +5514,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required:
+                  - data
+                  - cursor
                 properties:
                   data:
                     type: array
@@ -5149,9 +5528,9 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
     post:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Create a category
       description: Creates a new service category. Intake can be enabled with schema in separate schema endpoints.
       operationId: adminCreateCategory
@@ -5163,7 +5542,11 @@ paths:
           application/json:
             schema:
               type: object
-              required: [name, name_mn, icon_url, sort_order]
+              required:
+                - name
+                - name_mn
+                - icon_url
+                - sort_order
               properties:
                 name:
                   type: string
@@ -5194,10 +5577,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /admin/categories/{id}:
     put:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Update a category
       description: Updates an existing category. Can activate, deactivate, rename, reorder, or toggle intake availability.
       operationId: adminUpdateCategory
@@ -5242,10 +5625,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
   /admin/categories/{id}/schemas:
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: List category intake schema versions
       operationId: adminListCategorySchemas
       security:
@@ -5259,19 +5642,28 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data]
+                required:
+                  - data
                 properties:
                   data:
                     type: array
                     items:
                       type: object
-                      required: [version, status, schema_json, created_at]
+                      required:
+                        - version
+                        - status
+                        - schema_json
+                        - created_at
                       properties:
                         version:
                           type: integer
                         status:
                           type: string
-                          enum: [DRAFT, CANARY, ACTIVE, ROLLED_BACK]
+                          enum:
+                            - DRAFT
+                            - CANARY
+                            - ACTIVE
+                            - ROLLED_BACK
                         schema_json:
                           type: object
                           additionalProperties: true
@@ -5282,9 +5674,9 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
     post:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Create category intake schema version
       description: Runs schema lint/preview checks before persisting version.
       operationId: adminCreateCategorySchema
@@ -5298,14 +5690,18 @@ paths:
           application/json:
             schema:
               type: object
-              required: [schema_json]
+              required:
+                - schema_json
               properties:
                 schema_json:
                   type: object
                   additionalProperties: true
                 activate_as:
                   type: string
-                  enum: [DRAFT, CANARY, ACTIVE]
+                  enum:
+                    - DRAFT
+                    - CANARY
+                    - ACTIVE
       responses:
         '201':
           description: Schema version created.
@@ -5313,7 +5709,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [version, status]
+                required:
+                  - version
+                  - status
                 properties:
                   version:
                     type: integer
@@ -5325,10 +5723,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /admin/categories/{id}/schemas/{version}/activate:
     post:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Activate or rollback category schema version
       operationId: adminActivateCategorySchema
       security:
@@ -5346,11 +5744,15 @@ paths:
           application/json:
             schema:
               type: object
-              required: [mode]
+              required:
+                - mode
               properties:
                 mode:
                   type: string
-                  enum: [CANARY, ACTIVE, ROLLBACK_TO_LAST_KNOWN_GOOD]
+                  enum:
+                    - CANARY
+                    - ACTIVE
+                    - ROLLBACK_TO_LAST_KNOWN_GOOD
       responses:
         '200':
           description: Schema activation state updated.
@@ -5371,11 +5773,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
-  # ─── Security ────────────────────────────────────────────────
   /security/customer/ping:
     get:
-      tags: [Security]
+      tags:
+        - Security
       summary: Customer role auth smoke-test
       description: |
         Auth scope smoke-test endpoint. Returns the authenticated user's role
@@ -5391,7 +5792,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [role, userId]
+                required:
+                  - role
+                  - userId
                 properties:
                   role:
                     type: string
@@ -5403,10 +5806,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /security/tasker/ping:
     get:
-      tags: [Security]
+      tags:
+        - Security
       summary: Tasker role auth smoke-test
       description: |
         Auth scope smoke-test endpoint. Returns the authenticated user's role
@@ -5422,7 +5825,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [role, userId]
+                required:
+                  - role
+                  - userId
                 properties:
                   role:
                     type: string
@@ -5434,10 +5839,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /security/admin/ping:
     get:
-      tags: [Security]
+      tags:
+        - Security
       summary: Admin role auth smoke-test
       description: |
         Auth scope smoke-test endpoint. Returns the authenticated user's role
@@ -5453,7 +5858,9 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [role, userId]
+                required:
+                  - role
+                  - userId
                 properties:
                   role:
                     type: string
@@ -5465,10 +5872,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /admin/outbox/summary:
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Outbox event summary
       description: Returns counts of outbox events by status (pending, failed, processed, processing).
       operationId: adminOutboxSummary
@@ -5485,10 +5892,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /admin/outbox/events:
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: List outbox events
       description: Paginated list of outbox events filtered by status.
       operationId: adminListOutboxEvents
@@ -5500,7 +5907,11 @@ paths:
           required: false
           schema:
             type: string
-            enum: [PENDING, FAILED, PROCESSED, PROCESSING]
+            enum:
+              - PENDING
+              - FAILED
+              - PROCESSED
+              - PROCESSING
             default: FAILED
         - name: limit
           in: query
@@ -5528,10 +5939,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /admin/outbox/events/{id}:
     get:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Get outbox event detail
       description: Returns a single outbox event by ID.
       operationId: adminGetOutboxEvent
@@ -5557,10 +5968,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
   /admin/outbox/events/{id}/replay:
     post:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Replay outbox event
       description: Resets a FAILED outbox event to PENDING so the processor will retry it.
       operationId: adminReplayOutboxEvent
@@ -5595,10 +6006,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /admin/outbox/events/replay-all:
     post:
-      tags: [Admin]
+      tags:
+        - Admin
       summary: Replay all failed outbox events
       description: Resets all FAILED outbox events to PENDING for bulk retry.
       operationId: adminReplayAllOutboxEvents
@@ -5622,10 +6033,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-
   /location/reverse-geocode:
     get:
-      tags: [Location]
+      tags:
+        - Location
       summary: Reverse geocode coordinates to district-level address
       description: |
         Returns the nearest UB district name and centroid for the provided
@@ -5659,10 +6070,10 @@ paths:
                 $ref: '#/components/schemas/ReverseGeocodeResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
   /location/search:
     get:
-      tags: [Location]
+      tags:
+        - Location
       summary: Search locations by name fragment
       description: |
         Returns matching UB districts for the query string. Used to power the

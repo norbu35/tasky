@@ -1,0 +1,38 @@
+BadRequest:
+  description: Invalid request parameters or body.
+  content:
+    application/json:
+      schema:
+        $ref: ./schemas/common.yaml#/Error
+Unauthorized:
+  description: Missing or invalid authentication token.
+  content:
+    application/json:
+      schema:
+        $ref: ./schemas/common.yaml#/Error
+Forbidden:
+  description: |
+    Insufficient permissions or policy gate active for this action.
+    Common codes: `FORBIDDEN`, `VERIFICATION_REQUIRED`, `OTP_MIGRATION_REQUIRED`, `ADDRESS_LOCKED`, `USER_BANNED`.
+  content:
+    application/json:
+      schema:
+        $ref: ./schemas/common.yaml#/Error
+NotFound:
+  description: Requested resource not found.
+  content:
+    application/json:
+      schema:
+        $ref: ./schemas/common.yaml#/Error
+Conflict:
+  description: Conflict with current resource state.
+  content:
+    application/json:
+      schema:
+        $ref: ./schemas/common.yaml#/Error
+TooManyRequests:
+  description: Rate limit exceeded.
+  content:
+    application/json:
+      schema:
+        $ref: ./schemas/common.yaml#/Error

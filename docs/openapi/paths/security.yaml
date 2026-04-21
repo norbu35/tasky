@@ -1,0 +1,99 @@
+/security/customer/ping:
+  get:
+    tags:
+      - Security
+    summary: Customer role auth smoke-test
+    description: |
+      Auth scope smoke-test endpoint. Returns the authenticated user's role
+      and userId. Used in integration tests to verify that CUSTOMER
+      role-based access control is correctly applied.
+    operationId: pingCustomer
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Auth scope confirmed.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - role
+                - userId
+              properties:
+                role:
+                  type: string
+                  example: CUSTOMER
+                userId:
+                  type: string
+                  format: uuid
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+/security/tasker/ping:
+  get:
+    tags:
+      - Security
+    summary: Tasker role auth smoke-test
+    description: |
+      Auth scope smoke-test endpoint. Returns the authenticated user's role
+      and userId. Used in integration tests to verify that TASKER
+      role-based access control is correctly applied.
+    operationId: pingTasker
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Auth scope confirmed.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - role
+                - userId
+              properties:
+                role:
+                  type: string
+                  example: TASKER
+                userId:
+                  type: string
+                  format: uuid
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+/security/admin/ping:
+  get:
+    tags:
+      - Security
+    summary: Admin role auth smoke-test
+    description: |
+      Auth scope smoke-test endpoint. Returns the authenticated user's role
+      and userId. Used in integration tests to verify that ADMIN
+      role-based access control is correctly applied.
+    operationId: pingAdmin
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Auth scope confirmed.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - role
+                - userId
+              properties:
+                role:
+                  type: string
+                  example: ADMIN
+                userId:
+                  type: string
+                  format: uuid
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden

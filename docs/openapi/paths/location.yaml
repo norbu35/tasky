@@ -1,0 +1,76 @@
+/location/reverse-geocode:
+  get:
+    tags:
+      - Location
+    summary: Reverse geocode coordinates to district-level address
+    description: |
+      Returns the nearest UB district name and centroid for the provided
+      coordinates. Used to populate the location label on the task-post form.
+    operationId: reverseGeocode
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: lat
+        in: query
+        required: true
+        schema:
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+      - name: lng
+        in: query
+        required: true
+        schema:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+    responses:
+      '200':
+        description: District-level address resolved.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/location.yaml#/ReverseGeocodeResponse
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+/location/search:
+  get:
+    tags:
+      - Location
+    summary: Search locations by name fragment
+    description: |
+      Returns matching UB districts for the query string. Used to power the
+      address auto-complete on the task-post form.
+    operationId: searchLocations
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: q
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+      - name: bias_lat
+        in: query
+        required: false
+        schema:
+          type: number
+          format: double
+      - name: bias_lng
+        in: query
+        required: false
+        schema:
+          type: number
+          format: double
+    responses:
+      '200':
+        description: Search results returned (may be empty).
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/location.yaml#/LocationSearchResponse
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized

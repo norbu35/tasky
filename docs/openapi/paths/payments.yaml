@@ -1,0 +1,179 @@
+/payments/bookings/{id}/initiate:
+  post:
+    tags:
+      - Payments
+    summary: Initiate QPay payment for a booking
+    description: |
+      Phase-gated endpoint. Enabled only when the current rollout phase activates this feature.
+      Generates a QPay payment link and QR code for the booking.
+      The booking must be in ASSIGNED status and monetization must be enabled.
+      Requires Idempotency-Key header.
+      Requires explicit liability disclaimer acceptance.
+    operationId: initiatePayment
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - liability_disclaimer_accepted
+            properties:
+              liability_disclaimer_accepted:
+                type: boolean
+                description: Must be `true` to initiate payment.
+                enum:
+                  - true
+    responses:
+      '200':
+        description: Payment link generated.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - payment_url
+                - qr_code
+              properties:
+                payment_url:
+                  type: string
+                  format: uri
+                  description: QPay deeplink URL for app-to-app payment.
+                qr_code:
+                  type: string
+                  description: Base64-encoded QR code image for scanning.
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Booking is not eligible for payment initiation or payment already initiated.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '503':
+        description: Monetization feature is disabled for the current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/payments/qpay/callback:
+  post:
+    tags:
+      - Payments
+    summary: QPay payment webhook callback
+    security: []
+    description: |
+      Phase-gated endpoint. Enabled only when the current rollout phase activates this feature.
+      Receives payment confirmation from QPay. No Bearer auth — secured via signature verification.
+      On successful payment: booking status may be updated per monetization state machine.
+      Must be idempotent (handle duplicate callbacks gracefully).
+    operationId: qpayCallback
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            description: QPay callback payload. Schema defined by QPay integration.
+            required:
+              - payment_id
+              - status
+              - timestamp
+              - signature
+            properties:
+              payment_id:
+                type: string
+              object_type:
+                type: string
+                enum:
+                  - BOOKING_ESCROW
+                  - CREDIT_PACK
+              object_id:
+                type: string
+                description: Booking ID or credit purchase intent ID passed during payment initiation.
+              amount:
+                type: integer
+              status:
+                type: string
+              timestamp:
+                type: integer
+                format: int64
+                description: Unix epoch seconds, included in HMAC payload.
+              signature:
+                type: string
+                description: HMAC signature for verification.
+    responses:
+      '200':
+        description: Callback processed successfully.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: ok
+      '400':
+        description: Invalid callback payload or signature.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '503':
+        description: Monetization feature is disabled for the current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/subscriptions/tasker:
+  x-tasky-status: deferred
+  x-tasky-target-phase: phase_3
+  post:
+    tags:
+      - Payments
+    summary: Activate tasker subscription (Phase 3+)
+    description: |
+      **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
+      Enables monthly subscription for eligible Pro taskers.
+    operationId: activateTaskerSubscription
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - plan_code
+            properties:
+              plan_code:
+                type: string
+    responses:
+      '200':
+        description: Subscription activated.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/monetization.yaml#/TaskerSubscription
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '503':
+        description: Subscription feature disabled for current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error

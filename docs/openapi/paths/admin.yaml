@@ -1,0 +1,1225 @@
+/business/accounts:
+  x-tasky-status: deferred
+  x-tasky-target-phase: phase_4
+  post:
+    tags:
+      - Admin
+    summary: Create business account (future B2B path)
+    description: |
+      **Not yet implemented — future B2B forward reference. Returns 404 until implemented.**
+      Creates B2B account for recurring scheduling and organization billing.
+    operationId: createBusinessAccount
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+              billing_profile:
+                type: object
+                additionalProperties: true
+    responses:
+      '201':
+        description: Business account created.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/monetization.yaml#/BusinessAccount
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '503':
+        description: B2B feature disabled for current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/admin/messages/flagged:
+  get:
+    tags:
+      - Admin
+    summary: List phone-flagged messages
+    description: Returns paginated messages where phone_number_flagged is true.
+    operationId: adminListFlaggedMessages
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated list of phone-flagged messages.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/messaging.yaml#/Message
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+/admin/users:
+  get:
+    tags:
+      - Admin
+    summary: Search users
+    description: |
+      Search users by phone number (exact normalized match). Phase 0-1 implementation is phone-only.
+      Name and Facebook ID search criteria are Phase 2+ additions (not yet implemented).
+    operationId: adminSearchUsers
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: phone
+        in: query
+        required: true
+        description: Phone number to search for (exact normalized match, E.164 recommended).
+        schema:
+          type: string
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated list of users.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/identity.yaml#/User
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+/admin/users/{id}/ban:
+  post:
+    tags:
+      - Admin
+    summary: Ban a user
+    description: |
+      Bans a user, preventing them from logging in even with a valid JWT.
+      Active bookings are not automatically cancelled.
+    operationId: adminBanUser
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - reason
+            properties:
+              reason:
+                type: string
+                minLength: 1
+    responses:
+      '200':
+        description: User banned.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/identity.yaml#/User
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: User is already banned.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/admin/users/{id}/unban:
+  post:
+    tags:
+      - Admin
+    summary: Unban a user
+    description: Removes the ban on a user, restoring their access.
+    operationId: adminUnbanUser
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    responses:
+      '200':
+        description: User unbanned.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/identity.yaml#/User
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: User is not banned.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/admin/tasks/{id}/concierge-assign:
+  post:
+    tags:
+      - Admin
+    summary: Concierge assign task to tasker (Phase 0-1)
+    description: |
+      Founder/admin manual dispatch fallback for low-liquidity periods.
+      Creates booking assignment if target tasker is eligible and verified.
+      Requires Idempotency-Key header.
+    operationId: adminConciergeAssignTask
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - tasker_id
+              - override_reason
+              - liability_disclaimer_accepted
+            properties:
+              tasker_id:
+                type: string
+                format: uuid
+              override_reason:
+                type: string
+                minLength: 3
+                maxLength: 500
+              liability_disclaimer_accepted:
+                type: boolean
+                enum:
+                  - true
+    responses:
+      '200':
+        description: Concierge assignment completed.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/Booking
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Task not eligible for assignment or tasker not eligible.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/admin/verifications/pending:
+  get:
+    tags:
+      - Admin
+    summary: List pending verifications
+    description: Returns paginated list of verification submissions awaiting admin review.
+    operationId: adminListPendingVerifications
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated list of pending verifications.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/identity.yaml#/VerificationDetail
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+/admin/verifications/{id}:
+  get:
+    tags:
+      - Admin
+    summary: Get verification detail
+    description: Returns a single verification submission with media URLs and review metadata for admin handling.
+    operationId: adminGetVerificationDetail
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    responses:
+      '200':
+        description: Verification detail.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/identity.yaml#/VerificationDetail
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+/admin/verifications/{id}/approve:
+  post:
+    tags:
+      - Admin
+    summary: Approve verification
+    description: Approves a tasker's identity verification. User status changes to VERIFIED.
+    operationId: adminApproveVerification
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    responses:
+      '200':
+        description: Verification approved.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/identity.yaml#/VerificationDetail
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Verification is not in PENDING status.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/admin/verifications/{id}/reject:
+  post:
+    tags:
+      - Admin
+    summary: Reject verification
+    description: Rejects a tasker's identity verification with a reason. Tasker can resubmit.
+    operationId: adminRejectVerification
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - reason
+            properties:
+              reason:
+                type: string
+                minLength: 1
+                description: Reason for rejection, visible to the tasker.
+    responses:
+      '200':
+        description: Verification rejected.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/identity.yaml#/VerificationDetail
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Verification is not in PENDING status.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/admin/disputes:
+  get:
+    tags:
+      - Admin
+    summary: List open disputes
+    description: Returns paginated list of open disputes for admin resolution.
+    operationId: adminListDisputes
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated list of open disputes.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/disputes.yaml#/Dispute
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+/admin/disputes/{id}:
+  get:
+    tags:
+      - Admin
+    summary: Get dispute details with evidence context
+    description: |
+      Returns full dispute details, related booking context, and recent conversation messages
+      between booking participants for moderation review.
+    operationId: adminGetDispute
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    responses:
+      '200':
+        description: Dispute detail payload for admin review.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dispute:
+                  $ref: ../components/schemas/disputes.yaml#/Dispute
+                booking:
+                  $ref: ../components/schemas/bookings.yaml#/Booking
+                conversation_id:
+                  type: string
+                  format: uuid
+                  nullable: true
+                evidence_messages:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/messaging.yaml#/Message
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+/admin/disputes/{id}/resolve:
+  post:
+    tags:
+      - Admin
+    summary: Resolve a dispute
+    description: |
+      Admin resolves a dispute by selecting customer-favor, tasker-favor, or escalation outcome.
+      Later rollout phases may extend this endpoint with refund/release amount handling.
+      Requires Idempotency-Key header.
+    operationId: adminResolveDispute
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - resolution
+            properties:
+              resolution:
+                type: string
+                enum:
+                  - RESOLVE_CUSTOMER
+                  - RESOLVE_TASKER
+                  - ESCALATE
+              notes:
+                type: string
+                maxLength: 2000
+                description: Admin notes on the resolution decision.
+    responses:
+      '200':
+        description: Dispute resolved.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/disputes.yaml#/Dispute
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Dispute is already resolved.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/admin/moderation/strike-policy:
+  get:
+    tags:
+      - Admin
+    summary: Get strike and suspension policy
+    description: Returns current moderation policy used for tasker strike suspension logic.
+    operationId: adminGetStrikePolicy
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Current strike policy.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/identity.yaml#/StrikePolicy
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+  put:
+    tags:
+      - Admin
+    summary: Update strike and suspension policy
+    description: |
+      Updates moderation policy values used for suspension thresholds and repeat-offense escalation.
+    operationId: adminUpdateStrikePolicy
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/identity.yaml#/StrikePolicyUpdateRequest
+    responses:
+      '200':
+        description: Strike policy updated.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/identity.yaml#/StrikePolicy
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+/admin/payouts/pending:
+  get:
+    tags:
+      - Admin
+    summary: List pending payouts
+    description: Phase-gated endpoint. Returns paginated pending payout requests.
+    operationId: adminListPendingPayouts
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated list of pending payouts.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/monetization.yaml#/PayoutRequest
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '503':
+        description: Monetization feature is disabled for the current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/admin/payouts/{id}/process:
+  post:
+    tags:
+      - Admin
+    summary: Mark payout as processed
+    description: |
+      Phase-gated endpoint.
+      Admin marks a payout request as processed after completing the bank transfer.
+      This debits the tasker's wallet and creates a ledger entry.
+      Processing is allowed only on Tuesdays and Fridays in platform timezone.
+      Requires Idempotency-Key header.
+    operationId: adminProcessPayout
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    responses:
+      '200':
+        description: Payout processed.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/monetization.yaml#/PayoutRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Payout is not in PENDING status.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '503':
+        description: Monetization feature is disabled for the current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/admin/features/toggles:
+  get:
+    tags:
+      - Admin
+    summary: List feature toggles
+    description: Returns monetization and AI feature toggles. Changes are audit-logged.
+    operationId: adminListFeatureToggles
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Current feature toggle states.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/monetization.yaml#/FeatureToggle
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+  put:
+    tags:
+      - Admin
+    summary: Update feature toggle
+    description: Enables or disables runtime feature flags without redeploy.
+    operationId: adminUpdateFeatureToggle
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - feature_name
+              - is_enabled
+            properties:
+              feature_name:
+                type: string
+                enum:
+                  - lead_fee_enabled
+                  - subscription_enabled
+                  - escrow_enabled
+                  - ai_scope_summary_enabled
+                description: Seeded feature toggle names only; presence in this enum does not imply a confirmed runtime consumer in the current launch posture.
+              is_enabled:
+                type: boolean
+    responses:
+      '200':
+        description: Feature toggle updated.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/monetization.yaml#/FeatureToggle
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+/admin/lead-unlock-prices:
+  x-tasky-status: deferred
+  x-tasky-target-phase: phase_2
+  get:
+    tags:
+      - Admin
+    summary: List lead unlock prices
+    description: Returns active and scheduled lead-unlock pricing rows by category and district.
+    operationId: adminListLeadUnlockPrices
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated price rows.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/monetization.yaml#/LeadUnlockPrice
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+  post:
+    tags:
+      - Admin
+    summary: Create or schedule lead unlock price
+    operationId: adminCreateLeadUnlockPrice
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - category_id
+              - district_id
+              - credits_required
+              - effective_from
+            properties:
+              category_id:
+                type: string
+                format: uuid
+              district_id:
+                type: string
+              credits_required:
+                type: integer
+                minimum: 1
+              effective_from:
+                type: string
+                format: date-time
+              effective_to:
+                type: string
+                format: date-time
+                nullable: true
+    responses:
+      '201':
+        description: Price row created.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/monetization.yaml#/LeadUnlockPrice
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+/admin/categories:
+  get:
+    tags:
+      - Admin
+    summary: List all categories
+    description: Returns paginated categories including inactive ones. Admin only.
+    operationId: adminListCategories
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated list of all categories.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/categories.yaml#/Category
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+  post:
+    tags:
+      - Admin
+    summary: Create a category
+    description: Creates a new service category. Intake can be enabled with schema in separate schema endpoints.
+    operationId: adminCreateCategory
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - name_mn
+              - icon_url
+              - sort_order
+            properties:
+              name:
+                type: string
+                minLength: 1
+                example: Cleaning
+              name_mn:
+                type: string
+                minLength: 1
+                example: Цэвэрлэгээ
+              icon_url:
+                type: string
+                format: uri
+              sort_order:
+                type: integer
+              intake_enabled:
+                type: boolean
+                default: true
+    responses:
+      '201':
+        description: Category created.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/categories.yaml#/Category
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+/admin/categories/{id}:
+  put:
+    tags:
+      - Admin
+    summary: Update a category
+    description: Updates an existing category. Can activate, deactivate, rename, reorder, or toggle intake availability.
+    operationId: adminUpdateCategory
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                minLength: 1
+              name_mn:
+                type: string
+                minLength: 1
+              icon_url:
+                type: string
+                format: uri
+              is_active:
+                type: boolean
+              sort_order:
+                type: integer
+              intake_enabled:
+                type: boolean
+    responses:
+      '200':
+        description: Category updated.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/categories.yaml#/Category
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+/admin/categories/{id}/schemas:
+  get:
+    tags:
+      - Admin
+    summary: List category intake schema versions
+    operationId: adminListCategorySchemas
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    responses:
+      '200':
+        description: Schema versions for category.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - version
+                      - status
+                      - schema_json
+                      - created_at
+                    properties:
+                      version:
+                        type: integer
+                      status:
+                        type: string
+                        enum:
+                          - DRAFT
+                          - CANARY
+                          - ACTIVE
+                          - ROLLED_BACK
+                      schema_json:
+                        type: object
+                        additionalProperties: true
+                      created_at:
+                        type: string
+                        format: date-time
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+  post:
+    tags:
+      - Admin
+    summary: Create category intake schema version
+    description: Runs schema lint/preview checks before persisting version.
+    operationId: adminCreateCategorySchema
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - schema_json
+            properties:
+              schema_json:
+                type: object
+                additionalProperties: true
+              activate_as:
+                type: string
+                enum:
+                  - DRAFT
+                  - CANARY
+                  - ACTIVE
+    responses:
+      '201':
+        description: Schema version created.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - version
+                - status
+              properties:
+                version:
+                  type: integer
+                status:
+                  type: string
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+/admin/categories/{id}/schemas/{version}/activate:
+  post:
+    tags:
+      - Admin
+    summary: Activate or rollback category schema version
+    operationId: adminActivateCategorySchema
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - name: version
+        in: path
+        required: true
+        schema:
+          type: integer
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - mode
+            properties:
+              mode:
+                type: string
+                enum:
+                  - CANARY
+                  - ACTIVE
+                  - ROLLBACK_TO_LAST_KNOWN_GOOD
+    responses:
+      '200':
+        description: Schema activation state updated.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                version:
+                  type: integer
+                status:
+                  type: string
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+/admin/outbox/summary:
+  get:
+    tags:
+      - Admin
+    summary: Outbox event summary
+    description: Returns counts of outbox events by status (pending, failed, processed, processing).
+    operationId: adminOutboxSummary
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Outbox summary.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/operations.yaml#/OutboxSummary
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+/admin/outbox/events:
+  get:
+    tags:
+      - Admin
+    summary: List outbox events
+    description: Paginated list of outbox events filtered by status.
+    operationId: adminListOutboxEvents
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+            - PENDING
+            - FAILED
+            - PROCESSED
+            - PROCESSING
+          default: FAILED
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          minimum: 1
+          maximum: 200
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          minimum: 0
+    responses:
+      '200':
+        description: Paginated list of outbox events.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/operations.yaml#/OutboxEventPage
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+/admin/outbox/events/{id}:
+  get:
+    tags:
+      - Admin
+    summary: Get outbox event detail
+    description: Returns a single outbox event by ID.
+    operationId: adminGetOutboxEvent
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Outbox event detail.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/operations.yaml#/OutboxEvent
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+/admin/outbox/events/{id}/replay:
+  post:
+    tags:
+      - Admin
+    summary: Replay outbox event
+    description: Resets a FAILED outbox event to PENDING so the processor will retry it.
+    operationId: adminReplayOutboxEvent
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Event replay initiated.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                eventId:
+                  type: string
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '409':
+        description: Event is not in FAILED status.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/admin/outbox/events/replay-all:
+  post:
+    tags:
+      - Admin
+    summary: Replay all failed outbox events
+    description: Resets all FAILED outbox events to PENDING for bulk retry.
+    operationId: adminReplayAllOutboxEvents
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Bulk replay initiated.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                replayed_count:
+                  type: integer
+                total_failed:
+                  type: integer
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden

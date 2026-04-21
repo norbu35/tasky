@@ -1,0 +1,152 @@
+/credits/balance:
+  x-tasky-status: deferred
+  x-tasky-target-phase: phase_2
+  get:
+    tags:
+      - Credits
+    summary: Get lead-unlock credit balance
+    description: |
+      **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
+      Tasker credit balance for lead-unlock purchases.
+    operationId: getCreditBalance
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Credit balance.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/monetization.yaml#/CreditBalance
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '503':
+        description: Credit system disabled for current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/credits/transactions:
+  x-tasky-status: deferred
+  x-tasky-target-phase: phase_2
+  get:
+    tags:
+      - Credits
+    summary: List credit transactions
+    operationId: listCreditTransactions
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated credit transaction history.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/monetization.yaml#/CreditTransaction
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '503':
+        description: Credit system disabled for current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/credits/packs:
+  x-tasky-status: deferred
+  x-tasky-target-phase: phase_2
+  get:
+    tags:
+      - Credits
+    summary: List available credit packs
+    operationId: listCreditPacks
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Active credit packs.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/monetization.yaml#/CreditPack
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '503':
+        description: Credit system disabled for current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/credits/purchase:
+  x-tasky-status: deferred
+  x-tasky-target-phase: phase_2
+  post:
+    tags:
+      - Credits
+    summary: Purchase credit pack via QPay
+    description: Creates a QPay checkout intent for selected credit pack.
+    operationId: purchaseCreditPack
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - pack_id
+            properties:
+              pack_id:
+                type: string
+                format: uuid
+    responses:
+      '200':
+        description: Purchase intent created.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - payment_url
+                - qr_code
+                - pack
+              properties:
+                payment_url:
+                  type: string
+                  format: uri
+                qr_code:
+                  type: string
+                pack:
+                  $ref: ../components/schemas/monetization.yaml#/CreditPack
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '503':
+        description: Credit system disabled for current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error

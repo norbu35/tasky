@@ -1,0 +1,76 @@
+Conversation:
+  type: object
+  required:
+    - id
+    - task_id
+    - counterparty_id
+    - counterparty_name
+    - unread_count
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    task_id:
+      type: string
+      format: uuid
+    task_title:
+      type: string
+      nullable: true
+      description: Truncated task description for display.
+    counterparty_id:
+      type: string
+      format: uuid
+    counterparty_name:
+      type: string
+    counterparty_avatar_url:
+      type: string
+      format: uri
+      nullable: true
+    counterparty_last_active_at:
+      type: string
+      format: date-time
+      nullable: true
+    last_message_content:
+      type: string
+      nullable: true
+      description: Truncated last message content.
+    last_message_at:
+      type: string
+      format: date-time
+      nullable: true
+    unread_count:
+      type: integer
+      description: Always 0 until read-receipt tracking is implemented.
+    created_at:
+      type: string
+      format: date-time
+Message:
+  type: object
+  required:
+    - id
+    - conversation_id
+    - sender_id
+    - content
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    conversation_id:
+      type: string
+      format: uuid
+    sender_id:
+      type: string
+      format: uuid
+    content:
+      type: string
+    phone_number_flagged:
+      type: boolean
+      nullable: true
+    content_hash:
+      type: string
+      nullable: true
+    created_at:
+      type: string
+      format: date-time

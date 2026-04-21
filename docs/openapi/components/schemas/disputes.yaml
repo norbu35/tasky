@@ -1,0 +1,97 @@
+Dispute:
+  type: object
+  required:
+    - id
+    - booking_id
+    - raised_by
+    - reason
+    - status
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    booking_id:
+      type: string
+      format: uuid
+    booking:
+      $ref: ./bookings.yaml#/Booking
+    raised_by:
+      type: string
+      format: uuid
+    reason:
+      type: string
+    status:
+      type: string
+      enum:
+        - OPEN
+        - RESOLVED_TASKER
+        - RESOLVED_CUSTOMER
+        - ESCALATED
+        - CLOSED_INSUFFICIENT_EVIDENCE
+    resolution_action:
+      type: string
+      enum:
+        - RESOLVE_CUSTOMER
+        - RESOLVE_TASKER
+        - ESCALATE
+        - REFUND
+        - RELEASE
+      nullable: true
+    wrongful_party_user_id:
+      type: string
+      format: uuid
+      nullable: true
+    resolution_amount:
+      type: integer
+      nullable: true
+    resolution_notes:
+      type: string
+      nullable: true
+    evidence:
+      type: array
+      items:
+        $ref: '#/DisputeEvidence'
+    created_at:
+      type: string
+      format: date-time
+    resolved_at:
+      type: string
+      format: date-time
+      nullable: true
+DisputeEvidence:
+  type: object
+  required:
+    - type
+  properties:
+    type:
+      type: string
+      enum:
+        - CHAT_EXCERPT
+        - PHOTO
+        - WRITTEN_TIMELINE
+    storage_key:
+      type: string
+      nullable: true
+    text_payload:
+      type: string
+      nullable: true
+AdminDisputeDetail:
+  type: object
+  required:
+    - dispute
+    - booking
+    - evidence_messages
+  properties:
+    dispute:
+      type: object
+      additionalProperties: true
+    booking:
+      type: object
+      additionalProperties: true
+    conversation_id:
+      type: string
+      nullable: true
+    evidence_messages:
+      type: array
+      items: {}

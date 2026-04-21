@@ -1,0 +1,372 @@
+PublicTask:
+  type: object
+  required:
+    - id
+    - category
+    - customer
+    - description
+    - budget
+    - approximate_location
+    - status
+    - scheduled_at
+    - photo_urls
+    - application_count
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    category:
+      $ref: ./categories.yaml#/Category
+    customer:
+      type: object
+      required:
+        - id
+        - full_name
+        - avatar_url
+        - rating_avg
+      properties:
+        id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+        avatar_url:
+          type: string
+          format: uri
+          nullable: true
+        rating_avg:
+          type: number
+          format: double
+    description:
+      type: string
+    budget:
+      type: integer
+      description: Fixed budget in MNT.
+      example: 50000
+    approximate_location:
+      type: string
+      description: Fuzzed location (district/khoroo level). Exact address hidden until booking.
+      example: Хан-Уул дүүрэг, 15-р хороо
+    approximate_lat:
+      type: number
+      format: double
+      description: Approximate latitude (fuzzed to ~500m).
+    approximate_lng:
+      type: number
+      format: double
+      description: Approximate longitude (fuzzed to ~500m).
+    status:
+      type: string
+      enum:
+        - OPEN
+    scheduled_at:
+      type: string
+      format: date-time
+    photo_urls:
+      type: array
+      items:
+        type: string
+        format: uri
+      maxItems: 3
+    application_count:
+      type: integer
+    created_at:
+      type: string
+      format: date-time
+Task:
+  type: object
+  required:
+    - id
+    - category_id
+    - description
+    - budget
+    - location_lat
+    - location_lng
+    - location_text
+    - status
+    - scheduled_at
+    - photos
+    - intake_schema_version
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    category_id:
+      type: string
+      format: uuid
+    category:
+      $ref: ./categories.yaml#/Category
+    customer_id:
+      type: string
+      format: uuid
+    description:
+      type: string
+    budget:
+      type: integer
+      description: Fixed budget in MNT.
+      example: 50000
+    location_lat:
+      type: number
+      format: double
+    location_lng:
+      type: number
+      format: double
+    location_text:
+      type: string
+      description: Exact address (visible only to task owner and booked tasker).
+      example: Энхтайваны өргөн чөлөө 5-р байр, 301 тоот
+    status:
+      type: string
+      enum:
+        - OPEN
+        - ASSIGNED
+        - COMPLETED
+        - CANCELLED
+        - NO_SHOW
+    scheduled_at:
+      type: string
+      format: date-time
+    intake_answers:
+      type: object
+      additionalProperties: true
+      description: Structured intake answers keyed by schema field keys.
+    intake_schema_version:
+      type: integer
+      minimum: 1
+    scope_summary_source:
+      type: string
+      enum:
+        - TEMPLATE
+        - USER_EDITED
+        - LLM
+    photos:
+      type: array
+      items:
+        type: object
+        properties:
+          storage_key:
+            type: string
+          url:
+            type: string
+            format: uri
+          sort_order:
+            type: integer
+      maxItems: 3
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+RecentLocation:
+  type: object
+  required:
+    - location_lat
+    - location_lng
+    - location_text
+  properties:
+    location_lat:
+      type: number
+      format: double
+      description: Latitude of the task location.
+    location_lng:
+      type: number
+      format: double
+      description: Longitude of the task location.
+    location_text:
+      type: string
+      description: Human-readable location description.
+CreateTaskRequest:
+  type: object
+  required:
+    - category_id
+    - description
+    - budget
+    - location_lat
+    - location_lng
+    - location_text
+    - scheduled_at
+    - intake_answers
+    - intake_schema_version
+  properties:
+    category_id:
+      type: string
+      format: uuid
+    description:
+      type: string
+      minLength: 10
+      maxLength: 2000
+    budget:
+      type: integer
+      minimum: 5000
+      description: Fixed budget in MNT. Must be at least ₮5,000.
+    location_lat:
+      type: number
+      format: double
+    location_lng:
+      type: number
+      format: double
+    location_text:
+      type: string
+      minLength: 5
+      maxLength: 500
+      description: Human-readable address description.
+    scheduled_at:
+      type: string
+      format: date-time
+      description: Must be in the future.
+    intake_answers:
+      type: object
+      additionalProperties: true
+      description: Structured responses generated from active category intake schema.
+    intake_schema_version:
+      type: integer
+      minimum: 1
+    scope_summary:
+      type: string
+      nullable: true
+      description: Optional editable deterministic summary shown before final submit.
+    photo_keys:
+      type: array
+      items:
+        type: string
+      maxItems: 3
+      description: Storage keys from presigned upload.
+    draft_id:
+      type: string
+      format: uuid
+      nullable: true
+      description: Optional task draft reference bound to intake schema version.
+UpdateTaskRequest:
+  type: object
+  properties:
+    description:
+      type: string
+      maxLength: 2000
+    budget:
+      type: integer
+      minimum: 1001
+    location_lat:
+      type: number
+      format: double
+    location_lng:
+      type: number
+      format: double
+    location_text:
+      type: string
+      minLength: 5
+      maxLength: 500
+    scheduled_at:
+      type: string
+      format: date-time
+    photo_keys:
+      type: array
+      items:
+        type: string
+      maxItems: 3
+TaskDraft:
+  type: object
+  required:
+    - id
+    - category_id
+    - intake_answers
+    - intake_schema_version
+    - created_at
+    - expires_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    category_id:
+      type: string
+      format: uuid
+    intake_answers:
+      type: object
+      additionalProperties: true
+    intake_schema_version:
+      type: integer
+    summary_draft:
+      type: string
+      nullable: true
+    location_lat:
+      type: number
+      format: double
+      nullable: true
+    location_lng:
+      type: number
+      format: double
+      nullable: true
+    location_text:
+      type: string
+      nullable: true
+    created_at:
+      type: string
+      format: date-time
+    expires_at:
+      type: string
+      format: date-time
+TaskApplication:
+  type: object
+  required:
+    - id
+    - task_id
+    - tasker
+    - message
+    - status
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    task_id:
+      type: string
+      format: uuid
+    tasker:
+      type: object
+      required:
+        - id
+        - full_name
+        - avatar_url
+        - rating_avg
+        - completed_tasks
+        - is_pro
+      properties:
+        id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+        avatar_url:
+          type: string
+          format: uri
+          nullable: true
+        rating_avg:
+          type: number
+          format: double
+        completed_tasks:
+          type: integer
+        is_pro:
+          type: boolean
+    message:
+      type: string
+      description: Tasker's cover message.
+    status:
+      type: string
+      enum:
+        - APPLIED
+        - SELECTED
+        - ACCEPTED
+        - DECLINED
+        - EXPIRED
+    relevance_score:
+      type: number
+      format: double
+      nullable: true
+    recommended:
+      type: boolean
+      nullable: true
+    created_at:
+      type: string
+      format: date-time

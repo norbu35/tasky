@@ -4,7 +4,7 @@ Use this file when the change touches `apps/web/**`.
 
 ## Read Next
 
-- `docs/architecture/web.md`, then `docs/architecture/common.md`
+- `docs/architecture/web.md`, then `docs/architecture/shared-frontend.md`, then `docs/architecture/common.md`
 - `docs/API.yaml` when the change touches API contracts or generated SDK usage
 - `docs/design/DESIGN_SYSTEM.md` for visual rules
 - `apps/web/README.md` for local commands and test entrypoints

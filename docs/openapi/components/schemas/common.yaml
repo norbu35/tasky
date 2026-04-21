@@ -1,0 +1,44 @@
+Error:
+  type: object
+  required:
+    - code
+    - message
+    - trace_id
+  properties:
+    code:
+      type: string
+      example: TASK_ALREADY_BOOKED
+    message:
+      type: string
+      example: This task has already been assigned to another tasker.
+    trace_id:
+      type: string
+      example: abc-123-def
+CursorPagination:
+  type: object
+  required:
+    - next
+    - has_more
+  properties:
+    next:
+      type: string
+      nullable: true
+      description: Opaque cursor to fetch the next page. Null if no more results.
+      example: eyJpZCI6MTAwfQ==
+    has_more:
+      type: boolean
+      example: true
+PresignedUrlResponse:
+  type: object
+  required:
+    - upload_url
+    - storage_key
+  properties:
+    upload_url:
+      type: string
+      format: uri
+      description: Presigned URL to upload the file directly to S3/MinIO.
+    storage_key:
+      type: string
+      description: Storage key to reference this file in subsequent API calls.
+      example: uploads/avatars/550e8400-e29b-41d4-a716-446655440000.jpg

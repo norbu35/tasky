@@ -1,0 +1,727 @@
+/tasks/drafts:
+  post:
+    tags:
+      - Tasks
+    summary: Create task draft
+    description: |
+      Creates a draft bound to the currently active category intake schema version.
+      Submit-time validation must use this bound version even if a newer schema is activated later.
+    operationId: createTaskDraft
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - category_id
+            properties:
+              category_id:
+                type: string
+                format: uuid
+    responses:
+      '201':
+        description: Draft created.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/tasks.yaml#/TaskDraft
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '409':
+        description: Category inactive or schema mismatch.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/tasks/drafts/{id}:
+  get:
+    tags:
+      - Tasks
+    summary: Get task draft
+    operationId: getTaskDraft
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    responses:
+      '200':
+        description: Draft details.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/tasks.yaml#/TaskDraft
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        description: Exact address is locked for current user/state (`ADDRESS_LOCKED`).
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+  put:
+    tags:
+      - Tasks
+    summary: Update task draft
+    operationId: updateTaskDraft
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              intake_answers:
+                type: object
+                additionalProperties: true
+              summary_draft:
+                type: string
+                nullable: true
+              location_lat:
+                type: number
+                format: double
+                nullable: true
+              location_lng:
+                type: number
+                format: double
+                nullable: true
+              location_text:
+                type: string
+                nullable: true
+                maxLength: 500
+    responses:
+      '200':
+        description: Draft updated.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/tasks.yaml#/TaskDraft
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+/tasks/photos/upload-url:
+  post:
+    tags:
+      - Tasks
+    summary: Get presigned URL for pre-create task photo upload
+    description: |
+      Returns a presigned URL to upload a task photo directly to S3/MinIO before task creation.
+      Upload keys can be submitted in `photo_keys` during `POST /tasks`.
+    operationId: getTaskPreCreatePhotoUploadUrl
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - content_type
+            properties:
+              content_type:
+                type: string
+                example: image/jpeg
+    responses:
+      '200':
+        description: Presigned upload URL generated.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/PresignedUrlResponse
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+/tasks:
+  get:
+    tags:
+      - Tasks
+    summary: List open tasks
+    description: |
+      Returns a paginated list of OPEN tasks. Supports filtering by category and
+      geospatial radius search. Location data is fuzzed for privacy.
+    operationId: listTasks
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: category
+        in: query
+        description: Filter by category ID.
+        schema:
+          type: string
+          format: uuid
+      - name: lat
+        in: query
+        description: Latitude for radius search.
+        schema:
+          type: number
+          format: double
+      - name: lng
+        in: query
+        description: Longitude for radius search.
+        schema:
+          type: number
+          format: double
+      - name: radius_km
+        in: query
+        description: Search radius in kilometers (default 10, max 50).
+        schema:
+          type: number
+          format: double
+          default: 10
+          maximum: 50
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated list of open tasks.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/tasks.yaml#/PublicTask
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+  post:
+    tags:
+      - Tasks
+    summary: Create a new task
+    description: |
+      Creates a new task in OPEN status using schema-driven intake payload.
+      Deterministic scope summary generation runs before final submit; if generation fails,
+      server falls back to canonical key-value summary and still returns success.
+      Only authenticated customers can create tasks.
+    operationId: createTask
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/tasks.yaml#/CreateTaskRequest
+    responses:
+      '201':
+        description: Task created successfully.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/tasks.yaml#/Task
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+/tasks/mine:
+  get:
+    tags:
+      - Tasks
+    summary: List my task ads/history
+    description: |
+      Returns authenticated user's task list with full task details.
+      - `role=customer`: tasks created by the authenticated user.
+      - `role=tasker`: tasks where the authenticated user has booking history as a tasker.
+    operationId: listMyTasks
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: role
+        in: query
+        description: View scope for task history.
+        schema:
+          type: string
+          enum:
+            - customer
+            - tasker
+          default: customer
+      - name: status
+        in: query
+        description: Filter by task status.
+        schema:
+          type: string
+          enum:
+            - OPEN
+            - ASSIGNED
+            - COMPLETED
+            - CANCELLED
+            - NO_SHOW
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated list of tasks for authenticated user scope.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/tasks.yaml#/Task
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+/tasks/mine/recent-locations:
+  get:
+    tags:
+      - Tasks
+    summary: Recent distinct task locations
+    description: |
+      Returns up to 3 of the authenticated customer's most recent distinct task
+      locations, deduplicated by proximity (~200 m). Used to populate location
+      presets in the task creation wizard.
+    operationId: listMyRecentLocations
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: List of recent distinct locations (may be empty).
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - locations
+              properties:
+                locations:
+                  type: array
+                  maxItems: 3
+                  items:
+                    $ref: ../components/schemas/tasks.yaml#/RecentLocation
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+/tasks/{id}:
+  get:
+    tags:
+      - Tasks
+    summary: Get task details
+    description: |
+      Returns full task details. Exact location is only visible to the task owner
+      and the booked tasker. Other users see approximate location only.
+    operationId: getTask
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    responses:
+      '200':
+        description: Task details.
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: ../components/schemas/tasks.yaml#/Task
+                - $ref: ../components/schemas/tasks.yaml#/PublicTask
+              description: |
+                Returns role-scoped task details.
+                - Owners and booked taskers receive full `Task` (exact location fields populated).
+                - Other authorized users receive redacted `PublicTask` (approximate location only).
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+  put:
+    tags:
+      - Tasks
+    summary: Update a task
+    description: |
+      Updates a task. Only the task owner can update, and only while the task is in OPEN status.
+    operationId: updateTask
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/tasks.yaml#/UpdateTaskRequest
+    responses:
+      '200':
+        description: Task updated.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/tasks.yaml#/Task
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Task is not in OPEN status and cannot be updated.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/tasks/{id}/cancel:
+  post:
+    tags:
+      - Tasks
+    summary: Cancel a task
+    description: |
+      Cancels an OPEN task. Only the task owner can cancel.
+      If the task has an active booking, use the booking cancellation endpoint instead.
+    operationId: cancelTask
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    responses:
+      '200':
+        description: Task cancelled.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/tasks.yaml#/Task
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Task cannot be cancelled in its current status.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/tasks/{id}/photos/upload-url:
+  post:
+    tags:
+      - Tasks
+    summary: Get presigned URL for task photo upload
+    description: |
+      Returns a presigned URL to upload a task photo directly to S3/MinIO.
+      Maximum 3 photos per task.
+    operationId: getTaskPhotoUploadUrl
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - content_type
+            properties:
+              content_type:
+                type: string
+                example: image/jpeg
+    responses:
+      '200':
+        description: Presigned upload URL generated.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/PresignedUrlResponse
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+/tasks/{id}/applications:
+  post:
+    tags:
+      - Applications
+    summary: Apply to a task
+    description: |
+      Tasker applies to an OPEN task. Only verified taskers can apply.
+      A conversation is automatically created between the customer and tasker.
+    operationId: applyToTask
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                minLength: 1
+                maxLength: 500
+                description: Cover message explaining why the tasker is a good fit.
+    responses:
+      '201':
+        description: Application submitted.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/tasks.yaml#/TaskApplication
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        description: User is not a verified tasker.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Tasker already applied or task is not OPEN.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+            examples:
+              applicationCap:
+                summary: Application cap reached
+                value:
+                  code: APPLICATION_CAP_REACHED
+                  message: Maximum number of applications reached for this task.
+                  trace_id: abc-123
+  get:
+    tags:
+      - Applications
+    summary: List applications for a task
+    description: |
+      Returns paginated list of applications for a task.
+      Only the task owner can view all applications.
+    operationId: listTaskApplications
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated list of applications.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/tasks.yaml#/TaskApplication
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+/tasks/{id}/applications/{applicationId}/accept:
+  post:
+    tags:
+      - Applications
+    summary: Accept a tasker's application
+    description: |
+      Customer accepts a tasker's application. This creates a booking in ASSIGNED status.
+      Phase 2+: selected tasker must complete lead unlock to reveal Customer contact details.
+      Requires `liability_disclaimer_accepted=true`.
+      All other pending applications for this task are automatically rejected.
+      Requires Idempotency-Key header.
+    operationId: acceptApplication
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - liability_disclaimer_accepted
+            properties:
+              liability_disclaimer_accepted:
+                type: boolean
+                description: Must be `true` to confirm booking.
+                enum:
+                  - true
+    responses:
+      '200':
+        description: Application accepted, booking created.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/Booking
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Application already processed or task is not OPEN.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '422':
+        description: Liability disclaimer not accepted.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/tasks/{id}/booking-intents:
+  post:
+    tags:
+      - Bookings
+    summary: Create booking intent for non-application confirmation sources
+    description: |
+      Creates a booking intent for a customer-owned OPEN task.
+      `REBOOK` is implemented. `INSTANT_MATCH` remains deferred until Phase 3+.
+    operationId: createBookingIntent
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - source
+              - tasker_id
+            properties:
+              source:
+                type: string
+                enum:
+                  - REBOOK
+                  - INSTANT_MATCH
+              tasker_id:
+                type: string
+                format: uuid
+              original_booking_id:
+                type: string
+                format: uuid
+                nullable: true
+              offer_id:
+                type: string
+                format: uuid
+                nullable: true
+    responses:
+      '201':
+        description: Booking intent created.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/BookingIntent
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Task or source constraints not satisfiable.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/tasks/{id}/instant-match:
+  x-tasky-status: deferred
+  x-tasky-target-phase: phase_3
+  post:
+    tags:
+      - Applications
+    summary: Start instant match (Phase 3+)
+    description: |
+      **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
+      Starts instant-match flow for eligible high-liquidity categories/districts.
+      Offer window is 5 minutes per tasker; after 3 declines/timeouts flow falls back to standard applications.
+    operationId: startInstantMatch
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    responses:
+      '200':
+        description: Instant match started or booking immediately assigned.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mode:
+                  type: string
+                  enum:
+                    - INSTANT_MATCH_STARTED
+                    - BOOKING_ASSIGNED
+                    - FALLBACK_TO_APPLICATIONS
+                booking:
+                  $ref: ../components/schemas/bookings.yaml#/Booking
+                  nullable: true
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Task not eligible for instant match.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error

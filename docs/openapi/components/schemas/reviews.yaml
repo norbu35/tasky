@@ -1,0 +1,85 @@
+PendingReview:
+  type: object
+  required:
+    - id
+    - booking_id
+    - user_id
+    - status
+    - triggered_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    booking_id:
+      type: string
+      format: uuid
+    user_id:
+      type: string
+      format: uuid
+    status:
+      type: string
+      enum:
+        - PENDING
+        - REMINDED_24H
+        - REMINDED_72H
+        - COMPLETED
+        - EXPIRED
+    triggered_at:
+      type: string
+      format: date-time
+    resolved_at:
+      type: string
+      format: date-time
+      nullable: true
+    investigation_active:
+      type: boolean
+Review:
+  type: object
+  required:
+    - id
+    - booking_id
+    - reviewer_id
+    - reviewee_id
+    - punctuality_rating
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    booking_id:
+      type: string
+      format: uuid
+    reviewer_id:
+      type: string
+      format: uuid
+    reviewer:
+      $ref: ./identity.yaml#/Profile
+    reviewee_id:
+      type: string
+      format: uuid
+    quality_rating:
+      type: integer
+      minimum: 1
+      maximum: 5
+    punctuality_rating:
+      type: integer
+      minimum: 1
+      maximum: 5
+    communication_rating:
+      type: integer
+      minimum: 1
+      maximum: 5
+    clarity_rating:
+      type: integer
+      minimum: 1
+      maximum: 5
+    respectfulness_rating:
+      type: integer
+      minimum: 1
+      maximum: 5
+    comment:
+      type: string
+      nullable: true
+    created_at:
+      type: string
+      format: date-time

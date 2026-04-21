@@ -1,0 +1,144 @@
+IntakeFieldOption:
+  type: object
+  required:
+    - value
+    - label
+    - label_mn
+  properties:
+    value:
+      type: string
+      example: deep_clean
+    label:
+      type: string
+      example: Deep Clean
+    label_mn:
+      type: string
+      example: Гүнзгий цэвэрлэгээ
+IntakeFieldSchema:
+  type: object
+  required:
+    - key
+    - label
+    - label_mn
+    - type
+    - required
+  properties:
+    key:
+      type: string
+      example: cleaning_type
+    label:
+      type: string
+      example: Cleaning type
+    label_mn:
+      type: string
+      example: Цэвэрлэгээний төрөл
+    type:
+      type: string
+      enum:
+        - single_select
+        - multi_select
+        - dropdown
+        - yes_no
+        - numeric_counter
+        - text
+        - textarea
+    required:
+      type: boolean
+    options:
+      type: array
+      items:
+        $ref: '#/IntakeFieldOption'
+      nullable: true
+    min:
+      type: integer
+      nullable: true
+    max:
+      type: integer
+      nullable: true
+    min_length:
+      type: integer
+      nullable: true
+    max_length:
+      type: integer
+      nullable: true
+Category:
+  type: object
+  required:
+    - id
+    - name
+    - name_mn
+    - icon_url
+    - is_active
+    - sort_order
+    - intake_enabled
+    - intake_schema_version
+  properties:
+    id:
+      type: string
+      format: uuid
+    name:
+      type: string
+      example: Cleaning
+    name_mn:
+      type: string
+      example: Цэвэрлэгээ
+    icon_url:
+      type: string
+      format: uri
+    is_active:
+      type: boolean
+    sort_order:
+      type: integer
+    intake_enabled:
+      type: boolean
+    intake_schema_version:
+      type: integer
+    intake_schema_json:
+      nullable: true
+      description: Active intake schema payload for task-posting clients.
+      oneOf:
+        - type: object
+          additionalProperties: true
+        - type: array
+          items:
+            $ref: '#/IntakeFieldSchema'
+CategorySchemaVersion:
+  type: object
+  required:
+    - version
+    - status
+    - schema_json
+    - created_at
+  properties:
+    version:
+      type: integer
+    status:
+      type: string
+    schema_json:
+      type: object
+      additionalProperties: true
+    created_at:
+      type: string
+      format: date-time
+AdminCategoryPayload:
+  type: object
+  required:
+    - name
+    - name_mn
+    - icon_url
+    - sort_order
+    - intake_enabled
+  properties:
+    name:
+      type: string
+    name_mn:
+      type: string
+    icon_url:
+      type: string
+      format: uri
+    sort_order:
+      type: integer
+    intake_enabled:
+      type: boolean
+    is_active:
+      type: boolean

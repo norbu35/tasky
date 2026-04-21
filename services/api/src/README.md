@@ -90,7 +90,7 @@ docker compose up -d postgres
 
 ## API
 
-The canonical API contract is `docs/API.yaml` (OpenAPI 3.0). Spring interfaces are generated at compile time via the `openApiGenerate` Gradle task into `mn.tasky.api.generated`.
+The canonical API contract source is `docs/openapi/openapi.yaml` plus its split fragments under `docs/openapi/**` (OpenAPI 3.0). `docs/API.yaml` is the generated single-file compatibility artifact. Spring interfaces are generated at compile time via the `openApiGenerate` Gradle task into `mn.tasky.api.generated`.
 
 ## Static Analysis
 
@@ -122,5 +122,5 @@ Tests use JUnit 5, Spring Boot Test, Spring Security Test, Testcontainers (Postg
 ./gradlew check            # Full backend quality pass (tests + static analysis + architecture)
 ./gradlew precommit        # Quick pre-commit check (~20-30s)
 ./gradlew spotlessApply    # Auto-format code
-./gradlew openApiValidate  # Validate API.yaml
+./gradlew openApiValidate  # Validate docs/openapi/** and refresh docs/API.yaml
 ```

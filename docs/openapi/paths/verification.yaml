@@ -1,0 +1,145 @@
+/verification/upload-url:
+  post:
+    tags:
+      - Verification
+    summary: Get presigned URL for verification image upload
+    description: |
+      Returns a presigned URL to upload government ID images used in verification submission.
+    operationId: getVerificationUploadUrl
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - content_type
+            properties:
+              content_type:
+                type: string
+                description: MIME type of the verification image (e.g. image/jpeg, image/png).
+                example: image/jpeg
+    responses:
+      '200':
+        description: Presigned upload URL generated.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/PresignedUrlResponse
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+/verification/submit:
+  post:
+    tags:
+      - Verification
+    summary: Submit ID verification
+    description: |
+      Tasker submits government ID photos for manual verification.
+      The storage keys must reference previously uploaded files via presigned URL.
+    operationId: submitVerification
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id_card_front_key
+              - id_card_back_key
+              - consent_policy_version
+              - consent_accepted
+            properties:
+              id_card_front_key:
+                type: string
+                description: Storage key of the uploaded ID card front image.
+              id_card_back_key:
+                type: string
+                description: Storage key of the uploaded ID card back image.
+              consent_policy_version:
+                type: string
+                description: Policy version accepted by the user before identity upload.
+              consent_accepted:
+                type: boolean
+                enum:
+                  - true
+    responses:
+      '200':
+        description: Verification submitted successfully.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/identity.yaml#/VerificationStatus
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '409':
+        description: Verification already submitted or approved.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/verification/status:
+  get:
+    tags:
+      - Verification
+    summary: Check verification status
+    description: Returns the current verification status for the authenticated user.
+    operationId: getVerificationStatus
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Current verification status.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/identity.yaml#/VerificationStatus
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+/verification/dan/verify:
+  x-tasky-status: deferred
+  x-tasky-target-phase: phase_2
+  post:
+    tags:
+      - Verification
+    summary: Verify via E-Mongolia DAN (Phase 2+)
+    description: |
+      **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
+      Optional fast-path verification using DAN. On provider failure/unavailability,
+      manual verification remains available as fallback.
+    operationId: verifyWithDan
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - dan_token
+            properties:
+              dan_token:
+                type: string
+    responses:
+      '200':
+        description: DAN verification processed.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/identity.yaml#/VerificationStatus
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '503':
+        description: DAN provider unavailable.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error

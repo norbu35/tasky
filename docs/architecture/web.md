@@ -7,10 +7,11 @@ Read this after:
 1. `AGENTS.md`
 2. `apps/web/AGENTS.md`
 3. `docs/architecture/common.md`
+4. `docs/architecture/shared-frontend.md`
 
 ## Scope
 
-This document is intentionally small. Web-specific rules should live here; shared system and shared frontend rules stay in `docs/architecture/common.md`.
+This document is intentionally small. Web-specific rules live here. Shared system rules stay in `common.md`. Cross-platform frontend contracts (tokens, parity, test naming) stay in `shared-frontend.md`. Backend API contracts stay in `api.md`.
 
 ## Platform Contract
 
@@ -56,7 +57,7 @@ apps/web/
 - Unit/component tests: Vitest + React Testing Library.
 - E2E tests: Playwright.
 - Accessibility checks for touched flows belong in the web test surface, not as ad hoc manual notes.
-- Every touched API flow must remain aligned with `docs/API.yaml` and generated SDK output.
+- Every touched API flow must remain aligned with `docs/openapi/**`, the bundled `docs/API.yaml`, and generated SDK output.
 
 ## Verification Commands
 
@@ -78,4 +79,4 @@ These do not belong here:
 - mobile structural rules
 - historical plans or remediation tranches
 
-Keep those in `docs/architecture/common.md`, `docs/API.yaml`, `docs/architecture/mobile.md`, or archive paths as appropriate.
+Keep those in `docs/architecture/common.md`, `docs/openapi/**`, the bundled `docs/API.yaml`, `docs/architecture/mobile.md`, or archive paths as appropriate.

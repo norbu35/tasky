@@ -1,5 +1,6 @@
 {
   "name": "tasky-monorepo",
+  "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@10.29.2",
   "engines": {
@@ -17,6 +18,8 @@
     }
   },
   "scripts": {
+    "openapi:bundle": "node tooling/scripts/bundle-openapi.mjs",
+    "openapi:check": "node tooling/scripts/bundle-openapi.mjs --check",
     "build": "turbo build",
     "test": "turbo test",
     "test:coverage": "turbo test:coverage",
@@ -28,11 +31,11 @@
     "sdk:drift": "bash tooling/scripts/validate-sdk-contract-drift.sh",
     "generated:verify": "pnpm sdk:generate && pnpm --filter @tasky/design-tokens build && pnpm -r typecheck",
     "workspace:boundaries": "node tooling/scripts/validate-workspace-boundaries.mjs",
-    "pack": "npx repomix",
-    "pack:backend": "npx repomix --include 'services/api/**,docs/API.yaml,docs/architecture/common.md,services/api/AGENTS.md,AGENTS.md,tests/**,tooling/config/**,build.gradle.kts,settings.gradle.kts,gradle.properties' -o repomix-backend.xml",
-    "pack:web": "npx repomix --include 'apps/web/**,packages/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/web.md,apps/web/AGENTS.md,AGENTS.md,tsconfig.json' -o repomix-web.xml",
-    "pack:mobile": "npx repomix --include 'apps/mobile/**,packages/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/mobile.md,apps/mobile/AGENTS.md,AGENTS.md' -o repomix-mobile.xml",
-    "docs:check": "python3 tooling/scripts/check-doc-governance.py",
+    "pack": "repomix --split-output 2mb",
+    "pack:backend": "repomix --include 'services/api/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,services/api/AGENTS.md,AGENTS.md,tests/**,tooling/config/**,build.gradle.kts,settings.gradle.kts,gradle.properties' -o repomix-backend.xml",
+    "pack:web": "repomix --include 'apps/web/**,packages/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/web.md,apps/web/AGENTS.md,AGENTS.md,tsconfig.json' -o repomix-web.xml",
+    "pack:mobile": "repomix --include 'apps/mobile/**,packages/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/mobile.md,apps/mobile/AGENTS.md,AGENTS.md' -o repomix-mobile.xml",
+    "docs:check": "python3 tooling/scripts/check-doc-governance.py && node tooling/scripts/bundle-openapi.mjs --check",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -41,6 +44,8 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
-    "turbo": "^2.9.6"
+    "repomix": "^1.13.1",
+    "turbo": "^2.9.6",
+    "yaml": "^2.8.3"
   }
 }

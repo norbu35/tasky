@@ -15,7 +15,7 @@
     }
   },
   "scripts": {
-    "generate": "openapi-typescript ../../docs/API.yaml -o src/generated/api-types.ts",
+    "generate": "node ../../tooling/scripts/bundle-openapi.mjs && openapi-typescript ../../docs/openapi/openapi.yaml -o src/generated/api-types.ts",
     "drift:check": "bash ../../tooling/scripts/validate-sdk-contract-drift.sh",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",

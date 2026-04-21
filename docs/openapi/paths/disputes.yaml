@@ -1,0 +1,82 @@
+/bookings/{id}/disputes:
+  post:
+    tags:
+      - Disputes
+    summary: Raise a dispute
+    description: |
+      Either booking party (customer or tasker) may raise a dispute.
+      Allowed states:
+      - ASSIGNED booking (in-progress)
+      - COMPLETED booking within 24 hours of completion
+      Raising a dispute blocks booking closure actions until admin resolution.
+      Requires Idempotency-Key header.
+    operationId: raiseDispute
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - reason
+              - evidence
+            properties:
+              reason:
+                type: string
+                minLength: 10
+                maxLength: 2000
+              evidence:
+                type: array
+                minItems: 1
+                items:
+                  $ref: ../components/schemas/disputes.yaml#/DisputeEvidence
+    responses:
+      '201':
+        description: Dispute raised.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/disputes.yaml#/Dispute
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Dispute already raised or booking status/timing does not allow disputes.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/disputes/{id}:
+  get:
+    tags:
+      - Disputes
+    summary: Get dispute details
+    description: Returns dispute details. Accessible by the dispute raiser, the other booking party, and admins.
+    operationId: getDispute
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    responses:
+      '200':
+        description: Dispute details.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/disputes.yaml#/Dispute
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound

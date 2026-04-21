@@ -1,0 +1,567 @@
+/bookings:
+  get:
+    tags:
+      - Bookings
+    summary: List my bookings
+    description: |
+      Returns paginated list of bookings for the authenticated user.
+      Filter by role (as customer or tasker) and booking status.
+    operationId: listBookings
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: role
+        in: query
+        description: View bookings as customer or tasker.
+        schema:
+          type: string
+          enum:
+            - customer
+            - tasker
+      - name: status
+        in: query
+        description: Filter by booking status.
+        schema:
+          type: string
+          enum:
+            - ASSIGNED
+            - COMPLETED
+            - CANCELLED
+            - NO_SHOW
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated list of bookings.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/bookings.yaml#/Booking
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+/bookings/{id}:
+  get:
+    tags:
+      - Bookings
+    summary: Get booking details
+    description: Returns full booking details. Only accessible by the booking's customer or tasker.
+    operationId: getBooking
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    responses:
+      '200':
+        description: Booking details.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/Booking
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+/bookings/{id}/schedule-events:
+  get:
+    tags:
+      - Bookings
+    summary: List booking schedule events
+    description: Returns immutable reschedule timeline events for auditability.
+    operationId: listBookingScheduleEvents
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    responses:
+      '200':
+        description: Schedule events.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/bookings.yaml#/BookingScheduleEvent
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+/bookings/{id}/lead-unlock:
+  x-tasky-status: deferred
+  x-tasky-target-phase: phase_2
+  post:
+    tags:
+      - Bookings
+    summary: Tasker accepts lead and unlocks customer contact
+    description: |
+      **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
+      Selected tasker accepts or declines lead within configured timeout window.
+      Accepting spends configured lead-unlock credits and unlocks customer contact details.
+      Declining does not spend credits and keeps contact details locked.
+      Requires Idempotency-Key header.
+    operationId: unlockBookingLead
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - accept
+            properties:
+              accept:
+                type: boolean
+                description: True spends credits and unlocks contact; false declines without debit.
+    responses:
+      '200':
+        description: Lead response processed.
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required:
+                    - booking
+                    - accepted
+                    - credits_spent
+                    - customer_contact_unlocked
+                  properties:
+                    booking:
+                      $ref: ../components/schemas/bookings.yaml#/Booking
+                    accepted:
+                      type: boolean
+                      enum:
+                        - true
+                    credits_spent:
+                      type: integer
+                      example: 1
+                    customer_contact_unlocked:
+                      type: boolean
+                      enum:
+                        - true
+                - type: object
+                  required:
+                    - booking
+                    - accepted
+                    - credits_spent
+                    - customer_contact_unlocked
+                  properties:
+                    booking:
+                      $ref: ../components/schemas/bookings.yaml#/Booking
+                    accepted:
+                      type: boolean
+                      enum:
+                        - false
+                    credits_spent:
+                      type: integer
+                      enum:
+                        - 0
+                    customer_contact_unlocked:
+                      type: boolean
+                      enum:
+                        - false
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Booking is not eligible for lead unlock or has already been unlocked.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '503':
+        description: Monetization feature is disabled for the current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/bookings/{id}/cancel:
+  post:
+    tags:
+      - Bookings
+    summary: Cancel a booking
+    description: |
+      Cancels an active booking. Cancellation policy applies:
+      - Customer: Free cancellation > 4 hours before scheduled_at. Late cancellation is recorded as a reliability incident.
+      - Tasker: Task reverts to OPEN. Strike recorded. Suspension thresholds/durations are managed by admin moderation policy.
+      Requires Idempotency-Key header.
+    operationId: cancelBooking
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: false
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              reason:
+                type: string
+                description: Optional cancellation reason. Taskers can use "Safety/Fraud" to bypass strikes.
+    responses:
+      '200':
+        description: Booking cancelled.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/Booking
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Booking cannot be cancelled in its current status.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/bookings/{id}/complete:
+  post:
+    tags:
+      - Bookings
+    summary: Mark booking as complete
+    description: |
+      Customer marks an ASSIGNED booking as complete. This triggers:
+      - Booking status -> COMPLETED
+      - Task status -> COMPLETED
+      Requires Idempotency-Key header.
+    operationId: completeBooking
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    responses:
+      '200':
+        description: Booking completed.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/Booking
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Booking is not in ASSIGNED status.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/bookings/{id}/reschedule:
+  post:
+    tags:
+      - Bookings
+    summary: Request booking reschedule
+    description: |
+      Either booking party may request a reschedule while booking is ASSIGNED.
+      Counterparty accepts/declines in-app. Policy timers always reference the latest accepted schedule.
+      Requires Idempotency-Key header.
+    operationId: requestBookingReschedule
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - proposed_scheduled_at
+            properties:
+              proposed_scheduled_at:
+                type: string
+                format: date-time
+              reason:
+                type: string
+                nullable: true
+                maxLength: 1000
+    responses:
+      '201':
+        description: Reschedule request created.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/BookingScheduleEvent
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Booking is not in ASSIGNED status or proposed time invalid.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/bookings/{id}/reschedule/{eventId}/respond:
+  post:
+    tags:
+      - Bookings
+    summary: Accept or decline reschedule request
+    description: Responds to a pending reschedule request. Accepted response updates canonical schedule.
+    operationId: respondBookingReschedule
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - name: eventId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - action
+            properties:
+              action:
+                type: string
+                enum:
+                  - ACCEPT
+                  - DECLINE
+    responses:
+      '200':
+        description: Reschedule request responded.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/BookingScheduleEvent
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Request already finalized or booking not eligible.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/bookings/{id}/no-show/flag:
+  post:
+    tags:
+      - Bookings
+    summary: Flag and adjudicate no-show
+    description: |
+      No-show adjudication follows deterministic rules:
+      reminder at scheduled +10m; no-show flag eligibility at +15m; rejected if either party
+      posted a status/check-in in trailing 30 minutes or a newer accepted reschedule supersedes schedule.
+      On success, both booking and linked task transition to NO_SHOW in one transaction.
+      Requires Idempotency-Key header.
+    operationId: flagNoShow
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    responses:
+      '200':
+        description: No-show confirmed.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/Booking
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: No-show rules not satisfied (`NO_SHOW_NOT_ELIGIBLE`).
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/bookings/{id}/mark-done:
+  post:
+    tags:
+      - Bookings
+    summary: Tasker marks booking as done
+    description: |
+      Tasker signals that work is finished while booking remains active.
+      Customer is notified to review and finalize booking completion.
+      Requires Idempotency-Key header.
+    operationId: markBookingDone
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    responses:
+      '200':
+        description: Booking marked done by tasker.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - booking
+                - tasker_marked_done_at
+              properties:
+                booking:
+                  $ref: ../components/schemas/bookings.yaml#/Booking
+                tasker_marked_done_at:
+                  type: string
+                  format: date-time
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Booking is not in ASSIGNED status.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/bookings/{id}/rebook:
+  post:
+    tags:
+      - Bookings
+    summary: Rebook from completed booking
+    description: |
+      Creates a new OPEN task prefilled from a completed booking (same category, location, budget).
+      Intake answers use the current active schema version.
+    operationId: rebookFromBooking
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    responses:
+      '201':
+        description: New task created from completed booking.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/tasks.yaml#/Task
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Booking is not in COMPLETED status.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/booking-intents/{id}:
+  get:
+    tags:
+      - Bookings
+    summary: Get booking intent
+    description: Returns booking intent details for the owner.
+    operationId: getBookingIntent
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    responses:
+      '200':
+        description: Booking intent details.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/BookingIntent
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+/booking-intents/{id}/confirm:
+  post:
+    tags:
+      - Bookings
+    summary: Confirm booking intent
+    description: |
+      Confirms a booking intent and creates an ASSIGNED booking.
+      Requires `liability_disclaimer_accepted=true` and Idempotency-Key header.
+    operationId: confirmBookingIntent
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - liability_disclaimer_accepted
+            properties:
+              liability_disclaimer_accepted:
+                type: boolean
+                enum:
+                  - true
+    responses:
+      '200':
+        description: Booking created from intent.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/Booking
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Intent or task status does not allow confirmation.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error

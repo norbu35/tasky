@@ -1,0 +1,278 @@
+CreditBalance:
+  type: object
+  required:
+    - balance
+    - total_purchased
+    - total_spent
+    - total_refunded
+  properties:
+    balance:
+      type: integer
+      minimum: 0
+    total_purchased:
+      type: integer
+    total_spent:
+      type: integer
+    total_refunded:
+      type: integer
+CreditTransaction:
+  type: object
+  required:
+    - id
+    - amount
+    - type
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    amount:
+      type: integer
+    type:
+      type: string
+      enum:
+        - PURCHASE
+        - SPEND
+        - REFUND
+        - SIGNUP_BONUS
+    reference_id:
+      type: string
+      nullable: true
+    created_at:
+      type: string
+      format: date-time
+CreditPack:
+  type: object
+  required:
+    - id
+    - name
+    - credit_count
+    - price_mnt
+    - is_active
+  properties:
+    id:
+      type: string
+      format: uuid
+    name:
+      type: string
+    credit_count:
+      type: integer
+      minimum: 1
+    price_mnt:
+      type: integer
+      minimum: 1
+    is_active:
+      type: boolean
+WalletBalance:
+  type: object
+  required:
+    - available_balance
+    - pending_balance
+    - currency
+  properties:
+    available_balance:
+      type: integer
+      description: Available balance in MNT.
+      example: 250000
+    pending_balance:
+      type: integer
+      description: Pending balance in MNT (not yet eligible for payout).
+      example: 100000
+    currency:
+      type: string
+      example: MNT
+LedgerEntry:
+  type: object
+  required:
+    - id
+    - amount
+    - type
+    - description
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    amount:
+      type: integer
+      description: Signed amount in MNT. Positive = credit, negative = debit.
+    type:
+      type: string
+      enum:
+        - DEPOSIT
+        - FEE
+        - PAYOUT
+        - REFUND
+    reference_id:
+      type: string
+      format: uuid
+      nullable: true
+      description: Related booking or payout ID.
+    description:
+      type: string
+      example: 'Цэвэрлэгээ ажил #1234 — орлого'
+    created_at:
+      type: string
+      format: date-time
+PayoutRequest:
+  type: object
+  required:
+    - id
+    - amount
+    - bank_name
+    - bank_account
+    - status
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    user_id:
+      type: string
+      format: uuid
+    amount:
+      type: integer
+      description: Payout amount in MNT.
+    bank_name:
+      type: string
+      example: Хаан банк
+    bank_account:
+      type: string
+      example: '5012345678'
+    status:
+      type: string
+      enum:
+        - PENDING
+        - PROCESSED
+        - REJECTED
+    created_at:
+      type: string
+      format: date-time
+    processed_at:
+      type: string
+      format: date-time
+      nullable: true
+FeatureToggle:
+  type: object
+  required:
+    - feature_name
+    - is_enabled
+    - updated_at
+  properties:
+    feature_name:
+      type: string
+      enum:
+        - lead_fee_enabled
+        - subscription_enabled
+        - escrow_enabled
+        - ai_scope_summary_enabled
+      description: Seeded feature toggle names; current runtime consumer status varies by toggle. Future-facing names such as `promoted_listings_enabled` and `b2b_enabled` are not part of the current API toggle enum because this sweep found no confirmed seeded runtime support for them.
+    is_enabled:
+      type: boolean
+    updated_by:
+      type: string
+      format: uuid
+      nullable: true
+    updated_at:
+      type: string
+      format: date-time
+LeadUnlockPrice:
+  type: object
+  required:
+    - id
+    - category_id
+    - district_id
+    - credits_required
+    - effective_from
+  properties:
+    id:
+      type: string
+      format: uuid
+    category_id:
+      type: string
+      format: uuid
+    district_id:
+      type: string
+    credits_required:
+      type: integer
+      minimum: 1
+    effective_from:
+      type: string
+      format: date-time
+    effective_to:
+      type: string
+      format: date-time
+      nullable: true
+TaskerSubscription:
+  type: object
+  required:
+    - id
+    - tasker_id
+    - status
+    - started_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    tasker_id:
+      type: string
+      format: uuid
+    status:
+      type: string
+      enum:
+        - ACTIVE
+        - CANCELLED
+        - EXPIRED
+    started_at:
+      type: string
+      format: date-time
+    expires_at:
+      type: string
+      format: date-time
+      nullable: true
+BusinessAccount:
+  type: object
+  required:
+    - id
+    - name
+    - status
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    name:
+      type: string
+    status:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+    billing_profile:
+      type: object
+      additionalProperties: true
+    created_at:
+      type: string
+      format: date-time
+LeadUnlockPricePayload:
+  type: object
+  required:
+    - category_id
+    - district_id
+    - credits_required
+    - effective_from
+  properties:
+    category_id:
+      type: string
+    district_id:
+      type: string
+    credits_required:
+      type: integer
+      minimum: 1
+    effective_from:
+      type: string
+      format: date-time
+    effective_to:
+      type: string
+      format: date-time
+      nullable: true

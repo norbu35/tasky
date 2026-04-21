@@ -1,0 +1,244 @@
+User:
+  type: object
+  required:
+    - id
+    - role
+    - status
+    - primary_auth
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    phone:
+      type: string
+      nullable: true
+      example: '+97699001122'
+    facebook_id:
+      type: string
+      nullable: true
+      example: fb-user-123
+    primary_auth:
+      type: string
+      enum:
+        - FACEBOOK
+        - PHONE_OTP
+    role:
+      type: string
+      enum:
+        - CUSTOMER
+        - TASKER
+        - ADMIN
+    status:
+      type: string
+      enum:
+        - PENDING
+        - VERIFIED
+        - BANNED
+        - SUSPENDED
+    created_at:
+      type: string
+      format: date-time
+Profile:
+  type: object
+  required:
+    - id
+    - role
+    - status
+    - full_name
+    - avatar_url
+    - rating_avg
+    - completed_tasks
+    - is_pro
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    phone_masked:
+      type: string
+      nullable: true
+      example: +97699****22
+    role:
+      type: string
+      enum:
+        - CUSTOMER
+        - TASKER
+        - ADMIN
+    status:
+      type: string
+      enum:
+        - PENDING
+        - VERIFIED
+        - BANNED
+        - SUSPENDED
+    full_name:
+      type: string
+      example: Бат-Эрдэнэ
+    avatar_url:
+      type: string
+      format: uri
+      nullable: true
+    bio:
+      type: string
+      nullable: true
+      maxLength: 200
+    rating_avg:
+      type: number
+      format: double
+      example: 4.7
+    reliability_score:
+      type: number
+      format: double
+      nullable: true
+      description: Composite reliability score used in ranking (Phase 2+).
+    completed_tasks:
+      type: integer
+      example: 12
+    is_pro:
+      type: boolean
+      description: Auto-assigned when completed_tasks > 15 AND rating_avg > 4.5 in Phase 0-1; threshold may change in later phases.
+    created_at:
+      type: string
+      format: date-time
+    last_active_at:
+      type: string
+      format: date-time
+      nullable: true
+      description: Last time the user made an authenticated API request. Updated at most every 2 minutes.
+StrikePolicy:
+  type: object
+  required:
+    - strikeWindowDays
+    - strikeThreshold
+    - firstSuspensionDays
+    - repeatSuspensionDays
+    - repeatOffenseWindowDays
+    - autoUnsuspendEnabled
+    - updatedAt
+  properties:
+    strikeWindowDays:
+      type: integer
+      minimum: 1
+      maximum: 365
+    strikeThreshold:
+      type: integer
+      minimum: 1
+      maximum: 10
+    firstSuspensionDays:
+      type: integer
+      minimum: 1
+      maximum: 365
+    repeatSuspensionDays:
+      type: integer
+      minimum: 1
+      maximum: 365
+    repeatOffenseWindowDays:
+      type: integer
+      minimum: 1
+      maximum: 730
+    autoUnsuspendEnabled:
+      type: boolean
+    updatedAt:
+      type: string
+      format: date-time
+StrikePolicyUpdateRequest:
+  type: object
+  required:
+    - strikeWindowDays
+    - strikeThreshold
+    - firstSuspensionDays
+    - repeatSuspensionDays
+    - repeatOffenseWindowDays
+    - autoUnsuspendEnabled
+  properties:
+    strikeWindowDays:
+      type: integer
+      minimum: 1
+      maximum: 365
+    strikeThreshold:
+      type: integer
+      minimum: 1
+      maximum: 10
+    firstSuspensionDays:
+      type: integer
+      minimum: 1
+      maximum: 365
+    repeatSuspensionDays:
+      type: integer
+      minimum: 1
+      maximum: 365
+    repeatOffenseWindowDays:
+      type: integer
+      minimum: 1
+      maximum: 730
+    autoUnsuspendEnabled:
+      type: boolean
+VerificationStatus:
+  type: object
+  required:
+    - status
+  properties:
+    status:
+      type: string
+      enum:
+        - NOT_SUBMITTED
+        - PENDING
+        - APPROVED
+        - REJECTED
+    admin_notes:
+      type: string
+      nullable: true
+      description: Reason for rejection (visible to user).
+    submitted_at:
+      type: string
+      format: date-time
+      nullable: true
+    reviewed_at:
+      type: string
+      format: date-time
+      nullable: true
+VerificationDetail:
+  type: object
+  required:
+    - id
+    - user_id
+    - status
+    - submitted_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    user_id:
+      type: string
+      format: uuid
+    user_phone:
+      type: string
+    user_name:
+      type: string
+    id_card_front_url:
+      type: string
+      format: uri
+    id_card_back_url:
+      type: string
+      format: uri
+    status:
+      type: string
+      enum:
+        - PENDING
+        - APPROVED
+        - REJECTED
+    admin_notes:
+      type: string
+      nullable: true
+    submitted_at:
+      type: string
+      format: date-time
+    reviewed_at:
+      type: string
+      format: date-time
+      nullable: true
+    sla_deadline_at:
+      type: string
+      format: date-time
+      nullable: true

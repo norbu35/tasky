@@ -1,0 +1,175 @@
+Booking:
+  type: object
+  required:
+    - id
+    - task_id
+    - tasker_id
+    - customer_id
+    - price
+    - status
+    - confirmed_scheduled_at
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    task_id:
+      type: string
+      format: uuid
+    task:
+      $ref: ./tasks.yaml#/Task
+    tasker_id:
+      type: string
+      format: uuid
+    tasker:
+      $ref: ./identity.yaml#/Profile
+    customer_id:
+      type: string
+      format: uuid
+    customer:
+      $ref: ./identity.yaml#/Profile
+    price:
+      type: integer
+      description: Agreed price in MNT.
+    status:
+      type: string
+      enum:
+        - ASSIGNED
+        - COMPLETED
+        - CANCELLED
+        - NO_SHOW
+    confirmed_scheduled_at:
+      type: string
+      format: date-time
+    liability_disclaimer_accepted:
+      type: boolean
+    liability_disclaimer_accepted_at:
+      type: string
+      format: date-time
+      nullable: true
+    settlement_mode:
+      type: string
+      enum:
+        - DIRECT
+        - LEAD_UNLOCK
+        - ESCROW
+    escrow_status:
+      type: string
+      nullable: true
+      enum:
+        - UNPAID
+        - PAID
+        - HELD
+        - RELEASED
+    late_cancel_incident:
+      type: boolean
+    customer_contact_unlocked:
+      type: boolean
+      nullable: true
+    cancellation_fee:
+      type: integer
+      nullable: true
+      description: Phase-gated monetization field. Null when the current phase keeps cancellation fees disabled.
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+BookingIntent:
+  type: object
+  required:
+    - id
+    - task_id
+    - tasker_id
+    - customer_id
+    - source
+    - status
+    - created_at
+    - updated_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    task_id:
+      type: string
+      format: uuid
+    tasker_id:
+      type: string
+      format: uuid
+    customer_id:
+      type: string
+      format: uuid
+    source:
+      type: string
+      enum:
+        - REBOOK
+        - INSTANT_MATCH
+    status:
+      type: string
+      enum:
+        - PENDING
+        - CONFIRMED
+        - EXPIRED
+        - CANCELLED
+    original_booking_id:
+      type: string
+      format: uuid
+      nullable: true
+    offer_id:
+      type: string
+      format: uuid
+      nullable: true
+    expires_at:
+      type: string
+      format: date-time
+      nullable: true
+    confirmed_booking_id:
+      type: string
+      format: uuid
+      nullable: true
+    confirmed_at:
+      type: string
+      format: date-time
+      nullable: true
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+BookingScheduleEvent:
+  type: object
+  required:
+    - id
+    - booking_id
+    - event_type
+    - actor_user_id
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    booking_id:
+      type: string
+      format: uuid
+    event_type:
+      type: string
+      enum:
+        - REQUESTED
+        - ACCEPTED
+        - DECLINED
+        - EXPIRED
+    actor_user_id:
+      type: string
+      format: uuid
+    proposed_scheduled_at:
+      type: string
+      format: date-time
+      nullable: true
+    reason:
+      type: string
+      nullable: true
+    created_at:
+      type: string
+      format: date-time

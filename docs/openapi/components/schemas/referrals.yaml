@@ -1,0 +1,17 @@
+ReferralSummary:
+  type: object
+  required:
+    - referral_code
+    - referral_link
+    - successful_referrals_this_month
+  properties:
+    referral_code:
+      type: string
+    referral_link:
+      type: string
+      format: uri
+    successful_referrals_this_month:
+      type: integer
+    remaining_reward_capacity_this_month:
+      type: integer
+      description: Remaining successful referrals eligible for rewards within monthly cap.

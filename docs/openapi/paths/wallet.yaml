@@ -1,0 +1,120 @@
+/wallet:
+  get:
+    tags:
+      - Wallet
+    summary: Get wallet balance
+    description: Phase-gated endpoint. Returns wallet balance and pending payout amount.
+    operationId: getWalletBalance
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Wallet balance.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/monetization.yaml#/WalletBalance
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '503':
+        description: Monetization feature is disabled for the current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/wallet/transactions:
+  get:
+    tags:
+      - Wallet
+    summary: List wallet transactions
+    description: Phase-gated endpoint. Returns paginated transaction history.
+    operationId: listWalletTransactions
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/CursorParam
+      - $ref: ../components/parameters.yaml#/LimitParam
+    responses:
+      '200':
+        description: Paginated transaction history.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/monetization.yaml#/LedgerEntry
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '503':
+        description: Monetization feature is disabled for the current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/wallet/payouts:
+  post:
+    tags:
+      - Wallet
+    summary: Request payout
+    description: |
+      Phase-gated endpoint.
+      Tasker requests a payout from their wallet balance to a bank account.
+      Payouts are processed by admin on Tuesdays and Fridays.
+      Requires Idempotency-Key header.
+    operationId: requestPayout
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - amount
+              - bank_name
+              - bank_account
+            properties:
+              amount:
+                type: integer
+                minimum: 10000
+                description: Payout amount in MNT. Minimum 10,000 MNT.
+              bank_name:
+                type: string
+                example: Хаан банк
+              bank_account:
+                type: string
+                example: '5012345678'
+    responses:
+      '201':
+        description: Payout request created.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/monetization.yaml#/PayoutRequest
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '409':
+        description: Insufficient balance or existing pending payout.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '503':
+        description: Monetization feature is disabled for the current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error

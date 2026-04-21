@@ -7,10 +7,11 @@ Read this after:
 1. `AGENTS.md`
 2. `apps/mobile/AGENTS.md`
 3. `docs/architecture/common.md`
+4. `docs/architecture/shared-frontend.md`
 
 ## Scope
 
-This document owns mobile-specific architecture, structural boundaries, and enforcement expectations. Shared system rules remain in `docs/architecture/common.md`.
+This document owns mobile-specific architecture, structural boundaries, and enforcement expectations. Shared system rules remain in `common.md`. Cross-platform frontend contracts (tokens, parity, test naming) remain in `shared-frontend.md`. Backend API contracts remain in `api.md`.
 
 ## Platform Contract
 

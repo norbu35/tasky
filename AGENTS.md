@@ -7,12 +7,13 @@ This is the canonical repo-level instruction file for agents.
 | Working area                       | Read next                                                      |
 | ---------------------------------- | -------------------------------------------------------------- |
 | Whole repo or shared contract work | `docs/architecture/AGENTS.md`                                  |
+| `docs/openapi/**`                  | `docs/openapi/AGENTS.md`                                       |
 | `services/api/**`                  | `services/api/AGENTS.md`, then the affected module `AGENTS.md` |
 | `apps/web/**`                      | `apps/web/AGENTS.md`                                           |
 | `apps/mobile/**`                   | `apps/mobile/AGENTS.md`                                        |
 | `tooling/agent/**`                 | `tooling/agent/AGENTS.md`                                      |
 
-Pull in `docs/architecture/*.md` for system-wide context and `docs/API.yaml` when contracts change. On conflict, the more specific surface wins unless it contradicts this file.
+Pull in `docs/architecture/*.md`, `docs/openapi/AGENTS.md`, and `docs/openapi/openapi.yaml` when contracts change. Use `docs/API.yaml` only when you need the bundled single-file artifact. On conflict, the more specific surface wins unless it contradicts this file.
 
 ## Code Navigation
 
@@ -28,21 +29,21 @@ Use `repomix` when you need broad repository context and semantic tools are unav
 
 ```bash
 npx repomix
-npx repomix --include "services/api/**,docs/architecture/common.md,docs/API.yaml"
-npx repomix --include "apps/web/**,docs/architecture/common.md,docs/architecture/web.md,apps/web/AGENTS.md"
-npx repomix --include "apps/mobile/**,docs/architecture/common.md,docs/architecture/mobile.md,apps/mobile/AGENTS.md"
+npx repomix --include "services/api/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/api.md"
+npx repomix --include "apps/web/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/web.md,docs/architecture/shared-frontend.md,apps/web/AGENTS.md"
+npx repomix --include "apps/mobile/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/mobile.md,docs/architecture/shared-frontend.md,apps/mobile/AGENTS.md"
 ```
 
 Do not use repomix for narrow symbol lookups that Serena can answer.
 
 ## Core Commands
 
-Frontend tasks run through Turborepo via `pnpm <task>`. Backend tasks use `./gradlew` — never system `gradle`. The required pre-PR gate is `./gradlew gateSmoke`. See `package.json` scripts and `docs/architecture/common.md § 8` for the full set.
+Frontend tasks run through Turborepo via `pnpm <task>`. Backend tasks use `./gradlew` — never system `gradle`. The required pre-PR gate is `./gradlew gateSmoke`. See `package.json` scripts and `docs/architecture/common.md` §6 for the full set.
 
 ## Workflow Rules
 
 - Read the smallest relevant architecture document before editing code.
-- If the API changes, update `docs/API.yaml` first, then regenerate `@tasky/sdk`, then implement.
+- If the API changes, update `docs/openapi/**` first, regenerate `docs/API.yaml`, then regenerate `@tasky/sdk`, then implement.
 - Use the active issue or approved execution brief as the task source. Do not rely on archived plan directories.
 - Keep changes vertical and reviewable.
 - Update `CHANGELOG.md` when the repo convention requires it.

@@ -1,0 +1,29 @@
+/referrals/me:
+  x-tasky-status: deferred
+  x-tasky-target-phase: phase_2
+  get:
+    tags:
+      - Referrals
+    summary: Get my referral link and monthly reward status
+    description: |
+      **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
+      Returns referral code/link, current monthly conversion count,
+      and remaining reward-eligible slots under fraud-cap policy.
+    operationId: getMyReferralSummary
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Referral summary.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/referrals.yaml#/ReferralSummary
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '503':
+        description: Referral feature is disabled for the current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error

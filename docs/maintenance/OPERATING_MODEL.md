@@ -9,7 +9,7 @@ Tasky is operated as a maintenance-and-extension monorepo, not a greenfield task
 ## Source Of Truth
 
 - Product: `docs/PRD.md`
-- Technical: `docs/architecture/AGENTS.md`, `docs/architecture/common.md`, `docs/API.yaml`
+- Technical: `docs/architecture/AGENTS.md`, `docs/architecture/common.md`, `docs/openapi/openapi.yaml`, `docs/API.yaml`
 - Design: canonical sources under `docs/design/`
 - Operational runbooks: `docs/maintenance/STAGING_RUNBOOK.md`, `docs/maintenance/STAGING_TOGGLE_POSTURE.md`, `docs/maintenance/STAGING_SEED_DATA.md`
 - Launch readiness: `docs/maintenance/PRODUCTION_READINESS.md`, `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`
@@ -20,7 +20,7 @@ Tasky is operated as a maintenance-and-extension monorepo, not a greenfield task
 When a maintenance task spans multiple document families, read them in this order:
 
 1. Product intent and constraints from `docs/PRD.md`.
-2. Technical baseline from `docs/architecture/AGENTS.md`, then the smallest relevant split architecture document, then `docs/API.yaml`.
+2. Technical baseline from `docs/architecture/AGENTS.md`, then the smallest relevant split architecture document, then `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml`. Use `docs/API.yaml` only when a bundled single-file contract is required.
 3. Design authority from canonical `docs/design/` sources.
 4. Launch readiness from `docs/maintenance/PRODUCTION_READINESS.md` and `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`.
 5. Archive material only for historical context, never as live authority.

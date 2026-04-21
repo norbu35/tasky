@@ -13,16 +13,22 @@ class ApiContractTraceabilityTests {
     @Test
     @DisplayName("TID-TASK-002-API-VALIDATE OpenAPI contract baseline exists and declares " + "pagination primitives")
     void openApiContractBaselineIsPresent() throws Exception {
-        Path apiPath = OpenApiContractTestSupport.resolveFromRepoRoot("docs/API.yaml");
-        assertThat(apiPath).exists();
+        Path sourcePath = OpenApiContractTestSupport.resolveFromRepoRoot("docs/openapi/openapi.yaml");
+        Path bundlePath = OpenApiContractTestSupport.resolveFromRepoRoot("docs/API.yaml");
+        assertThat(sourcePath).exists();
+        assertThat(bundlePath).exists();
 
-        String api = Files.readString(apiPath);
+        String api = Files.readString(sourcePath);
         assertThat(api)
                 .contains("openapi: 3.0.3")
                 .contains("servers:")
                 .contains("- url: /api/v1")
                 .contains("CursorParam:")
                 .contains("LimitParam:");
+
+        assertThat(Files.readString(bundlePath))
+                .contains("# GENERATED FILE. Do not edit directly.")
+                .contains("openapi: 3.0.3");
     }
 
     @Test
