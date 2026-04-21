@@ -548,7 +548,7 @@ Standardized error response:
 
 - **Authentication**: `Authorization: Bearer <JWT>` header.
   - Tokens are signed HS256, carry `iss: tasky-server` and `aud: tasky-api`, and include a `jti` (UUID) for revocation.
-  - Access token TTL: 15 minutes. Refresh token TTL: configurable (current default is **14 days**).
+  - Access token TTL: 15 minutes. Refresh token TTL: configurable (base default **14 days**; `dev` and `local` profiles override to 30 days).
   - `JwtTokenService` validates signature, expiry, issuer, audience, and token type on every parse.
 - **Token Revocation**: `TokenBlacklistService` holds an in-memory Caffeine cache of revoked `jti` values with a 15-minute TTL (matching access token lifetime). The logout endpoint (`POST /api/v1/auth/logout`) revokes the current access token's JTI. The blacklist is also consulted on STOMP `CONNECT`. The blacklist is in-memory and does not survive restarts — user ban provides persistent revocation.
 - **Authorization**:
@@ -592,7 +592,7 @@ Standardized error response:
   - Runtime LLM is not on the task-posting critical path.
   - If optional async LLM summary polish is enabled in Phase 3+, deterministic summary remains source of truth on
     failures/timeouts.
-- **Input Validation**: JSR-380 (Bean Validation) on all DTOs.
+- **Input Validation**: JSR-380 (Bean Validation) on most DTOs. Some endpoints (e.g., `ServiceAreaController.setServiceAreas`) accept unvalidated `Map` bodies without `@Valid`; validation for those paths is service-level only.
 
 ### 5.4 File Upload Pattern (Presigned URLs)
 
