@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import mn.tasky.auth.application.FacebookGraphClient;
 import mn.tasky.common.IntegrationTestBase;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -227,6 +228,101 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
     }
 
     // -----------------------------------------------------------------------
+    // Review routes — CUSTOMER|TASKER at filter level (SCN-SEC-011)
+    // -----------------------------------------------------------------------
+
+    static Stream<Arguments> reviewRoutesAllowed() {
+        return Stream.of(
+                Arguments.of("/api/v1/me/pending-reviews", HttpMethod.GET),
+                Arguments.of("/api/v1/users/" + UUID.randomUUID() + "/reviews", HttpMethod.GET));
+    }
+
+    @ParameterizedTest(name = "SCN-SEC-011: CUSTOMER {1} {0} is allowed")
+    @MethodSource("reviewRoutesAllowed")
+    @DisplayName("SCN-SEC-011: Review routes allow CUSTOMER and TASKER, reject unauthenticated")
+    void customerCanAccessReviewRoutes(String path, HttpMethod method) {
+        String token = tokenFor("CUSTOMER");
+        ResponseEntity<Map> response = exchange(path, method, token);
+        assertThat(response.getStatusCode())
+                .as("CUSTOMER %s %s", method, path)
+                .isNotEqualTo(HttpStatus.UNAUTHORIZED)
+                .isNotEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @ParameterizedTest(name = "SCN-SEC-011: TASKER {1} {0} is allowed")
+    @MethodSource("reviewRoutesAllowed")
+    @DisplayName("SCN-SEC-011: Review routes allow CUSTOMER and TASKER, reject unauthenticated")
+    void taskerCanAccessReviewRoutes(String path, HttpMethod method) {
+        String token = tokenFor("TASKER");
+        ResponseEntity<Map> response = exchange(path, method, token);
+        assertThat(response.getStatusCode())
+                .as("TASKER %s %s", method, path)
+                .isNotEqualTo(HttpStatus.UNAUTHORIZED)
+                .isNotEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    static Stream<Arguments> reviewRoutesUnauthenticated() {
+        return Stream.of(
+                Arguments.of("/api/v1/me/pending-reviews", HttpMethod.GET),
+                Arguments.of("/api/v1/users/" + UUID.randomUUID() + "/reviews", HttpMethod.GET));
+    }
+
+    @ParameterizedTest(name = "SCN-SEC-011: unauthenticated {1} {0} returns 401")
+    @MethodSource("reviewRoutesUnauthenticated")
+    @DisplayName("SCN-SEC-011: Review routes allow CUSTOMER and TASKER, reject unauthenticated")
+    void reviewRoutesRejectUnauthenticated(String path, HttpMethod method) {
+        ResponseEntity<Map> response = exchange(path, method, null);
+        assertThat(response.getStatusCode())
+                .as("Unauthenticated %s %s", method, path)
+                .isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    // -----------------------------------------------------------------------
+    // Revoked-token behavior (SCN-SEC-012)
+    // -----------------------------------------------------------------------
+
+    @Test
+    @DisplayName("SCN-SEC-012: Logout endpoint revokes the current access token")
+    void logoutRevokesCurrentAccessToken() {
+        // Given: a valid token (obtained via devLogin)
+        Map<String, Object> loginBody = Map.of("phone", "+97699990001", "role", "CUSTOMER");
+        ResponseEntity<Map> loginResp =
+                restTemplate.postForEntity("http://localhost:" + port + "/api/v1/auth/dev/login", loginBody, Map.class);
+        assertThat(loginResp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        String token = (String) loginResp.getBody().get("access_token");
+
+        // When: calling logout with that token
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        ResponseEntity<Void> logoutResp = restTemplate.exchange(
+                "http://localhost:" + port + "/api/v1/auth/logout",
+                HttpMethod.POST,
+                new HttpEntity<>(headers),
+                Void.class);
+
+        // Then: logout succeeds
+        assertThat(logoutResp.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        // And: the revoked token is rejected on subsequent use
+        ResponseEntity<Map> postLogoutResp = exchange("/api/v1/tasks", HttpMethod.GET, token);
+        assertThat(postLogoutResp.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(postLogoutResp.getBody()).containsEntry("code", "TOKEN_REVOKED");
+    }
+
+    // -----------------------------------------------------------------------
+    // Deleted-account behavior (SCN-SEC-013)
+    // -----------------------------------------------------------------------
+
+    @Test
+    @DisplayName("SCN-SEC-013: DELETED user is rejected with 403")
+    void deletedUserRejectedWith403() {
+        String token = tokenFor("CUSTOMER", "DELETED");
+        ResponseEntity<Map> response = exchange("/api/v1/tasks", HttpMethod.GET, token);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(response.getBody()).containsEntry("code", "USER_BANNED");
+    }
+
+    // -----------------------------------------------------------------------
     // Helpers
     // -----------------------------------------------------------------------
 
@@ -234,8 +330,31 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
         Instant now = Instant.now();
         return Jwts.builder()
                 .subject(UUID.randomUUID().toString())
+                .issuer("tasky-server")
+                .audience()
+                .add("tasky-api")
+                .and()
+                .id(UUID.randomUUID().toString())
                 .claim("role", role)
                 .claim("status", "ACTIVE")
+                .claim("token_type", "access")
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusSeconds(3600)))
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
+                .compact();
+    }
+
+    private String tokenFor(String role, String status) {
+        Instant now = Instant.now();
+        return Jwts.builder()
+                .subject(UUID.randomUUID().toString())
+                .issuer("tasky-server")
+                .audience()
+                .add("tasky-api")
+                .and()
+                .id(UUID.randomUUID().toString())
+                .claim("role", role)
+                .claim("status", status)
                 .claim("token_type", "access")
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(3600)))
