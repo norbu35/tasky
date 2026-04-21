@@ -90,16 +90,31 @@ Runtime composition services inject the port interfaces, never the handlers.
 **Intent.** Decouple side effects (notifications, analytics, wallet crediting) from the synchronous request
 path with at-least-once delivery guarantees.
 
-**Flow:**
+**Two-path publish model:**
 
-1. Domain service calls `DomainEventOutboxService.publish(eventType, aggregateType, aggregateId, payload)`.
-2. The outbox service persists the event to `domain_outbox_events` **and** publishes it to RabbitMQ
-   (when `tasky.automation.broker.enabled=true`). Broker failure does not roll back the domain transaction.
-3. `EventWorkerConsumer` (RabbitMQ listener) dispatches to the registered `EventHandler` by event type.
-4. Each handler extends `AbstractEventHandler`, which provides:
+1. **Synchronous direct publish (happy path):**
+   `DomainEventOutboxService.publish(eventType, aggregateType, aggregateId, payload)` persists the event to
+   `domain_outbox_events` and immediately publishes to RabbitMQ via `EventRelayPublisher` (when
+   `tasky.automation.broker.enabled=true`). On successful publish, the row is marked `PROCESSED` in the same
+   call. Broker failure does **not** roll back the domain transaction — the row remains `PENDING` for relay recovery.
+
+2. **Scheduled relay recovery (failure path):**
+   `OutboxRelayScheduler` runs every 10 s (ShedLock-guarded) and delegates to `OutboxRelayService`, which claims
+   batches of `PENDING`/`FAILED` rows, republishes via `EventRelayPublisher`, and marks them `PROCESSED` or `FAILED`.
+   Failed publishes use exponential backoff (30 s base, 1 h max) with configurable max attempts (default 10).
+   Events exceeding max attempts enter permanent `FAILURE` status.
+
+**At-least-once delivery:** The system provides true at-least-once semantics — direct publish on the happy path,
+relay recovery for failures. Handler-level idempotency via `WorkflowIdempotencyGuard` (`kernel.idempotency`)
+handles any duplicate deliveries that arise from the overlap between the two paths.
+
+**Handler dispatch:**
+
+1. `EventWorkerConsumer` (RabbitMQ listener) dispatches to the registered `EventHandler` by event type.
+2. Each handler extends `AbstractEventHandler`, which provides:
    - `tryClaimEvent(envelope)` / `tryClaimEventComplete(envelope)` for event-level idempotency.
    - `withObservability(payload, base)` to propagate correlation/locale/platform from the envelope.
-5. Handlers live in domain-owned `workflow` packages (e.g. `mn.tasky.messaging.workflow.TaskApplicationAcceptedHandler`).
+3. Handlers live in domain-owned `workflow` packages (e.g. `mn.tasky.messaging.workflow.TaskApplicationAcceptedHandler`).
 
 **Context propagation.** Events carry `correlation_id`, `causation_id`, `command_id`, `workflow_id`,
 `actor_id`, `locale`, and `platform`. The `EventWorkerConsumer` restores these into MDC before dispatch.
@@ -184,10 +199,21 @@ Kernel contents:
 **Intent.** Every boundary crossing (HTTP request → async workflow → job → provider call) carries a
 consistent tracing context.
 
-- `RequestContext` → populated by `RequestObservabilityFilter` from HTTP headers.
+- `RequestContext` → populated by `RequestObservabilityFilter` from HTTP headers; filter calls
+  `ContextPropagator.propagate(requestContext)` to seed MDC at HTTP ingress.
 - `WorkflowContext` → derived from RequestContext or carried in `AutomationEventEnvelope`.
-- `JobContext` → derived from WorkflowContext.
+  `EventWorkerConsumer` reconstructs `WorkflowContext` from envelope fields and calls
+  `ContextPropagator.propagate(workflowContext)` at the worker boundary.
+- `JobContext` → derived from WorkflowContext. Exists as a type but is **not yet used at runtime**
+  (no job layer currently).
 - `ContextPropagator` bridges between contexts and MDC; all canonical keys are defined in `LogField`.
+
+**Propagation chain (wired):**
+`RequestContext` (ingress) → MDC → `ContextPropagator.captureMdc()` (outbox write) → envelope fields →
+`WorkflowContext` (worker dispatch).
+
+`DomainEventOutboxService` captures MDC via `ContextPropagator.captureMdc()` at outbox persistence time,
+ensuring trace context survives across the async boundary.
 
 ### 1.1.9 Layering Within a Domain Module
 
@@ -614,18 +640,30 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 ### 6.3 Async Workers & Outbox Consumers
 
-> **Truth status: current state** — verified against `DomainEventOutboxService`, `EventRelayPublisher`, `EventWorkerConsumer`.
+> **Truth status: current state** — verified against `DomainEventOutboxService`, `EventRelayPublisher`, `EventWorkerConsumer`, `OutboxRelayService`, `OutboxRelayScheduler`.
 
-- **Mechanism**: `DomainEventOutboxService` persists events to `domain_outbox_events` and, when
-  `tasky.automation.broker.enabled=true`, directly publishes to RabbitMQ via `EventRelayPublisher`.
-  The old `@Async` + `ApplicationEventPublisher` + polling relay mechanism is **retired**.
-- **Persistence**: The outbox row is written first; broker publish is attempted synchronously afterward.
+- **Mechanism (retired):** The old `@Async` + `ApplicationEventPublisher` + polling relay mechanism is
+  **retired**. The old `DomainEventOutboxProcessor` polling relay is also retired.
+- **Mechanism (current — two-path publish):** `DomainEventOutboxService` persists events to
+  `domain_outbox_events` and, when `tasky.automation.broker.enabled=true`, directly publishes to RabbitMQ
+  via `EventRelayPublisher`. On successful direct publish, the row is marked `PROCESSED` immediately.
+  Rows that fail to publish remain `PENDING` for relay recovery.
+- **Relay recovery:** `OutboxRelayScheduler` runs every 10 s (ShedLock-guarded via `@SchedulerLock`),
+  delegating to `OutboxRelayService`. Recovery loop: `claimBatch` (PENDING/FAILED rows) → `publish` via
+  `EventRelayPublisher` → `markProcessed` / `markFailed`. Failed events receive exponential backoff
+  (30 s base, 1 h max) with configurable max attempts (default 10, via `tasky.automation.relay.max-attempts`);
+  events exceeding max attempts enter permanent `FAILURE` status.
+  Batch size is configurable via `tasky.automation.relay.batch-size`.
+- **Persistence:** The outbox row is written first; broker publish is attempted synchronously afterward.
   Broker failure does **not** roll back the domain transaction because the row already exists.
-  Stale/unprocessed rows can be replayed via `OutboxReplayController`.
-- **Consumption**: `EventWorkerConsumer` (RabbitMQ listener, `automation.worker` queue) dispatches to registered
+- **Admin replay:** `OutboxReplayController` resets `FAILED` → `PENDING` (via `resetForReplay`);
+  the relay scheduler picks up replayed events on the next cycle. Replay now works end-to-end.
+- **Health:** `OutboxHealthIndicator` correctly reports health — events transition out of `PENDING`
+  (via direct publish or relay), so stale-PENDING false-negatives no longer occur.
+- **Consumption:** `EventWorkerConsumer` (RabbitMQ listener, `automation.worker` queue) dispatches to registered
   `EventHandler` implementations by event type, with retry routing (x-death headers, configurable `max-retries`)
   and DLQ fallback.
-- **At-least-once semantics**: Idempotency is enforced at the handler level via `WorkflowIdempotencyGuard`
+- **At-least-once semantics:** Idempotency is enforced at the handler level via `WorkflowIdempotencyGuard`
   (`kernel.idempotency`), not by deduplication at the broker.
 
 ### 6.4 Feature Toggles (Runtime Enforcement Status)

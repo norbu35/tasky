@@ -17,8 +17,10 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Declares RabbitMQ exchanges, queues, and bindings for the automation event bus.
  * The topology is:
- *   fanout exchange (tasky.events) -> per-event-type queues
- *   with a retry exchange and DLQ for failed processing.
+ *   fanout exchange (tasky.events) -> single automation.worker queue
+ *   with a retry exchange (30s TTL) and DLQ for failed processing.
+ * All event types share the same worker queue; dispatch by type happens in
+ * {@link mn.tasky.automation.worker.EventWorkerConsumer}.
  */
 @Configuration
 @ConditionalOnProperty(name = "tasky.automation.broker.enabled", havingValue = "true")

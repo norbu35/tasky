@@ -39,10 +39,16 @@ Operations in `IdempotencyOperations`:
 
 ## Outbox
 
-- `DomainEventOutboxService` persists events to `domain_outbox_events` and, when
-  `tasky.automation.broker.enabled=true`, directly publishes to RabbitMQ via
-  `EventRelayPublisher`. The old `DomainEventOutboxProcessor` polling relay is
-  **retired** — broker publish now happens synchronously at write time.
+- **Two-path publish model:**
+  - **Direct publish (happy path):** `DomainEventOutboxService` persists events to `domain_outbox_events`
+    and, when `tasky.automation.broker.enabled=true`, immediately publishes to RabbitMQ via
+    `EventRelayPublisher`. On successful publish, the row is marked `PROCESSED` in the same call.
+  - **Relay recovery (failure path):** `OutboxRelayScheduler` runs every 10 s (ShedLock-guarded) and
+    delegates to `OutboxRelayService`, which claims `PENDING`/`FAILED` rows, republishes, and marks them
+    `PROCESSED` or `FAILED`. Failed events use exponential backoff (30 s base, 1 h max) with configurable
+    max attempts (default 10). The old `DomainEventOutboxProcessor` polling relay is **retired**.
+- **At-least-once delivery:** Direct publish on the happy path, relay recovery for failures.
+  Handler-level idempotency via `WorkflowIdempotencyGuard` handles duplicate deliveries.
 - `EventWorkerConsumer` (RabbitMQ listener) dispatches to registered `EventHandler`
   implementations by event type, with retry routing via x-death headers and DLQ fallback.
 - Domain workflow handlers handle:
@@ -52,7 +58,8 @@ Operations in `IdempotencyOperations`:
 
 Side effects include messaging bootstrap, notifications, analytics tracking, and wallet
 crediting. Broker failure does **not** roll back the domain transaction because the outbox
-row is already persisted.
+row is already persisted. Admin replay via `OutboxReplayController` resets `FAILED` → `PENDING`,
+and the relay picks up replayed events on the next cycle.
 
 ## Security and Crypto
 

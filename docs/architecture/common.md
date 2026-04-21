@@ -82,16 +82,30 @@ For the full package-to-domain mapping, see `api.md` §2.
 
 ### 4.1 Event / Outbox / Async
 
-- **Mechanism**: `DomainEventOutboxService` persists events to `domain_outbox_events` and, when
-  `tasky.automation.broker.enabled=true`, directly publishes to RabbitMQ via `EventRelayPublisher`.
-  The old `@Async` + `ApplicationEventPublisher` + polling relay mechanism is **retired**.
-- **Persistence**: The `domain_outbox_events` table provides at-least-once delivery. The outbox row is written first;
-  broker publish is attempted synchronously afterward. Broker failure does **not** roll back the domain transaction
-  because the row already exists. Stale rows can be replayed via `OutboxReplayController`.
-- **Consumption**: `EventWorkerConsumer` (RabbitMQ listener) dispatches to registered `EventHandler` implementations
-  by event type, with retry routing (x-death headers) and DLQ fallback after max retries.
-- Events carry context propagation fields (`correlation_id`, `causation_id`, `command_id`, `workflow_id`, `actor_id`,
-  `locale`, `platform`).
+- **Mechanism (retired):** The old `@Async` + `ApplicationEventPublisher` + polling relay mechanism is
+  **retired**. The old `DomainEventOutboxProcessor` polling relay is also retired.
+- **Mechanism (current — two-path publish):** `DomainEventOutboxService` persists events to
+  `domain_outbox_events` and, when `tasky.automation.broker.enabled=true`, directly publishes to RabbitMQ
+  via `EventRelayPublisher`. On successful direct publish, the row is marked `PROCESSED` immediately.
+  Rows that fail to publish remain `PENDING` for relay recovery.
+- **Relay recovery:** `OutboxRelayScheduler` runs every 10 s (ShedLock-guarded), delegating to
+  `OutboxRelayService`. Recovery loop: `claimBatch` (PENDING/FAILED rows) → `publish` →
+  `markProcessed` / `markFailed`. Failed events receive exponential backoff (30 s base, 1 h max)
+  with configurable max attempts (default 10). Events exceeding max attempts enter permanent `FAILURE` status.
+- **At-least-once delivery:** The system provides true at-least-once semantics — direct publish on the
+  happy path, relay recovery for failures. Handler-level idempotency via `WorkflowIdempotencyGuard`
+  handles duplicate deliveries.
+- **Persistence:** The `domain_outbox_events` table provides the durability guarantee. The outbox row is
+  written first; broker publish is attempted synchronously afterward. Broker failure does **not** roll back
+  the domain transaction because the row already exists.
+- **Admin replay:** `OutboxReplayController` resets `FAILED` → `PENDING`; the relay scheduler picks up
+  replayed events on the next cycle. Replay now works end-to-end.
+- **Health:** `OutboxHealthIndicator` correctly reports health — events transition out of `PENDING`
+  (via direct publish or relay), so stale-PENDING false-negatives no longer occur.
+- **Consumption:** `EventWorkerConsumer` (RabbitMQ listener) dispatches to registered `EventHandler`
+  implementations by event type, with retry routing (x-death headers) and DLQ fallback after max retries.
+- Events carry context propagation fields (`correlation_id`, `causation_id`, `command_id`, `workflow_id`,
+  `actor_id`, `locale`, `platform`).
 
 ### 4.2 Internationalization Baseline
 
