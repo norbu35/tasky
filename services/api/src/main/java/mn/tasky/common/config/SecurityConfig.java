@@ -131,6 +131,10 @@ public class SecurityConfig {
                         // Reviews — either role
                         .requestMatchers("/api/v1/me/pending-reviews")
                         .hasAnyRole("CUSTOMER", "TASKER")
+                        .requestMatchers("/api/v1/bookings/*/reviews")
+                        .hasAnyRole("CUSTOMER", "TASKER")
+                        .requestMatchers("/api/v1/users/*/reviews")
+                        .hasAnyRole("CUSTOMER", "TASKER")
                         // Messaging — either role
                         .requestMatchers("/api/v1/conversations", "/api/v1/conversations/**")
                         .hasAnyRole("CUSTOMER", "TASKER")
