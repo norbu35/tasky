@@ -753,19 +753,124 @@ if (fs.existsSync(featuresDir)) {
 const testRoot = path.resolve(__dirname, '..', '__tests__');
 if (fs.existsSync(testRoot)) {
   const testFiles = walk(testRoot, ['.ts', '.tsx']).filter(
-    (f) => !f.includes(path.join('__tests__', 'integration') + path.sep),
+    (f) => !f.includes(path.join('__tests__', 'integration') + path.sep) &&
+           !f.includes(path.join('__tests__', 'test-utils') + path.sep),
   );
+
+  const importScanCache = new Map();
+
+  function fileExistsWithExt(filePath) {
+    if (fs.existsSync(filePath)) return filePath;
+    const ext = path.extname(filePath);
+    const base = filePath.slice(0, -ext.length) || filePath;
+    if (ext === '.tsx') {
+      const alt = base + '.ts';
+      if (fs.existsSync(alt)) return alt;
+    } else if (ext === '.ts') {
+      const alt = base + '.tsx';
+      if (fs.existsSync(alt)) return alt;
+    }
+    return null;
+  }
+
+  function extractSourcePathsFromTest(testFile) {
+    if (importScanCache.has(testFile)) return importScanCache.get(testFile);
+    const results = [];
+    try {
+      const content = fs.readFileSync(testFile, 'utf8');
+      const testDir = path.dirname(testFile);
+      // Static import: import X from 'path' / import { X } from 'path'
+      const importRe = /import\s+(?:[\s\S]*?)\s+from\s+['"]([^'"]+)['"]/g;
+      // require('path') / require("path")
+      const requireRe = /require\(\s*['"]([^'"]+)['"]\s*\)/g;
+      // readFileSync(resolve(process.cwd(), 'path')) / readFileSync(resolve(__dirname, 'path'))
+      const readFileSyncRe = /readFileSync\(\s*resolve\(\s*(?:process\.cwd\(\)|__dirname)\s*,\s*['"]([^'"]+)['"]\s*\)/g;
+
+      const relativeImports = new Set();
+      const cwdPaths = new Set();
+      let m;
+      while ((m = importRe.exec(content)) !== null) {
+        relativeImports.add(m[1]);
+      }
+      while ((m = requireRe.exec(content)) !== null) {
+        relativeImports.add(m[1]);
+      }
+      while ((m = readFileSyncRe.exec(content)) !== null) {
+        cwdPaths.add(m[1]);
+      }
+
+      const mobileAppRoot = path.resolve(__dirname, '..');
+
+      for (const p of relativeImports) {
+        // Only consider relative paths that point into src/
+        if (!p.startsWith('.')) continue;
+        const resolved = path.resolve(testDir, p);
+        // Check if it's under ROOT (src/)
+        if (!resolved.startsWith(ROOT + path.sep) && resolved !== ROOT) continue;
+        const found = fileExistsWithExt(resolved) || fileExistsWithExt(resolved + '.ts') || fileExistsWithExt(resolved + '.tsx');
+        if (found) {
+          results.push(found);
+        } else {
+          // Try index resolution (directory imports)
+          const indexPath = path.join(resolved, 'index.ts');
+          const foundIdx = fileExistsWithExt(indexPath);
+          if (foundIdx) results.push(foundIdx);
+        }
+      }
+
+      for (const p of cwdPaths) {
+        // readFileSync(resolve(process.cwd(), ...)) paths resolve from mobile app root
+        const resolved = path.resolve(mobileAppRoot, p);
+        const found = fileExistsWithExt(resolved);
+        if (found) results.push(found);
+      }
+    } catch (_) { /* ignore read errors */ }
+    importScanCache.set(testFile, results);
+    return results;
+  }
+
+  function resolveSourcePath(relToTestRoot, testFile) {
+    const sourceRelPath = relToTestRoot.replace(/\.(test|spec)\./, '.');
+
+    // 1. Direct path: src/{category}/{module}/File.tsx
+    const directPath = fileExistsWithExt(path.join(ROOT, sourceRelPath));
+    if (directPath) return directPath;
+
+    // Also try without stripping .test./.spec.
+    const originalPath = fileExistsWithExt(path.join(ROOT, relToTestRoot));
+    if (originalPath) return originalPath;
+
+    // 2. Feature-based path: src/{category}/{module}/... → src/features/{module}/{category}/...
+    //    e.g. screens/auth/LoginScreen.tsx → features/auth/screens/LoginScreen.tsx
+    const parts = sourceRelPath.split(path.sep);
+    if (parts.length >= 2) {
+      const category = parts[0]; // e.g. "screens", "hooks", "components"
+      const module = parts[1];   // e.g. "auth", "bookings", "tasks"
+      const rest = parts.slice(2).join(path.sep);
+      const featurePath = fileExistsWithExt(path.join(ROOT, 'features', module, category, rest));
+      if (featurePath) return featurePath;
+      // Also try without the category nesting (hooks → features/auth/hooks/...)
+      if (parts.length >= 3) {
+        const flatFeaturePath = path.join(ROOT, 'features', module, category, rest);
+        const flatFound = fileExistsWithExt(flatFeaturePath);
+        if (flatFound) return flatFound;
+      }
+    }
+
+    // 3. Import-scanning fallback: read the test file and extract source paths
+    if (testFile) {
+      const sourcePaths = extractSourcePathsFromTest(testFile);
+      if (sourcePaths.length > 0) return sourcePaths[0];
+    }
+
+    return null;
+  }
 
   for (const testFile of testFiles) {
     const relToTestRoot = path.relative(testRoot, testFile);
-    // Strip .test. or .spec. from filename to find source path
     const sourceRelPath = relToTestRoot.replace(/\.(test|spec)\./, '.');
-    const sourcePath = path.join(ROOT, sourceRelPath);
 
-    // Also try the original path in case there's no .test./.spec. in the name
-    const sourcePathOriginal = path.join(ROOT, relToTestRoot);
-
-    if (!fs.existsSync(sourcePath) && !fs.existsSync(sourcePathOriginal)) {
+    if (!resolveSourcePath(relToTestRoot, testFile)) {
       report(
         'warn',
         'test-path-mirror',
