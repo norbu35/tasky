@@ -29,8 +29,4 @@ Purpose: route humans and agents to the smallest authoritative architecture surf
 | `packages/**`      | `docs/architecture/common.md` plus the nearest consumer surface (`web.md` or `mobile.md`)          |
 | `tooling/agent/**` | `tooling/agent/AGENTS.md`                                                                          |
 
-## Compatibility Notes
-
-- `docs/ARCHITECTURE.md` remains as a compatibility stub only.
-- `docs/ARCHITECTURE_INDEX.md` remains as a compatibility alias only.
-- New structural guidance should be added to the split documents above, not to the legacy aliases.
+New structural guidance should be added to the split documents above.

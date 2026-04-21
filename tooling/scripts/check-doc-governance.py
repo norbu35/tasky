@@ -32,8 +32,6 @@ TEXT_FILES = [
     ROOT / "GEMINI.md",
     ROOT / ".github" / "copilot-instructions.md",
     ROOT / "README.md",
-    ROOT / "docs" / "ARCHITECTURE.md",
-    ROOT / "docs" / "ARCHITECTURE_INDEX.md",
     ROOT / "docs" / "maintenance" / "OPERATING_MODEL.md",
     ROOT / "tooling" / "agent" / "AGENTS.md",
 ]
