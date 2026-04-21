@@ -3,9 +3,9 @@ package mn.tasky.runtime.publicapi.composition;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.review.dto.Review;
 import mn.tasky.review.dto.ReviewEnforcementCase;
+import mn.tasky.review.publicapi.ReviewQueryPort;
 import mn.tasky.trust.publicapi.TrustQueryPort;
 import org.springframework.stereotype.Component;
 
@@ -13,12 +13,11 @@ import org.springframework.stereotype.Component;
 public class ReviewPublicCompositionService {
 
     private final TrustQueryPort trustQueryPort;
-    private final ReviewEnforcementService reviewEnforcementService;
+    private final ReviewQueryPort reviewQueryPort;
 
-    public ReviewPublicCompositionService(
-            TrustQueryPort trustQueryPort, ReviewEnforcementService reviewEnforcementService) {
+    public ReviewPublicCompositionService(TrustQueryPort trustQueryPort, ReviewQueryPort reviewQueryPort) {
         this.trustQueryPort = trustQueryPort;
-        this.reviewEnforcementService = reviewEnforcementService;
+        this.reviewQueryPort = reviewQueryPort;
     }
 
     public ReviewPublicPage listReviews(String revieweeId, String cursor, int limit) {
@@ -48,7 +47,7 @@ public class ReviewPublicCompositionService {
     }
 
     public List<Map<String, Object>> getPendingReviewCases(String userId) {
-        List<ReviewEnforcementCase> cases = reviewEnforcementService.getOpenCases(userId);
+        List<ReviewEnforcementCase> cases = reviewQueryPort.getOpenCases(userId);
         return cases.stream()
                 .map(c -> {
                     Map<String, Object> map = new LinkedHashMap<>();

@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
  * and auto-expiry of stale cases.
  */
 @Service
-public class ReviewEnforcementService {
+public class ReviewEnforcementService implements mn.tasky.review.publicapi.ReviewQueryPort {
 
     private static final Logger log = LoggerFactory.getLogger(ReviewEnforcementService.class);
 
