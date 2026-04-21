@@ -66,9 +66,6 @@
       "docs/superpowers/**",
       "docs/research/**",
 
-      "tooling/agent/skills/**",
-      "tooling/agent/workflows/**",
-
       "**/locales/**/translation.json",
 
       "**/*seed_test_data.sql",

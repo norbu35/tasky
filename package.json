@@ -33,8 +33,8 @@
     "workspace:boundaries": "node tooling/scripts/validate-workspace-boundaries.mjs",
     "pack": "repomix --split-output 2mb",
     "pack:backend": "repomix --include 'services/api/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,services/api/AGENTS.md,AGENTS.md,tests/**,tooling/config/**,build.gradle.kts,settings.gradle.kts,gradle.properties' -o repomix-backend.xml",
-    "pack:web": "repomix --include 'apps/web/**,packages/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/web.md,apps/web/AGENTS.md,AGENTS.md,tsconfig.json' -o repomix-web.xml",
-    "pack:mobile": "repomix --include 'apps/mobile/**,packages/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/mobile.md,apps/mobile/AGENTS.md,AGENTS.md' -o repomix-mobile.xml",
+    "pack:web": "repomix --include 'apps/web/**,packages/core/**,packages/design-tokens/**,packages/sdk/**,packages/test-utils/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/web.md,docs/architecture/shared-frontend.md,apps/web/AGENTS.md,AGENTS.md,packages/core/AGENTS.md,packages/design-tokens/AGENTS.md,packages/sdk/AGENTS.md,packages/test-utils/AGENTS.md,tsconfig.json' -o repomix-web.xml",
+    "pack:mobile": "repomix --include 'apps/mobile/**,packages/core/**,packages/design-tokens/**,packages/sdk/**,packages/test-utils/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/mobile.md,docs/architecture/shared-frontend.md,apps/mobile/AGENTS.md,AGENTS.md,packages/core/AGENTS.md,packages/design-tokens/AGENTS.md,packages/sdk/AGENTS.md,packages/test-utils/AGENTS.md' -o repomix-mobile.xml",
     "docs:check": "python3 tooling/scripts/check-doc-governance.py && node tooling/scripts/bundle-openapi.mjs --check",
     "prepare": "husky"
   },

@@ -4,10 +4,17 @@ Use this file when the change touches `apps/web/**`.
 
 ## Read Next
 
-- `docs/architecture/web.md`, then `docs/architecture/shared-frontend.md`, then `docs/architecture/common.md`
-- `docs/API.yaml` when the change touches API contracts or generated SDK usage
-- `docs/design/DESIGN_SYSTEM.md` for visual rules
-- `apps/web/README.md` for local commands and test entrypoints
+1. `apps/web/AGENTS.md` (this file)
+2. `docs/architecture/web.md`
+3. `docs/architecture/shared-frontend.md` — only when shared UI/tokens/parity/test naming matter
+4. `docs/architecture/common.md` — only when cross-cutting runtime/dev workflow context matters
+5. `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml` — only when API contracts change
+
+Additional references:
+
+- Visual rules: `docs/design/DESIGN_SYSTEM.md`
+- Local commands and test entrypoints: `apps/web/README.md`
+- Bundled API contract (compatibility only): `docs/API.yaml`
 
 ## Boundaries
 

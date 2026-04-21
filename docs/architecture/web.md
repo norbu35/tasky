@@ -6,8 +6,9 @@ Read this after:
 
 1. `AGENTS.md`
 2. `apps/web/AGENTS.md`
-3. `docs/architecture/common.md`
-4. `docs/architecture/shared-frontend.md`
+3. `docs/architecture/web.md` (this file)
+4. `docs/architecture/shared-frontend.md` — only when shared UI/tokens/parity/test naming matter
+5. `docs/architecture/common.md` — only when cross-cutting runtime/dev workflow context matters
 
 ## Scope
 

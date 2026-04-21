@@ -11,7 +11,8 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 | Shared system architecture            | `docs/architecture/common.md`  |
 | Web architecture                      | `docs/architecture/web.md`     |
 | Mobile architecture                   | `docs/architecture/mobile.md`  |
-| API contract                          | `docs/API.yaml`                |
+| API contract (canonical)              | `docs/openapi/openapi.yaml`    |
+| API contract (compatibility bundle)   | `docs/API.yaml`                |
 | Product scope                         | `docs/PRD.md`                  |
 | Design system                         | `docs/design/DESIGN_SYSTEM.md` |
 | Maintenance and readiness             | `docs/maintenance/`            |
@@ -23,11 +24,12 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 | `services/api`           | Spring Boot backend service                   |
 | `apps/web`               | React + Vite web client                       |
 | `apps/mobile`            | Expo / React Native mobile client             |
+| `packages/core`          | shared platform-agnostic core logic           |
 | `packages/sdk`           | generated TypeScript SDK from `docs/API.yaml` |
 | `packages/design-tokens` | shared cross-platform tokens                  |
+| `packages/test-utils`    | shared testing helpers                        |
 | `docs/architecture/`     | split architecture surfaces                   |
 | `docs/maintenance/`      | runbooks and readiness docs                   |
-| `tooling/agent`          | contributor-agent assets                      |
 | `tooling/config`         | shared static-analysis and security config    |
 | `tooling/scripts`        | repo-level verification and automation        |
 | `archive/`               | superseded historical material                |

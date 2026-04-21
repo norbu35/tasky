@@ -2,7 +2,7 @@
 
 Status: canonical architecture contract for `services/api`.
 
-Read after: repo `AGENTS.md`, `services/api/AGENTS.md`, `common.md`.
+Read after: repo `AGENTS.md`, `services/api/AGENTS.md`, then this file (`api.md`). Use `common.md` and `docs/openapi/AGENTS.md` only for cross-cutting or contract-change context.
 
 ## 1. Scope
 

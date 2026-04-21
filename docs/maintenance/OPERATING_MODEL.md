@@ -9,7 +9,7 @@ Tasky is operated as a maintenance-and-extension monorepo, not a greenfield task
 ## Source Of Truth
 
 - Product: `docs/PRD.md`
-- Technical: `docs/architecture/AGENTS.md`, `docs/architecture/common.md`, `docs/openapi/openapi.yaml`, `docs/API.yaml`
+- Technical: `docs/architecture/AGENTS.md`, then the smallest relevant split architecture document, then `docs/openapi/openapi.yaml` (canonical). Use `docs/API.yaml` (generated compatibility artifact) only when a bundled single-file contract is required.
 - Design: canonical sources under `docs/design/`
 - Operational runbooks: `docs/maintenance/STAGING_RUNBOOK.md`, `docs/maintenance/STAGING_TOGGLE_POSTURE.md`, `docs/maintenance/STAGING_SEED_DATA.md`
 - Launch readiness: `docs/maintenance/PRODUCTION_READINESS.md`, `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`

@@ -11,9 +11,12 @@ This is the canonical repo-level instruction file for agents.
 | `services/api/**`                  | `services/api/AGENTS.md`, then the affected module `AGENTS.md` |
 | `apps/web/**`                      | `apps/web/AGENTS.md`                                           |
 | `apps/mobile/**`                   | `apps/mobile/AGENTS.md`                                        |
-| `tooling/agent/**`                 | `tooling/agent/AGENTS.md`                                      |
+| `packages/core/**`                 | `packages/core/AGENTS.md`                                      |
+| `packages/design-tokens/**`        | `packages/design-tokens/AGENTS.md`                             |
+| `packages/sdk/**`                  | `packages/sdk/AGENTS.md`                                       |
+| `packages/test-utils/**`           | `packages/test-utils/AGENTS.md`                                |
 
-Pull in `docs/architecture/*.md`, `docs/openapi/AGENTS.md`, and `docs/openapi/openapi.yaml` when contracts change. Use `docs/API.yaml` only when you need the bundled single-file artifact. On conflict, the more specific surface wins unless it contradicts this file.
+Read the **nearest local `AGENTS.md` first**, then the **smallest relevant architecture doc**. Read `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml` only when request/response contracts change. Use `docs/API.yaml` only when a bundled single-file contract artifact is specifically needed. On conflict, the more specific surface wins unless it contradicts this file.
 
 ## Code Navigation
 
@@ -30,8 +33,8 @@ Use `repomix` when you need broad repository context and semantic tools are unav
 ```bash
 npx repomix
 npx repomix --include "services/api/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/api.md"
-npx repomix --include "apps/web/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/web.md,docs/architecture/shared-frontend.md,apps/web/AGENTS.md"
-npx repomix --include "apps/mobile/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/mobile.md,docs/architecture/shared-frontend.md,apps/mobile/AGENTS.md"
+npx repomix --include "apps/web/**,packages/core/**,packages/design-tokens/**,packages/sdk/**,packages/test-utils/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/web.md,docs/architecture/shared-frontend.md,apps/web/AGENTS.md,packages/core/AGENTS.md,packages/design-tokens/AGENTS.md,packages/sdk/AGENTS.md,packages/test-utils/AGENTS.md"
+npx repomix --include "apps/mobile/**,packages/core/**,packages/design-tokens/**,packages/sdk/**,packages/test-utils/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/mobile.md,docs/architecture/shared-frontend.md,apps/mobile/AGENTS.md,packages/core/AGENTS.md,packages/design-tokens/AGENTS.md,packages/sdk/AGENTS.md,packages/test-utils/AGENTS.md"
 ```
 
 Do not use repomix for narrow symbol lookups that Serena can answer.

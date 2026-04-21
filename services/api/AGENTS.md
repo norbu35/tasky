@@ -4,10 +4,13 @@ Use this file when the change touches `services/api/**`.
 
 ## Read Next
 
-- `docs/architecture/api.md` (especially §1.1 Foundational Design Patterns), then `docs/architecture/common.md`
-- `docs/openapi/AGENTS.md`
-- `docs/openapi/openapi.yaml`
-- The nearest module `AGENTS.md` under `src/main/java/mn/tasky/**`
+1. `services/api/AGENTS.md` (this file)
+2. `docs/architecture/api.md` (especially §1.1 Foundational Design Patterns)
+3. Nearest module `AGENTS.md` under `src/main/java/mn/tasky/**`
+4. `docs/architecture/common.md` — only for cross-cutting runtime/NFR/dev workflow topics
+5. `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml` — only for contract changes
+
+Bundled API contract (compatibility only): `docs/API.yaml`
 
 ## Foundational Design Patterns (Mandatory)
 
