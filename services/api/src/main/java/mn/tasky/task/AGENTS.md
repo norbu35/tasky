@@ -5,7 +5,7 @@ Task feed, task management, application flow, acceptance, and task photo upload 
 ## Implemented API
 
 | Method | Path                                                     | Notes                                                           |
-|--------|----------------------------------------------------------|-----------------------------------------------------------------|
+| ------ | -------------------------------------------------------- | --------------------------------------------------------------- |
 | `GET`  | `/api/v1/tasks`                                          | Open feed with optional category/geo filters, cursor pagination |
 | `GET`  | `/api/v1/tasks/mine`                                     | Caller tasks by role/status/cursor                              |
 | `GET`  | `/api/v1/tasks/{id}`                                     | Owner/booked-tasker sees full details; others see public/fuzzed |
@@ -24,6 +24,7 @@ Task feed, task management, application flow, acceptance, and task photo upload 
 - `ASSIGNED`
 - `COMPLETED`
 - `CANCELLED`
+- `NO_SHOW`
 
 ## Core Rules
 
@@ -47,7 +48,7 @@ Task feed, task management, application flow, acceptance, and task photo upload 
 ## Idempotency
 
 | Endpoint                                               | Operation key             |
-|--------------------------------------------------------|---------------------------|
+| ------------------------------------------------------ | ------------------------- |
 | `POST /tasks/{id}/applications/{applicationId}/accept` | `task.accept_application` |
 
 ## Explicitly Not Implemented

@@ -22,7 +22,7 @@ import org.springframework.util.StringUtils;
 @Service
 public class TaskQueryService {
 
-    private static final Set<String> TASK_STATUSES = Set.of("OPEN", "ASSIGNED", "COMPLETED", "CANCELLED");
+    private static final Set<String> TASK_STATUSES = Set.of("OPEN", "ASSIGNED", "COMPLETED", "CANCELLED", "NO_SHOW");
 
     private final TaskDao taskDao;
     private final TaskPhotoKeyHelper taskPhotoKeyHelper;

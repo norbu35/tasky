@@ -139,7 +139,7 @@ public class TaskController {
                 message = "Role filter must be customer or tasker.";
             } else if ("Status filter is invalid.".equals(exception.getMessage())) {
                 code = "INVALID_STATUS";
-                message = "Status filter must be OPEN, ASSIGNED, COMPLETED, or CANCELLED.";
+                message = "Status filter must be OPEN, ASSIGNED, COMPLETED, CANCELLED, or NO_SHOW.";
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("code", code, "message", message, "trace_id", resolveTraceId(request)));
