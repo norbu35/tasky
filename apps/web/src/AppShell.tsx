@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -7,6 +7,7 @@ import { GlobalErrorFallback } from './components/feature/GlobalErrorFallback';
 import { Toaster } from './components/ui/sonner';
 import { AppContext } from './context/AppContext';
 import type { AppContextValue } from './context/AppContext';
+import { HttpApiClient } from './lib/apiClient';
 import type { ApiClient, AuthTokens, Profile, User } from './lib/apiClient';
 import type { ActorRole, ClientAnalyticsTracker, ClientEventName } from './lib/clientAnalytics';
 import { parseError } from './lib/errorHandling';
@@ -66,6 +67,28 @@ export function AppShell({
     setProfileError(null);
     setProfileBusy(false);
   }, []);
+
+  const sessionRef = useRef(session);
+  sessionRef.current = session;
+
+  useEffect(() => {
+    if (apiClient instanceof HttpApiClient) {
+      apiClient.setTokenRefreshDelegate({
+        getRefreshToken() {
+          return sessionRef.current?.refreshToken ?? null;
+        },
+        onTokensRefreshed(accessToken, refreshToken) {
+          const current = sessionRef.current;
+          if (current) {
+            setSession({ ...current, accessToken, refreshToken });
+          }
+        },
+        onRefreshFailed() {
+          signOut();
+        },
+      });
+    }
+  }, [apiClient, setSession, signOut]);
 
   useEffect(() => {
     const handleUnauthorized = () => {
