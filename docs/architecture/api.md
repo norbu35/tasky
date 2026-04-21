@@ -5,9 +5,10 @@ Status: architecture reference for `services/api`. Sections are labeled with the
 Read after: repo `AGENTS.md`, `services/api/AGENTS.md`, then this file (`api.md`). Use `common.md` and `docs/openapi/AGENTS.md` only for cross-cutting or contract-change context.
 
 > **Reconciliation status: complete.** This document was reconciled with the codebase across
-> four passes (authority/async narrative, security, events/outbox, persistence). Every section
-> is labeled with its truth status. Treat labels as authoritative; unmarked subsections are current state.
-> Run `./tooling/scripts/scan-backend-doc-drift.sh` to check for drift re-introduction.
+> five passes (authority/async narrative, security, events/outbox, persistence, verification).
+> Every section is labeled with its truth status. Treat labels as authoritative; unmarked subsections are current state.
+> Run `./tooling/scripts/scan-backend-doc-drift.sh` to check for banned-term drift re-introduction.
+> Run `python3 tooling/scripts/validate-schema-parity.py` to check schema inventory drift against Flyway migrations.
 
 ## Authority Order
 
@@ -324,13 +325,17 @@ Any addition to the exception set requires deliberate justification in code revi
 
 ## 4. Data Architecture
 
-> **Truth status: current state** — Schema descriptions verified against Flyway migrations V1–V27 and live DAO/DTO contracts.
+> **Truth status: current state** — Schema descriptions verified against Flyway migrations V1–V28 and live DAO/DTO contracts.
 > Section 4.1 and 4.2 reflect the current-state schema; section 4.4 documents planned target-state tables separately.
 > For authoritative column definitions, consult the migrations directly.
+>
+> **Drift guard:** `python3 tooling/scripts/validate-schema-parity.py` compares the curated schema inventory
+> (`tooling/config/expected-schema.json`) against the actual Flyway migrations. It runs in the `structural-gate`
+> CI job and fails the PR on table or column drift. Run `--update-expected` when adding a new migration.
 
 ### 4.1 Current-state Domain Schema (authoritative)
 
-> **Truth status: current state** — verified against Flyway migrations V1–V27 and live DAO/DTO contracts.
+> **Truth status: current state** — verified against Flyway migrations V1–V28 and live DAO/DTO contracts.
 > For column-level definitions, consult the migrations directly (`services/api/src/main/resources/db/migration/`).
 
 #### Identity

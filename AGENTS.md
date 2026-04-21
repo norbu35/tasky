@@ -47,6 +47,7 @@ Frontend tasks run through Turborepo via `pnpm <task>`. Backend tasks use `./gra
 
 - Read the smallest relevant architecture document before editing code.
 - If the API changes, update `docs/openapi/**` first, regenerate `docs/API.yaml`, then regenerate `@tasky/sdk`, then implement.
+- If a Flyway migration adds, drops, or renames a column or table, run `python3 tooling/scripts/validate-schema-parity.py --update-expected` and commit the updated `tooling/config/expected-schema.json`. The CI `structural-gate` job runs this check and will fail the PR if the expected inventory is stale.
 - Use the active issue or approved execution brief as the task source. Do not rely on archived plan directories.
 - Keep changes vertical and reviewable.
 - Update `CHANGELOG.md` when the repo convention requires it.

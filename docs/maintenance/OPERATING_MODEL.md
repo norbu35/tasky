@@ -56,12 +56,17 @@ Boundary enforcement additions:
 ./gradlew --no-daemon :services:api:architectureTest
 pnpm workspace:boundaries
 pnpm sdk:drift
+python3 tooling/scripts/validate-schema-parity.py
 ```
 
 > `architectureTest` runs all `*ArchitectureTest` and `*BoundaryTest` classes. The full set:
 > `BackendArchitectureTest`, `AudienceCompositionBoundaryTest`, `AutomationContractBoundaryTest`,
 > `ProjectionBoundaryTest`, `ProviderBoundaryTest`, `PublicPortBoundaryTest`, `RuntimeBoundaryTest`,
 > `WorkflowBoundaryTest`.
+
+> `validate-schema-parity.py` compares the curated schema inventory (`tooling/config/expected-schema.json`)
+> against actual Flyway migrations. Fails on table or column drift. Run with `--update-expected` when
+> adding a new migration to regenerate the expected inventory.
 
 ## Documentation Policy
 
