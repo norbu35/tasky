@@ -1,0 +1,467 @@
+{
+  "_generated_from_migrations": "V1 through V28",
+  "_description": "Canonical schema inventory. Regenerate with: python3 tooling/scripts/validate-schema-parity.py --update-expected",
+  "tables": {
+    "analytics_events": {
+      "columns": ["id", "name", "properties", "timestamp", "user_id"]
+    },
+    "audit_events": {
+      "columns": [
+        "action",
+        "actor_user_id",
+        "created_at",
+        "id",
+        "metadata_json",
+        "resource_id",
+        "resource_type"
+      ]
+    },
+    "booking_completion_signals": {
+      "columns": ["booking_id", "marked_done_at", "tasker_id"]
+    },
+    "booking_intents": {
+      "columns": [
+        "confirmed_at",
+        "confirmed_booking_id",
+        "created_at",
+        "customer_id",
+        "expires_at",
+        "id",
+        "offer_id",
+        "original_booking_id",
+        "source",
+        "status",
+        "task_id",
+        "tasker_id",
+        "updated_at"
+      ],
+      "check_constraints": {
+        "source": ["INSTANT_MATCH", "REBOOK"],
+        "status": ["CANCELLED", "CONFIRMED", "EXPIRED", "PENDING"]
+      }
+    },
+    "booking_reliability_incidents": {
+      "columns": ["booking_id", "details", "id", "incident_type", "recorded_at", "user_id"]
+    },
+    "booking_reviews": {
+      "columns": [
+        "booking_id",
+        "clarity_rating",
+        "comment",
+        "communication_rating",
+        "created_at",
+        "id",
+        "punctuality_rating",
+        "quality_rating",
+        "respectfulness_rating",
+        "reviewee_id",
+        "reviewer_id"
+      ]
+    },
+    "booking_schedule_events": {
+      "columns": [
+        "actor_user_id",
+        "booking_id",
+        "created_at",
+        "event_type",
+        "id",
+        "proposed_scheduled_at",
+        "reason"
+      ],
+      "check_constraints": {
+        "event_type": ["ACCEPTED", "DECLINED", "EXPIRED", "REQUESTED"]
+      }
+    },
+    "booking_timeline_events": {
+      "columns": ["actor_user_id", "booking_id", "created_at", "event_type", "id", "metadata_json"]
+    },
+    "bookings": {
+      "columns": [
+        "cancellation_fee",
+        "confirmed_scheduled_at",
+        "created_at",
+        "customer_id",
+        "id",
+        "late_cancel_incident",
+        "liability_disclaimer_accepted",
+        "liability_disclaimer_accepted_at",
+        "price",
+        "settlement_mode",
+        "status",
+        "task_id",
+        "tasker_id",
+        "updated_at"
+      ],
+      "check_constraints": {
+        "settlement_mode": ["DIRECT", "ESCROW", "LEAD_UNLOCK"],
+        "status": ["ASSIGNED", "CANCELLED", "COMPLETED", "NO_SHOW", "PAID"]
+      }
+    },
+    "categories": {
+      "columns": [
+        "icon_url",
+        "id",
+        "intake_enabled",
+        "intake_schema_json",
+        "intake_schema_version",
+        "is_active",
+        "name",
+        "name_mn",
+        "sort_order"
+      ]
+    },
+    "category_schema_versions": {
+      "columns": [
+        "activated_at",
+        "category_id",
+        "created_at",
+        "created_by",
+        "id",
+        "schema_json",
+        "status",
+        "version"
+      ],
+      "check_constraints": {
+        "status": ["ACTIVE", "CANARY", "DRAFT", "ROLLED_BACK"]
+      }
+    },
+    "conversations": {
+      "columns": ["created_at", "customer_id", "id", "task_id", "tasker_id"]
+    },
+    "credited_bookings": {
+      "columns": ["booking_id"]
+    },
+    "device_tokens": {
+      "columns": ["created_at", "platform", "token", "user_id"],
+      "check_constraints": {
+        "platform": ["ANDROID", "IOS", "WEB"]
+      }
+    },
+    "dispute_evidence": {
+      "columns": ["created_at", "dispute_id", "id", "storage_key", "text_payload", "type"],
+      "check_constraints": {
+        "type": ["CHAT_EXCERPT", "PHOTO", "WRITTEN_TIMELINE"]
+      }
+    },
+    "disputes": {
+      "columns": [
+        "booking_id",
+        "created_at",
+        "id",
+        "raised_by",
+        "reason",
+        "resolution_action",
+        "resolution_notes",
+        "resolved_at",
+        "status",
+        "wrongful_party_user_id"
+      ],
+      "check_constraints": {
+        "resolution_action": [
+          "ESCALATE",
+          "REFUND",
+          "RELEASE",
+          "RESOLVE_CUSTOMER",
+          "RESOLVE_TASKER"
+        ],
+        "status": [
+          "CLOSED_INSUFFICIENT_EVIDENCE",
+          "ESCALATED",
+          "OPEN",
+          "RESOLVED_CUSTOMER",
+          "RESOLVED_TASKER"
+        ]
+      }
+    },
+    "districts": {
+      "columns": ["centroid_lat", "centroid_lng", "id", "is_active", "name", "name_mn", "slug"]
+    },
+    "domain_outbox_events": {
+      "columns": [
+        "actor_id",
+        "aggregate_id",
+        "aggregate_type",
+        "attempts",
+        "available_at",
+        "causation_id",
+        "command_id",
+        "correlation_id",
+        "created_at",
+        "event_type",
+        "id",
+        "last_error",
+        "locale",
+        "payload",
+        "platform",
+        "processed_at",
+        "status",
+        "trace_id",
+        "workflow_id"
+      ],
+      "check_constraints": {
+        "status": ["FAILED", "PENDING", "PROCESSED", "PROCESSING"]
+      }
+    },
+    "event_idempotency": {
+      "columns": ["event_id", "event_status", "event_type", "handler", "processed_at"],
+      "check_constraints": {
+        "event_status": ["COMPLETED", "IN_PROGRESS"]
+      }
+    },
+    "feature_toggles": {
+      "columns": [
+        "activated_at",
+        "deactivated_at",
+        "feature_name",
+        "id",
+        "is_enabled",
+        "updated_at",
+        "updated_by"
+      ]
+    },
+    "idempotency_keys": {
+      "columns": [
+        "created_at",
+        "id",
+        "idempotency_key",
+        "operation",
+        "resource_id",
+        "resource_type",
+        "status",
+        "updated_at",
+        "user_id"
+      ],
+      "check_constraints": {
+        "status": ["COMPLETED", "IN_PROGRESS"]
+      }
+    },
+    "ledger_entries": {
+      "columns": ["amount", "created_at", "description", "id", "reference_id", "type", "user_id"],
+      "check_constraints": {
+        "type": ["CONFISCATE", "DEPOSIT", "FEE", "HOLD", "PAYOUT", "REFUND", "RELEASE"]
+      }
+    },
+    "messages": {
+      "columns": [
+        "content",
+        "content_hash",
+        "conversation_id",
+        "id",
+        "phone_number_flagged",
+        "sender_id",
+        "sent_at"
+      ]
+    },
+    "moderation_policy": {
+      "columns": [
+        "auto_unsuspend_enabled",
+        "first_suspension_days",
+        "id",
+        "repeat_offense_window_days",
+        "repeat_suspension_days",
+        "strike_threshold",
+        "strike_window_days",
+        "updated_at"
+      ]
+    },
+    "notification_log": {
+      "columns": [
+        "channel",
+        "created_at",
+        "error_code",
+        "event_key",
+        "id",
+        "provider_message_id",
+        "status",
+        "type",
+        "user_id"
+      ]
+    },
+    "otp_challenges": {
+      "columns": ["attempts", "code", "expires_at", "phone_blind_idx"]
+    },
+    "payment_intents": {
+      "columns": ["booking_id", "payment_id", "processed"]
+    },
+    "payout_requests": {
+      "columns": ["amount", "created_at", "id", "processed_at", "status", "user_id"],
+      "check_constraints": {
+        "status": ["PENDING", "PROCESSED", "REJECTED"]
+      }
+    },
+    "profiles": {
+      "columns": [
+        "avatar_url",
+        "bio",
+        "completed_tasks",
+        "full_name",
+        "instant_match_revoked_until",
+        "last_active_at",
+        "rating_avg",
+        "user_id"
+      ]
+    },
+    "rate_limit_counters": {
+      "columns": ["attempt_count", "expires_at", "rate_key", "updated_at", "window_start"]
+    },
+    "refresh_sessions": {
+      "columns": ["expires_at", "token_id", "user_id"]
+    },
+    "review_enforcement_cases": {
+      "columns": [
+        "booking_id",
+        "id",
+        "investigation_active",
+        "reason_code",
+        "resolved_at",
+        "status",
+        "triggered_at",
+        "user_id"
+      ],
+      "check_constraints": {
+        "status": ["COMPLETED", "EXPIRED", "PENDING", "REMINDED_24H", "REMINDED_72H"]
+      }
+    },
+    "shedlock": {
+      "columns": ["lock_until", "locked_at", "locked_by", "name"]
+    },
+    "suspension_events": {
+      "columns": [
+        "id",
+        "strike_count",
+        "suspended_at",
+        "suspension_days",
+        "unsuspended_at",
+        "user_id"
+      ]
+    },
+    "task_applications": {
+      "columns": [
+        "created_at",
+        "id",
+        "message",
+        "recommended",
+        "relevance_score",
+        "respond_by_at",
+        "selected_at",
+        "status",
+        "task_id",
+        "tasker_id"
+      ],
+      "check_constraints": {
+        "status": ["ACCEPTED", "APPLIED", "DECLINED", "EXPIRED", "SELECTED"]
+      }
+    },
+    "task_drafts": {
+      "columns": [
+        "category_id",
+        "created_at",
+        "customer_id",
+        "expires_at",
+        "id",
+        "intake_answers_json",
+        "intake_schema_version",
+        "location_lat",
+        "location_lng",
+        "location_text",
+        "summary_draft"
+      ]
+    },
+    "task_photos": {
+      "columns": ["id", "sort_order", "storage_key", "task_id"]
+    },
+    "task_rescue_events": {
+      "columns": ["actions_json", "created_at", "id", "task_id", "trigger_window", "triggered_at"],
+      "check_constraints": {
+        "trigger_window": ["DAYTIME", "OFF_HOURS"]
+      }
+    },
+    "tasker_badges": {
+      "columns": ["assigned_at", "badge_type", "revoked_at", "tasker_id"],
+      "check_constraints": {
+        "badge_type": ["PRO"]
+      }
+    },
+    "tasker_reliability_scores": {
+      "columns": [
+        "cancellation_rate",
+        "completion_rate",
+        "computed_at",
+        "punctuality_rate",
+        "review_avg",
+        "score",
+        "tasker_id",
+        "window_days"
+      ]
+    },
+    "tasker_service_districts": {
+      "columns": ["created_at", "district_id", "user_id"]
+    },
+    "tasker_strikes": {
+      "columns": ["booking_id", "created_at", "id", "reason", "user_id"]
+    },
+    "tasks": {
+      "columns": [
+        "budget",
+        "category_id",
+        "created_at",
+        "customer_id",
+        "description",
+        "id",
+        "intake_answers_json",
+        "intake_schema_version",
+        "location_lat",
+        "location_lng",
+        "location_point",
+        "location_text",
+        "scheduled_at",
+        "scope_summary_source",
+        "status",
+        "updated_at"
+      ],
+      "check_constraints": {
+        "scope_summary_source": ["LLM", "TEMPLATE", "USER_EDITED"],
+        "status": ["ASSIGNED", "CANCELLED", "COMPLETED", "NO_SHOW", "OPEN"]
+      }
+    },
+    "users": {
+      "columns": [
+        "created_at",
+        "facebook_id",
+        "id",
+        "phone",
+        "phone_blind_idx",
+        "primary_auth",
+        "role",
+        "status",
+        "suspension_end_at",
+        "updated_at"
+      ],
+      "check_constraints": {
+        "role": ["ADMIN", "CUSTOMER", "TASKER"],
+        "status": ["ACTIVE", "BANNED", "DELETED", "PENDING", "SUSPENDED", "VERIFIED"]
+      }
+    },
+    "verifications": {
+      "columns": [
+        "admin_notes",
+        "consent_accepted_at",
+        "consent_policy_version",
+        "dan_reference",
+        "id",
+        "id_card_back_key",
+        "id_card_front_key",
+        "reviewed_at",
+        "status",
+        "submitted_at",
+        "user_id"
+      ],
+      "check_constraints": {
+        "status": ["APPROVED", "PENDING", "REJECTED"]
+      }
+    },
+    "wallets": {
+      "columns": ["balance_mnt", "held_balance_mnt", "updated_at", "user_id"]
+    }
+  }
+}
