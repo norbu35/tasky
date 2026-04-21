@@ -18,7 +18,7 @@ REQUIRED_FILES = [
     ROOT / "apps" / "web" / "AGENTS.md",
     ROOT / "apps" / "mobile" / "AGENTS.md",
     ROOT / "services" / "api" / "AGENTS.md",
-    ROOT / "docs" / "architecture" / "README.md",
+    ROOT / "docs" / "architecture" / "AGENTS.md",
     ROOT / "docs" / "architecture" / "common.md",
     ROOT / "docs" / "architecture" / "web.md",
     ROOT / "docs" / "architecture" / "mobile.md",
@@ -67,7 +67,7 @@ for path in ADAPTERS:
 
 agents_text = (ROOT / "AGENTS.md").read_text(encoding="utf-8") if (ROOT / "AGENTS.md").exists() else ""
 for required in [
-    "docs/architecture/README.md",
+    "docs/architecture/AGENTS.md",
     "apps/web/AGENTS.md",
     "apps/mobile/AGENTS.md",
     "services/api/AGENTS.md",

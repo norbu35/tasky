@@ -7,7 +7,7 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 | Need                                  | Read                           |
 | ------------------------------------- | ------------------------------ |
 | Repo-wide agent and contributor rules | `AGENTS.md`                    |
-| Architecture router                   | `docs/architecture/README.md`  |
+| Architecture router                   | `docs/architecture/AGENTS.md`  |
 | Shared system architecture            | `docs/architecture/common.md`  |
 | Web architecture                      | `docs/architecture/web.md`     |
 | Mobile architecture                   | `docs/architecture/mobile.md`  |

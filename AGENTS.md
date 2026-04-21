@@ -8,7 +8,7 @@ Start with the client adapter you were launched from, then read this file, then 
 
 | Working area                       | Read next                                                      |
 | ---------------------------------- | -------------------------------------------------------------- |
-| Whole repo or shared contract work | `docs/architecture/README.md`                                  |
+| Whole repo or shared contract work | `docs/architecture/AGENTS.md`                                  |
 | `services/api/**`                  | `services/api/AGENTS.md`, then the affected module `AGENTS.md` |
 | `apps/web/**`                      | `apps/web/AGENTS.md`                                           |
 | `apps/mobile/**`                   | `apps/mobile/AGENTS.md`                                        |
