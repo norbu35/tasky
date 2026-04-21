@@ -1,0 +1,168 @@
+groups:
+  # ── Operational alerts (section 12) ──────────────────────────────────
+  - name: tasky-operational
+    rules:
+      - alert: APIHealthDown
+        expr: up{job="tasky-api"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Tasky API is down'
+          description: >-
+            The Tasky API health endpoint has been unreachable for 2 consecutive
+            checks. Treat as SEV-1: freeze deploys and investigate immediately.
+          runbook_url: 'https://github.com/norbu/tasky/blob/main/docs/maintenance/PRODUCTION_READINESS.md'
+
+      - alert: High5xxRate
+        expr: >-
+          (
+            sum(rate(http_server_requests_seconds_count{status=~"5..",uri=~"/api/v1/.*"}[15m]))
+            /
+            sum(rate(http_server_requests_seconds_count{uri=~"/api/v1/.*"}[15m]))
+          ) * 100 > 5
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'High 5xx error rate on API routes'
+          description: >-
+            More than 5% of requests to /api/v1/* are returning 5xx errors for
+            the last 15 minutes. Current rate: {{ $value | printf "%.1f" }}%.
+            Treat as SEV-1: roll back unless the cause is isolated and quickly reversible.
+          runbook_url: 'https://github.com/norbu/tasky/blob/main/docs/maintenance/PRODUCTION_READINESS.md'
+
+      - alert: FacebookAuthFailures
+        expr: >-
+          sum(rate(http_server_requests_seconds_count{uri=~"/api/v1/auth/facebook",status=~"5.."}[10m]))
+          /
+          sum(rate(http_server_requests_seconds_count{uri=~"/api/v1/auth/facebook"}[10m]))
+          > 0.3
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Sustained Facebook auth failures'
+          description: >-
+            Facebook authentication endpoint is returning errors at {{ $value | printf "%.0f" }}%%
+            of requests over the last 10 minutes. If real sign-in is unavailable for
+            launch users, treat as SEV-1.
+          runbook_url: 'https://github.com/norbu/tasky/blob/main/docs/maintenance/PRODUCTION_READINESS.md'
+
+      # TODO: Enable when Firebase push delivery metrics are exported
+      # - alert: PushDeliveryFailing
+      #   expr: >-
+      #     sum(rate(firebase_push_errors_total[15m]))
+      #     /
+      #     sum(rate(firebase_push_total[15m]))
+      #     > 0.1
+      #   for: 15m
+      #   labels:
+      #     severity: warning
+      #   annotations:
+      #     summary: "Push delivery failures detected"
+      #     description: >-
+      #       Firebase push notification delivery error rate exceeds 10% over 15 minutes.
+      #       Treat as SEV-2: mitigation required before production confidence can increase.
+
+  # ── Product KPI alerts (section 11) ──────────────────────────────────
+  # All rules below are placeholders. They require a custom event metrics
+  # pipeline that aggregates from the events table (section 8) into
+  # Prometheus gauges/counters. Enable each rule once the corresponding
+  # metric is exported by the application.
+  #
+  # TODO: Enable when event metrics pipeline is wired
+
+  # - name: tasky-product-kpi
+  #   rules:
+  #     - alert: LiquidityScoreLow
+  #       expr: >-
+  #         tasky_category_liquidity_score < 50
+  #       for: 7d
+  #       labels:
+  #         severity: warning
+  #       annotations:
+  #         summary: "Category liquidity score below threshold"
+  #         description: >-
+  #           A category liquidity score has been below 50% for 7 days with at
+  #           least 50 posted tasks. Expected metric:
+  #           tasky_category_liquidity_score = tasks_with_qualified_app_24h / tasks_posted * 100
+  #
+  #     - alert: ConversionRateLow
+  #       expr: >-
+  #         tasky_task_to_booking_conversion_28d < 35
+  #       for: 1d
+  #       labels:
+  #         severity: warning
+  #       annotations:
+  #         summary: "Task-to-booking conversion below 35%"
+  #         description: >-
+  #           The 28-day task post to confirmed booking conversion rate has
+  #           dropped below 35%. Expected metric:
+  #           tasky_task_to_booking_conversion_28d = bookings_confirmed / tasks_posted_28d * 100
+  #
+  #     - alert: BookingCompletionLow
+  #       expr: >-
+  #         tasky_booking_completion_rate_28d < 50
+  #       for: 1d
+  #       labels:
+  #         severity: warning
+  #       annotations:
+  #         summary: "Booking completion rate below 50%"
+  #         description: >-
+  #           The 28-day booking completion rate has dropped below 50% with at
+  #           least 50 bookings. Expected metric:
+  #           tasky_booking_completion_rate_28d = tasks_completed / bookings_confirmed_28d * 100
+  #
+  #     - alert: ReviewCompletionLow
+  #       expr: >-
+  #         tasky_review_completion_rate_28d < 70
+  #       for: 1d
+  #       labels:
+  #         severity: warning
+  #       annotations:
+  #         summary: "Review completion rate below 70%"
+  #         description: >-
+  #           The 28-day review completion rate has dropped below 70%.
+  #           Expected metric:
+  #           tasky_review_completion_rate_28d = reviews_left / tasks_completed_28d * 100
+  #
+  #     - alert: VerificationQueueSlow
+  #       expr: >-
+  #         tasky_verification_turnaround_median_seconds > 86400
+  #       for: 1h
+  #       labels:
+  #         severity: warning
+  #       annotations:
+  #         summary: "Verification queue turnaround exceeds 24h"
+  #         description: >-
+  #           Median verification turnaround time exceeds 24 hours.
+  #           Expected metric: tasky_verification_turnaround_median_seconds
+  #           (histogram_quantile from verification duration buckets)
+  #
+  #     - alert: DisputeResolutionSlow
+  #       expr: >-
+  #         tasky_dispute_resolution_median_seconds > 172800
+  #       for: 1h
+  #       labels:
+  #         severity: warning
+  #       annotations:
+  #         summary: "Dispute resolution median exceeds 48h"
+  #         description: >-
+  #           Median dispute resolution time exceeds 48 hours.
+  #           Expected metric: tasky_dispute_resolution_median_seconds
+  #           (histogram_quantile from dispute duration buckets)
+  #
+  #     - alert: RepeatBookingLow
+  #       expr: >-
+  #         tasky_repeat_booking_rate < 15
+  #       for: 7d
+  #       labels:
+  #         severity: warning
+  #       annotations:
+  #         summary: "Repeat booking rate below 15%"
+  #         description: >-
+  #           Weekly repeat booking rate has dropped below 15% after the launch
+  #           cohort has at least 50 completed bookings.
+  #           Expected metric:
+  #           tasky_repeat_booking_rate = repeat_customers / customers_with_completed_booking * 100

@@ -1,0 +1,80 @@
+# Observability stack overlay — Prometheus + Grafana + Alertmanager
+#
+# Usage (local dev):
+#   docker compose -f docker-compose.yml -f docker-compose.observability.yml up
+#
+# Usage (production):
+#   docker compose -f docker-compose.production.yml -f docker-compose.observability.yml up
+#
+# See docs/OBSERVABILITY.md for architecture and configuration details.
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: tasky-prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    volumes:
+      - ./tooling/observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./tooling/observability/prometheus/alerts:/etc/prometheus/alerts:ro
+      - prometheus_data:/prometheus
+    ports:
+      - '${PROMETHEUS_PORT:-9090}:9090'
+    networks:
+      - default
+      - obs-net
+    depends_on:
+      - alertmanager
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: tasky-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+      GF_AUTH_ANONYMOUS_ENABLED: 'false'
+    volumes:
+      - ./tooling/observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./tooling/observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - '${GRAFANA_PORT:-3000}:3000'
+    networks:
+      - default
+      - obs-net
+    depends_on:
+      - prometheus
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: tasky-alertmanager
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    environment:
+      ALERT_WEBHOOK_URL: ${ALERT_WEBHOOK_URL:-http://localhost:9999/alerts}
+    volumes:
+      - ./tooling/observability/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager_data:/alertmanager
+    ports:
+      - '${ALERTMANAGER_PORT:-9093}:9093'
+    networks:
+      - default
+      - obs-net
+
+networks:
+  obs-net:
+    driver: bridge
+
+volumes:
+  prometheus_data:
+  grafana_data:
+  alertmanager_data:
