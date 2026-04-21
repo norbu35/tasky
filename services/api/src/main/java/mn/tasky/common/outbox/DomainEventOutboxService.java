@@ -11,7 +11,7 @@ import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.automation.broker.EventRelayPublisher;
 import mn.tasky.automation.event.AutomationEventEnvelope;
 import mn.tasky.common.observability.RequestObservabilityFilter;
-import mn.tasky.kernel.logging.LogField;
+import mn.tasky.kernel.context.ContextPropagator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -27,9 +27,9 @@ import org.springframework.util.StringUtils;
  * Extracts correlation, causation, command, workflow, and actor identifiers from
  * the current request's MDC so that downstream workers can trace the full chain.
  *
- * <p>After this change, {@code DomainEventOutboxProcessor} (the polling relay)
- * is retired: the broker publish happens synchronously at write time, making
- * the poller redundant.
+ * <p>Failed broker publishes are recovered by the outbox relay
+ * ({@link OutboxRelayScheduler} + {@link OutboxRelayService}), which periodically
+ * claims PENDING/FAILED rows and republishes them.
  */
 @Service
 public class DomainEventOutboxService {
@@ -59,14 +59,15 @@ public class DomainEventOutboxService {
         String eventId = UUID.randomUUID().toString();
         Instant now = Instant.now();
 
-        String correlationId = extractMdc(LogField.CORRELATION_ID.key());
-        String traceId = extractMdc(LogField.TRACE_ID.key());
-        String causationId = extractMdc(LogField.CAUSATION_ID.key());
-        String commandId = extractMdc(LogField.COMMAND_ID.key());
-        String workflowId = extractMdc(LogField.WORKFLOW_ID.key());
-        String actorId = extractMdc(LogField.ACTOR_ID.key());
-        String locale = extractMdc(LogField.LOCALE.key());
-        String platform = extractMdc(LogField.PLATFORM.key());
+        Map<String, String> capturedMdc = ContextPropagator.captureMdc();
+        String correlationId = ContextPropagator.fromMdc(capturedMdc, ContextPropagator.MDC_CORRELATION_ID);
+        String traceId = ContextPropagator.fromMdc(capturedMdc, ContextPropagator.MDC_TRACE_ID);
+        String causationId = ContextPropagator.fromMdc(capturedMdc, ContextPropagator.MDC_CAUSATION_ID);
+        String commandId = ContextPropagator.fromMdc(capturedMdc, ContextPropagator.MDC_COMMAND_ID);
+        String workflowId = ContextPropagator.fromMdc(capturedMdc, ContextPropagator.MDC_WORKFLOW_ID);
+        String actorId = ContextPropagator.fromMdc(capturedMdc, ContextPropagator.MDC_ACTOR_ID);
+        String locale = ContextPropagator.fromMdc(capturedMdc, ContextPropagator.MDC_LOCALE);
+        String platform = ContextPropagator.fromMdc(capturedMdc, ContextPropagator.MDC_PLATFORM);
 
         outboxEventDao.insert(
                 UUID.fromString(eventId),
@@ -107,6 +108,7 @@ public class DomainEventOutboxService {
 
             try {
                 eventRelayPublisher.publish(envelope);
+                outboxEventDao.markProcessed(UUID.fromString(eventId), Instant.now());
             } catch (RuntimeException exception) {
                 // Event is already persisted to the outbox table, so this failure
                 // is recoverable by a future retry. Log and continue — we never
@@ -141,11 +143,6 @@ public class DomainEventOutboxService {
             enriched.putIfAbsent(AnalyticsService.PROPERTY_PLATFORM, platform.toUpperCase(Locale.ROOT));
         }
         return enriched;
-    }
-
-    private String extractMdc(String key) {
-        String value = MDC.get(key);
-        return StringUtils.hasText(value) ? value : null;
     }
 
     private String toPayloadJson(Map<String, Object> payload) {

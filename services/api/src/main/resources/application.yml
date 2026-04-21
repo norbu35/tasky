@@ -135,7 +135,11 @@ tasky:
       exchange: tasky.events
       retry-exchange: tasky.events.retry
       dlq-exchange: tasky.events.dlq
-      default-routing-key: 'task.#'
+    relay:
+      enabled: ${TASKY_OUTBOX_RELAY_ENABLED:true}
+      batch-size: ${TASKY_OUTBOX_RELAY_BATCH_SIZE:50}
+      max-attempts: ${TASKY_OUTBOX_RELAY_MAX_ATTEMPTS:10}
+      claim-duration: ${TASKY_OUTBOX_RELAY_CLAIM_DURATION:5m}
     worker:
       concurrency: ${TASKY_WORKER_CONCURRENCY:4}
       max-retries: ${TASKY_WORKER_MAX_RETRIES:3}
