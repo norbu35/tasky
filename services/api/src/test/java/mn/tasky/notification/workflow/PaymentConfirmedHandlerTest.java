@@ -12,18 +12,15 @@ import java.lang.reflect.Field;
 import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
-import mn.tasky.analytics.application.AnalyticsService;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.automation.event.AutomationEventEnvelope;
 import mn.tasky.automation.event.AutomationEventTypes;
 import mn.tasky.kernel.idempotency.WorkflowIdempotencyGuard;
-import mn.tasky.notification.application.NotificationService;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/**
- * Tests duplicate event delivery idempotency for PaymentConfirmedHandler.
- */
 class PaymentConfirmedHandlerTest {
 
     private static final String EVENT_ID = UUID.randomUUID().toString();
@@ -34,17 +31,17 @@ class PaymentConfirmedHandlerTest {
     private static final String TASKER_ID = UUID.randomUUID().toString();
 
     private WorkflowIdempotencyGuard idempotencyGuard;
-    private NotificationService notificationService;
-    private AnalyticsService analyticsService;
+    private NotificationCommandPort notificationCommandPort;
+    private AnalyticsCommandPort analyticsCommandPort;
     private PaymentConfirmedHandler handler;
 
     @BeforeEach
     void setUp() {
-        notificationService = mock(NotificationService.class);
-        analyticsService = mock(AnalyticsService.class);
+        notificationCommandPort = mock(NotificationCommandPort.class);
+        analyticsCommandPort = mock(AnalyticsCommandPort.class);
         idempotencyGuard = mock(WorkflowIdempotencyGuard.class);
 
-        handler = new PaymentConfirmedHandler(notificationService, analyticsService);
+        handler = new PaymentConfirmedHandler(notificationCommandPort, analyticsCommandPort);
         setField(handler, "idempotencyGuard", idempotencyGuard);
     }
 
@@ -83,24 +80,22 @@ class PaymentConfirmedHandlerTest {
 
         handler.handle(envelope());
 
-        verify(notificationService, times(2))
+        verify(notificationCommandPort, times(2))
                 .sendPushWithEventKey(anyString(), anyString(), anyString(), anyString(), anyString());
-        verify(analyticsService).track(anyString(), eq(CUSTOMER_ID), anyMap());
+        verify(analyticsCommandPort).track(anyString(), eq(CUSTOMER_ID), anyMap());
         verify(idempotencyGuard).complete(EVENT_ID);
     }
 
     @Test
     @DisplayName("IDEM-005: Payment confirmed duplicate delivery does not resend notifications")
     void duplicateDeliveryDoesNotResend() {
-        when(idempotencyGuard.claim(anyString(), anyString()))
-                .thenReturn(true) // first
-                .thenReturn(false); // duplicate
+        when(idempotencyGuard.claim(anyString(), anyString())).thenReturn(true).thenReturn(false);
 
         AutomationEventEnvelope env = envelope();
         handler.handle(env);
         handler.handle(env);
 
-        verify(notificationService, times(2))
+        verify(notificationCommandPort, times(2))
                 .sendPushWithEventKey(anyString(), anyString(), anyString(), anyString(), anyString());
         verify(idempotencyGuard, times(1)).complete(EVENT_ID);
     }

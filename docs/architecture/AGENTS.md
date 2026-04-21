@@ -27,3 +27,21 @@ Also read `docs/openapi/AGENTS.md` and `docs/openapi/openapi.yaml` when the task
 - **`shared-frontend.md`** — tokens, parity baseline, intake renderer contract, TID test-naming rule.
 
 New structural guidance belongs in the doc whose scope matches — not in this router.
+
+## Authority Order (Backend Architecture)
+
+When backend architecture docs conflict with code or tests, this is the resolution order:
+
+1. **ArchUnit tests** (`services/api/src/test/java/mn/tasky/architecture/`)
+2. **Flyway migrations** (`services/api/src/main/resources/db/migration/`)
+3. **Runtime code** (package structure, public ports, composition services)
+4. **Architecture prose** (`api.md`, `common.md`, module `AGENTS.md`)
+
+If prose says X but code/tests say Y, the code/tests win. File a doc-fix issue.
+
+For backend architecture questions, route through:
+
+1. `services/api/AGENTS.md` (API agent contract)
+2. `api.md` (full backend architecture, section-labeled with truth status)
+3. ArchUnit tests (enforced rules)
+4. Flyway migrations (schema truth)

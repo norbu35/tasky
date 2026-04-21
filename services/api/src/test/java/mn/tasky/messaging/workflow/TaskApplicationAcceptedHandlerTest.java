@@ -13,19 +13,16 @@ import java.lang.reflect.Field;
 import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
-import mn.tasky.analytics.application.AnalyticsService;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.automation.event.AutomationEventEnvelope;
 import mn.tasky.automation.event.AutomationEventTypes;
 import mn.tasky.kernel.idempotency.WorkflowIdempotencyGuard;
-import mn.tasky.messaging.application.MessagingService;
-import mn.tasky.notification.application.NotificationService;
+import mn.tasky.messaging.publicapi.MessagingCommandPort;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/**
- * Tests duplicate event delivery idempotency for TaskApplicationAcceptedHandler.
- */
 class TaskApplicationAcceptedHandlerTest {
 
     private static final String EVENT_ID = UUID.randomUUID().toString();
@@ -36,22 +33,23 @@ class TaskApplicationAcceptedHandlerTest {
     private static final String APPLICATION_ID = UUID.randomUUID().toString();
 
     private WorkflowIdempotencyGuard idempotencyGuard;
-    private MessagingService messagingService;
-    private NotificationService notificationService;
-    private AnalyticsService analyticsService;
+    private MessagingCommandPort messagingCommandPort;
+    private NotificationCommandPort notificationCommandPort;
+    private AnalyticsCommandPort analyticsCommandPort;
     private TaskApplicationAcceptedHandler handler;
 
     @BeforeEach
     void setUp() {
-        messagingService = mock(MessagingService.class);
-        notificationService = mock(NotificationService.class);
-        analyticsService = mock(AnalyticsService.class);
+        messagingCommandPort = mock(MessagingCommandPort.class);
+        notificationCommandPort = mock(NotificationCommandPort.class);
+        analyticsCommandPort = mock(AnalyticsCommandPort.class);
         idempotencyGuard = mock(WorkflowIdempotencyGuard.class);
 
-        when(messagingService.startConversation(anyString(), anyString(), anyString()))
+        when(messagingCommandPort.startConversation(anyString(), anyString(), anyString()))
                 .thenReturn(UUID.randomUUID().toString());
 
-        handler = new TaskApplicationAcceptedHandler(messagingService, notificationService, analyticsService);
+        handler =
+                new TaskApplicationAcceptedHandler(messagingCommandPort, notificationCommandPort, analyticsCommandPort);
         setField(handler, "idempotencyGuard", idempotencyGuard);
     }
 
@@ -90,30 +88,25 @@ class TaskApplicationAcceptedHandlerTest {
 
         handler.handle(envelope());
 
-        verify(messagingService).startConversation(TASK_ID, TASKER_ID, CUSTOMER_ID);
-        verify(notificationService)
+        verify(messagingCommandPort).startConversation(TASK_ID, TASKER_ID, CUSTOMER_ID);
+        verify(notificationCommandPort)
                 .sendPushWithEventKey(eq(TASKER_ID), anyString(), anyString(), anyString(), anyString());
-        verify(analyticsService, atLeastOnce()).track(anyString(), eq(CUSTOMER_ID), anyMap());
-        // Two-phase: complete() is called after side effects succeed
+        verify(analyticsCommandPort, atLeastOnce()).track(anyString(), eq(CUSTOMER_ID), anyMap());
         verify(idempotencyGuard).complete(EVENT_ID);
     }
 
     @Test
     @DisplayName("IDEM-002: Duplicate event delivery does not duplicate side effects")
     void duplicateEventDeliveryDoesNotDuplicateSideEffects() {
-        when(idempotencyGuard.claim(anyString(), anyString()))
-                .thenReturn(true) // first delivery
-                .thenReturn(false); // duplicate
+        when(idempotencyGuard.claim(anyString(), anyString())).thenReturn(true).thenReturn(false);
 
         AutomationEventEnvelope env = envelope();
         handler.handle(env);
-        handler.handle(env); // duplicate delivery
+        handler.handle(env);
 
-        // Each side effect called exactly once
-        verify(messagingService, times(1)).startConversation(anyString(), anyString(), anyString());
-        verify(notificationService, times(1))
+        verify(messagingCommandPort, times(1)).startConversation(anyString(), anyString(), anyString());
+        verify(notificationCommandPort, times(1))
                 .sendPushWithEventKey(anyString(), anyString(), anyString(), anyString(), anyString());
-        // complete() only called on first delivery
         verify(idempotencyGuard, times(1)).complete(EVENT_ID);
     }
 
@@ -146,7 +139,6 @@ class TaskApplicationAcceptedHandlerTest {
                 .build();
         handler.handle(envelope2);
 
-        // Both events executed
-        verify(messagingService, times(2)).startConversation(anyString(), anyString(), anyString());
+        verify(messagingCommandPort, times(2)).startConversation(anyString(), anyString(), anyString());
     }
 }

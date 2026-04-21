@@ -6,7 +6,7 @@ import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import mn.tasky.booking.application.BookingIntentService;
+import mn.tasky.booking.dto.BookingIntentCreateResult;
 import mn.tasky.booking.dto.ConfirmBookingIntentRequest;
 import mn.tasky.booking.dto.CreateBookingIntentRequest;
 import mn.tasky.booking.publicapi.BookingIntentCommandPort;
@@ -50,28 +50,29 @@ public class BookingIntentController {
             @PathVariable String id,
             @Valid @RequestBody CreateBookingIntentRequest body,
             HttpServletRequest request) {
-        BookingIntentService.CreateResult result = bookingIntentCommandPort.createIntent(
+        BookingIntentCreateResult result = bookingIntentCommandPort.createIntent(
                 principal.userId(), id, body.source(), body.taskerId(), body.originalBookingId(), body.offerId());
         if (result.isSuccess()) {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(bookingIntentCompositionService.bookingIntentResponse(result.intent()));
+                    .body(bookingIntentCompositionService.bookingIntentResponse(
+                            result.intent().orElseThrow()));
         }
 
         return switch (result.errorCode()) {
-            case BookingIntentService.CreateResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+            case BookingIntentCreateResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(errorBody("NOT_FOUND", result.errorMessage(), request));
-            case BookingIntentService.CreateResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+            case BookingIntentCreateResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(errorBody("FORBIDDEN", result.errorMessage(), request));
-            case BookingIntentService.CreateResult.NOT_COMPLETED -> ResponseEntity.status(HttpStatus.CONFLICT)
+            case BookingIntentCreateResult.NOT_COMPLETED -> ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(errorBody("NOT_COMPLETED", result.errorMessage(), request));
-            case BookingIntentService.CreateResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT)
+            case BookingIntentCreateResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(errorBody("TASK_NOT_OPEN", result.errorMessage(), request));
-            case BookingIntentService.CreateResult.DEFERRED -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+            case BookingIntentCreateResult.DEFERRED -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(errorBody("NOT_IMPLEMENTED", result.errorMessage(), request));
-            case BookingIntentService.CreateResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
+            case BookingIntentCreateResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(errorBody("CONFLICT", result.errorMessage(), request));
-            case BookingIntentService.CreateResult.INVALID_SOURCE,
-                    BookingIntentService.CreateResult.INVALID_REQUEST -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            case BookingIntentCreateResult.INVALID_SOURCE, BookingIntentCreateResult.INVALID_REQUEST -> ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
                     .body(errorBody("BAD_REQUEST", result.errorMessage(), request));
             default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         };

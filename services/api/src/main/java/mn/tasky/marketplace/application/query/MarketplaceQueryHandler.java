@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Optional;
 import mn.tasky.marketplace.publicapi.MarketplaceQueryPort;
 import mn.tasky.task.application.TaskApplicationService;
+import mn.tasky.task.application.TaskDraftService;
 import mn.tasky.task.application.TaskPhotoService;
 import mn.tasky.task.application.TaskQueryService;
 import mn.tasky.task.dto.RecentLocation;
 import mn.tasky.task.dto.TaskApplicationsListResult;
+import mn.tasky.task.dto.TaskDraft;
 import mn.tasky.task.dto.TaskPage;
 import mn.tasky.task.dto.TaskState;
 import org.springframework.stereotype.Service;
@@ -17,14 +19,17 @@ public class MarketplaceQueryHandler implements MarketplaceQueryPort {
     private final TaskQueryService taskQueryService;
     private final TaskPhotoService taskPhotoService;
     private final TaskApplicationService taskApplicationService;
+    private final TaskDraftService taskDraftService;
 
     public MarketplaceQueryHandler(
             TaskQueryService taskQueryService,
             TaskPhotoService taskPhotoService,
-            TaskApplicationService taskApplicationService) {
+            TaskApplicationService taskApplicationService,
+            TaskDraftService taskDraftService) {
         this.taskQueryService = taskQueryService;
         this.taskPhotoService = taskPhotoService;
         this.taskApplicationService = taskApplicationService;
+        this.taskDraftService = taskDraftService;
     }
 
     @Override
@@ -65,5 +70,10 @@ public class MarketplaceQueryHandler implements MarketplaceQueryPort {
     @Override
     public Optional<String> buildOwnedPhotoAccessUrl(String storageKey, String customerId) {
         return taskPhotoService.buildOwnedPhotoAccessUrl(storageKey, customerId);
+    }
+
+    @Override
+    public Optional<TaskDraft> getDraft(String draftId, String userId) {
+        return taskDraftService.getDraft(draftId, userId);
     }
 }

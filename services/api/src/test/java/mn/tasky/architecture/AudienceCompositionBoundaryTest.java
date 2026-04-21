@@ -1,9 +1,14 @@
 package mn.tasky.architecture;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.tngtech.archunit.core.importer.ImportOption;
+import com.tngtech.archunit.junit.AnalyzeClasses;
+import com.tngtech.archunit.junit.ArchTest;
+import com.tngtech.archunit.lang.ArchRule;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -13,6 +18,9 @@ import mn.tasky.admin.api.AdminDisputeController;
 import mn.tasky.task.api.TaskController;
 import org.junit.jupiter.api.Test;
 
+@AnalyzeClasses(
+        packages = "mn.tasky",
+        importOptions = {ImportOption.DoNotIncludeTests.class})
 class AudienceCompositionBoundaryTest {
 
     /**
@@ -40,7 +48,31 @@ class AudienceCompositionBoundaryTest {
             "mn.tasky.category.api.CategoryController",
             // Operator endpoints (low-level platform control)
             "mn.tasky.admin.api.OutboxReplayController",
-            "mn.tasky.admin.api.AdminFeatureToggleController");
+            "mn.tasky.admin.api.AdminFeatureToggleController",
+            // Rate-limit enforcement is a cross-cutting security concern, not business logic
+            "mn.tasky.auth.api.OtpController");
+
+    @ArchTest
+    static final ArchRule nonExceptionControllersMustNotDependOnApplicationServices = noClasses()
+            .that()
+            .resideInAnyPackage("mn.tasky..api..")
+            .and()
+            .haveSimpleNameEndingWith("Controller")
+            .and()
+            .doNotHaveFullyQualifiedNameMatching(createExceptionPattern())
+            .should()
+            .dependOnClassesThat()
+            .resideInAnyPackage("mn.tasky..application..")
+            .because(
+                    "controllers must use runtime composition services or publicapi ports, never internal application services")
+            .allowEmptyShould(true);
+
+    private static String createExceptionPattern() {
+        String joined = EXCEPTION_CONTROLLERS.stream()
+                .map(java.util.regex.Pattern::quote)
+                .collect(Collectors.joining("|"));
+        return "^(?!" + joined + ").*$";
+    }
 
     @Test
     void runtimeAudienceCompositionPackagesAndServicesExist() {
@@ -94,6 +126,7 @@ class AudienceCompositionBoundaryTest {
         assertControllerDependsOn(
                 TaskController.class, "mn.tasky.runtime.publicapi.composition.TaskApplicationAcceptanceService");
         assertControllerDoesNotDependOn(TaskController.class, "mn.tasky.booking.publicapi.BookingQueryPort");
+        assertControllerDoesNotDependOn(TaskController.class, "mn.tasky.task.application.TaskDraftService");
         assertControllerOmitsMethods(
                 TaskController.class,
                 Set.of(
@@ -134,6 +167,9 @@ class AudienceCompositionBoundaryTest {
                 "mn.tasky.runtime.publicapi.composition.BookingIntentConfirmationService");
         assertControllerDoesNotDependOn(
                 mn.tasky.booking.api.BookingIntentController.class, "mn.tasky.booking.publicapi.BookingQueryPort");
+        assertControllerDoesNotDependOn(
+                mn.tasky.booking.api.BookingIntentController.class,
+                "mn.tasky.booking.application.BookingIntentService");
         assertControllerOmitsMethods(mn.tasky.booking.api.BookingIntentController.class, Set.of("toResponse", "error"));
 
         assertControllerDependsOn(
@@ -266,6 +302,8 @@ class AudienceCompositionBoundaryTest {
                 mn.tasky.review.api.ReviewController.class, "mn.tasky.trust.publicapi.TrustCommandPort");
         assertControllerDoesNotDependOn(
                 mn.tasky.review.api.ReviewController.class, "mn.tasky.trust.publicapi.TrustQueryPort");
+        assertControllerDoesNotDependOn(
+                mn.tasky.review.api.ReviewController.class, "mn.tasky.review.application.ReviewEnforcementService");
         assertControllerOmitsMethods(mn.tasky.review.api.ReviewController.class, Set.of("toReviewResponse"));
 
         assertControllerDependsOn(

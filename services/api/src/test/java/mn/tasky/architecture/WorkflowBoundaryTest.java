@@ -84,6 +84,16 @@ class WorkflowBoundaryTest {
             .because("kernel outbox primitives must not know about feature modules")
             .allowEmptyShould(true);
 
+    @ArchTest
+    static final ArchRule workflowHandlersMustNotDependOnApplicationServices = noClasses()
+            .that()
+            .resideInAnyPackage("mn.tasky..workflow..")
+            .should()
+            .dependOnClassesThat()
+            .resideInAnyPackage("mn.tasky..application..")
+            .because("workflow handlers must use publicapi ports, not internal application services")
+            .allowEmptyShould(true);
+
     private static void assertMarkerExists(String fqcn) {
         assertDoesNotThrow(() -> Class.forName(fqcn), () -> fqcn + " should exist");
     }

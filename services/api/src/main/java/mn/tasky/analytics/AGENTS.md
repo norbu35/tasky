@@ -36,4 +36,4 @@ Internal event tracking and KPI reporting. No public HTTP endpoints.
 - `TaskService`: `TASK_POSTED`, `APPLICATION_SUBMITTED`
 - `PaymentService`: `PAYMENT_INITIATED`
 - `DisputeController`: `DISPUTE_RAISED`
-- `DomainEventOutboxProcessor`: `TASKER_ACCEPTED`, `BOOKING_CONFIRMED`, `PAYMENT_CONFIRMED`, `BOOKING_COMPLETED`
+- Domain workflow handlers (via `EventWorkerConsumer`): `TASKER_ACCEPTED`, `BOOKING_CONFIRMED`, `PAYMENT_CONFIRMED`, `BOOKING_COMPLETED`

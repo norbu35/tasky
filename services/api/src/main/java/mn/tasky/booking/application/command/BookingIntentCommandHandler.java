@@ -3,6 +3,7 @@ package mn.tasky.booking.application.command;
 import java.util.Optional;
 import mn.tasky.booking.application.BookingIntentService;
 import mn.tasky.booking.dto.BookingIntentConfirmResult;
+import mn.tasky.booking.dto.BookingIntentCreateResult;
 import mn.tasky.booking.dto.BookingIntentState;
 import mn.tasky.booking.publicapi.BookingIntentCommandPort;
 import org.springframework.stereotype.Service;
@@ -23,14 +24,19 @@ public class BookingIntentCommandHandler implements BookingIntentCommandPort {
     }
 
     @Override
-    public BookingIntentService.CreateResult createIntent(
+    public BookingIntentCreateResult createIntent(
             String customerId,
             String taskId,
             String source,
             String taskerId,
             String originalBookingId,
             String offerId) {
-        return bookingIntentService.createIntent(customerId, taskId, source, taskerId, originalBookingId, offerId);
+        BookingIntentService.CreateResult result =
+                bookingIntentService.createIntent(customerId, taskId, source, taskerId, originalBookingId, offerId);
+        if (result.isSuccess()) {
+            return BookingIntentCreateResult.success(result.intent());
+        }
+        return BookingIntentCreateResult.error(result.errorCode(), result.errorMessage());
     }
 
     @Override

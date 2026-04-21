@@ -82,9 +82,16 @@ For the full package-to-domain mapping, see `api.md` §2.
 
 ### 4.1 Event / Outbox / Async
 
-- **Mechanism**: Spring `@Async` + `ApplicationEventPublisher` for decoupling.
-- **Persistence**: For critical tasks (e.g., notifications, payouts), the `domain_outbox_events` table provides at-least-once delivery. Events are published to RabbitMQ via an outbox relay poller, then handled by domain-owned workflow consumers.
-- Events carry context propagation fields (`correlation_id`, `causation_id`, `command_id`, `workflow_id`, `actor_id`).
+- **Mechanism**: `DomainEventOutboxService` persists events to `domain_outbox_events` and, when
+  `tasky.automation.broker.enabled=true`, directly publishes to RabbitMQ via `EventRelayPublisher`.
+  The old `@Async` + `ApplicationEventPublisher` + polling relay mechanism is **retired**.
+- **Persistence**: The `domain_outbox_events` table provides at-least-once delivery. The outbox row is written first;
+  broker publish is attempted synchronously afterward. Broker failure does **not** roll back the domain transaction
+  because the row already exists. Stale rows can be replayed via `OutboxReplayController`.
+- **Consumption**: `EventWorkerConsumer` (RabbitMQ listener) dispatches to registered `EventHandler` implementations
+  by event type, with retry routing (x-death headers) and DLQ fallback after max retries.
+- Events carry context propagation fields (`correlation_id`, `causation_id`, `command_id`, `workflow_id`, `actor_id`,
+  `locale`, `platform`).
 
 ### 4.2 Internationalization Baseline
 

@@ -20,7 +20,6 @@ import mn.tasky.marketplace.publicapi.MarketplaceQueryPort;
 import mn.tasky.runtime.publicapi.composition.PublicTaskCompositionService;
 import mn.tasky.runtime.publicapi.composition.TaskApplicationAcceptanceOutcome;
 import mn.tasky.runtime.publicapi.composition.TaskApplicationAcceptanceService;
-import mn.tasky.task.application.TaskDraftService;
 import mn.tasky.task.dto.AcceptApplicationRequest;
 import mn.tasky.task.dto.ApplyTaskRequest;
 import mn.tasky.task.dto.CreateDraftRequest;
@@ -61,19 +60,16 @@ public class TaskController {
 
     private final MarketplaceCommandPort marketplaceCommandPort;
     private final MarketplaceQueryPort marketplaceQueryPort;
-    private final TaskDraftService taskDraftService;
     private final PublicTaskCompositionService taskCompositionService;
     private final TaskApplicationAcceptanceService taskApplicationAcceptanceService;
 
     public TaskController(
             MarketplaceCommandPort marketplaceCommandPort,
             MarketplaceQueryPort marketplaceQueryPort,
-            TaskDraftService taskDraftService,
             PublicTaskCompositionService taskCompositionService,
             TaskApplicationAcceptanceService taskApplicationAcceptanceService) {
         this.marketplaceCommandPort = marketplaceCommandPort;
         this.marketplaceQueryPort = marketplaceQueryPort;
-        this.taskDraftService = taskDraftService;
         this.taskCompositionService = taskCompositionService;
         this.taskApplicationAcceptanceService = taskApplicationAcceptanceService;
     }
@@ -539,7 +535,7 @@ public class TaskController {
             @Valid @RequestBody CreateDraftRequest body,
             HttpServletRequest request) {
         try {
-            TaskDraft draft = taskDraftService.createDraft(principal.userId(), body.categoryId());
+            TaskDraft draft = marketplaceCommandPort.createDraft(principal.userId(), body.categoryId());
             return ResponseEntity.status(HttpStatus.CREATED).body(TaskDraftResponse.from(draft));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -559,7 +555,7 @@ public class TaskController {
     @GetMapping("/drafts/{id}")
     public ResponseEntity<?> getDraft(
             @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id, HttpServletRequest request) {
-        return taskDraftService
+        return marketplaceQueryPort
                 .getDraft(id, principal.userId())
                 .<ResponseEntity<?>>map(draft -> ResponseEntity.ok(TaskDraftResponse.from(draft)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -576,7 +572,7 @@ public class TaskController {
             @Valid @RequestBody UpdateDraftRequest body,
             HttpServletRequest request) {
         try {
-            TaskDraft updated = taskDraftService.updateDraft(
+            TaskDraft updated = marketplaceCommandPort.updateDraft(
                     id,
                     principal.userId(),
                     body.intakeAnswers() != null ? body.intakeAnswers().toString() : null,

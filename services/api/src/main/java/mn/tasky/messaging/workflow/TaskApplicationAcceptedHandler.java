@@ -1,42 +1,34 @@
 package mn.tasky.messaging.workflow;
 
 import java.util.Map;
-import mn.tasky.analytics.application.AnalyticsService;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.automation.event.AutomationEventEnvelope;
 import mn.tasky.automation.event.AutomationEventTypes;
 import mn.tasky.automation.worker.AbstractEventHandler;
-import mn.tasky.messaging.application.MessagingService;
-import mn.tasky.notification.application.NotificationService;
+import mn.tasky.messaging.publicapi.MessagingCommandPort;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-/**
- * Handles the TASK_APPLICATION_ACCEPTED event aftermath:
- * starts a conversation between customer and tasker, sends a push notification,
- * and tracks analytics events.
- *
- * Migrated from {@code DomainEventOutboxProcessor.handleTaskApplicationAccepted}.
- * Idempotent: duplicate event delivery will not duplicate side effects.
- */
 @Component
 @ConditionalOnProperty(name = "tasky.automation.broker.enabled", havingValue = "true")
 public class TaskApplicationAcceptedHandler extends AbstractEventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(TaskApplicationAcceptedHandler.class);
 
-    private final MessagingService messagingService;
-    private final NotificationService notificationService;
-    private final AnalyticsService analyticsService;
+    private final MessagingCommandPort messagingCommandPort;
+    private final NotificationCommandPort notificationCommandPort;
+    private final AnalyticsCommandPort analyticsCommandPort;
 
     public TaskApplicationAcceptedHandler(
-            MessagingService messagingService,
-            NotificationService notificationService,
-            AnalyticsService analyticsService) {
-        this.messagingService = messagingService;
-        this.notificationService = notificationService;
-        this.analyticsService = analyticsService;
+            MessagingCommandPort messagingCommandPort,
+            NotificationCommandPort notificationCommandPort,
+            AnalyticsCommandPort analyticsCommandPort) {
+        this.messagingCommandPort = messagingCommandPort;
+        this.notificationCommandPort = notificationCommandPort;
+        this.analyticsCommandPort = analyticsCommandPort;
     }
 
     @Override
@@ -58,19 +50,19 @@ public class TaskApplicationAcceptedHandler extends AbstractEventHandler {
         String taskerId = requiredString(payload, "tasker_id");
         String applicationId = requiredString(payload, "application_id");
 
-        String conversationId = messagingService.startConversation(taskId, taskerId, customerId);
-        notificationService.sendPushWithEventKey(
+        String conversationId = messagingCommandPort.startConversation(taskId, taskerId, customerId);
+        notificationCommandPort.sendPushWithEventKey(
                 taskerId, "You are hired!", "Your application has been accepted.", "HIRED", "HIRED_" + bookingId);
 
-        analyticsService.track(
-                AnalyticsService.EVENT_TASKER_ACCEPTED,
+        analyticsCommandPort.track(
+                "TASKER_ACCEPTED",
                 customerId,
                 withObservability(
                         payload,
                         Map.of(
-                                AnalyticsService.PROPERTY_TASK_ID,
+                                "task_id",
                                 taskId,
-                                AnalyticsService.PROPERTY_BOOKING_ID,
+                                "booking_id",
                                 bookingId,
                                 "tasker_id",
                                 taskerId,
@@ -78,15 +70,15 @@ public class TaskApplicationAcceptedHandler extends AbstractEventHandler {
                                 applicationId,
                                 "conversation_id",
                                 conversationId)));
-        analyticsService.track(
-                AnalyticsService.EVENT_BOOKING_CONFIRMED,
+        analyticsCommandPort.track(
+                "BOOKING_CONFIRMED",
                 customerId,
                 withObservability(
                         payload,
                         Map.of(
-                                AnalyticsService.PROPERTY_TASK_ID,
+                                "task_id",
                                 taskId,
-                                AnalyticsService.PROPERTY_BOOKING_ID,
+                                "booking_id",
                                 bookingId,
                                 "tasker_id",
                                 taskerId,

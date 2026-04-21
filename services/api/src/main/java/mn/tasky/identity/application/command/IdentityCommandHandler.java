@@ -2,7 +2,9 @@ package mn.tasky.identity.application.command;
 
 import java.util.Optional;
 import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.application.BadgeEvaluationService;
 import mn.tasky.auth.application.ModerationService;
+import mn.tasky.auth.application.ReliabilityScoreService;
 import mn.tasky.auth.application.UserProfileService;
 import mn.tasky.auth.application.VerificationService;
 import mn.tasky.auth.dto.AuthSession;
@@ -23,16 +25,22 @@ public class IdentityCommandHandler implements IdentityCommandPort {
     private final UserProfileService userProfileService;
     private final VerificationService verificationService;
     private final ModerationService moderationService;
+    private final ReliabilityScoreService reliabilityScoreService;
+    private final BadgeEvaluationService badgeEvaluationService;
 
     public IdentityCommandHandler(
             AuthService authService,
             UserProfileService userProfileService,
             VerificationService verificationService,
-            ModerationService moderationService) {
+            ModerationService moderationService,
+            ReliabilityScoreService reliabilityScoreService,
+            BadgeEvaluationService badgeEvaluationService) {
         this.authService = authService;
         this.userProfileService = userProfileService;
         this.verificationService = verificationService;
         this.moderationService = moderationService;
+        this.reliabilityScoreService = reliabilityScoreService;
+        this.badgeEvaluationService = badgeEvaluationService;
     }
 
     @Override
@@ -126,5 +134,15 @@ public class IdentityCommandHandler implements IdentityCommandPort {
     @Override
     public void requestAccountDeletion(String userId) {
         moderationService.requestAccountDeletion(userId);
+    }
+
+    @Override
+    public void recomputeReliabilityScore(String taskerId) {
+        reliabilityScoreService.recompute(taskerId);
+    }
+
+    @Override
+    public void evaluateBadges(String taskerId) {
+        badgeEvaluationService.evaluate(taskerId);
     }
 }

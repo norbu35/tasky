@@ -8,12 +8,10 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import mn.tasky.api.generated.ReviewsApi;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.security.JwtPrincipal;
-import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.review.dto.ReviewRequest;
 import mn.tasky.runtime.publicapi.composition.ReviewPublicCompositionService;
 import mn.tasky.runtime.publicapi.composition.ReviewSubmissionOutcome;
@@ -40,15 +38,12 @@ public class ReviewController implements ReviewsApi {
 
     private final ReviewPublicCompositionService reviewPublicCompositionService;
     private final ReviewSubmissionService reviewSubmissionService;
-    private final ReviewEnforcementService reviewEnforcementService;
 
     public ReviewController(
             ReviewPublicCompositionService reviewPublicCompositionService,
-            ReviewSubmissionService reviewSubmissionService,
-            ReviewEnforcementService reviewEnforcementService) {
+            ReviewSubmissionService reviewSubmissionService) {
         this.reviewPublicCompositionService = reviewPublicCompositionService;
         this.reviewSubmissionService = reviewSubmissionService;
-        this.reviewEnforcementService = reviewEnforcementService;
     }
 
     @Override
@@ -103,22 +98,7 @@ public class ReviewController implements ReviewsApi {
     @GetMapping("/me/pending-reviews")
     public ResponseEntity<mn.tasky.api.generated.model.GetMyPendingReviews200Response> getMyPendingReviews() {
         JwtPrincipal principal = getPrincipal();
-        var cases = reviewEnforcementService.getOpenCases(principal.userId());
-        var data = cases.stream()
-                .map(c -> {
-                    var map = new java.util.LinkedHashMap<String, Object>();
-                    map.put("id", c.id());
-                    map.put("booking_id", c.bookingId());
-                    map.put("user_id", c.userId());
-                    map.put("status", c.status());
-                    map.put("triggered_at", c.triggeredAt().toString());
-                    map.put(
-                            "resolved_at",
-                            c.resolvedAt() != null ? c.resolvedAt().toString() : null);
-                    map.put("investigation_active", c.investigationActive());
-                    return map;
-                })
-                .collect(Collectors.toList());
+        var data = reviewPublicCompositionService.getPendingReviewCases(principal.userId());
         return (ResponseEntity<mn.tasky.api.generated.model.GetMyPendingReviews200Response>)
                 (ResponseEntity<?>) ResponseEntity.ok(Map.of("data", data));
     }

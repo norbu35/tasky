@@ -2,6 +2,16 @@
 
 Use this file when the change touches `services/api/**`.
 
+## Authority Order
+
+If this file or `api.md` prose conflicts with tests, migrations, or runtime code:
+
+1. **ArchUnit tests** win over prose.
+2. **Flyway migrations** win over table descriptions.
+3. **Runtime code** wins over stale documentation.
+
+File a doc-fix issue when you find a conflict.
+
 ## Read Next
 
 1. `services/api/AGENTS.md` (this file)

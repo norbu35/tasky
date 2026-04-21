@@ -21,4 +21,9 @@ public class WalletCommandHandler implements WalletCommandPort {
     public void processPayout(String actorUserId, String payoutId, String reason) {
         walletService.processPayout(actorUserId, payoutId, reason);
     }
+
+    @Override
+    public void creditTaskCompletion(String taskerId, String bookingId, int price, int platformFeeBasisPoints) {
+        walletService.creditTaskCompletion(taskerId, bookingId, price, platformFeeBasisPoints);
+    }
 }

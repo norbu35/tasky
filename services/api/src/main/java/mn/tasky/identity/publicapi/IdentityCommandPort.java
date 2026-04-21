@@ -53,4 +53,14 @@ public interface IdentityCommandPort {
      * Marks user as DELETED and records audit event.
      */
     void requestAccountDeletion(String userId);
+
+    /**
+     * Recompute tasker reliability score based on recent signals.
+     */
+    void recomputeReliabilityScore(String taskerId);
+
+    /**
+     * Evaluate and update tasker badge status based on performance thresholds.
+     */
+    void evaluateBadges(String taskerId);
 }

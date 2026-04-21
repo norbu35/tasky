@@ -1,14 +1,34 @@
 # Tasky Architecture — Backend (`services/api`)
 
-Status: canonical architecture contract for `services/api`.
+Status: architecture reference for `services/api`. Sections are labeled with their truth status (see below).
 
 Read after: repo `AGENTS.md`, `services/api/AGENTS.md`, then this file (`api.md`). Use `common.md` and `docs/openapi/AGENTS.md` only for cross-cutting or contract-change context.
 
+> ⚠️ **Drift warning (active)**: This document is being reconciled with the codebase.
+> Some sections previously described a target architecture rather than current implementation.
+> Each major section is now labeled with its truth status. Treat labels as authoritative;
+> unmarked subsections are current state.
+
+## Authority Order
+
+When this document conflicts with other sources, precedence is:
+
+1. **ArchUnit tests and build-enforced rules** — `services/api/src/test/java/mn/tasky/architecture/`
+2. **Flyway migrations** — `services/api/src/main/resources/db/migration/` (schema truth)
+3. **Runtime code and package structure** — actual Java source
+4. **This document** — prose descriptions derived from the above
+
+If prose says X but code/tests say Y, the code/tests win. File a doc-fix issue.
+
 ## 1. Scope
+
+> **Truth status: current state** — verified against ArchUnit tests and runtime code.
 
 This document owns backend-specific architecture: module layout, request-path rules, data schemas and flows, API contracts, security, runtime concerns, and testing. Cross-cutting system context, shared infrastructure, NFR baselines, and dev workflow live in `common.md`. Frontend parity contracts live in `shared-frontend.md`.
 
 ## 1.1 Foundational Design Patterns
+
+> **Truth status: current state** — enforced by ArchUnit tests.
 
 The backend enforces a small set of architectural patterns that are **test-locked by ArchUnit** (see
 `services/api/src/test/java/mn/tasky/architecture/`). Every new module, controller, or service must comply.
@@ -198,6 +218,8 @@ mn.tasky.<module>/
 
 ## 2. Module Layout (`mn.tasky.*` Packages)
 
+> **Truth status: current state** — reflects actual package structure. Some aggregate boundaries (`runtime`, `kernel`, `automation`, `projection`) are not yet listed here; a full expansion is planned (P2 workstream F).
+
 The backend is a single deployable unit (`tasky-server`) organized by business domains. Cross-domain communication uses internal Java method calls — no network hops between domains.
 
 | Domain                  | Packages                                   | Responsibility                                                                               |
@@ -210,6 +232,8 @@ The backend is a single deployable unit (`tasky-server`) organized by business d
 | **common**              | `common`                                   | Cross-cutting: security filters, pagination, error handling, crypto, outbox, health, storage |
 
 ## 3. Request-Path Architecture
+
+> **Truth status: current state** — enforced by `AudienceCompositionBoundaryTest`. Note: a few controllers (TaskController, OtpController, ReviewController, BookingIntentController) have residual direct application-service dependencies that are being cleaned up (P1 workstream C).
 
 Every active backend request path uses one of two allowed shapes:
 
@@ -235,6 +259,11 @@ Every active backend request path uses one of two allowed shapes:
 Any addition to the exception set requires deliberate justification in code review.
 
 ## 4. Data Architecture
+
+> **Truth status: mixed** — Schema descriptions are being reconciled against Flyway migrations (P1 workstream E).
+> Tables marked _(implemented)_ are verified against `V1__initial_schema.sql` and DAO layer.
+> Tables marked _(planned)_ or _(Phase N+)_ have no current migration — treat as target design.
+> For authoritative column definitions, consult the migrations directly.
 
 ### 4.1 Core Schema (ERD)
 
@@ -264,7 +293,7 @@ Any addition to the exception set requires deliberate justification in code revi
   `relevance_score`, `recommended`, `selected_at`, `respond_by_at`, `created_at`
 - `instant_match_offers` _(Phase 3+ — not yet created)_: `id`, `task_id`, `tasker_id`, `offer_rank`, `expires_at`, `status`
   (PENDING, ACCEPTED, DECLINED, EXPIRED), `created_at`
-- `bookings`: `id`, `task_id`, `tasker_id`, `status` (ASSIGNED, COMPLETED, CANCELLED, NO_SHOW), `price`,
+- `bookings`: `id`, `task_id`, `tasker_id`, `status` (ASSIGNED, PAID, COMPLETED, CANCELLED, NO_SHOW), `price`,
   `confirmed_scheduled_at`, `liability_disclaimer_accepted`, `liability_disclaimer_accepted_at`, `settlement_mode`
   (DIRECT, LEAD_UNLOCK, ESCROW), `late_cancel_incident`, `created_at`
 - `booking_schedule_events`: `id`, `booking_id`, `actor_user_id`, `event_type` (REQUESTED, ACCEPTED, DECLINED, EXPIRED),
@@ -280,6 +309,10 @@ Any addition to the exception set requires deliberate justification in code revi
 
 #### Wallet Module And Deferred Monetization Targets
 
+> **Truth status: mixed** — `wallets`, `ledger_entries`, and `payout_requests` are implemented (verified against migrations).
+> Column descriptions below may still drift from the actual schema; consult `V1__initial_schema.sql` for authoritative definitions.
+> All other tables in this section are target-model placeholders with no current migration.
+
 Current schema evidence in this sweep confirms the escrow-path tables `wallets`, `ledger_entries`, and
 `payout_requests`. The credit, subscription, and B2B entries below are target-model placeholders for later phases;
 they are not all present in current migrations/runtime and must not be read as launch-live schema.
@@ -291,12 +324,12 @@ they are not all present in current migrations/runtime and must not be read as l
 - `credit_packs` _(planned Phase 2 target model)_: `id`, `name`, `credit_count`, `price_mnt`, `is_active`
 - `lead_unlock_prices` _(planned Phase 2 target model)_: `id`, `category_id`, `district_id`, `credits_required`,
   `effective_from`, `effective_to`, `updated_by`
-- `wallets` _(implemented-gated Phase 3 path)_: `user_id (PK)`, `available_balance_mnt`, `pending_balance_mnt`,
+- `wallets` _(implemented-gated Phase 3 path)_: `user_id (PK)`, `balance_mnt`, `held_balance_mnt`,
   `updated_at`
-- `ledger_entries` _(implemented-gated Phase 3 path)_: `id`, `wallet_id`, `amount`, `type`
-  (DEPOSIT, FEE, PAYOUT, REFUND), `reference_id`, `created_at`
-- `payout_requests` _(implemented-gated Phase 3 path)_: `id`, `user_id`, `amount`, `bank_account`, `status`,
-  `requested_at`, `processed_at`, `processed_by`
+- `ledger_entries` _(implemented-gated Phase 3 path)_: `id`, `user_id`, `amount`, `type`
+  (DEPOSIT, FEE, HOLD, RELEASE, CONFISCATE, PAYOUT, REFUND), `reference_id`, `description`, `created_at`
+- `payout_requests` _(implemented-gated Phase 3 path)_: `id`, `user_id`, `amount`, `status`
+  (PENDING, PROCESSED, REJECTED), `created_at`, `processed_at`
 - `tasker_subscriptions` _(planned Phase 3 target model)_: `id`, `tasker_id`, `status`, `started_at`, `expires_at`,
   `plan_code`
 - `business_accounts` _(planned future B2B target model; no current migration/runtime evidence in this sweep)_: `id`,
@@ -312,7 +345,7 @@ they are not all present in current migrations/runtime and must not be read as l
 
 - `conversations`: `id`, `task_id (FK)`, `customer_id (FK)`, `tasker_id (FK)`, `created_at`
 - `messages`: `id`, `conversation_id (FK)`, `sender_id (FK)`, `content`, `phone_number_flagged`, `content_hash`,
-  `created_at`
+  `sent_at`
 - `device_tokens`: `user_id (FK)`, `token`, `platform` CHECK (IOS, ANDROID, WEB), `created_at`
 - `notification_log`: `id`, `user_id`, `type`, `channel` (PUSH, SMS), `status`, `event_key`, `provider_message_id`,
   `error_code`, `created_at`
@@ -416,6 +449,8 @@ they are not all present in current migrations/runtime and must not be read as l
     - System tracks cumulative tasker engagement duration and emits legal-review alerts before 2-year threshold.
 
 ## 5. API Design
+
+> **Truth status: current state** — aligned with OpenAPI spec and runtime enforcement.
 
 ### 5.1 Standards
 
@@ -534,7 +569,8 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
   - No-show policy is deterministic: reminder at `+10m`, no-show flag eligibility at `+15m`, dual inactivity check on
     trailing 30 minutes, and accepted reschedule precedence over prior schedule.
   - Status transitions must enforce `OPEN -> ASSIGNED -> COMPLETED|CANCELLED|NO_SHOW` for tasks and
-    `ASSIGNED -> COMPLETED|CANCELLED|NO_SHOW` for bookings.
+    `ASSIGNED -> PAID -> COMPLETED|CANCELLED|NO_SHOW` for bookings (PAID is escrow-phase intermediate;
+    in direct-settlement mode bookings go ASSIGNED -> COMPLETED|CANCELLED|NO_SHOW directly).
 - **Monetization Contract**:
   - Credit debits are valid only for `LEAD_UNLOCK_ACCEPTED` events.
   - Application cap defaults to 10 and is config-driven per category.
@@ -575,8 +611,19 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 ### 6.3 Async Workers & Outbox Consumers
 
-- **Mechanism**: Spring `@Async` + `ApplicationEventPublisher` for decoupling.
-- **Persistence**: For critical tasks (e.g., notifications, payouts), the `domain_outbox_events` table provides at-least-once delivery. Events are published to RabbitMQ via an outbox relay poller, then handled by domain-owned workflow consumers.
+> **Truth status: current state** — verified against `DomainEventOutboxService`, `EventRelayPublisher`, `EventWorkerConsumer`.
+
+- **Mechanism**: `DomainEventOutboxService` persists events to `domain_outbox_events` and, when
+  `tasky.automation.broker.enabled=true`, directly publishes to RabbitMQ via `EventRelayPublisher`.
+  The old `@Async` + `ApplicationEventPublisher` + polling relay mechanism is **retired**.
+- **Persistence**: The outbox row is written first; broker publish is attempted synchronously afterward.
+  Broker failure does **not** roll back the domain transaction because the row already exists.
+  Stale/unprocessed rows can be replayed via `OutboxReplayController`.
+- **Consumption**: `EventWorkerConsumer` (RabbitMQ listener, `automation.worker` queue) dispatches to registered
+  `EventHandler` implementations by event type, with retry routing (x-death headers, configurable `max-retries`)
+  and DLQ fallback.
+- **At-least-once semantics**: Idempotency is enforced at the handler level via `WorkflowIdempotencyGuard`
+  (`kernel.idempotency`), not by deduplication at the broker.
 
 ### 6.4 Feature Toggles (Runtime Enforcement Status)
 
@@ -588,6 +635,8 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 ## 7. Backend Testing
 
+> **Truth status: current state** — matches `tests/registry.yaml` and build configuration.
+
 - Domain-unit tests: no `@SpringBootTest`, `@Autowired`, or `@MockBean`.
 - Mock only external boundaries: `FacebookGraphClient`, `FirebasePushProvider`, `S3StorageService`.
 - `@DisplayName` must be `"SCN-XXX-NNN: <exact title from scenario file>"`.
@@ -598,6 +647,8 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 - PIT survived mutation: fix the assertion, not production code; if no scenario covers it, report the gap.
 
 ## 8. Verification Commands
+
+> **Truth status: current state** — matches `build.gradle.kts` task definitions.
 
 | Gate       | Command                    | Blocks         |
 | ---------- | -------------------------- | -------------- |

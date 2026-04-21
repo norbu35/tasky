@@ -21,4 +21,9 @@ public interface TrustCommandPort {
             String userId, String bookingId, String reason, List<DisputeRequest.EvidenceItem> evidenceItems);
 
     DisputeResolutionResult resolveDispute(String adminId, String disputeId, String outcome, String resolutionNotes);
+
+    /**
+     * Create review enforcement cases for a completed booking's participants.
+     */
+    void createReviewEnforcementCases(String bookingId, String customerId, String taskerId);
 }

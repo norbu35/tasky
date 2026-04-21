@@ -45,4 +45,9 @@ public class NotificationCommandHandler implements NotificationCommandPort {
             serviceAreaDao.insertBySlug(userId, slug);
         }
     }
+
+    @Override
+    public void sendPushWithEventKey(String userId, String title, String body, String type, String eventKey) {
+        notificationService.sendPushWithEventKey(userId, title, body, type, eventKey);
+    }
 }

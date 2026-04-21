@@ -39,13 +39,20 @@ Operations in `IdempotencyOperations`:
 
 ## Outbox
 
-- `DomainEventOutboxService` persists events.
-- `DomainEventOutboxProcessor` scheduled poller dispatches:
-    - `TASK_APPLICATION_ACCEPTED`
-    - `PAYMENT_CONFIRMED`
-    - `BOOKING_COMPLETED`
+- `DomainEventOutboxService` persists events to `domain_outbox_events` and, when
+  `tasky.automation.broker.enabled=true`, directly publishes to RabbitMQ via
+  `EventRelayPublisher`. The old `DomainEventOutboxProcessor` polling relay is
+  **retired** — broker publish now happens synchronously at write time.
+- `EventWorkerConsumer` (RabbitMQ listener) dispatches to registered `EventHandler`
+  implementations by event type, with retry routing via x-death headers and DLQ fallback.
+- Domain workflow handlers handle:
+  - `TASK_APPLICATION_ACCEPTED`
+  - `PAYMENT_CONFIRMED`
+  - `BOOKING_COMPLETED`
 
-Processor side effects include messaging bootstrap, notifications, analytics tracking, and wallet crediting.
+Side effects include messaging bootstrap, notifications, analytics tracking, and wallet
+crediting. Broker failure does **not** roll back the domain transaction because the outbox
+row is already persisted.
 
 ## Security and Crypto
 

@@ -1,57 +1,45 @@
 package mn.tasky.wallet.workflow;
 
 import java.util.Map;
-import mn.tasky.analytics.application.AnalyticsService;
-import mn.tasky.auth.application.BadgeEvaluationService;
-import mn.tasky.auth.application.ReliabilityScoreService;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.automation.event.AutomationEventEnvelope;
 import mn.tasky.automation.event.AutomationEventTypes;
 import mn.tasky.automation.worker.AbstractEventHandler;
-import mn.tasky.notification.application.NotificationService;
-import mn.tasky.review.application.ReviewEnforcementService;
-import mn.tasky.wallet.application.WalletService;
+import mn.tasky.identity.publicapi.IdentityCommandPort;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
+import mn.tasky.trust.publicapi.TrustCommandPort;
+import mn.tasky.wallet.publicapi.WalletCommandPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-/**
- * Handles the BOOKING_COMPLETED event aftermath:
- * credits the tasker's wallet, sends push notification, tracks analytics,
- * creates review enforcement cases, recomputes reliability score, and evaluates badges.
- *
- * Migrated from {@code DomainEventOutboxProcessor.handleBookingCompleted}.
- * Idempotent: duplicate event delivery will not duplicate wallet credits or other side effects.
- */
 @Component
 @ConditionalOnProperty(name = "tasky.automation.broker.enabled", havingValue = "true")
 public class BookingCompletedHandler extends AbstractEventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(BookingCompletedHandler.class);
 
-    private final WalletService walletService;
-    private final NotificationService notificationService;
-    private final AnalyticsService analyticsService;
-    private final ReviewEnforcementService reviewEnforcementService;
-    private final ReliabilityScoreService reliabilityScoreService;
-    private final BadgeEvaluationService badgeEvaluationService;
+    private final WalletCommandPort walletCommandPort;
+    private final NotificationCommandPort notificationCommandPort;
+    private final AnalyticsCommandPort analyticsCommandPort;
+    private final TrustCommandPort trustCommandPort;
+    private final IdentityCommandPort identityCommandPort;
     private final int platformFeeBasisPoints;
 
     public BookingCompletedHandler(
-            WalletService walletService,
-            NotificationService notificationService,
-            AnalyticsService analyticsService,
-            ReviewEnforcementService reviewEnforcementService,
-            ReliabilityScoreService reliabilityScoreService,
-            BadgeEvaluationService badgeEvaluationService,
+            WalletCommandPort walletCommandPort,
+            NotificationCommandPort notificationCommandPort,
+            AnalyticsCommandPort analyticsCommandPort,
+            TrustCommandPort trustCommandPort,
+            IdentityCommandPort identityCommandPort,
             @Value("${tasky.wallet.platform-fee-basis-points:1500}") int platformFeeBasisPoints) {
-        this.walletService = walletService;
-        this.notificationService = notificationService;
-        this.analyticsService = analyticsService;
-        this.reviewEnforcementService = reviewEnforcementService;
-        this.reliabilityScoreService = reliabilityScoreService;
-        this.badgeEvaluationService = badgeEvaluationService;
+        this.walletCommandPort = walletCommandPort;
+        this.notificationCommandPort = notificationCommandPort;
+        this.analyticsCommandPort = analyticsCommandPort;
+        this.trustCommandPort = trustCommandPort;
+        this.identityCommandPort = identityCommandPort;
         this.platformFeeBasisPoints = platformFeeBasisPoints;
     }
 
@@ -74,30 +62,22 @@ public class BookingCompletedHandler extends AbstractEventHandler {
         String taskerId = requiredString(payload, "tasker_id");
         int price = requiredInt(payload);
 
-        walletService.creditTaskCompletion(taskerId, bookingId, price, platformFeeBasisPoints);
-        notificationService.sendPushWithEventKey(
+        walletCommandPort.creditTaskCompletion(taskerId, bookingId, price, platformFeeBasisPoints);
+        notificationCommandPort.sendPushWithEventKey(
                 taskerId,
                 "Job Complete",
                 "The customer has marked the job as complete.",
                 "JOB_COMPLETED",
                 "BOOKING_COMPLETED_" + bookingId);
 
-        analyticsService.track(
-                AnalyticsService.EVENT_BOOKING_COMPLETED,
+        analyticsCommandPort.track(
+                "BOOKING_COMPLETED",
                 customerId,
-                withObservability(
-                        payload,
-                        Map.of(
-                                AnalyticsService.PROPERTY_BOOKING_ID,
-                                bookingId,
-                                AnalyticsService.PROPERTY_TASK_ID,
-                                taskId,
-                                "tasker_id",
-                                taskerId)));
+                withObservability(payload, Map.of("booking_id", bookingId, "task_id", taskId, "tasker_id", taskerId)));
 
-        reviewEnforcementService.createCasesForBooking(bookingId, customerId, taskerId);
-        reliabilityScoreService.recompute(taskerId);
-        badgeEvaluationService.evaluate(taskerId);
+        trustCommandPort.createReviewEnforcementCases(bookingId, customerId, taskerId);
+        identityCommandPort.recomputeReliabilityScore(taskerId);
+        identityCommandPort.evaluateBadges(taskerId);
 
         tryClaimEventComplete(envelope);
 

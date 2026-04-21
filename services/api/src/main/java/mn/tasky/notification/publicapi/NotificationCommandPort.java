@@ -28,4 +28,10 @@ public interface NotificationCommandPort {
      * Replace service areas for a tasker.
      */
     void setServiceAreas(String userId, List<String> districtSlugs);
+
+    /**
+     * Send a push notification with an event deduplication key.
+     * If the event key was already processed, the notification is silently skipped.
+     */
+    void sendPushWithEventKey(String userId, String title, String body, String type, String eventKey);
 }

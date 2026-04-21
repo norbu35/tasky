@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import mn.tasky.task.dto.RecentLocation;
 import mn.tasky.task.dto.TaskApplicationsListResult;
+import mn.tasky.task.dto.TaskDraft;
 import mn.tasky.task.dto.TaskPage;
 import mn.tasky.task.dto.TaskState;
 
@@ -23,4 +24,6 @@ public interface MarketplaceQueryPort {
     List<String> buildPhotoAccessUrls(List<String> storageKeys, String customerId);
 
     Optional<String> buildOwnedPhotoAccessUrl(String storageKey, String customerId);
+
+    Optional<TaskDraft> getDraft(String draftId, String userId);
 }

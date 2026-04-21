@@ -5,6 +5,7 @@ import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.marketplace.publicapi.MarketplaceCommandPort;
 import mn.tasky.task.application.TaskApplicationService;
 import mn.tasky.task.application.TaskCreationService;
+import mn.tasky.task.application.TaskDraftService;
 import mn.tasky.task.application.TaskLifecycleService;
 import mn.tasky.task.application.TaskMutationService;
 import mn.tasky.task.application.TaskPhotoService;
@@ -13,6 +14,7 @@ import mn.tasky.task.dto.TaskAcceptResult;
 import mn.tasky.task.dto.TaskApplyResult;
 import mn.tasky.task.dto.TaskCancelResult;
 import mn.tasky.task.dto.TaskCreateResult;
+import mn.tasky.task.dto.TaskDraft;
 import mn.tasky.task.dto.TaskUpdateResult;
 import mn.tasky.task.dto.UpdateTask;
 import org.springframework.stereotype.Service;
@@ -24,18 +26,21 @@ public class MarketplaceCommandHandler implements MarketplaceCommandPort {
     private final TaskLifecycleService taskLifecycleService;
     private final TaskApplicationService taskApplicationService;
     private final TaskPhotoService taskPhotoService;
+    private final TaskDraftService taskDraftService;
 
     public MarketplaceCommandHandler(
             TaskCreationService taskCreationService,
             TaskMutationService taskMutationService,
             TaskLifecycleService taskLifecycleService,
             TaskApplicationService taskApplicationService,
-            TaskPhotoService taskPhotoService) {
+            TaskPhotoService taskPhotoService,
+            TaskDraftService taskDraftService) {
         this.taskCreationService = taskCreationService;
         this.taskMutationService = taskMutationService;
         this.taskLifecycleService = taskLifecycleService;
         this.taskApplicationService = taskApplicationService;
         this.taskPhotoService = taskPhotoService;
+        this.taskDraftService = taskDraftService;
     }
 
     @Override
@@ -72,5 +77,23 @@ public class MarketplaceCommandHandler implements MarketplaceCommandPort {
     @Override
     public void updateTaskStatus(String taskId, String status) {
         taskLifecycleService.updateTaskStatus(taskId, status);
+    }
+
+    @Override
+    public TaskDraft createDraft(String customerId, String categoryId) {
+        return taskDraftService.createDraft(customerId, categoryId);
+    }
+
+    @Override
+    public TaskDraft updateDraft(
+            String draftId,
+            String userId,
+            String intakeAnswersJson,
+            String summaryDraft,
+            Double locationLat,
+            Double locationLng,
+            String locationText) {
+        return taskDraftService.updateDraft(
+                draftId, userId, intakeAnswersJson, summaryDraft, locationLat, locationLng, locationText);
     }
 }

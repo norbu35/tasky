@@ -12,57 +12,48 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 import mn.tasky.analytics.application.AnalyticsService;
+import mn.tasky.analytics.application.command.AnalyticsCommandHandler;
 import mn.tasky.analytics.dao.AnalyticsEventDao;
-import mn.tasky.auth.application.BadgeEvaluationService;
-import mn.tasky.auth.application.ReliabilityScoreService;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.automation.event.AutomationEventEnvelope;
-import mn.tasky.messaging.application.MessagingService;
+import mn.tasky.identity.publicapi.IdentityCommandPort;
+import mn.tasky.messaging.publicapi.MessagingCommandPort;
 import mn.tasky.messaging.workflow.TaskApplicationAcceptedHandler;
-import mn.tasky.notification.application.NotificationService;
-import mn.tasky.review.application.ReviewEnforcementService;
-import mn.tasky.wallet.application.WalletService;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
+import mn.tasky.trust.publicapi.TrustCommandPort;
+import mn.tasky.wallet.publicapi.WalletCommandPort;
 import mn.tasky.wallet.workflow.BookingCompletedHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-/**
- * Domain-unit tests for analytics event emission scenarios.
- * Covers: SCN-ANALYTICS-001, SCN-ANALYTICS-002, SCN-ANALYTICS-003.
- *
- * <p>SCN-ANALYTICS-001 verifies TASK_POSTED events via AnalyticsService directly.
- * SCN-ANALYTICS-002 verifies BOOKING_CONFIRMED events emitted by the
- * TaskApplicationAcceptedHandler when processing TASK_APPLICATION_ACCEPTED events.
- * SCN-ANALYTICS-003 verifies BOOKING_COMPLETED events emitted by the
- * BookingCompletedHandler.
- */
 class AnalyticsScenarioTests {
 
     private AnalyticsEventDao analyticsEventDao;
     private AnalyticsService analyticsService;
+    private AnalyticsCommandPort analyticsCommandPort;
     private ObjectMapper objectMapper;
 
     // Workflow handler dependencies
-    private MessagingService messagingService;
-    private NotificationService notificationService;
-    private WalletService walletService;
-    private ReviewEnforcementService reviewEnforcementService;
-    private ReliabilityScoreService reliabilityScoreService;
-    private BadgeEvaluationService badgeEvaluationService;
+    private MessagingCommandPort messagingCommandPort;
+    private NotificationCommandPort notificationCommandPort;
+    private WalletCommandPort walletCommandPort;
+    private TrustCommandPort trustCommandPort;
+    private IdentityCommandPort identityCommandPort;
 
     @BeforeEach
     void setUp() {
         analyticsEventDao = mock(AnalyticsEventDao.class);
         objectMapper = new ObjectMapper();
         analyticsService = new AnalyticsService(analyticsEventDao, objectMapper);
+        analyticsCommandPort = new AnalyticsCommandHandler(analyticsService);
 
-        messagingService = mock(MessagingService.class);
-        notificationService = mock(NotificationService.class);
-        walletService = mock(WalletService.class);
-        reviewEnforcementService = mock(ReviewEnforcementService.class);
-        reliabilityScoreService = mock(ReliabilityScoreService.class);
-        badgeEvaluationService = mock(BadgeEvaluationService.class);
+        messagingCommandPort = mock(MessagingCommandPort.class);
+        notificationCommandPort = mock(NotificationCommandPort.class);
+        walletCommandPort = mock(WalletCommandPort.class);
+        trustCommandPort = mock(TrustCommandPort.class);
+        identityCommandPort = mock(IdentityCommandPort.class);
     }
 
     // ── SCN-ANALYTICS-001 ───────────────────────────────────────────────────
@@ -100,11 +91,11 @@ class AnalyticsScenarioTests {
     @Test
     @DisplayName("SCN-ANALYTICS-002: Booking confirmed event is emitted when an application is accepted")
     void bookingConfirmedEventEmittedOnApplicationAccepted() {
-        org.mockito.Mockito.when(messagingService.startConversation(anyString(), anyString(), anyString()))
+        org.mockito.Mockito.when(messagingCommandPort.startConversation(anyString(), anyString(), anyString()))
                 .thenReturn("conv-123");
 
         TaskApplicationAcceptedHandler handler =
-                new TaskApplicationAcceptedHandler(messagingService, notificationService, analyticsService);
+                new TaskApplicationAcceptedHandler(messagingCommandPort, notificationCommandPort, analyticsCommandPort);
 
         AutomationEventEnvelope envelope = AutomationEventEnvelope.builder()
                 .eventId(UUID.randomUUID().toString())
@@ -148,12 +139,11 @@ class AnalyticsScenarioTests {
     @DisplayName("SCN-ANALYTICS-003: Booking completed event is emitted when a booking transitions to COMPLETED")
     void bookingCompletedEventEmittedOnTransition() {
         BookingCompletedHandler handler = new BookingCompletedHandler(
-                walletService,
-                notificationService,
-                analyticsService,
-                reviewEnforcementService,
-                reliabilityScoreService,
-                badgeEvaluationService,
+                walletCommandPort,
+                notificationCommandPort,
+                analyticsCommandPort,
+                trustCommandPort,
+                identityCommandPort,
                 1500);
 
         AutomationEventEnvelope envelope = AutomationEventEnvelope.builder()
