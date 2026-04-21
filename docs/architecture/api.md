@@ -477,11 +477,12 @@ Standardized error response:
 
 - **Authentication**: `Authorization: Bearer <JWT>` header.
   - Tokens are signed HS256, carry `iss: tasky-server` and `aud: tasky-api`, and include a `jti` (UUID) for revocation.
-  - Access token TTL: 15 minutes. Refresh token TTL: configurable (default 30 days).
+  - Access token TTL: 15 minutes. Refresh token TTL: configurable (current default is **14 days**).
   - `JwtTokenService` validates signature, expiry, issuer, audience, and token type on every parse.
-- **Token Revocation**: `TokenBlacklistService` holds an in-memory Caffeine cache of revoked `jti` values with a 15-minute TTL (matching access token lifetime). Inject and call `TokenBlacklistService.revoke(jti)` for explicit revocation. Does not survive restarts — use user ban for persistent revocation.
+- **Token Revocation**: `TokenBlacklistService` holds an in-memory Caffeine cache of revoked `jti` values with a 15-minute TTL (matching access token lifetime). The logout endpoint (`POST /api/v1/auth/logout`) revokes the current access token's JTI. The blacklist is also consulted on STOMP `CONNECT`. The blacklist is in-memory and does not survive restarts — user ban provides persistent revocation.
 - **Authorization**:
   - **Filter-level role enforcement**: `SecurityConfig` enforces roles at the Spring Security filter chain for all business endpoint groups (task drafts → CUSTOMER; verification/wallet/subscriptions/business → TASKER; bookings/disputes/reviews/messaging → CUSTOMER|TASKER; payments/credits → CUSTOMER). Service-layer checks provide a second enforcement layer.
+  - **Terminal account-status enforcement**: `JwtAuthenticationFilter` rejects `BANNED`, `SUSPENDED`, and `DELETED` users on every authenticated HTTP request. The same terminal-status set is enforced on STOMP `CONNECT`, on refresh-token rotation, and at all auth entry points (Facebook login, OTP verify, dev login).
   - **Banned User Check**: `JwtAuthenticationFilter` checks `currentUserStatus()` (Caffeine-cached, 60 s TTL) on every authenticated request. Ban enforcement latency is at most 60 seconds. Cache can be flushed by restarting the application for immediate enforcement.
   - **Contact/Address Reveal Rules**:
     - Tasker phone is never exposed to customers in API responses.
@@ -495,8 +496,10 @@ Standardized error response:
       remains a required activation work item.
   - **OAuth Outage Posture (Phase 0-1)**: Login/signup endpoints fail closed when OAuth provider is down; existing
     already-issued valid tokens remain usable until expiry.
-  - **Liability Disclaimer Contract**: applicant accept endpoint rejects requests without
-    `liability_disclaimer_accepted=true`; accepted disclaimer is persisted on booking.
+  - **Liability Disclaimer Contract**: applicant accept and booking confirm endpoints reject requests without
+    `liability_disclaimer_accepted=true` via Bean Validation (`@NotNull` + `@AssertTrue`). Accepted disclaimer
+    is also enforced in service logic as defense in depth.
+- **Bean Validation**: `@Valid` + JSR-380 annotations enforce request-shape constraints on controller-layer DTOs. Some security-sensitive invariants (liability disclaimer, booking ownership) have both DTO-level and service-level enforcement; others are service-level only.
 - **Rate Limiting**:
   - **OTP Endpoints**: Config-defined per phone and per request-source limits with lockout on repeated failed OTP
     verification attempts.
