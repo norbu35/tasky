@@ -4,10 +4,10 @@ Status: architecture reference for `services/api`. Sections are labeled with the
 
 Read after: repo `AGENTS.md`, `services/api/AGENTS.md`, then this file (`api.md`). Use `common.md` and `docs/openapi/AGENTS.md` only for cross-cutting or contract-change context.
 
-> ⚠️ **Drift warning (active)**: This document is being reconciled with the codebase.
-> Some sections previously described a target architecture rather than current implementation.
-> Each major section is now labeled with its truth status. Treat labels as authoritative;
-> unmarked subsections are current state.
+> **Reconciliation status: complete.** This document was reconciled with the codebase across
+> four passes (authority/async narrative, security, events/outbox, persistence). Every section
+> is labeled with its truth status. Treat labels as authoritative; unmarked subsections are current state.
+> Run `./tooling/scripts/scan-backend-doc-drift.sh` to check for drift re-introduction.
 
 ## Authority Order
 
@@ -244,22 +244,59 @@ mn.tasky.<module>/
 
 ## 2. Module Layout (`mn.tasky.*` Packages)
 
-> **Truth status: current state** — reflects actual package structure. Some aggregate boundaries (`runtime`, `kernel`, `automation`, `projection`) are not yet listed here; a full expansion is planned (P2 workstream F).
+> **Truth status: current state** — verified against runtime package structure, PackageMarker inventory, and port interfaces.
 
 The backend is a single deployable unit (`tasky-server`) organized by business domains. Cross-domain communication uses internal Java method calls — no network hops between domains.
 
-| Domain                  | Packages                                   | Responsibility                                                                               |
-| ----------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| **identity**            | `auth`, `user`, `security`, `verification` | Auth (Facebook OAuth, OTP), user profiles, JWT filter, KYC/verification queue                |
-| **marketplace**         | `task`, `category`, `booking`              | Task posting & intake schemas, category management, booking state machine, applications      |
-| **wallet** _(Phase 2+)_ | `wallet`, `payment`                        | Credit ledger (Phase 2), internal wallet/escrow/payouts (Phase 3+), QPay integration         |
-| **communication**       | `messaging`, `notification`                | In-app WebSocket messaging, push notifications (FCM), SMS fallback                           |
-| **support**             | `dispute`, `review`, `admin`, `analytics`  | Disputes & evidence, review enforcement, admin tools, analytics event tracking               |
-| **common**              | `common`                                   | Cross-cutting: security filters, pagination, error handling, crypto, outbox, health, storage |
+### Feature Modules (domain business logic)
+
+| Module           | Package        | Responsibility                                          | CQRS Ports                                                           |
+| ---------------- | -------------- | ------------------------------------------------------- | -------------------------------------------------------------------- |
+| **Identity**     | `identity`     | Cross-cutting facade: composes auth, user, verification | `IdentityCommandPort`, `IdentityQueryPort`                           |
+| **Auth**         | `auth`         | Facebook OAuth, OTP login, JWT sessions                 | _(provider pattern; ports not yet extracted)_                        |
+| **User**         | `user`         | User profiles, roles                                    | _(ports not yet extracted)_                                          |
+| **Security**     | `security`     | Security endpoints (session info, CSRF)                 | _(ports not yet extracted)_                                          |
+| **Verification** | `verification` | Tasker KYC / document verification queue                | _(ports not yet extracted)_                                          |
+| **Marketplace**  | `marketplace`  | Cross-cutting facade: composes task, category, booking  | `MarketplaceCommandPort`, `MarketplaceQueryPort`                     |
+| **Task**         | `task`         | Task CRUD, lifecycle, assignment, status, drafts        | _(ports not yet extracted)_                                          |
+| **Category**     | `category`     | Service category taxonomy, intake schemas               | `CategoryQueryPort` (read-only)                                      |
+| **Booking**      | `booking`      | Booking state machine, intents, schedule events         | `BookingCommandPort`, `BookingIntentCommandPort`, `BookingQueryPort` |
+| **Location**     | `location`     | Districts, service areas, geocoding                     | `LocationQueryPort` (read-only)                                      |
+| **Trust**        | `trust`        | Cross-cutting facade: composes review, dispute          | `TrustCommandPort`, `TrustQueryPort`                                 |
+| **Review**       | `review`       | Post-task ratings, enforcement cases                    | _(ports not yet extracted)_                                          |
+| **Dispute**      | `dispute`      | Dispute resolution, evidence handling                   | _(ports not yet extracted)_                                          |
+| **Wallet**       | `wallet`       | Tasker wallet, ledger, payouts                          | `WalletCommandPort`, `WalletQueryPort`                               |
+| **Payment**      | `payment`      | Payment gateway integration (QPay)                      | `PaymentCommandPort`                                                 |
+| **Messaging**    | `messaging`    | In-app chat (WebSocket/STOMP)                           | `MessagingCommandPort`, `MessagingQueryPort`                         |
+| **Notification** | `notification` | Push notifications (FCM), in-app alerts                 | `NotificationCommandPort`                                            |
+| **Analytics**    | `analytics`    | Event tracking, marketplace metrics                     | `AnalyticsCommandPort`                                               |
+| **Admin**        | `admin`        | Admin dashboard APIs                                    | `AdminAuditCommandPort`                                              |
+
+### Orchestration Plane
+
+| Module      | Package   | Responsibility                                                                                                                                                  |
+| ----------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Runtime** | `runtime` | HTTP controllers, composition services, schedulers, workers. Sub-packages: `publicapi/` (composition), `adminapi/` (admin composition), `scheduler/`, `worker/` |
+
+### Automation Plane
+
+| Module         | Package      | Responsibility                                                                                                                                                                                 |
+| -------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Automation** | `automation` | Event-driven async engine. Sub-packages: `broker/` (RabbitMQ relay), `event/` (envelope contracts), `job/` (job dispatch), `provider/` (+`llm/`), `worker/` (consumer), `workflow/` (handlers) |
+
+### Infrastructure / Cross-Cutting
+
+| Module         | Package      | Responsibility                                                                                                                      |
+| -------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Kernel**     | `kernel`     | Shared primitives (must never depend on feature modules). Sub-packages: `context/`, `idempotency/`, `logging/`, `error/`, `outbox/` |
+| **Common**     | `common`     | Cross-cutting infrastructure: security config, audit, storage, outbox, persistence, health, crypto                                  |
+| **Projection** | `projection` | Admin read models. Sub-packages: `admin/`                                                                                           |
+
+> Modules marked "ports not yet extracted" have a `publicapi/` package marker but no CommandPort/QueryPort interfaces. Their runtime composition services call application-layer services directly. Port extraction is tracked as tech debt.
 
 ## 3. Request-Path Architecture
 
-> **Truth status: current state** — enforced by `AudienceCompositionBoundaryTest`. Note: a few controllers (TaskController, OtpController, ReviewController, BookingIntentController) have residual direct application-service dependencies that are being cleaned up (P1 workstream C).
+> **Truth status: current state** — enforced by `AudienceCompositionBoundaryTest`.
 
 Every active backend request path uses one of two allowed shapes:
 
