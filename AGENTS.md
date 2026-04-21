@@ -39,6 +39,8 @@ Do **not** use repomix when Serena can answer your question with a targeted symb
 
 ## Commands
 
+Frontend tasks use Turborepo (`pnpm <task>` delegates to `turbo`). Backend tasks use Gradle directly.
+
 | Task                   | Command                                              |
 | ---------------------- | ---------------------------------------------------- |
 | Backend test (domain)  | `./gradlew test --tests "mn.tasky.DOMAIN.*"`         |
@@ -46,10 +48,17 @@ Do **not** use repomix when Serena can answer your question with a targeted symb
 | Gate (required pre-PR) | `./gradlew gateSmoke`                                |
 | Validate API contract  | `./gradlew openApiValidate`                          |
 | Regen TypeScript SDK   | `pnpm sdk:generate`                                  |
-| Typecheck all          | `pnpm -r typecheck`                                  |
-| Frontend tests         | `pnpm -r test`                                       |
+| Typecheck all          | `pnpm typecheck`                                     |
+| Build all              | `pnpm build`                                         |
+| Test all (frontend)    | `pnpm test`                                          |
+| Lint all               | `pnpm lint`                                          |
+| Format all             | `pnpm format`                                        |
+| Check formatting       | `pnpm format:check`                                  |
+| Coverage               | `pnpm test:coverage`                                 |
+| Workspace boundaries   | `pnpm workspace:boundaries`                          |
 
 Always use `./gradlew`, never system `gradle`.
+Task graph and caching are configured in `turbo.json`.
 
 ## Tech Stack
 

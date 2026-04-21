@@ -25,6 +25,7 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 | `tooling/agent`                | Curated contributor-agent assets and workflows                      |
 | `tooling/config`               | Shared static-analysis and security tool configuration              |
 | `tooling/scripts`              | Repository-level verification and automation scripts                |
+| `turbo.json`                   | Turborepo task graph — dependencies, caching, and outputs           |
 | `archive/legacy-task-system/`  | Archived greenfield task queue (`tasks/` + `scripts/task.sh`)       |
 | `archive/greenfield-docs/`     | Archived superseded planning/spec artifacts                         |
 | `services/api/scripts`         | Backend-service-specific operational scripts                        |
@@ -98,6 +99,8 @@ Install JS dependencies:
 pnpm install
 ```
 
+Frontend tasks run through **Turborepo** (`pnpm <task>` delegates to `turbo`), which handles the task graph, parallelism, and local caching.
+
 Generate SDK types from OpenAPI:
 
 ```bash
@@ -116,6 +119,18 @@ Run mobile app:
 pnpm --filter @tasky/mobile start
 ```
 
+Build, typecheck, test, and lint across all workspaces:
+
+```bash
+pnpm build          # build all (respects dependency graph)
+pnpm typecheck      # typecheck all workspaces
+pnpm test           # run all frontend tests
+pnpm lint           # lint all workspaces
+pnpm format         # format all workspaces
+pnpm format:check   # check formatting without writing
+pnpm test:coverage  # test with coverage
+```
+
 ## Testing
 
 ### Backend
@@ -127,14 +142,12 @@ pnpm --filter @tasky/mobile start
 python3 tooling/scripts/validate-migrations.py # migration safety
 ```
 
-### Frontend
+### Frontend (individual workspaces)
 
 ```bash
 pnpm --filter @tasky/web test:unit          # web unit tests
 pnpm --filter @tasky/web test:e2e:smoke     # web E2E (Playwright)
 pnpm --filter @tasky/mobile test:unit       # mobile unit tests
-pnpm -r typecheck                           # typecheck all workspaces
-pnpm -r lint                                # lint all workspaces
 pnpm workspace:boundaries                   # monorepo dependency boundaries
 ```
 
