@@ -688,7 +688,7 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 > **Truth status: current state** — verified against `DomainEventOutboxService`, `EventRelayPublisher`, `EventWorkerConsumer`, `OutboxRelayService`, `OutboxRelayScheduler`.
 
 - **Mechanism (retired):** The old `@Async` + `ApplicationEventPublisher` + polling relay mechanism is
-  **retired**. The old `DomainEventOutboxProcessor` polling relay is also retired.
+  **retired**. The previous polling-based outbox relay is also retired.
 - **Mechanism (current — two-path publish):** `DomainEventOutboxService` persists events to
   `domain_outbox_events` and, when `tasky.automation.broker.enabled=true`, directly publishes to RabbitMQ
   via `EventRelayPublisher`. On successful direct publish, the row is marked `PROCESSED` immediately.

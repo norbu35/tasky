@@ -46,7 +46,7 @@ Operations in `IdempotencyOperations`:
   - **Relay recovery (failure path):** `OutboxRelayScheduler` runs every 10 s (ShedLock-guarded) and
     delegates to `OutboxRelayService`, which claims `PENDING`/`FAILED` rows, republishes, and marks them
     `PROCESSED` or `FAILED`. Failed events use exponential backoff (30 s base, 1 h max) with configurable
-    max attempts (default 10). The old `DomainEventOutboxProcessor` polling relay is **retired**.
+    max attempts (default 10). The previous polling-based outbox relay is **retired**.
 - **At-least-once delivery:** Direct publish on the happy path, relay recovery for failures.
   Handler-level idempotency via `WorkflowIdempotencyGuard` handles duplicate deliveries.
 - `EventWorkerConsumer` (RabbitMQ listener) dispatches to registered `EventHandler`
