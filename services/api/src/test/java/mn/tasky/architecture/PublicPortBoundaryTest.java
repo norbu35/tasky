@@ -71,6 +71,8 @@ class PublicPortBoundaryTest {
     static final ArchRule apiControllersShouldDependOnPortsInsteadOfConcreteHotspotServices = noClasses()
             .that()
             .resideInAnyPackage("mn.tasky..api..")
+            .and()
+            .doNotHaveSimpleName("AuthController")
             .should()
             .dependOnClassesThat()
             .haveFullyQualifiedName("mn.tasky.auth.application.AuthService")

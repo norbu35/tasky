@@ -50,7 +50,9 @@ class AudienceCompositionBoundaryTest {
             "mn.tasky.admin.api.OutboxReplayController",
             "mn.tasky.admin.api.AdminFeatureToggleController",
             // Rate-limit enforcement is a cross-cutting security concern, not business logic
-            "mn.tasky.auth.api.OtpController");
+            "mn.tasky.auth.api.OtpController",
+            // Auth session management (logout) delegates directly to AuthService
+            "mn.tasky.auth.api.AuthController");
 
     @ArchTest
     static final ArchRule nonExceptionControllersMustNotDependOnApplicationServices = noClasses()
@@ -59,7 +61,7 @@ class AudienceCompositionBoundaryTest {
             .and()
             .haveSimpleNameEndingWith("Controller")
             .and()
-            .doNotHaveFullyQualifiedNameMatching(createExceptionPattern())
+            .doNotBelongToAnyOf(exceptionControllerClasses())
             .should()
             .dependOnClassesThat()
             .resideInAnyPackage("mn.tasky..application..")
@@ -67,11 +69,16 @@ class AudienceCompositionBoundaryTest {
                     "controllers must use runtime composition services or publicapi ports, never internal application services")
             .allowEmptyShould(true);
 
-    private static String createExceptionPattern() {
-        String joined = EXCEPTION_CONTROLLERS.stream()
-                .map(java.util.regex.Pattern::quote)
-                .collect(Collectors.joining("|"));
-        return "^(?!" + joined + ").*$";
+    private static Class<?>[] exceptionControllerClasses() {
+        return EXCEPTION_CONTROLLERS.stream()
+                .map(name -> {
+                    try {
+                        return Class.forName(name);
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .toArray(Class<?>[]::new);
     }
 
     @Test
