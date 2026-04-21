@@ -95,3 +95,6 @@ research/market-data/unegui/*
 
 # Git worktrees
 .worktrees/
+
+# Turborepo local cache
+.turbo/

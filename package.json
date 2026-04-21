@@ -17,14 +17,14 @@
     }
   },
   "scripts": {
-    "build": "pnpm -r build",
-    "test": "pnpm -r test",
-    "test:coverage": "pnpm -r test:coverage",
-    "lint": "pnpm -r lint",
-    "format": "pnpm -r format",
-    "format:check": "pnpm -r format:check",
-    "typecheck": "pnpm -r typecheck",
-    "sdk:generate": "pnpm --filter @tasky/sdk generate",
+    "build": "turbo build",
+    "test": "turbo test",
+    "test:coverage": "turbo test:coverage",
+    "lint": "turbo lint",
+    "format": "turbo format",
+    "format:check": "turbo format:check",
+    "typecheck": "turbo typecheck",
+    "sdk:generate": "turbo sdk:generate",
     "sdk:drift": "bash tooling/scripts/validate-sdk-contract-drift.sh",
     "generated:verify": "pnpm sdk:generate && pnpm --filter @tasky/design-tokens build && pnpm -r typecheck",
     "workspace:boundaries": "node tooling/scripts/validate-workspace-boundaries.mjs",
@@ -39,6 +39,7 @@
     "eslint": "9.39.2",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "prettier": "^3.8.1"
+    "prettier": "^3.8.1",
+    "turbo": "^2.9.6"
   }
 }
