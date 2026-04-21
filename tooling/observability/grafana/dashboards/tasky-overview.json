@@ -1,0 +1,247 @@
+{
+  "uid": "tasky-overview",
+  "title": "Tasky Overview",
+  "description": "Phase 1 launch baseline dashboard — service health, API performance, authentication, and business metric placeholders.",
+  "timezone": "utc",
+  "refresh": "30s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "type": "datasource",
+        "query": "prometheus",
+        "current": {
+          "selected": true,
+          "text": "Prometheus",
+          "value": "Prometheus"
+        },
+        "hide": 0
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Service Health",
+      "type": "row",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 }
+    },
+    {
+      "id": 2,
+      "title": "Up Status",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "targets": [
+        {
+          "expr": "up{job=\"tasky-api\"}",
+          "refId": "A",
+          "legendFormat": "{{ instance }}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "DOWN", "color": "red" },
+                "1": { "text": "UP", "color": "green" }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": null, "color": "red" },
+              { "value": 1, "color": "green" }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 }
+    },
+    {
+      "id": 3,
+      "title": "JVM Memory Used",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "targets": [
+        {
+          "expr": "jvm_memory_used_bytes",
+          "refId": "A",
+          "legendFormat": "{{ area }} — {{ id }}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10
+          }
+        }
+      },
+      "gridPos": { "h": 8, "w": 10, "x": 4, "y": 1 }
+    },
+    {
+      "id": 4,
+      "title": "HTTP Request Rate",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "targets": [
+        {
+          "expr": "rate(http_server_requests_seconds_count[5m])",
+          "refId": "A",
+          "legendFormat": "{{ method }} {{ uri }} {{ status }}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10
+          }
+        }
+      },
+      "gridPos": { "h": 8, "w": 10, "x": 14, "y": 1 }
+    },
+    {
+      "id": 10,
+      "title": "API Performance",
+      "type": "row",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 }
+    },
+    {
+      "id": 11,
+      "title": "Request Duration p95",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket[5m])) by (le, uri))",
+          "refId": "A",
+          "legendFormat": "{{ uri }}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10
+          }
+        }
+      },
+      "gridPos": { "h": 8, "w": 14, "x": 0, "y": 10 }
+    },
+    {
+      "id": 12,
+      "title": "5xx Error Rate",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{status=~\"5..\"}[15m])) / sum(rate(http_server_requests_seconds_count[15m])) * 100",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": null, "color": "green" },
+              { "value": 1, "color": "yellow" },
+              { "value": 5, "color": "red" }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 8, "w": 10, "x": 14, "y": 10 }
+    },
+    {
+      "id": 20,
+      "title": "Authentication",
+      "type": "row",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 18 }
+    },
+    {
+      "id": 21,
+      "title": "Auth Request Rate",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "targets": [
+        {
+          "expr": "rate(http_server_requests_seconds_count{uri=~\"/api/v1/auth/.*\"}[5m])",
+          "refId": "A",
+          "legendFormat": "{{ method }} {{ uri }} {{ status }}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10
+          }
+        }
+      },
+      "gridPos": { "h": 8, "w": 14, "x": 0, "y": 19 }
+    },
+    {
+      "id": 22,
+      "title": "Circuit Breaker State",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "targets": [
+        {
+          "expr": "resilience4j_circuitbreaker_state",
+          "refId": "A",
+          "legendFormat": "{{ name }}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "CLOSED", "color": "green" },
+                "1": { "text": "OPEN", "color": "red" },
+                "2": { "text": "HALF_OPEN", "color": "yellow" }
+              }
+            }
+          ]
+        }
+      },
+      "description": "Shows resilience4j circuit breaker states. Panel displays data only when the resilience4j CircuitBreaker metrics are exported by the application.",
+      "gridPos": { "h": 8, "w": 10, "x": 14, "y": 19 }
+    },
+    {
+      "id": 30,
+      "title": "Business Metrics",
+      "type": "row",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 27 }
+    },
+    {
+      "id": 31,
+      "title": "Business Metrics — Placeholders",
+      "type": "text",
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 28 },
+      "options": {
+        "mode": "markdown",
+        "content": "## Business KPI Panels\n\nThese panels will be populated once the event metrics pipeline is wired to Prometheus.\n\nRefer to `docs/METRICS.md` sections 11–12 for KPI definitions and alert thresholds.\n\n### Required custom metrics\n\n| Metric | PromQL pattern | Description |\n|--------|---------------|-------------|\n| Category Liquidity Score | `tasky_category_liquidity_score` | % tasks with qualified application within 24h |\n| Task-to-Booking Conversion | `tasky_task_to_booking_conversion_28d` | 28-day conversion rate |\n| Booking Completion Rate | `tasky_booking_completion_rate_28d` | 28-day completion rate |\n| Review Completion Rate | `tasky_review_completion_rate_28d` | 28-day review rate |\n| Verification Turnaround | `tasky_verification_turnaway_median_seconds` | Median verification queue time |\n| Dispute Resolution Time | `tasky_dispute_resolution_median_seconds` | Median dispute resolution time |\n| Repeat Booking Rate | `tasky_repeat_booking_rate` | Weekly repeat customer rate |\n\n### How to wire\n\n1. Add a scheduled job in the Spring Boot app that aggregates from the `events` table and exports as Prometheus gauges.\n2. Replace this text panel with individual stat/timeseries panels per metric.\n3. Uncomment the corresponding alert rules in `tooling/observability/prometheus/alerts/tasky-alerts.yml`.\n"
+      }
+    }
+  ]
+}
