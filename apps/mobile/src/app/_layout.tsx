@@ -3,7 +3,6 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { LogBox } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -17,10 +16,6 @@ import '../utils/i18n';
 import '../design/nativewind-interop';
 
 import '../../global.css';
-
-// Suppress all LogBox warnings to prevent the yellow dev bar from
-// overlaying UI elements during Maestro E2E tests.
-LogBox.ignoreAllLogs();
 
 // Firebase native modules only work in EAS/bare builds, not Expo Go.
 const isExpoGo = Constants.executionEnvironment === 'storeClient';
