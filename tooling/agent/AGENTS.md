@@ -1,56 +1,29 @@
-# Superpowers for Antigravity
+# Tasky Agent Tooling Contract
 
-You have superpowers.
+Use this file only when editing `tooling/agent/**`.
 
-This profile adapts Superpowers workflows for Antigravity with strict single-flow execution.
+## Scope
 
-## Core Rules
+This subtree contains contributor-agent assets: skills, workflows, profiles, and local validation scripts. It is not product runtime code and it is not part of the main repo discovery path unless you are editing this subtree.
 
-1. Prefer local skills in `tooling/agent/skills/<skill-name>/SKILL.md`.
-2. Execute one core task at a time with `task_boundary`.
-3. Use `browser_subagent` only for browser automation tasks.
-4. Track checklist progress in `<project-root>/docs/plans/task.md` (table-only live tracker).
-5. Keep changes scoped to the requested task and verify before completion claims.
+## Read Order
 
-## Tool Translation Contract
+1. `AGENTS.md`
+2. `tooling/agent/README.md`
+3. This file
 
-When source skills reference legacy tool names, use these Antigravity equivalents:
+## Rules
 
-- Legacy assistant/platform names -> `Antigravity`
-- `Task` tool -> `browser_subagent` for browser tasks, otherwise sequential `task_boundary`
-- `Skill` tool -> `view_file ~/.gemini/skills/<skill-name>/SKILL.md` (or project-local `tooling/agent/skills/<skill-name>/SKILL.md`)
-- `TodoWrite` -> update `<project-root>/docs/plans/task.md` task list
-- File operations -> `view_file`, `write_to_file`, `replace_file_content`, `multi_replace_file_content`
-- Directory listing -> `list_dir`
-- Code structure -> `view_file_outline`, `view_code_item`
-- Search -> `grep_search`, `find_by_name`
-- Shell -> `run_command`
-- Web fetch -> `read_url_content`
-- Web search -> `search_web`
-- Image generation -> `generate_image`
-- User communication during tasks -> `notify_user`
-- MCP tools -> `mcp_*` tool family
+- Keep this subtree reusable and versioned.
+- Do not store session-local artifacts or ephemeral task trackers here.
+- Do not assume `docs/plans/` exists in the target repo.
+- When a skill needs a task source, refer to the active issue, ticket, or execution brief instead of a hard-coded plan path.
+- Keep tooling references local to this subtree when possible.
+- Validation for this subtree belongs in `tooling/agent/tests/`.
 
-## Skill Loading
+## Validation
 
-- First preference: project skills at `tooling/agent/skills`.
-- Second preference: user skills at `~/.gemini/skills`.
-- If both exist, project-local skills win for this profile.
-- Optional parity assets may exist at `tooling/agent/workflows/*` and `tooling/agent/agents/*` as entrypoint shims/reference profiles.
-- These assets do not change the strict single-flow execution requirements in this file.
-
-## Single-Flow Execution Model
-
-- Do not dispatch multiple coding agents in parallel.
-- Decompose large work into ordered, explicit steps.
-- Keep exactly one active task at a time in `<project-root>/docs/plans/task.md`.
-- If browser work is required, isolate it in a dedicated browser step.
-
-## Verification Discipline
-
-Before saying a task is done:
-
-1. Run the relevant verification command(s).
-2. Confirm exit status and key output.
-3. Update `<project-root>/docs/plans/task.md`.
-4. Report evidence, then claim completion.
+```bash
+bash tooling/agent/tests/run-tests.sh
+bash tooling/agent/tests/check-antigravity-profile.sh
+```
