@@ -47,6 +47,10 @@ Production remains blocked until these are closed:
    on QA scenario authoring before implementation tests can be written.
 
 4. Live alert routing, dashboard wiring, and incident evidence are not yet proven against a real deployed stack.
+   **Partial progress**: The observability stack (Prometheus, Grafana, Alertmanager) now exists in the repo as a
+   Docker Compose overlay (`docker-compose.observability.yml`) with pre-configured alert rules, dashboards, and
+   Alertmanager routing. See `docs/OBSERVABILITY.md` for architecture and usage. This remains a blocker until the
+   stack is deployed and verified against a real host.
 
 ## Required Runtime Controls
 
