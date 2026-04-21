@@ -228,6 +228,7 @@ class AuthScenarioTests {
                 refreshSessionDao,
                 statusResolver,
                 new io.micrometer.core.instrument.simple.SimpleMeterRegistry(),
+                mock(mn.tasky.common.security.TokenBlacklistService.class),
                 devAuthEnabled,
                 otpEnabled,
                 300L,

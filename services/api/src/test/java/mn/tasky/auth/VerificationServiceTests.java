@@ -321,7 +321,7 @@ class VerificationServiceTests {
         void returnsMappedDetails() {
             VerificationRequest request = new VerificationRequest(
                     VERIFICATION_ID, USER_ID, "front-key", "back-key", "PENDING", Instant.now(), null, null);
-            when(verificationDao.findPending(null, 10)).thenReturn(List.of(request));
+            when(verificationDao.findPending((String) null, 10)).thenReturn(List.of(request));
             when(userDao.findById(USER_ID)).thenReturn(Optional.of(taskerUser()));
             when(profileDao.findByUserId(USER_ID))
                     .thenReturn(Optional.of(new UserProfileState("Test User", null, null, 0.0, 0, null)));

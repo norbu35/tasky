@@ -225,7 +225,11 @@ class UserProfileServiceTests {
             service.updateUserStats(USER_ID, 5.0, false);
 
             // (4.0 * 2 + 5.0) / 3 = 4.333...
-            verify(profileDao).updateStats(eq(USER_ID), org.mockito.AdditionalMatchers.closeTo(4.333, 0.01), eq(2));
+            verify(profileDao)
+                    .updateStats(
+                            eq(USER_ID),
+                            org.mockito.ArgumentMatchers.doubleThat(d -> Math.abs(d - 4.333) < 0.01),
+                            eq(2));
         }
 
         @Test

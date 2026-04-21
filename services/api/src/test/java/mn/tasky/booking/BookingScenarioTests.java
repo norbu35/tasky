@@ -29,7 +29,7 @@ import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import mn.tasky.common.IntegrationTestBase;
-import mn.tasky.task.application.TaskService;
+import mn.tasky.task.application.TaskQueryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -118,6 +118,10 @@ class BookingScenarioTests {
 
         // In-memory findById
         when(bookingDao.findById(anyString())).thenAnswer(inv -> Optional.ofNullable(store.get(inv.getArgument(0))));
+
+        // In-memory findByIdForUpdate (used by transition)
+        when(bookingDao.findByIdForUpdate(anyString()))
+                .thenAnswer(inv -> Optional.ofNullable(store.get(inv.getArgument(0))));
 
         // In-memory update
         doAnswer(inv -> {
@@ -263,18 +267,22 @@ class BookingScenarioTests {
     void taskerCancelForSafetyDoesNotAddStrike() {
         BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50_000);
 
-        mn.tasky.task.application.TaskService taskService = mock(mn.tasky.task.application.TaskService.class);
+        mn.tasky.task.application.TaskQueryService taskQueryService =
+                mock(mn.tasky.task.application.TaskQueryService.class);
+        mn.tasky.task.application.TaskLifecycleService taskLifecycleService =
+                mock(mn.tasky.task.application.TaskLifecycleService.class);
         mn.tasky.task.dto.TaskState task = mock(mn.tasky.task.dto.TaskState.class);
         // Mock task state lookup
-        when(taskService.getTask("task-1")).thenReturn(Optional.of(task));
+        when(taskQueryService.getTask("task-1")).thenReturn(Optional.of(task));
         // Mock reopen task
-        when(taskService.reopenTask("task-1")).thenReturn(Optional.of(task));
+        when(taskLifecycleService.reopenTask("task-1")).thenReturn(Optional.of(task));
 
         mn.tasky.booking.application.BookingLifecycleService lifecycleService =
                 new mn.tasky.booking.application.BookingLifecycleService(
                         bookingService,
                         mock(mn.tasky.booking.application.BookingTimelineService.class),
-                        taskService,
+                        taskQueryService,
+                        taskLifecycleService,
                         moderationService,
                         mock(mn.tasky.common.outbox.DomainEventOutboxService.class),
                         mock(mn.tasky.trust.publicapi.TrustQueryPort.class));
@@ -352,7 +360,7 @@ class BookingScenarioTests {
         BookingLifecycleService lifecycleService;
 
         @Autowired
-        TaskService taskService;
+        TaskQueryService taskQueryService;
 
         @Test
         @DisplayName("SCN-BOOK-005 SCN-SMOKE-002: Tasker cancellation reopens the linked task to OPEN")
@@ -413,7 +421,7 @@ class BookingScenarioTests {
 
             assertThat(result.isSuccess()).isTrue();
             assertThat(result.booking().status()).isEqualTo("CANCELLED");
-            assertThat(taskService.getTask(taskId)).isPresent().hasValueSatisfying(t -> assertThat(t.status())
+            assertThat(taskQueryService.getTask(taskId)).isPresent().hasValueSatisfying(t -> assertThat(t.status())
                     .isEqualTo("OPEN"));
         }
 

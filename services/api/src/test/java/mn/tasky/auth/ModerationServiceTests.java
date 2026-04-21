@@ -68,7 +68,13 @@ class ModerationServiceTests {
     @BeforeEach
     void setUp() {
         service = new ModerationService(
-                strikeDao, suspensionEventDao, moderationPolicyDao, userDao, auditEventDao, userStatusResolver);
+                strikeDao,
+                suspensionEventDao,
+                moderationPolicyDao,
+                userDao,
+                auditEventDao,
+                userStatusResolver,
+                new com.fasterxml.jackson.databind.ObjectMapper());
     }
 
     // ── addStrike ──────────────────────────────────────────────────────────
@@ -212,7 +218,7 @@ class ModerationServiceTests {
         @DisplayName("Valid policy values are persisted and returned")
         void validPolicyIsPersisted() {
             ModerationPolicy expected = new ModerationPolicy(60, 5, 14, 30, 365, true, Instant.now());
-            when(moderationPolicyDao.update(60, 5, 14, 30, 365, true, any(Instant.class)))
+            when(moderationPolicyDao.update(eq(60), eq(5), eq(14), eq(30), eq(365), eq(true), any(Instant.class)))
                     .thenReturn(1);
             when(moderationPolicyDao.findActive()).thenReturn(Optional.of(expected));
 

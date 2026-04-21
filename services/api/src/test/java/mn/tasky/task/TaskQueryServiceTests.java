@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -14,9 +15,9 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import mn.tasky.task.application.TaskPhotoKeyHelper;
 import mn.tasky.task.application.TaskQueryService;
 import mn.tasky.task.dao.TaskDao;
-import mn.tasky.task.dao.TaskPhotoDao;
 import mn.tasky.task.dto.RecentLocation;
 import mn.tasky.task.dto.TaskPage;
 import mn.tasky.task.dto.TaskState;
@@ -43,13 +44,14 @@ class TaskQueryServiceTests {
     private TaskDao taskDao;
 
     @Mock
-    private TaskPhotoDao taskPhotoDao;
+    private TaskPhotoKeyHelper taskPhotoKeyHelper;
 
     private TaskQueryService service;
 
     @BeforeEach
     void setUp() {
-        service = new TaskQueryService(taskDao, taskPhotoDao);
+        service = new TaskQueryService(taskDao, taskPhotoKeyHelper);
+        lenient().when(taskPhotoKeyHelper.populatePhotoKeys(any())).thenAnswer(inv -> inv.getArgument(0));
     }
 
     private TaskState openTask(String id) {
@@ -91,7 +93,26 @@ class TaskQueryServiceTests {
         void populatesPhotoKeys() {
             TaskState task = openTask(TASK_ID);
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(task));
-            when(taskPhotoDao.findKeysByTaskId(TASK_ID)).thenReturn(List.of("photo-1", "photo-2"));
+            when(taskPhotoKeyHelper.populatePhotoKeys(any())).thenAnswer(inv -> {
+                TaskState t = inv.getArgument(0);
+                return new TaskState(
+                        t.id(),
+                        t.customerId(),
+                        t.categoryId(),
+                        t.description(),
+                        t.budget(),
+                        t.locationLat(),
+                        t.locationLng(),
+                        t.locationText(),
+                        t.status(),
+                        t.scheduledAt(),
+                        List.of("photo-1", "photo-2"),
+                        t.intakeAnswersJson(),
+                        t.intakeSchemaVersion(),
+                        t.scopeSummarySource(),
+                        t.createdAt(),
+                        t.updatedAt());
+            });
 
             Optional<TaskState> result = service.getTask(TASK_ID);
 
@@ -139,8 +160,8 @@ class TaskQueryServiceTests {
             TaskState task1 = openTask(UUID.randomUUID().toString());
             TaskState task2 = openTask(UUID.randomUUID().toString());
             // 2 results for limit=1 → hasMore=true
-            when(taskDao.findOpen(isNull(), isNull(), isNull(), eq(2))).thenReturn(List.of(task1, task2));
-            when(taskPhotoDao.findKeysByTaskId(any())).thenReturn(List.of());
+            when(taskDao.findOpen(isNull(String.class), isNull(), isNull(), eq(2)))
+                    .thenReturn(List.of(task1, task2));
 
             TaskPage page = service.listTasks(null, null, null, null, null, 1);
 
@@ -152,7 +173,8 @@ class TaskQueryServiceTests {
         @Test
         @DisplayName("Returns empty page when no open tasks")
         void noTasksReturnsEmptyPage() {
-            when(taskDao.findOpen(isNull(), isNull(), isNull(), eq(11))).thenReturn(List.of());
+            when(taskDao.findOpen(isNull(String.class), isNull(), isNull(), eq(11)))
+                    .thenReturn(List.of());
 
             TaskPage page = service.listTasks(null, null, null, null, null, 10);
 
@@ -164,12 +186,15 @@ class TaskQueryServiceTests {
         @Test
         @DisplayName("Geo-radius query is used when lat/lng/radius are provided")
         void geoRadiusQuery() {
-            when(taskDao.findOpenWithinRadius(isNull(), eq(47.9), eq(106.9), eq(5000.0), isNull(), isNull(), eq(11)))
+            when(taskDao.findOpenWithinRadius(
+                            isNull(String.class), eq(47.9), eq(106.9), eq(5000.0), isNull(), isNull(), eq(11)))
                     .thenReturn(List.of());
 
             service.listTasks(null, 47.9, 106.9, 5.0, null, 10);
 
-            verify(taskDao).findOpenWithinRadius(isNull(), eq(47.9), eq(106.9), eq(5000.0), isNull(), isNull(), eq(11));
+            verify(taskDao)
+                    .findOpenWithinRadius(
+                            isNull(String.class), eq(47.9), eq(106.9), eq(5000.0), isNull(), isNull(), eq(11));
         }
     }
 

@@ -26,7 +26,7 @@ import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
 import mn.tasky.notification.application.NotificationService;
-import mn.tasky.task.application.TaskService;
+import mn.tasky.task.application.TaskLifecycleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,7 +50,7 @@ class NoShowScenarioTests {
     private NotificationService notificationService;
     private ModerationService moderationService;
     private AuditEventDao auditEventDao;
-    private TaskService taskService;
+    private TaskLifecycleService taskLifecycleService;
     private NoShowService noShowService;
 
     @BeforeEach
@@ -64,7 +64,11 @@ class NoShowScenarioTests {
         notificationService = mock(NotificationService.class);
         moderationService = mock(ModerationService.class);
         auditEventDao = mock(AuditEventDao.class);
-        taskService = mock(TaskService.class);
+        taskLifecycleService = mock(TaskLifecycleService.class);
+
+        // flagNoShow uses findByIdForUpdate; other paths use findById
+        when(bookingDao.findByIdForUpdate(anyString()))
+                .thenAnswer(inv -> bookingDao.findById(inv.getArgument(0, String.class)));
 
         noShowService = new NoShowService(
                 bookingDao,
@@ -73,7 +77,7 @@ class NoShowScenarioTests {
                 scheduleEventDao,
                 messageDao,
                 conversationDao,
-                taskService,
+                taskLifecycleService,
                 moderationService,
                 notificationService,
                 auditEventDao);
@@ -208,7 +212,7 @@ class NoShowScenarioTests {
         assertThat(result.success()).isTrue();
         assertThat(result.booking().status()).isEqualTo("NO_SHOW");
         verify(bookingDao).updateStatus(eq(BOOKING_ID), eq("NO_SHOW"), any());
-        verify(taskService).transitionToNoShow(TASK_ID);
+        verify(taskLifecycleService).transitionToNoShow(TASK_ID);
         verify(timelineService)
                 .recordEvent(eq(BOOKING_ID), eq(BookingTimelineService.NO_SHOW_CONFIRMED), anyString(), anyString());
         verify(auditEventDao).insert(anyString(), eq("NO_SHOW_FLAGGED"), eq("BOOKING"), eq(BOOKING_ID), anyString());
