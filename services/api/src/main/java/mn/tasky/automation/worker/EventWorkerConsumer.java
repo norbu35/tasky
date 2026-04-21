@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import mn.tasky.automation.event.AutomationEventEnvelope;
 import mn.tasky.kernel.context.ContextPropagator;
+import mn.tasky.kernel.context.WorkflowContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -95,14 +96,23 @@ public class EventWorkerConsumer {
     }
 
     private void propagateMdc(AutomationEventEnvelope envelope) {
-        MDC.put(ContextPropagator.MDC_CORRELATION_ID, envelope.correlationId() != null ? envelope.correlationId() : "");
-        MDC.put(ContextPropagator.MDC_TRACE_ID, envelope.traceId() != null ? envelope.traceId() : "");
-        MDC.put(ContextPropagator.MDC_CAUSATION_ID, envelope.causationId() != null ? envelope.causationId() : "");
-        MDC.put(ContextPropagator.MDC_COMMAND_ID, envelope.commandId() != null ? envelope.commandId() : "");
-        MDC.put(ContextPropagator.MDC_WORKFLOW_ID, envelope.workflowId() != null ? envelope.workflowId() : "");
-        MDC.put(ContextPropagator.MDC_ACTOR_ID, envelope.actorId() != null ? envelope.actorId() : "");
-        MDC.put(ContextPropagator.MDC_LOCALE, envelope.locale() != null ? envelope.locale() : "");
-        MDC.put(ContextPropagator.MDC_PLATFORM, envelope.platform() != null ? envelope.platform() : "");
+        WorkflowContext workflowContext = new WorkflowContext(
+                envelope.correlationId(),
+                envelope.causationId(),
+                envelope.commandId(),
+                envelope.workflowId(),
+                envelope.actorId());
+        ContextPropagator.propagate(workflowContext);
+
+        putIfPresent(ContextPropagator.MDC_TRACE_ID, envelope.traceId());
+        putIfPresent(ContextPropagator.MDC_LOCALE, envelope.locale());
+        putIfPresent(ContextPropagator.MDC_PLATFORM, envelope.platform());
+    }
+
+    private static void putIfPresent(String key, String value) {
+        if (value != null && !value.isEmpty()) {
+            MDC.put(key, value);
+        }
     }
 
     private void clearMdc() {

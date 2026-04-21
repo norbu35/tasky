@@ -7,9 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.UUID;
+import mn.tasky.kernel.context.ContextPropagator;
+import mn.tasky.kernel.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -42,10 +43,8 @@ public class RequestObservabilityFilter extends OncePerRequestFilter {
         request.setAttribute(TRACE_ID_ATTRIBUTE, traceId);
         response.setHeader(CORRELATION_ID_HEADER, correlationId);
         response.setHeader(TRACE_ID_HEADER, traceId);
-        MDC.put(CORRELATION_ID_MDC_KEY, correlationId);
-        MDC.put(TRACE_ID_MDC_KEY, traceId);
-        MDC.put(LOCALE_MDC_KEY, locale);
-        MDC.put(PLATFORM_MDC_KEY, platform);
+        RequestContext requestContext = new RequestContext(correlationId, traceId, null, null, locale, platform);
+        ContextPropagator.propagate(requestContext);
 
         try {
             filterChain.doFilter(request, response);
@@ -59,10 +58,7 @@ public class RequestObservabilityFilter extends OncePerRequestFilter {
                     durationMs,
                     correlationId,
                     traceId);
-            MDC.remove(CORRELATION_ID_MDC_KEY);
-            MDC.remove(TRACE_ID_MDC_KEY);
-            MDC.remove(LOCALE_MDC_KEY);
-            MDC.remove(PLATFORM_MDC_KEY);
+            ContextPropagator.clear();
         }
     }
 
