@@ -1,8 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { DetailTemplate } from '@/components/templates/DetailTemplate';
+import { mobileSurfaces } from '@/design/surfaces';
 import { TaskCancelSheet } from '@/features/tasks/components/TaskCancelSheet';
 import { CompletedBanner, CancelledBanner } from './Banners';
 import { PhotosSection } from './Photos';
@@ -10,13 +11,28 @@ import { PhotosSection } from './Photos';
 import { formatSchedule } from './model';
 import type { CustomerTask } from './model';
 import { TaskHeader } from './Header';
-import { DetailRow } from './DetailRow';
 import { IntakeAnswersSection } from './IntakeAnswers';
 import { BudgetCard } from './BudgetCard';
 import { ApplicantsSection } from './ApplicantsSection';
 import { LocationCard } from './LocationCard';
 import { TaskerCard } from './TaskerCard';
 import { useCustomerTaskDetailScreen } from './useCustomerTaskDetailScreen';
+
+const { taskDetail } = mobileSurfaces;
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <View className="flex-row justify-between gap-md">
+      <Text
+        className="flex-1 text-label font-bold text-text-secondary uppercase"
+        style={{ letterSpacing: taskDetail.labelTracking }}
+      >
+        {label}
+      </Text>
+      <Text className="flex-1 text-label font-bold text-foreground text-right">{value}</Text>
+    </View>
+  );
+}
 
 export default function CustomerTaskDetailScreen() {
   const { t } = useTranslation();
