@@ -91,7 +91,7 @@ For the full package-to-domain mapping, see `api.md` §2.
 - **Relay recovery:** `OutboxRelayScheduler` runs every 10 s (ShedLock-guarded), delegating to
   `OutboxRelayService`. Recovery loop: `claimBatch` (PENDING/FAILED rows) → `publish` →
   `markProcessed` / `markFailed`. Failed events receive exponential backoff (30 s base, 1 h max)
-  with configurable max attempts (default 10). Events exceeding max attempts enter permanent `FAILURE` status.
+  with configurable max attempts (default 10). Events exceeding max attempts remain `FAILED` with a 24-hour permanent backoff — they are not promoted to a different status but will not be retried aggressively. Admin replay can reset `FAILED` → `PENDING` for reprocessing.
 - **At-least-once delivery:** The system provides true at-least-once semantics — direct publish on the
   happy path, relay recovery for failures. Handler-level idempotency via `WorkflowIdempotencyGuard`
   handles duplicate deliveries.

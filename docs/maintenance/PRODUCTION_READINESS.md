@@ -78,7 +78,9 @@ These controls already exist in the repo and must remain intact through staging 
 
 ### 2. Verification trust
 
-- `./gradlew --no-daemon gateRegression` passes.
+- `./gradlew --no-daemon :services:api:check` passes (PR quality gate — includes compile, static analysis, tests, architecture boundary tests).
+- `./gradlew --no-daemon gateRegression` passes (nightly regression — broader coverage).
+- Release-gate workflow (`release-gate.yml`) passes: migration safety, rollback readiness, performance smoke, E2E smoke.
 - `pnpm -r typecheck` passes.
 - Direct web and mobile unit/integration suites remain green.
 - Playwright smoke and Maestro smoke pass in CI or staging-equivalent infrastructure.

@@ -53,10 +53,15 @@ pnpm -r test
 Boundary enforcement additions:
 
 ```bash
-./gradlew --no-daemon :services:api:test --tests '*ArchitectureTest'
+./gradlew --no-daemon :services:api:architectureTest
 pnpm workspace:boundaries
 pnpm sdk:drift
 ```
+
+> `architectureTest` runs all `*ArchitectureTest` and `*BoundaryTest` classes. The full set:
+> `BackendArchitectureTest`, `AudienceCompositionBoundaryTest`, `AutomationContractBoundaryTest`,
+> `ProjectionBoundaryTest`, `ProviderBoundaryTest`, `PublicPortBoundaryTest`, `RuntimeBoundaryTest`,
+> `WorkflowBoundaryTest`.
 
 ## Documentation Policy
 

@@ -294,13 +294,14 @@ tasks.test {
 }
 
 tasks.register<Test>("architectureTest") {
-    description = "Runs architecture boundary tests (ArchUnit)."
+    description = "Runs architecture and boundary enforcement tests (ArchUnit)."
     group = "verification"
     useJUnitPlatform()
     testClassesDirs = sourceSets["test"].output.classesDirs
     classpath = sourceSets["test"].runtimeClasspath
     filter {
         includeTestsMatching("*ArchitectureTest")
+        includeTestsMatching("*BoundaryTest")
     }
 }
 

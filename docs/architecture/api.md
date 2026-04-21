@@ -102,7 +102,7 @@ path with at-least-once delivery guarantees.
    `OutboxRelayScheduler` runs every 10 s (ShedLock-guarded) and delegates to `OutboxRelayService`, which claims
    batches of `PENDING`/`FAILED` rows, republishes via `EventRelayPublisher`, and marks them `PROCESSED` or `FAILED`.
    Failed publishes use exponential backoff (30 s base, 1 h max) with configurable max attempts (default 10).
-   Events exceeding max attempts enter permanent `FAILURE` status.
+   Events exceeding max attempts remain `FAILED` with a 24-hour permanent backoff — they are not promoted to a different status but will not be retried aggressively. Admin replay (`OutboxReplayController`) can reset `FAILED` → `PENDING` manually.
 
 **At-least-once delivery:** The system provides true at-least-once semantics — direct publish on the happy path,
 relay recovery for failures. Handler-level idempotency via `WorkflowIdempotencyGuard` (`kernel.idempotency`)
@@ -318,6 +318,7 @@ Every active backend request path uses one of two allowed shapes:
 - `DevAuthController`, `TokenController`, `FacebookAuthController` — auth lifecycle helpers
 - `LocationController`, `ServiceAreaController`, `CategoryController` — pure lookup/reference data
 - `OutboxReplayController`, `AdminFeatureToggleController` — operator endpoints
+- `OtpController` — rate-limit enforcement is a cross-cutting security concern, not business logic; also uses `IdentityCommandPort` for OTP operations
 
 Any addition to the exception set requires deliberate justification in code review.
 
@@ -334,7 +335,7 @@ Any addition to the exception set requires deliberate justification in code revi
 
 #### Identity
 
-- `users`: `id (UUID PK)`, `phone`, `phone_blind_idx (UNIQUE)`, `primary_auth` (FACEBOOK, PHONE_OTP), `role` (CUSTOMER, TASKER, ADMIN), `status` (PENDING, ACTIVE, VERIFIED, SUSPENDED, BANNED), `suspension_end_at`, `created_at`, `updated_at`
+- `users`: `id (UUID PK)`, `phone`, `phone_blind_idx (UNIQUE)`, `primary_auth` (FACEBOOK, PHONE_OTP), `role` (CUSTOMER, TASKER, ADMIN), `status` (PENDING, ACTIVE, VERIFIED, SUSPENDED, BANNED, DELETED), `suspension_end_at`, `created_at`, `updated_at`
 - `profiles`: `user_id (PK → users)`, `full_name`, `avatar_url`, `rating_avg`, `bio`, `completed_tasks`
   — `instant_match_revoked_until` (behavior-affecting: gates instant-match eligibility when set to a future timestamp)
   — `last_active_at` (updated on activity)
@@ -691,7 +692,8 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
   delegating to `OutboxRelayService`. Recovery loop: `claimBatch` (PENDING/FAILED rows) → `publish` via
   `EventRelayPublisher` → `markProcessed` / `markFailed`. Failed events receive exponential backoff
   (30 s base, 1 h max) with configurable max attempts (default 10, via `tasky.automation.relay.max-attempts`);
-  events exceeding max attempts enter permanent `FAILURE` status.
+  events exceeding max attempts remain `FAILED` with a 24-hour permanent backoff. Admin replay can reset these
+  back to `PENDING` for reprocessing.
   Batch size is configurable via `tasky.automation.relay.batch-size`.
 - **Persistence:** The outbox row is written first; broker publish is attempted synchronously afterward.
   Broker failure does **not** roll back the domain transaction because the row already exists.
@@ -719,7 +721,7 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 - Domain-unit tests: no `@SpringBootTest`, `@Autowired`, or `@MockBean`.
 - Mock only external boundaries: `FacebookGraphClient`, `FirebasePushProvider`, `S3StorageService`.
-- `@DisplayName` must be `"SCN-XXX-NNN: <exact title from scenario file>"`.
+- `@DisplayName` for scenario-backed tests must include the scenario ID (e.g. `"SCN-TASK-001: ..."`) so that `sync-registry.sh` can discover it. Multiple scenario IDs in a single display name are supported (e.g. `"SCN-TASK-009 SCN-SMOKE-004: ..."`). Non-scenario domain-unit tests (no SCN mapping) may use descriptive display names without the SCN prefix.
 - Check `tests/registry.yaml` for existing scenarios before writing tests. Read `tests/scenarios/<domain>.md`.
 - After writing tests: run `./services/api/scripts/sync-registry.sh` and commit updated `tests/registry.yaml`.
 - Never modify `tests/scenarios/` directly.
@@ -728,10 +730,23 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 ## 8. Verification Commands
 
-> **Truth status: current state** — matches `build.gradle.kts` task definitions.
+> **Truth status: current state** — matches `build.gradle.kts` task definitions and CI workflow wiring.
 
-| Gate       | Command                    | Blocks         |
-| ---------- | -------------------------- | -------------- |
-| Smoke      | `./gradlew gateSmoke`      | merge to main  |
-| Regression | `./gradlew gateRegression` | deploy         |
-| Full       | `./gradlew gateFull`       | nightly alerts |
+### Gradle gates (local / CI)
+
+| Gate       | Command                    | Purpose                                   |
+| ---------- | -------------------------- | ----------------------------------------- |
+| Smoke      | `./gradlew gateSmoke`      | Fast compile + critical-test subset       |
+| Regression | `./gradlew gateRegression` | Extended test suite for broader coverage  |
+| Full       | `./gradlew gateFull`       | Full suite including PIT mutation testing |
+
+### CI enforcement (actual wiring)
+
+| CI workflow          | What it runs                                                                                   | When                  |
+| -------------------- | ---------------------------------------------------------------------------------------------- | --------------------- |
+| `quality-gates.yml`  | `:services:api:check` + `jacocoTestCoverageVerification` + `openApiValidate` (not `gateSmoke`) | every PR              |
+| `release-gate.yml`   | migration safety, rollback readiness, performance smoke, E2E smoke (not `gateRegression`)      | deploy (staging/prod) |
+| `nightly-regression` | `gateRegression` + `openApiValidate`                                                           | nightly schedule      |
+
+> `gateSmoke` and `gateRegression` are defined as Gradle tasks but are not currently wired into PR or deploy gates.
+> `gateRegression` runs only in the nightly schedule. The PR gate runs a broader `check` which includes `architectureTest`.
