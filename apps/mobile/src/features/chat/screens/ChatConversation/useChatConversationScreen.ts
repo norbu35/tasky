@@ -6,7 +6,7 @@ import { FlatList } from 'react-native';
 import { useConversations } from '@/features/chat/hooks/useConversations';
 import { useMessages } from '@/features/chat/hooks/useMessages';
 import { useSendMessage } from '@/features/chat/hooks/useSendMessage';
-import { useMyUserId } from '@/features/profile/hooks/useProfile';
+import { useMyUserId } from '@/features/profile';
 import { formatLastActive } from '@/lib/formatLastActive';
 
 import { type MessageItem, PHONE_REGEX } from './model';

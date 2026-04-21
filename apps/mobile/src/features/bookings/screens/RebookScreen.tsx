@@ -9,7 +9,7 @@ import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
 import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
 import { useCreateBookingIntent } from '@/features/bookings/hooks/useCreateBookingIntent';
-import { useCreateTask } from '@/features/tasks/hooks/useCreateTask';
+import { useCreateTask } from '@/features/tasks';
 
 function formatDateTime(value: Date): string {
   const y = value.getFullYear();

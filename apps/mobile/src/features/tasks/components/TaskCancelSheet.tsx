@@ -8,7 +8,7 @@ import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
 import { Button } from '@/components/ui/Button';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { generateIdempotencyKey } from '@/utils/uuid';
-import { useCancelBooking } from '@/features/bookings/hooks/useCancelBooking';
+import { useCancelBooking } from '@/features/bookings';
 
 const { colors } = mobileTheme;
 

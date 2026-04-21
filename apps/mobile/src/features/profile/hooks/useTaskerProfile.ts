@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { getPublicProfile } from '../api';
-import { getUserReviews } from '@/features/review/api';
+import { getUserReviews } from '@/features/review';
 import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
 

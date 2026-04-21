@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { listTasks } from '../api';
 import type { PublicTask } from '@/lib/api/types';
-import { useMyProfile } from '@/features/profile/hooks/useProfile';
+import { useMyProfile } from '@/features/profile';
 import { useAuthStore } from '@/store/authStore';
 import { getCurrentLocation } from '@/utils/permissions';
 import { queryKeys } from '@/lib/queryKeys';

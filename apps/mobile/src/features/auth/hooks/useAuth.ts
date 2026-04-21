@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 
 import { requestOtp, verifyOtp, devLogin } from '../api';
-import { getMyProfile } from '@/features/profile/api';
+import { getMyProfile } from '@/features/profile';
 import { useAppStore } from '@/store/appStore';
 import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
