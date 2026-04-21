@@ -4,8 +4,6 @@ This is the canonical repo-level instruction file for agents.
 
 ## Discovery Path
 
-Start with the client adapter you were launched from, then read this file, then move to the smallest local surface that matches the path you are changing.
-
 | Working area                       | Read next                                                      |
 | ---------------------------------- | -------------------------------------------------------------- |
 | Whole repo or shared contract work | `docs/architecture/AGENTS.md`                                  |
@@ -14,17 +12,7 @@ Start with the client adapter you were launched from, then read this file, then 
 | `apps/mobile/**`                   | `apps/mobile/AGENTS.md`                                        |
 | `tooling/agent/**`                 | `tooling/agent/AGENTS.md`                                      |
 
-Client adapter files (`CLAUDE.md`, `CODEX.md`, `GEMINI.md`, `.github/copilot-instructions.md`) are bootstrap shims only. They are not canonical sources of project rules.
-
-## Authority Order
-
-1. `AGENTS.md`
-2. Local `AGENTS.md` nearest the edited surface
-3. `docs/architecture/*.md`
-4. `docs/API.yaml`
-5. Other product, design, and maintenance docs
-
-When two documents disagree, the more specific canonical surface wins unless it conflicts with this file.
+Pull in `docs/architecture/*.md` for system-wide context and `docs/API.yaml` when contracts change. On conflict, the more specific surface wins unless it contradicts this file.
 
 ## Code Navigation
 
@@ -49,25 +37,7 @@ Do not use repomix for narrow symbol lookups that Serena can answer.
 
 ## Core Commands
 
-Frontend tasks use Turborepo (`pnpm <task>` delegates to `turbo`). Backend tasks use Gradle directly.
-
-| Task                   | Command                                              |
-| ---------------------- | ---------------------------------------------------- |
-| Backend test (domain)  | `./gradlew test --tests "mn.tasky.DOMAIN.*"`         |
-| Backend test (class)   | `./gradlew test --tests "mn.tasky.DOMAIN.ClassName"` |
-| Gate (required pre-PR) | `./gradlew gateSmoke`                                |
-| Validate API contract  | `./gradlew openApiValidate`                          |
-| Regenerate SDK         | `pnpm sdk:generate`                                  |
-| Typecheck all          | `pnpm typecheck`                                     |
-| Build all              | `pnpm build`                                         |
-| Test all               | `pnpm test`                                          |
-| Lint all               | `pnpm lint`                                          |
-| Format all             | `pnpm format`                                        |
-| Check formatting       | `pnpm format:check`                                  |
-| Coverage               | `pnpm test:coverage`                                 |
-| Workspace boundaries   | `pnpm workspace:boundaries`                          |
-
-Always use `./gradlew`, never system `gradle`.
+Frontend tasks run through Turborepo via `pnpm <task>`. Backend tasks use `./gradlew` — never system `gradle`. The required pre-PR gate is `./gradlew gateSmoke`. See `package.json` scripts and `docs/architecture/common.md § 8` for the full set.
 
 ## Workflow Rules
 

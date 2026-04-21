@@ -2,14 +2,12 @@
 
 Use this file when the change touches `apps/web/**`.
 
-## Read Order
+## Read Next
 
-1. `AGENTS.md`
-2. `docs/architecture/web.md`
-3. `docs/architecture/common.md`
-4. `docs/API.yaml` if the change touches API contracts or generated SDK usage
-5. `docs/design/DESIGN_SYSTEM.md` for visual rules
-6. `apps/web/README.md` for local commands and test entrypoints
+- `docs/architecture/web.md`, then `docs/architecture/common.md`
+- `docs/API.yaml` when the change touches API contracts or generated SDK usage
+- `docs/design/DESIGN_SYSTEM.md` for visual rules
+- `apps/web/README.md` for local commands and test entrypoints
 
 ## Boundaries
 

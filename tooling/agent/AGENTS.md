@@ -6,11 +6,9 @@ Use this file only when editing `tooling/agent/**`.
 
 This subtree contains contributor-agent assets: skills, workflows, profiles, and local validation scripts. It is not product runtime code and it is not part of the main repo discovery path unless you are editing this subtree.
 
-## Read Order
+## Read Next
 
-1. `AGENTS.md`
-2. `tooling/agent/README.md`
-3. This file
+- `tooling/agent/README.md`
 
 ## Rules
 

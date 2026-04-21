@@ -2,13 +2,12 @@
 
 Use this file when the change touches `services/api/**`.
 
-## Read Order
+## Read Next
 
-1. `AGENTS.md`
-2. `docs/architecture/common.md`
-3. `docs/API.yaml`
-4. The nearest module `AGENTS.md` under `src/main/java/mn/tasky/**`
-5. `services/api/src/README.md` for local layout hints when needed
+- `docs/architecture/common.md`
+- `docs/API.yaml`
+- The nearest module `AGENTS.md` under `src/main/java/mn/tasky/**`
+- `services/api/src/README.md` for local layout hints when needed
 
 ## Boundaries
 

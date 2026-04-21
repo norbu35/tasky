@@ -16,11 +16,4 @@ Call `mcp__serena__initial_instructions` once at session start, then use the `mc
 
 Requires JetBrains with the project open and the Serena plugin installed.
 
-## Read Order
-
-1. `AGENTS.md`
-2. The nearest local `AGENTS.md` for the path you are changing
-3. The smallest relevant architecture document under `docs/architecture/`
-4. `docs/API.yaml` when contracts change
-
-Do not treat this file as the project rulebook. It is only the Claude bootstrap surface.
+Read `AGENTS.md` for the canonical rules; this file only covers Claude-specific setup.
