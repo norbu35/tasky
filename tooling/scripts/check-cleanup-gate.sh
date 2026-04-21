@@ -7,5 +7,6 @@ set -euo pipefail
 
 ./gradlew --no-daemon openApiValidate gateSmoke
 pnpm -r typecheck
+python3 tooling/scripts/check-doc-governance.py
 
 echo "cleanup-gate: PASS"

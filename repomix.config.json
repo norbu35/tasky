@@ -65,7 +65,6 @@
 
       "docs/superpowers/**",
       "docs/research/**",
-      "docs/plans/**",
 
       "tooling/agent/skills/**",
       "tooling/agent/workflows/**",

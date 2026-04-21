@@ -73,7 +73,7 @@ Always use `./gradlew`, never system `gradle`.
 
 - Read the smallest relevant architecture document before editing code.
 - If the API changes, update `docs/API.yaml` first, then regenerate `@tasky/sdk`, then implement.
-- Use the active issue or approved execution brief as the task source. Do not rely on archived `docs/plans/` conventions.
+- Use the active issue or approved execution brief as the task source. Do not rely on archived plan directories.
 - Keep changes vertical and reviewable.
 - Update `CHANGELOG.md` when the repo convention requires it.
 

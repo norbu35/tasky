@@ -16,7 +16,7 @@ This subtree contains contributor-agent assets: skills, workflows, profiles, and
 
 - Keep this subtree reusable and versioned.
 - Do not store session-local artifacts or ephemeral task trackers here.
-- Do not assume `docs/plans/` exists in the target repo.
+- Do not assume a plans directory exists in the target repo.
 - When a skill needs a task source, refer to the active issue, ticket, or execution brief instead of a hard-coded plan path.
 - Keep tooling references local to this subtree when possible.
 - Validation for this subtree belongs in `tooling/agent/tests/`.
