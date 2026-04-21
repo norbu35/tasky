@@ -33,7 +33,7 @@ export default {
   thresholds: {
     high: 80,    // green in report
     low: 60,     // yellow in report
-    break: 0,    // CI fails below this — raise once baseline is established
+    break: 30,   // CI fails below this — conservative floor; raise toward 60-70 as coverage matures
   },
 
   // Vitest-specific: reuse the project's existing vitest config

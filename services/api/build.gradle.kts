@@ -299,9 +299,9 @@ tasks.register("precommit") {
 // Run sync-registry.sh first to ensure registry reflects current test + PIT state.
 
 tasks.register<Exec>("gateSmoke") {
-    description = "Gate 1: all Critical scenarios covered. Blocks merge to main."
+    description = "Gate 1: all Critical scenarios covered + mutation floor. Blocks merge to main."
     group = "verification"
-    dependsOn(tasks.test)
+    dependsOn(tasks.test, "pitest")
     workingDir(rootProject.projectDir)
     doFirst {
         exec {
