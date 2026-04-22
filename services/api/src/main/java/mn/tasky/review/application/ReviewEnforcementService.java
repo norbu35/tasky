@@ -98,25 +98,11 @@ public class ReviewEnforcementService implements mn.tasky.review.publicapi.Revie
 
     /**
      * Determines whether a user is hard-locked from creating tasks or applying.
-     * A user is locked when they have at least one open enforcement case AND at
-     * least one risk signal: open dispute, 2+ consecutive expired cases, or an
-     * active investigation flag.
+     * REQ-P1-SAFE-07: any open enforcement case blocks the next post/apply action.
      */
     public boolean isUserLocked(String userId) {
         List<ReviewEnforcementCase> openCases = reviewEnforcementCaseDao.findOpenByUser(userId);
-        if (openCases.isEmpty()) {
-            return false;
-        }
-
-        // Risk signal 1: open dispute involving this user
-        if (disputeDao.existsOpenForUser(userId)) {
-            return true;
-        }
-
-        // Risk signal 2: 2+ consecutive expired cases
-        // Risk signal 3: any case with investigation_active flag
-        return reviewEnforcementCaseDao.countConsecutiveExpired(userId) >= 2
-                || reviewEnforcementCaseDao.hasInvestigationActive(userId);
+        return !openCases.isEmpty();
     }
 
     /**

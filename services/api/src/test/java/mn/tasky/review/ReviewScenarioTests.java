@@ -126,40 +126,24 @@ class ReviewScenarioTests {
     // ── SCN-REVIEW-005 ───────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-REVIEW-005: Hard lock is enforced only when an open review case also has a configured risk flag")
-    void noHardLockWithoutRiskSignal() {
-        // User has an open enforcement case but no risk signals
+    @DisplayName("SCN-REVIEW-005: Hard lock is enforced when any open review enforcement case exists")
+    void hardLockAppliedWithAnyOpenCase() {
         when(caseDao.findOpenByUser(CUSTOMER_ID)).thenReturn(List.of(openCase(CUSTOMER_ID)));
-        when(disputeDao.existsOpenForUser(CUSTOMER_ID)).thenReturn(false);
-        when(caseDao.countConsecutiveExpired(CUSTOMER_ID)).thenReturn(0);
-        when(caseDao.hasInvestigationActive(CUSTOMER_ID)).thenReturn(false);
 
         boolean locked = service.isUserLocked(CUSTOMER_ID);
 
-        assertThat(locked).isFalse();
+        assertThat(locked).isTrue();
     }
 
     // ── SCN-REVIEW-006 ───────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-REVIEW-006: Hard lock triggered by dispute, repeated non-submission, or investigation logs the trigger reason")
-    void hardLockAppliedWhenRiskSignalPresent() {
-        ReviewEnforcementCase openCase = openCase(CUSTOMER_ID);
-        when(caseDao.findOpenByUser(CUSTOMER_ID)).thenReturn(List.of(openCase));
+    @DisplayName("SCN-REVIEW-006: Hard lock is lifted when the owed review is submitted and the case is resolved")
+    void noHardLockWhenNoOpenCases() {
+        when(caseDao.findOpenByUser(CUSTOMER_ID)).thenReturn(List.of());
 
-        // Risk signal 1: open dispute
-        when(disputeDao.existsOpenForUser(CUSTOMER_ID)).thenReturn(true);
-        assertThat(service.isUserLocked(CUSTOMER_ID)).isTrue();
+        boolean locked = service.isUserLocked(CUSTOMER_ID);
 
-        // Risk signal 2: 2+ consecutive expired cases
-        when(disputeDao.existsOpenForUser(CUSTOMER_ID)).thenReturn(false);
-        when(caseDao.countConsecutiveExpired(CUSTOMER_ID)).thenReturn(2);
-        assertThat(service.isUserLocked(CUSTOMER_ID)).isTrue();
-
-        // Risk signal 3: active investigation flag
-        when(caseDao.countConsecutiveExpired(CUSTOMER_ID)).thenReturn(0);
-        when(caseDao.hasInvestigationActive(CUSTOMER_ID)).thenReturn(true);
-        assertThat(service.isUserLocked(CUSTOMER_ID)).isTrue();
+        assertThat(locked).isFalse();
     }
 }

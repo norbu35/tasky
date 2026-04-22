@@ -370,6 +370,14 @@ public class TaskController {
                             "You have already applied to this task.",
                             "trace_id",
                             resolveTraceId(request)));
+            case TaskApplyResult.REVIEW_LOCK_ACTIVE -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of(
+                            "code",
+                            "REVIEW_LOCK_ACTIVE",
+                            "message",
+                            "You must complete pending reviews before applying.",
+                            "trace_id",
+                            resolveTraceId(request)));
             default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
         };

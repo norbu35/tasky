@@ -1,7 +1,9 @@
 # review Scenarios
+
 <!-- Scenarios authored here. See tests/scenarios/README.md for format. -->
 
 ## SCN-REVIEW-001
+
 **Risk:** High
 **PRD:** REQ-SAFE-02
 **Title:** Booking completion creates structured review prompts for both customer and tasker
@@ -12,6 +14,7 @@ Then the customer receives a structured review prompt
 And the tasker receives a structured review prompt
 
 ## SCN-REVIEW-002
+
 **Risk:** High
 **PRD:** REQ-SAFE-02
 **Title:** Immediate review prompt is sent at completion time
@@ -21,6 +24,7 @@ When the completion workflow finishes
 Then the review prompt is sent immediately
 
 ## SCN-REVIEW-003
+
 **Risk:** High
 **PRD:** REQ-SAFE-11
 **Title:** Open review case at 24 hours sends the first reminder
@@ -31,6 +35,7 @@ Then the participant receives the 24-hour review reminder
 And the enforcement case advances to the 24-hour reminder state
 
 ## SCN-REVIEW-004
+
 **Risk:** High
 **PRD:** REQ-SAFE-11
 **Title:** Open review case at 72 hours sends the final reminder
@@ -41,22 +46,22 @@ Then the participant receives the 72-hour review reminder
 And the enforcement case advances to the 72-hour reminder state
 
 ## SCN-REVIEW-005
+
 **Risk:** High
-**PRD:** REQ-SAFE-02
-**Title:** Hard lock is enforced only when an open review case also has a configured risk flag
+**PRD:** REQ-SAFE-07
+**Title:** Hard lock is enforced when any open review enforcement case exists
 
 Given a user has an open review enforcement case
-And the user has no open dispute, no two consecutive missed reviews, and no active trust-safety investigation
-When lock eligibility is evaluated
-Then no hard lock is applied
-
-## SCN-REVIEW-006
-**Risk:** High
-**PRD:** REQ-SAFE-11
-**Title:** Hard lock triggered by dispute, repeated non-submission, or investigation logs the trigger reason
-
-Given a user has an open review enforcement case
-And at least one configured risk flag is true for that user
 When lock eligibility is evaluated
 Then a hard lock is applied to the user's next posting or application action
-And the trigger reason is recorded in the audit trail
+
+## SCN-REVIEW-006
+
+**Risk:** High
+**PRD:** REQ-SAFE-08
+**Title:** Hard lock is lifted when the owed review is submitted and the case is resolved
+
+Given a user has an open review enforcement case
+And the user submits their owed review
+When lock eligibility is evaluated
+Then no hard lock is applied
