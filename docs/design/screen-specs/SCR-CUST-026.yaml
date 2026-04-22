@@ -1,181 +1,19 @@
 # Screen Spec: No Applicant Rescue
+# Status: Superseded / inactive reference. Not part of the active Phase 1 launch surface.
 screen_id: SCR-CUST-026
-name: 'No Applicant Rescue'
+name: 'Deprecated — No Applicant Rescue'
 route: null
 role: [customer]
-phase: '0-1'
+phase: '2'
 template: modal_sheet
 figma_page: 'Customer/No Applicant Rescue'
 feature: 'task'
 
-layout:
-  template: modal_sheet
-  density: default
-  structure: 'scrim -> sheet(handle_bar + title + description + rescue_options + primary_action + secondary_action)'
-
-components:
-  - id: COMP-MODALSHEET
-    usage: 'Bottom sheet overlay with recovery options when no qualified applications are found after 120 minutes'
-    props:
-      visible: true
-      title: 'Гүйцэтгэгч олдсонгүй'
-      primaryAction: 'Өөрчлөлт хадгалах'
-      secondaryAction: 'Хаах'
-    variant: default
-
-  - id: COMP-FORMFIELD
-    usage: 'Wrapper for budget and schedule adjustment fields inside the rescue sheet'
-    props:
-      label: 'Төсөв нэмэгдүүлэх'
-      required: false
-    variant: default
-
-  - id: COMP-INPUT
-    usage: 'Budget adjustment input field'
-    props:
-      value: '50000'
-      placeholder: '₮'
-      maxLength: 10
-    variant: default
-
-  - id: COMP-DATEPICKER
-    usage: 'Schedule adjustment date picker'
-    props:
-      value: 'current_schedule'
-      minDate: 'tomorrow'
-      mode: date_time
-    variant: date_time
-
-  - id: COMP-BUTTON
-    usage: 'Save adjustments button and dismiss button'
-    props:
-      label: 'Өөрчлөлт хадгалах'
-      variant: primary
-      size: lg
-    variant: primary
-
-  - id: COMP-TOAST
-    usage: 'Success toast after adjustments saved or concierge queued'
-    props:
-      message: 'Өөрчлөлт хадгалагдлаа'
-      variant: success
-    variant: success
-
-states:
-  - id: rescue_prompt
-    description: 'Initial in-product recovery prompt shown after 120 minutes with zero qualified applications during 08:00-22:00. Offers options: adjust budget, adjust schedule, or request concierge help'
-    components_visible: [COMP-MODALSHEET, COMP-BUTTON]
-    components_hidden: [COMP-FORMFIELD, COMP-INPUT, COMP-DATEPICKER, COMP-TOAST]
-
-  - id: adjust_budget
-    description: 'User chose to adjust budget; budget input field shown with current value prefilled for editing'
-    components_visible: [COMP-MODALSHEET, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
-    components_hidden: [COMP-DATEPICKER, COMP-TOAST]
-
-  - id: adjust_schedule
-    description: 'User chose to adjust schedule; date picker shown with current schedule prefilled'
-    components_visible: [COMP-MODALSHEET, COMP-FORMFIELD, COMP-DATEPICKER, COMP-BUTTON]
-    components_hidden: [COMP-INPUT, COMP-TOAST]
-
-  - id: broadened_push_sent
-    description: 'System has re-notified additional eligible Taskers inside the marketplace; confirmation shown'
-    components_visible: [COMP-MODALSHEET, COMP-BUTTON, COMP-TOAST]
-    components_hidden: [COMP-FORMFIELD, COMP-INPUT, COMP-DATEPICKER]
-
-  - id: concierge_queued
-    description: 'Task has been queued for concierge dispatch follow-up; confirmation shown with expected response time'
-    components_visible: [COMP-MODALSHEET, COMP-BUTTON, COMP-TOAST]
-    components_hidden: [COMP-FORMFIELD, COMP-INPUT, COMP-DATEPICKER]
-
-copy:
-  - key: title
-    mn: 'Гүйцэтгэгч олдсонгүй'
-    en: 'No Tasker found yet'
-    max_chars: 25
-
-  - key: description
-    mn: '120 минутын дотор шаардлага хангасан хүсэлт ирээгүй байна. Дараах сонголтуудаас сонгоно уу.'
-    en: 'No qualified application has arrived in 120 minutes. Choose from the options below.'
-    max_chars: 100
-
-  - key: option_adjust_budget
-    mn: 'Төсөв нэмэгдүүлэх'
-    en: 'Increase Budget'
-    max_chars: 25
-
-  - key: option_adjust_schedule
-    mn: 'Цаг өөрчлөх'
-    en: 'Change Schedule'
-    max_chars: 20
-
-  - key: option_concierge
-    mn: 'Туслах ажилтнаас тусламж авах'
-    en: 'Request Concierge Help'
-    max_chars: 35
-
-  - key: label_budget
-    mn: 'Шинэ төсөв'
-    en: 'New Budget'
-    max_chars: 15
-
-  - key: label_schedule
-    mn: 'Шинэ товлосон цаг'
-    en: 'New Schedule'
-    max_chars: 20
-
-  - key: cta_save
-    mn: 'Өөрчлөлт хадгалах'
-    en: 'Save Changes'
-    max_chars: 20
-
-  - key: cta_dismiss
-    mn: 'Хаах'
-    en: 'Dismiss'
-    max_chars: 20
-
-  - key: broadened_push_message
-    mn: 'Нэмэлт тохирох гүйцэтгэгчдэд дотоод мэдэгдэл илгээлээ'
-    en: 'Marketplace notifications were sent to additional eligible Taskers'
-    max_chars: 60
-
-  - key: concierge_queued_message
-    mn: 'Таны даалгавар туслах ажилтанд шилжүүлэгдлээ. Удахгүй холбогдоно.'
-    en: 'Your task has been queued for concierge follow-up. You will be contacted soon.'
-    max_chars: 100
-
-  - key: toast_saved
-    mn: 'Өөрчлөлт хадгалагдлаа'
-    en: 'Changes saved'
-    max_chars: 25
-
-api_endpoints:
-  - method: PUT
-    path: '/tasks/:id'
-    purpose: 'Update task budget and/or schedule as part of rescue flow'
-
-analytics_events:
-  - event: 'no_applicant_rescue_shown'
-    trigger: 'Rescue modal appears after 120-minute zero-applicant threshold'
-  - event: 'no_applicant_budget_adjusted'
-    trigger: 'User saves a budget adjustment'
-  - event: 'no_applicant_schedule_adjusted'
-    trigger: 'User saves a schedule adjustment'
-  - event: 'no_applicant_broadened_push'
-    trigger: 'System broadens push to additional Taskers'
-  - event: 'no_applicant_concierge_queued'
-    trigger: 'Task queued for concierge dispatch'
-  - event: 'no_applicant_rescue_dismissed'
-    trigger: 'User dismisses the rescue sheet without action'
+notes:
+  - 'This customer-facing rescue-choice concept is superseded.'
+  - 'Active product intent uses backend-controlled assisted distribution after the qualifying no-application window.'
+  - 'Customers are not asked to choose budget adjustment, schedule adjustment, concierge, or off-platform distribution behavior.'
 
 acceptance_criteria:
-  - 'Recovery modal appears only after 120 minutes with zero qualified applications during 08:00-22:00 local time'
-  - 'Three rescue options are presented: adjust budget, adjust schedule, request concierge help'
-  - 'Budget adjustment prefills current budget and allows increase'
-  - 'Schedule adjustment shows date picker with minimum date of tomorrow'
-  - 'Saving adjustments triggers PUT /tasks/:id and optional internal re-notification to additional eligible Taskers'
-  - 'Concierge option queues the task for founder or admin manual dispatch'
-  - 'This modal does not itself trigger external distribution; external distribution remains a separate 12-hour no-qualified-application rule'
-  - 'After adjustments, confirmation message and success toast are shown'
-  - 'Dismiss closes the sheet and returns to Task Detail (SCR-CUST-009)'
-  - 'Drag-to-dismiss via handle bar is supported'
-  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'
+  - 'This screen is not part of the active Phase 1 customer surface.'
+  - 'Any future assisted-distribution handling must remain backend-controlled unless the PRD is explicitly changed.'

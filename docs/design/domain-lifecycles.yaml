@@ -132,20 +132,10 @@ entities:
       - id: TASK-T11
         source: OPEN
         target: OPEN
-        trigger: no_applicant_rescue
-        guard: '0 qualified applications after 120min, 08:00-22:00 local'
-        side_effects:
-          - 'prompt customer: adjust budget/schedule'
-          - 'optionally re-notify additional eligible Taskers inside the marketplace'
-          - 'allow concierge/manual-help request'
-        phase: '0-1'
-
-      - id: TASK-T11A
-        source: OPEN
-        target: OPEN
         trigger: external_distribution_eligible
         guard: 'pilot-eligible task has 0 qualified applications after 12h'
         side_effects:
+          - 'enqueue backend off-platform distribution workflow'
           - 'sanitize task payload for off-platform distribution'
           - 'mark intervention_type=external_distribution'
           - 'persist assisted-distribution event for KPI exclusion from self-serve reporting'
@@ -190,7 +180,7 @@ entities:
       - 'Intake answers persist with schema version'
       - 'Deactivated category blocks new posts; existing tasks continue'
       - 'Job scope summary is deterministic from the category template with key-value fallback'
-      - '120-minute no-applicant rescue is an in-product recovery prompt, not the external-distribution trigger'
+      - 'Customers are not asked to choose task-level rescue behavior'
       - 'External distribution is allowed only after 12 hours with no qualified application on a pilot-eligible task'
 
   # ═══════════════════════════════════════════════════

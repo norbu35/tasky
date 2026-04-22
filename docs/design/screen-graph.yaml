@@ -617,14 +617,6 @@ nodes:
         guard: 'back'
     data_deps: [dispute_id, dispute_status]
 
-  SCR-CUST-026:
-    label: 'No Applicant Rescue'
-    edges:
-      - to: SCR-CUST-009
-        type: dismiss
-        guard: 'adjustments made or dismissed'
-    data_deps: [task_id, current_budget, current_schedule]
-
   SCR-CUST-027:
     label: 'Instant Match Customer'
     edges:

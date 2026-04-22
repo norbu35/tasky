@@ -357,6 +357,7 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-ASSIST-01**: The product MUST classify task outcomes as self-serve, system-assisted, or manual-assisted.
 - **REQ-P1-ASSIST-02**: Task-level external distribution MUST NOT be used by default.
 - **REQ-P1-ASSIST-03**: External distribution MAY trigger only when a pilot-eligible task has received no qualified application within twelve hours of posting.
+- **REQ-P1-ASSIST-03A**: The decision to trigger external distribution MUST be backend-controlled. Customers MUST NOT be asked to choose or approve task-level rescue behavior in the normal posting flow.
 - **REQ-P1-ASSIST-04**: External distribution MUST be limited in Phase 1 to home cleaning, furniture assembly, moving help, and minor handyman.
 - **REQ-P1-ASSIST-05**: External distribution payloads MUST be sanitized and MUST NOT expose exact address, raw contact details, or unsupported trust claims.
 - **REQ-P1-ASSIST-06**: Tasks advanced through external distribution MUST remain eligible for booking and completion metrics but MUST be excluded from self-serve fulfillment reporting.

@@ -38,12 +38,12 @@ Phase 1 must not promise payment hold, payment protection, or escrow.
 
 ### Microcopy examples
 
-| Moment                 | English                                                                          | Notes                             |
-| ---------------------- | -------------------------------------------------------------------------------- | --------------------------------- |
-| Verification complete  | "Identity confirmed. You're good to go."                                         | Positive and immediate            |
-| Booking confirmed      | "Booked. We'll keep the details and updates in one place."                       | Confident without implying escrow |
-| Bayangol posting limit | "Posting is live in Bayangol for now. Join the waitlist for your area."          | Operationally explicit            |
-| No immediate match     | "No qualified tasker yet. We’ll keep trying and can ask if you want extra help." | Honest rescue posture             |
+| Moment                 | English                                                                 | Notes                             |
+| ---------------------- | ----------------------------------------------------------------------- | --------------------------------- |
+| Verification complete  | "Identity confirmed. You're good to go."                                | Positive and immediate            |
+| Booking confirmed      | "Booked. We'll keep the details and updates in one place."              | Confident without implying escrow |
+| Bayangol posting limit | "Posting is live in Bayangol for now. Join the waitlist for your area." | Operationally explicit            |
+| No immediate match     | "No qualified tasker yet. We’ll keep trying in the background."         | Honest assisted posture           |
 
 ## Trust Promise
 

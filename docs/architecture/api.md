@@ -511,13 +511,12 @@ _(No database views or materialized projections currently exist. Admin read mode
    - Signup bonus credits are granted once per tasker via idempotent transaction key.
    - Phase 3+: escrow payment initiation/callback, wallet crediting, and payout processing remain future gated flows.
 6. **No-Applicant Rescue Flow**:
-   - If a task has zero qualified applications for 120 minutes during 08:00-22:00 local time, show an in-product
-     recovery prompt.
-   - Early recovery actions may include: budget/schedule adjustment prompt, internal re-notification fanout to
-     additional eligible Taskers, and concierge/manual-help request.
-   - External distribution is a separate assisted path and must not trigger before 12 hours with no qualified
-     application on a pilot-eligible task.
-   - Persist recovery prompts and assisted interventions in `task_rescue_events`.
+   - There is no customer-facing rescue-choice surface in the intended Phase 1 product.
+   - A pilot-eligible task becomes eligible for assisted distribution only after 12 hours with no qualified
+     application.
+   - When implemented, a backend timer/worker will hand the task to the off-platform distribution module
+     automatically; the customer is not asked to choose rescue behavior.
+   - Persist assisted-distribution decisions and outcomes in `task_rescue_events`.
 7. **Messaging Flow** (WebSocket + REST fallback):
    - Open-ended pre-booking chat is not part of Phase 1 launch UX.
    - If messaging is enabled for a booking, it is a post-confirmation channel between booking participants.

@@ -36,7 +36,7 @@ in `docs/STRATEGY.md`.
 
 | Item                                                 | Canonical requirement                                                    | Trigger                                          |
 | ---------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------ |
-| No-qualified-application rescue flow and persistence | `REQ-P1-ADMIN-05`                                                        | Native matching shows repeated Bayangol failures |
+| Backend assisted-distribution module and persistence | `REQ-P1-ASSIST-03`, `REQ-P1-ASSIST-03A`, `REQ-P1-ADMIN-08`               | Native matching shows repeated Bayangol failures |
 | Review enforcement hard locks tuning                 | `REQ-P1-SAFE-02`                                                         | Review obligation compliance is materially weak  |
 | Verification and moderation ops hardening            | `REQ-P1-SAFE-01`, `REQ-P1-SAFE-06`, `REQ-P1-ADMIN-01`, `REQ-P1-ADMIN-04` | Operational volume requires tighter tooling      |
 | KPI dashboard and alert ratification on real host    | KPI policy in `docs/PRD.md` / `docs/METRICS.md`                          | Required before production                       |
