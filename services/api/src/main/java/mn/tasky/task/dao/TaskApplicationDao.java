@@ -12,27 +12,37 @@ import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
+import org.springframework.lang.Nullable;
 
 @RegisterConstructorMapper(TaskApplicationState.class)
 public interface TaskApplicationDao {
 
-    default void insert(String id, String taskId, String taskerId, String message, String status, Instant createdAt) {
+    default void insert(
+            String id,
+            String taskId,
+            String taskerId,
+            String message,
+            @Nullable Integer quotePrice,
+            String status,
+            Instant createdAt) {
         insert(
                 required(id, "id"),
                 required(taskId, "taskId"),
                 required(taskerId, "taskerId"),
                 message,
+                quotePrice,
                 status,
                 createdAt);
     }
 
-    @SqlUpdate("INSERT INTO task_applications (id, task_id, tasker_id, message, status, created_at) "
-            + "VALUES (:id, :taskId, :taskerId, :message, :status, :createdAt)")
+    @SqlUpdate("INSERT INTO task_applications (id, task_id, tasker_id, message, quote_price, status, created_at) "
+            + "VALUES (:id, :taskId, :taskerId, :message, :quotePrice, :status, :createdAt)")
     void insert(
             @Bind("id") UUID id,
             @Bind("taskId") UUID taskId,
             @Bind("taskerId") UUID taskerId,
             @Bind("message") String message,
+            @Bind("quotePrice") Integer quotePrice,
             @Bind("status") String status,
             @Bind("createdAt") Instant createdAt);
 
@@ -45,7 +55,7 @@ public interface TaskApplicationDao {
             + "p.rating_avg AS tasker_rating_avg, p.completed_tasks AS tasker_completed_tasks, "
             + "CASE WHEN p.completed_tasks >= 6 AND p.rating_avg >= 4.5 THEN true ELSE false END AS"
             + " tasker_is_pro, "
-            + "ta.message, ta.status, "
+            + "ta.message, ta.quote_price, ta.status, "
             + "ta.relevance_score, ta.recommended, ta.selected_at, ta.respond_by_at, "
             + "ta.created_at "
             + "FROM task_applications ta "
@@ -71,7 +81,7 @@ public interface TaskApplicationDao {
             + "p.rating_avg AS tasker_rating_avg, p.completed_tasks AS tasker_completed_tasks, "
             + "CASE WHEN p.completed_tasks >= 6 AND p.rating_avg >= 4.5 THEN true ELSE false END AS"
             + " tasker_is_pro, "
-            + "ta.message, ta.status, "
+            + "ta.message, ta.quote_price, ta.status, "
             + "ta.relevance_score, ta.recommended, ta.selected_at, ta.respond_by_at, "
             + "ta.created_at "
             + "FROM task_applications ta "
@@ -85,7 +95,7 @@ public interface TaskApplicationDao {
             + "p.rating_avg AS tasker_rating_avg, p.completed_tasks AS tasker_completed_tasks, "
             + "CASE WHEN p.completed_tasks >= 6 AND p.rating_avg >= 4.5 THEN true ELSE false END AS"
             + " tasker_is_pro, "
-            + "ta.message, ta.status, "
+            + "ta.message, ta.quote_price, ta.status, "
             + "ta.relevance_score, ta.recommended, ta.selected_at, ta.respond_by_at, "
             + "ta.created_at "
             + "FROM task_applications ta "

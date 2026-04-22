@@ -8,11 +8,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import org.springframework.lang.Nullable;
 
 public record CreateTaskRequest(
         @JsonProperty("category_id") @NotBlank @Size(max = 512) String categoryId,
         @NotBlank @Size(min = 10, max = 2000) String description,
-        @Min(5000) @Max(50_000_000) int budget,
+        @Nullable @Min(5000) @Max(50_000_000) Integer budget,
+        @JsonProperty("pricing_mode") @NotNull PricingMode pricingMode,
         @JsonProperty("location_lat") @NotNull @Min(-90) @Max(90) double locationLat,
         @JsonProperty("location_lng") @NotNull @Min(-180) @Max(180) double locationLng,
         @JsonProperty("location_text") @NotBlank @Size(min = 5, max = 500) String locationText,

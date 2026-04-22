@@ -22,12 +22,13 @@ public interface TaskDao {
             String customerId,
             String categoryId,
             String description,
-            int budget,
+            Integer budget,
             double locationLat,
             double locationLng,
             String locationText,
             String status,
             Instant scheduledAt,
+            String pricingMode,
             String intakeAnswersJson,
             Integer intakeSchemaVersion,
             String scopeSummarySource,
@@ -39,6 +40,7 @@ public interface TaskDao {
                 required(categoryId, "categoryId"),
                 description,
                 budget,
+                pricingMode,
                 locationLat,
                 locationLng,
                 locationText,
@@ -51,11 +53,11 @@ public interface TaskDao {
                 updatedAt);
     }
 
-    @SqlUpdate("INSERT INTO tasks (id, customer_id, category_id, description, budget, "
+    @SqlUpdate("INSERT INTO tasks (id, customer_id, category_id, description, budget, pricing_mode, "
             + "location_lat, location_lng, location_text, status, scheduled_at, "
             + "intake_answers_json, intake_schema_version, scope_summary_source, "
             + "created_at, updated_at) "
-            + "VALUES (:id, :customerId, :categoryId, :description, :budget, "
+            + "VALUES (:id, :customerId, :categoryId, :description, :budget, :pricingMode, "
             + ":locationLat, :locationLng, :locationText, :status, :scheduledAt, "
             + "CAST(:intakeAnswersJson AS jsonb), :intakeSchemaVersion, :scopeSummarySource, "
             + ":createdAt, :updatedAt)")
@@ -64,7 +66,8 @@ public interface TaskDao {
             @Bind("customerId") UUID customerId,
             @Bind("categoryId") UUID categoryId,
             @Bind("description") String description,
-            @Bind("budget") int budget,
+            @Bind("budget") Integer budget,
+            @Bind("pricingMode") String pricingMode,
             @Bind("locationLat") double locationLat,
             @Bind("locationLng") double locationLng,
             @Bind("locationText") String locationText,
@@ -80,7 +83,7 @@ public interface TaskDao {
         return findById(required(id, "id"));
     }
 
-    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, pricing_mode, "
             + "location_lat, location_lng, location_text, status, scheduled_at, "
             + "intake_answers_json, intake_schema_version, scope_summary_source, "
             + "created_at, updated_at "
@@ -97,7 +100,7 @@ public interface TaskDao {
     default void updateDetails(
             String id,
             String description,
-            int budget,
+            Integer budget,
             double locationLat,
             double locationLng,
             String locationText,
@@ -121,7 +124,7 @@ public interface TaskDao {
     void updateDetails(
             @Bind("id") UUID id,
             @Bind("description") String description,
-            @Bind("budget") int budget,
+            @Bind("budget") Integer budget,
             @Bind("locationLat") double locationLat,
             @Bind("locationLng") double locationLng,
             @Bind("locationText") String locationText,
@@ -141,7 +144,7 @@ public interface TaskDao {
                 : findOpenByCategoryAfter(categoryId, cursorCreatedAt, cursorId, limit);
     }
 
-    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, pricing_mode, "
             + "location_lat, location_lng, location_text, status, scheduled_at, "
             + "intake_answers_json, intake_schema_version, scope_summary_source, "
             + "created_at, updated_at "
@@ -150,7 +153,7 @@ public interface TaskDao {
             + "LIMIT :limit")
     List<TaskState> findOpenAll(@Bind("limit") int limit);
 
-    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, pricing_mode, "
             + "location_lat, location_lng, location_text, status, scheduled_at, "
             + "intake_answers_json, intake_schema_version, scope_summary_source, "
             + "created_at, updated_at "
@@ -164,7 +167,7 @@ public interface TaskDao {
             @Bind("cursorId") UUID cursorId,
             @Bind("limit") int limit);
 
-    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, pricing_mode, "
             + "location_lat, location_lng, location_text, status, scheduled_at, "
             + "intake_answers_json, intake_schema_version, scope_summary_source, "
             + "created_at, updated_at "
@@ -174,7 +177,7 @@ public interface TaskDao {
             + "LIMIT :limit")
     List<TaskState> findOpenByCategory(@Bind("categoryId") UUID categoryId, @Bind("limit") int limit);
 
-    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, pricing_mode, "
             + "location_lat, location_lng, location_text, status, scheduled_at, "
             + "intake_answers_json, intake_schema_version, scope_summary_source, "
             + "created_at, updated_at "
@@ -213,7 +216,7 @@ public interface TaskDao {
                 : findOpenWithinRadiusByCategoryAfter(categoryId, lat, lng, meters, cursorCreatedAt, cursorId, limit);
     }
 
-    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, pricing_mode, "
             + "location_lat, location_lng, location_text, status, scheduled_at, "
             + "intake_answers_json, intake_schema_version, scope_summary_source, "
             + "created_at, updated_at "
@@ -225,7 +228,7 @@ public interface TaskDao {
     List<TaskState> findOpenWithinRadiusAll(
             @Bind("lat") double lat, @Bind("lng") double lng, @Bind("meters") double meters, @Bind("limit") int limit);
 
-    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, pricing_mode, "
             + "location_lat, location_lng, location_text, status, scheduled_at, "
             + "intake_answers_json, intake_schema_version, scope_summary_source, "
             + "created_at, updated_at "
@@ -243,7 +246,7 @@ public interface TaskDao {
             @Bind("cursorId") UUID cursorId,
             @Bind("limit") int limit);
 
-    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, pricing_mode, "
             + "location_lat, location_lng, location_text, status, scheduled_at, "
             + "intake_answers_json, intake_schema_version, scope_summary_source, "
             + "created_at, updated_at "
@@ -260,7 +263,7 @@ public interface TaskDao {
             @Bind("meters") double meters,
             @Bind("limit") int limit);
 
-    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, pricing_mode, "
             + "location_lat, location_lng, location_text, status, scheduled_at, "
             + "intake_answers_json, intake_schema_version, scope_summary_source, "
             + "created_at, updated_at "
@@ -280,7 +283,7 @@ public interface TaskDao {
             @Bind("cursorId") UUID cursorId,
             @Bind("limit") int limit);
 
-    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, pricing_mode, "
             + "location_lat, location_lng, location_text, status, scheduled_at, "
             + "intake_answers_json, intake_schema_version, scope_summary_source, "
             + "created_at, updated_at "
@@ -303,7 +306,7 @@ public interface TaskDao {
         return findByCustomerAfterCursor(customerId, status, cursorCreatedAt, cursorId, limit);
     }
 
-    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, pricing_mode, "
             + "location_lat, location_lng, location_text, status, scheduled_at, "
             + "intake_answers_json, intake_schema_version, scope_summary_source, "
             + "created_at, updated_at "
@@ -314,7 +317,7 @@ public interface TaskDao {
     List<TaskState> findByCustomerFirstPage(
             @Bind("customerId") UUID customerId, @Bind("status") String status, @Bind("limit") int limit);
 
-    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, pricing_mode, "
             + "location_lat, location_lng, location_text, status, scheduled_at, "
             + "intake_answers_json, intake_schema_version, scope_summary_source, "
             + "created_at, updated_at "
@@ -356,7 +359,7 @@ public interface TaskDao {
         return findByTaskerAfterCursor(taskerId, status, cursorCreatedAt, cursorId, limit);
     }
 
-    @SqlQuery("SELECT t.id, t.customer_id, t.category_id, t.description, t.budget, "
+    @SqlQuery("SELECT t.id, t.customer_id, t.category_id, t.description, t.budget, t.pricing_mode, "
             + "t.location_lat, t.location_lng, t.location_text, t.status, t.scheduled_at, "
             + "t.intake_answers_json, t.intake_schema_version, t.scope_summary_source, "
             + "t.created_at, t.updated_at "
@@ -369,7 +372,7 @@ public interface TaskDao {
     List<TaskState> findByTaskerFirstPage(
             @Bind("taskerId") UUID taskerId, @Bind("status") String status, @Bind("limit") int limit);
 
-    @SqlQuery("SELECT t.id, t.customer_id, t.category_id, t.description, t.budget, "
+    @SqlQuery("SELECT t.id, t.customer_id, t.category_id, t.description, t.budget, t.pricing_mode, "
             + "t.location_lat, t.location_lng, t.location_text, t.status, t.scheduled_at, "
             + "t.intake_answers_json, t.intake_schema_version, t.scope_summary_source, "
             + "t.created_at, t.updated_at "

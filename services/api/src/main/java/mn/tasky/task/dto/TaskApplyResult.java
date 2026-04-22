@@ -7,6 +7,7 @@ public record TaskApplyResult(TaskApplicationState application, String errorCode
     public static final String TASK_NOT_OPEN = "TASK_NOT_OPEN";
     public static final String DUPLICATE_APPLICATION = "DUPLICATE_APPLICATION";
     public static final String REVIEW_LOCK_ACTIVE = "REVIEW_LOCK_ACTIVE";
+    public static final String QUOTE_PRICE_REQUIRED = "QUOTE_PRICE_REQUIRED";
     public static final TaskApplyResult NOT_FOUND_RESULT = new TaskApplyResult(null, NOT_FOUND);
     public static final TaskApplyResult FORBIDDEN_RESULT = new TaskApplyResult(null, FORBIDDEN);
     public static final TaskApplyResult TASK_NOT_OPEN_RESULT = new TaskApplyResult(null, TASK_NOT_OPEN);

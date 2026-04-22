@@ -155,6 +155,7 @@ public class TaskMutationService {
                         finalLocationText,
                         existing.status(),
                         finalScheduledAt,
+                        existing.pricingMode(),
                         photoKeys,
                         existing.intakeAnswersJson(),
                         existing.intakeSchemaVersion(),

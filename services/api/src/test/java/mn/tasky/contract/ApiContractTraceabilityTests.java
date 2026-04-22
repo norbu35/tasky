@@ -39,7 +39,7 @@ class ApiContractTraceabilityTests {
 
         assertThat(generatedTypes).exists();
         assertThat(sdkIndex).exists();
-        assertThat(Files.readString(sdkIndex)).contains("export * from \"./generated/api-types\"");
+        assertThat(Files.readString(sdkIndex)).contains("export * from './generated/api-types'");
     }
 
     @Test

@@ -23,6 +23,7 @@ import mn.tasky.task.dao.TaskDao;
 import mn.tasky.task.dao.TaskDraftDao;
 import mn.tasky.task.dao.TaskPhotoDao;
 import mn.tasky.task.dto.CreateTask;
+import mn.tasky.task.dto.PricingMode;
 import mn.tasky.task.dto.TaskCreateResult;
 import mn.tasky.task.dto.TaskDraft;
 import mn.tasky.task.dto.TaskState;
@@ -118,6 +119,16 @@ public class TaskCreationService {
                     TaskCreateResult.INVALID_PHOTO_KEY, "Photo keys must belong to the caller's task-photo namespace.");
         }
 
+        // Validate pricing mode and budget interaction
+        String pricingMode = command.pricingMode();
+        if (pricingMode == null) {
+            pricingMode = PricingMode.BUDGET.name();
+        }
+        if (PricingMode.BUDGET.name().equals(pricingMode) && command.budget() == null) {
+            return TaskCreateResult.error(
+                    TaskCreateResult.INVALID_BUDGET, "Budget is required for BUDGET pricing mode.");
+        }
+
         String sanitizedDescription = TextSanitizer.plainText(command.description());
         String sanitizedLocationText = TextSanitizer.plainText(command.locationText());
         if (!StringUtils.hasText(sanitizedDescription)) {
@@ -198,6 +209,7 @@ public class TaskCreationService {
                 sanitizedLocationText,
                 "OPEN",
                 scheduledAt,
+                pricingMode,
                 intakeAnswersJson,
                 intakeSchemaVersion,
                 scopeSummarySource,
@@ -220,6 +232,7 @@ public class TaskCreationService {
                 sanitizedLocationText,
                 "OPEN",
                 scheduledAt,
+                pricingMode,
                 photoKeys,
                 intakeAnswersJson,
                 intakeSchemaVersion,

@@ -88,6 +88,7 @@ public class RepeatBookingService {
                 originalTask.locationText(),
                 "OPEN",
                 null, // scheduledAt — user must set new schedule
+                originalTask.pricingMode(),
                 originalTask.intakeAnswersJson(),
                 currentSchemaVersion,
                 null, // scopeSummarySource
@@ -105,6 +106,7 @@ public class RepeatBookingService {
                 originalTask.locationText(),
                 "OPEN",
                 null, // scheduledAt
+                originalTask.pricingMode(),
                 Collections.emptyList(),
                 originalTask.intakeAnswersJson(),
                 currentSchemaVersion,

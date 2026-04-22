@@ -43,8 +43,15 @@ PublicTask:
       type: string
     budget:
       type: integer
-      description: Fixed budget in MNT. Current live contract is fixed-budget-only; PRD v2.0 target adds pricing mode and quote support.
+      nullable: true
+      description: Budget in MNT when pricing_mode is BUDGET. Null for QUOTE mode tasks.
       example: 50000
+    pricing_mode:
+      type: string
+      enum:
+        - BUDGET
+        - QUOTE
+      description: 'BUDGET = customer sets a budget, taskers accept or counter-offer. QUOTE = taskers submit price quotes.'
     approximate_location:
       type: string
       description: Fuzzed location (district/khoroo level). Exact address hidden until booking.
@@ -106,8 +113,15 @@ Task:
       type: string
     budget:
       type: integer
-      description: Fixed budget in MNT. Current live contract is fixed-budget-only; PRD v2.0 target adds pricing mode and quote support.
+      nullable: true
+      description: Budget in MNT when pricing_mode is BUDGET. Null for QUOTE mode tasks.
       example: 50000
+    pricing_mode:
+      type: string
+      enum:
+        - BUDGET
+        - QUOTE
+      description: 'BUDGET = customer sets a budget, taskers accept or counter-offer. QUOTE = taskers submit price quotes.'
     location_lat:
       type: number
       format: double
@@ -184,13 +198,13 @@ CreateTaskRequest:
   required:
     - category_id
     - description
-    - budget
     - location_lat
     - location_lng
     - location_text
     - scheduled_at
     - intake_answers
     - intake_schema_version
+    - pricing_mode
   properties:
     category_id:
       type: string
@@ -202,7 +216,14 @@ CreateTaskRequest:
     budget:
       type: integer
       minimum: 5000
-      description: Fixed budget in MNT. Must be at least ₮5,000. Current live contract does not yet expose `pricing_mode` or quote-request fields required by PRD v2.0.
+      nullable: true
+      description: Budget in MNT. Required when pricing_mode is BUDGET. Ignored for QUOTE mode.
+    pricing_mode:
+      type: string
+      enum:
+        - BUDGET
+        - QUOTE
+      description: 'BUDGET = customer has a budget. QUOTE = customer wants taskers to quote a price.'
     location_lat:
       type: number
       format: double
@@ -353,7 +374,11 @@ TaskApplication:
           type: boolean
     message:
       type: string
-      description: Tasker's short application note. Current live contract does not yet expose the structured pricing response required by PRD v2.0.
+      description: Tasker's short structured application note.
+    quote_price:
+      type: integer
+      nullable: true
+      description: "Tasker's price. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the quote (required)."
     status:
       type: string
       enum:

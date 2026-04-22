@@ -184,6 +184,7 @@ public class TaskController {
                         body.locationLng(),
                         body.locationText(),
                         body.scheduledAt(),
+                        body.pricingMode() != null ? body.pricingMode().name() : null,
                         body.photoKeys() != null ? body.photoKeys() : List.of(),
                         body.intakeAnswersJson() != null
                                 ? body.intakeAnswersJson().toString()
@@ -334,8 +335,8 @@ public class TaskController {
             @PathVariable String id,
             @Valid @RequestBody ApplyTaskRequest body,
             HttpServletRequest request) {
-        TaskApplyResult result =
-                marketplaceCommandPort.applyToTask(principal.userId(), principal.role(), id, body.message());
+        TaskApplyResult result = marketplaceCommandPort.applyToTask(
+                principal.userId(), principal.role(), id, body.message(), body.quotePrice());
 
         if (result.isSuccess()) {
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -376,6 +377,14 @@ public class TaskController {
                             "REVIEW_LOCK_ACTIVE",
                             "message",
                             "You must complete pending reviews before applying.",
+                            "trace_id",
+                            resolveTraceId(request)));
+            case TaskApplyResult.QUOTE_PRICE_REQUIRED -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of(
+                            "code",
+                            "QUOTE_PRICE_REQUIRED",
+                            "message",
+                            "Quote price is required for QUOTE pricing mode tasks.",
                             "trace_id",
                             resolveTraceId(request)));
             default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -396,6 +396,8 @@ class BookingScenarioTests {
                     "Test task for SCN-BOOK-005 scenario",
                     "budget",
                     50000,
+                    "pricing_mode",
+                    "BUDGET",
                     "location_lat",
                     47.9,
                     "location_lng",

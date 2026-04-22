@@ -100,6 +100,7 @@ class TaskApplicationServiceTests {
                 "Ulaanbaatar",
                 "OPEN",
                 Instant.now(),
+                "BUDGET",
                 null,
                 null,
                 null,
@@ -120,6 +121,7 @@ class TaskApplicationServiceTests {
                 "Ulaanbaatar",
                 "ASSIGNED",
                 Instant.now(),
+                "BUDGET",
                 null,
                 null,
                 null,
@@ -154,6 +156,7 @@ class TaskApplicationServiceTests {
                 10,
                 false,
                 "I can do this",
+                null,
                 "APPLIED",
                 null,
                 null,
@@ -173,7 +176,7 @@ class TaskApplicationServiceTests {
         void reviewLockedIsRejected() {
             when(reviewEnforcementService.isUserLocked(TASKER_ID)).thenReturn(true);
 
-            TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "msg");
+            TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "msg", null);
 
             assertThat(result.errorCode()).isEqualTo(TaskApplyResult.REVIEW_LOCK_ACTIVE);
         }
@@ -184,7 +187,7 @@ class TaskApplicationServiceTests {
             when(reviewEnforcementService.isUserLocked(TASKER_ID)).thenReturn(false);
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.empty());
 
-            TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "msg");
+            TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "msg", null);
 
             assertThat(result.errorCode()).isEqualTo(TaskApplyResult.NOT_FOUND);
         }
@@ -195,7 +198,7 @@ class TaskApplicationServiceTests {
             when(reviewEnforcementService.isUserLocked(TASKER_ID)).thenReturn(false);
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(openTask()));
 
-            TaskApplyResult result = service.applyToTask(TASKER_ID, "CUSTOMER", TASK_ID, "msg");
+            TaskApplyResult result = service.applyToTask(TASKER_ID, "CUSTOMER", TASK_ID, "msg", null);
 
             assertThat(result.errorCode()).isEqualTo(TaskApplyResult.FORBIDDEN);
         }
@@ -206,7 +209,7 @@ class TaskApplicationServiceTests {
             when(reviewEnforcementService.isUserLocked(CUSTOMER_ID)).thenReturn(false);
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(openTask()));
 
-            TaskApplyResult result = service.applyToTask(CUSTOMER_ID, "TASKER", TASK_ID, "msg");
+            TaskApplyResult result = service.applyToTask(CUSTOMER_ID, "TASKER", TASK_ID, "msg", null);
 
             assertThat(result.errorCode()).isEqualTo(TaskApplyResult.FORBIDDEN);
         }
@@ -217,7 +220,7 @@ class TaskApplicationServiceTests {
             when(reviewEnforcementService.isUserLocked(TASKER_ID)).thenReturn(false);
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(assignedTask()));
 
-            TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "msg");
+            TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "msg", null);
 
             assertThat(result.errorCode()).isEqualTo(TaskApplyResult.TASK_NOT_OPEN);
         }
@@ -242,7 +245,7 @@ class TaskApplicationServiceTests {
                     Instant.now().toString());
             when(userProfileService.getProfile(TASKER_ID)).thenReturn(Optional.of(unverified));
 
-            TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "msg");
+            TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "msg", null);
 
             assertThat(result.errorCode()).isEqualTo(TaskApplyResult.FORBIDDEN);
         }
@@ -257,7 +260,7 @@ class TaskApplicationServiceTests {
             when(taskApplicationDao.existsByTaskIdAndTaskerId(TASK_ID, TASKER_ID))
                     .thenReturn(true);
 
-            TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "msg");
+            TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "msg", null);
 
             assertThat(result.errorCode()).isEqualTo(TaskApplyResult.DUPLICATE_APPLICATION);
         }
@@ -272,13 +275,20 @@ class TaskApplicationServiceTests {
             when(taskApplicationDao.existsByTaskIdAndTaskerId(TASK_ID, TASKER_ID))
                     .thenReturn(false);
 
-            TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "I can do this");
+            TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "I can do this", null);
 
             assertThat(result.isSuccess()).isTrue();
             assertThat(result.application().taskerId()).isEqualTo(TASKER_ID);
             assertThat(result.application().status()).isEqualTo("APPLIED");
             verify(taskApplicationDao)
-                    .insert(anyString(), eq(TASK_ID), eq(TASKER_ID), anyString(), eq("APPLIED"), any(Instant.class));
+                    .insert(
+                            anyString(),
+                            eq(TASK_ID),
+                            eq(TASKER_ID),
+                            anyString(),
+                            any(),
+                            eq("APPLIED"),
+                            any(Instant.class));
             verify(notificationService).sendPush(eq(CUSTOMER_ID), anyString(), anyString(), eq("TASKER_APPLIED"));
             verify(analyticsService).track(eq(AnalyticsService.EVENT_APPLICATION_SUBMITTED), eq(TASKER_ID), any());
         }
@@ -407,6 +417,7 @@ class TaskApplicationServiceTests {
                     5,
                     false,
                     "msg",
+                    null,
                     "APPLIED",
                     null,
                     null,
@@ -435,6 +446,7 @@ class TaskApplicationServiceTests {
                     5,
                     false,
                     "msg",
+                    null,
                     "REJECTED",
                     null,
                     null,

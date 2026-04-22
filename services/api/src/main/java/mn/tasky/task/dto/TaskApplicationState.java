@@ -13,6 +13,7 @@ public record TaskApplicationState(
         int taskerCompletedTasks,
         boolean taskerIsPro,
         String message,
+        @Nullable Integer quotePrice,
         String status,
         @Nullable Double relevanceScore,
         @Nullable Boolean recommended,

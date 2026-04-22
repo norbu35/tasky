@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -91,25 +92,17 @@ class TaskScenarioTests extends IntegrationTestBase {
         // The Cleaning schema requires: property_type, size_or_rooms, cleaning_type, supplies_provided
         // Provide only one answer — three required fields are absent
         Map<String, Object> partialAnswers = Map.of("property_type", "Apartment");
-        Map body = Map.of(
-                "category_id",
-                categoryId,
-                "description",
-                "Task with partial intake answers",
-                "budget",
-                50000,
-                "location_lat",
-                47.9,
-                "location_lng",
-                106.9,
-                "location_text",
-                "Test Street 1, UB",
-                "scheduled_at",
-                future(),
-                "intake_schema_version",
-                CLEANING_SCHEMA_VERSION,
-                "intake_answers",
-                partialAnswers);
+        Map<String, Object> body = new HashMap<>();
+        body.put("category_id", categoryId);
+        body.put("description", "Task with partial intake answers");
+        body.put("budget", 50000);
+        body.put("pricing_mode", "BUDGET");
+        body.put("location_lat", 47.9);
+        body.put("location_lng", 106.9);
+        body.put("location_text", "Test Street 1, UB");
+        body.put("scheduled_at", future());
+        body.put("intake_schema_version", CLEANING_SCHEMA_VERSION);
+        body.put("intake_answers", partialAnswers);
 
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", body, custToken);
 
@@ -128,6 +121,8 @@ class TaskScenarioTests extends IntegrationTestBase {
                 categoryId,
                 "budget",
                 50000,
+                "pricing_mode",
+                "BUDGET",
                 "location_lat",
                 47.9,
                 "location_lng",
@@ -181,6 +176,8 @@ class TaskScenarioTests extends IntegrationTestBase {
                 "Task with too many photos supplied",
                 "budget",
                 50000,
+                "pricing_mode",
+                "BUDGET",
                 "location_lat",
                 47.9,
                 "location_lng",
@@ -347,25 +344,17 @@ class TaskScenarioTests extends IntegrationTestBase {
     @DisplayName(
             "SCN-TASK-014: Deterministic job scope summary is generated from intake answers before submit and persisted")
     void scopeSummaryGeneratedAndPersisted() {
-        Map body = Map.of(
-                "category_id",
-                categoryId,
-                "description",
-                "Cleaning job in Zaisan apartment",
-                "budget",
-                50000,
-                "location_lat",
-                47.9,
-                "location_lng",
-                106.9,
-                "location_text",
-                "Zaisan, UB",
-                "scheduled_at",
-                future(),
-                "intake_schema_version",
-                CLEANING_SCHEMA_VERSION,
-                "intake_answers",
-                CLEANING_INTAKE_ANSWERS);
+        Map<String, Object> body = new HashMap<>();
+        body.put("category_id", categoryId);
+        body.put("description", "Cleaning job in Zaisan apartment");
+        body.put("budget", 50000);
+        body.put("pricing_mode", "BUDGET");
+        body.put("location_lat", 47.9);
+        body.put("location_lng", 106.9);
+        body.put("location_text", "Zaisan, UB");
+        body.put("scheduled_at", future());
+        body.put("intake_schema_version", CLEANING_SCHEMA_VERSION);
+        body.put("intake_answers", CLEANING_INTAKE_ANSWERS);
 
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", body, custToken);
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -422,27 +411,18 @@ class TaskScenarioTests extends IntegrationTestBase {
         assertThat(boundVersion).isEqualTo(CLEANING_SCHEMA_VERSION);
 
         // Submit task using draft_id — the service uses the draft's bound version
-        Map body = Map.of(
-                "category_id",
-                categoryId,
-                "description",
-                "Task submitted with draft binding version 1",
-                "budget",
-                50000,
-                "location_lat",
-                47.9,
-                "location_lng",
-                106.9,
-                "location_text",
-                "Test Street 1, UB",
-                "scheduled_at",
-                future(),
-                "draft_id",
-                draftId,
-                "intake_answers",
-                CLEANING_INTAKE_ANSWERS,
-                "intake_schema_version",
-                CLEANING_SCHEMA_VERSION);
+        Map<String, Object> body = new HashMap<>();
+        body.put("category_id", categoryId);
+        body.put("description", "Task submitted with draft binding version 1");
+        body.put("budget", 50000);
+        body.put("pricing_mode", "BUDGET");
+        body.put("location_lat", 47.9);
+        body.put("location_lng", 106.9);
+        body.put("location_text", "Test Street 1, UB");
+        body.put("scheduled_at", future());
+        body.put("draft_id", draftId);
+        body.put("intake_answers", CLEANING_INTAKE_ANSWERS);
+        body.put("intake_schema_version", CLEANING_SCHEMA_VERSION);
 
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", body, custToken);
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -461,27 +441,18 @@ class TaskScenarioTests extends IntegrationTestBase {
 
         // Submit with the draft — even if in theory the schema changed, the service
         // uses the draft's bound version for validation
-        Map body = Map.of(
-                "category_id",
-                categoryId,
-                "description",
-                "Task submitted from a bound draft",
-                "budget",
-                50000,
-                "location_lat",
-                47.9,
-                "location_lng",
-                106.9,
-                "location_text",
-                "Test Street 1, UB",
-                "scheduled_at",
-                future(),
-                "draft_id",
-                draftId,
-                "intake_answers",
-                CLEANING_INTAKE_ANSWERS,
-                "intake_schema_version",
-                CLEANING_SCHEMA_VERSION);
+        Map<String, Object> body = new java.util.HashMap<>();
+        body.put("category_id", categoryId);
+        body.put("description", "Task submitted from a bound draft");
+        body.put("budget", 50000);
+        body.put("pricing_mode", "BUDGET");
+        body.put("location_lat", 47.9);
+        body.put("location_lng", 106.9);
+        body.put("location_text", "Test Street 1, UB");
+        body.put("scheduled_at", future());
+        body.put("draft_id", draftId);
+        body.put("intake_answers", CLEANING_INTAKE_ANSWERS);
+        body.put("intake_schema_version", CLEANING_SCHEMA_VERSION);
 
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", body, custToken);
         // Submission succeeds using the bound version
@@ -513,23 +484,16 @@ class TaskScenarioTests extends IntegrationTestBase {
         String tempCatId = catResp.getBody().get("id").toString();
 
         // Create a task while category is active
-        Map body = Map.of(
-                "category_id",
-                tempCatId,
-                "description",
-                "Task in category that will be deactivated",
-                "budget",
-                50000,
-                "location_lat",
-                47.9,
-                "location_lng",
-                106.9,
-                "location_text",
-                "Test Street 1, UB",
-                "scheduled_at",
-                future(),
-                "intake_answers",
-                Map.of());
+        Map<String, Object> body = new java.util.HashMap<>();
+        body.put("category_id", tempCatId);
+        body.put("description", "Task in category that will be deactivated");
+        body.put("budget", 50000);
+        body.put("pricing_mode", "BUDGET");
+        body.put("location_lat", 47.9);
+        body.put("location_lng", 106.9);
+        body.put("location_text", "Test Street 1, UB");
+        body.put("scheduled_at", future());
+        body.put("intake_answers", Map.of());
         ResponseEntity<Map> existing = postWithAuth("/api/v1/tasks", body, custToken);
         assertThat(existing.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         String existingTaskId = existing.getBody().get("id").toString();
@@ -577,25 +541,18 @@ class TaskScenarioTests extends IntegrationTestBase {
     }
 
     private Map taskBody(int budget) {
-        return Map.of(
-                "category_id",
-                categoryId,
-                "description",
-                "Standard scenario test task description",
-                "budget",
-                budget,
-                "location_lat",
-                47.9077,
-                "location_lng",
-                106.8832,
-                "location_text",
-                "Test Street 1, Ulaanbaatar",
-                "scheduled_at",
-                future(),
-                "intake_answers",
-                CLEANING_INTAKE_ANSWERS,
-                "intake_schema_version",
-                CLEANING_SCHEMA_VERSION);
+        Map<String, Object> body = new HashMap<>();
+        body.put("category_id", categoryId);
+        body.put("description", "Standard scenario test task description");
+        body.put("budget", budget);
+        body.put("pricing_mode", "BUDGET");
+        body.put("location_lat", 47.9077);
+        body.put("location_lng", 106.8832);
+        body.put("location_text", "Test Street 1, Ulaanbaatar");
+        body.put("scheduled_at", future());
+        body.put("intake_answers", CLEANING_INTAKE_ANSWERS);
+        body.put("intake_schema_version", CLEANING_SCHEMA_VERSION);
+        return body;
     }
 
     private String future() {

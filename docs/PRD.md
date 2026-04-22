@@ -1,85 +1,101 @@
 # Product Requirements Document (PRD): Tasky
 
 **Status:** Canonical  
-**Version:** 2.0  
+**Version:** 2.1 (enriched Phase 1 baseline)  
 **Last updated:** 2026-04-22
 
-## 1. Purpose
+## 1. Document authority and anti-drift rules
 
-This PRD defines the intended **Phase 1 launch product** for Tasky. It is the primary source of truth for product behavior, launch scope, and requirement-level acceptance criteria.
+This PRD defines the intended **Phase 1 launch product** for Tasky. It is the primary source of truth for:
+
+- intended product behavior
+- launch scope
+- requirement-level policy
+- KPI definitions
+- launch trust and coverage promises
 
 When active documents conflict:
 
 1. this PRD wins on intended product behavior
-2. `docs/STRATEGY.md` constrains launch and market posture
-3. maintenance policies constrain governance and rollout discipline
-4. architecture, design, OpenAPI, tests, and implementation are derived from this PRD
+2. `docs/STRATEGY.md` constrains market and launch posture
+3. maintenance policies constrain activation, readiness, and operating discipline
+4. architecture, OpenAPI, design, tests, and implementation are derived from this PRD
 
-Code may describe current implementation reality, but it does not silently redefine product intent.
+### 1.1 Code and document truth
 
-## 2. Product Thesis
+- Code may describe **current implementation reality**, but it does not silently redefine product intent.
+- If code conflicts with this PRD, default assumption is **implementation drift** unless a deliberate product decision updates this PRD.
+- Architecture may describe implementation design, but it does not outrank this PRD.
 
-Tasky is a trust-first, liquidity-first service marketplace for Ulaanbaatar. Phase 1 is not trying to prove full city coverage, monetization, or mature marketplace automation. Phase 1 is trying to prove that a constrained launch cell can generate enough structured demand and supply to complete real jobs through a mostly self-serve product flow.
+### 1.2 Deferred-feature discipline
 
-The product question for Phase 1 is:
+- Phase 1 normative sections describe **launch truth only**.
+- Future monetization, expansion, or automation surfaces may be referenced only in clearly labeled deferred appendices.
+- Derived documents and public copy may **not** promise behavior beyond the launch baseline.
 
-**Can a customer in the pilot area post a structured task, receive qualified supply quickly, confirm a booking, and get the job completed without manual rescue?**
+### 1.3 Change-discipline rule
 
-## 3. Phase 1 Success Condition
+Any PR that changes product behavior, launch scope, KPI semantics, pilot boundary, trust promises, or booking/review policy MUST update:
 
-Phase 1 succeeds when the Bayangol pilot demonstrates:
+1. this PRD
+2. affected maintenance policies
+3. affected architecture / contract / design artifacts
+4. any launch-facing copy or status matrix affected by the change
 
-- reliable qualified applications in the launch categories
-- conversion from posting to confirmed booking
-- enough completed jobs to show operational viability
-- trust outcomes good enough to justify expansion
-- decreasing reliance on assisted rescue over time
+### 1.4 Alignment gate
 
-The KPI model in this PRD is normative. Supporting dashboards, exports, and alerts must conform to it.
+The product is aligned only when:
 
-## 4. Personas
+- code and tests implement this PRD
+- downstream docs do not exceed this PRD
+- contracts do not expose deferred behavior as active truth
+- launch dashboards measure the KPI model defined here
+- public copy does not promise behavior outside this PRD
 
-### 4.1 Customer
+## 2. Product thesis
 
-A Ulaanbaatar resident who needs a one-off or occasional service task completed with minimal coordination overhead.
+Tasky is a trust-first, liquidity-first domestic services marketplace for Ulaanbaatar. Phase 1 is not trying to prove full city coverage, monetization, or mature marketplace automation. Phase 1 is trying to prove that a constrained pilot can generate enough structured demand and qualified supply to complete real jobs through a mostly self-serve platform flow.
 
-### 4.2 Tasker
+The Phase 1 product question is:
 
-An individual willing to perform listed services for payment. In Phase 1, tasker supply may come from anywhere in the city, including outskirts and student-heavy areas, but only taskers willing to serve Bayangol may participate in pilot demand.
+**Can a customer in the pilot area post a structured task, receive qualified supply quickly, confirm a booking, and get the job completed without rescue?**
 
-### 4.3 Admin / Founder-Operator
+## 3. Problem statement and value proposition
 
-The operator who manages verification, moderation, category intake schemas, feature toggles, waitlist demand, and dispute resolution, and who may provide launch rescue when native matching fails.
+### 3.1 Problem statement
 
-## 5. Phase 1 Launch Baseline
+Tasky exists because the current dominant alternatives for domestic services in Mongolia — Facebook groups, classifieds, and informal personal networks — are structurally weak at trust, coordination, and recourse.
 
-### 5.1 Coverage and pilot boundary
+They commonly produce:
 
-- Tasky is positioned as a product built for Ulaanbaatar.
-- Phase 1 operational truth is **Bayangol-only live posting**.
-- Customers outside Bayangol may browse, but they may not create live tasks.
-- Out-of-area customers must be offered a waitlist that captures both **area** and **category**.
-- Supply is citywide, but a tasker must explicitly declare willingness to serve Bayangol before applying to pilot tasks.
-- Public copy must explicitly communicate that the pilot is currently live in Bayangol.
+- unreliable identity and weak trust
+- repeated call-chain negotiation just to find one available person
+- unclear pricing and on-the-spot haggling
+- no durable booking record
+- weak evidence when a service fails
+- weak portability of reputation
 
-### 5.2 Launch categories
+Tasky’s launch product does **not** solve every later-stage marketplace problem. It solves the first ones that matter most:
 
-Phase 1 launches only the following service categories:
+- verified identity
+- structured task creation
+- controlled booking flow
+- review-backed reputation
+- evidence-backed disputes
+- moderation and operator backstop
 
-1. Home cleaning
-2. Furniture assembly
-3. Moving help / lifting help
-4. Minor handyman
+### 3.2 Value proposition framing
 
-The following remain out of scope for Phase 1:
+| Market weakness                          | Phase 1 Tasky response                                              |
+| ---------------------------------------- | ------------------------------------------------------------------- |
+| No verification                          | ID-verified taskers and verification-gated supply                   |
+| No structured booking record             | Structured intake, booking timeline, and auditable lifecycle events |
+| Haggling chaos                           | Budget-or-quote model with structured pricing responses             |
+| Weak recourse                            | Evidence-backed disputes and serious complaint handling             |
+| No durable reputation                    | Mandatory post-completion bilateral reviews                         |
+| Hard to know where service is truly live | Explicit Bayangol pilot boundary and waitlist for unsupported areas |
 
-- safety-critical or regulated categories such as electrical, gas, structural, roofing, major plumbing, or lock work
-- high-trust care categories such as childcare, eldercare, or in-home health-like support
-- privacy-sensitive service types that require heavy disclosure to be intelligible
-- highly ambiguous, quote-heavy categories such as renovation or custom interior projects
-- categories involving vulnerable users or elevated abuse/moderation risk
-
-### 5.3 Trust and money posture
+### 3.3 Trust promise for launch
 
 Phase 1 trust is based on:
 
@@ -96,29 +112,110 @@ Phase 1 does **not** promise:
 - escrow
 - wallet safety guarantees
 
-### 5.4 Phase 1 feature posture
+## 4. Phase 1 success condition
 
-Phase 1 does not depend on OTP-first auth, DAN, escrow, subscriptions, credits, referrals, B2B workflows, instant match, or other deferred monetization and expansion surfaces.
+Phase 1 succeeds when the Bayangol pilot demonstrates:
 
-## 6. Core Product Principles
+- qualified applications in the launch categories
+- conversion from posting to confirmed booking
+- enough completed jobs to show operational viability
+- trust outcomes good enough to justify expansion
+- decreasing reliance on assistance over time
 
-1. **Structure beats ambiguity.** Launch flows must prefer structured input over free-form negotiation.
+The KPI model in this PRD is normative. Supporting dashboards, exports, alerts, and downstream scorecards must conform to it.
+
+## 5. Users and JTBD
+
+### 5.1 Customer
+
+A Ulaanbaatar resident who needs a one-off or occasional service task completed with minimal coordination overhead.
+
+**Primary launch customer**
+
+- apartment-dwelling or urban household customer in or near the pilot area
+- values reliability and clarity over lowest possible price
+- wants to avoid calling many providers and negotiating from scratch
+
+**Core job to be done**
+
+- When a home task appears, help me secure a trustworthy tasker quickly at a predictable price or quote workflow, without off-platform chaos.
+
+### 5.2 Tasker
+
+An individual willing to perform listed services for payment. In Phase 1, tasker supply may come from anywhere in Ulaanbaatar, including outskirts and student-heavy areas, but only taskers willing to serve Bayangol may participate in pilot demand.
+
+**Primary launch tasker**
+
+- semi-professional or practical solo operator
+- may be a student, part-time worker, or worker from outer districts
+- wants steady work without self-marketing on Facebook
+
+**Core job to be done**
+
+- When I am willing to work in the pilot area, show me relevant tasks clearly, let me apply quickly, and help me build verified reputation through completed bookings.
+
+### 5.3 Founder / admin
+
+The launch pilot depends on an operator-managed backstop. Admin is not a future abstraction here; it is part of the product surface required to keep the pilot reliable.
+
+**Core job to be done**
+
+- Keep the marketplace trustworthy and operable by running verification, schema governance, moderation, disputes, waitlist management, and measured rescue.
+
+## 6. Phase 1 launch baseline
+
+### 6.1 Pilot geography and coverage
+
+- Tasky is positioned as a product built for Ulaanbaatar.
+- Phase 1 operational truth is **Bayangol-only live posting**.
+- Customers outside Bayangol may browse, but may not create live tasks.
+- Out-of-area customers must be offered a waitlist that captures both **area** and **category**.
+- Supply is citywide, but a tasker must explicitly declare willingness to serve Bayangol before applying to pilot tasks.
+- Public copy must explicitly communicate that the pilot is currently live in Bayangol.
+
+### 6.2 Launch categories
+
+Phase 1 launches only the following service categories:
+
+1. Home cleaning
+2. Furniture assembly
+3. Moving help / lifting help
+4. Minor handyman
+
+Minor handyman is subtype-based and excludes regulated, dangerous, or diagnosis-heavy work.
+
+### 6.3 Out of scope for launch
+
+The following remain out of scope for Phase 1 launch and must not be treated as active launch truth:
+
+- OTP-first auth
+- DAN verification integration
+- lead fees, credits, and paid lead-unlock flows
+- escrow, wallet, and payout flows
+- subscriptions
+- referrals
+- B2B flows
+- instant match
+- runtime LLM-led posting path
+- citywide live posting
+- payment protection or hold claims
+
+## 7. Core product principles
+
+1. **Structure beats ambiguity.** Launch flows prefer structured input over free-form negotiation.
 2. **Native liquidity before assisted liquidity.** The product must measure native marketplace health before leaning on rescue channels.
 3. **Trust before scale.** Coverage claims, copy, and interaction design must not outrun verification and moderation reality.
 4. **Category-first learning.** Category is the primary decision slice for launch KPIs; district is diagnostic.
 5. **No false availability.** The product must not imply that unsupported areas or deferred capabilities are already live.
+6. **Assistance must stay measurable.** System-assisted and manual-assisted outcomes must not be counted as self-serve.
 
-## 7. Canonical Domain Concepts
+## 8. Canonical domain concepts
 
-### 7.1 Launch cell
-
-For Phase 1 operations, the pilot area is defined by the customer task location being inside Bayangol. KPI scorecards are sliced primarily by category, with district as drilldown.
-
-### 7.2 Pilot-eligible task
+### 8.1 Pilot-eligible task
 
 A `pilot_eligible_task` is a task whose service location is inside Bayangol, belongs to a launch category, and is not invalidated by spam, fraud, or admin rejection.
 
-### 7.3 Qualified application
+### 8.2 Qualified application
 
 A `qualified_application` is an application submitted through the platform by a tasker who, at the time of apply:
 
@@ -130,15 +227,17 @@ A `qualified_application` is an application submitted through the platform by a 
 
 Time-slot availability is not part of qualification in Phase 1.
 
-### 7.4 Booking confirmation
+### 8.3 Booking confirmation
 
 A booking is `confirmed` only when:
 
 - a customer selects a specific applicant
 - the selected tasker accepts within the active acceptance window
 - the platform records the selection and acceptance as a confirmed booking
+- the customer has accepted the liability disclaimer
+- the booking price has been locked
 
-### 7.5 Assisted vs self-serve outcomes
+### 8.4 Assistance classes
 
 Task progress is classified into one of three buckets:
 
@@ -148,14 +247,14 @@ Task progress is classified into one of three buckets:
 
 Self-serve metrics exclude both assisted classes.
 
-### 7.6 Intervention
+### 8.5 Intervention
 
 `intervention = true` means the task required non-standard rescue or assistance to progress. Track:
 
 - `intervention_type = manual_rescue | external_distribution | ops_override`
 - `intervention_stage = pre_match | post_match | post_booking | completion_rescue`
 
-### 7.7 Out-of-area demand
+### 8.6 Out-of-area demand signals
 
 Out-of-area posting attempts must be captured with:
 
@@ -164,14 +263,14 @@ Out-of-area posting attempts must be captured with:
 - `waitlist_area`
 - `waitlist_category`
 
-## 8. Core User Journeys
+## 9. User journeys
 
-### 8.1 Customer journey
+### 9.1 Customer journey
 
 1. Sign in with Facebook OAuth.
 2. Browse available categories and select a launch category.
 3. Start a category-specific intake flow.
-4. Provide task location, schedule, structured scope details, pricing mode, optional photos, and title.
+4. Provide task location, date, time window, structured scope details, pricing mode, optional photos, and short title.
 5. If the task location is outside Bayangol, posting is blocked and the customer is offered a waitlist by area and category.
 6. If eligible, post the task and await applications.
 7. Compare applications and select one tasker.
@@ -181,7 +280,7 @@ Out-of-area posting attempts must be captured with:
 11. The customer confirms or disputes completion. If silent, SMS nudges and timeout handling apply.
 12. After completion, the customer must submit a structured review before posting another task.
 
-### 8.2 Tasker journey
+### 9.2 Tasker journey
 
 1. Sign in with Facebook OAuth.
 2. Request tasker role activation.
@@ -193,7 +292,7 @@ Out-of-area posting attempts must be captured with:
 8. Complete the job and mark it complete.
 9. Submit the required post-completion review before applying to another task.
 
-### 8.3 Admin journey
+### 9.3 Admin journey
 
 1. Review verification submissions.
 2. Manage launch categories and intake schemas.
@@ -203,9 +302,22 @@ Out-of-area posting attempts must be captured with:
 6. Trigger or monitor assisted distribution when native matching fails.
 7. Perform task-level rescue when required.
 
-## 9. Detailed Functional Requirements
+## 10. Unhappy-path and decision rules
 
-## 9.1 Coverage and availability
+These rules are normative for Phase 1 unless a more specific requirement below overrides them.
+
+1. **Out-of-area post attempt**: if task location is outside Bayangol, live posting is blocked immediately and the user is offered waitlist capture by area and category.
+2. **No qualified application window**: if a pilot-eligible task has no qualified application within 12 hours of posting, the system may trigger external distribution for eligible categories.
+3. **Selected tasker timeout**: selected-tasker acceptance expires after 4 hours. Expiry returns the task to selectable-applicant state without confirming booking.
+4. **Reschedule authority**: only mutually accepted in-app reschedules change the canonical schedule. Chat-only schedule changes do not affect timers.
+5. **No-show rule**: at scheduled start +10 minutes, both parties receive a reminder to update status. At +15 minutes, a no-show flag is allowed only if recent activity and accepted reschedules do not block it.
+6. **Late cancellation rule**: customer cancellation more than 4 hours before start is non-incident; cancellation at or within 4 hours creates a reliability incident.
+7. **Dispute evidence rule**: disputes must include evidence artifacts or enter a grace path that can close as insufficient evidence.
+8. **Review enforcement rule**: after completion, both parties owe a review, and unresolved review debt blocks the next posting or applying action.
+
+## 11. Detailed functional requirements
+
+### 11.1 Coverage and availability
 
 - **REQ-P1-COVER-01**: The product MUST present itself as built for Ulaanbaatar while enforcing Bayangol-only live posting in Phase 1.
 - **REQ-P1-COVER-02**: The system MUST determine pilot eligibility from the customer task location, not from the tasker home location.
@@ -214,16 +326,16 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-COVER-05**: Taskers MAY onboard from anywhere in Ulaanbaatar, but they MUST explicitly declare willingness to serve Bayangol before applying to pilot tasks.
 - **REQ-P1-COVER-06**: Public launch copy, onboarding copy, and unsupported-area copy MUST explicitly communicate the Bayangol pilot boundary.
 
-## 9.2 Authentication and accounts
+### 11.2 Authentication and accounts
 
 - **REQ-P1-AUTH-01**: Facebook OAuth MUST be the only launch authentication method for new session creation in Phase 1.
 - **REQ-P1-AUTH-02**: The system MUST fail closed for new authentication when Facebook OAuth is unavailable.
 - **REQ-P1-AUTH-03**: Existing valid sessions MUST remain usable until expiry during temporary Facebook provider outage.
 - **REQ-P1-AUTH-04**: The system MUST prevent duplicate Facebook identities from creating duplicate user accounts.
-- **REQ-P1-AUTH-05**: BANNED users and actively suspended users MUST be denied authentication even if provider credentials are otherwise valid.
+- **REQ-P1-AUTH-05**: Banned users and actively suspended users MUST be denied authentication even if provider credentials are otherwise valid.
 - **REQ-P1-AUTH-06**: OTP-based auth flows MAY remain implemented behind flags, but they MUST remain disabled for Phase 1 launch and MUST NOT appear in customer-facing launch UX.
 
-## 9.3 Roles, verification, and tasker eligibility
+### 11.3 Roles, verification, and tasker eligibility
 
 - **REQ-P1-SAFE-01**: A user MAY request tasker role activation before verification, but MUST remain verification-gated until approved.
 - **REQ-P1-SAFE-02**: New taskers MUST remain pending until manual verification is completed by admin.
@@ -231,7 +343,7 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-SAFE-04**: A tasker MUST explicitly declare service-area willingness for Bayangol before the system treats them as eligible supply for pilot tasks.
 - **REQ-P1-SAFE-05**: The platform MUST preserve auditable evidence of verification consent, verification decision, and verification state changes.
 
-## 9.4 Category model and fixed templates
+### 11.4 Category model and fixed templates
 
 - **REQ-P1-CAT-01**: Phase 1 task creation MUST use category-specific intake templates. A generic free-form posting flow MUST NOT be the primary creation path.
 - **REQ-P1-CAT-02**: The launch category catalog MUST include home cleaning, furniture assembly, moving help / lifting help, and minor handyman.
@@ -239,7 +351,7 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-CAT-04**: Admin MUST be able to add, edit, activate, deactivate, and reorder category templates.
 - **REQ-P1-CAT-05**: Deactivating a category MUST block new draft and create requests for that category while preserving existing task lifecycle continuity.
 
-## 9.5 Task posting and intake
+### 11.5 Task posting and intake
 
 - **REQ-P1-TASK-01**: The task create flow MUST require task location, preferred date, time window, short title, structured scope fields, and pricing mode.
 - **REQ-P1-TASK-02**: Task photos MUST be optional but strongly encouraged.
@@ -252,7 +364,7 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-TASK-09**: Task feeds visible before booking confirmation MUST expose only district-level or approximate location, not exact address or precise coordinates.
 - **REQ-P1-TASK-10**: Exact task address MUST be revealed only after booking confirmation, and only to the task owner, confirmed tasker, and authorized admin surfaces.
 
-## 9.6 Category-specific template requirements
+### 11.6 Category-specific template requirements
 
 - **REQ-P1-TASK-11**: Home cleaning intake MUST capture property type, room count or size bracket, cleaning type, supplies provided yes/no, pets present yes/no, preferred date and time window, and pricing mode.
 - **REQ-P1-TASK-12**: Furniture assembly intake MUST capture furniture type, item count, brand/model when known, delivered yes/no, instructions available yes/no, preferred date and time window, and pricing mode.
@@ -260,7 +372,7 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-TASK-14**: Minor handyman intake MUST capture task subtype, material/item available yes/no, wall/surface type where relevant, estimated item count, preferred date and time window, and pricing mode.
 - **REQ-P1-TASK-15**: Each launch template MAY collect optional photos and notes, but the required fields MUST be sufficient for a tasker to make a yes/no application decision without pre-booking chat.
 
-## 9.7 Pricing model
+### 11.7 Pricing model
 
 - **REQ-P1-PRICE-01**: Every launch-category task MUST support exactly two pricing modes: `I have a budget` and `I want quotes`.
 - **REQ-P1-PRICE-02**: When a customer chooses `I have a budget`, the posted budget MUST be visible to applicants.
@@ -271,7 +383,7 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-PRICE-07**: The agreed booking price MUST lock at confirmed booking.
 - **REQ-P1-PRICE-08**: Pricing state changes relevant to booking must be auditable.
 
-## 9.8 Applications and matching
+### 11.8 Applications and matching
 
 - **REQ-P1-MATCH-01**: Only qualified taskers MUST be allowed to apply to a pilot-eligible task.
 - **REQ-P1-MATCH-02**: Applications MUST include a structured pricing response and a short structured note.
@@ -281,7 +393,7 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-MATCH-06**: Open-ended pre-booking chat MUST NOT be available in Phase 1.
 - **REQ-P1-MATCH-07**: The product MUST rely on structured application data rather than pre-booking chat to support customer choice.
 
-## 9.9 Booking confirmation and scheduling
+### 11.9 Booking confirmation and scheduling
 
 - **REQ-P1-BOOK-01**: A booking MUST become confirmed only when the customer selects a tasker and the selected tasker accepts within the active acceptance window.
 - **REQ-P1-BOOK-02**: The default acceptance window for a selected tasker MUST be four hours.
@@ -296,7 +408,7 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-BOOK-11**: Accepted reschedule requests MUST update the canonical schedule and reset policy timers.
 - **REQ-P1-BOOK-12**: Declined or expired reschedule requests MUST preserve the prior accepted schedule.
 
-## 9.10 Booking lifecycle, cancellation, and no-show
+### 11.10 Booking lifecycle, cancellation, and no-show
 
 - **REQ-P1-BOOK-13**: The booking lifecycle MUST support confirmed, completed, canceled, disputed, and no-show outcomes.
 - **REQ-P1-BOOK-14**: Customer cancellation more than four hours before scheduled start MUST not create a reliability incident.
@@ -311,14 +423,14 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-BOOK-23**: A valid no-show adjudication MUST transition booking and task state consistently and leave an audit trail.
 - **REQ-P1-BOOK-24**: Repeated no-show behavior MUST support strike-review or equivalent trust escalation.
 
-## 9.11 Completion flow
+### 11.11 Completion flow
 
 - **REQ-P1-BOOK-25**: Task completion MUST follow this sequence: tasker marks complete -> customer confirms or disputes -> SMS reminder on silence -> timeout auto-complete -> ops fallback for edge cases.
 - **REQ-P1-BOOK-26**: Customer silence after tasker-marked completion MUST not block the product indefinitely; the platform MUST support timeout-based auto-complete after reminder attempts.
 - **REQ-P1-BOOK-27**: Ops MUST be able to review and resolve edge cases before finalization when the normal completion flow stalls or becomes contested.
 - **REQ-P1-BOOK-28**: Completion proof MAY remain optional for most launch categories, but the product MUST support attaching evidence artifacts where disputes or complaints require them.
 
-## 9.12 Reviews, reputation, complaints, and disputes
+### 11.12 Reviews, reputation, complaints, and disputes
 
 - **REQ-P1-SAFE-06**: After a booking reaches `COMPLETED`, both parties MUST owe a structured review.
 - **REQ-P1-SAFE-07**: Until the owed review is submitted, the customer MUST be blocked from posting a new task and the tasker MUST be blocked from applying to another task.
@@ -334,7 +446,7 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-SAFE-17**: Verification consent, review enforcement, complaint handling, and admin evidence access MUST remain auditable.
 - **REQ-P1-SAFE-18**: Customer-facing trust messaging MUST promise identity, records, evidence, moderation, and dispute handling, and MUST NOT promise payment protection, payment hold, or escrow.
 
-## 9.13 Messaging, privacy, and contact
+### 11.13 Messaging, privacy, and contact
 
 - **REQ-P1-MSG-01**: Phase 1 MUST NOT support open-ended pre-booking chat.
 - **REQ-P1-MSG-02**: Any post-confirmation contact channel that exists MUST remain platform-mediated and available for admin review.
@@ -342,7 +454,7 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-MSG-04**: Raw direct contact details MUST remain hidden until the product intentionally unlocks them through an approved policy surface; Phase 1 does not require such unlock for normal operation.
 - **REQ-P1-MSG-05**: If message content contains obvious off-platform contact-sharing patterns, the system SHOULD support moderation flags.
 
-## 9.14 Notifications
+### 11.14 Notifications
 
 - **REQ-P1-NOTIF-01**: The system MUST notify eligible taskers when a newly posted pilot task matches their role and category eligibility.
 - **REQ-P1-NOTIF-02**: The system MUST notify the selected tasker when chosen by a customer.
@@ -352,19 +464,18 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-NOTIF-06**: The system MUST notify taskers of verification decisions and customers of waitlist submission where applicable.
 - **REQ-P1-NOTIF-07**: Notification delivery for launch-critical lifecycle events MUST be auditable.
 
-## 9.15 Assistance model and rescue
+### 11.15 Assistance model and rescue
 
 - **REQ-P1-ASSIST-01**: The product MUST classify task outcomes as self-serve, system-assisted, or manual-assisted.
 - **REQ-P1-ASSIST-02**: Task-level external distribution MUST NOT be used by default.
 - **REQ-P1-ASSIST-03**: External distribution MAY trigger only when a pilot-eligible task has received no qualified application within twelve hours of posting.
-- **REQ-P1-ASSIST-03A**: The decision to trigger external distribution MUST be backend-controlled. Customers MUST NOT be asked to choose or approve task-level rescue behavior in the normal posting flow.
 - **REQ-P1-ASSIST-04**: External distribution MUST be limited in Phase 1 to home cleaning, furniture assembly, moving help, and minor handyman.
 - **REQ-P1-ASSIST-05**: External distribution payloads MUST be sanitized and MUST NOT expose exact address, raw contact details, or unsupported trust claims.
 - **REQ-P1-ASSIST-06**: Tasks advanced through external distribution MUST remain eligible for booking and completion metrics but MUST be excluded from self-serve fulfillment reporting.
 - **REQ-P1-ASSIST-07**: Manual task-specific rescue performed by the operator MUST be recorded as intervention.
 - **REQ-P1-ASSIST-08**: General marketing or broad supply seeding MUST NOT be misclassified as task-level intervention.
 
-## 9.16 Admin operations
+### 11.16 Admin operations
 
 - **REQ-P1-ADMIN-01**: Admin MUST be able to review pending verifications and approve or reject them.
 - **REQ-P1-ADMIN-02**: Admin MUST be able to manage category templates and activation state.
@@ -374,8 +485,10 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-ADMIN-06**: Admin MUST be able to inspect and manage waitlist demand by area and category.
 - **REQ-P1-ADMIN-07**: Admin MUST be able to perform manual rescue, but such rescue MUST remain auditable and separately measurable from self-serve activity.
 - **REQ-P1-ADMIN-08**: Admin MUST be able to monitor or trigger assisted distribution within the launch rules.
+- **REQ-P1-ADMIN-09**: Admin MUST be able to lint, preview, activate, deactivate, canary, and roll back intake schema versions.
+- **REQ-P1-ADMIN-10**: Verification operations MUST expose queue age and SLA posture for operational review.
 
-## 9.17 Analytics, KPI instrumentation, and launch telemetry
+### 11.17 Analytics, KPI instrumentation, and launch telemetry
 
 - **REQ-P1-KPI-01**: The platform MUST expose the canonical business events and state transitions needed to compute the Phase 1 KPI stack.
 - **REQ-P1-KPI-02**: KPI computation MUST be based on backend-exported business metrics or derived state transitions, not ad hoc dashboard SQL.
@@ -384,9 +497,9 @@ Out-of-area posting attempts must be captured with:
 - **REQ-P1-KPI-05**: Category MUST be the default scorecard slice for launch KPI reporting, with district as drilldown.
 - **REQ-P1-KPI-06**: All launch-critical KPI events and state changes MUST remain auditable enough to support operational review.
 
-## 10. KPI Model
+## 12. KPI model
 
-## 10.1 Hard-gate metrics
+### 12.1 Hard-gate metrics
 
 1. **Qualified Match Rate within 24h**  
    `% of pilot_eligible_task posts receiving at least one qualified_application within 24h`
@@ -397,7 +510,7 @@ Out-of-area posting attempts must be captured with:
 4. **Trust Failure Rate**  
    `% of confirmed bookings ending in objective trust-damaging failure`
 
-### 10.1.1 Hard-gate thresholds
+#### 12.1.1 Hard-gate thresholds
 
 | Metric                                    |    Green |   Yellow |     Red |
 | ----------------------------------------- | -------: | -------: | ------: |
@@ -406,7 +519,7 @@ Out-of-area posting attempts must be captured with:
 | Intervention Rate                         | `<= 40%` | `41-55%` | `> 55%` |
 | Trust Failure Rate                        | `<= 15%` | `16-20%` | `> 20%` |
 
-## 10.2 Monitored metrics
+### 12.2 Monitored metrics
 
 1. **Self-Serve Fulfillment Rate**  
    `% of pilot_eligible_task posts reaching completed_booking within 7 days of posting, through the platform flow, with no intervention`
@@ -415,7 +528,7 @@ Out-of-area posting attempts must be captured with:
 3. **Verification Queue Turnaround**  
    median and p95 from complete document submission to final decision, split for identity verification and category vetting
 
-### 10.2.1 Monitored targets
+#### 12.2.1 Monitored targets
 
 | Metric                           | Target                         |
 | -------------------------------- | ------------------------------ |
@@ -424,24 +537,102 @@ Out-of-area posting attempts must be captured with:
 | Identity Verification Turnaround | median `<= 36h`, p95 `<= 96h`  |
 | Category Vetting Turnaround      | median `<= 72h`, p95 `<= 120h` |
 
-## 10.3 KPI policy rules
+### 12.3 KPI policy rules
 
 - All seven KPIs MUST exist on a real dashboard before launch.
 - Alerts are required only for the hard-gate metrics.
 - KPI decisions are valid only once denominator thresholds are met.
 - Category is the primary launch scorecard slice; district is diagnostic drilldown.
 - Native self-serve reporting MUST exclude both system-assisted and manual-assisted outcomes.
+- If data quality is degraded, gate decisions are paused until tracking is repaired and backfilled.
 
-## 11. Non-Goals for Phase 1
+## 13. Non-functional requirements
+
+### 13.1 Security and privacy
+
+- **NFR-SEC-01**: Personal data and identity assets MUST be encrypted at rest.
+- **NFR-SEC-02**: Identity-data processing MUST require explicit consent with stored policy version and timestamp.
+- **NFR-SEC-03**: Identity assets and PII access logs MUST be immutable and queryable for incident investigation.
+- **NFR-SEC-04**: Identity-data retention and deletion policy MUST be defined, communicated, and enforceable.
+- **NFR-SEC-05**: Admin access to verification artifacts MUST be audit-logged.
+
+### 13.2 Reliability and state integrity
+
+- **NFR-RELI-01**: State-changing booking, review, moderation, and verification operations MUST be idempotent and retry-safe.
+- **NFR-RELI-02**: Task, booking, review, and dispute state transitions MUST be auditable.
+- **NFR-RELI-03**: The platform MUST protect against duplicate lifecycle effects caused by retries, refreshes, or race conditions.
+- **NFR-RELI-04**: Mobile clients SHOULD support read-only offline viewing of current tasks/bookings where feasible.
+
+### 13.3 API and contract hygiene
+
+- **NFR-API-01**: List endpoints MUST support cursor-based pagination.
+- **NFR-API-02**: Public API endpoints MUST use stable versioning and machine-readable error envelopes.
+- **NFR-API-03**: Active contracts MUST expose only live or implemented-and-gated behavior, not forward-reference placeholder surfaces.
+- **NFR-API-04**: Contract-breaking changes MUST include migration notes and aligned PRD/doc updates.
+
+### 13.4 Performance and operational posture
+
+- **NFR-PERF-01**: Core task-feed and applicant-review surfaces MUST remain usable under ordinary mobile network conditions in Ulaanbaatar.
+- **NFR-PERF-02**: Posting, applying, selecting, accepting, and review submission flows MUST remain lightweight enough for a solo-operated pilot.
+
+### 13.5 Localization
+
+- **NFR-LOC-01**: User-visible product copy is concept-first and bilingual.
+- **NFR-LOC-02**: English MAY remain the technical source for keys and fallback structure, but Mongolian must not be treated as a machine-translated afterthought.
+- **NFR-LOC-03**: The platform MUST handle Mongolian Cyrillic input and UTF-8 correctly throughout storage, transport, and rendering.
+
+### 13.6 Legal and trust posture
+
+- **NFR-LEGAL-01**: Booking confirmation MUST require explicit liability-disclaimer acceptance.
+- **NFR-LEGAL-02**: Phase 1 legal posture MUST remain that of a technology marketplace facilitator, not a service employer or payment protector.
+- **NFR-LEGAL-03**: Launch trust copy MUST not claim payment hold, payment protection, escrow, or equivalent guarantees.
+
+### 13.7 Observability
+
+- **NFR-OBS-01**: The system MUST emit product events for posting, applications, selection, acceptance, booking confirmation, completion, reviews, disputes, interventions, out-of-area attempts, and waitlist joins.
+- **NFR-OBS-02**: KPI dashboards MUST be grounded in canonical events and state transitions, not dashboard-only ad hoc logic.
+- **NFR-OBS-03**: Hard-gate metric alerts MUST be auditable and tied to documented KPI definitions.
+
+## 14. Operating constraints and execution assumptions
+
+### 14.1 Solo-operator reality
+
+Phase 1 is designed for a solo founder or extremely small operating team using AI assistance. The launch product must therefore prefer:
+
+- deterministic flows over operator interpretation
+- structured forms over open-ended chat
+- measurable rescue over invisible rescue
+- explicit pilot boundaries over vague availability
+
+### 14.2 AI operating posture
+
+AI may assist planning, summarization, or analysis, but deterministic services and human approvals control:
+
+- verification decisions
+- dispute outcomes
+- moderation bans
+- feature activation
+- any later money movement
+
+### 14.3 Rescue discipline
+
+Operator rescue is allowed in Phase 1, but only if it remains:
+
+- exceptional
+- measurable
+- classifiable as system-assisted or manual-assisted
+- excluded from self-serve health reporting
+
+## 15. Non-goals for Phase 1
 
 - no customer-facing payment hold, protection, or escrow promise
 - no citywide live posting
-- no generic task-posting flow as the primary launch flow
+- no generic task-posting flow as the primary launch path
 - no open-ended pre-booking chat
 - no launch dependency on OTP auth, DAN, subscriptions, credits, referrals, B2B, instant match, or escrow activation
 - no claim that assisted distribution counts as native marketplace health
 
-## 12. Superseded Assumptions To Remove From Derived Artifacts
+## 16. Superseded assumptions to remove from derived artifacts
 
 The following assumptions are invalid for Phase 1 and MUST be removed from code, tests, contracts, architecture notes, design artifacts, and copy if they still appear:
 
@@ -451,15 +642,50 @@ The following assumptions are invalid for Phase 1 and MUST be removed from code,
 4. **Payment held or protected by Tasky** — invalid. Phase 1 makes no escrow or payment-protection promise.
 5. **Assisted outcomes counted as self-serve** — invalid. System-assisted and manual-assisted outcomes are excluded from self-serve fulfillment.
 6. **Founder intervention as a separate core metric from manual intervention** — invalid for Phase 1. Use a generic intervention model.
-7. **Review lock only under risk flags** — invalid. In Phase 1, owed review blocks the next post/apply action until fulfilled.
+7. **Risk-only review lock** — invalid. In Phase 1, owed review blocks the next post/apply action until fulfilled.
 8. **Pre-booking conversation created on apply** — invalid. Phase 1 does not require or expose open-ended pre-booking conversation.
 9. **Forward-reference or future-phase APIs treated as active product truth** — invalid. Launch contracts must reflect live or implemented-and-gated behavior only.
+10. **Broad Ulaanbaatar live coverage implied in product behavior** — invalid. Citywide is positioning; Bayangol is the posting boundary.
 
-## 13. Acceptance-of-Alignment Rule
+## 17. Requirements governance
 
-The product is aligned only when:
+### 17.1 Requirement ID rule
 
-- code and tests implement this PRD
-- Strategy, KPI, maintenance, architecture, design, and contract docs do not exceed this PRD
-- public copy does not promise behavior outside this PRD
-- launch dashboards measure the KPI model defined here
+`REQ-P1-*` is the only canonical active requirement ID family for the launch baseline. Legacy IDs may exist only in a historical mapping appendix outside the normative PRD.
+
+### 17.2 Acceptance rule for downstream docs
+
+A downstream document is aligned only if:
+
+- it does not contradict this PRD
+- it does not promise deferred behavior as live truth
+- it uses canonical Phase 1 requirement IDs where normative references are required
+- it preserves the Bayangol pilot boundary, Phase 1 pricing model, review gate, and trust posture defined here
+
+### 17.3 Discovery path rule
+
+For any non-trivial product work, the minimum reading order is:
+
+1. this PRD
+2. `docs/STRATEGY.md`
+3. relevant maintenance policies
+4. smallest relevant architecture doc
+5. contract docs if contract work is involved
+6. design docs only as derived UX detail
+
+## 18. Deferred capabilities appendix (non-normative)
+
+The following surfaces may remain documented elsewhere as future or deferred design space, but they are not active launch truth:
+
+- OTP migration
+- DAN verification
+- lead credits and paid lead unlock
+- promoted listings
+- subscriptions
+- escrow and payout operations
+- referrals
+- B2B Lite / managed flows
+- instant match
+- runtime AI posting rewrite
+
+They must not re-enter the active launch baseline without explicit PRD promotion.

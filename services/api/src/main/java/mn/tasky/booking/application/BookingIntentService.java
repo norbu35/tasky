@@ -168,8 +168,12 @@ public class BookingIntentService {
             return BookingIntentConfirmResult.error(BookingIntentConfirmResult.TASK_NOT_OPEN, "Task is not OPEN.");
         }
 
+        // Resolve booking price: for BUDGET mode use task budget, for QUOTE mode
+        // the rebook reuses the previously agreed price (stored in task budget or 0 if null).
+        int bookingPrice = task.budget() != null ? task.budget() : 0;
+
         BookingState booking = bookingService.createBooking(
-                task.id(), intent.taskerId(), customerId, task.budget(), true, task.scheduledAt());
+                task.id(), intent.taskerId(), customerId, bookingPrice, true, task.scheduledAt());
         taskDao.updateStatus(task.id(), "ASSIGNED", Instant.now());
         Instant now = Instant.now();
         bookingIntentDao.markConfirmed(intent.id(), booking.id(), now, now);

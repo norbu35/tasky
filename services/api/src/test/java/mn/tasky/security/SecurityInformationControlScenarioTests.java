@@ -198,6 +198,8 @@ class SecurityInformationControlScenarioTests extends IntegrationTestBase {
                 "Security test task description",
                 "budget",
                 50000,
+                "pricing_mode",
+                "BUDGET",
                 "location_lat",
                 47.9077,
                 "location_lng",

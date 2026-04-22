@@ -46,6 +46,7 @@ public class TaskPhotoKeyHelper {
                 task.locationText(),
                 task.status(),
                 task.scheduledAt(),
+                task.pricingMode(),
                 keys,
                 task.intakeAnswersJson(),
                 task.intakeSchemaVersion(),

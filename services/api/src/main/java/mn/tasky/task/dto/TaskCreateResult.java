@@ -7,6 +7,7 @@ public record TaskCreateResult(TaskState task, String errorCode, String errorMes
     public static final String INVALID_PHOTO_KEY = "INVALID_PHOTO_KEY";
     public static final String INVALID_DESCRIPTION = "INVALID_DESCRIPTION";
     public static final String INVALID_SCHEDULE = "INVALID_SCHEDULE";
+    public static final String INVALID_BUDGET = "INVALID_BUDGET";
     public static final String INTAKE_NOT_ENABLED = "INTAKE_NOT_ENABLED";
     public static final String INVALID_SCHEMA_VERSION = "INVALID_SCHEMA_VERSION";
     public static final String INTAKE_VALIDATION_FAILED = "INTAKE_VALIDATION_FAILED";

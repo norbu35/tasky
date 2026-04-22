@@ -102,6 +102,7 @@ public class PublicTaskCompositionService {
 
         response.put("description", task.description());
         response.put("budget", task.budget());
+        response.put("pricing_mode", task.pricingMode());
         response.put("approximate_location", approx.formattedAddress());
         response.put("approximate_lat", approx.approximateLat());
         response.put("approximate_lng", approx.approximateLng());
@@ -134,6 +135,7 @@ public class PublicTaskCompositionService {
         response.put("customer_id", task.customerId());
         response.put("description", task.description());
         response.put("budget", task.budget());
+        response.put("pricing_mode", task.pricingMode());
         response.put("location_lat", task.locationLat());
         response.put("location_lng", task.locationLng());
         response.put("location_text", task.locationText());
@@ -163,6 +165,7 @@ public class PublicTaskCompositionService {
                         "completed_tasks", application.taskerCompletedTasks(),
                         "is_pro", application.taskerIsPro()));
         response.put("message", application.message());
+        response.put("quote_price", application.quotePrice());
         response.put("status", application.status());
         response.put("created_at", application.createdAt().toString());
         return response;

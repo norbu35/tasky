@@ -17,6 +17,7 @@ import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
+import mn.tasky.task.dto.PricingMode;
 import mn.tasky.task.dto.TaskAcceptResult;
 import mn.tasky.task.dto.TaskApplicationState;
 import mn.tasky.task.dto.TaskApplicationsListResult;
@@ -67,9 +68,11 @@ public class TaskApplicationService {
      * @param taskerRole Caller role expected to be {@code TASKER}.
      * @param taskId     Target task identifier.
      * @param message    Optional application message.
+     * @param quotePrice Optional quote price (required for QUOTE mode, counter-offer for BUDGET mode).
      * @return Result containing created application or error state.
      */
-    public TaskApplyResult applyToTask(String taskerId, String taskerRole, String taskId, String message) {
+    public TaskApplyResult applyToTask(
+            String taskerId, String taskerRole, String taskId, String message, Integer quotePrice) {
         if (reviewEnforcementService.isUserLocked(taskerId)) {
             return new TaskApplyResult(null, TaskApplyResult.REVIEW_LOCK_ACTIVE);
         }
@@ -101,9 +104,16 @@ public class TaskApplicationService {
             return TaskApplyResult.DUPLICATE_APPLICATION_RESULT;
         }
 
+        // Validate quote price against pricing mode
+        boolean isQuoteMode = PricingMode.QUOTE.name().equals(task.pricingMode());
+        if (isQuoteMode && quotePrice == null) {
+            return new TaskApplyResult(null, TaskApplyResult.QUOTE_PRICE_REQUIRED);
+        }
+
         String applicationId = UUID.randomUUID().toString();
         String sanitizedMessage = TextSanitizer.plainText(message);
-        taskApplicationDao.insert(applicationId, taskId, taskerId, sanitizedMessage, "APPLIED", Instant.now());
+        taskApplicationDao.insert(
+                applicationId, taskId, taskerId, sanitizedMessage, quotePrice, "APPLIED", Instant.now());
 
         TaskApplicationState application = new TaskApplicationState(
                 applicationId,
@@ -115,6 +125,7 @@ public class TaskApplicationService {
                 profile.completedTasks(),
                 profile.isPro(),
                 sanitizedMessage,
+                quotePrice,
                 "APPLIED",
                 null,
                 null,
@@ -225,8 +236,19 @@ public class TaskApplicationService {
         taskApplicationDao.updateStatus(selected.id(), "ACCEPTED");
         taskApplicationDao.rejectOthers(taskId, selected.id());
 
+        // Resolve booking price based on pricing mode
+        int bookingPrice;
+        if (PricingMode.QUOTE.name().equals(task.pricingMode())) {
+            if (selected.quotePrice() == null) {
+                return new TaskAcceptResult(null, "QUOTE_PRICE_MISSING");
+            }
+            bookingPrice = selected.quotePrice();
+        } else {
+            bookingPrice = task.budget() != null ? task.budget() : 0;
+        }
+
         BookingState booking = bookingCommandPort.createBooking(
-                task.id(), selected.taskerId(), task.customerId(), task.budget(), true, task.scheduledAt());
+                task.id(), selected.taskerId(), task.customerId(), bookingPrice, true, task.scheduledAt());
         taskDao.updateStatus(task.id(), "ASSIGNED", Instant.now());
 
         domainEventOutboxService.publish(

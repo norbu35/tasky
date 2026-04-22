@@ -118,6 +118,8 @@ class RecentLocationsTests extends IntegrationTestBase {
                 "Test task for recent locations feature",
                 "budget",
                 50000,
+                "pricing_mode",
+                "BUDGET",
                 "location_lat",
                 lat,
                 "location_lng",

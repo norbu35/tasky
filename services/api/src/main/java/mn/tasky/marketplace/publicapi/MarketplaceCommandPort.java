@@ -18,7 +18,7 @@ public interface MarketplaceCommandPort {
 
     TaskCancelResult cancelTask(String customerId, String taskId);
 
-    TaskApplyResult applyToTask(String taskerId, String taskerRole, String taskId, String message);
+    TaskApplyResult applyToTask(String taskerId, String taskerRole, String taskId, String message, Integer quotePrice);
 
     TaskAcceptResult acceptApplication(
             String customerId, String taskId, String applicationId, boolean liabilityDisclaimerAccepted);

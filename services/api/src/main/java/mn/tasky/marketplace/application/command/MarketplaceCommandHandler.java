@@ -59,8 +59,9 @@ public class MarketplaceCommandHandler implements MarketplaceCommandPort {
     }
 
     @Override
-    public TaskApplyResult applyToTask(String taskerId, String taskerRole, String taskId, String message) {
-        return taskApplicationService.applyToTask(taskerId, taskerRole, taskId, message);
+    public TaskApplyResult applyToTask(
+            String taskerId, String taskerRole, String taskId, String message, Integer quotePrice) {
+        return taskApplicationService.applyToTask(taskerId, taskerRole, taskId, message, quotePrice);
     }
 
     @Override
