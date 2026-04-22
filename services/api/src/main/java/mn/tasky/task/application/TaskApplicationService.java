@@ -126,19 +126,12 @@ public class TaskApplicationService {
                 null,
                 Instant.now());
 
-        String conversationId = messagingService.startConversation(taskId, taskerId, task.customerId());
         notificationService.sendPush(
                 task.customerId(), "New Applicant", "A tasker has applied to your task.", "TASKER_APPLIED");
         analyticsService.track(
                 AnalyticsService.EVENT_APPLICATION_SUBMITTED,
                 taskerId,
-                Map.of(
-                        AnalyticsService.PROPERTY_TASK_ID,
-                        taskId,
-                        "application_id",
-                        application.id(),
-                        "conversation_id",
-                        conversationId));
+                Map.of(AnalyticsService.PROPERTY_TASK_ID, taskId, "application_id", application.id()));
 
         return TaskApplyResult.success(application);
     }

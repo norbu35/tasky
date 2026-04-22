@@ -276,8 +276,6 @@ class TaskApplicationServiceTests {
             when(userProfileService.getProfile(TASKER_ID)).thenReturn(Optional.of(verifiedTaskerProfile()));
             when(taskApplicationDao.existsByTaskIdAndTaskerId(TASK_ID, TASKER_ID))
                     .thenReturn(false);
-            when(messagingService.startConversation(TASK_ID, TASKER_ID, CUSTOMER_ID))
-                    .thenReturn("conv-123");
 
             TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "I can do this");
 
