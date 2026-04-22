@@ -102,7 +102,9 @@ public class DisputeService {
             return DisputeRaiseResult.error("FORBIDDEN");
         }
 
-        if (!"ASSIGNED".equals(booking.status()) && !"COMPLETED".equals(booking.status())) {
+        if (!"ASSIGNED".equals(booking.status())
+                && !"PAID".equals(booking.status())
+                && !"COMPLETED".equals(booking.status())) {
             return DisputeRaiseResult.error("INVALID_STATUS");
         }
         if ("COMPLETED".equals(booking.status())) {
@@ -131,6 +133,8 @@ public class DisputeService {
                 disputeEvidenceDao.insert(evidenceId, id, item.type(), storageKey, textPayload);
             }
         }
+
+        bookingService.transitionToDisputed(bookingId);
 
         return DisputeRaiseResult.success(dispute);
     }

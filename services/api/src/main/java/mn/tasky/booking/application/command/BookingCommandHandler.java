@@ -90,4 +90,9 @@ public class BookingCommandHandler implements BookingCommandPort {
     public RebookResult rebook(String bookingId, String customerId) {
         return repeatBookingService.rebook(bookingId, customerId);
     }
+
+    @Override
+    public BookingTransitionResult forceTransition(String bookingId, String newStatus) {
+        return bookingService.forceTransition(bookingId, newStatus);
+    }
 }

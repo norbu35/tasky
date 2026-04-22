@@ -226,4 +226,26 @@ public interface BookingDao {
             @Bind("id") UUID id,
             @Bind("confirmedScheduledAt") Instant confirmedScheduledAt,
             @Bind("updatedAt") Instant updatedAt);
+
+    default List<BookingState> findPendingCompletion(Instant threshold, int limit) {
+        return findPendingCompletionInternal(threshold, limit);
+    }
+
+    @SqlQuery("SELECT b.* FROM bookings b "
+            + "JOIN booking_completion_signals bcs ON bcs.booking_id = b.id "
+            + "WHERE b.status IN ('ASSIGNED', 'PAID') "
+            + "AND bcs.marked_done_at < :threshold "
+            + "ORDER BY bcs.marked_done_at LIMIT :limit")
+    List<BookingState> findPendingCompletionInternal(@Bind("threshold") Instant threshold, @Bind("limit") int limit);
+
+    default void updateCompletionReminder(String id, int reminderCount, Instant lastReminderAt) {
+        updateCompletionReminder(required(id, "id"), reminderCount, lastReminderAt);
+    }
+
+    @SqlUpdate("UPDATE bookings SET completion_reminder_count = :reminderCount, "
+            + "completion_reminder_last_at = :lastReminderAt, updated_at = :lastReminderAt WHERE id = :id")
+    void updateCompletionReminder(
+            @Bind("id") UUID id,
+            @Bind("reminderCount") int reminderCount,
+            @Bind("lastReminderAt") Instant lastReminderAt);
 }

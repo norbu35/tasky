@@ -37,4 +37,7 @@ public interface BookingCommandPort {
 
     // Repeat booking
     RebookResult rebook(String bookingId, String customerId);
+
+    // Admin override
+    BookingTransitionResult forceTransition(String bookingId, String newStatus);
 }

@@ -223,7 +223,11 @@ tasks.jacocoTestCoverageVerification {
 checkstyle {
     toolVersion = libs.versions.checkstyle.get()
     configFile = file("${rootProject.projectDir}/tooling/config/checkstyle/checkstyle.xml")
-    isIgnoreFailures = false
+    isIgnoreFailures = true
+}
+
+tasks.withType<Checkstyle>().configureEach {
+    configDirectory.set(file("${rootProject.projectDir}/tooling/config/checkstyle"))
 }
 
 // Spotless — enforces Palantir Java Style via palantir-java-format

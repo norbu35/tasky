@@ -16,5 +16,7 @@ public record BookingState(
         String settlementMode,
         boolean lateCancelIncident,
         @Nullable Instant liabilityDisclaimerAcceptedAt,
+        int completionReminderCount,
+        @Nullable Instant completionReminderLastAt,
         Instant createdAt,
         Instant updatedAt) {}

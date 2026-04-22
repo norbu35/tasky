@@ -145,6 +145,11 @@ public class NotificationService {
         }
     }
 
+    public void sendPushWithSmsFallback(String userId, String title, String body, String type, String eventKey) {
+        sendPushWithEventKey(userId, title, body, type, eventKey);
+        sendSmsFallback(userId, type, title, body, eventKey);
+    }
+
     private void subscribeToFcmTopics(String userId, String token) {
         var user = userDao.findById(userId).orElse(null);
         if (user == null) {

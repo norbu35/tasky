@@ -8,7 +8,9 @@ import mn.tasky.task.dto.TaskApplyResult;
 import mn.tasky.task.dto.TaskCancelResult;
 import mn.tasky.task.dto.TaskCreateResult;
 import mn.tasky.task.dto.TaskDraft;
+import mn.tasky.task.dto.TaskSelectResult;
 import mn.tasky.task.dto.TaskUpdateResult;
+import mn.tasky.task.dto.TaskWithdrawResult;
 import mn.tasky.task.dto.UpdateTask;
 
 public interface MarketplaceCommandPort {
@@ -23,11 +25,14 @@ public interface MarketplaceCommandPort {
     TaskAcceptResult acceptApplication(
             String customerId, String taskId, String applicationId, boolean liabilityDisclaimerAccepted);
 
+    TaskSelectResult selectApplication(String customerId, String taskId, String applicationId);
+
+    TaskAcceptResult confirmAcceptance(String taskerId, String applicationId);
+
+    TaskWithdrawResult withdrawApplication(String taskerId, String applicationId);
+
     Optional<PresignedUpload> createPhotoUploadUrl(String userId, String contentType);
 
-    /**
-     * Update task status directly (used by admin concierge assignment).
-     */
     void updateTaskStatus(String taskId, String status);
 
     TaskDraft createDraft(String customerId, String categoryId);
