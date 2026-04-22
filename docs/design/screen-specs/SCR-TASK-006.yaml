@@ -1,147 +1,148 @@
 # Screen Spec: Verification — DAN Fast-Path
 screen_id: SCR-TASK-006
-name: "Verification — DAN Fast-Path"
-route: "/(tasker)/verification/dan"
+name: 'Verification — DAN Fast-Path'
+route: '/(tasker)/verification/dan'
 role: [tasker]
-phase: "2"
+phase: '2'
 template: auth
-figma_page: "Tasker/Verification DAN Fast-Path"
-feature: "verification"
+figma_page: 'Tasker/Verification DAN Fast-Path'
+feature: 'verification'
 
 layout:
   template: auth
   density: comfortable
-  structure: "safe_area -> centered_content(e_mongolia_logo + heading + description + dan_button) -> bottom_fallback(manual_link)"
+  structure: 'safe_area -> centered_content(e_mongolia_logo + heading + description + dan_button) -> bottom_fallback(manual_link)'
 
 components:
   - id: COMP-BUTTON
-    usage: "Primary CTA to initiate DAN (E-Mongolia) verification"
+    usage: 'Primary CTA to initiate DAN (E-Mongolia) verification'
     props:
-      label: "E-Mongolia-р баталгаажуулах"
+      label: 'E-Mongolia-р баталгаажуулах'
       variant: primary
       size: xl
       loading: false
     variant: primary
 
   - id: COMP-BUTTON
-    usage: "Secondary ghost link to fall back to manual ID upload"
+    usage: 'Secondary ghost link to fall back to manual ID upload'
     props:
-      label: "Гар аргаар баталгаажуулах"
+      label: 'Гар аргаар баталгаажуулах'
       variant: ghost
       size: md
     variant: ghost
 
 states:
   - id: default
-    description: "DAN fast-path option displayed — user can verify via E-Mongolia or fall back to manual"
+    description: 'DAN fast-path option displayed — user can verify via E-Mongolia or fall back to manual'
     components_visible: [e_mongolia_logo, heading, description, dan_button, manual_fallback_link]
     components_hidden: [verifying_spinner, success_content, error_content]
 
   - id: verifying
-    description: "DAN verification in progress — loading state while E-Mongolia API is called"
+    description: 'DAN verification in progress — loading state while E-Mongolia API is called'
     components_visible: [e_mongolia_logo, heading, verifying_spinner, verifying_message]
     components_hidden: [dan_button, manual_fallback_link, success_content, error_content]
 
   - id: success
-    description: "DAN verification succeeded — tasker is auto-approved"
+    description: 'DAN verification succeeded — tasker is auto-approved'
     components_visible: [success_icon, success_heading, success_description, browse_tasks_button]
     components_hidden: [dan_button, manual_fallback_link, verifying_spinner, error_content]
 
   - id: error_dan_failed
-    description: "DAN verification failed — offer manual upload as fallback"
-    components_visible: [e_mongolia_logo, heading, error_message, manual_upload_button, retry_button]
+    description: 'DAN verification failed — offer manual upload as fallback'
+    components_visible:
+      [e_mongolia_logo, heading, error_message, manual_upload_button, retry_button]
     components_hidden: [dan_button, verifying_spinner, success_content]
 
   - id: error_network
-    description: "Network error during DAN verification — retry option"
+    description: 'Network error during DAN verification — retry option'
     components_visible: [e_mongolia_logo, heading, network_error_message, retry_button]
     components_hidden: [dan_button, verifying_spinner, success_content, error_content]
 
 copy:
   - key: heading
-    mn: "Хурдан баталгаажуулалт"
-    en: "Fast Verification"
+    mn: 'Хурдан баталгаажуулалт'
+    en: 'Fast Verification'
     max_chars: 25
 
   - key: description
-    mn: "E-Mongolia (ДАН) системээр таниулах баталгаажуулалтыг автоматаар хийнэ. Зураг оруулах шаардлагагүй."
-    en: "Verify automatically via E-Mongolia (DAN) system. No photo upload required."
+    mn: 'E-Mongolia (ДАН) системээр таниулах баталгаажуулалтыг автоматаар хийнэ. Зураг оруулах шаардлагагүй.'
+    en: 'Verify automatically via E-Mongolia (DAN) system. No photo upload required.'
     max_chars: 100
 
   - key: dan_button
-    mn: "E-Mongolia-р баталгаажуулах"
-    en: "Verify with E-Mongolia"
+    mn: 'E-Mongolia-р баталгаажуулах'
+    en: 'Verify with E-Mongolia'
     max_chars: 30
 
   - key: manual_fallback
-    mn: "Гар аргаар баталгаажуулах"
-    en: "Verify manually instead"
+    mn: 'Гар аргаар баталгаажуулах'
+    en: 'Verify manually instead'
     max_chars: 30
 
   - key: verifying_message
-    mn: "Баталгаажуулж байна..."
-    en: "Verifying..."
+    mn: 'Баталгаажуулж байна...'
+    en: 'Verifying...'
     max_chars: 20
 
   - key: success_heading
-    mn: "Баталгаажуулалт амжилттай!"
-    en: "Verification successful!"
+    mn: 'Баталгаажуулалт амжилттай!'
+    en: 'Verification successful!'
     max_chars: 30
 
   - key: success_description
-    mn: "Таны хаяг E-Mongolia-р баталгаажлаа. Одоо даалгавруудад анкет илгээх боломжтой."
-    en: "Your identity is verified via E-Mongolia. You can now apply to tasks."
+    mn: 'Таны хаяг E-Mongolia-р баталгаажлаа. Одоо даалгавруудад анкет илгээх боломжтой.'
+    en: 'Your identity is verified via E-Mongolia. You can now apply to tasks.'
     max_chars: 80
 
   - key: browse_tasks_button
-    mn: "Даалгавар хайх"
-    en: "Browse Tasks"
+    mn: 'Даалгавар хайх'
+    en: 'Browse Tasks'
     max_chars: 20
 
   - key: error_dan_failed
-    mn: "E-Mongolia баталгаажуулалт амжилтгүй боллоо. Гар аргаар баталгаажуулна уу."
-    en: "E-Mongolia verification failed. Please verify manually."
+    mn: 'E-Mongolia баталгаажуулалт амжилтгүй боллоо. Гар аргаар баталгаажуулна уу.'
+    en: 'E-Mongolia verification failed. Please verify manually.'
     max_chars: 70
 
   - key: error_network
-    mn: "Интернэт холболтоо шалгана уу"
-    en: "Please check your internet connection"
+    mn: 'Интернэт холболтоо шалгана уу'
+    en: 'Please check your internet connection'
     max_chars: 45
 
   - key: retry_button
-    mn: "Дахин оролдох"
-    en: "Retry"
+    mn: 'Дахин оролдох'
+    en: 'Retry'
     max_chars: 15
 
   - key: manual_upload_button
-    mn: "Зургаар баталгаажуулах"
-    en: "Upload ID Photos"
+    mn: 'Зургаар баталгаажуулах'
+    en: 'Upload ID Photos'
     max_chars: 25
 
 api_endpoints:
   - method: POST
-    path: "/verification/dan/verify"
-    purpose: "Initiate DAN (E-Mongolia) identity verification for fast-path approval"
+    path: '/verification/dan/verify'
+    purpose: 'Initiate DAN (E-Mongolia) identity verification for fast-path approval'
 
 analytics_events:
-  - event: "verification_dan_viewed"
-    trigger: "DAN Fast-Path screen becomes visible"
-  - event: "verification_dan_initiated"
-    trigger: "User taps E-Mongolia verify button"
-  - event: "verification_dan_success"
-    trigger: "DAN verification completes successfully"
-  - event: "verification_dan_failed"
-    trigger: "DAN verification fails"
-  - event: "verification_dan_manual_fallback"
-    trigger: "User taps manual fallback to switch to ID upload"
+  - event: 'verification_dan_viewed'
+    trigger: 'DAN Fast-Path screen becomes visible'
+  - event: 'verification_dan_initiated'
+    trigger: 'User taps E-Mongolia verify button'
+  - event: 'verification_dan_success'
+    trigger: 'DAN verification completes successfully'
+  - event: 'verification_dan_failed'
+    trigger: 'DAN verification fails'
+  - event: 'verification_dan_manual_fallback'
+    trigger: 'User taps manual fallback to switch to ID upload'
 
 acceptance_criteria:
-  - "DAN Fast-Path is only available in Phase 2+ (REQ-SAFE-05)"
-  - "E-Mongolia logo and branding are displayed prominently"
-  - "Tapping DAN verify button initiates POST /verification/dan/verify"
-  - "On success, navigates to Verification Approved (SCR-TASK-008) — tasker is auto-verified"
-  - "On DAN failure, shows error with manual upload fallback button that navigates to ID Upload (SCR-TASK-005)"
-  - "Manual fallback link navigates to ID Upload (SCR-TASK-005) to replace DAN with manual flow"
-  - "Back button returns to Verification Gate (SCR-TASK-003)"
+  - 'DAN Fast-Path is only available in Phase 2+ (Phase 2+ DAN requirement)'
+  - 'E-Mongolia logo and branding are displayed prominently'
+  - 'Tapping DAN verify button initiates POST /verification/dan/verify'
+  - 'On success, navigates to Verification Approved (SCR-TASK-008) — tasker is auto-verified'
+  - 'On DAN failure, shows error with manual upload fallback button that navigates to ID Upload (SCR-TASK-005)'
+  - 'Manual fallback link navigates to ID Upload (SCR-TASK-005) to replace DAN with manual flow'
+  - 'Back button returns to Verification Gate (SCR-TASK-003)'
   - "Loading state shows spinner with 'Баталгаажуулж байна...' message"
-  - "Network error shows retry option"
+  - 'Network error shows retry option'

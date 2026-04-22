@@ -2,6 +2,8 @@
 
 This is the canonical repo-level instruction file for agents.
 
+**Status:** Canonical
+
 ## Default Discovery Path
 
 For non-trivial work, read in this order unless a more specific local `AGENTS.md` narrows the surface:

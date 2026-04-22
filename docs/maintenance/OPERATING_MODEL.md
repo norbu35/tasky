@@ -1,5 +1,7 @@
 # Maintenance Operating Model
 
+**Status:** Canonical operational policy
+
 Last updated: 2026-04-22
 
 ## Scope

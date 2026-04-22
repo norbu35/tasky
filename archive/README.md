@@ -1,5 +1,7 @@
 # Archive
 
+**Status:** Historical
+
 This directory stores retired repository assets that are kept for historical traceability.
 
 ## Rules

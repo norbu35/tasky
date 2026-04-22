@@ -1,5 +1,7 @@
 # Documentation Governance
 
+**Status:** Canonical operational policy
+
 This document defines the allowed live documentation structure for the repository. Enforced by
 `tooling/scripts/check-doc-governance.py`.
 
