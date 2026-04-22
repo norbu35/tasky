@@ -239,6 +239,11 @@ class ContractEnvelopeTests extends IntegrationTestBase {
         Instant now = Instant.now();
         return Jwts.builder()
                 .subject(UUID.randomUUID().toString())
+                .issuer("tasky-server")
+                .audience()
+                .add("tasky-api")
+                .and()
+                .id(UUID.randomUUID().toString())
                 .claim("role", role)
                 .claim("status", "ACTIVE")
                 .claim("token_type", "access")

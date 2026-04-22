@@ -30,7 +30,7 @@ components:
     variant: default
 
   - id: COMP-STARRATING
-    usage: 'Selected Tasker rating displayed in the summary'
+    usage: 'Selected Tasker public rating displayed only when public reputation is above the minimum review threshold'
     props:
       value: 4.7
       readonly: true
@@ -174,8 +174,9 @@ analytics_events:
     trigger: 'Selection request submission fails; includes error type'
 
 acceptance_criteria:
-  - 'Summary shows selected Tasker with avatar, name, VerificationBadge, and StarRating'
-  - 'Task summary shows category, title or description, location, schedule (YYYY.MM.DD), and pricing'
+  - 'Summary shows selected Tasker with avatar, name, and VerificationBadge; public rating appears only when thresholded reputation is available'
+  - 'Task summary shows category, title or description, approximate location, schedule (YYYY.MM.DD), and pricing'
+  - 'Pricing summary preserves the posted budget and any structured counter-offer, or shows the submitted quote when the task was posted in quote mode'
   - 'Liability disclaimer section is prominently displayed and must be explicitly acknowledged before continuing'
   - 'Confirm button is disabled until disclaimer is acknowledged'
   - 'Payment note states that price locks only after booking confirmation and settlement remains direct between the parties'

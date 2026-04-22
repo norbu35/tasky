@@ -11,7 +11,7 @@ feature: 'profiles'
 layout:
   template: detail
   density: default
-  structure: 'safe_area -> nav_header(back + title) -> scrollview(avatar_hero + stats + categories + reviews)'
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(avatar_hero + trust_summary + categories + reviews)'
 
 components:
   - id: COMP-PROFILEAVATAR
@@ -32,7 +32,7 @@ components:
     variant: default
 
   - id: COMP-STARRATING
-    usage: 'Overall Tasker rating displayed below name'
+    usage: 'Public Tasker rating shown only when the minimum review-count threshold has been met'
     props:
       value: 4.7
       readonly: true
@@ -40,7 +40,7 @@ components:
     variant: display
 
   - id: COMP-TRUSTBANNER
-    usage: 'Trust metrics showing verified status, completion count, and rating'
+    usage: 'Trust metrics showing verified status and completion count; public rating is additive only after the minimum review threshold is met'
     props:
       verifiedCount: 1
       completedCount: 24
@@ -81,8 +81,14 @@ states:
         COMP-REVIEWCARD,
       ]
 
-  - id: loaded
-    description: 'Profile data loaded; all sections rendered with avatar, stats, categories, and reviews'
+  - id: loaded_trust_first
+    description: 'Profile data loaded below the public-rating threshold; verification, completion history, and categories are shown first'
+    components_visible:
+      [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-TRUSTBANNER, COMP-CATEGORYCHIP]
+    components_hidden: [COMP-STARRATING, COMP-REVIEWCARD, COMP-LOADINGSKELETON]
+
+  - id: loaded_with_public_reputation
+    description: 'Profile data loaded and public reputation is visible because the minimum review threshold has been met'
     components_visible:
       [
         COMP-PROFILEAVATAR,
@@ -149,6 +155,11 @@ copy:
     en: 'Reviews'
     max_chars: 15
 
+  - key: public_reputation_pending
+    mn: 'Нийтийн үнэлгээ удахгүй харагдана'
+    en: 'Public rating will appear once enough reviews are collected'
+    max_chars: 60
+
   - key: verified_since
     mn: 'Баталгаажсан: {date}'
     en: 'Verified since: {date}'
@@ -172,7 +183,7 @@ copy:
 api_endpoints:
   - method: GET
     path: '/users/:id/profile'
-    purpose: 'Fetch Tasker public profile including bio, categories, stats, reviews, and verification status'
+    purpose: 'Fetch Tasker public profile including verification/trust cues, categories, and thresholded public reputation'
 
 analytics_events:
   - event: 'tasker_profile_viewed'
@@ -182,11 +193,12 @@ analytics_events:
 
 acceptance_criteria:
   - 'Profile hero shows large Tasker avatar with VerificationBadge anchored bottom-right'
-  - 'Name, overall rating (StarRating display), and member-since date displayed below avatar'
-  - 'TrustBanner shows verified status, completed job count, and rating'
+  - 'Name and member-since date are always shown below avatar'
+  - 'TrustBanner shows verified status and completed-job count even when public rating is still hidden'
+  - 'Overall rating and public review list appear only after the minimum review-count threshold is met'
   - 'Categories section shows CategoryChip for each category the Tasker works in'
-  - 'Reviews section lists recent ReviewCards from past customers'
-  - "Empty reviews state shows 'No reviews yet' message"
+  - 'Below the threshold, the profile avoids public rating/review-count claims and may show a neutral pending-reputation message instead'
+  - 'When the threshold is met, the reviews section lists recent ReviewCards from past customers'
   - 'Tasker phone number is never shown on the public profile'
   - 'No direct-contact CTA appears on the public profile before booking confirmation'
   - 'Back button pops to Applicants List SCR-CUST-011'

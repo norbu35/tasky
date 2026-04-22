@@ -191,7 +191,7 @@ public class UserProfileService {
     @org.springframework.cache.annotation.Cacheable(
             value = mn.tasky.common.config.CacheConfig.USER_STATUS_CACHE,
             key = "#userId",
-            unless = "#result.isEmpty()")
+            unless = "#result == null || #result.isEmpty()")
     public Optional<String> currentUserStatus(String userId) {
         try {
             UUID.fromString(userId);

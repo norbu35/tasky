@@ -127,15 +127,6 @@ public class VerificationController implements VerificationApi {
         };
     }
 
-    @Override
-    @PostMapping(
-            value = "/dan/verify",
-            consumes = {"application/json"})
-    public ResponseEntity<mn.tasky.api.generated.model.VerificationStatus> verifyWithDan(
-            @Valid @RequestBody mn.tasky.api.generated.model.VerifyWithDanRequest verifyWithDanRequest) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
-    }
-
     private JwtPrincipal getPrincipal() {
         return (JwtPrincipal)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();

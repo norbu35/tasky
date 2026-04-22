@@ -38,11 +38,12 @@ PublicTask:
         rating_avg:
           type: number
           format: double
+          description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
     description:
       type: string
     budget:
       type: integer
-      description: Fixed budget in MNT.
+      description: Fixed budget in MNT. Current live contract is fixed-budget-only; PRD v2.0 target adds pricing mode and quote support.
       example: 50000
     approximate_location:
       type: string
@@ -105,7 +106,7 @@ Task:
       type: string
     budget:
       type: integer
-      description: Fixed budget in MNT.
+      description: Fixed budget in MNT. Current live contract is fixed-budget-only; PRD v2.0 target adds pricing mode and quote support.
       example: 50000
     location_lat:
       type: number
@@ -201,7 +202,7 @@ CreateTaskRequest:
     budget:
       type: integer
       minimum: 5000
-      description: Fixed budget in MNT. Must be at least ₮5,000.
+      description: Fixed budget in MNT. Must be at least ₮5,000. Current live contract does not yet expose `pricing_mode` or quote-request fields required by PRD v2.0.
     location_lat:
       type: number
       format: double
@@ -345,13 +346,14 @@ TaskApplication:
         rating_avg:
           type: number
           format: double
+          description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
         completed_tasks:
           type: integer
         is_pro:
           type: boolean
     message:
       type: string
-      description: Tasker's cover message.
+      description: Tasker's short application note. Current live contract does not yet expose the structured pricing response required by PRD v2.0.
     status:
       type: string
       enum:

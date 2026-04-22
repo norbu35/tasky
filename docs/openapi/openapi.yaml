@@ -183,6 +183,12 @@ paths:
     $ref: ./paths/auth.yaml#/~1auth~1facebook
   /auth/facebook/status:
     $ref: ./paths/auth.yaml#/~1auth~1facebook~1status
+  /auth/logout:
+    $ref: ./paths/auth.yaml#/~1auth~1logout
+  /auth/otp/request:
+    $ref: ./paths/auth.yaml#/~1auth~1otp~1request
+  /auth/otp/verify:
+    $ref: ./paths/auth.yaml#/~1auth~1otp~1verify
   /auth/dev/login:
     $ref: ./paths/auth.yaml#/~1auth~1dev~1login
   /auth/token/refresh:
@@ -193,6 +199,8 @@ paths:
     $ref: ./paths/users.yaml#/~1users~1me~1role~1tasker
   /users/me/avatar/upload-url:
     $ref: ./paths/users.yaml#/~1users~1me~1avatar~1upload-url
+  /users/me/stats:
+    $ref: ./paths/users.yaml#/~1users~1me~1stats
   /verification/upload-url:
     $ref: ./paths/verification.yaml#/~1verification~1upload-url
   /verification/submit:

@@ -349,9 +349,9 @@ journeys:
       - id: JRN-CUST-02-A2
         name: 'No applicant rescue'
         branch_at: 1
-        condition: '120min with 0 applicants'
+        condition: '120min with 0 qualified applications'
         screens: [SCR-CUST-026]
-        outcome: 'Rescue flow: adjust budget/schedule, concierge'
+        outcome: 'In-product recovery flow: adjust budget/schedule, optional internal re-notify, concierge; external distribution is separate at 12h'
         lifecycle: 'TASK-T10 (no_applicant_rescue)'
       - id: JRN-CUST-02-A3
         name: 'Tasker declines'

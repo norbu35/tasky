@@ -539,11 +539,12 @@ components:
             rating_avg:
               type: number
               format: double
+              description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
         description:
           type: string
         budget:
           type: integer
-          description: Fixed budget in MNT.
+          description: Fixed budget in MNT. Current live contract is fixed-budget-only; PRD v2.0 target adds pricing mode and quote support.
           example: 50000
         approximate_location:
           type: string
@@ -606,7 +607,7 @@ components:
           type: string
         budget:
           type: integer
-          description: Fixed budget in MNT.
+          description: Fixed budget in MNT. Current live contract is fixed-budget-only; PRD v2.0 target adds pricing mode and quote support.
           example: 50000
         location_lat:
           type: number
@@ -702,7 +703,7 @@ components:
         budget:
           type: integer
           minimum: 5000
-          description: Fixed budget in MNT. Must be at least ₮5,000.
+          description: Fixed budget in MNT. Must be at least ₮5,000. Current live contract does not yet expose `pricing_mode` or quote-request fields required by PRD v2.0.
         location_lat:
           type: number
           format: double
@@ -846,13 +847,14 @@ components:
             rating_avg:
               type: number
               format: double
+              description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
             completed_tasks:
               type: integer
             is_pro:
               type: boolean
         message:
           type: string
-          description: Tasker's cover message.
+          description: Tasker's short application note. Current live contract does not yet expose the structured pricing response required by PRD v2.0.
         status:
           type: string
           enum:
@@ -1776,6 +1778,128 @@ paths:
                       - CLOSED
                       - OPEN
                       - HALF_OPEN
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Logout and revoke access token
+      description: |
+        Revokes the current access token. The token cannot be used after this call.
+      operationId: logout
+      responses:
+        '204':
+          description: Token revoked successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/otp/request:
+    post:
+      tags:
+        - Auth
+      summary: Request OTP code
+      description: |
+        Sends a one-time password (OTP) to a phone number.
+        Phase 2+ endpoint used for primary phone authentication and Facebook-user migration.
+      operationId: requestOtp
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone_number
+              properties:
+                phone_number:
+                  type: string
+                  example: '+97699001122'
+      responses:
+        '202':
+          description: OTP request accepted.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: OTP sent
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          description: OTP authentication disabled for current rollout phase (`FEATURE_DISABLED`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /auth/otp/verify:
+    post:
+      tags:
+        - Auth
+      summary: Verify OTP and authenticate
+      description: |
+        Verifies OTP code and issues JWT tokens.
+        In Phase 2+, this is the primary auth endpoint for new users and migrated Facebook users.
+      operationId: verifyOtp
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone_number
+                - otp_code
+              properties:
+                phone_number:
+                  type: string
+                  example: '+97699001122'
+                otp_code:
+                  type: string
+                  example: '123456'
+                facebook_access_token:
+                  type: string
+                  nullable: true
+                  description: Optional token used during Phase 2 migration to link prior Facebook identity.
+      responses:
+        '200':
+          description: Authentication successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - access_token
+                  - refresh_token
+                  - user
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: Invalid or expired OTP code.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: OTP authentication disabled for current rollout phase (`FEATURE_DISABLED`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
   /auth/dev/login:
     post:
       tags:
@@ -2010,6 +2134,43 @@ paths:
                 $ref: '#/components/schemas/PresignedUrlResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /users/me/stats:
+    get:
+      tags:
+        - Users
+      summary: Get current user stats
+      description: Returns aggregate statistics for the authenticated user.
+      operationId: getMyStats
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User statistics.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - completed_tasks
+                  - rating_avg
+                properties:
+                  completed_tasks:
+                    type: integer
+                    example: 12
+                  rating_avg:
+                    type: number
+                    format: double
+                    example: 4.8
+                  last_active_at:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  joined_at:
+                    type: string
+                    format: date-time
+                    nullable: true
         '401':
           $ref: '#/components/responses/Unauthorized'
   /verification/upload-url:
@@ -2618,7 +2779,9 @@ paths:
       summary: Apply to a task
       description: |
         Tasker applies to an OPEN task. Only verified taskers can apply.
-        A conversation is automatically created between the customer and tasker.
+        The current live contract captures a short application note only.
+        Phase 1 launch UX does not expose open-ended pre-booking chat.
+        PRD v2.0 requires a later contract remediation to add structured pricing-response fields.
       operationId: applyToTask
       security:
         - BearerAuth: []
@@ -2637,7 +2800,7 @@ paths:
                   type: string
                   minLength: 1
                   maxLength: 500
-                  description: Cover message explaining why the tasker is a good fit.
+                  description: Short application note. Current live contract does not yet model structured pricing response data.
       responses:
         '201':
           description: Application submitted.
@@ -3296,6 +3459,8 @@ paths:
         The selected tasker declines a pending booking intent.
         The customer can then return to the applicant list and choose another tasker.
       operationId: declineBookingIntent
+      x-tasky-status: deferred
+      x-tasky-target-phase: phase_2
       security:
         - BearerAuth: []
       parameters:

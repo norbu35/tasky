@@ -235,7 +235,7 @@ acceptance_criteria:
   - 'Task detail displays title, description, photos, approximate location, schedule, and budget'
   - 'Location is shown as approximate area (fuzzed 500m) per PRD — exact address only after booking'
   - "Verified taskers see enabled 'Анкет илгээх' primary CTA at bottom"
-  - 'Task detail does not expose open-ended pre-booking chat; communication starts with the application flow'
+  - 'Task detail does not expose open-ended pre-booking chat; any messaging channel remains post-confirmation only'
   - "Unverified taskers see 'Баталгаажуулалт хийх' CTA that navigates to Verification Gate (SCR-TASK-003)"
   - 'Tapping Apply for a verified tasker triggers application POST and navigates to Application Sent (SCR-TASK-011)'
   - "Already applied state replaces apply button with 'Анкет илгээсэн' badge"

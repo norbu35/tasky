@@ -468,7 +468,9 @@
     summary: Apply to a task
     description: |
       Tasker applies to an OPEN task. Only verified taskers can apply.
-      A conversation is automatically created between the customer and tasker.
+      The current live contract captures a short application note only.
+      Phase 1 launch UX does not expose open-ended pre-booking chat.
+      PRD v2.0 requires a later contract remediation to add structured pricing-response fields.
     operationId: applyToTask
     security:
       - BearerAuth: []
@@ -487,7 +489,7 @@
                 type: string
                 minLength: 1
                 maxLength: 500
-                description: Cover message explaining why the tasker is a good fit.
+                description: Short application note. Current live contract does not yet model structured pricing response data.
     responses:
       '201':
         description: Application submitted.

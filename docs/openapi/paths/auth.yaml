@@ -64,6 +64,19 @@
           application/json:
             schema:
               $ref: ../components/schemas/common.yaml#/Error
+/auth/logout:
+  post:
+    tags:
+      - Auth
+    summary: Logout and revoke access token
+    description: |
+      Revokes the current access token. The token cannot be used after this call.
+    operationId: logout
+    responses:
+      '204':
+        description: Token revoked successfully.
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
 /auth/facebook/status:
   get:
     tags:

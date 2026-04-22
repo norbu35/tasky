@@ -107,7 +107,7 @@ public class SecurityConfig {
                         .hasRole("TASKER")
                         // Bookings and booking-intents — either role (ownership enforced in service)
                         .requestMatchers("/api/v1/bookings/**")
-                        .hasAnyRole("CUSTOMER", "TASKER")
+                        .hasAnyRole("CUSTOMER", "TASKER", "ADMIN")
                         .requestMatchers("/api/v1/booking-intents/**")
                         .hasAnyRole("CUSTOMER", "TASKER")
                         // Payments — CUSTOMER initiates; QPay callback is public (listed above)

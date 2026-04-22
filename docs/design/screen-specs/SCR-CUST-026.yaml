@@ -15,7 +15,7 @@ layout:
 
 components:
   - id: COMP-MODALSHEET
-    usage: 'Bottom sheet overlay with rescue options when no applicants are found after 120 minutes'
+    usage: 'Bottom sheet overlay with recovery options when no qualified applications are found after 120 minutes'
     props:
       visible: true
       title: 'Гүйцэтгэгч олдсонгүй'
@@ -63,7 +63,7 @@ components:
 
 states:
   - id: rescue_prompt
-    description: 'Initial rescue prompt shown after 120 minutes with zero applicants during 08:00-22:00. Offers options: adjust budget, adjust schedule, or request concierge help'
+    description: 'Initial in-product recovery prompt shown after 120 minutes with zero qualified applications during 08:00-22:00. Offers options: adjust budget, adjust schedule, or request concierge help'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: [COMP-FORMFIELD, COMP-INPUT, COMP-DATEPICKER, COMP-TOAST]
 
@@ -78,7 +78,7 @@ states:
     components_hidden: [COMP-INPUT, COMP-TOAST]
 
   - id: broadened_push_sent
-    description: 'System has broadened push notifications to additional nearby verified Taskers; confirmation shown'
+    description: 'System has re-notified additional eligible Taskers inside the marketplace; confirmation shown'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON, COMP-TOAST]
     components_hidden: [COMP-FORMFIELD, COMP-INPUT, COMP-DATEPICKER]
 
@@ -94,8 +94,8 @@ copy:
     max_chars: 25
 
   - key: description
-    mn: '120 минутад ямар нэг гүйцэтгэгч хүсэлт гаргаагүй байна. Дараах сонголтуудаас сонгоно уу.'
-    en: 'No Tasker has applied in 120 minutes. Choose from the options below.'
+    mn: '120 минутын дотор шаардлага хангасан хүсэлт ирээгүй байна. Дараах сонголтуудаас сонгоно уу.'
+    en: 'No qualified application has arrived in 120 minutes. Choose from the options below.'
     max_chars: 100
 
   - key: option_adjust_budget
@@ -134,8 +134,8 @@ copy:
     max_chars: 20
 
   - key: broadened_push_message
-    mn: 'Ойролцоох нэмэлт гүйцэтгэгчдэд мэдэгдэл илгээлээ'
-    en: 'Notifications sent to additional nearby Taskers'
+    mn: 'Нэмэлт тохирох гүйцэтгэгчдэд дотоод мэдэгдэл илгээлээ'
+    en: 'Marketplace notifications were sent to additional eligible Taskers'
     max_chars: 60
 
   - key: concierge_queued_message
@@ -168,12 +168,13 @@ analytics_events:
     trigger: 'User dismisses the rescue sheet without action'
 
 acceptance_criteria:
-  - 'Rescue modal appears only after 120 minutes with zero eligible applicants during 08:00-22:00 local time'
+  - 'Recovery modal appears only after 120 minutes with zero qualified applications during 08:00-22:00 local time'
   - 'Three rescue options are presented: adjust budget, adjust schedule, request concierge help'
   - 'Budget adjustment prefills current budget and allows increase'
   - 'Schedule adjustment shows date picker with minimum date of tomorrow'
-  - 'Saving adjustments triggers PUT /tasks/:id and broadened push to additional nearby verified Taskers'
+  - 'Saving adjustments triggers PUT /tasks/:id and optional internal re-notification to additional eligible Taskers'
   - 'Concierge option queues the task for founder or admin manual dispatch'
+  - 'This modal does not itself trigger external distribution; external distribution remains a separate 12-hour no-qualified-application rule'
   - 'After adjustments, confirmation message and success toast are shown'
   - 'Dismiss closes the sheet and returns to Task Detail (SCR-CUST-009)'
   - 'Drag-to-dismiss via handle bar is supported'

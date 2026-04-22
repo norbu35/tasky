@@ -562,6 +562,8 @@
       The selected tasker declines a pending booking intent.
       The customer can then return to the applicant list and choose another tasker.
     operationId: declineBookingIntent
+    x-tasky-status: deferred
+    x-tasky-target-phase: phase_2
     security:
       - BearerAuth: []
     parameters:

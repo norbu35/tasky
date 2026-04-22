@@ -347,6 +347,8 @@ Any addition to the exception set requires deliberate justification in code revi
 
 - `users`: `id (UUID PK)`, `phone`, `phone_blind_idx (UNIQUE)`, `primary_auth` (FACEBOOK, PHONE_OTP), `role` (CUSTOMER, TASKER, ADMIN), `status` (PENDING, ACTIVE, VERIFIED, SUSPENDED, BANNED, DELETED), `suspension_end_at`, `created_at`, `updated_at`
 - `profiles`: `user_id (PK → users)`, `full_name`, `avatar_url`, `rating_avg`, `bio`, `completed_tasks`
+  — current schema stores aggregate rating, but PRD v2.0 requires public rating display to stay hidden until a
+  minimum review-count threshold is met; threshold/public-display metadata is not yet modeled explicitly
   — `instant_match_revoked_until` (behavior-affecting: gates instant-match eligibility when set to a future timestamp)
   — `last_active_at` (updated on activity)
 - `verifications`: `id (UUID PK)`, `user_id (FK → users)`, `id_card_front_key`, `id_card_back_key`, `status` (PENDING, APPROVED, REJECTED), `submitted_at`, `admin_notes`, `reviewed_at`, `consent_policy_version`, `consent_accepted_at`, `dan_reference (nullable)`
@@ -355,12 +357,16 @@ Any addition to the exception set requires deliberate justification in code revi
 #### Marketplace
 
 - `tasks`: `id (UUID PK)`, `customer_id (FK → users)`, `category_id (FK → categories)`, `description`, `budget`, `location_lat`, `location_lng`, `location_text`, `location_point (GEOMETRY(Point, 4326))`, `status` (OPEN, ASSIGNED, COMPLETED, CANCELLED, NO_SHOW), `scheduled_at`, `created_at`, `updated_at`, `intake_answers_json (JSONB)`, `intake_schema_version`, `scope_summary_source` (TEMPLATE, USER_EDITED, LLM)
+  — current launch-live schema is still fixed-budget-centric; PRD v2.0 target requires `pricing_mode` plus auditable
+  quote/counter-offer support before the implementation is considered aligned
 - `task_drafts`: `id (UUID PK)`, `customer_id (FK → users)`, `category_id (FK → categories)`, `intake_answers_json (JSONB)`, `intake_schema_version`, `summary_draft`, `location_lat`, `location_lng`, `location_text`, `created_at`, `expires_at (default now()+7d)`
   — Design constraint: drafts intentionally do NOT store `location_point`; geometry is materialized only on promotion to `tasks`
 - `task_photos`: `id (UUID PK)`, `task_id (FK → tasks)`, `storage_key`, `sort_order`
 - `categories`: `id (UUID PK)`, `name`, `name_mn`, `icon_url`, `is_active`, `sort_order`, `intake_enabled`, `intake_schema_version`, `intake_schema_json (JSONB)`
 - `category_schema_versions`: `id (UUID PK)`, `category_id (FK → categories)`, `version`, `schema_json (JSONB)`, `status` (DRAFT, CANARY, ACTIVE, ROLLED_BACK), `created_by`, `created_at`, `activated_at`; UNIQUE(category_id, version)
 - `task_applications`: `id (UUID PK)`, `task_id (FK → tasks)`, `tasker_id (FK → users)`, `message`, `status` (APPLIED, SELECTED, ACCEPTED, DECLINED, EXPIRED), `relevance_score`, `recommended`, `selected_at`, `respond_by_at`, `created_at`; UNIQUE(task_id, tasker_id)
+  — current schema stores only a short note; PRD v2.0 target requires structured pricing response data in addition to
+  the short note
 - `bookings`: `id (UUID PK)`, `task_id (FK → tasks)`, `tasker_id (FK → users)`, `customer_id (FK → users)`, `price`, `status` (ASSIGNED, PAID, COMPLETED, CANCELLED, NO_SHOW), `cancellation_fee`, `liability_disclaimer_accepted`, `liability_disclaimer_accepted_at`, `confirmed_scheduled_at`, `settlement_mode` (DIRECT, LEAD_UNLOCK, ESCROW; default DIRECT), `late_cancel_incident`, `created_at`, `updated_at`
   — `PAID` is a live transitional state in the booking state machine
 - `booking_intents`: `id (UUID PK)`, `task_id (FK → tasks CASCADE)`, `tasker_id (FK → users)`, `customer_id (FK → users)`, `source` (REBOOK, INSTANT_MATCH), `status` (PENDING, CONFIRMED, EXPIRED, CANCELLED), `original_booking_id (FK → bookings)`, `offer_id`, `expires_at`, `confirmed_booking_id (FK → bookings)`, `confirmed_at`, `created_at`, `updated_at`
@@ -381,6 +387,8 @@ Any addition to the exception set requires deliberate justification in code revi
 #### Communication
 
 - `conversations`: `id (UUID PK)`, `task_id (FK → tasks)`, `customer_id (FK → users)`, `tasker_id (FK → users)`, `created_at`; UNIQUE(task_id, customer_id, tasker_id)
+  — communication tables exist in current state, but PRD v2.0 requires Phase 1 UX to avoid open-ended pre-booking
+  chat and to expose messaging only as a post-confirmation channel
 - `messages`: `id (UUID PK)`, `conversation_id (FK → conversations)`, `sender_id (FK → users)`, `content`, `phone_number_flagged`, `content_hash`, `sent_at`
 - `device_tokens`: `user_id (FK → users)`, `token`, `platform`, `created_at`; UNIQUE(user_id, token)
 - `notification_log`: `id (UUID PK)`, `user_id (FK → users)`, `type`, `channel`, `status`, `event_key`, `provider_message_id`, `error_code`, `created_at`
@@ -461,8 +469,13 @@ _(No database views or materialized projections currently exist. Admin read mode
 2. **Task & Booking Flow** (Dual-status model):
    - `POST /tasks` → `tasks.status=OPEN`.
    - `POST /tasks/{id}/applications` → creates `task_applications`.
-   - `POST /tasks/{id}/applications/{appId}/accept` → customer accepts Tasker + liability disclaimer; creates
+   - Phase 1 launch intent: applications remain structured and do not open an open-ended pre-booking conversation.
+   - `POST /tasks/{id}/applications/{appId}/accept` → customer selects Tasker + liability disclaimer; creates a
+     pending `booking_intent` and marks the application `SELECTED`.
+   - `POST /booking-intents/{id}/confirm` → selected Tasker accepts within the active SLA; creates
      `bookings.status=ASSIGNED`; updates `tasks.status=ASSIGNED`.
+   - `POST /booking-intents/{id}/decline` or expiry → pending selection closes without confirming booking and the task
+     remains open for applicant comparison.
    - In Phase 2+, booking confirmation/contact reveal requires successful lead-unlock debit (`LEAD_UNLOCK_ACCEPTED`)
      before customer phone reveal.
    - `POST /bookings/{id}/complete` → `bookings.status=COMPLETED`; `tasks.status=COMPLETED`.
@@ -488,17 +501,26 @@ _(No database views or materialized projections currently exist. Admin read mode
      after 3 declines/timeouts.
 5. **Monetization Flow** _(Phased by PRD)_:
    - Phase 0-1: direct settlement only (`DIRECT`), no platform fee transactions.
+   - PRD v2.0 target adds two launch pricing modes: `I have a budget` and `I want quotes`, with structured
+     quote/counter-offer capture and price lock at booking confirmation.
+   - Current implementation drift: active launch-live schema and OpenAPI still model fixed-budget task posting plus a
+     short-note application payload; pricing-mode remediation remains a required contract-first follow-up.
    - Phase 2: credit pack purchase via QPay; selected Tasker lead unlock consumes credits before customer contact
      reveal.
    - Phase 2 lead-unlock pricing resolves from `lead_unlock_prices` by category/district/effective window.
    - Signup bonus credits are granted once per tasker via idempotent transaction key.
    - Phase 3+: escrow payment initiation/callback, wallet crediting, and payout processing remain future gated flows.
 6. **No-Applicant Rescue Flow**:
-   - If a task has zero eligible applicants for 120 minutes during 08:00-22:00 local time, enqueue rescue actions.
-   - Rescue actions include: budget/schedule adjustment prompt, broadened push fanout, and concierge queue placement.
-   - Persist trigger and executed actions in `task_rescue_events`.
+   - If a task has zero qualified applications for 120 minutes during 08:00-22:00 local time, show an in-product
+     recovery prompt.
+   - Early recovery actions may include: budget/schedule adjustment prompt, internal re-notification fanout to
+     additional eligible Taskers, and concierge/manual-help request.
+   - External distribution is a separate assisted path and must not trigger before 12 hours with no qualified
+     application on a pilot-eligible task.
+   - Persist recovery prompts and assisted interventions in `task_rescue_events`.
 7. **Messaging Flow** (WebSocket + REST fallback):
-   - Conversation is created when Tasker applies to a task.
+   - Open-ended pre-booking chat is not part of Phase 1 launch UX.
+   - If messaging is enabled for a booking, it is a post-confirmation channel between booking participants.
    - Real-time delivery via Spring WebSocket + STOMP.
    - WebSocket: `SUBSCRIBE /topic/conversations/{id}`, `SEND /app/conversations/{id}/messages`.
    - REST fallback: `POST /conversations/{id}/messages`.
@@ -511,10 +533,14 @@ _(No database views or materialized projections currently exist. Admin read mode
    - Outage state is surfaced to clients and audit/ops events are emitted.
 9. **Reviews, Disputes, and Enforcement Flow**:
    - Booking completion triggers bilateral review prompt + reminders at 24h and 72h.
-   - Hard lock is created only for configured risk cases and stored in `review_enforcement_cases`.
+   - Review obligation is universal after completion; customer posting and tasker application are locked until the
+     owed review is submitted.
+   - `review_enforcement_cases` tracks reminder/lock workflow state for that universal review obligation.
    - Dispute creation requires at least one evidence artifact, or enters 24-hour evidence grace before auto-close.
    - Tasker cancellation/no-show incidents are rolled into strike review and reliability-score recomputation.
    - Pro badge assignment is auto-evaluated from completion/rating thresholds and stored in `tasker_badges`.
+   - Public reputation display remains trust-first: verification and badges lead, while ratings stay hidden until the
+     minimum review-count threshold is met.
 10. **Category Lifecycle & Referral Flow**:
     - Category deactivation blocks new drafts and new tasks while preserving lifecycle for existing tasks.
     - Phase 2+ referral attribution is persisted at signup and finalized on first completed booking conversion.
@@ -641,15 +667,23 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
   - On summary generation failure, server returns success with canonical fallback summary and logs failure event.
 - **Booking Contract**:
   - Applicant acceptance endpoint requires `liability_disclaimer_accepted=true`.
+  - Application selection creates a pending booking intent first; booking is confirmed only after the selected Tasker
+    accepts within the active response window.
   - In paid phases, booking confirmation/contact reveal must be gated by successful lead-unlock debit event.
   - Applicant list supports ranked ordering (`relevance_score`) while preserving customer free selection.
-  - Selected-applicant confirmation timeout is phase-driven (15m in Phase 2, 5m for Phase 3 instant-match offers).
+  - Phase 1 default selected-applicant response window is 4 hours; later monetized or instant-match phases may shorten
+    that window for gated flows.
   - Repeat-booking endpoint must only allow rebook from completed bookings and same-category prefill.
   - No-show policy is deterministic: reminder at `+10m`, no-show flag eligibility at `+15m`, dual inactivity check on
     trailing 30 minutes, and accepted reschedule precedence over prior schedule.
   - Status transitions must enforce `OPEN -> ASSIGNED -> COMPLETED|CANCELLED|NO_SHOW` for tasks and
     `ASSIGNED -> PAID -> COMPLETED|CANCELLED|NO_SHOW` for bookings (PAID is escrow-phase intermediate;
     in direct-settlement mode bookings go ASSIGNED -> COMPLETED|CANCELLED|NO_SHOW directly).
+- **Pricing Contract**:
+  - PRD v2.0 target requires `pricing_mode` on tasks plus structured application pricing responses that can represent
+    budget acceptance, counter-offer, or quote submission.
+  - Current active OpenAPI remains fixed-budget-only and message-only for applications; that mismatch is intentional
+    documentation of implementation drift and must be remediated before code is declared PRD-aligned.
 - **Monetization Contract**:
   - Credit debits are valid only for `LEAD_UNLOCK_ACCEPTED` events.
   - Application cap defaults to 10 and is config-driven per category.
@@ -658,7 +692,8 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 - **Dispute and Review Contract**:
   - Dispute creation from `ASSIGNED` or within 24h of `COMPLETED` requires at least one evidence artifact or enters
     24h grace before auto-close.
-  - Review reminders follow immediate +24h +72h cadence; hard lock applies only for configured risk triggers.
+  - Review reminders follow immediate +24h +72h cadence; the review gate applies to every completed booking until the
+    owed review is submitted.
   - Notification fallback events (`HIRED`, `BOOKING_CONFIRMED`) are idempotent via `notification_log.event_key`.
 - **Trust Scoring Contract**:
   - Reliability score is recomputed on cancellation/no-show/completion signals and consumed by applicant ranking.
