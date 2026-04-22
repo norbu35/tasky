@@ -1,144 +1,144 @@
 # Screen Spec: No-Show Flag + Reminder
 screen_id: SCR-CUST-021
-name: "No-Show Flag + Reminder"
+name: 'No-Show Flag + Reminder'
 route: null
 role: [customer]
-phase: "0-1"
+phase: '0-1'
 template: modal_sheet
-figma_page: "Customer/No-Show Flag Reminder"
-feature: "booking"
+figma_page: 'Customer/No-Show Flag Reminder'
+feature: 'booking'
 
 layout:
   template: modal_sheet
   density: default
-  structure: "scrim -> sheet(handle_bar + icon + title + description + primary_action + secondary_action)"
+  structure: 'scrim -> sheet(handle_bar + icon + title + description + primary_action + secondary_action)'
 
 components:
   - id: COMP-MODALSHEET
-    usage: "Bottom sheet overlay for pre-no-show reminder and no-show flagging flow"
+    usage: 'Bottom sheet overlay for pre-no-show reminder and no-show flagging flow'
     props:
       visible: true
-      title: "Гүйцэтгэгч ирсэн үү?"
-      primaryAction: "Ирээгүй гэж тэмдэглэх"
-      secondaryAction: "Хаах"
+      title: 'Гүйцэтгэгч ирсэн үү?'
+      primaryAction: 'Ирээгүй гэж тэмдэглэх'
+      secondaryAction: 'Хаах'
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Primary flag button (danger variant for no-show flag) and secondary dismiss button"
+    usage: 'Primary flag button (danger variant for no-show flag) and secondary dismiss button'
     props:
-      label: "Ирээгүй гэж тэмдэглэх"
+      label: 'Ирээгүй гэж тэмдэглэх'
       variant: danger
       size: lg
       loading: false
     variant: danger
 
   - id: COMP-TOAST
-    usage: "Success toast after no-show flag is submitted"
+    usage: 'Success toast after no-show flag is submitted'
     props:
-      message: "Ирээгүй гэж тэмдэглэлээ"
+      message: 'Ирээгүй гэж тэмдэглэлээ'
       variant: success
     variant: success
 
 states:
   - id: pre_reminder_10min
-    description: "At scheduled start +10 minutes, system sends a reminder asking customer to update arrival status. Sheet shows gentle prompt asking if the Tasker has arrived"
+    description: 'At scheduled start +10 minutes, system sends a reminder asking customer to update arrival status. Sheet shows gentle prompt asking if the Tasker has arrived'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: flag_available_15min
-    description: "At scheduled start +15 minutes, if neither party checked in within the last 30 minutes and no accepted reschedule supersedes the schedule, the no-show flag button becomes active"
+    description: 'At scheduled start +15 minutes, if neither party checked in within the last 30 minutes and no accepted reschedule supersedes the schedule, the no-show flag button becomes active'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: flagging
-    description: "User tapped flag button; POST /bookings/:id/no-show in progress; button shows loading state"
+    description: 'User tapped flag button; POST /bookings/:id/no-show in progress; button shows loading state'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: flagged_success
-    description: "No-show flag submitted successfully; success toast shown, sheet dismisses"
+    description: 'No-show flag submitted successfully; success toast shown, sheet dismisses'
     components_visible: [COMP-TOAST]
     components_hidden: [COMP-MODALSHEET]
 
 copy:
   - key: reminder_title
-    mn: "Гүйцэтгэгч ирсэн үү?"
-    en: "Has the Tasker arrived?"
+    mn: 'Гүйцэтгэгч ирсэн үү?'
+    en: 'Has the Tasker arrived?'
     max_chars: 30
 
   - key: reminder_description
-    mn: "Товлосон цагаас 10 минут өнгөрлөө. Байдлаа шинэчилнэ үү."
-    en: "10 minutes past scheduled time. Please update the status."
+    mn: 'Товлосон цагаас 10 минут өнгөрлөө. Байдлаа шинэчилнэ үү.'
+    en: '10 minutes past scheduled time. Please update the status.'
     max_chars: 80
 
   - key: cta_tasker_arrived
-    mn: "Тийм, ирсэн"
-    en: "Yes, arrived"
+    mn: 'Тийм, ирсэн'
+    en: 'Yes, arrived'
     max_chars: 20
 
   - key: cta_not_yet
-    mn: "Үгүй, ирээгүй"
-    en: "No, not yet"
+    mn: 'Үгүй, ирээгүй'
+    en: 'No, not yet'
     max_chars: 20
 
   - key: flag_title
-    mn: "Гүйцэтгэгч ирээгүй"
-    en: "Tasker did not show up"
+    mn: 'Гүйцэтгэгч ирээгүй'
+    en: 'Tasker did not show up'
     max_chars: 30
 
   - key: flag_description
-    mn: "Товлосон цагаас 15 минут өнгөрлөө. Ирээгүй гэж тэмдэглэх үү? Энэ нь захиалгыг цуцалж, админ шалгалтад оруулна."
-    en: "15 minutes past scheduled time. Flag as no-show? This will cancel the booking and trigger an admin review."
+    mn: 'Товлосон цагаас 15 минут өнгөрлөө. Ирээгүй гэж тэмдэглэх үү? Энэ нь захиалгыг цуцалж, админ шалгалтад оруулна.'
+    en: '15 minutes past scheduled time. Flag as no-show? This will cancel the booking and trigger an admin review.'
     max_chars: 150
 
   - key: cta_flag_no_show
-    mn: "Ирээгүй гэж тэмдэглэх"
-    en: "Flag No-Show"
+    mn: 'Ирээгүй гэж тэмдэглэх'
+    en: 'Flag No-Show'
     max_chars: 25
 
   - key: cta_dismiss
-    mn: "Хаах"
-    en: "Dismiss"
+    mn: 'Хаах'
+    en: 'Dismiss'
     max_chars: 20
 
   - key: toast_flagged
-    mn: "Ирээгүй гэж тэмдэглэлээ"
-    en: "No-show flagged successfully"
+    mn: 'Ирээгүй гэж тэмдэглэлээ'
+    en: 'No-show flagged successfully'
     max_chars: 35
 
   - key: flag_note
-    mn: "28 хоногт 2 удаа ирээгүй тэмдэглэгдвэл торгуулийн шалгалт хийгдэнэ"
-    en: "2 or more no-shows in 28 days triggers a strike review"
+    mn: '28 хоногт 2 удаа ирээгүй тэмдэглэгдвэл торгуулийн шалгалт хийгдэнэ'
+    en: '2 or more no-shows in 28 days triggers a strike review'
     max_chars: 80
 
 api_endpoints:
   - method: POST
-    path: "/bookings/:id/no-show"
-    purpose: "Submit no-show flag for the booking; triggers admin reliability review"
+    path: '/bookings/:id/no-show'
+    purpose: 'Submit no-show flag for the booking; triggers admin reliability review'
 
 analytics_events:
-  - event: "no_show_reminder_shown"
-    trigger: "Pre-reminder sheet appears at scheduled start +10 minutes"
-  - event: "no_show_reminder_tasker_arrived"
-    trigger: "Customer confirms Tasker arrived at +10 min reminder"
-  - event: "no_show_flag_available"
-    trigger: "Flag button becomes active at scheduled start +15 minutes"
-  - event: "no_show_flag_submitted"
-    trigger: "Customer taps flag button and POST is sent"
-  - event: "no_show_flag_success"
-    trigger: "No-show flag processed successfully"
-  - event: "no_show_flag_dismissed"
-    trigger: "Customer dismisses the sheet without flagging"
+  - event: 'no_show_reminder_shown'
+    trigger: 'Pre-reminder sheet appears at scheduled start +10 minutes'
+  - event: 'no_show_reminder_tasker_arrived'
+    trigger: 'Customer confirms Tasker arrived at +10 min reminder'
+  - event: 'no_show_flag_available'
+    trigger: 'Flag button becomes active at scheduled start +15 minutes'
+  - event: 'no_show_flag_submitted'
+    trigger: 'Customer taps flag button and POST is sent'
+  - event: 'no_show_flag_success'
+    trigger: 'No-show flag processed successfully'
+  - event: 'no_show_flag_dismissed'
+    trigger: 'Customer dismisses the sheet without flagging'
 
 acceptance_criteria:
-  - "Pre-reminder appears at scheduled start +10 minutes per PRD Section 6.4.3"
-  - "No-show flag button activates only at scheduled start +15 minutes"
-  - "Flag button is only active if system verifies neither party posted an in-app status update or check-in in the preceding 30 minutes per REQ-BOOK-11"
-  - "Flag button is disabled if an accepted in-app reschedule has superseded the original schedule"
-  - "Flagging uses danger button variant requiring explicit tap"
-  - "On successful flag, booking transitions to NO_SHOW status"
-  - "Success toast shows after flag submission"
-  - "Sheet dismisses after flagging or on user dismiss"
-  - "Flag note warns about repeated no-show consequences (>=2 in 28 days triggers strike review)"
-  - "Drag-to-dismiss via handle bar is supported"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'Pre-reminder appears at scheduled start +10 minutes per PRD Section 6.4.3'
+  - 'No-show flag button activates only at scheduled start +15 minutes'
+  - 'Flag button is only active if the system verifies neither party posted an in-app status update or check-in in the preceding 30 minutes'
+  - 'Flag button is disabled if an accepted in-app reschedule has superseded the original schedule'
+  - 'Flagging uses danger button variant requiring explicit tap'
+  - 'On successful flag, booking transitions to NO_SHOW status'
+  - 'Success toast shows after flag submission'
+  - 'Sheet dismisses after flagging or on user dismiss'
+  - 'Flag note warns about repeated no-show consequences (>=2 in 28 days triggers strike review)'
+  - 'Drag-to-dismiss via handle bar is supported'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

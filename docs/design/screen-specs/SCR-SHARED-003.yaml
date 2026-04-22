@@ -1,48 +1,49 @@
 # Screen Spec: Auth — OTP Verification
+# Status: Draft / Future reference. Not part of the active Phase 1 launch surface.
 screen_id: SCR-SHARED-003
-name: "Auth — OTP Verification"
-route: "/auth/otp-verify"
+name: 'Auth — OTP Verification'
+route: '/auth/otp-verify'
 role: [customer, tasker]
-phase: "2"
+phase: '2'
 template: auth
-figma_page: "Shared/Auth OTP Verification"
-feature: "auth"
+figma_page: 'Shared/Auth OTP Verification'
+feature: 'auth'
 
 layout:
   template: auth
   density: comfortable
-  structure: "safe_area -> nav_header(back) -> centered_content(heading + description + otp_input + resend_link) -> bottom_cta(verify_button)"
+  structure: 'safe_area -> nav_header(back) -> centered_content(heading + description + otp_input + resend_link) -> bottom_cta(verify_button)'
 
 components:
   - id: COMP-INPUT
-    usage: "OTP code entry field; 4-digit numeric input with auto-advance"
+    usage: 'OTP code entry field; 4-digit numeric input with auto-advance'
     props:
-      placeholder: "- - - -"
-      label: "Баталгаажуулах код"
+      placeholder: '- - - -'
+      label: 'Баталгаажуулах код'
       maxLength: 4
     variant: default
 
   - id: COMP-FORMFIELD
-    usage: "Wraps OTP input with label, error, and helper text"
+    usage: 'Wraps OTP input with label, error, and helper text'
     props:
-      label: "Баталгаажуулах код"
+      label: 'Баталгаажуулах код'
       required: true
-      helperText: "Таны утсанд илгээсэн 4 оронтой код"
+      helperText: 'Таны утсанд илгээсэн 4 оронтой код'
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Primary verify CTA at screen bottom"
+    usage: 'Primary verify CTA at screen bottom'
     props:
-      label: "Баталгаажуулах"
+      label: 'Баталгаажуулах'
       variant: primary
       size: xl
       loading: false
     variant: primary
 
   - id: COMP-BUTTON
-    usage: "Resend code link styled as ghost button with countdown timer"
+    usage: 'Resend code link styled as ghost button with countdown timer'
     props:
-      label: "Код дахин илгээх"
+      label: 'Код дахин илгээх'
       variant: ghost
       size: md
       disabled: true
@@ -50,126 +51,137 @@ components:
 
 states:
   - id: default
-    description: "OTP screen loaded; phone number displayed; input field empty and focused"
+    description: 'OTP screen loaded; phone number displayed; input field empty and focused'
     components_visible: [heading, phone_display, otp_input, verify_button_disabled, resend_link]
     components_hidden: [error_message, verifying_spinner]
 
   - id: code_entry
-    description: "User is entering the OTP code digits"
-    components_visible: [heading, phone_display, otp_input_active, verify_button_enabled, resend_link]
+    description: 'User is entering the OTP code digits'
+    components_visible:
+      [heading, phone_display, otp_input_active, verify_button_enabled, resend_link]
     components_hidden: [error_message, verifying_spinner]
 
   - id: verifying
-    description: "OTP code submitted; verification request in progress"
+    description: 'OTP code submitted; verification request in progress'
     components_visible: [heading, phone_display, otp_input_disabled, verify_button_loading]
     components_hidden: [error_message, resend_link]
 
   - id: error_wrong_code
-    description: "User entered incorrect OTP code; field shows error and clears"
-    components_visible: [heading, phone_display, otp_input_error, wrong_code_error, verify_button_disabled, resend_link]
+    description: 'User entered incorrect OTP code; field shows error and clears'
+    components_visible:
+      [
+        heading,
+        phone_display,
+        otp_input_error,
+        wrong_code_error,
+        verify_button_disabled,
+        resend_link,
+      ]
     components_hidden: [verifying_spinner]
 
   - id: error_expired
-    description: "OTP code has expired; user must request a new code"
-    components_visible: [heading, phone_display, otp_input_disabled, expired_error, resend_link_enabled]
+    description: 'OTP code has expired; user must request a new code'
+    components_visible:
+      [heading, phone_display, otp_input_disabled, expired_error, resend_link_enabled]
     components_hidden: [verify_button, verifying_spinner]
 
   - id: resend_cooldown
-    description: "Resend requested; countdown timer shown (60s) before resend is available again"
+    description: 'Resend requested; countdown timer shown (60s) before resend is available again'
     components_visible: [heading, phone_display, otp_input, verify_button, resend_countdown]
     components_hidden: [error_message, resend_link_enabled]
 
   - id: error_network
-    description: "Network error during OTP verification or resend request"
-    components_visible: [heading, phone_display, otp_input, network_error_message, verify_button, resend_link]
+    description: 'Network error during OTP verification or resend request'
+    components_visible:
+      [heading, phone_display, otp_input, network_error_message, verify_button, resend_link]
     components_hidden: [verifying_spinner]
 
 copy:
   - key: heading
-    mn: "Код баталгаажуулах"
-    en: "Verify Code"
+    mn: 'Код баталгаажуулах'
+    en: 'Verify Code'
     max_chars: 25
 
   - key: description
-    mn: "{phone_number} дугаар руу илгээсэн 4 оронтой кодыг оруулна уу"
-    en: "Enter the 4-digit code sent to {phone_number}"
+    mn: '{phone_number} дугаар руу илгээсэн 4 оронтой кодыг оруулна уу'
+    en: 'Enter the 4-digit code sent to {phone_number}'
     max_chars: 70
 
   - key: otp_input_label
-    mn: "Баталгаажуулах код"
-    en: "Verification code"
+    mn: 'Баталгаажуулах код'
+    en: 'Verification code'
     max_chars: 25
 
   - key: otp_input_helper
-    mn: "Таны утсанд илгээсэн 4 оронтой код"
-    en: "4-digit code sent to your phone"
+    mn: 'Таны утсанд илгээсэн 4 оронтой код'
+    en: '4-digit code sent to your phone'
     max_chars: 45
 
   - key: verify_button_label
-    mn: "Баталгаажуулах"
-    en: "Verify"
+    mn: 'Баталгаажуулах'
+    en: 'Verify'
     max_chars: 20
 
   - key: resend_label
-    mn: "Код дахин илгээх"
-    en: "Resend code"
+    mn: 'Код дахин илгээх'
+    en: 'Resend code'
     max_chars: 20
 
   - key: resend_cooldown_label
-    mn: "Дахин илгээх ({seconds} сек)"
-    en: "Resend in ({seconds}s)"
+    mn: 'Дахин илгээх ({seconds} сек)'
+    en: 'Resend in ({seconds}s)'
     max_chars: 25
 
   - key: error_wrong_code
-    mn: "Буруу код оруулсан байна. Дахин оролдоно уу."
-    en: "Incorrect code. Please try again."
+    mn: 'Буруу код оруулсан байна. Дахин оролдоно уу.'
+    en: 'Incorrect code. Please try again.'
     max_chars: 50
 
   - key: error_expired
-    mn: "Кодын хугацаа дууссан. Шинэ код авна уу."
-    en: "Code expired. Please request a new one."
+    mn: 'Кодын хугацаа дууссан. Шинэ код авна уу.'
+    en: 'Code expired. Please request a new one.'
     max_chars: 50
 
   - key: error_network
-    mn: "Интернэт холболтоо шалгана уу"
-    en: "Please check your internet connection"
+    mn: 'Интернэт холболтоо шалгана уу'
+    en: 'Please check your internet connection'
     max_chars: 45
 
 api_endpoints:
   - method: POST
-    path: "/auth/otp/verify"
-    purpose: "Verify the OTP code entered by the user"
+    path: '/auth/otp/verify'
+    purpose: 'Verify the OTP code entered by the user'
   - method: POST
-    path: "/auth/otp/request"
+    path: '/auth/otp/request'
     purpose: "Resend OTP code to the user's phone number"
 
 analytics_events:
-  - event: "otp_screen_viewed"
-    trigger: "OTP verification screen becomes visible"
-  - event: "otp_code_entered"
-    trigger: "User finishes entering 4-digit code"
-  - event: "otp_verify_tapped"
-    trigger: "User taps the Verify button"
-  - event: "otp_verify_success"
-    trigger: "OTP verification succeeds"
-  - event: "otp_verify_failed"
-    trigger: "OTP verification fails (wrong code or expired)"
-  - event: "otp_resend_tapped"
-    trigger: "User taps the resend code link"
-  - event: "otp_resend_success"
-    trigger: "Resend OTP request completes successfully"
+  - event: 'otp_screen_viewed'
+    trigger: 'OTP verification screen becomes visible'
+  - event: 'otp_code_entered'
+    trigger: 'User finishes entering 4-digit code'
+  - event: 'otp_verify_tapped'
+    trigger: 'User taps the Verify button'
+  - event: 'otp_verify_success'
+    trigger: 'OTP verification succeeds'
+  - event: 'otp_verify_failed'
+    trigger: 'OTP verification fails (wrong code or expired)'
+  - event: 'otp_resend_tapped'
+    trigger: 'User taps the resend code link'
+  - event: 'otp_resend_success'
+    trigger: 'Resend OTP request completes successfully'
 
 acceptance_criteria:
-  - "The phone number that received the OTP is displayed on screen"
-  - "OTP input field auto-focuses on screen load"
-  - "Input accepts exactly 4 numeric digits"
-  - "Verify button is disabled until all 4 digits are entered"
-  - "Tapping Verify shows loading state on the button"
-  - "On success for a new user, the app replaces to Onboarding Carousel (SCR-SHARED-005)"
-  - "On success for a returning customer, the app replaces to My Tasks (SCR-CUST-001)"
-  - "On success for a returning tasker, the app replaces to Task Feed (SCR-TASK-001)"
-  - "Wrong code shows inline error below the input and clears the field"
-  - "Expired code disables the input and highlights the resend link"
-  - "Resend link is disabled for 60 seconds after each resend with countdown visible"
-  - "Network errors display inline message below the form"
-  - "Back navigation returns to the Login screen (SCR-SHARED-002) or OTP Migration Gate (SCR-SHARED-004)"
+  - 'The phone number that received the OTP is displayed on screen'
+  - 'OTP input field auto-focuses on screen load'
+  - 'Input accepts exactly 4 numeric digits'
+  - 'Verify button is disabled until all 4 digits are entered'
+  - 'Tapping Verify shows loading state on the button'
+  - 'On success for a new user, the app replaces to Onboarding Carousel (SCR-SHARED-005)'
+  - 'On success for a returning customer, the app replaces to My Tasks (SCR-CUST-001)'
+  - 'On success for a returning tasker, the app replaces to Task Feed (SCR-TASK-001)'
+  - 'Wrong code shows inline error below the input and clears the field'
+  - 'Expired code disables the input and highlights the resend link'
+  - 'Resend link is disabled for 60 seconds after each resend with countdown visible'
+  - 'Network errors display inline message below the form'
+  - 'Back navigation returns to the Login screen (SCR-SHARED-002) or OTP Migration Gate (SCR-SHARED-004)'

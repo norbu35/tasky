@@ -1,214 +1,214 @@
 # Screen Spec: Dispute — Raise
 screen_id: SCR-CUST-024
-name: "Dispute — Raise"
-route: "/(customer)/bookings/:bookingId/dispute"
+name: 'Dispute — Raise'
+route: '/(customer)/bookings/:bookingId/dispute'
 role: [customer]
-phase: "0-1"
+phase: '0-1'
 template: form_wizard
-figma_page: "Customer/Dispute Raise"
-feature: "dispute"
+figma_page: 'Customer/Dispute Raise'
+feature: 'dispute'
 
 layout:
   template: form_wizard
   density: default
-  structure: "safe_area -> nav_header(back + title) -> scrollview(booking_reference + reason_selector + evidence_upload + description) -> bottom_nav(back + submit)"
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(booking_reference + reason_selector + evidence_upload + description) -> bottom_nav(back + submit)'
 
 components:
   - id: COMP-FORMFIELD
-    usage: "Wrapper for dispute reason selection, evidence upload section, and written description"
+    usage: 'Wrapper for dispute reason selection, evidence upload section, and written description'
     props:
-      label: "Шалтгаан"
+      label: 'Шалтгаан'
       required: true
     variant: default
 
   - id: COMP-INPUT
-    usage: "Written timeline/description text area for dispute details"
+    usage: 'Written timeline/description text area for dispute details'
     props:
-      placeholder: "Асуудлын дэлгэрэнгүй тайлбар..."
+      placeholder: 'Асуудлын дэлгэрэнгүй тайлбар...'
       maxLength: 500
     variant: multiline
 
   - id: COMP-PHOTOPICKER
-    usage: "Evidence photo upload (at least 1 artifact required per PRD Section 6.4.6)"
+    usage: 'Evidence photo upload (at least 1 artifact required per PRD Section 6.4.6)'
     props:
       photos: []
       maxPhotos: 5
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Submit dispute button and back button"
+    usage: 'Submit dispute button and back button'
     props:
-      label: "Маргаан илгээх"
+      label: 'Маргаан илгээх'
       variant: primary
       size: lg
       loading: false
     variant: primary
 
   - id: COMP-TOAST
-    usage: "Success toast after dispute submission or error toast on failure"
+    usage: 'Success toast after dispute submission or error toast on failure'
     props:
-      message: "Маргаан амжилттай илгээлээ"
+      message: 'Маргаан амжилттай илгээлээ'
       variant: success
     variant: success
 
 states:
   - id: default
-    description: "Form shown with booking reference at top, reason selector, evidence upload area, and description field. At least one evidence artifact is required"
+    description: 'Form shown with booking reference at top, reason selector, evidence upload area, and description field. At least one evidence artifact is required'
     components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: evidence_photo
-    description: "User is uploading photo evidence; upload progress shown per photo"
+    description: 'User is uploading photo evidence; upload progress shown per photo'
     components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: evidence_chat
-    description: "User selects chat excerpt as evidence; chat excerpt selector shown"
+    description: 'User selects chat excerpt as evidence; chat excerpt selector shown'
     components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-PHOTOPICKER, COMP-TOAST]
 
   - id: evidence_text
-    description: "User writes a text-based timeline as evidence; description field active"
+    description: 'User writes a text-based timeline as evidence; description field active'
     components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-PHOTOPICKER, COMP-TOAST]
 
   - id: submitting
-    description: "Dispute submission in progress via POST /disputes; submit button in loading state"
+    description: 'Dispute submission in progress via POST /disputes; submit button in loading state'
     components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: success
-    description: "Dispute submitted successfully; navigates to Dispute Status screen"
+    description: 'Dispute submitted successfully; navigates to Dispute Status screen'
     components_visible: [COMP-TOAST]
     components_hidden: [COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON]
 
   - id: validation_no_evidence
-    description: "User attempted to submit without any evidence artifact; inline validation error shown on evidence section"
+    description: 'User attempted to submit without any evidence artifact; inline validation error shown on evidence section'
     components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: error_network
-    description: "Network error during submission; error toast with retry"
+    description: 'Network error during submission; error toast with retry'
     components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON, COMP-TOAST]
     components_hidden: []
 
 copy:
   - key: page_title
-    mn: "Асуудал мэдэгдэх"
-    en: "Report Issue"
+    mn: 'Асуудал мэдэгдэх'
+    en: 'Report Issue'
     max_chars: 20
 
   - key: section_booking_ref
-    mn: "Захиалгын мэдээлэл"
-    en: "Booking Reference"
+    mn: 'Захиалгын мэдээлэл'
+    en: 'Booking Reference'
     max_chars: 25
 
   - key: label_reason
-    mn: "Асуудлын шалтгаан"
-    en: "Issue Type"
+    mn: 'Асуудлын шалтгаан'
+    en: 'Issue Type'
     max_chars: 20
 
   - key: label_evidence
-    mn: "Нотлох баримт"
-    en: "Evidence"
+    mn: 'Нотлох баримт'
+    en: 'Evidence'
     max_chars: 20
 
   - key: evidence_helper
-    mn: "Дор хаяж 1 нотлох баримт шаардлагатай: зураг, чатын хэсэг, эсвэл бичгэн тайлбар"
-    en: "At least 1 evidence artifact required: photo, chat excerpt, or written timeline"
+    mn: 'Дор хаяж 1 нотлох баримт шаардлагатай: зураг, чатын хэсэг, эсвэл бичгэн тайлбар'
+    en: 'At least 1 evidence artifact required: photo, chat excerpt, or written timeline'
     max_chars: 100
 
   - key: label_description
-    mn: "Дэлгэрэнгүй тайлбар"
-    en: "Description"
+    mn: 'Дэлгэрэнгүй тайлбар'
+    en: 'Description'
     max_chars: 25
 
   - key: placeholder_description
-    mn: "Асуудлын дэлгэрэнгүй тайлбар..."
-    en: "Describe the issue in detail..."
+    mn: 'Асуудлын дэлгэрэнгүй тайлбар...'
+    en: 'Describe the issue in detail...'
     max_chars: 50
 
   - key: evidence_photo_label
-    mn: "Зураг нэмэх"
-    en: "Add Photo"
+    mn: 'Зураг нэмэх'
+    en: 'Add Photo'
     max_chars: 20
 
   - key: evidence_chat_label
-    mn: "Чатын хэсэг сонгох"
-    en: "Select Chat Excerpt"
+    mn: 'Чатын хэсэг сонгох'
+    en: 'Select Chat Excerpt'
     max_chars: 25
 
   - key: evidence_text_label
-    mn: "Бичгэн тайлбар"
-    en: "Written Timeline"
+    mn: 'Бичгэн тайлбар'
+    en: 'Written Timeline'
     max_chars: 20
 
   - key: cta_submit
-    mn: "Маргаан илгээх"
-    en: "Submit Dispute"
+    mn: 'Маргаан илгээх'
+    en: 'Submit Dispute'
     max_chars: 20
 
   - key: cta_back
-    mn: "Буцах"
-    en: "Back"
+    mn: 'Буцах'
+    en: 'Back'
     max_chars: 20
 
   - key: validation_no_evidence_error
-    mn: "Дор хаяж 1 нотлох баримт шаардлагатай"
-    en: "At least 1 evidence artifact is required"
+    mn: 'Дор хаяж 1 нотлох баримт шаардлагатай'
+    en: 'At least 1 evidence artifact is required'
     max_chars: 50
 
   - key: toast_success
-    mn: "Маргаан амжилттай илгээлээ"
-    en: "Dispute submitted successfully"
+    mn: 'Маргаан амжилттай илгээлээ'
+    en: 'Dispute submitted successfully'
     max_chars: 40
 
   - key: toast_error
-    mn: "Маргаан илгээхэд алдаа гарлаа"
-    en: "Failed to submit dispute"
+    mn: 'Маргаан илгээхэд алдаа гарлаа'
+    en: 'Failed to submit dispute'
     max_chars: 40
 
   - key: evidence_deadline_note
-    mn: "Нотлох баримт 24 цагийн дотор ирүүлээгүй бол маргаан автоматаар хаагдана"
-    en: "Dispute auto-closes if evidence is not provided within 24 hours"
+    mn: 'Нотлох баримт 24 цагийн дотор ирүүлээгүй бол маргаан автоматаар хаагдана'
+    en: 'Dispute auto-closes if evidence is not provided within 24 hours'
     max_chars: 100
 
   - key: eligibility_note
-    mn: "Маргаан нээх боломжтой: ASSIGNED төлөвт эсвэл COMPLETED-аас хойш 24 цагийн дотор"
-    en: "Disputes can be opened during ASSIGNED status or within 24 hours of COMPLETED"
+    mn: 'Маргаан нээх боломжтой: ASSIGNED төлөвт эсвэл COMPLETED-аас хойш 24 цагийн дотор'
+    en: 'Disputes can be opened during ASSIGNED status or within 24 hours of COMPLETED'
     max_chars: 100
 
 api_endpoints:
   - method: POST
-    path: "/disputes"
-    purpose: "Submit a new dispute with reason, evidence artifacts, and description"
+    path: '/disputes'
+    purpose: 'Submit a new dispute with reason, evidence artifacts, and description'
 
 analytics_events:
-  - event: "dispute_raise_viewed"
-    trigger: "Dispute form screen becomes visible"
-  - event: "dispute_evidence_photo_added"
-    trigger: "User uploads a photo as evidence"
-  - event: "dispute_evidence_chat_selected"
-    trigger: "User selects a chat excerpt as evidence"
-  - event: "dispute_evidence_text_entered"
-    trigger: "User writes text-based evidence"
-  - event: "dispute_submitted"
-    trigger: "User taps submit and POST /disputes is sent"
-  - event: "dispute_validation_no_evidence"
-    trigger: "Submit attempted without any evidence artifact"
-  - event: "dispute_submit_error"
-    trigger: "Network error during dispute submission"
+  - event: 'dispute_raise_viewed'
+    trigger: 'Dispute form screen becomes visible'
+  - event: 'dispute_evidence_photo_added'
+    trigger: 'User uploads a photo as evidence'
+  - event: 'dispute_evidence_chat_selected'
+    trigger: 'User selects a chat excerpt as evidence'
+  - event: 'dispute_evidence_text_entered'
+    trigger: 'User writes text-based evidence'
+  - event: 'dispute_submitted'
+    trigger: 'User taps submit and POST /disputes is sent'
+  - event: 'dispute_validation_no_evidence'
+    trigger: 'Submit attempted without any evidence artifact'
+  - event: 'dispute_submit_error'
+    trigger: 'Network error during dispute submission'
 
 acceptance_criteria:
-  - "Disputes can only be raised when booking is ASSIGNED or within 24 hours of COMPLETED per REQ-SAFE-03 and PRD Section 6.4.6"
-  - "At least one evidence artifact is required: photo, chat excerpt, or written timeline per REQ-SAFE-10"
-  - "Submitting without evidence shows inline validation error on evidence section"
-  - "Photo evidence uses presigned URL upload with per-photo progress"
-  - "Chat excerpt selection allows highlighting relevant message range"
-  - "Written timeline has 500 character limit"
-  - "Submit button sends POST /disputes with all evidence artifacts and enters loading state"
-  - "On success, navigates via replace to Dispute Status (SCR-CUST-025)"
-  - "Evidence deadline note warns that dispute auto-closes after 24 hours if evidence not provided"
-  - "Back button navigates via pop to Booking Detail (SCR-CUST-017)"
-  - "Network error shows error toast with retry"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'Disputes can only be raised when booking is ASSIGNED or within 24 hours of COMPLETED'
+  - 'At least one evidence artifact is required: photo, chat excerpt, or written timeline'
+  - 'Submitting without evidence shows inline validation error on evidence section'
+  - 'Photo evidence uses presigned URL upload with per-photo progress'
+  - 'Chat excerpt selection allows highlighting relevant message range'
+  - 'Written timeline has 500 character limit'
+  - 'Submit button sends POST /disputes with all evidence artifacts and enters loading state'
+  - 'On success, navigates via replace to Dispute Status (SCR-CUST-025)'
+  - 'Evidence deadline note warns that dispute auto-closes after 24 hours if evidence not provided'
+  - 'Back button navigates via pop to Booking Detail (SCR-CUST-017)'
+  - 'Network error shows error toast with retry'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

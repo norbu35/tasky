@@ -8,8 +8,7 @@ info:
 
     ## Authentication
     All endpoints (unless noted) require a Bearer JWT in the `Authorization` header.
-    Phase 0-1 auth uses Facebook OAuth (`/auth/facebook`).
-    Phase 2+ adds phone OTP auth (`/auth/otp/request`, `/auth/otp/verify`) and OTP becomes primary for new signups.
+    Current launch auth uses Facebook OAuth (`/auth/facebook`).
 
     ## Pagination
     All list endpoints use **cursor-based pagination**.
@@ -26,16 +25,11 @@ info:
     Critical state-changing endpoints require an `Idempotency-Key` header.
 
     ## Phase Gating
-    Two classes of deferred endpoints exist in this spec:
+    The active spec may include implemented-and-gated endpoints:
     - **Implemented and gated** (`wallet`, `payment`, `payout`): endpoints exist in the server and return `503` when
       their feature toggle is disabled. Current toggles: `escrow_enabled` (Phase 3+).
-    - **Not yet implemented** (`lead-unlock`, `credits`, `referrals`, `subscription`, `business`,
-      `instant-match`, `/verification/dan/verify`): endpoints are specified here as forward references for Phase 2/3+
-      implementation. Until then they return `404`.
-      Each such endpoint is annotated with `x-tasky-status: deferred` and `x-tasky-target-phase`.
-    Current launch posture is Phase 1 zero monetization; seeded feature toggles may exist before their runtime
-     consumers are implemented. Current activation status is Phase 1 zero monetization;
-     see `docs/maintenance/PRODUCTION_READINESS.md` for the go/no-go checklist.
+    Current launch posture is Phase 1 zero monetization. Forward-design endpoints belong in draft or future surfaces,
+    not in this active contract.
   version: 1.3.0
   contact:
     name: Tasky Engineering
@@ -46,7 +40,7 @@ tags:
   - name: System
     description: Service status and version metadata
   - name: Auth
-    description: Facebook OAuth (Phase 0-1) and phone OTP auth flows
+    description: Current authentication flows
   - name: Users
     description: User profile management
   - name: Verification
@@ -61,16 +55,12 @@ tags:
     description: Booking lifecycle
   - name: Payments
     description: QPay payment integration (feature-toggled by phase)
-  - name: Credits
-    description: Phase 2 lead-unlock credit ledger and purchases
   - name: Wallet
     description: Tasker wallet and payouts (feature-toggled by phase)
   - name: Reviews
     description: Post-completion reviews
   - name: Disputes
     description: Booking disputes
-  - name: Referrals
-    description: Referral attribution and rewards
   - name: Conversations
     description: In-app messaging (REST fallback)
   - name: Notifications
@@ -986,6 +976,7 @@ components:
         source:
           type: string
           enum:
+            - APPLICATION_SELECTION
             - REBOOK
             - INSTANT_MATCH
         status:
@@ -993,8 +984,13 @@ components:
           enum:
             - PENDING
             - CONFIRMED
+            - DECLINED
             - EXPIRED
             - CANCELLED
+        selected_application_id:
+          type: string
+          format: uuid
+          nullable: true
         original_booking_id:
           type: string
           format: uuid
@@ -1056,71 +1052,6 @@ components:
         created_at:
           type: string
           format: date-time
-    CreditBalance:
-      type: object
-      required:
-        - balance
-        - total_purchased
-        - total_spent
-        - total_refunded
-      properties:
-        balance:
-          type: integer
-          minimum: 0
-        total_purchased:
-          type: integer
-        total_spent:
-          type: integer
-        total_refunded:
-          type: integer
-    CreditTransaction:
-      type: object
-      required:
-        - id
-        - amount
-        - type
-        - created_at
-      properties:
-        id:
-          type: string
-          format: uuid
-        amount:
-          type: integer
-        type:
-          type: string
-          enum:
-            - PURCHASE
-            - SPEND
-            - REFUND
-            - SIGNUP_BONUS
-        reference_id:
-          type: string
-          nullable: true
-        created_at:
-          type: string
-          format: date-time
-    CreditPack:
-      type: object
-      required:
-        - id
-        - name
-        - credit_count
-        - price_mnt
-        - is_active
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        credit_count:
-          type: integer
-          minimum: 1
-        price_mnt:
-          type: integer
-          minimum: 1
-        is_active:
-          type: boolean
     WalletBalance:
       type: object
       required:
@@ -1473,101 +1404,6 @@ components:
         updated_at:
           type: string
           format: date-time
-    LeadUnlockPrice:
-      type: object
-      required:
-        - id
-        - category_id
-        - district_id
-        - credits_required
-        - effective_from
-      properties:
-        id:
-          type: string
-          format: uuid
-        category_id:
-          type: string
-          format: uuid
-        district_id:
-          type: string
-        credits_required:
-          type: integer
-          minimum: 1
-        effective_from:
-          type: string
-          format: date-time
-        effective_to:
-          type: string
-          format: date-time
-          nullable: true
-    TaskerSubscription:
-      type: object
-      required:
-        - id
-        - tasker_id
-        - status
-        - started_at
-      properties:
-        id:
-          type: string
-          format: uuid
-        tasker_id:
-          type: string
-          format: uuid
-        status:
-          type: string
-          enum:
-            - ACTIVE
-            - CANCELLED
-            - EXPIRED
-        started_at:
-          type: string
-          format: date-time
-        expires_at:
-          type: string
-          format: date-time
-          nullable: true
-    BusinessAccount:
-      type: object
-      required:
-        - id
-        - name
-        - status
-        - created_at
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        status:
-          type: string
-          enum:
-            - ACTIVE
-            - INACTIVE
-        billing_profile:
-          type: object
-          additionalProperties: true
-        created_at:
-          type: string
-          format: date-time
-    ReferralSummary:
-      type: object
-      required:
-        - referral_code
-        - referral_link
-        - successful_referrals_this_month
-      properties:
-        referral_code:
-          type: string
-        referral_link:
-          type: string
-          format: uri
-        successful_referrals_this_month:
-          type: integer
-        remaining_reward_capacity_this_month:
-          type: integer
-          description: Remaining successful referrals eligible for rewards within monthly cap.
     ReverseGeocodeResponse:
       type: object
       required:
@@ -1716,28 +1552,6 @@ components:
           format: double
         district:
           type: string
-          nullable: true
-    LeadUnlockPricePayload:
-      type: object
-      required:
-        - category_id
-        - district_id
-        - credits_required
-        - effective_from
-      properties:
-        category_id:
-          type: string
-        district_id:
-          type: string
-        credits_required:
-          type: integer
-          minimum: 1
-        effective_from:
-          type: string
-          format: date-time
-        effective_to:
-          type: string
-          format: date-time
           nullable: true
     AdminDisputeDetail:
       type: object
@@ -1962,115 +1776,6 @@ paths:
                       - CLOSED
                       - OPEN
                       - HALF_OPEN
-  /auth/otp/request:
-    post:
-      tags:
-        - Auth
-      summary: Request OTP code
-      description: |
-        Sends a one-time password (OTP) to a phone number.
-        Phase 2+ endpoint used for primary phone authentication and Facebook-user migration.
-      operationId: requestOtp
-      security: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - phone_number
-              properties:
-                phone_number:
-                  type: string
-                  example: '+97699001122'
-      responses:
-        '202':
-          description: OTP request accepted.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - message
-                properties:
-                  message:
-                    type: string
-                    example: OTP sent
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '403':
-          description: OTP authentication disabled for current rollout phase (`FEATURE_DISABLED`).
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
-  /auth/otp/verify:
-    post:
-      tags:
-        - Auth
-      summary: Verify OTP and authenticate
-      description: |
-        Verifies OTP code and issues JWT tokens.
-        In Phase 2+, this is the primary auth endpoint for new users and migrated Facebook users.
-      operationId: verifyOtp
-      security: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - phone_number
-                - otp_code
-              properties:
-                phone_number:
-                  type: string
-                  example: '+97699001122'
-                otp_code:
-                  type: string
-                  example: '123456'
-                facebook_access_token:
-                  type: string
-                  nullable: true
-                  description: Optional token used during Phase 2 migration to link prior Facebook identity.
-      responses:
-        '200':
-          description: Authentication successful.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - access_token
-                  - refresh_token
-                  - user
-                properties:
-                  access_token:
-                    type: string
-                  refresh_token:
-                    type: string
-                  user:
-                    $ref: '#/components/schemas/User'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          description: Invalid or expired OTP code.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '403':
-          description: OTP authentication disabled for current rollout phase (`FEATURE_DISABLED`).
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
   /auth/dev/login:
     post:
       tags:
@@ -2412,46 +2117,6 @@ paths:
                 $ref: '#/components/schemas/VerificationStatus'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  /verification/dan/verify:
-    x-tasky-status: deferred
-    x-tasky-target-phase: phase_2
-    post:
-      tags:
-        - Verification
-      summary: Verify via E-Mongolia DAN (Phase 2+)
-      description: |
-        **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
-        Optional fast-path verification using DAN. On provider failure/unavailability,
-        manual verification remains available as fallback.
-      operationId: verifyWithDan
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - dan_token
-              properties:
-                dan_token:
-                  type: string
-      responses:
-        '200':
-          description: DAN verification processed.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/VerificationStatus'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '503':
-          description: DAN provider unavailable.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
   /categories:
     get:
       tags:
@@ -3046,14 +2711,15 @@ paths:
     post:
       tags:
         - Applications
-      summary: Accept a tasker's application
+      summary: Select a tasker's application
       description: |
-        Customer accepts a tasker's application. This creates a booking in ASSIGNED status.
-        Phase 2+: selected tasker must complete lead unlock to reveal Customer contact details.
+        Customer selects a tasker's application. This creates a pending booking intent and marks the
+        application as `SELECTED`.
         Requires `liability_disclaimer_accepted=true`.
-        All other pending applications for this task are automatically rejected.
+        The selected tasker then has the default 4-hour response window to confirm or decline.
+        Other applications remain available until a booking is confirmed.
         Requires Idempotency-Key header.
-      operationId: acceptApplication
+      operationId: selectApplication
       security:
         - BearerAuth: []
       parameters:
@@ -3076,16 +2742,16 @@ paths:
               properties:
                 liability_disclaimer_accepted:
                   type: boolean
-                  description: Must be `true` to confirm booking.
+                  description: Must be `true` to create the booking request.
                   enum:
                     - true
       responses:
-        '200':
-          description: Application accepted, booking created.
+        '201':
+          description: Booking intent created for the selected application.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Booking'
+                $ref: '#/components/schemas/BookingIntent'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -3093,7 +2759,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Application already processed or task is not OPEN.
+          description: Application already processed, selection already pending, or task is not OPEN.
           content:
             application/json:
               schema:
@@ -3111,7 +2777,7 @@ paths:
       summary: Create booking intent for non-application confirmation sources
       description: |
         Creates a booking intent for a customer-owned OPEN task.
-        `REBOOK` is implemented. `INSTANT_MATCH` remains deferred until Phase 3+.
+        `REBOOK` is the only active non-application source in the current contract.
       operationId: createBookingIntent
       security:
         - BearerAuth: []
@@ -3131,7 +2797,6 @@ paths:
                   type: string
                   enum:
                     - REBOOK
-                    - INSTANT_MATCH
                 tasker_id:
                   type: string
                   format: uuid
@@ -3160,52 +2825,6 @@ paths:
           $ref: '#/components/responses/NotFound'
         '409':
           description: Task or source constraints not satisfiable.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /tasks/{id}/instant-match:
-    x-tasky-status: deferred
-    x-tasky-target-phase: phase_3
-    post:
-      tags:
-        - Applications
-      summary: Start instant match (Phase 3+)
-      description: |
-        **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
-        Starts instant-match flow for eligible high-liquidity categories/districts.
-        Offer window is 5 minutes per tasker; after 3 declines/timeouts flow falls back to standard applications.
-      operationId: startInstantMatch
-      security:
-        - BearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/PathId'
-        - $ref: '#/components/parameters/IdempotencyKeyHeader'
-      responses:
-        '200':
-          description: Instant match started or booking immediately assigned.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  mode:
-                    type: string
-                    enum:
-                      - INSTANT_MATCH_STARTED
-                      - BOOKING_ASSIGNED
-                      - FALLBACK_TO_APPLICATIONS
-                  booking:
-                    $ref: '#/components/schemas/Booking'
-                    nullable: true
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          description: Task not eligible for instant match.
           content:
             application/json:
               schema:
@@ -3318,103 +2937,6 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-  /bookings/{id}/lead-unlock:
-    x-tasky-status: deferred
-    x-tasky-target-phase: phase_2
-    post:
-      tags:
-        - Bookings
-      summary: Tasker accepts lead and unlocks customer contact
-      description: |
-        **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
-        Selected tasker accepts or declines lead within configured timeout window.
-        Accepting spends configured lead-unlock credits and unlocks customer contact details.
-        Declining does not spend credits and keeps contact details locked.
-        Requires Idempotency-Key header.
-      operationId: unlockBookingLead
-      security:
-        - BearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/PathId'
-        - $ref: '#/components/parameters/IdempotencyKeyHeader'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - accept
-              properties:
-                accept:
-                  type: boolean
-                  description: True spends credits and unlocks contact; false declines without debit.
-      responses:
-        '200':
-          description: Lead response processed.
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    required:
-                      - booking
-                      - accepted
-                      - credits_spent
-                      - customer_contact_unlocked
-                    properties:
-                      booking:
-                        $ref: '#/components/schemas/Booking'
-                      accepted:
-                        type: boolean
-                        enum:
-                          - true
-                      credits_spent:
-                        type: integer
-                        example: 1
-                      customer_contact_unlocked:
-                        type: boolean
-                        enum:
-                          - true
-                  - type: object
-                    required:
-                      - booking
-                      - accepted
-                      - credits_spent
-                      - customer_contact_unlocked
-                    properties:
-                      booking:
-                        $ref: '#/components/schemas/Booking'
-                      accepted:
-                        type: boolean
-                        enum:
-                          - false
-                      credits_spent:
-                        type: integer
-                        enum:
-                          - 0
-                      customer_contact_unlocked:
-                        type: boolean
-                        enum:
-                          - false
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          description: Booking is not eligible for lead unlock or has already been unlocked.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '503':
-          description: Monetization feature is disabled for the current rollout phase.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
   /bookings/{id}/cancel:
     post:
       tags:
@@ -3712,7 +3234,7 @@ paths:
       tags:
         - Bookings
       summary: Get booking intent
-      description: Returns booking intent details for the owner.
+      description: Returns booking intent details for the owner or the selected tasker.
       operationId: getBookingIntent
       security:
         - BearerAuth: []
@@ -3733,29 +3255,17 @@ paths:
     post:
       tags:
         - Bookings
-      summary: Confirm booking intent
+      summary: Tasker confirms booking intent
       description: |
-        Confirms a booking intent and creates an ASSIGNED booking.
-        Requires `liability_disclaimer_accepted=true` and Idempotency-Key header.
+        The selected tasker confirms a pending booking intent within the default 4-hour response window.
+        This creates an ASSIGNED booking and closes the remaining applications for the task.
+        Requires Idempotency-Key header.
       operationId: confirmBookingIntent
       security:
         - BearerAuth: []
       parameters:
         - $ref: '#/components/parameters/PathId'
         - $ref: '#/components/parameters/IdempotencyKeyHeader'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - liability_disclaimer_accepted
-              properties:
-                liability_disclaimer_accepted:
-                  type: boolean
-                  enum:
-                    - true
       responses:
         '200':
           description: Booking created from intent.
@@ -3773,6 +3283,39 @@ paths:
           $ref: '#/components/responses/NotFound'
         '409':
           description: Intent or task status does not allow confirmation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /booking-intents/{id}/decline:
+    post:
+      tags:
+        - Bookings
+      summary: Tasker declines booking intent
+      description: |
+        The selected tasker declines a pending booking intent.
+        The customer can then return to the applicant list and choose another tasker.
+      operationId: declineBookingIntent
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      responses:
+        '200':
+          description: Booking intent declined.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingIntent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Intent is not pending or already resolved.
           content:
             application/json:
               schema:
@@ -3909,245 +3452,6 @@ paths:
                 $ref: '#/components/schemas/Error'
         '503':
           description: Monetization feature is disabled for the current rollout phase.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /credits/balance:
-    x-tasky-status: deferred
-    x-tasky-target-phase: phase_2
-    get:
-      tags:
-        - Credits
-      summary: Get lead-unlock credit balance
-      description: |
-        **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
-        Tasker credit balance for lead-unlock purchases.
-      operationId: getCreditBalance
-      security:
-        - BearerAuth: []
-      responses:
-        '200':
-          description: Credit balance.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreditBalance'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '503':
-          description: Credit system disabled for current rollout phase.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /credits/transactions:
-    x-tasky-status: deferred
-    x-tasky-target-phase: phase_2
-    get:
-      tags:
-        - Credits
-      summary: List credit transactions
-      operationId: listCreditTransactions
-      security:
-        - BearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/CursorParam'
-        - $ref: '#/components/parameters/LimitParam'
-      responses:
-        '200':
-          description: Paginated credit transaction history.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - data
-                  - cursor
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/CreditTransaction'
-                  cursor:
-                    $ref: '#/components/schemas/CursorPagination'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '503':
-          description: Credit system disabled for current rollout phase.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /credits/packs:
-    x-tasky-status: deferred
-    x-tasky-target-phase: phase_2
-    get:
-      tags:
-        - Credits
-      summary: List available credit packs
-      operationId: listCreditPacks
-      security:
-        - BearerAuth: []
-      responses:
-        '200':
-          description: Active credit packs.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - data
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/CreditPack'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '503':
-          description: Credit system disabled for current rollout phase.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /credits/purchase:
-    x-tasky-status: deferred
-    x-tasky-target-phase: phase_2
-    post:
-      tags:
-        - Credits
-      summary: Purchase credit pack via QPay
-      description: Creates a QPay checkout intent for selected credit pack.
-      operationId: purchaseCreditPack
-      security:
-        - BearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKeyHeader'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - pack_id
-              properties:
-                pack_id:
-                  type: string
-                  format: uuid
-      responses:
-        '200':
-          description: Purchase intent created.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - payment_url
-                  - qr_code
-                  - pack
-                properties:
-                  payment_url:
-                    type: string
-                    format: uri
-                  qr_code:
-                    type: string
-                  pack:
-                    $ref: '#/components/schemas/CreditPack'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '503':
-          description: Credit system disabled for current rollout phase.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /subscriptions/tasker:
-    x-tasky-status: deferred
-    x-tasky-target-phase: phase_3
-    post:
-      tags:
-        - Payments
-      summary: Activate tasker subscription (Phase 3+)
-      description: |
-        **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
-        Enables monthly subscription for eligible Pro taskers.
-      operationId: activateTaskerSubscription
-      security:
-        - BearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKeyHeader'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - plan_code
-              properties:
-                plan_code:
-                  type: string
-      responses:
-        '200':
-          description: Subscription activated.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TaskerSubscription'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '503':
-          description: Subscription feature disabled for current rollout phase.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /business/accounts:
-    x-tasky-status: deferred
-    x-tasky-target-phase: phase_4
-    post:
-      tags:
-        - Admin
-      summary: Create business account (future B2B path)
-      description: |
-        **Not yet implemented — future B2B forward reference. Returns 404 until implemented.**
-        Creates B2B account for recurring scheduling and organization billing.
-      operationId: createBusinessAccount
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - name
-              properties:
-                name:
-                  type: string
-                billing_profile:
-                  type: object
-                  additionalProperties: true
-      responses:
-        '201':
-          description: Business account created.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BusinessAccount'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '503':
-          description: B2B feature disabled for current rollout phase.
           content:
             application/json:
               schema:
@@ -4400,35 +3704,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  /referrals/me:
-    x-tasky-status: deferred
-    x-tasky-target-phase: phase_2
-    get:
-      tags:
-        - Referrals
-      summary: Get my referral link and monthly reward status
-      description: |
-        **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
-        Returns referral code/link, current monthly conversion count,
-        and remaining reward-eligible slots under fraud-cap policy.
-      operationId: getMyReferralSummary
-      security:
-        - BearerAuth: []
-      responses:
-        '200':
-          description: Referral summary.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ReferralSummary'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '503':
-          description: Referral feature is disabled for the current rollout phase.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
   /bookings/{id}/disputes:
     post:
       tags:
@@ -5407,88 +4682,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FeatureToggle'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-  /admin/lead-unlock-prices:
-    x-tasky-status: deferred
-    x-tasky-target-phase: phase_2
-    get:
-      tags:
-        - Admin
-      summary: List lead unlock prices
-      description: Returns active and scheduled lead-unlock pricing rows by category and district.
-      operationId: adminListLeadUnlockPrices
-      security:
-        - BearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/CursorParam'
-        - $ref: '#/components/parameters/LimitParam'
-      responses:
-        '200':
-          description: Paginated price rows.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - data
-                  - cursor
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/LeadUnlockPrice'
-                  cursor:
-                    $ref: '#/components/schemas/CursorPagination'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-    post:
-      tags:
-        - Admin
-      summary: Create or schedule lead unlock price
-      operationId: adminCreateLeadUnlockPrice
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - category_id
-                - district_id
-                - credits_required
-                - effective_from
-              properties:
-                category_id:
-                  type: string
-                  format: uuid
-                district_id:
-                  type: string
-                credits_required:
-                  type: integer
-                  minimum: 1
-                effective_from:
-                  type: string
-                  format: date-time
-                effective_to:
-                  type: string
-                  format: date-time
-                  nullable: true
-      responses:
-        '201':
-          description: Price row created.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LeadUnlockPrice'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':

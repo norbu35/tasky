@@ -1,6 +1,21 @@
 # Tasky Architecture Router
 
-Routes to the smallest authoritative architecture surface for the change.
+Routes to the smallest derived architecture surface for the change.
+
+Architecture docs describe implementation reality and design. They do not govern intended product behavior. Intended
+product truth lives in `docs/PRD.md`, `docs/STRATEGY.md`, and the relevant maintenance policy docs.
+
+## Read Order Before Architecture
+
+For non-trivial work, read in this order:
+
+1. `docs/PRD.md`
+2. `docs/STRATEGY.md`
+3. relevant `docs/maintenance/*.md`
+4. the smallest relevant architecture doc below
+5. `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml` only for contract work
+
+## Routing Table
 
 | Working area                      | Read                                                                         |
 | --------------------------------- | ---------------------------------------------------------------------------- |
@@ -12,36 +27,45 @@ Routes to the smallest authoritative architecture surface for the change.
 | `packages/design-tokens/**`       | `packages/design-tokens/AGENTS.md`, `shared-frontend.md`                     |
 | `packages/sdk/**`                 | `packages/sdk/AGENTS.md`, `docs/openapi/AGENTS.md`, `api.md`                 |
 | `packages/test-utils/**`          | `packages/test-utils/AGENTS.md`, `shared-frontend.md`                        |
-| `packages/**` (other)             | `common.md` + nearest consumer surface doc                                   |
+| `packages/**` (other)             | `common.md` plus the nearest consumer surface doc                            |
 | `tooling/**` (other)              | `common.md` §Dev Workflow                                                    |
 | Root infra (`docker-compose`, CI) | `common.md` §Shared Tech Decisions, `common.md` §Dev Workflow                |
 
-Also read `docs/openapi/AGENTS.md` and `docs/openapi/openapi.yaml` when the task touches request/response contracts. Use `docs/API.yaml` only when you need the bundled single-file artifact. Use `common.md` as cross-cutting support context, not as a mandatory first read for every area.
+Use `docs/API.yaml` only when you need the bundled single-file artifact. It is generated output, not an independent
+source of truth.
 
-## What each doc owns
+## What Each Doc Owns
 
-- **`common.md`** — system context, cross-cutting tech decisions, runtime patterns (events/outbox, async, i18n), NFR baseline, dev workflow, cross-reference index.
-- **`api.md`** — backend module layout, request-path architecture, data schemas and flows, API/security contracts, backend runtime concerns, backend testing.
-- **`web.md`** — web-only structural contract; thin by design.
-- **`mobile.md`** — mobile structural contract (layer rules, screen-family contract, enforcement).
-- **`shared-frontend.md`** — tokens, parity baseline, intake renderer contract, TID test-naming rule.
+- `common.md` — system context, cross-cutting tech decisions, runtime patterns, NFR baseline, dev workflow, cross-reference index
+- `api.md` — backend module layout, request-path architecture, data schemas and flows, API/security contracts, backend runtime concerns, backend testing
+- `web.md` — web-only structural contract
+- `mobile.md` — mobile structural contract
+- `shared-frontend.md` — tokens, parity baseline, intake renderer contract, TID test-naming rule
 
-New structural guidance belongs in the doc whose scope matches — not in this router.
+New structural guidance belongs in the doc whose scope matches, not in this router.
 
-## Authority Order (Backend Architecture)
+## Authority Model
 
-When backend architecture docs conflict with code or tests, this is the resolution order:
+### Intended product truth
 
-1. **ArchUnit tests** (`services/api/src/test/java/mn/tasky/architecture/`)
-2. **Flyway migrations** (`services/api/src/main/resources/db/migration/`)
-3. **Runtime code** (package structure, public ports, composition services)
-4. **Architecture prose** (`api.md`, `common.md`, module `AGENTS.md`)
+When architecture prose conflicts with product intent, precedence is:
 
-If prose says X but code/tests say Y, the code/tests win. File a doc-fix issue.
+1. `docs/PRD.md`
+2. `docs/STRATEGY.md`
+3. relevant `docs/maintenance/*.md`
+4. architecture prose
 
-For backend architecture questions, route through:
+Code drift does not silently rewrite product intent. If runtime behavior differs from PRD or strategy without an
+explicit governing-doc change, treat it as implementation drift and document the mismatch.
 
-1. `services/api/AGENTS.md` (API agent contract)
-2. `api.md` (full backend architecture, section-labeled with truth status)
-3. ArchUnit tests (enforced rules)
-4. Flyway migrations (schema truth)
+### Backend implementation reality
+
+When backend architecture docs conflict with code or tests about current implementation reality, this is the resolution
+order:
+
+1. ArchUnit tests (`services/api/src/test/java/mn/tasky/architecture/`)
+2. Flyway migrations (`services/api/src/main/resources/db/migration/`)
+3. Runtime code (package structure, public ports, composition services)
+4. Architecture prose (`api.md`, `common.md`, module `AGENTS.md`)
+
+If prose says X but code/tests say Y, code/tests win for implementation reality. File a doc fix.

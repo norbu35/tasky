@@ -1,63 +1,63 @@
 # Screen Spec: Post Task — Intake Form
 screen_id: SCR-CUST-003
-name: "Post Task — Intake Form"
-route: "/(customer)/tasks/new/intake"
+name: 'Post Task — Intake Form'
+route: '/(customer)/tasks/new/intake'
 role: [customer]
-phase: "0-1"
+phase: '0-1'
 template: form_wizard
-figma_page: "Customer/Post Task Intake Form"
-feature: "task_posting"
+figma_page: 'Customer/Post Task Intake Form'
+feature: 'task_posting'
 
 layout:
   template: form_wizard
   density: default
-  structure: "safe_area -> nav_header(back + title) -> step_indicator(step 2/7) -> scrollview(dynamic_form) -> bottom_nav(back + next)"
+  structure: 'safe_area -> nav_header(back + title) -> step_indicator(step 2/7) -> scrollview(dynamic_form) -> bottom_nav(back + next)'
 
 components:
   - id: COMP-STEPINDICATOR
-    usage: "Shows step 2 of 7 in the Post Task wizard flow"
+    usage: 'Shows step 2 of 7 in the Post Task wizard flow'
     props:
       currentStep: 2
       totalSteps: 7
-      labels: ["Ангилал", "Маягт", "Зураг", "Байршил", "Хуваарь", "Хянах", "Дуусгах"]
+      labels: ['Ангилал', 'Маягт', 'Зураг', 'Байршил', 'Хуваарь', 'Хянах', 'Дуусгах']
     variant: horizontal
 
   - id: COMP-FORMFIELD
-    usage: "Wraps each dynamic intake question with label, input, and inline error"
+    usage: 'Wraps each dynamic intake question with label, input, and inline error'
     props:
-      label: "{question_label}"
-      error: "{validation_error_message}"
-      helperText: "{helper_text}"
+      label: '{question_label}'
+      error: '{validation_error_message}'
+      helperText: '{helper_text}'
       required: true
     variant: default
 
   - id: COMP-INPUT
-    usage: "Text/number input fields for intake questions that require free-text or numeric input"
+    usage: 'Text/number input fields for intake questions that require free-text or numeric input'
     props:
-      value: ""
-      placeholder: "{placeholder_text}"
-      label: "{field_label}"
+      value: ''
+      placeholder: '{placeholder_text}'
+      label: '{field_label}'
       maxLength: 200
     variant: default
 
   - id: COMP-CATEGORYCHIP
-    usage: "Single-select and multi-select options rendered as chips for structured intake questions"
+    usage: 'Single-select and multi-select options rendered as chips for structured intake questions'
     props:
-      category: "{option_label}"
+      category: '{option_label}'
       isActive: false
     variant: inactive
 
   - id: COMP-BUTTON
-    usage: "Back and Next navigation buttons in bottom bar"
+    usage: 'Back and Next navigation buttons in bottom bar'
     props:
-      label: "Үргэлжлүүлэх"
+      label: 'Үргэлжлүүлэх'
       variant: primary
       size: lg
       disabled: false
     variant: primary
 
   - id: COMP-LOADINGSKELETON
-    usage: "Form skeleton shown while intake schema loads"
+    usage: 'Form skeleton shown while intake schema loads'
     props:
       variant: detail
       count: 1
@@ -65,77 +65,79 @@ components:
 
 states:
   - id: loading_schema
-    description: "GET /categories/:id in progress; loading the intake_schema for the selected category"
+    description: 'GET /categories/:id in progress; loading the intake_schema for the selected category'
     components_visible: [COMP-STEPINDICATOR, COMP-LOADINGSKELETON]
     components_hidden: [COMP-FORMFIELD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON]
 
   - id: form_entry
-    description: "Intake schema loaded; 3-5 structured questions rendered; user fills in answers"
-    components_visible: [COMP-STEPINDICATOR, COMP-FORMFIELD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON]
+    description: 'Intake schema loaded; 3-5 structured questions rendered; user fills in answers'
+    components_visible:
+      [COMP-STEPINDICATOR, COMP-FORMFIELD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON]
     components_hidden: [COMP-LOADINGSKELETON]
 
   - id: validation_error
-    description: "User tapped Next but required fields are incomplete; inline errors shown per field"
-    components_visible: [COMP-STEPINDICATOR, COMP-FORMFIELD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON]
+    description: 'User tapped Next but required fields are incomplete; inline errors shown per field'
+    components_visible:
+      [COMP-STEPINDICATOR, COMP-FORMFIELD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON]
     components_hidden: [COMP-LOADINGSKELETON]
 
 copy:
   - key: page_title
-    mn: "Дэлгэрэнгүй мэдээлэл"
-    en: "Task Details"
+    mn: 'Дэлгэрэнгүй мэдээлэл'
+    en: 'Task Details'
     max_chars: 25
 
   - key: step_label
-    mn: "Маягт"
-    en: "Form"
+    mn: 'Маягт'
+    en: 'Form'
     max_chars: 15
 
   - key: instruction
-    mn: "Даалгаврын дэлгэрэнгүй мэдээллийг бөглөнө үү"
-    en: "Fill in the task details"
+    mn: 'Даалгаврын дэлгэрэнгүй мэдээллийг бөглөнө үү'
+    en: 'Fill in the task details'
     max_chars: 60
 
   - key: cta_next
-    mn: "Үргэлжлүүлэх"
-    en: "Continue"
+    mn: 'Үргэлжлүүлэх'
+    en: 'Continue'
     max_chars: 20
 
   - key: cta_back
-    mn: "Буцах"
-    en: "Back"
+    mn: 'Буцах'
+    en: 'Back'
     max_chars: 10
 
   - key: validation_required
-    mn: "Энэ талбарыг бөглөнө үү"
-    en: "This field is required"
+    mn: 'Энэ талбарыг бөглөнө үү'
+    en: 'This field is required'
     max_chars: 30
 
   - key: error_schema_load
-    mn: "Маягт ачаалахад алдаа гарлаа"
-    en: "Failed to load form"
+    mn: 'Маягт ачаалахад алдаа гарлаа'
+    en: 'Failed to load form'
     max_chars: 40
 
 api_endpoints:
   - method: GET
-    path: "/categories/:id"
-    purpose: "Fetch the intake_schema (3-5 structured questions) for the selected category"
+    path: '/categories/:id'
+    purpose: 'Fetch the intake_schema (3-5 structured questions) for the selected category'
 
 analytics_events:
-  - event: "intake_form_loaded"
-    trigger: "Intake schema loaded and form rendered; includes category_id and schema_version"
-  - event: "intake_form_completed"
-    trigger: "User taps Next with all fields valid"
-  - event: "intake_form_validation_error"
-    trigger: "User taps Next with invalid fields; includes field names"
+  - event: 'intake_form_loaded'
+    trigger: 'Intake schema loaded and form rendered; includes category_id and schema_version'
+  - event: 'intake_form_completed'
+    trigger: 'User taps Next with all fields valid'
+  - event: 'intake_form_validation_error'
+    trigger: 'User taps Next with invalid fields; includes field names'
 
 acceptance_criteria:
   - "StepIndicator shows step 2 of 7 with 'Маягт' label highlighted"
-  - "Intake form is dynamically rendered from the category intake_schema (JSON schema)"
-  - "Each question uses appropriate input type: single-select chips, multi-select chips, dropdown, yes/no toggle, or numeric counter per REQ-TASK-00"
-  - "All form fields are wrapped in FormField with label and inline error"
-  - "Validation errors appear inline below each field when Next is tapped with incomplete required fields"
-  - "Draft binds to intake_schema_version loaded at start per REQ-TASK-09"
-  - "Next button navigates (push) to Photo Upload SCR-CUST-004"
-  - "Back button pops to Category Selection SCR-CUST-002"
-  - "Keyboard-aware scrolling ensures active field is visible above keyboard"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'Intake form is dynamically rendered from the category intake_schema (JSON schema)'
+  - 'Each question uses the appropriate input type: single-select chips, multi-select chips, dropdown, yes or no toggle, or numeric counter'
+  - 'All form fields are wrapped in FormField with label and inline error'
+  - 'Validation errors appear inline below each field when Next is tapped with incomplete required fields'
+  - 'Draft binds to the intake_schema_version loaded at start'
+  - 'Next button navigates (push) to Photo Upload SCR-CUST-004'
+  - 'Back button pops to Category Selection SCR-CUST-002'
+  - 'Keyboard-aware scrolling ensures active field is visible above keyboard'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

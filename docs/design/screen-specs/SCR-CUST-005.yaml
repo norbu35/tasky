@@ -1,55 +1,55 @@
 # Screen Spec: Post Task — Location Pin
 screen_id: SCR-CUST-005
-name: "Post Task — Location Pin"
-route: "/(customer)/tasks/new/location"
+name: 'Post Task — Location Pin'
+route: '/(customer)/tasks/new/location'
 role: [customer]
-phase: "0-1"
+phase: '0-1'
 template: form_wizard
-figma_page: "Customer/Post Task Location Pin"
-feature: "task_posting"
+figma_page: 'Customer/Post Task Location Pin'
+feature: 'task_posting'
 
 layout:
   template: form_wizard
   density: default
-  structure: "safe_area -> nav_header(back + title) -> step_indicator(step 4/7) -> scrollview(map_picker + text_field) -> bottom_nav(back + next)"
+  structure: 'safe_area -> nav_header(back + title) -> step_indicator(step 4/7) -> scrollview(map_picker + text_field) -> bottom_nav(back + next)'
 
 components:
   - id: COMP-STEPINDICATOR
-    usage: "Shows step 4 of 7 in the Post Task wizard flow"
+    usage: 'Shows step 4 of 7 in the Post Task wizard flow'
     props:
       currentStep: 4
       totalSteps: 7
-      labels: ["Ангилал", "Маягт", "Зураг", "Байршил", "Хуваарь", "Хянах", "Дуусгах"]
+      labels: ['Ангилал', 'Маягт', 'Зураг', 'Байршил', 'Хуваарь', 'Хянах', 'Дуусгах']
     variant: horizontal
 
   - id: COMP-MAPPICKER
-    usage: "Interactive map with draggable pin for setting task location"
+    usage: 'Interactive map with draggable pin for setting task location'
     props:
       location: null
-      textDescription: ""
+      textDescription: ''
     variant: default
 
   - id: COMP-FORMFIELD
-    usage: "Wraps the text description input for location landmark/details"
+    usage: 'Wraps the text description input for location landmark/details'
     props:
-      label: "Дэлгэрэнгүй байршил"
-      helperText: "Жишээ нь: Их дэлгүүрийн ард"
+      label: 'Дэлгэрэнгүй байршил'
+      helperText: 'Жишээ нь: Их дэлгүүрийн ард'
       required: false
     variant: default
 
   - id: COMP-INPUT
-    usage: "Free-text input for location description (landmark, floor, apartment details)"
+    usage: 'Free-text input for location description (landmark, floor, apartment details)'
     props:
-      value: ""
-      placeholder: "Жишээ нь: Их дэлгүүрийн ард, 5 давхарт"
-      label: "Дэлгэрэнгүй байршил"
+      value: ''
+      placeholder: 'Жишээ нь: Их дэлгүүрийн ард, 5 давхарт'
+      label: 'Дэлгэрэнгүй байршил'
       maxLength: 100
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Back and Next navigation buttons in bottom bar"
+    usage: 'Back and Next navigation buttons in bottom bar'
     props:
-      label: "Үргэлжлүүлэх"
+      label: 'Үргэлжлүүлэх'
       variant: primary
       size: lg
     variant: primary
@@ -57,95 +57,99 @@ components:
 states:
   - id: default
     description: "Map displayed centered on user's current location (if permitted) or Ulaanbaatar default; no pin placed yet"
-    components_visible: [COMP-STEPINDICATOR, COMP-MAPPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    components_visible:
+      [COMP-STEPINDICATOR, COMP-MAPPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: []
 
   - id: pin_placed
-    description: "User has dropped a pin on the map; lat/lng captured; Next button enabled"
-    components_visible: [COMP-STEPINDICATOR, COMP-MAPPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    description: 'User has dropped a pin on the map; lat/lng captured; Next button enabled'
+    components_visible:
+      [COMP-STEPINDICATOR, COMP-MAPPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: []
 
   - id: text_entry
-    description: "User is typing a location description in the text field; keyboard visible"
-    components_visible: [COMP-STEPINDICATOR, COMP-MAPPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    description: 'User is typing a location description in the text field; keyboard visible'
+    components_visible:
+      [COMP-STEPINDICATOR, COMP-MAPPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: []
 
   - id: permission_denied
-    description: "Location permission denied; map shows Ulaanbaatar default with manual pin placement instruction"
-    components_visible: [COMP-STEPINDICATOR, COMP-MAPPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    description: 'Location permission denied; map shows Ulaanbaatar default with manual pin placement instruction'
+    components_visible:
+      [COMP-STEPINDICATOR, COMP-MAPPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: []
 
 copy:
   - key: page_title
-    mn: "Байршил тодорхойлох"
-    en: "Set Location"
+    mn: 'Байршил тодорхойлох'
+    en: 'Set Location'
     max_chars: 25
 
   - key: step_label
-    mn: "Байршил"
-    en: "Location"
+    mn: 'Байршил'
+    en: 'Location'
     max_chars: 15
 
   - key: instruction
-    mn: "Даалгаврын байршлыг газрын зурагт тэмдэглэнэ үү"
-    en: "Pin the task location on the map"
+    mn: 'Даалгаврын байршлыг газрын зурагт тэмдэглэнэ үү'
+    en: 'Pin the task location on the map'
     max_chars: 60
 
   - key: text_field_label
-    mn: "Дэлгэрэнгүй байршил"
-    en: "Location details"
+    mn: 'Дэлгэрэнгүй байршил'
+    en: 'Location details'
     max_chars: 30
 
   - key: text_field_placeholder
-    mn: "Жишээ нь: Их дэлгүүрийн ард, 5 давхарт"
-    en: "e.g., Behind State Dept Store, 5th floor"
+    mn: 'Жишээ нь: Их дэлгүүрийн ард, 5 давхарт'
+    en: 'e.g., Behind State Dept Store, 5th floor'
     max_chars: 60
 
   - key: text_field_helper
-    mn: "Гүйцэтгэгчид ойлгомжтой мэдээлэл бичнэ үү"
-    en: "Provide details helpful for the Tasker"
+    mn: 'Гүйцэтгэгчид ойлгомжтой мэдээлэл бичнэ үү'
+    en: 'Provide details helpful for the Tasker'
     max_chars: 60
 
   - key: permission_denied_hint
-    mn: "Байршлын зөвшөөрөл өгөөгүй байна. Газрын зурагт гараар тэмдэглэнэ үү"
-    en: "Location permission denied. Please pin manually on the map"
+    mn: 'Байршлын зөвшөөрөл өгөөгүй байна. Газрын зурагт гараар тэмдэглэнэ үү'
+    en: 'Location permission denied. Please pin manually on the map'
     max_chars: 80
 
   - key: privacy_note
-    mn: "Гүйцэтгэгчид ойролцоо байршил харагдана. Яг хаяг захиалга баталсны дараа харагдана"
-    en: "Taskers see approximate location. Exact address shown after booking confirmation"
+    mn: 'Гүйцэтгэгчид ойролцоо байршил харагдана. Яг хаяг захиалга баталсны дараа харагдана'
+    en: 'Taskers see approximate location. Exact address shown after booking confirmation'
     max_chars: 100
 
   - key: cta_next
-    mn: "Үргэлжлүүлэх"
-    en: "Continue"
+    mn: 'Үргэлжлүүлэх'
+    en: 'Continue'
     max_chars: 20
 
   - key: cta_back
-    mn: "Буцах"
-    en: "Back"
+    mn: 'Буцах'
+    en: 'Back'
     max_chars: 10
 
 api_endpoints: []
 
 analytics_events:
-  - event: "location_pin_placed"
-    trigger: "User drops a pin on the map; includes lat/lng"
-  - event: "location_text_entered"
-    trigger: "User submits location description text"
-  - event: "location_permission_denied"
-    trigger: "Device location permission was denied"
-  - event: "location_step_completed"
-    trigger: "User taps Next with a valid pin placement"
+  - event: 'location_pin_placed'
+    trigger: 'User drops a pin on the map; includes lat/lng'
+  - event: 'location_text_entered'
+    trigger: 'User submits location description text'
+  - event: 'location_permission_denied'
+    trigger: 'Device location permission was denied'
+  - event: 'location_step_completed'
+    trigger: 'User taps Next with a valid pin placement'
 
 acceptance_criteria:
   - "StepIndicator shows step 4 of 7 with 'Байршил' label highlighted"
-  - "Map displays with draggable pin; defaults to current location if permission granted"
-  - "If location permission denied, map defaults to Ulaanbaatar center with manual pin instruction"
-  - "Text field below map accepts location landmark description (optional)"
-  - "Privacy note informs user that Taskers only see approximate location (500m radius) per REQ-TASK-03 and REQ-LEAK-03"
-  - "Next button is disabled until a pin is placed on the map"
-  - "Next button navigates (push) to Schedule & Budget SCR-CUST-006"
-  - "Back button pops to Photo Upload SCR-CUST-004"
-  - "Keyboard-aware scrolling ensures text field is visible when focused"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'Map displays with draggable pin; defaults to current location if permission granted'
+  - 'If location permission denied, map defaults to Ulaanbaatar center with manual pin instruction'
+  - 'Text field below map accepts location landmark description (optional)'
+  - 'Privacy note informs the user that taskers only see approximate location (500m radius)'
+  - 'Next button is disabled until a pin is placed on the map'
+  - 'Next button navigates (push) to Schedule & Budget SCR-CUST-006'
+  - 'Back button pops to Photo Upload SCR-CUST-004'
+  - 'Keyboard-aware scrolling ensures text field is visible when focused'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

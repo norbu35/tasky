@@ -561,14 +561,15 @@
   post:
     tags:
       - Applications
-    summary: Accept a tasker's application
+    summary: Select a tasker's application
     description: |
-      Customer accepts a tasker's application. This creates a booking in ASSIGNED status.
-      Phase 2+: selected tasker must complete lead unlock to reveal Customer contact details.
+      Customer selects a tasker's application. This creates a pending booking intent and marks the
+      application as `SELECTED`.
       Requires `liability_disclaimer_accepted=true`.
-      All other pending applications for this task are automatically rejected.
+      The selected tasker then has the default 4-hour response window to confirm or decline.
+      Other applications remain available until a booking is confirmed.
       Requires Idempotency-Key header.
-    operationId: acceptApplication
+    operationId: selectApplication
     security:
       - BearerAuth: []
     parameters:
@@ -591,16 +592,16 @@
             properties:
               liability_disclaimer_accepted:
                 type: boolean
-                description: Must be `true` to confirm booking.
+                description: Must be `true` to create the booking request.
                 enum:
                   - true
     responses:
-      '200':
-        description: Application accepted, booking created.
+      '201':
+        description: Booking intent created for the selected application.
         content:
           application/json:
             schema:
-              $ref: ../components/schemas/bookings.yaml#/Booking
+              $ref: ../components/schemas/bookings.yaml#/BookingIntent
       '401':
         $ref: ../components/responses.yaml#/Unauthorized
       '403':
@@ -608,7 +609,7 @@
       '404':
         $ref: ../components/responses.yaml#/NotFound
       '409':
-        description: Application already processed or task is not OPEN.
+        description: Application already processed, selection already pending, or task is not OPEN.
         content:
           application/json:
             schema:
@@ -626,7 +627,7 @@
     summary: Create booking intent for non-application confirmation sources
     description: |
       Creates a booking intent for a customer-owned OPEN task.
-      `REBOOK` is implemented. `INSTANT_MATCH` remains deferred until Phase 3+.
+      `REBOOK` is the only active non-application source in the current contract.
     operationId: createBookingIntent
     security:
       - BearerAuth: []
@@ -646,7 +647,6 @@
                 type: string
                 enum:
                   - REBOOK
-                  - INSTANT_MATCH
               tasker_id:
                 type: string
                 format: uuid

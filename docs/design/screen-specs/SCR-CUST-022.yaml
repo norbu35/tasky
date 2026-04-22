@@ -1,32 +1,32 @@
 # Screen Spec: Booking Cancel (Customer)
 screen_id: SCR-CUST-022
-name: "Booking Cancel (Customer)"
+name: 'Booking Cancel (Customer)'
 route: null
 role: [customer]
-phase: "0-1"
+phase: '0-1'
 template: modal_sheet
-figma_page: "Customer/Booking Cancel Customer"
-feature: "booking"
+figma_page: 'Customer/Booking Cancel Customer'
+feature: 'booking'
 
 layout:
   template: modal_sheet
   density: default
-  structure: "scrim -> sheet(handle_bar + title + policy_description + incident_count + primary_action + secondary_action)"
+  structure: 'scrim -> sheet(handle_bar + title + policy_description + incident_count + primary_action + secondary_action)'
 
 components:
   - id: COMP-MODALSHEET
-    usage: "Bottom sheet overlay for booking cancellation confirmation with policy context"
+    usage: 'Bottom sheet overlay for booking cancellation confirmation with policy context'
     props:
       visible: true
-      title: "Захиалга цуцлах"
-      primaryAction: "Цуцлах"
-      secondaryAction: "Буцах"
+      title: 'Захиалга цуцлах'
+      primaryAction: 'Цуцлах'
+      secondaryAction: 'Буцах'
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Primary cancel button (danger variant) and secondary go-back button"
+    usage: 'Primary cancel button (danger variant) and secondary go-back button'
     props:
-      label: "Цуцлах"
+      label: 'Цуцлах'
       variant: danger
       size: lg
       loading: false
@@ -34,90 +34,90 @@ components:
 
 states:
   - id: free_cancel
-    description: "Cancellation is more than 4 hours before scheduled time; no penalty. Simple confirmation with no-penalty messaging"
+    description: 'Cancellation is more than 4 hours before scheduled time; no penalty. Simple confirmation with no-penalty messaging'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: []
 
   - id: late_cancel_warning
-    description: "Cancellation is within 4 hours of scheduled time; late cancellation warning shown with reliability incident implications"
+    description: 'Cancellation is within 4 hours of scheduled time; late cancellation warning shown with reliability incident implications'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: []
 
   - id: late_cancel_incident_count
-    description: "Late cancellation and customer already has 1 incident in trailing 28 days; stronger warning about ranking penalty and potential strike review"
+    description: 'Late cancellation and customer already has 1 incident in trailing 28 days; stronger warning about ranking penalty and potential strike review'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: []
 
   - id: confirming
-    description: "User tapped cancel; PUT /bookings/:id/cancel in progress; button shows loading state"
+    description: 'User tapped cancel; PUT /bookings/:id/cancel in progress; button shows loading state'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: []
 
 copy:
   - key: title
-    mn: "Захиалга цуцлах"
-    en: "Cancel Booking"
+    mn: 'Захиалга цуцлах'
+    en: 'Cancel Booking'
     max_chars: 20
 
   - key: free_cancel_description
-    mn: "Та энэ захиалгыг торгуулгүйгээр цуцлах боломжтой."
-    en: "You can cancel this booking with no penalty."
+    mn: 'Та энэ захиалгыг торгуулгүйгээр цуцлах боломжтой.'
+    en: 'You can cancel this booking with no penalty.'
     max_chars: 60
 
   - key: late_cancel_description
-    mn: "Товлосон цаг хүртэл 4 цагаас бага хугацаа үлдлээ. Энэ цуцлалт таны найдвартай байдлын бүртгэлд тэмдэглэгдэнэ."
-    en: "Less than 4 hours until scheduled time. This cancellation will be recorded as a reliability incident."
+    mn: 'Товлосон цаг хүртэл 4 цагаас бага хугацаа үлдлээ. Энэ цуцлалт таны найдвартай байдлын бүртгэлд тэмдэглэгдэнэ.'
+    en: 'Less than 4 hours until scheduled time. This cancellation will be recorded as a reliability incident.'
     max_chars: 150
 
   - key: late_cancel_first_warning
-    mn: "Энэ нь таны сүүлийн 28 хоногийн анхны зөрчил байна. Анхааруулга хэлбэрээр бүртгэгдэнэ."
-    en: "This is your first incident in the last 28 days. It will be recorded as a warning."
+    mn: 'Энэ нь таны сүүлийн 28 хоногийн анхны зөрчил байна. Анхааруулга хэлбэрээр бүртгэгдэнэ.'
+    en: 'This is your first incident in the last 28 days. It will be recorded as a warning.'
     max_chars: 100
 
   - key: late_cancel_repeat_warning
-    mn: "Та сүүлийн 28 хоногт аль хэдийн 1 зөрчилтэй байна. 2 дахь зөрчил нь зэрэглэлийн бууралт болон торгуулийн шалгалтыг идэвхжүүлж болно."
-    en: "You already have 1 incident in the last 28 days. A 2nd incident may trigger ranking penalty and strike review."
+    mn: 'Та сүүлийн 28 хоногт аль хэдийн 1 зөрчилтэй байна. 2 дахь зөрчил нь зэрэглэлийн бууралт болон торгуулийн шалгалтыг идэвхжүүлж болно.'
+    en: 'You already have 1 incident in the last 28 days. A 2nd incident may trigger ranking penalty and strike review.'
     max_chars: 180
 
   - key: cta_cancel_confirm
-    mn: "Захиалга цуцлах"
-    en: "Cancel Booking"
+    mn: 'Захиалга цуцлах'
+    en: 'Cancel Booking'
     max_chars: 20
 
   - key: cta_go_back
-    mn: "Буцах"
-    en: "Go Back"
+    mn: 'Буцах'
+    en: 'Go Back'
     max_chars: 20
 
   - key: policy_note
-    mn: "Цуцлалтын бодлого: 4+ цагийн өмнө — торгуулгүй. 4 цагийн дотор — найдвартай байдлын зөрчил."
-    en: "Cancellation policy: >4 hours before — no penalty. Within 4 hours — reliability incident."
+    mn: 'Цуцлалтын бодлого: 4+ цагийн өмнө — торгуулгүй. 4 цагийн дотор — найдвартай байдлын зөрчил.'
+    en: 'Cancellation policy: >4 hours before — no penalty. Within 4 hours — reliability incident.'
     max_chars: 120
 
 api_endpoints:
   - method: PUT
-    path: "/bookings/:id/cancel"
-    purpose: "Cancel the booking; records reliability incident if late cancellation"
+    path: '/bookings/:id/cancel'
+    purpose: 'Cancel the booking; records reliability incident if late cancellation'
 
 analytics_events:
-  - event: "booking_cancel_sheet_shown"
-    trigger: "Cancellation modal sheet appears"
-  - event: "booking_cancel_free"
-    trigger: "User confirms free cancellation (>4 hours before schedule)"
-  - event: "booking_cancel_late"
-    trigger: "User confirms late cancellation (<4 hours before schedule)"
-  - event: "booking_cancel_aborted"
-    trigger: "User taps Go Back or dismisses the sheet"
+  - event: 'booking_cancel_sheet_shown'
+    trigger: 'Cancellation modal sheet appears'
+  - event: 'booking_cancel_free'
+    trigger: 'User confirms free cancellation (>4 hours before schedule)'
+  - event: 'booking_cancel_late'
+    trigger: 'User confirms late cancellation (<4 hours before schedule)'
+  - event: 'booking_cancel_aborted'
+    trigger: 'User taps Go Back or dismisses the sheet'
 
 acceptance_criteria:
-  - "Free cancellation state shows no-penalty messaging when >4 hours before scheduled time per REQ-BOOK-04"
-  - "Late cancellation warning appears when <4 hours before scheduled time"
-  - "Late cancel incident count state shows elevated warning when customer has 1 existing incident in trailing 28 days"
-  - "2 incidents in trailing 28 days triggers ranking penalty and potential strike review per PRD Section 6.4.5"
-  - "Cancel button uses danger variant requiring explicit tap"
-  - "Confirming state shows loading spinner on button while PUT /bookings/:id/cancel is in progress"
-  - "On successful cancellation, sheet dismisses and navigates via replace to Customer Bookings List (SCR-CUST-016)"
-  - "Tapping Go Back dismisses the sheet and returns to Booking Detail (SCR-CUST-017)"
-  - "Cancellation policy note is always visible at the bottom of the sheet"
-  - "Drag-to-dismiss via handle bar is supported"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'Free cancellation state shows no-penalty messaging when >4 hours before scheduled time'
+  - 'Late cancellation warning appears when <4 hours before scheduled time'
+  - 'Late cancel incident count state shows elevated warning when customer has 1 existing incident in trailing 28 days'
+  - '2 incidents in trailing 28 days triggers ranking penalty and potential strike review per PRD Section 6.4.5'
+  - 'Cancel button uses danger variant requiring explicit tap'
+  - 'Confirming state shows loading spinner on button while PUT /bookings/:id/cancel is in progress'
+  - 'On successful cancellation, sheet dismisses and navigates via replace to Customer Bookings List (SCR-CUST-016)'
+  - 'Tapping Go Back dismisses the sheet and returns to Booking Detail (SCR-CUST-017)'
+  - 'Cancellation policy note is always visible at the bottom of the sheet'
+  - 'Drag-to-dismiss via handle bar is supported'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

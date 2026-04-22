@@ -116,10 +116,10 @@ function LoginScreen({ onLogin }) {
 // ── Screen: Browse Task Feed ─────────────────────────────────────
 function BrowseScreen({ onTaskClick }) {
   const [activeFilter, setActiveFilter] = useState('all');
-  const filters = [{ id: 'all', label: 'Бүгд' }, { id: 'cleaning', label: 'Цэвэрлэгээ' }, { id: 'repair', label: 'Засвар' }, { id: 'moving', label: 'Зөөвөрлөлт' }];
+  const filters = [{ id: 'all', label: 'Бүгд' }, { id: 'cleaning', label: 'Цэвэрлэгээ' }, { id: 'assembly', label: 'Угсралт' }, { id: 'moving', label: 'Зөөвөрлөлт' }];
   const filtered = activeFilter === 'all' ? TASKS : TASKS.filter(t =>
     (activeFilter === 'cleaning' && t.category === 'Цэвэрлэгээ') ||
-    (activeFilter === 'repair' && t.category === 'Засвар') ||
+    (activeFilter === 'assembly' && t.category === 'Угсралт') ||
     (activeFilter === 'moving' && t.category === 'Зөөвөрлөлт')
   );
   return (

@@ -90,7 +90,7 @@ function FeedCard({ category, description, budget, location, applicants }) {
         <p style={{ fontSize: 24, fontWeight: 700, margin: 0, color: 'hsl(212 43% 23%)', fontFamily: 'var(--font-display)' }}>{budget} <span style={{ fontSize: 13, fontWeight: 400, color: 'hsl(210 13% 39%)' }}>MNT</span></p>
       </div>
       <div style={{ padding: '14px 16px', flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {[{ icon: 'pin', label: location }, { icon: 'coin', label: 'Fixed price' }].map((item, i) => (
+        {[{ icon: 'pin', label: location }, { icon: 'coin', label: 'Budget or quotes' }].map((item, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', background: 'hsl(36 20% 94% / 0.5)', borderRadius: 8, border: '1px solid hsl(210 16% 80% / 0.3)', fontSize: 13, fontWeight: 500, color: 'hsl(212 43% 23%)', fontFamily: 'var(--font-sans)' }}>
             {item.icon === 'pin'
               ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="hsl(212 43% 23%)" strokeWidth="2" opacity="0.7"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -246,7 +246,7 @@ function CompositionsSection() {
       <CompSection title="Task Cards" subtitle="Customer Dashboard — horizontal list row layout">
         <CompRow label="Status variants">
           <TaskCard status="OPEN" description="Гэрийн цэвэрлэгээ" location="Хан-Уул дүүрэг, 4-р хороо" budget="80,000" date="Apr 22" />
-          <TaskCard status="ASSIGNED" description="Угаалгын машины засвар" location="Баянгол дүүрэг" budget="150,000" date="Apr 23" />
+          <TaskCard status="ASSIGNED" description="Тавилга угсралт" location="Баянгол дүүрэг" budget="150,000" date="Apr 23" />
           <TaskCard status="COMPLETED" description="Нүүлгэн шилжүүлэх ажил" location="Чингэлтэй дүүрэг" budget="200,000" date="Apr 18" />
         </CompRow>
         <CompRow label="Skeleton loading">
@@ -258,7 +258,7 @@ function CompositionsSection() {
       <CompSection title="Feed Cards" subtitle="Tasker Feed — vertical card with apply CTA">
         <CompRow>
           <FeedCard category="Cleaning" description="Гэрийн цэвэрлэгээ — 3 өрөө байр, долоо хоногт нэг удаа" budget="80,000" location="Хан-Уул, 4-р хороо" applicants={3} />
-          <FeedCard category="Repair" description="Угаалгын машин засварлах, Bosch машин" budget="150,000" location="Баянгол дүүрэг" applicants={1} />
+          <FeedCard category="Assembly" description="Тавилга угсрах, 3 хаалгатай шкаф" budget="150,000" location="Баянгол дүүрэг" applicants={1} />
           <FeedCard category="Moving" description="Нүүлгэн шилжүүлэх — 2-р давхраас 5-р давхарт" budget="200,000" location="Чингэлтэй, 8-р хороо" applicants={5} />
         </CompRow>
       </CompSection>
@@ -286,7 +286,7 @@ function CompositionsSection() {
         <CompRow gap={12} label="States">
           <KitToast type="success" message="Application sent — the customer will review shortly." />
           <KitToast type="error" message="Facebook login was canceled. Please try again." />
-          <KitToast type="info" message="Your payment is held safely until the job is done." />
+          <KitToast type="info" message="Verified booking details and moderation support stay in Tasky." />
         </CompRow>
       </CompSection>
     </div>

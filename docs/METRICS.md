@@ -1,187 +1,131 @@
-# Tasky Marketplace Metrics (Year 1–2)
+# Tasky Phase 1 KPI Model
 
-## Objective
+**Status:** Canonical  
+**Last updated:** 2026-04-22
 
-Validate and improve marketplace liquidity.
+## 1. Purpose
 
-**Liquidity definition:** A task is posted → receives a qualified application → gets assigned → gets completed →
-receives a review.
+This document defines the launch KPI stack for the Phase 1 Bayangol pilot. `docs/PRD.md`,
+`docs/OBSERVABILITY.md`, and `docs/maintenance/PRODUCTION_READINESS.md` must match this file.
 
-All metrics serve this goal.
+## 2. KPI Stack
 
----
+### 2.1 Hard-gate metrics
 
-## 1. North Star Metric
+1. Qualified Match Rate within 24h
+2. Post -> Confirmed Booking Rate within 48h
+3. Intervention Rate
+4. Trust Failure Rate
 
-**Category Liquidity Score** — percentage of tasks posted that receive at least one qualified application within 24
-hours.
+### 2.2 Monitored metrics
 
-```
-Liquidity Score = tasks_with_qualified_application_within_24h / tasks_posted
-```
+1. Self-Serve Fulfillment Rate
+2. Booking Completion Rate
+3. Verification Queue Turnaround
 
-Measured per category, weekly and monthly.
+Category is the primary decision slice. District is drilldown only.
 
-**Year 1 target:** ≥ 70% in core categories.
+## 3. Locked Definitions
 
-**Year 1 survival gate:** If this metric fails, the marketplace is not viable.
+### 3.1 Self-Serve Fulfillment Rate
 
----
+`% of pilot_eligible_task posts that reach completed_booking within 7 days of posting, through the platform flow, with no intervention`
 
-## 2. Marketplace Funnel
+- Primary slice: category
+- District: drilldown
+- Decision-valid only when denominator >= 30 posted tasks per category
 
-| Stage                          | Metric          | Year 1 Target    |
-| ------------------------------ | --------------- | ---------------- |
-| Posted → Qualified application | Liquidity Rate  | ≥ 70% within 24h |
-| Posted → Assigned              | Assignment Rate | —                |
-| Posted → Completed             | Completion Rate | ≥ 60%            |
-| Completed → Reviewed           | Review Rate     | —                |
+### 3.2 Qualified Match Rate within 24h
 
-```
-Liquidity Rate  = tasks_with_qualified_application / tasks_posted
-Assignment Rate = tasks_assigned / tasks_posted
-Completion Rate = tasks_completed / tasks_posted
-Review Rate     = reviews_left / tasks_completed
-```
+`% of pilot_eligible_task posts receiving at least one qualified_application within 24h`
 
----
+- Excludes spam, fraud, admin-invalid tasks, and user-mistake cancels within 30 minutes
+- Paired diagnostic: median time to first qualified application
 
-## 3. Supply-Side Metrics (Taskers)
+### 3.3 Post -> Confirmed Booking Rate within 48h
 
-**Active tasker definition:** Applied to ≥ 1 task OR completed ≥ 1 task in the last 30 days.
+`% of pilot_eligible_task posts that reach confirmed_booking within 48h of posting`
 
-Track:
+- Confirmed booking means customer selects + tasker accepts + system confirms
+- Customer abandonment counts as failure
+- Paired diagnostic: median time from posting to confirmed booking
 
-- Total taskers / active taskers / taskers per category
-- Average response time, applications per tasker, jobs completed per tasker
-- 30 / 60 / 90-day retention (at least 1 platform action in period)
+### 3.4 Booking Completion Rate
 
-**Response time target:** < 6 hours in core categories (p75).
+`% of confirmed_booking records that reach completed_booking within 7 days of confirmation`
 
----
+- Denominator: all confirmed bookings
+- Post-confirmation cancellation counts as failure
+- Failure reason split required
 
-## 4. Demand-Side Metrics (Customers)
+### 3.5 Intervention Rate
 
-Track:
+`% of pilot_eligible_task posts that required non-standard rescue or assistance to progress`
 
-- Tasks posted per day / week, tasks per category
-- Median time to first response
-- % customers who post again within 30 days
-- Average tasks per customer
+- Track `intervention_type = manual_rescue | external_distribution | ops_override`
+- Track `intervention_stage = pre_match | post_match | post_booking | completion_rescue`
 
----
+### 3.6 Trust Failure Rate
 
-## 5. Quality & Risk Metrics
+`% of confirmed_booking records ending in objective trust-damaging failure`
 
-```
-Cancellation Rate = tasks_cancelled / tasks_posted
-Dispute Rate      = disputes_opened / tasks_completed
-```
+- Includes post-confirmation cancellation, no-show, dispute, and serious complaint after completion
+- Excludes vague dissatisfaction as a core KPI
 
-Also track: average rating per category, % 1-star reviews per category.
+### 3.7 Verification Queue Turnaround
 
----
+Median and p95 from complete document submission to final decision.
 
-## 6. GMV (Even When Free)
+- Split identity verification turnaround vs category-vetting turnaround
 
-Store `reported_task_value` on each task. Track monthly GMV to validate economic market size before monetization is
-enabled.
+## 4. Thresholds
 
----
+### 4.1 Hard-gate thresholds
 
-## 7. Category Performance Dashboard
+| Metric                                    | Green    | Yellow   | Red     |
+| ----------------------------------------- | -------- | -------- | ------- |
+| Qualified Match Rate within 24h           | `>= 50%` | `40-49%` | `< 40%` |
+| Post -> Confirmed Booking Rate within 48h | `>= 25%` | `15-24%` | `< 15%` |
+| Intervention Rate                         | `<= 40%` | `41-55%` | `> 55%` |
+| Trust Failure Rate                        | `<= 15%` | `16-20%` | `> 20%` |
 
-Per category, display: tasks posted, tasks completed, liquidity score, active taskers, average response time, completion
-rate, GMV (reported).
+### 4.2 Monitored targets
 
-Use to decide which categories to invest in, drop, or expand.
+| Metric                           | Target                         |
+| -------------------------------- | ------------------------------ |
+| Self-Serve Fulfillment Rate      | `>= 15%`                       |
+| Booking Completion Rate          | `>= 65%`                       |
+| Identity Verification Turnaround | median `<= 36h`, p95 `<= 96h`  |
+| Category Vetting Turnaround      | median `<= 72h`, p95 `<= 120h` |
 
----
+## 5. Event And Vocabulary Rules
 
-## 8. Event Tracking Schema
+Use the following conceptual event/state vocabulary in reporting:
 
-### events table
+- `pilot_eligible_task`
+- `qualified_application`
+- `confirmed_booking`
+- `completed_booking`
+- `intervention`
+- `out_of_area_post_attempted`
+- `out_of_area_waitlist_joined`
+- `waitlist_area`
+- `waitlist_category`
 
-| Field       | Type      | Notes                           |
-| ----------- | --------- | ------------------------------- |
-| id          | UUID PK   |                                 |
-| event_type  | TEXT      | See types below                 |
-| actor_type  | TEXT      | `user` \| `tasker` \| `system`  |
-| actor_id    | UUID      |                                 |
-| entity_type | TEXT      | `task` \| `review` \| `message` |
-| entity_id   | UUID      |                                 |
-| metadata    | JSONB     |                                 |
-| created_at  | TIMESTAMP |                                 |
+KPI computation must come from backend-exported business metrics derived from canonical events and state transitions,
+not ad hoc dashboard SQL.
 
-### Required event types
+## 6. Dashboard Policy
 
-**User/Tasker lifecycle:** `user_registered`, `tasker_registered`, `tasker_verified`, `tasker_deactivated`
+- All seven KPIs must exist on a real dashboard before launch.
+- Alerts are required only for the four hard-gate metrics.
+- Category is the primary launch dashboard slice.
+- District remains a drilldown and diagnostic slice.
+- Diagnostics such as median time to first qualified application or failure-reason splits should support the core KPIs
+  instead of replacing them.
 
-**Task lifecycle:** `task_posted`, `task_viewed`, `tasker_applied`, `first_response_sent`, `task_assigned`,
-`task_started`, `task_completed`, `task_cancelled`, `dispute_opened`, `review_left`
+## 7. Data Quality Rules
 
-See `NFR-OBS-01` in `docs/PRD.md` for MVP funnel event requirements.
-
----
-
-## 9. What NOT to Track (Year 1)
-
-Avoid: page views, sessions, sign-up counts, bounce rates, marketing vanity metrics.
-
-Only track behavior tied to completed tasks.
-
----
-
-## 10. Weekly Founder Review
-
-Each week, examine:
-
-1. Worst-performing category by liquidity score
-2. Lowest liquidity percentage
-3. Longest response times
-4. Highest cancellation rate
-
-Then contact users in that segment. Data shows where; conversations reveal why.
-
----
-
-## 11. Phase 1 Launch Dashboard
-
-These are the metrics that must be visible before production launch.
-
-| Metric                                   | Why it matters                                             | Target / alert boundary                                                                                       | Owner            |
-| ---------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------- |
-| Category Liquidity Score                 | Primary proof that the marketplace is working.             | Target: `>= 70%` in core categories. Alert if `< 50%` for 7 days with at least 50 posted tasks.               | Founder/operator |
-| Task post → confirmed booking conversion | Detects matching friction before revenue questions matter. | Alert if the 28-day conversion rate drops below `35%`.                                                        | Founder/operator |
-| Booking completion rate                  | Core trust and value-delivery metric.                      | Target: `>= 60%`. Alert if `< 50%` over a 28-day window with at least 50 bookings.                            | Founder/operator |
-| Review completion rate                   | Needed for reputation quality.                             | Alert if `< 70%` over 28 days.                                                                                | Founder/operator |
-| Verification queue turnaround time       | Launch trust depends on supply verification speed.         | Alert if median turnaround exceeds `24h` or p95 exceeds `48h`.                                                | Founder/operator |
-| Dispute resolution time                  | Measures trust-safety response quality.                    | Alert if median time exceeds `48h` or any dispute remains unresolved beyond `72h` without manual note.        | Founder/operator |
-| Repeat booking rate                      | Early signal that the service is habit-forming.            | Track weekly; alert if the rate drops below `15%` after the launch cohort has at least 50 completed bookings. | Founder/operator |
-
-## 12. Operational Alerts
-
-The launch environment must also monitor service health, not just product outcomes.
-
-| Signal                                               | Threshold                                                                                               | Required action                                                                  |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| API health/readiness                                 | `/actuator/health` not `UP` for 2 consecutive checks or readiness group failing for more than 5 minutes | Treat as `SEV-1`; freeze deploys and investigate immediately.                    |
-| HTTP 5xx rate                                        | `> 5%` of requests for 15 minutes on launch-critical routes                                             | Treat as `SEV-1`; roll back unless the cause is isolated and quickly reversible. |
-| Facebook auth failures                               | Sustained auth-provider failures beyond the expected circuit-breaker open/close posture                 | Treat as `SEV-1` if real sign-in is unavailable for launch users.                |
-| Push delivery posture                                | Firebase provider misconfigured or notification fan-out failing for launch-critical booking events      | Treat as `SEV-2`; mitigation required before production confidence can increase. |
-| Payment/payout errors after future escrow activation | Any sustained callback verification or payout-processing failures                                       | Treat as activation-blocking and disable `escrow_enabled` until resolved.        |
-
-## 13. Data Quality Rules
-
-Do not make product or launch decisions from broken telemetry.
-
-1. KPI decisions require at least 50 relevant events in the trailing window.
-2. If any of the core event types are missing or delayed, mark the dashboard as degraded and pause KPI-based decisions:
-   - `task_posted`
-   - `tasker_applied`
-   - `task_assigned`
-   - `task_completed`
-   - `review_left`
-   - `dispute_opened`
-3. If event quality is degraded, use manual operator review temporarily, then repair tracking before resuming automated
-   thresholds.
+1. KPI decisions are valid only when the denominator threshold for that KPI is met.
+2. If core event exports are degraded, pause KPI-based go/no-go decisions until tracking is repaired.
+3. Native self-serve reporting must exclude both system-assisted and manual-assisted outcomes.

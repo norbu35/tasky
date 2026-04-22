@@ -1,94 +1,92 @@
-# Screen Spec: Applicant Timeout/Decline
+# Screen Spec: Selected Tasker Declined / Expired
 screen_id: SCR-CUST-012
-name: "Applicant Timeout/Decline"
+name: 'Selected Tasker Declined / Expired'
 route: null
 role: [customer]
-phase: "2"
+phase: '0-1'
 template: modal_sheet
-figma_page: "Customer/Applicant Timeout Decline"
-feature: "matching"
+figma_page: 'Customer/Selected Tasker Declined Expired'
+feature: 'matching'
 
 layout:
   template: modal_sheet
   density: default
-  structure: "scrim -> sheet(handle_bar + icon + title + body + actions)"
+  structure: 'scrim -> sheet(handle_bar + icon + title + body + actions)'
 
 components:
   - id: COMP-MODALSHEET
-    usage: "Bottom sheet notifying customer that the selected Tasker has timed out or declined"
+    usage: 'Bottom sheet notifying the customer that the selected Tasker declined or did not respond in time'
     props:
       visible: true
-      title: "Гүйцэтгэгч хариу өгсөнгүй"
-      primaryAction: "Дараагийнхыг сонгох"
+      title: 'Гүйцэтгэгч хариу өгсөнгүй'
+      primaryAction: 'Дараагийнхыг сонгох'
       secondaryAction: null
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Primary CTA to select the next ranked applicant"
+    usage: 'Primary CTA to select the next applicant'
     props:
-      label: "Дараагийнхыг сонгох"
+      label: 'Дараагийнхыг сонгох'
       variant: primary
       size: lg
     variant: primary
 
 states:
   - id: timeout_notification
-    description: "Selected Tasker did not respond within 15-minute window per REQ-BOOK-10; timeout notification shown"
+    description: 'Selected Tasker did not respond within the default four-hour response window'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: []
 
   - id: decline_notification
-    description: "Selected Tasker actively declined the lead; decline notification shown"
+    description: 'Selected Tasker actively declined the booking request'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: []
 
   - id: select_next_prompt
-    description: "Customer prompted to select the next applicant from the ranked list"
+    description: 'Customer is prompted to return to the applicants list and choose again'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: []
 
 copy:
   - key: title_timeout
-    mn: "Хугацаа дууслаа"
-    en: "Time Expired"
+    mn: 'Хугацаа дууслаа'
+    en: 'Time Expired'
     max_chars: 20
 
   - key: body_timeout
-    mn: "Сонгосон гүйцэтгэгч 15 минутын дотор хариу өгсөнгүй. Дараагийн гүйцэтгэгчийг сонгоно уу"
-    en: "The selected Tasker did not respond within 15 minutes. Please select the next Tasker"
+    mn: 'Сонгосон гүйцэтгэгч 4 цагийн дотор хариу өгсөнгүй. Дараагийн гүйцэтгэгчийг сонгоно уу'
+    en: 'The selected Tasker did not respond within 4 hours. Please select the next Tasker'
     max_chars: 120
 
   - key: title_decline
-    mn: "Гүйцэтгэгч татгалзлаа"
-    en: "Tasker Declined"
+    mn: 'Гүйцэтгэгч татгалзлаа'
+    en: 'Tasker Declined'
     max_chars: 20
 
   - key: body_decline
-    mn: "Сонгосон гүйцэтгэгч энэ удаа ажиллах боломжгүй байна. Дараагийн гүйцэтгэгчийг сонгоно уу"
-    en: "The selected Tasker is unable to take this task. Please select the next Tasker"
+    mn: 'Сонгосон гүйцэтгэгч энэ удаа ажиллах боломжгүй байна. Дараагийн гүйцэтгэгчийг сонгоно уу'
+    en: 'The selected Tasker is unable to take this task. Please select the next Tasker'
     max_chars: 120
 
   - key: cta_select_next
-    mn: "Дараагийнхыг сонгох"
-    en: "Select Next"
+    mn: 'Дараагийнхыг сонгох'
+    en: 'Select Next'
     max_chars: 20
 
 api_endpoints: []
 
 analytics_events:
-  - event: "applicant_timeout_shown"
-    trigger: "Timeout notification sheet displayed; includes task_id and timed_out_tasker_id"
-  - event: "applicant_decline_shown"
-    trigger: "Decline notification sheet displayed; includes task_id and declined_tasker_id"
-  - event: "select_next_applicant_tapped"
-    trigger: "User taps Select Next to return to applicant list"
+  - event: 'applicant_timeout_shown'
+    trigger: 'Timeout notification sheet displayed; includes task_id and timed_out_tasker_id'
+  - event: 'applicant_decline_shown'
+    trigger: 'Decline notification sheet displayed; includes task_id and declined_tasker_id'
+  - event: 'select_next_applicant_tapped'
+    trigger: 'User taps Select Next to return to applicant list'
 
 acceptance_criteria:
-  - "Bottom sheet uses ModalSheet with handle bar for drag-to-dismiss"
-  - "Timeout state shows that the 15-minute window expired per REQ-BOOK-10 and REQ-PAY-12"
-  - "Decline state shows that the Tasker actively declined; no credits charged per REQ-PAY-12"
-  - "Select Next CTA dismisses sheet and returns to Applicants List SCR-CUST-011"
-  - "After 3 total declines/timeouts, flow should fall back to open application per REQ-BOOK-10"
-  - "Scrim uses branded primaryDeep at 35% opacity"
-  - "This screen is Phase 2 only (lead-unlock flow)"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'Bottom sheet uses ModalSheet with handle bar for drag-to-dismiss'
+  - 'Timeout state makes clear that the default four-hour response window expired'
+  - 'Decline state makes clear that the selected Tasker actively declined the booking request'
+  - 'Select Next CTA dismisses sheet and returns to Applicants List SCR-CUST-011'
+  - 'Scrim uses branded primaryDeep at 35% opacity'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

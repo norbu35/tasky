@@ -1,75 +1,75 @@
-# Screen Spec: Booking Confirmed — Success
+# Screen Spec: Selection Sent — Success
 screen_id: SCR-CUST-015
-name: "Booking Confirmed — Success"
-route: "/(customer)/bookings/confirmed"
+name: 'Selection Sent — Success'
+route: '/(customer)/tasks/selection-sent'
 role: [customer]
-phase: "0-1"
+phase: '0-1'
 template: success_celebration
-figma_page: "Customer/Booking Confirmed Success"
-feature: "booking"
+figma_page: 'Customer/Selection Sent Success'
+feature: 'booking'
 
 layout:
   template: success_celebration
   density: comfortable
-  structure: "safe_area -> centered(animated_checkmark + headline + next_steps + ctas)"
+  structure: 'safe_area -> centered(animated_checkmark + headline + next_steps + ctas)'
 
 components:
   - id: COMP-ANIMATEDCHECKMARK
-    usage: "Animated success checkmark displayed after booking is confirmed"
+    usage: 'Animated success checkmark displayed after the booking request is sent'
     props:
       size: 96
       color: verified
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Primary CTA to view the new booking detail; secondary CTA to return to bookings list"
+    usage: 'Primary CTA to view task detail while waiting for tasker acceptance; secondary CTA returns to task list'
     props:
-      label: "Захиалга харах"
+      label: 'Даалгавар харах'
       variant: primary
       size: lg
     variant: primary
 
 states:
   - id: default
-    description: "Booking successfully created; celebration screen shown with animated checkmark, headline, next-steps guidance, and two CTAs"
+    description: 'Booking request successfully sent; celebration screen shown with next-step guidance and two CTAs'
     components_visible: [COMP-ANIMATEDCHECKMARK, COMP-BUTTON]
     components_hidden: []
 
 copy:
   - key: headline
-    mn: "Захиалга баталгаажлаа!"
-    en: "Booking confirmed!"
+    mn: 'Хүсэлт илгээгдлээ!'
+    en: 'Request sent!'
     max_chars: 30
 
   - key: next_steps
-    mn: "Таны гүйцэтгэгч товлосон цагт ирнэ. Чат хэсгээс холбогдох боломжтой."
-    en: "Your Tasker will arrive at the scheduled time. You can contact them via chat."
+    mn: 'Сонгосон гүйцэтгэгч 4 цагийн дотор хариу өгнө. Статусын шинэчлэлтийг Tasky дотор хараарай.'
+    en: 'The selected tasker will respond within 4 hours. Follow status updates in Tasky.'
     max_chars: 100
 
-  - key: cta_view_booking
-    mn: "Захиалга харах"
-    en: "View Booking"
+  - key: cta_view_task
+    mn: 'Даалгавар харах'
+    en: 'View Task'
     max_chars: 20
 
   - key: cta_done
-    mn: "Болсон"
-    en: "Done"
+    mn: 'Болсон'
+    en: 'Done'
     max_chars: 20
 
 api_endpoints: []
 
 analytics_events:
-  - event: "booking_confirmed_success_shown"
-    trigger: "Success screen displayed after booking creation"
-  - event: "booking_confirmed_view_tapped"
-    trigger: "User taps 'View Booking' CTA"
-  - event: "booking_confirmed_done_tapped"
+  - event: 'booking_request_sent_success_shown'
+    trigger: 'Success screen displayed after the selection request is created'
+  - event: 'booking_request_view_task_tapped'
+    trigger: "User taps 'View Task' CTA"
+  - event: 'booking_request_done_tapped'
     trigger: "User taps 'Done' CTA"
 
 acceptance_criteria:
-  - "Animated checkmark plays spring animation on screen entry"
-  - "Headline and next-steps text render in Mongolian Cyrillic at 16px minimum body size"
-  - "'View Booking' CTA navigates via replace to Booking Detail (SCR-CUST-017)"
-  - "'Done' CTA navigates via replace to Customer Bookings List (SCR-CUST-016)"
-  - "Screen uses comfortable density with generous spacing"
-  - "Add-to-calendar deep link is available if device supports it"
+  - 'Animated checkmark plays spring animation on screen entry'
+  - 'Headline and next-steps text render in Mongolian Cyrillic at 16px minimum body size'
+  - "'View Task' CTA navigates via replace to Task Detail (SCR-CUST-009)"
+  - "'Done' CTA navigates via replace to My Tasks (SCR-CUST-001)"
+  - 'Screen uses comfortable density with generous spacing'
+  - 'Success copy makes clear that the booking is waiting on tasker acceptance, not yet confirmed'

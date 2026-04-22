@@ -1,201 +1,188 @@
-# Screen Spec: Booking Confirmation
+# Screen Spec: Booking Request Confirmation
 screen_id: SCR-CUST-014
-name: "Booking Confirmation"
-route: "/(customer)/bookings/confirm"
+name: 'Booking Request Confirmation'
+route: '/(customer)/bookings/confirm'
 role: [customer]
-phase: "0-1"
+phase: '0-1'
 template: detail
-figma_page: "Customer/Booking Confirmation"
-feature: "booking"
+figma_page: 'Customer/Booking Request Confirmation'
+feature: 'booking'
 
 layout:
   template: detail
   density: default
-  structure: "safe_area -> nav_header(back + title) -> scrollview(tasker_summary + task_summary + disclaimer) -> sticky_bottom_cta(confirm)"
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(tasker_summary + task_summary + pricing + disclaimer + response_window_note) -> sticky_bottom_cta(confirm)'
 
 components:
   - id: COMP-PROFILEAVATAR
-    usage: "Selected Tasker avatar shown in booking summary header"
+    usage: 'Selected Tasker avatar shown in the booking request summary header'
     props:
-      imageUrl: "{tasker_avatar}"
-      size: "lg"
+      imageUrl: '{tasker_avatar}'
+      size: 'lg'
       isVerified: true
     variant: lg
 
   - id: COMP-VERIFICATIONBADGE
-    usage: "Verified identity badge on selected Tasker avatar"
+    usage: 'Verified identity badge on selected Tasker avatar'
     props:
       isVerified: true
-      size: "avatar_badge"
+      size: 'avatar_badge'
     variant: default
 
   - id: COMP-STARRATING
-    usage: "Selected Tasker's rating displayed in summary"
+    usage: 'Selected Tasker rating displayed in the summary'
     props:
       value: 4.7
       readonly: true
-      size: "md"
+      size: 'md'
     variant: display
 
   - id: COMP-CARD
-    usage: "Summary sections for Tasker info, task details, schedule, budget, and liability disclaimer"
+    usage: 'Summary sections for selected Tasker info, task details, pricing, liability disclaimer, and response-window note'
     props:
       onPress: null
     variant: outlined
 
   - id: COMP-BUTTON
-    usage: "Primary confirm booking CTA; secondary back button"
+    usage: 'Primary CTA to send the booking request to the selected Tasker'
     props:
-      label: "Захиалга баталгаажуулах"
+      label: 'Сонгоод хүсэлт илгээх'
       variant: primary
       size: xl
       loading: false
     variant: primary
 
   - id: COMP-TOAST
-    usage: "Error toast when booking confirmation fails"
+    usage: 'Error toast when the booking request submission fails'
     props:
-      message: "Захиалга баталгаажуулахад алдаа гарлаа"
+      message: 'Гүйцэтгэгч сонгоход алдаа гарлаа'
       variant: error
       duration: 6000
     variant: error
 
 states:
   - id: default
-    description: "Booking summary displayed with Tasker info, task details, and disclaimer requiring review"
-    components_visible: [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-CARD, COMP-BUTTON]
+    description: 'Booking request summary displayed with Tasker info, task details, and disclaimer requiring review'
+    components_visible:
+      [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-CARD, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: disclaimer_review
-    description: "User scrolled to and is reading the liability disclaimer; confirm button becomes enabled after disclaimer acknowledgment"
-    components_visible: [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-CARD, COMP-BUTTON]
+    description: 'User is reviewing the liability disclaimer; confirm button becomes enabled after acknowledgment'
+    components_visible:
+      [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-CARD, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: confirming
-    description: "POST /bookings in progress; confirm button shows loading spinner"
-    components_visible: [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-CARD, COMP-BUTTON]
+    description: 'Selection request is being submitted; confirm button shows loading spinner'
+    components_visible:
+      [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-CARD, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: error_network
-    description: "POST /bookings failed; error toast with retry action"
-    components_visible: [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-CARD, COMP-BUTTON, COMP-TOAST]
+    description: 'Selection request failed; error toast with retry action'
+    components_visible:
+      [
+        COMP-PROFILEAVATAR,
+        COMP-VERIFICATIONBADGE,
+        COMP-STARRATING,
+        COMP-CARD,
+        COMP-BUTTON,
+        COMP-TOAST,
+      ]
     components_hidden: []
-
-  - id: add_to_calendar_prompt
-    description: "Booking confirmed; prompt to add scheduled time to device calendar before navigating to success"
-    components_visible: [COMP-CARD, COMP-BUTTON]
-    components_hidden: [COMP-TOAST]
 
 copy:
   - key: page_title
-    mn: "Захиалга баталгаажуулах"
-    en: "Confirm Booking"
+    mn: 'Гүйцэтгэгч сонгох'
+    en: 'Select Tasker'
     max_chars: 25
 
   - key: section_tasker
-    mn: "Гүйцэтгэгч"
-    en: "Tasker"
+    mn: 'Гүйцэтгэгч'
+    en: 'Tasker'
     max_chars: 15
 
   - key: section_task
-    mn: "Даалгавар"
-    en: "Task"
+    mn: 'Даалгавар'
+    en: 'Task'
     max_chars: 15
 
   - key: section_schedule
-    mn: "Хуваарь"
-    en: "Schedule"
+    mn: 'Хуваарь'
+    en: 'Schedule'
     max_chars: 15
 
-  - key: section_budget
-    mn: "Төсөв"
-    en: "Budget"
+  - key: section_pricing
+    mn: 'Үнэ'
+    en: 'Pricing'
     max_chars: 15
 
   - key: section_disclaimer
-    mn: "Хариуцлагын мэдэгдэл"
-    en: "Liability Disclaimer"
+    mn: 'Хариуцлагын мэдэгдэл'
+    en: 'Liability Disclaimer'
     max_chars: 25
 
   - key: disclaimer_text
-    mn: "Tasky нь захиалагч болон гүйцэтгэгчийг холбох платформ юм. Төлбөрийг талууд шууд тохиролцоно. Платформ нь төлбөр зуучлагч биш бөгөөд платформ дээрх захиалгаас гадуурх тохиролцоонд хариуцлага хүлээхгүй"
-    en: "Tasky is a platform connecting Customers and Taskers. Payment is arranged directly between parties. The platform is not a payment intermediary and bears no liability for arrangements made off-platform"
-    max_chars: 200
+    mn: 'Tasky нь захиалагч болон гүйцэтгэгчийг холбох платформ юм. Төлбөр нь захиалга баталгаажсаны дараа талуудын хооронд шууд тохиролцогдоно. Платформ нь төлбөр зуучлагч биш бөгөөд төлбөр хамгаалах амлалт өгөхгүй.'
+    en: 'Tasky connects customers and taskers. After booking confirmation, payment is arranged directly between the parties. The platform is not a payment intermediary and does not promise payment hold or payment protection.'
+    max_chars: 220
 
   - key: disclaimer_acknowledge
-    mn: "Би энэ нөхцлийг зөвшөөрч байна"
-    en: "I agree to these terms"
+    mn: 'Би энэ нөхцлийг зөвшөөрч байна'
+    en: 'I agree to these terms'
     max_chars: 40
 
   - key: payment_note
-    mn: "Төлбөрийг гүйцэтгэгчтэй шууд тохиролцоно"
-    en: "Payment is arranged directly with the Tasker"
+    mn: 'Захиалга баталгаажсаны дараа үнэ түгжигдэж, төлбөрийг шууд тохиролцоно'
+    en: 'After confirmation, the agreed price is locked and paid directly between the parties'
+    max_chars: 80
+
+  - key: response_window_note
+    mn: 'Сонгосон гүйцэтгэгч 4 цагийн дотор зөвшөөрөх ёстой'
+    en: 'The selected tasker must accept within 4 hours'
     max_chars: 60
 
   - key: cta_confirm
-    mn: "Захиалга баталгаажуулах"
-    en: "Confirm Booking"
-    max_chars: 25
+    mn: 'Сонгоод хүсэлт илгээх'
+    en: 'Select and Send Request'
+    max_chars: 30
 
   - key: cta_back
-    mn: "Буцах"
-    en: "Back"
+    mn: 'Буцах'
+    en: 'Back'
     max_chars: 10
 
   - key: error_confirm
-    mn: "Захиалга баталгаажуулахад алдаа гарлаа. Дахин оролдоно уу"
-    en: "Failed to confirm booking. Please try again"
-    max_chars: 60
-
-  - key: calendar_prompt_title
-    mn: "Календарьт нэмэх үү?"
-    en: "Add to calendar?"
-    max_chars: 25
-
-  - key: calendar_prompt_body
-    mn: "Хуваарьт цагийг календарьт нэмж сануулга авна уу"
-    en: "Add the scheduled time to your calendar for a reminder"
-    max_chars: 80
-
-  - key: calendar_cta_add
-    mn: "Нэмэх"
-    en: "Add"
-    max_chars: 10
-
-  - key: calendar_cta_skip
-    mn: "Алгасах"
-    en: "Skip"
-    max_chars: 10
+    mn: 'Гүйцэтгэгч сонгоход алдаа гарлаа. Дахин оролдоно уу'
+    en: 'Failed to send the booking request. Please try again'
+    max_chars: 70
 
 api_endpoints:
   - method: POST
-    path: "/bookings"
-    purpose: "Create booking by confirming the selected applicant with liability disclaimer acceptance per REQ-BOOK-03"
+    path: '/tasks/:id/applications/:applicationId/accept'
+    purpose: 'Create a booking-selection intent for the selected applicant after liability disclaimer acceptance'
 
 analytics_events:
-  - event: "booking_confirmation_viewed"
-    trigger: "Screen becomes visible; includes task_id and selected_tasker_id"
-  - event: "disclaimer_acknowledged"
-    trigger: "User checks the disclaimer acknowledgment checkbox"
-  - event: "booking_confirmed"
-    trigger: "User taps Confirm Booking and POST /bookings succeeds; includes booking_id"
-  - event: "booking_confirm_failed"
-    trigger: "POST /bookings failed; includes error type"
-  - event: "calendar_add_tapped"
-    trigger: "User taps Add to calendar after confirmation"
-  - event: "calendar_skip_tapped"
-    trigger: "User skips calendar prompt"
+  - event: 'booking_confirmation_viewed'
+    trigger: 'Screen becomes visible; includes task_id and selected_tasker_id'
+  - event: 'disclaimer_acknowledged'
+    trigger: 'User checks the disclaimer acknowledgment checkbox'
+  - event: 'booking_request_sent'
+    trigger: 'User taps Select and Send Request and the selection intent is created; includes booking_intent_id'
+  - event: 'booking_confirm_failed'
+    trigger: 'Selection request submission fails; includes error type'
 
 acceptance_criteria:
-  - "Summary shows selected Tasker with avatar, name, VerificationBadge, and StarRating"
-  - "Task summary shows category, title/description, location, schedule (YYYY.MM.DD), and budget (₮ format)"
-  - "Liability disclaimer section is prominently displayed and must be explicitly acknowledged per REQ-BOOK-03"
-  - "Confirm button is disabled until disclaimer is acknowledged"
-  - "Payment note per REQ-PAY-03 informs that payment is direct between parties"
-  - "Confirm button enters loading state during POST /bookings"
-  - "On success, screen replaces to Booking Confirmed Success SCR-CUST-015"
-  - "Add-to-calendar prompt appears after confirmation success before navigation"
-  - "On failure, error toast appears with retry action"
-  - "Back button pops to Applicants List SCR-CUST-011"
-  - "In Phase 2, booking is final only after Tasker accepts and spends lead-unlock credits per REQ-BOOK-03"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'Summary shows selected Tasker with avatar, name, VerificationBadge, and StarRating'
+  - 'Task summary shows category, title or description, location, schedule (YYYY.MM.DD), and pricing'
+  - 'Liability disclaimer section is prominently displayed and must be explicitly acknowledged before continuing'
+  - 'Confirm button is disabled until disclaimer is acknowledged'
+  - 'Payment note states that price locks only after booking confirmation and settlement remains direct between the parties'
+  - 'Confirm button enters loading state during POST /tasks/:id/applications/:applicationId/accept'
+  - 'On success, screen replaces to Selection Sent Success SCR-CUST-015'
+  - 'On failure, error toast appears with retry action'
+  - 'Back button pops to Applicants List SCR-CUST-011'
+  - 'Successful submission creates a pending selection request, not a confirmed booking'
+  - 'Booking confirmation requires the selected Tasker to accept within the default four-hour SLA'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

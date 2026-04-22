@@ -103,6 +103,7 @@ BookingIntent:
     source:
       type: string
       enum:
+        - APPLICATION_SELECTION
         - REBOOK
         - INSTANT_MATCH
     status:
@@ -110,8 +111,13 @@ BookingIntent:
       enum:
         - PENDING
         - CONFIRMED
+        - DECLINED
         - EXPIRED
         - CANCELLED
+    selected_application_id:
+      type: string
+      format: uuid
+      nullable: true
     original_booking_id:
       type: string
       format: uuid

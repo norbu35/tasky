@@ -1,14 +1,15 @@
 # Domain Lifecycle Models — Tasky Mobile
-# State machines for all core entities derived from PRD v1.3 and API v1.3.0
+# State machines for all core entities derived from the active PRD and API contract
 # Each entity: states, transitions (id, source, target, trigger, guard, side_effects, phase)
+# Status: Derived
+# Phase `0-1` entries are the active launch model. Later-phase entries are draft / future reference only.
 
 entities:
-
   # ═══════════════════════════════════════════════════
   # 1. Task
   # ═══════════════════════════════════════════════════
   task:
-    description: "Customer-posted service request"
+    description: 'Customer-posted service request'
     states:
       - OPEN
       - ASSIGNED
@@ -23,160 +24,168 @@ entities:
         source: null
         target: OPEN
         trigger: customer_publishes_task
-        guard: "category active, intake_schema valid, budget > 1000 MNT, schedule future"
+        guard: 'pilot location is Bayangol, category active, intake_schema valid, schedule future, pricing mode valid'
         side_effects:
-          - "persist task with intake_schema_version"
-          - "generate job scope summary"
-          - "push notification to matching Taskers (Phase 2+)"
-          - "start 120-min no-applicant timer (08:00-22:00)"
-        phase: "0-1"
+          - 'persist task with intake_schema_version and pricing mode'
+          - 'generate job scope summary'
+          - 'surface task to eligible Bayangol-serving verified Taskers and matching notifications'
+          - 'start 120-min no-applicant timer (08:00-22:00)'
+        phase: '0-1'
 
       - id: TASK-T02
         source: OPEN
-        target: ASSIGNED
-        trigger: customer_accepts_applicant
-        guard: "applicant.status == APPLIED, customer accepts liability disclaimer"
+        target: OPEN
+        trigger: customer_selects_applicant
+        guard: 'applicant.status == APPLIED, customer accepts liability disclaimer'
         side_effects:
-          - "create booking(ASSIGNED)"
-          - "reject remaining applicants"
-          - "reveal exact address to Tasker"
-          - "cancel no-applicant timer"
-        phase: "0-1"
+          - 'create booking_intent(PENDING)'
+          - 'mark application as SELECTED'
+          - 'notify selected Tasker'
+          - 'start 4-hour response timer'
+        phase: '0-1'
 
       - id: TASK-T03
         source: OPEN
         target: ASSIGNED
-        trigger: concierge_assigns_tasker
-        guard: "admin role, task in rescue queue"
+        trigger: selected_tasker_confirms_selection
+        guard: 'active booking intent exists and selected Tasker accepts within SLA'
         side_effects:
-          - "create booking(ASSIGNED)"
-          - "notify customer and tasker"
-        phase: "0-1"
+          - 'create booking(ASSIGNED)'
+          - 'reject remaining applicants'
+          - 'reveal exact address to Tasker'
+          - 'cancel no-applicant timer'
+        phase: '0-1'
 
       - id: TASK-T04
         source: OPEN
         target: ASSIGNED
-        trigger: instant_match_accepted
-        guard: "category liquidity >= 10 verified Taskers >4.0 in-district"
+        trigger: concierge_assigns_tasker
+        guard: 'admin role, task in rescue queue'
         side_effects:
-          - "auto-assign highest-ranked Tasker"
-          - "create booking(ASSIGNED)"
-        phase: "3+"
+          - 'create booking(ASSIGNED)'
+          - 'notify customer and tasker'
+        phase: '0-1'
 
       - id: TASK-T05
+        source: OPEN
+        target: ASSIGNED
+        trigger: instant_match_accepted
+        guard: 'category liquidity >= 10 verified Taskers >4.0 in-district'
+        side_effects:
+          - 'auto-assign highest-ranked Tasker'
+          - 'create booking(ASSIGNED)'
+        phase: '3+'
+
+      - id: TASK-T06
         source: ASSIGNED
         target: COMPLETED
         trigger: customer_confirms_completion
-        guard: "tasker_marked_done == true"
+        guard: 'tasker_marked_done == true'
         side_effects:
-          - "booking → COMPLETED"
-          - "trigger review prompts for both parties"
-          - "record completion metrics"
-        phase: "0-1"
+          - 'booking → COMPLETED'
+          - 'trigger review prompts for both parties'
+          - 'record completion metrics'
+        phase: '0-1'
 
-      - id: TASK-T06
+      - id: TASK-T07
         source: OPEN
         target: CANCELLED
         trigger: customer_cancels_open_task
-        guard: "task.status == OPEN"
+        guard: 'task.status == OPEN'
         side_effects:
-          - "notify applied Taskers"
-          - "cancel no-applicant timer"
-        phase: "0-1"
-
-      - id: TASK-T07
-        source: ASSIGNED
-        target: CANCELLED
-        trigger: customer_cancels_assigned_task
-        guard: "booking exists"
-        side_effects:
-          - "booking → CANCELLED"
-          - "record reliability incident if < 4h to schedule"
-          - "refund lead credits to Tasker (Phase 2+)"
-        phase: "0-1"
+          - 'notify applied Taskers'
+          - 'cancel no-applicant timer'
+        phase: '0-1'
 
       - id: TASK-T08
         source: ASSIGNED
-        target: OPEN
-        trigger: tasker_cancels_booking
-        guard: "booking.status == ASSIGNED"
+        target: CANCELLED
+        trigger: customer_cancels_assigned_task
+        guard: 'booking exists'
         side_effects:
-          - "booking → CANCELLED"
-          - "record Tasker strike (3 in 30d → 7d suspension)"
-          - "task re-opens for applications"
-        phase: "0-1"
+          - 'booking → CANCELLED'
+          - 'record reliability incident if < 4h to schedule'
+        phase: '0-1'
 
       - id: TASK-T09
         source: ASSIGNED
-        target: NO_SHOW
-        trigger: counterparty_flags_no_show
-        guard: "schedule_start + 15min elapsed, no check-in in 30min, no accepted reschedule"
+        target: OPEN
+        trigger: tasker_cancels_booking
+        guard: 'booking.status == ASSIGNED'
         side_effects:
-          - "booking → NO_SHOW"
-          - "enter admin reliability review"
-          - "2+ no-shows in 28d → strike review"
-        phase: "0-1"
+          - 'booking → CANCELLED'
+          - 'record Tasker strike (3 in 30d → 7d suspension)'
+          - 'task re-opens for applications'
+        phase: '0-1'
 
       - id: TASK-T10
-        source: OPEN
-        target: OPEN
-        trigger: no_applicant_rescue
-        guard: "0 applicants after 120min, 08:00-22:00 local"
+        source: ASSIGNED
+        target: NO_SHOW
+        trigger: counterparty_flags_no_show
+        guard: 'schedule_start + 15min elapsed, no check-in in 30min, no accepted reschedule'
         side_effects:
-          - "prompt customer: adjust budget/schedule"
-          - "broaden push to additional Taskers"
-          - "queue for concierge dispatch"
-        phase: "0-1"
+          - 'booking → NO_SHOW'
+          - 'enter admin reliability review'
+          - '2+ no-shows in 28d → strike review'
+        phase: '0-1'
 
       - id: TASK-T11
         source: OPEN
         target: OPEN
-        trigger: instant_match_fallback
-        guard: "3 consecutive declines/timeouts on instant match"
+        trigger: no_applicant_rescue
+        guard: '0 applicants after 120min, 08:00-22:00 local'
         side_effects:
-          - "revert to open application flow"
-          - "notify customer"
-        phase: "3+"
+          - 'prompt customer: adjust budget/schedule'
+          - 'broaden push to additional Taskers'
+          - 'queue for concierge dispatch'
+        phase: '0-1'
 
       - id: TASK-T12
         source: OPEN
         target: OPEN
-        trigger: task_boost_activated
-        guard: "QPay payment verified, boost type in {PROMOTED, URGENT}, no overlapping active boost"
+        trigger: instant_match_fallback
+        guard: '3 consecutive declines/timeouts on instant match'
         side_effects:
-          - "persist boost_type, activated_at, expires_at on task"
-          - "apply time-bounded feed sort priority and label"
-          - "emit monetization analytics event"
-        phase: "2"
+          - 'revert to open application flow'
+          - 'notify customer'
+        phase: '3+'
 
       - id: TASK-T13
+        source: OPEN
+        target: OPEN
+        trigger: task_boost_activated
+        guard: 'QPay payment verified, boost type in {PROMOTED, URGENT}, no overlapping active boost'
+        side_effects:
+          - 'persist boost_type, activated_at, expires_at on task'
+          - 'apply time-bounded feed sort priority and label'
+          - 'emit monetization analytics event'
+        phase: '2'
+
+      - id: TASK-T14
         source: null
         target: OPEN
         trigger: business_task_published
-        guard: "customer has OWNER or MANAGER role on selected business account and valid business location selected"
+        guard: 'customer has OWNER or MANAGER role on selected business account and valid business location selected'
         side_effects:
-          - "persist task with business_account_id and business_location_id"
-          - "apply B2B priority weighting in matching query"
-          - "route task into both standard customer views and business task views"
-        phase: "2"
+          - 'persist task with business_account_id and business_location_id'
+          - 'apply B2B priority weighting in matching query'
+          - 'route task into both standard customer views and business task views'
+        phase: '2'
 
     business_rules:
-      - "Budget must be > 1,000 MNT (REQ-TASK-01)"
-      - "Max 3 photos per task (REQ-TASK-04)"
-      - "Approximate location in feed; exact after booking (REQ-TASK-03, REQ-LEAK-03)"
-      - "Intake answers persist with schema version (REQ-TASK-06)"
-      - "Deactivated category blocks new posts; existing tasks continue (REQ-TASK-11)"
-      - "Application cap per task configurable, default 10 (REQ-PAY-17)"
-      - "B2B tasks tagged with business_account_id, receive priority boost (REQ-PAY-26)"
-      - "Promoted/Urgent listings get sort boost in feed (REQ-PAY-23/24)"
-      - "Job scope summary: deterministic template, fallback key-value (REQ-TASK-07/10)"
-      - "No-applicant rescue at 120min during business hours (REQ-BOOK-09)"
+      - 'Pricing mode must be either budget or quote; budget mode requires > 1,000 MNT'
+      - 'Max 3 photos per task'
+      - 'Approximate location in browse surfaces; exact address only after confirmed booking'
+      - 'Intake answers persist with schema version'
+      - 'Deactivated category blocks new posts; existing tasks continue'
+      - 'Job scope summary is deterministic from the category template with key-value fallback'
+      - 'No-applicant rescue starts at 120 minutes during business hours'
 
   # ═══════════════════════════════════════════════════
   # 2. Booking
   # ═══════════════════════════════════════════════════
   booking:
-    description: "Confirmed assignment between Customer and Tasker"
+    description: 'Confirmed assignment between Customer and Tasker'
     states:
       - ASSIGNED
       - COMPLETED
@@ -190,133 +199,127 @@ entities:
         source: null
         target: ASSIGNED
         trigger: task_assigned
-        guard: "task transitions OPEN → ASSIGNED"
+        guard: 'task transitions OPEN → ASSIGNED'
         side_effects:
-          - "create booking record"
-          - "reveal exact address to Tasker"
-          - "schedule no-show reminder at start +10min"
-        phase: "0-1"
+          - 'create booking record'
+          - 'reveal exact address to Tasker'
+          - 'schedule no-show reminder at start +10min'
+        phase: '0-1'
 
       - id: BOOK-T02
         source: ASSIGNED
         target: ASSIGNED
         trigger: tasker_marks_done
-        guard: "booking.status == ASSIGNED"
+        guard: 'booking.status == ASSIGNED'
         side_effects:
-          - "set tasker_marked_done flag"
-          - "notify customer to confirm completion"
-        phase: "0-1"
-        note: "Sub-state — booking stays ASSIGNED, awaiting customer confirmation"
+          - 'set tasker_marked_done flag'
+          - 'notify customer to confirm completion'
+        phase: '0-1'
+        note: 'Sub-state — booking stays ASSIGNED, awaiting customer confirmation'
 
       - id: BOOK-T03
         source: ASSIGNED
         target: COMPLETED
         trigger: customer_confirms_completion
-        guard: "tasker_marked_done == true"
+        guard: 'tasker_marked_done == true'
         side_effects:
-          - "task → COMPLETED"
-          - "trigger bilateral review prompts"
-          - "credit Tasker wallet (Phase 3+)"
-          - "release escrow after 4h hold (Phase 3+ if opted-in)"
-        phase: "0-1"
+          - 'task → COMPLETED'
+          - 'trigger bilateral review prompts'
+        phase: '0-1'
 
       - id: BOOK-T04
         source: ASSIGNED
         target: CANCELLED
         trigger: customer_cancels
-        guard: "booking.status == ASSIGNED"
+        guard: 'booking.status == ASSIGNED'
         side_effects:
-          - "record reliability incident if < 4h to schedule"
-          - "first incident in 28d: warning only"
-          - "2 incidents in 28d: ranking penalty + strike review"
-          - "refund lead credits to Tasker (Phase 2+)"
-        phase: "0-1"
+          - 'record reliability incident if < 4h to schedule'
+          - 'first incident in 28d: warning only'
+          - '2 incidents in 28d: ranking penalty + strike review'
+        phase: '0-1'
 
       - id: BOOK-T05
         source: ASSIGNED
         target: CANCELLED
         trigger: tasker_cancels
-        guard: "booking.status == ASSIGNED"
+        guard: 'booking.status == ASSIGNED'
         side_effects:
-          - "task → OPEN (re-opens for applications)"
-          - "record Tasker cancellation strike"
-          - "3 cancellations in 30d → 7-day suspension"
-        phase: "0-1"
+          - 'task → OPEN (re-opens for applications)'
+          - 'record Tasker cancellation strike'
+          - '3 cancellations in 30d → 7-day suspension'
+        phase: '0-1'
 
       - id: BOOK-T06
         source: ASSIGNED
         target: NO_SHOW
         trigger: counterparty_flags_no_show
-        guard: "schedule_start + 15min, no check-in in 30min, no accepted reschedule"
+        guard: 'schedule_start + 15min, no check-in in 30min, no accepted reschedule'
         side_effects:
-          - "task → NO_SHOW"
-          - "enter admin reliability review"
-          - "2+ no-shows in 28d → strike review"
-        phase: "0-1"
+          - 'task → NO_SHOW'
+          - 'enter admin reliability review'
+          - '2+ no-shows in 28d → strike review'
+        phase: '0-1'
 
       - id: BOOK-T07
         source: ASSIGNED
         target: ASSIGNED
         trigger: reschedule_requested
-        guard: "either party submits new date/time"
+        guard: 'either party submits new date/time'
         side_effects:
-          - "create reschedule request record"
-          - "notify counterparty"
-          - "original schedule stays active until accepted"
-        phase: "0-1"
+          - 'create reschedule request record'
+          - 'notify counterparty'
+          - 'original schedule stays active until accepted'
+        phase: '0-1'
 
       - id: BOOK-T08
         source: ASSIGNED
         target: ASSIGNED
         trigger: reschedule_accepted
-        guard: "counterparty accepts reschedule"
+        guard: 'counterparty accepts reschedule'
         side_effects:
-          - "update task scheduled_at"
-          - "reset no-show timers to new schedule"
-          - "persist timeline event"
-        phase: "0-1"
+          - 'update task scheduled_at'
+          - 'reset no-show timers to new schedule'
+          - 'persist timeline event'
+        phase: '0-1'
 
       - id: BOOK-T09
         source: ASSIGNED
         target: ASSIGNED
         trigger: reschedule_declined
-        guard: "counterparty declines or request expires"
+        guard: 'counterparty declines or request expires'
         side_effects:
-          - "original schedule remains active"
-          - "persist timeline event"
-        phase: "0-1"
+          - 'original schedule remains active'
+          - 'persist timeline event'
+        phase: '0-1'
 
       - id: BOOK-T10
         source: ASSIGNED
         target: ASSIGNED
         trigger: pre_noshow_reminder
-        guard: "schedule_start + 10min elapsed"
+        guard: 'schedule_start + 10min elapsed'
         side_effects:
-          - "push both parties to update status"
-        phase: "0-1"
+          - 'push both parties to update status'
+        phase: '0-1'
 
       - id: BOOK-T11
         source: null
         target: ASSIGNED
         trigger: rebook_shortcut
-        guard: "previous booking completed with same Tasker, same category"
+        guard: 'previous booking completed with same Tasker, same category'
         side_effects:
-          - "create new task + booking in one flow"
-          - "pre-fill from previous booking"
-        phase: "0-1"
+          - 'create new task + booking in one flow'
+          - 'pre-fill from previous booking'
+        phase: '0-1'
 
     business_rules:
-      - "Separate lifecycle from Task (REQ-BOOK-05)"
-      - "Free cancellation > 4h before schedule (REQ-BOOK-04)"
-      - "Late cancellation records reliability incident (REQ-BOOK-04)"
-      - "Tasker cancel → task re-opens, strike tracked (REQ-BOOK-06)"
-      - "Chat-only schedule changes don't affect timers (REQ-BOOK-13)"
-      - "Reschedule requires counterparty acceptance (REQ-BOOK-12)"
-      - "Timeline events immutable audit trail (REQ-BOOK-13)"
-      - "Rebook shortcut for repeat Tasker (REQ-BOOK-07)"
-      - "Escrow release 4h after completion (Phase 3+, REQ-PAY-32)"
-      - "Payout schedule: Tuesdays and Fridays (REQ-PAY-37)"
-      - "Direct settlement default; escrow opt-in for >300k MNT (REQ-PAY-32)"
+      - 'Booking is separate from Task and begins only after the selected Tasker accepts within SLA'
+      - 'Free cancellation applies more than 4 hours before schedule'
+      - 'Late cancellation records a reliability incident'
+      - 'Tasker cancel re-opens the task and records a strike'
+      - 'Chat-only schedule changes do not affect timers'
+      - 'Reschedule requires counterparty acceptance'
+      - 'Timeline events are immutable audit records'
+      - 'Direct settlement is the launch default'
 
   # ═══════════════════════════════════════════════════
   # 3. Application
@@ -325,7 +328,7 @@ entities:
     description: "Tasker's expression of interest in a task"
     states:
       - APPLIED
-      - SELECTED        # Phase 2+: customer selected, awaiting Tasker accept
+      - SELECTED # Customer selected, awaiting Tasker accept
       - ACCEPTED
       - DECLINED
       - EXPIRED
@@ -337,206 +340,191 @@ entities:
         source: null
         target: APPLIED
         trigger: tasker_applies
-        guard: "tasker.verification == APPROVED, task.status == OPEN, under application cap"
+        guard: 'tasker.verification == APPROVED, task.status == OPEN, under application cap'
         side_effects:
-          - "increment task.application_count"
-          - "notify customer"
-        phase: "0-1"
+          - 'increment task.application_count'
+          - 'notify customer'
+        phase: '0-1'
 
       - id: APP-T02
         source: APPLIED
-        target: ACCEPTED
-        trigger: customer_accepts_directly
-        guard: "Phase 0-1 only, customer confirms liability disclaimer"
-        side_effects:
-          - "task → ASSIGNED"
-          - "create booking"
-          - "auto-decline remaining applicants"
-        phase: "0-1"
-
-      - id: APP-T03
-        source: APPLIED
         target: SELECTED
         trigger: customer_selects_applicant
-        guard: "Phase 2+, applicant ranked by relevance"
+        guard: 'customer confirms liability disclaimer'
         side_effects:
-          - "start 15-min accept/decline window"
-          - "notify Tasker with confirmation request"
-        phase: "2"
+          - 'create booking intent'
+          - 'notify selected Tasker'
+          - 'start 4-hour response window'
+        phase: '0-1'
+
+      - id: APP-T03
+        source: SELECTED
+        target: ACCEPTED
+        trigger: tasker_confirms_selection
+        guard: 'within 4-hour response window'
+        side_effects:
+          - 'task → ASSIGNED'
+          - 'create booking'
+          - 'auto-decline remaining applicants'
+        phase: '0-1'
 
       - id: APP-T04
         source: SELECTED
-        target: ACCEPTED
-        trigger: tasker_accepts_and_unlocks
-        guard: "Tasker has sufficient lead credits"
+        target: DECLINED
+        trigger: tasker_declines_selection
+        guard: 'within 4-hour response window'
         side_effects:
-          - "deduct lead-unlock credits"
-          - "reveal customer contact info"
-          - "task → ASSIGNED"
-          - "create booking"
-          - "auto-decline remaining applicants"
-        phase: "2"
+          - 'close booking intent'
+          - 'prompt customer to select next applicant'
+        phase: '0-1'
 
       - id: APP-T05
         source: SELECTED
-        target: DECLINED
-        trigger: tasker_declines_selection
-        guard: "within 15-min window"
-        side_effects:
-          - "no credits charged"
-          - "prompt customer to select next applicant"
-        phase: "2"
-
-      - id: APP-T06
-        source: SELECTED
         target: EXPIRED
         trigger: selection_window_expires
-        guard: "15-min window elapsed without response"
+        guard: '4-hour window elapsed without response'
         side_effects:
-          - "no credits charged"
-          - "prompt customer to select next applicant"
-        phase: "2"
+          - 'expire booking intent'
+          - 'prompt customer to select next applicant'
+        phase: '0-1'
 
-      - id: APP-T07
+      - id: APP-T06
         source: APPLIED
         target: DECLINED
         trigger: auto_rejected
-        guard: "another applicant accepted for this task"
+        guard: 'another applicant accepted for this task'
         side_effects:
-          - "notify Tasker"
-        phase: "0-1"
+          - 'notify Tasker'
+        phase: '0-1'
 
-      - id: APP-T08
+      - id: APP-T07
         source: APPLIED
         target: EXPIRED
         trigger: task_cancelled
-        guard: "task transitions to CANCELLED"
+        guard: 'task transitions to CANCELLED'
         side_effects:
-          - "notify Tasker"
-        phase: "0-1"
+          - 'notify Tasker'
+        phase: '0-1'
 
-      - id: APP-T09
+      - id: APP-T08
         source: APPLIED
         target: ACCEPTED
         trigger: instant_match_auto_assign
-        guard: "Phase 3+, Tasker is top-ranked, 5-min accept window"
+        guard: 'Phase 3+, Tasker is top-ranked, 5-min accept window'
         side_effects:
-          - "task → ASSIGNED"
-          - "create booking"
-        phase: "3+"
+          - 'task → ASSIGNED'
+          - 'create booking'
+        phase: '3+'
 
-      - id: APP-T10
+      - id: APP-T09
         source: APPLIED
         target: DECLINED
         trigger: instant_match_decline
-        guard: "Phase 3+, Tasker declines auto-match"
+        guard: 'Phase 3+, Tasker declines auto-match'
         side_effects:
-          - "next ranked Tasker notified"
-          - "after 3 declines → open application fallback"
-        phase: "3+"
+          - 'next ranked Tasker notified'
+          - 'after 3 declines → open application fallback'
+        phase: '3+'
 
     business_rules:
-      - "Tasker must be verified to apply (REQ-SAFE-01)"
-      - "Application cap configurable, default 10 (REQ-PAY-17)"
-      - "Phase 2 lead credits charged only on accept, not apply (REQ-PAY-15)"
-      - "Credits refunded if customer cancels after lead unlock (REQ-PAY-13)"
-      - "Relevance scoring: category + proximity + rating + completion rate (REQ-BOOK-02)"
-      - "Recommended label on top-ranked applicants (Phase 2+)"
-      - "Instant match: 5-min window, 3 decline fallback (REQ-BOOK-08/10)"
-      - "Application success rate visible in Tasker dashboard (REQ-PAY-18)"
+      - 'Tasker must be verified and Bayangol-service-enabled to apply'
+      - 'Customers can review all applications; the UI may optionally highlight a suggested subset'
+      - 'Selected Tasker has the default 4-hour window to accept or decline'
+      - 'Non-selected applications close automatically once a booking is confirmed'
+      - 'Instant match remains future-phase only'
 
   # ═══════════════════════════════════════════════════
   # 4. Verification
   # ═══════════════════════════════════════════════════
   verification:
-    description: "Tasker identity verification process"
+    description: 'Tasker identity verification process'
     states:
       - NOT_SUBMITTED
       - PENDING
       - APPROVED
       - REJECTED
     initial: NOT_SUBMITTED
-    terminal: [APPROVED]  # REJECTED is non-terminal — can resubmit
+    terminal: [APPROVED] # REJECTED is non-terminal — can resubmit
 
     transitions:
       - id: VER-T01
         source: NOT_SUBMITTED
         target: PENDING
         trigger: tasker_submits_id
-        guard: "ID card front + back + selfie uploaded"
+        guard: 'ID card front + back + selfie uploaded'
         side_effects:
-          - "start 24h SLA timer"
-          - "add to admin verification queue"
-          - "show pending screen to Tasker"
-        phase: "0-1"
+          - 'start 24h SLA timer'
+          - 'add to admin verification queue'
+          - 'show pending screen to Tasker'
+        phase: '0-1'
 
       - id: VER-T02
         source: PENDING
         target: APPROVED
         trigger: admin_approves
-        guard: "admin reviews within SLA"
+        guard: 'admin reviews within SLA'
         side_effects:
-          - "grant verified badge"
-          - "enable task applications"
-          - "notify Tasker of approval"
-        phase: "0-1"
+          - 'grant verified badge'
+          - 'enable task applications'
+          - 'notify Tasker of approval'
+        phase: '0-1'
 
       - id: VER-T03
         source: PENDING
         target: REJECTED
         trigger: admin_rejects
-        guard: "ID mismatch, blurry, fraudulent"
+        guard: 'ID mismatch, blurry, fraudulent'
         side_effects:
-          - "record admin_notes (visible to user)"
-          - "notify Tasker with rejection reason"
-          - "allow resubmission"
-        phase: "0-1"
+          - 'record admin_notes (visible to user)'
+          - 'notify Tasker with rejection reason'
+          - 'allow resubmission'
+        phase: '0-1'
 
       - id: VER-T04
         source: REJECTED
         target: PENDING
         trigger: tasker_resubmits
-        guard: "new ID images uploaded"
+        guard: 'new ID images uploaded'
         side_effects:
-          - "reset 24h SLA timer"
-          - "re-add to verification queue"
-        phase: "0-1"
+          - 'reset 24h SLA timer'
+          - 're-add to verification queue'
+        phase: '0-1'
 
       - id: VER-T05
         source: NOT_SUBMITTED
         target: APPROVED
         trigger: dan_fast_path
-        guard: "Phase 2+, E-Mongolia DAN verification success"
+        guard: 'Phase 2+, E-Mongolia DAN verification success'
         side_effects:
-          - "auto-verify without manual review"
-          - "grant verified badge"
-        phase: "2"
+          - 'auto-verify without manual review'
+          - 'grant verified badge'
+        phase: '2'
 
       - id: VER-T06
         source: REJECTED
         target: APPROVED
         trigger: dan_fast_path_from_rejected
-        guard: "Phase 2+, DAN verification success after prior rejection"
+        guard: 'Phase 2+, DAN verification success after prior rejection'
         side_effects:
-          - "auto-verify"
-          - "clear rejection notes"
-        phase: "2"
+          - 'auto-verify'
+          - 'clear rejection notes'
+        phase: '2'
 
     business_rules:
-      - "24-hour SLA for manual review (REQ-SAFE-01)"
-      - "First 50 Taskers: may include video/in-person interview"
-      - "Unverified Taskers can browse feed but cannot apply"
-      - "DAN fast-path skips manual review in Phase 2+ (REQ-AUTH-05)"
-      - "ID card front, back, and selfie all required"
-      - "Rejection reason visible to user for correction"
-      - "Upload via presigned URL to S3/MinIO"
-      - "Verification status included in profile responses"
+      - '24-hour SLA for manual review'
+      - 'First 50 Taskers: may include video/in-person interview'
+      - 'Unverified Taskers can browse feed but cannot apply'
+      - 'DAN fast-path is future-phase only'
+      - 'ID card front, back, and selfie all required'
+      - 'Rejection reason visible to user for correction'
+      - 'Upload via presigned URL to S3/MinIO'
+      - 'Verification status included in profile responses'
 
   # ═══════════════════════════════════════════════════
   # 5. Dispute
   # ═══════════════════════════════════════════════════
   dispute:
-    description: "Post-booking dispute between Customer and Tasker"
+    description: 'Post-booking dispute between Customer and Tasker'
     states:
       - OPEN
       - RESOLVED_CUSTOMER
@@ -551,272 +539,270 @@ entities:
         source: null
         target: OPEN
         trigger: party_raises_dispute
-        guard: "booking ASSIGNED or within 24h of COMPLETED, at least 1 evidence artifact"
+        guard: 'booking ASSIGNED or within 24h of COMPLETED, at least 1 evidence artifact'
         side_effects:
-          - "create dispute record"
-          - "notify counterparty"
-          - "notify admin"
-        phase: "0-1"
+          - 'create dispute record'
+          - 'notify counterparty'
+          - 'notify admin'
+        phase: '0-1'
 
       - id: DISP-T02
         source: OPEN
         target: RESOLVED_CUSTOMER
         trigger: admin_resolves_for_customer
-        guard: "admin reviews evidence"
+        guard: 'admin reviews evidence'
         side_effects:
-          - "apply resolution (refund credits if Phase 2+, strike to Tasker if warranted)"
-          - "notify both parties"
-        phase: "0-1"
+          - 'apply resolution and strike to Tasker if warranted'
+          - 'notify both parties'
+        phase: '0-1'
 
       - id: DISP-T03
         source: OPEN
         target: RESOLVED_TASKER
         trigger: admin_resolves_for_tasker
-        guard: "admin reviews evidence"
+        guard: 'admin reviews evidence'
         side_effects:
-          - "dismiss dispute"
-          - "notify both parties"
-        phase: "0-1"
+          - 'dismiss dispute'
+          - 'notify both parties'
+        phase: '0-1'
 
       - id: DISP-T04
         source: OPEN
         target: ESCALATED
         trigger: admin_escalates
-        guard: "complex case requiring additional review"
+        guard: 'complex case requiring additional review'
         side_effects:
-          - "flag for senior review"
-          - "notify both parties of escalation"
-        phase: "0-1"
+          - 'flag for senior review'
+          - 'notify both parties of escalation'
+        phase: '0-1'
 
       - id: DISP-T05
         source: ESCALATED
         target: RESOLVED_CUSTOMER
         trigger: admin_resolves_escalated_for_customer
-        guard: "senior admin reviews"
+        guard: 'senior admin reviews'
         side_effects:
-          - "apply resolution"
-          - "notify both parties"
-        phase: "0-1"
+          - 'apply resolution'
+          - 'notify both parties'
+        phase: '0-1'
 
       - id: DISP-T06
         source: ESCALATED
         target: RESOLVED_TASKER
         trigger: admin_resolves_escalated_for_tasker
-        guard: "senior admin reviews"
+        guard: 'senior admin reviews'
         side_effects:
-          - "dismiss dispute"
-          - "notify both parties"
-        phase: "0-1"
+          - 'dismiss dispute'
+          - 'notify both parties'
+        phase: '0-1'
 
       - id: DISP-T07
         source: OPEN
         target: CLOSED_INSUFFICIENT_EVIDENCE
         trigger: evidence_timeout
-        guard: "no evidence provided after 24h reminder"
+        guard: 'no evidence provided after 24h reminder'
         side_effects:
-          - "auto-close dispute"
-          - "notify raising party"
-        phase: "0-1"
+          - 'auto-close dispute'
+          - 'notify raising party'
+        phase: '0-1'
 
     business_rules:
-      - "Can raise during ASSIGNED or within 24h of COMPLETED (Section 6.4.6)"
-      - "At least 1 evidence artifact required: chat, photo, or written timeline"
-      - "Auto-close after 24h if evidence not provided (Section 6.4.6)"
-      - "Open dispute triggers review hard lock for both parties"
-      - "Dispute resolution affects trust metrics"
-      - "Admin can resolve from both OPEN and ESCALATED states"
-      - "Evidence types: chat excerpt, photo, written timeline"
-      - "Credits refunded if dispute resolved for customer (Phase 2+)"
-      - "Strike system applies to dispute outcomes"
-      - "Dispute rate tracked as program KPI (Section 3.1)"
+      - 'Can raise during ASSIGNED or within 24 hours of COMPLETED'
+      - 'At least 1 evidence artifact required: chat, photo, or written timeline'
+      - 'Auto-close after 24 hours if evidence is not provided'
+      - 'Open dispute triggers review hard lock for both parties'
+      - 'Dispute resolution affects trust metrics'
+      - 'Admin can resolve from both OPEN and ESCALATED states'
+      - 'Evidence types: chat excerpt, photo, written timeline'
+      - 'Strike system applies to dispute outcomes'
+      - 'Dispute rate is tracked as a hard-gate trust KPI'
 
   # ═══════════════════════════════════════════════════
   # 6. User
   # ═══════════════════════════════════════════════════
   user:
-    description: "User account lifecycle"
+    description: 'User account lifecycle'
     states:
       - PENDING
       - VERIFIED
       - SUSPENDED
       - BANNED
     initial: PENDING
-    terminal: [BANNED]  # BANNED can be reversed by admin
+    terminal: [BANNED] # BANNED can be reversed by admin
 
     transitions:
       - id: USER-T01
         source: null
         target: PENDING
         trigger: user_signs_up
-        guard: "valid Facebook OAuth (Phase 0-1) or phone OTP (Phase 2+)"
+        guard: 'valid Facebook OAuth (Phase 0-1) or phone OTP (Phase 2+)'
         side_effects:
-          - "create user record"
-          - "issue JWT"
-        phase: "0-1"
+          - 'create user record'
+          - 'issue JWT'
+        phase: '0-1'
 
       - id: USER-T02
         source: PENDING
         target: VERIFIED
         trigger: customer_completes_profile
-        guard: "role == CUSTOMER, name and avatar set"
+        guard: 'role == CUSTOMER, name and avatar set'
         side_effects:
-          - "enable task posting"
-        phase: "0-1"
+          - 'enable task posting'
+        phase: '0-1'
 
       - id: USER-T03
         source: PENDING
         target: VERIFIED
         trigger: tasker_verification_approved
-        guard: "role == TASKER, admin approves ID"
+        guard: 'role == TASKER, admin approves ID'
         side_effects:
-          - "enable task applications"
-          - "grant verified badge"
-        phase: "0-1"
+          - 'enable task applications'
+          - 'grant verified badge'
+        phase: '0-1'
 
       - id: USER-T04
         source: VERIFIED
         target: PENDING
         trigger: role_switch_to_tasker
-        guard: "user switches from CUSTOMER to TASKER, not yet verified as Tasker"
+        guard: 'user switches from CUSTOMER to TASKER, not yet verified as Tasker'
         side_effects:
-          - "prompt verification flow"
-          - "retain customer capabilities"
-        phase: "0-1"
+          - 'prompt verification flow'
+          - 'retain customer capabilities'
+        phase: '0-1'
 
       - id: USER-T05
         source: VERIFIED
         target: SUSPENDED
         trigger: strike_threshold_reached
-        guard: "3+ strikes in 30-day window"
+        guard: '3+ strikes in 30-day window'
         side_effects:
-          - "7-day first suspension"
-          - "notify user"
-          - "cancel active bookings"
-        phase: "0-1"
+          - '7-day first suspension'
+          - 'notify user'
+          - 'cancel active bookings'
+        phase: '0-1'
 
       - id: USER-T06
         source: PENDING
         target: SUSPENDED
         trigger: admin_suspends_pending
-        guard: "admin action, fraud or safety concern"
+        guard: 'admin action, fraud or safety concern'
         side_effects:
-          - "notify user"
-        phase: "0-1"
+          - 'notify user'
+        phase: '0-1'
 
       - id: USER-T07
         source: SUSPENDED
         target: VERIFIED
         trigger: suspension_expires
-        guard: "suspension period elapsed, auto-unsuspend enabled"
+        guard: 'suspension period elapsed, auto-unsuspend enabled'
         side_effects:
-          - "restore access"
-          - "notify user"
-        phase: "0-1"
+          - 'restore access'
+          - 'notify user'
+        phase: '0-1'
 
       - id: USER-T08
         source: SUSPENDED
         target: VERIFIED
         trigger: admin_unsuspends
-        guard: "admin manual override"
+        guard: 'admin manual override'
         side_effects:
-          - "restore access"
-          - "notify user"
-        phase: "0-1"
+          - 'restore access'
+          - 'notify user'
+        phase: '0-1'
 
       - id: USER-T09
         source: VERIFIED
         target: BANNED
         trigger: admin_bans
-        guard: "severe policy violation"
+        guard: 'severe policy violation'
         side_effects:
-          - "cancel all active bookings"
-          - "hide from search"
-          - "notify user"
-        phase: "0-1"
+          - 'cancel all active bookings'
+          - 'hide from search'
+          - 'notify user'
+        phase: '0-1'
 
       - id: USER-T10
         source: SUSPENDED
         target: BANNED
         trigger: admin_bans_suspended
-        guard: "repeat offense or severe violation"
+        guard: 'repeat offense or severe violation'
         side_effects:
-          - "permanent removal"
-          - "notify user"
-        phase: "0-1"
+          - 'permanent removal'
+          - 'notify user'
+        phase: '0-1'
 
       - id: USER-T11
         source: PENDING
         target: BANNED
         trigger: admin_bans_pending
-        guard: "fraud detected during signup"
+        guard: 'fraud detected during signup'
         side_effects:
-          - "block account"
-        phase: "0-1"
+          - 'block account'
+        phase: '0-1'
 
       - id: USER-T12
         source: BANNED
         target: VERIFIED
         trigger: admin_unbans
-        guard: "admin appeals review"
+        guard: 'admin appeals review'
         side_effects:
-          - "restore account"
-          - "notify user"
-        phase: "0-1"
+          - 'restore account'
+          - 'notify user'
+        phase: '0-1'
 
       - id: USER-T13
         source: VERIFIED
         target: VERIFIED
         trigger: phase2_otp_migration
-        guard: "Phase 2, user has Facebook-only auth, must add phone OTP"
+        guard: 'Phase 2, user has Facebook-only auth, must add phone OTP'
         side_effects:
-          - "prompt OTP verification gate"
-          - "phone becomes primary auth"
-          - "facebook_id retained as secondary"
-        phase: "2"
+          - 'prompt OTP verification gate'
+          - 'phone becomes primary auth'
+          - 'facebook_id retained as secondary'
+        phase: '2'
 
       - id: USER-T14
         source: VERIFIED
         target: null
         trigger: account_deletion
-        guard: "no active bookings, no open disputes"
+        guard: 'no active bookings, no open disputes'
         side_effects:
-          - "soft delete user record"
-          - "anonymize PII"
-          - "retain aggregated metrics"
-        phase: "0-1"
+          - 'soft delete user record'
+          - 'anonymize PII'
+          - 'retain aggregated metrics'
+        phase: '0-1'
 
       - id: USER-T15
         source: VERIFIED
         target: VERIFIED
         trigger: tasker_polishes_profile
-        guard: "role == TASKER, user explicitly accepts AI-suggested copy before save"
+        guard: 'role == TASKER, user explicitly accepts AI-suggested copy before save'
         side_effects:
-          - "persist updated profile description"
-          - "retain editable pre-polish draft until confirmation"
-          - "emit profile quality analytics event"
-        phase: "0-1"
+          - 'persist updated profile description'
+          - 'retain editable pre-polish draft until confirmation'
+          - 'emit profile quality analytics event'
+        phase: '0-1'
 
     business_rules:
-      - "Duplicate prevention: one account per facebook_id (REQ-AUTH-02)"
-      - "JWT issued on successful auth (REQ-AUTH-03)"
-      - "Role switch: customer → tasker triggers verification (REQ-AUTH-04)"
-      - "Phase 2 OTP migration mandatory for Facebook-only users (REQ-AUTH-06)"
-      - "Strike window: configurable (default 30 days)"
-      - "Strike threshold: configurable (default 3)"
-      - "First suspension: 7 days"
-      - "Repeat suspension (within repeat window): configurable longer"
-      - "Auto-unsuspend toggle: admin-configurable"
-      - "Pro badge: assigned at >=4.5 avg, revoked at <4.0 (hysteresis)"
-      - "Grandfathered flag: 5+ bookings before first paid launch → 5% discount"
-      - "Account deletion: soft delete, anonymize PII, retain metrics"
-      - "Facebook OAuth outage: existing sessions survive, new login unavailable (REQ-AUTH-09/10)"
-      - "Phase 0-1: Facebook only. Phase 2+: phone OTP primary (REQ-AUTH-05/08)"
+      - 'Duplicate prevention: one account per facebook_id'
+      - 'JWT issued on successful auth'
+      - 'Role switch from customer to tasker triggers verification'
+      - 'Strike window: configurable (default 30 days)'
+      - 'Strike threshold: configurable (default 3)'
+      - 'First suspension: 7 days'
+      - 'Repeat suspension (within repeat window): configurable longer'
+      - 'Auto-unsuspend toggle: admin-configurable'
+      - 'Pro badge: assigned at >=4.5 avg, revoked at <4.0 (hysteresis)'
+      - 'Grandfathered flag: 5+ bookings before first paid launch → 5% discount'
+      - 'Account deletion: soft delete, anonymize PII, retain metrics'
+      - 'Facebook OAuth outage: existing sessions survive, new login is unavailable'
+      - 'Phase 0-1 launch auth is Facebook only'
 
   # ═══════════════════════════════════════════════════
   # 7. Business Account
   # ═══════════════════════════════════════════════════
   business_account:
-    description: "Customer-owned or customer-managed account used for business-scoped task posting and operations"
+    description: 'Customer-owned or customer-managed account used for business-scoped task posting and operations'
     states:
       - ACTIVE
     initial: ACTIVE
@@ -827,24 +813,24 @@ entities:
         source: null
         target: ACTIVE
         trigger: business_account_created
-        guard: "b2b_enabled, requester is CUSTOMER role, name valid, at least one location saved"
+        guard: 'b2b_enabled, requester is CUSTOMER role, name valid, at least one location saved'
         side_effects:
-          - "create business account with OWNER membership"
-          - "persist primary business location"
-          - "allow owner to invite MANAGER members"
-        phase: "2"
+          - 'create business account with OWNER membership'
+          - 'persist primary business location'
+          - 'allow owner to invite MANAGER members'
+        phase: '2'
 
     business_rules:
-      - "Business accounts are tenant-isolated and keyed by business_account_id (REQ-PAY-26)"
-      - "Only OWNER and MANAGER memberships can act on behalf of the account"
-      - "Business-posted tasks reuse the standard task lifecycle with attached business context"
-      - "Business accounts are feature-gated behind b2b_enabled"
+      - 'Business accounts are tenant-isolated and keyed by business_account_id'
+      - 'Only OWNER and MANAGER memberships can act on behalf of the account'
+      - 'Business-posted tasks reuse the standard task lifecycle with attached business context'
+      - 'Business accounts are feature-gated behind b2b_enabled'
 
   # ═══════════════════════════════════════════════════
   # 8. Business Subscription
   # ═══════════════════════════════════════════════════
   business_subscription:
-    description: "Recurring B2B billing state for Host Lite and Ops Standard plans"
+    description: 'Recurring B2B billing state for Host Lite and Ops Standard plans'
     states:
       - NOT_SUBSCRIBED
       - ACTIVE
@@ -858,33 +844,33 @@ entities:
         source: NOT_SUBSCRIBED
         target: ACTIVE
         trigger: business_subscription_activated
-        guard: "QPay subscription payment verified for Host Lite or Ops Standard"
+        guard: 'QPay subscription payment verified for Host Lite or Ops Standard'
         side_effects:
-          - "persist active plan_code and billing cycle day"
-          - "enable paid B2B billing entitlements for the account"
-        phase: "3+"
+          - 'persist active plan_code and billing cycle day'
+          - 'enable paid B2B billing entitlements for the account'
+        phase: '3+'
 
       - id: B2B-T03
         source: ACTIVE
         target: PAST_DUE
         trigger: business_subscription_renewal_failed
-        guard: "scheduled recurring payment could not be captured"
+        guard: 'scheduled recurring payment could not be captured'
         side_effects:
-          - "flag renewal_failed status"
-          - "prompt manual recovery or resubscribe"
-        phase: "3+"
+          - 'flag renewal_failed status'
+          - 'prompt manual recovery or resubscribe'
+        phase: '3+'
 
       - id: B2B-T04
         source: ACTIVE
         target: CANCELLED
         trigger: business_subscription_cancelled
-        guard: "owner cancels or admin disables paid B2B plan"
+        guard: 'owner cancels or admin disables paid B2B plan'
         side_effects:
-          - "retain plan history for audit"
-          - "offer resubscribe path until permanent expiry"
-        phase: "3+"
+          - 'retain plan history for audit'
+          - 'offer resubscribe path until permanent expiry'
+        phase: '3+'
 
     business_rules:
-      - "Host Lite and Ops Standard are plan variants of the same subscription lifecycle (REQ-PAY-39)"
-      - "Recurring billing is account-scoped, not user-scoped"
-      - "Renewal failure must surface a recoverable resubscribe path"
+      - 'Host Lite and Ops Standard are plan variants of the same subscription lifecycle'
+      - 'Recurring billing is account-scoped, not user-scoped'
+      - 'Renewal failure must surface a recoverable resubscribe path'

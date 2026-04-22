@@ -13,6 +13,8 @@ Use this file when the change touches `docs/openapi/**` or restructures request/
 
 - `docs/openapi/**` is the canonical OpenAPI source. Edit it directly.
 - `docs/API.yaml` is a generated compatibility artifact. Do not hand-edit it.
+- Keep the active contract limited to live endpoints and implemented-and-gated endpoints. Do not keep 404-only forward
+  references in the active spec.
 - Keep fragments domain-level. Extend the nearest existing file before creating a new fragment.
 - When the contract changes: update `docs/openapi/**`, run `pnpm openapi:bundle`, regenerate the SDK, then validate the backend contract.
 

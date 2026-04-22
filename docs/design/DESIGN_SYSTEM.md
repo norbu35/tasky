@@ -1,212 +1,59 @@
 # Tasky Design System
 
-**Version:** 2.1 | **Status:** Canonical | **Updated:** 2026-04-20
+**Version:** 2.2  
+**Status:** Derived  
+**Updated:** 2026-04-22
 
-> Mongolia's trust-first domestic service marketplace — where verified identity meets community reputation.
+This document is derived from `docs/PRD.md`, `docs/STRATEGY.md`, and `docs/BRAND.md`.
 
-Tasky solves what Facebook groups and Unegui.mn structurally cannot: verified identity, fair pricing, dispute protection, and reputation that travels with you. Built for Ulaanbaatar; Mongolian Cyrillic is first-class, not an afterthought.
+## 1. Scope
 
----
+The active Phase 1 design system supports the Bayangol launch pilot only. Product truth remains in the PRD.
 
-## Sources
+### Active vs future specs
 
-| Resource      | Location                                           |
-| ------------- | -------------------------------------------------- |
-| Figma file    | `Mobile.fig` (mounted as VFS — 110 frames, 1 page) |
-| Codebase      | `tasky/` (Expo React Native monorepo)              |
-| Design tokens | `tasky/packages/design-tokens/`                    |
-| Mobile app    | `tasky/apps/mobile/`                               |
-| Brand doc     | `tasky/docs/BRAND.md`                              |
+- Active Phase 1 specs: `SCR-CUST-*`, `SCR-TASK-*`, `SCR-SHARED-*`
+- Draft / Future specs: `SCR-P2-*`, `SCR-P3-*`, `SCR-B2B-*`
 
----
+Future-prefixed specs are not launch authority and must not be read as active product commitments.
 
-## Products
+## 2. Content Fundamentals
 
-| Product            | Tech                                      | Notes                                            |
-| ------------------ | ----------------------------------------- | ------------------------------------------------ |
-| **Mobile App**     | Expo React Native + NativeWind + Tailwind | Primary product. Customer + Tasker dual-role.    |
-| **Web**            | `tasky/apps/web/`                         | Web client — design directives in `ui_kits/web/` |
-| **Services / API** | `tasky/services/`                         | Backend (not a UI surface)                       |
+- Voice: direct and warm
+- Copy model: concept-first bilingual
+- English is the technical key / fallback source
+- Mongolian copy must be authored to read naturally in Mongolian
+- Sentence case by default
+- No emoji in UI
 
----
+### Phase 1 copy constraints
 
-## CONTENT FUNDAMENTALS
+- Operational screens must say the pilot is live in Bayangol.
+- Out-of-area posting surfaces must offer waitlist capture by area and category.
+- Pricing copy must support both `I have a budget` and `I want quotes`.
+- Do not promise payment hold, payment protection, or escrow.
+- Do not imply open-ended pre-booking chat.
 
-**Voice:** Direct and warm — not corporate, not cold. Reassuring especially around money and strangers in your home.
+## 3. Product Experience Rules
 
-**Language:** Bilingual parity. Mongolian copy is written for Mongolian readers, not translated from English. UI uses Mongolian Cyrillic as the default first-class language (e.g. "Даалгаврууд", "Баталгаажсан", "Хүсэлт илгээх").
+### 3.1 Posting
 
-**Casing:** Sentence-case universally. ALL-CAPS used only for badge/status microcopy (StatusBadge text, "БАТАЛГААЖСАН"), with slight letter-spacing (+0.6–1.2px) to separate Cyrillic block forms.
+- Phase 1 posting uses fixed category templates, not a generic free-form task form.
+- Required content: location, preferred date, time window, short title, structured scope fields, optional-but-encouraged photos, pricing mode.
 
-**Emoji:** Never used in UI. Brand identity relies on a hand-drawn checkmark (SVG stroke) as the sole gestural mark.
+### 3.2 Contact
 
-**Tone examples:**
+- No open-ended pre-booking chat.
+- Before selection, taskers communicate through the structured application and pricing response only.
+- After confirmation, any contact surface must remain platform-mediated and reviewable.
 
-- Verification complete → "Identity confirmed. You're good to go." — positive, immediate, no jargon
-- Booking confirmed → "Locked in. Your Tasker is on the way." — confident, human
-- Dispute opened → "We've got it. You'll hear back within 24 hours." — reassuring, not defensive
-- Empty state → "No one nearby yet — try a wider area or a different time." — honest, gives next step
-- Payment held → "Your payment is held safely until the job is done." — trust-building, not alarming
+### 3.3 Trust
 
-**Numbers/prices:** Mongolian tögrög symbol `₮` prefix, comma-separated (e.g. `₮120,000`).
+- Trust banners and explanatory copy may promise verification, booking records, evidence trails, and moderation.
+- Trust banners must not promise escrow, held funds, or payment protection in Phase 1.
 
----
+## 4. Visual Foundations
 
-## VISUAL FOUNDATIONS
-
-### Colors — "Тэнгэр" (Sky) Palette
-
-Four anchors: Deep Sky Blue · Steppe Gold · Open Sky · Clean Off-White
-
-| Token                         | Hex       | Role                                                                                                   |
-| ----------------------------- | --------- | ------------------------------------------------------------------------------------------------------ |
-| `--color-primary` / ink       | `#1B3A5C` | Authority, trust. Body text, primary buttons, nav active. Evokes "Мөнх хөх тэнгэр" (Eternal Blue Sky). |
-| `--color-primary-deep`        | `#102638` | Hero text, prominent headers, high-authority UI                                                        |
-| `--color-secondary` / sun     | `#8B6914` | Steppe Gold — star ratings, pricing, warm CTAs. Evokes the Mongolian steppe.                           |
-| `--color-sun-light`           | `#C49A3C` | Lighter gold fill — secondary buttons                                                                  |
-| `--color-sun-wash`            | `#FDCE6A` | Gold tint wash — highlights                                                                            |
-| `--color-accent` / sky        | `#6BA3BE` | Open Sky — highlights, links, interactive accents                                                      |
-| `--color-sky-soft`            | `#ABD1E8` | Soft sky tint — trust banner backgrounds                                                               |
-| `--color-background` / canvas | `#F9F8F5` | Clean off-white — professional without being sterile                                                   |
-| `--color-card` / surface      | `#FFFFFF` | Card backgrounds                                                                                       |
-| `--color-muted`               | `#F3F1EC` | Subtle surface, chip backgrounds                                                                       |
-| `--color-border` / line       | `#C7D0D9` | Borders and dividers                                                                                   |
-| `--color-input` / field       | `#DBE0E5` | Input backgrounds                                                                                      |
-| `--color-verified`            | `#469178` | Sage Emerald — verification badges, success states                                                     |
-| `--color-trust`               | `#3568A1` | Trust badges, authority indicators                                                                     |
-| `--color-trust-muted`         | `#B3C4D6` | Trust background tint                                                                                  |
-| `--color-destructive`         | `#EF4444` | Errors and destructive actions only — never branding                                                   |
-| `--color-text-secondary`      | `#5E6B78` | Secondary body text                                                                                    |
-| `--color-text-tertiary`       | `#808D99` | Tertiary text, placeholders                                                                            |
-| `--color-nav-inactive`        | `#6C7B89` | Inactive navigation icons/labels                                                                       |
-| `--color-chip-inactive`       | `#D8DDE2` | Inactive filter chip backgrounds                                                                       |
-
-**Dark theme:** Deep sky base (HSL 212 35% 6%) with warm foreground (HSL 40 30% 88%). Brand colors increase lightness to ~55–60% and slightly desaturate. Dark theme values live in the `.dark` CSS class using HSL channel format (for Tailwind `hsl()` consumption).
-
-### Typography
-
-| Role                | Font                  | Weight  | Sizes                                                                                                                                          |
-| ------------------- | --------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Display / Headlines | **Manrope**           | 600–700 | 48px display-xl, 36px display-lg, 28px heading-1, 22px heading-2, 18px heading-3                                                               |
-| Body / UI           | **Plus Jakarta Sans** | 400–700 | 18px body-lg, 16px body (hard floor for Mongolian readability), 14px body-sm/label, 13px label-ui, 12px caption, 11px overline/nav, 10px micro |
-| Cyrillic fallback   | Roboto                | system  | —                                                                                                                                              |
-
-- **Line-height:** 1.6 for body paragraphs; 1.3 (tight) for UI controls/buttons
-- **Letter-spacing:** Prohibited on sentence-case. +1px only on ALL-CAPS microcopy
-- **Alignment:** Flush-left always — justified text creates uneven gaps in Mongolian words
-- **Min body size:** 16px non-negotiable for Mongolian mobile reading
-
-### Spacing Scale
-
-4px base unit: 4 · 8 · 12 · 16 · 24 · 32 · 40 · 48 · 64
-
-### Border Radius
-
-xs: 6px · sm: 8px · md: 12px · lg: 16px · full: 9999px  
-Cards use `md` (12px). Buttons use `sm` (8px). Avatar initials: `md`. Circular badges: `full`.
-
-### Shadows / Elevation
-
-- **card:** `0 1px 2px rgba(0,0,0,0.05)` — default card
-- **elevated:** `0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.05)` — modals, dropdowns
-- **fab:** `0 4px 6px -4px rgba(0,0,0,0.1), 0 10px 15px -3px rgba(0,0,0,0.1)` — floating action buttons, primary CTAs
-- **nav:** `0 -4px 24px rgba(26,28,26,0.04)` — bottom nav bar (upward shadow)
-- **deep:** `0 25px 50px -12px rgba(0,0,0,0.25)` — dialogs, overlays
-
-### Backgrounds
-
-Off-white canvas `#F9F8F5` is universal. Cards sit on pure white. Subtle sections use `#F3F1EC`. No full-bleed photographic backgrounds in app UI. Auth screen uses a decorative illustration at 30% opacity with `mix-blend-mode: multiply`. Trust banner uses soft blue tint `rgba(171,201,242,0.3)`.
-
-### Animation / Motion
-
-- **Durations:** instant 80ms, fast 150ms, normal 250ms, slow 400ms, skeleton 1500ms
-- **Easing:** standard `cubic-bezier(0.4,0,0.2,1)`, spring `cubic-bezier(0.34,1.56,0.64,1)` for interactive press states
-- **Press states:** opacity drop to 0.92 + `scale(0.98)` spring. No color change on press.
-- **Skeleton:** 1500ms shimmer tuned for Mongolia's 20 Mbps mobile average
-- **Celebration animations:** HandDrawnCheck scales in using spring easing on verification/success
-
-### Hover / Press States
-
-- Buttons: opacity 0.5 when disabled; `scale(0.98)` + opacity 0.92 on press
-- Cards (PressableCard/ListItemCard): `scale(0.98)` spring on press
-- No color-change hover states (mobile-first, touch-primary)
-
-### Cards
-
-White background (`#FFFFFF`), radius `md` (12px), card shadow (`0 1px 2px rgba(0,0,0,0.05)`), subtle border (`border-border/60`). Pressable cards shrink slightly on press.
-
-### Bottom Navigation Bar
-
-Height ~81px. Background: `rgba(250,249,246,0.6)` with `backdrop-filter: blur(16px)`. Top-left/right radius 12px. Shadow: `0 -4px 20px rgba(26,28,26,0.06)`. Active tab: primary blue icon + label. Inactive: `#6C7B89`.
-
-### Sticky Footer Actions
-
-Full-width action area at screen bottom. Background: `rgba(250,249,246,0.8)` with `backdrop-filter: blur(24px)`. Contains primary CTA button (full width or paired with icon-only secondary).
-
-### Iconography — Lucide Icons
-
-See `ICONOGRAPHY` section below.
-
-### Brand Mark
-
-**Logo wordmark:** "Tasky" in Manrope 700, `#102638`.  
-**Logo icon:** Dark navy square (border-radius 8px, `#002444`) with white checkmark SVG centered inside. Subtle gold halo (`rgba(253,206,106,0.2)`, radius 12px) offset -16px behind the icon box.  
-**Recognition mark:** Hand-drawn gestural checkmark in verified sage emerald `#469178`. Stroke only, `stroke-linecap: round`, `stroke-linejoin: round`, 3–4px weight. Never filled. Max one per viewport.
-
----
-
-## ICONOGRAPHY
-
-**Icon library:** Lucide (`lucide-react-native`) — thin-stroke outlined icon set.  
-**Style:** Outlined / stroke, consistent 1.5–2px weight, never filled except star ratings.  
-**Sizes:** 16px (sm inline), 18px (nav), 20px (standard), 24px (feature).  
-**Color:** Matches semantic text/foreground tokens — primary blue for active states, `#6C7B89` for inactive nav, `#5E6B78` for secondary actions.  
-**Special fill:** Star rating icons (`Star`) fill with `secondary` gold when active; stroke only when inactive.  
-**Emoji:** Never used. Unicode chars not used as icons.  
-**Verification badge icon:** `ShieldCheck` (Lucide) filled on verified, `Shield` unfilled for pending.
-
-Assets copied:
-
-- `assets/logo-icon.svg` — App icon (white checkmark on navy bg)
-- `assets/facebook-icon.svg` — Facebook OAuth button icon
-- `assets/email-icon.svg` — Email login button icon
-
----
-
-## File Index
-
-```
-README.md                    ← This file
-SKILL.md                     ← Agent skill definition
-colors_and_type.css          ← All CSS custom properties (colors + typography + semantic type styles)
-fonts/                       ← .ttf font files (Manrope, Plus Jakarta Sans)
-assets/                      ← Logos, icons, SVG assets
-preview/                     ← Design system card HTML files
-ui_kits/
-  mobile/
-    index.html               ← Interactive mobile app UI kit
-    components.jsx           ← Shared React components
-    README.md                ← Mobile UI kit notes
-  web/
-    Web UI Kit.html          ← Interactive web app UI kit
-    foundation.jsx           ← Colors, typography, spacing, radius, shadows, motion tokens
-    primitives.jsx           ← Buttons, inputs, badges, checkbox, switch, filter chips
-    compositions.jsx         ← Cards, tabs, alerts, dialog, avatar, skeleton, toast
-    patterns.jsx             ← Navigation, auth layout, page templates, empty states, dashboard
-    assets/                  ← Web-specific assets
-    fonts/                   ← Web-embedded font files
-```
-
----
-
-## Verification System
-
-The `VerifiedBadge` is the primary trust signal on every Tasker profile. States:
-
-| State      | Color                  | Label                           |
-| ---------- | ---------------------- | ------------------------------- |
-| Verified   | `#469178` sage emerald | "Баталгаажсан" / Verified       |
-| Pending    | `#6BA3BE` open sky     | "Хянагдаж байна" / Under Review |
-| Unverified | (hidden)               | —                               |
-
-Badge appears: search result cards, Tasker profile header, booking confirmation screen.
+The existing color, typography, spacing, iconography, and motion foundations remain valid where they do not conflict
+with launch truth. Derived preview assets and UI kits must keep the same constraint: no Phase 1 payment-protection
+promise and no citywide-posting implication.

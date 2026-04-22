@@ -500,7 +500,7 @@
     tags:
       - Bookings
     summary: Get booking intent
-    description: Returns booking intent details for the owner.
+    description: Returns booking intent details for the owner or the selected tasker.
     operationId: getBookingIntent
     security:
       - BearerAuth: []
@@ -521,29 +521,17 @@
   post:
     tags:
       - Bookings
-    summary: Confirm booking intent
+    summary: Tasker confirms booking intent
     description: |
-      Confirms a booking intent and creates an ASSIGNED booking.
-      Requires `liability_disclaimer_accepted=true` and Idempotency-Key header.
+      The selected tasker confirms a pending booking intent within the default 4-hour response window.
+      This creates an ASSIGNED booking and closes the remaining applications for the task.
+      Requires Idempotency-Key header.
     operationId: confirmBookingIntent
     security:
       - BearerAuth: []
     parameters:
       - $ref: ../components/parameters.yaml#/PathId
       - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - liability_disclaimer_accepted
-            properties:
-              liability_disclaimer_accepted:
-                type: boolean
-                enum:
-                  - true
     responses:
       '200':
         description: Booking created from intent.
@@ -561,6 +549,39 @@
         $ref: ../components/responses.yaml#/NotFound
       '409':
         description: Intent or task status does not allow confirmation.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/booking-intents/{id}/decline:
+  post:
+    tags:
+      - Bookings
+    summary: Tasker declines booking intent
+    description: |
+      The selected tasker declines a pending booking intent.
+      The customer can then return to the applicant list and choose another tasker.
+    operationId: declineBookingIntent
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    responses:
+      '200':
+        description: Booking intent declined.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/BookingIntent
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Intent is not pending or already resolved.
         content:
           application/json:
             schema:

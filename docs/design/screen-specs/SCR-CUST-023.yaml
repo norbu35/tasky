@@ -1,172 +1,173 @@
 # Screen Spec: Rebook Shortcut
 screen_id: SCR-CUST-023
-name: "Rebook Shortcut"
-route: "/(customer)/rebook"
+name: 'Rebook Shortcut'
+route: '/(customer)/rebook'
 role: [customer]
-phase: "0-1"
+phase: '0-1'
 template: form_wizard
-figma_page: "Customer/Rebook Shortcut"
-feature: "booking"
+figma_page: 'Customer/Rebook Shortcut'
+feature: 'booking'
 
 layout:
   template: form_wizard
   density: default
-  structure: "safe_area -> nav_header(back + title) -> scrollview(tasker_card + prefilled_task_summary + editable_fields) -> bottom_nav(back + submit)"
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(tasker_card + prefilled_task_summary + editable_fields) -> bottom_nav(back + submit)'
 
 components:
   - id: COMP-SPLITCARD
     usage: "Read-only card showing the previously hired tasker's avatar, name, rating, and verification status"
     props:
-      headerContent: "ProfileAvatar + name + rating"
-      bodyContent: "category + previous_date"
+      headerContent: 'ProfileAvatar + name + rating'
+      bodyContent: 'category + previous_date'
       status: completed
     variant: booking
 
   - id: COMP-DATEPICKER
-    usage: "Date and time picker prefilled from previous booking; editable for new schedule"
+    usage: 'Date and time picker prefilled from previous booking; editable for new schedule'
     props:
-      value: "previous_schedule"
-      minDate: "tomorrow"
+      value: 'previous_schedule'
+      minDate: 'tomorrow'
       mode: date_time
     variant: date_time
 
   - id: COMP-FORMFIELD
-    usage: "Wrapper for budget input with label"
+    usage: 'Wrapper for budget input with label'
     props:
-      label: "Төсөв"
+      label: 'Төсөв'
       required: true
     variant: default
 
   - id: COMP-INPUT
-    usage: "Budget input prefilled from previous task; editable"
+    usage: 'Budget input prefilled from previous task; editable'
     props:
-      value: "50000"
-      placeholder: "₮"
+      value: '50000'
+      placeholder: '₮'
       maxLength: 10
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Submit button to create rebook task and proceed to booking confirmation"
+    usage: 'Submit button to create rebook task and proceed to booking confirmation'
     props:
-      label: "Захиалга үргэлжлүүлэх"
+      label: 'Захиалга үргэлжлүүлэх'
       variant: primary
       size: lg
       loading: false
     variant: primary
 
   - id: COMP-TOAST
-    usage: "Error toast on network failure during submission"
+    usage: 'Error toast on network failure during submission'
     props:
-      message: "Алдаа гарлаа"
+      message: 'Алдаа гарлаа'
       variant: error
     variant: error
 
 states:
   - id: prefilled
-    description: "Screen loads with tasker info card and task details prefilled from previous booking (category, description, location, schedule, budget)"
+    description: 'Screen loads with tasker info card and task details prefilled from previous booking (category, description, location, schedule, budget)'
     components_visible: [COMP-SPLITCARD, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: editing
-    description: "User modifies prefilled fields (schedule or budget); inline validation active"
+    description: 'User modifies prefilled fields (schedule or budget); inline validation active'
     components_visible: [COMP-SPLITCARD, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: submitting
-    description: "User taps submit; POST /tasks and POST /bookings in progress; button shows loading"
+    description: 'User taps submit; POST /tasks and POST /bookings in progress; button shows loading'
     components_visible: [COMP-SPLITCARD, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: success
-    description: "Rebook task created and booking ready; navigates to Booking Confirmation (SCR-CUST-014)"
+    description: 'Rebook task created and booking ready; navigates to Booking Confirmation (SCR-CUST-014)'
     components_visible: [COMP-SPLITCARD]
     components_hidden: [COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST]
 
   - id: error_network
-    description: "Network error during submission; error toast with retry"
-    components_visible: [COMP-SPLITCARD, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST]
+    description: 'Network error during submission; error toast with retry'
+    components_visible:
+      [COMP-SPLITCARD, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST]
     components_hidden: []
 
 copy:
   - key: page_title
-    mn: "Дахин захиалах"
-    en: "Rebook"
+    mn: 'Дахин захиалах'
+    en: 'Rebook'
     max_chars: 20
 
   - key: section_tasker
-    mn: "Өмнөх гүйцэтгэгч"
-    en: "Previous Tasker"
+    mn: 'Өмнөх гүйцэтгэгч'
+    en: 'Previous Tasker'
     max_chars: 25
 
   - key: section_task
-    mn: "Даалгаврын мэдээлэл"
-    en: "Task Details"
+    mn: 'Даалгаврын мэдээлэл'
+    en: 'Task Details'
     max_chars: 25
 
   - key: label_schedule
-    mn: "Шинэ товлосон цаг"
-    en: "New Schedule"
+    mn: 'Шинэ товлосон цаг'
+    en: 'New Schedule'
     max_chars: 20
 
   - key: label_budget
-    mn: "Төсөв"
-    en: "Budget"
+    mn: 'Төсөв'
+    en: 'Budget'
     max_chars: 15
 
   - key: prefilled_note
-    mn: "Өмнөх захиалгаас урьдчилж бөглөсөн. Та засварлах боломжтой."
-    en: "Prefilled from previous booking. You can edit."
+    mn: 'Өмнөх захиалгаас урьдчилж бөглөсөн. Та засварлах боломжтой.'
+    en: 'Prefilled from previous booking. You can edit.'
     max_chars: 70
 
   - key: cta_submit
-    mn: "Захиалга үргэлжлүүлэх"
-    en: "Continue to Booking"
+    mn: 'Захиалга үргэлжлүүлэх'
+    en: 'Continue to Booking'
     max_chars: 25
 
   - key: cta_back
-    mn: "Буцах"
-    en: "Back"
+    mn: 'Буцах'
+    en: 'Back'
     max_chars: 20
 
   - key: error_toast
-    mn: "Дахин захиалахад алдаа гарлаа"
-    en: "Failed to create rebook"
+    mn: 'Дахин захиалахад алдаа гарлаа'
+    en: 'Failed to create rebook'
     max_chars: 40
 
   - key: validation_budget_low
-    mn: "Төсөв ₮1,001-ээс дээш байх ёстой"
-    en: "Budget must be above ₮1,001"
+    mn: 'Төсөв ₮1,001-ээс дээш байх ёстой'
+    en: 'Budget must be above ₮1,001'
     max_chars: 40
 
 api_endpoints:
   - method: POST
-    path: "/tasks"
-    purpose: "Create a new task from the rebook shortcut with prefilled data from previous booking"
+    path: '/tasks'
+    purpose: 'Create a new task from the rebook shortcut with prefilled data from previous booking'
   - method: POST
-    path: "/bookings"
-    purpose: "Create booking directly with the previously hired tasker"
+    path: '/bookings'
+    purpose: 'Create booking directly with the previously hired tasker'
 
 analytics_events:
-  - event: "rebook_shortcut_viewed"
-    trigger: "Rebook screen becomes visible with prefilled data"
-  - event: "rebook_fields_edited"
-    trigger: "User modifies any prefilled field"
-  - event: "rebook_submitted"
-    trigger: "User taps submit and task/booking creation begins"
-  - event: "rebook_success"
-    trigger: "Rebook task and booking created successfully"
-  - event: "rebook_error"
-    trigger: "Network error during rebook submission"
+  - event: 'rebook_shortcut_viewed'
+    trigger: 'Rebook screen becomes visible with prefilled data'
+  - event: 'rebook_fields_edited'
+    trigger: 'User modifies any prefilled field'
+  - event: 'rebook_submitted'
+    trigger: 'User taps submit and task/booking creation begins'
+  - event: 'rebook_success'
+    trigger: 'Rebook task and booking created successfully'
+  - event: 'rebook_error'
+    trigger: 'Network error during rebook submission'
 
 acceptance_criteria:
-  - "Screen prefills task details from previous booking: category, description, location, schedule, and budget"
-  - "Tasker info card is read-only showing avatar, name, rating, and verification badge"
-  - "Schedule date picker has minimum date of tomorrow"
-  - "Budget input validates minimum of ₮1,001 per REQ-TASK-01"
-  - "Submit creates both a new task and booking in sequence per REQ-BOOK-07"
-  - "On success, navigates via push to Booking Confirmation (SCR-CUST-014)"
-  - "Back button navigates via pop to Booking Detail (SCR-CUST-017)"
-  - "Network error shows error toast with retry"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
-  - "Date format follows YYYY.MM.DD Mongolian convention"
-  - "Currency format follows ₮XX,XXX convention"
+  - 'Screen prefills task details from previous booking: category, description, location, schedule, and budget'
+  - 'Tasker info card is read-only showing avatar, name, rating, and verification badge'
+  - 'Schedule date picker has minimum date of tomorrow'
+  - 'Budget input validates a minimum of ₮1,001 when budget mode is selected'
+  - 'Submit creates the rebook flow artifacts in sequence and pre-fills the prior context'
+  - 'On success, navigates via push to Booking Confirmation (SCR-CUST-014)'
+  - 'Back button navigates via pop to Booking Detail (SCR-CUST-017)'
+  - 'Network error shows error toast with retry'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'
+  - 'Date format follows YYYY.MM.DD Mongolian convention'
+  - 'Currency format follows ₮XX,XXX convention'

@@ -1,43 +1,43 @@
 # Screen Spec: Dispute — Status
 screen_id: SCR-CUST-025
-name: "Dispute — Status"
-route: "/(customer)/disputes/:disputeId"
+name: 'Dispute — Status'
+route: '/(customer)/disputes/:disputeId'
 role: [customer]
-phase: "0-1"
+phase: '0-1'
 template: detail
-figma_page: "Customer/Dispute Status"
-feature: "dispute"
+figma_page: 'Customer/Dispute Status'
+feature: 'dispute'
 
 layout:
   template: detail
   density: default
-  structure: "safe_area -> nav_header(back + title) -> scrollview(status_header + dispute_summary + evidence_list + resolution_details)"
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(status_header + dispute_summary + evidence_list + resolution_details)'
 
 components:
   - id: COMP-STATUSBADGE
-    usage: "Prominent status badge showing current dispute state (open, escalated, resolved, closed)"
+    usage: 'Prominent status badge showing current dispute state (open, escalated, resolved, closed)'
     props:
       status: open
       size: md
     variant: open
 
   - id: COMP-LOADINGSKELETON
-    usage: "Detail skeleton placeholder during initial data fetch"
+    usage: 'Detail skeleton placeholder during initial data fetch'
     props:
       variant: detail
       count: 1
     variant: detail
 
   - id: COMP-TOAST
-    usage: "Error toast on network failure"
+    usage: 'Error toast on network failure'
     props:
-      message: "Алдаа гарлаа"
+      message: 'Алдаа гарлаа'
       variant: error
     variant: error
 
 states:
   - id: loading_initial
-    description: "First load; skeleton shown while GET /disputes/:id is in progress"
+    description: 'First load; skeleton shown while GET /disputes/:id is in progress'
     components_visible: [COMP-LOADINGSKELETON]
     components_hidden: [COMP-STATUSBADGE, COMP-TOAST]
 
@@ -47,136 +47,136 @@ states:
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: escalated
-    description: "Dispute has been escalated by admin for further investigation; escalation note visible"
+    description: 'Dispute has been escalated by admin for further investigation; escalation note visible'
     components_visible: [COMP-STATUSBADGE]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: resolved_customer
-    description: "Dispute resolved in favor of the customer; resolution details and outcome visible"
+    description: 'Dispute resolved in favor of the customer; resolution details and outcome visible'
     components_visible: [COMP-STATUSBADGE]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: resolved_tasker
-    description: "Dispute resolved in favor of the tasker; resolution details and outcome visible"
+    description: 'Dispute resolved in favor of the tasker; resolution details and outcome visible'
     components_visible: [COMP-STATUSBADGE]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: closed_insufficient
-    description: "Dispute auto-closed due to insufficient evidence (evidence not provided within 24 hours after reminder)"
+    description: 'Dispute auto-closed due to insufficient evidence (evidence not provided within 24 hours after reminder)'
     components_visible: [COMP-STATUSBADGE]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: error_network
-    description: "Network error on dispute data fetch; error toast with retry"
+    description: 'Network error on dispute data fetch; error toast with retry'
     components_visible: [COMP-TOAST]
     components_hidden: [COMP-STATUSBADGE, COMP-LOADINGSKELETON]
 
 copy:
   - key: page_title
-    mn: "Маргааны төлөв"
-    en: "Dispute Status"
+    mn: 'Маргааны төлөв'
+    en: 'Dispute Status'
     max_chars: 20
 
   - key: section_status
-    mn: "Төлөв"
-    en: "Status"
+    mn: 'Төлөв'
+    en: 'Status'
     max_chars: 15
 
   - key: section_summary
-    mn: "Маргааны товч"
-    en: "Dispute Summary"
+    mn: 'Маргааны товч'
+    en: 'Dispute Summary'
     max_chars: 20
 
   - key: section_evidence
-    mn: "Илгээсэн нотлох баримт"
-    en: "Submitted Evidence"
+    mn: 'Илгээсэн нотлох баримт'
+    en: 'Submitted Evidence'
     max_chars: 30
 
   - key: section_resolution
-    mn: "Шийдвэр"
-    en: "Resolution"
+    mn: 'Шийдвэр'
+    en: 'Resolution'
     max_chars: 15
 
   - key: status_open
-    mn: "Нээлттэй"
-    en: "Open"
+    mn: 'Нээлттэй'
+    en: 'Open'
     max_chars: 15
 
   - key: status_escalated
-    mn: "Мөрдөн шалгаж байна"
-    en: "Escalated"
+    mn: 'Мөрдөн шалгаж байна'
+    en: 'Escalated'
     max_chars: 25
 
   - key: status_resolved_customer
-    mn: "Хэрэглэгчийн талд шийдэгдсэн"
-    en: "Resolved for Customer"
+    mn: 'Хэрэглэгчийн талд шийдэгдсэн'
+    en: 'Resolved for Customer'
     max_chars: 35
 
   - key: status_resolved_tasker
-    mn: "Гүйцэтгэгчийн талд шийдэгдсэн"
-    en: "Resolved for Tasker"
+    mn: 'Гүйцэтгэгчийн талд шийдэгдсэн'
+    en: 'Resolved for Tasker'
     max_chars: 35
 
   - key: status_closed_insufficient
-    mn: "Нотлох баримт хангалтгүй — хаагдсан"
-    en: "Closed — Insufficient Evidence"
+    mn: 'Нотлох баримт хангалтгүй — хаагдсан'
+    en: 'Closed — Insufficient Evidence'
     max_chars: 40
 
   - key: open_description
-    mn: "Таны маргаан админы хянаж байна. Шийдвэр гарахад мэдэгдэл авна."
-    en: "Your dispute is under admin review. You will be notified when a decision is made."
+    mn: 'Таны маргаан админы хянаж байна. Шийдвэр гарахад мэдэгдэл авна.'
+    en: 'Your dispute is under admin review. You will be notified when a decision is made.'
     max_chars: 100
 
   - key: escalated_description
-    mn: "Маргааныг нэмэлт шалгалтад шилжүүлсэн. Удахгүй хариу өгнө."
-    en: "Dispute has been escalated for further investigation. A response will follow."
+    mn: 'Маргааныг нэмэлт шалгалтад шилжүүлсэн. Удахгүй хариу өгнө.'
+    en: 'Dispute has been escalated for further investigation. A response will follow.'
     max_chars: 100
 
   - key: resolved_customer_description
-    mn: "Маргаан таны талд шийдэгдлээ. Нөгөө талд зөрчлийн тэмдэглэл хийгдсэн."
-    en: "Dispute resolved in your favor. A misconduct note has been added to the other party."
+    mn: 'Маргаан таны талд шийдэгдлээ. Нөгөө талд зөрчлийн тэмдэглэл хийгдсэн.'
+    en: 'Dispute resolved in your favor. A misconduct note has been added to the other party.'
     max_chars: 100
 
   - key: resolved_tasker_description
-    mn: "Маргаан гүйцэтгэгчийн талд шийдэгдлээ."
-    en: "Dispute resolved in favor of the Tasker."
+    mn: 'Маргаан гүйцэтгэгчийн талд шийдэгдлээ.'
+    en: 'Dispute resolved in favor of the Tasker.'
     max_chars: 60
 
   - key: closed_insufficient_description
-    mn: "Нотлох баримт 24 цагийн дотор ирүүлээгүй тул маргаан хаагдлаа."
-    en: "Dispute closed because evidence was not provided within 24 hours."
+    mn: 'Нотлох баримт 24 цагийн дотор ирүүлээгүй тул маргаан хаагдлаа.'
+    en: 'Dispute closed because evidence was not provided within 24 hours.'
     max_chars: 80
 
   - key: phase1_note
-    mn: "Маргаан нь зөвхөн зуучлалын шинжтэй. Мөнгөн нөхөн төлбөр олгогдохгүй."
-    en: "Disputes are evidence-only mediation. No monetary compensation is issued."
+    mn: 'Маргаан нь зөвхөн зуучлалын шинжтэй. Мөнгөн нөхөн төлбөр олгогдохгүй.'
+    en: 'Disputes are evidence-only mediation. No monetary compensation is issued.'
     max_chars: 80
 
   - key: error_toast
-    mn: "Маргааны мэдээлэл ачааллахад алдаа гарлаа"
-    en: "Failed to load dispute details"
+    mn: 'Маргааны мэдээлэл ачааллахад алдаа гарлаа'
+    en: 'Failed to load dispute details'
     max_chars: 50
 
 api_endpoints:
   - method: GET
-    path: "/disputes/:id"
-    purpose: "Fetch dispute details including status, evidence, and resolution outcome"
+    path: '/disputes/:id'
+    purpose: 'Fetch dispute details including status, evidence, and resolution outcome'
 
 analytics_events:
-  - event: "dispute_status_viewed"
-    trigger: "Screen becomes visible with dispute data loaded"
-  - event: "dispute_status_refreshed"
-    trigger: "User pulls to refresh dispute status"
+  - event: 'dispute_status_viewed'
+    trigger: 'Screen becomes visible with dispute data loaded'
+  - event: 'dispute_status_refreshed'
+    trigger: 'User pulls to refresh dispute status'
 
 acceptance_criteria:
-  - "Initial load shows detail skeleton matching content layout"
+  - 'Initial load shows detail skeleton matching content layout'
   - "Open state shows dispute summary, submitted evidence, and 'under review' messaging"
   - "Escalated state shows escalation note with 'further investigation' messaging"
-  - "Resolved states show resolution details: resolved for customer shows misconduct note acknowledgment; resolved for tasker shows outcome"
-  - "Closed insufficient state explains the 24-hour evidence deadline per PRD Section 6.4.6 and REQ-SAFE-10"
-  - "Phase 1 mediation note is always visible: disputes are evidence-only, no monetary compensation per REQ-SAFE-03"
-  - "Submitted evidence (photos, chat excerpts, text) is displayed read-only"
-  - "Back button navigates via pop to Booking Detail (SCR-CUST-017)"
-  - "Deep link from dispute_update push notification lands on this screen"
-  - "Network error shows error toast with retry"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'Resolved states show resolution details: resolved for customer shows misconduct note acknowledgment; resolved for tasker shows outcome'
+  - 'Closed insufficient state explains the 24-hour evidence deadline'
+  - 'Phase 1 mediation note is always visible: disputes are evidence-only, with no monetary compensation promise'
+  - 'Submitted evidence (photos, chat excerpts, text) is displayed read-only'
+  - 'Back button navigates via pop to Booking Detail (SCR-CUST-017)'
+  - 'Deep link from dispute_update push notification lands on this screen'
+  - 'Network error shows error toast with retry'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

@@ -1,158 +1,128 @@
 # Observability Stack
 
-## Architecture
+**Status:** Canonical operational policy  
+**Last updated:** 2026-04-22
 
+## 1. Purpose
+
+Tasky uses Prometheus, Grafana, and Alertmanager for operational telemetry plus backend-exported business metrics for
+launch KPIs. KPI dashboards are not placeholders; they are a launch requirement.
+
+## 2. Stack
+
+```text
+Grafana -> Prometheus -> Alertmanager
+                 ^
+                 |
+        Tasky API /actuator/prometheus
 ```
-┌──────────────┐       ┌──────────────┐       ┌──────────────┐
-│   Grafana    │──────▶│  Prometheus  │──────▶│ Alertmanager │
-│   :3000      │       │   :9090      │       │   :9093      │
-└──────────────┘       └──────┬───────┘       └──────────────┘
-                              │ scrape /actuator/prometheus
-                       ┌──────▼───────┐
-                       │  Tasky API   │
-                       │   app:8080   │
-                       └──────────────┘
-```
 
-- **Prometheus** scrapes the Tasky backend at `app:8080/actuator/prometheus` every 15 seconds, evaluates alert rules, and sends alerts to Alertmanager.
-- **Grafana** visualises metrics from Prometheus. Pre-provisioned with a datasource and the Tasky Overview dashboard.
-- **Alertmanager** receives alerts from Prometheus and routes them to a configurable webhook (or email/Slack).
+- Prometheus scrapes the Tasky backend every 15 seconds.
+- Grafana visualizes operational and business KPI dashboards.
+- Alertmanager routes alert traffic to the configured incident channel.
 
-## Running Locally
+## 3. Running Locally
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.observability.yml up -d
 ```
 
-This starts all infrastructure services **plus** the observability stack. The `app` service must be healthy before Prometheus begins scraping.
+This starts the core infrastructure plus the observability stack. The app must be healthy before Prometheus scrapes it.
 
-## Access URLs
+## 4. Metric Sources Of Truth
 
-| Service      | URL                   | Default credentials |
-| ------------ | --------------------- | ------------------- |
-| Grafana      | http://localhost:3000 | `admin` / `admin`   |
-| Prometheus   | http://localhost:9090 | —                   |
-| Alertmanager | http://localhost:9093 | —                   |
+### 4.1 Operational metrics
 
-Override ports with environment variables: `GRAFANA_PORT`, `PROMETHEUS_PORT`, `ALERTMANAGER_PORT`.
+- `/actuator/prometheus`
+- `/actuator/health`
+- `/actuator/health/liveness`
+- `/actuator/health/readiness`
 
-## Adding to Production
+### 4.2 Business KPI metrics
 
-The observability stack is designed as a Docker Compose overlay. Merge it with the production compose file:
+The seven Phase 1 KPIs must be exported by the backend from canonical events and state transitions. Dashboard-only SQL
+or manual spreadsheet derivations are not sufficient for launch control.
 
-```bash
-docker compose \
-  -f docker-compose.production.yml \
-  -f docker-compose.observability.yml \
-  up -d
-```
+Required conceptual exports align with `docs/METRICS.md`:
 
-For production, set these environment variables before starting:
+- `pilot_eligible_task`
+- `qualified_application`
+- `confirmed_booking`
+- `completed_booking`
+- `intervention`
+- `out_of_area_post_attempted`
+- `out_of_area_waitlist_joined`
 
-```bash
-GRAFANA_ADMIN_USER=<secure-user>
-GRAFANA_ADMIN_PASSWORD=<secure-password>
-ALERT_WEBHOOK_URL=<your-webhook-endpoint>
-```
+## 5. Dashboard Requirements
 
-## Metric Endpoints
+Grafana must include:
 
-The Tasky backend exposes Spring Boot Actuator endpoints:
+### 5.1 Operational dashboard
 
-| Endpoint                     | Purpose                                |
-| ---------------------------- | -------------------------------------- |
-| `/actuator/prometheus`       | Prometheus-format metrics for scraping |
-| `/actuator/health`           | Liveness and readiness probes          |
-| `/actuator/health/liveness`  | Container liveness check               |
-| `/actuator/health/readiness` | Readiness group check                  |
+- API health and readiness
+- HTTP request rate
+- p95 request latency
+- 5xx rate
+- Facebook auth failure posture
+- push / notification delivery posture when relevant
 
-## Dashboards
+### 5.2 Launch KPI dashboard
 
-### Tasky Overview (`tasky-overview`)
+All seven Phase 1 KPIs must be present:
 
-The default dashboard has four rows:
+1. Self-Serve Fulfillment Rate
+2. Qualified Match Rate within 24h
+3. Post -> Confirmed Booking Rate within 48h
+4. Booking Completion Rate
+5. Intervention Rate
+6. Trust Failure Rate
+7. Verification Queue Turnaround
 
-| Row              | Panels                                                                           |
-| ---------------- | -------------------------------------------------------------------------------- |
-| Service Health   | Up status (stat), JVM memory used (time series), HTTP request rate (time series) |
-| API Performance  | Request duration p95 (time series), 5xx error rate (stat with thresholds)        |
-| Authentication   | Auth request rate (time series), circuit breaker state (stat)                    |
-| Business Metrics | Placeholder text panel with instructions to wire custom metrics                  |
+Required supporting views:
 
-**Metric → KPI mapping** (see `docs/METRICS.md` sections 11–12):
+- category as the primary slice
+- district as drilldown
+- median time to first qualified application
+- median posting-to-confirmed-booking time
+- booking failure reasons
+- intervention type and stage breakdowns
 
-| Dashboard panel       | Actuator metric                                              | METRICS.md section  |
-| --------------------- | ------------------------------------------------------------ | ------------------- |
-| Up Status             | `up{job="tasky-api"}`                                        | §12 (API health)    |
-| HTTP Request Rate     | `http_server_requests_seconds_count`                         | §12 (5xx rate)      |
-| Request Duration p95  | `http_server_requests_seconds_bucket`                        | — (operational)     |
-| 5xx Error Rate        | `http_server_requests_seconds_count{status=~"5.."}`          | §12 (5xx rate)      |
-| Auth Request Rate     | `http_server_requests_seconds_count{uri=~"/api/v1/auth/.*"}` | §12 (Facebook auth) |
-| Circuit Breaker State | `resilience4j_circuitbreaker_state`                          | §12 (Facebook auth) |
-
-Business KPI panels are placeholders pending the event metrics pipeline (see below).
-
-## Alert Rules
+## 6. Alert Policy
 
 Alert rules live in `tooling/observability/prometheus/alerts/tasky-alerts.yml`.
 
-### Operational alerts (active)
+### 6.1 Required hard-gate KPI alerts
 
-| Alert                  | Severity | Condition                                          | Response (per PRODUCTION_READINESS.md)              |
-| ---------------------- | -------- | -------------------------------------------------- | --------------------------------------------------- |
-| `APIHealthDown`        | critical | `up{job="tasky-api"} == 0` for 2m                  | SEV-1: freeze deploys, investigate immediately      |
-| `High5xxRate`          | critical | >5% 5xx on `/api/v1/*` for 15m                     | SEV-1: roll back unless cause is isolated           |
-| `FacebookAuthFailures` | critical | >30% error rate on `/api/v1/auth/facebook` for 10m | SEV-1: if real sign-in unavailable for launch users |
+| Alert family        | Condition                                                      |
+| ------------------- | -------------------------------------------------------------- |
+| Qualified match low | threshold breach for Qualified Match Rate within 24h           |
+| Post-to-booking low | threshold breach for Post -> Confirmed Booking Rate within 48h |
+| Intervention high   | threshold breach for Intervention Rate                         |
+| Trust failure high  | threshold breach for Trust Failure Rate                        |
 
-### Product KPI alerts (commented out — pending event metrics pipeline)
+These alerts are required before launch.
 
-These are defined in the alert file as commented-out placeholders with the expected PromQL query pattern. Uncomment each rule once the corresponding custom metric is exported:
+### 6.2 Required operational alerts
 
-| Alert                   | KPI threshold                       | METRICS.md § |
-| ----------------------- | ----------------------------------- | ------------ |
-| `LiquidityScoreLow`     | category liquidity < 50% for 7 days | §11          |
-| `ConversionRateLow`     | task-to-booking < 35% over 28 days  | §11          |
-| `BookingCompletionLow`  | completion rate < 50% over 28 days  | §11          |
-| `ReviewCompletionLow`   | review rate < 70% over 28 days      | §11          |
-| `VerificationQueueSlow` | median turnaround > 24h             | §11          |
-| `DisputeResolutionSlow` | median > 48h                        | §11          |
-| `RepeatBookingLow`      | repeat rate < 15%                   | §11          |
+| Alert family           | Condition                                                  |
+| ---------------------- | ---------------------------------------------------------- |
+| API health down        | backend unavailable or readiness failing                   |
+| High 5xx rate          | sustained elevated server errors on launch-critical routes |
+| Facebook auth failures | real-user sign-in degraded or unavailable                  |
 
-All KPI alerts use `severity: warning`.
+Operational alerts and KPI alerts should route through Alertmanager to the configured incident channel.
 
-### Alert routing
+## 7. File Layout
 
-Alertmanager routes all alerts to a webhook receiver configured via `ALERT_WEBHOOK_URL`. Critical alerts repeat every 1 hour; warning alerts repeat every 4 hours.
-
-To configure email or Slack receivers, edit `tooling/observability/alertmanager/alertmanager.yml` and uncomment the relevant section.
-
-## Adding New Panels
-
-1. Edit `tooling/observability/grafana/dashboards/tasky-overview.json` (or create a new JSON file in the same directory).
-2. Restart Grafana or wait for the provisioning refresh (30 seconds).
-3. Grafana auto-discovers dashboards from `/var/lib/grafana/dashboards/`.
-
-## Adding New Alert Rules
-
-1. Edit `tooling/observability/prometheus/alerts/tasky-alerts.yml` (or add a new `.yml` file in `tooling/observability/prometheus/alerts/`).
-2. Reload Prometheus config: `curl -X POST http://localhost:9090/-/reload` or restart the Prometheus container.
-
-## File Layout
-
-```
+```text
 tooling/observability/
 ├── alertmanager/
-│   └── alertmanager.yml
 ├── grafana/
-│   ├── dashboards/
-│   │   └── tasky-overview.json
-│   └── provisioning/
-│       ├── dashboards/
-│       │   └── dashboard.yml
-│       └── datasources/
-│           └── datasource.yml
 └── prometheus/
-    ├── alerts/
-    │   └── tasky-alerts.yml
-    └── prometheus.yml
 ```
+
+## 8. Policy Notes
+
+- KPI dashboards must exist before launch.
+- Hard-gate alerts are mandatory; monitored metrics do not require paging alerts.
+- The dashboard, alert rules, and metric vocabulary must remain aligned with `docs/METRICS.md`.

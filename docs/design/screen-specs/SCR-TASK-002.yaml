@@ -1,67 +1,59 @@
 # Screen Spec: Task Detail (Tasker)
 screen_id: SCR-TASK-002
-name: "Task Detail (Tasker)"
-route: "/(tasker)/tasks/:taskId"
+name: 'Task Detail (Tasker)'
+route: '/(tasker)/tasks/:taskId'
 role: [tasker]
-phase: "0-1"
+phase: '0-1'
 template: detail
-figma_page: "Tasker/Task Detail Tasker"
-feature: "task-browse"
+figma_page: 'Tasker/Task Detail Tasker'
+feature: 'task-browse'
 
 layout:
   template: detail
   density: default
-  structure: "safe_area -> nav_header(back + title) -> scrollview(task_hero + customer_info + description + photos + location_approximate + schedule_budget + trust_banner) -> sticky_bottom_cta(apply_button)"
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(task_hero + customer_info + description + photos + location_approximate + schedule_budget + trust_banner) -> sticky_bottom_cta(apply_button)'
 
 components:
   - id: COMP-BUTTON
     usage: "Primary CTA at bottom — 'Apply' for verified taskers, 'Get Verified' for unverified"
     props:
-      label: "Анкет илгээх"
+      label: 'Анкет илгээх'
       variant: primary
       size: xl
       disabled: false
     variant: primary
 
-  - id: COMP-BUTTON
-    usage: "Secondary CTA — Message customer about the task"
-    props:
-      label: "Зурвас илгээх"
-      variant: outline
-      size: lg
-    variant: outline
-
   - id: COMP-STATUSBADGE
     usage: "Task status badge showing 'Нээлттэй' (Open)"
     props:
-      status: "open"
-      size: "md"
+      status: 'open'
+      size: 'md'
     variant: open
 
   - id: COMP-PROFILEAVATAR
     usage: "Customer's profile avatar in task hero section"
     props:
-      imageUrl: "customer_avatar_url"
-      size: "md"
+      imageUrl: 'customer_avatar_url'
+      size: 'md'
       isVerified: false
     variant: md
 
   - id: COMP-CATEGORYCHIP
     usage: "Category label chip showing the task's service category"
     props:
-      category: "Цэвэрлэгээ"
+      category: 'Цэвэрлэгээ'
       isActive: true
     variant: active
 
   - id: COMP-TRUSTBANNER
-    usage: "Trust messaging reinforcing platform safety on detail view"
+    usage: 'Trust messaging reinforcing platform safety on detail view'
     props:
       verifiedCount: 128
       completedCount: 540
     variant: compact
 
   - id: COMP-LOADINGSKELETON
-    usage: "Detail skeleton placeholder during initial data fetch"
+    usage: 'Detail skeleton placeholder during initial data fetch'
     props:
       variant: detail
       count: 1
@@ -69,154 +61,188 @@ components:
 
 states:
   - id: loading_initial
-    description: "Task detail is loading — skeleton placeholder shown"
+    description: 'Task detail is loading — skeleton placeholder shown'
     components_visible: [nav_header, loading_skeleton]
-    components_hidden: [task_content, apply_button, message_button, trust_banner]
+    components_hidden: [task_content, apply_button, trust_banner]
 
   - id: viewable_unverified
     description: "Unverified tasker can view task details but cannot apply — CTA says 'Get Verified'"
-    components_visible: [nav_header, task_content, customer_info, photos, location, schedule_budget, trust_banner, verify_cta]
+    components_visible:
+      [
+        nav_header,
+        task_content,
+        customer_info,
+        photos,
+        location,
+        schedule_budget,
+        trust_banner,
+        verify_cta,
+      ]
     components_hidden: [apply_button, already_applied_badge, cap_reached_notice]
 
   - id: apply_verified
-    description: "Verified tasker can view full detail and apply — primary CTA enabled"
-    components_visible: [nav_header, task_content, customer_info, photos, location, schedule_budget, trust_banner, apply_button, message_button]
+    description: 'Verified tasker can view full detail and apply — primary CTA enabled'
+    components_visible:
+      [
+        nav_header,
+        task_content,
+        customer_info,
+        photos,
+        location,
+        schedule_budget,
+        trust_banner,
+        apply_button,
+      ]
     components_hidden: [verify_cta, already_applied_badge, cap_reached_notice]
 
   - id: already_applied
-    description: "Tasker has already applied to this task — apply button replaced with status indicator"
-    components_visible: [nav_header, task_content, customer_info, photos, location, schedule_budget, trust_banner, already_applied_badge, message_button]
+    description: 'Tasker has already applied to this task — apply button replaced with status indicator'
+    components_visible:
+      [
+        nav_header,
+        task_content,
+        customer_info,
+        photos,
+        location,
+        schedule_budget,
+        trust_banner,
+        already_applied_badge,
+      ]
     components_hidden: [apply_button, verify_cta, cap_reached_notice]
 
   - id: cap_reached
-    description: "Task has reached maximum application count — apply button disabled with explanation"
-    components_visible: [nav_header, task_content, customer_info, photos, location, schedule_budget, trust_banner, cap_reached_notice]
+    description: 'Task has reached maximum application count — apply button disabled with explanation'
+    components_visible:
+      [
+        nav_header,
+        task_content,
+        customer_info,
+        photos,
+        location,
+        schedule_budget,
+        trust_banner,
+        cap_reached_notice,
+      ]
     components_hidden: [apply_button, verify_cta, already_applied_badge]
 
   - id: error_network
-    description: "Failed to load task detail — network error with retry"
+    description: 'Failed to load task detail — network error with retry'
     components_visible: [nav_header, error_message, retry_button]
     components_hidden: [task_content, apply_button, trust_banner, loading_skeleton]
 
 copy:
   - key: page_title
-    mn: "Даалгаврын дэлгэрэнгүй"
-    en: "Task Detail"
+    mn: 'Даалгаврын дэлгэрэнгүй'
+    en: 'Task Detail'
     max_chars: 25
 
   - key: apply_button
-    mn: "Анкет илгээх"
-    en: "Apply"
+    mn: 'Анкет илгээх'
+    en: 'Apply'
     max_chars: 15
 
   - key: verify_cta
-    mn: "Баталгаажуулалт хийх"
-    en: "Get Verified"
+    mn: 'Баталгаажуулалт хийх'
+    en: 'Get Verified'
     max_chars: 25
 
-  - key: message_button
-    mn: "Зурвас илгээх"
-    en: "Message"
-    max_chars: 15
-
   - key: budget_label
-    mn: "Төсөв"
-    en: "Budget"
+    mn: 'Төсөв'
+    en: 'Budget'
     max_chars: 10
 
   - key: schedule_label
-    mn: "Хуваарь"
-    en: "Schedule"
+    mn: 'Хуваарь'
+    en: 'Schedule'
     max_chars: 10
 
   - key: location_label
-    mn: "Байршил"
-    en: "Location"
+    mn: 'Байршил'
+    en: 'Location'
     max_chars: 10
 
   - key: location_approximate_note
-    mn: "Ойролцоо байршил (захиалга баталгаажсны дараа тодорхой хаяг харагдана)"
-    en: "Approximate location (exact address shown after booking confirmed)"
+    mn: 'Ойролцоо байршил (захиалга баталгаажсны дараа тодорхой хаяг харагдана)'
+    en: 'Approximate location (exact address shown after booking confirmed)'
     max_chars: 80
 
   - key: description_label
-    mn: "Тайлбар"
-    en: "Description"
+    mn: 'Тайлбар'
+    en: 'Description'
     max_chars: 15
 
   - key: photos_label
-    mn: "Зурагнууд"
-    en: "Photos"
+    mn: 'Зурагнууд'
+    en: 'Photos'
     max_chars: 10
 
   - key: customer_label
-    mn: "Захиалагч"
-    en: "Customer"
+    mn: 'Захиалагч'
+    en: 'Customer'
     max_chars: 15
 
   - key: applicant_count
-    mn: "{count} хүн анкет илгээсэн"
-    en: "{count} applicants"
+    mn: '{count} хүн анкет илгээсэн'
+    en: '{count} applicants'
     max_chars: 30
 
   - key: already_applied_badge
-    mn: "Анкет илгээсэн"
-    en: "Applied"
+    mn: 'Анкет илгээсэн'
+    en: 'Applied'
     max_chars: 15
 
   - key: cap_reached_notice
-    mn: "Анкетын тоо дүүрсэн байна"
-    en: "Application limit reached"
+    mn: 'Анкетын тоо дүүрсэн байна'
+    en: 'Application limit reached'
     max_chars: 30
 
   - key: posted_time
-    mn: "{time} өмнө нийтлэгдсэн"
-    en: "Posted {time} ago"
+    mn: '{time} өмнө нийтлэгдсэн'
+    en: 'Posted {time} ago'
     max_chars: 30
 
   - key: error_network
-    mn: "Интернэт холболтоо шалгана уу"
-    en: "Please check your internet connection"
+    mn: 'Интернэт холболтоо шалгана уу'
+    en: 'Please check your internet connection'
     max_chars: 45
 
   - key: retry
-    mn: "Дахин оролдох"
-    en: "Retry"
+    mn: 'Дахин оролдох'
+    en: 'Retry'
     max_chars: 15
 
 api_endpoints:
   - method: GET
-    path: "/tasks/:id"
-    purpose: "Fetch full task detail including description, photos, location, schedule, budget"
+    path: '/tasks/:id'
+    purpose: 'Fetch full task detail including description, photos, location, schedule, budget'
   - method: POST
-    path: "/tasks/:id/applications"
-    purpose: "Submit application to the task (verified taskers only)"
+    path: '/tasks/:id/applications'
+    purpose: 'Submit application to the task (verified taskers only)'
 
 analytics_events:
-  - event: "task_detail_viewed"
-    trigger: "Task Detail screen becomes visible"
-  - event: "task_apply_tapped"
-    trigger: "Verified tasker taps Apply button"
-  - event: "task_apply_blocked_unverified"
-    trigger: "Unverified tasker taps Get Verified CTA"
-  - event: "task_apply_blocked_cap"
-    trigger: "Apply action blocked because application cap is reached"
-  - event: "task_message_tapped"
-    trigger: "User taps Message button to contact customer"
-  - event: "task_detail_photos_viewed"
-    trigger: "User scrolls through task photos"
+  - event: 'task_detail_viewed'
+    trigger: 'Task Detail screen becomes visible'
+  - event: 'task_apply_tapped'
+    trigger: 'Verified tasker taps Apply button'
+  - event: 'task_apply_blocked_unverified'
+    trigger: 'Unverified tasker taps Get Verified CTA'
+  - event: 'task_apply_blocked_cap'
+    trigger: 'Apply action blocked because application cap is reached'
+  - event: 'task_detail_photos_viewed'
+    trigger: 'User scrolls through task photos'
 
 acceptance_criteria:
-  - "Task detail displays title, description, photos, approximate location, schedule, and budget"
-  - "Location is shown as approximate area (fuzzed 500m) per PRD — exact address only after booking"
+  - 'Task detail displays title, description, photos, approximate location, schedule, and budget'
+  - 'Location is shown as approximate area (fuzzed 500m) per PRD — exact address only after booking'
   - "Verified taskers see enabled 'Анкет илгээх' primary CTA at bottom"
+  - 'Task detail does not expose open-ended pre-booking chat; communication starts with the application flow'
   - "Unverified taskers see 'Баталгаажуулалт хийх' CTA that navigates to Verification Gate (SCR-TASK-003)"
-  - "Tapping Apply for a verified tasker triggers application POST and navigates to Application Sent (SCR-TASK-011)"
+  - 'Tapping Apply for a verified tasker triggers application POST and navigates to Application Sent (SCR-TASK-011)'
   - "Already applied state replaces apply button with 'Анкет илгээсэн' badge"
-  - "Cap reached state disables apply with explanatory notice"
-  - "Customer avatar and name are displayed in customer info section"
-  - "Budget is displayed in ₮XX,XXX format using price_display typography"
-  - "Back button in nav header returns to Task Feed (SCR-TASK-001)"
+  - 'Cap reached state disables apply with explanatory notice'
+  - 'Customer avatar and name are displayed in customer info section'
+  - 'Budget is displayed in ₮XX,XXX format using price_display typography'
+  - 'Back button in nav header returns to Task Feed (SCR-TASK-001)'
   - "Application count is shown (e.g., '5 хүн анкет илгээсэн')"
-  - "Loading state uses detail skeleton matching content layout"
-  - "Network error displays retry button"
+  - 'Loading state uses detail skeleton matching content layout'
+  - 'Network error displays retry button'

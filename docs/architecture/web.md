@@ -1,14 +1,15 @@
 # Tasky Architecture — Web App
 
-Status: canonical architecture contract for `apps/web`.
+Status: derived architecture contract for `apps/web`.
 
 Read this after:
 
 1. `AGENTS.md`
-2. `apps/web/AGENTS.md`
-3. `docs/architecture/web.md` (this file)
-4. `docs/architecture/shared-frontend.md` — only when shared UI/tokens/parity/test naming matter
-5. `docs/architecture/common.md` — only when cross-cutting runtime/dev workflow context matters
+2. `docs/PRD.md` and `docs/STRATEGY.md`
+3. `apps/web/AGENTS.md`
+4. `docs/architecture/web.md` (this file)
+5. `docs/architecture/shared-frontend.md` — only when shared UI/tokens/parity/test naming matter
+6. `docs/architecture/common.md` — only when cross-cutting runtime/dev workflow context matters
 
 ## Scope
 

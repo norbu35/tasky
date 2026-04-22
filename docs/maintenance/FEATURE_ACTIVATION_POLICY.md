@@ -28,7 +28,7 @@ that the product surface is activation-ready.
 | --------------------------- | ------------------------------------------------ | -------------------------------- | ----------------------------------------------------------------------------------- |
 | `escrow_enabled`            | `implemented-gated`                              | `yes, after additional evidence` | Backend and client/runtime paths exist, but launch keeps the path off.              |
 | `lead_fee_enabled`          | `partial`                                        | `no`                             | No confirmed runtime consumer in the current audit.                                 |
-| `subscription_enabled`      | `deferred`                                       | `no`                             | API forward reference plus shell-only client surfaces.                              |
+| `subscription_enabled`      | `deferred`                                       | `no`                             | Draft future contract notes plus shell-only client surfaces.                        |
 | `ai_scope_summary_enabled`  | `partial`                                        | `no`                             | Deterministic summary is live; AI rewrite still lacks a confirmed runtime consumer. |
 | `promoted_listings_enabled` | `partial` with architecture-to-code discrepancy  | `no`                             | No matching backend or migration evidence found in the current sweep.               |
 | `b2b_enabled`               | `deferred` with architecture-to-code discrepancy | `no`                             | No confirmed backend/runtime evidence.                                              |

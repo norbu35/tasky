@@ -1,8 +1,9 @@
 # Tasky Architecture — Shared Frontend Contracts
 
-Status: canonical cross-platform UI contract for `apps/web` and `apps/mobile`.
+Status: derived cross-platform UI contract for `apps/web` and `apps/mobile`.
 
-Read after: `common.md`, the surface-specific doc (`web.md` or `mobile.md`).
+Read after: `docs/PRD.md`, `docs/STRATEGY.md`, the surface-specific doc (`web.md` or `mobile.md`), then `common.md`
+when needed.
 
 ## 1. Scope
 
@@ -10,7 +11,8 @@ This document owns the cross-platform frontend contract: design tokens, componen
 
 ## 2. Design Token Source of Truth
 
-- Canonical design tokens live in `packages/design-tokens`, structured as primitive values, semantic aliases, and platform outputs.
+- The governing design-token source for implementation is `packages/design-tokens`, structured as primitive values,
+  semantic aliases, and platform outputs.
 - Web consumes the token graph via Tailwind/theme variables (`packages/design-tokens/tokens.css` for CSS variables).
 - Mobile consumes the token graph via NativeWind theme bindings and shared shell/primitive adapters.
 - Token contract: all parity components consume the canonical token graph from `packages/design-tokens` via platform outputs.

@@ -1,6 +1,9 @@
 # Screen Graph — Tasky Mobile
 # Navigation graph: transitions, guards, data dependencies
 # Depends on: journey-catalog.yaml, screen-specs/
+# Status: Derived
+# Active scope is any node whose underlying screen spec has `phase: "0-1"`.
+# Phase-gated nodes remain draft / future reference even when they use `SCR-SHARED-*`, `SCR-CUST-*`, or `SCR-TASK-*` ids.
 
 # Navigation model: Expo Router file-based routing
 # Tab groups: (customer) and (tasker) with role-aware switching
@@ -23,9 +26,6 @@ nodes:
       - to: SCR-TASK-001
         type: replace
         guard: 'valid JWT, role == TASKER'
-      - to: SCR-SHARED-004
-        type: replace
-        guard: 'valid JWT, Phase 2, needs OTP migration'
     data_deps: [jwt_token, user_role]
 
   SCR-SHARED-002:
@@ -40,10 +40,7 @@ nodes:
       - to: SCR-TASK-001
         type: replace
         guard: 'auth success, returning tasker'
-      - to: SCR-SHARED-003
-        type: push
-        guard: 'Phase 2+, phone OTP selected'
-    data_deps: [facebook_token, phone_number]
+    data_deps: [facebook_token]
 
   SCR-SHARED-003:
     label: 'OTP Verification'
@@ -450,14 +447,14 @@ nodes:
         guard: 'tap applicant profile'
       - to: SCR-CUST-014
         type: push
-        guard: "tap 'Accept' (Phase 0-1)"
+        guard: "tap 'Select'"
       - to: SCR-CUST-012
         type: modal
-        guard: 'Phase 2, applicant timeout/decline'
+        guard: 'selected tasker declines or response window expires'
       - to: SCR-CUST-009
         type: pop
         guard: 'back'
-    data_deps: [task_id, applications, relevance_scores]
+    data_deps: [task_id, applications]
 
   SCR-CUST-012:
     label: 'Applicant Timeout/Decline'
@@ -473,32 +470,29 @@ nodes:
       - to: SCR-CUST-011
         type: pop
         guard: 'back'
-      - to: SCR-SHARED-010
-        type: push
-        guard: "tap 'Message'"
     data_deps: [tasker_id, tasker_profile, reviews]
 
   SCR-CUST-014:
-    label: 'Booking Confirmation'
+    label: 'Booking Request Confirmation'
     edges:
       - to: SCR-CUST-015
         type: replace
-        guard: 'booking confirmed'
+        guard: 'booking request sent'
       - to: SCR-CUST-011
         type: pop
         guard: 'back'
     data_deps: [task_id, applicant_id, liability_disclaimer]
 
   SCR-CUST-015:
-    label: 'Booking Confirmed Success'
+    label: 'Selection Sent Success'
     edges:
-      - to: SCR-CUST-017
+      - to: SCR-CUST-009
         type: replace
-        guard: "tap 'View Booking'"
-      - to: SCR-CUST-016
+        guard: "tap 'View Task'"
+      - to: SCR-CUST-001
         type: replace
         guard: "tap 'Done'"
-    data_deps: [booking_id]
+    data_deps: [task_id, booking_intent_id]
 
   SCR-CUST-016:
     label: 'Customer Bookings List'
@@ -859,18 +853,15 @@ nodes:
     data_deps: [tasker_stats]
 
   SCR-TASK-017:
-    label: 'Lead Unlock'
+    label: 'Booking Request'
     edges:
       - to: SCR-TASK-012
         type: dismiss
         guard: 'accepted'
-      - to: SCR-P2-001
-        type: push
-        guard: "insufficient credits, tap 'Buy Credits'"
       - to: SCR-TASK-012
         type: dismiss
         guard: 'declined or expired'
-    data_deps: [application_id, lead_cost, credit_balance]
+    data_deps: [booking_intent_id, task_id]
 
   SCR-TASK-018:
     label: 'Privacy Policy'

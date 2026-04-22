@@ -1,14 +1,15 @@
 # Tasky Architecture — Mobile App
 
-Status: canonical architecture contract for `apps/mobile`.
+Status: derived architecture contract for `apps/mobile`.
 
 Read this after:
 
 1. `AGENTS.md`
-2. `apps/mobile/AGENTS.md`
-3. `docs/architecture/mobile.md` (this file)
-4. `docs/architecture/shared-frontend.md` — only when shared UI/tokens/parity/test naming matter
-5. `docs/architecture/common.md` — only when cross-cutting runtime/dev workflow context matters
+2. `docs/PRD.md` and `docs/STRATEGY.md`
+3. `apps/mobile/AGENTS.md`
+4. `docs/architecture/mobile.md` (this file)
+5. `docs/architecture/shared-frontend.md` — only when shared UI/tokens/parity/test naming matter
+6. `docs/architecture/common.md` — only when cross-cutting runtime/dev workflow context matters
 
 ## Scope
 
@@ -28,8 +29,9 @@ This document owns mobile-specific architecture, structural boundaries, and enfo
 
 ## 1. Mobile Layer Model and Structural Contract
 
-This document is the only normative architecture contract for `apps/mobile`.
-Do not treat dated plan or remediation docs as competing sources of truth. If a mobile rule changes, update this document and the enforcing tooling in the same change.
+This document is the derived architecture contract for `apps/mobile`.
+Do not treat dated plan or remediation docs as competing sources of truth. If a mobile rule changes, update this
+document and the enforcing tooling in the same change.
 
 #### 7.7.1 Dependency Flow
 

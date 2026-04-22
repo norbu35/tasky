@@ -1,87 +1,82 @@
 # Tasky Business Strategy & Go-To-Market
 
-## 1. Overview
+**Status:** Canonical  
+**Last updated:** 2026-04-22
 
-Tasky is a launch-first marketplace. The current business commitment is the Phase 1 controlled pilot described in `docs/LAUNCH_ROADMAP.md`. The strategy is to prove trust, liquidity, and operational reliability before expanding into paid rails or adjacent product lines.
+## 1. Strategy Frame
 
-Later phases are not automatic next steps. They are conditional paths that require verified implementation status, test coverage, and an explicit rollout decision. The launch team should treat docs, UI shells, and seeded toggles as research signals, not as proof that a later phase is ready.
+Tasky is a launch-first marketplace. The current business commitment is the Phase 1 pilot defined in `docs/PRD.md`:
+trust-first operations, zero monetization dependency, Bayangol posting only, and a founder-operated rescue backstop.
 
-## 2. Current Strategy: Phase 1 Controlled Pilot
+Later phases remain conditional. UI shells, toggles, and draft docs do not prove readiness.
 
-### 2.1 Objective
+## 2. Phase 1 Pilot Truth
 
-Build enough trust and liquidity for the marketplace to work without monetization.
+### 2.1 Operating boundary
 
-### 2.2 What The Pilot Optimizes For
+- Brand positioning is citywide Ulaanbaatar.
+- Operational pilot truth is **Bayangol-only posting**.
+- Citywide supply is allowed only when taskers explicitly declare willingness to serve Bayangol.
+- Out-of-area customers may browse but are routed to a waitlist that captures both **area** and **category**.
 
-1. Verified supply density in a small launch district.
-2. Fast task posting and booking completion.
-3. Founder-assisted exception handling for unmatched or risky cases.
-4. Stable customer and tasker habits around in-app communication.
+### 2.2 What the pilot optimizes for
 
-### 2.3 Launch Tactics
+1. Qualified applications arriving quickly in Bayangol.
+2. Confirmed bookings from structured category templates.
+3. Jobs that complete without manual rescue.
+4. Trust outcomes strong enough to justify expanding the pilot.
 
-- Start with a small number of categories where the launch baseline is already live.
-- Focus supply acquisition on verified taskers who can accept jobs quickly.
-- Use Facebook channels and local community distribution where the audience already is.
-- Keep the founder visible in ops so unresolved tasks do not become product failures.
-- Use push notifications and in-app messaging to keep contact inside the platform.
+### 2.3 Launch categories
 
-### 2.4 What The Pilot Does Not Optimize For
+The initial liquidity bet is:
 
-- No launch dependency on monetization conversion.
-- No assumption that lead fees, subscriptions, escrow, referrals, B2B, or instant match are ready just because they are mentioned elsewhere.
-- No strategy that requires toggling latent product lines on without implementation work.
+1. Home cleaning
+2. Furniture assembly
+3. Moving help / lifting help
+4. Minor handyman
 
-## 3. Conditional Future Paths
+These categories are safe enough for structured intake, concrete scope fields, and selective external rescue when
+native matching fails.
 
-The table below separates strategic intent from current verified status.
+## 3. Matching And Rescue Model
 
-| Future path | Current verified status | Strategy implication |
-|---|---|---|
-| Phase 2 lead unlock, OTP migration, referrals, DAN fast-path | OTP, referrals, and DAN are deferred; lead fee is partial with no confirmed runtime consumer. | Treat as a build-and-verify program, not a switch to flip. |
-| Phase 3 escrow, wallet, payout processing | Escrow is implemented-gated and must stay off for launch; wallet/payout remain gated behind the launch decision. | Only consider after the launch pilot is stable and the payment path is fully verified. |
-| Subscription products | Deferred in the matrix and API. | Do not plan revenue forecasts around it yet. |
-| B2B Lite and later B2B Managed | Deferred in the matrix and API, with no confirmed runtime evidence. | Keep as a future expansion thesis only. |
-| Promoted listings | Partial, with architecture-to-code discrepancy and no matching backend evidence. | Not activation-ready. |
-| AI scope summary rewrite | Deterministic summaries are launch-live; AI polish has no confirmed runtime consumer. | Keep as optional research, not a launch dependency. |
+### 3.1 Native marketplace first
 
-## 4. Operating Principles
+- Native supply and native booking are the primary path.
+- Multiple applications are allowed and all remain visible to the customer.
+- Self-serve success excludes any system-assisted or manual-assisted rescue.
 
-1. Launch behavior is the only committed product posture today.
-2. A later-phase mention in docs is not a release commitment.
-3. A feature toggle is an operational control, not evidence of product readiness.
-4. If runtime evidence, API contract, and tests do not all line up, the path stays conditional.
-5. Preserve founder control in the pilot until the product shows durable liquidity.
+### 3.2 Assistance model
 
-## 5. Go-To-Market Sequence
+There are three buckets:
 
-### 5.1 Phase 1
+1. Self-serve
+2. System-assisted
+3. Manual-assisted
 
-1. Launch in a constrained district and a constrained category set.
-2. Seed the supply side first, then expand customer acquisition into the same local network.
-3. Keep the booking flow simple: post, apply, confirm, complete, review.
-4. Measure trust outcomes before monetization outcomes.
+Rules:
 
-### 5.2 Phase 2 Candidate Work
+- External distribution is not self-serve.
+- External distribution triggers only after native failure, not by default.
+- The agreed trigger is no qualified application within 12 hours.
+- External distribution is allowed initially only for cleaning, furniture assembly, moving help, and minor handyman.
 
-Only start the Phase 2 build when the launch pilot is stable enough to justify the work. The candidate work should be prioritized by verified implementation status:
+### 3.3 KPI slicing
 
-- Implement OTP migration only when the auth path is ready and tested.
-- Implement lead unlock only when address/contact reveal enforcement is verified.
-- Implement referrals only when attribution and fraud controls are verified.
-- Implement DAN only when the backend and fallback flow are verified.
+- Category is the primary strategic slice for launch KPI decisions.
+- District is a drilldown, not the primary scorecard.
+- Waitlist capture must preserve area and category so expansion decisions have structured demand evidence.
 
-### 5.3 Phase 3+ Candidate Work
+## 4. Go-To-Market Sequence
 
-Escrow, wallet, payout, and subscription should be treated as separate implementation programs, not as a single "monetization toggle" step. Escrow is currently the only implemented-gated monetization path, but it remains off until the product team explicitly decides to move the pilot forward.
+1. Seed verified tasker supply across the city, but activate only Bayangol-serving supply in the pilot.
+2. Acquire customer demand inside Bayangol first.
+3. Use fixed templates and structured pricing to reduce negotiation friction.
+4. Measure native liquidity before leaning on assisted distribution.
+5. Expand only when the hard-gate metrics support it.
 
-## 6. AI-Assisted Solo Ops
+## 5. Strategic Non-Commitments
 
-AI is an execution multiplier for the founder, not a product phase:
-
-1. Verification Copilot: triage the queue by SLA risk and fraud signals.
-2. Dispute Copilot: summarize evidence and draft resolution options.
-3. Supply Activation Copilot: identify district/category gaps and outreach timing.
-4. Retention Copilot: prepare rebook and reactivation messages.
-5. Founder Weekly Brief: generate blockers, risks, and next actions.
+- No launch dependency on credits, subscriptions, referrals, B2B, DAN, OTP primary auth, instant match, or escrow.
+- No strategy that assumes future monetization or future trust rails are already live.
+- No claim that external distribution counts as native marketplace health.

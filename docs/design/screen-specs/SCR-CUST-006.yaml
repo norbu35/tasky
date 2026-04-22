@@ -1,164 +1,233 @@
-# Screen Spec: Post Task — Schedule & Budget
+# Screen Spec: Post Task — Schedule & Pricing
 screen_id: SCR-CUST-006
-name: "Post Task — Schedule & Budget"
-route: "/(customer)/tasks/new/schedule"
+name: 'Post Task — Schedule & Pricing'
+route: '/(customer)/tasks/new/schedule'
 role: [customer]
-phase: "0-1"
+phase: '0-1'
 template: form_wizard
-figma_page: "Customer/Post Task Schedule Budget"
-feature: "task_posting"
+figma_page: 'Customer/Post Task Schedule Pricing'
+feature: 'task_posting'
 
 layout:
   template: form_wizard
   density: default
-  structure: "safe_area -> nav_header(back + title) -> step_indicator(step 5/7) -> scrollview(date_picker + budget_input) -> bottom_nav(back + next)"
+  structure: 'safe_area -> nav_header(back + title) -> step_indicator(step 5/7) -> scrollview(date_picker + pricing_mode + amount_or_quote_fields) -> bottom_nav(back + next)'
 
 components:
   - id: COMP-STEPINDICATOR
-    usage: "Shows step 5 of 7 in the Post Task wizard flow"
+    usage: 'Shows step 5 of 7 in the Post Task wizard flow'
     props:
       currentStep: 5
       totalSteps: 7
-      labels: ["Ангилал", "Маягт", "Зураг", "Байршил", "Хуваарь", "Хянах", "Дуусгах"]
+      labels: ['Ангилал', 'Маягт', 'Зураг', 'Байршил', 'Хуваарь', 'Хянах', 'Дуусгах']
     variant: horizontal
 
   - id: COMP-DATEPICKER
-    usage: "Date and time selector for scheduling the task; minimum date is tomorrow"
+    usage: 'Date and time selector for scheduling the task; minimum date is tomorrow'
     props:
       value: null
-      minDate: "tomorrow"
-      mode: "date_time"
+      minDate: 'tomorrow'
+      mode: 'date_time'
     variant: date_time
 
   - id: COMP-FORMFIELD
-    usage: "Wraps DatePicker and budget Input with labels and inline error"
+    usage: 'Wraps schedule and pricing controls with labels and inline error'
     props:
-      label: "{field_label}"
-      error: "{validation_error}"
+      label: '{field_label}'
+      error: '{validation_error}'
       required: true
     variant: default
 
-  - id: COMP-INPUT
-    usage: "Numeric input for budget amount in MNT with currency prefix"
+  - id: COMP-SEGMENTEDCONTROL
+    usage: 'Pricing mode selector for budget or quote-based posting'
     props:
-      value: ""
-      placeholder: "₮50,000"
-      label: "Төсөв"
+      options: ['Төсөвтэй', 'Үнийн санал авна']
+      value: 'Төсөвтэй'
+    variant: default
+
+  - id: COMP-INPUT
+    usage: 'Numeric input for budget amount in MNT when the customer has a budget'
+    props:
+      value: ''
+      placeholder: '₮50,000'
+      label: 'Төсөв'
       maxLength: 10
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Back and Next navigation buttons in bottom bar"
+    usage: 'Back and Next navigation buttons in bottom bar'
     props:
-      label: "Үргэлжлүүлэх"
+      label: 'Үргэлжлүүлэх'
       variant: primary
       size: lg
     variant: primary
 
 states:
   - id: default
-    description: "Empty form; date picker and budget input shown with defaults; Next disabled"
-    components_visible: [COMP-STEPINDICATOR, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    description: 'Date picker and pricing mode are visible; Next disabled until required values are valid'
+    components_visible:
+      [
+        COMP-STEPINDICATOR,
+        COMP-DATEPICKER,
+        COMP-FORMFIELD,
+        COMP-SEGMENTEDCONTROL,
+        COMP-INPUT,
+        COMP-BUTTON,
+      ]
     components_hidden: []
 
   - id: date_picking
-    description: "User has opened the date/time picker; calendar/time overlay visible"
-    components_visible: [COMP-STEPINDICATOR, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    description: 'User has opened the date/time picker; calendar/time overlay visible'
+    components_visible:
+      [
+        COMP-STEPINDICATOR,
+        COMP-DATEPICKER,
+        COMP-FORMFIELD,
+        COMP-SEGMENTEDCONTROL,
+        COMP-INPUT,
+        COMP-BUTTON,
+      ]
     components_hidden: []
 
   - id: budget_entry
-    description: "User is entering budget amount; keyboard visible with numeric keypad"
-    components_visible: [COMP-STEPINDICATOR, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    description: 'Customer selected budget mode and is entering an amount'
+    components_visible:
+      [
+        COMP-STEPINDICATOR,
+        COMP-DATEPICKER,
+        COMP-FORMFIELD,
+        COMP-SEGMENTEDCONTROL,
+        COMP-INPUT,
+        COMP-BUTTON,
+      ]
+    components_hidden: []
+
+  - id: quote_mode
+    description: 'Customer selected quote mode; budget entry is hidden and quote guidance is shown'
+    components_visible:
+      [COMP-STEPINDICATOR, COMP-DATEPICKER, COMP-FORMFIELD, COMP-SEGMENTEDCONTROL, COMP-BUTTON]
     components_hidden: []
 
   - id: validation_budget_low
-    description: "Budget is below minimum threshold (1,001 MNT); inline error on budget field"
-    components_visible: [COMP-STEPINDICATOR, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    description: 'Budget is below minimum threshold (1,001 MNT); inline error on budget field'
+    components_visible:
+      [
+        COMP-STEPINDICATOR,
+        COMP-DATEPICKER,
+        COMP-FORMFIELD,
+        COMP-SEGMENTEDCONTROL,
+        COMP-INPUT,
+        COMP-BUTTON,
+      ]
     components_hidden: []
 
   - id: validation_schedule_past
-    description: "Selected date/time is in the past; inline error on schedule field"
-    components_visible: [COMP-STEPINDICATOR, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    description: 'Selected date/time is in the past; inline error on schedule field'
+    components_visible:
+      [COMP-STEPINDICATOR, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: []
 
 copy:
   - key: page_title
-    mn: "Хуваарь ба төсөв"
-    en: "Schedule & Budget"
+    mn: 'Хуваарь ба үнэ'
+    en: 'Schedule & Pricing'
     max_chars: 25
 
   - key: step_label
-    mn: "Хуваарь"
-    en: "Schedule"
+    mn: 'Хуваарь'
+    en: 'Schedule'
     max_chars: 15
 
   - key: schedule_label
-    mn: "Хэзээ хийлгэх вэ?"
-    en: "When do you need this done?"
+    mn: 'Хэзээ хийлгэх вэ?'
+    en: 'When do you need this done?'
     max_chars: 30
 
   - key: schedule_helper
-    mn: "Огноо болон цагийг сонгоно уу"
-    en: "Select a date and time"
+    mn: 'Огноо болон цагийг сонгоно уу'
+    en: 'Select a date and time'
     max_chars: 40
 
+  - key: pricing_mode_label
+    mn: 'Үнэ яаж тогтоох вэ?'
+    en: 'How do you want to price this?'
+    max_chars: 35
+
+  - key: pricing_mode_budget
+    mn: 'Төсөвтэй'
+    en: 'I have a budget'
+    max_chars: 20
+
+  - key: pricing_mode_quote
+    mn: 'Үнийн санал авна'
+    en: 'I want quotes'
+    max_chars: 20
+
   - key: budget_label
-    mn: "Төсөв (₮)"
-    en: "Budget (₮)"
+    mn: 'Төсөв (₮)'
+    en: 'Budget (₮)'
     max_chars: 15
 
   - key: budget_placeholder
-    mn: "₮50,000"
-    en: "₮50,000"
+    mn: '₮50,000'
+    en: '₮50,000'
     max_chars: 15
 
   - key: budget_helper
-    mn: "Тогтсон дүн оруулна уу. Хамгийн бага: ₮1,001"
-    en: "Enter a fixed amount. Minimum: ₮1,001"
+    mn: 'Төсөвтэй бол дүн оруулна уу. Хамгийн бага: ₮1,001'
+    en: 'Enter an amount if you have a budget. Minimum: ₮1,001'
     max_chars: 50
 
+  - key: quote_helper
+    mn: 'Үнийн саналын горимд гүйцэтгэгчид бүтэцтэй санал илгээнэ'
+    en: 'In quote mode, taskers send structured offers'
+    max_chars: 60
+
   - key: error_budget_low
-    mn: "Төсөв хамгийн багадаа ₮1,001 байх ёстой"
-    en: "Budget must be at least ₮1,001"
+    mn: 'Төсөв хамгийн багадаа ₮1,001 байх ёстой'
+    en: 'Budget must be at least ₮1,001'
     max_chars: 50
 
   - key: error_schedule_past
-    mn: "Өнгөрсөн огноо/цаг сонгож болохгүй"
-    en: "Cannot select a past date/time"
+    mn: 'Өнгөрсөн огноо/цаг сонгож болохгүй'
+    en: 'Cannot select a past date/time'
     max_chars: 50
 
   - key: cta_next
-    mn: "Үргэлжлүүлэх"
-    en: "Continue"
+    mn: 'Үргэлжлүүлэх'
+    en: 'Continue'
     max_chars: 20
 
   - key: cta_back
-    mn: "Буцах"
-    en: "Back"
+    mn: 'Буцах'
+    en: 'Back'
     max_chars: 10
 
 api_endpoints: []
 
 analytics_events:
-  - event: "schedule_date_selected"
-    trigger: "User selects a date/time from the picker"
-  - event: "budget_entered"
-    trigger: "User enters a budget amount; includes amount value"
-  - event: "schedule_budget_validation_error"
-    trigger: "Validation fails on Next; includes error type (budget_low or schedule_past)"
-  - event: "schedule_budget_completed"
-    trigger: "User taps Next with valid schedule and budget"
+  - event: 'schedule_date_selected'
+    trigger: 'User selects a date/time from the picker'
+  - event: 'budget_entered'
+    trigger: 'User enters a budget amount; includes amount value'
+  - event: 'pricing_mode_selected'
+    trigger: 'User switches between budget mode and quote mode'
+  - event: 'schedule_budget_validation_error'
+    trigger: 'Validation fails on Next; includes error type (budget_low or schedule_past)'
+  - event: 'schedule_budget_completed'
+    trigger: 'User taps Next with valid schedule and pricing inputs'
 
 acceptance_criteria:
   - "StepIndicator shows step 5 of 7 with 'Хуваарь' label highlighted"
-  - "DatePicker enforces minimum date of tomorrow per component rules"
-  - "Date format displays as YYYY.MM.DD per Mongolian convention"
-  - "Budget input uses numeric keypad and formats with comma thousand separator"
-  - "Budget validation enforces minimum of ₮1,001 per REQ-TASK-01"
-  - "Inline validation error appears below budget field for amounts below minimum"
-  - "Inline validation error appears below schedule field for past dates"
-  - "Next button is disabled until both schedule and budget are valid"
-  - "Next button navigates (push) to Review & Submit SCR-CUST-007"
-  - "Back button pops to Location Pin SCR-CUST-005"
-  - "Keyboard-aware scrolling ensures budget field is visible when focused"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'DatePicker enforces minimum date of tomorrow per component rules'
+  - 'Date format displays as YYYY.MM.DD per Mongolian convention'
+  - 'Pricing mode supports both budget and quote-based posting'
+  - 'Budget input uses numeric keypad and formats with comma thousand separator when budget mode is selected'
+  - 'Budget validation enforces minimum of ₮1,001 when budget mode is selected'
+  - 'Inline validation error appears below budget field for amounts below minimum'
+  - 'Inline validation error appears below schedule field for past dates'
+  - 'Next button is disabled until schedule and the selected pricing mode inputs are valid'
+  - 'Next button navigates (push) to Review & Submit SCR-CUST-007'
+  - 'Back button pops to Location Pin SCR-CUST-005'
+  - 'Keyboard-aware scrolling ensures budget field is visible when focused'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

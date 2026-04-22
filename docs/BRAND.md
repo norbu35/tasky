@@ -1,157 +1,58 @@
 # Tasky Brand Identity
 
-**Version:** 2.0
-**Date:** 2026-03-22
-**Status:** Canonical
+**Status:** Derived  
+**Version:** 2.1  
+**Date:** 2026-04-22
 
----
+This document is derived from `docs/PRD.md` and `docs/STRATEGY.md`. It must not override launch product truth.
 
 ## Mission
 
-> "Mongolia's trust-first domestic service marketplace — where verified identity meets community reputation."
+> "A trust-first domestic services marketplace built for Ulaanbaatar."
 
-Tasky solves what Facebook groups and Unegui.mn structurally cannot: verified identity, fair pricing, dispute protection, and reputation that travels with you.
+Tasky solves what Facebook groups and Unegui.mn structurally cannot: verified identity, structured booking records,
+evidence-backed moderation, and reputation that travels with you.
 
----
+## Brand Truth For Phase 1
 
-## Brand Personality
+| Pillar      | What it means                                                                                           |
+| ----------- | ------------------------------------------------------------------------------------------------------- |
+| Trustworthy | Every tasker is ID-verified, bookings are structured, and disputes have moderation and evidence trails. |
+| Local       | Built for Ulaanbaatar, with a live Bayangol posting pilot in Phase 1.                                   |
+| Modern      | Clear, fast, no-clutter product that feels intentional and reliable.                                    |
+| Fair        | Structured pricing with either budget or quotes, no hidden ranking spam, no inflated trust promises.    |
 
-| Pillar          | What It Means                                                                  |
-| --------------- | ------------------------------------------------------------------------------ |
-| **Trustworthy** | Every Tasker is ID-verified. Payments are protected. Disputes have recourse.   |
-| **Local**       | Built for Ulaanbaatar. Mongolian Cyrillic is first-class, not an afterthought. |
-| **Modern**      | Clean, fast, no clutter. Feels like a product people are proud to use.         |
-| **Fair**        | Fixed prices upfront. No foreigner pricing. No pay-to-rank spam.               |
+Phase 1 must not promise payment hold, payment protection, or escrow.
 
----
+## Voice And Tone
 
-## Voice & Tone
+- direct and warm
+- reassuring around trust and reliability
+- concept-first bilingual copy
 
-- **Direct and warm** — not corporate, not cold
-- **Reassuring** — especially around money and strangers in your home
-- **Bilingual parity** — Mongolian copy is written for Mongolian readers, not translated from English
+### Localization policy
+
+- English remains the technical source for keys, code, and fallback structure.
+- Mongolian must not read like a machine-translated afterthought.
+- User-facing copy in each language should read naturally in that language.
 
 ### Microcopy examples
 
-| Moment                   | English                                                     | Notes                          |
-| ------------------------ | ----------------------------------------------------------- | ------------------------------ |
-| Verification complete    | "Identity confirmed. You're good to go."                    | Positive, immediate, no jargon |
-| Booking confirmed        | "Locked in. Your Tasker is on the way."                     | Confident, human               |
-| Dispute opened           | "We've got it. You'll hear back within 24 hours."           | Reassuring, not defensive      |
-| Empty state (no taskers) | "No one nearby yet — try a wider area or a different time." | Honest, gives next step        |
-| Payment held             | "Your payment is held safely until the job is done."        | Trust-building, not alarming   |
+| Moment                 | English                                                                          | Notes                             |
+| ---------------------- | -------------------------------------------------------------------------------- | --------------------------------- |
+| Verification complete  | "Identity confirmed. You're good to go."                                         | Positive and immediate            |
+| Booking confirmed      | "Booked. We'll keep the details and updates in one place."                       | Confident without implying escrow |
+| Bayangol posting limit | "Posting is live in Bayangol for now. Join the waitlist for your area."          | Operationally explicit            |
+| No immediate match     | "No qualified tasker yet. We’ll keep trying and can ask if you want extra help." | Honest rescue posture             |
 
----
+## Trust Promise
 
-## Color Palette — "Тэнгэр" (Sky)
+The customer-facing Phase 1 trust promise is:
 
-Four anchors: Deep Sky Blue `#1B3A5C` · Steppe Gold `#C49A3C` · Open Sky `#6BA3BE` · Clean Off-White `#F9F8F5`
+1. verified identities
+2. structured booking record
+3. evidence trail
+4. disputes and moderation
 
-| Token          | Hex       | Role            | Rationale                                                                                                          |
-| -------------- | --------- | --------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `primary`      | `#1B3A5C` | Deep Sky Blue   | Authority and trust. Resonates with Mongolia's "Мөнх хөх тэнгэр" (Eternal Blue Sky). Also used as body text color. |
-| `primary-deep` | `#102638` | Deeper Sky      | Hero text, prominent headers, high-authority UI.                                                                   |
-| `secondary`    | `#8B6914` | Steppe Gold     | Star ratings, pricing, warm CTAs. Evokes the Mongolian steppe and adds warmth to the blue authority.               |
-| `accent`       | `#6BA3BE` | Open Sky        | Highlights, links, interactive accents. Light, airy, modern.                                                       |
-| `background`   | `#F9F8F5` | Clean Off-White | Clean, bright surface. Professional without being sterile.                                                         |
-| `trust`        | `#3568A1` | Blue            | Trust badges, authority indicators. Derived from primary hue at higher saturation.                                 |
-| `verified`     | `#469178` | Sage Emerald    | Verification badge. Semantic green for "safe/confirmed" — independent of brand palette.                            |
-| `danger`       | `#EF4444` | Red             | Errors and destructive actions only. Never used for branding.                                                      |
-
-### Dark theme
-
-Deep sky base (`212 35% 6%`) with warm foreground (`40 30% 88%`). Brand colors increase lightness to ~55-60% and slightly desaturate to avoid glare on dark surfaces. The steppe gold secondary warms up slightly and the open sky accent remains recognizable.
-
----
-
-## Typography
-
-| Role                  | Font              | Weight  | Min Size              |
-| --------------------- | ----------------- | ------- | --------------------- |
-| Display / Headlines   | Manrope           | 600–700 | 24px                  |
-| Body / Long-form text | Plus Jakarta Sans | 400–600 | **16px** (hard floor) |
-| UI / Badges / Meta    | Plus Jakarta Sans | 500–700 | 12px (caption floor)  |
-| Fallback (Cyrillic)   | Roboto            | system  | —                     |
-
-### Mongolian Cyrillic rules
-
-- **Body text size: 16px** — non-negotiable for reading long-term Mongolian content on mobile. However, auxiliary UI components (badges, timestamps) may scale down to 12px/14px using a heavier font weight.
-- **Line-height: 1.6** for multi-line body paragraphs. UI structurals (Buttons, Badges) must use `tight` (1.2–1.3) leading to preserve vertical layout alignment.
-- **Letter-spacing:** Prohibited `(wide tracking > 0em)` universally on sentence-case text. Allow slight tracking (+1px) exclusively on ALL-CAPS microcopy to separate the block forms of Cyrillic caps.
-- **Flush-left alignment** — justified text creates uneven gaps in Mongolian words; always left-align
-- **Font fallback** — Manrope and Plus Jakarta Sans cover the Ү and Ө glyphs; Roboto is listed as a system fallback for edge cases
-
----
-
-## Logo Principles
-
-- **Wordmark:** "Tasky" in Manrope 700, `primary-deep` (`#102638`)
-- **Don't use:** literal houses, hammers, generic checkmark shields, culturally specific symbols
-
----
-
-## Recognition Marker — Hand-drawn Checkmark
-
-A gestural, slightly imperfect single-stroke checkmark in `verified` sage emerald (`#469178`). This is Tasky's signature mark — used across all surfaces to create brand recognition.
-
-**The mark:** A hand-drawn checkmark rendered as an SVG path with `stroke-linecap: round` and `stroke-linejoin: round`. Not a geometric checkbox — a confident, human stroke with slight thickness variation.
-
-**Variations:**
-
-- **Standard** — single confident stroke, 3-4px weight. Primary usage.
-- **Inline** — smaller, lighter (2-3px). Used within text or UI elements.
-- **Emphasis** — double stroke (second at 40% opacity). For marketing hero moments.
-
-**Where to use:**
-
-- Section punctuation on landing pages (after headlines)
-- Task completion states in-app
-- Marketing card accents (corner or bottom-right, low opacity)
-- Social media watermarks
-- Photo overlays on marketing imagery
-
-**Rules:**
-
-- Always `verified` color (`#469178`) — never primary, accent, or secondary
-- Never fill the checkmark — stroke only
-- Minimum size: 16px
-- On dark backgrounds: use at 100% opacity. On light backgrounds: 60-80% opacity for subtlety.
-- Maximum one checkmark per visible viewport area — sparse, not patterned
-
----
-
-## Verification System
-
-The verification badge is the primary trust signal on every Tasker profile. In the current baseline it reflects manual review of government ID evidence; a DAN/KHUR fast-path may be layered on in later phases. Its visual treatment must communicate **government-ID-backed confidence**, not just platform self-certification.
-
-| State      | Color Token          | Label                           |
-| ---------- | -------------------- | ------------------------------- |
-| Verified   | `verified` (#469178) | "Баталгаажсан" / Verified       |
-| Pending    | `accent` (#6BA3BE)   | "Хянагдаж байна" / Under Review |
-| Unverified | `chip-inactive`      | (no badge shown)                |
-
-Phase note: manual verification is canonical for Phase 0-1; DAN/E-Mongolia fast-path remains a later-phase enhancement.
-
-The badge must appear:
-
-1. On every search result card (anchored to the avatar)
-2. At the top of the Tasker profile page
-3. In the booking confirmation screen
-
----
-
-## Photography & Illustration
-
-- **Photography:** Real urban homes and professional workers. Warm-lit, candid, not staged global stock.
-- **Illustration:** Flat geometric using `primary-deep` + `secondary` palette. No gradients in illustrations — gradients are reserved for UI chrome.
-- **Asset naming:** `hero-illustration.webp`, `auth-bg.webp`, `category-{slug}.webp`
-- **Performance:** All images served as `.webp`. Target < 150 KB for above-the-fold assets (20 Mbps mobile constraint).
-
----
-
-## What We Are Not
-
-- Not a generic SaaS landing page with blurred gradient blobs
-- Not a copy of TaskRabbit with Mongolian text
-- Not a culturally themed brand — no ethnic motifs, no folklore decoration
-- Not a fintech app that sacrifices warmth for authority
+Future trust enhancements such as escrow or payment protection must be described only as future-state concepts, never as
+current launch truth.

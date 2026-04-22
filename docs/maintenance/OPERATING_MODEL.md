@@ -1,6 +1,6 @@
 # Maintenance Operating Model
 
-Last updated: 2026-04-21
+Last updated: 2026-04-22
 
 ## Scope
 
@@ -8,40 +8,47 @@ Tasky is operated as a maintenance-and-extension monorepo, not a greenfield task
 
 ## Source Of Truth
 
-- Product: `docs/PRD.md`
-- Technical: `docs/architecture/AGENTS.md`, then the smallest relevant split architecture document, then `docs/openapi/openapi.yaml` (canonical). Use `docs/API.yaml` (generated compatibility artifact) only when a bundled single-file contract is required.
-- Design: canonical sources under `docs/design/`
-- Operational runbooks: `docs/maintenance/STAGING_RUNBOOK.md`, `docs/maintenance/STAGING_TOGGLE_POSTURE.md`, `docs/maintenance/STAGING_SEED_DATA.md`
-- Launch readiness: `docs/maintenance/PRODUCTION_READINESS.md`, `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`
-- Historical plans/specs: `archive/greenfield-docs/`
+- Product truth: `docs/PRD.md`
+- Strategy and pilot truth: `docs/STRATEGY.md`
+- Governance and operational policy: relevant `docs/maintenance/*.md`
+- Derived implementation design: `docs/architecture/AGENTS.md`, then the smallest relevant architecture doc
+- Active API contract: `docs/openapi/openapi.yaml`
+- Generated compatibility contract: `docs/API.yaml`
+- Derived brand and UX detail: `docs/BRAND.md`, `docs/design/**`
+- Historical reference only: `archive/**`
+
+Design is not canonical. `docs/API.yaml` is generated-only and carries no independent authority.
 
 ## Read Order
 
 When a maintenance task spans multiple document families, read them in this order:
 
-1. Product intent and constraints from `docs/PRD.md`.
-2. Technical baseline from `docs/architecture/AGENTS.md`, then the smallest relevant split architecture document, then `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml`. Use `docs/API.yaml` only when a bundled single-file contract is required.
-3. Design authority from canonical `docs/design/` sources.
-4. Launch readiness from `docs/maintenance/PRODUCTION_READINESS.md` and `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`.
-5. Archive material only for historical context, never as live authority.
+1. Product intent and launch constraints from `docs/PRD.md`.
+2. Market and pilot strategy from `docs/STRATEGY.md`.
+3. Relevant maintenance policy docs for governance, readiness, or operational posture.
+4. The smallest relevant derived architecture document routed by `docs/architecture/AGENTS.md`.
+5. `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml` only when the request changes request/response contracts.
+6. Design docs only for derived UX detail.
+7. Archive material only for history, never as live authority.
 
 ## Planning Workflow
 
-1. Capture requirement and constraints from user, product, or issue-tracker direction.
-2. Write or update a scoped execution brief in the active work surface used by the team.
-3. Define entry/exit criteria and explicit verification commands.
-4. Execute in resumable checkpoints with reviewable commits.
+1. Capture requirement and constraints from the user, product direction, or issue tracker.
+2. Confirm governing truth in PRD, strategy, and the relevant maintenance policy before proposing structural changes.
+3. Write or update a scoped execution brief in the active work surface used by the team.
+4. Define entry criteria, exit criteria, and explicit verification commands.
+5. Execute in resumable checkpoints with reviewable commits.
 
 ## Implementation Workflow
 
 1. Pick the next approved task from the active issue or execution brief.
-2. Apply changes across required layers, API-first when contracts change.
-3. Verify locally before claiming completion.
-4. Commit with explicit scope and evidence-backed verification notes.
+2. Apply changes across required layers, contract-first when request/response behavior changes.
+3. Verify locally at the appropriate baseline before claiming completion.
+4. Record the evidence that matches the gate you are invoking.
 
-## Verification Baseline
+## Verification Model
 
-Trusted maintenance gates:
+### Local baseline
 
 ```bash
 tooling/scripts/check-cleanup-gate.sh
@@ -50,7 +57,7 @@ pnpm -r typecheck
 pnpm -r test
 ```
 
-Boundary enforcement additions:
+### Boundary and drift checks
 
 ```bash
 ./gradlew --no-daemon :services:api:architectureTest
@@ -59,22 +66,23 @@ pnpm sdk:drift
 python3 tooling/scripts/validate-schema-parity.py
 ```
 
-> `architectureTest` runs all `*ArchitectureTest` and `*BoundaryTest` classes. The full set:
-> `BackendArchitectureTest`, `AudienceCompositionBoundaryTest`, `AutomationContractBoundaryTest`,
-> `ProjectionBoundaryTest`, `ProviderBoundaryTest`, `PublicPortBoundaryTest`, `RuntimeBoundaryTest`,
-> `WorkflowBoundaryTest`.
+### CI and release gates
 
-> `validate-schema-parity.py` compares the curated schema inventory (`tooling/config/expected-schema.json`)
-> against actual Flyway migrations. Fails on table or column drift. Run with `--update-expected` when
-> adding a new migration to regenerate the expected inventory.
+- PR CI truth: `quality-gates.yml`
+- Release gate truth: `release-gate.yml`
+- Nightly extended regression: `nightly-regression` plus `./gradlew gateRegression`
+- Full extended suite: `./gradlew gateFull`
+
+`gateSmoke` remains a useful local smoke command, but it is not the singular governing verification surface.
 
 ## Documentation Policy
 
-- Keep live operational docs in `docs/`.
-- Keep live architecture split by responsibility under `docs/architecture/`.
+- Keep live governing docs in `docs/`.
+- Keep live derived architecture split by responsibility under `docs/architecture/`.
+- Keep live derived design detail under `docs/design/`.
+- Mark generated artifacts as generated and refresh them in the same change as their source.
 - Move superseded plan/spec material to `archive/greenfield-docs/`.
-- Decide whether a document is canonical, local-router, compatibility alias, operational, or archive before editing it.
-- When a doc is archived or replaced, update root guidance and local agent discovery surfaces in the same change.
+- When a doc is archived or replaced, update root guidance and local discovery surfaces in the same change.
 
 ## Archive Policy
 

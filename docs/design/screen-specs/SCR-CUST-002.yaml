@@ -1,37 +1,37 @@
 # Screen Spec: Post Task — Category Selection
 screen_id: SCR-CUST-002
-name: "Post Task — Category Selection"
-route: "/(customer)/tasks/new/category"
+name: 'Post Task — Category Selection'
+route: '/(customer)/tasks/new/category'
 role: [customer]
-phase: "0-1"
+phase: '0-1'
 template: feed_list
-figma_page: "Customer/Post Task Category Selection"
-feature: "task_posting"
+figma_page: 'Customer/Post Task Category Selection'
+feature: 'task_posting'
 
 layout:
   template: feed_list
   density: default
-  structure: "safe_area -> nav_header(back + title) -> step_indicator(step 1/7) -> scrollview(category_grid)"
+  structure: 'safe_area -> nav_header(back + title) -> step_indicator(step 1/7) -> scrollview(category_grid)'
 
 components:
   - id: COMP-STEPINDICATOR
-    usage: "Shows step 1 of 7 in the Post Task wizard flow"
+    usage: 'Shows step 1 of 7 in the Post Task wizard flow'
     props:
       currentStep: 1
       totalSteps: 7
-      labels: ["Ангилал", "Маягт", "Зураг", "Байршил", "Хуваарь", "Хянах", "Дуусгах"]
+      labels: ['Ангилал', 'Маягт', 'Зураг', 'Байршил', 'Хуваарь', 'Хянах', 'Дуусгах']
     variant: horizontal
 
   - id: COMP-CATEGORYCHIP
-    usage: "Category selection items displayed in a grid; tapping selects and advances"
+    usage: 'Category selection items displayed in a grid; tapping selects and advances'
     props:
-      category: "{category_name}"
+      category: '{category_name}'
       isActive: false
-      onPress: "selectCategory(category_id)"
+      onPress: 'selectCategory(category_id)'
     variant: inactive
 
   - id: COMP-LOADINGSKELETON
-    usage: "Grid skeleton shown while categories load from API"
+    usage: 'Grid skeleton shown while categories load from API'
     props:
       variant: card
       count: 8
@@ -39,66 +39,66 @@ components:
 
 states:
   - id: loading_initial
-    description: "GET /categories in progress; skeleton grid displayed"
+    description: 'GET /categories in progress; skeleton grid displayed'
     components_visible: [COMP-STEPINDICATOR, COMP-LOADINGSKELETON]
     components_hidden: [COMP-CATEGORYCHIP]
 
   - id: loaded
-    description: "Categories fetched and rendered as tappable chips/cards in grid"
+    description: 'Categories fetched and rendered as tappable chips/cards in grid'
     components_visible: [COMP-STEPINDICATOR, COMP-CATEGORYCHIP]
     components_hidden: [COMP-LOADINGSKELETON]
 
   - id: error_network
-    description: "GET /categories failed; error state with retry"
+    description: 'GET /categories failed; error state with retry'
     components_visible: [COMP-STEPINDICATOR]
     components_hidden: [COMP-CATEGORYCHIP, COMP-LOADINGSKELETON]
 
 copy:
   - key: page_title
-    mn: "Ангилал сонгох"
-    en: "Select Category"
+    mn: 'Ангилал сонгох'
+    en: 'Select Category'
     max_chars: 20
 
   - key: step_label
-    mn: "Ангилал"
-    en: "Category"
+    mn: 'Ангилал'
+    en: 'Category'
     max_chars: 15
 
   - key: instruction
-    mn: "Ямар төрлийн ажил хийлгэх вэ?"
-    en: "What type of task do you need?"
+    mn: 'Ямар төрлийн ажил хийлгэх вэ?'
+    en: 'What type of task do you need?'
     max_chars: 40
 
   - key: error_load_failed
-    mn: "Ангилал ачаалахад алдаа гарлаа"
-    en: "Failed to load categories"
+    mn: 'Ангилал ачаалахад алдаа гарлаа'
+    en: 'Failed to load categories'
     max_chars: 40
 
   - key: cta_retry
-    mn: "Дахин оролдох"
-    en: "Try again"
+    mn: 'Дахин оролдох'
+    en: 'Try again'
     max_chars: 20
 
 api_endpoints:
   - method: GET
-    path: "/categories"
-    purpose: "Fetch active task categories for selection grid"
+    path: '/categories'
+    purpose: 'Fetch active task categories for selection grid'
 
 analytics_events:
-  - event: "post_task_started"
-    trigger: "Screen becomes visible (step 1 of wizard)"
-  - event: "category_selected"
-    trigger: "User taps a category to proceed; includes category_id"
-  - event: "post_task_abandoned"
-    trigger: "User taps back to exit the wizard at step 1"
+  - event: 'post_task_started'
+    trigger: 'Screen becomes visible (step 1 of wizard)'
+  - event: 'category_selected'
+    trigger: 'User taps a category to proceed; includes category_id'
+  - event: 'post_task_abandoned'
+    trigger: 'User taps back to exit the wizard at step 1'
 
 acceptance_criteria:
   - "StepIndicator shows step 1 of 7 with 'Ангилал' label highlighted"
-  - "Categories are displayed in a scrollable grid from GET /categories"
-  - "Each category is a tappable chip/card with category name and icon"
-  - "Tapping a category navigates (push) to Intake Form SCR-CUST-003 with category_id"
-  - "Back button pops to My Tasks SCR-CUST-001"
-  - "Loading state shows skeleton grid matching category card layout"
-  - "Network error shows inline error with retry CTA"
-  - "Only active categories are shown; deactivated categories are hidden per REQ-TASK-11"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'Categories are displayed in a scrollable grid from GET /categories'
+  - 'Each category is a tappable chip/card with category name and icon'
+  - 'Tapping a category navigates (push) to Intake Form SCR-CUST-003 with category_id'
+  - 'Back button pops to My Tasks SCR-CUST-001'
+  - 'Loading state shows skeleton grid matching category card layout'
+  - 'Network error shows inline error with retry CTA'
+  - 'Only active categories are shown; deactivated categories are hidden'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

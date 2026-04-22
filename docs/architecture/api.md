@@ -1,8 +1,10 @@
 # Tasky Architecture — Backend (`services/api`)
 
-Status: architecture reference for `services/api`. Sections are labeled with their truth status (see below).
+Status: derived architecture reference for `services/api`. Sections are labeled with their truth status (see below).
 
-Read after: repo `AGENTS.md`, `services/api/AGENTS.md`, then this file (`api.md`). Use `common.md` and `docs/openapi/AGENTS.md` only for cross-cutting or contract-change context.
+Read after: repo `AGENTS.md`, `docs/PRD.md`, `docs/STRATEGY.md`, relevant maintenance policy, `services/api/AGENTS.md`,
+then this file (`api.md`). Use `common.md` and `docs/openapi/AGENTS.md` only for cross-cutting or contract-change
+context.
 
 > **Reconciliation status: complete.** This document was reconciled with the codebase across
 > five passes (authority/async narrative, security, events/outbox, persistence, verification).
@@ -11,6 +13,9 @@ Read after: repo `AGENTS.md`, `services/api/AGENTS.md`, then this file (`api.md`
 > Run `python3 tooling/scripts/validate-schema-parity.py` to check schema inventory drift against Flyway migrations.
 
 ## Authority Order
+
+Intended product behavior is governed by `docs/PRD.md`, `docs/STRATEGY.md`, and relevant maintenance policy docs.
+This document describes backend implementation design and current implementation reality.
 
 When this document conflicts with other sources, precedence is:
 
@@ -461,7 +466,7 @@ _(No database views or materialized projections currently exist. Admin read mode
    - In Phase 2+, booking confirmation/contact reveal requires successful lead-unlock debit (`LEAD_UNLOCK_ACCEPTED`)
      before customer phone reveal.
    - `POST /bookings/{id}/complete` → `bookings.status=COMPLETED`; `tasks.status=COMPLETED`.
-   - **No-show adjudication path (REQ-BOOK-11)**:
+   - **No-show adjudication path (REQ-P1-BOOK-05 / REQ-P1-BOOK-07)**:
      - Scheduler emits reminder at `confirmed_scheduled_at +10m` and writes `booking_timeline_events` (
        `NO_SHOW_REMINDER_SENT`).
      - Either party may call `POST /bookings/{id}/no-show/flag` at/after `+15m`.
@@ -487,7 +492,7 @@ _(No database views or materialized projections currently exist. Admin read mode
      reveal.
    - Phase 2 lead-unlock pricing resolves from `lead_unlock_prices` by category/district/effective window.
    - Signup bonus credits are granted once per tasker via idempotent transaction key.
-   - Phase 3+: escrow payment initiation/callback, wallet crediting, and payout processing are feature-toggled.
+   - Phase 3+: escrow payment initiation/callback, wallet crediting, and payout processing remain future gated flows.
 6. **No-Applicant Rescue Flow**:
    - If a task has zero eligible applicants for 120 minutes during 08:00-22:00 local time, enqueue rescue actions.
    - Rescue actions include: budget/schedule adjustment prompt, broadened push fanout, and concierge queue placement.
@@ -558,7 +563,7 @@ Standardized error response:
   - **Contact/Address Reveal Rules**:
     - Tasker phone is never exposed to customers in API responses.
     - Customer phone is masked until selected Tasker completes lead unlock in paid phases.
-    - Exact task address is hidden pre-confirmation (and pre-payment commitment in escrow phases).
+    - Exact task address is hidden until confirmed booking.
     - **Phase 0-1 current behavior**: `GET /tasks/{id}` reveals `location_text` (exact address) to any tasker
       whose booking is in `ASSIGNED`, `PAID`, or `COMPLETED` status. No payment gate exists because Phase 0-1
       uses direct settlement only.
@@ -741,17 +746,17 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 | Gate       | Command                    | Purpose                                   |
 | ---------- | -------------------------- | ----------------------------------------- |
-| Smoke      | `./gradlew gateSmoke`      | Fast compile + critical-test subset       |
-| Regression | `./gradlew gateRegression` | Extended test suite for broader coverage  |
+| Smoke      | `./gradlew gateSmoke`      | Fast local confidence                     |
+| Regression | `./gradlew gateRegression` | Extended or nightly coverage              |
 | Full       | `./gradlew gateFull`       | Full suite including PIT mutation testing |
 
 ### CI enforcement (actual wiring)
 
-| CI workflow          | What it runs                                                                                   | When                  |
-| -------------------- | ---------------------------------------------------------------------------------------------- | --------------------- |
-| `quality-gates.yml`  | `:services:api:check` + `jacocoTestCoverageVerification` + `openApiValidate` (not `gateSmoke`) | every PR              |
-| `release-gate.yml`   | migration safety, rollback readiness, performance smoke, E2E smoke (not `gateRegression`)      | deploy (staging/prod) |
-| `nightly-regression` | `gateRegression` + `openApiValidate`                                                           | nightly schedule      |
+| CI workflow          | What it runs                                                                 | When             |
+| -------------------- | ---------------------------------------------------------------------------- | ---------------- |
+| `quality-gates.yml`  | `:services:api:check` + `jacocoTestCoverageVerification` + `openApiValidate` | every PR         |
+| `release-gate.yml`   | migration safety, rollback readiness, performance smoke, E2E smoke           | deploy           |
+| `nightly-regression` | `gateRegression` + `openApiValidate`                                         | nightly schedule |
 
-> `gateSmoke` and `gateRegression` are defined as Gradle tasks but are not currently wired into PR or deploy gates.
-> `gateRegression` runs only in the nightly schedule. The PR gate runs a broader `check` which includes `architectureTest`.
+> `gateSmoke` is a local smoke gate, not the singular PR truth. The PR gate runs the broader `check`, and release and
+> nightly gates are governed by their respective workflows.

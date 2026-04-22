@@ -6,8 +6,7 @@ info:
 
     ## Authentication
     All endpoints (unless noted) require a Bearer JWT in the `Authorization` header.
-    Phase 0-1 auth uses Facebook OAuth (`/auth/facebook`).
-    Phase 2+ adds phone OTP auth (`/auth/otp/request`, `/auth/otp/verify`) and OTP becomes primary for new signups.
+    Current launch auth uses Facebook OAuth (`/auth/facebook`).
 
     ## Pagination
     All list endpoints use **cursor-based pagination**.
@@ -24,16 +23,11 @@ info:
     Critical state-changing endpoints require an `Idempotency-Key` header.
 
     ## Phase Gating
-    Two classes of deferred endpoints exist in this spec:
+    The active spec may include implemented-and-gated endpoints:
     - **Implemented and gated** (`wallet`, `payment`, `payout`): endpoints exist in the server and return `503` when
       their feature toggle is disabled. Current toggles: `escrow_enabled` (Phase 3+).
-    - **Not yet implemented** (`lead-unlock`, `credits`, `referrals`, `subscription`, `business`,
-      `instant-match`, `/verification/dan/verify`): endpoints are specified here as forward references for Phase 2/3+
-      implementation. Until then they return `404`.
-      Each such endpoint is annotated with `x-tasky-status: deferred` and `x-tasky-target-phase`.
-    Current launch posture is Phase 1 zero monetization; seeded feature toggles may exist before their runtime
-     consumers are implemented. Current activation status is Phase 1 zero monetization;
-     see `docs/maintenance/PRODUCTION_READINESS.md` for the go/no-go checklist.
+    Current launch posture is Phase 1 zero monetization. Forward-design endpoints belong in draft or future surfaces,
+    not in this active contract.
   version: 1.3.0
   contact:
     name: Tasky Engineering
@@ -44,7 +38,7 @@ tags:
   - name: System
     description: Service status and version metadata
   - name: Auth
-    description: Facebook OAuth (Phase 0-1) and phone OTP auth flows
+    description: Current authentication flows
   - name: Users
     description: User profile management
   - name: Verification
@@ -59,16 +53,12 @@ tags:
     description: Booking lifecycle
   - name: Payments
     description: QPay payment integration (feature-toggled by phase)
-  - name: Credits
-    description: Phase 2 lead-unlock credit ledger and purchases
   - name: Wallet
     description: Tasker wallet and payouts (feature-toggled by phase)
   - name: Reviews
     description: Post-completion reviews
   - name: Disputes
     description: Booking disputes
-  - name: Referrals
-    description: Referral attribution and rewards
   - name: Conversations
     description: In-app messaging (REST fallback)
   - name: Notifications
@@ -135,12 +125,6 @@ components:
       $ref: ./components/schemas/bookings.yaml#/BookingIntent
     BookingScheduleEvent:
       $ref: ./components/schemas/bookings.yaml#/BookingScheduleEvent
-    CreditBalance:
-      $ref: ./components/schemas/monetization.yaml#/CreditBalance
-    CreditTransaction:
-      $ref: ./components/schemas/monetization.yaml#/CreditTransaction
-    CreditPack:
-      $ref: ./components/schemas/monetization.yaml#/CreditPack
     WalletBalance:
       $ref: ./components/schemas/monetization.yaml#/WalletBalance
     LedgerEntry:
@@ -161,14 +145,6 @@ components:
       $ref: ./components/schemas/messaging.yaml#/Message
     FeatureToggle:
       $ref: ./components/schemas/monetization.yaml#/FeatureToggle
-    LeadUnlockPrice:
-      $ref: ./components/schemas/monetization.yaml#/LeadUnlockPrice
-    TaskerSubscription:
-      $ref: ./components/schemas/monetization.yaml#/TaskerSubscription
-    BusinessAccount:
-      $ref: ./components/schemas/monetization.yaml#/BusinessAccount
-    ReferralSummary:
-      $ref: ./components/schemas/referrals.yaml#/ReferralSummary
     ReverseGeocodeResponse:
       $ref: ./components/schemas/location.yaml#/ReverseGeocodeResponse
     LocationSearchResponse:
@@ -181,8 +157,6 @@ components:
       $ref: ./components/schemas/operations.yaml#/OutboxEventPage
     LocationSearchResult:
       $ref: ./components/schemas/location.yaml#/LocationSearchResult
-    LeadUnlockPricePayload:
-      $ref: ./components/schemas/monetization.yaml#/LeadUnlockPricePayload
     AdminDisputeDetail:
       $ref: ./components/schemas/disputes.yaml#/AdminDisputeDetail
     CategorySchemaVersion:
@@ -209,10 +183,6 @@ paths:
     $ref: ./paths/auth.yaml#/~1auth~1facebook
   /auth/facebook/status:
     $ref: ./paths/auth.yaml#/~1auth~1facebook~1status
-  /auth/otp/request:
-    $ref: ./paths/auth.yaml#/~1auth~1otp~1request
-  /auth/otp/verify:
-    $ref: ./paths/auth.yaml#/~1auth~1otp~1verify
   /auth/dev/login:
     $ref: ./paths/auth.yaml#/~1auth~1dev~1login
   /auth/token/refresh:
@@ -229,8 +199,6 @@ paths:
     $ref: ./paths/verification.yaml#/~1verification~1submit
   /verification/status:
     $ref: ./paths/verification.yaml#/~1verification~1status
-  /verification/dan/verify:
-    $ref: ./paths/verification.yaml#/~1verification~1dan~1verify
   /categories:
     $ref: ./paths/categories.yaml#/~1categories
   /tasks/drafts:
@@ -257,16 +225,12 @@ paths:
     $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications~1{applicationId}~1accept
   /tasks/{id}/booking-intents:
     $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1booking-intents
-  /tasks/{id}/instant-match:
-    $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1instant-match
   /bookings:
     $ref: ./paths/bookings.yaml#/~1bookings
   /bookings/{id}:
     $ref: ./paths/bookings.yaml#/~1bookings~1{id}
   /bookings/{id}/schedule-events:
     $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1schedule-events
-  /bookings/{id}/lead-unlock:
-    $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1lead-unlock
   /bookings/{id}/cancel:
     $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1cancel
   /bookings/{id}/complete:
@@ -285,22 +249,12 @@ paths:
     $ref: ./paths/bookings.yaml#/~1booking-intents~1{id}
   /booking-intents/{id}/confirm:
     $ref: ./paths/bookings.yaml#/~1booking-intents~1{id}~1confirm
+  /booking-intents/{id}/decline:
+    $ref: ./paths/bookings.yaml#/~1booking-intents~1{id}~1decline
   /payments/bookings/{id}/initiate:
     $ref: ./paths/payments.yaml#/~1payments~1bookings~1{id}~1initiate
   /payments/qpay/callback:
     $ref: ./paths/payments.yaml#/~1payments~1qpay~1callback
-  /credits/balance:
-    $ref: ./paths/credits.yaml#/~1credits~1balance
-  /credits/transactions:
-    $ref: ./paths/credits.yaml#/~1credits~1transactions
-  /credits/packs:
-    $ref: ./paths/credits.yaml#/~1credits~1packs
-  /credits/purchase:
-    $ref: ./paths/credits.yaml#/~1credits~1purchase
-  /subscriptions/tasker:
-    $ref: ./paths/payments.yaml#/~1subscriptions~1tasker
-  /business/accounts:
-    $ref: ./paths/admin.yaml#/~1business~1accounts
   /wallet:
     $ref: ./paths/wallet.yaml#/~1wallet
   /wallet/transactions:
@@ -313,8 +267,6 @@ paths:
     $ref: ./paths/reviews.yaml#/~1me~1pending-reviews
   /users/{id}/reviews:
     $ref: ./paths/reviews.yaml#/~1users~1{id}~1reviews
-  /referrals/me:
-    $ref: ./paths/referrals.yaml#/~1referrals~1me
   /bookings/{id}/disputes:
     $ref: ./paths/disputes.yaml#/~1bookings~1{id}~1disputes
   /disputes/{id}:
@@ -361,8 +313,6 @@ paths:
     $ref: ./paths/admin.yaml#/~1admin~1payouts~1{id}~1process
   /admin/features/toggles:
     $ref: ./paths/admin.yaml#/~1admin~1features~1toggles
-  /admin/lead-unlock-prices:
-    $ref: ./paths/admin.yaml#/~1admin~1lead-unlock-prices
   /admin/categories:
     $ref: ./paths/admin.yaml#/~1admin~1categories
   /admin/categories/{id}:

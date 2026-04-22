@@ -1,6 +1,6 @@
 # Tasky Architecture — Common Baseline
 
-Status: canonical cross-cutting baseline. Backend specifics live in `api.md`; frontend parity in `shared-frontend.md`; per-surface rules in `web.md` / `mobile.md`.
+Status: derived cross-cutting baseline. Backend specifics live in `api.md`; frontend parity in `shared-frontend.md`; per-surface rules in `web.md` / `mobile.md`.
 
 ## 1. Executive Summary
 
@@ -8,7 +8,9 @@ Status: canonical cross-cutting baseline. Backend specifics live in `api.md`; fr
 **Stack:** Java 21, Spring Boot 3, JDBI, PostgreSQL, React/React Native
 **Key Constraint:** "Trust-First" (Graceful degradation)
 
-This document defines the cross-cutting technical architecture for Tasky: system context, shared technology decisions, runtime patterns, non-functional baselines, and development workflow. For surface-specific details, see the companion documents listed in `docs/architecture/AGENTS.md`.
+This document defines cross-cutting technical architecture for Tasky: system context, shared technology decisions,
+runtime patterns, non-functional baselines, and development workflow. Intended product truth lives in `docs/PRD.md`,
+`docs/STRATEGY.md`, and relevant maintenance policy docs.
 
 ---
 
@@ -116,9 +118,9 @@ For the full package-to-domain mapping, see `api.md` §2.
     `messages_mn.properties`) resolved via Spring `MessageSource`.
   - **Web**: JSON translation files per locale (`en.json`, `mn.json`) loaded by `react-i18next`.
   - **Mobile**: Same JSON files bundled via `react-i18next` + Expo localization.
-- **Translation workflow**: English is the source-of-truth locale. Mongolian strings are machine-translated from
-  English, then reviewed before release. Translation files live under `src/main/resources/i18n/` (backend) and
-  `locales/` (clients).
+- **Translation workflow**: English remains the technical source for keys, code, and fallback structure. Mongolian
+  copy must be authored and reviewed so it reads naturally in Mongolian rather than as machine-translated English.
+  Translation files live under `src/main/resources/i18n/` (backend) and `locales/` (clients).
 - **Database content**: User-generated content (task descriptions, reviews) is stored as-is. Admin-managed content (
   category names) has explicit `name` (English) and `name_mn` (Mongolian) columns.
 - **API contract**: The API returns server-driven strings (error messages, notification text) localized based on the
@@ -149,28 +151,18 @@ For the full package-to-domain mapping, see `api.md` §2.
 - **Logs**: Structured JSON logs with `trace_id` and `user_id`.
 - **Metrics**: Prometheus endpoint exposing JVM, HikariCP, and HTTP latency metrics.
 - **Product Events**:
-  - Must emit: `task_intake_started`, `task_intake_completed`, `intake_schema_render_failed`,
-    `intake_validation_failed`, `scope_summary_generation_failed_fallback`, `job_scope_summary_edited`,
-    `task_posted`, `application_submitted`, `tasker_accepted`, `booking_confirmed`, `booking_completed`,
-    `dispute_raised`, `review_prompted`, `review_reminder_sent`, `review_hard_lock_applied`,
-    `lead_unlock_debited`, `lead_unlock_refunded`, `verification_submitted`, `verification_reviewed`,
-    `referral_reward_applied`.
+  - Must support backend-exported business metrics aligned to the governing KPI model:
+    `pilot_eligible_task`, `qualified_application`, `confirmed_booking`, `completed_booking`, `intervention`,
+    `out_of_area_post_attempted`, `out_of_area_waitlist_joined`.
   - Intake-related events must include `category_id`, `intake_schema_version`, and `client_app_version`.
   - Funnel events must include `locale` and `platform` dimensions.
 - **Product Metrics (Required)**:
-  - Leakage indicators: phone-sharing flag rate, repeat contact-sharing attempts, booking-to-repost ratio.
-  - Verification queue metrics: submissions/day, median approval time, SLA breach count.
-  - Review completion rate by cohort (target > 85%).
-  - Monetization adoption metrics by active phase: lead-unlock payment rate, subscription conversion, escrow opt-in.
-  - Payment rail telemetry (Phase 4): per-rail checkout success/failure for QPay, SocialPay, and bank transfer.
-  - Referral fraud signals: monthly successful referrals per user and cap-breach attempts.
-  - Matching quality metrics: instant-match timeout/decline fallback rate and rescue-trigger rate by
-    category/district.
+  - Required launch KPIs are the seven metrics defined in `docs/METRICS.md`.
+  - Category is the primary slice; district is drilldown.
+  - Native self-serve reporting must exclude both system-assisted and manual-assisted outcomes.
 - **Operational Alerts**:
-  - Alert on scope-clarity regression when median pre-booking clarification messages per `ASSIGNED` booking exceeds
-    2.0 for two consecutive weeks.
+  - Alert on the four hard-gate KPI families defined in `docs/METRICS.md`.
   - Alert on verification SLA breaches and OAuth outage active windows.
-  - Monitor review completion rate and leakage-signal ratio per trailing 28-day window.
   - Alert when open-task feed p95 latency breaches performance SLO budget.
 
 ### 5.3 Performance and Legal Compliance
@@ -202,26 +194,26 @@ For the full package-to-domain mapping, see `api.md` §2.
 
 ## 7. Cross-Reference Index
 
-| Concern                          | Authority                                             |
-| -------------------------------- | ----------------------------------------------------- |
-| **Foundational design patterns** | **`api.md` §1.1**                                     |
-| Backend module layout            | `api.md` §2                                           |
-| Request-path architecture        | `api.md` §3                                           |
-| Data schemas and flows           | `api.md` §4                                           |
-| API design and security          | `api.md` §5                                           |
-| Backend runtime and testing      | `api.md` §6–§8                                        |
-| Design tokens and parity         | `shared-frontend.md` §2–§4                            |
-| Accessibility baseline           | `shared-frontend.md` §5                               |
-| Frontend file structure          | `shared-frontend.md` §6                               |
-| TID test naming                  | `shared-frontend.md` §7                               |
-| Intake renderer contract         | `shared-frontend.md` §8                               |
-| Web structural contract          | `web.md`                                              |
-| Mobile structural contract       | `mobile.md`                                           |
-| OpenAPI contracts                | `docs/openapi/AGENTS.md`, `docs/openapi/openapi.yaml` |
-| PRD requirements                 | `docs/PRD.md`                                         |
-| PRD-to-architecture traceability | `docs/PRD.md` Appendix A                              |
-| Architecture decision records    | `docs/adr/**`                                         |
-| Launch readiness                 | `docs/maintenance/PRODUCTION_READINESS.md`            |
-| Feature activation policy        | `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`       |
-| Observability                    | `docs/OBSERVABILITY.md`                               |
-| Metrics                          | `docs/METRICS.md`                                     |
+| Concern                          | Authority                                              |
+| -------------------------------- | ------------------------------------------------------ |
+| **Foundational design patterns** | **`api.md` §1.1**                                      |
+| Backend module layout            | `api.md` §2                                            |
+| Request-path architecture        | `api.md` §3                                            |
+| Data schemas and flows           | `api.md` §4                                            |
+| API design and security          | `api.md` §5                                            |
+| Backend runtime and testing      | `api.md` §6–§8                                         |
+| Design tokens and parity         | `shared-frontend.md` §2–§4                             |
+| Accessibility baseline           | `shared-frontend.md` §5                                |
+| Frontend file structure          | `shared-frontend.md` §6                                |
+| TID test naming                  | `shared-frontend.md` §7                                |
+| Intake renderer contract         | `shared-frontend.md` §8                                |
+| Web structural contract          | `web.md`                                               |
+| Mobile structural contract       | `mobile.md`                                            |
+| OpenAPI contracts                | `docs/openapi/AGENTS.md`, `docs/openapi/openapi.yaml`  |
+| PRD requirements                 | `docs/PRD.md`                                          |
+| PRD-to-architecture traceability | `docs/PRD.md` functional requirements and KPI sections |
+| Architecture decision records    | `docs/adr/**`                                          |
+| Launch readiness                 | `docs/maintenance/PRODUCTION_READINESS.md`             |
+| Feature activation policy        | `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`        |
+| Observability                    | `docs/OBSERVABILITY.md`                                |
+| Metrics                          | `docs/METRICS.md`                                      |

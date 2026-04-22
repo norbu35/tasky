@@ -1,180 +1,180 @@
 # Screen Spec: No Applicant Rescue
 screen_id: SCR-CUST-026
-name: "No Applicant Rescue"
+name: 'No Applicant Rescue'
 route: null
 role: [customer]
-phase: "0-1"
+phase: '0-1'
 template: modal_sheet
-figma_page: "Customer/No Applicant Rescue"
-feature: "task"
+figma_page: 'Customer/No Applicant Rescue'
+feature: 'task'
 
 layout:
   template: modal_sheet
   density: default
-  structure: "scrim -> sheet(handle_bar + title + description + rescue_options + primary_action + secondary_action)"
+  structure: 'scrim -> sheet(handle_bar + title + description + rescue_options + primary_action + secondary_action)'
 
 components:
   - id: COMP-MODALSHEET
-    usage: "Bottom sheet overlay with rescue options when no applicants are found after 120 minutes"
+    usage: 'Bottom sheet overlay with rescue options when no applicants are found after 120 minutes'
     props:
       visible: true
-      title: "Гүйцэтгэгч олдсонгүй"
-      primaryAction: "Өөрчлөлт хадгалах"
-      secondaryAction: "Хаах"
+      title: 'Гүйцэтгэгч олдсонгүй'
+      primaryAction: 'Өөрчлөлт хадгалах'
+      secondaryAction: 'Хаах'
     variant: default
 
   - id: COMP-FORMFIELD
-    usage: "Wrapper for budget and schedule adjustment fields inside the rescue sheet"
+    usage: 'Wrapper for budget and schedule adjustment fields inside the rescue sheet'
     props:
-      label: "Төсөв нэмэгдүүлэх"
+      label: 'Төсөв нэмэгдүүлэх'
       required: false
     variant: default
 
   - id: COMP-INPUT
-    usage: "Budget adjustment input field"
+    usage: 'Budget adjustment input field'
     props:
-      value: "50000"
-      placeholder: "₮"
+      value: '50000'
+      placeholder: '₮'
       maxLength: 10
     variant: default
 
   - id: COMP-DATEPICKER
-    usage: "Schedule adjustment date picker"
+    usage: 'Schedule adjustment date picker'
     props:
-      value: "current_schedule"
-      minDate: "tomorrow"
+      value: 'current_schedule'
+      minDate: 'tomorrow'
       mode: date_time
     variant: date_time
 
   - id: COMP-BUTTON
-    usage: "Save adjustments button and dismiss button"
+    usage: 'Save adjustments button and dismiss button'
     props:
-      label: "Өөрчлөлт хадгалах"
+      label: 'Өөрчлөлт хадгалах'
       variant: primary
       size: lg
     variant: primary
 
   - id: COMP-TOAST
-    usage: "Success toast after adjustments saved or concierge queued"
+    usage: 'Success toast after adjustments saved or concierge queued'
     props:
-      message: "Өөрчлөлт хадгалагдлаа"
+      message: 'Өөрчлөлт хадгалагдлаа'
       variant: success
     variant: success
 
 states:
   - id: rescue_prompt
-    description: "Initial rescue prompt shown after 120 minutes with zero applicants during 08:00-22:00. Offers options: adjust budget, adjust schedule, or request concierge help"
+    description: 'Initial rescue prompt shown after 120 minutes with zero applicants during 08:00-22:00. Offers options: adjust budget, adjust schedule, or request concierge help'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: [COMP-FORMFIELD, COMP-INPUT, COMP-DATEPICKER, COMP-TOAST]
 
   - id: adjust_budget
-    description: "User chose to adjust budget; budget input field shown with current value prefilled for editing"
+    description: 'User chose to adjust budget; budget input field shown with current value prefilled for editing'
     components_visible: [COMP-MODALSHEET, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-DATEPICKER, COMP-TOAST]
 
   - id: adjust_schedule
-    description: "User chose to adjust schedule; date picker shown with current schedule prefilled"
+    description: 'User chose to adjust schedule; date picker shown with current schedule prefilled'
     components_visible: [COMP-MODALSHEET, COMP-FORMFIELD, COMP-DATEPICKER, COMP-BUTTON]
     components_hidden: [COMP-INPUT, COMP-TOAST]
 
   - id: broadened_push_sent
-    description: "System has broadened push notifications to additional nearby verified Taskers; confirmation shown"
+    description: 'System has broadened push notifications to additional nearby verified Taskers; confirmation shown'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON, COMP-TOAST]
     components_hidden: [COMP-FORMFIELD, COMP-INPUT, COMP-DATEPICKER]
 
   - id: concierge_queued
-    description: "Task has been queued for concierge dispatch follow-up; confirmation shown with expected response time"
+    description: 'Task has been queued for concierge dispatch follow-up; confirmation shown with expected response time'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON, COMP-TOAST]
     components_hidden: [COMP-FORMFIELD, COMP-INPUT, COMP-DATEPICKER]
 
 copy:
   - key: title
-    mn: "Гүйцэтгэгч олдсонгүй"
-    en: "No Tasker found yet"
+    mn: 'Гүйцэтгэгч олдсонгүй'
+    en: 'No Tasker found yet'
     max_chars: 25
 
   - key: description
-    mn: "120 минутад ямар нэг гүйцэтгэгч хүсэлт гаргаагүй байна. Дараах сонголтуудаас сонгоно уу."
-    en: "No Tasker has applied in 120 minutes. Choose from the options below."
+    mn: '120 минутад ямар нэг гүйцэтгэгч хүсэлт гаргаагүй байна. Дараах сонголтуудаас сонгоно уу.'
+    en: 'No Tasker has applied in 120 minutes. Choose from the options below.'
     max_chars: 100
 
   - key: option_adjust_budget
-    mn: "Төсөв нэмэгдүүлэх"
-    en: "Increase Budget"
+    mn: 'Төсөв нэмэгдүүлэх'
+    en: 'Increase Budget'
     max_chars: 25
 
   - key: option_adjust_schedule
-    mn: "Цаг өөрчлөх"
-    en: "Change Schedule"
+    mn: 'Цаг өөрчлөх'
+    en: 'Change Schedule'
     max_chars: 20
 
   - key: option_concierge
-    mn: "Туслах ажилтнаас тусламж авах"
-    en: "Request Concierge Help"
+    mn: 'Туслах ажилтнаас тусламж авах'
+    en: 'Request Concierge Help'
     max_chars: 35
 
   - key: label_budget
-    mn: "Шинэ төсөв"
-    en: "New Budget"
+    mn: 'Шинэ төсөв'
+    en: 'New Budget'
     max_chars: 15
 
   - key: label_schedule
-    mn: "Шинэ товлосон цаг"
-    en: "New Schedule"
+    mn: 'Шинэ товлосон цаг'
+    en: 'New Schedule'
     max_chars: 20
 
   - key: cta_save
-    mn: "Өөрчлөлт хадгалах"
-    en: "Save Changes"
+    mn: 'Өөрчлөлт хадгалах'
+    en: 'Save Changes'
     max_chars: 20
 
   - key: cta_dismiss
-    mn: "Хаах"
-    en: "Dismiss"
+    mn: 'Хаах'
+    en: 'Dismiss'
     max_chars: 20
 
   - key: broadened_push_message
-    mn: "Ойролцоох нэмэлт гүйцэтгэгчдэд мэдэгдэл илгээлээ"
-    en: "Notifications sent to additional nearby Taskers"
+    mn: 'Ойролцоох нэмэлт гүйцэтгэгчдэд мэдэгдэл илгээлээ'
+    en: 'Notifications sent to additional nearby Taskers'
     max_chars: 60
 
   - key: concierge_queued_message
-    mn: "Таны даалгавар туслах ажилтанд шилжүүлэгдлээ. Удахгүй холбогдоно."
-    en: "Your task has been queued for concierge follow-up. You will be contacted soon."
+    mn: 'Таны даалгавар туслах ажилтанд шилжүүлэгдлээ. Удахгүй холбогдоно.'
+    en: 'Your task has been queued for concierge follow-up. You will be contacted soon.'
     max_chars: 100
 
   - key: toast_saved
-    mn: "Өөрчлөлт хадгалагдлаа"
-    en: "Changes saved"
+    mn: 'Өөрчлөлт хадгалагдлаа'
+    en: 'Changes saved'
     max_chars: 25
 
 api_endpoints:
   - method: PUT
-    path: "/tasks/:id"
-    purpose: "Update task budget and/or schedule as part of rescue flow"
+    path: '/tasks/:id'
+    purpose: 'Update task budget and/or schedule as part of rescue flow'
 
 analytics_events:
-  - event: "no_applicant_rescue_shown"
-    trigger: "Rescue modal appears after 120-minute zero-applicant threshold"
-  - event: "no_applicant_budget_adjusted"
-    trigger: "User saves a budget adjustment"
-  - event: "no_applicant_schedule_adjusted"
-    trigger: "User saves a schedule adjustment"
-  - event: "no_applicant_broadened_push"
-    trigger: "System broadens push to additional Taskers"
-  - event: "no_applicant_concierge_queued"
-    trigger: "Task queued for concierge dispatch"
-  - event: "no_applicant_rescue_dismissed"
-    trigger: "User dismisses the rescue sheet without action"
+  - event: 'no_applicant_rescue_shown'
+    trigger: 'Rescue modal appears after 120-minute zero-applicant threshold'
+  - event: 'no_applicant_budget_adjusted'
+    trigger: 'User saves a budget adjustment'
+  - event: 'no_applicant_schedule_adjusted'
+    trigger: 'User saves a schedule adjustment'
+  - event: 'no_applicant_broadened_push'
+    trigger: 'System broadens push to additional Taskers'
+  - event: 'no_applicant_concierge_queued'
+    trigger: 'Task queued for concierge dispatch'
+  - event: 'no_applicant_rescue_dismissed'
+    trigger: 'User dismisses the rescue sheet without action'
 
 acceptance_criteria:
-  - "Rescue modal appears only after 120 minutes with zero eligible applicants during 08:00-22:00 local time per REQ-BOOK-09"
-  - "Three rescue options are presented: adjust budget, adjust schedule, request concierge help"
-  - "Budget adjustment prefills current budget and allows increase"
-  - "Schedule adjustment shows date picker with minimum date of tomorrow"
-  - "Saving adjustments triggers PUT /tasks/:id and broadened push to additional nearby verified Taskers"
-  - "Concierge option queues the task for founder/admin manual dispatch per REQ-ADMIN-07"
-  - "After adjustments, confirmation message and success toast are shown"
-  - "Dismiss closes the sheet and returns to Task Detail (SCR-CUST-009)"
-  - "Drag-to-dismiss via handle bar is supported"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'Rescue modal appears only after 120 minutes with zero eligible applicants during 08:00-22:00 local time'
+  - 'Three rescue options are presented: adjust budget, adjust schedule, request concierge help'
+  - 'Budget adjustment prefills current budget and allows increase'
+  - 'Schedule adjustment shows date picker with minimum date of tomorrow'
+  - 'Saving adjustments triggers PUT /tasks/:id and broadened push to additional nearby verified Taskers'
+  - 'Concierge option queues the task for founder or admin manual dispatch'
+  - 'After adjustments, confirmation message and success toast are shown'
+  - 'Dismiss closes the sheet and returns to Task Detail (SCR-CUST-009)'
+  - 'Drag-to-dismiss via handle bar is supported'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'
