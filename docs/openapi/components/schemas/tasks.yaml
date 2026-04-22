@@ -387,6 +387,7 @@ TaskApplication:
         - ACCEPTED
         - DECLINED
         - EXPIRED
+        - WITHDRAWN
     relevance_score:
       type: number
       format: double
@@ -394,6 +395,11 @@ TaskApplication:
     recommended:
       type: boolean
       nullable: true
+    respond_by_at:
+      type: string
+      format: date-time
+      nullable: true
+      description: Deadline for the tasker to respond after being selected.
     created_at:
       type: string
       format: date-time

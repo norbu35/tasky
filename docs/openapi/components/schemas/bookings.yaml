@@ -38,6 +38,7 @@ Booking:
         - COMPLETED
         - CANCELLED
         - NO_SHOW
+        - DISPUTED
     confirmed_scheduled_at:
       type: string
       format: date-time
@@ -70,6 +71,14 @@ Booking:
       type: integer
       nullable: true
       description: Phase-gated monetization field. Null when the current phase keeps cancellation fees disabled.
+    completion_reminder_count:
+      type: integer
+      description: Number of completion reminders sent for this booking.
+    completion_reminder_last_at:
+      type: string
+      format: date-time
+      nullable: true
+      description: Timestamp of the most recent completion reminder.
     created_at:
       type: string
       format: date-time

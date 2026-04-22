@@ -34,8 +34,10 @@ User:
       enum:
         - PENDING
         - VERIFIED
+        - ACTIVE
         - BANNED
         - SUSPENDED
+        - DELETED
     created_at:
       type: string
       format: date-time
@@ -70,8 +72,10 @@ Profile:
       enum:
         - PENDING
         - VERIFIED
+        - ACTIVE
         - BANNED
         - SUSPENDED
+        - DELETED
     full_name:
       type: string
       example: Бат-Эрдэнэ

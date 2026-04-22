@@ -468,9 +468,8 @@
     summary: Apply to a task
     description: |
       Tasker applies to an OPEN task. Only verified taskers can apply.
-      The current live contract captures a short application note only.
+      The current live contract captures a short application note and optional quote_price.
       Phase 1 launch UX does not expose open-ended pre-booking chat.
-      PRD v2.0 requires a later contract remediation to add structured pricing-response fields.
     operationId: applyToTask
     security:
       - BearerAuth: []
@@ -489,7 +488,13 @@
                 type: string
                 minLength: 1
                 maxLength: 500
-                description: Short application note. Current live contract does not yet model structured pricing response data.
+                description: Short application note.
+              quote_price:
+                type: integer
+                nullable: true
+                minimum: 5000
+                maximum: 50000000
+                description: "Tasker's price response. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the required quote."
     responses:
       '201':
         description: Application submitted.
