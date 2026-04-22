@@ -102,6 +102,8 @@ dependencies {
 // OpenAPI Generator
 val bundleOpenApiSpec by tasks.registering(Exec::class) {
     workingDir = rootProject.projectDir
+    val nodeAvailable = try { ProcessBuilder("node", "--version").start().waitFor() == 0 } catch (_: Exception) { false }
+    onlyIf { nodeAvailable }
     commandLine("node", "tooling/scripts/bundle-openapi.mjs")
     inputs.dir("${rootProject.projectDir}/docs/openapi")
     inputs.file("${rootProject.projectDir}/tooling/scripts/bundle-openapi.mjs")

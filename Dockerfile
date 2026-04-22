@@ -8,6 +8,7 @@ COPY services services
 COPY packages packages
 COPY tooling tooling
 COPY docs/API.yaml docs/API.yaml
+COPY docs/openapi docs/openapi
 
 RUN chmod +x gradlew && ./gradlew --no-daemon :services:api:bootJar
 
