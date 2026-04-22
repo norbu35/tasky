@@ -8,8 +8,8 @@ in `docs/STRATEGY.md`.
 
 ## 1. Current Launch Posture
 
-- Bayangol is the only live posting district in Phase 1.
-- Supply may be citywide, but taskers must declare willingness to serve Bayangol before applying.
+- Live posting is available across all of Ulaanbaatar in Phase 1.
+- Supply is citywide; taskers may set service-area preferences for notification targeting.
 - Launch categories are home cleaning, furniture assembly, moving help / lifting help, and minor handyman.
 - Phase 1 uses fixed category templates plus `I have a budget` / `I want quotes`.
 - No customer-facing payment hold, payment protection, or escrow promise is allowed.
@@ -20,7 +20,7 @@ in `docs/STRATEGY.md`.
 ### Core flow
 
 - category-template task creation with schema-bound drafts and deterministic scope summaries (`REQ-P1-TASK-01` to `REQ-P1-TASK-04`)
-- Bayangol posting gate plus out-of-area waitlist capture (`REQ-P1-TASK-05`)
+- Citywide posting with Ulaanbaatar-wide task eligibility (`REQ-P1-TASK-05`)
 - open application flow with customer selection and tasker acceptance SLA (`REQ-P1-BOOK-01` to `REQ-P1-BOOK-03`)
 - booking lifecycle, reschedule timeline, no-show handling, and completion flow (`REQ-P1-BOOK-05` to `REQ-P1-BOOK-07`)
 - verification, reviews, moderation, and admin operations (`REQ-P1-SAFE-*`, `REQ-P1-ADMIN-*`)
@@ -36,7 +36,7 @@ in `docs/STRATEGY.md`.
 
 | Item                                                 | Canonical requirement                                                    | Trigger                                          |
 | ---------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------ |
-| Backend assisted-distribution module and persistence | `REQ-P1-ASSIST-03`, `REQ-P1-ASSIST-03A`, `REQ-P1-ADMIN-08`               | Native matching shows repeated Bayangol failures |
+| Backend assisted-distribution module and persistence | `REQ-P1-ASSIST-03`, `REQ-P1-ASSIST-03A`, `REQ-P1-ADMIN-08`               | Native matching shows repeated citywide failures |
 | Review enforcement hard locks tuning                 | `REQ-P1-SAFE-02`                                                         | Review obligation compliance is materially weak  |
 | Verification and moderation ops hardening            | `REQ-P1-SAFE-01`, `REQ-P1-SAFE-06`, `REQ-P1-ADMIN-01`, `REQ-P1-ADMIN-04` | Operational volume requires tighter tooling      |
 | KPI dashboard and alert ratification on real host    | KPI policy in `docs/PRD.md` / `docs/METRICS.md`                          | Required before production                       |

@@ -45,13 +45,11 @@ or manual spreadsheet derivations are not sufficient for launch control.
 
 Required conceptual exports align with `docs/METRICS.md`:
 
-- `pilot_eligible_task`
+- `eligible_task`
 - `qualified_application`
 - `confirmed_booking`
 - `completed_booking`
 - `intervention`
-- `out_of_area_post_attempted`
-- `out_of_area_waitlist_joined`
 
 ## 5. Dashboard Requirements
 

@@ -8,7 +8,7 @@ This document is derived from `docs/PRD.md`, `docs/STRATEGY.md`, and `docs/BRAND
 
 ## 1. Scope
 
-The active Phase 1 design system supports the Bayangol launch pilot only. Product truth remains in the PRD.
+The active Phase 1 design system supports the Ulaanbaatar launch. Product truth remains in the PRD.
 
 ### Active vs future specs
 
@@ -28,8 +28,7 @@ Future-prefixed specs are not launch authority and must not be read as active pr
 
 ### Phase 1 copy constraints
 
-- Operational screens must say the pilot is live in Bayangol.
-- Out-of-area posting surfaces must offer waitlist capture by area and category.
+- Operational screens must communicate the service is live in Ulaanbaatar.
 - Pricing copy must support both `I have a budget` and `I want quotes`.
 - Do not promise payment hold, payment protection, or escrow.
 - Do not imply open-ended pre-booking chat.

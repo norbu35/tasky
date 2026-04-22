@@ -152,8 +152,7 @@ For the full package-to-domain mapping, see `api.md` §2.
 - **Metrics**: Prometheus endpoint exposing JVM, HikariCP, and HTTP latency metrics.
 - **Product Events**:
   - Must support backend-exported business metrics aligned to the governing KPI model:
-    `pilot_eligible_task`, `qualified_application`, `confirmed_booking`, `completed_booking`, `intervention`,
-    `out_of_area_post_attempted`, `out_of_area_waitlist_joined`.
+    `eligible_task`, `qualified_application`, `confirmed_booking`, `completed_booking`, `intervention`,
   - Intake-related events must include `category_id`, `intake_schema_version`, and `client_app_version`.
   - Funnel events must include `locale` and `platform` dimensions.
 - **Product Metrics (Required)**:

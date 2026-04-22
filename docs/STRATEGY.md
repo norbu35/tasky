@@ -6,7 +6,7 @@
 ## 1. Strategy Frame
 
 Tasky is a launch-first marketplace. The current business commitment is the Phase 1 pilot defined in `docs/PRD.md`:
-trust-first operations, zero monetization dependency, Bayangol posting only, and a founder-operated rescue backstop.
+trust-first operations, zero monetization dependency, citywide Ulaanbaatar posting, and a founder-operated rescue backstop.
 
 Later phases remain conditional. UI shells, toggles, and draft docs do not prove readiness.
 
@@ -15,13 +15,13 @@ Later phases remain conditional. UI shells, toggles, and draft docs do not prove
 ### 2.1 Operating boundary
 
 - Brand positioning is citywide Ulaanbaatar.
-- Operational pilot truth is **Bayangol-only posting**.
-- Citywide supply is allowed only when taskers explicitly declare willingness to serve Bayangol.
-- Out-of-area customers may browse but are routed to a waitlist that captures both **area** and **category**.
+- Operational pilot truth is **citywide Ulaanbaatar posting**.
+- Supply is citywide; taskers may set service-area preferences for notification targeting.
+-
 
 ### 2.2 What the pilot optimizes for
 
-1. Qualified applications arriving quickly in Bayangol.
+1. Qualified applications arriving quickly across Ulaanbaatar.
 2. Confirmed bookings from structured category templates.
 3. Jobs that complete without manual rescue.
 4. Trust outcomes strong enough to justify expanding the pilot.
@@ -70,8 +70,8 @@ Rules:
 
 ## 4. Go-To-Market Sequence
 
-1. Seed verified tasker supply across the city, but activate only Bayangol-serving supply in the pilot.
-2. Acquire customer demand inside Bayangol first.
+1. Seed verified tasker supply across the city.
+2. Acquire customer demand across Ulaanbaatar.
 3. Use fixed templates and structured pricing to reduce negotiation friction.
 4. Measure native liquidity before leaning on assisted distribution.
 5. Expand only when the hard-gate metrics support it.

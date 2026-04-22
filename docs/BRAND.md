@@ -18,7 +18,7 @@ evidence-backed moderation, and reputation that travels with you.
 | Pillar      | What it means                                                                                           |
 | ----------- | ------------------------------------------------------------------------------------------------------- |
 | Trustworthy | Every tasker is ID-verified, bookings are structured, and disputes have moderation and evidence trails. |
-| Local       | Built for Ulaanbaatar, with a live Bayangol posting pilot in Phase 1.                                   |
+| Local       | Built for Ulaanbaatar, launching citywide in Phase 1.                                                   |
 | Modern      | Clear, fast, no-clutter product that feels intentional and reliable.                                    |
 | Fair        | Structured pricing with either budget or quotes, no hidden ranking spam, no inflated trust promises.    |
 
@@ -38,12 +38,11 @@ Phase 1 must not promise payment hold, payment protection, or escrow.
 
 ### Microcopy examples
 
-| Moment                 | English                                                                 | Notes                             |
-| ---------------------- | ----------------------------------------------------------------------- | --------------------------------- |
-| Verification complete  | "Identity confirmed. You're good to go."                                | Positive and immediate            |
-| Booking confirmed      | "Booked. We'll keep the details and updates in one place."              | Confident without implying escrow |
-| Bayangol posting limit | "Posting is live in Bayangol for now. Join the waitlist for your area." | Operationally explicit            |
-| No immediate match     | "No qualified tasker yet. We’ll keep trying in the background."         | Honest assisted posture           |
+| Moment                | English                                                         | Notes                             |
+| --------------------- | --------------------------------------------------------------- | --------------------------------- |
+| Verification complete | "Identity confirmed. You're good to go."                        | Positive and immediate            |
+| Booking confirmed     | "Booked. We'll keep the details and updates in one place."      | Confident without implying escrow |
+| No immediate match    | "No qualified tasker yet. We’ll keep trying in the background." | Honest assisted posture           |
 
 ## Trust Promise
 

@@ -112,5 +112,5 @@ The recommendation may move to `ready for production` only when:
 2. Current production blockers are closed or explicitly waived with documented signoff.
 3. Launch KPI dashboards and alert routing are live.
 4. Backup, restore, and rollback have been rehearsed.
-5. The Phase 1 baseline remains truthful: Bayangol posting pilot, no payment-protection promise, and later-phase
+5. The Phase 1 baseline remains truthful: citywide Ulaanbaatar launch, no payment-protection promise, and later-phase
    toggles still off.

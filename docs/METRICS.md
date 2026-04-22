@@ -5,7 +5,7 @@
 
 ## 1. Purpose
 
-This document defines the launch KPI stack for the Phase 1 Bayangol pilot. `docs/PRD.md`,
+This document defines the launch KPI stack for the Phase 1 Ulaanbaatar launch. `docs/PRD.md`,
 `docs/OBSERVABILITY.md`, and `docs/maintenance/PRODUCTION_READINESS.md` must match this file.
 
 ## 2. KPI Stack
@@ -29,7 +29,7 @@ Category is the primary decision slice. District is drilldown only.
 
 ### 3.1 Self-Serve Fulfillment Rate
 
-`% of pilot_eligible_task posts that reach completed_booking within 7 days of posting, through the platform flow, with no intervention`
+`% of eligible_task posts that reach completed_booking within 7 days of posting, through the platform flow, with no intervention`
 
 - Primary slice: category
 - District: drilldown
@@ -37,14 +37,14 @@ Category is the primary decision slice. District is drilldown only.
 
 ### 3.2 Qualified Match Rate within 24h
 
-`% of pilot_eligible_task posts receiving at least one qualified_application within 24h`
+`% of eligible_task posts receiving at least one qualified_application within 24h`
 
 - Excludes spam, fraud, admin-invalid tasks, and user-mistake cancels within 30 minutes
 - Paired diagnostic: median time to first qualified application
 
 ### 3.3 Post -> Confirmed Booking Rate within 48h
 
-`% of pilot_eligible_task posts that reach confirmed_booking within 48h of posting`
+`% of eligible_task posts that reach confirmed_booking within 48h of posting`
 
 - Confirmed booking means customer selects + tasker accepts + system confirms
 - Customer abandonment counts as failure
@@ -60,7 +60,7 @@ Category is the primary decision slice. District is drilldown only.
 
 ### 3.5 Intervention Rate
 
-`% of pilot_eligible_task posts that required non-standard rescue or assistance to progress`
+`% of eligible_task posts that required non-standard rescue or assistance to progress`
 
 - Track `intervention_type = manual_rescue | external_distribution | ops_override`
 - Track `intervention_stage = pre_match | post_match | post_booking | completion_rescue`
@@ -102,15 +102,11 @@ Median and p95 from complete document submission to final decision.
 
 Use the following conceptual event/state vocabulary in reporting:
 
-- `pilot_eligible_task`
+- `eligible_task`
 - `qualified_application`
 - `confirmed_booking`
 - `completed_booking`
 - `intervention`
-- `out_of_area_post_attempted`
-- `out_of_area_waitlist_joined`
-- `waitlist_area`
-- `waitlist_category`
 
 KPI computation must come from backend-exported business metrics derived from canonical events and state transitions,
 not ad hoc dashboard SQL.

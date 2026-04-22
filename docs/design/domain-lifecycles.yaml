@@ -24,11 +24,11 @@ entities:
         source: null
         target: OPEN
         trigger: customer_publishes_task
-        guard: 'pilot location is Bayangol, category active, intake_schema valid, schedule future, pricing mode valid'
+        guard: 'location within Ulaanbaatar, category active, intake_schema valid, schedule future, pricing mode valid'
         side_effects:
           - 'persist task with intake_schema_version and pricing mode'
           - 'generate job scope summary'
-          - 'surface task to eligible Bayangol-serving verified Taskers and matching notifications'
+          - 'surface task to verified Taskers with matching service area and matching notifications'
           - 'start 120-min no-applicant timer (08:00-22:00)'
         phase: '0-1'
 
@@ -429,7 +429,7 @@ entities:
         phase: '3+'
 
     business_rules:
-      - 'Tasker must be verified and Bayangol-service-enabled to apply'
+      - 'Tasker must be verified to apply'
       - 'Customers can review all applications; the UI may optionally highlight a suggested subset'
       - 'Selected Tasker has the default 4-hour window to accept or decline'
       - 'Non-selected applications close automatically once a booking is confirmed'
