@@ -58,7 +58,7 @@ Rules:
 
 - External distribution is not self-serve.
 - External distribution triggers only after native failure, not by default.
-- The agreed trigger is no qualified application within 12 hours.
+- The agreed trigger is no qualified application within 8 hours.
 - Triggering assisted distribution is a backend/ops decision, not a customer-facing choice.
 - External distribution is allowed initially only for cleaning, furniture assembly, moving help, and minor handyman.
 

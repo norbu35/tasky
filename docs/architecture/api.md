@@ -356,18 +356,14 @@ Any addition to the exception set requires deliberate justification in code revi
 
 #### Marketplace
 
-- `tasks`: `id (UUID PK)`, `customer_id (FK → users)`, `category_id (FK → categories)`, `description`, `budget`, `location_lat`, `location_lng`, `location_text`, `location_point (GEOMETRY(Point, 4326))`, `status` (OPEN, ASSIGNED, COMPLETED, CANCELLED, NO_SHOW), `scheduled_at`, `created_at`, `updated_at`, `intake_answers_json (JSONB)`, `intake_schema_version`, `scope_summary_source` (TEMPLATE, USER_EDITED, LLM)
-  — current launch-live schema is still fixed-budget-centric; PRD v2.0 target requires `pricing_mode` plus auditable
-  quote/counter-offer support before the implementation is considered aligned
+- `tasks`: `id (UUID PK)`, `customer_id (FK → users)`, `category_id (FK → categories)`, `description`, `budget`, `pricing_mode` (BUDGET, QUOTE), `location_lat`, `location_lng`, `location_text`, `location_point (GEOMETRY(Point, 4326))`, `status` (OPEN, ASSIGNED, COMPLETED, CANCELLED, NO_SHOW), `scheduled_at`, `created_at`, `updated_at`, `intake_answers_json (JSONB)`, `intake_schema_version`, `scope_summary_source` (TEMPLATE, USER_EDITED, LLM)
 - `task_drafts`: `id (UUID PK)`, `customer_id (FK → users)`, `category_id (FK → categories)`, `intake_answers_json (JSONB)`, `intake_schema_version`, `summary_draft`, `location_lat`, `location_lng`, `location_text`, `created_at`, `expires_at (default now()+7d)`
   — Design constraint: drafts intentionally do NOT store `location_point`; geometry is materialized only on promotion to `tasks`
 - `task_photos`: `id (UUID PK)`, `task_id (FK → tasks)`, `storage_key`, `sort_order`
 - `categories`: `id (UUID PK)`, `name`, `name_mn`, `icon_url`, `is_active`, `sort_order`, `intake_enabled`, `intake_schema_version`, `intake_schema_json (JSONB)`
 - `category_schema_versions`: `id (UUID PK)`, `category_id (FK → categories)`, `version`, `schema_json (JSONB)`, `status` (DRAFT, CANARY, ACTIVE, ROLLED_BACK), `created_by`, `created_at`, `activated_at`; UNIQUE(category_id, version)
-- `task_applications`: `id (UUID PK)`, `task_id (FK → tasks)`, `tasker_id (FK → users)`, `message`, `status` (APPLIED, SELECTED, ACCEPTED, DECLINED, EXPIRED), `relevance_score`, `recommended`, `selected_at`, `respond_by_at`, `created_at`; UNIQUE(task_id, tasker_id)
-  — current schema stores only a short note; PRD v2.0 target requires structured pricing response data in addition to
-  the short note
-- `bookings`: `id (UUID PK)`, `task_id (FK → tasks)`, `tasker_id (FK → users)`, `customer_id (FK → users)`, `price`, `status` (ASSIGNED, PAID, COMPLETED, CANCELLED, NO_SHOW), `cancellation_fee`, `liability_disclaimer_accepted`, `liability_disclaimer_accepted_at`, `confirmed_scheduled_at`, `settlement_mode` (DIRECT, LEAD_UNLOCK, ESCROW; default DIRECT), `late_cancel_incident`, `created_at`, `updated_at`
+- `task_applications`: `id (UUID PK)`, `task_id (FK → tasks)`, `tasker_id (FK → users)`, `message`, `quote_price (INT, nullable)`, `status` (APPLIED, SELECTED, ACCEPTED, DECLINED, EXPIRED, WITHDRAWN), `relevance_score`, `recommended`, `selected_at`, `respond_by_at`, `created_at`; UNIQUE(task_id, tasker_id)
+- `bookings`: `id (UUID PK)`, `task_id (FK → tasks)`, `tasker_id (FK → users)`, `customer_id (FK → users)`, `price`, `status` (ASSIGNED, PAID, COMPLETED, CANCELLED, NO_SHOW, DISPUTED), `cancellation_fee`, `liability_disclaimer_accepted`, `liability_disclaimer_accepted_at`, `confirmed_scheduled_at`, `settlement_mode` (DIRECT, LEAD_UNLOCK, ESCROW; default DIRECT), `late_cancel_incident`, `created_at`, `updated_at`
   — `PAID` is a live transitional state in the booking state machine
 - `booking_intents`: `id (UUID PK)`, `task_id (FK → tasks CASCADE)`, `tasker_id (FK → users)`, `customer_id (FK → users)`, `source` (REBOOK, INSTANT_MATCH), `status` (PENDING, CONFIRMED, EXPIRED, CANCELLED), `original_booking_id (FK → bookings)`, `offer_id`, `expires_at`, `confirmed_booking_id (FK → bookings)`, `confirmed_at`, `created_at`, `updated_at`
 - `booking_schedule_events`: `id (UUID PK)`, `booking_id (FK → bookings)`, `actor_user_id (FK → users)`, `event_type` (REQUESTED, ACCEPTED, DECLINED, EXPIRED), `proposed_scheduled_at`, `reason`, `created_at`
@@ -501,10 +497,8 @@ _(No database views or materialized projections currently exist. Admin read mode
      after 3 declines/timeouts.
 5. **Monetization Flow** _(Phased by PRD)_:
    - Phase 0-1: direct settlement only (`DIRECT`), no platform fee transactions.
-   - PRD v2.0 target adds two launch pricing modes: `I have a budget` and `I want quotes`, with structured
+   - Phase 1 implements two launch pricing modes: `I have a budget` and `I want quotes`, with structured
      quote/counter-offer capture and price lock at booking confirmation.
-   - Current implementation drift: active launch-live schema and OpenAPI still model fixed-budget task posting plus a
-     short-note application payload; pricing-mode remediation remains a required contract-first follow-up.
    - Phase 2: credit pack purchase via QPay; selected Tasker lead unlock consumes credits before customer contact
      reveal.
    - Phase 2 lead-unlock pricing resolves from `lead_unlock_prices` by category/district/effective window.
@@ -679,10 +673,8 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
     `ASSIGNED -> PAID -> COMPLETED|CANCELLED|NO_SHOW` for bookings (PAID is escrow-phase intermediate;
     in direct-settlement mode bookings go ASSIGNED -> COMPLETED|CANCELLED|NO_SHOW directly).
 - **Pricing Contract**:
-  - PRD v2.0 target requires `pricing_mode` on tasks plus structured application pricing responses that can represent
+  - Phase 1 implements `pricing_mode` on tasks plus structured application pricing responses that can represent
     budget acceptance, counter-offer, or quote submission.
-  - Current active OpenAPI remains fixed-budget-only and message-only for applications; that mismatch is intentional
-    documentation of implementation drift and must be remediated before code is declared PRD-aligned.
 - **Monetization Contract**:
   - Credit debits are valid only for `LEAD_UNLOCK_ACCEPTED` events.
   - Application cap defaults to 10 and is config-driven per category.

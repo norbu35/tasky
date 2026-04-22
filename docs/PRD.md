@@ -304,7 +304,7 @@ The following events support KPI computation:
 
 These rules are normative for Phase 1 unless a more specific requirement below overrides them.
 
-1. **No qualified application window**: if an eligible task has no qualified application within 12 hours of posting, the system may trigger external distribution for eligible categories.
+1. **No qualified application window**: if an eligible task has no qualified application within 8 hours of posting, the system may trigger external distribution for eligible categories.
 2. **Selected tasker timeout**: selected-tasker acceptance expires after 4 hours. Expiry returns the task to selectable-applicant state without confirming booking.
 3. **Reschedule authority**: only mutually accepted in-app reschedules change the canonical schedule. Chat-only schedule changes do not affect timers.
 4. **No-show rule**: at scheduled start +10 minutes, both parties receive a reminder to update status. At +15 minutes, a no-show flag is allowed only if recent activity and accepted reschedules do not block it.
@@ -334,7 +334,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 
 - **REQ-P1-SAFE-01**: A user MAY request tasker role activation before verification, but MUST remain verification-gated until approved.
 - **REQ-P1-SAFE-02**: New taskers MUST remain pending until manual verification is completed by admin.
-- **REQ-P1-SAFE-03**: Category-specific vetting MUST be supported for categories that require additional eligibility beyond identity verification.
+- **REQ-P1-SAFE-03**: Category-specific vetting MUST be supported for categories that require additional eligibility beyond identity verification. _(Phase 2+: Phase 1 uses a single VERIFIED status per user; per-category qualifications are deferred.)_
 - **REQ-P1-SAFE-04**: Taskers MAY declare service-area preferences to improve notification relevance, but service-area is not a posting or application gate.
 - **REQ-P1-SAFE-05**: The platform MUST preserve auditable evidence of verification consent, verification decision, and verification state changes.
 
@@ -348,7 +348,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 
 ### 11.5 Task posting and intake
 
-- **REQ-P1-TASK-01**: The task create flow MUST require task location, preferred date, time window, short title, structured scope fields, and pricing mode.
+- **REQ-P1-TASK-01**: The task create flow MUST require task location, preferred date, time window, structured scope fields, and pricing mode. The `description` field serves as the short title; the frontend composes display titles from task columns.
 - **REQ-P1-TASK-02**: Task photos MUST be optional but strongly encouraged.
 - **REQ-P1-TASK-03**: Task photos MUST use presigned upload URLs and MUST be capped at three photos per task.
 - **REQ-P1-TASK-04**: Draft creation MUST bind to the active intake schema version at form start.
@@ -380,7 +380,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 
 ### 11.8 Applications and matching
 
-- **REQ-P1-MATCH-01**: Only qualified taskers MUST be allowed to apply to an eligible task.
+- **REQ-P1-MATCH-01**: Only qualified taskers MUST be allowed to apply to an eligible task. _(Phase 1: any verified tasker may apply to any eligible task regardless of category.)_
 - **REQ-P1-MATCH-02**: Applications MUST include a structured pricing response and a short structured note.
 - **REQ-P1-MATCH-03**: Customers MUST be able to review all applications on a task. The UI MAY rank or highlight top candidates, but MUST NOT hard-cap comparison to a fixed maximum.
 - **REQ-P1-MATCH-04**: Customers MUST select exactly one applicant to proceed toward booking confirmation.
@@ -433,7 +433,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 - **REQ-P1-SAFE-09**: The platform MUST send a review prompt immediately at completion and support reminder prompts for unresolved review obligations.
 - **REQ-P1-SAFE-10**: The structured review model MUST support at least an overall rating, whether the tasker showed up on time, whether the task was completed as expected, whether the user would book again, and optional text.
 - **REQ-P1-SAFE-11**: Tasker-to-customer reviews MUST be supported in Phase 1.
-- **REQ-P1-SAFE-12**: Serious complaints MUST remain a separate path from ordinary reviews.
+- **REQ-P1-SAFE-12**: Serious complaints MUST remain a separate path from ordinary reviews. In Phase 1, disputes serve as the unified complaint pathway.
 - **REQ-P1-SAFE-13**: Public reputation in Phase 1 MUST prioritize verification and trust badges; public rating display MUST remain hidden until a minimum review-count threshold is reached.
 - **REQ-P1-SAFE-14**: A dispute MUST be openable during an active booking and for a limited period after completion.
 - **REQ-P1-SAFE-15**: Dispute submission MUST require evidence artifacts or enter a grace process that can auto-close for insufficient evidence.
@@ -463,7 +463,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 
 - **REQ-P1-ASSIST-01**: The product MUST classify task outcomes as self-serve, system-assisted, or manual-assisted.
 - **REQ-P1-ASSIST-02**: Task-level external distribution MUST NOT be used by default.
-- **REQ-P1-ASSIST-03**: External distribution MAY trigger only when an eligible task has received no qualified application within twelve hours of posting.
+- **REQ-P1-ASSIST-03**: External distribution MAY trigger only when an eligible task has received no qualified application within eight hours of posting.
 - **REQ-P1-ASSIST-04**: External distribution MUST be limited in Phase 1 to home cleaning, furniture assembly, moving help, and minor handyman.
 - **REQ-P1-ASSIST-05**: External distribution payloads MUST be sanitized and MUST NOT expose exact address, raw contact details, or unsupported trust claims.
 - **REQ-P1-ASSIST-06**: Tasks advanced through external distribution MUST remain eligible for booking and completion metrics but MUST be excluded from self-serve fulfillment reporting.
