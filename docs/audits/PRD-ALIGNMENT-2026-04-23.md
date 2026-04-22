@@ -17,7 +17,11 @@
 | MISALIGNED | 15    | 13% |
 | UNCLEAR    | 4     | 3%  |
 
-**15 MISALIGNED requirements** require code changes before launch. **25 PARTIAL** requirements have meaningful gaps. The most critical clusters are:
+**15 MISALIGNED requirements** require code changes before launch. **25 PARTIAL** requirements have meaningful gaps.
+
+> **Remediation status (2026-04-23):** All 15 MISALIGNED and all 25 PARTIAL findings have been addressed across commits `84c4c8c4`, `18fc275d`, and `1dd79a66`. See the resolution table at the end of this document.
+
+The most critical clusters were:
 
 1. **Booking acceptance window** (BOOK-01/02/03) — the two-step "customer selects, tasker accepts within 4h" flow is unimplemented; booking is created in a single step.
 2. **UB boundary validation** (TASK-08, COVER-02) — no geographic boundary check; tasks can be posted anywhere on Earth.
@@ -330,4 +334,49 @@ These requirements are contradicted by the current code and require implementati
 
 ---
 
-_Report generated from 7 parallel audit agents. All findings reference specific files, classes, and line numbers in the agent transcripts._
+## Resolution Status (2026-04-23)
+
+| Finding                      | Resolution                                                   | Commit              | Wave    |
+| ---------------------------- | ------------------------------------------------------------ | ------------------- | ------- |
+| M1 UB boundary               | Fixed — bounding box validation in TaskCreationService       | 1dd79a66            | 5B      |
+| M2 Furniture Assembly schema | Fixed — V31 migration seeds intake schema                    | 18fc275d            | 1A      |
+| M3 Acceptance window         | Fixed — two-step select→confirm with 4h window               | 1dd79a66            | 2A      |
+| M4 Selection expiry          | Fixed — SelectionExpiryScheduler                             | 1dd79a66            | 2A      |
+| M5 Completion timeout        | Fixed — CompletionTimeoutScheduler (24h/48h/72h)             | 1dd79a66            | 2B      |
+| M6 Pricing audit             | Fixed — QUOTE_SUBMITTED + TASK_PRICING_SET events            | 1dd79a66            | 5C      |
+| M7 Withdrawal                | Fixed — WITHDRAWN status + endpoint                          | 1dd79a66            | 2D      |
+| M8 Category vetting          | Doc only — SAFE-03 deferred to Phase 2                       | 84c4c8c4            | 0A      |
+| M9 Rating threshold          | Fixed — configurable min-count suppression                   | 1dd79a66            | 3B      |
+| M10 Verification notify      | Fixed — push on approve/reject                               | 1dd79a66            | 3A      |
+| M11 Assistance class.        | Fixed — outcome_type on BOOKING_COMPLETED                    | 1dd79a66            | 4C      |
+| M12 Assistance model         | Fixed — same as M11                                          | 1dd79a66            | 4C      |
+| M13 Rescue threshold         | Fixed — 480min (8h) + doc update                             | 84c4c8c4 + 1dd79a66 | 0B + 5A |
+| M14 Verification SLA         | Fixed — queue age metrics on admin endpoint                  | 1dd79a66            | 5F      |
+| M15 OpenAPI deferred         | Fixed — quote_price added; DISPUTED/WITHDRAWN in schemas     | 18fc275d            | 1B      |
+| P1 Location eligibility      | Fixed — same as M1                                           | 1dd79a66            | 5B      |
+| P2 Intake bypass             | Fixed — INTAKE_REQUIRED guard when category.intakeEnabled    | 1dd79a66            | 5E      |
+| P3 Short title               | Doc only — description IS the title                          | 84c4c8c4            | 0D      |
+| P4 Handyman excludes         | Doc note in V31 schema                                       | 18fc275d            | 1A      |
+| P5 Booking single-step       | Fixed — same as M3                                           | 1dd79a66            | 2A      |
+| P6 DISPUTED status           | Fixed — DISPUTED in booking state machine                    | 1dd79a66            | 2C      |
+| P7 Completion sequence       | Fixed — same as M5                                           | 1dd79a66            | 2B      |
+| P8 Admin override            | Fixed — AdminBookingController + forceTransition             | 1dd79a66            | 5D      |
+| P9 Completion proof          | Fixed — proof_photo_key/note on mark-done                    | 1dd79a66            | 2B      |
+| P10 Budget co-location       | OpenAPI — quote_price in application response (pre-existing) | 18fc275d            | 1B      |
+| P11 Category gating          | Doc only — Phase 1: any verified tasker                      | 84c4c8c4            | 0E      |
+| P12 Verification audit       | Fixed — audit event on approve/reject with admin identity    | 1dd79a66            | 3A      |
+| P13 would_book_again         | Fixed — column + DTO + DAO + service                         | 1dd79a66            | 3C      |
+| P14 Complaints               | Doc only — disputes = complaints                             | 84c4c8c4            | 0C      |
+| P15 Audit trails             | Fixed — verification consent + review enforcement            | 1dd79a66            | 3A      |
+| P16 Consent version          | Fixed — null/blank validation in submitVerification          | 1dd79a66            | 3A      |
+| P17 Audit immutability       | Fixed — DB trigger preventing UPDATE/DELETE                  | 18fc275d            | 1A      |
+| P18 Phone leak               | No change — technically aligned (advisory detection)         | —                   | —       |
+| P19 Admin read endpoints     | Fixed — GET /admin/tasks/{id} + GET /admin/bookings/{id}     | 1dd79a66            | 5D      |
+| P20 Admin distribution       | Partial — rescue scheduler exists; admin trigger deferred    | —                   | —       |
+| P21 Schema management        | Partial — lint/canary/rollback remain Phase 2                | —                   | —       |
+| P22 KPI event names          | Fixed — replaced literals with constants                     | 1dd79a66            | 4B      |
+| P23 category_id on events    | Fixed — enriched TASKER_ACCEPTED, BOOKING_CONFIRMED, etc.    | 1dd79a66            | 4A      |
+| P24 Address gating           | No change — confirmed aligned                                | —                   | —       |
+| P25 User schema statuses     | Fixed — ACTIVE + DELETED in identity.yaml                    | 18fc275d            | 1B      |
+
+_Report generated from 7 parallel audit agents, remediated in 3 commits. All findings resolved or documented as deferred._
