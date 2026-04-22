@@ -19,9 +19,10 @@ import org.springframework.stereotype.Component;
 
 /**
  * Periodically checks for OPEN tasks that have received zero applications after
- * 120 minutes. Triggers rescue actions: customer budget/schedule prompt,
- * broadened tasker push, and concierge flag.
+ * 120 minutes. Triggers backend-controlled rescue actions: broadened tasker
+ * push, concierge flag, and intervention tracking.
  *
+ * REQ-P1-ASSIST-03A: customers are not asked to choose rescue behavior.
  * Only runs during daytime hours (08:00-21:59) in Asia/Ulaanbaatar timezone.
  */
 @Component
@@ -34,7 +35,8 @@ public class RescueScheduler {
     private static final int HOUR_END = 21;
     private static final int BATCH_LIMIT = 200;
     private static final String RESCUE_ACTIONS_JSON =
-            "{\"actions\": [\"CUSTOMER_BUDGET_SCHEDULE_PROMPT\", \"BROADENED_TASKER_PUSH\", \"CONCIERGE_FLAG\"]}";
+            "{\"actions\": [\"BROADENED_TASKER_PUSH\", \"CONCIERGE_FLAG\", \"INTERVENTION_CREATED\"]}";
+    private static final String INTERVENTION_TYPE = "SYSTEM_ASSISTED";
 
     private final TaskDao taskDao;
     private final TaskApplicationDao taskApplicationDao;
@@ -93,13 +95,10 @@ public class RescueScheduler {
 
         Instant now = Instant.now();
         String eventId = UUID.randomUUID().toString();
-        taskRescueEventDao.insert(eventId, task.id(), now, triggerWindow, RESCUE_ACTIONS_JSON);
+        taskRescueEventDao.insert(eventId, task.id(), now, triggerWindow, RESCUE_ACTIONS_JSON, INTERVENTION_TYPE);
 
         notificationService.sendPush(
-                task.customerId(),
-                "No applications yet",
-                "Your task hasn't received applications yet. Consider adjusting budget or schedule.",
-                "RESCUE_CUSTOMER_PROMPT");
+                task.customerId(), "Finding taskers", "We're expanding the search for your task.", "RESCUE_INFO");
 
         // Concierge / admin notification — send to the task's customer ID channel as a proxy;
         // in production this would target an admin user or ops channel.

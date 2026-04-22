@@ -9,4 +9,5 @@ public record TaskRescueEvent(
         Instant triggeredAt,
         String triggerWindow,
         @Nullable String actionsJson,
+        @Nullable String interventionType,
         Instant createdAt) {}

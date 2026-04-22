@@ -1,5 +1,5 @@
 {
-  "_generated_from_migrations": "V1 through V28",
+  "_generated_from_migrations": "V1 through V29",
   "_description": "Canonical schema inventory. Regenerate with: python3 tooling/scripts/validate-schema-parity.py --update-expected",
   "tables": {
     "analytics_events": {
@@ -371,8 +371,17 @@
       "columns": ["id", "sort_order", "storage_key", "task_id"]
     },
     "task_rescue_events": {
-      "columns": ["actions_json", "created_at", "id", "task_id", "trigger_window", "triggered_at"],
+      "columns": [
+        "actions_json",
+        "created_at",
+        "id",
+        "intervention_type",
+        "task_id",
+        "trigger_window",
+        "triggered_at"
+      ],
       "check_constraints": {
+        "intervention_type": ["EXTERNAL_DISTRIBUTION", "MANUAL_ASSISTED", "SYSTEM_ASSISTED"],
         "trigger_window": ["DAYTIME", "OFF_HOURS"]
       }
     },

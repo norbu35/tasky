@@ -19,7 +19,6 @@ import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.publicapi.BookingCommandPort;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.outbox.OutboxEventTypes;
-import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.TaskApplicationService;
@@ -57,9 +56,6 @@ class TaskApplicationServiceTests {
     private BookingCommandPort bookingCommandPort;
 
     @Mock
-    private MessagingService messagingService;
-
-    @Mock
     private NotificationService notificationService;
 
     @Mock
@@ -84,7 +80,6 @@ class TaskApplicationServiceTests {
         service = new TaskApplicationService(
                 userProfileService,
                 bookingCommandPort,
-                messagingService,
                 notificationService,
                 analyticsService,
                 domainEventOutboxService,

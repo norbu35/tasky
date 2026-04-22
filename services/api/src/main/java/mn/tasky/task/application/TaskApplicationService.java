@@ -13,7 +13,6 @@ import mn.tasky.booking.publicapi.BookingCommandPort;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.common.validation.TextSanitizer;
-import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.dao.TaskApplicationDao;
@@ -34,7 +33,6 @@ public class TaskApplicationService {
 
     private final UserProfileService userProfileService;
     private final BookingCommandPort bookingCommandPort;
-    private final MessagingService messagingService;
     private final NotificationService notificationService;
     private final AnalyticsService analyticsService;
     private final DomainEventOutboxService domainEventOutboxService;
@@ -45,7 +43,6 @@ public class TaskApplicationService {
     public TaskApplicationService(
             UserProfileService userProfileService,
             BookingCommandPort bookingCommandPort,
-            MessagingService messagingService,
             NotificationService notificationService,
             AnalyticsService analyticsService,
             DomainEventOutboxService domainEventOutboxService,
@@ -54,7 +51,6 @@ public class TaskApplicationService {
             TaskApplicationDao taskApplicationDao) {
         this.userProfileService = userProfileService;
         this.bookingCommandPort = bookingCommandPort;
-        this.messagingService = messagingService;
         this.notificationService = notificationService;
         this.analyticsService = analyticsService;
         this.domainEventOutboxService = domainEventOutboxService;
