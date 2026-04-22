@@ -32,10 +32,21 @@ pnpm -r lint || exit 1
 
 pnpm sdk:drift || exit 1
 
-# === Frontend unit tests (~23s) ===
+# === Quality gate — tests + scenario coverage (~90s) ===
 
-pnpm --filter @tasky/web test:unit || exit 1
+if [ "${SKIP_QUALITY_GATES:-0}" = "1" ]; then
+  echo "SKIP_QUALITY_GATES=1 — skipping quality gate."
+else
+  # Frontend unit tests
+  pnpm --filter @tasky/web test:unit || exit 1
+  pnpm --filter @tasky/mobile test:unit || exit 1
 
-pnpm --filter @tasky/mobile test:unit || exit 1
+  # Backend tests
+  ./gradlew :services:api:test -q || exit 1
+
+  # Sync scenario registry with test results, then enforce smoke gate
+  bash services/api/scripts/sync-registry.sh || exit 1
+  bash tooling/scripts/check-gates.sh smoke || exit 1
+fi
 
 echo "All pre-push checks passed."
