@@ -1,6 +1,14 @@
-# Secret scanning on staged files (requires gitleaks installed)
-if command -v gitleaks &> /dev/null; then
+#!/usr/bin/env sh
+set -eu
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "gitleaks is required for pre-commit secret scanning." >&2
+  echo "Install gitleaks or set SKIP_LOCAL_SECRET_SCAN=1 for an explicit one-off bypass." >&2
+  if [ "${SKIP_LOCAL_SECRET_SCAN:-0}" != "1" ]; then
+    exit 1
+  fi
+else
   gitleaks git --pre-commit --staged --config .gitleaks.toml
 fi
 
-npx lint-staged
+pnpm exec lint-staged

@@ -34,8 +34,8 @@ Use this file when the change touches operational surfaces rather than product b
 ## Verification
 
 ```bash
-pnpm gate:cleanup
-pnpm gate:baseline
-pnpm gate:drift
-bash -n tooling/scripts/*.sh
+pnpm verify:cleanup
+pnpm verify:ops
+pnpm verify:drift
+pnpm verify:backend
 ```

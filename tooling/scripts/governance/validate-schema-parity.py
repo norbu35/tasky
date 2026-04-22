@@ -17,7 +17,7 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 MIGRATION_DIR = (
     REPO_ROOT
     / "services"
@@ -274,7 +274,7 @@ def schema_to_json(
         "_generated_from_migrations": version_range,
         "_description": (
             "Canonical schema inventory. Regenerate with: "
-            "python3 tooling/scripts/validate-schema-parity.py --update-expected"
+            "python3 tooling/scripts/governance/validate-schema-parity.py --update-expected"
         ),
         "tables": {},
     }

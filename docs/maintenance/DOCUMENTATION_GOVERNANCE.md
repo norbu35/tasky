@@ -3,7 +3,7 @@
 **Status:** Canonical operational policy
 
 This document defines the allowed live documentation structure for the repository. Enforced by
-`tooling/scripts/check-doc-governance.py`.
+`tooling/scripts/governance/check-doc-governance.py`.
 
 ## Status Vocabulary
 

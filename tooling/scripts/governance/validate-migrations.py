@@ -6,7 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 MIGRATION_DIR = REPO_ROOT / "services" / "api" / "src" / "main" / "resources" / "db" / "migration"
 VERSIONED_RE = re.compile(r"^V([0-9]+(?:_[0-9]+)*)__[A-Za-z0-9_]+\.sql$")
 REPEATABLE_RE = re.compile(r"^R__[A-Za-z0-9_]+\.sql$")

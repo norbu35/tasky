@@ -38,22 +38,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Ensure scripts are executable
-        run: chmod +x gradlew tooling/scripts/*.sh tooling/scripts/*.py
+        run: find tooling/scripts -type f \( -name '*.sh' -o -name '*.py' \) -exec chmod +x {} + && chmod +x gradlew
 
-      - name: Validate SDK contract drift
-        run: tooling/scripts/validate-sdk-contract-drift.sh
+      - name: Run structural cleanup gate
+        run: pnpm verify:cleanup
 
-      - name: Validate workspace boundaries
-        run: pnpm workspace:boundaries
-
-      - name: Validate mobile structural contract
-        run: pnpm --filter @tasky/mobile structure:check
-
-      - name: Validate migration safety
-        run: python3 tooling/scripts/validate-migrations.py
-
-      - name: Validate schema parity
-        run: python3 tooling/scripts/validate-schema-parity.py
+      - name: Run ops/config verification
+        run: pnpm verify:ops
 
   backend-quality:
     runs-on: ubuntu-latest
@@ -69,14 +60,22 @@ jobs:
           distribution: temurin
           java-version: '21'
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Ensure gradlew is executable
-        run: chmod +x gradlew
+      - name: Ensure scripts are executable
+        run: find tooling/scripts -type f \( -name '*.sh' -o -name '*.py' \) -exec chmod +x {} + && chmod +x gradlew
 
       - name: Run backend quality checks
-        run: ./gradlew --no-daemon :services:api:check :services:api:jacocoTestCoverageVerification :services:api:openApiValidate
+        run: pnpm verify:backend
 
   frontend-quality:
     runs-on: ubuntu-latest
@@ -104,14 +103,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Typecheck
-        run: pnpm -r typecheck
-
-      - name: Lint
-        run: pnpm -r lint
-
-      - name: Test
-        run: pnpm -r test
+      - name: Run frontend quality checks
+        run: pnpm verify:frontend
 
   e2e-web:
     runs-on: ubuntu-latest

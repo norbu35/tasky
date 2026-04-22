@@ -53,7 +53,7 @@ When a maintenance task spans multiple document families, read them in this orde
 ### Local baseline
 
 ```bash
-tooling/scripts/check-cleanup-gate.sh
+pnpm verify:cleanup
 ./gradlew --no-daemon :services:api:test :services:api:openApiValidate
 pnpm -r typecheck
 pnpm -r test
@@ -63,9 +63,9 @@ pnpm -r test
 
 ```bash
 ./gradlew --no-daemon :services:api:architectureTest
-pnpm workspace:boundaries
-pnpm sdk:drift
-python3 tooling/scripts/validate-schema-parity.py
+pnpm repo:workspace:boundaries
+pnpm contract:sdk:drift
+python3 tooling/scripts/governance/validate-schema-parity.py
 ```
 
 ### CI and release gates

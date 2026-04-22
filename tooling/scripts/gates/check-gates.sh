@@ -2,14 +2,14 @@
 # check-gates.sh
 # Reads tests/registry.yaml and enforces quality gates.
 #
-# Usage: ./tooling/scripts/check-gates.sh <gate>
+# Usage: ./tooling/scripts/gates/check-gates.sh <gate>
 #   gate: smoke | regression | full
 #
 # Exit code: 0 = pass, 1 = fail
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
 
 GATE="${1:-smoke}"
 REGISTRY="${ROOT_DIR}/tests/registry.yaml"

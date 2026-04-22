@@ -34,10 +34,10 @@ The private VPS sandbox is defined by:
 
 - `docker-compose.private-staging.yml`
 - `.env.private-staging.example`
-- `tooling/scripts/bootstrap-private-staging-vps.sh`
-- `tooling/scripts/push-private-staging.sh`
-- `tooling/scripts/deploy-private-staging.sh`
-- `tooling/scripts/smoke-private-staging.sh`
+- `tooling/scripts/deploy/bootstrap-private-staging-vps.sh`
+- `tooling/scripts/deploy/push-private-staging.sh`
+- `tooling/scripts/deploy/deploy-private-staging.sh`
+- `tooling/scripts/deploy/smoke-private-staging.sh`
 
 The web container now serves the SPA and reverse-proxies:
 
@@ -114,7 +114,7 @@ Fill in at minimum:
 Fast path for a fresh Debian/Ubuntu VPS with SSH and a sudo-capable user:
 
 ```bash
-tooling/scripts/push-private-staging.sh <ssh-user@vps-host> /srv/tasky-private-staging .env.private-staging
+tooling/scripts/deploy/push-private-staging.sh <ssh-user@vps-host> /srv/tasky-private-staging .env.private-staging
 ```
 
 This command does all of the following:
@@ -133,8 +133,8 @@ Operator requirement:
 ### 3. Manual fallback on the VPS
 
 ```bash
-sudo ./tooling/scripts/bootstrap-private-staging-vps.sh <deploy-user> /srv/tasky-private-staging
-./tooling/scripts/deploy-private-staging.sh .env.private-staging
+sudo ./tooling/scripts/deploy/bootstrap-private-staging-vps.sh <deploy-user> /srv/tasky-private-staging
+./tooling/scripts/deploy/deploy-private-staging.sh .env.private-staging
 ```
 
 Use the manual path only if you prefer to clone/sync the repo yourself.
@@ -142,7 +142,7 @@ Use the manual path only if you prefer to clone/sync the repo yourself.
 ### 4. Run the smoke script on the VPS
 
 ```bash
-tooling/scripts/smoke-private-staging.sh .env.private-staging
+tooling/scripts/deploy/smoke-private-staging.sh .env.private-staging
 ```
 
 This verifies:
@@ -285,8 +285,8 @@ pnpm --filter @tasky/mobile test:e2e:smoke
 For host bootstrap script verification, the local repository can at least prove shell syntax:
 
 ```bash
-bash -n tooling/scripts/bootstrap-private-staging-vps.sh
-bash -n tooling/scripts/push-private-staging.sh
+bash -n tooling/scripts/deploy/bootstrap-private-staging-vps.sh
+bash -n tooling/scripts/deploy/push-private-staging.sh
 ```
 
 ## Rollback And Recovery

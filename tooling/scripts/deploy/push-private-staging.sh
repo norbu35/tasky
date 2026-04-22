@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
 REMOTE_LOGIN="${1:-}"
 REMOTE_DIR="${2:-/srv/tasky-private-staging}"
 ENV_FILE="${3:-${ROOT_DIR}/.env.private-staging}"
@@ -34,7 +34,7 @@ if [[ -z "${DEPLOY_USER}" ]]; then
   fi
 fi
 
-REMOTE_BOOTSTRAP='chmod +x tooling/scripts/*.sh gradlew; if [ "$(id -u)" -eq 0 ]; then ./tooling/scripts/bootstrap-private-staging-vps.sh; elif sudo -n true >/dev/null 2>&1; then sudo -n ./tooling/scripts/bootstrap-private-staging-vps.sh; else echo "Remote bootstrap requires root SSH or passwordless sudo." >&2; exit 1; fi'
+REMOTE_BOOTSTRAP='find tooling/scripts -type f -name "*.sh" -exec chmod +x {} +; chmod +x gradlew; if [ "$(id -u)" -eq 0 ]; then ./tooling/scripts/deploy/bootstrap-private-staging-vps.sh; elif sudo -n true >/dev/null 2>&1; then sudo -n ./tooling/scripts/deploy/bootstrap-private-staging-vps.sh; else echo "Remote bootstrap requires root SSH or passwordless sudo." >&2; exit 1; fi'
 
 echo "Preparing remote directory ${REMOTE_DIR} on ${REMOTE_LOGIN}..."
 ssh "${REMOTE_LOGIN}" "mkdir -p '${REMOTE_DIR}'"
@@ -70,12 +70,12 @@ scp "${ENV_FILE}" "${REMOTE_LOGIN}:${REMOTE_DIR}/.env.private-staging"
 
 echo "Deploying private staging stack..."
 ssh "${REMOTE_LOGIN}" \
-  "cd '${REMOTE_DIR}' && chmod +x tooling/scripts/*.sh gradlew && ./tooling/scripts/deploy-private-staging.sh .env.private-staging"
+  "cd '${REMOTE_DIR}' && find tooling/scripts -type f -name '*.sh' -exec chmod +x {} + && chmod +x gradlew && ./tooling/scripts/deploy/deploy-private-staging.sh .env.private-staging"
 
 if [[ "${RUN_SMOKE:-true}" == "true" ]]; then
   echo "Running private staging smoke checks..."
   ssh "${REMOTE_LOGIN}" \
-    "cd '${REMOTE_DIR}' && ./tooling/scripts/smoke-private-staging.sh .env.private-staging"
+    "cd '${REMOTE_DIR}' && ./tooling/scripts/deploy/smoke-private-staging.sh .env.private-staging"
 fi
 
 cat <<EOF

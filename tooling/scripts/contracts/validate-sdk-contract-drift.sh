@@ -17,7 +17,7 @@ if [[ -f "${target_file}" ]]; then
   before_hash="$(shasum "${target_file}" | awk '{print $1}')"
 fi
 
-pnpm sdk:generate
+pnpm contract:sdk:generate
 
 if [[ "${ticket}" == "TASK-002" ]]; then
   echo "TID-TASK-002-CI-CONTRACT-DRIFT"

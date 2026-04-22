@@ -31,6 +31,7 @@ product intent. `archive/**` is historical only.
 | `packages/design-tokens/**`        | `packages/design-tokens/AGENTS.md`                             |
 | `packages/sdk/**`                  | `packages/sdk/AGENTS.md`                                       |
 | `packages/test-utils/**`           | `packages/test-utils/AGENTS.md`                                |
+| `tooling/**`                       | `tooling/AGENTS.md`                                            |
 
 Read the nearest local `AGENTS.md` first when you are already inside a surfaced area. On conflict, the more specific
 surface wins unless it contradicts this file or a higher governing doc.
@@ -65,7 +66,7 @@ Frontend tasks run through Turborepo via `pnpm <task>`. Backend tasks use `./gra
 
 - Read the smallest relevant governing and architecture surfaces before editing code.
 - If the API changes, update `docs/openapi/**` first, regenerate `docs/API.yaml`, then regenerate `@tasky/sdk`, then implement.
-- If a Flyway migration adds, drops, or renames a column or table, run `python3 tooling/scripts/validate-schema-parity.py --update-expected` and commit the updated `tooling/config/expected-schema.json`.
+- If a Flyway migration adds, drops, or renames a column or table, run `python3 tooling/scripts/governance/validate-schema-parity.py --update-expected` and commit the updated `tooling/config/expected-schema.json`.
 - Use the active issue or approved execution brief as the task source. Do not rely on archived plan directories.
 - Keep changes vertical and reviewable.
 - Update `CHANGELOG.md` when the repo convention requires it.
@@ -76,8 +77,8 @@ Use the right gate for the claim you are making.
 
 | Level                         | Command / source                                                                                                                     | Meaning                                                  |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
-| Local baseline                | `tooling/scripts/check-cleanup-gate.sh`, `:services:api:test`, `:services:api:openApiValidate`, `pnpm -r typecheck`, `pnpm -r test`  | Minimum local confidence before claiming completion      |
-| Local boundary / drift checks | `:services:api:architectureTest`, `pnpm workspace:boundaries`, `pnpm sdk:drift`, `python3 tooling/scripts/validate-schema-parity.py` | Use when the change touches those surfaces               |
+| Local baseline                | `pnpm verify:cleanup`, `:services:api:test`, `:services:api:openApiValidate`, `pnpm -r typecheck`, `pnpm -r test`                          | Minimum local confidence before claiming completion      |
+| Local boundary / drift checks | `:services:api:architectureTest`, `pnpm repo:workspace:boundaries`, `pnpm contract:sdk:drift`, `python3 tooling/scripts/governance/validate-schema-parity.py` | Use when the change touches those surfaces               |
 | PR CI gate                    | `quality-gates.yml`                                                                                                                  | Actual every-PR enforcement                              |
 | Release gate                  | `release-gate.yml`                                                                                                                   | Deploy-time enforcement                                  |
 | Nightly regression            | `./gradlew gateRegression`, `./gradlew gateFull`                                                                                     | Broader or scheduled confidence, not the default PR gate |

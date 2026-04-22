@@ -76,5 +76,5 @@ Host:
 - app directory prepared at ${APP_DIR}
 
 Next step from the developer machine:
-- sync the repo and deploy with tooling/scripts/push-private-staging.sh
+- sync the repo and deploy with tooling/scripts/deploy/push-private-staging.sh
 EOF

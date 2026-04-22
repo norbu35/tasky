@@ -7,7 +7,7 @@ import YAML from "yaml";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const repoRoot = path.resolve(__dirname, "../..");
+const repoRoot = path.resolve(__dirname, "../../..");
 const sourceRoot = path.join(repoRoot, "docs", "openapi", "openapi.yaml");
 const bundlePath = path.join(repoRoot, "docs", "API.yaml");
 const bundleHeader = [

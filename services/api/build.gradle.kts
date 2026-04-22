@@ -104,9 +104,9 @@ val bundleOpenApiSpec by tasks.registering(Exec::class) {
     workingDir = rootProject.projectDir
     val nodeAvailable = try { ProcessBuilder("node", "--version").start().waitFor() == 0 } catch (_: Exception) { false }
     onlyIf { nodeAvailable }
-    commandLine("node", "tooling/scripts/bundle-openapi.mjs")
+    commandLine("node", "tooling/scripts/contracts/bundle-openapi.mjs")
     inputs.dir("${rootProject.projectDir}/docs/openapi")
-    inputs.file("${rootProject.projectDir}/tooling/scripts/bundle-openapi.mjs")
+    inputs.file("${rootProject.projectDir}/tooling/scripts/contracts/bundle-openapi.mjs")
     outputs.file("${rootProject.projectDir}/docs/API.yaml")
 }
 
@@ -223,7 +223,7 @@ tasks.jacocoTestCoverageVerification {
 checkstyle {
     toolVersion = libs.versions.checkstyle.get()
     configFile = file("${rootProject.projectDir}/tooling/config/checkstyle/checkstyle.xml")
-    isIgnoreFailures = true
+    isIgnoreFailures = false
 }
 
 tasks.withType<Checkstyle>().configureEach {
@@ -324,18 +324,25 @@ tasks.register("precommit") {
 // Quality Gates — driven by tests/registry.yaml and tests/scenarios/*.md
 // Run sync-registry.sh first to ensure registry reflects current test + PIT state.
 
+val syncTestRegistry by tasks.registering(Exec::class) {
+    description = "Syncs tests/registry.yaml before gate evaluation."
+    group = "verification"
+    workingDir(rootProject.projectDir)
+    commandLine("${rootProject.projectDir}/services/api/scripts/sync-registry.sh")
+    mustRunAfter(tasks.test)
+    mustRunAfter("pitest")
+    mustRunAfter(tasks.jacocoTestReport)
+    mustRunAfter("jacocoTestCoverageVerification")
+    mustRunAfter("openApiValidate")
+    mustRunAfter("dependencyCheckAnalyze")
+}
+
 tasks.register<Exec>("gateSmoke") {
     description = "Gate 1: all Critical scenarios covered + mutation floor. Blocks merge to main."
     group = "verification"
-    dependsOn(tasks.test, "pitest")
+    dependsOn(tasks.test, "pitest", syncTestRegistry)
     workingDir(rootProject.projectDir)
-    doFirst {
-        exec {
-            workingDir(rootProject.projectDir)
-            commandLine("${rootProject.projectDir}/services/api/scripts/sync-registry.sh")
-        }
-    }
-    commandLine("${rootProject.projectDir}/tooling/scripts/check-gates.sh", "smoke")
+    commandLine("${rootProject.projectDir}/tooling/scripts/gates/check-gates.sh", "smoke")
 }
 
 tasks.register<Exec>("gateRegression") {
@@ -346,29 +353,18 @@ tasks.register<Exec>("gateRegression") {
         tasks.jacocoTestReport,
         "jacocoTestCoverageVerification",
         "openApiValidate",
+        syncTestRegistry,
     )
     workingDir(rootProject.projectDir)
-    doFirst {
-        exec {
-            workingDir(rootProject.projectDir)
-            commandLine("${rootProject.projectDir}/services/api/scripts/sync-registry.sh")
-        }
-    }
-    commandLine("${rootProject.projectDir}/tooling/scripts/check-gates.sh", "regression")
+    commandLine("${rootProject.projectDir}/tooling/scripts/gates/check-gates.sh", "regression")
 }
 
 tasks.register<Exec>("gateFull") {
     description = "Gate 3: all scenarios + PIT floors. Runs nightly."
     group = "verification"
-    dependsOn(tasks.test, tasks.jacocoTestReport, "pitest", "dependencyCheckAnalyze")
+    dependsOn(tasks.test, tasks.jacocoTestReport, "pitest", "dependencyCheckAnalyze", syncTestRegistry)
     workingDir(rootProject.projectDir)
-    doFirst {
-        exec {
-            workingDir(rootProject.projectDir)
-            commandLine("${rootProject.projectDir}/services/api/scripts/sync-registry.sh")
-        }
-    }
-    commandLine("${rootProject.projectDir}/tooling/scripts/check-gates.sh", "full")
+    commandLine("${rootProject.projectDir}/tooling/scripts/gates/check-gates.sh", "full")
 }
 
 // PIT Mutation Testing

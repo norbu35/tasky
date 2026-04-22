@@ -1,6 +1,6 @@
 {
   "_generated_from_migrations": "V1 through V29",
-  "_description": "Canonical schema inventory. Regenerate with: python3 tooling/scripts/validate-schema-parity.py --update-expected",
+  "_description": "Canonical schema inventory. Regenerate with: python3 tooling/scripts/governance/validate-schema-parity.py --update-expected",
   "tables": {
     "analytics_events": {
       "columns": ["id", "name", "properties", "timestamp", "user_id"]

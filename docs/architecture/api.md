@@ -9,8 +9,8 @@ context.
 > **Reconciliation status: complete.** This document was reconciled with the codebase across
 > five passes (authority/async narrative, security, events/outbox, persistence, verification).
 > Every section is labeled with its truth status. Treat labels as authoritative; unmarked subsections are current state.
-> Run `./tooling/scripts/scan-backend-doc-drift.sh` to check for banned-term drift re-introduction.
-> Run `python3 tooling/scripts/validate-schema-parity.py` to check schema inventory drift against Flyway migrations.
+> Run `./tooling/scripts/manual/scan-backend-doc-drift.sh` to check for banned-term drift re-introduction.
+> Run `python3 tooling/scripts/governance/validate-schema-parity.py` to check schema inventory drift against Flyway migrations.
 
 ## Authority Order
 
@@ -334,7 +334,7 @@ Any addition to the exception set requires deliberate justification in code revi
 > Section 4.1 and 4.2 reflect the current-state schema; section 4.4 documents planned target-state tables separately.
 > For authoritative column definitions, consult the migrations directly.
 >
-> **Drift guard:** `python3 tooling/scripts/validate-schema-parity.py` compares the curated schema inventory
+> **Drift guard:** `python3 tooling/scripts/governance/validate-schema-parity.py` compares the curated schema inventory
 > (`tooling/config/expected-schema.json`) against the actual Flyway migrations. It runs in the `structural-gate`
 > CI job and fails the PR on table or column drift. Run `--update-expected` when adding a new migration.
 

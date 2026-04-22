@@ -66,7 +66,7 @@ pnpm --filter @tasky/mobile start
 Local baseline:
 
 ```bash
-tooling/scripts/check-cleanup-gate.sh
+tooling/scripts/gates/check-cleanup-gate.sh
 ./gradlew --no-daemon :services:api:test :services:api:openApiValidate
 pnpm -r typecheck
 pnpm -r test
@@ -76,9 +76,9 @@ Additional boundary and drift checks:
 
 ```bash
 ./gradlew --no-daemon :services:api:architectureTest
-pnpm workspace:boundaries
-pnpm sdk:drift
-python3 tooling/scripts/validate-schema-parity.py
+pnpm repo:workspace:boundaries
+pnpm contract:sdk:drift
+python3 tooling/scripts/governance/validate-schema-parity.py
 ```
 
 See `AGENTS.md` and `docs/maintenance/OPERATING_MODEL.md` for CI, release, and nightly gate expectations.
@@ -92,7 +92,7 @@ Historical plans and superseded specs live under `archive/`.
 
 ```bash
 cp .env.private-staging.example .env.private-staging
-tooling/scripts/push-private-staging.sh <ssh-user@vps-host> /srv/tasky-private-staging .env.private-staging
+tooling/scripts/deploy/push-private-staging.sh <ssh-user@vps-host> /srv/tasky-private-staging .env.private-staging
 ```
 
 See `docs/maintenance/STAGING_RUNBOOK.md` for tunnel workflow, admin bootstrap, and limitations.

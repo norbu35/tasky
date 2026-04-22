@@ -8,8 +8,8 @@ set -euo pipefail
 # reappear in the canonical architecture documentation.
 #
 # Usage:
-#   ./tooling/scripts/scan-backend-doc-drift.sh            # check for drift
-#   ./tooling/scripts/scan-backend-doc-drift.sh --fix-hint  # show recommended fixes
+#   ./tooling/scripts/manual/scan-backend-doc-drift.sh            # check for drift
+#   ./tooling/scripts/manual/scan-backend-doc-drift.sh --fix-hint  # show recommended fixes
 
 fix_hint=false
 if [[ "${1:-}" == "--fix-hint" ]]; then

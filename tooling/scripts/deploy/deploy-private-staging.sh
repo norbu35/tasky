@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
 ENV_FILE="${1:-${ROOT_DIR}/.env.private-staging}"
 COMPOSE_FILE="${ROOT_DIR}/docker-compose.private-staging.yml"
 
@@ -23,4 +23,4 @@ docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" ps
 
 echo
 echo "Run smoke verification next:"
-echo "  ${ROOT_DIR}/tooling/scripts/smoke-private-staging.sh ${ENV_FILE}"
+echo "  ${ROOT_DIR}/tooling/scripts/deploy/smoke-private-staging.sh ${ENV_FILE}"

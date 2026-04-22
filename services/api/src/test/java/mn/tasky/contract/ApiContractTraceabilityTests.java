@@ -46,7 +46,7 @@ class ApiContractTraceabilityTests {
     @DisplayName("TID-TASK-002-CI-CONTRACT-DRIFT CI drift gate script enforces generated SDK " + "parity")
     void contractDriftGateScriptExists() throws Exception {
         Path driftScript =
-                OpenApiContractTestSupport.resolveFromRepoRoot("tooling/scripts/validate-sdk-contract-drift.sh");
+                OpenApiContractTestSupport.resolveFromRepoRoot("tooling/scripts/contracts/validate-sdk-contract-drift.sh");
         assertThat(driftScript).exists();
 
         String script = Files.readString(driftScript);
