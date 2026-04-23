@@ -3,11 +3,14 @@ set -euo pipefail
 
 echo "Running pre-push checks..."
 
-# Detect docs-only changes — skip heavy checks
+# Detect docs-only changes — skip heavy checks.
+# docs/openapi/** and docs/API.yaml are contract surfaces, not pure docs,
+# and are intentionally excluded from the docs-only fast path.
 CHANGED_FILES=$(git diff --name-only @{push}.. 2>/dev/null || git diff --name-only HEAD~1)
-NON_DOC_FILES=$(echo "$CHANGED_FILES" | grep -v -E '\.(md|txt)$|^docs/|^research/|^README' || true)
+NON_DOC_FILES=$(echo "$CHANGED_FILES" | grep -v -E '\.(md|txt)$|^research/|^README' | grep -v -E '^docs/' || true)
+CONTRACT_FILES=$(echo "$CHANGED_FILES" | grep -E '^docs/(openapi/|API\.yaml)' || true)
 
-if [ -z "$NON_DOC_FILES" ]; then
+if [ -z "$NON_DOC_FILES" ] && [ -z "$CONTRACT_FILES" ]; then
   echo "Docs-only change detected — running docs and ops checks."
   pnpm repo:docs:check
   pnpm verify:ops
@@ -25,5 +28,7 @@ else
   pnpm verify:frontend
   pnpm verify:scenario:smoke
 fi
+
+pnpm verify:drift
 
 echo "All pre-push checks passed."

@@ -6,11 +6,6 @@ if ! command -v pnpm >/dev/null 2>&1; then
   exit 1
 fi
 
-ticket="${SELF_VERIFY_TICKET:-}"
-if [[ "${ticket}" == "TASK-002" ]]; then
-  echo "TID-TASK-002-SDK-GENERATE"
-fi
-
 target_file="packages/sdk/src/generated/api-types.ts"
 before_hash="MISSING"
 if [[ -f "${target_file}" ]]; then
@@ -18,10 +13,6 @@ if [[ -f "${target_file}" ]]; then
 fi
 
 pnpm contract:sdk:generate
-
-if [[ "${ticket}" == "TASK-002" ]]; then
-  echo "TID-TASK-002-CI-CONTRACT-DRIFT"
-fi
 
 if [[ ! -f "${target_file}" ]]; then
   echo "SDK contract output missing: ${target_file}" >&2

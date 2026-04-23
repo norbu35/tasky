@@ -7,9 +7,11 @@ set -euo pipefail
 # These terms reference retired mechanisms or incorrect column names that must not
 # reappear in the canonical architecture documentation.
 #
+# Wired into `pnpm verify:cleanup` via tooling/scripts/gates/check-cleanup-gate.sh.
+#
 # Usage:
-#   ./tooling/scripts/manual/scan-backend-doc-drift.sh            # check for drift
-#   ./tooling/scripts/manual/scan-backend-doc-drift.sh --fix-hint  # show recommended fixes
+#   ./tooling/scripts/governance/scan-backend-doc-drift.sh            # check for drift
+#   ./tooling/scripts/governance/scan-backend-doc-drift.sh --fix-hint  # show recommended fixes
 
 fix_hint=false
 if [[ "${1:-}" == "--fix-hint" ]]; then

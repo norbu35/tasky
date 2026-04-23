@@ -1,19 +1,20 @@
 #!/usr/bin/env node
 
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
 const repoRoot = process.cwd();
 const workspaceRoots = ["apps", "packages", "services", "tooling"];
 
-const packageFiles = [
-    path.join(repoRoot, "apps/mobile/package.json"),
-    path.join(repoRoot, "apps/web/package.json"),
-    path.join(repoRoot, "packages/core/package.json"),
-    path.join(repoRoot, "packages/design-tokens/package.json"),
-    path.join(repoRoot, "packages/sdk/package.json")
-];
+// Discover package.json files dynamically so new packages are automatically covered.
+const packageFiles = workspaceRoots.flatMap((root) => {
+    const rootDir = path.join(repoRoot, root);
+    if (!existsSync(rootDir)) return [];
+    return readdirSync(rootDir)
+        .map((entry) => path.join(rootDir, entry, "package.json"))
+        .filter((f) => existsSync(f) && statSync(path.dirname(f)).isDirectory());
+});
 
 const packageIndex = new Map();
 
@@ -40,6 +41,13 @@ const getZone = (location) => {
     return workspaceRoots.includes(first) ? first : "root";
 };
 
+// Config-only packages in the tooling zone that all other zones are allowed to consume
+// as devDependencies (tsconfig, eslint presets, etc). These are build-time only and
+// do not represent runtime tool or deploy dependencies.
+const allowedToolingDeps = new Set([
+    "@tasky/tooling-config",
+]);
+
 const violations = [];
 
 for (const pkg of packageIndex.values()) {
@@ -47,6 +55,10 @@ for (const pkg of packageIndex.values()) {
     for (const depName of Object.keys(pkg.dependencies)) {
         const depPkg = packageIndex.get(depName);
         if (!depPkg) {
+            continue;
+        }
+
+        if (allowedToolingDeps.has(depName)) {
             continue;
         }
 

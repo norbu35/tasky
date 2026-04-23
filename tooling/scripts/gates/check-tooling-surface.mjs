@@ -22,11 +22,12 @@ const registry = {
     "governance/check-doc-governance.py": "active",
     "governance/check-gitleaks-secret-scan.sh": "active",
     "governance/check-trivyignore-expiry.sh": "active",
+    "governance/scan-backend-doc-drift.sh": "active",
+    "governance/validate-doc-references.py": "active",
     "governance/validate-migrations.py": "active",
     "governance/validate-schema-parity.py": "active",
     "governance/validate-workspace-boundaries.mjs": "active",
     "manual/analyze_i18n.py": "manual",
-    "manual/scan-backend-doc-drift.sh": "manual",
     "observability/start-alertmanager.sh": "active",
 };
 

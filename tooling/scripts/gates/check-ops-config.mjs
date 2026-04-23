@@ -39,6 +39,7 @@ const textExpectations = [
             "pnpm verify:backend",
             "pnpm verify:frontend",
             "pnpm verify:scenario:smoke",
+            "pnpm verify:drift",
         ],
     },
     {
@@ -48,6 +49,7 @@ const textExpectations = [
             "pnpm verify:ops",
             "pnpm verify:backend",
             "pnpm verify:frontend",
+            "pnpm verify:drift",
         ],
     },
     {

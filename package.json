@@ -31,7 +31,7 @@
     "contract:sdk:generate": "turbo run generate --filter=@tasky/sdk",
     "contract:sdk:drift": "bash tooling/scripts/contracts/validate-sdk-contract-drift.sh",
     "contract:generated:verify": "pnpm contract:sdk:generate && turbo run build typecheck",
-    "repo:docs:check": "python3 tooling/scripts/governance/check-doc-governance.py && node tooling/scripts/contracts/bundle-openapi.mjs --check",
+    "repo:docs:check": "python3 tooling/scripts/governance/check-doc-governance.py && python3 tooling/scripts/governance/validate-doc-references.py && node tooling/scripts/contracts/bundle-openapi.mjs --check",
     "repo:tooling:check": "find tooling/scripts -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n && find tooling/scripts -type f -name '*.py' -print0 | xargs -0 -n1 python3 -m py_compile && node tooling/scripts/gates/check-tooling-surface.mjs",
     "repo:workspace:boundaries": "node tooling/scripts/governance/validate-workspace-boundaries.mjs",
     "build": "turbo build",

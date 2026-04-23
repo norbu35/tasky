@@ -84,6 +84,8 @@ Pick the smallest lane that matches the job:
 | `tooling/scripts/governance/validate-workspace-boundaries.mjs` | Workspace boundary enforcement                          | `pnpm repo:workspace:boundaries`, `pnpm verify:cleanup`       |
 | `tooling/scripts/governance/validate-migrations.py`            | Flyway migration naming and immutability checks         | `pnpm verify:cleanup`, staging and release workflows          |
 | `tooling/scripts/governance/validate-schema-parity.py`         | Schema inventory drift check                            | `pnpm verify:cleanup`                                         |
+| `tooling/scripts/governance/validate-doc-references.py`        | Verify pnpm/file refs in AGENTS.md and adapters resolve | `pnpm repo:docs:check`, `pnpm verify:cleanup`                 |
+| `tooling/scripts/governance/scan-backend-doc-drift.sh`         | Backend architecture / module doc drift scan            | `pnpm verify:cleanup`                                         |
 | `tooling/scripts/governance/check-trivyignore-expiry.sh`       | Expiring security-ignore audit                          | `pnpm verify:cleanup`                                         |
 | `tooling/scripts/gates/check-gates.sh`                         | Scenario gate evaluator for smoke/regression/full       | `services/api/build.gradle.kts`                               |
 | `tooling/scripts/deploy/performance-smoke.sh`                  | Latency smoke against live or locally booted backend    | release gate                                                  |
@@ -93,7 +95,6 @@ Pick the smallest lane that matches the job:
 | `tooling/scripts/deploy/deploy-private-staging.sh`             | Compose deployment on private staging host              | staging runbook / manual                                      |
 | `tooling/scripts/deploy/smoke-private-staging.sh`              | Post-deploy staging smoke checks                        | staging runbook / manual                                      |
 | `tooling/scripts/manual/analyze_i18n.py`                       | Manual locale diagnostic                                | manual only                                                   |
-| `tooling/scripts/manual/scan-backend-doc-drift.sh`             | Manual backend-doc drift scan                           | manual only                                                   |
 
 ## Agent Finish Rules
 

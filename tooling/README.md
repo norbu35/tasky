@@ -25,7 +25,6 @@ This directory contains repository-level engineering tooling for maintenance and
 ## Manual-Only Helpers
 
 - `tooling/scripts/manual/analyze_i18n.py`
-- `tooling/scripts/manual/scan-backend-doc-drift.sh`
 
 These are diagnostic helpers, not default gates.
 
