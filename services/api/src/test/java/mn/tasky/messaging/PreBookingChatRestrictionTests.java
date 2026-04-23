@@ -32,13 +32,12 @@ import org.junit.jupiter.api.Test;
 class PreBookingChatRestrictionTests {
 
     private ConversationDao conversationDao;
-    private MessageDao messageDao;
     private MessagingService messagingService;
 
     @BeforeEach
     void setUp() {
         conversationDao = mock(ConversationDao.class);
-        messageDao = mock(MessageDao.class);
+        MessageDao messageDao = mock(MessageDao.class);
 
         when(conversationDao.findByTaskAndParticipants(anyString(), anyString(), anyString()))
                 .thenReturn(Optional.empty());

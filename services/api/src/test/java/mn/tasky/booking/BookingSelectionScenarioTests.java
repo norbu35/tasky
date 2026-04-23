@@ -77,10 +77,6 @@ class BookingSelectionScenarioTests {
     private TaskDao taskDao;
     private BookingCommandPort bookingCommandPort;
     private NotificationService notificationService;
-    private AnalyticsService analyticsService;
-    private DomainEventOutboxService outboxService;
-    private ReviewEnforcementService reviewEnforcementService;
-    private UserProfileService userProfileService;
     private TaskApplicationService taskApplicationService;
 
     private BookingDao bookingDao;
@@ -99,10 +95,10 @@ class BookingSelectionScenarioTests {
         taskDao = mock(TaskDao.class);
         bookingCommandPort = mock(BookingCommandPort.class);
         notificationService = mock(NotificationService.class);
-        analyticsService = mock(AnalyticsService.class);
-        outboxService = mock(DomainEventOutboxService.class);
-        reviewEnforcementService = mock(ReviewEnforcementService.class);
-        userProfileService = mock(UserProfileService.class);
+        AnalyticsService analyticsService = mock(AnalyticsService.class);
+        DomainEventOutboxService outboxService = mock(DomainEventOutboxService.class);
+        ReviewEnforcementService reviewEnforcementService = mock(ReviewEnforcementService.class);
+        UserProfileService userProfileService = mock(UserProfileService.class);
 
         taskApplicationService = new TaskApplicationService(
                 userProfileService,
@@ -119,7 +115,11 @@ class BookingSelectionScenarioTests {
         BookingReliabilityIncidentDao incidentDao = mock(BookingReliabilityIncidentDao.class);
 
         bookingService = new BookingService(
-                userProfileService, bookingDao, incidentDao, completionSignalDao, new SimpleMeterRegistry());
+                mock(UserProfileService.class),
+                bookingDao,
+                incidentDao,
+                completionSignalDao,
+                new SimpleMeterRegistry());
 
         taskQueryService = mock(TaskQueryService.class);
         taskLifecycleService = mock(TaskLifecycleService.class);

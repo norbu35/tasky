@@ -30,14 +30,13 @@ class ReviewPromptScenarioTests {
 
     private ReviewEnforcementCaseDao reviewEnforcementCaseDao;
     private NotificationService notificationService;
-    private DisputeDao disputeDao;
     private ReviewEnforcementService reviewEnforcementService;
 
     @BeforeEach
     void setUp() {
         reviewEnforcementCaseDao = mock(ReviewEnforcementCaseDao.class);
         notificationService = mock(NotificationService.class);
-        disputeDao = mock(DisputeDao.class);
+        DisputeDao disputeDao = mock(DisputeDao.class);
 
         // Default: no existing enforcement cases (idempotency check passes)
         when(reviewEnforcementCaseDao.findByBookingAndUser(anyString(), anyString()))
