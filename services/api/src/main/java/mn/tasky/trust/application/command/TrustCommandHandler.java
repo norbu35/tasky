@@ -35,7 +35,8 @@ public class TrustCommandHandler implements TrustCommandPort {
             Integer communicationRating,
             Integer clarityRating,
             Integer respectfulnessRating,
-            String comment) {
+            String comment,
+            Boolean wouldBookAgain) {
         return reviewService.submitReview(
                 authorId,
                 bookingId,
@@ -44,7 +45,8 @@ public class TrustCommandHandler implements TrustCommandPort {
                 communicationRating,
                 clarityRating,
                 respectfulnessRating,
-                comment);
+                comment,
+                wouldBookAgain);
     }
 
     @Override

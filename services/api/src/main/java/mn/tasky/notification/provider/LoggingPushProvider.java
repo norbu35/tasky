@@ -20,7 +20,9 @@ public class LoggingPushProvider implements PushNotificationProvider {
     private static final Logger log = LoggerFactory.getLogger(LoggingPushProvider.class);
 
     private static String maskToken(String token) {
-        if (token == null || token.length() <= 8) return "***";
+        if (token == null || token.length() <= 8) {
+            return "***";
+        }
         return token.substring(0, 8) + "...";
     }
 

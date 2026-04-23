@@ -95,10 +95,14 @@ public class PublicTaskCompositionService {
                 .ifPresent(profile -> response.put(
                         "customer",
                         Map.of(
-                                "id", profile.id(),
-                                "full_name", profile.fullName(),
-                                "avatar_url", profile.avatarUrl() != null ? profile.avatarUrl() : "",
-                                "rating_avg", profile.ratingAvg())));
+                                "id",
+                                profile.id(),
+                                "full_name",
+                                profile.fullName(),
+                                "avatar_url",
+                                profile.avatarUrl() != null ? profile.avatarUrl() : "",
+                                "rating_avg",
+                                profile.ratingAvg() != null ? profile.ratingAvg() : "")));
 
         response.put("description", task.description());
         response.put("budget", task.budget());

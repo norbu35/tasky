@@ -1,29 +1,21 @@
 package mn.tasky.runtime.publicapi.composition;
 
-import mn.tasky.booking.publicapi.BookingQueryPort;
+import java.util.Map;
 import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyService;
 import mn.tasky.marketplace.publicapi.MarketplaceCommandPort;
-import mn.tasky.task.dto.TaskAcceptResult;
+import mn.tasky.task.dto.TaskSelectResult;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TaskApplicationAcceptanceService {
-
     private final MarketplaceCommandPort marketplaceCommandPort;
-    private final BookingQueryPort bookingQueryPort;
-    private final BookingResponseCompositionService bookingResponseCompositionService;
     private final IdempotencyService idempotencyService;
 
     public TaskApplicationAcceptanceService(
-            MarketplaceCommandPort marketplaceCommandPort,
-            BookingQueryPort bookingQueryPort,
-            BookingResponseCompositionService bookingResponseCompositionService,
-            IdempotencyService idempotencyService) {
+            MarketplaceCommandPort marketplaceCommandPort, IdempotencyService idempotencyService) {
         this.marketplaceCommandPort = marketplaceCommandPort;
-        this.bookingQueryPort = bookingQueryPort;
-        this.bookingResponseCompositionService = bookingResponseCompositionService;
         this.idempotencyService = idempotencyService;
     }
 
@@ -42,47 +34,52 @@ public class TaskApplicationAcceptanceService {
             if (claim.record() == null || claim.record().resourceId() == null) {
                 return TaskApplicationAcceptanceOutcome.replayMissing();
             }
-            String bookingId = claim.record().resourceId().toString();
-            return bookingQueryPort
-                    .getBooking(bookingId)
-                    .map(booking -> TaskApplicationAcceptanceOutcome.success(
-                            bookingResponseCompositionService.basicBookingResponse(booking)))
-                    .orElseGet(TaskApplicationAcceptanceOutcome::replayMissing);
+            Map<String, Object> body =
+                    Map.of("application_id", claim.record().resourceId().toString(), "status", "SELECTED");
+            return TaskApplicationAcceptanceOutcome.success(body);
         }
-
         try {
-            TaskAcceptResult result = marketplaceCommandPort.acceptApplication(
-                    customerId, taskId, applicationId, liabilityDisclaimerAccepted);
+            if (!liabilityDisclaimerAccepted) {
+                idempotencyService.abandon(customerId, IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey);
+                return TaskApplicationAcceptanceOutcome.failure(
+                        TaskApplicationAcceptanceOutcome.Status.DISCLAIMER_REQUIRED,
+                        "DISCLAIMER_REQUIRED",
+                        "Liability disclaimer must be accepted.");
+            }
+            TaskSelectResult result = marketplaceCommandPort.selectApplication(customerId, taskId, applicationId);
             if (result.isSuccess()) {
                 idempotencyService.completeWithResource(
                         customerId,
                         IdempotencyOperations.ACCEPT_APPLICATION,
                         idempotencyKey,
-                        "BOOKING",
-                        result.booking().id());
-                return TaskApplicationAcceptanceOutcome.success(
-                        bookingResponseCompositionService.basicBookingResponse(result.booking()));
+                        "TASK_APPLICATION",
+                        result.application().id());
+                Map<String, Object> body = Map.of(
+                        "application_id",
+                        result.application().id(),
+                        "status",
+                        result.application().status(),
+                        "respond_by_at",
+                        result.application().respondByAt() != null
+                                ? result.application().respondByAt().toString()
+                                : null);
+                return TaskApplicationAcceptanceOutcome.success(body);
             }
-
             idempotencyService.abandon(customerId, IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey);
             return switch (result.errorCode()) {
-                case TaskAcceptResult.NOT_FOUND -> TaskApplicationAcceptanceOutcome.failure(
+                case TaskSelectResult.NOT_FOUND -> TaskApplicationAcceptanceOutcome.failure(
                         TaskApplicationAcceptanceOutcome.Status.NOT_FOUND,
                         "NOT_FOUND",
                         "Task or application not found.");
-                case TaskAcceptResult.FORBIDDEN -> TaskApplicationAcceptanceOutcome.failure(
+                case TaskSelectResult.FORBIDDEN -> TaskApplicationAcceptanceOutcome.failure(
                         TaskApplicationAcceptanceOutcome.Status.FORBIDDEN,
                         "FORBIDDEN",
-                        "Only the task owner can accept applications.");
-                case TaskAcceptResult.TASK_NOT_OPEN -> TaskApplicationAcceptanceOutcome.failure(
+                        "Only the task owner can select applicants.");
+                case TaskSelectResult.TASK_NOT_OPEN -> TaskApplicationAcceptanceOutcome.failure(
                         TaskApplicationAcceptanceOutcome.Status.TASK_NOT_OPEN,
                         "TASK_NOT_OPEN",
                         "Task is no longer open.");
-                case TaskAcceptResult.DISCLAIMER_REQUIRED -> TaskApplicationAcceptanceOutcome.failure(
-                        TaskApplicationAcceptanceOutcome.Status.DISCLAIMER_REQUIRED,
-                        "DISCLAIMER_REQUIRED",
-                        "Liability disclaimer must be accepted to confirm booking.");
-                case TaskAcceptResult.CONFLICT -> TaskApplicationAcceptanceOutcome.failure(
+                case TaskSelectResult.CONFLICT -> TaskApplicationAcceptanceOutcome.failure(
                         TaskApplicationAcceptanceOutcome.Status.CONFLICT,
                         "CONFLICT",
                         "Application already processed or task assigned.");

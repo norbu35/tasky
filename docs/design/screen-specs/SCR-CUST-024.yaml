@@ -29,7 +29,7 @@ components:
     variant: multiline
 
   - id: COMP-PHOTOPICKER
-    usage: 'Evidence photo upload (at least 1 artifact required per PRD Section 6.4.6)'
+    usage: 'Evidence photo upload for disputes that require supporting artifacts under the launch trust policy'
     props:
       photos: []
       maxPhotos: 5
@@ -169,13 +169,13 @@ copy:
     max_chars: 40
 
   - key: evidence_deadline_note
-    mn: 'Нотлох баримт 24 цагийн дотор ирүүлээгүй бол маргаан автоматаар хаагдана'
-    en: 'Dispute auto-closes if evidence is not provided within 24 hours'
+    mn: 'Сануулах хугацааны дараа нотлох баримт ирүүлээгүй бол маргаан хангалтгүй баримттайгаар хаагдаж болно'
+    en: 'A dispute may close as insufficient evidence if evidence is not provided after the reminder window'
     max_chars: 100
 
   - key: eligibility_note
-    mn: 'Маргаан нээх боломжтой: ASSIGNED төлөвт эсвэл COMPLETED-аас хойш 24 цагийн дотор'
-    en: 'Disputes can be opened during ASSIGNED status or within 24 hours of COMPLETED'
+    mn: 'Маргаан нээх боломжтой: ASSIGNED төлөвт эсвэл дууссаны дараах зөвшөөрөгдсөн хугацаанд'
+    en: 'Disputes can be opened during ASSIGNED status or within the allowed post-completion window'
     max_chars: 100
 
 api_endpoints:
@@ -200,7 +200,7 @@ analytics_events:
     trigger: 'Network error during dispute submission'
 
 acceptance_criteria:
-  - 'Disputes can only be raised when booking is ASSIGNED or within 24 hours of COMPLETED'
+  - 'Disputes can only be raised when booking is ASSIGNED or within the allowed post-completion window'
   - 'At least one evidence artifact is required: photo, chat excerpt, or written timeline'
   - 'Submitting without evidence shows inline validation error on evidence section'
   - 'Photo evidence uses presigned URL upload with per-photo progress'
@@ -208,7 +208,7 @@ acceptance_criteria:
   - 'Written timeline has 500 character limit'
   - 'Submit button sends POST /disputes with all evidence artifacts and enters loading state'
   - 'On success, navigates via replace to Dispute Status (SCR-CUST-025)'
-  - 'Evidence deadline note warns that dispute auto-closes after 24 hours if evidence not provided'
+  - 'Evidence note warns that a dispute may close as insufficient evidence if follow-up evidence is not provided'
   - 'Back button navigates via pop to Booking Detail (SCR-CUST-017)'
   - 'Network error shows error toast with retry'
   - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

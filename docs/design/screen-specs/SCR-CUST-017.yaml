@@ -30,7 +30,7 @@ components:
     variant: assigned
 
   - id: COMP-BUTTON
-    usage: 'Primary CTA in sticky bottom bar; changes per state (Message, Confirm Complete, Rebook, Report Issue)'
+    usage: 'Primary CTA in sticky bottom bar; changes per state (Message, Confirm Complete, Leave Review, Report Issue)'
     props:
       label: 'Зурвас илгээх'
       variant: primary
@@ -86,8 +86,8 @@ states:
     components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
-  - id: completed_rebook_cta
-    description: 'Booking is COMPLETED and review is submitted; Rebook CTA becomes primary action'
+  - id: completed_reviewed
+    description: 'Booking is COMPLETED and review is submitted; timeline and booking summary remain available'
     components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
@@ -133,9 +133,9 @@ copy:
     en: 'Location'
     max_chars: 20
 
-  - key: section_budget
-    mn: 'Төсөв'
-    en: 'Budget'
+  - key: section_pricing
+    mn: 'Үнэ / Үнийн нөхцөл'
+    en: 'Pricing'
     max_chars: 20
 
   - key: section_timeline
@@ -152,11 +152,6 @@ copy:
     mn: 'Дуусгасныг баталгаажуулах'
     en: 'Confirm Complete'
     max_chars: 30
-
-  - key: cta_rebook
-    mn: 'Дахин захиалах'
-    en: 'Rebook'
-    max_chars: 20
 
   - key: cta_reschedule
     mn: 'Цаг өөрчлөх'
@@ -240,8 +235,6 @@ analytics_events:
     trigger: "User taps 'Message' to open chat with tasker"
   - event: 'booking_detail_confirm_complete_tapped'
     trigger: "User taps 'Confirm Complete' when tasker marked done"
-  - event: 'booking_detail_rebook_tapped'
-    trigger: "User taps 'Rebook' on a completed booking"
   - event: 'booking_detail_reschedule_tapped'
     trigger: "User taps 'Reschedule'"
   - event: 'booking_detail_cancel_tapped'
@@ -254,22 +247,22 @@ analytics_events:
     trigger: 'User taps tasker avatar/name to view profile'
 acceptance_criteria:
   - 'Initial load shows detail skeleton matching content layout'
-  - 'Assigned state shows tasker avatar with verification badge, task title, schedule, location, and budget'
+  - 'Assigned state shows tasker avatar with verification badge, task title, schedule, location, and pricing summary'
   - 'Assigned state CTA bar contains Message (primary) and secondary actions: Reschedule, Cancel, Timeline'
   - 'Assigned_approaching state shows a warning banner when scheduled time is within 4 hours'
   - "Tasker_marked_done state changes primary CTA to 'Confirm Complete' and shows 'Report Issue' as secondary"
   - "Tapping 'Confirm Complete' opens Confirm Completion modal (SCR-CUST-018)"
   - "Completed state shows review prompt if not yet reviewed, with 'Leave Review' CTA navigating to SCR-SHARED-017"
-  - "Completed_rebook_cta state shows 'Rebook' as primary CTA navigating to Rebook Shortcut (SCR-CUST-023)"
+  - 'Completed state remains focused on review completion, timeline, and dispute-safe record keeping'
   - 'Cancelled state shows cancelled status badge with no modify actions; only Timeline and Report Issue available'
   - 'No-show state shows no-show status badge with Timeline and Report Issue available'
-  - 'Payment settlement note is always visible in Phase 0-2 (direct settlement)'
+  - 'Payment settlement note is always visible for the launch settlement model'
   - 'Tapping tasker avatar navigates to Tasker Public Profile (SCR-CUST-013)'
   - "Tapping 'Message' navigates to Chat Detail (SCR-SHARED-011)"
   - "Tapping 'Reschedule' navigates to Reschedule screen (SCR-CUST-020)"
   - "Tapping 'Cancel Booking' opens Booking Cancel modal (SCR-CUST-022)"
   - "Tapping 'Report Issue' navigates to Dispute Raise (SCR-CUST-024)"
   - "Tapping 'View Timeline' navigates to Booking Timeline (SCR-CUST-019)"
-  - 'No-show flag trigger is handled via modal (SCR-CUST-021) when conditions met per PRD Section 6.4.3'
+  - 'No-show flag trigger is handled via modal (SCR-CUST-021) when the booking reaches the launch no-show threshold'
   - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'
   - 'Network error shows error toast with retry action'

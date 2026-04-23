@@ -1,23 +1,20 @@
 # Tasky Design System
 
-**Version:** 2.2  
-**Status:** Derived  
-**Updated:** 2026-04-22
-
 This document is derived from `docs/PRD.md`, `docs/STRATEGY.md`, and `docs/BRAND.md`.
 
 ## 1. Scope
 
-The active Phase 1 design system supports the Ulaanbaatar launch. Product truth remains in the PRD.
+This design system supports the active Phase 1 Ulaanbaatar launch.
+Product behavior is defined in the PRD.
 
-### Active vs future specs
+### Active design boundary
 
-- Active Phase 1 specs: `SCR-CUST-*`, `SCR-TASK-*`, `SCR-SHARED-*`
-- Draft / Future specs: `SCR-P2-*`, `SCR-P3-*`, `SCR-B2B-*`
+- `docs/design/**` is the active design surface for the current phase.
+- Only screen specs with `phase: "0-1"` remain in the live design path.
+- Deferred-phase design drafts have been removed from the active path so launch UX can be checked directly against the current product baseline.
+- Historical future drafts, if needed, belong under `archive/**` and are not authoritative.
 
-Future-prefixed specs are not launch authority and must not be read as active product commitments.
-
-## 2. Content Fundamentals
+## 2. Content fundamentals
 
 - Voice: direct and warm
 - Copy model: concept-first bilingual
@@ -28,12 +25,13 @@ Future-prefixed specs are not launch authority and must not be read as active pr
 
 ### Phase 1 copy constraints
 
-- Operational screens must communicate the service is live in Ulaanbaatar.
-- Pricing copy must support both `I have a budget` and `I want quotes`.
-- Do not promise payment hold, payment protection, or escrow.
+- Operational screens must communicate that the service is live across Ulaanbaatar.
+- Pricing copy must support both `I have a budget` and `I want quotes`, including quote, counter-offer, and locked booking price states where applicable.
+- Do not promise payment hold, payment protection, wallet protection, or escrow.
 - Do not imply open-ended pre-booking chat.
+- Before confirmation, show only approximate location. Exact address appears only after confirmed booking.
 
-## 3. Product Experience Rules
+## 3. Product experience rules
 
 ### 3.1 Posting
 
@@ -49,10 +47,8 @@ Future-prefixed specs are not launch authority and must not be read as active pr
 ### 3.3 Trust
 
 - Trust banners and explanatory copy may promise verification, booking records, evidence trails, and moderation.
-- Trust banners must not promise escrow, held funds, or payment protection in Phase 1.
+- Trust banners must not promise escrow, held funds, payout protection, or payment protection in Phase 1.
 
-## 4. Visual Foundations
+## 4. Visual foundations
 
-The existing color, typography, spacing, iconography, and motion foundations remain valid where they do not conflict
-with launch truth. Derived preview assets and UI kits must keep the same constraint: no Phase 1 payment-protection
-promise and no citywide-posting implication.
+The existing color, typography, spacing, iconography, and motion foundations remain valid where they do not conflict with the launch baseline. Derived preview assets and UI kits must keep the same constraint: no claims beyond the active launch scope.

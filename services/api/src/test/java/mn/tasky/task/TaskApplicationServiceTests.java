@@ -239,7 +239,7 @@ class TaskApplicationServiceTests {
                     "Name",
                     null,
                     null,
-                    0,
+                    0.0,
                     0,
                     false,
                     Instant.now().toString());
@@ -482,6 +482,8 @@ class TaskApplicationServiceTests {
                     "STANDARD",
                     false,
                     Instant.now(),
+                    0,
+                    null,
                     Instant.now(),
                     Instant.now());
             when(bookingCommandPort.createBooking(

@@ -13,7 +13,7 @@ class KernelSkeletonTest {
 
     @Test
     void idempotencyKeyNormalizesAndValidatesInput() {
-        assertEquals("demo-key", IdempotencyKey.of("  demo-key  ").value());
+        assertEquals("demo-key", IdempotencyKey.of("  demo-key  ").value(), "idempotency key should be normalized");
         assertThrows(IllegalArgumentException.class, () -> IdempotencyKey.of(" "));
         assertThrows(IllegalArgumentException.class, () -> IdempotencyKey.of("x".repeat(129)));
     }
@@ -21,9 +21,17 @@ class KernelSkeletonTest {
     @Test
     void commonDeprecationPathDocumentsKernelMigrationTargets() {
         List<CommonToKernelDeprecationPath.Entry> entries = CommonToKernelDeprecationPath.entries();
-        assertTrue(entries.stream().anyMatch(entry -> entry.currentArea().equals("mn.tasky.common.observability")));
-        assertTrue(entries.stream().anyMatch(entry -> entry.currentArea().equals("mn.tasky.common.idempotency")));
-        assertTrue(entries.stream().anyMatch(entry -> entry.currentArea().equals("mn.tasky.common.outbox")));
-        assertTrue(entries.stream().anyMatch(entry -> entry.currentArea().equals("mn.tasky.common.config")));
+        assertTrue(
+                entries.stream().anyMatch(entry -> entry.currentArea().equals("mn.tasky.common.observability")),
+                "should contain observability");
+        assertTrue(
+                entries.stream().anyMatch(entry -> entry.currentArea().equals("mn.tasky.common.idempotency")),
+                "should contain idempotency");
+        assertTrue(
+                entries.stream().anyMatch(entry -> entry.currentArea().equals("mn.tasky.common.outbox")),
+                "should contain outbox");
+        assertTrue(
+                entries.stream().anyMatch(entry -> entry.currentArea().equals("mn.tasky.common.config")),
+                "should contain config");
     }
 }

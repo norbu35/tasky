@@ -5,7 +5,7 @@
 ## SCN-REVIEW-001
 
 **Risk:** High
-**PRD:** REQ-SAFE-02
+**PRD:** REQ-P1-SAFE-06
 **Title:** Booking completion creates structured review prompts for both customer and tasker
 
 Given a booking transitions to COMPLETED
@@ -16,7 +16,7 @@ And the tasker receives a structured review prompt
 ## SCN-REVIEW-002
 
 **Risk:** High
-**PRD:** REQ-SAFE-02
+**PRD:** REQ-P1-SAFE-09
 **Title:** Immediate review prompt is sent at completion time
 
 Given a booking has just transitioned to COMPLETED
@@ -26,7 +26,7 @@ Then the review prompt is sent immediately
 ## SCN-REVIEW-003
 
 **Risk:** High
-**PRD:** REQ-SAFE-11
+**PRD:** REQ-P1-SAFE-09
 **Title:** Open review case at 24 hours sends the first reminder
 
 Given a participant still has an open review enforcement case 24 hours after booking completion
@@ -37,7 +37,7 @@ And the enforcement case advances to the 24-hour reminder state
 ## SCN-REVIEW-004
 
 **Risk:** High
-**PRD:** REQ-SAFE-11
+**PRD:** REQ-P1-SAFE-09
 **Title:** Open review case at 72 hours sends the final reminder
 
 Given a participant still has an open review enforcement case 72 hours after booking completion
@@ -48,7 +48,7 @@ And the enforcement case advances to the 72-hour reminder state
 ## SCN-REVIEW-005
 
 **Risk:** High
-**PRD:** REQ-SAFE-07
+**PRD:** REQ-P1-SAFE-07
 **Title:** Hard lock is enforced when any open review enforcement case exists
 
 Given a user has an open review enforcement case
@@ -58,7 +58,7 @@ Then a hard lock is applied to the user's next posting or application action
 ## SCN-REVIEW-006
 
 **Risk:** High
-**PRD:** REQ-SAFE-08
+**PRD:** REQ-P1-SAFE-08
 **Title:** Hard lock is lifted when the owed review is submitted and the case is resolved
 
 Given a user has an open review enforcement case

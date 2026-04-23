@@ -15,7 +15,9 @@ import mn.tasky.task.dto.TaskApplyResult;
 import mn.tasky.task.dto.TaskCancelResult;
 import mn.tasky.task.dto.TaskCreateResult;
 import mn.tasky.task.dto.TaskDraft;
+import mn.tasky.task.dto.TaskSelectResult;
 import mn.tasky.task.dto.TaskUpdateResult;
+import mn.tasky.task.dto.TaskWithdrawResult;
 import mn.tasky.task.dto.UpdateTask;
 import org.springframework.stereotype.Service;
 
@@ -68,6 +70,21 @@ public class MarketplaceCommandHandler implements MarketplaceCommandPort {
     public TaskAcceptResult acceptApplication(
             String customerId, String taskId, String applicationId, boolean liabilityDisclaimerAccepted) {
         return taskApplicationService.acceptApplication(customerId, taskId, applicationId, liabilityDisclaimerAccepted);
+    }
+
+    @Override
+    public TaskSelectResult selectApplication(String customerId, String taskId, String applicationId) {
+        return taskApplicationService.selectApplication(customerId, taskId, applicationId);
+    }
+
+    @Override
+    public TaskAcceptResult confirmAcceptance(String taskerId, String applicationId) {
+        return taskApplicationService.confirmAcceptance(taskerId, applicationId);
+    }
+
+    @Override
+    public TaskWithdrawResult withdrawApplication(String taskerId, String applicationId) {
+        return taskApplicationService.withdrawApplication(taskerId, applicationId);
     }
 
     @Override

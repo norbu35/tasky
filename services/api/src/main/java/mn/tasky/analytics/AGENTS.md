@@ -5,7 +5,7 @@ Internal event tracking and KPI reporting. No public HTTP endpoints.
 ## Internal Services
 
 - `AnalyticsService.track(eventName, userId, properties)`
-- `KpiReportService.buildReport(...)`
+- `AnalyticsService.getEvents()`
 
 ## Event Constants
 
@@ -33,7 +33,8 @@ Internal event tracking and KPI reporting. No public HTTP endpoints.
 
 ## Emitters (current code)
 
-- `TaskService`: `TASK_POSTED`, `APPLICATION_SUBMITTED`
+- `TaskCreationService`: `TASK_POSTED`
+- `TaskApplicationService`: `APPLICATION_SUBMITTED`
 - `PaymentService`: `PAYMENT_INITIATED`
 - `DisputeController`: `DISPUTE_RAISED`
 - Domain workflow handlers (via `EventWorkerConsumer`): `TASKER_ACCEPTED`, `BOOKING_CONFIRMED`, `PAYMENT_CONFIRMED`, `BOOKING_COMPLETED`

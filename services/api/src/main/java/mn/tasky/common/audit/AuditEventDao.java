@@ -4,6 +4,7 @@ import static mn.tasky.common.persistence.UuidHelper.optional;
 
 import java.util.UUID;
 import org.jdbi.v3.sqlobject.customizer.Bind;
+import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 public interface AuditEventDao {
@@ -21,4 +22,11 @@ public interface AuditEventDao {
             @Bind("resourceType") String resourceType,
             @Bind("resourceId") UUID resourceId,
             @Bind("metadataJson") String metadataJson);
+
+    default boolean existsByActionAndResourceId(String action, String resourceId) {
+        return existsByActionAndResourceId(action, optional(resourceId));
+    }
+
+    @SqlQuery("SELECT COUNT(*) > 0 FROM audit_events WHERE action = :action AND resource_id = :resourceId")
+    boolean existsByActionAndResourceId(@Bind("action") String action, @Bind("resourceId") UUID resourceId);
 }

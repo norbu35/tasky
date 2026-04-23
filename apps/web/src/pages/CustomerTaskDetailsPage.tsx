@@ -160,7 +160,7 @@ export function CustomerTaskDetailsPage() {
                     {t('customerTaskDetails.budgetLabel', 'Budget')}
                   </div>
                   <div className="text-2xl font-bold font-display text-foreground">
-                    ₮{task.budget.toLocaleString()}
+                    ₮{(task.budget ?? 0).toLocaleString()}
                   </div>
                 </div>
               </CardContent>

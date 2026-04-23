@@ -109,7 +109,7 @@ states:
     components_hidden: []
 
   - id: validation_budget_low
-    description: 'Budget is below minimum threshold (1,001 MNT); inline error on budget field'
+    description: 'Entered budget is invalid for the active pricing rules; inline error on budget field'
     components_visible:
       [
         COMP-STEPINDICATOR,
@@ -174,8 +174,8 @@ copy:
     max_chars: 15
 
   - key: budget_helper
-    mn: 'Төсөвтэй бол дүн оруулна уу. Хамгийн бага: ₮1,001'
-    en: 'Enter an amount if you have a budget. Minimum: ₮1,001'
+    mn: 'Төсөвтэй бол дүн оруулна уу'
+    en: 'Enter an amount if you have a budget'
     max_chars: 50
 
   - key: quote_helper
@@ -184,8 +184,8 @@ copy:
     max_chars: 60
 
   - key: error_budget_low
-    mn: 'Төсөв хамгийн багадаа ₮1,001 байх ёстой'
-    en: 'Budget must be at least ₮1,001'
+    mn: 'Төсвийн дүнг шалгана уу'
+    en: 'Please check the budget amount'
     max_chars: 50
 
   - key: error_schedule_past
@@ -212,9 +212,9 @@ analytics_events:
     trigger: 'User enters a budget amount; includes amount value'
   - event: 'pricing_mode_selected'
     trigger: 'User switches between budget mode and quote mode'
-  - event: 'schedule_budget_validation_error'
+  - event: 'schedule_pricing_validation_error'
     trigger: 'Validation fails on Next; includes error type (budget_low or schedule_past)'
-  - event: 'schedule_budget_completed'
+  - event: 'schedule_pricing_completed'
     trigger: 'User taps Next with valid schedule and pricing inputs'
 
 acceptance_criteria:
@@ -223,8 +223,8 @@ acceptance_criteria:
   - 'Date format displays as YYYY.MM.DD per Mongolian convention'
   - 'Pricing mode supports both budget and quote-based posting'
   - 'Budget input uses numeric keypad and formats with comma thousand separator when budget mode is selected'
-  - 'Budget validation enforces minimum of ₮1,001 when budget mode is selected'
-  - 'Inline validation error appears below budget field for amounts below minimum'
+  - 'Budget mode validates that a usable amount is entered before continuing'
+  - 'Inline validation error appears below budget field when the entered amount is invalid'
   - 'Inline validation error appears below schedule field for past dates'
   - 'Next button is disabled until schedule and the selected pricing mode inputs are valid'
   - 'Next button navigates (push) to Review & Submit SCR-CUST-007'

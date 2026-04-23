@@ -144,6 +144,7 @@ public class ReviewEnforcementService implements mn.tasky.review.publicapi.Revie
     /**
      * Retrieves all non-completed and non-expired enforcement cases for a given user.
      */
+    @Override
     public List<ReviewEnforcementCase> getOpenCases(String userId) {
         return reviewEnforcementCaseDao.findOpenByUser(userId);
     }

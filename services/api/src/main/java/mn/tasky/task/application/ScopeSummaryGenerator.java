@@ -1,8 +1,10 @@
 package mn.tasky.task.application;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,10 @@ import org.springframework.stereotype.Component;
  * Produces "Label: Value" lines in schema field order.
  */
 @Component
+@SuppressFBWarnings(
+        value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+        justification =
+                "ObjectMapper and DAO fields are Spring-injected singletons; SpotBugs cannot model DI nullability.")
 public class ScopeSummaryGenerator {
 
     private static final Logger log = LoggerFactory.getLogger(ScopeSummaryGenerator.class);
@@ -108,7 +114,7 @@ public class ScopeSummaryGenerator {
                             .map(n -> valueLabelMap.getOrDefault(n.asText(), n.asText()))
                             .collect(Collectors.joining(", "));
                 }
-            } catch (Exception ignored) {
+            } catch (JsonProcessingException ignored) {
                 // fall through
             }
 

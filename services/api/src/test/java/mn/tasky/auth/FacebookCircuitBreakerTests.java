@@ -31,8 +31,8 @@ class FacebookCircuitBreakerTests {
     // ------------------------------------------------------------------
 
     @Test
-    @DisplayName(
-            "SCN-AUTH-014: Facebook circuit breaker opens after repeated provider failures and status reports unavailable")
+    @DisplayName("SCN-AUTH-014: Facebook circuit breaker opens after repeated provider failures"
+            + " and status reports unavailable")
     void threeFailuresWithinWindowOpensCircuit() {
         breaker.recordFailure();
         breaker.recordFailure();
@@ -190,7 +190,7 @@ class FacebookCircuitBreakerTests {
     /** Back-doors {@code windowStart} via reflection to avoid sleeping in tests. */
     private static void setWindowStart(FacebookCircuitBreaker target, Instant value) throws Exception {
         Field field = FacebookCircuitBreaker.class.getDeclaredField("windowStart");
-        field.setAccessible(true);
+        field.setAccessible(true); // NOPMD AvoidAccessibilityAlteration
         field.set(target, value);
     }
 }

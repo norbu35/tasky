@@ -19,7 +19,7 @@ export function makeUser(overrides: Partial<User> = {}): User {
     id: 'u-1',
     phone: '+97699001122',
     facebook_id: null,
-    primary_auth: 'PHONE_OTP',
+    primary_auth: 'FACEBOOK',
     role: 'CUSTOMER',
     status: 'VERIFIED',
     created_at: new Date().toISOString(),

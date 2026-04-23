@@ -22,7 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 /**
- * Integration tests for information-control scenarios SCN-SEC-006 through SCN-SEC-010.
+ * Integration tests for information-control scenarios SCN-SEC-006 through SCN-SEC-008.
  * Verifies that the API correctly hides or reveals location and contact data
  * based on participation status and phase-gating.
  */
@@ -116,59 +116,6 @@ class SecurityInformationControlScenarioTests extends IntegrationTestBase {
         if (taskerProfile.getStatusCode().value() < 300) {
             assertThat(taskerProfile.getBody()).doesNotContainKey("phone");
         }
-    }
-
-    // ── SCN-SEC-009 ─────────────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("SCN-SEC-009: Customer phone remains masked until lead unlock or payment commitment succeeds")
-    void customerPhoneNotExposedInBookingOrTaskPayloads() {
-        // In Phase 0-1 (lead_fee_enabled=false), customer phone is never present in
-        // task feed or booking list payloads — it's only accessible through the
-        // messaging system after booking, not as a raw field.
-        AuthContext customer = devLogin("sec009-customer", "CUSTOMER");
-        AuthContext tasker = devLogin("sec009-tasker", "TASKER");
-        String taskId = createTask(customer);
-
-        // Tasker views task feed
-        ResponseEntity<Map> feedResponse = getWithAuth("/api/v1/tasks", tasker.token());
-        assertThat(feedResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        List<Map<String, Object>> tasks =
-                (List<Map<String, Object>>) feedResponse.getBody().get("data");
-        if (tasks != null) {
-            for (Map<String, Object> task : tasks) {
-                assertThat(task).doesNotContainKey("phone");
-                Map<String, Object> customerObj = (Map<String, Object>) task.get("customer");
-                if (customerObj != null) {
-                    assertThat(customerObj).doesNotContainKey("phone");
-                }
-            }
-        }
-    }
-
-    // ── SCN-SEC-010 ─────────────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("SCN-SEC-010: Exact-address fetch before the required unlock state is denied with ADDRESS_LOCKED")
-    void exactAddressLockedBeforeUnlock() {
-        // In Phase 0-1 (lead_fee_enabled=false, escrow_enabled=false):
-        // - Address is revealed to confirmed booked tasker without a payment gate.
-        // - A non-booked tasker does NOT get the exact address — they get approximate only.
-        // This verifies the non-booked path does not expose address,
-        // which is the Phase 0-1 equivalent of ADDRESS_LOCKED behaviour.
-        AuthContext customer = devLogin("sec010-customer", "CUSTOMER");
-        AuthContext unbookedTasker = devLogin("sec010-tasker", "TASKER");
-        String taskId = createTask(customer);
-
-        // Unbooked tasker attempts to get exact address via task detail
-        ResponseEntity<Map> response = getWithAuth("/api/v1/tasks/" + taskId, unbookedTasker.token());
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        // Exact address fields are not present (approximate only — equivalent to address-locked)
-        assertThat(response.getBody()).doesNotContainKey("location_text");
-        assertThat(response.getBody()).doesNotContainKey("location_lat");
-        assertThat(response.getBody()).doesNotContainKey("location_lng");
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

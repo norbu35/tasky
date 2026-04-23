@@ -181,7 +181,7 @@ export function AdminConciergePage() {
               <CardContent className="p-3">
                 <p className="font-medium">{task.description}</p>
                 <p className="text-sm text-muted-foreground">
-                  {task.category.name} &middot; {task.budget.toLocaleString()}
+                  {task.category.name} &middot; {(task.budget ?? 0).toLocaleString()}
                   {t('common.currency', ' MNT')}
                 </p>
               </CardContent>

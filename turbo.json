@@ -1,9 +1,10 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["NODE_ENV"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".output/**", "build/**"]
+      "outputs": ["dist/**"]
     },
     "typecheck": {
       "dependsOn": ["^build"],
@@ -31,7 +32,7 @@
     "format:check": {
       "outputs": []
     },
-    "sdk:generate": {
+    "generate": {
       "outputs": ["src/generated/**"]
     }
   }

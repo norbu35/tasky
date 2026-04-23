@@ -1,0 +1,34 @@
+# CODEOWNERS — security-critical and contract-authority files require explicit review.
+# Any PR touching these paths will request review from @norbu.
+# Add team handles (e.g. @tasky/security) when the team grows.
+
+# Security-critical backend files (filter-chain, token signing, revocation, websocket auth)
+services/api/src/main/java/**/SecurityConfig.java                @norbu
+services/api/src/main/java/**/JwtAuthenticationFilter.java       @norbu
+services/api/src/main/java/**/JwtTokenService.java               @norbu
+services/api/src/main/java/**/TokenBlacklistService.java         @norbu
+services/api/src/main/java/**/StompRateLimitInterceptor.java     @norbu
+services/api/src/main/java/**/ChannelInterceptorConfig.java      @norbu
+
+# Web CSP — widening can open XSS vectors
+apps/web/Caddyfile.production                                     @norbu
+
+# API contract sources — changes must bundle + regenerate SDK
+docs/openapi/                                                     @norbu
+docs/API.yaml                                                     @norbu
+packages/sdk/src/generated/                                       @norbu
+
+# CI/CD and deployment automation
+.github/workflows/                                                @norbu
+.husky/                                                           @norbu
+tooling/scripts/deploy/                                           @norbu
+docker-compose.production.yml                                     @norbu
+docker-compose.private-staging.yml                                @norbu
+Dockerfile                                                        @norbu
+
+# Governance and gate scripts
+tooling/scripts/gates/                                            @norbu
+tooling/scripts/governance/                                       @norbu
+
+# Scenario baseline curation
+tests/scenarios/                                                  @norbu

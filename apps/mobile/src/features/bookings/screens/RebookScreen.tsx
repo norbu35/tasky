@@ -62,6 +62,7 @@ export default function RebookScreen() {
       category_id: params.categoryId,
       description: params.description,
       budget: numericBudget,
+      pricing_mode: 'BUDGET' as const,
       intake_answers: { description: params.description },
       intake_schema_version: 1,
       location_lat: Number(params.locationLat),

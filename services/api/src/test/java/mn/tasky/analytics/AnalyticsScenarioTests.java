@@ -28,11 +28,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+@SuppressWarnings("PMD.SingularField")
 class AnalyticsScenarioTests {
 
     private AnalyticsEventDao analyticsEventDao;
     private AnalyticsService analyticsService;
-    private AnalyticsCommandPort analyticsCommandPort;
+    private AnalyticsCommandPort analyticsCommandPort; // NOPMD SingularField
     private ObjectMapper objectMapper;
 
     // Workflow handler dependencies

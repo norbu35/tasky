@@ -11,7 +11,7 @@ feature: 'verification'
 layout:
   template: error_state
   density: comfortable
-  structure: 'safe_area -> centered(error_icon + heading + rejection_reason + resubmit_guidance + resubmit_cta + dan_alternative_link)'
+  structure: 'safe_area -> centered(error_icon + heading + rejection_reason + resubmit_guidance + resubmit_cta + browse_link)'
 
 components:
   - id: COMP-BUTTON
@@ -21,14 +21,6 @@ components:
       variant: primary
       size: xl
     variant: primary
-
-  - id: COMP-BUTTON
-    usage: 'Secondary CTA to try DAN fast-path (Phase 2+ only)'
-    props:
-      label: 'E-Mongolia-р оролдох'
-      variant: outline
-      size: lg
-    variant: outline
 
   - id: COMP-BUTTON
     usage: 'Ghost link to return to task feed'
@@ -51,18 +43,12 @@ states:
     description: 'Rejection displayed with specific reason from admin review and resubmit CTA'
     components_visible:
       [error_icon, heading, rejection_reason, resubmit_guidance, resubmit_button, browse_link]
-    components_hidden: [dan_alternative_button]
+    components_hidden: []
 
   - id: resubmit_prompt
     description: 'Explicit resubmit prompt with guidance on what to fix'
     components_visible:
       [error_icon, heading, rejection_reason, fix_instructions, resubmit_button, browse_link]
-    components_hidden: [dan_alternative_button]
-
-  - id: dan_alternative
-    description: 'Optional state (Phase 2+) — DAN fast-path offered as alternative to re-uploading photos'
-    components_visible:
-      [error_icon, heading, rejection_reason, resubmit_button, dan_alternative_button, browse_link]
     components_hidden: []
 
 copy:
@@ -121,11 +107,6 @@ copy:
     en: 'Resubmit'
     max_chars: 15
 
-  - key: dan_alternative_button
-    mn: 'E-Mongolia-р оролдох'
-    en: 'Try E-Mongolia'
-    max_chars: 20
-
   - key: browse_link
     mn: 'Даалгавар үзэх'
     en: 'Browse Tasks'
@@ -141,18 +122,15 @@ analytics_events:
     trigger: 'Rejected screen becomes visible'
   - event: 'verification_resubmit_tapped'
     trigger: 'User taps Resubmit button to re-enter upload flow'
-  - event: 'verification_dan_alternative_tapped'
-    trigger: 'User taps E-Mongolia alternative (Phase 2+)'
   - event: 'verification_rejected_browse_tapped'
     trigger: 'User taps Browse Tasks to return to feed'
 
 acceptance_criteria:
-  - 'Rejection screen displays specific reason from admin review (Phase 2+ verification requirement)'
+  - 'Rejection screen displays specific reason from admin review'
   - 'Reason text is dynamically populated from /verification/status response'
   - 'Resubmit CTA navigates to ID Upload (SCR-TASK-005) to re-enter the upload flow'
-  - 'In Phase 2+, DAN alternative button navigates to DAN Fast-Path (SCR-TASK-006)'
-  - 'DAN alternative button is hidden in Phase 0-1'
   - 'Guidance tips help user fix specific issues (lighting, flat surface, face visibility)'
+  - 'The launch rejection flow remains manual-resubmission only'
   - 'Back button returns to Task Feed (SCR-TASK-001)'
   - 'This screen is reached via push notification for rejection'
   - 'Comfortable density for empathetic error messaging'

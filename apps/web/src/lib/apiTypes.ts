@@ -26,11 +26,25 @@ export type StrikePolicy = Omit<components['schemas']['StrikePolicy'], 'updatedA
 };
 export type StrikePolicyUpdateRequest = components['schemas']['StrikePolicyUpdateRequest'];
 export type PayoutRequest = components['schemas']['PayoutRequest'];
-export type LeadUnlockPrice = components['schemas']['LeadUnlockPrice'];
-export type LeadUnlockPricePayload = components['schemas']['LeadUnlockPricePayload'];
 export type AdminDisputeDetail = components['schemas']['AdminDisputeDetail'];
 export type CategorySchemaVersion = components['schemas']['CategorySchemaVersion'];
 export type AdminCategoryPayload = components['schemas']['AdminCategoryPayload'];
+
+export interface LeadUnlockPrice {
+  id: string;
+  category_id: string;
+  district_id: string;
+  credits_required: number;
+  effective_from: string;
+  effective_to: string | null;
+}
+
+export interface LeadUnlockPricePayload {
+  category_id: string;
+  district_id: string;
+  credits_required: number;
+  effective_from: string;
+}
 
 export interface AuthTokens {
   accessToken: string;

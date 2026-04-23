@@ -114,7 +114,8 @@ public class DomainEventOutboxService {
                 // is recoverable by a future retry. Log and continue — we never
                 // want a broker outage to roll back the domain transaction.
                 log.warn(
-                        "Failed to publish event to broker at write time (outbox row persisted): eventId={} type={} error={}",
+                        "Failed to publish event to broker at write time "
+                                + "(outbox row persisted): eventId={} type={} error={}",
                         eventId,
                         eventType,
                         exception.getMessage());

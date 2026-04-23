@@ -269,10 +269,10 @@ copy:
     en: 'Scheduled time is approaching!'
     max_chars: 35
 
-  - key: budget_label
-    mn: 'Төсөв'
-    en: 'Budget'
-    max_chars: 10
+  - key: pricing_label
+    mn: 'Үнэ / Үнийн нөхцөл'
+    en: 'Pricing'
+    max_chars: 18
 
   - key: error_network
     mn: 'Интернэт холболтоо шалгана уу'
@@ -310,6 +310,7 @@ acceptance_criteria:
   - 'Exact address is shown only after booking is assigned and visible only to the confirmed tasker'
   - 'Exact address section includes note that it is visible only to the tasker'
   - 'Payment note clearly states direct settlement between parties'
+  - 'Locked price display adapts to the task pricing mode and agreed booking price'
   - 'Mark Done button triggers PUT /bookings/:id/mark-done'
   - 'After marking done, awaiting confirmation banner replaces Mark Done button'
   - 'Cancel link opens Booking Cancel modal (SCR-TASK-015)'

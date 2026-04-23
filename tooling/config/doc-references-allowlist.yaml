@@ -1,0 +1,52 @@
+java_class_false_positives:
+  - Tasky
+  - Ulaanbaatar
+  - Mongolia
+  - PostgreSQL
+  - RabbitMQ
+  - MinIO
+  - Firebase
+  - React
+  - NativeWind
+  - Tailwind
+  - Docker
+  - GitHub
+  - PgBouncer
+  - Mongolian
+  - Facebook
+  - OAuth
+  - MessageSource
+  - SimpMessagingTemplate
+  - IllegalArgumentException
+  - Phase
+  - Launch
+  - Product
+  - Shared
+  - Route
+  - Screen
+  - ScreenA
+  - ScreenB
+  - Section
+  - Module
+  - Design
+  - Feature
+
+env_var_false_positives:
+  - PATH
+  - HOME
+  - USER
+  - CI
+
+intentional:
+  - kind: java-class
+    value: ExpoPushProvider
+    reason: architecture and module docs cite the retired provider class to document deprecation history
+    expires: 2026-09-01
+
+per_file:
+  - file: docs/architecture/mobile.md
+    suppress:
+      - kind: java-class
+        value: CustomerTaskDetail
+      - kind: java-class
+        value: CustomerTasks

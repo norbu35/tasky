@@ -61,6 +61,7 @@ public class ReviewController implements ReviewsApi {
                 submitReviewRequest.getCommunicationRating(),
                 submitReviewRequest.getClarityRating(),
                 submitReviewRequest.getRespectfulnessRating(),
+                submitReviewRequest.getWouldBookAgain(),
                 submitReviewRequest.getComment());
         ReviewSubmissionOutcome outcome =
                 reviewSubmissionService.submitReview(principal.userId(), id.toString(), domainBody);

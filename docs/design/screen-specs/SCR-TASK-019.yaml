@@ -1,160 +1,163 @@
 # Screen Spec: AI Profile Polish
 screen_id: SCR-TASK-019
-name: "AI Profile Polish"
-route: "/(tasker)/profile/polish"
+name: 'AI Profile Polish'
+route: '/(tasker)/profile/polish'
 role: [tasker]
-phase: "0-1"
+phase: '2'
 template: detail
-figma_page: "Tasker/AI Profile Polish"
-feature: "profile"
+figma_page: 'Phase 2/Tasker AI Profile Polish'
+feature: 'profile'
 
 layout:
   template: detail
   density: default
-  structure: "safe_area -> nav_header(back + title) -> scrollview(original_bio + polish_options + suggestion_card) -> sticky_bottom_cta"
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(original_bio + polish_options + suggestion_card) -> sticky_bottom_cta'
 
 components:
   - id: COMP-CARD
-    usage: "Original and polished bio cards with clear before/after comparison"
+    usage: 'Original and polished bio cards with clear before/after comparison'
     props:
       onPress: null
     variant: elevated
 
   - id: COMP-INPUT
-    usage: "Editable multiline bio source input"
+    usage: 'Editable multiline bio source input'
     props:
-      value: "Байшин цэвэрлэгээ, нүүлгэлтийн ажил хийдэг."
-      placeholder: "Өөрийн ажлын туршлагаа бичнэ үү"
-      label: "Одоогийн тайлбар"
+      value: 'Байшин цэвэрлэгээ, нүүлгэлтийн ажил хийдэг.'
+      placeholder: 'Өөрийн ажлын туршлагаа бичнэ үү'
+      label: 'Одоогийн тайлбар'
       maxLength: 300
     variant: multiline
 
   - id: COMP-CATEGORYCHIP
-    usage: "Tone selection chips for the polish request (friendly, professional, concise)"
+    usage: 'Tone selection chips for the polish request (friendly, professional, concise)'
     props:
-      category: "Мэргэжлийн"
+      category: 'Мэргэжлийн'
       isActive: true
     variant: active
 
   - id: COMP-BUTTON
-    usage: "Primary CTA to generate or apply the polished version"
+    usage: 'Primary CTA to generate or apply the polished version'
     props:
-      label: "Санал болгох"
+      label: 'Санал болгох'
       variant: primary
       size: lg
     variant: primary
 
   - id: COMP-BUTTON
-    usage: "Secondary CTA to keep editing manually"
+    usage: 'Secondary CTA to keep editing manually'
     props:
-      label: "Гараар засах"
+      label: 'Гараар засах'
       variant: ghost
       size: md
     variant: ghost
 
   - id: COMP-LOADINGSKELETON
-    usage: "Skeleton for suggestion card while profile data or generation result is loading"
+    usage: 'Skeleton for suggestion card while profile data or generation result is loading'
     props:
       variant: detail
       count: 1
     variant: detail
 
   - id: COMP-TOAST
-    usage: "Success and error toast for apply/save outcomes"
+    usage: 'Success and error toast for apply/save outcomes'
     props:
-      message: "Санал болгосон текст хадгалагдлаа"
+      message: 'Санал болгосон текст хадгалагдлаа'
       variant: success
     variant: success
 
 states:
   - id: loading_initial
-    description: "Current bio is loading before polish flow starts"
+    description: 'Current bio is loading before polish flow starts'
     components_visible: [COMP-LOADINGSKELETON]
     components_hidden: [COMP-CARD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON, COMP-TOAST]
 
   - id: draft_ready
-    description: "Original profile description is loaded and ready for polish request"
-    components_visible: [COMP-CARD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    description: 'Original profile description is loaded and ready for polish request'
+    components_visible:
+      [COMP-CARD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON.primary, COMP-BUTTON.ghost]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: generating
-    description: "AI polish request is running and preview result is being generated"
+    description: 'AI polish request is running and preview result is being generated'
     components_visible: [COMP-CARD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON.primary]
     components_hidden: [COMP-BUTTON.ghost, COMP-TOAST]
 
   - id: suggestion_ready
-    description: "Polished version is shown side by side with the original and can be applied"
-    components_visible: [COMP-CARD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    description: 'Polished version is shown side by side with the original and can be applied'
+    components_visible:
+      [COMP-CARD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON.primary, COMP-BUTTON.ghost]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: apply_success
-    description: "User applied the polished bio and profile update succeeded"
+    description: 'User applied the polished bio and profile update succeeded'
     components_visible: [COMP-TOAST]
     components_hidden: [COMP-LOADINGSKELETON]
 
   - id: error_network
-    description: "Preview generation or save failed due to network error"
-    components_visible: [COMP-CARD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON.primary, COMP-BUTTON.ghost, COMP-TOAST]
+    description: 'Preview generation or save failed due to network error'
+    components_visible:
+      [COMP-CARD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON.primary, COMP-BUTTON.ghost, COMP-TOAST]
     components_hidden: [COMP-LOADINGSKELETON]
 
 copy:
   - key: nav_title
-    mn: "AI тайлбар сайжруулах"
-    en: "AI Profile Polish"
+    mn: 'AI тайлбар сайжруулах'
+    en: 'AI Profile Polish'
     max_chars: 28
 
   - key: source_label
-    mn: "Одоогийн тайлбар"
-    en: "Current description"
+    mn: 'Одоогийн тайлбар'
+    en: 'Current description'
     max_chars: 24
 
   - key: polished_label
-    mn: "Санал болгосон хувилбар"
-    en: "Suggested version"
+    mn: 'Санал болгосон хувилбар'
+    en: 'Suggested version'
     max_chars: 28
 
   - key: tone_label
-    mn: "Хэв маяг"
-    en: "Tone"
+    mn: 'Хэв маяг'
+    en: 'Tone'
     max_chars: 12
 
   - key: cta_generate
-    mn: "Санал болгох"
-    en: "Generate suggestion"
+    mn: 'Санал болгох'
+    en: 'Generate suggestion'
     max_chars: 22
 
   - key: cta_apply
-    mn: "Энэ хувилбарыг хэрэглэх"
-    en: "Apply this version"
+    mn: 'Энэ хувилбарыг хэрэглэх'
+    en: 'Apply this version'
     max_chars: 28
 
   - key: toast_success
-    mn: "Санал болгосон текст хадгалагдлаа"
-    en: "Suggested text saved"
+    mn: 'Санал болгосон текст хадгалагдлаа'
+    en: 'Suggested text saved'
     max_chars: 40
 
 api_endpoints:
   - method: POST
-    path: "/users/me/profile-polish-preview"
+    path: '/users/me/profile-polish-preview'
     purpose: "Request a polished preview of the tasker's profile description"
   - method: PUT
-    path: "/users/me"
-    purpose: "Persist the accepted polished profile description"
+    path: '/users/me'
+    purpose: 'Persist the accepted polished profile description'
 
 analytics_events:
-  - event: "profile_polish_viewed"
-    trigger: "Screen becomes visible"
-  - event: "profile_polish_requested"
-    trigger: "Tasker taps Generate suggestion"
-  - event: "profile_polish_applied"
-    trigger: "Tasker accepts and saves the polished version"
-  - event: "profile_polish_rejected"
-    trigger: "Tasker leaves without applying the suggestion"
+  - event: 'profile_polish_viewed'
+    trigger: 'Screen becomes visible'
+  - event: 'profile_polish_requested'
+    trigger: 'Tasker taps Generate suggestion'
+  - event: 'profile_polish_applied'
+    trigger: 'Tasker accepts and saves the polished version'
+  - event: 'profile_polish_rejected'
+    trigger: 'Tasker leaves without applying the suggestion'
 
 acceptance_criteria:
-  - "Tasker can preview a polished version of their profile description before saving it"
-  - "Original text remains visible and editable throughout the flow"
-  - "Polish request does not overwrite the profile automatically; user must explicitly apply it"
-  - "Tone chips let the tasker request a more professional or concise rewrite"
-  - "Apply action persists through PUT /users/me after preview selection"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'Tasker can preview a polished version of their profile description before saving it'
+  - 'Original text remains visible and editable throughout the flow'
+  - 'Polish request does not overwrite the profile automatically; user must explicitly apply it'
+  - 'Tone chips let the tasker request a more professional or concise rewrite'
+  - 'Apply action persists through PUT /users/me after preview selection'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

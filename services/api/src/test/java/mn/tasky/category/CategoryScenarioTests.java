@@ -24,7 +24,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Domain-unit tests for category management scenarios SCN-CATEGORY-001 through SCN-CATEGORY-011.
+ * Domain-unit tests for category management scenarios SCN-CATEGORY-001 through SCN-CATEGORY-005.
+ * Additional schema validation tests (needs-scenario) cover real Phase 1 behavior not yet backed by registry entries.
  */
 class CategoryScenarioTests {
 
@@ -56,10 +57,12 @@ class CategoryScenarioTests {
                     + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\",\"type\":\"yes_no\",\"required\":true},"
                     + "{\"key\":\"c\",\"label\":\"C\",\"label_mn\":\"C_mn\",\"type\":\"yes_no\",\"required\":true}]";
 
-    private static final String VALID_TEXT_TEXTAREA_SCHEMA =
-            "[{\"key\":\"a\",\"label\":\"A\",\"label_mn\":\"A_mn\",\"type\":\"text\",\"required\":true,\"max_length\":200},"
-                    + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\",\"type\":\"textarea\",\"required\":false,\"max_length\":2000},"
-                    + "{\"key\":\"c\",\"label\":\"C\",\"label_mn\":\"C_mn\",\"type\":\"yes_no\",\"required\":true}]";
+    private static final String VALID_TEXT_TEXTAREA_SCHEMA = "[{\"key\":\"a\",\"label\":\"A\",\"label_mn\":\"A_mn\","
+            + "\"type\":\"text\",\"required\":true,\"max_length\":200},"
+            + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\","
+            + "\"type\":\"textarea\",\"required\":false,\"max_length\":2000},"
+            + "{\"key\":\"c\",\"label\":\"C\",\"label_mn\":\"C_mn\","
+            + "\"type\":\"yes_no\",\"required\":true}]";
 
     private static final String TEXT_MISSING_MAX_LENGTH_SCHEMA =
             "[{\"key\":\"a\",\"label\":\"A\",\"label_mn\":\"A_mn\",\"type\":\"text\",\"required\":true},"
@@ -167,10 +170,10 @@ class CategoryScenarioTests {
                 .hasMessageContaining("unsupported type");
     }
 
-    // ── SCN-CATEGORY-006 ─────────────────────────────────────────────────────
+    // ── needs-scenario: activation from ROLLED_BACK ────────────────────────
 
     @Test
-    @DisplayName("SCN-CATEGORY-006: Admin can activate a schema version, including from ROLLED_BACK status")
+    @DisplayName("needs-scenario: Admin can activate a schema version, including from ROLLED_BACK status")
     void activationFromRolledBackStatusSucceeds() {
         CategorySchemaVersion rolledBack = schemaVersion(1, "ROLLED_BACK");
         when(schemaVersionDao.findByCategoryIdAndVersion(CAT_ID, 1)).thenReturn(Optional.of(rolledBack));
@@ -182,20 +185,20 @@ class CategoryScenarioTests {
         verify(schemaVersionDao).updateStatusAndActivatedAt(eq(rolledBack.id()), eq("ACTIVE"));
     }
 
-    // ── SCN-CATEGORY-007 (new) ──────────────────────────────────────────
+    // ── needs-scenario: label_mn validation ───────────────────────────────
 
     @Test
-    @DisplayName("SCN-CATEGORY-007: Schema with missing label_mn is rejected")
+    @DisplayName("needs-scenario: Schema with missing label_mn is rejected")
     void schemaWithMissingLabelMnRejected() {
         assertThatThrownBy(() -> schemaVersionService.createVersion(CAT_ID, MISSING_LABEL_MN_SCHEMA, ADMIN_ID))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("label_mn");
     }
 
-    // ── SCN-CATEGORY-008 (new) ──────────────────────────────────────────
+    // ── needs-scenario: text/textarea field types ────────────────────────
 
     @Test
-    @DisplayName("SCN-CATEGORY-008: Schema with text and textarea field types is accepted")
+    @DisplayName("needs-scenario: Schema with text and textarea field types is accepted")
     void schemaWithTextAndTextareaTypesAccepted() {
         when(schemaVersionDao.findMaxVersion(CAT_ID)).thenReturn(Optional.of(0));
         when(schemaVersionDao.findByCategoryIdAndVersion(eq(CAT_ID), eq(1)))
@@ -206,20 +209,20 @@ class CategoryScenarioTests {
         assertThat(result).isNotNull();
     }
 
-    // ── SCN-CATEGORY-009 ────────────────────────────────────────────────
+    // ── needs-scenario: text field max_length ─────────────────────────────
 
     @Test
-    @DisplayName("SCN-CATEGORY-009: Text field without max_length is rejected")
+    @DisplayName("needs-scenario: Text field without max_length is rejected")
     void textFieldWithoutMaxLengthRejected() {
         assertThatThrownBy(() -> schemaVersionService.createVersion(CAT_ID, TEXT_MISSING_MAX_LENGTH_SCHEMA, ADMIN_ID))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("max_length");
     }
 
-    // ── SCN-CATEGORY-011 ────────────────────────────────────────────────
+    // ── needs-scenario: option label_mn validation ───────────────────────
 
     @Test
-    @DisplayName("SCN-CATEGORY-011: Option objects missing label_mn are rejected")
+    @DisplayName("needs-scenario: Option objects missing label_mn are rejected")
     void optionWithMissingLabelMnRejected() {
         assertThatThrownBy(() -> schemaVersionService.createVersion(CAT_ID, INVALID_OPTIONS_SCHEMA, ADMIN_ID))
                 .isInstanceOf(IllegalArgumentException.class)

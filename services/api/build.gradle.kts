@@ -1,4 +1,6 @@
 import net.ltgt.gradle.errorprone.errorprone
+import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
+import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
@@ -104,9 +106,9 @@ val bundleOpenApiSpec by tasks.registering(Exec::class) {
     workingDir = rootProject.projectDir
     val nodeAvailable = try { ProcessBuilder("node", "--version").start().waitFor() == 0 } catch (_: Exception) { false }
     onlyIf { nodeAvailable }
-    commandLine("node", "tooling/scripts/bundle-openapi.mjs")
+    commandLine("node", "tooling/scripts/contracts/bundle-openapi.mjs")
     inputs.dir("${rootProject.projectDir}/docs/openapi")
-    inputs.file("${rootProject.projectDir}/tooling/scripts/bundle-openapi.mjs")
+    inputs.file("${rootProject.projectDir}/tooling/scripts/contracts/bundle-openapi.mjs")
     outputs.file("${rootProject.projectDir}/docs/API.yaml")
 }
 
@@ -187,6 +189,26 @@ jacoco {
     toolVersion = libs.versions.jacoco.get()
 }
 
+val jacocoCoverageExcludes = listOf(
+    "mn.tasky.api.generated*",
+    "mn.tasky.*.dto*",
+    "mn.tasky.payment*",
+    "mn.tasky.wallet*",
+    "mn.tasky"
+)
+
+fun normalizeCoveragePackage(raw: String): String = raw.trim().removeSuffix(".*").removeSuffix(".")
+
+val coverageSlicePackages = (findProperty("coveragePackages") as String?)
+    ?.split(",")
+    ?.map(::normalizeCoveragePackage)
+    ?.filter(String::isNotEmpty)
+    ?.distinct()
+    ?: emptyList()
+
+val coverageSliceFileIncludes = coverageSlicePackages.map { "${it.replace('.', '/')}/**" }
+val coverageSliceClassIncludes = coverageSlicePackages.map { "$it*" }
+
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
     reports {
@@ -198,18 +220,83 @@ tasks.jacocoTestReport {
 tasks.jacocoTestCoverageVerification {
     violationRules {
         rule {
-            // Legacy blanket package coverage floor.
-            // Kept as an opt-in advisory task while release gates move to scenario-backed evidence
-            // plus scoped mutation checks. Do not wire this into blocking deploy gates.
+            // Repo-wide backend coverage floor. This is a blocking verification rule and
+            // remains wired into verify:backend and CI alongside scenario-backed gates.
             element = "PACKAGE"
             includes = listOf("mn.tasky.*")
-            excludes = listOf(
-                "mn.tasky.api.generated*",
-                "mn.tasky.*.dto*",
-                "mn.tasky.payment*",
-                "mn.tasky.wallet*",
-                "mn.tasky"
-            )
+            excludes = jacocoCoverageExcludes
+            limit {
+                counter = "LINE"
+                value = "COVEREDRATIO"
+                minimum = "0.80".toBigDecimal()
+            }
+        }
+    }
+}
+
+tasks.register<JacocoReport>("jacocoSliceReport") {
+    group = "verification"
+    description = "Generates an HTML/XML JaCoCo report for the packages selected via -PcoveragePackages=mn.tasky.auth,mn.tasky.task"
+    if (coverageSlicePackages.isNotEmpty()) {
+        dependsOn(tasks.test)
+    }
+
+    doFirst {
+        require(coverageSlicePackages.isNotEmpty()) {
+            "jacocoSliceReport requires -PcoveragePackages=mn.tasky.auth,mn.tasky.task"
+        }
+    }
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+
+    classDirectories.setFrom(files(sourceSets["main"].output.classesDirs).asFileTree.matching {
+        include(coverageSliceFileIncludes)
+        exclude(
+            "mn/tasky/api/generated/**",
+            "**/dto/**",
+            "mn/tasky/payment/**",
+            "mn/tasky/wallet/**"
+        )
+    })
+    sourceDirectories.setFrom(files(sourceSets["main"].allSource.srcDirs))
+    additionalSourceDirs.setFrom(files(sourceSets["main"].allSource.srcDirs))
+    executionData.setFrom(file("${layout.buildDirectory.get()}/jacoco/test.exec"))
+}
+
+tasks.register<JacocoCoverageVerification>("jacocoSliceCoverageVerification") {
+    group = "verification"
+    description = "Checks the selected coverage slice against the blocking 80% line floor. Requires -PcoveragePackages."
+    if (coverageSlicePackages.isNotEmpty()) {
+        dependsOn(tasks.test)
+    }
+
+    doFirst {
+        require(coverageSlicePackages.isNotEmpty()) {
+            "jacocoSliceCoverageVerification requires -PcoveragePackages=mn.tasky.auth,mn.tasky.task"
+        }
+    }
+
+    classDirectories.setFrom(files(sourceSets["main"].output.classesDirs).asFileTree.matching {
+        include(coverageSliceFileIncludes)
+        exclude(
+            "mn/tasky/api/generated/**",
+            "**/dto/**",
+            "mn/tasky/payment/**",
+            "mn/tasky/wallet/**"
+        )
+    })
+    sourceDirectories.setFrom(files(sourceSets["main"].allSource.srcDirs))
+    additionalSourceDirs.setFrom(files(sourceSets["main"].allSource.srcDirs))
+    executionData.setFrom(file("${layout.buildDirectory.get()}/jacoco/test.exec"))
+
+    violationRules {
+        rule {
+            element = "PACKAGE"
+            includes = coverageSliceClassIncludes
+            excludes = jacocoCoverageExcludes
             limit {
                 counter = "LINE"
                 value = "COVEREDRATIO"
@@ -224,6 +311,10 @@ checkstyle {
     toolVersion = libs.versions.checkstyle.get()
     configFile = file("${rootProject.projectDir}/tooling/config/checkstyle/checkstyle.xml")
     isIgnoreFailures = false
+}
+
+tasks.withType<Checkstyle>().configureEach {
+    configDirectory.set(file("${rootProject.projectDir}/tooling/config/checkstyle"))
 }
 
 // Spotless — enforces Palantir Java Style via palantir-java-format
@@ -320,18 +411,25 @@ tasks.register("precommit") {
 // Quality Gates — driven by tests/registry.yaml and tests/scenarios/*.md
 // Run sync-registry.sh first to ensure registry reflects current test + PIT state.
 
+val syncTestRegistry by tasks.registering(Exec::class) {
+    description = "Syncs tests/registry.yaml before gate evaluation."
+    group = "verification"
+    workingDir(rootProject.projectDir)
+    commandLine("${rootProject.projectDir}/services/api/scripts/sync-registry.sh")
+    mustRunAfter(tasks.test)
+    mustRunAfter("pitest")
+    mustRunAfter(tasks.jacocoTestReport)
+    mustRunAfter("jacocoTestCoverageVerification")
+    mustRunAfter("openApiValidate")
+    mustRunAfter("dependencyCheckAnalyze")
+}
+
 tasks.register<Exec>("gateSmoke") {
     description = "Gate 1: all Critical scenarios covered + mutation floor. Blocks merge to main."
     group = "verification"
-    dependsOn(tasks.test, "pitest")
+    dependsOn(tasks.test, "pitest", syncTestRegistry)
     workingDir(rootProject.projectDir)
-    doFirst {
-        exec {
-            workingDir(rootProject.projectDir)
-            commandLine("${rootProject.projectDir}/services/api/scripts/sync-registry.sh")
-        }
-    }
-    commandLine("${rootProject.projectDir}/tooling/scripts/check-gates.sh", "smoke")
+    commandLine("${rootProject.projectDir}/tooling/scripts/gates/check-gates.sh", "smoke")
 }
 
 tasks.register<Exec>("gateRegression") {
@@ -342,29 +440,18 @@ tasks.register<Exec>("gateRegression") {
         tasks.jacocoTestReport,
         "jacocoTestCoverageVerification",
         "openApiValidate",
+        syncTestRegistry,
     )
     workingDir(rootProject.projectDir)
-    doFirst {
-        exec {
-            workingDir(rootProject.projectDir)
-            commandLine("${rootProject.projectDir}/services/api/scripts/sync-registry.sh")
-        }
-    }
-    commandLine("${rootProject.projectDir}/tooling/scripts/check-gates.sh", "regression")
+    commandLine("${rootProject.projectDir}/tooling/scripts/gates/check-gates.sh", "regression")
 }
 
 tasks.register<Exec>("gateFull") {
     description = "Gate 3: all scenarios + PIT floors. Runs nightly."
     group = "verification"
-    dependsOn(tasks.test, tasks.jacocoTestReport, "pitest", "dependencyCheckAnalyze")
+    dependsOn(tasks.test, tasks.jacocoTestReport, "pitest", "dependencyCheckAnalyze", syncTestRegistry)
     workingDir(rootProject.projectDir)
-    doFirst {
-        exec {
-            workingDir(rootProject.projectDir)
-            commandLine("${rootProject.projectDir}/services/api/scripts/sync-registry.sh")
-        }
-    }
-    commandLine("${rootProject.projectDir}/tooling/scripts/check-gates.sh", "full")
+    commandLine("${rootProject.projectDir}/tooling/scripts/gates/check-gates.sh", "full")
 }
 
 // PIT Mutation Testing

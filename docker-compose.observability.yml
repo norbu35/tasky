@@ -57,12 +57,13 @@ services:
     container_name: tasky-alertmanager
     restart: unless-stopped
     command:
-      - '--config.file=/etc/alertmanager/alertmanager.yml'
-      - '--storage.path=/alertmanager'
+      - '/bin/sh'
+      - '/opt/tasky/start-alertmanager.sh'
     environment:
       ALERT_WEBHOOK_URL: ${ALERT_WEBHOOK_URL:-http://localhost:9999/alerts}
     volumes:
-      - ./tooling/observability/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./tooling/observability/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml.template:ro
+      - ./tooling/scripts/observability/start-alertmanager.sh:/opt/tasky/start-alertmanager.sh:ro
       - alertmanager_data:/alertmanager
     ports:
       - '${ALERTMANAGER_PORT:-9093}:9093'

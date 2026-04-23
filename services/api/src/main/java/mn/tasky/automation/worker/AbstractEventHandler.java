@@ -24,11 +24,7 @@ public abstract class AbstractEventHandler implements EventHandler {
      * Subclasses should call this at the start of handle() and return early if false.
      */
     protected boolean tryClaimEvent(AutomationEventEnvelope envelope) {
-        if (idempotencyGuard == null) {
-            // Guard not available (e.g., broker not enabled) — allow through.
-            return true;
-        }
-        return idempotencyGuard.claim(eventType(), envelope.eventId());
+        return idempotencyGuard == null || idempotencyGuard.claim(eventType(), envelope.eventId());
     }
 
     /**

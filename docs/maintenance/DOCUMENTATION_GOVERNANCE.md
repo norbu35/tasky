@@ -1,64 +1,112 @@
 # Documentation Governance
 
-**Status:** Canonical operational policy
+This document defines the live documentation structure for the repository. It is enforced by `tooling/scripts/governance/check-doc-governance.py`.
 
-This document defines the allowed live documentation structure for the repository. Enforced by
-`tooling/scripts/check-doc-governance.py`.
+## Document classes
 
-## Status Vocabulary
+| Class      | Purpose                                                           | Typical surfaces                                                                                           |
+| ---------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Governing  | Product, strategy, rollout, and operating policy                  | `AGENTS.md`, `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, selected `docs/maintenance/*.md` |
+| Derived    | Active implementation design and UX detail for the current phase  | `docs/architecture/*.md`, `docs/BRAND.md`, active `docs/design/**`, active `docs/openapi/**`               |
+| Generated  | Bundled or machine-produced output from another maintained source | `docs/API.yaml`                                                                                            |
+| Router     | Entry points that send readers to the smallest relevant document  | `apps/*/AGENTS.md`, `services/api/AGENTS.md`, `docs/openapi/AGENTS.md`                                     |
+| Historical | Archived material kept for reference only                         | `archive/**`, `docs/audits/**`                                                                             |
 
-Only the following status classes are allowed in active repository docs:
+## Precedence
 
-| Status         | Meaning                                                                                                | Typical surfaces                                                                 |
-| -------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| Canonical      | Governing source of truth for intended product, strategy, or policy                                    | `AGENTS.md`, `docs/PRD.md`, `docs/STRATEGY.md`, relevant `docs/maintenance/*.md` |
-| Derived        | Implementation design, UX detail, messaging, or other lower-order material derived from governing docs | `docs/architecture/*.md`, `docs/BRAND.md`, `docs/design/**`                      |
-| Generated      | Machine-produced compatibility or bundle surface regenerated from another source                       | `docs/API.yaml`                                                                  |
-| Historical     | Retained for audit or reference only and never normative                                               | `archive/**`                                                                     |
-| Draft / Future | Explicitly non-active forward design or roadmap material                                               | draft future specs and non-live contract proposals                               |
-| Stale          | Temporary remediation marker only while a live surface is being corrected                              | short-lived remediation use only                                                 |
-
-Only narrow governing docs may claim `Canonical`. Architecture docs and design docs must not.
-
-## Authority Hierarchy
-
-When active docs conflict, precedence is:
+When active documents conflict, read them in this order:
 
 1. `docs/PRD.md`
 2. `docs/STRATEGY.md`
-3. relevant `docs/maintenance/*.md`
-4. `docs/architecture/*.md`
-5. `docs/openapi/openapi.yaml`
-6. `docs/BRAND.md` and `docs/design/**`
+3. `docs/ROLLOUT_PHASES.md`
+4. relevant `docs/maintenance/*.md`
+5. `docs/architecture/*.md`
+6. `docs/openapi/openapi.yaml`
+7. `docs/BRAND.md` and active `docs/design/**`
 
-Lower docs must be corrected, not rationalized. Architecture is derived implementation design. Design is derived UX
-and messaging detail. `archive/**` is historical only and never normative.
-
-## Active Document Classes
-
-| Class        | Purpose                                                                | Examples                                                                         |
-| ------------ | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Canonical    | Governing product, strategy, policy, and repo agent truth              | `AGENTS.md`, `docs/PRD.md`, `docs/STRATEGY.md`, selected `docs/maintenance/*.md` |
-| Derived      | Implementation or UX detail that must align upward                     | `docs/architecture/*.md`, `docs/BRAND.md`, `docs/design/**`                      |
-| Generated    | Compatibility or bundled output generated from an authoritative source | `docs/API.yaml`                                                                  |
-| Local router | Path-specific entrypoint that routes to smaller relevant docs          | `apps/*/AGENTS.md`, `services/api/AGENTS.md`, `docs/openapi/AGENTS.md`           |
-| Historical   | Archived material retained for context                                 | `archive/**`                                                                     |
+Lower-order documents must be corrected when they drift.
 
 ## Rules
 
-1. Only `AGENTS.md` is allowed to be the canonical repo-level agent instruction file.
-2. New governing product truth belongs in `docs/PRD.md`, `docs/STRATEGY.md`, or the relevant maintenance policy doc.
-3. New architecture guidance belongs under `docs/architecture/` and must be marked derived.
-4. New design guidance belongs under `docs/design/` and must be marked derived.
-5. Active docs must not depend on `archive/**` or historical plan directories for authority.
-6. `docs/openapi/**` is the active API contract source. `docs/API.yaml` is generated output only and must be refreshed in the same change.
-7. Draft or future material must be labeled as non-active and must not masquerade as launch-live guidance.
-8. `Stale` may be used only as a temporary remediation status and must be removed once the replacement lands.
+1. `AGENTS.md` is the repo-level entry point for working instructions.
+2. Product behavior belongs in `docs/PRD.md`.
+3. Market posture belongs in `docs/STRATEGY.md`.
+4. Future rollout intent belongs in `docs/ROLLOUT_PHASES.md`.
+5. Active architecture, design, and API docs must describe the current phase only.
+6. Future technical detail must not stay in the active derivative path once that phase is deferred again.
+7. If future material is worth keeping, move it to `archive/**` instead of leaving it mixed into active docs.
+8. Active documents must not rely on `archive/**` for authority.
+9. `docs/openapi/**` is the maintained active API contract source; `docs/API.yaml` is the bundled output and must be refreshed in the same change.
+10. Do not use an ADR system in the live docs path until the team deliberately adopts one.
 
-## Review Checklist
+## Machine-Checked Claims
 
-- Does this change introduce a second authority surface for the same topic?
-- Does it keep governing docs above derived docs in discovery paths?
-- Does any architecture or design doc incorrectly claim canonical authority?
-- If OpenAPI changed, did the change update both `docs/openapi/**` and the generated `docs/API.yaml` bundle?
-- If material became historical or future-only, is it clearly labeled non-normative and out of active discovery?
+Architecture docs, maintenance docs, and backend module `AGENTS.md` files are also checked by
+`tooling/scripts/governance/validate-doc-claims.py`.
+
+The validator cross-checks named repo surfaces against live inventories, including:
+
+- PRD requirement IDs from `docs/PRD.md`
+- Java classes and FQNs under `services/api/src/{main,test}/java`
+- DB tables and columns from `tooling/config/expected-schema.json`
+- env vars from `.env*.example`
+- config keys from `application*.yml` plus code-backed property declarations
+- OpenAPI operationIds and method/path pairs from the bundled API contract
+- Flyway migration versions/files
+- GitHub workflow filenames
+
+Use claim blocks when a load-bearing assertion is too specific for convention-based extraction:
+
+````md
+```claim symbol-exists
+class: mn.tasky.common.outbox.DomainEventOutboxService
+method: publish
+```
+
+```claim db-table
+table: domain_outbox_events
+required_columns: [id, event_type, payload, status, attempts, created_at]
+```
+
+```claim prd-req
+id: REQ-P1-BOOK-01
+```
+````
+
+Supported claim types:
+
+- `prd-req`
+- `symbol-exists`
+- `db-table`
+- `env-var`
+- `endpoint`
+- `config-key`
+- `flyway`
+- `workflow`
+
+Scenario files are additionally checked by `tooling/scripts/governance/validate-prd-scenario-links.py`.
+Every `tests/scenarios/*.md` `**PRD:**` reference must resolve to a live PRD ID, and the check warns when a
+non-deferred `REQ-P1-*` requirement has no high-or-critical scenario coverage.
+
+False positives and intentional historical references belong in
+`tooling/config/doc-references-allowlist.yaml`.
+
+Agent-facing remediation workflow lives in the repo-owned skill
+`tooling/skills/doc-claims-remediation/SKILL.md`. Harnesses without native skill support should read that file directly and may use `pnpm repo:docs:claims:triage`.
+
+Allowlist rules:
+
+- Prefer fixing the doc or adding a claim block before suppressing a reference.
+- Use `intentional` entries only for deliberate historical or external references.
+- Every intentional suppression should include a reason.
+- Add `expires` for temporary suppressions so they are re-justified later.
+- Expired entries warn for 30 days, then fail the check.
+
+## Review checklist
+
+- Does this change introduce a second document that tries to own the same topic?
+- Does it keep governing docs above derived docs in the discovery path?
+- Does any architecture, design, or API doc describe a future phase as if it were live?
+- If content became future-only or historical, was it moved out of the active reading path?
+- If OpenAPI changed, were both `docs/openapi/**` and `docs/API.yaml` updated together?
+- If a doc names a code/config/schema surface, does it resolve under `validate-doc-claims.py` without a stale suppress entry?

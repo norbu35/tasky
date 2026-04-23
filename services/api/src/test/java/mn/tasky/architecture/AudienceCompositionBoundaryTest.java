@@ -65,8 +65,8 @@ class AudienceCompositionBoundaryTest {
             .should()
             .dependOnClassesThat()
             .resideInAnyPackage("mn.tasky..application..")
-            .because(
-                    "controllers must use runtime composition services or publicapi ports, never internal application services")
+            .because("controllers must use runtime composition services or publicapi ports,"
+                    + " never internal application services")
             .allowEmptyShould(true);
 
     private static Class<?>[] exceptionControllerClasses() {

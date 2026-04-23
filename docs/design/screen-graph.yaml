@@ -1,1156 +1,843 @@
-# Screen Graph — Tasky Mobile
-# Navigation graph: transitions, guards, data dependencies
-# Depends on: journey-catalog.yaml, screen-specs/
-# Status: Derived
-# Active scope is any node whose underlying screen spec has `phase: "0-1"`.
-# Phase-gated nodes remain draft / future reference even when they use `SCR-SHARED-*`, `SCR-CUST-*`, or `SCR-TASK-*` ids.
-
-# Navigation model: Expo Router file-based routing
-# Tab groups: (customer) and (tasker) with role-aware switching
-# Transitions: push (detail), replace (auth), modal (sheets), tab (bottom nav)
-
 nodes:
-  # ═══════════════════════════════════════════════════
-  # SHARED SCREENS
-  # ═══════════════════════════════════════════════════
-
   SCR-SHARED-001:
-    label: 'Splash'
+    label: Splash
     edges:
       - to: SCR-SHARED-002
         type: replace
-        guard: 'no valid JWT'
+        guard: no valid JWT
       - to: SCR-CUST-001
         type: replace
-        guard: 'valid JWT, role == CUSTOMER'
+        guard: valid JWT, role == CUSTOMER
       - to: SCR-TASK-001
         type: replace
-        guard: 'valid JWT, role == TASKER'
-    data_deps: [jwt_token, user_role]
-
+        guard: valid JWT, role == TASKER
+    data_deps:
+      - jwt_token
+      - user_role
   SCR-SHARED-002:
-    label: 'Login'
+    label: Login
     edges:
       - to: SCR-SHARED-005
         type: replace
-        guard: 'auth success, new user'
+        guard: auth success, new user
       - to: SCR-CUST-001
         type: replace
-        guard: 'auth success, returning customer'
+        guard: auth success, returning customer
       - to: SCR-TASK-001
         type: replace
-        guard: 'auth success, returning tasker'
-    data_deps: [facebook_token]
-
-  SCR-SHARED-003:
-    label: 'OTP Verification'
-    edges:
-      - to: SCR-SHARED-005
-        type: replace
-        guard: 'OTP verified, new user'
-      - to: SCR-CUST-001
-        type: replace
-        guard: 'OTP verified, returning customer'
-      - to: SCR-TASK-001
-        type: replace
-        guard: 'OTP verified, returning tasker'
-    data_deps: [phone_number, otp_code]
-
-  SCR-SHARED-004:
-    label: 'OTP Migration Gate'
-    edges:
-      - to: SCR-SHARED-003
-        type: push
-        guard: 'phone entered'
-    data_deps: [user_id, phone_number]
-
+        guard: auth success, returning tasker
+    data_deps:
+      - facebook_token
   SCR-SHARED-005:
-    label: 'Onboarding Carousel'
+    label: Onboarding Carousel
     edges:
       - to: SCR-SHARED-006
         type: replace
-        guard: 'carousel completed or skipped'
+        guard: carousel completed or skipped
     data_deps: []
-
   SCR-SHARED-006:
-    label: 'Role Selection'
+    label: Role Selection
     edges:
       - to: SCR-SHARED-007
         type: replace
-        guard: 'role selected'
-    data_deps: [selected_role]
-
+        guard: role selected
+    data_deps:
+      - selected_role
   SCR-SHARED-007:
-    label: 'Permission — Camera'
+    label: Permission — Camera
     edges:
       - to: SCR-SHARED-008
         type: replace
-        guard: 'granted or skipped'
+        guard: granted or skipped
     data_deps: []
-
   SCR-SHARED-008:
-    label: 'Permission — Location'
+    label: Permission — Location
     edges:
       - to: SCR-SHARED-009
         type: replace
-        guard: 'granted or skipped'
+        guard: granted or skipped
     data_deps: []
-
   SCR-SHARED-009:
-    label: 'Permission — Notifications'
+    label: Permission — Notifications
     edges:
       - to: SCR-CUST-001
         type: replace
-        guard: 'role == CUSTOMER'
+        guard: role == CUSTOMER
       - to: SCR-TASK-001
         type: replace
-        guard: 'role == TASKER'
-    data_deps: [user_role]
-
+        guard: role == TASKER
+    data_deps:
+      - user_role
   SCR-SHARED-010:
-    label: 'Conversation List'
+    label: Conversation List
     edges:
       - to: SCR-SHARED-011
         type: push
-        guard: 'conversation selected'
-    data_deps: [user_id]
+        guard: conversation selected
+    data_deps:
+      - user_id
     tab: inbox
-
   SCR-SHARED-011:
-    label: 'Chat Detail'
+    label: Chat Detail
     edges:
       - to: SCR-SHARED-010
         type: pop
-        guard: 'back'
+        guard: back
       - to: SCR-CUST-013
         type: push
-        guard: 'tap counterparty avatar, role == customer'
+        guard: tap counterparty avatar, role == customer
       - to: SCR-CUST-009
         type: push
-        guard: 'tap task reference'
-    data_deps: [conversation_id, messages]
-
+        guard: tap task reference
+    data_deps:
+      - conversation_id
+      - messages
   SCR-SHARED-012:
-    label: 'My Profile'
+    label: My Profile
     edges:
       - to: SCR-SHARED-013
         type: push
-        guard: 'tap edit'
+        guard: tap edit
       - to: SCR-SHARED-014
         type: push
-        guard: 'tap settings'
+        guard: tap settings
       - to: SCR-TASK-016
         type: push
-        guard: 'tap stats, role == tasker'
-      - to: SCR-B2B-001
-        type: push
-        guard: 'tap business accounts, role == customer, b2b_enabled'
-    data_deps: [user_id, profile]
+        guard: tap stats, role == tasker
+    data_deps:
+      - user_id
+      - profile
     tab: profile
-
   SCR-SHARED-013:
-    label: 'Edit Profile'
+    label: Edit Profile
     edges:
       - to: SCR-SHARED-012
         type: pop
-        guard: 'save success or cancel'
-      - to: SCR-TASK-019
-        type: push
-        guard: "tap 'AI polish', role == tasker"
-    data_deps: [user_id, profile]
-
+        guard: save success or cancel
+    data_deps:
+      - user_id
+      - profile
   SCR-SHARED-014:
-    label: 'Settings'
+    label: Settings
     edges:
       - to: SCR-SHARED-012
         type: pop
-        guard: 'back'
+        guard: back
       - to: SCR-SHARED-015
         type: modal
-        guard: 'tap delete account'
+        guard: tap delete account
       - to: SCR-TASK-003
         type: push
-        guard: 'role switch to tasker, not verified'
+        guard: role switch to tasker, not verified
       - to: SCR-INFRA-004
         type: push
-        guard: 'tap terms'
+        guard: tap terms
       - to: SCR-INFRA-005
         type: push
-        guard: 'tap help'
+        guard: tap help
       - to: SCR-TASK-018
         type: push
-        guard: 'tap privacy'
-    data_deps: [user_settings]
-
+        guard: tap privacy
+    data_deps:
+      - user_settings
   SCR-SHARED-015:
-    label: 'Account Deletion'
+    label: Account Deletion
     edges:
       - to: SCR-SHARED-014
         type: dismiss
-        guard: 'cancel or blocked'
+        guard: cancel or blocked
       - to: SCR-SHARED-002
         type: replace
-        guard: 'deletion confirmed'
-    data_deps: [active_bookings_count, open_disputes_count]
-
+        guard: deletion confirmed
+    data_deps:
+      - active_bookings_count
+      - open_disputes_count
   SCR-SHARED-016:
-    label: 'Notification Center'
+    label: Notification Center
     edges:
       - to: SCR-CUST-009
         type: push
-        guard: 'tap task notification'
+        guard: tap task notification
       - to: SCR-CUST-017
         type: push
-        guard: 'tap booking notification'
+        guard: tap booking notification
       - to: SCR-TASK-002
         type: push
-        guard: 'tap task notification, role == tasker'
+        guard: tap task notification, role == tasker
       - to: SCR-TASK-013
         type: push
-        guard: 'tap booking notification, role == tasker'
+        guard: tap booking notification, role == tasker
       - to: SCR-CUST-025
         type: push
-        guard: 'tap dispute notification'
-    data_deps: [notifications]
-
+        guard: tap dispute notification
+    data_deps:
+      - notifications
   SCR-SHARED-017:
-    label: 'Review Form'
+    label: Review Form
     edges:
       - to: SCR-CUST-017
         type: pop
-        guard: 'submitted, role == customer'
+        guard: submitted, role == customer
       - to: SCR-TASK-013
         type: pop
-        guard: 'submitted, role == tasker'
-    data_deps: [booking_id, counterparty_profile]
-
+        guard: submitted, role == tasker
+    data_deps:
+      - booking_id
+      - counterparty_profile
   SCR-SHARED-018:
-    label: 'Review Reminder'
+    label: Review Reminder
     edges:
       - to: SCR-SHARED-017
         type: push
-        guard: "tap 'Review Now'"
-    data_deps: [booking_id]
-    note: 'Bottom sheet overlay'
-
+        guard: tap 'Review Now'
+    data_deps:
+      - booking_id
+    note: Bottom sheet overlay
   SCR-SHARED-019:
-    label: 'Review Hard Lock'
+    label: Review Hard Lock
     edges:
       - to: SCR-SHARED-017
         type: push
-        guard: "tap 'Submit Review'"
-    data_deps: [pending_review_booking_id, lock_reason]
-    note: 'Blocks all posting/applying until resolved'
-
+        guard: tap 'Submit Review'
+    data_deps:
+      - pending_review_booking_id
+      - lock_reason
+    note: Blocks all posting/applying until resolved
   SCR-SHARED-020:
-    label: 'Suspended Account'
+    label: Suspended Account
     edges:
       - to: SCR-CUST-001
         type: replace
-        guard: 'suspension expired'
+        guard: suspension expired
       - to: SCR-TASK-001
         type: replace
-        guard: 'suspension expired, role == tasker'
-    data_deps: [suspension_expiry, appeal_status]
-
+        guard: suspension expired, role == tasker
+    data_deps:
+      - suspension_expiry
+      - appeal_status
   SCR-SHARED-021:
-    label: 'Banned Account'
+    label: Banned Account
     edges: []
-    data_deps: [ban_reason]
-    note: 'Terminal screen — no outgoing edges'
-
-  # ═══════════════════════════════════════════════════
-  # INFRASTRUCTURE SCREENS
-  # ═══════════════════════════════════════════════════
-
+    data_deps:
+      - ban_reason
+    note: Terminal screen — no outgoing edges
   SCR-INFRA-001:
-    label: 'Network Error'
-    edges:
-      - to: '$previous'
-        type: replace
-        guard: 'connectivity restored'
-    data_deps: [cached_content]
-
+    label: Network Error
+    edges: []
+    data_deps:
+      - cached_content
   SCR-INFRA-002:
-    label: 'App Update'
-    edges:
-      - to: '$previous'
-        type: dismiss
-        guard: 'soft update dismissed'
-      - to: '$app_store'
-        type: external
-        guard: 'tap update'
-    data_deps: [min_version, current_version]
-
+    label: App Update
+    edges: []
+    data_deps:
+      - min_version
+      - current_version
   SCR-INFRA-003:
-    label: 'Session Expired'
+    label: Session Expired
     edges:
       - to: SCR-SHARED-002
         type: replace
-        guard: 'tap re-login'
+        guard: tap re-login
     data_deps: []
-
   SCR-INFRA-004:
-    label: 'Terms of Service'
-    edges:
-      - to: '$previous'
-        type: pop
-        guard: 'back'
+    label: Terms of Service
+    edges: []
     data_deps: []
-
   SCR-INFRA-005:
-    label: 'Help & Support'
-    edges:
-      - to: '$previous'
-        type: pop
-        guard: 'back'
+    label: Help & Support
+    edges: []
     data_deps: []
-
-  # ═══════════════════════════════════════════════════
-  # CUSTOMER FLOW
-  # ═══════════════════════════════════════════════════
-
   SCR-CUST-001:
-    label: 'My Tasks'
+    label: My Tasks
     edges:
       - to: SCR-CUST-002
         type: push
-        guard: 'tap FAB'
+        guard: tap FAB
       - to: SCR-CUST-009
         type: push
-        guard: 'tap task card'
+        guard: tap task card
       - to: SCR-SHARED-016
         type: push
-        guard: 'tap notifications bell'
-    data_deps: [user_tasks]
+        guard: tap notifications bell
+    data_deps:
+      - user_tasks
     tab: my_tasks
-
   SCR-CUST-002:
-    label: 'Category Selection'
+    label: Category Selection
     edges:
       - to: SCR-CUST-003
         type: push
-        guard: 'category selected'
+        guard: category selected
       - to: SCR-CUST-001
         type: pop
-        guard: 'back'
-    data_deps: [categories]
-
+        guard: back
+    data_deps:
+      - categories
   SCR-CUST-003:
-    label: 'Intake Form'
+    label: Intake Form
     edges:
       - to: SCR-CUST-004
         type: push
-        guard: 'form valid'
+        guard: form valid
       - to: SCR-CUST-002
         type: pop
-        guard: 'back'
-    data_deps: [category_id, intake_schema]
-
+        guard: back
+    data_deps:
+      - category_id
+      - intake_schema
   SCR-CUST-004:
-    label: 'Photo Upload'
+    label: Photo Upload
     edges:
       - to: SCR-CUST-007
         type: push
-        guard: 'photos uploaded or skipped'
+        guard: photos uploaded or skipped
       - to: SCR-CUST-003
         type: pop
-        guard: 'back'
-    data_deps: [photo_upload_urls]
-
+        guard: back
+    data_deps:
+      - photo_upload_urls
   SCR-CUST-007:
-    label: 'Job Scope Summary'
+    label: Job Scope Summary
     edges:
       - to: SCR-CUST-005
         type: push
-        guard: 'summary reviewed'
+        guard: summary reviewed
       - to: SCR-CUST-004
         type: pop
-        guard: 'back'
-    data_deps: [job_scope_summary]
-
+        guard: back
+    data_deps:
+      - job_scope_summary
   SCR-CUST-005:
-    label: 'Location Pin'
+    label: Location Pin
     edges:
       - to: SCR-CUST-006
         type: push
-        guard: 'location set'
+        guard: location set
       - to: SCR-CUST-007
         type: pop
-        guard: 'back'
-    data_deps: [location_lat, location_lng, location_text]
-
+        guard: back
+    data_deps:
+      - location_lat
+      - location_lng
+      - location_text
   SCR-CUST-006:
-    label: 'Schedule, Budget & Submit'
+    label: Schedule, Budget & Submit
     edges:
       - to: SCR-CUST-008
         type: replace
-        guard: 'submit success'
+        guard: submit success
       - to: SCR-CUST-005
         type: pop
-        guard: 'back'
-    data_deps: [scheduled_at, budget, task_draft]
-
+        guard: back
+    data_deps:
+      - scheduled_at
+      - budget
+      - task_draft
   SCR-CUST-008:
-    label: 'Task Posted Success'
+    label: Task Posted Success
     edges:
       - to: SCR-CUST-009
         type: replace
-        guard: "tap 'View Task'"
+        guard: tap 'View Task'
       - to: SCR-CUST-001
         type: replace
-        guard: "tap 'Done'"
-    data_deps: [task_id]
-
+        guard: tap 'Done'
+    data_deps:
+      - task_id
   SCR-CUST-009:
-    label: 'Task Detail (Customer)'
+    label: Task Detail (Customer)
     edges:
       - to: SCR-CUST-011
         type: push
-        guard: "tap 'View Applicants', status == OPEN"
+        guard: tap 'View Applicants', status == OPEN
       - to: SCR-CUST-010
         type: modal
-        guard: "tap 'Cancel'"
+        guard: tap 'Cancel'
       - to: SCR-CUST-017
         type: push
-        guard: 'tap booking section, status == ASSIGNED'
-      - to: SCR-CUST-027
-        type: push
-        guard: "tap 'Match me now', Phase 3+"
-      - to: SCR-CUST-028
-        type: push
-        guard: "tap 'Boost Task', Phase 2, promoted_listings_enabled"
+        guard: tap booking section, status == ASSIGNED
       - to: SCR-SHARED-010
         type: push
-        guard: "tap 'Message Tasker'"
+        guard: tap 'Message Tasker'
       - to: SCR-CUST-001
         type: pop
-        guard: 'back'
-    data_deps: [task_id, task_detail, applicant_count]
-
+        guard: back
+    data_deps:
+      - task_id
+      - task_detail
+      - applicant_count
   SCR-CUST-010:
-    label: 'Task Cancel Confirmation'
+    label: Task Cancel Confirmation
     edges:
       - to: SCR-CUST-009
         type: dismiss
-        guard: 'cancel aborted'
+        guard: cancel aborted
       - to: SCR-CUST-001
         type: replace
-        guard: 'cancellation confirmed'
-    data_deps: [task_id, booking_id, hours_to_schedule]
-
+        guard: cancellation confirmed
+    data_deps:
+      - task_id
+      - booking_id
+      - hours_to_schedule
   SCR-CUST-011:
-    label: 'Applicants List'
+    label: Applicants List
     edges:
       - to: SCR-CUST-013
         type: push
-        guard: 'tap applicant profile'
+        guard: tap applicant profile
       - to: SCR-CUST-014
         type: push
-        guard: "tap 'Select'"
+        guard: tap 'Select'
       - to: SCR-CUST-012
         type: modal
-        guard: 'selected tasker declines or response window expires'
+        guard: selected tasker declines or response window expires
       - to: SCR-CUST-009
         type: pop
-        guard: 'back'
-    data_deps: [task_id, applications]
-
+        guard: back
+    data_deps:
+      - task_id
+      - applications
   SCR-CUST-012:
-    label: 'Applicant Timeout/Decline'
+    label: Applicant Timeout/Decline
     edges:
       - to: SCR-CUST-011
         type: dismiss
-        guard: "tap 'Select Next'"
-    data_deps: [declined_application_id]
-
+        guard: tap 'Select Next'
+    data_deps:
+      - declined_application_id
   SCR-CUST-013:
-    label: 'Tasker Public Profile'
+    label: Tasker Public Profile
     edges:
       - to: SCR-CUST-011
         type: pop
-        guard: 'back'
-    data_deps: [tasker_id, tasker_profile, reviews]
-
+        guard: back
+    data_deps:
+      - tasker_id
+      - tasker_profile
+      - reviews
   SCR-CUST-014:
-    label: 'Booking Request Confirmation'
+    label: Booking Request Confirmation
     edges:
       - to: SCR-CUST-015
         type: replace
-        guard: 'booking request sent'
+        guard: booking request sent
       - to: SCR-CUST-011
         type: pop
-        guard: 'back'
-    data_deps: [task_id, applicant_id, liability_disclaimer]
-
+        guard: back
+    data_deps:
+      - task_id
+      - applicant_id
+      - liability_disclaimer
   SCR-CUST-015:
-    label: 'Selection Sent Success'
+    label: Selection Sent Success
     edges:
       - to: SCR-CUST-009
         type: replace
-        guard: "tap 'View Task'"
+        guard: tap 'View Task'
       - to: SCR-CUST-001
         type: replace
-        guard: "tap 'Done'"
-    data_deps: [task_id, booking_intent_id]
-
+        guard: tap 'Done'
+    data_deps:
+      - task_id
+      - booking_intent_id
   SCR-CUST-016:
-    label: 'Customer Bookings List'
+    label: Customer Bookings List
     edges:
       - to: SCR-CUST-017
         type: push
-        guard: 'tap booking card'
-    data_deps: [user_bookings]
+        guard: tap booking card
+    data_deps:
+      - user_bookings
     tab: bookings
-
   SCR-CUST-017:
-    label: 'Booking Detail (Customer)'
+    label: Booking Detail (Customer)
     edges:
       - to: SCR-CUST-018
         type: modal
-        guard: "tap 'Confirm Complete', tasker_marked_done"
+        guard: tap 'Confirm Complete', tasker_marked_done
       - to: SCR-CUST-019
         type: push
-        guard: "tap 'Timeline'"
+        guard: tap 'Timeline'
       - to: SCR-CUST-020
         type: push
-        guard: "tap 'Reschedule'"
+        guard: tap 'Reschedule'
       - to: SCR-CUST-021
         type: modal
-        guard: 'no-show flag available'
+        guard: no-show flag available
       - to: SCR-CUST-022
         type: modal
-        guard: "tap 'Cancel Booking'"
-      - to: SCR-CUST-023
-        type: push
-        guard: "tap 'Rebook', status == COMPLETED"
+        guard: tap 'Cancel Booking'
       - to: SCR-CUST-024
         type: push
-        guard: "tap 'Report Issue'"
+        guard: tap 'Report Issue'
       - to: SCR-SHARED-010
         type: push
-        guard: "tap 'Message'"
+        guard: tap 'Message'
       - to: SCR-CUST-013
         type: push
-        guard: 'tap Tasker profile'
-      - to: SCR-P3-003
-        type: push
-        guard: "Phase 3+, tap 'Pay with Escrow'"
+        guard: tap Tasker profile
       - to: SCR-CUST-016
         type: pop
-        guard: 'back'
-    data_deps: [booking_id, booking_detail, tasker_profile]
-
+        guard: back
+    data_deps:
+      - booking_id
+      - booking_detail
+      - tasker_profile
   SCR-CUST-018:
-    label: 'Confirm Completion'
+    label: Confirm Completion
     edges:
       - to: SCR-SHARED-017
         type: replace
-        guard: 'completion confirmed'
+        guard: completion confirmed
       - to: SCR-CUST-017
         type: dismiss
-        guard: 'cancel'
-    data_deps: [booking_id]
-
+        guard: cancel
+    data_deps:
+      - booking_id
   SCR-CUST-019:
-    label: 'Booking Timeline'
+    label: Booking Timeline
     edges:
       - to: SCR-CUST-017
         type: pop
-        guard: 'back'
-    data_deps: [booking_id, timeline_events]
-
+        guard: back
+    data_deps:
+      - booking_id
+      - timeline_events
   SCR-CUST-020:
-    label: 'Reschedule'
+    label: Reschedule
     edges:
       - to: SCR-CUST-017
         type: pop
-        guard: 'request sent or back'
-    data_deps: [booking_id, current_schedule]
-
+        guard: request sent or back
+    data_deps:
+      - booking_id
+      - current_schedule
   SCR-CUST-021:
-    label: 'No-Show Flag'
+    label: No-Show Flag
     edges:
       - to: SCR-CUST-017
         type: dismiss
-        guard: 'flagged or dismissed'
-    data_deps: [booking_id, schedule_start, last_checkin]
-
+        guard: flagged or dismissed
+    data_deps:
+      - booking_id
+      - schedule_start
+      - last_checkin
   SCR-CUST-022:
-    label: 'Booking Cancel (Customer)'
+    label: Booking Cancel (Customer)
     edges:
       - to: SCR-CUST-017
         type: dismiss
-        guard: 'cancel aborted'
+        guard: cancel aborted
       - to: SCR-CUST-016
         type: replace
-        guard: 'cancellation confirmed'
-    data_deps: [booking_id, hours_to_schedule]
-
-  SCR-CUST-023:
-    label: 'Rebook Shortcut'
-    edges:
-      - to: SCR-CUST-014
-        type: push
-        guard: 'rebook details ready'
-      - to: SCR-CUST-017
-        type: pop
-        guard: 'back'
-    data_deps: [previous_booking, tasker_id, category_id]
-
+        guard: cancellation confirmed
+    data_deps:
+      - booking_id
+      - hours_to_schedule
   SCR-CUST-024:
-    label: 'Dispute — Raise'
+    label: Dispute — Raise
     edges:
       - to: SCR-CUST-025
         type: replace
-        guard: 'dispute submitted'
+        guard: dispute submitted
       - to: SCR-CUST-017
         type: pop
-        guard: 'back'
-    data_deps: [booking_id, evidence_artifacts]
-
+        guard: back
+    data_deps:
+      - booking_id
+      - evidence_artifacts
   SCR-CUST-025:
-    label: 'Dispute — Status'
+    label: Dispute — Status
     edges:
       - to: SCR-CUST-017
         type: pop
-        guard: 'back'
-    data_deps: [dispute_id, dispute_status]
-
-  SCR-CUST-027:
-    label: 'Instant Match Customer'
-    edges:
-      - to: SCR-CUST-014
-        type: replace
-        guard: 'match found and accepted'
-      - to: SCR-CUST-011
-        type: replace
-        guard: '3 declines, fallback to open'
-      - to: SCR-CUST-009
-        type: pop
-        guard: 'back'
-    data_deps: [task_id, match_candidates]
-
-  SCR-CUST-028:
-    label: 'Task Boost Options'
-    edges:
-      - to: SCR-CUST-029
-        type: push
-        guard: 'boost selected and continue tapped'
-      - to: SCR-CUST-009
-        type: pop
-        guard: 'back'
-    data_deps: [task_id, boost_products, active_boost_state]
-
-  SCR-CUST-029:
-    label: 'Task Boost Payment'
-    edges:
-      - to: SCR-CUST-009
-        type: pop
-        guard: 'payment complete or back'
-      - to: SCR-CUST-028
-        type: pop
-        guard: 'cancel before activation'
-    data_deps: [task_id, payment_id, qpay_qr, selected_boost]
-
-  # ═══════════════════════════════════════════════════
-  # TASKER FLOW
-  # ═══════════════════════════════════════════════════
-
+        guard: back
+    data_deps:
+      - dispute_id
+      - dispute_status
   SCR-TASK-001:
-    label: 'Task Feed'
+    label: Task Feed
     edges:
       - to: SCR-TASK-002
         type: push
-        guard: 'tap task card'
+        guard: tap task card
       - to: SCR-SHARED-016
         type: push
-        guard: 'tap notifications'
-    data_deps: [open_tasks, filters]
+        guard: tap notifications
+    data_deps:
+      - open_tasks
+      - filters
     tab: browse
-
   SCR-TASK-002:
-    label: 'Task Detail (Tasker)'
+    label: Task Detail (Tasker)
     edges:
       - to: SCR-TASK-011
         type: modal
-        guard: "tap 'Apply', verified"
+        guard: tap 'Apply', verified
       - to: SCR-TASK-003
         type: push
-        guard: "tap 'Apply', unverified"
+        guard: tap 'Apply', unverified
       - to: SCR-SHARED-010
         type: push
-        guard: "tap 'Message'"
+        guard: tap 'Message'
       - to: SCR-TASK-001
         type: pop
-        guard: 'back'
-    data_deps: [task_id, task_detail, verification_status, application_count]
-
+        guard: back
+    data_deps:
+      - task_id
+      - task_detail
+      - verification_status
+      - application_count
   SCR-TASK-003:
-    label: 'Verification Gate'
+    label: Verification Gate
     edges:
       - to: SCR-TASK-004
         type: push
-        guard: "tap 'Get Verified'"
+        guard: tap 'Get Verified'
       - to: SCR-TASK-002
         type: pop
-        guard: 'back'
+        guard: back
     data_deps: []
-
   SCR-TASK-004:
-    label: 'Verification Consent'
+    label: Verification Consent
     edges:
       - to: SCR-TASK-005
         type: push
-        guard: 'consent accepted'
+        guard: consent accepted
       - to: SCR-TASK-003
         type: pop
-        guard: 'back'
+        guard: back
     data_deps: []
-
   SCR-TASK-005:
-    label: 'ID Upload'
+    label: ID Upload
     edges:
       - to: SCR-TASK-010
         type: replace
-        guard: 'all 3 uploads complete, submitted'
+        guard: all 3 uploads complete, submitted
       - to: SCR-TASK-004
         type: pop
-        guard: 'back'
-    data_deps: [id_front_key, id_back_key, selfie_key]
-
-  SCR-TASK-006:
-    label: 'DAN Fast-Path'
-    edges:
-      - to: SCR-TASK-008
-        type: replace
-        guard: 'DAN verified'
-      - to: SCR-TASK-005
-        type: replace
-        guard: 'DAN failed, fallback to manual'
-      - to: SCR-TASK-003
-        type: pop
-        guard: 'back'
-    data_deps: [dan_token]
-
+        guard: back
+    data_deps:
+      - id_front_key
+      - id_back_key
+      - selfie_key
   SCR-TASK-007:
-    label: 'Verification Pending'
+    label: Verification Pending
     edges:
       - to: SCR-TASK-008
         type: replace
-        guard: 'admin approved (push notification)'
+        guard: admin approved (push notification)
       - to: SCR-TASK-009
         type: replace
-        guard: 'admin rejected (push notification)'
+        guard: admin rejected (push notification)
       - to: SCR-TASK-001
         type: pop
-        guard: 'back'
-    data_deps: [verification_status, sla_deadline]
-
+        guard: back
+    data_deps:
+      - verification_status
+      - sla_deadline
   SCR-TASK-008:
-    label: 'Verification Approved'
+    label: Verification Approved
     edges:
       - to: SCR-TASK-001
         type: replace
-        guard: "tap 'Start Browsing'"
+        guard: tap 'Start Browsing'
     data_deps: []
-
   SCR-TASK-009:
-    label: 'Verification Rejected'
+    label: Verification Rejected
     edges:
       - to: SCR-TASK-005
         type: push
-        guard: "tap 'Resubmit'"
-      - to: SCR-TASK-006
-        type: push
-        guard: "Phase 2, tap 'Try DAN'"
+        guard: tap 'Resubmit'
       - to: SCR-TASK-001
         type: pop
-        guard: 'back'
-    data_deps: [rejection_reason]
-
+        guard: back
+    data_deps:
+      - rejection_reason
   SCR-TASK-010:
-    label: 'Verification Submitted'
+    label: Verification Submitted
     edges:
       - to: SCR-TASK-007
         type: replace
-        guard: "tap 'Continue'"
+        guard: tap 'Continue'
     data_deps: []
-
   SCR-TASK-011:
-    label: 'Application Sent'
+    label: Application Sent
     edges:
       - to: SCR-TASK-001
         type: replace
-        guard: "tap 'Browse More'"
+        guard: tap 'Browse More'
       - to: SCR-TASK-002
         type: dismiss
-        guard: "tap 'View Task'"
-    data_deps: [application_id]
-
+        guard: tap 'View Task'
+    data_deps:
+      - application_id
   SCR-TASK-012:
-    label: 'My Jobs'
+    label: My Jobs
     edges:
       - to: SCR-TASK-013
         type: push
-        guard: 'tap booking card'
-    data_deps: [tasker_bookings]
+        guard: tap booking card
+    data_deps:
+      - tasker_bookings
     tab: my_jobs
-
   SCR-TASK-013:
-    label: 'Booking Detail (Tasker)'
+    label: Booking Detail (Tasker)
     edges:
       - to: SCR-TASK-015
         type: modal
-        guard: "tap 'Cancel'"
+        guard: tap 'Cancel'
       - to: SCR-TASK-014
         type: modal
-        guard: 'no-show flag available'
+        guard: no-show flag available
       - to: SCR-SHARED-010
         type: push
-        guard: "tap 'Message'"
+        guard: tap 'Message'
       - to: SCR-SHARED-017
         type: push
-        guard: "tap 'Leave Review', after completion"
+        guard: tap 'Leave Review', after completion
       - to: SCR-TASK-012
         type: pop
-        guard: 'back'
-    data_deps: [booking_id, booking_detail, exact_address]
-
+        guard: back
+    data_deps:
+      - booking_id
+      - booking_detail
+      - exact_address
   SCR-TASK-014:
-    label: 'No-Show Flag (Tasker)'
+    label: No-Show Flag (Tasker)
     edges:
       - to: SCR-TASK-013
         type: dismiss
-        guard: 'flagged or dismissed'
-    data_deps: [booking_id, schedule_start]
-
+        guard: flagged or dismissed
+    data_deps:
+      - booking_id
+      - schedule_start
   SCR-TASK-015:
-    label: 'Booking Cancel (Tasker)'
+    label: Booking Cancel (Tasker)
     edges:
       - to: SCR-TASK-013
         type: dismiss
-        guard: 'cancel aborted'
+        guard: cancel aborted
       - to: SCR-TASK-012
         type: replace
-        guard: 'cancellation confirmed'
-    data_deps: [booking_id, tasker_cancel_count_30d]
-
+        guard: cancellation confirmed
+    data_deps:
+      - booking_id
+      - tasker_cancel_count_30d
   SCR-TASK-016:
-    label: 'Tasker Stats'
+    label: Tasker Stats
     edges:
       - to: SCR-SHARED-012
         type: pop
-        guard: 'back'
-    data_deps: [tasker_stats]
-
+        guard: back
+    data_deps:
+      - tasker_stats
   SCR-TASK-017:
-    label: 'Booking Request'
+    label: Booking Request
     edges:
       - to: SCR-TASK-012
         type: dismiss
-        guard: 'accepted'
+        guard: accepted
       - to: SCR-TASK-012
         type: dismiss
-        guard: 'declined or expired'
-    data_deps: [booking_intent_id, task_id]
-
+        guard: declined or expired
+    data_deps:
+      - booking_intent_id
+      - task_id
   SCR-TASK-018:
-    label: 'Privacy Policy'
-    edges:
-      - to: '$previous'
-        type: pop
-        guard: 'back'
+    label: Privacy Policy
+    edges: []
     data_deps: []
-
-  SCR-TASK-019:
-    label: 'AI Profile Polish'
-    edges:
-      - to: SCR-SHARED-013
-        type: pop
-        guard: 'apply success or back'
-    data_deps: [user_id, profile_bio, polish_preview]
-
-  # ═══════════════════════════════════════════════════
-  # B2B SCREENS
-  # ═══════════════════════════════════════════════════
-
-  SCR-B2B-001:
-    label: 'Business Accounts'
-    edges:
-      - to: SCR-B2B-002
-        type: push
-        guard: 'tap create account or edit account'
-      - to: SCR-B2B-006
-        type: push
-        guard: 'tap account tasks'
-      - to: SCR-B2B-007
-        type: push
-        guard: 'tap account billing'
-      - to: SCR-B2B-004
-        type: push
-        guard: 'tap account members'
-      - to: SCR-SHARED-012
-        type: pop
-        guard: 'back'
-    data_deps: [business_accounts]
-
-  SCR-B2B-002:
-    label: 'Business Account Editor'
-    edges:
-      - to: SCR-B2B-003
-        type: push
-        guard: 'tap manage locations'
-      - to: SCR-B2B-004
-        type: push
-        guard: 'tap manage members'
-      - to: SCR-B2B-001
-        type: pop
-        guard: 'save success or back'
-    data_deps: [account_id, business_account]
-
-  SCR-B2B-003:
-    label: 'Business Location Editor'
-    edges:
-      - to: SCR-B2B-002
-        type: pop
-        guard: 'save success or back'
-    data_deps: [account_id, location_id, business_location]
-
-  SCR-B2B-004:
-    label: 'Business Members'
-    edges:
-      - to: SCR-B2B-002
-        type: pop
-        guard: 'back'
-    data_deps: [account_id, members]
-
-  SCR-B2B-005:
-    label: 'Post Task as Business'
-    edges:
-      - to: SCR-CUST-002
-        type: push
-        guard: 'business context selected and continue tapped'
-      - to: SCR-B2B-006
-        type: pop
-        guard: 'back'
-    data_deps: [business_accounts, selected_account, selected_location]
-
-  SCR-B2B-006:
-    label: 'Business Tasks'
-    edges:
-      - to: SCR-B2B-005
-        type: push
-        guard: "tap 'Post Task as Business'"
-      - to: SCR-CUST-009
-        type: push
-        guard: 'tap business task card'
-      - to: SCR-B2B-001
-        type: pop
-        guard: 'back'
-    data_deps: [account_id, business_tasks]
-
-  SCR-B2B-007:
-    label: 'Business Subscription Billing'
-    edges:
-      - to: SCR-B2B-001
-        type: pop
-        guard: 'back or billing updated'
-    data_deps: [account_id, subscription_plans, current_subscription]
-
-  # ═══════════════════════════════════════════════════
-  # PHASE 2 SCREENS
-  # ═══════════════════════════════════════════════════
-
-  SCR-P2-001:
-    label: 'Credits Balance'
-    edges:
-      - to: SCR-P2-002
-        type: push
-        guard: "tap 'Buy Credits'"
-      - to: SCR-P2-003
-        type: push
-        guard: "tap 'Transaction History'"
-    data_deps: [credit_balance, credit_packs]
-
-  SCR-P2-002:
-    label: 'QPay Payment'
-    edges:
-      - to: SCR-P2-001
-        type: pop
-        guard: 'payment complete or back'
-    data_deps: [payment_id, qpay_qr, payment_status]
-
-  SCR-P2-003:
-    label: 'Transaction History'
-    edges:
-      - to: SCR-P2-001
-        type: pop
-        guard: 'back'
-    data_deps: [credit_transactions]
-
-  SCR-P2-004:
-    label: 'Low Balance Alert'
-    edges:
-      - to: SCR-P2-001
-        type: push
-        guard: "tap 'Buy Credits'"
-      - to: '$previous'
-        type: dismiss
-        guard: 'dismissed'
-    data_deps: [credit_balance]
-
-  SCR-P2-005:
-    label: 'Referral'
-    edges:
-      - to: '$previous'
-        type: pop
-        guard: 'back'
-    data_deps: [referral_code, referral_stats]
-
-  # ═══════════════════════════════════════════════════
-  # PHASE 3+ SCREENS
-  # ═══════════════════════════════════════════════════
-
-  SCR-P3-001:
-    label: 'Wallet'
-    edges:
-      - to: SCR-P3-002
-        type: push
-        guard: "tap 'Request Payout'"
-    data_deps: [wallet_balance, wallet_transactions]
-
-  SCR-P3-002:
-    label: 'Request Payout'
-    edges:
-      - to: SCR-P3-001
-        type: pop
-        guard: 'submitted or back'
-    data_deps: [wallet_balance, payout_schedule]
-
-  SCR-P3-003:
-    label: 'Escrow Payment'
-    edges:
-      - to: SCR-CUST-017
-        type: pop
-        guard: 'payment complete or back'
-    data_deps: [booking_id, escrow_amount, qpay_qr]
-
-  SCR-P3-004:
-    label: 'Tasker Pro Subscription'
-    edges:
-      - to: '$previous'
-        type: pop
-        guard: 'back'
-    data_deps: [subscription_plans, pro_badge_status, current_subscription]
-
-  SCR-P3-005:
-    label: 'Instant Match (Tasker)'
-    edges:
-      - to: SCR-TASK-012
-        type: dismiss
-        guard: 'accepted or declined'
-    data_deps: [task_id, match_details]
-
-# ═══════════════════════════════════════════════════
-# TAB NAVIGATION
-# ═══════════════════════════════════════════════════
-
 tab_bars:
   customer:
     tabs:
       - id: my_tasks
-        label_mn: 'Даалгаврууд'
-        label_en: 'My Tasks'
-        icon: 'tasks'
+        label_mn: Даалгаврууд
+        label_en: My Tasks
+        icon: tasks
         root: SCR-CUST-001
       - id: bookings
-        label_mn: 'Захиалгууд'
-        label_en: 'Bookings'
-        icon: 'calendar'
+        label_mn: Захиалгууд
+        label_en: Bookings
+        icon: calendar
         root: SCR-CUST-016
       - id: inbox
-        label_mn: 'Чат'
-        label_en: 'Inbox'
-        icon: 'chat'
+        label_mn: Чат
+        label_en: Inbox
+        icon: chat
         root: SCR-SHARED-010
       - id: profile
-        label_mn: 'Профайл'
-        label_en: 'Profile'
-        icon: 'person'
+        label_mn: Профайл
+        label_en: Profile
+        icon: person
         root: SCR-SHARED-012
-
   tasker:
     tabs:
       - id: browse
-        label_mn: 'Хайх'
-        label_en: 'Browse'
-        icon: 'search'
+        label_mn: Хайх
+        label_en: Browse
+        icon: search
         root: SCR-TASK-001
       - id: my_jobs
-        label_mn: 'Ажлууд'
-        label_en: 'My Jobs'
-        icon: 'briefcase'
+        label_mn: Ажлууд
+        label_en: My Jobs
+        icon: briefcase
         root: SCR-TASK-012
       - id: inbox
-        label_mn: 'Чат'
-        label_en: 'Inbox'
-        icon: 'chat'
+        label_mn: Чат
+        label_en: Inbox
+        icon: chat
         root: SCR-SHARED-010
       - id: profile
-        label_mn: 'Профайл'
-        label_en: 'Profile'
-        icon: 'person'
+        label_mn: Профайл
+        label_en: Profile
+        icon: person
         root: SCR-SHARED-012
-
-# ═══════════════════════════════════════════════════
-# DEEP LINKS (Push notification targets)
-# ═══════════════════════════════════════════════════
-
 deep_links:
-  - notification: 'new_applicant'
+  - notification: new_applicant
     target: SCR-CUST-011
-    params: [task_id]
-  - notification: 'booking_confirmed'
+    params:
+      - task_id
+  - notification: booking_confirmed
     target: SCR-CUST-017
-    params: [booking_id]
-  - notification: 'tasker_marked_done'
+    params:
+      - booking_id
+  - notification: tasker_marked_done
     target: SCR-CUST-017
-    params: [booking_id]
-  - notification: 'new_message'
+    params:
+      - booking_id
+  - notification: new_message
     target: SCR-SHARED-011
-    params: [conversation_id]
-  - notification: 'verification_approved'
+    params:
+      - conversation_id
+  - notification: verification_approved
     target: SCR-TASK-008
     params: []
-  - notification: 'verification_rejected'
+  - notification: verification_rejected
     target: SCR-TASK-009
     params: []
-  - notification: 'lead_unlock_request'
+  - notification: lead_unlock_request
     target: SCR-TASK-017
-    params: [application_id]
-  - notification: 'no_show_reminder'
+    params:
+      - application_id
+  - notification: no_show_reminder
     target: SCR-CUST-021
-    params: [booking_id]
-  - notification: 'review_reminder'
+    params:
+      - booking_id
+  - notification: review_reminder
     target: SCR-SHARED-017
-    params: [booking_id]
-  - notification: 'instant_match'
-    target: SCR-P3-005
-    params: [task_id]
-  - notification: 'dispute_update'
+    params:
+      - booking_id
+  - notification: dispute_update
     target: SCR-CUST-025
-    params: [dispute_id]
-  - notification: 'reschedule_request'
+    params:
+      - dispute_id
+  - notification: reschedule_request
     target: SCR-CUST-020
-    params: [booking_id]
-  - notification: 'low_credits'
-    target: SCR-P2-004
-    params: []
-
-# ─── Validation ─────────────────────────────────────
+    params:
+      - booking_id
 validation:
-  total_nodes: 81
-  dead_ends: 1 # SCR-SHARED-021 (Banned — intentional terminal)
-  orphans: 0 # all screens reachable from splash or deep links
+  total_nodes: 65
+  dead_ends: 1
+  orphans: 0
   all_screens_in_inventory: true

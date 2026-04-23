@@ -1,40 +1,35 @@
 # Tasky Architecture — Backend (`services/api`)
 
-Status: derived architecture reference for `services/api`. Sections are labeled with their truth status (see below).
+This document describes the backend architecture for `services/api`. It should be read as implementation guidance derived from the governing product and policy docs.
 
-Read after: repo `AGENTS.md`, `docs/PRD.md`, `docs/STRATEGY.md`, relevant maintenance policy, `services/api/AGENTS.md`,
+Read after: repo `AGENTS.md`, `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, relevant maintenance policy, `services/api/AGENTS.md`,
 then this file (`api.md`). Use `common.md` and `docs/openapi/AGENTS.md` only for cross-cutting or contract-change
 context.
 
-> **Reconciliation status: complete.** This document was reconciled with the codebase across
-> five passes (authority/async narrative, security, events/outbox, persistence, verification).
-> Every section is labeled with its truth status. Treat labels as authoritative; unmarked subsections are current state.
-> Run `./tooling/scripts/scan-backend-doc-drift.sh` to check for banned-term drift re-introduction.
-> Run `python3 tooling/scripts/validate-schema-parity.py` to check schema inventory drift against Flyway migrations.
+Use `python3 tooling/scripts/governance/validate-schema-parity.py` to check schema inventory against Flyway migrations.
 
 ## Authority Order
 
-Intended product behavior is governed by `docs/PRD.md`, `docs/STRATEGY.md`, and relevant maintenance policy docs.
-This document describes backend implementation design and current implementation reality.
+Product behavior and launch scope are governed by `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, and the relevant maintenance policy docs. This file describes backend design and implementation structure for that product.
 
-When this document conflicts with other sources, precedence is:
+Use this interpretation rule throughout:
 
-1. **ArchUnit tests and build-enforced rules** — `services/api/src/test/java/mn/tasky/architecture/`
-2. **Flyway migrations** — `services/api/src/main/resources/db/migration/` (schema truth)
-3. **Runtime code and package structure** — actual Java source
-4. **This document** — prose descriptions derived from the above
+1. `docs/PRD.md` defines intended Phase 1 behavior and launch scope.
+2. `docs/STRATEGY.md` defines operating posture and launch discipline.
+3. `docs/ROLLOUT_PHASES.md` preserves later-phase intent without widening the active contract.
+4. Maintenance policies constrain activation posture, staging posture, and operational discipline.
+5. This document describes how the backend is organized to implement current behavior.
+6. Tests, migrations, and runtime code are evidence of implementation reality, but they do **not** expand launch scope on their own.
 
-If prose says X but code/tests say Y, the code/tests win. File a doc-fix issue.
+Any non-Phase-1 scaffolding in code or schema is implementation residue, not active architecture scope.
 
 ## 1. Scope
 
-> **Truth status: current state** — verified against ArchUnit tests and runtime code.
-
 This document owns backend-specific architecture: module layout, request-path rules, data schemas and flows, API contracts, security, runtime concerns, and testing. Cross-cutting system context, shared infrastructure, NFR baselines, and dev workflow live in `common.md`. Frontend parity contracts live in `shared-frontend.md`.
 
-## 1.1 Foundational Design Patterns
+Future rollout intent belongs in `docs/ROLLOUT_PHASES.md`. This architecture doc should describe active backend structure, not keep later-phase technical design alive in the main reading path.
 
-> **Truth status: current state** — enforced by ArchUnit tests.
+## 1.1 Foundational Design Patterns
 
 The backend enforces a small set of architectural patterns that are **test-locked by ArchUnit** (see
 `services/api/src/test/java/mn/tasky/architecture/`). Every new module, controller, or service must comply.
@@ -93,7 +88,7 @@ Runtime composition services inject the port interfaces, never the handlers.
 
 ### 1.1.3 Outbox + Event-Driven Workflow
 
-**Intent.** Decouple side effects (notifications, analytics, wallet crediting) from the synchronous request
+**Intent.** Decouple side effects such as notifications, analytics, reminders, and recovery workflows from the synchronous request
 path with at-least-once delivery guarantees.
 
 **Two-path publish model:**
@@ -113,6 +108,16 @@ path with at-least-once delivery guarantees.
 **At-least-once delivery:** The system provides true at-least-once semantics — direct publish on the happy path,
 relay recovery for failures. Handler-level idempotency via `WorkflowIdempotencyGuard` (`kernel.idempotency`)
 handles any duplicate deliveries that arise from the overlap between the two paths.
+
+```claim symbol-exists
+class: mn.tasky.common.outbox.DomainEventOutboxService
+method: publish
+```
+
+```claim db-table
+table: domain_outbox_events
+required_columns: [id, event_type, payload, status, attempts, created_at]
+```
 
 **Handler dispatch:**
 
@@ -135,8 +140,7 @@ handles any duplicate deliveries that arise from the overlap between the two pat
 
 ### 1.1.4 Provider / Strategy Pattern for External Integrations
 
-**Intent.** External systems (payment gateways, OAuth providers, push/SMS, geocoding, LLM, storage) are
-wrapped behind provider interfaces so callers remain testable and swappable.
+**Intent.** External systems used by the Phase 1 product — Facebook OAuth, push/SMS delivery, geocoding, and object storage — are wrapped behind provider interfaces so callers remain testable and swappable.
 
 **Convention:**
 
@@ -145,17 +149,17 @@ mn.tasky.<module>.provider.<ProviderInterface>        ← interface
 mn.tasky.<module>.provider.<ConcreteProvider>          ← @ConditionalOnProperty implementation
 ```
 
-Active providers:
+**Active Phase 1 provider families:**
 
 | Provider interface                     | Implementations                               | Activation property                 |
 | -------------------------------------- | --------------------------------------------- | ----------------------------------- |
 | `PushNotificationProvider`             | `FirebasePushProvider`, `LoggingPushProvider` | `tasky.push.provider`               |
-| `SmsNotificationProvider`              | `LoggingSmsNotificationProvider`              | `tasky.auth.sms.provider`           |
+| `SmsNotificationProvider`              | `LoggingSmsNotificationProvider`              | `tasky.notification.sms.provider`   |
 | `OAuthProvider`                        | `FacebookOAuthProvider`                       | `tasky.auth.oauth.provider`         |
-| `PaymentProvider`                      | `QPayPaymentProvider`                         | —                                   |
 | `GeocodingProvider`                    | `DistrictGeocodingProvider`                   | `tasky.location.geocoding.provider` |
 | `StorageProvider` / `S3StorageService` | S3/MinIO                                      | —                                   |
-| `LlmProvider`                          | `LoggingLlmProvider`                          | —                                   |
+
+Deferred adapters for payment, escrow, payout, alternate auth, or LLM-assisted copy may exist in the codebase, but they are not part of the Phase 1 runtime contract and must stay disabled unless the PRD and downstream contracts are updated first.
 
 **Boundary rules (ArchUnit-enforced):**
 
@@ -250,45 +254,45 @@ mn.tasky.<module>/
 
 ## 2. Module Layout (`mn.tasky.*` Packages)
 
-> **Truth status: current state** — verified against runtime package structure, PackageMarker inventory, and port interfaces.
-
 The backend is a single deployable unit (`tasky-server`) organized by business domains. Cross-domain communication uses internal Java method calls — no network hops between domains.
 
-### Feature Modules (domain business logic)
+### Feature Modules (Phase 1 launch baseline)
 
-| Module           | Package        | Responsibility                                          | CQRS Ports                                                           |
-| ---------------- | -------------- | ------------------------------------------------------- | -------------------------------------------------------------------- |
-| **Identity**     | `identity`     | Cross-cutting facade: composes auth, user, verification | `IdentityCommandPort`, `IdentityQueryPort`                           |
-| **Auth**         | `auth`         | Facebook OAuth, OTP login, JWT sessions                 | _(provider pattern; ports not yet extracted)_                        |
-| **User**         | `user`         | User profiles, roles                                    | _(ports not yet extracted)_                                          |
-| **Security**     | `security`     | Security endpoints (session info, CSRF)                 | _(ports not yet extracted)_                                          |
-| **Verification** | `verification` | Tasker KYC / document verification queue                | _(ports not yet extracted)_                                          |
-| **Marketplace**  | `marketplace`  | Cross-cutting facade: composes task, category, booking  | `MarketplaceCommandPort`, `MarketplaceQueryPort`                     |
-| **Task**         | `task`         | Task CRUD, lifecycle, assignment, status, drafts        | _(ports not yet extracted)_                                          |
-| **Category**     | `category`     | Service category taxonomy, intake schemas               | `CategoryQueryPort` (read-only)                                      |
-| **Booking**      | `booking`      | Booking state machine, intents, schedule events         | `BookingCommandPort`, `BookingIntentCommandPort`, `BookingQueryPort` |
-| **Location**     | `location`     | Districts, service areas, geocoding                     | `LocationQueryPort` (read-only)                                      |
-| **Trust**        | `trust`        | Cross-cutting facade: composes review, dispute          | `TrustCommandPort`, `TrustQueryPort`                                 |
-| **Review**       | `review`       | Post-task ratings, enforcement cases                    | _(ports not yet extracted)_                                          |
-| **Dispute**      | `dispute`      | Dispute resolution, evidence handling                   | _(ports not yet extracted)_                                          |
-| **Wallet**       | `wallet`       | Tasker wallet, ledger, payouts                          | `WalletCommandPort`, `WalletQueryPort`                               |
-| **Payment**      | `payment`      | Payment gateway integration (QPay)                      | `PaymentCommandPort`                                                 |
-| **Messaging**    | `messaging`    | In-app chat (WebSocket/STOMP)                           | `MessagingCommandPort`, `MessagingQueryPort`                         |
-| **Notification** | `notification` | Push notifications (FCM), in-app alerts                 | `NotificationCommandPort`                                            |
-| **Analytics**    | `analytics`    | Event tracking, marketplace metrics                     | `AnalyticsCommandPort`                                               |
-| **Admin**        | `admin`        | Admin dashboard APIs                                    | `AdminAuditCommandPort`                                              |
+| Module           | Package        | Responsibility                                                                             | CQRS Ports                                                           |
+| ---------------- | -------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| **Identity**     | `identity`     | Cross-cutting facade for authentication state, user identity, and verification             | `IdentityCommandPort`, `IdentityQueryPort`                           |
+| **Auth**         | `auth`         | Facebook OAuth login, token issuance, refresh, logout, outage posture                      | _(provider pattern; ports not yet extracted)_                        |
+| **User**         | `user`         | User profiles and role state                                                               | _(ports not yet extracted)_                                          |
+| **Security**     | `security`     | Session introspection and request security surfaces                                        | _(ports not yet extracted)_                                          |
+| **Verification** | `verification` | Tasker verification queue and audit trail                                                  | _(ports not yet extracted)_                                          |
+| **Marketplace**  | `marketplace`  | Cross-cutting facade for task, category, and booking flows                                 | `MarketplaceCommandPort`, `MarketplaceQueryPort`                     |
+| **Task**         | `task`         | Task drafts, posting, application review, and lifecycle                                    | _(ports not yet extracted)_                                          |
+| **Category**     | `category`     | Launch category catalog and structured intake schemas                                      | `CategoryQueryPort` (read-only)                                      |
+| **Booking**      | `booking`      | Booking intent window, confirmation, reschedule, cancellation, no-show, completion         | `BookingCommandPort`, `BookingIntentCommandPort`, `BookingQueryPort` |
+| **Location**     | `location`     | District and service-area lookup used for eligibility and notification targeting           | `LocationQueryPort` (read-only)                                      |
+| **Trust**        | `trust`        | Cross-cutting facade for review, dispute, reliability, and moderation signals              | `TrustCommandPort`, `TrustQueryPort`                                 |
+| **Review**       | `review`       | Post-completion review workflow and review debt enforcement                                | _(ports not yet extracted)_                                          |
+| **Dispute**      | `dispute`      | Evidence-backed dispute handling and admin outcomes                                        | _(ports not yet extracted)_                                          |
+| **Messaging**    | `messaging`    | Platform-mediated post-confirmation messaging and auditability                             | `MessagingCommandPort`, `MessagingQueryPort`                         |
+| **Notification** | `notification` | Push/SMS notification delivery                                                             | `NotificationCommandPort`                                            |
+| **Analytics**    | `analytics`    | Product-event emission and KPI instrumentation                                             | `AnalyticsCommandPort`                                               |
+| **Admin**        | `admin`        | Admin dashboard APIs for verification, moderation, disputes, rescue, and schema governance | `AdminAuditCommandPort`                                              |
+
+### Current-phase boundary
+
+The repository may still contain dormant scaffolding outside the launch baseline. That residue is not part of the active backend contract and should not be used to infer live product scope.
 
 ### Orchestration Plane
 
-| Module      | Package   | Responsibility                                                                                                                                                  |
-| ----------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Runtime** | `runtime` | HTTP controllers, composition services, schedulers, workers. Sub-packages: `publicapi/` (composition), `adminapi/` (admin composition), `scheduler/`, `worker/` |
+| Module      | Package   | Responsibility                                                                                                                                                      |
+| ----------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Runtime** | `runtime` | HTTP controllers, composition services, schedulers, and workers. Sub-packages: `publicapi/` (composition), `adminapi/` (admin composition), `scheduler/`, `worker/` |
 
 ### Automation Plane
 
-| Module         | Package      | Responsibility                                                                                                                                                                                 |
-| -------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Automation** | `automation` | Event-driven async engine. Sub-packages: `broker/` (RabbitMQ relay), `event/` (envelope contracts), `job/` (job dispatch), `provider/` (+`llm/`), `worker/` (consumer), `workflow/` (handlers) |
+| Module         | Package      | Responsibility                                                                                                                             |
+| -------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Automation** | `automation` | Event-driven async engine for broker relay, event envelopes, workers, and workflow handlers backing notifications, reminders, and recovery |
 
 ### Infrastructure / Cross-Cutting
 
@@ -298,11 +302,9 @@ The backend is a single deployable unit (`tasky-server`) organized by business d
 | **Common**     | `common`     | Cross-cutting infrastructure: security config, audit, storage, outbox, persistence, health, crypto                                  |
 | **Projection** | `projection` | Admin read models. Sub-packages: `admin/`                                                                                           |
 
-> Modules marked "ports not yet extracted" have a `publicapi/` package marker but no CommandPort/QueryPort interfaces. Their runtime composition services call application-layer services directly. Port extraction is tracked as tech debt.
+Modules marked "ports not yet extracted" may still expose a `publicapi/` package marker without a full CommandPort/QueryPort pair. That is an implementation detail, not permission to bypass the layering rules.
 
 ## 3. Request-Path Architecture
-
-> **Truth status: current state** — enforced by `AudienceCompositionBoundaryTest`.
 
 Every active backend request path uses one of two allowed shapes:
 
@@ -319,245 +321,130 @@ Every active backend request path uses one of two allowed shapes:
 
 **Exception set** (explicitly documented in architecture tests):
 
-- `SystemInfoController` — system/health endpoint
+- `SystemInfoController` — system and health endpoint
 - `SecurityScopeController` — security introspection
 - `DevAuthController`, `TokenController`, `FacebookAuthController` — auth lifecycle helpers
 - `LocationController`, `ServiceAreaController`, `CategoryController` — pure lookup/reference data
 - `OutboxReplayController`, `AdminFeatureToggleController` — operator endpoints
-- `OtpController` — rate-limit enforcement is a cross-cutting security concern, not business logic; also uses `IdentityCommandPort` for OTP operations
+- `OtpController` — dormant non-launch surface retained only as implementation residue; it must remain disabled and absent from launch UX
 
 Any addition to the exception set requires deliberate justification in code review.
 
 ## 4. Data Architecture
 
-> **Truth status: current state** — Schema descriptions verified against Flyway migrations V1–V28 and live DAO/DTO contracts.
-> Section 4.1 and 4.2 reflect the current-state schema; section 4.4 documents planned target-state tables separately.
-> For authoritative column definitions, consult the migrations directly.
->
-> **Drift guard:** `python3 tooling/scripts/validate-schema-parity.py` compares the curated schema inventory
-> (`tooling/config/expected-schema.json`) against the actual Flyway migrations. It runs in the `structural-gate`
-> CI job and fails the PR on table or column drift. Run `--update-expected` when adding a new migration.
+This section inventories the backend data model in a way that stays aligned with the PRD.
 
-### 4.1 Current-state Domain Schema (authoritative)
+Two rules apply:
 
-> **Truth status: current state** — verified against Flyway migrations V1–V28 and live DAO/DTO contracts.
-> For column-level definitions, consult the migrations directly (`services/api/src/main/resources/db/migration/`).
+This section inventories the launch-aligned backend data model. Non-launch residue in the physical schema is not normative for the active product baseline.
 
-#### Identity
+### 4.1 Launch-aligned domain schema inventory
 
-- `users`: `id (UUID PK)`, `phone`, `phone_blind_idx (UNIQUE)`, `primary_auth` (FACEBOOK, PHONE_OTP), `role` (CUSTOMER, TASKER, ADMIN), `status` (PENDING, ACTIVE, VERIFIED, SUSPENDED, BANNED, DELETED), `suspension_end_at`, `created_at`, `updated_at`
-- `profiles`: `user_id (PK → users)`, `full_name`, `avatar_url`, `rating_avg`, `bio`, `completed_tasks`
-  — current schema stores aggregate rating, but PRD v2.0 requires public rating display to stay hidden until a
-  minimum review-count threshold is met; threshold/public-display metadata is not yet modeled explicitly
-  — `instant_match_revoked_until` (behavior-affecting: gates instant-match eligibility when set to a future timestamp)
-  — `last_active_at` (updated on activity)
-- `verifications`: `id (UUID PK)`, `user_id (FK → users)`, `id_card_front_key`, `id_card_back_key`, `status` (PENDING, APPROVED, REJECTED), `submitted_at`, `admin_notes`, `reviewed_at`, `consent_policy_version`, `consent_accepted_at`, `dan_reference (nullable)`
-  — columns store S3/MinIO object keys, not URLs; download links are generated via presigned GET URLs on demand
+For exact column definitions, use the Flyway migrations in `services/api/src/main/resources/db/migration/`.
 
-#### Marketplace
+#### Identity and access
 
-- `tasks`: `id (UUID PK)`, `customer_id (FK → users)`, `category_id (FK → categories)`, `description`, `budget`, `location_lat`, `location_lng`, `location_text`, `location_point (GEOMETRY(Point, 4326))`, `status` (OPEN, ASSIGNED, COMPLETED, CANCELLED, NO_SHOW), `scheduled_at`, `created_at`, `updated_at`, `intake_answers_json (JSONB)`, `intake_schema_version`, `scope_summary_source` (TEMPLATE, USER_EDITED, LLM)
-  — current launch-live schema is still fixed-budget-centric; PRD v2.0 target requires `pricing_mode` plus auditable
-  quote/counter-offer support before the implementation is considered aligned
-- `task_drafts`: `id (UUID PK)`, `customer_id (FK → users)`, `category_id (FK → categories)`, `intake_answers_json (JSONB)`, `intake_schema_version`, `summary_draft`, `location_lat`, `location_lng`, `location_text`, `created_at`, `expires_at (default now()+7d)`
-  — Design constraint: drafts intentionally do NOT store `location_point`; geometry is materialized only on promotion to `tasks`
-- `task_photos`: `id (UUID PK)`, `task_id (FK → tasks)`, `storage_key`, `sort_order`
-- `categories`: `id (UUID PK)`, `name`, `name_mn`, `icon_url`, `is_active`, `sort_order`, `intake_enabled`, `intake_schema_version`, `intake_schema_json (JSONB)`
-- `category_schema_versions`: `id (UUID PK)`, `category_id (FK → categories)`, `version`, `schema_json (JSONB)`, `status` (DRAFT, CANARY, ACTIVE, ROLLED_BACK), `created_by`, `created_at`, `activated_at`; UNIQUE(category_id, version)
-- `task_applications`: `id (UUID PK)`, `task_id (FK → tasks)`, `tasker_id (FK → users)`, `message`, `status` (APPLIED, SELECTED, ACCEPTED, DECLINED, EXPIRED), `relevance_score`, `recommended`, `selected_at`, `respond_by_at`, `created_at`; UNIQUE(task_id, tasker_id)
-  — current schema stores only a short note; PRD v2.0 target requires structured pricing response data in addition to
-  the short note
-- `bookings`: `id (UUID PK)`, `task_id (FK → tasks)`, `tasker_id (FK → users)`, `customer_id (FK → users)`, `price`, `status` (ASSIGNED, PAID, COMPLETED, CANCELLED, NO_SHOW), `cancellation_fee`, `liability_disclaimer_accepted`, `liability_disclaimer_accepted_at`, `confirmed_scheduled_at`, `settlement_mode` (DIRECT, LEAD_UNLOCK, ESCROW; default DIRECT), `late_cancel_incident`, `created_at`, `updated_at`
-  — `PAID` is a live transitional state in the booking state machine
-- `booking_intents`: `id (UUID PK)`, `task_id (FK → tasks CASCADE)`, `tasker_id (FK → users)`, `customer_id (FK → users)`, `source` (REBOOK, INSTANT_MATCH), `status` (PENDING, CONFIRMED, EXPIRED, CANCELLED), `original_booking_id (FK → bookings)`, `offer_id`, `expires_at`, `confirmed_booking_id (FK → bookings)`, `confirmed_at`, `created_at`, `updated_at`
-- `booking_schedule_events`: `id (UUID PK)`, `booking_id (FK → bookings)`, `actor_user_id (FK → users)`, `event_type` (REQUESTED, ACCEPTED, DECLINED, EXPIRED), `proposed_scheduled_at`, `reason`, `created_at`
-- `booking_timeline_events`: `id (UUID PK)`, `booking_id (FK → bookings)`, `event_type`, `actor_user_id (FK → users)`, `metadata_json (JSONB)`, `created_at`
-- `task_rescue_events`: `id (UUID PK)`, `task_id (FK → tasks)`, `triggered_at`, `trigger_window` (DAYTIME, OFF_HOURS), `actions_json (JSONB)`, `created_at`
-- `booking_reviews`: `id (UUID PK)`, `booking_id (FK → bookings)`, `reviewer_id (FK → users)`, `reviewee_id (FK → users)`, `quality_rating (1-5)`, `punctuality_rating (1-5)`, `communication_rating (1-5)`, `clarity_rating (1-5)`, `respectfulness_rating (1-5)`, `comment`, `created_at`; UNIQUE(booking_id, reviewer_id)
-- `tasker_reliability_scores`: `tasker_id (PK → users)`, `score`, `completion_rate`, `punctuality_rate`, `cancellation_rate`, `review_avg`, `window_days`, `computed_at`
-- `tasker_badges`: `tasker_id (FK → users)`, `badge_type` (PRO), `assigned_at`, `revoked_at`; PK(tasker_id, badge_type)
+- `users`: user identity, role, status, and session-facing auth state. Phase 1 launch authentication is Facebook OAuth only. Alternate auth enum values may exist physically but remain disabled for launch.
+- `profiles`: profile data such as full name, avatar, bio, and aggregate completion/reputation fields. Public ratings remain hidden until the product threshold policy allows display.
+- `verifications`: tasker verification submission, consent evidence, review decision, notes, and timestamps.
 
-#### Wallet
+#### Marketplace and booking
 
-- `wallets`: `user_id (PK → users)`, `balance_mnt`, `held_balance_mnt`, `updated_at`
-- `ledger_entries`: `id (UUID PK)`, `user_id (FK → users)`, `amount`, `type` (DEPOSIT, FEE, HOLD, RELEASE, CONFISCATE, PAYOUT, REFUND), `reference_id`, `description`, `created_at`
-- `payout_requests`: `id (UUID PK)`, `user_id (FK → users)`, `amount`, `status` (PENDING, PROCESSED, REJECTED), `created_at`, `processed_at`
-- `credited_bookings`: `booking_id (PK → bookings)`
+- `tasks`: customer task record with launch category, pricing mode (`BUDGET` / `QUOTE`), structured intake answers, schedule, approximate/exact location fields, lifecycle status, and summary provenance. Launch summary generation is deterministic; any LLM-related provenance must remain dormant.
+- `task_drafts`: draft posting state bound to a specific intake schema version.
+- `categories`: launch category catalog and active intake schema pointers.
+- `category_schema_versions`: versioned structured-intake definitions with draft/canary/active lifecycle.
+- `task_applications`: tasker applications, structured pricing response data, selection state, and response-window timestamps.
+- `bookings`: confirmed work agreement between customer and selected tasker. Phase 1 lifecycle centers on confirmed, completed, canceled, disputed, and no-show outcomes. If physical schema includes monetization-oriented states or settlement modes, they remain dormant outside launch.
+- `booking_intents`: the selected-tasker acceptance window between customer selection and booking confirmation.
+- `booking_schedule_events`: immutable reschedule request, accept, decline, and expiry records.
+- `booking_timeline_events`: auditable lifecycle and policy events such as reminders, status changes, and adjudication outcomes.
+- `task_rescue_events`: auditable record of assisted distribution or operator rescue.
 
-#### Communication
+#### Communication and notifications
 
-- `conversations`: `id (UUID PK)`, `task_id (FK → tasks)`, `customer_id (FK → users)`, `tasker_id (FK → users)`, `created_at`; UNIQUE(task_id, customer_id, tasker_id)
-  — communication tables exist in current state, but PRD v2.0 requires Phase 1 UX to avoid open-ended pre-booking
-  chat and to expose messaging only as a post-confirmation channel
-- `messages`: `id (UUID PK)`, `conversation_id (FK → conversations)`, `sender_id (FK → users)`, `content`, `phone_number_flagged`, `content_hash`, `sent_at`
-- `device_tokens`: `user_id (FK → users)`, `token`, `platform`, `created_at`; UNIQUE(user_id, token)
-- `notification_log`: `id (UUID PK)`, `user_id (FK → users)`, `type`, `channel`, `status`, `event_key`, `provider_message_id`, `error_code`, `created_at`
+- `conversations`: platform-mediated post-confirmation conversation threads between booking participants.
+- `messages`: message records with moderation-relevant metadata.
+- `device_tokens`: mobile push tokens per user/device.
+- `notification_log`: push/SMS delivery attempts and idempotent event keys.
 
-#### Support
+#### Trust, disputes, and moderation
 
-- `disputes`: `id (UUID PK)`, `booking_id (FK → bookings)`, `raised_by (FK → users)`, `reason`, `status` (OPEN, RESOLVED_TASKER, RESOLVED_CUSTOMER, ESCALATED, CLOSED_INSUFFICIENT_EVIDENCE), `resolution_action` (RESOLVE_CUSTOMER, RESOLVE_TASKER, ESCALATE, REFUND, RELEASE), `wrongful_party_user_id`, `resolution_notes`, `resolved_at`, `created_at`
-- `dispute_evidence`: `id (UUID PK)`, `dispute_id (FK → disputes)`, `type` (CHAT_EXCERPT, PHOTO, WRITTEN_TIMELINE), `storage_key`, `text_payload`, `created_at`
-- `tasker_strikes`: `id (UUID PK)`, `user_id (FK → users)`, `booking_id (FK → bookings)`, `reason`, `created_at`
-- `referrals`: `id`, `referrer_id`, `referred_id`, `conversion_event`, `converted_at`, `reward_type`, `reward_applied`
-- `referral_rewards`: `id`, `referral_id`, `phase`, `reward_type`, `reward_value`, `applied_at`
-- `review_enforcement_cases`: `id (UUID PK)`, `booking_id (FK → bookings)`, `user_id (FK → users)`, `reason_code`, `status` (PENDING, REMINDED_24H, REMINDED_72H, COMPLETED, EXPIRED), `investigation_active` (behavior-affecting: drives hard-lock enforcement), `triggered_at`, `resolved_at`
-- `audit_events`: `id (UUID PK)`, `actor_user_id`, `action`, `resource_type`, `resource_id`, `metadata_json (JSONB)`, `created_at`
+- `booking_reviews`: bilateral structured review submissions after completion.
+- `review_enforcement_cases`: reminder cadence and lock state for owed reviews.
+- `tasker_reliability_scores`: derived reliability data used for ranking and trust operations.
+- `tasker_badges`: trust badge assignments. Badge display remains subordinate to verification and threshold-based public reputation policy.
+- `disputes`: booking-linked dispute records resolved through evidence-backed moderation.
+- `dispute_evidence`: uploaded or written evidence artifacts tied to a dispute.
+- `tasker_strikes`: trust escalation records for no-show, cancellation, or misconduct patterns.
+- `audit_events`: admin and system audit trail.
 
-### 4.2 Current-state Operational / Support Schema (authoritative)
+#### Operational support
 
-> **Truth status: current state** — live tables that support auth, moderation, and infrastructure.
-> Not product-facing but materially affect backend behavior.
+- `oauth_states`, `oauth_outage_events`: auth-session coordination and provider outage posture.
+- `rate_limit_counters`: request-rate limiting state.
+- `moderation_policy`: operator-controlled moderation threshold configuration.
+- `booking_reliability_incidents`: auditable late-cancel and no-show incidents.
+- `districts`, `tasker_service_districts`: district lookup and tasker service-area preferences used for targeting and diagnostics.
+- `domain_outbox_events`, `event_idempotency`: durable async delivery and handler idempotency.
+- `feature_toggles`: audited runtime toggles used for controlled rollout posture.
 
-#### Auth Operations
+### 4.3 Read models and projections
 
-- `otp_challenges`: `phone_blind_idx (PK)`, `code`, `expires_at`, `attempts`
-- `refresh_sessions`: `token_id (PK)`, `user_id (FK → users)`, `expires_at`
+Admin read models live in the `projection.admin` package.
 
-#### Trust & Moderation
+No SQL views or materialized projections are currently part of the architecture contract. Admin read models are composed in Java through composition services backed by query ports.
 
-- `moderation_policy`: `id (SMALLINT PK, singleton=1)`, `strike_window_days`, `strike_threshold`, `first_suspension_days`, `repeat_suspension_days`, `repeat_offense_window_days`, `auto_unsuspend_enabled`, `updated_at`
-- `suspension_events`: `id (UUID PK)`, `user_id (FK → users)`, `strike_count`, `suspension_days`, `suspended_at`, `unsuspended_at`
-- `booking_reliability_incidents`: `id (UUID PK)`, `booking_id (FK → bookings)`, `user_id (FK → users)`, `incident_type`, `details`, `recorded_at`; UNIQUE(booking_id, user_id, incident_type)
+### 4.4 Launch-aligned data flow patterns
 
-#### Service Areas
+1. **Structured task intake and posting**
+   - Client loads the active category schema and binds the task draft to that schema version.
+   - Server validates answers against the bound version, not against whatever becomes active later.
+   - Server generates a deterministic summary before task creation. If template rendering fails, posting still succeeds with a canonical fallback summary.
+2. **Application review, selection, and booking confirmation**
+   - `POST /tasks` creates an open task.
+   - `POST /tasks/{id}/applications` creates structured applications.
+   - Customers can review the full application set, with ranking allowed but no hard comparison cap.
+   - Customer selection creates a pending booking intent.
+   - Booking becomes confirmed only when the selected tasker accepts within the four-hour acceptance window.
+   - Expiry or decline returns the task to selectable-applicant state without confirming a booking.
+3. **Reschedule, cancellation, and no-show authority**
+   - Only accepted in-app reschedule events change the canonical schedule.
+   - Late-cancel and no-show timers always read the latest accepted in-app schedule.
+   - No-show reminder triggers at scheduled start +10 minutes; no-show flag is allowed no earlier than +15 minutes.
+   - Recent in-app activity and accepted future reschedules block premature no-show adjudication.
+4. **Completion, review gate, and disputes**
+   - Completion sequence is: tasker marks complete → customer confirms or disputes → reminder on silence → timeout auto-complete → ops fallback for edge cases.
+   - Every completed booking creates bilateral review debt.
+   - Customer posting and tasker application actions remain blocked until the owed review is submitted.
+   - Disputes remain evidence-backed moderation flows, not escrow or payout flows.
+5. **Assistance and rescue**
+   - Phase 1 prefers native self-serve matching.
+   - If a task receives no qualified application within the allowed window, the backend may record assisted distribution or manual rescue in `task_rescue_events`.
+   - Any such intervention remains measurable and must not be counted as self-serve.
+6. **Messaging and contact control**
+   - Open-ended pre-booking chat is not part of the Phase 1 launch contract.
+   - If messaging is enabled, it is a post-confirmation, platform-mediated channel between booking participants and remains available for admin review.
+   - Exact address and any direct contact surface remain policy-controlled and unavailable before booking confirmation.
+7. **Identity, verification, and outage posture**
+   - Facebook OAuth is the only launch login path for new sessions.
+   - If the provider is down, new authentication fails closed while valid sessions remain usable until expiry.
+   - Tasker verification requires recorded consent and auditable state transitions.
+8. **Category and admin governance**
+   - Category activation, deactivation, linting, preview, canary, and rollback are admin-governed.
+   - Verification queues, disputes, moderation actions, and rescue actions remain auditable operator surfaces.
 
-- `districts`: `id (UUID PK)`, `name`, `name_mn`, `slug (UNIQUE)`, `is_active`, `centroid_lat`, `centroid_lng`
-- `tasker_service_districts`: `user_id (FK → users CASCADE)`, `district_id (FK → districts CASCADE)`, `created_at`; PK(user_id, district_id)
+### 4.5 Interpretation note for dormant implementation residue
 
-#### Event Infrastructure
-
-- `domain_outbox_events`: `id`, `type`, `payload (JSONB)`, `status` (PENDING, PROCESSING, PROCESSED, FAILED), `attempts`, `last_error`, `available_at`, `created_at`, `correlation_id`, `causation_id`, `command_id`, `workflow_id`, `actor_id`
-  — full outbox pattern with context propagation; events relayed to RabbitMQ and consumed by domain workflow handlers
-- `event_idempotency`: `event_id (PK)`, `event_type`, `handler`, `event_status` (IN_PROGRESS, COMPLETED), `processed_at`
-
-#### Feature Flags
-
-- `feature_toggles`: `id (UUID PK)`, `feature_name (UNIQUE)`, `is_enabled`, `activated_at`, `deactivated_at`, `updated_by`, `updated_at`
-  — four toggles seeded at migration time: `escrow_enabled` is the only implemented-gated monetization path with confirmed runtime enforcement; `lead_fee_enabled`, `subscription_enabled`, and `ai_scope_summary_enabled` are seeded latent capabilities with no confirmed runtime consumer
-
-### 4.3 Read Models and Projections
-
-> **Truth status: current state** — admin read models in `projection.admin` package.
-
-_(No database views or materialized projections currently exist. Admin read models are composed in Java via composition services backed by publicapi query ports. This section is a placeholder for when SQL views or materialized query tables are introduced.)_
-
-### 4.4 Planned / Target-state Schema (non-authoritative)
-
-> **Truth status: target design only** — these tables have **no current migration or runtime**.
-> They are documented for roadmap and design reference. Do not read them as launch-live schema.
-> When any of these are implemented, move the entry to the current-state section above and add the migration reference.
-
-- `instant_match_offers`: `id`, `task_id`, `tasker_id`, `offer_rank`, `expires_at`, `status` (PENDING, ACCEPTED, DECLINED, EXPIRED), `created_at`
-- `credit_balances`: `tasker_id (PK)`, `balance`, `total_purchased`, `total_spent`, `total_refunded`, `updated_at`
-- `credit_transactions`: `id`, `tasker_id`, `amount`, `type` (PURCHASE, SPEND, REFUND, SIGNUP_BONUS), `reference_id`, `idempotency_key`, `created_at`
-- `credit_packs`: `id`, `name`, `credit_count`, `price_mnt`, `is_active`
-- `lead_unlock_prices`: `id`, `category_id`, `district_id`, `credits_required`, `effective_from`, `effective_to`, `updated_by`
-- `tasker_subscriptions`: `id`, `tasker_id`, `status`, `started_at`, `expires_at`, `plan_code`
-- `business_accounts`: `id`, `owner_user_id (FK)`, `name`, `plan_code`, `billing_cycle_day`, `status` (TRIAL, ACTIVE, SUSPENDED, CHURNED), `created_at`
-- `business_locations`: `id`, `business_account_id (FK)`, `label`, `address_text`, `location_point (GEOMETRY)`, `is_active`
-- `business_members`: `id`, `business_account_id (FK)`, `user_id (FK)`, `role` (OWNER, MANAGER), `joined_at`; UNIQUE(business_account_id, user_id)
-- `tasks.business_account_id` (Phase 2+ B2B Lite — tags task as belonging to a business account)
-
-### 4.5 Data Flow Patterns
-
-1. **Structured Task Intake & Posting Flow**:
-   - Client loads active category schema (`intake_schema_json`, `intake_schema_version`).
-   - Draft is created with bound schema version (`task_drafts`) and validated against that same version at submit.
-   - Server generates deterministic scope summary from answers; if template rendering fails, server falls back to
-     canonical key-value summary and logs failure.
-   - `POST /tasks` writes `tasks` row with `intake_answers_json`, `intake_schema_version`, `scope_summary_source`.
-2. **Task & Booking Flow** (Dual-status model):
-   - `POST /tasks` → `tasks.status=OPEN`.
-   - `POST /tasks/{id}/applications` → creates `task_applications`.
-   - Phase 1 launch intent: applications remain structured and do not open an open-ended pre-booking conversation.
-   - `POST /tasks/{id}/applications/{appId}/accept` → customer selects Tasker + liability disclaimer; creates a
-     pending `booking_intent` and marks the application `SELECTED`.
-   - `POST /booking-intents/{id}/confirm` → selected Tasker accepts within the active SLA; creates
-     `bookings.status=ASSIGNED`; updates `tasks.status=ASSIGNED`.
-   - `POST /booking-intents/{id}/decline` or expiry → pending selection closes without confirming booking and the task
-     remains open for applicant comparison.
-   - In Phase 2+, booking confirmation/contact reveal requires successful lead-unlock debit (`LEAD_UNLOCK_ACCEPTED`)
-     before customer phone reveal.
-   - `POST /bookings/{id}/complete` → `bookings.status=COMPLETED`; `tasks.status=COMPLETED`.
-   - **No-show adjudication path (REQ-P1-BOOK-05 / REQ-P1-BOOK-07)**:
-     - Scheduler emits reminder at `confirmed_scheduled_at +10m` and writes `booking_timeline_events` (
-       `NO_SHOW_REMINDER_SENT`).
-     - Either party may call `POST /bookings/{id}/no-show/flag` at/after `+15m`.
-     - Eligibility check uses canonical schedule (latest accepted in-app reschedule; otherwise booking confirmed
-       time).
-     - Request is rejected unless all are true: booking is `ASSIGNED`; no accepted future reschedule supersedes
-       current schedule; no status/check-in events from either party in trailing 30 minutes.
-     - On success, one DB transaction updates `bookings.status=NO_SHOW` and `tasks.status=NO_SHOW`, then appends
-       immutable `booking_timeline_events` (`NO_SHOW_CONFIRMED`) plus `audit_events` with actor and rule snapshot.
-     - Endpoint is idempotent: duplicate/retry requests for same booking return existing terminal state.
-3. **Reschedule & Timer Authority Flow**:
-   - Reschedule request/accept/decline/expiry writes to `booking_schedule_events`.
-   - Canonical schedule timers (late-cancel/no-show) reference only latest accepted in-app schedule.
-   - Chat-only schedule mentions do not mutate enforcement timers.
-4. **Ranking, Repeat Booking, and Instant Match Flow**:
-   - Applicant ranking uses category match, proximity, reliability score, completion rate, and review quality.
-   - Repeat booking pre-fills a new task from a completed booking in the same category.
-   - Phase 3+ instant match uses `instant_match_offers` with 5-minute offer window and fallback to application flow
-     after 3 declines/timeouts.
-5. **Monetization Flow** _(Phased by PRD)_:
-   - Phase 0-1: direct settlement only (`DIRECT`), no platform fee transactions.
-   - PRD v2.0 target adds two launch pricing modes: `I have a budget` and `I want quotes`, with structured
-     quote/counter-offer capture and price lock at booking confirmation.
-   - Current implementation drift: active launch-live schema and OpenAPI still model fixed-budget task posting plus a
-     short-note application payload; pricing-mode remediation remains a required contract-first follow-up.
-   - Phase 2: credit pack purchase via QPay; selected Tasker lead unlock consumes credits before customer contact
-     reveal.
-   - Phase 2 lead-unlock pricing resolves from `lead_unlock_prices` by category/district/effective window.
-   - Signup bonus credits are granted once per tasker via idempotent transaction key.
-   - Phase 3+: escrow payment initiation/callback, wallet crediting, and payout processing remain future gated flows.
-6. **No-Applicant Rescue Flow**:
-   - There is no customer-facing rescue-choice surface in the intended Phase 1 product.
-   - A pilot-eligible task becomes eligible for assisted distribution only after 12 hours with no qualified
-     application.
-   - When implemented, a backend timer/worker will hand the task to the off-platform distribution module
-     automatically; the customer is not asked to choose rescue behavior.
-   - Persist assisted-distribution decisions and outcomes in `task_rescue_events`.
-7. **Messaging Flow** (WebSocket + REST fallback):
-   - Open-ended pre-booking chat is not part of Phase 1 launch UX.
-   - If messaging is enabled for a booking, it is a post-confirmation channel between booking participants.
-   - Real-time delivery via Spring WebSocket + STOMP.
-   - WebSocket: `SUBSCRIBE /topic/conversations/{id}`, `SEND /app/conversations/{id}/messages`.
-   - REST fallback: `POST /conversations/{id}/messages`.
-   - Message scanning flags phone-sharing patterns for advisory/admin workflows; `content_hash` supports tamper-evident
-     dispute investigation.
-8. **Identity, Consent, and Outage Posture Flow**:
-   - Phase 0-1: Facebook OAuth primary login; Phase 2+ OTP primary with migration of existing users.
-   - During OAuth outage, new login/signup fails closed, while existing valid sessions continue until expiry.
-   - Identity upload is blocked until consent is captured (`consent_policy_version`, timestamp).
-   - Outage state is surfaced to clients and audit/ops events are emitted.
-9. **Reviews, Disputes, and Enforcement Flow**:
-   - Booking completion triggers bilateral review prompt + reminders at 24h and 72h.
-   - Review obligation is universal after completion; customer posting and tasker application are locked until the
-     owed review is submitted.
-   - `review_enforcement_cases` tracks reminder/lock workflow state for that universal review obligation.
-   - Dispute creation requires at least one evidence artifact, or enters 24-hour evidence grace before auto-close.
-   - Tasker cancellation/no-show incidents are rolled into strike review and reliability-score recomputation.
-   - Pro badge assignment is auto-evaluated from completion/rating thresholds and stored in `tasker_badges`.
-   - Public reputation display remains trust-first: verification and badges lead, while ratings stay hidden until the
-     minimum review-count threshold is met.
-10. **Category Lifecycle & Referral Flow**:
-    - Category deactivation blocks new drafts and new tasks while preserving lifecycle for existing tasks.
-    - Phase 2+ referral attribution is persisted at signup and finalized on first completed booking conversion.
-    - Monthly referral reward caps and threshold breaches emit manual-review alerts.
-    - Referral rewards are phase-aware and persisted in `referral_rewards`.
-11. **Payout and Legal-Guard Flow**:
-    - Payout processing enforces Tuesday/Friday execution window in platform timezone.
-    - System tracks cumulative tasker engagement duration and emits legal-review alerts before 2-year threshold.
+This repository may still contain dormant tables, handlers, enums, or toggles for deferred marketplace features. Architecture documentation must never present those surfaces as launch behavior merely because they exist in code or schema.
 
 ## 5. API Design
-
-> **Truth status: current state** — aligned with OpenAPI spec and runtime enforcement.
 
 ### 5.1 Standards
 
 - **Protocol**: REST over HTTP/2.
 - **Format**: JSON.
-- **Spec**: OpenAPI 3.0.3 (Source of Truth).
+- **Spec**: OpenAPI 3.0.3 (maintained contract).
 - **Versioning**: URI Versioning (`/api/v1/...`).
 - **Breaking-change policy**: Contract-breaking API updates require version bump and migration notes in the same
   release.
@@ -580,49 +467,32 @@ Standardized error response:
   - Tokens are signed HS256, carry `iss: tasky-server` and `aud: tasky-api`, and include a `jti` (UUID) for revocation.
   - Access token TTL: 15 minutes. Refresh token TTL: configurable (base default **14 days**; `dev` and `local` profiles override to 30 days).
   - `JwtTokenService` validates signature, expiry, issuer, audience, and token type on every parse.
-- **Token Revocation**: `TokenBlacklistService` holds an in-memory Caffeine cache of revoked `jti` values with a 15-minute TTL (matching access token lifetime). The logout endpoint (`POST /api/v1/auth/logout`) revokes the current access token's JTI. The blacklist is also consulted on STOMP `CONNECT`. The blacklist is in-memory and does not survive restarts — user ban provides persistent revocation.
+  - Facebook OAuth is the only launch authentication method for new sessions.
+  - Any non-launch auth residue must remain disabled and absent from launch UX.
+- **Token revocation**: `TokenBlacklistService` holds an in-memory Caffeine cache of revoked `jti` values with a 15-minute TTL (matching access token lifetime). The logout endpoint (`POST /api/v1/auth/logout`) revokes the current access token's JTI. The blacklist is also consulted on STOMP `CONNECT` when messaging is enabled.
 - **Authorization**:
-  - **Filter-level role enforcement**: `SecurityConfig` enforces roles at the Spring Security filter chain for all business endpoint groups (task drafts → CUSTOMER; verification/wallet/subscriptions/business → TASKER; bookings/disputes/reviews/messaging → CUSTOMER|TASKER; payments/credits → CUSTOMER). Service-layer checks provide a second enforcement layer.
-  - **Terminal account-status enforcement**: `JwtAuthenticationFilter` rejects `BANNED`, `SUSPENDED`, and `DELETED` users on every authenticated HTTP request. The same terminal-status set is enforced on STOMP `CONNECT`, on refresh-token rotation, and at all auth entry points (Facebook login, OTP verify, dev login).
-  - **Banned User Check**: `JwtAuthenticationFilter` checks `currentUserStatus()` (Caffeine-cached, 60 s TTL) on every authenticated request. Ban enforcement latency is at most 60 seconds. Cache can be flushed by restarting the application for immediate enforcement.
-  - **Contact/Address Reveal Rules**:
-    - Tasker phone is never exposed to customers in API responses.
-    - Customer phone is masked until selected Tasker completes lead unlock in paid phases.
-    - Exact task address is hidden until confirmed booking.
-    - **Phase 0-1 current behavior**: `GET /tasks/{id}` reveals `location_text` (exact address) to any tasker
-      whose booking is in `ASSIGNED`, `PAID`, or `COMPLETED` status. No payment gate exists because Phase 0-1
-      uses direct settlement only.
-    - **Phase 2 activation gap**: If `lead_fee_enabled` is activated in a later tranche, `TaskController.getTask()`
-      must be updated to gate address reveal behind a successful lead-unlock event. This is not launch behavior and
-      remains a required activation work item.
-  - **OAuth Outage Posture (Phase 0-1)**: Login/signup endpoints fail closed when OAuth provider is down; existing
-    already-issued valid tokens remain usable until expiry.
-  - **Liability Disclaimer Contract**: applicant accept and booking confirm endpoints reject requests without
-    `liability_disclaimer_accepted=true` via Bean Validation (`@NotNull` + `@AssertTrue`). Accepted disclaimer
-    is also enforced in service logic as defense in depth.
-- **Bean Validation**: `@Valid` + JSR-380 annotations enforce request-shape constraints on controller-layer DTOs. Some security-sensitive invariants (liability disclaimer, booking ownership) have both DTO-level and service-level enforcement; others are service-level only.
-- **Rate Limiting**:
-  - **OTP Endpoints**: Config-defined per phone and per request-source limits with lockout on repeated failed OTP
-    verification attempts.
-  - **General API**: Sliding window (1-minute window), DB-backed via `rate_limit_counters` table (`RateLimitFilter`). Defaults: 100 rpm authenticated, 30 rpm unauthenticated. Configurable per environment.
-  - **WebSocket (STOMP)**: `StompRateLimitInterceptor` applies a Bucket4j token-bucket per user (30 messages/minute) on all `SEND` frames. Subscription authorization uses a single `isParticipant` DB query rather than loading all conversations.
-- **Web Frontend Security**:
+  - `SecurityConfig` enforces role boundaries for launch surfaces: task posting and draft flows for customers, verification/service-area flows for taskers, booking/review/dispute/messaging flows for booking participants, and admin-only operator surfaces.
+  - `JwtAuthenticationFilter` rejects `BANNED`, `SUSPENDED`, and `DELETED` users on authenticated requests, refresh-token rotation, and auth entry points.
+  - Exact task address remains hidden until confirmed booking and is then visible only to the task owner, confirmed tasker, and authorized admin surfaces.
+  - Raw direct contact details remain hidden unless an approved policy surface intentionally unlocks them. Phase 1 normal operation does not require direct raw contact exchange.
+  - Liability disclaimer acceptance is required where booking confirmation policy says so and is enforced both at DTO validation and service level.
+- **Bean Validation**: `@Valid` + JSR-380 annotations enforce request-shape constraints on controller DTOs. Security-sensitive invariants also receive service-layer checks.
+- **Rate limiting**:
+  - General API traffic uses sliding-window limits backed by `rate_limit_counters`.
+  - Auth endpoints and other abuse-sensitive edges must fail closed under configured limits.
+  - Any non-launch auth endpoints that still exist in code must stay disabled and must not leak into launch UX or policy.
+  - When messaging is enabled, STOMP `SEND` frames are rate-limited and subscriptions are authorization-checked.
+- **Web frontend security**:
   - `Caddyfile.production` sets a `Content-Security-Policy` header: `default-src 'self'`, `script-src` allows Facebook CDN and the inline polyfill hash, `style-src` allows Google Fonts, `connect-src` allows `wss:` and `graph.facebook.com`.
-  - Built JS/CSS chunks include `integrity` (SRI) attributes generated by `vite-plugin-sri3` at build time.
-- **Data Privacy**:
-  - **Gov IDs**: Stored in a strict **Private S3 Bucket**. API never exposes public links. Admin viewing uses
-    short-lived Presigned GET URLs.
-  - **Location**: Exact coords in DB. API exposes `approximate_lat/lng` only for `PublicTask`.
-  - **Intake Answers**: Stored as structured JSON; retained/deleted per platform data retention policy and access is
-    role-scoped.
-- **Monetization Security (Phase 2+)**:
-  - **Callbacks**: QPay Webhook MUST verify the HMAC signature using a server-side secret key.
-  - **Idempotency**: Enforced on all financial endpoints when monetization is enabled.
-- **AI Safety (Phase 0-2)**:
-  - Runtime LLM is not on the task-posting critical path.
-  - If optional async LLM summary polish is enabled in Phase 3+, deterministic summary remains source of truth on
-    failures/timeouts.
-- **Input Validation**: JSR-380 (Bean Validation) on most DTOs. Some endpoints (e.g., `ServiceAreaController.setServiceAreas`) accept unvalidated `Map` bodies without `@Valid`; validation for those paths is service-level only.
+  - Built JS/CSS chunks include `integrity` (SRI) attributes generated at build time.
+- **Data privacy**:
+  - Government ID images are stored in a private object store and served to admin only through short-lived presigned URLs.
+  - Exact coordinates are stored in the database, while public task feeds expose only approximate or district-level location before booking confirmation.
+  - Structured intake answers are retained and access-controlled according to platform policy.
+- **Optional async polish posture**:
+  - Runtime LLM assistance is not part of the Phase 1 posting path.
+  - If async summary polish is ever introduced later, deterministic summary generation remains canonical and posting success must not depend on the model.
+- **Input validation**: JSR-380 covers most DTOs. Any path that still performs service-level validation only should be treated as implementation debt, not as the preferred contract.
 
 ### 5.4 File Upload Pattern (Presigned URLs)
 
@@ -654,55 +524,33 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 ### 5.6 Task Intake and Booking Contracts
 
-- **Category Intake Contract**:
-  - `GET /categories` (or category detail) must expose `intake_enabled`, `intake_schema_version`, and active schema
-    payload for task-posting clients.
-- **Draft Contract**:
-  - Draft create/update APIs must persist `intake_schema_version` bound at start.
-  - Final task submit validates against bound schema version and rejects missing required answers with field-level
-    error codes.
-- **Summary Contract**:
-  - Task submit pipeline performs deterministic scope summary generation.
-  - On summary generation failure, server returns success with canonical fallback summary and logs failure event.
-- **Booking Contract**:
-  - Applicant acceptance endpoint requires `liability_disclaimer_accepted=true`.
-  - Application selection creates a pending booking intent first; booking is confirmed only after the selected Tasker
-    accepts within the active response window.
-  - In paid phases, booking confirmation/contact reveal must be gated by successful lead-unlock debit event.
-  - Applicant list supports ranked ordering (`relevance_score`) while preserving customer free selection.
-  - Phase 1 default selected-applicant response window is 4 hours; later monetized or instant-match phases may shorten
-    that window for gated flows.
-  - Repeat-booking endpoint must only allow rebook from completed bookings and same-category prefill.
-  - No-show policy is deterministic: reminder at `+10m`, no-show flag eligibility at `+15m`, dual inactivity check on
-    trailing 30 minutes, and accepted reschedule precedence over prior schedule.
-  - Status transitions must enforce `OPEN -> ASSIGNED -> COMPLETED|CANCELLED|NO_SHOW` for tasks and
-    `ASSIGNED -> PAID -> COMPLETED|CANCELLED|NO_SHOW` for bookings (PAID is escrow-phase intermediate;
-    in direct-settlement mode bookings go ASSIGNED -> COMPLETED|CANCELLED|NO_SHOW directly).
-- **Pricing Contract**:
-  - PRD v2.0 target requires `pricing_mode` on tasks plus structured application pricing responses that can represent
-    budget acceptance, counter-offer, or quote submission.
-  - Current active OpenAPI remains fixed-budget-only and message-only for applications; that mismatch is intentional
-    documentation of implementation drift and must be remediated before code is declared PRD-aligned.
-- **Monetization Contract**:
-  - Credit debits are valid only for `LEAD_UNLOCK_ACCEPTED` events.
-  - Application cap defaults to 10 and is config-driven per category.
-  - Price resolution for lead unlock must use active `lead_unlock_prices` row by category/district/effective time.
-  - Signup bonus (5 credits) must be one-time per eligible tasker and enforced idempotently.
-- **Dispute and Review Contract**:
-  - Dispute creation from `ASSIGNED` or within 24h of `COMPLETED` requires at least one evidence artifact or enters
-    24h grace before auto-close.
-  - Review reminders follow immediate +24h +72h cadence; the review gate applies to every completed booking until the
-    owed review is submitted.
-  - Notification fallback events (`HIRED`, `BOOKING_CONFIRMED`) are idempotent via `notification_log.event_key`.
-- **Trust Scoring Contract**:
-  - Reliability score is recomputed on cancellation/no-show/completion signals and consumed by applicant ranking.
-  - Pro badge assignment is deterministic from completion/rating thresholds and evaluated in background jobs.
-- **Admin Contract**:
-  - Admin user search supports exact normalized phone lookup plus name and Facebook ID criteria with cursor pagination.
-  - Category management supports intake schema create/update/activate/version/rollback with audit logs.
-  - Feature toggles must be runtime-switchable without redeploy and fully audited. Only `escrow_enabled` has
-    confirmed runtime enforcement in the current sweep; the remaining monetization toggles stay dormant until later
-    activation work is verified.
+- **Category intake contract**:
+  - Category endpoints must expose `intake_enabled`, `intake_schema_version`, and the active schema payload needed by posting clients.
+  - Launch task creation is category-specific. Generic free-form posting is not the primary creation path.
+- **Draft contract**:
+  - Draft create/update APIs persist the schema version bound at form start.
+  - Final task submission validates against the bound schema version and returns field-level errors for missing or invalid required answers.
+- **Summary contract**:
+  - Task submission performs deterministic scope summary generation.
+  - On summary-generation failure, the server still returns success with a canonical fallback summary and records the failure event.
+- **Booking contract**:
+  - Customer selection creates a pending booking intent first.
+  - Booking is confirmed only after the selected tasker accepts within the active four-hour response window.
+  - Expired or declined selections do not create bookings and return the task to applicant-review state.
+  - Applicant ranking is allowed, but the customer remains free to inspect and choose across the full application set.
+  - No-show policy is deterministic: reminder at `+10m`, no-show flag eligibility at `+15m`, activity lookback protection, and accepted-reschedule precedence over earlier schedules.
+  - Launch lifecycle transitions align with the PRD: tasks move through open/assigned/completed-or-terminal states, and bookings move through confirmed/completed-or-terminal states without requiring payment-gated intermediates.
+- **Pricing contract**:
+  - Every launch-category task uses exactly one of the two Phase 1 pricing modes: `I have a budget` or `I want quotes`.
+  - Structured application pricing must support budget acceptance, counter-offer, and quote submission as required by the PRD.
+- **Trust contract**:
+  - Disputes may be opened during active bookings and for the limited post-completion window defined by product policy.
+  - Evidence-backed moderation remains the dispute model for Phase 1.
+  - Review reminders follow the required cadence, and the next post/apply action remains gated on owed review completion.
+  - Public trust presentation prioritizes verification and trust badges, while ratings remain threshold-gated.
+- **Admin contract**:
+  - Admin can manage verification queues, disputes, moderation actions, rescue actions, category schemas, and feature toggles with audit trails.
+  - Category management supports lint, preview, activate, deactivate, canary, and rollback operations.
 
 ## 6. Backend Runtime Concerns
 
@@ -724,65 +572,45 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 ### 6.3 Async Workers & Outbox Consumers
 
-> **Truth status: current state** — verified against `DomainEventOutboxService`, `EventRelayPublisher`, `EventWorkerConsumer`, `OutboxRelayService`, `OutboxRelayScheduler`.
+- `DomainEventOutboxService` writes durable events to `domain_outbox_events` and publishes them through `EventRelayPublisher` when broker mode is enabled.
+- `OutboxRelayScheduler` and `OutboxRelayService` recover failed or pending publishes and move events through the retry path with backoff and bounded attempts.
+- Broker publish failure does not roll back the domain transaction because the durable outbox row already exists.
+- `OutboxReplayController` can reset replayable failures back to `PENDING` so the relay can pick them up again.
+- `EventWorkerConsumer` dispatches broker-delivered events to registered `EventHandler` implementations.
+- Handler idempotency is enforced through `WorkflowIdempotencyGuard` rather than broker-level deduplication.
+- This async path backs launch-critical side effects such as notifications, reminders, analytics events, and recovery workflows.
 
-- **Mechanism (retired):** The old `@Async` + `ApplicationEventPublisher` + polling relay mechanism is
-  **retired**. The previous polling-based outbox relay is also retired.
-- **Mechanism (current — two-path publish):** `DomainEventOutboxService` persists events to
-  `domain_outbox_events` and, when `tasky.automation.broker.enabled=true`, directly publishes to RabbitMQ
-  via `EventRelayPublisher`. On successful direct publish, the row is marked `PROCESSED` immediately.
-  Rows that fail to publish remain `PENDING` for relay recovery.
-- **Relay recovery:** `OutboxRelayScheduler` runs every 10 s (ShedLock-guarded via `@SchedulerLock`),
-  delegating to `OutboxRelayService`. Recovery loop: `claimBatch` (PENDING/FAILED rows) → `publish` via
-  `EventRelayPublisher` → `markProcessed` / `markFailed`. Failed events receive exponential backoff
-  (30 s base, 1 h max) with configurable max attempts (default 10, via `tasky.automation.relay.max-attempts`);
-  events exceeding max attempts remain `FAILED` with a 24-hour permanent backoff. Admin replay can reset these
-  back to `PENDING` for reprocessing.
-  Batch size is configurable via `tasky.automation.relay.batch-size`.
-- **Persistence:** The outbox row is written first; broker publish is attempted synchronously afterward.
-  Broker failure does **not** roll back the domain transaction because the row already exists.
-- **Admin replay:** `OutboxReplayController` resets `FAILED` → `PENDING` (via `resetForReplay`);
-  the relay scheduler picks up replayed events on the next cycle. Replay now works end-to-end.
-- **Health:** `OutboxHealthIndicator` correctly reports health — events transition out of `PENDING`
-  (via direct publish or relay), so stale-PENDING false-negatives no longer occur.
-- **Consumption:** `EventWorkerConsumer` (RabbitMQ listener, `automation.worker` queue) dispatches to registered
-  `EventHandler` implementations by event type, with retry routing (x-death headers, configurable `max-retries`)
-  and DLQ fallback.
-- **At-least-once semantics:** Idempotency is enforced at the handler level via `WorkflowIdempotencyGuard`
-  (`kernel.idempotency`), not by deduplication at the broker.
+### 6.4 Feature Toggles
 
-### 6.4 Feature Toggles (Runtime Enforcement Status)
-
-- Feature toggles are seeded at migration time and stored in `feature_toggles`.
-- `escrow_enabled` is the only implemented-gated monetization path with confirmed runtime enforcement.
-- `lead_fee_enabled`, `subscription_enabled`, and `ai_scope_summary_enabled` are seeded latent capabilities with no confirmed runtime consumer.
-- `promoted_listings_enabled` and `b2b_enabled` remain documented future activation gaps; no current migration or runtime evidence.
-- Toggles must be runtime-switchable without redeploy and fully audited.
+- Feature toggles are stored in `feature_toggles` and must be fully audited.
+- A toggle may control runtime wiring, but toggle presence does **not** change product scope on its own.
+- Any non-launch surface must remain disabled and absent from launch UX until the governing docs change.
+- Any activation that changes product behavior must update the PRD, maintenance policy, contracts, tests, and implementation together.
 
 ## 7. Backend Testing
-
-> **Truth status: current state** — matches `tests/registry.yaml` and build configuration.
 
 - Domain-unit tests: no `@SpringBootTest`, `@Autowired`, or `@MockBean`.
 - Mock only external boundaries: `FacebookGraphClient`, `FirebasePushProvider`, `S3StorageService`.
 - `@DisplayName` for scenario-backed tests must include the scenario ID (e.g. `"SCN-TASK-001: ..."`) so that `sync-registry.sh` can discover it. Multiple scenario IDs in a single display name are supported (e.g. `"SCN-TASK-009 SCN-SMOKE-004: ..."`). Non-scenario domain-unit tests (no SCN mapping) may use descriptive display names without the SCN prefix.
 - Check `tests/registry.yaml` for existing scenarios before writing tests. Read `tests/scenarios/<domain>.md`.
-- After writing tests: run `./services/api/scripts/sync-registry.sh` and commit updated `tests/registry.yaml`.
-- Never modify `tests/scenarios/` directly.
+- If no scenario covers the behavior, stop and report the gap unless you are the designated scenario curator for the current execution brief.
+- Scenario curation is single-owner work. Only the designated scenario curator for the current execution brief may edit `tests/scenarios/**`; all implementation agents must otherwise treat it as read-only.
+- Scenario curation must reconcile the active baseline from `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, active `docs/openapi/**`, and active `docs/design/**` before test-writing slices begin.
+- Obsolete tests tied to removed or future-phase behavior may be deleted once the active scenario set no longer covers that behavior.
+- After scenario curation or writing tests: run `./services/api/scripts/sync-registry.sh` and commit updated `tests/registry.yaml`.
 - Never use `@DirtiesContext`.
 - PIT survived mutation: fix the assertion, not production code; if no scenario covers it, report the gap.
 
 ## 8. Verification Commands
 
-> **Truth status: current state** — matches `build.gradle.kts` task definitions and CI workflow wiring.
-
 ### Gradle gates (local / CI)
 
-| Gate       | Command                    | Purpose                                   |
-| ---------- | -------------------------- | ----------------------------------------- |
-| Smoke      | `./gradlew gateSmoke`      | Fast local confidence                     |
-| Regression | `./gradlew gateRegression` | Extended or nightly coverage              |
-| Full       | `./gradlew gateFull`       | Full suite including PIT mutation testing |
+| Gate       | Command                                                                                                      | Purpose                                              |
+| ---------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
+| Smoke      | `./gradlew gateSmoke`                                                                                        | Fast local confidence                                |
+| Regression | `./gradlew gateRegression`                                                                                   | Extended or nightly coverage                         |
+| Full       | `./gradlew gateFull`                                                                                         | Full suite including PIT mutation testing            |
+| Slice      | `./gradlew jacocoSliceReport jacocoSliceCoverageVerification -PcoveragePackages=mn.tasky.auth,mn.tasky.task` | Scoped coverage report + 80% floor for a rehab slice |
 
 ### CI enforcement (actual wiring)
 
@@ -792,5 +620,5 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 | `release-gate.yml`   | migration safety, rollback readiness, performance smoke, E2E smoke           | deploy           |
 | `nightly-regression` | `gateRegression` + `openApiValidate`                                         | nightly schedule |
 
-> `gateSmoke` is a local smoke gate, not the singular PR truth. The PR gate runs the broader `check`, and release and
-> nightly gates are governed by their respective workflows.
+`gateSmoke` is a local smoke gate, not the only PR gate. The PR gate runs the broader `check`, and release and
+nightly gates are governed by their respective workflows.

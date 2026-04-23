@@ -44,8 +44,8 @@ class NoShowScenarioTests {
     private BookingDao bookingDao;
     private BookingTimelineEventDao timelineEventDao;
     private BookingScheduleEventDao scheduleEventDao;
-    private ConversationDao conversationDao;
-    private MessageDao messageDao;
+    private ConversationDao conversationDao; // NOPMD SingularField
+    private MessageDao messageDao; // NOPMD SingularField
     private BookingTimelineService timelineService;
     private NotificationService notificationService;
     private ModerationService moderationService;
@@ -103,6 +103,8 @@ class NoShowScenarioTests {
                 confirmedScheduledAt,
                 "DIRECT",
                 false,
+                null,
+                0,
                 null,
                 Instant.now().minus(1, ChronoUnit.HOURS),
                 Instant.now());
@@ -203,6 +205,8 @@ class NoShowScenarioTests {
                 "DIRECT",
                 false,
                 null,
+                0,
+                null,
                 booking.createdAt(),
                 Instant.now());
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(booking)).thenReturn(Optional.of(updated));
@@ -241,6 +245,8 @@ class NoShowScenarioTests {
                         "DIRECT",
                         false,
                         null,
+                        0,
+                        null,
                         booking.createdAt(),
                         Instant.now())));
 
@@ -269,6 +275,8 @@ class NoShowScenarioTests {
                 Instant.now().minus(20, ChronoUnit.MINUTES),
                 "DIRECT",
                 false,
+                null,
+                0,
                 null,
                 Instant.now().minus(1, ChronoUnit.HOURS),
                 Instant.now());

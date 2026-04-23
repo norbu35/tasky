@@ -11,19 +11,23 @@ public final class CommonToKernelDeprecationPath {
             new Entry(
                     "mn.tasky.common.observability",
                     "mn.tasky.kernel.context + mn.tasky.kernel.logging",
-                    "Promote request/workflow/job context contracts and canonical log fields before moving filter implementations."),
+                    "Promote request/workflow/job context contracts and canonical log fields "
+                            + "before moving filter implementations."),
             new Entry(
                     "mn.tasky.common.idempotency",
                     "mn.tasky.kernel.idempotency",
-                    "Move idempotency key contracts and orchestration seams before relocating the current service and DAO."),
+                    "Move idempotency key contracts and orchestration seams "
+                            + "before relocating the current service and DAO."),
             new Entry(
                     "mn.tasky.common.outbox",
                     "mn.tasky.kernel.outbox + mn.tasky.automation",
-                    "Lift canonical event envelopes into kernel first, then migrate processors and broker-facing handlers."),
+                    "Lift canonical event envelopes into kernel first, "
+                            + "then migrate processors and broker-facing handlers."),
             new Entry(
                     "mn.tasky.common.config",
                     "mn.tasky.kernel + mn.tasky.runtime.*",
-                    "Keep shared framework wiring narrow in kernel and move surface-owned composition into runtime packages."));
+                    "Keep shared framework wiring narrow in kernel "
+                            + "and move surface-owned composition into runtime packages."));
 
     private CommonToKernelDeprecationPath() {}
 

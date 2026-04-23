@@ -96,7 +96,7 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
     useAuthStore.setState({
       session: {
         ...baseSession,
-        user: { ...baseSession.user, role: 'CUSTOMER', primary_auth: 'PHONE_OTP' },
+        user: { ...baseSession.user, role: 'CUSTOMER', primary_auth: 'FACEBOOK' },
       },
     });
     render(<SplashScreen />);
@@ -107,7 +107,7 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
     useAuthStore.setState({
       session: {
         ...baseSession,
-        user: { ...baseSession.user, role: 'TASKER', primary_auth: 'PHONE_OTP' },
+        user: { ...baseSession.user, role: 'TASKER', primary_auth: 'FACEBOOK' },
       },
     });
     render(<SplashScreen />);

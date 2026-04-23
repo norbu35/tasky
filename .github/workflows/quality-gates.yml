@@ -38,22 +38,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Ensure scripts are executable
-        run: chmod +x gradlew tooling/scripts/*.sh tooling/scripts/*.py
+        run: find tooling/scripts -type f \( -name '*.sh' -o -name '*.py' \) -exec chmod +x {} + && chmod +x gradlew
 
-      - name: Validate SDK contract drift
-        run: tooling/scripts/validate-sdk-contract-drift.sh
+      - name: Run structural cleanup gate
+        run: pnpm verify:cleanup
 
-      - name: Validate workspace boundaries
-        run: pnpm workspace:boundaries
-
-      - name: Validate mobile structural contract
-        run: pnpm --filter @tasky/mobile structure:check
-
-      - name: Validate migration safety
-        run: python3 tooling/scripts/validate-migrations.py
-
-      - name: Validate schema parity
-        run: python3 tooling/scripts/validate-schema-parity.py
+      - name: Run ops/config verification
+        run: pnpm verify:ops
 
   backend-quality:
     runs-on: ubuntu-latest
@@ -69,14 +60,25 @@ jobs:
           distribution: temurin
           java-version: '21'
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Ensure gradlew is executable
-        run: chmod +x gradlew
+      - name: Ensure scripts are executable
+        run: find tooling/scripts -type f \( -name '*.sh' -o -name '*.py' \) -exec chmod +x {} + && chmod +x gradlew
 
       - name: Run backend quality checks
-        run: ./gradlew --no-daemon :services:api:check :services:api:jacocoTestCoverageVerification :services:api:openApiValidate
+        run: pnpm verify:backend
+
+      - name: Run scenario smoke gate
+        run: pnpm verify:scenario:smoke
 
   frontend-quality:
     runs-on: ubuntu-latest
@@ -85,6 +87,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -101,17 +105,19 @@ jobs:
           key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: pnpm-${{ runner.os }}-
 
+      - name: Cache turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo/cache
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Typecheck
-        run: pnpm -r typecheck
-
-      - name: Lint
-        run: pnpm -r lint
-
-      - name: Test
-        run: pnpm -r test
+      - name: Run frontend quality checks (affected only)
+        run: pnpm verify:frontend:affected
 
   e2e-web:
     runs-on: ubuntu-latest
@@ -144,6 +150,14 @@ jobs:
 
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v6
+
+      - name: Cache turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo/cache
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
 
       - name: Ensure scripts are executable
         run: chmod +x gradlew
@@ -224,6 +238,14 @@ jobs:
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v6
 
+      - name: Cache turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo/cache
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
       - name: Ensure scripts are executable
         run: chmod +x gradlew
 
@@ -283,6 +305,47 @@ jobs:
         if: always()
         run: docker compose down
 
+  contracts:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
+
+      - name: Setup Gradle cache
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Ensure scripts are executable
+        run: find tooling/scripts -type f \( -name '*.sh' -o -name '*.py' \) -exec chmod +x {} + && chmod +x gradlew
+
+      - name: Run contract drift checks
+        run: pnpm verify:drift
+
   security:
     runs-on: ubuntu-latest
     permissions:
@@ -291,6 +354,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install gitleaks
+        run: |
+          curl -sSfL -o /tmp/gitleaks.tar.gz https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz
+          tar -xzf /tmp/gitleaks.tar.gz -C /usr/local/bin gitleaks
+          gitleaks version
+
+      - name: Gitleaks secret scan
+        run: bash tooling/scripts/governance/check-gitleaks-secret-scan.sh
 
       - name: Filesystem vulnerability scan
         uses: aquasecurity/trivy-action@0.35.0

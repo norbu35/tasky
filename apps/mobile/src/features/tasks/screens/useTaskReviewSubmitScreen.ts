@@ -79,6 +79,7 @@ export function useTaskReviewSubmitScreen() {
         category_id: categoryId,
         description,
         budget: Number(budget) || 0,
+        pricing_mode: 'BUDGET' as const,
         intake_answers: intakeAnswers,
         intake_schema_version: intakeSchemaVersion,
         location_lat: Number.isFinite(locationLat) ? locationLat : 0,

@@ -31,6 +31,8 @@ product intent. `archive/**` is historical only.
 | `packages/design-tokens/**`        | `packages/design-tokens/AGENTS.md`                             |
 | `packages/sdk/**`                  | `packages/sdk/AGENTS.md`                                       |
 | `packages/test-utils/**`           | `packages/test-utils/AGENTS.md`                                |
+| `tooling/skills/**`                | `tooling/skills/AGENTS.md`                                     |
+| `tooling/**`                       | `tooling/AGENTS.md`                                            |
 
 Read the nearest local `AGENTS.md` first when you are already inside a surfaced area. On conflict, the more specific
 surface wins unless it contradicts this file or a higher governing doc.
@@ -61,11 +63,18 @@ Do not use repomix for narrow symbol lookups that Serena can answer.
 
 Frontend tasks run through Turborepo via `pnpm <task>`. Backend tasks use `./gradlew` and never system `gradle`.
 
+## Repo Skills
+
+Reusable repo-owned agent workflows live under `tooling/skills/**`.
+
+- Skills must remain harness-agnostic. Any harness should be able to use them by reading the nearest `SKILL.md` and running bundled scripts directly.
+- For doc-surface drift or `validate-doc-claims.py` failures, use `tooling/skills/doc-claims-remediation/SKILL.md`.
+
 ## Workflow Rules
 
 - Read the smallest relevant governing and architecture surfaces before editing code.
 - If the API changes, update `docs/openapi/**` first, regenerate `docs/API.yaml`, then regenerate `@tasky/sdk`, then implement.
-- If a Flyway migration adds, drops, or renames a column or table, run `python3 tooling/scripts/validate-schema-parity.py --update-expected` and commit the updated `tooling/config/expected-schema.json`.
+- If a Flyway migration adds, drops, or renames a column or table, run `python3 tooling/scripts/governance/validate-schema-parity.py --update-expected` and commit the updated `tooling/config/expected-schema.json`.
 - Use the active issue or approved execution brief as the task source. Do not rely on archived plan directories.
 - Keep changes vertical and reviewable.
 - Update `CHANGELOG.md` when the repo convention requires it.
@@ -74,13 +83,13 @@ Frontend tasks run through Turborepo via `pnpm <task>`. Backend tasks use `./gra
 
 Use the right gate for the claim you are making.
 
-| Level                         | Command / source                                                                                                                     | Meaning                                                  |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
-| Local baseline                | `tooling/scripts/check-cleanup-gate.sh`, `:services:api:test`, `:services:api:openApiValidate`, `pnpm -r typecheck`, `pnpm -r test`  | Minimum local confidence before claiming completion      |
-| Local boundary / drift checks | `:services:api:architectureTest`, `pnpm workspace:boundaries`, `pnpm sdk:drift`, `python3 tooling/scripts/validate-schema-parity.py` | Use when the change touches those surfaces               |
-| PR CI gate                    | `quality-gates.yml`                                                                                                                  | Actual every-PR enforcement                              |
-| Release gate                  | `release-gate.yml`                                                                                                                   | Deploy-time enforcement                                  |
-| Nightly regression            | `./gradlew gateRegression`, `./gradlew gateFull`                                                                                     | Broader or scheduled confidence, not the default PR gate |
+| Level                         | Command / source                                                                                                                                              | Meaning                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Local baseline                | `pnpm verify:cleanup`, `:services:api:test`, `:services:api:openApiValidate`, `pnpm -r typecheck`, `pnpm -r test`                                             | Minimum local confidence before claiming completion      |
+| Local boundary / drift checks | `:services:api:architectureTest`, `pnpm repo:workspace:boundaries`, `pnpm contract:sdk:drift`, `python3 tooling/scripts/governance/validate-schema-parity.py` | Use when the change touches those surfaces               |
+| PR CI gate                    | `quality-gates.yml`                                                                                                                                           | Actual every-PR enforcement                              |
+| Release gate                  | `release-gate.yml`                                                                                                                                            | Deploy-time enforcement                                  |
+| Nightly regression            | `./gradlew gateRegression`, `./gradlew gateFull`                                                                                                              | Broader or scheduled confidence, not the default PR gate |
 
 Do not describe `./gradlew gateSmoke` as the singular pre-PR source of truth. It remains a useful local smoke gate,
 but CI and release workflows are the governing enforcement surfaces.
@@ -88,13 +97,15 @@ but CI and release workflows are the governing enforcement surfaces.
 ## Backend Testing Rules
 
 Before writing any backend test: check `tests/registry.yaml` for an existing scenario. Read `tests/scenarios/<domain>.md`.
-If no scenario covers the behavior, stop and report the gap.
+If no scenario covers the behavior, stop and report the gap unless you are the designated scenario curator for the current execution brief.
 
 - `@DisplayName` must be `"SCN-XXX-NNN: <exact title from scenario file>"`
 - Domain-unit tests: no `@SpringBootTest`, `@Autowired`, or `@MockBean`
 - Mock only external boundaries: `FacebookGraphClient`, `FirebasePushProvider`, `S3StorageService`
-- After writing tests: run `./services/api/scripts/sync-registry.sh` and commit updated `tests/registry.yaml`
-- Never modify `tests/scenarios/` directly
+- Scenario curation is single-owner work. Only the designated scenario curator for the current execution brief may edit `tests/scenarios/**`; all implementation agents must otherwise treat it as read-only.
+- Scenario curation must reconcile the active baseline from `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, active `docs/openapi/**`, and active `docs/design/**` before test-writing slices begin.
+- Obsolete tests tied to removed or future-phase behavior may be deleted once the active scenario set no longer covers that behavior.
+- After scenario curation or writing tests: run `./services/api/scripts/sync-registry.sh` and commit updated `tests/registry.yaml`
 - Never use `@DirtiesContext`
 - PIT survived mutation: fix the assertion, not production code; if no scenario covers it, report the gap
 

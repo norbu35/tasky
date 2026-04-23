@@ -25,7 +25,8 @@ public class ReviewSubmissionService {
                 body.communicationRating(),
                 body.clarityRating(),
                 body.respectfulnessRating(),
-                body.comment());
+                body.comment(),
+                body.wouldBookAgain());
 
         if (!result.isSuccess()) {
             return switch (result.error()) {

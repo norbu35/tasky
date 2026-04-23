@@ -43,7 +43,7 @@ function TaskerBookingCard({ task }: { task: Task }) {
           <MapPin className="w-4 h-4" />
           <span className="truncate">{task.location_text}</span>
         </div>
-        <div className="font-medium text-foreground">₮{task.budget.toLocaleString()}</div>
+        <div className="font-medium text-foreground">₮{(task.budget ?? 0).toLocaleString()}</div>
       </CardContent>
       <CardFooter className="pt-3 border-t bg-muted/20 flex justify-between items-center">
         <div className="flex items-center gap-1.5 text-sm text-muted-foreground">

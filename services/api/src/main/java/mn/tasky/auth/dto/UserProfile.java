@@ -8,7 +8,7 @@ public record UserProfile(
         String fullName,
         String avatarUrl,
         String bio,
-        double ratingAvg,
+        Double ratingAvg,
         int completedTasks,
         boolean isPro,
         String createdAt) {}

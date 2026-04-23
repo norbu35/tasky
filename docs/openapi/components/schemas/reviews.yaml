@@ -80,6 +80,10 @@ Review:
     comment:
       type: string
       nullable: true
+    would_book_again:
+      type: boolean
+      nullable: true
+      description: Whether the reviewer would book again.
     created_at:
       type: string
       format: date-time

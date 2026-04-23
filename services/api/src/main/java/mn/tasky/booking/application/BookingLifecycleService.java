@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BookingLifecycleService {
-
     private final BookingService bookingService;
     private final BookingTimelineService timelineService;
     private final TaskQueryService taskQueryService;
@@ -52,10 +51,9 @@ public class BookingLifecycleService {
         if (booking == null) {
             return BookingTransitionResult.NOT_FOUND_RESULT;
         }
-        if (hasOpenDispute(bookingId)) {
+        if (hasOpenDispute(bookingId) && !"DISPUTED".equals(booking.status())) {
             return BookingTransitionResult.OPEN_DISPUTE_RESULT;
         }
-
         TaskState task = taskQueryService
                 .getTask(booking.taskId())
                 .orElseThrow(
@@ -64,7 +62,6 @@ public class BookingLifecycleService {
         if (!result.isSuccess()) {
             return result;
         }
-
         BookingState updated = result.booking();
         if (updated.taskerId().equals(actorUserId)) {
             requireTaskUpdate(
@@ -90,14 +87,17 @@ public class BookingLifecycleService {
 
     @Transactional
     public BookingTransitionResult completeBooking(String actorUserId, String bookingId) {
-        if (hasOpenDispute(bookingId)) {
+        BookingState booking = bookingService.getBooking(bookingId).orElse(null);
+        if (booking == null) {
+            return BookingTransitionResult.NOT_FOUND_RESULT;
+        }
+        if (!"DISPUTED".equals(booking.status()) && hasOpenDispute(bookingId)) {
             return BookingTransitionResult.OPEN_DISPUTE_RESULT;
         }
         BookingTransitionResult result = bookingService.completeBooking(actorUserId, bookingId);
         if (!result.isSuccess()) {
             return result;
         }
-
         BookingState updated = result.booking();
         requireTaskUpdate(
                 taskLifecycleService.transitionToCompleted(updated.taskId()),

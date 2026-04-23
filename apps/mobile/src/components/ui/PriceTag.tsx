@@ -9,7 +9,7 @@ const { typography } = mobileTheme;
 type PriceSize = 'sm' | 'md' | 'lg';
 
 interface PriceTagProps {
-  amount: number;
+  amount: number | null;
   size?: PriceSize;
   testID?: string;
   className?: string;
@@ -26,6 +26,9 @@ function formatAmount(amount: number): string {
 }
 
 export function PriceTag({ amount, size = 'md', testID, className }: PriceTagProps) {
+  if (amount == null) {
+    return null;
+  }
   return (
     <Text
       style={{ fontSize: fontSizeMap[size] }}

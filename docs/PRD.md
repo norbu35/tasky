@@ -1,12 +1,8 @@
 # Product Requirements Document (PRD): Tasky
 
-**Status:** Canonical  
-**Version:** 2.1 (enriched Phase 1 baseline)  
-**Last updated:** 2026-04-22
+## 1. Scope and use of this document
 
-## 1. Document authority and anti-drift rules
-
-This PRD defines the intended **Phase 1 launch product** for Tasky. It is the primary source of truth for:
+This PRD defines the **Phase 1 launch product** for Tasky. It is the governing product document for:
 
 - intended product behavior
 - launch scope
@@ -21,34 +17,35 @@ When active documents conflict:
 3. maintenance policies constrain activation, readiness, and operating discipline
 4. architecture, OpenAPI, design, tests, and implementation are derived from this PRD
 
-### 1.1 Code and document truth
+### 1.1 Product intent and implementation
 
 - Code may describe **current implementation reality**, but it does not silently redefine product intent.
-- If code conflicts with this PRD, default assumption is **implementation drift** unless a deliberate product decision updates this PRD.
+- If code conflicts with this PRD, the product change should be recorded here before it is treated as part of the launch baseline.
 - Architecture may describe implementation design, but it does not outrank this PRD.
 
-### 1.2 Deferred-feature discipline
+### 1.2 Deferred capabilities
 
-- Phase 1 normative sections describe **launch truth only**.
-- Future monetization, expansion, or automation surfaces may be referenced only in clearly labeled deferred appendices.
+- Phase 1 normative sections describe the **launch baseline only**.
+- Future monetization, expansion, or automation surfaces may be referenced only in clearly labeled deferred appendices or in `docs/ROLLOUT_PHASES.md`.
+- `docs/ROLLOUT_PHASES.md` is planning guidance for later phases. It does not override the Phase 1 launch baseline defined here.
 - Derived documents and public copy may **not** promise behavior beyond the launch baseline.
 
-### 1.3 Change-discipline rule
+### 1.3 Change discipline
 
-Any PR that changes product behavior, launch scope, KPI semantics, pilot boundary, trust promises, or booking/review policy MUST update:
+Any PR that changes product behavior, launch scope, KPI semantics, trust promises, or booking/review policy MUST update:
 
 1. this PRD
 2. affected maintenance policies
 3. affected architecture / contract / design artifacts
 4. any launch-facing copy or status matrix affected by the change
 
-### 1.4 Alignment gate
+### 1.4 Alignment criteria
 
 The product is aligned only when:
 
 - code and tests implement this PRD
 - downstream docs do not exceed this PRD
-- contracts do not expose deferred behavior as active truth
+- contracts do not present deferred behavior as part of the launch baseline
 - launch dashboards measure the KPI model defined here
 - public copy does not promise behavior outside this PRD
 
@@ -156,7 +153,7 @@ An individual willing to perform listed services for payment. In Phase 1, tasker
 
 ### 5.3 Founder / admin
 
-The launch pilot depends on an operator-managed backstop. Admin is not a future abstraction here; it is part of the product surface required to keep the pilot reliable.
+The launch depends on an operator-managed backstop. Admin is not a future abstraction here; it is part of the product surface required to keep launch operations reliable.
 
 **Core job to be done**
 
@@ -167,7 +164,7 @@ The launch pilot depends on an operator-managed backstop. Admin is not a future 
 ### 6.1 Launch geography and coverage
 
 - Tasky is positioned as a product built for Ulaanbaatar.
-- Phase 1 operational truth is **citywide Ulaanbaatar posting**.
+- Phase 1 launches with **citywide Ulaanbaatar posting**.
 - Any customer in Ulaanbaatar may create live tasks.
 - Supply is citywide. Taskers may declare service-area preferences for notification targeting.
 - Public copy communicates that the service is live in Ulaanbaatar.
@@ -185,7 +182,7 @@ Minor handyman is subtype-based and excludes regulated, dangerous, or diagnosis-
 
 ### 6.3 Out of scope for launch
 
-The following remain out of scope for Phase 1 launch and must not be treated as active launch truth:
+The following remain out of scope for Phase 1 launch and must not be treated as part of the launch baseline:
 
 - OTP-first auth
 - DAN verification integration
@@ -196,7 +193,6 @@ The following remain out of scope for Phase 1 launch and must not be treated as 
 - B2B flows
 - instant match
 - runtime LLM-led posting path
-- citywide live posting
 - payment protection or hold claims
 
 ## 7. Core product principles
@@ -210,7 +206,7 @@ The following remain out of scope for Phase 1 launch and must not be treated as 
 
 ## 8. Canonical domain concepts
 
-### 8.1 Pilot-eligible task
+### 8.1 Eligible task
 
 An `eligible_task` is a task whose service location is within Ulaanbaatar, belongs to a launch category, and is not invalidated by spam, fraud, or admin rejection.
 
@@ -304,7 +300,7 @@ The following events support KPI computation:
 
 These rules are normative for Phase 1 unless a more specific requirement below overrides them.
 
-1. **No qualified application window**: if an eligible task has no qualified application within 12 hours of posting, the system may trigger external distribution for eligible categories.
+1. **No qualified application window**: if an eligible task has no qualified application within 8 hours of posting, the system may trigger external distribution for eligible categories.
 2. **Selected tasker timeout**: selected-tasker acceptance expires after 4 hours. Expiry returns the task to selectable-applicant state without confirming booking.
 3. **Reschedule authority**: only mutually accepted in-app reschedules change the canonical schedule. Chat-only schedule changes do not affect timers.
 4. **No-show rule**: at scheduled start +10 minutes, both parties receive a reminder to update status. At +15 minutes, a no-show flag is allowed only if recent activity and accepted reschedules do not block it.
@@ -334,7 +330,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 
 - **REQ-P1-SAFE-01**: A user MAY request tasker role activation before verification, but MUST remain verification-gated until approved.
 - **REQ-P1-SAFE-02**: New taskers MUST remain pending until manual verification is completed by admin.
-- **REQ-P1-SAFE-03**: Category-specific vetting MUST be supported for categories that require additional eligibility beyond identity verification.
+- **REQ-P1-SAFE-03**: Category-specific vetting MUST be supported for categories that require additional eligibility beyond identity verification. _(Phase 2+: Phase 1 uses a single VERIFIED status per user; per-category qualifications are deferred.)_
 - **REQ-P1-SAFE-04**: Taskers MAY declare service-area preferences to improve notification relevance, but service-area is not a posting or application gate.
 - **REQ-P1-SAFE-05**: The platform MUST preserve auditable evidence of verification consent, verification decision, and verification state changes.
 
@@ -348,7 +344,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 
 ### 11.5 Task posting and intake
 
-- **REQ-P1-TASK-01**: The task create flow MUST require task location, preferred date, time window, short title, structured scope fields, and pricing mode.
+- **REQ-P1-TASK-01**: The task create flow MUST require task location, preferred date, time window, structured scope fields, and pricing mode. The `description` field serves as the short title; the frontend composes display titles from task columns.
 - **REQ-P1-TASK-02**: Task photos MUST be optional but strongly encouraged.
 - **REQ-P1-TASK-03**: Task photos MUST use presigned upload URLs and MUST be capped at three photos per task.
 - **REQ-P1-TASK-04**: Draft creation MUST bind to the active intake schema version at form start.
@@ -380,7 +376,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 
 ### 11.8 Applications and matching
 
-- **REQ-P1-MATCH-01**: Only qualified taskers MUST be allowed to apply to an eligible task.
+- **REQ-P1-MATCH-01**: Only qualified taskers MUST be allowed to apply to an eligible task. _(Phase 1: any verified tasker may apply to any eligible task regardless of category.)_
 - **REQ-P1-MATCH-02**: Applications MUST include a structured pricing response and a short structured note.
 - **REQ-P1-MATCH-03**: Customers MUST be able to review all applications on a task. The UI MAY rank or highlight top candidates, but MUST NOT hard-cap comparison to a fixed maximum.
 - **REQ-P1-MATCH-04**: Customers MUST select exactly one applicant to proceed toward booking confirmation.
@@ -433,7 +429,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 - **REQ-P1-SAFE-09**: The platform MUST send a review prompt immediately at completion and support reminder prompts for unresolved review obligations.
 - **REQ-P1-SAFE-10**: The structured review model MUST support at least an overall rating, whether the tasker showed up on time, whether the task was completed as expected, whether the user would book again, and optional text.
 - **REQ-P1-SAFE-11**: Tasker-to-customer reviews MUST be supported in Phase 1.
-- **REQ-P1-SAFE-12**: Serious complaints MUST remain a separate path from ordinary reviews.
+- **REQ-P1-SAFE-12**: Serious complaints MUST remain a separate path from ordinary reviews. In Phase 1, disputes serve as the unified complaint pathway.
 - **REQ-P1-SAFE-13**: Public reputation in Phase 1 MUST prioritize verification and trust badges; public rating display MUST remain hidden until a minimum review-count threshold is reached.
 - **REQ-P1-SAFE-14**: A dispute MUST be openable during an active booking and for a limited period after completion.
 - **REQ-P1-SAFE-15**: Dispute submission MUST require evidence artifacts or enter a grace process that can auto-close for insufficient evidence.
@@ -463,7 +459,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 
 - **REQ-P1-ASSIST-01**: The product MUST classify task outcomes as self-serve, system-assisted, or manual-assisted.
 - **REQ-P1-ASSIST-02**: Task-level external distribution MUST NOT be used by default.
-- **REQ-P1-ASSIST-03**: External distribution MAY trigger only when an eligible task has received no qualified application within twelve hours of posting.
+- **REQ-P1-ASSIST-03**: External distribution MAY trigger only when an eligible task has received no qualified application within eight hours of posting.
 - **REQ-P1-ASSIST-04**: External distribution MUST be limited in Phase 1 to home cleaning, furniture assembly, moving help, and minor handyman.
 - **REQ-P1-ASSIST-05**: External distribution payloads MUST be sanitized and MUST NOT expose exact address, raw contact details, or unsupported trust claims.
 - **REQ-P1-ASSIST-06**: Tasks advanced through external distribution MUST remain eligible for booking and completion metrics but MUST be excluded from self-serve fulfillment reporting.
@@ -568,7 +564,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 ### 13.4 Performance and operational posture
 
 - **NFR-PERF-01**: Core task-feed and applicant-review surfaces MUST remain usable under ordinary mobile network conditions in Ulaanbaatar.
-- **NFR-PERF-02**: Posting, applying, selecting, accepting, and review submission flows MUST remain lightweight enough for a solo-operated pilot.
+- **NFR-PERF-02**: Posting, applying, selecting, accepting, and review submission flows MUST remain lightweight enough for a small operating team.
 
 ### 13.5 Localization
 
@@ -621,39 +617,38 @@ Operator rescue is allowed in Phase 1, but only if it remains:
 ## 15. Non-goals for Phase 1
 
 - no customer-facing payment hold, protection, or escrow promise
-- no citywide live posting
 - no generic task-posting flow as the primary launch path
 - no open-ended pre-booking chat
 - no launch dependency on OTP auth, DAN, subscriptions, credits, referrals, B2B, instant match, or escrow activation
 - no claim that assisted distribution counts as native marketplace health
 
-## 16. Superseded assumptions to remove from derived artifacts
+## 16. Launch baseline clarifications for derived artifacts
 
-The following assumptions are invalid for Phase 1 and MUST be removed from code, tests, contracts, architecture notes, design artifacts, and copy if they still appear:
+The following clarifications should be reflected consistently across code, tests, contracts, architecture notes, design artifacts, and copy:
 
-1. **Fixed-budget-only posting** — invalid. Phase 1 supports both budgeted posts and quote requests.
-2. **Open-ended pre-booking messaging** — invalid. Phase 1 uses structured applications with no open-ended pre-booking chat.
-3. **Citywide live posting** — now valid. Phase 1 allows live posting across all of Ulaanbaatar.
-4. **Payment held or protected by Tasky** — invalid. Phase 1 makes no escrow or payment-protection promise.
-5. **Assisted outcomes counted as self-serve** — invalid. System-assisted and manual-assisted outcomes are excluded from self-serve fulfillment.
-6. **Founder intervention as a separate core metric from manual intervention** — invalid for Phase 1. Use a generic intervention model.
-7. **Risk-only review lock** — invalid. In Phase 1, owed review blocks the next post/apply action until fulfilled.
-8. **Pre-booking conversation created on apply** — invalid. Phase 1 does not require or expose open-ended pre-booking conversation.
-9. **Forward-reference or future-phase APIs treated as active product truth** — invalid. Launch contracts must reflect live or implemented-and-gated behavior only.
-10. **Geographically restricted posting** — invalid for Phase 1. Posting is available citywide across Ulaanbaatar.
+1. Phase 1 supports both budgeted posts and quote requests.
+2. Phase 1 uses structured applications and does not expose open-ended pre-booking chat.
+3. Phase 1 allows live posting across all of Ulaanbaatar.
+4. Phase 1 makes no escrow or payment-protection promise.
+5. System-assisted and manual-assisted outcomes are excluded from self-serve fulfillment.
+6. Intervention is tracked through a generic intervention model rather than a founder-only metric.
+7. Owed review blocks the next post or apply action until fulfilled.
+8. Applying to a task does not create an open-ended pre-booking conversation.
+9. Launch contracts should expose only live or deliberately gated behavior.
+10. Posting is available citywide across Ulaanbaatar.
 
 ## 17. Requirements governance
 
 ### 17.1 Requirement ID rule
 
-`REQ-P1-*` is the only canonical active requirement ID family for the launch baseline. Legacy IDs may exist only in a historical mapping appendix outside the normative PRD.
+`REQ-P1-*` is the only canonical active requirement ID family for the launch baseline. Use this family consistently in launch requirements and downstream references.
 
 ### 17.2 Acceptance rule for downstream docs
 
 A downstream document is aligned only if:
 
 - it does not contradict this PRD
-- it does not promise deferred behavior as live truth
+- it does not present deferred behavior as part of the launch baseline
 - it uses canonical Phase 1 requirement IDs where normative references are required
 - it preserves the citywide Ulaanbaatar posting scope, Phase 1 pricing model, review gate, and trust posture defined here
 
@@ -668,9 +663,11 @@ For any non-trivial product work, the minimum reading order is:
 5. contract docs if contract work is involved
 6. design docs only as derived UX detail
 
-## 18. Deferred capabilities appendix (non-normative)
+## 18. Deferred capabilities and phased rollout appendix (non-normative)
 
-The following surfaces may remain documented elsewhere as future or deferred design space, but they are not active launch truth:
+### 18.1 Deferred capabilities
+
+The following surfaces may remain documented elsewhere as future or deferred design space, but they are not part of the launch baseline:
 
 - OTP migration
 - DAN verification
@@ -683,4 +680,22 @@ The following surfaces may remain documented elsewhere as future or deferred des
 - instant match
 - runtime AI posting rewrite
 
-They must not re-enter the active launch baseline without explicit PRD promotion.
+They must not enter the launch baseline without an explicit PRD change.
+
+### 18.2 Planned phase sequence
+
+The current rollout shape is:
+
+| Phase       | Purpose                                      | Capabilities intended for that phase                                                                                                                                                                    | Still out of scope in that phase                                                                                                               |
+| ----------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1** | Launch baseline                              | Citywide Ulaanbaatar posting, four launch categories, structured intake, budget-or-quote pricing, open application, direct settlement, verification, reviews, disputes, moderation, measured assistance | OTP-primary auth, DAN, lead fees, promoted listings, subscriptions, escrow, wallet, payouts, referrals, B2B, instant match, runtime AI posting |
+| **Phase 2** | Liquidity systems and soft monetization      | Algorithm-assisted application, OTP migration, DAN fast-path, lead credits if justified, promoted listings if justified, direct settlement still standard                                               | Escrow, wallet, payouts, subscriptions, instant match by default, geographic expansion                                                         |
+| **Phase 3** | Stronger trust rails and supply monetization | Tasker subscription, opt-in escrow, wallet and payout operations, tighter anti-leakage enforcement, instant match only after liquidity proof                                                            | Geographic expansion, managed B2B, broad revenue diversification                                                                               |
+| **Phase 4** | Expansion and broader revenue mix            | Additional payment rails, customer subscription products, geographic expansion, managed B2B only if earlier validation exists                                                                           | None by default; every addition still requires explicit scope approval                                                                         |
+
+### 18.3 Rollout rules
+
+- A feature toggle does not advance the product to the next phase.
+- A future-phase endpoint or schema may exist in code, but it is not part of product scope until the PRD, strategy, maintenance policies, and launch-facing copy all say so.
+- Phase advancement is evidence-driven. The KPI model in this PRD remains the launch decision frame until a later-phase change is explicitly approved.
+- Referrals and B2B are conditional tracks, not required ingredients of the core Phase 2 path.

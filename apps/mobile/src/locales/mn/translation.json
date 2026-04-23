@@ -1301,7 +1301,7 @@
     "submitUnexpectedResponse": "Серверийн гэнэтийн хариу үйлдэл. Дахин оролдоно уу."
   },
   "ScheduleBudgetScreen": {
-    "budgetError": "Төсөв хамгийн багадаа ₮5,000 байх ёстой",
+    "budgetError": "Төсөв хамгийн багадаа ₮20,000 байх ёстой",
     "schedulePastError": "Өнгөрсөн огноо/цагийг сонгох боломжгүй",
     "schedulePageTitle": "Хуваарь ба төсөв",
     "scheduleInstruction": "Даалгавар хэзээ биелэхээ сонгоод төсвөө тохируулаарай.",
@@ -1311,7 +1311,7 @@
     "scheduleDatePlaceholder": "Огноо сонгоно уу",
     "scheduleTimePlaceholder": "Цаг сонгоно уу",
     "budgetLabel": "Төсөв",
-    "budgetHelper": "Тогтмол дүнг оруулна уу. Хамгийн бага: ₮5,000",
+    "budgetHelper": "Тогтмол дүнг оруулна уу. Хамгийн бага: ₮20,000",
     "budgetPlaceholder": "₮50,000",
     "budgetGoldHint": "Чадварлаг ажилчдыг татахын тулд шударга төсөв тогтоо",
     "budgetTypicalRange": "💡 Энэ ангиллын ажлууд ихэвчлэн ₮30,000 – ₮80,000 байдаг",

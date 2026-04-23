@@ -26,6 +26,7 @@ public interface ReviewDao {
             Integer clarityRating,
             Integer respectfulnessRating,
             String comment,
+            Boolean wouldBookAgain,
             Instant createdAt) {
         insert(
                 required(id, "id"),
@@ -38,15 +39,16 @@ public interface ReviewDao {
                 clarityRating,
                 respectfulnessRating,
                 comment,
+                wouldBookAgain,
                 createdAt);
     }
 
     @SqlUpdate("INSERT INTO booking_reviews (id, booking_id, reviewer_id, reviewee_id, "
             + "quality_rating, punctuality_rating, communication_rating, clarity_rating, respectfulness_rating, "
-            + "comment, created_at) "
+            + "comment, would_book_again, created_at) "
             + "VALUES (:id, :bookingId, :reviewerId, :revieweeId, "
             + ":qualityRating, :punctualityRating, :communicationRating, :clarityRating, :respectfulnessRating, "
-            + ":comment, :createdAt)")
+            + ":comment, :wouldBookAgain, :createdAt)")
     void insert(
             @Bind("id") UUID id,
             @Bind("bookingId") UUID bookingId,
@@ -58,6 +60,7 @@ public interface ReviewDao {
             @Bind("clarityRating") Integer clarityRating,
             @Bind("respectfulnessRating") Integer respectfulnessRating,
             @Bind("comment") String comment,
+            @Bind("wouldBookAgain") Boolean wouldBookAgain,
             @Bind("createdAt") Instant createdAt);
 
     default List<Review> findByRevieweeId(String userId, String cursor, int limit) {
@@ -74,14 +77,14 @@ public interface ReviewDao {
 
     @SqlQuery("SELECT id, booking_id, reviewer_id, reviewee_id, "
             + "quality_rating, punctuality_rating, communication_rating, clarity_rating, respectfulness_rating, "
-            + "comment, created_at "
+            + "comment, would_book_again, created_at "
             + "FROM booking_reviews WHERE reviewee_id = :userId "
             + "ORDER BY id LIMIT :limit")
     List<Review> findByRevieweeIdFirstPage(@Bind("userId") UUID userId, @Bind("limit") int limit);
 
     @SqlQuery("SELECT id, booking_id, reviewer_id, reviewee_id, "
             + "quality_rating, punctuality_rating, communication_rating, clarity_rating, respectfulness_rating, "
-            + "comment, created_at "
+            + "comment, would_book_again, created_at "
             + "FROM booking_reviews WHERE reviewee_id = :userId "
             + "AND id > :cursor "
             + "ORDER BY id LIMIT :limit")

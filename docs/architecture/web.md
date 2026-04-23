@@ -1,11 +1,11 @@
 # Tasky Architecture — Web App
 
-Status: derived architecture contract for `apps/web`.
+This document defines the web architecture for `apps/web`.
 
 Read this after:
 
 1. `AGENTS.md`
-2. `docs/PRD.md` and `docs/STRATEGY.md`
+2. `docs/PRD.md`, `docs/STRATEGY.md`, and `docs/ROLLOUT_PHASES.md`
 3. `apps/web/AGENTS.md`
 4. `docs/architecture/web.md` (this file)
 5. `docs/architecture/shared-frontend.md` — only when shared UI/tokens/parity/test naming matter
@@ -14,6 +14,8 @@ Read this after:
 ## Scope
 
 This document is intentionally small. Web-specific rules live here. Shared system rules stay in `common.md`. Cross-platform frontend contracts (tokens, parity, test naming) stay in `shared-frontend.md`. Backend API contracts stay in `api.md`.
+
+Use `docs/PRD.md` as the authority for active Phase 1 web behavior. Use `docs/ROLLOUT_PHASES.md` for deferred phase sequencing only. Draft routes, admin-only scaffolding, and dormant paid-product UI do not become launch scope unless the PRD and rollout map both place them there.
 
 ## Platform Contract
 
@@ -79,6 +81,6 @@ These do not belong here:
 - shared system architecture
 - backend schema and API policy
 - mobile structural rules
-- historical plans or remediation tranches
+- archived plans and execution notes
 
 Keep those in `docs/architecture/common.md`, `docs/openapi/**`, the bundled `docs/API.yaml`, `docs/architecture/mobile.md`, or archive paths as appropriate.

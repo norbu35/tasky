@@ -1,6 +1,7 @@
 package mn.tasky.review.dto;
 
 import java.time.Instant;
+import org.springframework.lang.Nullable;
 
 public record Review(
         String id,
@@ -13,4 +14,5 @@ public record Review(
         Integer clarityRating,
         Integer respectfulnessRating,
         String comment,
+        @Nullable Boolean wouldBookAgain,
         Instant createdAt) {}

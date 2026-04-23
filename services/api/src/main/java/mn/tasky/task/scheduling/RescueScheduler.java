@@ -30,7 +30,7 @@ public class RescueScheduler {
 
     private static final Logger log = LoggerFactory.getLogger(RescueScheduler.class);
     private static final ZoneId UB_ZONE = ZoneId.of("Asia/Ulaanbaatar");
-    private static final int RESCUE_THRESHOLD_MINUTES = 120;
+    private static final int RESCUE_THRESHOLD_MINUTES = 480;
     private static final int HOUR_START = 8;
     private static final int HOUR_END = 21;
     private static final int BATCH_LIMIT = 200;

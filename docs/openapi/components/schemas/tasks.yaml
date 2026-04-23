@@ -215,7 +215,7 @@ CreateTaskRequest:
       maxLength: 2000
     budget:
       type: integer
-      minimum: 5000
+      minimum: 20000
       nullable: true
       description: Budget in MNT. Required when pricing_mode is BUDGET. Ignored for QUOTE mode.
     pricing_mode:
@@ -387,6 +387,7 @@ TaskApplication:
         - ACCEPTED
         - DECLINED
         - EXPIRED
+        - WITHDRAWN
     relevance_score:
       type: number
       format: double
@@ -394,6 +395,11 @@ TaskApplication:
     recommended:
       type: boolean
       nullable: true
+    respond_by_at:
+      type: string
+      format: date-time
+      nullable: true
+      description: Deadline for the tasker to respond after being selected.
     created_at:
       type: string
       format: date-time

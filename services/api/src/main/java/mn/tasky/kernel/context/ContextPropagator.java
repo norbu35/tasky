@@ -92,7 +92,9 @@ public final class ContextPropagator {
      * Extract a value from the captured MDC map (safe for null/missing entries).
      */
     public static String fromMdc(Map<String, String> mdc, String key) {
-        if (mdc == null) return null;
+        if (mdc == null) {
+            return null;
+        }
         String value = mdc.get(key);
         return StringUtils.hasText(value) ? value : null;
     }

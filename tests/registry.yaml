@@ -10,7 +10,7 @@ scenarios:
     notes: '2026-04-02 rehab: mutation kill rate is 0; prioritize assertion-strength
       follow-up (P2).'
     override_status: null
-    prd_ref: REQ-SAFE-06
+    prd_ref: REQ-P1-KPI-04
     risk: medium
     status: untested
     test_type: medium-unit
@@ -22,7 +22,7 @@ scenarios:
     notes: '2026-04-02 rehab: mutation kill rate is 0; prioritize assertion-strength
       follow-up (P2).'
     override_status: null
-    prd_ref: REQ-SAFE-06
+    prd_ref: REQ-P1-KPI-04
     risk: medium
     status: untested
     test_type: medium-unit
@@ -34,18 +34,133 @@ scenarios:
     notes: '2026-04-02 rehab: mutation kill rate is 0; prioritize assertion-strength
       follow-up (P2).'
     override_status: null
-    prd_ref: REQ-SAFE-06
+    prd_ref: REQ-P1-KPI-04
     risk: medium
     status: untested
     test_type: medium-unit
     title: Booking completed event is emitted when a booking transitions to COMPLETED
+  SCN-ANALYTICS-004:
+    domain: analytics
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-KPI-04
+    risk: medium
+    status: untested
+    test_type: medium-unit
+    title: Qualified application submitted event is emitted when a verified tasker
+      applies
+  SCN-ANALYTICS-005:
+    domain: analytics
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-KPI-04
+    risk: medium
+    status: untested
+    test_type: medium-unit
+    title: Intervention recorded event is emitted when assisted distribution or manual
+      rescue is used
+  SCN-ASSIST-001:
+    domain: assistance
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ASSIST-01
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Task outcome is classified as self-serve when no intervention occurred
+  SCN-ASSIST-002:
+    domain: assistance
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ASSIST-01
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Task outcome is classified as system-assisted when external distribution
+      was used
+  SCN-ASSIST-003:
+    domain: assistance
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ASSIST-01
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Task outcome is classified as manual-assisted when operator performed rescue
+  SCN-ASSIST-004:
+    domain: assistance
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ASSIST-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: External distribution triggers only after 8 hours without qualified application
+  SCN-ASSIST-005:
+    domain: assistance
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ASSIST-04
+    risk: medium
+    status: untested
+    test_type: medium-unit
+    title: External distribution is limited to launch categories
+  SCN-ASSIST-006:
+    domain: assistance
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ASSIST-05
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: External distribution payloads do not expose exact address, raw contacts,
+      or unsupported trust claims
+  SCN-ASSIST-007:
+    domain: assistance
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ASSIST-06
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Tasks advanced through external distribution are excluded from self-serve
+      fulfillment reporting
+  SCN-ASSIST-008:
+    domain: assistance
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ASSIST-07
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Manual task-specific rescue is recorded as intervention
   SCN-AUTH-001:
     domain: auth
     mutation_kill_rate: 12
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-01
+    prd_ref: REQ-P1-AUTH-01
     risk: critical
     status: untested
     test_type: domain-unit
@@ -56,7 +171,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-01
+    prd_ref: REQ-P1-AUTH-06
     risk: critical
     status: untested
     test_type: domain-unit
@@ -67,7 +182,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-01
+    prd_ref: REQ-P1-AUTH-06
     risk: critical
     status: untested
     test_type: domain-unit
@@ -78,7 +193,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-01
+    prd_ref: REQ-P1-AUTH-01
     risk: critical
     status: untested
     test_type: domain-unit
@@ -89,7 +204,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-02
+    prd_ref: REQ-P1-AUTH-04
     risk: critical
     status: untested
     test_type: domain-unit
@@ -101,7 +216,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-03
+    prd_ref: REQ-P1-AUTH-01
     risk: critical
     status: untested
     test_type: domain-unit
@@ -113,7 +228,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-03
+    prd_ref: REQ-P1-AUTH-01
     risk: critical
     status: untested
     test_type: domain-unit
@@ -124,53 +239,19 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-ADMIN-03
+    prd_ref: REQ-P1-AUTH-05
     risk: critical
     status: untested
     test_type: domain-unit
     title: BANNED or active SUSPENDED account is denied authentication even with otherwise
       valid credentials
-  SCN-AUTH-009:
-    domain: auth
-    mutation_kill_rate: 12
-    mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
-    notes: null
-    override_status: null
-    prd_ref: REQ-AUTH-05
-    risk: critical
-    status: untested
-    test_type: domain-unit
-    title: OTP request rate limit per phone returns 429 within the configured window
-  SCN-AUTH-010:
-    domain: auth
-    mutation_kill_rate: 12
-    mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
-    notes: null
-    override_status: null
-    prd_ref: REQ-AUTH-05
-    risk: critical
-    status: untested
-    test_type: domain-unit
-    title: OTP request rate limit per request source returns 429 within the configured
-      window
-  SCN-AUTH-011:
-    domain: auth
-    mutation_kill_rate: 12
-    mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
-    notes: null
-    override_status: null
-    prd_ref: REQ-AUTH-05
-    risk: critical
-    status: untested
-    test_type: domain-unit
-    title: Valid OTP verification returns an authenticated session
   SCN-AUTH-012:
     domain: auth
     mutation_kill_rate: 12
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-09
+    prd_ref: REQ-P1-AUTH-02
     risk: critical
     status: untested
     test_type: domain-unit
@@ -181,7 +262,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-10
+    prd_ref: REQ-P1-AUTH-03
     risk: critical
     status: untested
     test_type: domain-unit
@@ -192,7 +273,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-09
+    prd_ref: REQ-P1-AUTH-02
     risk: critical
     status: untested
     test_type: domain-unit
@@ -204,7 +285,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-09
+    prd_ref: REQ-P1-AUTH-02
     risk: critical
     status: untested
     test_type: domain-unit
@@ -215,7 +296,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-04
+    prd_ref: REQ-P1-BOOK-14
     risk: critical
     status: untested
     test_type: domain-unit
@@ -227,7 +308,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-04
+    prd_ref: REQ-P1-BOOK-15
     risk: critical
     status: untested
     test_type: domain-unit
@@ -239,7 +320,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-04
+    prd_ref: REQ-P1-BOOK-15
     risk: critical
     status: untested
     test_type: domain-unit
@@ -250,20 +331,19 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-04
+    prd_ref: REQ-P1-BOOK-15
     risk: critical
     status: untested
     test_type: domain-unit
     title: Late-cancel enforcement escalates from warning-only on first occurrence
-      to "Low Customer Reliability" flag and Instant Match revocation on second occurrence
-      in 28 days
+      to "Low Customer Reliability" flag on second occurrence in 28 days
   SCN-BOOK-005:
     domain: booking
     mutation_kill_rate: 33
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-06
+    prd_ref: REQ-P1-BOOK-16
     risk: critical
     status: untested
     test_type: domain-unit
@@ -274,7 +354,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: Tasker 3-strike suspension not yet implemented; deferred to next sprint.
     override_status: waived pending tasker-suspension feature
-    prd_ref: REQ-BOOK-06
+    prd_ref: REQ-P1-BOOK-17
     risk: critical
     status: untested
     test_type: domain-unit
@@ -286,7 +366,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-03
+    prd_ref: REQ-P1-BOOK-05
     risk: critical
     status: untested
     test_type: domain-unit
@@ -297,7 +377,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-03
+    prd_ref: REQ-P1-BOOK-06
     risk: critical
     status: untested
     test_type: domain-unit
@@ -308,7 +388,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-05
+    prd_ref: REQ-P1-BOOK-13
     risk: critical
     status: untested
     test_type: domain-unit
@@ -319,7 +399,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-11
+    prd_ref: REQ-P1-BOOK-19
     risk: critical
     status: untested
     test_type: domain-unit
@@ -330,7 +410,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-11
+    prd_ref: REQ-P1-BOOK-20
     risk: critical
     status: untested
     test_type: domain-unit
@@ -341,7 +421,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-11
+    prd_ref: REQ-P1-BOOK-21
     risk: critical
     status: untested
     test_type: domain-unit
@@ -352,7 +432,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-11
+    prd_ref: REQ-P1-BOOK-22
     risk: critical
     status: untested
     test_type: domain-unit
@@ -364,7 +444,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-11
+    prd_ref: REQ-P1-BOOK-23
     risk: critical
     status: untested
     test_type: domain-unit
@@ -376,7 +456,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-11
+    prd_ref: REQ-P1-BOOK-24
     risk: critical
     status: untested
     test_type: domain-unit
@@ -387,7 +467,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-11
+    prd_ref: REQ-P1-BOOK-23
     risk: critical
     status: untested
     test_type: domain-unit
@@ -398,7 +478,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-12
+    prd_ref: REQ-P1-BOOK-10
     risk: critical
     status: untested
     test_type: domain-unit
@@ -410,7 +490,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-12
+    prd_ref: REQ-P1-BOOK-11
     risk: critical
     status: untested
     test_type: domain-unit
@@ -421,7 +501,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-12
+    prd_ref: REQ-P1-BOOK-12
     risk: critical
     status: untested
     test_type: domain-unit
@@ -432,7 +512,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-13
+    prd_ref: REQ-P1-BOOK-09, REQ-P1-BOOK-10
     risk: critical
     status: untested
     test_type: domain-unit
@@ -444,19 +524,85 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-06
+    prd_ref: REQ-P1-BOOK-18
     risk: critical
     status: untested
     test_type: domain-unit
     title: Tasker cancellation with Safety/Fraud reason bypasses automated strike
       and opens Trust and Safety ticket
+  SCN-BOOK-022:
+    domain: booking
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-BOOK-01
+    risk: critical
+    status: untested
+    test_type: domain-unit
+    title: Customer selects one applicant and booking becomes ASSIGNED
+  SCN-BOOK-023:
+    domain: booking
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-BOOK-02, REQ-P1-BOOK-03
+    risk: critical
+    status: untested
+    test_type: domain-unit
+    title: Selected tasker does not accept within 4 hours and pending selection expires
+  SCN-BOOK-024:
+    domain: booking
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-BOOK-04
+    risk: critical
+    status: untested
+    test_type: domain-unit
+    title: Non-selected applications close automatically once one tasker is confirmed
+  SCN-BOOK-025:
+    domain: booking
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-PRICE-07
+    risk: critical
+    status: untested
+    test_type: domain-unit
+    title: Booking price is locked at confirmed booking
+  SCN-BOOK-026:
+    domain: booking
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-BOOK-25
+    risk: critical
+    status: untested
+    test_type: domain-unit
+    title: Tasker marks complete and customer confirms completion
+  SCN-BOOK-027:
+    domain: booking
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-BOOK-26
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Customer silence after tasker-marked complete triggers timeout auto-complete
   SCN-CATEGORY-001:
     domain: category
     mutation_kill_rate: 0
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-ADMIN-05
+    prd_ref: REQ-P1-CAT-04
     risk: high
     status: untested
     test_type: domain-unit
@@ -467,7 +613,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-ADMIN-05
+    prd_ref: REQ-P1-CAT-04
     risk: high
     status: untested
     test_type: domain-unit
@@ -479,7 +625,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-ADMIN-05
+    prd_ref: REQ-P1-ADMIN-09
     risk: high
     status: untested
     test_type: domain-unit
@@ -490,7 +636,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-ADMIN-05
+    prd_ref: REQ-P1-ADMIN-09
     risk: high
     status: untested
     test_type: domain-unit
@@ -501,7 +647,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-ADMIN-05
+    prd_ref: REQ-P1-ADMIN-09
     risk: high
     status: untested
     test_type: domain-unit
@@ -512,7 +658,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-ADMIN-05
+    prd_ref: REQ-P1-ADMIN-09
     risk: high
     status: untested
     test_type: domain-unit
@@ -524,7 +670,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-ADMIN-05
+    prd_ref: REQ-P1-ADMIN-09
     risk: high
     status: untested
     test_type: domain-unit
@@ -535,18 +681,62 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-ADMIN-05
+    prd_ref: REQ-P1-ADMIN-09
     risk: high
     status: untested
     test_type: domain-unit
     title: Rollback without a last-known-good schema fails with NO_FALLBACK
+  SCN-CONTRACT-400:
+    domain: contract
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: NFR-API-02
+    risk: high
+    status: covered
+    test_type: domain-unit
+    title: Validation errors return the standard error envelope
+  SCN-CONTRACT-401:
+    domain: contract
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: NFR-API-02
+    risk: high
+    status: covered
+    test_type: domain-unit
+    title: Unauthenticated requests return 401 with standard error envelope
+  SCN-CONTRACT-403:
+    domain: contract
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: NFR-API-02
+    risk: high
+    status: covered
+    test_type: domain-unit
+    title: Forbidden access returns 403 with standard error envelope
+  SCN-CONTRACT-404:
+    domain: contract
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: NFR-API-02
+    risk: high
+    status: covered
+    test_type: domain-unit
+    title: Unknown resources return 404 with standard error envelope
   SCN-DISPUTE-001:
     domain: dispute
     mutation_kill_rate: 58
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-SAFE-03
+    prd_ref: REQ-P1-SAFE-14
     risk: high
     status: untested
     test_type: domain-unit
@@ -557,7 +747,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-SAFE-03
+    prd_ref: REQ-P1-SAFE-14
     risk: high
     status: untested
     test_type: domain-unit
@@ -568,7 +758,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-SAFE-03
+    prd_ref: REQ-P1-SAFE-14
     risk: high
     status: untested
     test_type: domain-unit
@@ -579,7 +769,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-SAFE-03
+    prd_ref: REQ-P1-SAFE-14
     risk: high
     status: untested
     test_type: domain-unit
@@ -590,7 +780,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-SAFE-10
+    prd_ref: REQ-P1-SAFE-15
     risk: high
     status: untested
     test_type: domain-unit
@@ -601,7 +791,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-SAFE-10
+    prd_ref: REQ-P1-SAFE-15
     risk: high
     status: untested
     test_type: domain-unit
@@ -613,7 +803,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-SAFE-10
+    prd_ref: REQ-P1-SAFE-15
     risk: high
     status: untested
     test_type: domain-unit
@@ -624,7 +814,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-SAFE-03
+    prd_ref: REQ-P1-SAFE-16
     risk: high
     status: untested
     test_type: domain-unit
@@ -636,7 +826,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-MSG-01
+    prd_ref: REQ-P1-MSG-02
     risk: medium
     status: untested
     test_type: medium-unit
@@ -647,7 +837,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-MSG-02
+    prd_ref: REQ-P1-MSG-02
     risk: medium
     status: untested
     test_type: medium-unit
@@ -658,7 +848,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-MSG-03
+    prd_ref: REQ-P1-MSG-03
     risk: medium
     status: untested
     test_type: medium-unit
@@ -669,18 +859,29 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-LEAK-04
+    prd_ref: REQ-P1-MSG-05
     risk: medium
     status: untested
     test_type: medium-unit
     title: Message containing a phone number pattern is flagged for admin review
+  SCN-MSG-005:
+    domain: messaging
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-MSG-01
+    risk: medium
+    status: untested
+    test_type: medium-unit
+    title: No pre-booking chat exists in Phase 1
   SCN-NOTIF-001:
     domain: notification
     mutation_kill_rate: 4
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-NOTIF-01
+    prd_ref: REQ-P1-NOTIF-01
     risk: medium
     status: untested
     test_type: medium-unit
@@ -692,7 +893,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-NOTIF-01
+    prd_ref: REQ-P1-NOTIF-02
     risk: medium
     status: untested
     test_type: medium-unit
@@ -703,7 +904,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-NOTIF-01
+    prd_ref: REQ-P1-NOTIF-04
     risk: medium
     status: untested
     test_type: medium-unit
@@ -714,7 +915,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-NOTIF-01
+    prd_ref: REQ-P1-NOTIF-07
     risk: medium
     status: untested
     test_type: medium-unit
@@ -725,20 +926,42 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-NOTIF-01
+    prd_ref: REQ-P1-NOTIF-07
     risk: medium
     status: untested
     test_type: medium-unit
     title: Unregistering a device token removes it for the authenticated user
+  SCN-NOTIF-006:
+    domain: notification
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-NOTIF-06
+    risk: medium
+    status: untested
+    test_type: medium-unit
+    title: Verification decision notification is sent to the affected tasker
+  SCN-NOTIF-007:
+    domain: notification
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-NOTIF-05
+    risk: medium
+    status: untested
+    test_type: medium-unit
+    title: Completion prompt and review obligation notification is sent to both participants
   SCN-REVIEW-001:
     domain: review
     mutation_kill_rate: 43
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-SAFE-02
+    prd_ref: REQ-P1-SAFE-06
     risk: high
-    status: covered
+    status: untested
     test_type: domain-unit
     title: Booking completion creates structured review prompts for both customer
       and tasker
@@ -748,9 +971,9 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-SAFE-02
+    prd_ref: REQ-P1-SAFE-09
     risk: high
-    status: covered
+    status: untested
     test_type: domain-unit
     title: Immediate review prompt is sent at completion time
   SCN-REVIEW-003:
@@ -759,9 +982,9 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-SAFE-11
+    prd_ref: REQ-P1-SAFE-09
     risk: high
-    status: covered
+    status: untested
     test_type: domain-unit
     title: Open review case at 24 hours sends the first reminder
   SCN-REVIEW-004:
@@ -770,9 +993,9 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-SAFE-11
+    prd_ref: REQ-P1-SAFE-09
     risk: high
-    status: covered
+    status: untested
     test_type: domain-unit
     title: Open review case at 72 hours sends the final reminder
   SCN-REVIEW-005:
@@ -781,9 +1004,9 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-SAFE-07
+    prd_ref: REQ-P1-SAFE-07
     risk: high
-    status: covered
+    status: untested
     test_type: domain-unit
     title: Hard lock is enforced when any open review enforcement case exists
   SCN-REVIEW-006:
@@ -792,9 +1015,9 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-SAFE-08
+    prd_ref: REQ-P1-SAFE-08
     risk: high
-    status: covered
+    status: untested
     test_type: domain-unit
     title: Hard lock is lifted when the owed review is submitted and the case is resolved
   SCN-SEC-001:
@@ -803,7 +1026,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-03
+    prd_ref: REQ-P1-AUTH-01
     risk: critical
     status: untested
     test_type: domain-unit
@@ -814,7 +1037,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-03
+    prd_ref: REQ-P1-AUTH-01
     risk: critical
     status: untested
     test_type: domain-unit
@@ -825,7 +1048,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-03
+    prd_ref: REQ-P1-AUTH-01
     risk: critical
     status: untested
     test_type: domain-unit
@@ -836,7 +1059,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-03
+    prd_ref: REQ-P1-AUTH-01
     risk: critical
     status: untested
     test_type: domain-unit
@@ -847,7 +1070,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-01
+    prd_ref: REQ-P1-TASK-01
     risk: critical
     status: untested
     test_type: domain-unit
@@ -859,7 +1082,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-03
+    prd_ref: REQ-P1-TASK-09
     risk: critical
     status: untested
     test_type: domain-unit
@@ -870,7 +1093,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-LEAK-03
+    prd_ref: REQ-P1-TASK-10, REQ-P1-BOOK-07
     risk: critical
     status: untested
     test_type: domain-unit
@@ -882,40 +1105,51 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-LEAK-01
+    prd_ref: REQ-P1-MSG-04
     risk: critical
     status: untested
     test_type: domain-unit
     title: Customer-facing payloads never expose tasker phone fields
-  SCN-SEC-009:
+  SCN-SEC-011:
     domain: security
-    mutation_kill_rate: 0
-    mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-LEAK-02
+    prd_ref: REQ-P1-MSG-04
     risk: critical
     status: untested
     test_type: domain-unit
-    title: Customer phone remains masked until lead unlock or payment commitment succeeds
-  SCN-SEC-010:
+    title: Customer phone is not exposed in tasker-facing payloads in Phase 1
+  SCN-SEC-012:
     domain: security
-    mutation_kill_rate: 0
-    mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-LEAK-03
+    prd_ref: REQ-P1-AUTH-05
     risk: critical
     status: untested
     test_type: domain-unit
-    title: Exact-address fetch before the required unlock state is denied with ADDRESS_LOCKED
+    title: Logout endpoint revokes the current access token
+  SCN-SEC-013:
+    domain: security
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-AUTH-05
+    risk: critical
+    status: untested
+    test_type: domain-unit
+    title: DELETED user is rejected with 403
   SCN-SMOKE-001:
     domain: integration
     mutation_kill_rate: null
     mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-01
+    prd_ref: REQ-P1-AUTH-02, REQ-P1-AUTH-03
     risk: high
     status: untested
     test_type: integration
@@ -926,7 +1160,7 @@ scenarios:
     mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-BOOK-05
+    prd_ref: REQ-P1-BOOK-16
     risk: high
     status: untested
     test_type: integration
@@ -937,7 +1171,7 @@ scenarios:
     mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-01
+    prd_ref: REQ-P1-TASK-01, REQ-P1-TASK-10
     risk: high
     status: untested
     test_type: integration
@@ -948,7 +1182,7 @@ scenarios:
     mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-03
+    prd_ref: REQ-P1-TASK-09
     risk: high
     status: untested
     test_type: integration
@@ -960,9 +1194,9 @@ scenarios:
     mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-AUTH-03
+    prd_ref: NFR-API-02
     risk: high
-    status: untested
+    status: covered
     test_type: integration
     title: All protected endpoint error responses include code, message, and trace_id
       fields
@@ -972,7 +1206,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-00
+    prd_ref: REQ-P1-CAT-01
     risk: high
     status: untested
     test_type: domain-unit
@@ -983,7 +1217,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-00
+    prd_ref: REQ-P1-TASK-15
     risk: high
     status: untested
     test_type: domain-unit
@@ -995,7 +1229,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-01
+    prd_ref: REQ-P1-TASK-01
     risk: high
     status: untested
     test_type: domain-unit
@@ -1007,29 +1241,29 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-01
+    prd_ref: REQ-P1-PRICE-01
     risk: high
     status: untested
     test_type: domain-unit
-    title: Budget equal to 1000 MNT is rejected
+    title: Budget below 20000 MNT is rejected
   SCN-TASK-005:
     domain: task
     mutation_kill_rate: 12
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-01
+    prd_ref: REQ-P1-PRICE-01
     risk: high
     status: untested
     test_type: domain-unit
-    title: Budget greater than 1000 MNT is accepted
+    title: Budget of 20000 MNT is accepted, 19999 is rejected
   SCN-TASK-006:
     domain: task
     mutation_kill_rate: 12
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-01
+    prd_ref: REQ-P1-TASK-03
     risk: high
     status: untested
     test_type: domain-unit
@@ -1040,7 +1274,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-03
+    prd_ref: REQ-P1-COVER-02
     risk: high
     status: untested
     test_type: domain-unit
@@ -1051,7 +1285,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-03
+    prd_ref: REQ-P1-TASK-09
     risk: high
     status: untested
     test_type: domain-unit
@@ -1062,7 +1296,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-03
+    prd_ref: REQ-P1-TASK-09
     risk: high
     status: untested
     test_type: domain-unit
@@ -1073,7 +1307,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-03
+    prd_ref: REQ-P1-TASK-10
     risk: high
     status: untested
     test_type: domain-unit
@@ -1084,7 +1318,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-03
+    prd_ref: REQ-P1-TASK-10
     risk: high
     status: untested
     test_type: domain-unit
@@ -1095,7 +1329,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-03
+    prd_ref: REQ-P1-COVER-02
     risk: high
     status: untested
     test_type: domain-unit
@@ -1106,7 +1340,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-03
+    prd_ref: NFR-API-01
     risk: high
     status: untested
     test_type: domain-unit
@@ -1117,7 +1351,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-07
+    prd_ref: REQ-P1-TASK-06
     risk: high
     status: untested
     test_type: domain-unit
@@ -1129,7 +1363,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-10
+    prd_ref: REQ-P1-TASK-07
     risk: high
     status: untested
     test_type: domain-unit
@@ -1141,7 +1375,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-09
+    prd_ref: REQ-P1-TASK-04
     risk: high
     status: untested
     test_type: domain-unit
@@ -1153,7 +1387,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-09
+    prd_ref: REQ-P1-TASK-05
     risk: high
     status: untested
     test_type: domain-unit
@@ -1165,7 +1399,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-09
+    prd_ref: REQ-P1-TASK-05
     risk: high
     status: untested
     test_type: domain-unit
@@ -1177,9 +1411,174 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-TASK-11
+    prd_ref: REQ-P1-CAT-05
     risk: high
     status: untested
     test_type: domain-unit
     title: Deactivated category blocks new draft and create requests but existing
       tasks keep their lifecycle
+  SCN-TASK-020:
+    domain: task
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-TASK-08
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Task location outside Ulaanbaatar service area is rejected at posting
+  SCN-TASK-021:
+    domain: task
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-COVER-02
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Task creation in a non-launch category is rejected
+  SCN-TASK-022:
+    domain: task
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-MATCH-01
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Only verified active taskers can submit applications to eligible tasks
+  SCN-TASK-023:
+    domain: task
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-MATCH-02
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Application requires structured pricing response and short note
+  SCN-TASK-024:
+    domain: task
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-MATCH-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Customer can review all applications on a task without hard cap
+  SCN-TASK-025:
+    domain: task
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-MATCH-05
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Tasker can withdraw application before customer selection
+  SCN-TASK-026:
+    domain: task
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-PRICE-02
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Budget mode task shows posted budget to applicants
+  SCN-TASK-027:
+    domain: task
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-PRICE-04
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Quote mode task requires tasker price quote in application
+  SCN-TASK-028:
+    domain: task
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-PRICE-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Tasker counter-offer on budget-mode task is structured and recorded
+  SCN-TASK-029:
+    domain: task
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-PRICE-05
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Customer sees original budget and counter-offer where both exist
+  SCN-VERIF-001:
+    domain: verification
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-SAFE-01
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: User requests tasker role activation before verification
+  SCN-VERIF-002:
+    domain: verification
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-SAFE-02
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: New tasker remains pending until admin manual verification is completed
+  SCN-VERIF-003:
+    domain: verification
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-SAFE-05
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Verification consent, decision, and state changes are auditable
+  SCN-VERIF-004:
+    domain: verification
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ADMIN-01
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Admin reviews pending verifications and approves or rejects
+  SCN-VERIF-005:
+    domain: verification
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ADMIN-10
+    risk: medium
+    status: untested
+    test_type: medium-unit
+    title: Verification queue exposes queue age and SLA posture for operational review

@@ -29,9 +29,10 @@ public interface TaskRescueEventDao {
                 interventionType);
     }
 
-    @SqlUpdate(
-            "INSERT INTO task_rescue_events (id, task_id, triggered_at, trigger_window, actions_json, intervention_type) "
-                    + "VALUES (:id, :taskId, :triggeredAt, :triggerWindow, CAST(:actionsJson AS jsonb), :interventionType)")
+    @SqlUpdate("INSERT INTO task_rescue_events "
+            + "(id, task_id, triggered_at, trigger_window, actions_json, intervention_type) "
+            + "VALUES (:id, :taskId, :triggeredAt, :triggerWindow, "
+            + "CAST(:actionsJson AS jsonb), :interventionType)")
     void insert(
             @Bind("id") UUID id,
             @Bind("taskId") UUID taskId,

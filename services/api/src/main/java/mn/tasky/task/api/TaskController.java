@@ -25,6 +25,7 @@ import mn.tasky.task.dto.ApplyTaskRequest;
 import mn.tasky.task.dto.CreateDraftRequest;
 import mn.tasky.task.dto.CreateTask;
 import mn.tasky.task.dto.CreateTaskRequest;
+import mn.tasky.task.dto.TaskAcceptResult;
 import mn.tasky.task.dto.TaskApplicationState;
 import mn.tasky.task.dto.TaskApplicationsListResult;
 import mn.tasky.task.dto.TaskApplyResult;
@@ -34,8 +35,10 @@ import mn.tasky.task.dto.TaskDraft;
 import mn.tasky.task.dto.TaskDraftResponse;
 import mn.tasky.task.dto.TaskPage;
 import mn.tasky.task.dto.TaskPhotoUploadUrlRequest;
+import mn.tasky.task.dto.TaskSelectResult;
 import mn.tasky.task.dto.TaskState;
 import mn.tasky.task.dto.TaskUpdateResult;
+import mn.tasky.task.dto.TaskWithdrawResult;
 import mn.tasky.task.dto.UpdateDraftRequest;
 import mn.tasky.task.dto.UpdateTask;
 import mn.tasky.task.dto.UpdateTaskRequest;
@@ -480,6 +483,112 @@ public class TaskController {
                             "message", outcome.errorMessage(),
                             "trace_id", resolveTraceId(request)));
             case INTERNAL_ERROR -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
+        };
+    }
+
+    @PostMapping("/{id}/applications/{applicationId}/select")
+    public ResponseEntity<?> selectApplication(
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @PathVariable String id,
+            @PathVariable String applicationId,
+            HttpServletRequest request) {
+        TaskSelectResult result = marketplaceCommandPort.selectApplication(principal.userId(), id, applicationId);
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(taskCompositionService.toTaskApplicationResponse(result.application()));
+        }
+        return switch (result.errorCode()) {
+            case TaskSelectResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "code",
+                            "NOT_FOUND",
+                            "message",
+                            "Task or application not found.",
+                            "trace_id",
+                            resolveTraceId(request)));
+            case TaskSelectResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of(
+                            "code",
+                            "FORBIDDEN",
+                            "message",
+                            "Only the task owner can select applicants.",
+                            "trace_id",
+                            resolveTraceId(request)));
+            case TaskSelectResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of(
+                            "code",
+                            "TASK_NOT_OPEN",
+                            "message",
+                            "Task is no longer open.",
+                            "trace_id",
+                            resolveTraceId(request)));
+            case TaskSelectResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of(
+                            "code",
+                            "CONFLICT",
+                            "message",
+                            "Application already processed or task assigned.",
+                            "trace_id",
+                            resolveTraceId(request)));
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
+        };
+    }
+
+    @PostMapping("/{id}/applications/{applicationId}/confirm")
+    public ResponseEntity<?> confirmAcceptance(
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @PathVariable String id,
+            @PathVariable String applicationId,
+            @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
+            HttpServletRequest request) {
+        TaskAcceptResult result = marketplaceCommandPort.confirmAcceptance(principal.userId(), applicationId);
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(Map.of(
+                    "booking_id",
+                    result.booking().id(),
+                    "status",
+                    result.booking().status()));
+        }
+        return switch (result.errorCode()) {
+            case TaskAcceptResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(errorBody("NOT_FOUND", "Application not found.", request));
+            case TaskAcceptResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(errorBody("FORBIDDEN", "You do not have permission to confirm this application.", request));
+            case TaskAcceptResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(errorBody("TASK_NOT_OPEN", "Task is no longer open.", request));
+            case TaskAcceptResult.DISCLAIMER_REQUIRED -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(errorBody("DISCLAIMER_REQUIRED", "Liability disclaimer must be accepted.", request));
+            case TaskAcceptResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(errorBody("CONFLICT", "Selection expired or application already processed.", request));
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
+        };
+    }
+
+    @PostMapping("/{id}/applications/{applicationId}/withdraw")
+    public ResponseEntity<?> withdrawApplication(
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @PathVariable String id,
+            @PathVariable String applicationId,
+            HttpServletRequest request) {
+        TaskWithdrawResult result = marketplaceCommandPort.withdrawApplication(principal.userId(), applicationId);
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(Map.of(
+                    "application_id",
+                    result.application().id(),
+                    "status",
+                    result.application().status()));
+        }
+        return switch (result.errorCode()) {
+            case TaskWithdrawResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(errorBody("NOT_FOUND", "Application not found.", request));
+            case TaskWithdrawResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(errorBody("FORBIDDEN", "You do not have permission to withdraw this application.", request));
+            case TaskWithdrawResult.INVALID_STATUS -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(errorBody(
+                            "INVALID_STATUS", "Application cannot be withdrawn in its current status.", request));
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
         };
     }

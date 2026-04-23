@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import mn.tasky.booking.application.BookingService;
+import mn.tasky.booking.publicapi.BookingCommandPort;
+import mn.tasky.booking.publicapi.BookingQueryPort;
 import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.dispute.dao.DisputeDao;
@@ -19,6 +20,7 @@ import mn.tasky.dispute.dto.DisputeRequest;
 import mn.tasky.dispute.dto.DisputeResolutionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,19 +34,22 @@ public class DisputeService {
     private static final Logger log = LoggerFactory.getLogger(DisputeService.class);
     private static final long COMPLETED_DISPUTE_WINDOW_HOURS = 24L;
 
-    private final BookingService bookingService;
+    private final BookingQueryPort bookingQueryPort;
+    private final BookingCommandPort bookingCommandPort;
     private final DisputeDao disputeDao;
     private final DisputeEvidenceDao disputeEvidenceDao;
     private final AuditEventDao auditEventDao;
     private final ObjectMapper objectMapper;
 
     public DisputeService(
-            BookingService bookingService,
+            BookingQueryPort bookingQueryPort,
+            @Lazy BookingCommandPort bookingCommandPort,
             DisputeDao disputeDao,
             DisputeEvidenceDao disputeEvidenceDao,
             AuditEventDao auditEventDao,
             ObjectMapper objectMapper) {
-        this.bookingService = bookingService;
+        this.bookingQueryPort = bookingQueryPort;
+        this.bookingCommandPort = bookingCommandPort;
         this.disputeDao = disputeDao;
         this.disputeEvidenceDao = disputeEvidenceDao;
         this.auditEventDao = auditEventDao;
@@ -90,7 +95,7 @@ public class DisputeService {
             return DisputeRaiseResult.error("INVALID_REASON");
         }
 
-        var bookingOpt = bookingService.getBooking(bookingId);
+        var bookingOpt = bookingQueryPort.getBooking(bookingId);
         if (bookingOpt.isEmpty()) {
             return DisputeRaiseResult.error("BOOKING_NOT_FOUND");
         }
@@ -102,7 +107,9 @@ public class DisputeService {
             return DisputeRaiseResult.error("FORBIDDEN");
         }
 
-        if (!"ASSIGNED".equals(booking.status()) && !"COMPLETED".equals(booking.status())) {
+        if (!"ASSIGNED".equals(booking.status())
+                && !"PAID".equals(booking.status())
+                && !"COMPLETED".equals(booking.status())) {
             return DisputeRaiseResult.error("INVALID_STATUS");
         }
         if ("COMPLETED".equals(booking.status())) {
@@ -131,6 +138,8 @@ public class DisputeService {
                 disputeEvidenceDao.insert(evidenceId, id, item.type(), storageKey, textPayload);
             }
         }
+
+        bookingCommandPort.transitionToDisputed(bookingId);
 
         return DisputeRaiseResult.success(dispute);
     }
@@ -189,7 +198,7 @@ public class DisputeService {
         }
 
         Dispute dispute = disputeOpt.get();
-        Optional<String> role = bookingService.getBooking(dispute.bookingId()).map(booking -> {
+        Optional<String> role = bookingQueryPort.getBooking(dispute.bookingId()).map(booking -> {
             if (booking.customerId().equals(userId) || booking.taskerId().equals(userId)) {
                 return "PARTICIPANT";
             }
@@ -225,7 +234,7 @@ public class DisputeService {
             return DisputeResolutionResult.error("NOT_OPEN");
         }
 
-        var bookingOpt = bookingService.getBooking(dispute.bookingId());
+        var bookingOpt = bookingQueryPort.getBooking(dispute.bookingId());
         if (bookingOpt.isEmpty()) {
             return DisputeResolutionResult.error("BOOKING_NOT_FOUND");
         }

@@ -13,8 +13,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
+import mn.tasky.booking.publicapi.BookingCommandPort;
+import mn.tasky.booking.publicapi.BookingQueryPort;
 import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.dispute.application.DisputeService;
 import mn.tasky.dispute.dao.DisputeDao;
@@ -37,24 +38,30 @@ class DisputeScenarioTests {
     private static final String TASKER_ID = "tasker-1";
     private static final String REASON = "Work was not completed as agreed";
 
-    private BookingService bookingService;
+    private BookingQueryPort bookingQueryPort;
+    private BookingCommandPort bookingCommandPort; // NOPMD SingularField
     private DisputeDao disputeDao;
     private DisputeEvidenceDao disputeEvidenceDao;
     private DisputeService disputeService;
 
     @BeforeEach
     void setUp() {
-        bookingService = mock(BookingService.class);
+        bookingQueryPort = mock(BookingQueryPort.class);
+        bookingCommandPort = mock(BookingCommandPort.class);
         disputeDao = mock(DisputeDao.class);
         disputeEvidenceDao = mock(DisputeEvidenceDao.class);
         disputeService = new DisputeService(
-                bookingService, disputeDao, disputeEvidenceDao, mock(AuditEventDao.class), new ObjectMapper());
+                bookingQueryPort,
+                bookingCommandPort,
+                disputeDao,
+                disputeEvidenceDao,
+                mock(AuditEventDao.class),
+                new ObjectMapper());
 
         // Default: no existing dispute
         when(disputeDao.findOpenByBookingId(BOOKING_ID)).thenReturn(Optional.empty());
         when(disputeDao.findById(anyString())).thenReturn(Optional.empty());
-        // bookingService.getBooking is used by raiseDispute; bookingService.getBooking(id) → empty by default
-        when(bookingService.getBooking(anyString())).thenReturn(Optional.empty());
+        when(bookingQueryPort.getBooking(anyString())).thenReturn(Optional.empty());
     }
 
     private BookingState bookingWith(String status, Instant updatedAt) {
@@ -70,6 +77,8 @@ class DisputeScenarioTests {
                 null,
                 "DIRECT",
                 false,
+                null,
+                0,
                 null,
                 updatedAt.minus(1, ChronoUnit.HOURS),
                 updatedAt);
@@ -94,7 +103,7 @@ class DisputeScenarioTests {
     @Test
     @DisplayName("SCN-DISPUTE-001: Either participant can open a dispute while the booking is ASSIGNED")
     void participantCanOpenDisputeFromAssigned() {
-        when(bookingService.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("ASSIGNED", Instant.now())));
+        when(bookingQueryPort.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("ASSIGNED", Instant.now())));
         Dispute created = openDispute();
         when(disputeDao.findById(anyString())).thenReturn(Optional.of(created));
 
@@ -110,7 +119,7 @@ class DisputeScenarioTests {
     @DisplayName("SCN-DISPUTE-002: Either participant can open a dispute within 24 hours after booking completion")
     void participantCanOpenDisputeWithin24hOfCompletion() {
         Instant completedAt = Instant.now().minus(12, ChronoUnit.HOURS);
-        when(bookingService.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("COMPLETED", completedAt)));
+        when(bookingQueryPort.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("COMPLETED", completedAt)));
         Dispute created = openDispute();
         when(disputeDao.findById(anyString())).thenReturn(Optional.of(created));
 
@@ -125,7 +134,7 @@ class DisputeScenarioTests {
     @DisplayName("SCN-DISPUTE-003: Completed-booking dispute after 24 hours is rejected")
     void disputeAfter24hWindowExpiredRejected() {
         Instant completedAt = Instant.now().minus(25, ChronoUnit.HOURS);
-        when(bookingService.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("COMPLETED", completedAt)));
+        when(bookingQueryPort.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("COMPLETED", completedAt)));
 
         DisputeRaiseResult result = disputeService.raiseDispute(CUSTOMER_ID, BOOKING_ID, REASON);
 
@@ -139,7 +148,7 @@ class DisputeScenarioTests {
     @DisplayName("SCN-DISPUTE-004: Dispute creation outside ASSIGNED or COMPLETED booking states is rejected")
     void disputeFromInvalidStatusRejected() {
         for (String status : List.of("CANCELLED", "NO_SHOW")) {
-            when(bookingService.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith(status, Instant.now())));
+            when(bookingQueryPort.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith(status, Instant.now())));
 
             DisputeRaiseResult result = disputeService.raiseDispute(CUSTOMER_ID, BOOKING_ID, REASON);
 
@@ -156,7 +165,7 @@ class DisputeScenarioTests {
     @DisplayName("SCN-DISPUTE-005: Dispute submission requires at least one evidence artifact")
     void disputeWithoutEvidenceRecordedAsOpenPendingEvidence() {
         // When no evidenceItems are supplied, dispute is created but open (pending evidence)
-        when(bookingService.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("ASSIGNED", Instant.now())));
+        when(bookingQueryPort.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("ASSIGNED", Instant.now())));
         Dispute created = openDispute();
         when(disputeDao.findById(anyString())).thenReturn(Optional.of(created));
 
@@ -172,8 +181,8 @@ class DisputeScenarioTests {
     // ── SCN-DISPUTE-006 ──────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-DISPUTE-006: Missing evidence after reminder and 24-hour grace auto-closes the dispute as INSUFFICIENT_EVIDENCE")
+    @DisplayName("SCN-DISPUTE-006: Missing evidence after reminder and 24-hour grace"
+            + " auto-closes the dispute as INSUFFICIENT_EVIDENCE")
     void staleDisputeWithNoEvidenceAutoCloses() {
         // Dispute is OPEN and older than 24h, with zero evidence
         Dispute stale = new Dispute(
@@ -240,12 +249,12 @@ class DisputeScenarioTests {
     // ── SCN-DISPUTE-008 ──────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-DISPUTE-008: Phase 1 dispute resolution is limited to evidence-only outcomes and admin misconduct notes")
+    @DisplayName("SCN-DISPUTE-008: Phase 1 dispute resolution is limited to evidence-only outcomes"
+            + " and admin misconduct notes")
     void phase1ResolutionAllowsOnlyEvidenceOutcomes() {
         Dispute dispute = openDispute();
         when(disputeDao.findById(dispute.id())).thenReturn(Optional.of(dispute));
-        when(bookingService.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("ASSIGNED", Instant.now())));
+        when(bookingQueryPort.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("ASSIGNED", Instant.now())));
 
         String adminId = "admin-1";
 

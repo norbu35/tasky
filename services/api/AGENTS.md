@@ -48,7 +48,7 @@ Quick reference:
 - Security-sensitive code needs positive and negative tests.
 - Follow scenario-first testing rules from root `AGENTS.md`.
 - Keep feature behavior local to the owning module instead of leaking cross-module logic into common infrastructure.
-- Schema parity: if a Flyway migration adds, drops, or renames a column or table, run `python3 tooling/scripts/validate-schema-parity.py --update-expected` and commit the updated `tooling/config/expected-schema.json`.
+- Schema parity: if a Flyway migration adds, drops, or renames a column or table, run `python3 tooling/scripts/governance/validate-schema-parity.py --update-expected` and commit the updated `tooling/config/expected-schema.json`.
 
 ## Verification
 
@@ -56,5 +56,5 @@ Quick reference:
 ./gradlew --no-daemon :services:api:test
 ./gradlew --no-daemon :services:api:openApiValidate
 ./gradlew --no-daemon gateSmoke
-python3 tooling/scripts/validate-schema-parity.py
+python3 tooling/scripts/governance/validate-schema-parity.py
 ```

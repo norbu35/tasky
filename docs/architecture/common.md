@@ -1,6 +1,6 @@
 # Tasky Architecture — Common Baseline
 
-Status: derived cross-cutting baseline. Backend specifics live in `api.md`; frontend parity in `shared-frontend.md`; per-surface rules in `web.md` / `mobile.md`.
+This document covers the shared technical baseline for Tasky. Backend specifics live in `api.md`; frontend parity in `shared-frontend.md`; per-surface rules live in `web.md` and `mobile.md`.
 
 ## 1. Executive Summary
 
@@ -9,8 +9,19 @@ Status: derived cross-cutting baseline. Backend specifics live in `api.md`; fron
 **Key Constraint:** "Trust-First" (Graceful degradation)
 
 This document defines cross-cutting technical architecture for Tasky: system context, shared technology decisions,
-runtime patterns, non-functional baselines, and development workflow. Intended product truth lives in `docs/PRD.md`,
-`docs/STRATEGY.md`, and relevant maintenance policy docs.
+runtime patterns, non-functional baselines, and development workflow. Product behavior is defined in `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, and the relevant maintenance policy docs.
+
+## 1.1 Interpretation Rule
+
+Use the governance docs in this order when reading shared architecture:
+
+1. `docs/PRD.md` defines the active Phase 1 product contract.
+2. `docs/STRATEGY.md` defines launch posture and operating discipline.
+3. `docs/ROLLOUT_PHASES.md` defines the intended sequencing for deferred capabilities beyond Phase 1.
+4. Maintenance policies define toggle posture, activation readiness, and staging discipline.
+5. This document describes the shared technical baseline that supports those rules.
+
+If a deferred integration appears in code or infrastructure before its planned phase, keep it labeled dormant. Its existence does not make it part of the active runtime contract.
 
 ---
 
@@ -21,11 +32,13 @@ runtime patterns, non-functional baselines, and development workflow. Intended p
 Tasky acts as a trusted intermediary between **Customers** (Demand) and **Taskers** (Supply).
 
 - **External Systems**:
-  - **QPay (Phase 2+)**: Credit pack purchases in Phase 2 and escrow settlement rails in Phase 3+.
-  - **SMS Gateway (Phase 2+)**: OTP delivery and critical fallback notifications.
-    - **Google Maps / Mapbox**: Geocoding and static maps.
-    - **Push Provider (Firebase Cloud Messaging)**: Mobile notifications via FCM for Android; FCM → APNs bridge for iOS. Expo Push relay is explicitly not used.
-  - **LLM Provider (Phase 3+ optional)**: Async task scope summary polish only; never blocking task posting.
+  - **Facebook OAuth**: the only launch login provider for new sessions.
+  - **SMS Gateway**: critical fallback notifications such as reminders and completion nudges. OTP is not part of the Phase 1 launch baseline.
+  - **Google Maps / Mapbox**: geocoding and static maps.
+  - **Push Provider (Firebase Cloud Messaging)**: mobile notifications via FCM for Android and the FCM → APNs bridge for iOS. Expo Push relay is explicitly not used.
+  - **Object Storage (MinIO / S3)**: private storage for uploads such as verification artifacts and images.
+
+Deferred payment, escrow, payout, alternate-auth, and runtime-LLM integrations are not part of the launch baseline even if dormant scaffolding exists in code or schema.
 
 ### 2.2 Modular Monolith Structure
 
@@ -57,16 +70,10 @@ For the full package-to-domain mapping, see `api.md` §2.
 - **Push Notifications (FCM)**:
   - **Provider**: Firebase Cloud Messaging (FCM) via Firebase Admin SDK on the backend. Expo Push relay is not used.
   - **Mobile**: `@react-native-firebase/messaging` for token acquisition and topic subscriptions; `@notifee/react-native` for local notification display and Android channels. `expo-notifications` is retained only for permission requests.
-  - **Individual delivery**: `FirebasePushProvider` calls `FirebaseMessaging.send()` per device token stored in `device_tokens`.
-  - **Topic fan-out** (Phase 1+): Subscribe devices server-side via Firebase Admin SDK on Tasker profile save. Topic taxonomy:
-    - `taskers.district.{slug}` — all Taskers in a geo district
-    - `taskers.category.{slug}` — all Taskers in a skill category
-    - `taskers.district.{slug}.{category}` — compound precision targeting (primary supply activation topic)
-    - `taskers.concierge-pool` — founder-operated concierge dispatch
-    - `customers.churned.{category}` — inactive Customer reactivation
-    - `platform.all` — system-wide announcements
+  - **Individual delivery**: `FirebasePushProvider` sends to device tokens stored in `device_tokens`.
+  - **Topic fan-out**: subscribe devices server-side for launch-relevant targeting such as category and district/category combinations.
   - **Configuration**: `FIREBASE_SERVICE_ACCOUNT_JSON` env var; `tasky.push.provider=firebase` activates `FirebasePushProvider`.
-  - **Current state**: `FirebasePushProvider` is the active production provider. Expo push relay is removed from runtime use and retained only as historical context in ADR-0002.
+  - `FirebasePushProvider` is the active production provider.
 - **Geospatial**:
   - **Engine**: PostGIS running in the Postgres container.
   - **Indexing**: GiST index on `tasks.location_point` is mandatory.
@@ -84,30 +91,12 @@ For the full package-to-domain mapping, see `api.md` §2.
 
 ### 4.1 Event / Outbox / Async
 
-- **Mechanism (retired):** The old `@Async` + `ApplicationEventPublisher` + polling relay mechanism is
-  **retired**. The previous polling-based outbox relay is also retired.
-- **Mechanism (current — two-path publish):** `DomainEventOutboxService` persists events to
-  `domain_outbox_events` and, when `tasky.automation.broker.enabled=true`, directly publishes to RabbitMQ
-  via `EventRelayPublisher`. On successful direct publish, the row is marked `PROCESSED` immediately.
-  Rows that fail to publish remain `PENDING` for relay recovery.
-- **Relay recovery:** `OutboxRelayScheduler` runs every 10 s (ShedLock-guarded), delegating to
-  `OutboxRelayService`. Recovery loop: `claimBatch` (PENDING/FAILED rows) → `publish` →
-  `markProcessed` / `markFailed`. Failed events receive exponential backoff (30 s base, 1 h max)
-  with configurable max attempts (default 10). Events exceeding max attempts remain `FAILED` with a 24-hour permanent backoff — they are not promoted to a different status but will not be retried aggressively. Admin replay can reset `FAILED` → `PENDING` for reprocessing.
-- **At-least-once delivery:** The system provides true at-least-once semantics — direct publish on the
-  happy path, relay recovery for failures. Handler-level idempotency via `WorkflowIdempotencyGuard`
-  handles duplicate deliveries.
-- **Persistence:** The `domain_outbox_events` table provides the durability guarantee. The outbox row is
-  written first; broker publish is attempted synchronously afterward. Broker failure does **not** roll back
-  the domain transaction because the row already exists.
-- **Admin replay:** `OutboxReplayController` resets `FAILED` → `PENDING`; the relay scheduler picks up
-  replayed events on the next cycle. Replay now works end-to-end.
-- **Health:** `OutboxHealthIndicator` correctly reports health — events transition out of `PENDING`
-  (via direct publish or relay), so stale-PENDING false-negatives no longer occur.
-- **Consumption:** `EventWorkerConsumer` (RabbitMQ listener) dispatches to registered `EventHandler`
-  implementations by event type, with retry routing (x-death headers) and DLQ fallback after max retries.
-- Events carry context propagation fields (`correlation_id`, `causation_id`, `command_id`, `workflow_id`,
-  `actor_id`, `locale`, `platform`).
+- `DomainEventOutboxService` persists events to `domain_outbox_events` and publishes them through the broker path when broker mode is enabled.
+- `OutboxRelayScheduler` and `OutboxRelayService` recover failed or pending publishes and provide the at-least-once delivery path.
+- `EventWorkerConsumer` dispatches automation events to registered handlers.
+- Handler-level idempotency is enforced through `WorkflowIdempotencyGuard`.
+- Events carry correlation and actor context (`correlation_id`, `causation_id`, `command_id`, `workflow_id`, `actor_id`, `locale`, `platform`) so request context survives the async boundary.
+- The outbox is used for launch-critical side effects such as notifications, reminders, analytics emission, and recovery workflows.
 
 ### 4.2 Internationalization Baseline
 
@@ -133,18 +122,16 @@ For the full package-to-domain mapping, see `api.md` §2.
 ### 5.1 Reliability
 
 - **Idempotency**: Critical irreversible state-changing endpoints must accept an `Idempotency-Key` header.
-  - Minimum MVP scope: application accept, booking cancel/complete, dispute creation/resolution.
-  - Phase 2+ monetization scope: lead-unlock credit spending, payment initiation/callback handling, and payout
-    processing.
+  - Minimum Phase 1 scope: application accept, booking cancel, booking completion, and dispute creation/resolution.
 - **Schema Safety (Structured Intake)**:
   - Category schema activation runs lint + preview validation before activation.
   - Rollout supports canary activation and instant rollback to last-known-good schema version.
-  - Task drafts bind schema version at form start to prevent submit-time drift.
+  - Task drafts bind schema version at form start to prevent submit-time mismatch.
 - **Offline Support**: Mobile app caches active "My Tasks" locally (AsyncStorage) for read-only viewing when offline.
   This is limited to previously fetched data; no offline mutations are supported in MVP.
 - **Policy Guards**:
-  - Enforce Tuesday/Friday payout processing window in platform timezone.
-  - Enforce no-show and late-cancel timers against latest accepted in-app schedule only.
+  - Enforce no-show and late-cancel timers against the latest accepted in-app schedule only.
+  - Keep intervention and assisted-distribution outcomes measurable so self-serve KPI reporting stays truthful.
 
 ### 5.2 Observability
 
@@ -210,8 +197,8 @@ For the full package-to-domain mapping, see `api.md` §2.
 | Mobile structural contract       | `mobile.md`                                            |
 | OpenAPI contracts                | `docs/openapi/AGENTS.md`, `docs/openapi/openapi.yaml`  |
 | PRD requirements                 | `docs/PRD.md`                                          |
+| Rollout sequencing               | `docs/ROLLOUT_PHASES.md`                               |
 | PRD-to-architecture traceability | `docs/PRD.md` functional requirements and KPI sections |
-| Architecture decision records    | `docs/adr/**`                                          |
 | Launch readiness                 | `docs/maintenance/PRODUCTION_READINESS.md`             |
 | Feature activation policy        | `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`        |
 | Observability                    | `docs/OBSERVABILITY.md`                                |

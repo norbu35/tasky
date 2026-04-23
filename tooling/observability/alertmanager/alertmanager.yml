@@ -16,7 +16,7 @@ route:
 receivers:
   - name: webhook
     webhook_configs:
-      - url: '{{ .EnvAlertWebhookUrl }}'
+      - url: '__ALERT_WEBHOOK_URL__'
         send_resolved: true
 
   # ── Email receiver (uncomment and configure for production) ──────────
