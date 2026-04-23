@@ -307,6 +307,27 @@ class UserProfileServiceTests {
 
             assertThat(service.activateTaskerRole(USER_ID)).isEmpty();
         }
+
+        @Test
+        @DisplayName("SCN-VERIF-001: User requests tasker role activation before verification")
+        void customerActivatesTaskerRoleRemainsVerificationGated() {
+            // Given an authenticated user with role CUSTOMER
+            AuthUser customer = activeCustomer();
+            when(userDao.findById(USER_ID)).thenReturn(Optional.of(customer));
+            when(userStatusResolver.resolve(eq(USER_ID), anyString())).thenReturn("ACTIVE");
+
+            // When the user requests tasker role activation
+            Optional<RoleActivationResult> result = service.activateTaskerRole(USER_ID);
+
+            // Then the user role is updated to reflect tasker-role request
+            assertThat(result).isPresent();
+            verify(userDao).updateRole(USER_ID, "TASKER");
+
+            // And the user remains verification-gated -- status does NOT become VERIFIED
+            verify(userDao, never()).updateStatus(anyString(), eq("VERIFIED"));
+            assertThat(result.get().user()).containsEntry("role", "TASKER");
+            assertThat(result.get().user()).containsEntry("status", "ACTIVE");
+        }
     }
 
     // ── currentUserStatus ─────────────────────────────────────────────────
