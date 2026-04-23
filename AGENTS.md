@@ -107,6 +107,8 @@ but CI and release workflows are the governing enforcement surfaces.
 Before writing any backend test: check `tests/registry.yaml` for an existing scenario. Read `tests/scenarios/<domain>.md`.
 If no scenario covers the behavior, stop and report the gap unless you are the designated scenario curator for the current execution brief.
 
+- Identifier format rules (SCN 3-digit, REQ-P1 2-digit, capitalized Risk): `docs/identifiers/STANDARDS.md`
+- Coverage gaps and domain-to-domain map: `docs/identifiers/REFERENCE-MAP.md`
 - `@DisplayName` must be `"SCN-XXX-NNN: <exact title from scenario file>"`
 - Domain-unit tests: no `@SpringBootTest`, `@Autowired`, or `@MockBean`
 - Mock only external boundaries: `FacebookGraphClient`, `FirebasePushProvider`, `S3StorageService`
