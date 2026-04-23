@@ -13,6 +13,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install gitleaks
+        run: |
+          curl -sSfL -o /tmp/gitleaks.tar.gz https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz
+          tar -xzf /tmp/gitleaks.tar.gz -C /usr/local/bin gitleaks
+          gitleaks version
 
       - name: Setup Java 21
         uses: actions/setup-java@v5
@@ -38,6 +46,14 @@ jobs:
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v6
 
+      - name: Cache turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo/cache
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
       - name: Ensure scripts are executable
         run: find tooling/scripts -type f \( -name '*.sh' -o -name '*.py' \) -exec chmod +x {} + && chmod +x gradlew
 
@@ -46,8 +62,7 @@ jobs:
 
       - name: Run frontend regression checks
         run: |
-          pnpm -r typecheck
-          pnpm -r test
+          pnpm turbo run lint typecheck test:coverage
 
       - name: Run backend regression gate
         run: ./gradlew --no-daemon :services:api:gateRegression :services:api:openApiValidate
@@ -56,6 +71,9 @@ jobs:
         run: ./gradlew --no-daemon :services:api:dependencyCheckAnalyze
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+
+      - name: Gitleaks secret scan (full history)
+        run: bash tooling/scripts/governance/check-gitleaks-secret-scan.sh
 
       - name: Build regression container image
         run: docker build -t tasky-server:nightly .

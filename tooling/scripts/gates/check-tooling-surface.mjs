@@ -20,6 +20,7 @@ const registry = {
     "gates/check-ops-config.mjs": "active",
     "gates/check-tooling-surface.mjs": "active",
     "governance/check-doc-governance.py": "active",
+    "governance/check-gitleaks-secret-scan.sh": "active",
     "governance/check-trivyignore-expiry.sh": "active",
     "governance/validate-migrations.py": "active",
     "governance/validate-schema-parity.py": "active",

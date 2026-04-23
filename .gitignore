@@ -3,6 +3,7 @@
 .venv/
 .superpowers/
 .idea/*
+.gitleaksignore
 !.idea/codeStyles
 # VS Code — track workspace settings, ignore user-specific state
 .vscode/*
