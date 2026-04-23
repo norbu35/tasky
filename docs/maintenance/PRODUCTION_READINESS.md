@@ -43,9 +43,9 @@ The following controls must remain intact:
 ### 5.1 Local and CI
 
 - Local baseline verification is documented in `AGENTS.md` and `docs/maintenance/OPERATING_MODEL.md`.
-- PR CI is `quality-gates.yml`.
+- Merge CI is `quality-gates.yml` on pushes to `main` and `staging`.
 - Release gate is `release-gate.yml`.
-- Nightly regression is `nightly-regression` plus `./gradlew gateRegression`.
+- Nightly regression is `nightly-regression` when manually dispatched plus `./gradlew gateRegression`.
 
 ### 5.2 Launch evidence expectations
 

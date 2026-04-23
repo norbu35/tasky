@@ -73,6 +73,9 @@ Reusable repo-owned agent workflows live under `tooling/skills/**`.
 ## Workflow Rules
 
 - Read the smallest relevant governing and architecture surfaces before editing code.
+- Follow the branch flow: `feature/*` -> `staging` -> `main`.
+- Merge to `staging` for integration feedback; promote `staging` to `main` only after full local verification passes.
+- Do not use `--no-verify` (or equivalent hook bypass) for pushes that target `staging` or `main`.
 - If the API changes, update `docs/openapi/**` first, regenerate `docs/API.yaml`, then regenerate `@tasky/sdk`, then implement.
 - If a Flyway migration adds, drops, or renames a column or table, run `python3 tooling/scripts/governance/validate-schema-parity.py --update-expected` and commit the updated `tooling/config/expected-schema.json`.
 - Use the active issue or approved execution brief as the task source. Do not rely on archived plan directories.
@@ -83,15 +86,17 @@ Reusable repo-owned agent workflows live under `tooling/skills/**`.
 
 Use the right gate for the claim you are making.
 
-| Level                         | Command / source                                                                                                                                              | Meaning                                                  |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| Local baseline                | `pnpm verify:cleanup`, `:services:api:test`, `:services:api:openApiValidate`, `pnpm -r typecheck`, `pnpm -r test`                                             | Minimum local confidence before claiming completion      |
-| Local boundary / drift checks | `:services:api:architectureTest`, `pnpm repo:workspace:boundaries`, `pnpm contract:sdk:drift`, `python3 tooling/scripts/governance/validate-schema-parity.py` | Use when the change touches those surfaces               |
-| PR CI gate                    | `quality-gates.yml`                                                                                                                                           | Actual every-PR enforcement                              |
-| Release gate                  | `release-gate.yml`                                                                                                                                            | Deploy-time enforcement                                  |
-| Nightly regression            | `./gradlew gateRegression`, `./gradlew gateFull`                                                                                                              | Broader or scheduled confidence, not the default PR gate |
+| Level                         | Command / source                                                                                                                                                  | Meaning                                                  |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Local baseline                | `pnpm verify:cleanup`, `:services:api:test`, `:services:api:openApiValidate`, `pnpm -r typecheck`, `pnpm -r test`                                                 | Minimum local confidence before claiming completion      |
+| Local boundary / drift checks | `:services:api:architectureTest`, `pnpm repo:workspace:boundaries`, `pnpm contract:sdk:drift`, `python3 tooling/scripts/governance/validate-schema-parity.py`     | Use when the change touches those surfaces               |
+| Local push gate (`main`)      | `.husky/pre-push` runs `pnpm verify:cleanup`, `pnpm verify:ops`, `pnpm verify:backend`, `pnpm verify:frontend`, `pnpm verify:scenario:smoke`, `pnpm verify:drift` | Required before any push to `main`                       |
+| Local push gate (non-`main`)  | `.husky/pre-push` lightweight path; optional `RUN_LIGHT_PREPUSH_ON_NON_MAIN=1` for cleanup+ops                                                                    | Fast iteration on `feature/*` and `staging`              |
+| Merge CI gate                 | `quality-gates.yml`                                                                                                                                               | Required merge-branch verification on `main` / `staging` |
+| Release gate                  | `release-gate.yml`                                                                                                                                                | Deploy-time enforcement                                  |
+| Nightly regression            | `./gradlew gateRegression`, `./gradlew gateFull`                                                                                                                  | Broader or scheduled confidence, not the default PR gate |
 
-Do not describe `./gradlew gateSmoke` as the singular pre-PR source of truth. It remains a useful local smoke gate,
+Do not describe `./gradlew gateSmoke` as the singular pre-merge source of truth. It remains a useful local smoke gate,
 but CI and release workflows are the governing enforcement surfaces.
 
 ## Backend Testing Rules

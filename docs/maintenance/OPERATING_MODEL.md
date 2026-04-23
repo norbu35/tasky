@@ -44,6 +44,18 @@ When a task spans multiple document families, read them in this order:
 3. Verify locally at the appropriate baseline before claiming completion.
 4. Record the evidence that matches the gate being used.
 
+## Branch workflow
+
+1. Build and validate changes on a feature branch.
+2. Merge to `staging` for shared integration and CI feedback.
+3. Promote `staging` to `main` only when the full local push gate is green.
+
+Operational rules:
+
+- Do not bypass git hooks with `--no-verify` when pushing to `staging` or `main`.
+- `.husky/pre-push` is branch-aware: full gate on pushes to `main`, lightweight path on non-`main` branches.
+- `quality-gates.yml` runs on pushes to `staging` and `main`; feature branches do not trigger it by default.
+
 ## Verification model
 
 ### Local baseline
@@ -66,9 +78,9 @@ python3 tooling/scripts/governance/validate-schema-parity.py
 
 ### CI and release gates
 
-- PR CI: `quality-gates.yml`
+- Merge CI: `quality-gates.yml` on pushes to `main` and `staging`
 - Release gate: `release-gate.yml`
-- Nightly extended regression: `nightly-regression` plus `./gradlew gateRegression`
+- Nightly extended regression: `nightly-regression` when manually dispatched plus `./gradlew gateRegression`
 - Full extended suite: `./gradlew gateFull`
 
 `gateSmoke` remains useful locally, but it is not the only verification surface.

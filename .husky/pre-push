@@ -3,32 +3,51 @@ set -euo pipefail
 
 echo "Running pre-push checks..."
 
-# Detect docs-only changes — skip heavy checks.
-# docs/openapi/** and docs/API.yaml are contract surfaces, not pure docs,
-# and are intentionally excluded from the docs-only fast path.
+updates="$(cat)"
+pushes_main=0
+if [ -n "$updates" ]; then
+  while read -r local_ref local_sha remote_ref remote_sha; do
+    if [ "$remote_ref" = "refs/heads/main" ]; then
+      pushes_main=1
+      break
+    fi
+  done <<< "$updates"
+fi
+
+if [ "$pushes_main" -eq 0 ]; then
+  echo "Non-main push detected — skipping local heavy gates."
+  echo "CI quality gates run on merges to 'staging' and 'main'."
+  echo "Set RUN_LIGHT_PREPUSH_ON_NON_MAIN=1 to run cleanup+ops on non-main pushes."
+  if [ "${RUN_LIGHT_PREPUSH_ON_NON_MAIN:-0}" = "1" ]; then
+    pnpm verify:cleanup
+    pnpm verify:ops
+  fi
+  echo "Pre-push checks passed."
+  exit 0
+fi
+
+echo "Push target includes 'main' — running full local gate."
+
+# Detect docs-only changes to avoid full test costs on main for doc edits.
+# docs/openapi/** and docs/API.yaml are contract surfaces, not pure docs.
 CHANGED_FILES=$(git diff --name-only @{push}.. 2>/dev/null || git diff --name-only HEAD~1)
 NON_DOC_FILES=$(echo "$CHANGED_FILES" | grep -v -E '\.(md|txt)$|^research/|^README' | grep -v -E '^docs/' || true)
 CONTRACT_FILES=$(echo "$CHANGED_FILES" | grep -E '^docs/(openapi/|API\.yaml)' || true)
 
 if [ -z "$NON_DOC_FILES" ] && [ -z "$CONTRACT_FILES" ]; then
-  echo "Docs-only change detected — running docs and ops checks."
+  echo "Docs-only change detected on main push — running docs and ops checks."
   pnpm repo:docs:check
   pnpm verify:ops
-  echo "All pre-push checks passed (docs-only fast path)."
+  echo "All pre-push checks passed (main docs-only fast path)."
   exit 0
 fi
 
 pnpm verify:cleanup
 pnpm verify:ops
 
-if [ "${SKIP_QUALITY_GATES:-0}" = "1" ]; then
-  echo "SKIP_QUALITY_GATES=1 — skipping quality gate."
-else
-  pnpm verify:backend
-  pnpm verify:frontend
-  pnpm verify:scenario:smoke
-fi
-
+pnpm verify:backend
+pnpm verify:frontend
+pnpm verify:scenario:smoke
 pnpm verify:drift
 
 echo "All pre-push checks passed."

@@ -45,6 +45,8 @@ const textExpectations = [
     {
         file: ".github/workflows/quality-gates.yml",
         needs: [
+            "push:",
+            "staging",
             "pnpm verify:cleanup",
             "pnpm verify:ops",
             "pnpm verify:backend",

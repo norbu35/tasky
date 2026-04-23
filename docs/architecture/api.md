@@ -614,11 +614,11 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 ### CI enforcement (actual wiring)
 
-| CI workflow          | What it runs                                                                 | When             |
-| -------------------- | ---------------------------------------------------------------------------- | ---------------- |
-| `quality-gates.yml`  | `:services:api:check` + `jacocoTestCoverageVerification` + `openApiValidate` | every PR         |
-| `release-gate.yml`   | migration safety, rollback readiness, performance smoke, E2E smoke           | deploy           |
-| `nightly-regression` | `gateRegression` + `openApiValidate`                                         | nightly schedule |
+| CI workflow          | What it runs                                                                 | When                                             |
+| -------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------ |
+| `quality-gates.yml`  | `:services:api:check` + `jacocoTestCoverageVerification` + `openApiValidate` | pushes to `main` / `staging`                     |
+| `release-gate.yml`   | migration safety, rollback readiness, performance smoke, E2E smoke           | deploy                                           |
+| `nightly-regression` | `gateRegression` + `openApiValidate`                                         | manual dispatch while nightly schedule is paused |
 
-`gateSmoke` is a local smoke gate, not the only PR gate. The PR gate runs the broader `check`, and release and
+`gateSmoke` is a local smoke gate, not the only merge gate. The merge gate runs the broader `check`, and release and
 nightly gates are governed by their respective workflows.

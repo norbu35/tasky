@@ -30,6 +30,9 @@ Use this file when the change touches operational surfaces rather than product b
 - Deployment workflows must use deterministic image tags and deterministic config refs.
 - Private staging remains a private VPS sandbox until a release-grade staging environment exists.
 - `docs/API.yaml` is generated output only; do not use it as independent authority for ops decisions.
+- Branch execution model is `feature/*` -> `staging` -> `main`.
+- Do not use `--no-verify` for pushes targeting `staging` or `main`.
+- Treat `.husky/pre-push` and `quality-gates.yml` as the canonical enforcement surfaces for merge flow.
 
 ## Verification
 

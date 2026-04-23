@@ -17,13 +17,13 @@ configuration rather than product behavior.
 
 Pick the smallest lane that matches the job:
 
-| Lane       | Use for                                                             | Primary commands                                                                                                                             |
-| ---------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `verify`   | CI-local verification, hook surfaces, PR gates, release gate wiring | `pnpm verify:cleanup`, `pnpm verify:ops`, `pnpm verify:backend`, `pnpm verify:frontend`, `pnpm verify:scenario:smoke`, `pnpm verify:drift`   |
-| `contract` | OpenAPI bundle, generated SDK, contract drift                       | `pnpm contract:openapi:bundle`, `pnpm contract:openapi:check`, `pnpm contract:sdk:generate`, `pnpm contract:sdk:drift`                       |
-| `repo`     | Docs governance, script-surface audit, workspace boundaries         | `pnpm repo:docs:check`, `pnpm repo:docs:claims`, `pnpm repo:docs:claims:triage`, `pnpm repo:tooling:check`, `pnpm repo:workspace:boundaries` |
-| `deploy`   | Private staging push/deploy/smoke and performance smoke             | `tooling/scripts/deploy/**`                                                                                                                  |
-| `manual`   | Human-only diagnostics not used by default automation               | `tooling/scripts/manual/**`                                                                                                                  |
+| Lane       | Use for                                                                | Primary commands                                                                                                                             |
+| ---------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `verify`   | CI-local verification, hook surfaces, merge gates, release gate wiring | `pnpm verify:cleanup`, `pnpm verify:ops`, `pnpm verify:backend`, `pnpm verify:frontend`, `pnpm verify:scenario:smoke`, `pnpm verify:drift`   |
+| `contract` | OpenAPI bundle, generated SDK, contract drift                          | `pnpm contract:openapi:bundle`, `pnpm contract:openapi:check`, `pnpm contract:sdk:generate`, `pnpm contract:sdk:drift`                       |
+| `repo`     | Docs governance, script-surface audit, workspace boundaries            | `pnpm repo:docs:check`, `pnpm repo:docs:claims`, `pnpm repo:docs:claims:triage`, `pnpm repo:tooling:check`, `pnpm repo:workspace:boundaries` |
+| `deploy`   | Private staging push/deploy/smoke and performance smoke                | `tooling/scripts/deploy/**`                                                                                                                  |
+| `manual`   | Human-only diagnostics not used by default automation                  | `tooling/scripts/manual/**`                                                                                                                  |
 
 ## Read Next
 
@@ -43,23 +43,27 @@ Pick the smallest lane that matches the job:
 - Generated outputs must be regenerated through their owning script, not hand-maintained as independent authority.
 - Deploy inputs must be deterministic: workflow refs, image tags, and config refs must resolve to one exact target.
 - Observability config must run as checked in. Do not rely on undocumented template expansion.
-- Compatibility aliases such as `gate:*`, `openapi:*`, `sdk:*`, `docs:check`, `tooling:check`, and `workspace:boundaries`
+- Compatibility aliases such as `openapi:*`, `sdk:*`, `docs:check`, `tooling:check`, and `workspace:boundaries`
   exist for transition only. Prefer the lane names above in new work.
+- Branch flow is `feature/*` -> `staging` -> `main`; keep verification wiring aligned with that route.
+- Do not bypass hooks with `--no-verify` for `staging`/`main` pushes.
 
 ## Pipeline Map
 
-| Surface                  | Purpose                                                     | Canonical entrypoint                       |
-| ------------------------ | ----------------------------------------------------------- | ------------------------------------------ |
-| PR structural gate       | Repo drift, docs, boundaries, migrations, schema checks     | `pnpm verify:cleanup`                      |
-| PR ops/config validation | Tooling surface, workflow wiring, compose config validation | `pnpm verify:ops`                          |
-| PR backend quality       | Backend compile, tests, coverage, OpenAPI validation        | `pnpm verify:backend`                      |
-| PR frontend quality      | Frontend lint and tests                                     | `pnpm verify:frontend`                     |
-| Main image build         | Build and publish API and web images                        | `.github/workflows/build-and-push.yml`     |
-| Staging deploy           | Promote a verified build to private staging                 | `.github/workflows/deploy-staging.yml`     |
-| Release gate             | Pre-production validation                                   | `.github/workflows/release-gate.yml`       |
-| Production deploy        | Manual promotion after release gate                         | `.github/workflows/deploy-production.yml`  |
-| Nightly regression       | Extended backend, web, and security validation              | `.github/workflows/nightly-regression.yml` |
-| Nightly mobile           | Extended Android and Maestro regression                     | `.github/workflows/nightly-mobile.yml`     |
+| Surface                      | Purpose                                                              | Canonical entrypoint                       |
+| ---------------------------- | -------------------------------------------------------------------- | ------------------------------------------ |
+| Local push gate (`main`)     | Full local enforcement before production branch updates              | `.husky/pre-push`                          |
+| Local push gate (non-`main`) | Lightweight local path for rapid iteration                           | `.husky/pre-push`                          |
+| Merge structural gate        | Repo drift, docs, boundaries, migrations, schema checks              | `pnpm verify:cleanup`                      |
+| Merge ops/config validation  | Tooling surface, workflow wiring, compose config validation          | `pnpm verify:ops`                          |
+| Merge backend quality        | Backend compile, tests, coverage, OpenAPI validation                 | `pnpm verify:backend`                      |
+| Merge frontend quality       | Frontend lint and tests                                              | `pnpm verify:frontend`                     |
+| Main image build             | Build and publish API and web images                                 | `.github/workflows/build-and-push.yml`     |
+| Staging deploy               | Promote a verified build to private staging                          | `.github/workflows/deploy-staging.yml`     |
+| Release gate                 | Pre-production validation                                            | `.github/workflows/release-gate.yml`       |
+| Production deploy            | Manual promotion after release gate                                  | `.github/workflows/deploy-production.yml`  |
+| Nightly regression           | Extended backend, web, and security validation (manual while paused) | `.github/workflows/nightly-regression.yml` |
+| Nightly mobile               | Extended Android and Maestro regression (manual while paused)        | `.github/workflows/nightly-mobile.yml`     |
 
 ## Directory Map
 
@@ -67,7 +71,7 @@ Pick the smallest lane that matches the job:
 | -------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------ |
 | `tooling/skills/`                | Repo-owned harness-agnostic agent workflows                    | adapters, `AGENTS.md`, direct agent use                |
 | `tooling/scripts/contracts/`     | OpenAPI and SDK contract automation                            | `pnpm contract:*`                                      |
-| `tooling/scripts/gates/`         | Verification entrypoints and wiring audits                     | `pnpm verify:*`, Gradle gates, PR CI                   |
+| `tooling/scripts/gates/`         | Verification entrypoints and wiring audits                     | `pnpm verify:*`, Gradle gates, merge CI                |
 | `tooling/scripts/governance/`    | Docs, migration, schema, workspace, security-ignore governance | `pnpm repo:*`, `pnpm verify:cleanup`, deploy workflows |
 | `tooling/scripts/deploy/`        | Private staging and performance/deploy helpers                 | staging runbook, release gate                          |
 | `tooling/scripts/observability/` | Runtime observability bootstrap helpers                        | `docker-compose.observability.yml`                     |
@@ -77,7 +81,7 @@ Pick the smallest lane that matches the job:
 
 | Surface                                                        | Function                                                | Called from                                                   |
 | -------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------- |
-| `tooling/scripts/gates/check-cleanup-gate.sh`                  | Structural repo gate                                    | `pnpm verify:cleanup`, PR structural gate                     |
+| `tooling/scripts/gates/check-cleanup-gate.sh`                  | Structural repo gate                                    | `pnpm verify:cleanup`, merge structural gate                  |
 | `tooling/scripts/gates/check-ops-config.mjs`                   | Workflow wiring and compose config validation           | `pnpm verify:ops`                                             |
 | `tooling/scripts/gates/check-tooling-surface.mjs`              | Enforces script classification and live callers         | `pnpm repo:tooling:check`                                     |
 | `tooling/scripts/governance/check-doc-governance.py`           | Documentation governance                                | `pnpm repo:docs:check`, `pnpm verify:cleanup`                 |
