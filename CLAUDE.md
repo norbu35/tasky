@@ -18,3 +18,5 @@ Requires JetBrains with the project open and the Serena plugin installed.
 
 Read `AGENTS.md` for the canonical rules; this file only covers Claude-specific setup.
 For doc-claim failures or architecture / maintenance doc work, use the repo-local skill `tooling/skills/doc-claims-remediation/SKILL.md`.
+For PRD-first routing and ripple review, use `tooling/skills/intake-to-prd/SKILL.md`.
+For design doc structure validation, use `tooling/skills/design-surface-drift/SKILL.md`.

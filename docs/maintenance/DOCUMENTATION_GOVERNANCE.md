@@ -96,11 +96,26 @@ Design component drift is checked by `tooling/scripts/governance/validate-design
 Implemented component entries in `docs/design/component-contract.yaml` must point at an exported component; future
 component entries and prop mismatches are reported as warnings until their implementation path is active.
 
+Design navigation and lifecycle structure is checked by `pnpm repo:design:check`, which runs three validators:
+
+- `tooling/skills/design-surface-drift/scripts/check_screen_graph.py` — node uniqueness, edge resolution, deep link and tab bar root validation
+- `tooling/skills/design-surface-drift/scripts/check_journeys.py` — cross-validates screens against screen-graph, lifecycle refs against domain-lifecycles
+- `tooling/skills/design-surface-drift/scripts/check_lifecycles.py` — entity/transition uniqueness, state self-consistency, phase enforcement
+
+These run as part of `pnpm repo:docs:check` and are blocking. See `tooling/skills/design-surface-drift/SKILL.md`.
+
 False positives and intentional historical references belong in
 `tooling/config/doc-references-allowlist.yaml`.
 
-Agent-facing remediation workflow lives in the repo-owned skill
-`tooling/skills/doc-claims-remediation/SKILL.md`. Harnesses without native skill support should read that file directly and may use `pnpm repo:docs:claims:triage`.
+Agent-facing remediation workflows live in repo-owned skills:
+
+- `tooling/skills/doc-claims-remediation/SKILL.md` — for validator failures and proactive audit.
+  Use `pnpm repo:docs:claims:triage` for grouped failure summary and `pnpm repo:docs:claims:audit` for proactive
+  discovery of load-bearing references that lack a claim block.
+- `tooling/skills/intake-to-prd/SKILL.md` — for PRD-first routing and ripple review.
+  Use `pnpm repo:prd:diff-ids` to extract changed REQ-P1/NFR IDs from a PRD git diff.
+- `tooling/skills/design-surface-drift/SKILL.md` — for design doc structure validation.
+- `tooling/skills/scenario-fidelity/SKILL.md` — for report-only weak-test triage (`pnpm verify:scenario:fidelity`).
 
 Allowlist rules:
 
@@ -118,3 +133,5 @@ Allowlist rules:
 - If content became future-only or historical, was it moved out of the active reading path?
 - If OpenAPI changed, were both `docs/openapi/**` and `docs/API.yaml` updated together?
 - If a doc names a code/config/schema surface, does it resolve under `validate-doc-claims.py` without a stale suppress entry?
+- If `docs/design/*.yaml` changed, does `pnpm repo:design:check` still pass?
+- If `docs/PRD.md` changed, were affected scenarios, architecture, maintenance, design, and contract surfaces reviewed (use `pnpm repo:prd:diff-ids`)?

@@ -41,4 +41,10 @@ pnpm verify:cleanup
 pnpm verify:ops
 pnpm verify:drift
 pnpm verify:backend
+pnpm repo:docs:check
+pnpm repo:design:check
+pnpm repo:docs:claims:triage
+pnpm repo:docs:claims:audit
+pnpm repo:prd:diff-ids
+pnpm verify:scenario:fidelity
 ```
