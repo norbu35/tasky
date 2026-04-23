@@ -218,11 +218,8 @@ public class BookingService {
                     incidentType,
                     recentIncidents == 0
                             ? "Customer cancelled within 4 hours. Warning issued."
-                            : "Customer cancelled within 4 hours. Ranking penalty and Instant Match disabled.",
+                            : "Customer cancelled within 4 hours. Ranking penalty applied.",
                     Instant.now());
-            if ("CUSTOMER_LATE_CANCEL_PENALTY".equals(incidentType)) {
-                userProfileService.revokeInstantMatch(userId, java.time.Duration.ofDays(30));
-            }
         }
         return result;
     }

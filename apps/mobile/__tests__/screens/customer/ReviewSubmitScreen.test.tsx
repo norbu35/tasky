@@ -180,6 +180,7 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
         location_lng: 106.91876,
         location_text: 'Behind State Dept Store',
         photo_keys: [],
+        pricing_mode: 'BUDGET',
         scheduled_at: new Date(2026, 3, 1, 10, 0).toISOString(),
       });
     });
@@ -255,6 +256,7 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
         location_lng: 106.91876,
         location_text: 'Behind State Dept Store',
         photo_keys: ['photo-key-1', 'photo-key-2'],
+        pricing_mode: 'BUDGET',
         scheduled_at: new Date(2026, 3, 1, 10, 0).toISOString(),
       });
     });
