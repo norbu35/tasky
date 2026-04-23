@@ -1090,6 +1090,9 @@
             schema:
               $ref: ../components/schemas/common.yaml#/Error
 /admin/payouts/pending:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_3
+  x-tasky-target-phase: phase_3
   get:
     tags:
       - Admin
@@ -1128,6 +1131,9 @@
             schema:
               $ref: ../components/schemas/common.yaml#/Error
 /admin/payouts/{id}/process:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_3
+  x-tasky-target-phase: phase_3
   post:
     tags:
       - Admin

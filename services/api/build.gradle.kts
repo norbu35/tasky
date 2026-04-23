@@ -425,10 +425,14 @@ val syncTestRegistry by tasks.registering(Exec::class) {
 }
 
 tasks.register<Exec>("gateSmoke") {
-    description = "Gate 1: all Critical scenarios covered + mutation floor. Blocks merge to main."
+    description = "Gate 1: all Critical scenarios covered plus optional diff-scoped mutation floor."
     group = "verification"
     dependsOn(tasks.test, "pitest", syncTestRegistry)
     workingDir(rootProject.projectDir)
+    val mutationDiffBase = (findProperty("mutationDiffBase") as String?) ?: System.getenv("MUTATION_DIFF_BASE")
+    if (!mutationDiffBase.isNullOrBlank()) {
+        environment("MUTATION_DIFF_BASE", mutationDiffBase)
+    }
     commandLine("${rootProject.projectDir}/tooling/scripts/gates/check-gates.sh", "smoke")
 }
 
