@@ -74,6 +74,19 @@ For the full package-to-domain mapping, see `api.md` §2.
   - **Topic fan-out**: subscribe devices server-side for launch-relevant targeting such as category and district/category combinations.
   - **Configuration**: `FIREBASE_SERVICE_ACCOUNT_JSON` env var; `tasky.push.provider=firebase` activates `FirebasePushProvider`.
   - `FirebasePushProvider` is the active production provider.
+
+```claim env-var
+name: FIREBASE_SERVICE_ACCOUNT_JSON
+```
+
+```claim config-key
+key: tasky.push.provider
+```
+
+```claim symbol-exists
+class: mn.tasky.notification.provider.FirebasePushProvider
+```
+
 - **Geospatial**:
   - **Engine**: PostGIS running in the Postgres container.
   - **Indexing**: GiST index on `tasks.location_point` is mandatory.
@@ -97,6 +110,10 @@ For the full package-to-domain mapping, see `api.md` §2.
 - Handler-level idempotency is enforced through `WorkflowIdempotencyGuard`.
 - Events carry correlation and actor context (`correlation_id`, `causation_id`, `command_id`, `workflow_id`, `actor_id`, `locale`, `platform`) so request context survives the async boundary.
 - The outbox is used for launch-critical side effects such as notifications, reminders, analytics emission, and recovery workflows.
+
+```claim symbol-exists
+class: mn.tasky.common.outbox.OutboxRelayService
+```
 
 ### 4.2 Internationalization Baseline
 

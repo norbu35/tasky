@@ -61,6 +61,19 @@ crediting. Broker failure does **not** roll back the domain transaction because 
 row is already persisted. Admin replay via `OutboxReplayController` resets `FAILED` → `PENDING`,
 and the relay picks up replayed events on the next cycle.
 
+```claim symbol-exists
+class: mn.tasky.common.outbox.DomainEventOutboxService
+method: publish
+```
+
+```claim symbol-exists
+class: mn.tasky.common.outbox.OutboxRelayService
+```
+
+```claim config-key
+key: tasky.automation.broker.enabled
+```
+
 ## Security and Crypto
 
 - JWT filter: `JwtAuthenticationFilter`
@@ -77,9 +90,19 @@ and the relay picks up replayed events on the next cycle.
 - `locale`
 - `platform`
 
+```claim symbol-exists
+class: mn.tasky.common.observability.RequestObservabilityFilter
+```
+
 ## Config Endpoints
 
 - `GET /api/v1/system/version`
+
+```claim endpoint
+operationId: getSystemVersion
+method: GET
+path: /api/v1/system/version
+```
 
 ## Security Path Rules (from `SecurityConfig`)
 

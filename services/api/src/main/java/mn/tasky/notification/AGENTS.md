@@ -9,6 +9,18 @@ Device token registration and push notification dispatch abstraction.
 | `POST`   | `/api/v1/notifications/devices`         | Register FCM registration token (IOS\|ANDROID\|WEB) |
 | `DELETE` | `/api/v1/notifications/devices/{token}` | Unregister token (call on logout)                   |
 
+```claim endpoint
+operationId: registerDevice
+method: POST
+path: /api/v1/notifications/devices
+```
+
+```claim endpoint
+operationId: unregisterDevice
+method: DELETE
+path: /api/v1/notifications/devices/{token}
+```
+
 ## Service Behavior
 
 - `registerDevice` upserts FCM registration token per user/platform in `device_tokens`.
@@ -26,6 +38,26 @@ Device token registration and push notification dispatch abstraction.
 | `LoggingPushProvider`  | local dev / default        | `tasky.push.provider=logging` (default) |
 
 **Current state**: `FirebasePushProvider` is active in production and topic subscription is performed during device registration. `ExpoPushProvider` is no longer part of the active runtime path.
+
+```claim symbol-exists
+class: mn.tasky.notification.provider.PushNotificationProvider
+```
+
+```claim symbol-exists
+class: mn.tasky.notification.provider.FirebasePushProvider
+```
+
+```claim symbol-exists
+class: mn.tasky.notification.provider.LoggingPushProvider
+```
+
+```claim config-key
+key: tasky.push.provider
+```
+
+```claim env-var
+name: FIREBASE_SERVICE_ACCOUNT_JSON
+```
 
 ## Topic Fan-out (Phase 1+)
 

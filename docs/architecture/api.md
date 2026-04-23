@@ -119,6 +119,14 @@ table: domain_outbox_events
 required_columns: [id, event_type, payload, status, attempts, created_at]
 ```
 
+```claim config-key
+key: tasky.automation.broker.enabled
+```
+
+```claim symbol-exists
+class: mn.tasky.admin.api.OutboxReplayController
+```
+
 **Handler dispatch:**
 
 1. `EventWorkerConsumer` (RabbitMQ listener) dispatches to the registered `EventHandler` by event type.
@@ -158,6 +166,22 @@ mn.tasky.<module>.provider.<ConcreteProvider>          ← @ConditionalOnPropert
 | `OAuthProvider`                        | `FacebookOAuthProvider`                       | `tasky.auth.oauth.provider`         |
 | `GeocodingProvider`                    | `DistrictGeocodingProvider`                   | `tasky.location.geocoding.provider` |
 | `StorageProvider` / `S3StorageService` | S3/MinIO                                      | —                                   |
+
+```claim config-key
+key: tasky.push.provider
+```
+
+```claim config-key
+key: tasky.notification.sms.provider
+```
+
+```claim config-key
+key: tasky.auth.oauth.provider
+```
+
+```claim config-key
+key: tasky.location.geocoding.provider
+```
 
 Deferred adapters for payment, escrow, payout, alternate auth, or LLM-assisted copy may exist in the codebase, but they are not part of the Phase 1 runtime contract and must stay disabled unless the PRD and downstream contracts are updated first.
 
@@ -217,6 +241,10 @@ consistent tracing context.
 - `JobContext` → derived from WorkflowContext. Exists as a type but is **not yet used at runtime**
   (no job layer currently).
 - `ContextPropagator` bridges between contexts and MDC; all canonical keys are defined in `LogField`.
+
+```claim symbol-exists
+class: mn.tasky.common.observability.RequestObservabilityFilter
+```
 
 **Propagation chain (wired):**
 `RequestContext` (ingress) → MDC → `ContextPropagator.captureMdc()` (outbox write) → envelope fields →
@@ -476,6 +504,29 @@ Standardized error response:
   - Exact task address remains hidden until confirmed booking and is then visible only to the task owner, confirmed tasker, and authorized admin surfaces.
   - Raw direct contact details remain hidden unless an approved policy surface intentionally unlocks them. Phase 1 normal operation does not require direct raw contact exchange.
   - Liability disclaimer acceptance is required where booking confirmation policy says so and is enforced both at DTO validation and service level.
+
+```claim symbol-exists
+class: mn.tasky.common.security.JwtTokenService
+```
+
+```claim symbol-exists
+class: mn.tasky.common.security.TokenBlacklistService
+```
+
+```claim endpoint
+operationId: logout
+method: POST
+path: /api/v1/auth/logout
+```
+
+```claim symbol-exists
+class: mn.tasky.common.config.SecurityConfig
+```
+
+```claim symbol-exists
+class: mn.tasky.common.security.JwtAuthenticationFilter
+```
+
 - **Bean Validation**: `@Valid` + JSR-380 annotations enforce request-shape constraints on controller DTOs. Security-sensitive invariants also receive service-layer checks.
 - **Rate limiting**:
   - General API traffic uses sliding-window limits backed by `rate_limit_counters`.
@@ -614,11 +665,29 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 ### CI enforcement (actual wiring)
 
-| CI workflow          | What it runs                                                                                          | When                                             |
-| -------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| `quality-gates.yml`  | `pnpm repo:docs:check` + `:services:api:check` + `jacocoTestCoverageVerification` + `openApiValidate` | pushes to `main` / `staging`                     |
-| `release-gate.yml`   | migration safety, rollback readiness, performance smoke, E2E smoke                                    | deploy                                           |
-| `nightly-regression` | `gateRegression` + `openApiValidate`                                                                  | manual dispatch while nightly schedule is paused |
+| CI workflow              | What it runs                                                                                          | When                                             |
+| ------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `quality-gates.yml`      | `pnpm repo:docs:check` + `:services:api:check` + `jacocoTestCoverageVerification` + `openApiValidate` | pushes to `main` / `staging`                     |
+| `release-gate.yml`       | migration safety, rollback readiness, performance smoke, E2E smoke                                    | deploy                                           |
+| `nightly-regression.yml` | `gateRegression` + `openApiValidate`                                                                  | manual dispatch while nightly schedule is paused |
+
+```claim workflow
+filename: quality-gates.yml
+name: quality-gates
+triggers: [push, workflow_dispatch]
+```
+
+```claim workflow
+filename: release-gate.yml
+name: release-gate
+triggers: [workflow_dispatch, workflow_call]
+```
+
+```claim workflow
+filename: nightly-regression.yml
+name: nightly-regression
+triggers: [workflow_dispatch]
+```
 
 `gateSmoke` is a local smoke gate, not the only merge gate. The merge gate runs the broader `check`, and release and
 nightly gates are governed by their respective workflows.
