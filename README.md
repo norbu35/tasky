@@ -33,6 +33,7 @@ compatibility artifact only; the active contract source lives in `docs/openapi/*
 | `docs/architecture/`     | derived implementation design surfaces        |
 | `docs/design/`           | derived UX and copy detail                    |
 | `tooling/config`         | shared static-analysis and security config    |
+| `tooling/skills`         | repo-owned harness-agnostic agent workflows   |
 | `tooling/scripts`        | repo-level verification and automation        |
 | `archive/`               | historical material only                      |
 
@@ -76,6 +77,7 @@ Additional boundary and drift checks:
 
 ```bash
 ./gradlew --no-daemon :services:api:architectureTest
+pnpm repo:docs:claims:triage
 pnpm repo:workspace:boundaries
 pnpm contract:sdk:drift
 python3 tooling/scripts/governance/validate-schema-parity.py

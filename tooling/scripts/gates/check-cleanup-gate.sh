@@ -12,7 +12,6 @@ pnpm repo:workspace:boundaries
 pnpm --filter @tasky/mobile structure:check
 python3 tooling/scripts/governance/validate-migrations.py
 python3 tooling/scripts/governance/validate-schema-parity.py
-bash tooling/scripts/governance/scan-backend-doc-drift.sh
 bash tooling/scripts/governance/check-trivyignore-expiry.sh
 bash tooling/scripts/governance/check-gitleaks-secret-scan.sh
 

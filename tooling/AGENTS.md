@@ -6,6 +6,7 @@ configuration rather than product behavior.
 ## Applies To
 
 - `tooling/config/**`
+- `tooling/skills/**`
 - `tooling/scripts/**`
 - `tooling/observability/**`
 - `.github/workflows/**` when changing how tooling is invoked
@@ -16,13 +17,13 @@ configuration rather than product behavior.
 
 Pick the smallest lane that matches the job:
 
-| Lane       | Use for                                                             | Primary commands                                                                                                                           |
-| ---------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `verify`   | CI-local verification, hook surfaces, PR gates, release gate wiring | `pnpm verify:cleanup`, `pnpm verify:ops`, `pnpm verify:backend`, `pnpm verify:frontend`, `pnpm verify:scenario:smoke`, `pnpm verify:drift` |
-| `contract` | OpenAPI bundle, generated SDK, contract drift                       | `pnpm contract:openapi:bundle`, `pnpm contract:openapi:check`, `pnpm contract:sdk:generate`, `pnpm contract:sdk:drift`                     |
-| `repo`     | Docs governance, script-surface audit, workspace boundaries         | `pnpm repo:docs:check`, `pnpm repo:tooling:check`, `pnpm repo:workspace:boundaries`                                                        |
-| `deploy`   | Private staging push/deploy/smoke and performance smoke             | `tooling/scripts/deploy/**`                                                                                                                |
-| `manual`   | Human-only diagnostics not used by default automation               | `tooling/scripts/manual/**`                                                                                                                |
+| Lane       | Use for                                                             | Primary commands                                                                                                                             |
+| ---------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `verify`   | CI-local verification, hook surfaces, PR gates, release gate wiring | `pnpm verify:cleanup`, `pnpm verify:ops`, `pnpm verify:backend`, `pnpm verify:frontend`, `pnpm verify:scenario:smoke`, `pnpm verify:drift`   |
+| `contract` | OpenAPI bundle, generated SDK, contract drift                       | `pnpm contract:openapi:bundle`, `pnpm contract:openapi:check`, `pnpm contract:sdk:generate`, `pnpm contract:sdk:drift`                       |
+| `repo`     | Docs governance, script-surface audit, workspace boundaries         | `pnpm repo:docs:check`, `pnpm repo:docs:claims`, `pnpm repo:docs:claims:triage`, `pnpm repo:tooling:check`, `pnpm repo:workspace:boundaries` |
+| `deploy`   | Private staging push/deploy/smoke and performance smoke             | `tooling/scripts/deploy/**`                                                                                                                  |
+| `manual`   | Human-only diagnostics not used by default automation               | `tooling/scripts/manual/**`                                                                                                                  |
 
 ## Read Next
 
@@ -64,6 +65,7 @@ Pick the smallest lane that matches the job:
 
 | Path                             | Role                                                           | Default caller                                         |
 | -------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------ |
+| `tooling/skills/`                | Repo-owned harness-agnostic agent workflows                    | adapters, `AGENTS.md`, direct agent use                |
 | `tooling/scripts/contracts/`     | OpenAPI and SDK contract automation                            | `pnpm contract:*`                                      |
 | `tooling/scripts/gates/`         | Verification entrypoints and wiring audits                     | `pnpm verify:*`, Gradle gates, PR CI                   |
 | `tooling/scripts/governance/`    | Docs, migration, schema, workspace, security-ignore governance | `pnpm repo:*`, `pnpm verify:cleanup`, deploy workflows |
@@ -84,8 +86,8 @@ Pick the smallest lane that matches the job:
 | `tooling/scripts/governance/validate-workspace-boundaries.mjs` | Workspace boundary enforcement                          | `pnpm repo:workspace:boundaries`, `pnpm verify:cleanup`       |
 | `tooling/scripts/governance/validate-migrations.py`            | Flyway migration naming and immutability checks         | `pnpm verify:cleanup`, staging and release workflows          |
 | `tooling/scripts/governance/validate-schema-parity.py`         | Schema inventory drift check                            | `pnpm verify:cleanup`                                         |
+| `tooling/scripts/governance/validate-doc-claims.py`            | Validate architecture and AGENTS surface refs stay live | `pnpm repo:docs:check`, `pnpm verify:cleanup`                 |
 | `tooling/scripts/governance/validate-doc-references.py`        | Verify pnpm/file refs in AGENTS.md and adapters resolve | `pnpm repo:docs:check`, `pnpm verify:cleanup`                 |
-| `tooling/scripts/governance/scan-backend-doc-drift.sh`         | Backend architecture / module doc drift scan            | `pnpm verify:cleanup`                                         |
 | `tooling/scripts/governance/check-trivyignore-expiry.sh`       | Expiring security-ignore audit                          | `pnpm verify:cleanup`                                         |
 | `tooling/scripts/gates/check-gates.sh`                         | Scenario gate evaluator for smoke/regression/full       | `services/api/build.gradle.kts`                               |
 | `tooling/scripts/deploy/performance-smoke.sh`                  | Latency smoke against live or locally booted backend    | release gate                                                  |
@@ -121,6 +123,8 @@ pnpm verify:scenario:smoke
 pnpm verify:drift
 pnpm repo:tooling:check
 pnpm repo:docs:check
+pnpm repo:docs:claims
+pnpm repo:docs:claims:triage
 pnpm contract:openapi:check
 pnpm contract:sdk:drift
 docker compose -f docker-compose.observability.yml config

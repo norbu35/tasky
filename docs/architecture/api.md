@@ -109,6 +109,16 @@ path with at-least-once delivery guarantees.
 relay recovery for failures. Handler-level idempotency via `WorkflowIdempotencyGuard` (`kernel.idempotency`)
 handles any duplicate deliveries that arise from the overlap between the two paths.
 
+```claim symbol-exists
+class: mn.tasky.common.outbox.DomainEventOutboxService
+method: publish
+```
+
+```claim db-table
+table: domain_outbox_events
+required_columns: [id, event_type, payload, status, attempts, created_at]
+```
+
 **Handler dispatch:**
 
 1. `EventWorkerConsumer` (RabbitMQ listener) dispatches to the registered `EventHandler` by event type.
@@ -144,7 +154,7 @@ mn.tasky.<module>.provider.<ConcreteProvider>          ← @ConditionalOnPropert
 | Provider interface                     | Implementations                               | Activation property                 |
 | -------------------------------------- | --------------------------------------------- | ----------------------------------- |
 | `PushNotificationProvider`             | `FirebasePushProvider`, `LoggingPushProvider` | `tasky.push.provider`               |
-| `SmsNotificationProvider`              | `LoggingSmsNotificationProvider`              | `tasky.notifications.sms.provider`  |
+| `SmsNotificationProvider`              | `LoggingSmsNotificationProvider`              | `tasky.notification.sms.provider`   |
 | `OAuthProvider`                        | `FacebookOAuthProvider`                       | `tasky.auth.oauth.provider`         |
 | `GeocodingProvider`                    | `DistrictGeocodingProvider`                   | `tasky.location.geocoding.provider` |
 | `StorageProvider` / `S3StorageService` | S3/MinIO                                      | —                                   |

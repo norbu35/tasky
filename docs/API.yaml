@@ -1,50 +1,32 @@
 # GENERATED FILE. Do not edit directly.
-# Edit docs/openapi/** and refresh the bundle.
+# Edit docs/openapi/** and run `pnpm openapi:bundle`.
 openapi: 3.0.3
 info:
   title: Tasky API
-  description: "REST API for Tasky — Mongolia's most trusted domestic service marketplace.
-
+  description: |
+    REST API for Tasky — Mongolia's most trusted domestic service marketplace.
 
     ## Authentication
-
     All endpoints (unless noted) require a Bearer JWT in the `Authorization` header.
-
     Current launch auth uses Facebook OAuth (`/auth/facebook`).
 
-
     ## Pagination
-
     All list endpoints use **cursor-based pagination**.
-
     Pass `cursor` (opaque string) and `limit` (default 20, max 100) as query parameters.
-
     Responses wrap results in `{ data: [], cursor: { next, has_more } }`.
 
-
     ## Errors
-
     All errors return a standard JSON body: `{ code, message, trace_id }`.
 
-
     ## Currency
-
     All monetary amounts are integers in MNT (Mongolian Tugrik).
 
-
     ## Idempotency
-
     Critical state-changing endpoints require an `Idempotency-Key` header.
 
-
     ## Contract Scope
-
     This active contract describes the Phase 1 launch baseline only.
-
-    Deferred-phase API design is tracked in `docs/ROLLOUT_PHASES.md` and archived
-    references, not in this live contract.
-
-    "
+    Deferred-phase API design is tracked in `docs/ROLLOUT_PHASES.md` and archived references, not in this live contract.
   version: 1.4.0
   contact:
     name: Tasky Engineering
@@ -90,8 +72,7 @@ components:
     CursorParam:
       name: cursor
       in: query
-      description: Opaque cursor for pagination. Pass the `next` value from a previous
-        response.
+      description: Opaque cursor for pagination. Pass the `next` value from a previous response.
       schema:
         type: string
     LimitParam:
@@ -117,46 +98,7 @@ components:
       schema:
         type: string
         format: uuid
-      description: Unique key to ensure idempotent handling of critical state-changing
-        requests.
-  responses:
-    BadRequest:
-      description: Invalid request parameters or body.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid authentication token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Forbidden:
-      description: 'Insufficient permissions or policy gate active for this action.
-        Common codes: `FORBIDDEN`, `VERIFICATION_REQUIRED`, `ADDRESS_LOCKED`, `USER_BANNED`.'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Requested resource not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Conflict:
-      description: Conflict with current resource state.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    TooManyRequests:
-      description: Rate limit exceeded.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+      description: Unique key to ensure idempotent handling of critical state-changing requests.
   schemas:
     Error:
       type: object
@@ -299,8 +241,7 @@ components:
           example: 12
         is_pro:
           type: boolean
-          description: Auto-assigned when completed_tasks > 15 AND rating_avg > 4.5
-            in Phase 0-1; threshold may change in later phases.
+          description: Auto-assigned when completed_tasks > 15 AND rating_avg > 4.5 in Phase 0-1; threshold may change in later phases.
         created_at:
           type: string
           format: date-time
@@ -308,8 +249,7 @@ components:
           type: string
           format: date-time
           nullable: true
-          description: Last time the user made an authenticated API request. Updated
-            at most every 2 minutes.
+          description: Last time the user made an authenticated API request. Updated at most every 2 minutes.
     StrikePolicy:
       type: object
       required:
@@ -590,28 +530,23 @@ components:
             rating_avg:
               type: number
               format: double
-              description: Aggregate rating. Current live contract returns this value,
-                but Phase 1 public display is PRD-gated until the minimum review-count
-                threshold is met.
+              description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
         description:
           type: string
         budget:
           type: integer
           nullable: true
-          description: Budget in MNT when pricing_mode is BUDGET. Null for QUOTE mode
-            tasks.
+          description: Budget in MNT when pricing_mode is BUDGET. Null for QUOTE mode tasks.
           example: 50000
         pricing_mode:
           type: string
           enum:
             - BUDGET
             - QUOTE
-          description: BUDGET = customer sets a budget, taskers accept or counter-offer.
-            QUOTE = taskers submit price quotes.
+          description: BUDGET = customer sets a budget, taskers accept or counter-offer. QUOTE = taskers submit price quotes.
         approximate_location:
           type: string
-          description: Fuzzed location (district/khoroo level). Exact address hidden
-            until booking.
+          description: Fuzzed location (district/khoroo level). Exact address hidden until booking.
           example: Хан-Уул дүүрэг, 15-р хороо
         approximate_lat:
           type: number
@@ -671,16 +606,14 @@ components:
         budget:
           type: integer
           nullable: true
-          description: Budget in MNT when pricing_mode is BUDGET. Null for QUOTE mode
-            tasks.
+          description: Budget in MNT when pricing_mode is BUDGET. Null for QUOTE mode tasks.
           example: 50000
         pricing_mode:
           type: string
           enum:
             - BUDGET
             - QUOTE
-          description: BUDGET = customer sets a budget, taskers accept or counter-offer.
-            QUOTE = taskers submit price quotes.
+          description: BUDGET = customer sets a budget, taskers accept or counter-offer. QUOTE = taskers submit price quotes.
         location_lat:
           type: number
           format: double
@@ -776,15 +709,13 @@ components:
           type: integer
           minimum: 5000
           nullable: true
-          description: Budget in MNT. Required when pricing_mode is BUDGET. Ignored
-            for QUOTE mode.
+          description: Budget in MNT. Required when pricing_mode is BUDGET. Ignored for QUOTE mode.
         pricing_mode:
           type: string
           enum:
             - BUDGET
             - QUOTE
-          description: BUDGET = customer has a budget. QUOTE = customer wants taskers
-            to quote a price.
+          description: BUDGET = customer has a budget. QUOTE = customer wants taskers to quote a price.
         location_lat:
           type: number
           format: double
@@ -803,16 +734,14 @@ components:
         intake_answers:
           type: object
           additionalProperties: true
-          description: Structured responses generated from active category intake
-            schema.
+          description: Structured responses generated from active category intake schema.
         intake_schema_version:
           type: integer
           minimum: 1
         scope_summary:
           type: string
           nullable: true
-          description: Optional editable deterministic summary shown before final
-            submit.
+          description: Optional editable deterministic summary shown before final submit.
         photo_keys:
           type: array
           items:
@@ -930,9 +859,7 @@ components:
             rating_avg:
               type: number
               format: double
-              description: Aggregate rating. Current live contract returns this value,
-                but Phase 1 public display is PRD-gated until the minimum review-count
-                threshold is met.
+              description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
             completed_tasks:
               type: integer
             is_pro:
@@ -943,8 +870,7 @@ components:
         quote_price:
           type: integer
           nullable: true
-          description: Tasker's price. For BUDGET tasks, this is a counter-offer (optional).
-            For QUOTE tasks, this is the quote (required).
+          description: Tasker's price. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the quote (required).
         status:
           type: string
           enum:
@@ -1384,8 +1310,7 @@ components:
       properties:
         feature_name:
           type: string
-          description: Feature toggle key. Active launch docs do not treat toggle
-            presence as rollout scope.
+          description: Feature toggle key. Active launch docs do not treat toggle presence as rollout scope.
         is_enabled:
           type: boolean
         updated_by:
@@ -1603,14 +1528,50 @@ components:
           type: boolean
         is_active:
           type: boolean
+  responses:
+    BadRequest:
+      description: Invalid request parameters or body.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid authentication token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: 'Insufficient permissions or policy gate active for this action. Common codes: `FORBIDDEN`, `VERIFICATION_REQUIRED`, `ADDRESS_LOCKED`, `USER_BANNED`.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Requested resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Conflict:
+      description: Conflict with current resource state.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequests:
+      description: Rate limit exceeded.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
 paths:
   /system/version:
     get:
       tags:
         - System
       summary: API version and status
-      description: Returns application name, API version, and a localized status string.
-        No authentication required.
+      description: Returns application name, API version, and a localized status string. No authentication required.
       operationId: getSystemVersion
       security: []
       responses:
@@ -1638,11 +1599,9 @@ paths:
       tags:
         - Auth
       summary: Authenticate with Facebook OAuth
-      description: 'Validates a Facebook user access token and returns JWT tokens.
-
+      description: |
+        Validates a Facebook user access token and returns JWT tokens.
         This is the launch authentication endpoint for the active Phase 1 contract.
-
-        '
       operationId: loginWithFacebook
       security: []
       requestBody:
@@ -1703,13 +1662,10 @@ paths:
       tags:
         - Auth
       summary: Facebook OAuth circuit breaker status
-      description: 'Returns the current state of the Facebook OAuth circuit breaker.
-
+      description: |
+        Returns the current state of the Facebook OAuth circuit breaker.
         Used by the web auth page to surface outage banners when the Facebook
-
         OAuth provider is degraded or unavailable.
-
-        '
       operationId: getFacebookStatus
       security: []
       responses:
@@ -1736,10 +1692,8 @@ paths:
       tags:
         - Auth
       summary: Logout and revoke access token
-      description: 'Revokes the current access token. The token cannot be used after
-        this call.
-
-        '
+      description: |
+        Revokes the current access token. The token cannot be used after this call.
       operationId: logout
       responses:
         '204':
@@ -1751,11 +1705,9 @@ paths:
       tags:
         - Auth
       summary: Dev login (development only)
-      description: 'Authenticate with a phone number and role without SMS OTP.
-
+      description: |
+        Authenticate with a phone number and role without SMS OTP.
         Only available when `tasky.dev-auth.enabled=true`. Never enabled in production.
-
-        '
       operationId: devLogin
       security: []
       requestBody:
@@ -1896,10 +1848,8 @@ paths:
       tags:
         - Users
       summary: Request account deletion
-      description: 'Marks the account for deletion. Identity data is anonymized after
-        90-day retention period.
-
-        '
+      description: |
+        Marks the account for deletion. Identity data is anonymized after 90-day retention period.
       operationId: requestAccountDeletion
       security:
         - BearerAuth: []
@@ -1915,8 +1865,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Account deletion requested. Data will be removed after
-                      90-day retention period.
+                    example: Account deletion requested. Data will be removed after 90-day retention period.
         '401':
           $ref: '#/components/responses/Unauthorized'
   /users/me/role/tasker:
@@ -1924,11 +1873,9 @@ paths:
       tags:
         - Users
       summary: Activate tasker role
-      description: 'Requests role transition from CUSTOMER to TASKER.
-
+      description: |
+        Requests role transition from CUSTOMER to TASKER.
         Verification status remains pending until admin approval.
-
-        '
       operationId: activateTaskerRole
       security:
         - BearerAuth: []
@@ -1952,15 +1899,10 @@ paths:
       tags:
         - Users
       summary: Get presigned URL for avatar upload
-      description: 'Returns a presigned URL to upload an avatar image directly to
-        S3/MinIO.
-
-        URLs are constrained to image/jpeg, image/png, and image/webp with a 5MB max
-        size.
-
+      description: |
+        Returns a presigned URL to upload an avatar image directly to S3/MinIO.
+        URLs are constrained to image/jpeg, image/png, and image/webp with a 5MB max size.
         After uploading, use the returned `storage_key` to update the profile.
-
-        '
       operationId: getAvatarUploadUrl
       security:
         - BearerAuth: []
@@ -2034,10 +1976,8 @@ paths:
       tags:
         - Verification
       summary: Get presigned URL for verification image upload
-      description: 'Returns a presigned URL to upload government ID images used in
-        verification submission.
-
-        '
+      description: |
+        Returns a presigned URL to upload government ID images used in verification submission.
       operationId: getVerificationUploadUrl
       security:
         - BearerAuth: []
@@ -2052,8 +1992,7 @@ paths:
               properties:
                 content_type:
                   type: string
-                  description: MIME type of the verification image (e.g. image/jpeg,
-                    image/png).
+                  description: MIME type of the verification image (e.g. image/jpeg, image/png).
                   example: image/jpeg
       responses:
         '200':
@@ -2071,11 +2010,9 @@ paths:
       tags:
         - Verification
       summary: Submit ID verification
-      description: 'Tasker submits government ID photos for manual verification.
-
+      description: |
+        Tasker submits government ID photos for manual verification.
         The storage keys must reference previously uploaded files via presigned URL.
-
-        '
       operationId: submitVerification
       security:
         - BearerAuth: []
@@ -2099,8 +2036,7 @@ paths:
                   description: Storage key of the uploaded ID card back image.
                 consent_policy_version:
                   type: string
-                  description: Policy version accepted by the user before identity
-                    upload.
+                  description: Policy version accepted by the user before identity upload.
                 consent_accepted:
                   type: boolean
                   enum:
@@ -2176,13 +2112,9 @@ paths:
       tags:
         - Tasks
       summary: Create task draft
-      description: 'Creates a draft bound to the currently active category intake
-        schema version.
-
-        Submit-time validation must use this bound version even if a newer schema
-        is activated later.
-
-        '
+      description: |
+        Creates a draft bound to the currently active category intake schema version.
+        Submit-time validation must use this bound version even if a newer schema is activated later.
       operationId: createTaskDraft
       security:
         - BearerAuth: []
@@ -2292,12 +2224,9 @@ paths:
       tags:
         - Tasks
       summary: Get presigned URL for pre-create task photo upload
-      description: 'Returns a presigned URL to upload a task photo directly to S3/MinIO
-        before task creation.
-
+      description: |
+        Returns a presigned URL to upload a task photo directly to S3/MinIO before task creation.
         Upload keys can be submitted in `photo_keys` during `POST /tasks`.
-
-        '
       operationId: getTaskPreCreatePhotoUploadUrl
       security:
         - BearerAuth: []
@@ -2329,12 +2258,9 @@ paths:
       tags:
         - Tasks
       summary: List open tasks
-      description: 'Returns a paginated list of OPEN tasks. Supports filtering by
-        category and
-
+      description: |
+        Returns a paginated list of OPEN tasks. Supports filtering by category and
         geospatial radius search. Location data is fuzzed for privacy.
-
-        '
       operationId: listTasks
       security:
         - BearerAuth: []
@@ -2392,16 +2318,11 @@ paths:
       tags:
         - Tasks
       summary: Create a new task
-      description: 'Creates a new task in OPEN status using schema-driven intake payload.
-
-        Deterministic scope summary generation runs before final submit; if generation
-        fails,
-
+      description: |
+        Creates a new task in OPEN status using schema-driven intake payload.
+        Deterministic scope summary generation runs before final submit; if generation fails,
         server falls back to canonical key-value summary and still returns success.
-
         Only authenticated customers can create tasks.
-
-        '
       operationId: createTask
       security:
         - BearerAuth: []
@@ -2429,14 +2350,10 @@ paths:
       tags:
         - Tasks
       summary: List my task ads/history
-      description: "Returns authenticated user's task list with full task details.
-
+      description: |
+        Returns authenticated user's task list with full task details.
         - `role=customer`: tasks created by the authenticated user.
-
-        - `role=tasker`: tasks where the authenticated user has booking history as
-        a tasker.
-
-        "
+        - `role=tasker`: tasks where the authenticated user has booking history as a tasker.
       operationId: listMyTasks
       security:
         - BearerAuth: []
@@ -2489,14 +2406,10 @@ paths:
       tags:
         - Tasks
       summary: Recent distinct task locations
-      description: "Returns up to 3 of the authenticated customer's most recent distinct
-        task
-
+      description: |
+        Returns up to 3 of the authenticated customer's most recent distinct task
         locations, deduplicated by proximity (~200 m). Used to populate location
-
         presets in the task creation wizard.
-
-        "
       operationId: listMyRecentLocations
       security:
         - BearerAuth: []
@@ -2522,12 +2435,9 @@ paths:
       tags:
         - Tasks
       summary: Get task details
-      description: 'Returns full task details. Exact location is only visible to the
-        task owner
-
+      description: |
+        Returns full task details. Exact location is only visible to the task owner
         and the booked tasker. Other users see approximate location only.
-
-        '
       operationId: getTask
       security:
         - BearerAuth: []
@@ -2542,15 +2452,10 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/Task'
                   - $ref: '#/components/schemas/PublicTask'
-                description: 'Returns role-scoped task details.
-
-                  - Owners and booked taskers receive full `Task` (exact location
-                  fields populated).
-
-                  - Other authorized users receive redacted `PublicTask` (approximate
-                  location only).
-
-                  '
+                description: |
+                  Returns role-scoped task details.
+                  - Owners and booked taskers receive full `Task` (exact location fields populated).
+                  - Other authorized users receive redacted `PublicTask` (approximate location only).
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -2559,10 +2464,8 @@ paths:
       tags:
         - Tasks
       summary: Update a task
-      description: 'Updates a task. Only the task owner can update, and only while
-        the task is in OPEN status.
-
-        '
+      description: |
+        Updates a task. Only the task owner can update, and only while the task is in OPEN status.
       operationId: updateTask
       security:
         - BearerAuth: []
@@ -2600,11 +2503,9 @@ paths:
       tags:
         - Tasks
       summary: Cancel a task
-      description: 'Cancels an OPEN task. Only the task owner can cancel.
-
+      description: |
+        Cancels an OPEN task. Only the task owner can cancel.
         If the task has an active booking, use the booking cancellation endpoint instead.
-
-        '
       operationId: cancelTask
       security:
         - BearerAuth: []
@@ -2634,11 +2535,9 @@ paths:
       tags:
         - Tasks
       summary: Get presigned URL for task photo upload
-      description: 'Returns a presigned URL to upload a task photo directly to S3/MinIO.
-
+      description: |
+        Returns a presigned URL to upload a task photo directly to S3/MinIO.
         Maximum 3 photos per task.
-
-        '
       operationId: getTaskPhotoUploadUrl
       security:
         - BearerAuth: []
@@ -2676,13 +2575,10 @@ paths:
       tags:
         - Applications
       summary: Apply to a task
-      description: 'Tasker applies to an OPEN task. Only verified taskers can apply.
-
+      description: |
+        Tasker applies to an OPEN task. Only verified taskers can apply.
         The current live contract captures a short application note and optional quote_price.
-
         Phase 1 launch UX does not expose open-ended pre-booking chat.
-
-        '
       operationId: applyToTask
       security:
         - BearerAuth: []
@@ -2707,9 +2603,7 @@ paths:
                   nullable: true
                   minimum: 5000
                   maximum: 50000000
-                  description: Tasker's price response. For BUDGET tasks, this is
-                    a counter-offer (optional). For QUOTE tasks, this is the required
-                    quote.
+                  description: Tasker's price response. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the required quote.
       responses:
         '201':
           description: Application submitted.
@@ -2746,11 +2640,9 @@ paths:
       tags:
         - Applications
       summary: List applications for a task
-      description: 'Returns paginated list of applications for a task.
-
+      description: |
+        Returns paginated list of applications for a task.
         Only the task owner can view all applications.
-
-        '
       operationId: listTaskApplications
       security:
         - BearerAuth: []
@@ -2786,21 +2678,13 @@ paths:
       tags:
         - Applications
       summary: Accept a tasker's application
-      description: "Customer accepts a tasker's application. This creates a pending
-        booking intent and marks the
-
+      description: |
+        Customer accepts a tasker's application. This creates a pending booking intent and marks the
         application as `SELECTED`.
-
         Requires `liability_disclaimer_accepted=true`.
-
-        The selected tasker then has the default 4-hour response window to confirm
-        or decline.
-
+        The selected tasker then has the default 4-hour response window to confirm or decline.
         Other applications remain available until a booking is confirmed.
-
         Requires Idempotency-Key header.
-
-        "
       operationId: acceptApplication
       security:
         - BearerAuth: []
@@ -2841,8 +2725,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Application already processed, selection already pending, or
-            task is not OPEN.
+          description: Application already processed, selection already pending, or task is not OPEN.
           content:
             application/json:
               schema:
@@ -2858,12 +2741,9 @@ paths:
       tags:
         - Tasks
       summary: Select an applicant (customer action)
-      description: "Customer selects a tasker's application, starting the 4-hour
-        acceptance window.
-
+      description: |
+        Customer selects a tasker's application, starting the 4-hour acceptance window.
         The tasker receives a push notification to confirm.
-
-        "
       operationId: selectApplication
       security:
         - BearerAuth: []
@@ -2899,11 +2779,9 @@ paths:
       tags:
         - Tasks
       summary: Confirm acceptance (tasker action)
-      description: 'Tasker confirms their selection within the 4-hour window.
-
+      description: |
+        Tasker confirms their selection within the 4-hour window.
         Creates a booking and rejects other pending applications.
-
-        '
       operationId: confirmAcceptance
       security:
         - BearerAuth: []
@@ -2946,11 +2824,9 @@ paths:
       tags:
         - Tasks
       summary: Withdraw an application (tasker action)
-      description: 'Tasker withdraws their application. If the application was SELECTED,
-
+      description: |
+        Tasker withdraws their application. If the application was SELECTED,
         the task is reopened for new applications.
-
-        '
       operationId: withdrawApplication
       security:
         - BearerAuth: []
@@ -2992,11 +2868,9 @@ paths:
       tags:
         - Bookings
       summary: List my bookings
-      description: 'Returns paginated list of bookings for the authenticated user.
-
+      description: |
+        Returns paginated list of bookings for the authenticated user.
         Filter by role (as customer or tasker) and booking status.
-
-        '
       operationId: listBookings
       security:
         - BearerAuth: []
@@ -3047,8 +2921,7 @@ paths:
       tags:
         - Bookings
       summary: Get booking details
-      description: Returns full booking details. Only accessible by the booking's
-        customer or tasker.
+      description: Returns full booking details. Only accessible by the booking's customer or tasker.
       operationId: getBooking
       security:
         - BearerAuth: []
@@ -3103,17 +2976,11 @@ paths:
       tags:
         - Bookings
       summary: Cancel a booking
-      description: 'Cancels an active booking. Cancellation policy applies:
-
-        - Customer: Free cancellation > 4 hours before scheduled_at. Late cancellation
-        is recorded as a reliability incident.
-
-        - Tasker: Task reverts to OPEN. Strike recorded. Suspension thresholds/durations
-        are managed by admin moderation policy.
-
+      description: |
+        Cancels an active booking. Cancellation policy applies:
+        - Customer: Free cancellation > 4 hours before scheduled_at. Late cancellation is recorded as a reliability incident.
+        - Tasker: Task reverts to OPEN. Strike recorded. Suspension thresholds/durations are managed by admin moderation policy.
         Requires Idempotency-Key header.
-
-        '
       operationId: cancelBooking
       security:
         - BearerAuth: []
@@ -3129,8 +2996,7 @@ paths:
               properties:
                 reason:
                   type: string
-                  description: Optional cancellation reason. Taskers can use "Safety/Fraud"
-                    to bypass strikes.
+                  description: Optional cancellation reason. Taskers can use "Safety/Fraud" to bypass strikes.
       responses:
         '200':
           description: Booking cancelled.
@@ -3155,15 +3021,11 @@ paths:
       tags:
         - Bookings
       summary: Mark booking as complete
-      description: 'Customer marks an ASSIGNED booking as complete. This triggers:
-
+      description: |
+        Customer marks an ASSIGNED booking as complete. This triggers:
         - Booking status -> COMPLETED
-
         - Task status -> COMPLETED
-
         Requires Idempotency-Key header.
-
-        '
       operationId: completeBooking
       security:
         - BearerAuth: []
@@ -3194,15 +3056,10 @@ paths:
       tags:
         - Bookings
       summary: Request booking reschedule
-      description: 'Either booking party may request a reschedule while booking is
-        ASSIGNED.
-
-        Counterparty accepts/declines in-app. Policy timers always reference the latest
-        accepted schedule.
-
+      description: |
+        Either booking party may request a reschedule while booking is ASSIGNED.
+        Counterparty accepts/declines in-app. Policy timers always reference the latest accepted schedule.
         Requires Idempotency-Key header.
-
-        '
       operationId: requestBookingReschedule
       security:
         - BearerAuth: []
@@ -3249,8 +3106,7 @@ paths:
       tags:
         - Bookings
       summary: Accept or decline reschedule request
-      description: Responds to a pending reschedule request. Accepted response updates
-        canonical schedule.
+      description: Responds to a pending reschedule request. Accepted response updates canonical schedule.
       operationId: respondBookingReschedule
       security:
         - BearerAuth: []
@@ -3301,19 +3157,12 @@ paths:
       tags:
         - Bookings
       summary: Flag and adjudicate no-show
-      description: 'No-show adjudication follows deterministic rules:
-
-        reminder at scheduled +10m; no-show flag eligibility at +15m; rejected if
-        either party
-
-        posted a status/check-in in trailing 30 minutes or a newer accepted reschedule
-        supersedes schedule.
-
+      description: |
+        No-show adjudication follows deterministic rules:
+        reminder at scheduled +10m; no-show flag eligibility at +15m; rejected if either party
+        posted a status/check-in in trailing 30 minutes or a newer accepted reschedule supersedes schedule.
         On success, both booking and linked task transition to NO_SHOW in one transaction.
-
         Requires Idempotency-Key header.
-
-        '
       operationId: flagNoShow
       security:
         - BearerAuth: []
@@ -3344,13 +3193,10 @@ paths:
       tags:
         - Bookings
       summary: Tasker marks booking as done
-      description: 'Tasker signals that work is finished while booking remains active.
-
+      description: |
+        Tasker signals that work is finished while booking remains active.
         Customer is notified to review and finalize booking completion.
-
         Requires Idempotency-Key header.
-
-        '
       operationId: markBookingDone
       security:
         - BearerAuth: []
@@ -3412,15 +3258,10 @@ paths:
       tags:
         - Bookings
       summary: Tasker confirms booking intent
-      description: 'The selected tasker confirms a pending booking intent within the
-        default 4-hour response window.
-
-        This creates an ASSIGNED booking and closes the remaining applications for
-        the task.
-
+      description: |
+        The selected tasker confirms a pending booking intent within the default 4-hour response window.
+        This creates an ASSIGNED booking and closes the remaining applications for the task.
         Requires Idempotency-Key header.
-
-        '
       operationId: confirmBookingIntent
       security:
         - BearerAuth: []
@@ -3453,11 +3294,9 @@ paths:
       tags:
         - Bookings
       summary: Tasker declines booking intent
-      description: 'The selected tasker declines a pending booking intent.
-
+      description: |
+        The selected tasker declines a pending booking intent.
         The customer can then return to the applicant list and choose another tasker.
-
-        '
       operationId: declineBookingIntent
       security:
         - BearerAuth: []
@@ -3488,12 +3327,9 @@ paths:
       tags:
         - Reviews
       summary: Submit a review
-      description: 'Submit a review for a COMPLETED booking. Both customer and tasker
-        can review each other.
-
+      description: |
+        Submit a review for a COMPLETED booking. Both customer and tasker can review each other.
         Each party can only submit one review per booking.
-
-        '
       operationId: submitReview
       security:
         - BearerAuth: []
@@ -3505,11 +3341,8 @@ paths:
           application/json:
             schema:
               type: object
-              description: 'Role-specific validation: customers must provide quality
-                + punctuality + communication; taskers must provide clarity + respectfulness
-                + punctuality.
-
-                '
+              description: |
+                Role-specific validation: customers must provide quality + punctuality + communication; taskers must provide clarity + respectfulness + punctuality.
               required:
                 - punctuality_rating
               properties:
@@ -3557,8 +3390,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Review already submitted for this booking or booking is not
-            COMPLETED.
+          description: Review already submitted for this booking or booking is not COMPLETED.
           content:
             application/json:
               schema:
@@ -3568,8 +3400,7 @@ paths:
       tags:
         - Reviews
       summary: Get my pending reviews
-      description: Returns a list of the authenticated user's pending reviews (enforcement
-        cases).
+      description: Returns a list of the authenticated user's pending reviews (enforcement cases).
       operationId: getMyPendingReviews
       security:
         - BearerAuth: []
@@ -3628,19 +3459,13 @@ paths:
       tags:
         - Disputes
       summary: Raise a dispute
-      description: 'Either booking party (customer or tasker) may raise a dispute.
-
+      description: |
+        Either booking party (customer or tasker) may raise a dispute.
         Allowed states:
-
         - ASSIGNED booking (in-progress)
-
         - COMPLETED booking within 24 hours of completion
-
         Raising a dispute blocks booking closure actions until admin resolution.
-
         Requires Idempotency-Key header.
-
-        '
       operationId: raiseDispute
       security:
         - BearerAuth: []
@@ -3682,8 +3507,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Dispute already raised or booking status/timing does not allow
-            disputes.
+          description: Dispute already raised or booking status/timing does not allow disputes.
           content:
             application/json:
               schema:
@@ -3693,8 +3517,7 @@ paths:
       tags:
         - Disputes
       summary: Get dispute details
-      description: Returns dispute details. Accessible by the dispute raiser, the
-        other booking party, and admins.
+      description: Returns dispute details. Accessible by the dispute raiser, the other booking party, and admins.
       operationId: getDispute
       security:
         - BearerAuth: []
@@ -3718,8 +3541,7 @@ paths:
       tags:
         - Conversations
       summary: List my conversations
-      description: Returns paginated list of conversations for the authenticated user,
-        ordered by last message.
+      description: Returns paginated list of conversations for the authenticated user, ordered by last message.
       operationId: listConversations
       security:
         - BearerAuth: []
@@ -3750,12 +3572,9 @@ paths:
       tags:
         - Conversations
       summary: Get messages in a conversation
-      description: 'Returns paginated messages in a conversation, ordered by most
-        recent first.
-
+      description: |
+        Returns paginated messages in a conversation, ordered by most recent first.
         Only accessible by conversation participants and admins (for dispute resolution).
-
-        '
       operationId: listMessages
       security:
         - BearerAuth: []
@@ -3790,14 +3609,10 @@ paths:
       tags:
         - Conversations
       summary: Send a message (REST fallback)
-      description: 'Sends a message in a conversation. This is the REST fallback for
-        clients that
-
+      description: |
+        Sends a message in a conversation. This is the REST fallback for clients that
         cannot maintain a WebSocket connection. For real-time messaging, use the STOMP
-
         WebSocket endpoint: SEND /app/conversations/{id}/messages.
-
-        '
       operationId: sendMessage
       security:
         - BearerAuth: []
@@ -3836,8 +3651,7 @@ paths:
       tags:
         - Notifications
       summary: Register push notification device
-      description: Registers a device token for push notifications. Overwrites existing
-        token for the same device.
+      description: Registers a device token for push notifications. Overwrites existing token for the same device.
       operationId: registerDevice
       security:
         - BearerAuth: []
@@ -3853,9 +3667,7 @@ paths:
               properties:
                 token:
                   type: string
-                  description:
-                    FCM registration token obtained via `@react-native-firebase/messaging`
-                    `getToken()`. Expo push tokens are not accepted.
+                  description: FCM registration token obtained via `@react-native-firebase/messaging` `getToken()`. Expo push tokens are not accepted.
                 platform:
                   type: string
                   enum:
@@ -3904,8 +3716,7 @@ paths:
       tags:
         - Users
       summary: List my tasker service areas
-      description: Returns the authenticated tasker's configured district coverage
-        areas.
+      description: Returns the authenticated tasker's configured district coverage areas.
       operationId: getTaskerServiceAreas
       security:
         - BearerAuth: []
@@ -3945,8 +3756,7 @@ paths:
       tags:
         - Users
       summary: Replace my tasker service areas
-      description: Replaces the authenticated tasker's district coverage by district
-        slug.
+      description: Replaces the authenticated tasker's district coverage by district slug.
       operationId: setTaskerServiceAreas
       security:
         - BearerAuth: []
@@ -4006,9 +3816,8 @@ paths:
       tags:
         - Admin
       summary: Search users
-      description: 'Search users by phone number (exact normalized match, E.164 recommended).
-
-        '
+      description: |
+        Search users by phone number (exact normalized match, E.164 recommended).
       operationId: adminSearchUsers
       security:
         - BearerAuth: []
@@ -4047,12 +3856,9 @@ paths:
       tags:
         - Admin
       summary: Ban a user
-      description: 'Bans a user, preventing them from logging in even with a valid
-        JWT.
-
+      description: |
+        Bans a user, preventing them from logging in even with a valid JWT.
         Active bookings are not automatically cancelled.
-
-        '
       operationId: adminBanUser
       security:
         - BearerAuth: []
@@ -4124,13 +3930,10 @@ paths:
       tags:
         - Admin
       summary: Concierge assign task to tasker (Phase 0-1)
-      description: 'Founder/admin manual dispatch fallback for low-liquidity periods.
-
+      description: |
+        Founder/admin manual dispatch fallback for low-liquidity periods.
         Creates booking assignment if target tasker is eligible and verified.
-
         Requires Idempotency-Key header.
-
-        '
       operationId: adminConciergeAssignTask
       security:
         - BearerAuth: []
@@ -4185,8 +3988,7 @@ paths:
       tags:
         - Admin
       summary: List pending verifications
-      description: Returns paginated list of verification submissions awaiting admin
-        review.
+      description: Returns paginated list of verification submissions awaiting admin review.
       operationId: adminListPendingVerifications
       security:
         - BearerAuth: []
@@ -4219,8 +4021,7 @@ paths:
       tags:
         - Admin
       summary: Get verification detail
-      description: Returns a single verification submission with media URLs and review
-        metadata for admin handling.
+      description: Returns a single verification submission with media URLs and review metadata for admin handling.
       operationId: adminGetVerificationDetail
       security:
         - BearerAuth: []
@@ -4244,8 +4045,7 @@ paths:
       tags:
         - Admin
       summary: Approve verification
-      description: Approves a tasker's identity verification. User status changes
-        to VERIFIED.
+      description: Approves a tasker's identity verification. User status changes to VERIFIED.
       operationId: adminApproveVerification
       security:
         - BearerAuth: []
@@ -4275,8 +4075,7 @@ paths:
       tags:
         - Admin
       summary: Reject verification
-      description: Rejects a tasker's identity verification with a reason. Tasker
-        can resubmit.
+      description: Rejects a tasker's identity verification with a reason. Tasker can resubmit.
       operationId: adminRejectVerification
       security:
         - BearerAuth: []
@@ -4352,12 +4151,9 @@ paths:
       tags:
         - Admin
       summary: Get dispute details with evidence context
-      description: 'Returns full dispute details, related booking context, and recent
-        conversation messages
-
+      description: |
+        Returns full dispute details, related booking context, and recent conversation messages
         between booking participants for moderation review.
-
-        '
       operationId: adminGetDispute
       security:
         - BearerAuth: []
@@ -4394,14 +4190,10 @@ paths:
       tags:
         - Admin
       summary: Resolve a dispute
-      description: 'Admin resolves a dispute by selecting customer-favor, tasker-favor,
-        or escalation outcome.
-
+      description: |
+        Admin resolves a dispute by selecting customer-favor, tasker-favor, or escalation outcome.
         Later rollout phases may extend this endpoint with refund/release amount handling.
-
         Requires Idempotency-Key header.
-
-        '
       operationId: adminResolveDispute
       security:
         - BearerAuth: []
@@ -4453,8 +4245,7 @@ paths:
       tags:
         - Admin
       summary: Get strike and suspension policy
-      description: Returns current moderation policy used for tasker strike suspension
-        logic.
+      description: Returns current moderation policy used for tasker strike suspension logic.
       operationId: adminGetStrikePolicy
       security:
         - BearerAuth: []
@@ -4473,10 +4264,8 @@ paths:
       tags:
         - Admin
       summary: Update strike and suspension policy
-      description: 'Updates moderation policy values used for suspension thresholds
-        and repeat-offense escalation.
-
-        '
+      description: |
+        Updates moderation policy values used for suspension thresholds and repeat-offense escalation.
       operationId: adminUpdateStrikePolicy
       security:
         - BearerAuth: []
@@ -4546,8 +4335,7 @@ paths:
               properties:
                 feature_name:
                   type: string
-                  description: Feature toggle key. Presence in this endpoint does
-                    not widen Phase 1 product scope.
+                  description: Feature toggle key. Presence in this endpoint does not widen Phase 1 product scope.
                 is_enabled:
                   type: boolean
       responses:
@@ -4600,8 +4388,7 @@ paths:
       tags:
         - Admin
       summary: Create a category
-      description: Creates a new service category. Intake can be enabled with schema
-        in separate schema endpoints.
+      description: Creates a new service category. Intake can be enabled with schema in separate schema endpoints.
       operationId: adminCreateCategory
       security:
         - BearerAuth: []
@@ -4651,8 +4438,7 @@ paths:
       tags:
         - Admin
       summary: Update a category
-      description: Updates an existing category. Can activate, deactivate, rename,
-        reorder, or toggle intake availability.
+      description: Updates an existing category. Can activate, deactivate, rename, reorder, or toggle intake availability.
       operationId: adminUpdateCategory
       security:
         - BearerAuth: []
@@ -4848,14 +4634,10 @@ paths:
       tags:
         - Security
       summary: Customer role auth smoke-test
-      description: "Auth scope smoke-test endpoint. Returns the authenticated user's
-        role
-
+      description: |
+        Auth scope smoke-test endpoint. Returns the authenticated user's role
         and userId. Used in integration tests to verify that CUSTOMER
-
         role-based access control is correctly applied.
-
-        "
       operationId: pingCustomer
       security:
         - BearerAuth: []
@@ -4885,14 +4667,10 @@ paths:
       tags:
         - Security
       summary: Tasker role auth smoke-test
-      description: "Auth scope smoke-test endpoint. Returns the authenticated user's
-        role
-
+      description: |
+        Auth scope smoke-test endpoint. Returns the authenticated user's role
         and userId. Used in integration tests to verify that TASKER
-
         role-based access control is correctly applied.
-
-        "
       operationId: pingTasker
       security:
         - BearerAuth: []
@@ -4922,14 +4700,10 @@ paths:
       tags:
         - Security
       summary: Admin role auth smoke-test
-      description: "Auth scope smoke-test endpoint. Returns the authenticated user's
-        role
-
+      description: |
+        Auth scope smoke-test endpoint. Returns the authenticated user's role
         and userId. Used in integration tests to verify that ADMIN
-
         role-based access control is correctly applied.
-
-        "
       operationId: pingAdmin
       security:
         - BearerAuth: []
@@ -4959,8 +4733,7 @@ paths:
       tags:
         - Admin
       summary: Outbox event summary
-      description: Returns counts of outbox events by status (pending, failed, processed,
-        processing).
+      description: Returns counts of outbox events by status (pending, failed, processed, processing).
       operationId: adminOutboxSummary
       security:
         - BearerAuth: []
@@ -5056,8 +4829,7 @@ paths:
       tags:
         - Admin
       summary: Replay outbox event
-      description: Resets a FAILED outbox event to PENDING so the processor will retry
-        it.
+      description: Resets a FAILED outbox event to PENDING so the processor will retry it.
       operationId: adminReplayOutboxEvent
       security:
         - BearerAuth: []
@@ -5119,11 +4891,9 @@ paths:
       tags:
         - Admin
       summary: Override booking status (admin)
-      description: 'Forces a booking status transition. Used for admin dispute resolution
-
+      description: |
+        Forces a booking status transition. Used for admin dispute resolution
         and manual intervention. Requires idempotency key.
-
-        '
       operationId: adminOverrideBookingStatus
       security:
         - BearerAuth: []
@@ -5203,11 +4973,9 @@ paths:
       tags:
         - Location
       summary: Reverse geocode coordinates to district-level address
-      description: 'Returns the nearest UB district name and centroid for the provided
-
+      description: |
+        Returns the nearest UB district name and centroid for the provided
         coordinates. Used to populate the location label on the task-post form.
-
-        '
       operationId: reverseGeocode
       security:
         - BearerAuth: []
@@ -5242,12 +5010,9 @@ paths:
       tags:
         - Location
       summary: Search locations by name fragment
-      description: 'Returns matching UB districts for the query string. Used to power
-        the
-
+      description: |
+        Returns matching UB districts for the query string. Used to power the
         address auto-complete on the task-post form.
-
-        '
       operationId: searchLocations
       security:
         - BearerAuth: []

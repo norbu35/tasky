@@ -39,6 +39,59 @@ Lower-order documents must be corrected when they drift.
 9. `docs/openapi/**` is the maintained active API contract source; `docs/API.yaml` is the bundled output and must be refreshed in the same change.
 10. Do not use an ADR system in the live docs path until the team deliberately adopts one.
 
+## Machine-Checked Claims
+
+Architecture docs, maintenance docs, and backend module `AGENTS.md` files are also checked by
+`tooling/scripts/governance/validate-doc-claims.py`.
+
+The validator cross-checks named repo surfaces against live inventories, including:
+
+- Java classes and FQNs under `services/api/src/{main,test}/java`
+- DB tables and columns from `tooling/config/expected-schema.json`
+- env vars from `.env*.example`
+- config keys from `application*.yml` plus code-backed property declarations
+- OpenAPI operationIds and method/path pairs from the bundled API contract
+- Flyway migration versions/files
+- GitHub workflow filenames
+
+Use claim blocks when a load-bearing assertion is too specific for convention-based extraction:
+
+````md
+```claim symbol-exists
+class: mn.tasky.common.outbox.DomainEventOutboxService
+method: publish
+```
+
+```claim db-table
+table: domain_outbox_events
+required_columns: [id, event_type, payload, status, attempts, created_at]
+```
+````
+
+Supported claim types:
+
+- `symbol-exists`
+- `db-table`
+- `env-var`
+- `endpoint`
+- `config-key`
+- `flyway`
+- `workflow`
+
+False positives and intentional historical references belong in
+`tooling/config/doc-references-allowlist.yaml`.
+
+Agent-facing remediation workflow lives in the repo-owned skill
+`tooling/skills/doc-claims-remediation/SKILL.md`. Harnesses without native skill support should read that file directly and may use `pnpm repo:docs:claims:triage`.
+
+Allowlist rules:
+
+- Prefer fixing the doc or adding a claim block before suppressing a reference.
+- Use `intentional` entries only for deliberate historical or external references.
+- Every intentional suppression should include a reason.
+- Add `expires` for temporary suppressions so they are re-justified later.
+- Expired entries warn for 30 days, then fail the check.
+
 ## Review checklist
 
 - Does this change introduce a second document that tries to own the same topic?
@@ -46,3 +99,4 @@ Lower-order documents must be corrected when they drift.
 - Does any architecture, design, or API doc describe a future phase as if it were live?
 - If content became future-only or historical, was it moved out of the active reading path?
 - If OpenAPI changed, were both `docs/openapi/**` and `docs/API.yaml` updated together?
+- If a doc names a code/config/schema surface, does it resolve under `validate-doc-claims.py` without a stale suppress entry?

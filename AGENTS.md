@@ -31,6 +31,7 @@ product intent. `archive/**` is historical only.
 | `packages/design-tokens/**`        | `packages/design-tokens/AGENTS.md`                             |
 | `packages/sdk/**`                  | `packages/sdk/AGENTS.md`                                       |
 | `packages/test-utils/**`           | `packages/test-utils/AGENTS.md`                                |
+| `tooling/skills/**`                | `tooling/skills/AGENTS.md`                                     |
 | `tooling/**`                       | `tooling/AGENTS.md`                                            |
 
 Read the nearest local `AGENTS.md` first when you are already inside a surfaced area. On conflict, the more specific
@@ -61,6 +62,13 @@ Do not use repomix for narrow symbol lookups that Serena can answer.
 ## Core Commands
 
 Frontend tasks run through Turborepo via `pnpm <task>`. Backend tasks use `./gradlew` and never system `gradle`.
+
+## Repo Skills
+
+Reusable repo-owned agent workflows live under `tooling/skills/**`.
+
+- Skills must remain harness-agnostic. Any harness should be able to use them by reading the nearest `SKILL.md` and running bundled scripts directly.
+- For doc-surface drift or `validate-doc-claims.py` failures, use `tooling/skills/doc-claims-remediation/SKILL.md`.
 
 ## Workflow Rules
 
