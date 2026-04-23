@@ -23,7 +23,15 @@
 .ignore
 postflight.json
 monorepo-hardening-report.md
-.pi/
+.pi/*
+!.pi/README.md
+!.pi/settings.json
+!.pi/skills/
+!.pi/skills/**
+!.pi/prompts/
+!.pi/prompts/**
+.pi/extensions/
+.pi/sessions/
 
 # Generated audit / analysis snapshots (session artifacts)
 docs/DEPENDENCY_VERSION_MATRIX.md

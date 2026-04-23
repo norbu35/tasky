@@ -1,0 +1,6 @@
+{
+  "skills": ["../tooling/skills", "./skills"],
+  "prompts": ["./prompts"],
+  "enableSkillCommands": true,
+  "sessionDir": "./sessions"
+}
