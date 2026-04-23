@@ -86,6 +86,7 @@ Pick the smallest lane that matches the job:
 | `tooling/scripts/governance/validate-workspace-boundaries.mjs` | Workspace boundary enforcement                          | `pnpm repo:workspace:boundaries`, `pnpm verify:cleanup`       |
 | `tooling/scripts/governance/validate-migrations.py`            | Flyway migration naming and immutability checks         | `pnpm verify:cleanup`, staging and release workflows          |
 | `tooling/scripts/governance/validate-schema-parity.py`         | Schema inventory drift check                            | `pnpm verify:cleanup`                                         |
+| `tooling/scripts/governance/validate-prd-scenario-links.py`    | PRD requirement to scenario traceability                | `pnpm repo:docs:check`, `pnpm verify:scenario:smoke`          |
 | `tooling/scripts/governance/validate-doc-claims.py`            | Validate architecture and AGENTS surface refs stay live | `pnpm repo:docs:check`, `pnpm verify:cleanup`                 |
 | `tooling/scripts/governance/validate-doc-references.py`        | Verify pnpm/file refs in AGENTS.md and adapters resolve | `pnpm repo:docs:check`, `pnpm verify:cleanup`                 |
 | `tooling/scripts/governance/check-trivyignore-expiry.sh`       | Expiring security-ignore audit                          | `pnpm verify:cleanup`                                         |

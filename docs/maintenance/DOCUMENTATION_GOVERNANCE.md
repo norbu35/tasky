@@ -46,6 +46,7 @@ Architecture docs, maintenance docs, and backend module `AGENTS.md` files are al
 
 The validator cross-checks named repo surfaces against live inventories, including:
 
+- PRD requirement IDs from `docs/PRD.md`
 - Java classes and FQNs under `services/api/src/{main,test}/java`
 - DB tables and columns from `tooling/config/expected-schema.json`
 - env vars from `.env*.example`
@@ -66,10 +67,15 @@ method: publish
 table: domain_outbox_events
 required_columns: [id, event_type, payload, status, attempts, created_at]
 ```
+
+```claim prd-req
+id: REQ-P1-BOOK-01
+```
 ````
 
 Supported claim types:
 
+- `prd-req`
 - `symbol-exists`
 - `db-table`
 - `env-var`
@@ -77,6 +83,10 @@ Supported claim types:
 - `config-key`
 - `flyway`
 - `workflow`
+
+Scenario files are additionally checked by `tooling/scripts/governance/validate-prd-scenario-links.py`.
+Every `tests/scenarios/*.md` `**PRD:**` reference must resolve to a live PRD ID, and the check warns when a
+non-deferred `REQ-P1-*` requirement has no high-or-critical scenario coverage.
 
 False positives and intentional historical references belong in
 `tooling/config/doc-references-allowlist.yaml`.

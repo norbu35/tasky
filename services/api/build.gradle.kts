@@ -1,4 +1,6 @@
 import net.ltgt.gradle.errorprone.errorprone
+import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
+import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
@@ -187,6 +189,26 @@ jacoco {
     toolVersion = libs.versions.jacoco.get()
 }
 
+val jacocoCoverageExcludes = listOf(
+    "mn.tasky.api.generated*",
+    "mn.tasky.*.dto*",
+    "mn.tasky.payment*",
+    "mn.tasky.wallet*",
+    "mn.tasky"
+)
+
+fun normalizeCoveragePackage(raw: String): String = raw.trim().removeSuffix(".*").removeSuffix(".")
+
+val coverageSlicePackages = (findProperty("coveragePackages") as String?)
+    ?.split(",")
+    ?.map(::normalizeCoveragePackage)
+    ?.filter(String::isNotEmpty)
+    ?.distinct()
+    ?: emptyList()
+
+val coverageSliceFileIncludes = coverageSlicePackages.map { "${it.replace('.', '/')}/**" }
+val coverageSliceClassIncludes = coverageSlicePackages.map { "$it*" }
+
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
     reports {
@@ -198,18 +220,83 @@ tasks.jacocoTestReport {
 tasks.jacocoTestCoverageVerification {
     violationRules {
         rule {
-            // Legacy blanket package coverage floor.
-            // Kept as an opt-in advisory task while release gates move to scenario-backed evidence
-            // plus scoped mutation checks. Do not wire this into blocking deploy gates.
+            // Repo-wide backend coverage floor. This is a blocking verification rule and
+            // remains wired into verify:backend and CI alongside scenario-backed gates.
             element = "PACKAGE"
             includes = listOf("mn.tasky.*")
-            excludes = listOf(
-                "mn.tasky.api.generated*",
-                "mn.tasky.*.dto*",
-                "mn.tasky.payment*",
-                "mn.tasky.wallet*",
-                "mn.tasky"
-            )
+            excludes = jacocoCoverageExcludes
+            limit {
+                counter = "LINE"
+                value = "COVEREDRATIO"
+                minimum = "0.80".toBigDecimal()
+            }
+        }
+    }
+}
+
+tasks.register<JacocoReport>("jacocoSliceReport") {
+    group = "verification"
+    description = "Generates an HTML/XML JaCoCo report for the packages selected via -PcoveragePackages=mn.tasky.auth,mn.tasky.task"
+    if (coverageSlicePackages.isNotEmpty()) {
+        dependsOn(tasks.test)
+    }
+
+    doFirst {
+        require(coverageSlicePackages.isNotEmpty()) {
+            "jacocoSliceReport requires -PcoveragePackages=mn.tasky.auth,mn.tasky.task"
+        }
+    }
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+
+    classDirectories.setFrom(files(sourceSets["main"].output.classesDirs).asFileTree.matching {
+        include(coverageSliceFileIncludes)
+        exclude(
+            "mn/tasky/api/generated/**",
+            "**/dto/**",
+            "mn/tasky/payment/**",
+            "mn/tasky/wallet/**"
+        )
+    })
+    sourceDirectories.setFrom(files(sourceSets["main"].allSource.srcDirs))
+    additionalSourceDirs.setFrom(files(sourceSets["main"].allSource.srcDirs))
+    executionData.setFrom(file("${layout.buildDirectory.get()}/jacoco/test.exec"))
+}
+
+tasks.register<JacocoCoverageVerification>("jacocoSliceCoverageVerification") {
+    group = "verification"
+    description = "Checks the selected coverage slice against the blocking 80% line floor. Requires -PcoveragePackages."
+    if (coverageSlicePackages.isNotEmpty()) {
+        dependsOn(tasks.test)
+    }
+
+    doFirst {
+        require(coverageSlicePackages.isNotEmpty()) {
+            "jacocoSliceCoverageVerification requires -PcoveragePackages=mn.tasky.auth,mn.tasky.task"
+        }
+    }
+
+    classDirectories.setFrom(files(sourceSets["main"].output.classesDirs).asFileTree.matching {
+        include(coverageSliceFileIncludes)
+        exclude(
+            "mn/tasky/api/generated/**",
+            "**/dto/**",
+            "mn/tasky/payment/**",
+            "mn/tasky/wallet/**"
+        )
+    })
+    sourceDirectories.setFrom(files(sourceSets["main"].allSource.srcDirs))
+    additionalSourceDirs.setFrom(files(sourceSets["main"].allSource.srcDirs))
+    executionData.setFrom(file("${layout.buildDirectory.get()}/jacoco/test.exec"))
+
+    violationRules {
+        rule {
+            element = "PACKAGE"
+            includes = coverageSliceClassIncludes
+            excludes = jacocoCoverageExcludes
             limit {
                 counter = "LINE"
                 value = "COVEREDRATIO"

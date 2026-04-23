@@ -593,8 +593,11 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 - Mock only external boundaries: `FacebookGraphClient`, `FirebasePushProvider`, `S3StorageService`.
 - `@DisplayName` for scenario-backed tests must include the scenario ID (e.g. `"SCN-TASK-001: ..."`) so that `sync-registry.sh` can discover it. Multiple scenario IDs in a single display name are supported (e.g. `"SCN-TASK-009 SCN-SMOKE-004: ..."`). Non-scenario domain-unit tests (no SCN mapping) may use descriptive display names without the SCN prefix.
 - Check `tests/registry.yaml` for existing scenarios before writing tests. Read `tests/scenarios/<domain>.md`.
-- After writing tests: run `./services/api/scripts/sync-registry.sh` and commit updated `tests/registry.yaml`.
-- Never modify `tests/scenarios/` directly.
+- If no scenario covers the behavior, stop and report the gap unless you are the designated scenario curator for the current execution brief.
+- Scenario curation is single-owner work. Only the designated scenario curator for the current execution brief may edit `tests/scenarios/**`; all implementation agents must otherwise treat it as read-only.
+- Scenario curation must reconcile the active baseline from `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, active `docs/openapi/**`, and active `docs/design/**` before test-writing slices begin.
+- Obsolete tests tied to removed or future-phase behavior may be deleted once the active scenario set no longer covers that behavior.
+- After scenario curation or writing tests: run `./services/api/scripts/sync-registry.sh` and commit updated `tests/registry.yaml`.
 - Never use `@DirtiesContext`.
 - PIT survived mutation: fix the assertion, not production code; if no scenario covers it, report the gap.
 
@@ -602,11 +605,12 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 ### Gradle gates (local / CI)
 
-| Gate       | Command                    | Purpose                                   |
-| ---------- | -------------------------- | ----------------------------------------- |
-| Smoke      | `./gradlew gateSmoke`      | Fast local confidence                     |
-| Regression | `./gradlew gateRegression` | Extended or nightly coverage              |
-| Full       | `./gradlew gateFull`       | Full suite including PIT mutation testing |
+| Gate       | Command                                                                                                      | Purpose                                              |
+| ---------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
+| Smoke      | `./gradlew gateSmoke`                                                                                        | Fast local confidence                                |
+| Regression | `./gradlew gateRegression`                                                                                   | Extended or nightly coverage                         |
+| Full       | `./gradlew gateFull`                                                                                         | Full suite including PIT mutation testing            |
+| Slice      | `./gradlew jacocoSliceReport jacocoSliceCoverageVerification -PcoveragePackages=mn.tasky.auth,mn.tasky.task` | Scoped coverage report + 80% floor for a rehab slice |
 
 ### CI enforcement (actual wiring)
 

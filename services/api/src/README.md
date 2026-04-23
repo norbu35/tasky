@@ -94,22 +94,23 @@ The canonical API contract source is `docs/openapi/openapi.yaml` plus its split 
 
 ## Static Analysis
 
-| Tool                       | Purpose                                             |
-| -------------------------- | --------------------------------------------------- |
-| Checkstyle                 | Code style enforcement                              |
-| Spotless (Palantir format) | Auto-formatting (4-space indent, 120-char limit)    |
-| PMD                        | Bug pattern detection                               |
-| SpotBugs + FindSecBugs     | Security-focused bug detection                      |
-| ErrorProne                 | Compile-time bug checks                             |
-| OWASP Dependency Check     | CVE scanning (opt-in)                               |
-| JaCoCo                     | Coverage reporting and a legacy advisory floor task |
+| Tool                       | Purpose                                            |
+| -------------------------- | -------------------------------------------------- |
+| Checkstyle                 | Code style enforcement                             |
+| Spotless (Palantir format) | Auto-formatting (4-space indent, 120-char limit)   |
+| PMD                        | Bug pattern detection                              |
+| SpotBugs + FindSecBugs     | Security-focused bug detection                     |
+| ErrorProne                 | Compile-time bug checks                            |
+| OWASP Dependency Check     | CVE scanning (opt-in)                              |
+| JaCoCo                     | Coverage reporting plus the blocking backend floor |
 
 ## Testing
 
 ```bash
 ./gradlew test                     # Run all tests
 ./gradlew jacocoTestReport         # Generate coverage report
-./gradlew jacocoTestCoverageVerification  # Legacy blanket coverage floor (advisory only)
+./gradlew jacocoTestCoverageVerification  # Blocking repo-wide backend coverage floor
+./gradlew jacocoSliceReport jacocoSliceCoverageVerification -PcoveragePackages=mn.tasky.auth,mn.tasky.task  # Slice report + floor
 ```
 
 Tests use JUnit 5, Spring Boot Test, Spring Security Test, Testcontainers (PostgreSQL), and ArchUnit for architecture tests.

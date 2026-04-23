@@ -77,6 +77,9 @@ jobs:
       - name: Run backend quality checks
         run: pnpm verify:backend
 
+      - name: Run scenario smoke gate
+        run: pnpm verify:scenario:smoke
+
   frontend-quality:
     runs-on: ubuntu-latest
     permissions:

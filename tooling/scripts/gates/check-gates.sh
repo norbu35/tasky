@@ -20,7 +20,7 @@ if [ ! -f "$REGISTRY" ]; then
 fi
 
 python3 - "$GATE" "$REGISTRY" <<'PYEOF'
-import sys, yaml
+import sys, yaml, re
 from datetime import datetime, timezone, timedelta
 
 gate = sys.argv[1]
@@ -31,6 +31,7 @@ registry_path = sys.argv[2]
 # Override via env: MUTATION_STALENESS_HOURS=N
 import os
 PIT_STALENESS_HOURS = int(os.environ.get("MUTATION_STALENESS_HOURS", "25"))
+NEEDS_SCENARIO_MAX_DAYS = int(os.environ.get("NEEDS_SCENARIO_MAX_DAYS", "30"))
 
 if gate not in ("smoke", "regression", "full"):
     print(f"[gate] ERROR: unknown gate '{gate}'. Use: smoke | regression | full")
@@ -65,6 +66,21 @@ if gate in ("regression", "full"):
         if entry["status"] != "covered" and not override.startswith("waived"):
             failures.append(
                 f"[REGRESSION] High scenario not covered: {scn_id} — {entry['title']}"
+            )
+
+    needs_scenario_pattern = re.compile(r"needs-scenario:\s*(\d{4}-\d{2}-\d{2})", re.IGNORECASE)
+    today = datetime.now(timezone.utc).date()
+    for scn_id, entry in sorted(scenarios.items()):
+        notes = (entry.get("notes") or "").strip()
+        match = needs_scenario_pattern.search(notes)
+        if not match:
+            continue
+        opened_at = datetime.strptime(match.group(1), "%Y-%m-%d").date()
+        age_days = (today - opened_at).days
+        if age_days > NEEDS_SCENARIO_MAX_DAYS:
+            failures.append(
+                f"[REGRESSION] needs-scenario note older than {NEEDS_SCENARIO_MAX_DAYS} days: "
+                f"{scn_id} ({age_days} days)"
             )
 
 # ── Gate 3 (Full): Mutation floors + no silent untested high/critical ─────────

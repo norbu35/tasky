@@ -48,6 +48,7 @@ const textExpectations = [
             "pnpm verify:cleanup",
             "pnpm verify:ops",
             "pnpm verify:backend",
+            "pnpm verify:scenario:smoke",
             "pnpm verify:frontend",
             "pnpm verify:drift",
         ],
@@ -57,6 +58,7 @@ const textExpectations = [
         needs: [
             "python3 tooling/scripts/governance/validate-migrations.py",
             ":services:api:dependencyCheckAnalyze",
+            ":services:api:gateRegression",
             "bash tooling/scripts/deploy/performance-smoke.sh",
         ],
     },

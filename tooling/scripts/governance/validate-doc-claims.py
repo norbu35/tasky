@@ -34,6 +34,7 @@ MIGRATION_ROOT = REPO_ROOT / "services" / "api" / "src" / "main" / "resources" /
 CONFIG_ROOT = REPO_ROOT / "services" / "api" / "src" / "main" / "resources"
 OPENAPI_BUNDLE = REPO_ROOT / "docs" / "API.yaml"
 OPENAPI_SOURCE = REPO_ROOT / "docs" / "openapi" / "openapi.yaml"
+PRD_FILE = REPO_ROOT / "docs" / "PRD.md"
 WORKFLOWS_ROOT = REPO_ROOT / ".github" / "workflows"
 
 BACKEND_CLASS_DOCS = {
@@ -81,6 +82,7 @@ OPERATION_RE = re.compile(r"\boperationId\s+`?([a-z][A-Za-z0-9]*[A-Z][A-Za-z0-9]
 HTTP_PATH_RE = re.compile(r"\b(GET|POST|PUT|PATCH|DELETE)\s+(/api(?:/[^\s`*]+)+)\b")
 FLYWAY_RE = re.compile(r"\b(V(\d+(?:_\d+)*)__[A-Za-z0-9_]+(?:\.sql)?)\b")
 WORKFLOW_RE = re.compile(r"(?:workflow\s+)?`?([\w.-]+\.yml)`?", re.IGNORECASE)
+PRD_REQ_RE = re.compile(r"\b(?:REQ-P1|NFR)-[A-Z]+-\d+\b")
 VALUE_CONFIG_RE = re.compile(r'@Value\("\$\{([a-z0-9.-]+)(?::[^}]*)?\}"\)')
 CONDITIONAL_PROPERTY_RE = re.compile(r"@ConditionalOnProperty\((.*?)\)", re.DOTALL)
 CONDITIONAL_NAME_RE = re.compile(r'name\s*=\s*"([a-z0-9.-]+)"')
@@ -205,6 +207,11 @@ class WorkflowInventory:
 @dataclass
 class FrontendInventory:
     exports: dict[str, list[str]]
+
+
+@dataclass
+class PrdRequirementInventory:
+    ids: set[str]
 
 
 @dataclass(frozen=True)
@@ -518,6 +525,12 @@ def build_frontend_inventory() -> FrontendInventory:
     return FrontendInventory(exports=dict(exports))
 
 
+def build_prd_requirement_inventory() -> PrdRequirementInventory:
+    if not PRD_FILE.exists():
+        return PrdRequirementInventory(ids=set())
+    return PrdRequirementInventory(ids=set(PRD_REQ_RE.findall(PRD_FILE.read_text(encoding="utf-8"))))
+
+
 def relative(path: Path) -> Path:
     return path.relative_to(REPO_ROOT)
 
@@ -736,6 +749,10 @@ def parse_claim_block(claim_type: str, body: str, rel: Path, line_no: int) -> tu
         filename = require("filename")
         if filename is not None:
             refs.append(Reference("claim:workflow", str(filename), rel, line_no))
+    elif claim_type == "prd-req":
+        req_id = require("id")
+        if req_id is not None:
+            refs.append(Reference("claim:prd-req", str(req_id), rel, line_no))
     else:
         failures.append(Failure(rel, line_no, f"Unsupported claim type `{claim_type}`."))
 
@@ -1160,6 +1177,20 @@ def validate_claim_workflow(ref: Reference, inventory: WorkflowInventory, payloa
     return failures
 
 
+def validate_claim_prd_req(ref: Reference, inventory: PrdRequirementInventory) -> list[Failure]:
+    if ref.value in inventory.ids:
+        return []
+    suggestion = closest(ref.value, inventory.ids, cutoff=0.55)
+    return [
+        Failure(
+            ref.source_file,
+            ref.line,
+            f"Claim prd-req failed: PRD requirement `{ref.value}` not found in docs/PRD.md.",
+            f"Did you mean: {suggestion}?" if suggestion else None,
+        )
+    ]
+
+
 def sort_failures(failures: list[Failure]) -> list[Failure]:
     return sorted(failures, key=lambda item: (item.source_file.as_posix(), item.line, item.message))
 
@@ -1174,6 +1205,7 @@ def main() -> int:
     endpoint_inventory = build_endpoint_inventory()
     flyway_inventory = build_flyway_inventory()
     workflow_inventory = build_workflow_inventory()
+    prd_requirement_inventory = build_prd_requirement_inventory()
     _frontend_inventory = build_frontend_inventory()
 
     scan_files = collect_scan_files()
@@ -1231,6 +1263,8 @@ def main() -> int:
                     failures.extend(validate_flyway(Reference("flyway", ref.value, ref.source_file, ref.line), flyway_inventory))
                 elif ref.kind == "claim:workflow":
                     failures.extend(validate_claim_workflow(ref, workflow_inventory, payload))
+                elif ref.kind == "claim:prd-req":
+                    failures.extend(validate_claim_prd_req(ref, prd_requirement_inventory))
 
     failures = sort_failures(failures)
     warnings = sorted(warnings, key=lambda item: (item.source_file.as_posix(), item.line, item.message))

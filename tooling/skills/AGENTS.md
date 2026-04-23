@@ -15,6 +15,8 @@ Repo skills are harness-agnostic agent workflows stored in the repository.
 
 - `tooling/skills/doc-claims-remediation/SKILL.md`
   Use when `validate-doc-claims.py` fails or when editing architecture / maintenance docs or backend module `AGENTS.md` files that name code, schema, config, or contract surfaces.
+- `tooling/skills/intake-to-prd/SKILL.md`
+  Use when a request, bug, or execution brief may change product behavior and needs deterministic PRD-first routing.
 
 ## Rules
 

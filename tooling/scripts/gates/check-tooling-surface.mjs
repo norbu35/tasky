@@ -21,6 +21,7 @@ const registry = {
     "gates/check-tooling-surface.mjs": "active",
     "governance/check-doc-governance.py": "active",
     "governance/validate-doc-claims.py": "active",
+    "governance/validate-prd-scenario-links.py": "active",
     "governance/check-gitleaks-secret-scan.sh": "active",
     "governance/check-trivyignore-expiry.sh": "active",
     "governance/validate-doc-references.py": "active",

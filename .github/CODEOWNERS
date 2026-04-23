@@ -29,3 +29,6 @@ Dockerfile                                                        @norbu
 # Governance and gate scripts
 tooling/scripts/gates/                                            @norbu
 tooling/scripts/governance/                                       @norbu
+
+# Scenario baseline curation
+tests/scenarios/                                                  @norbu
