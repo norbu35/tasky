@@ -1,9 +1,11 @@
 # auth Scenarios
+
 <!-- Scenarios authored here. See tests/scenarios/README.md for format. -->
 
 ## SCN-AUTH-001
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-01
+**PRD:** REQ-P1-AUTH-01
 **Title:** Dev auth enabled in production profile throws on startup
 
 Given devAuthEnabled is true
@@ -13,8 +15,9 @@ Then an IllegalStateException is thrown with message containing "must be false i
 And the application does not start
 
 ## SCN-AUTH-002
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-01
+**PRD:** REQ-P1-AUTH-06
 **Title:** Phase 0-1 OTP request endpoint is disabled with 403 FEATURE_DISABLED
 
 Given the product is running in Phase 0-1 with OTP authentication disabled
@@ -23,8 +26,9 @@ Then the response status is 403
 And the error code is FEATURE_DISABLED
 
 ## SCN-AUTH-003
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-01
+**PRD:** REQ-P1-AUTH-06
 **Title:** Phase 0-1 OTP verify endpoint is disabled with 403 FEATURE_DISABLED
 
 Given the product is running in Phase 0-1 with OTP authentication disabled
@@ -33,8 +37,9 @@ Then the response status is 403
 And the error code is FEATURE_DISABLED
 
 ## SCN-AUTH-004
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-01
+**PRD:** REQ-P1-AUTH-01
 **Title:** Valid Facebook OAuth token creates a CUSTOMER session
 
 Given a Facebook access token that resolves to a valid Facebook identity
@@ -45,8 +50,9 @@ And a Tasky user is created with role CUSTOMER
 And the authenticated session includes access and refresh tokens
 
 ## SCN-AUTH-005
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-02
+**PRD:** REQ-P1-AUTH-04
 **Title:** Same facebook_id authenticates the existing user without creating a duplicate account
 
 Given a Tasky account already exists for a facebook_id
@@ -56,8 +62,9 @@ And the returned user id matches the existing account
 And no second account is created for that facebook_id
 
 ## SCN-AUTH-006
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-03
+**PRD:** REQ-P1-AUTH-01
 **Title:** Successful authentication issues a signed JWT with sub, role, exp, and iat claims
 
 Given a user successfully authenticates
@@ -67,8 +74,9 @@ And the JWT contains a role claim for the authenticated user role
 And the JWT contains exp and iat claims
 
 ## SCN-AUTH-007
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-03
+**PRD:** REQ-P1-AUTH-01
 **Title:** Invalid-signature or expired access token is rejected with 401
 
 Given a protected endpoint requires a bearer access token
@@ -77,8 +85,9 @@ Then the response status is 401
 And the request is not authenticated
 
 ## SCN-AUTH-008
+
 **Risk:** Critical
-**PRD:** REQ-ADMIN-03
+**PRD:** REQ-P1-AUTH-05
 **Title:** BANNED or active SUSPENDED account is denied authentication even with otherwise valid credentials
 
 Given a user account has effective status BANNED or active SUSPENDED
@@ -86,43 +95,10 @@ When that user attempts to authenticate or refresh a session with otherwise vali
 Then the response status is 403
 And the account is not granted an authenticated session
 
-## SCN-AUTH-009
-**Risk:** Critical
-**PRD:** REQ-AUTH-05
-**Title:** OTP request rate limit per phone returns 429 within the configured window
-
-Given OTP authentication is enabled
-And the same phone number has already reached the configured OTP request limit within the active window
-When another OTP request is submitted for that phone number
-Then the response status is 429
-And the error code identifies the OTP request as rate limited
-
-## SCN-AUTH-010
-**Risk:** Critical
-**PRD:** REQ-AUTH-05
-**Title:** OTP request rate limit per request source returns 429 within the configured window
-
-Given OTP authentication is enabled
-And the same request source has already reached the configured OTP request limit within the active window
-When another OTP request is submitted from that request source
-Then the response status is 429
-And the error code identifies the OTP request as rate limited
-
-## SCN-AUTH-011
-**Risk:** Critical
-**PRD:** REQ-AUTH-05
-**Title:** Valid OTP verification returns an authenticated session
-
-Given OTP authentication is enabled
-And a non-expired OTP challenge exists for the supplied phone number
-When the client verifies with the correct OTP code
-Then the response status is 200
-And the response includes access and refresh tokens
-And the response includes the authenticated user
-
 ## SCN-AUTH-012
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-09
+**PRD:** REQ-P1-AUTH-02
 **Title:** Facebook OAuth outage fails closed with 503 AUTH_PROVIDER_UNAVAILABLE
 
 Given Facebook OAuth is unavailable for new authentication attempts
@@ -131,8 +107,9 @@ Then the response status is 503
 And the error code is AUTH_PROVIDER_UNAVAILABLE
 
 ## SCN-AUTH-013
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-10
+**PRD:** REQ-P1-AUTH-03
 **Title:** Existing valid session remains usable during Facebook OAuth outage
 
 Given a user already holds a valid unexpired Tasky session
@@ -142,8 +119,9 @@ Then the response is authorized
 And the existing session remains usable until its normal expiry
 
 ## SCN-AUTH-014
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-09
+**PRD:** REQ-P1-AUTH-02
 **Title:** Facebook circuit breaker opens after repeated provider failures and status reports unavailable
 
 Given repeated Facebook provider failures have crossed the configured circuit-breaker threshold within the active window
@@ -152,8 +130,9 @@ Then the circuit state is reported as open or unavailable
 And new Facebook login attempts are treated as degraded auth
 
 ## SCN-AUTH-015
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-09
+**PRD:** REQ-P1-AUTH-02
 **Title:** Open Facebook circuit fails closed on additional login attempts until recovery
 
 Given the Facebook auth circuit breaker is already open

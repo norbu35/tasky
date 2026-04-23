@@ -1,9 +1,11 @@
 # security Scenarios
+
 <!-- Scenarios authored here. See tests/scenarios/README.md for format. -->
 
 ## SCN-SEC-001
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-03
+**PRD:** REQ-P1-AUTH-01
 **Title:** Protected endpoints reject requests without a bearer JWT
 
 Given an endpoint requires authentication
@@ -12,8 +14,9 @@ Then the response status is 401
 And the request is not authorized
 
 ## SCN-SEC-002
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-03
+**PRD:** REQ-P1-AUTH-01
 **Title:** CUSTOMER role cannot access tasker-only or admin-only routes
 
 Given a valid CUSTOMER session token
@@ -22,8 +25,9 @@ Then the response status is 403
 And the customer is not granted access to that route
 
 ## SCN-SEC-003
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-03
+**PRD:** REQ-P1-AUTH-01
 **Title:** TASKER role cannot access customer-only or admin-only routes
 
 Given a valid TASKER session token
@@ -32,8 +36,9 @@ Then the response status is 403
 And the tasker is not granted access to that route
 
 ## SCN-SEC-004
+
 **Risk:** Critical
-**PRD:** REQ-AUTH-03
+**PRD:** REQ-P1-AUTH-01
 **Title:** ADMIN-only routes are accessible to ADMIN and forbidden to non-admin roles
 
 Given an admin-only endpoint exists
@@ -43,8 +48,9 @@ And the CUSTOMER request is rejected with 403
 And the TASKER request is rejected with 403
 
 ## SCN-SEC-005
+
 **Risk:** Critical
-**PRD:** REQ-TASK-01
+**PRD:** REQ-P1-TASK-01
 **Title:** Task creation endpoint allows CUSTOMER and rejects TASKER or ADMIN at the security layer
 
 Given POST /tasks is a customer-only operation
@@ -54,8 +60,9 @@ And the TASKER request is rejected with 403
 And the ADMIN request is rejected with 403
 
 ## SCN-SEC-006
+
 **Risk:** Critical
-**PRD:** REQ-TASK-03
+**PRD:** REQ-P1-TASK-09
 **Title:** Open-task visibility exposes only approximate location before booking confirmation
 
 Given a task is still visible as OPEN to non-participants
@@ -64,8 +71,9 @@ Then the response includes only approximate or fuzzed location fields
 And the response does not include exact address text or exact coordinates
 
 ## SCN-SEC-007
+
 **Risk:** Critical
-**PRD:** REQ-LEAK-03
+**PRD:** REQ-P1-TASK-10, REQ-P1-BOOK-07
 **Title:** Exact task address is revealed only to the owner or booked tasker after booking confirmation
 
 Given a task has an associated booking that is confirmed for a selected tasker
@@ -74,31 +82,44 @@ Then the response includes the exact address fields
 And other authorized users do not receive those exact address fields
 
 ## SCN-SEC-008
+
 **Risk:** Critical
-**PRD:** REQ-LEAK-01
+**PRD:** REQ-P1-MSG-04
 **Title:** Customer-facing payloads never expose tasker phone fields
 
 Given a customer views tasker-related profile, booking, chat, or receipt payloads
 When the response payload is returned to that customer
 Then no tasker phone field is present anywhere in the customer-facing payload
 
-## SCN-SEC-009
+## SCN-SEC-011
+
 **Risk:** Critical
-**PRD:** REQ-LEAK-02
-**Title:** Customer phone remains masked until lead unlock or payment commitment succeeds
+**PRD:** REQ-P1-MSG-04
+**Title:** Customer phone is not exposed in tasker-facing payloads in Phase 1
 
-Given a selected tasker can read customer contact details only after the required commitment step for the current phase
-When customer contact is fetched before lead unlock or payment commitment succeeds
-Then the customer phone is returned only in masked form or remains locked
-And the full customer phone is not revealed
+Given the product is in Phase 1 with no contact-unlock mechanism
+When a tasker views booking details, task details, or messaging surfaces
+Then no customer phone field is present in the tasker-facing payload
+And raw direct contact details remain unavailable through any Phase 1 API surface
 
-## SCN-SEC-010
+## SCN-SEC-012
+
 **Risk:** Critical
-**PRD:** REQ-LEAK-03
-**Title:** Exact-address fetch before the required unlock state is denied with ADDRESS_LOCKED
+**PRD:** REQ-P1-AUTH-05
+**Title:** Logout endpoint revokes the current access token
 
-Given the current phase requires an unlock or payment commitment before exact address reveal
-And that unlock state has not been reached for the caller
-When the caller attempts to fetch the exact task address
+Given a customer has a valid active access token
+When the customer logs out
+Then the current access token is revoked
+And later requests with the same token are rejected
+
+## SCN-SEC-013
+
+**Risk:** Critical
+**PRD:** REQ-P1-AUTH-05
+**Title:** DELETED user is rejected with 403
+
+Given a bearer token identifies a deleted user account
+When the user calls a protected product endpoint
 Then the response status is 403
-And the error code is ADDRESS_LOCKED
+And the account is not granted access

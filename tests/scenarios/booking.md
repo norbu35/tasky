@@ -1,9 +1,11 @@
 # booking Scenarios
+
 <!-- Scenarios authored here. See tests/scenarios/README.md for format. -->
 
 ## SCN-BOOK-001
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-04
+**PRD:** REQ-P1-BOOK-14
 **Title:** Customer cancels more than 4 hours before schedule - no incident and no fee
 
 Given a booking is in ASSIGNED status
@@ -14,8 +16,9 @@ And no cancellation fee is recorded
 And no reliability incident is recorded
 
 ## SCN-BOOK-002
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-04
+**PRD:** REQ-P1-BOOK-15
 **Title:** Customer cancels less than 4 hours before schedule - reliability incident recorded and no fee
 
 Given a booking is in ASSIGNED status
@@ -26,8 +29,9 @@ And no cancellation fee is recorded
 And a customer late-cancel reliability incident is recorded
 
 ## SCN-BOOK-003
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-04
+**PRD:** REQ-P1-BOOK-15
 **Title:** Customer cancels exactly 4 hours before schedule - treated as late
 
 Given a booking is in ASSIGNED status
@@ -37,20 +41,21 @@ Then the booking status becomes CANCELLED
 And a customer late-cancel reliability incident is recorded
 
 ## SCN-BOOK-004
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-04
-**Title:** Late-cancel enforcement escalates from warning-only on first occurrence to "Low Customer Reliability" flag and Instant Match revocation on second occurrence in 28 days
+**PRD:** REQ-P1-BOOK-15
+**Title:** Late-cancel enforcement escalates from warning-only on first occurrence to "Low Customer Reliability" flag on second occurrence in 28 days
 
 Given a customer records a first late cancellation within a trailing 28-day window
 And that same customer records a second late cancellation within the same trailing 28-day window
 When the two incidents are evaluated for enforcement
-Then the first occurrence results in a cancellation fee (Phase 2+) or a reliability incident warning
+Then the first occurrence results in a reliability incident warning
 And the second occurrence flags future tasks with "Low Customer Reliability" visible to applicants
-And revokes access to Instant Match for 30 days
 
 ## SCN-BOOK-005
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-06
+**PRD:** REQ-P1-BOOK-16
 **Title:** Tasker cancellation reopens the linked task to OPEN
 
 Given a booking is in ASSIGNED status
@@ -61,8 +66,9 @@ And the linked task status becomes OPEN
 And no cancellation fee is recorded
 
 ## SCN-BOOK-006
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-06
+**PRD:** REQ-P1-BOOK-17
 **Title:** Third tasker cancellation without safety override in a rolling 30 days suspends the tasker for 7 days
 
 Given a tasker already has 2 booking cancellations in the trailing 30 days
@@ -71,8 +77,9 @@ Then the tasker records a third cancellation in the rolling 30-day window
 And the tasker account is suspended for 7 days
 
 ## SCN-BOOK-021
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-06
+**PRD:** REQ-P1-BOOK-18
 **Title:** Tasker cancellation with Safety/Fraud reason bypasses automated strike and opens Trust and Safety ticket
 
 Given a booking is in ASSIGNED status
@@ -81,8 +88,9 @@ Then no moderation strike is incurred
 And a Trust & Safety investigation ticket is immediately opened
 
 ## SCN-BOOK-007
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-03
+**PRD:** REQ-P1-BOOK-05
 **Title:** Booking confirmation without liability disclaimer acceptance is rejected
 
 Given a customer is confirming a selected applicant
@@ -91,8 +99,9 @@ Then the booking is not finalized
 And the request is rejected
 
 ## SCN-BOOK-008
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-03
+**PRD:** REQ-P1-BOOK-06
 **Title:** Liability disclaimer acceptance timestamp is recorded on the booking
 
 Given a customer confirms a selected applicant with liability disclaimer acceptance
@@ -101,8 +110,9 @@ Then the booking stores liability_disclaimer_accepted as true
 And the booking stores the disclaimer acceptance timestamp
 
 ## SCN-BOOK-009
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-05
+**PRD:** REQ-P1-BOOK-13
 **Title:** Terminal booking states reject invalid transitions with INVALID_TRANSITION
 
 Given one booking is in COMPLETED status
@@ -113,8 +123,9 @@ Then the request is rejected with INVALID_TRANSITION
 And the terminal booking statuses do not change
 
 ## SCN-BOOK-010
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-11
+**PRD:** REQ-P1-BOOK-19
 **Title:** Scheduled start plus 10 minutes sends no-show reminder to both parties
 
 Given a booking remains ASSIGNED at 10 minutes after the current confirmed schedule
@@ -124,8 +135,9 @@ And the tasker receives a no-show reminder notification
 And a NO_SHOW_REMINDER_SENT timeline event is recorded
 
 ## SCN-BOOK-011
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-11
+**PRD:** REQ-P1-BOOK-20
 **Title:** No-show flag before 15 minutes after schedule returns TOO_EARLY
 
 Given a booking remains ASSIGNED
@@ -135,8 +147,9 @@ Then the request is rejected
 And the error code is TOO_EARLY
 
 ## SCN-BOOK-012
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-11
+**PRD:** REQ-P1-BOOK-21
 **Title:** Recent in-app activity within 30 minutes blocks no-show flag
 
 Given a booking remains ASSIGNED
@@ -147,8 +160,9 @@ Then the request is rejected
 And the error code is ACTIVITY_DETECTED
 
 ## SCN-BOOK-013
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-11
+**PRD:** REQ-P1-BOOK-22
 **Title:** Accepted future reschedule supersedes no-show adjudication on the original schedule
 
 Given a booking was originally confirmed for one schedule
@@ -158,8 +172,9 @@ Then the request is rejected
 And the error code is RESCHEDULE_SUPERSEDES
 
 ## SCN-BOOK-014
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-11
+**PRD:** REQ-P1-BOOK-23
 **Title:** Valid no-show flag transitions booking and task to NO_SHOW and records audit history
 
 Given a booking remains ASSIGNED
@@ -172,8 +187,9 @@ And the linked task status becomes NO_SHOW
 And immutable timeline and audit events are recorded for the NO_SHOW decision
 
 ## SCN-BOOK-015
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-11
+**PRD:** REQ-P1-BOOK-24
 **Title:** Repeated no-shows within 28 days create a strike-review case
 
 Given the same participant has already recorded 1 validated no-show in the trailing 28 days
@@ -181,8 +197,9 @@ When another validated no-show is recorded against that participant within the s
 Then a strike-review case is created
 
 ## SCN-BOOK-016
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-11
+**PRD:** REQ-P1-BOOK-23
 **Title:** Repeating the no-show flag on an already NO_SHOW booking is idempotent
 
 Given a booking has already been finalized as NO_SHOW
@@ -191,8 +208,9 @@ Then the response returns the existing NO_SHOW booking state
 And no second terminal transition is applied
 
 ## SCN-BOOK-017
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-12
+**PRD:** REQ-P1-BOOK-10
 **Title:** Reschedule request in ASSIGNED creates a REQUESTED event with proposed datetime and optional reason
 
 Given a booking is in ASSIGNED status
@@ -201,8 +219,9 @@ Then a REQUESTED schedule event is created for that booking
 And the proposed datetime is stored on the schedule event
 
 ## SCN-BOOK-018
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-12
+**PRD:** REQ-P1-BOOK-11
 **Title:** Accepted reschedule updates the canonical schedule and resets policy timers
 
 Given a booking is in ASSIGNED status
@@ -213,8 +232,9 @@ And the canonical confirmed schedule is updated to the accepted datetime
 And late-cancel and no-show timers reset to the accepted datetime
 
 ## SCN-BOOK-019
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-12
+**PRD:** REQ-P1-BOOK-12
 **Title:** Declined or expired reschedule request preserves the original schedule
 
 Given a booking is in ASSIGNED status
@@ -224,8 +244,9 @@ Then the original confirmed schedule remains active
 And no-show and late-cancel timers continue to use the original confirmed schedule
 
 ## SCN-BOOK-020
+
 **Risk:** Critical
-**PRD:** REQ-BOOK-13
+**PRD:** REQ-P1-BOOK-09, REQ-P1-BOOK-10
 **Title:** Only the latest mutually accepted in-app schedule changes policy timers and the reschedule lifecycle remains audit-immutable
 
 Given a booking has an original confirmed schedule
@@ -235,3 +256,76 @@ When late-cancel or no-show timers are evaluated and the booking history is retr
 Then policy timers use only the latest mutually accepted in-app schedule
 And chat-only schedule mentions do not change timer calculations
 And reschedule request, accept, decline, and expiry actions are returned as immutable booking timeline events
+
+## SCN-BOOK-022
+
+**Risk:** Critical
+**PRD:** REQ-P1-BOOK-01
+**Title:** Customer selects one applicant and booking becomes ASSIGNED
+
+Given a task has multiple qualified applications in OPEN status
+When the customer selects exactly one applicant
+Then the booking is created in ASSIGNED status
+And the selected applicant becomes the assigned tasker
+And the booking record references the selected application
+
+## SCN-BOOK-023
+
+**Risk:** Critical
+**PRD:** REQ-P1-BOOK-02, REQ-P1-BOOK-03
+**Title:** Selected tasker does not accept within 4 hours and pending selection expires
+
+Given a customer has selected an applicant for a task
+And the selected tasker has not accepted within 4 hours of selection
+When the acceptance window expires
+Then the pending selection expires without confirming the booking
+And the task returns to selectable-applicant state
+And the customer may select a different applicant
+
+## SCN-BOOK-024
+
+**Risk:** Critical
+**PRD:** REQ-P1-BOOK-04
+**Title:** Non-selected applications close automatically once one tasker is confirmed
+
+Given a task has multiple applications
+And one applicant has been selected and accepted within the window
+When the booking becomes confirmed
+Then all other non-selected applications are automatically closed
+And the closed applicants are notified that the task has been filled
+
+## SCN-BOOK-025
+
+**Risk:** Critical
+**PRD:** REQ-P1-PRICE-07
+**Title:** Booking price is locked at confirmed booking
+
+Given a customer selected a tasker with a pricing response of either accepted budget or quoted price
+When the tasker accepts and the booking becomes confirmed
+Then the booking record stores the locked booking price
+And subsequent price changes are not allowed on the confirmed booking
+
+## SCN-BOOK-026
+
+**Risk:** Critical
+**PRD:** REQ-P1-BOOK-25
+**Title:** Tasker marks complete and customer confirms completion
+
+Given a booking is in ASSIGNED status and the scheduled service has been performed
+When the tasker marks the booking as complete
+Then the booking transitions to a customer-confirmation-pending state
+And the customer is notified to confirm or dispute the completion
+And the customer confirms the completion
+Then the booking transitions to COMPLETED
+
+## SCN-BOOK-027
+
+**Risk:** High
+**PRD:** REQ-P1-BOOK-26
+**Title:** Customer silence after tasker-marked complete triggers timeout auto-complete
+
+Given a booking is in customer-confirmation-pending state after the tasker marked it complete
+When the customer does not respond within the configured timeout after reminder attempts
+Then the booking auto-completes via the timeout path
+And the booking transitions to COMPLETED
+And the completion is recorded as auto-completed rather than customer-confirmed
