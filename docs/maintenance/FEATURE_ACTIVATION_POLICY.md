@@ -2,7 +2,7 @@
 
 ## Scope
 
-This document defines how Tasky may enable dormant or later-phase capabilities after the Phase 1 launch baseline.
+This document defines how Tasky may enable dormant or later-phase capabilities after the Phase 1 launch baseline. Planned target phase is recorded for context, but it does not by itself make a capability activation-ready.
 
 It is intentionally stricter than ordinary feature-flag usage. A database toggle is an operational control, not proof
 that the product surface is activation-ready.
@@ -22,17 +22,21 @@ that the product surface is activation-ready.
 
 ## Current Eligibility Ledger
 
-| Surface                     | Status                                           | Eligible for activation?         | Why                                                                                 |
-| --------------------------- | ------------------------------------------------ | -------------------------------- | ----------------------------------------------------------------------------------- |
-| `escrow_enabled`            | `implemented-gated`                              | `yes, after additional evidence` | Backend and client/runtime paths exist, but launch keeps the path off.              |
-| `lead_fee_enabled`          | `partial`                                        | `no`                             | No confirmed runtime consumer in the current review.                                |
-| `subscription_enabled`      | `deferred`                                       | `no`                             | Draft future contract notes plus shell-only client surfaces.                        |
-| `ai_scope_summary_enabled`  | `partial`                                        | `no`                             | Deterministic summary is live; AI rewrite still lacks a confirmed runtime consumer. |
-| `promoted_listings_enabled` | `partial` with architecture-to-code discrepancy  | `no`                             | No matching backend or migration evidence found in the current review.              |
-| `b2b_enabled`               | `deferred` with architecture-to-code discrepancy | `no`                             | No confirmed backend/runtime evidence.                                              |
-| Referrals                   | `deferred`                                       | `no`                             | Forward reference only.                                                             |
-| DAN verification            | `deferred`                                       | `no`                             | Forward reference and mobile shell only.                                            |
-| Instant match               | `deferred`                                       | `no`                             | Forward reference only.                                                             |
+| Surface                     | Planned target phase                        | Status                                           | Eligible for activation?         | Why                                                                                                    |
+| --------------------------- | ------------------------------------------- | ------------------------------------------------ | -------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `escrow_enabled`            | Phase 3                                     | `implemented-gated`                              | `yes, after additional evidence` | Backend and client/runtime paths exist, but launch keeps the path off.                                 |
+| `lead_fee_enabled`          | Phase 2                                     | `partial`                                        | `no`                             | Phase target is defined, but no confirmed release-grade runtime consumer exists in the current review. |
+| `subscription_enabled`      | Phase 3                                     | `deferred`                                       | `no`                             | Planned later-phase surface with draft contracts and shell-only client work.                           |
+| `ai_scope_summary_enabled`  | Phase 3 optional                            | `partial`                                        | `no`                             | Deterministic summary is live; AI rewrite still lacks a confirmed runtime consumer.                    |
+| `promoted_listings_enabled` | Phase 2 conditional                         | `partial` with architecture-to-code discrepancy  | `no`                             | Planned as an optional later-phase monetization surface, but the implementation posture is not ready.  |
+| `b2b_enabled`               | Conditional side-track after consumer proof | `deferred` with architecture-to-code discrepancy | `no`                             | Not part of the core launch path and lacks confirmed backend/runtime evidence.                         |
+| Referrals                   | Phase 2 conditional                         | `deferred`                                       | `no`                             | Forward reference only; not required for the core Phase 2 path.                                        |
+| DAN verification            | Phase 2                                     | `deferred`                                       | `no`                             | Forward reference and mobile shell only.                                                               |
+| Instant match               | Phase 3 after liquidity proof               | `deferred`                                       | `no`                             | Forward reference only and depends on stronger marketplace liquidity than launch has.                  |
+
+## Phase Context
+
+`docs/ROLLOUT_PHASES.md` records where each later capability is intended to belong. That phase map is planning context only. Activation still depends on implementation evidence, contract alignment, operational proof, and rollback readiness.
 
 ## Required Evidence Bundle Before Any Activation
 

@@ -3,7 +3,7 @@
 Routes to the smallest derived architecture surface for the change.
 
 Architecture docs describe implementation reality and design. They do not govern intended product behavior. Product
-behavior lives in `docs/PRD.md`, `docs/STRATEGY.md`, and the relevant maintenance policy docs.
+behavior lives in `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, and the relevant maintenance policy docs.
 
 ## Read Order Before Architecture
 
@@ -11,9 +11,10 @@ For non-trivial work, read in this order:
 
 1. `docs/PRD.md`
 2. `docs/STRATEGY.md`
-3. relevant `docs/maintenance/*.md`
-4. the smallest relevant architecture doc below
-5. `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml` only for contract work
+3. `docs/ROLLOUT_PHASES.md`
+4. relevant `docs/maintenance/*.md`
+5. the smallest relevant architecture doc below
+6. `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml` only for contract work
 
 ## Routing Table
 
@@ -52,8 +53,9 @@ When architecture prose conflicts with product intent, precedence is:
 
 1. `docs/PRD.md`
 2. `docs/STRATEGY.md`
-3. relevant `docs/maintenance/*.md`
-4. architecture prose
+3. `docs/ROLLOUT_PHASES.md` for deferred-phase sequencing that does not override the active Phase 1 baseline
+4. relevant `docs/maintenance/*.md`
+5. architecture prose
 
 If runtime behavior differs from PRD or strategy without an explicit document change, treat it as a code-and-doc mismatch and record the fix.
 

@@ -5,7 +5,7 @@ This document defines the mobile architecture for `apps/mobile`.
 Read this after:
 
 1. `AGENTS.md`
-2. `docs/PRD.md` and `docs/STRATEGY.md`
+2. `docs/PRD.md`, `docs/STRATEGY.md`, and `docs/ROLLOUT_PHASES.md`
 3. `apps/mobile/AGENTS.md`
 4. `docs/architecture/mobile.md` (this file)
 5. `docs/architecture/shared-frontend.md` — only when shared UI/tokens/parity/test naming matter
@@ -14,6 +14,8 @@ Read this after:
 ## Scope
 
 This document owns mobile-specific architecture, structural boundaries, and enforcement expectations. Shared system rules remain in `common.md`. Cross-platform frontend contracts (tokens, parity, test naming) remain in `shared-frontend.md`. Backend API contracts remain in `api.md`.
+
+Use `docs/PRD.md` as the authority for active Phase 1 mobile behavior. Use `docs/ROLLOUT_PHASES.md` only to understand deferred mobile surfaces that may already have dormant navigation, components, or state scaffolding. Future-phase references here must not be read as launch commitments.
 
 ## Platform Contract
 

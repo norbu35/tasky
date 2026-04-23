@@ -2,12 +2,14 @@
 
 This document defines the shared frontend contract for `apps/web` and `apps/mobile`.
 
-Read after: `docs/PRD.md`, `docs/STRATEGY.md`, the surface-specific doc (`web.md` or `mobile.md`), then `common.md`
+Read after: `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, the surface-specific doc (`web.md` or `mobile.md`), then `common.md`
 when needed.
 
 ## 1. Scope
 
 This document owns the cross-platform frontend contract: design tokens, component reference, parity baseline, accessibility, file structure conventions, and test naming rules. Surface-specific rules live in `web.md` and `mobile.md`. Backend API contracts live in `api.md`.
+
+Phase-specific UI behavior must follow `docs/PRD.md` for the active launch baseline and `docs/ROLLOUT_PHASES.md` for deferred surfaces. A dormant screen, component, or state does not become part of the launch UX unless the PRD and rollout map say it is active.
 
 ## 2. Design Tokens
 

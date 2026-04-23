@@ -21,3 +21,9 @@ Tasky now authors OpenAPI in split source files under `docs/openapi/**`.
 - Prefer domain-level files such as `paths/tasks.yaml` or `components/schemas/monetization.yaml`.
 - Keep reusable parameters, responses, and security schemes in `components/`.
 - Add a new fragment only when an existing domain file becomes meaningfully harder to review.
+
+## Rollout Contract Rule
+
+- Active contract files may describe launch behavior and implemented-and-gated runtime surfaces.
+- Future phase intent belongs in `docs/ROLLOUT_PHASES.md`.
+- Do not add draft forward-reference paths to the active contract unless the runtime surface genuinely exists and the disabled behavior is part of the supported server posture.

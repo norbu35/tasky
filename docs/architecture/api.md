@@ -2,7 +2,7 @@
 
 This document describes the backend architecture for `services/api`. It should be read as implementation guidance derived from the governing product and policy docs.
 
-Read after: repo `AGENTS.md`, `docs/PRD.md`, `docs/STRATEGY.md`, relevant maintenance policy, `services/api/AGENTS.md`,
+Read after: repo `AGENTS.md`, `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, relevant maintenance policy, `services/api/AGENTS.md`,
 then this file (`api.md`). Use `common.md` and `docs/openapi/AGENTS.md` only for cross-cutting or contract-change
 context.
 
@@ -10,20 +10,24 @@ Use `python3 tooling/scripts/governance/validate-schema-parity.py` to check sche
 
 ## Authority Order
 
-Product behavior and launch scope are governed by `docs/PRD.md`, `docs/STRATEGY.md`, and the relevant maintenance policy docs. This file describes backend design and implementation structure for that product.
+Product behavior and launch scope are governed by `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, and the relevant maintenance policy docs. This file describes backend design and implementation structure for that product.
 
 Use this interpretation rule throughout:
 
 1. `docs/PRD.md` defines intended Phase 1 behavior and launch scope.
-2. `docs/STRATEGY.md` and maintenance policies constrain launch posture and operating discipline.
-3. This document describes how the backend is organized to implement that behavior.
-4. Tests, migrations, and runtime code are evidence of implementation reality, but they do **not** expand launch scope on their own.
+2. `docs/STRATEGY.md` defines operating posture and launch discipline.
+3. `docs/ROLLOUT_PHASES.md` is the canonical future-phase map for deferred capabilities. It may describe later activation targets, but it does **not** widen the active Phase 1 contract.
+4. Maintenance policies constrain activation posture, staging posture, and operational discipline.
+5. This document describes how the backend is organized to implement that behavior.
+6. Tests, migrations, and runtime code are evidence of implementation reality, but they do **not** expand launch scope on their own.
 
 If code or schema contains dormant capabilities outside the PRD baseline, this document must label them as dormant or deferred rather than presenting them as active launch behavior.
 
 ## 1. Scope
 
 This document owns backend-specific architecture: module layout, request-path rules, data schemas and flows, API contracts, security, runtime concerns, and testing. Cross-cutting system context, shared infrastructure, NFR baselines, and dev workflow live in `common.md`. Frontend parity contracts live in `shared-frontend.md`.
+
+When this file mentions deferred capabilities such as OTP migration, lead credits, subscriptions, escrow, B2B, or instant match, phase intent must trace back to `docs/ROLLOUT_PHASES.md`. If this file and the rollout map disagree, treat that as documentation drift and fix it rather than inferring a new backend contract.
 
 ## 1.1 Foundational Design Patterns
 

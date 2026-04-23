@@ -9,7 +9,19 @@ This document covers the shared technical baseline for Tasky. Backend specifics 
 **Key Constraint:** "Trust-First" (Graceful degradation)
 
 This document defines cross-cutting technical architecture for Tasky: system context, shared technology decisions,
-runtime patterns, non-functional baselines, and development workflow. Product behavior is defined in `docs/PRD.md`, `docs/STRATEGY.md`, and the relevant maintenance policy docs.
+runtime patterns, non-functional baselines, and development workflow. Product behavior is defined in `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, and the relevant maintenance policy docs.
+
+## 1.1 Interpretation Rule
+
+Use the governance docs in this order when reading shared architecture:
+
+1. `docs/PRD.md` defines the active Phase 1 product contract.
+2. `docs/STRATEGY.md` defines launch posture and operating discipline.
+3. `docs/ROLLOUT_PHASES.md` defines the intended sequencing for deferred capabilities beyond Phase 1.
+4. Maintenance policies define toggle posture, activation readiness, and staging discipline.
+5. This document describes the shared technical baseline that supports those rules.
+
+If a deferred integration appears in code or infrastructure before its planned phase, keep it labeled dormant. Its existence does not make it part of the active runtime contract.
 
 ---
 
@@ -185,6 +197,7 @@ For the full package-to-domain mapping, see `api.md` §2.
 | Mobile structural contract       | `mobile.md`                                            |
 | OpenAPI contracts                | `docs/openapi/AGENTS.md`, `docs/openapi/openapi.yaml`  |
 | PRD requirements                 | `docs/PRD.md`                                          |
+| Rollout sequencing               | `docs/ROLLOUT_PHASES.md`                               |
 | PRD-to-architecture traceability | `docs/PRD.md` functional requirements and KPI sections |
 | Architecture decision records    | `docs/adr/**`                                          |
 | Launch readiness                 | `docs/maintenance/PRODUCTION_READINESS.md`             |

@@ -80,3 +80,23 @@ Rules:
 - No launch dependency on credits, subscriptions, referrals, B2B, DAN, OTP-primary auth, instant match, or escrow.
 - No operating plan that assumes future monetization or future trust rails are already live.
 - No claim that external distribution counts as native marketplace health.
+
+## 6. Phase progression
+
+The rollout sequence beyond launch is recorded in `docs/ROLLOUT_PHASES.md`. The strategy view is:
+
+| Phase       | Strategic job                                                                                   | Notes                                                                                              |
+| ----------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Phase 1** | Prove the marketplace works across Ulaanbaatar with the launch categories and direct settlement | This is the current product.                                                                       |
+| **Phase 2** | Improve matching quality and test light monetization without changing the settlement model      | Lead credits and promoted listings are optional tools inside the phase, not automatic commitments. |
+| **Phase 3** | Add stronger trust rails and supply-side monetization                                           | Escrow, wallet, payouts, and subscription belong here if earlier evidence supports them.           |
+| **Phase 4** | Expand geography and revenue mix                                                                | This is where broader payment rails, customer plans, and any managed B2B layer belong.             |
+
+### 6.1 Conditional tracks
+
+- Referrals are optional and should follow working liquidity rather than precede it.
+- B2B is a conditional track. Founder-led commercial discovery may happen early, but it is not part of the core Phase 1 or Phase 2 success case unless the governing docs explicitly change.
+
+### 6.2 Advancement rule
+
+A later phase is real only when the governing docs, maintenance posture, contracts, and launch-facing UX all reflect it together. Dormant code does not advance the strategy.

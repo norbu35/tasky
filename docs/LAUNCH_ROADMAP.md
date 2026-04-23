@@ -1,6 +1,6 @@
 # Phase 1 Launch Roadmap
 
-This roadmap summarizes the current launch baseline. Product behavior is defined in `docs/PRD.md`. Market posture and operating priorities are defined in `docs/STRATEGY.md`.
+This roadmap summarizes the current launch baseline. Product behavior is defined in `docs/PRD.md`. Market posture and operating priorities are defined in `docs/STRATEGY.md`. Future-phase sequencing is tracked in `docs/ROLLOUT_PHASES.md` and does not change the Phase 1 baseline by implication.
 
 ## 1. Launch posture
 
@@ -46,8 +46,22 @@ The operating decision lives in:
 
 Current recommendation:
 
-| Decision               | Current status         | Notes                                                                                  |
-| ---------------------- | ---------------------- | -------------------------------------------------------------------------------------- |
-| `not ready`            | No longer accurate     | The repo and private sandbox are usable                                                |
-| `ready for staging`    | Current recommendation | Use the private VPS sandbox next                                                       |
-| `ready for production` | Not yet                | Blocked on staging rehearsal, dashboarding, alert routing, and remaining evidence gaps |
+| Decision               | Current status         | Notes                                                                                   |
+| ---------------------- | ---------------------- | --------------------------------------------------------------------------------------- |
+| `not ready`            | Not recommended        | The repo and private sandbox already exceed this state.                                 |
+| `ready for staging`    | Current recommendation | Use the private VPS sandbox next.                                                       |
+| `ready for production` | Not yet                | Blocked on staging rehearsal, dashboarding, alert routing, and remaining evidence gaps. |
+
+## 5. Boundary to later phases
+
+This roadmap is intentionally narrow. It does not commit the launch to:
+
+- OTP-primary auth or DAN verification
+- lead credits or promoted listings
+- subscriptions
+- escrow, wallet, or payout operations
+- referrals
+- B2B flows
+- instant match
+
+Those surfaces belong to later-phase planning only and must follow the rollout rules in `docs/ROLLOUT_PHASES.md` and `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`.

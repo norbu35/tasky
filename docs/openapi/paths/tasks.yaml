@@ -568,15 +568,15 @@
   post:
     tags:
       - Applications
-    summary: Accept a tasker's application
+    summary: Select a tasker's application
     description: |
-      Customer accepts a tasker's application. This creates a pending booking intent and marks the
+      Customer selects a tasker's application. This creates a pending booking intent and marks the
       application as `SELECTED`.
       Requires `liability_disclaimer_accepted=true`.
       The selected tasker then has the default 4-hour response window to confirm or decline.
       Other applications remain available until a booking is confirmed.
       Requires Idempotency-Key header.
-    operationId: acceptApplication
+    operationId: selectApplication
     security:
       - BearerAuth: []
     parameters:

@@ -26,7 +26,8 @@ When active documents conflict:
 ### 1.2 Deferred capabilities
 
 - Phase 1 normative sections describe the **launch baseline only**.
-- Future monetization, expansion, or automation surfaces may be referenced only in clearly labeled deferred appendices.
+- Future monetization, expansion, or automation surfaces may be referenced only in clearly labeled deferred appendices or in `docs/ROLLOUT_PHASES.md`.
+- `docs/ROLLOUT_PHASES.md` is planning guidance for later phases. It does not override the Phase 1 launch baseline defined here.
 - Derived documents and public copy may **not** promise behavior beyond the launch baseline.
 
 ### 1.3 Change discipline
@@ -662,7 +663,9 @@ For any non-trivial product work, the minimum reading order is:
 5. contract docs if contract work is involved
 6. design docs only as derived UX detail
 
-## 18. Deferred capabilities appendix (non-normative)
+## 18. Deferred capabilities and phased rollout appendix (non-normative)
+
+### 18.1 Deferred capabilities
 
 The following surfaces may remain documented elsewhere as future or deferred design space, but they are not part of the launch baseline:
 
@@ -678,3 +681,21 @@ The following surfaces may remain documented elsewhere as future or deferred des
 - runtime AI posting rewrite
 
 They must not enter the launch baseline without an explicit PRD change.
+
+### 18.2 Planned phase sequence
+
+The current rollout shape is:
+
+| Phase       | Purpose                                      | Capabilities intended for that phase                                                                                                                                                                    | Still out of scope in that phase                                                                                                               |
+| ----------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1** | Launch baseline                              | Citywide Ulaanbaatar posting, four launch categories, structured intake, budget-or-quote pricing, open application, direct settlement, verification, reviews, disputes, moderation, measured assistance | OTP-primary auth, DAN, lead fees, promoted listings, subscriptions, escrow, wallet, payouts, referrals, B2B, instant match, runtime AI posting |
+| **Phase 2** | Liquidity systems and soft monetization      | Algorithm-assisted application, OTP migration, DAN fast-path, lead credits if justified, promoted listings if justified, direct settlement still standard                                               | Escrow, wallet, payouts, subscriptions, instant match by default, geographic expansion                                                         |
+| **Phase 3** | Stronger trust rails and supply monetization | Tasker subscription, opt-in escrow, wallet and payout operations, tighter anti-leakage enforcement, instant match only after liquidity proof                                                            | Geographic expansion, managed B2B, broad revenue diversification                                                                               |
+| **Phase 4** | Expansion and broader revenue mix            | Additional payment rails, customer subscription products, geographic expansion, managed B2B only if earlier validation exists                                                                           | None by default; every addition still requires explicit scope approval                                                                         |
+
+### 18.3 Rollout rules
+
+- A feature toggle does not advance the product to the next phase.
+- A future-phase endpoint or schema may exist in code, but it is not part of product scope until the PRD, strategy, maintenance policies, and launch-facing copy all say so.
+- Phase advancement is evidence-driven. The KPI model in this PRD remains the launch decision frame until a later-phase change is explicitly approved.
+- Referrals and B2B are conditional tracks, not required ingredients of the core Phase 2 path.
