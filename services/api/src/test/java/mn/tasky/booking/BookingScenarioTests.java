@@ -57,13 +57,12 @@ class BookingScenarioTests {
     private BookingService bookingService;
     private BookingReliabilityIncidentDao incidentDao;
     private ModerationService moderationService;
-    private UserProfileService userProfileService;
 
     @BeforeEach
     void setUp() {
         store.clear();
         moderationService = mock(ModerationService.class);
-        userProfileService = mock(UserProfileService.class);
+        UserProfileService userProfileService = mock(UserProfileService.class);
         BookingDao bookingDao = mock(BookingDao.class);
         incidentDao = mock(BookingReliabilityIncidentDao.class);
         BookingCompletionSignalDao completionSignalDao = mock(BookingCompletionSignalDao.class);
