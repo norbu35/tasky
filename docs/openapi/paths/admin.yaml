@@ -1089,3 +1089,101 @@
           application/json:
             schema:
               $ref: ../components/schemas/common.yaml#/Error
+/admin/payouts/pending:
+  get:
+    tags:
+      - Admin
+    summary: List pending payouts
+    description: |
+      Returns a paginated list of payout requests awaiting admin processing.
+      Gated by the `escrow_enabled` feature toggle.
+    operationId: adminListPendingPayouts
+    security:
+      - BearerAuth: []
+    responses:
+      '200':
+        description: Paginated list of pending payout requests.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - cursor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/monetization.yaml#/PayoutRequest
+                cursor:
+                  $ref: ../components/schemas/common.yaml#/CursorPagination
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '503':
+        description: Payout operations are deferred during the liquidity-first MVP phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/admin/payouts/{id}/process:
+  post:
+    tags:
+      - Admin
+    summary: Process a payout
+    description: |
+      Admin processes (approves or rejects) a pending payout request.
+      Payouts can only be processed on Tuesdays and Fridays.
+      Gated by the `escrow_enabled` feature toggle.
+      Requires Idempotency-Key header.
+    operationId: adminProcessPayout
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - reason
+            properties:
+              reason:
+                type: string
+                minLength: 1
+                maxLength: 500
+                description: Admin reason for the processing decision.
+    responses:
+      '200':
+        description: Payout processed successfully.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Payout is not eligible for processing (e.g. wrong weekday).
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '503':
+        description: Payout operations are deferred during the liquidity-first MVP phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error

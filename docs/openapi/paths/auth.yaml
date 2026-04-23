@@ -105,6 +105,8 @@
                     - OPEN
                     - HALF_OPEN
 /auth/dev/login:
+  x-tasky-status: deferred
+  x-tasky-target-phase: dev_only
   post:
     tags:
       - Auth
@@ -193,3 +195,124 @@
           application/json:
             schema:
               $ref: ../components/schemas/common.yaml#/Error
+/auth/otp/request:
+  x-tasky-status: deferred
+  x-tasky-target-phase: phase_2
+  post:
+    tags:
+      - Auth
+    summary: Request OTP code (Phase 2+)
+    description: |
+      **Not yet active — Phase 2+ forward reference. Returns 403 until OTP is enabled.**
+      Sends a one-time password to the given phone number. Requires `tasky.otp.enabled=true`.
+    operationId: requestOtp
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - phone
+            properties:
+              phone:
+                type: string
+                format: phone
+                description: Phone number in E.164 format.
+                example: '+97699112233'
+    responses:
+      '200':
+        description: OTP sent successfully.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+                - masked_phone
+              properties:
+                message:
+                  type: string
+                masked_phone:
+                  type: string
+                  description: Masked phone number confirming the delivery target.
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '403':
+        description: OTP authentication is disabled for the current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '429':
+        $ref: ../components/responses.yaml#/TooManyRequests
+/auth/otp/verify:
+  x-tasky-status: deferred
+  x-tasky-target-phase: phase_2
+  post:
+    tags:
+      - Auth
+    summary: Verify OTP code (Phase 2+)
+    description: |
+      **Not yet active — Phase 2+ forward reference. Returns 403 until OTP is enabled.**
+      Verifies the OTP code sent to the given phone number. Optionally links a Facebook
+      access token for account migration. Requires `tasky.otp.enabled=true`.
+    operationId: verifyOtp
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - phone
+              - code
+            properties:
+              phone:
+                type: string
+                format: phone
+                description: Phone number in E.164 format.
+                example: '+97699112233'
+              code:
+                type: string
+                description: 4-6 digit OTP code.
+                minLength: 4
+                maxLength: 6
+              facebook_access_token:
+                type: string
+                description: Optional Facebook access token for account linking/migration.
+                maxLength: 512
+    responses:
+      '200':
+        description: Authentication successful.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - access_token
+                - refresh_token
+                - user
+              properties:
+                access_token:
+                  type: string
+                refresh_token:
+                  type: string
+                user:
+                  $ref: ../components/schemas/identity.yaml#/User
+      '401':
+        description: Invalid or expired OTP code.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '403':
+        description: OTP authentication is disabled for the current rollout phase.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+      '429':
+        $ref: ../components/responses.yaml#/TooManyRequests

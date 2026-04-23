@@ -194,6 +194,10 @@ paths:
     $ref: ./paths/auth.yaml#/~1auth~1dev~1login
   /auth/token/refresh:
     $ref: ./paths/auth.yaml#/~1auth~1token~1refresh
+  /auth/otp/request:
+    $ref: ./paths/auth.yaml#/~1auth~1otp~1request
+  /auth/otp/verify:
+    $ref: ./paths/auth.yaml#/~1auth~1otp~1verify
   /users/me:
     $ref: ./paths/users.yaml#/~1users~1me
   /users/me/role/tasker:
@@ -256,6 +260,10 @@ paths:
     $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1no-show~1flag
   /bookings/{id}/mark-done:
     $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1mark-done
+  /bookings/{id}/rebook:
+    $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1rebook
+  /tasks/{id}/booking-intents:
+    $ref: ./paths/bookings.yaml#/~1tasks~1{id}~1booking-intents
   /booking-intents/{id}:
     $ref: ./paths/bookings.yaml#/~1booking-intents~1{id}
   /booking-intents/{id}/confirm:
@@ -336,9 +344,35 @@ paths:
     $ref: ./paths/admin.yaml#/~1admin~1bookings~1{id}
   /admin/bookings/{id}/override-status:
     $ref: ./paths/admin.yaml#/~1admin~1bookings~1{id}~1override-status
+  /admin/payouts/pending:
+    $ref: ./paths/admin.yaml#/~1admin~1payouts~1pending
+  /admin/payouts/{id}/process:
+    $ref: ./paths/admin.yaml#/~1admin~1payouts~1{id}~1process
   /admin/outbox/events/replay-all:
     $ref: ./paths/admin.yaml#/~1admin~1outbox~1events~1replay-all
   /location/reverse-geocode:
     $ref: ./paths/location.yaml#/~1location~1reverse-geocode
   /location/search:
     $ref: ./paths/location.yaml#/~1location~1search
+  /wallet:
+    $ref: ./paths/wallet.yaml#/~1wallet
+  /wallet/transactions:
+    $ref: ./paths/wallet.yaml#/~1wallet~1transactions
+  /wallet/payouts:
+    $ref: ./paths/wallet.yaml#/~1wallet~1payouts
+  /payments/bookings/{id}/initiate:
+    $ref: ./paths/payments.yaml#/~1payments~1bookings~1{id}~1initiate
+  /payments/qpay/callback:
+    $ref: ./paths/payments.yaml#/~1payments~1qpay~1callback
+  /subscriptions/tasker:
+    $ref: ./paths/payments.yaml#/~1subscriptions~1tasker
+  /credits/balance:
+    $ref: ./paths/credits.yaml#/~1credits~1balance
+  /credits/transactions:
+    $ref: ./paths/credits.yaml#/~1credits~1transactions
+  /credits/packs:
+    $ref: ./paths/credits.yaml#/~1credits~1packs
+  /credits/purchase:
+    $ref: ./paths/credits.yaml#/~1credits~1purchase
+  /referrals/me:
+    $ref: ./paths/referrals.yaml#/~1referrals~1me

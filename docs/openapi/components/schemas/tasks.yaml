@@ -215,7 +215,7 @@ CreateTaskRequest:
       maxLength: 2000
     budget:
       type: integer
-      minimum: 5000
+      minimum: 20000
       nullable: true
       description: Budget in MNT. Required when pricing_mode is BUDGET. Ignored for QUOTE mode.
     pricing_mode:

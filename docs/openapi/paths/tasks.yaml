@@ -492,7 +492,7 @@
               quote_price:
                 type: integer
                 nullable: true
-                minimum: 5000
+                minimum: 20000
                 maximum: 50000000
                 description: "Tasker's price response. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the required quote."
     responses:

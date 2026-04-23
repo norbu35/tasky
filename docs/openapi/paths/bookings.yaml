@@ -425,6 +425,8 @@
             schema:
               $ref: ../components/schemas/common.yaml#/Error
 /booking-intents/{id}/decline:
+  x-tasky-status: deferred
+  x-tasky-target-phase: phase_2
   post:
     tags:
       - Bookings
@@ -453,6 +455,105 @@
         $ref: ../components/responses.yaml#/NotFound
       '409':
         description: Intent is not pending or already resolved.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/bookings/{id}/rebook:
+  post:
+    tags:
+      - Bookings
+    summary: Rebook a completed booking
+    description: |
+      Creates a booking intent to rebook the same tasker for a completed booking.
+      The original booking must be in COMPLETED status.
+      Requires Idempotency-Key header.
+    operationId: rebookBooking
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    responses:
+      '200':
+        description: Rebook intent created.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/BookingIntent
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Original booking is not eligible for rebooking.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+/tasks/{id}/booking-intents:
+  post:
+    tags:
+      - Bookings
+    summary: Create booking intent for a task
+    description: |
+      Customer creates a booking intent for a task, selecting a tasker.
+      Supports REBOOK source (from a previous booking) and INSTANT_MATCH source.
+      The task must be in a state that allows booking intent creation.
+      Requires Idempotency-Key header.
+    operationId: createBookingIntent
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - source
+              - tasker_id
+            properties:
+              source:
+                type: string
+                enum:
+                  - REBOOK
+                  - INSTANT_MATCH
+                description: Booking intent source type.
+              tasker_id:
+                type: string
+                format: uuid
+                description: Selected tasker ID.
+              original_booking_id:
+                type: string
+                format: uuid
+                description: Original booking ID (required for REBOOK source).
+              offer_id:
+                type: string
+                format: uuid
+                description: Associated offer ID (for INSTANT_MATCH source).
+    responses:
+      '201':
+        description: Booking intent created.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/BookingIntent
+      '400':
+        $ref: ../components/responses.yaml#/BadRequest
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Task is not open or booking not eligible for intent creation.
         content:
           application/json:
             schema:
