@@ -52,25 +52,8 @@ Booking:
       type: string
       enum:
         - DIRECT
-        - LEAD_UNLOCK
-        - ESCROW
-    escrow_status:
-      type: string
-      nullable: true
-      enum:
-        - UNPAID
-        - PAID
-        - HELD
-        - RELEASED
     late_cancel_incident:
       type: boolean
-    customer_contact_unlocked:
-      type: boolean
-      nullable: true
-    cancellation_fee:
-      type: integer
-      nullable: true
-      description: Phase-gated monetization field. Null when the current phase keeps cancellation fees disabled.
     completion_reminder_count:
       type: integer
       description: Number of completion reminders sent for this booking.
@@ -113,8 +96,6 @@ BookingIntent:
       type: string
       enum:
         - APPLICATION_SELECTION
-        - REBOOK
-        - INSTANT_MATCH
     status:
       type: string
       enum:
@@ -124,14 +105,6 @@ BookingIntent:
         - EXPIRED
         - CANCELLED
     selected_application_id:
-      type: string
-      format: uuid
-      nullable: true
-    original_booking_id:
-      type: string
-      format: uuid
-      nullable: true
-    offer_id:
       type: string
       format: uuid
       nullable: true

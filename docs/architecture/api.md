@@ -16,18 +16,18 @@ Use this interpretation rule throughout:
 
 1. `docs/PRD.md` defines intended Phase 1 behavior and launch scope.
 2. `docs/STRATEGY.md` defines operating posture and launch discipline.
-3. `docs/ROLLOUT_PHASES.md` is the canonical future-phase map for deferred capabilities. It may describe later activation targets, but it does **not** widen the active Phase 1 contract.
+3. `docs/ROLLOUT_PHASES.md` preserves later-phase intent without widening the active contract.
 4. Maintenance policies constrain activation posture, staging posture, and operational discipline.
-5. This document describes how the backend is organized to implement that behavior.
+5. This document describes how the backend is organized to implement current behavior.
 6. Tests, migrations, and runtime code are evidence of implementation reality, but they do **not** expand launch scope on their own.
 
-If code or schema contains dormant capabilities outside the PRD baseline, this document must label them as dormant or deferred rather than presenting them as active launch behavior.
+Any non-Phase-1 scaffolding in code or schema is implementation residue, not active architecture scope.
 
 ## 1. Scope
 
 This document owns backend-specific architecture: module layout, request-path rules, data schemas and flows, API contracts, security, runtime concerns, and testing. Cross-cutting system context, shared infrastructure, NFR baselines, and dev workflow live in `common.md`. Frontend parity contracts live in `shared-frontend.md`.
 
-When this file mentions deferred capabilities such as OTP migration, lead credits, subscriptions, escrow, B2B, or instant match, phase intent must trace back to `docs/ROLLOUT_PHASES.md`. If this file and the rollout map disagree, treat that as documentation drift and fix it rather than inferring a new backend contract.
+Future rollout intent belongs in `docs/ROLLOUT_PHASES.md`. This architecture doc should describe active backend structure, not keep later-phase technical design alive in the main reading path.
 
 ## 1.1 Foundational Design Patterns
 
@@ -268,9 +268,9 @@ The backend is a single deployable unit (`tasky-server`) organized by business d
 | **Analytics**    | `analytics`    | Product-event emission and KPI instrumentation                                             | `AnalyticsCommandPort`                                               |
 | **Admin**        | `admin`        | Admin dashboard APIs for verification, moderation, disputes, rescue, and schema governance | `AdminAuditCommandPort`                                              |
 
-### Dormant or deferred capabilities
+### Current-phase boundary
 
-Parts of the codebase and schema may already contain dormant scaffolding for non-launch capabilities such as OTP-first auth, lead-unlock monetization, escrow, payouts, subscriptions, B2B, instant match, referral flows, or AI-assisted copy. Those surfaces are **not** part of the Phase 1 architecture contract and must remain disabled, non-promoted, and absent from launch UX until the PRD and downstream contracts are updated.
+The repository may still contain dormant scaffolding outside the launch baseline. That residue is not part of the active backend contract and should not be used to infer live product scope.
 
 ### Orchestration Plane
 
@@ -326,8 +326,7 @@ This section inventories the backend data model in a way that stays aligned with
 
 Two rules apply:
 
-1. Physical schema and runtime code may contain dormant fields, enum values, tables, or handlers for deferred capabilities.
-2. Their existence does **not** make them part of the Phase 1 product contract. When they exist, they must be labeled as dormant or deferred.
+This section inventories the launch-aligned backend data model. Non-launch residue in the physical schema is not normative for the active product baseline.
 
 ### 4.1 Launch-aligned domain schema inventory
 
@@ -337,7 +336,7 @@ For exact column definitions, use the Flyway migrations in `services/api/src/mai
 
 - `users`: user identity, role, status, and session-facing auth state. Phase 1 launch authentication is Facebook OAuth only. Alternate auth enum values may exist physically but remain disabled for launch.
 - `profiles`: profile data such as full name, avatar, bio, and aggregate completion/reputation fields. Public ratings remain hidden until the product threshold policy allows display.
-- `verifications`: tasker verification submission, consent evidence, review decision, notes, and timestamps. A nullable `dan_reference` may exist physically, but DAN integration is out of launch scope.
+- `verifications`: tasker verification submission, consent evidence, review decision, notes, and timestamps.
 
 #### Marketplace and booking
 
@@ -365,7 +364,7 @@ For exact column definitions, use the Flyway migrations in `services/api/src/mai
 - `review_enforcement_cases`: reminder cadence and lock state for owed reviews.
 - `tasker_reliability_scores`: derived reliability data used for ranking and trust operations.
 - `tasker_badges`: trust badge assignments. Badge display remains subordinate to verification and threshold-based public reputation policy.
-- `disputes`: booking-linked dispute records. Enum values associated with refund or escrow-style outcomes may exist physically, but Phase 1 disputes resolve through evidence-backed moderation rather than payout adjudication.
+- `disputes`: booking-linked dispute records resolved through evidence-backed moderation.
 - `dispute_evidence`: uploaded or written evidence artifacts tied to a dispute.
 - `tasker_strikes`: trust escalation records for no-show, cancellation, or misconduct patterns.
 - `audit_events`: admin and system audit trail.
@@ -378,17 +377,7 @@ For exact column definitions, use the Flyway migrations in `services/api/src/mai
 - `booking_reliability_incidents`: auditable late-cancel and no-show incidents.
 - `districts`, `tasker_service_districts`: district lookup and tasker service-area preferences used for targeting and diagnostics.
 - `domain_outbox_events`, `event_idempotency`: durable async delivery and handler idempotency.
-- `feature_toggles`: audited runtime toggles. Toggle presence does not authorize a deferred capability for launch.
-
-### 4.2 Dormant or deferred schema references
-
-These items may exist physically in the codebase or schema, but they are not part of the Phase 1 launch contract:
-
-- Monetization and payout tables such as `wallets`, `ledger_entries`, `payout_requests`, and `credited_bookings`
-- Referral artifacts such as `referrals` and `referral_rewards`
-- Future-phase tables such as `instant_match_offers`, `credit_balances`, `credit_transactions`, `credit_packs`, `lead_unlock_prices`, `tasker_subscriptions`, `business_accounts`, `business_locations`, and `business_members`
-
-If any of these are activated in product behavior, they must first be added to the PRD and then propagated through OpenAPI, maintenance policy, tests, and implementation.
+- `feature_toggles`: audited runtime toggles used for controlled rollout posture.
 
 ### 4.3 Read models and projections
 
@@ -469,7 +458,7 @@ Standardized error response:
   - Access token TTL: 15 minutes. Refresh token TTL: configurable (base default **14 days**; `dev` and `local` profiles override to 30 days).
   - `JwtTokenService` validates signature, expiry, issuer, audience, and token type on every parse.
   - Facebook OAuth is the only launch authentication method for new sessions.
-  - If dormant OTP flows still exist in code, they must remain disabled and absent from launch UX.
+  - Any non-launch auth residue must remain disabled and absent from launch UX.
 - **Token revocation**: `TokenBlacklistService` holds an in-memory Caffeine cache of revoked `jti` values with a 15-minute TTL (matching access token lifetime). The logout endpoint (`POST /api/v1/auth/logout`) revokes the current access token's JTI. The blacklist is also consulted on STOMP `CONNECT` when messaging is enabled.
 - **Authorization**:
   - `SecurityConfig` enforces role boundaries for launch surfaces: task posting and draft flows for customers, verification/service-area flows for taskers, booking/review/dispute/messaging flows for booking participants, and admin-only operator surfaces.
@@ -481,7 +470,7 @@ Standardized error response:
 - **Rate limiting**:
   - General API traffic uses sliding-window limits backed by `rate_limit_counters`.
   - Auth endpoints and other abuse-sensitive edges must fail closed under configured limits.
-  - If dormant OTP endpoints remain implemented, they must stay disabled; their existence must not leak into launch UX or policy.
+  - Any non-launch auth endpoints that still exist in code must stay disabled and must not leak into launch UX or policy.
   - When messaging is enabled, STOMP `SEND` frames are rate-limited and subscriptions are authorization-checked.
 - **Web frontend security**:
   - `Caddyfile.production` sets a `Content-Security-Policy` header: `default-src 'self'`, `script-src` allows Facebook CDN and the inline polyfill hash, `style-src` allows Google Fonts, `connect-src` allows `wss:` and `graph.facebook.com`.
@@ -584,8 +573,8 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 ### 6.4 Feature Toggles
 
 - Feature toggles are stored in `feature_toggles` and must be fully audited.
-- A toggle may control runtime wiring, but toggle presence does **not** make a deferred capability part of the launch baseline.
-- For Phase 1 launch, deferred surfaces such as OTP-first auth, AI scope-summary generation, lead-fee/credit monetization, escrow, payouts, subscriptions, B2B, and instant match must remain disabled and absent from launch UX.
+- A toggle may control runtime wiring, but toggle presence does **not** change product scope on its own.
+- Any non-launch surface must remain disabled and absent from launch UX until the governing docs change.
 - Any activation that changes product behavior must update the PRD, maintenance policy, contracts, tests, and implementation together.
 
 ## 7. Backend Testing

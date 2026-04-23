@@ -22,7 +22,6 @@ User:
       type: string
       enum:
         - FACEBOOK
-        - PHONE_OTP
     role:
       type: string
       enum:
@@ -91,17 +90,13 @@ Profile:
       type: number
       format: double
       example: 4.7
-    reliability_score:
-      type: number
-      format: double
-      nullable: true
-      description: Composite reliability score used in ranking (Phase 2+).
     completed_tasks:
       type: integer
       example: 12
     is_pro:
       type: boolean
-      description: Auto-assigned when completed_tasks > 15 AND rating_avg > 4.5 in Phase 0-1; threshold may change in later phases.
+      description: Auto-assigned when completed_tasks > 15 AND rating_avg > 4.5 in
+        Phase 0-1; threshold may change in later phases.
     created_at:
       type: string
       format: date-time
@@ -109,7 +104,8 @@ Profile:
       type: string
       format: date-time
       nullable: true
-      description: Last time the user made an authenticated API request. Updated at most every 2 minutes.
+      description: Last time the user made an authenticated API request. Updated at
+        most every 2 minutes.
 StrikePolicy:
   type: object
   required:

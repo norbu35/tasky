@@ -627,112 +627,6 @@
           application/json:
             schema:
               $ref: ../components/schemas/common.yaml#/Error
-/tasks/{id}/booking-intents:
-  post:
-    tags:
-      - Bookings
-    summary: Create booking intent for non-application confirmation sources
-    description: |
-      Creates a booking intent for a customer-owned OPEN task.
-      `REBOOK` is the only active non-application source in the current contract.
-    operationId: createBookingIntent
-    security:
-      - BearerAuth: []
-    parameters:
-      - $ref: ../components/parameters.yaml#/PathId
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - source
-              - tasker_id
-            properties:
-              source:
-                type: string
-                enum:
-                  - REBOOK
-              tasker_id:
-                type: string
-                format: uuid
-              original_booking_id:
-                type: string
-                format: uuid
-                nullable: true
-              offer_id:
-                type: string
-                format: uuid
-                nullable: true
-    responses:
-      '201':
-        description: Booking intent created.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/bookings.yaml#/BookingIntent
-      '400':
-        $ref: ../components/responses.yaml#/BadRequest
-      '401':
-        $ref: ../components/responses.yaml#/Unauthorized
-      '403':
-        $ref: ../components/responses.yaml#/Forbidden
-      '404':
-        $ref: ../components/responses.yaml#/NotFound
-      '409':
-        description: Task or source constraints not satisfiable.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/common.yaml#/Error
-/tasks/{id}/instant-match:
-  x-tasky-status: deferred
-  x-tasky-target-phase: phase_3
-  post:
-    tags:
-      - Applications
-    summary: Start instant match (Phase 3+)
-    description: |
-      **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
-      Starts instant-match flow for eligible high-liquidity categories/districts.
-      Offer window is 5 minutes per tasker; after 3 declines/timeouts flow falls back to standard applications.
-    operationId: startInstantMatch
-    security:
-      - BearerAuth: []
-    parameters:
-      - $ref: ../components/parameters.yaml#/PathId
-      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
-    responses:
-      '200':
-        description: Instant match started or booking immediately assigned.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                mode:
-                  type: string
-                  enum:
-                    - INSTANT_MATCH_STARTED
-                    - BOOKING_ASSIGNED
-                    - FALLBACK_TO_APPLICATIONS
-                booking:
-                  $ref: ../components/schemas/bookings.yaml#/Booking
-                  nullable: true
-      '401':
-        $ref: ../components/responses.yaml#/Unauthorized
-      '403':
-        $ref: ../components/responses.yaml#/Forbidden
-      '404':
-        $ref: ../components/responses.yaml#/NotFound
-      '409':
-        description: Task not eligible for instant match.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/common.yaml#/Error
-
 /tasks/{id}/applications/{applicationId}/select:
   post:
     tags:
@@ -771,7 +665,6 @@
           application/json:
             schema:
               $ref: ../components/schemas/common.yaml#/Error
-
 /tasks/{id}/applications/{applicationId}/confirm:
   post:
     tags:
@@ -817,7 +710,6 @@
           application/json:
             schema:
               $ref: ../components/schemas/common.yaml#/Error
-
 /tasks/{id}/applications/{applicationId}/withdraw:
   post:
     tags:

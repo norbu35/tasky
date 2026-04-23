@@ -161,12 +161,8 @@ FeatureToggle:
   properties:
     feature_name:
       type: string
-      enum:
-        - lead_fee_enabled
-        - subscription_enabled
-        - escrow_enabled
-        - ai_scope_summary_enabled
-      description: Seeded feature toggle names; current runtime consumer status varies by toggle. Future-facing names such as `promoted_listings_enabled` and `b2b_enabled` are not part of the current API toggle enum because this sweep found no confirmed seeded runtime support for them.
+      description: Feature toggle key. Active launch docs do not treat toggle presence
+        as rollout scope.
     is_enabled:
       type: boolean
     updated_by:

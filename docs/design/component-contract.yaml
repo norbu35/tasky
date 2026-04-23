@@ -599,9 +599,9 @@ new_components:
       typography: [price_display, label]
       colors: [primary, danger, secondary]
     rules:
-      - 'Header variant: prominent in credits screen'
-      - 'Inline variant: compact in deferred monetization flows'
-      - 'Low balance warning at 1 credit'
+      - 'Header variant: prominent in balance-oriented surfaces'
+      - 'Inline variant: compact in secondary summary surfaces'
+      - 'Low balance warning at 1 unit'
 
   - id: COMP-PROGRESSTRACKER
     name: ProgressTracker

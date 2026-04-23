@@ -1,34 +1,49 @@
 openapi: 3.0.3
 info:
   title: Tasky API
-  description: |
-    REST API for Tasky — Mongolia's most trusted domestic service marketplace.
+  description: "REST API for Tasky — Mongolia's most trusted domestic service marketplace.
+
 
     ## Authentication
+
     All endpoints (unless noted) require a Bearer JWT in the `Authorization` header.
+
     Current launch auth uses Facebook OAuth (`/auth/facebook`).
 
+
     ## Pagination
+
     All list endpoints use **cursor-based pagination**.
+
     Pass `cursor` (opaque string) and `limit` (default 20, max 100) as query parameters.
+
     Responses wrap results in `{ data: [], cursor: { next, has_more } }`.
 
+
     ## Errors
+
     All errors return a standard JSON body: `{ code, message, trace_id }`.
 
+
     ## Currency
+
     All monetary amounts are integers in MNT (Mongolian Tugrik).
 
+
     ## Idempotency
+
     Critical state-changing endpoints require an `Idempotency-Key` header.
 
-    ## Phase Gating
-    The active spec includes implemented-and-gated endpoints:
-    - **Implemented and gated** (`wallet`, `payment`, `payout`): endpoints exist in the server and return `503` when
-      their feature toggle is disabled. Current toggles: `escrow_enabled` (Phase 3+).
-    These endpoints are retained in the contract because the server implements them. Truly not-yet-implemented
-    forward-design endpoints belong in draft or future surfaces, not in this active contract.
-  version: 1.3.0
+
+    ## Contract Scope
+
+    This active contract describes the Phase 1 launch baseline only.
+
+    Deferred-phase API design is tracked in `docs/ROLLOUT_PHASES.md` and archived
+    references, not in this live contract.
+
+    "
+  version: 1.4.0
   contact:
     name: Tasky Engineering
 servers:
@@ -51,10 +66,6 @@ tags:
     description: Tasker applications to tasks
   - name: Bookings
     description: Booking lifecycle
-  - name: Payments
-    description: QPay payment integration (Phase 3+, feature-toggled)
-  - name: Wallet
-    description: Tasker wallet and payouts (Phase 3+, feature-toggled)
   - name: Reviews
     description: Post-completion reviews
   - name: Disputes
@@ -125,12 +136,6 @@ components:
       $ref: ./components/schemas/bookings.yaml#/BookingIntent
     BookingScheduleEvent:
       $ref: ./components/schemas/bookings.yaml#/BookingScheduleEvent
-    WalletBalance:
-      $ref: ./components/schemas/monetization.yaml#/WalletBalance
-    LedgerEntry:
-      $ref: ./components/schemas/monetization.yaml#/LedgerEntry
-    PayoutRequest:
-      $ref: ./components/schemas/monetization.yaml#/PayoutRequest
     PendingReview:
       $ref: ./components/schemas/reviews.yaml#/PendingReview
     Review:
@@ -185,10 +190,6 @@ paths:
     $ref: ./paths/auth.yaml#/~1auth~1facebook~1status
   /auth/logout:
     $ref: ./paths/auth.yaml#/~1auth~1logout
-  /auth/otp/request:
-    $ref: ./paths/auth.yaml#/~1auth~1otp~1request
-  /auth/otp/verify:
-    $ref: ./paths/auth.yaml#/~1auth~1otp~1verify
   /auth/dev/login:
     $ref: ./paths/auth.yaml#/~1auth~1dev~1login
   /auth/token/refresh:
@@ -237,8 +238,6 @@ paths:
     $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications~1{applicationId}~1confirm
   /tasks/{id}/applications/{applicationId}/withdraw:
     $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications~1{applicationId}~1withdraw
-  /tasks/{id}/booking-intents:
-    $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1booking-intents
   /bookings:
     $ref: ./paths/bookings.yaml#/~1bookings
   /bookings/{id}:
@@ -257,24 +256,12 @@ paths:
     $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1no-show~1flag
   /bookings/{id}/mark-done:
     $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1mark-done
-  /bookings/{id}/rebook:
-    $ref: ./paths/bookings.yaml#/~1bookings~1{id}~1rebook
   /booking-intents/{id}:
     $ref: ./paths/bookings.yaml#/~1booking-intents~1{id}
   /booking-intents/{id}/confirm:
     $ref: ./paths/bookings.yaml#/~1booking-intents~1{id}~1confirm
   /booking-intents/{id}/decline:
     $ref: ./paths/bookings.yaml#/~1booking-intents~1{id}~1decline
-  /payments/bookings/{id}/initiate:
-    $ref: ./paths/payments.yaml#/~1payments~1bookings~1{id}~1initiate
-  /payments/qpay/callback:
-    $ref: ./paths/payments.yaml#/~1payments~1qpay~1callback
-  /wallet:
-    $ref: ./paths/wallet.yaml#/~1wallet
-  /wallet/transactions:
-    $ref: ./paths/wallet.yaml#/~1wallet~1transactions
-  /wallet/payouts:
-    $ref: ./paths/wallet.yaml#/~1wallet~1payouts
   /bookings/{id}/reviews:
     $ref: ./paths/reviews.yaml#/~1bookings~1{id}~1reviews
   /me/pending-reviews:
@@ -321,10 +308,6 @@ paths:
     $ref: ./paths/admin.yaml#/~1admin~1disputes~1{id}~1resolve
   /admin/moderation/strike-policy:
     $ref: ./paths/admin.yaml#/~1admin~1moderation~1strike-policy
-  /admin/payouts/pending:
-    $ref: ./paths/admin.yaml#/~1admin~1payouts~1pending
-  /admin/payouts/{id}/process:
-    $ref: ./paths/admin.yaml#/~1admin~1payouts~1{id}~1process
   /admin/features/toggles:
     $ref: ./paths/admin.yaml#/~1admin~1features~1toggles
   /admin/categories:

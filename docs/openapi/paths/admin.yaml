@@ -1,47 +1,3 @@
-/business/accounts:
-  x-tasky-status: deferred
-  x-tasky-target-phase: phase_4
-  post:
-    tags:
-      - Admin
-    summary: Create business account (future B2B path)
-    description: |
-      **Not yet implemented — future B2B forward reference. Returns 404 until implemented.**
-      Creates B2B account for recurring scheduling and organization billing.
-    operationId: createBusinessAccount
-    security:
-      - BearerAuth: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - name
-            properties:
-              name:
-                type: string
-              billing_profile:
-                type: object
-                additionalProperties: true
-    responses:
-      '201':
-        description: Business account created.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/monetization.yaml#/BusinessAccount
-      '401':
-        $ref: ../components/responses.yaml#/Unauthorized
-      '403':
-        $ref: ../components/responses.yaml#/Forbidden
-      '503':
-        description: B2B feature disabled for current rollout phase.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/common.yaml#/Error
 /admin/messages/flagged:
   get:
     tags:
@@ -81,8 +37,7 @@
       - Admin
     summary: Search users
     description: |
-      Search users by phone number (exact normalized match). Phase 0-1 implementation is phone-only.
-      Name and Facebook ID search criteria are Phase 2+ additions (not yet implemented).
+      Search users by phone number (exact normalized match, E.164 recommended).
     operationId: adminSearchUsers
     security:
       - BearerAuth: []
@@ -553,87 +508,6 @@
         $ref: ../components/responses.yaml#/Unauthorized
       '403':
         $ref: ../components/responses.yaml#/Forbidden
-/admin/payouts/pending:
-  get:
-    tags:
-      - Admin
-    summary: List pending payouts
-    description: Phase-gated endpoint. Returns paginated pending payout requests.
-    operationId: adminListPendingPayouts
-    security:
-      - BearerAuth: []
-    parameters:
-      - $ref: ../components/parameters.yaml#/CursorParam
-      - $ref: ../components/parameters.yaml#/LimitParam
-    responses:
-      '200':
-        description: Paginated list of pending payouts.
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - data
-                - cursor
-              properties:
-                data:
-                  type: array
-                  items:
-                    $ref: ../components/schemas/monetization.yaml#/PayoutRequest
-                cursor:
-                  $ref: ../components/schemas/common.yaml#/CursorPagination
-      '401':
-        $ref: ../components/responses.yaml#/Unauthorized
-      '403':
-        $ref: ../components/responses.yaml#/Forbidden
-      '503':
-        description: Monetization feature is disabled for the current rollout phase.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/common.yaml#/Error
-/admin/payouts/{id}/process:
-  post:
-    tags:
-      - Admin
-    summary: Mark payout as processed
-    description: |
-      Phase-gated endpoint.
-      Admin marks a payout request as processed after completing the bank transfer.
-      This debits the tasker's wallet and creates a ledger entry.
-      Processing is allowed only on Tuesdays and Fridays in platform timezone.
-      Requires Idempotency-Key header.
-    operationId: adminProcessPayout
-    security:
-      - BearerAuth: []
-    parameters:
-      - $ref: ../components/parameters.yaml#/PathId
-      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
-    responses:
-      '200':
-        description: Payout processed.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/monetization.yaml#/PayoutRequest
-      '401':
-        $ref: ../components/responses.yaml#/Unauthorized
-      '403':
-        $ref: ../components/responses.yaml#/Forbidden
-      '404':
-        $ref: ../components/responses.yaml#/NotFound
-      '409':
-        description: Payout is not in PENDING status.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/common.yaml#/Error
-      '503':
-        description: Monetization feature is disabled for the current rollout phase.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/common.yaml#/Error
 /admin/features/toggles:
   get:
     tags:
@@ -681,12 +555,7 @@
             properties:
               feature_name:
                 type: string
-                enum:
-                  - lead_fee_enabled
-                  - subscription_enabled
-                  - escrow_enabled
-                  - ai_scope_summary_enabled
-                description: Seeded feature toggle names only; presence in this enum does not imply a confirmed runtime consumer in the current launch posture.
+                description: Feature toggle key. Presence in this endpoint does not widen Phase 1 product scope.
               is_enabled:
                 type: boolean
     responses:
@@ -696,88 +565,6 @@
           application/json:
             schema:
               $ref: ../components/schemas/monetization.yaml#/FeatureToggle
-      '400':
-        $ref: ../components/responses.yaml#/BadRequest
-      '401':
-        $ref: ../components/responses.yaml#/Unauthorized
-      '403':
-        $ref: ../components/responses.yaml#/Forbidden
-/admin/lead-unlock-prices:
-  x-tasky-status: deferred
-  x-tasky-target-phase: phase_2
-  get:
-    tags:
-      - Admin
-    summary: List lead unlock prices
-    description: Returns active and scheduled lead-unlock pricing rows by category and district.
-    operationId: adminListLeadUnlockPrices
-    security:
-      - BearerAuth: []
-    parameters:
-      - $ref: ../components/parameters.yaml#/CursorParam
-      - $ref: ../components/parameters.yaml#/LimitParam
-    responses:
-      '200':
-        description: Paginated price rows.
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - data
-                - cursor
-              properties:
-                data:
-                  type: array
-                  items:
-                    $ref: ../components/schemas/monetization.yaml#/LeadUnlockPrice
-                cursor:
-                  $ref: ../components/schemas/common.yaml#/CursorPagination
-      '401':
-        $ref: ../components/responses.yaml#/Unauthorized
-      '403':
-        $ref: ../components/responses.yaml#/Forbidden
-  post:
-    tags:
-      - Admin
-    summary: Create or schedule lead unlock price
-    operationId: adminCreateLeadUnlockPrice
-    security:
-      - BearerAuth: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - category_id
-              - district_id
-              - credits_required
-              - effective_from
-            properties:
-              category_id:
-                type: string
-                format: uuid
-              district_id:
-                type: string
-              credits_required:
-                type: integer
-                minimum: 1
-              effective_from:
-                type: string
-                format: date-time
-              effective_to:
-                type: string
-                format: date-time
-                nullable: true
-    responses:
-      '201':
-        description: Price row created.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/monetization.yaml#/LeadUnlockPrice
       '400':
         $ref: ../components/responses.yaml#/BadRequest
       '401':
@@ -1223,7 +1010,6 @@
         $ref: ../components/responses.yaml#/Unauthorized
       '403':
         $ref: ../components/responses.yaml#/Forbidden
-
 /admin/bookings/{id}:
   get:
     tags:
@@ -1248,7 +1034,6 @@
         $ref: ../components/responses.yaml#/Forbidden
       '404':
         $ref: ../components/responses.yaml#/NotFound
-
 /admin/bookings/{id}/override-status:
   post:
     tags:

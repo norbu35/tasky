@@ -11,9 +11,8 @@ Unauthorized:
       schema:
         $ref: ./schemas/common.yaml#/Error
 Forbidden:
-  description: |
-    Insufficient permissions or policy gate active for this action.
-    Common codes: `FORBIDDEN`, `VERIFICATION_REQUIRED`, `OTP_MIGRATION_REQUIRED`, `ADDRESS_LOCKED`, `USER_BANNED`.
+  description: 'Insufficient permissions or policy gate active for this action. Common
+    codes: `FORBIDDEN`, `VERIFICATION_REQUIRED`, `ADDRESS_LOCKED`, `USER_BANNED`.'
   content:
     application/json:
       schema:

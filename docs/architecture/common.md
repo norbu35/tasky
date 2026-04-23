@@ -73,7 +73,7 @@ For the full package-to-domain mapping, see `api.md` §2.
   - **Individual delivery**: `FirebasePushProvider` sends to device tokens stored in `device_tokens`.
   - **Topic fan-out**: subscribe devices server-side for launch-relevant targeting such as category and district/category combinations.
   - **Configuration**: `FIREBASE_SERVICE_ACCOUNT_JSON` env var; `tasky.push.provider=firebase` activates `FirebasePushProvider`.
-  - `FirebasePushProvider` is the active production provider. ADR-0002 records the decision.
+  - `FirebasePushProvider` is the active production provider.
 - **Geospatial**:
   - **Engine**: PostGIS running in the Postgres container.
   - **Indexing**: GiST index on `tasks.location_point` is mandatory.
@@ -199,7 +199,6 @@ For the full package-to-domain mapping, see `api.md` §2.
 | PRD requirements                 | `docs/PRD.md`                                          |
 | Rollout sequencing               | `docs/ROLLOUT_PHASES.md`                               |
 | PRD-to-architecture traceability | `docs/PRD.md` functional requirements and KPI sections |
-| Architecture decision records    | `docs/adr/**`                                          |
 | Launch readiness                 | `docs/maintenance/PRODUCTION_READINESS.md`             |
 | Feature activation policy        | `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`        |
 | Observability                    | `docs/OBSERVABILITY.md`                                |

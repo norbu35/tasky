@@ -106,103 +106,6 @@
         $ref: ../components/responses.yaml#/Forbidden
       '404':
         $ref: ../components/responses.yaml#/NotFound
-/bookings/{id}/lead-unlock:
-  x-tasky-status: deferred
-  x-tasky-target-phase: phase_2
-  post:
-    tags:
-      - Bookings
-    summary: Tasker accepts lead and unlocks customer contact
-    description: |
-      **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
-      Selected tasker accepts or declines lead within configured timeout window.
-      Accepting spends configured lead-unlock credits and unlocks customer contact details.
-      Declining does not spend credits and keeps contact details locked.
-      Requires Idempotency-Key header.
-    operationId: unlockBookingLead
-    security:
-      - BearerAuth: []
-    parameters:
-      - $ref: ../components/parameters.yaml#/PathId
-      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - accept
-            properties:
-              accept:
-                type: boolean
-                description: True spends credits and unlocks contact; false declines without debit.
-    responses:
-      '200':
-        description: Lead response processed.
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - type: object
-                  required:
-                    - booking
-                    - accepted
-                    - credits_spent
-                    - customer_contact_unlocked
-                  properties:
-                    booking:
-                      $ref: ../components/schemas/bookings.yaml#/Booking
-                    accepted:
-                      type: boolean
-                      enum:
-                        - true
-                    credits_spent:
-                      type: integer
-                      example: 1
-                    customer_contact_unlocked:
-                      type: boolean
-                      enum:
-                        - true
-                - type: object
-                  required:
-                    - booking
-                    - accepted
-                    - credits_spent
-                    - customer_contact_unlocked
-                  properties:
-                    booking:
-                      $ref: ../components/schemas/bookings.yaml#/Booking
-                    accepted:
-                      type: boolean
-                      enum:
-                        - false
-                    credits_spent:
-                      type: integer
-                      enum:
-                        - 0
-                    customer_contact_unlocked:
-                      type: boolean
-                      enum:
-                        - false
-      '401':
-        $ref: ../components/responses.yaml#/Unauthorized
-      '403':
-        $ref: ../components/responses.yaml#/Forbidden
-      '404':
-        $ref: ../components/responses.yaml#/NotFound
-      '409':
-        description: Booking is not eligible for lead unlock or has already been unlocked.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/common.yaml#/Error
-      '503':
-        description: Monetization feature is disabled for the current rollout phase.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/common.yaml#/Error
 /bookings/{id}/cancel:
   post:
     tags:
@@ -463,38 +366,6 @@
           application/json:
             schema:
               $ref: ../components/schemas/common.yaml#/Error
-/bookings/{id}/rebook:
-  post:
-    tags:
-      - Bookings
-    summary: Rebook from completed booking
-    description: |
-      Creates a new OPEN task prefilled from a completed booking (same category, location, budget).
-      Intake answers use the current active schema version.
-    operationId: rebookFromBooking
-    security:
-      - BearerAuth: []
-    parameters:
-      - $ref: ../components/parameters.yaml#/PathId
-    responses:
-      '201':
-        description: New task created from completed booking.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/tasks.yaml#/Task
-      '401':
-        $ref: ../components/responses.yaml#/Unauthorized
-      '403':
-        $ref: ../components/responses.yaml#/Forbidden
-      '404':
-        $ref: ../components/responses.yaml#/NotFound
-      '409':
-        description: Booking is not in COMPLETED status.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/common.yaml#/Error
 /booking-intents/{id}:
   get:
     tags:
@@ -562,8 +433,6 @@
       The selected tasker declines a pending booking intent.
       The customer can then return to the applicant list and choose another tasker.
     operationId: declineBookingIntent
-    x-tasky-status: deferred
-    x-tasky-target-phase: phase_2
     security:
       - BearerAuth: []
     parameters:
