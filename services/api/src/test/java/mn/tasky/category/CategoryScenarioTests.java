@@ -56,10 +56,12 @@ class CategoryScenarioTests {
                     + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\",\"type\":\"yes_no\",\"required\":true},"
                     + "{\"key\":\"c\",\"label\":\"C\",\"label_mn\":\"C_mn\",\"type\":\"yes_no\",\"required\":true}]";
 
-    private static final String VALID_TEXT_TEXTAREA_SCHEMA =
-            "[{\"key\":\"a\",\"label\":\"A\",\"label_mn\":\"A_mn\",\"type\":\"text\",\"required\":true,\"max_length\":200},"
-                    + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\",\"type\":\"textarea\",\"required\":false,\"max_length\":2000},"
-                    + "{\"key\":\"c\",\"label\":\"C\",\"label_mn\":\"C_mn\",\"type\":\"yes_no\",\"required\":true}]";
+    private static final String VALID_TEXT_TEXTAREA_SCHEMA = "[{\"key\":\"a\",\"label\":\"A\",\"label_mn\":\"A_mn\","
+            + "\"type\":\"text\",\"required\":true,\"max_length\":200},"
+            + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\","
+            + "\"type\":\"textarea\",\"required\":false,\"max_length\":2000},"
+            + "{\"key\":\"c\",\"label\":\"C\",\"label_mn\":\"C_mn\","
+            + "\"type\":\"yes_no\",\"required\":true}]";
 
     private static final String TEXT_MISSING_MAX_LENGTH_SCHEMA =
             "[{\"key\":\"a\",\"label\":\"A\",\"label_mn\":\"A_mn\",\"type\":\"text\",\"required\":true},"

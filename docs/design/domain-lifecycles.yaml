@@ -133,7 +133,7 @@ entities:
         source: OPEN
         target: OPEN
         trigger: external_distribution_eligible
-        guard: 'pilot-eligible task has 0 qualified applications after 12h'
+        guard: 'eligible task has 0 qualified applications after 8h'
         side_effects:
           - 'enqueue backend off-platform distribution workflow'
           - 'sanitize task payload for off-platform distribution'
@@ -181,7 +181,7 @@ entities:
       - 'Deactivated category blocks new posts; existing tasks continue'
       - 'Job scope summary is deterministic from the category template with key-value fallback'
       - 'Customers are not asked to choose task-level rescue behavior'
-      - 'External distribution is allowed only after 12 hours with no qualified application on a pilot-eligible task'
+      - 'External distribution is allowed only after 8 hours with no qualified application on an eligible task'
 
   # ═══════════════════════════════════════════════════
   # 2. Booking

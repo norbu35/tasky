@@ -1,12 +1,8 @@
 # Product Requirements Document (PRD): Tasky
 
-**Status:** Canonical  
-**Version:** 2.1 (enriched Phase 1 baseline)  
-**Last updated:** 2026-04-22
+## 1. Scope and use of this document
 
-## 1. Document authority and anti-drift rules
-
-This PRD defines the intended **Phase 1 launch product** for Tasky. It is the primary source of truth for:
+This PRD defines the **Phase 1 launch product** for Tasky. It is the governing product document for:
 
 - intended product behavior
 - launch scope
@@ -21,34 +17,34 @@ When active documents conflict:
 3. maintenance policies constrain activation, readiness, and operating discipline
 4. architecture, OpenAPI, design, tests, and implementation are derived from this PRD
 
-### 1.1 Code and document truth
+### 1.1 Product intent and implementation
 
 - Code may describe **current implementation reality**, but it does not silently redefine product intent.
-- If code conflicts with this PRD, default assumption is **implementation drift** unless a deliberate product decision updates this PRD.
+- If code conflicts with this PRD, the product change should be recorded here before it is treated as part of the launch baseline.
 - Architecture may describe implementation design, but it does not outrank this PRD.
 
-### 1.2 Deferred-feature discipline
+### 1.2 Deferred capabilities
 
-- Phase 1 normative sections describe **launch truth only**.
+- Phase 1 normative sections describe the **launch baseline only**.
 - Future monetization, expansion, or automation surfaces may be referenced only in clearly labeled deferred appendices.
 - Derived documents and public copy may **not** promise behavior beyond the launch baseline.
 
-### 1.3 Change-discipline rule
+### 1.3 Change discipline
 
-Any PR that changes product behavior, launch scope, KPI semantics, pilot boundary, trust promises, or booking/review policy MUST update:
+Any PR that changes product behavior, launch scope, KPI semantics, trust promises, or booking/review policy MUST update:
 
 1. this PRD
 2. affected maintenance policies
 3. affected architecture / contract / design artifacts
 4. any launch-facing copy or status matrix affected by the change
 
-### 1.4 Alignment gate
+### 1.4 Alignment criteria
 
 The product is aligned only when:
 
 - code and tests implement this PRD
 - downstream docs do not exceed this PRD
-- contracts do not expose deferred behavior as active truth
+- contracts do not present deferred behavior as part of the launch baseline
 - launch dashboards measure the KPI model defined here
 - public copy does not promise behavior outside this PRD
 
@@ -156,7 +152,7 @@ An individual willing to perform listed services for payment. In Phase 1, tasker
 
 ### 5.3 Founder / admin
 
-The launch pilot depends on an operator-managed backstop. Admin is not a future abstraction here; it is part of the product surface required to keep the pilot reliable.
+The launch depends on an operator-managed backstop. Admin is not a future abstraction here; it is part of the product surface required to keep launch operations reliable.
 
 **Core job to be done**
 
@@ -167,7 +163,7 @@ The launch pilot depends on an operator-managed backstop. Admin is not a future 
 ### 6.1 Launch geography and coverage
 
 - Tasky is positioned as a product built for Ulaanbaatar.
-- Phase 1 operational truth is **citywide Ulaanbaatar posting**.
+- Phase 1 launches with **citywide Ulaanbaatar posting**.
 - Any customer in Ulaanbaatar may create live tasks.
 - Supply is citywide. Taskers may declare service-area preferences for notification targeting.
 - Public copy communicates that the service is live in Ulaanbaatar.
@@ -185,7 +181,7 @@ Minor handyman is subtype-based and excludes regulated, dangerous, or diagnosis-
 
 ### 6.3 Out of scope for launch
 
-The following remain out of scope for Phase 1 launch and must not be treated as active launch truth:
+The following remain out of scope for Phase 1 launch and must not be treated as part of the launch baseline:
 
 - OTP-first auth
 - DAN verification integration
@@ -196,7 +192,6 @@ The following remain out of scope for Phase 1 launch and must not be treated as 
 - B2B flows
 - instant match
 - runtime LLM-led posting path
-- citywide live posting
 - payment protection or hold claims
 
 ## 7. Core product principles
@@ -210,7 +205,7 @@ The following remain out of scope for Phase 1 launch and must not be treated as 
 
 ## 8. Canonical domain concepts
 
-### 8.1 Pilot-eligible task
+### 8.1 Eligible task
 
 An `eligible_task` is a task whose service location is within Ulaanbaatar, belongs to a launch category, and is not invalidated by spam, fraud, or admin rejection.
 
@@ -568,7 +563,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 ### 13.4 Performance and operational posture
 
 - **NFR-PERF-01**: Core task-feed and applicant-review surfaces MUST remain usable under ordinary mobile network conditions in Ulaanbaatar.
-- **NFR-PERF-02**: Posting, applying, selecting, accepting, and review submission flows MUST remain lightweight enough for a solo-operated pilot.
+- **NFR-PERF-02**: Posting, applying, selecting, accepting, and review submission flows MUST remain lightweight enough for a small operating team.
 
 ### 13.5 Localization
 
@@ -621,39 +616,38 @@ Operator rescue is allowed in Phase 1, but only if it remains:
 ## 15. Non-goals for Phase 1
 
 - no customer-facing payment hold, protection, or escrow promise
-- no citywide live posting
 - no generic task-posting flow as the primary launch path
 - no open-ended pre-booking chat
 - no launch dependency on OTP auth, DAN, subscriptions, credits, referrals, B2B, instant match, or escrow activation
 - no claim that assisted distribution counts as native marketplace health
 
-## 16. Superseded assumptions to remove from derived artifacts
+## 16. Launch baseline clarifications for derived artifacts
 
-The following assumptions are invalid for Phase 1 and MUST be removed from code, tests, contracts, architecture notes, design artifacts, and copy if they still appear:
+The following clarifications should be reflected consistently across code, tests, contracts, architecture notes, design artifacts, and copy:
 
-1. **Fixed-budget-only posting** — invalid. Phase 1 supports both budgeted posts and quote requests.
-2. **Open-ended pre-booking messaging** — invalid. Phase 1 uses structured applications with no open-ended pre-booking chat.
-3. **Citywide live posting** — now valid. Phase 1 allows live posting across all of Ulaanbaatar.
-4. **Payment held or protected by Tasky** — invalid. Phase 1 makes no escrow or payment-protection promise.
-5. **Assisted outcomes counted as self-serve** — invalid. System-assisted and manual-assisted outcomes are excluded from self-serve fulfillment.
-6. **Founder intervention as a separate core metric from manual intervention** — invalid for Phase 1. Use a generic intervention model.
-7. **Risk-only review lock** — invalid. In Phase 1, owed review blocks the next post/apply action until fulfilled.
-8. **Pre-booking conversation created on apply** — invalid. Phase 1 does not require or expose open-ended pre-booking conversation.
-9. **Forward-reference or future-phase APIs treated as active product truth** — invalid. Launch contracts must reflect live or implemented-and-gated behavior only.
-10. **Geographically restricted posting** — invalid for Phase 1. Posting is available citywide across Ulaanbaatar.
+1. Phase 1 supports both budgeted posts and quote requests.
+2. Phase 1 uses structured applications and does not expose open-ended pre-booking chat.
+3. Phase 1 allows live posting across all of Ulaanbaatar.
+4. Phase 1 makes no escrow or payment-protection promise.
+5. System-assisted and manual-assisted outcomes are excluded from self-serve fulfillment.
+6. Intervention is tracked through a generic intervention model rather than a founder-only metric.
+7. Owed review blocks the next post or apply action until fulfilled.
+8. Applying to a task does not create an open-ended pre-booking conversation.
+9. Launch contracts should expose only live or deliberately gated behavior.
+10. Posting is available citywide across Ulaanbaatar.
 
 ## 17. Requirements governance
 
 ### 17.1 Requirement ID rule
 
-`REQ-P1-*` is the only canonical active requirement ID family for the launch baseline. Legacy IDs may exist only in a historical mapping appendix outside the normative PRD.
+`REQ-P1-*` is the only canonical active requirement ID family for the launch baseline. Use this family consistently in launch requirements and downstream references.
 
 ### 17.2 Acceptance rule for downstream docs
 
 A downstream document is aligned only if:
 
 - it does not contradict this PRD
-- it does not promise deferred behavior as live truth
+- it does not present deferred behavior as part of the launch baseline
 - it uses canonical Phase 1 requirement IDs where normative references are required
 - it preserves the citywide Ulaanbaatar posting scope, Phase 1 pricing model, review gate, and trust posture defined here
 
@@ -670,7 +664,7 @@ For any non-trivial product work, the minimum reading order is:
 
 ## 18. Deferred capabilities appendix (non-normative)
 
-The following surfaces may remain documented elsewhere as future or deferred design space, but they are not active launch truth:
+The following surfaces may remain documented elsewhere as future or deferred design space, but they are not part of the launch baseline:
 
 - OTP migration
 - DAN verification
@@ -683,4 +677,4 @@ The following surfaces may remain documented elsewhere as future or deferred des
 - instant match
 - runtime AI posting rewrite
 
-They must not re-enter the active launch baseline without explicit PRD promotion.
+They must not enter the launch baseline without an explicit PRD change.

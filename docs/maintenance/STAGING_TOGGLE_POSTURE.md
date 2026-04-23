@@ -1,7 +1,5 @@
 # Staging Toggle Posture
 
-Last updated: 2026-04-10
-
 ## Scope
 
 This document defines the current toggle posture for the private VPS staging sandbox. It is intentionally different from
@@ -16,15 +14,15 @@ The product rule does not change:
 
 ### Private VPS sandbox
 
-| Control                              | Required value       | Why                                                      |
-| ------------------------------------ | -------------------- | -------------------------------------------------------- |
-| `SPRING_PROFILES_ACTIVE`             | `local`              | Required if dev-auth is enabled                          |
-| `TASKY_DEV_AUTH_ENABLED`             | `true`               | Enables real backend dev auth endpoint                   |
-| `VITE_DEV_AUTH_ENABLED`              | `true`               | Web quick-login buttons (calls real backend)             |
-| `EXPO_PUBLIC_DEV_AUTH_ENABLED`       | `true`               | Mobile quick-login buttons (calls real backend)          |
-| `TASKY_FEATURE_MONETIZATION_ENABLED` | `false`              | Phase 1 remains zero-monetization                        |
-| `TASKY_OTP_ENABLED`                  | `false`              | OTP remains out of launch scope                          |
-| `TASKY_PUSH_PROVIDER`                | `logging` by default | Safe sandbox default                                     |
+| Control                              | Required value       | Why                                             |
+| ------------------------------------ | -------------------- | ----------------------------------------------- |
+| `SPRING_PROFILES_ACTIVE`             | `local`              | Required if dev-auth is enabled                 |
+| `TASKY_DEV_AUTH_ENABLED`             | `true`               | Enables real backend dev auth endpoint          |
+| `VITE_DEV_AUTH_ENABLED`              | `true`               | Web quick-login buttons (calls real backend)    |
+| `EXPO_PUBLIC_DEV_AUTH_ENABLED`       | `true`               | Mobile quick-login buttons (calls real backend) |
+| `TASKY_FEATURE_MONETIZATION_ENABLED` | `false`              | Phase 1 remains zero-monetization               |
+| `TASKY_OTP_ENABLED`                  | `false`              | OTP remains out of launch scope                 |
+| `TASKY_PUSH_PROVIDER`                | `logging` by default | Safe sandbox default                            |
 
 Additional rules:
 
@@ -44,9 +42,9 @@ Not implemented yet, but the intended posture later is:
 
 These rows stay aligned with the Phase 1 launch baseline even in the private sandbox.
 
-| Toggle                     | Required value | Current truth                                                     | Rule                                                |
+| Toggle                     | Required value | Notes                                                             | Rule                                                |
 | -------------------------- | -------------- | ----------------------------------------------------------------- | --------------------------------------------------- |
-| `lead_fee_enabled`         | `false`        | Seeded, but no confirmed runtime consumer in the current audit    | Keep off                                            |
+| `lead_fee_enabled`         | `false`        | Seeded, but no confirmed runtime consumer in the current review   | Keep off                                            |
 | `subscription_enabled`     | `false`        | Seeded, but deferred and shell-only                               | Keep off                                            |
 | `escrow_enabled`           | `false`        | Real gated runtime path exists, but Phase 1 keeps it dormant      | Keep off                                            |
 | `ai_scope_summary_enabled` | `false`        | Deterministic summary is launch-live; AI rewrite is still dormant | Keep off                                            |

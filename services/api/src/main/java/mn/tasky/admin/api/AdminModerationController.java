@@ -45,10 +45,9 @@ public class AdminModerationController {
             HttpServletRequest request) {
         AdminModerationPolicyUpdateOutcome outcome =
                 adminModerationPolicyUpdateService.updatePolicy(principal.userId(), body);
-        return switch (outcome.status()) {
-            case SUCCESS -> ResponseEntity.ok(outcome.body());
-            case INVALID_POLICY -> ResponseEntity.badRequest()
-                    .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
-        };
+        if (outcome.status() == AdminModerationPolicyUpdateOutcome.Status.SUCCESS) {
+            return ResponseEntity.ok(outcome.body());
+        }
+        return ResponseEntity.badRequest().body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
     }
 }

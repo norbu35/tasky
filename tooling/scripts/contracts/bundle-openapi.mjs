@@ -113,6 +113,25 @@ function materializeRefEntry(rootFile, entry, internalRefs) {
     return rewriteRefs(resolved, targetFile, internalRefs);
 }
 
+function checkUniqueOperationIds(bundled) {
+    const seen = new Map();
+
+    for (const [apiPath, pathItem] of Object.entries(bundled.paths ?? {})) {
+        for (const method of ["get", "post", "put", "patch", "delete", "options", "head", "trace"]) {
+            const operation = pathItem[method];
+            if (!operation) continue;
+            const opId = operation.operationId;
+            if (!opId) continue;
+            const loc = `${method.toUpperCase()} ${apiPath}`;
+            if (seen.has(opId)) {
+                console.error(`Duplicate operationId "${opId}" found at ${seen.get(opId)} and ${loc}.`);
+                process.exit(1);
+            }
+            seen.set(opId, loc);
+        }
+    }
+}
+
 function buildBundleDocument() {
     const rootDocument = readYaml(sourceRoot);
     const internalRefs = buildInternalRefMap(rootDocument, sourceRoot);
@@ -130,6 +149,8 @@ function buildBundleDocument() {
     for (const [apiPath, entry] of Object.entries(paths)) {
         bundled.paths[apiPath] = materializeRefEntry(sourceRoot, entry, internalRefs);
     }
+
+    checkUniqueOperationIds(bundled);
 
     return bundled;
 }

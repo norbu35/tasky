@@ -53,7 +53,7 @@ function TaskCard({ task }: { task: Task }) {
         </div>
       </div>
       <div className="text-right flex-shrink-0">
-        <div className="text-sm font-bold">₮{task.budget.toLocaleString(locale)}</div>
+        <div className="text-sm font-bold">₮{(task.budget ?? 0).toLocaleString(locale)}</div>
         <div className="text-xs text-muted-foreground">
           {new Date(task.scheduled_at).toLocaleDateString(locale)}
         </div>

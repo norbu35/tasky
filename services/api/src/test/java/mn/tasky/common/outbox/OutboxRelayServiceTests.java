@@ -63,7 +63,7 @@ class OutboxRelayServiceTests {
     private void injectPublisher(OutboxRelayService service, EventRelayPublisher publisher) {
         try {
             Field field = OutboxRelayService.class.getDeclaredField("eventRelayPublisher");
-            field.setAccessible(true);
+            field.setAccessible(true); // NOPMD AvoidAccessibilityAlteration
             field.set(service, publisher);
         } catch (Exception e) {
             throw new RuntimeException("Failed to inject eventRelayPublisher via reflection", e);

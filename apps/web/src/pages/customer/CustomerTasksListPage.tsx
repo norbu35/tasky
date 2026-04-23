@@ -161,7 +161,11 @@ function TaskCard({ task, onOpen }: { task: Task; onOpen: () => void }) {
         </div>
         <div className="text-right">
           <div className="text-lg font-semibold font-display">
-            {task.budget.toLocaleString()} {t('sharedPages.currencyMNT', 'MNT')}
+            {task.budget != null && (
+              <>
+                {task.budget.toLocaleString()} {t('sharedPages.currencyMNT', 'MNT')}
+              </>
+            )}
           </div>
           <Button type="button" variant="outline" size="sm" className="mt-2" onClick={onOpen}>
             {t('customerPages.tasksList.viewDetails', 'View details')}

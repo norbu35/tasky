@@ -56,7 +56,7 @@ class TaskApplicationAcceptedHandlerTest {
     private static void setField(Object target, String fieldName, Object value) {
         try {
             Field field = target.getClass().getSuperclass().getDeclaredField(fieldName);
-            field.setAccessible(true);
+            field.setAccessible(true); // NOPMD AvoidAccessibilityAlteration
             field.set(target, value);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);

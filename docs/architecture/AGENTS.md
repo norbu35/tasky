@@ -2,8 +2,8 @@
 
 Routes to the smallest derived architecture surface for the change.
 
-Architecture docs describe implementation reality and design. They do not govern intended product behavior. Intended
-product truth lives in `docs/PRD.md`, `docs/STRATEGY.md`, and the relevant maintenance policy docs.
+Architecture docs describe implementation reality and design. They do not govern intended product behavior. Product
+behavior lives in `docs/PRD.md`, `docs/STRATEGY.md`, and the relevant maintenance policy docs.
 
 ## Read Order Before Architecture
 
@@ -32,7 +32,7 @@ For non-trivial work, read in this order:
 | Root infra (`docker-compose`, CI) | `common.md` §Shared Tech Decisions, `common.md` §Dev Workflow                |
 
 Use `docs/API.yaml` only when you need the bundled single-file artifact. It is generated output, not an independent
-source of truth.
+maintained source.
 
 ## What Each Doc Owns
 
@@ -46,7 +46,7 @@ New structural guidance belongs in the doc whose scope matches, not in this rout
 
 ## Authority Model
 
-### Intended product truth
+### Product requirements and policy
 
 When architecture prose conflicts with product intent, precedence is:
 
@@ -55,10 +55,9 @@ When architecture prose conflicts with product intent, precedence is:
 3. relevant `docs/maintenance/*.md`
 4. architecture prose
 
-Code drift does not silently rewrite product intent. If runtime behavior differs from PRD or strategy without an
-explicit governing-doc change, treat it as implementation drift and document the mismatch.
+If runtime behavior differs from PRD or strategy without an explicit document change, treat it as a code-and-doc mismatch and record the fix.
 
-### Backend implementation reality
+### Backend implementation order
 
 When backend architecture docs conflict with code or tests about current implementation reality, this is the resolution
 order:

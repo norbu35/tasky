@@ -74,6 +74,7 @@ public class StompRateLimitInterceptor implements ChannelInterceptor {
         return null;
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private Bucket newBucket(String userId) {
         return Bucket.builder()
                 .addLimit(Bandwidth.builder()

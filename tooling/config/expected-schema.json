@@ -1,5 +1,5 @@
 {
-  "_generated_from_migrations": "V1 through V29",
+  "_generated_from_migrations": "V1 through V31",
   "_description": "Canonical schema inventory. Regenerate with: python3 tooling/scripts/governance/validate-schema-parity.py --update-expected",
   "tables": {
     "analytics_events": {
@@ -17,7 +17,7 @@
       ]
     },
     "booking_completion_signals": {
-      "columns": ["booking_id", "marked_done_at", "tasker_id"]
+      "columns": ["booking_id", "marked_done_at", "proof_note", "proof_photo_key", "tasker_id"]
     },
     "booking_intents": {
       "columns": [
@@ -55,7 +55,8 @@
         "quality_rating",
         "respectfulness_rating",
         "reviewee_id",
-        "reviewer_id"
+        "reviewer_id",
+        "would_book_again"
       ]
     },
     "booking_schedule_events": {
@@ -78,6 +79,8 @@
     "bookings": {
       "columns": [
         "cancellation_fee",
+        "completion_reminder_count",
+        "completion_reminder_last_at",
         "confirmed_scheduled_at",
         "created_at",
         "customer_id",
@@ -94,7 +97,7 @@
       ],
       "check_constraints": {
         "settlement_mode": ["DIRECT", "ESCROW", "LEAD_UNLOCK"],
-        "status": ["ASSIGNED", "CANCELLED", "COMPLETED", "NO_SHOW", "PAID"]
+        "status": ["ASSIGNED", "CANCELLED", "COMPLETED", "DISPUTED", "NO_SHOW", "PAID"]
       }
     },
     "categories": {
@@ -340,6 +343,7 @@
         "created_at",
         "id",
         "message",
+        "quote_price",
         "recommended",
         "relevance_score",
         "respond_by_at",
@@ -349,7 +353,7 @@
         "tasker_id"
       ],
       "check_constraints": {
-        "status": ["ACCEPTED", "APPLIED", "DECLINED", "EXPIRED", "SELECTED"]
+        "status": ["ACCEPTED", "APPLIED", "DECLINED", "EXPIRED", "SELECTED", "WITHDRAWN"]
       }
     },
     "task_drafts": {
@@ -423,12 +427,14 @@
         "location_lng",
         "location_point",
         "location_text",
+        "pricing_mode",
         "scheduled_at",
         "scope_summary_source",
         "status",
         "updated_at"
       ],
       "check_constraints": {
+        "pricing_mode": ["BUDGET", "QUOTE"],
         "scope_summary_source": ["LLM", "TEMPLATE", "USER_EDITED"],
         "status": ["ASSIGNED", "CANCELLED", "COMPLETED", "NO_SHOW", "OPEN"]
       }

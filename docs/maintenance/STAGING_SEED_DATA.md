@@ -1,7 +1,5 @@
 # Staging Seed Data
 
-Last updated: 2026-04-10
-
 ## Scope
 
 This document describes what the repository actually seeds today and how those seeds are used in the current private VPS
@@ -94,7 +92,7 @@ provisioned manually.
 `POST /api/v1/auth/dev/login` only accepts `CUSTOMER` and `TASKER`. In the current private VPS sandbox that is
 acceptable and intentional, but it still does not solve admin bootstrapping.
 
-## Current Private Sandbox Accounts
+## Private Sandbox Accounts
 
 The private VPS sandbox can use dev-auth-created smoke identities for customer and tasker flows.
 
@@ -119,12 +117,12 @@ When release-grade staging exists, this account posture must change:
 
 ## Manual Admin Promotion
 
-Current truthful posture:
+Current posture:
 
 - There is no runtime admin bootstrap endpoint.
 - The repository exposes only a DAO-level role update, not a public operator flow.
 
-Current sandbox workaround:
+Sandbox workaround:
 
 ```sql
 UPDATE users

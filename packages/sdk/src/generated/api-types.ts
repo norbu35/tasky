@@ -581,15 +581,15 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Select a tasker's application
-         * @description Customer selects a tasker's application. This creates a pending booking intent and marks the
+         * Accept a tasker's application
+         * @description Customer accepts a tasker's application. This creates a pending booking intent and marks the
          *     application as `SELECTED`.
          *     Requires `liability_disclaimer_accepted=true`.
          *     The selected tasker then has the default 4-hour response window to confirm or decline.
          *     Other applications remain available until a booking is confirmed.
          *     Requires Idempotency-Key header.
          */
-        post: operations["selectApplication"];
+        post: operations["acceptApplication"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3839,7 +3839,7 @@ export interface operations {
             };
         };
     };
-    selectApplication: {
+    acceptApplication: {
         parameters: {
             query?: never;
             header: {

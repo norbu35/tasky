@@ -237,7 +237,8 @@ export function TaskerFeedPage() {
                       {task.description}
                     </CardTitle>
                     <div className="text-2xl font-display font-bold text-foreground mt-1">
-                      {task.budget.toLocaleString(locale)}{' '}
+                      {(task.budget ?? 0).toLocaleString(locale)}
+                      {' }'}
                       <span className="text-sm font-normal text-muted-foreground">MNT</span>
                     </div>
                   </div>
@@ -302,7 +303,7 @@ export function TaskerFeedPage() {
                             </div>
                             <div className="text-right">
                               <div className="text-2xl font-bold text-primary font-display">
-                                {task.budget.toLocaleString(locale)}
+                                {(task.budget ?? 0).toLocaleString(locale)}
                               </div>
                               <div className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
                                 MNT

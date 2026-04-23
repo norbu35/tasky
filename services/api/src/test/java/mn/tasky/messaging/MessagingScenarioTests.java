@@ -43,8 +43,8 @@ class MessagingScenarioTests {
     private static final String TASKER_ID = UUID.randomUUID().toString();
     private static final String OUTSIDER_ID = UUID.randomUUID().toString();
 
-    private ConversationDao conversationDao;
-    private MessageDao messageDao;
+    private ConversationDao conversationDao; // NOPMD SingularField
+    private MessageDao messageDao; // NOPMD SingularField
     private AnalyticsService analyticsService;
     private SimpMessagingTemplate messagingTemplate;
     private MessagingService messagingService;

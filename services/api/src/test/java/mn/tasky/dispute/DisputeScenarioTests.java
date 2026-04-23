@@ -39,7 +39,7 @@ class DisputeScenarioTests {
     private static final String REASON = "Work was not completed as agreed";
 
     private BookingQueryPort bookingQueryPort;
-    private BookingCommandPort bookingCommandPort;
+    private BookingCommandPort bookingCommandPort; // NOPMD SingularField
     private DisputeDao disputeDao;
     private DisputeEvidenceDao disputeEvidenceDao;
     private DisputeService disputeService;
@@ -181,8 +181,8 @@ class DisputeScenarioTests {
     // ── SCN-DISPUTE-006 ──────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-DISPUTE-006: Missing evidence after reminder and 24-hour grace auto-closes the dispute as INSUFFICIENT_EVIDENCE")
+    @DisplayName("SCN-DISPUTE-006: Missing evidence after reminder and 24-hour grace"
+            + " auto-closes the dispute as INSUFFICIENT_EVIDENCE")
     void staleDisputeWithNoEvidenceAutoCloses() {
         // Dispute is OPEN and older than 24h, with zero evidence
         Dispute stale = new Dispute(
@@ -249,8 +249,8 @@ class DisputeScenarioTests {
     // ── SCN-DISPUTE-008 ──────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-DISPUTE-008: Phase 1 dispute resolution is limited to evidence-only outcomes and admin misconduct notes")
+    @DisplayName("SCN-DISPUTE-008: Phase 1 dispute resolution is limited to evidence-only outcomes"
+            + " and admin misconduct notes")
     void phase1ResolutionAllowsOnlyEvidenceOutcomes() {
         Dispute dispute = openDispute();
         when(disputeDao.findById(dispute.id())).thenReturn(Optional.of(dispute));

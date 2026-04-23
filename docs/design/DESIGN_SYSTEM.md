@@ -1,14 +1,10 @@
 # Tasky Design System
 
-**Version:** 2.2  
-**Status:** Derived  
-**Updated:** 2026-04-22
-
 This document is derived from `docs/PRD.md`, `docs/STRATEGY.md`, and `docs/BRAND.md`.
 
 ## 1. Scope
 
-The active Phase 1 design system supports the Ulaanbaatar launch. Product truth remains in the PRD.
+This design system supports the Phase 1 Ulaanbaatar launch. Product behavior is defined in the PRD.
 
 ### Active vs future specs
 
@@ -54,5 +50,5 @@ Future-prefixed specs are not launch authority and must not be read as active pr
 ## 4. Visual Foundations
 
 The existing color, typography, spacing, iconography, and motion foundations remain valid where they do not conflict
-with launch truth. Derived preview assets and UI kits must keep the same constraint: no Phase 1 payment-protection
-promise and no citywide-posting implication.
+with the launch baseline. Derived preview assets and UI kits must keep the same constraint: no Phase 1 payment-protection
+promise and no claims that go beyond the launch scope.

@@ -35,7 +35,7 @@ import org.springframework.http.ResponseEntity;
  * <p>Coverage: 401 unauthenticated, 403 forbidden, 400/422 validation errors,
  * 404 not found, 409 idempotency conflict, 503 provider unavailable.
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked", "PMD.UnusedFormalParameter"})
 class ContractEnvelopeTests extends IntegrationTestBase {
 
     private final TestRestTemplate http = new TestRestTemplate();

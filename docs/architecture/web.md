@@ -1,6 +1,6 @@
 # Tasky Architecture — Web App
 
-Status: derived architecture contract for `apps/web`.
+This document defines the web architecture for `apps/web`.
 
 Read this after:
 
@@ -79,6 +79,6 @@ These do not belong here:
 - shared system architecture
 - backend schema and API policy
 - mobile structural rules
-- historical plans or remediation tranches
+- archived plans and execution notes
 
 Keep those in `docs/architecture/common.md`, `docs/openapi/**`, the bundled `docs/API.yaml`, `docs/architecture/mobile.md`, or archive paths as appropriate.

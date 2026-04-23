@@ -1,13 +1,11 @@
 # Staging Runbook
 
-Last updated: 2026-04-10
-
 ## Scope
 
 Tasky now has a concrete private VPS staging surface, but it is a private integration sandbox, not the final
 release-grade staging environment.
 
-Current implemented mode:
+Current mode:
 
 - private VPS
 - loopback-only HTTP binding on the VPS
@@ -15,7 +13,7 @@ Current implemented mode:
 - `SPRING_PROFILES_ACTIVE=local`
 - dev-auth enabled intentionally
 
-Still future:
+Not part of this environment yet:
 
 - public or access-restricted release staging
 - production-like profile posture with dev-auth disabled
@@ -262,7 +260,7 @@ auto-configuration order.
 During the inbox-error investigation (2026-04-10), 401 responses from expired tokens were confirmed
 invisible in `docker logs`. This makes debugging auth failures in staging/production harder.
 
-**Current mitigations (2026-04-17):**
+**Current mitigations:**
 
 - `TOKEN_REVOKED` rejections are logged at WARN by `JwtAuthenticationFilter` before the response is written
 - `StompRateLimitInterceptor` logs WARN on WebSocket rate limit hits including `user=<userId>`

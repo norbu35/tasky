@@ -228,10 +228,7 @@ public class BookingService {
     }
 
     private boolean isLateCancellation(Instant scheduledAt) {
-        if (scheduledAt == null) {
-            return false;
-        }
-        return Instant.now().isAfter(scheduledAt.minus(4, java.time.temporal.ChronoUnit.HOURS));
+        return scheduledAt != null && Instant.now().isAfter(scheduledAt.minus(4, java.time.temporal.ChronoUnit.HOURS));
     }
 
     public BookingMarkDoneResult markBookingDone(String userId, String bookingId) {

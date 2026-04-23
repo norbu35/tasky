@@ -155,7 +155,7 @@ export function BookingConfirmationPage() {
                     {t('bookingConfirmation.totalBudget', 'Total Budget')}
                   </span>
                   <span className="font-semibold font-display text-lg">
-                    ₮{task.budget.toLocaleString()}
+                    ₮{(task.budget ?? 0).toLocaleString()}
                   </span>
                 </div>
               )}

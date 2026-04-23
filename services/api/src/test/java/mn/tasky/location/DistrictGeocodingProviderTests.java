@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 class DistrictGeocodingProviderTests {
 
-    private DistrictGeoDao districtGeoDao;
+    private DistrictGeoDao districtGeoDao; // NOPMD SingularField
     private DistrictGeocodingProvider provider;
 
     @BeforeEach

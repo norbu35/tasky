@@ -31,7 +31,7 @@ class ReviewScenarioTests {
 
     private ReviewEnforcementCaseDao caseDao;
     private NotificationService notificationService;
-    private DisputeDao disputeDao;
+    private DisputeDao disputeDao; // NOPMD SingularField
     private ReviewEnforcementService service;
 
     @BeforeEach

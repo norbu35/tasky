@@ -1,6 +1,9 @@
 package mn.tasky.wallet.workflow;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -61,7 +64,7 @@ class BookingCompletedHandlerTest {
     private static void setField(Object target, String fieldName, Object value) {
         try {
             Field field = target.getClass().getSuperclass().getDeclaredField(fieldName);
-            field.setAccessible(true);
+            field.setAccessible(true); // NOPMD AvoidAccessibilityAlteration
             field.set(target, value);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);

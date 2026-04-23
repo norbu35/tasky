@@ -1,6 +1,6 @@
 # Tasky Architecture — Mobile App
 
-Status: derived architecture contract for `apps/mobile`.
+This document defines the mobile architecture for `apps/mobile`.
 
 Read this after:
 
@@ -30,8 +30,7 @@ This document owns mobile-specific architecture, structural boundaries, and enfo
 ## 1. Mobile Layer Model and Structural Contract
 
 This document is the derived architecture contract for `apps/mobile`.
-Do not treat dated plan or remediation docs as competing sources of truth. If a mobile rule changes, update this
-document and the enforcing tooling in the same change.
+Treat this document as the maintained mobile contract. If a mobile rule changes, update the doc and the enforcing tooling in the same change.
 
 #### 7.7.1 Dependency Flow
 
@@ -169,9 +168,9 @@ A section file may be imported only by its sibling `<Screen>Screen.tsx` / `Scree
 
 `features/<domain>/screens/index.ts` is forbidden. A `screens/<Screen>/index.ts` is permitted only inside a screen-local folder and may only re-export the Screen as default plus named route-param types. **Enforcement:** checker rule 21. **Rationale:** directory-root barrels break dead-code analysis and make imports opaque.
 
-##### §7.7.5.5 — Legacy `*.parts.tsx` completion deadline
+##### §7.7.5.5 — `*.parts.tsx` phase-out rule
 
-Existing `*.parts.tsx` files remain tolerated until the `2026-04-20-mobile-screen-section-naming-remediation-plan.md` tranches complete. New `*.parts.tsx` files are not permitted and fail CI. Existing files flip from warn to fail as each migration tranche lands. **Enforcement:** existing check 12 plus a diff-based new-file veto.
+Existing `*.parts.tsx` files are temporarily tolerated while the screen-family split is being completed. New `*.parts.tsx` files are not permitted and fail CI. The existing set moves from warning to failure as enforcement tightens. **Enforcement:** existing check 12 plus a diff-based new-file veto.
 
 ##### §7.7.5.6 — Screen names are PascalCase root nouns
 
@@ -199,7 +198,7 @@ Decomposition is required when a screen exceeds `220` lines or mixes three or mo
 
 #### 7.7.6 Role-Aware File Budgets
 
-Only warn and fail thresholds are normative. Aspirational "target" numbers are not written into the contract because rules without gates drift (§7.7.11.3).
+Only warn and fail thresholds are normative. Aspirational "target" numbers are not written into the contract because rules without gates decay (§7.7.11.3).
 
 ##### §7.7.6.1 — Enforced line budgets
 
@@ -210,7 +209,7 @@ Only warn and fail thresholds are normative. Aspirational "target" numbers are n
 | Section (`<Screen>.<Section>.tsx`, folder `<Section>.tsx`) | > 260 | > 340 |
 | Model (`<Screen>.model.ts`, folder `model.ts`)             | > 180 | > 240 |
 | Orchestration hook (`use<Screen>Screen.ts`)                | > 180 | > 240 |
-| Legacy `*.parts.tsx` (transitional)                        | > 260 | > 340 |
+| Existing `*.parts.tsx` (transitional)                      | > 260 | > 340 |
 
 **Enforcement:** existing checks 1 (routes) and 11 (screen family); classification updated for the §7.7.5.1 allowlist.
 
@@ -224,7 +223,7 @@ No `../../` or deeper in any `src/**` file. Use path aliases (`@/…`). **Enforc
 
 #### 7.7.7 Data Access And SDK Contract
 
-`@tasky/sdk` is the source of truth for generated API schema types. Mobile code must consume generated SDK types instead of hand-writing fetch types.
+`@tasky/sdk` is the maintained reference for generated API schema types. Mobile code must consume generated SDK types instead of hand-writing fetch types.
 
 Runtime networking remains split into:
 
@@ -275,7 +274,7 @@ Deferred code must be excluded from runtime entrypoints, excluded from Tailwind 
 | 9   | Lib layer boundaries                                      | §7.7.2              | fail                     |
 | 10  | Utils layer boundaries                                    | §7.7.2              | fail                     |
 | 11  | Screen-family role-aware budgets                          | §7.7.6.1            | warn/fail by role        |
-| 12  | Legacy `*.parts.tsx` files                                | §7.7.5.5            | warn (fail on new files) |
+| 12  | Existing `*.parts.tsx` files                              | §7.7.5.5            | warn (fail on new files) |
 | 13  | Orchestration-hook naming (`Screen` suffix)               | §7.7.5.7, §7.7.5.10 | warn → fail (Phase 4)    |
 | 14  | Section-file name pattern                                 | §7.7.5.8            | warn → fail (Phase 4)    |
 | 15  | Screen-family file-role allowlist                         | §7.7.5.1            | warn → fail (Phase 4)    |
@@ -287,7 +286,7 @@ Deferred code must be excluded from runtime entrypoints, excluded from Tailwind 
 | 21  | `screens/` barrel ban                                     | §7.7.5.4            | warn → fail (Phase 4)    |
 | 22  | Test-path mirror                                          | §7.7.12.1           | warn                     |
 
-Checks 13–22 land at `warn` severity when the checker is extended; each flips to `fail` as the corresponding remediation tranche lands (track the rollout in the active issue or execution brief).
+Checks 13–22 begin at `warn` severity when the checker is extended, then move to `fail` as enforcement is tightened in the active workstream.
 
 When the contract and tooling diverge, fix both in the same change. Do not leave unstated severities or contradictory thresholds in the repo.
 
@@ -308,7 +307,7 @@ A Structural Contract Quick Reference is maintained in `apps/mobile/AGENTS.md`, 
 
 ##### §7.7.11.3 — Target tier is not used
 
-The contract exposes only warn and fail thresholds. Aspirational "target" numbers are not written into the contract, because rules without gates drift.
+The contract exposes only warn and fail thresholds. Aspirational "target" numbers are not written into the contract, because rules without gates decay.
 
 #### 7.7.12 Test Organization
 

@@ -39,7 +39,7 @@ class BookingScheduleScenarioTests {
     private BookingScheduleEventDao scheduleEventDao;
     private BookingDao bookingDao;
     private BookingTimelineService timelineService;
-    private NotificationService notificationService;
+    private NotificationService notificationService; // NOPMD SingularField
     private BookingScheduleService scheduleService;
 
     @BeforeEach
@@ -76,8 +76,8 @@ class BookingScheduleScenarioTests {
     // ── SCN-BOOK-017 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-BOOK-017: Reschedule request in ASSIGNED creates a REQUESTED event with proposed datetime and optional reason")
+    @DisplayName("SCN-BOOK-017: Reschedule request in ASSIGNED creates a REQUESTED event"
+            + " with proposed datetime and optional reason")
     void rescheduleRequestCreatesRequestedEvent() {
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(assignedBooking()));
         Instant proposed = Instant.now().plus(1, ChronoUnit.DAYS);
@@ -175,8 +175,8 @@ class BookingScheduleScenarioTests {
     // ── SCN-BOOK-020 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-BOOK-020: Only the latest mutually accepted in-app schedule changes policy timers and the reschedule lifecycle remains audit-immutable")
+    @DisplayName("SCN-BOOK-020: Only the latest mutually accepted in-app schedule changes policy timers"
+            + " and the reschedule lifecycle remains audit-immutable")
     void onlyAcceptedInAppReschedulesChangePolicyTimers() {
         // Booking has an original confirmed schedule
         Instant originalSchedule = Instant.now().plus(3, ChronoUnit.HOURS);

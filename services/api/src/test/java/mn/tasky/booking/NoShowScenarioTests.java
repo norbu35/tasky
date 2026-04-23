@@ -44,8 +44,8 @@ class NoShowScenarioTests {
     private BookingDao bookingDao;
     private BookingTimelineEventDao timelineEventDao;
     private BookingScheduleEventDao scheduleEventDao;
-    private ConversationDao conversationDao;
-    private MessageDao messageDao;
+    private ConversationDao conversationDao; // NOPMD SingularField
+    private MessageDao messageDao; // NOPMD SingularField
     private BookingTimelineService timelineService;
     private NotificationService notificationService;
     private ModerationService moderationService;

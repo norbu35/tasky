@@ -1,15 +1,15 @@
 # Tasky Architecture — Shared Frontend Contracts
 
-Status: derived cross-platform UI contract for `apps/web` and `apps/mobile`.
+This document defines the shared frontend contract for `apps/web` and `apps/mobile`.
 
 Read after: `docs/PRD.md`, `docs/STRATEGY.md`, the surface-specific doc (`web.md` or `mobile.md`), then `common.md`
 when needed.
 
 ## 1. Scope
 
-This document owns the cross-platform frontend contract: design tokens, component source of truth, parity baseline, accessibility, file structure conventions, and test naming rules. Surface-specific rules live in `web.md` and `mobile.md`. Backend API contracts live in `api.md`.
+This document owns the cross-platform frontend contract: design tokens, component reference, parity baseline, accessibility, file structure conventions, and test naming rules. Surface-specific rules live in `web.md` and `mobile.md`. Backend API contracts live in `api.md`.
 
-## 2. Design Token Source of Truth
+## 2. Design Tokens
 
 - The governing design-token source for implementation is `packages/design-tokens`, structured as primitive values,
   semantic aliases, and platform outputs.
@@ -18,7 +18,7 @@ This document owns the cross-platform frontend contract: design tokens, componen
 - Token contract: all parity components consume the canonical token graph from `packages/design-tokens` via platform outputs.
 - During the NativeWind foundation refactor, the parity baseline table (§4) is reference-only and does not drive implementation sequencing.
 
-## 3. Component Source of Truth (per Platform)
+## 3. Component Ownership by Platform
 
 ### 3.1 Web
 
@@ -86,18 +86,17 @@ it('TID-TASK-080-WEB-AUTH-OAUTH-FLOW should allow user to continue with Facebook
 });
 ```
 
-## 8. Structured Intake Renderer Contract (MVP)
+## 8. Structured Intake Renderer Contract
 
-1. **Renderer Input Contract**:
-   - Task-post UI loads `intake_schema_json` + `intake_schema_version` from category metadata.
-   - Supported field primitives in Phase 0-2: single-select, multi-select, dropdown, yes/no toggle, numeric counter.
-2. **Draft Binding Contract**:
-   - Client binds draft to schema version on form start.
-   - Submit endpoint validates answers against bound version, not latest activated version.
-3. **Summary Contract**:
-   - Deterministic template summary is generated before submit and prefilled into editable description.
-   - On deterministic summary failure, fallback key-value summary is generated and posting continues.
-4. **AI Optionality Contract** _(Phase 3+ only)_:
-   - Async summary polish can run behind feature toggle.
-   - Posting success cannot depend on LLM availability.
-   - LLM output cannot mutate structured intake answers.
+1. **Renderer input contract**:
+   - Task-post UI loads `intake_schema_json` and `intake_schema_version` from category metadata.
+   - Phase 1 launch field primitives are: single-select, multi-select, dropdown, yes/no toggle, and numeric counter.
+2. **Draft binding contract**:
+   - Client binds the draft to a schema version when the form starts.
+   - Submit validation runs against that bound version, not against whatever schema becomes active later.
+3. **Summary contract**:
+   - A deterministic template summary is generated before submit and prefilled into the editable description.
+   - If deterministic rendering fails, the client or server must still allow posting to continue with a canonical fallback summary.
+4. **Deferred optional polish**:
+   - Any later async summary polish must remain out of the posting critical path.
+   - Model output must never overwrite structured intake answers.

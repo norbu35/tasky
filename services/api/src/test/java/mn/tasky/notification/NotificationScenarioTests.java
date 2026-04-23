@@ -49,11 +49,11 @@ class NotificationScenarioTests {
     private DeviceTokenDao deviceTokenDao;
     private NotificationLogDao notificationLogDao;
     private PushNotificationProvider pushProvider;
-    private SmsNotificationProvider smsProvider;
-    private UserDao userDao;
-    private CryptoService cryptoService;
-    private TaskerServiceAreaDao serviceAreaDao;
-    private DistrictDao districtDao;
+    private SmsNotificationProvider smsProvider; // NOPMD SingularField
+    private UserDao userDao; // NOPMD SingularField
+    private CryptoService cryptoService; // NOPMD SingularField
+    private TaskerServiceAreaDao serviceAreaDao; // NOPMD SingularField
+    private DistrictDao districtDao; // NOPMD SingularField
     private NotificationService notificationService;
 
     // Track registered device tokens in-memory

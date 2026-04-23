@@ -189,8 +189,8 @@ class AuthScenarioTests {
     // ── SCN-AUTH-008 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-AUTH-008: BANNED or active SUSPENDED account is denied authentication even with otherwise valid credentials")
+    @DisplayName("SCN-AUTH-008: BANNED or active SUSPENDED account is denied authentication"
+            + " even with otherwise valid credentials")
     void bannedAccountDeniedAuthentication() {
         // Given: banned user
         AuthUser banned = new AuthUser(
@@ -243,7 +243,7 @@ class AuthScenarioTests {
     private void invokeValidateOtpConfiguration(AuthService service) throws Throwable {
         try {
             var method = AuthService.class.getDeclaredMethod("validateOtpConfiguration");
-            method.setAccessible(true);
+            method.setAccessible(true); // NOPMD AvoidAccessibilityAlteration
             method.invoke(service);
         } catch (java.lang.reflect.InvocationTargetException e) {
             throw e.getCause();

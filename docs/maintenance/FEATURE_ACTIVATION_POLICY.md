@@ -1,7 +1,5 @@
 # Feature Activation Policy
 
-Last updated: 2026-04-10
-
 ## Scope
 
 This document defines how Tasky may enable dormant or later-phase capabilities after the Phase 1 launch baseline.
@@ -24,13 +22,13 @@ that the product surface is activation-ready.
 
 ## Current Eligibility Ledger
 
-| Surface                     | Current status                                   | Eligible for activation?         | Why                                                                                 |
+| Surface                     | Status                                           | Eligible for activation?         | Why                                                                                 |
 | --------------------------- | ------------------------------------------------ | -------------------------------- | ----------------------------------------------------------------------------------- |
 | `escrow_enabled`            | `implemented-gated`                              | `yes, after additional evidence` | Backend and client/runtime paths exist, but launch keeps the path off.              |
-| `lead_fee_enabled`          | `partial`                                        | `no`                             | No confirmed runtime consumer in the current audit.                                 |
+| `lead_fee_enabled`          | `partial`                                        | `no`                             | No confirmed runtime consumer in the current review.                                |
 | `subscription_enabled`      | `deferred`                                       | `no`                             | Draft future contract notes plus shell-only client surfaces.                        |
 | `ai_scope_summary_enabled`  | `partial`                                        | `no`                             | Deterministic summary is live; AI rewrite still lacks a confirmed runtime consumer. |
-| `promoted_listings_enabled` | `partial` with architecture-to-code discrepancy  | `no`                             | No matching backend or migration evidence found in the current sweep.               |
+| `promoted_listings_enabled` | `partial` with architecture-to-code discrepancy  | `no`                             | No matching backend or migration evidence found in the current review.              |
 | `b2b_enabled`               | `deferred` with architecture-to-code discrepancy | `no`                             | No confirmed backend/runtime evidence.                                              |
 | Referrals                   | `deferred`                                       | `no`                             | Forward reference only.                                                             |
 | DAN verification            | `deferred`                                       | `no`                             | Forward reference and mobile shell only.                                            |
@@ -44,7 +42,7 @@ Every proposed activation must include the following bundle:
    - KPI trigger or user problem
    - target cohort
    - success metric and failure threshold
-2. Contract truth
+2. Contract alignment
    - canonical docs updated first
    - API contract matches the intended runtime posture
 3. Backend proof
@@ -93,7 +91,7 @@ note.
 
 1. Real QPay secret configuration and callback verification in release-grade staging.
 2. Wallet, payment, and payout smoke evidence across backend, web, mobile, and admin.
-3. Operator runbook for payout review, failure handling, and reconciliation.
+3. Operator runbook for payout review, failure handling, and settlement review.
 4. Launch KPI and incident thresholds specific to payment and payout failures.
 5. A documented rollback path that returns the system to the direct-settlement Phase 1 posture.
 

@@ -1,14 +1,10 @@
 # Tasky Phase 1 KPI Model
 
-**Status:** Canonical  
-**Last updated:** 2026-04-22
-
 ## 1. Purpose
 
-This document defines the launch KPI stack for the Phase 1 Ulaanbaatar launch. `docs/PRD.md`,
-`docs/OBSERVABILITY.md`, and `docs/maintenance/PRODUCTION_READINESS.md` must match this file.
+This document defines the KPI stack for the Phase 1 Ulaanbaatar launch. `docs/PRD.md`, `docs/OBSERVABILITY.md`, and `docs/maintenance/PRODUCTION_READINESS.md` should remain aligned with it.
 
-## 2. KPI Stack
+## 2. KPI stack
 
 ### 2.1 Hard-gate metrics
 
@@ -25,7 +21,7 @@ This document defines the launch KPI stack for the Phase 1 Ulaanbaatar launch. `
 
 Category is the primary decision slice. District is drilldown only.
 
-## 3. Locked Definitions
+## 3. Locked definitions
 
 ### 3.1 Self-Serve Fulfillment Rate
 
@@ -98,7 +94,7 @@ Median and p95 from complete document submission to final decision.
 | Identity Verification Turnaround | median `<= 36h`, p95 `<= 96h`  |
 | Category Vetting Turnaround      | median `<= 72h`, p95 `<= 120h` |
 
-## 5. Event And Vocabulary Rules
+## 5. Event and vocabulary rules
 
 Use the following conceptual event/state vocabulary in reporting:
 
@@ -108,20 +104,18 @@ Use the following conceptual event/state vocabulary in reporting:
 - `completed_booking`
 - `intervention`
 
-KPI computation must come from backend-exported business metrics derived from canonical events and state transitions,
-not ad hoc dashboard SQL.
+KPI computation should come from backend-exported business metrics derived from canonical events and state transitions, not ad hoc dashboard SQL.
 
-## 6. Dashboard Policy
+## 6. Dashboard policy
 
 - All seven KPIs must exist on a real dashboard before launch.
 - Alerts are required only for the four hard-gate metrics.
 - Category is the primary launch dashboard slice.
 - District remains a drilldown and diagnostic slice.
-- Diagnostics such as median time to first qualified application or failure-reason splits should support the core KPIs
-  instead of replacing them.
+- Diagnostics such as median time to first qualified application or failure-reason splits should support the core KPIs instead of replacing them.
 
-## 7. Data Quality Rules
+## 7. Data quality rules
 
 1. KPI decisions are valid only when the denominator threshold for that KPI is met.
-2. If core event exports are degraded, pause KPI-based go/no-go decisions until tracking is repaired.
+2. If core event exports are degraded, pause KPI-based go / no-go decisions until tracking is repaired.
 3. Native self-serve reporting must exclude both system-assisted and manual-assisted outcomes.

@@ -184,8 +184,8 @@ class BookingScenarioTests {
     // ── SCN-BOOK-002 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-BOOK-002: Customer cancels less than 4 hours before schedule - reliability incident recorded and no fee")
+    @DisplayName("SCN-BOOK-002: Customer cancels less than 4 hours before schedule"
+            + " - reliability incident recorded and no fee")
     void customerCancelWithin4HoursRecordsIncidentNoFee() {
         BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50_000);
         Instant scheduledAt = Instant.now().plus(2, ChronoUnit.HOURS);
@@ -266,8 +266,8 @@ class BookingScenarioTests {
     // ── SCN-BOOK-006 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-BOOK-021: Tasker cancellation with Safety/Fraud reason bypasses automated strike and opens Trust and Safety ticket")
+    @DisplayName("SCN-BOOK-021: Tasker cancellation with Safety/Fraud reason bypasses automated strike"
+            + " and opens Trust and Safety ticket")
     void taskerCancelForSafetyDoesNotAddStrike() {
         BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50_000);
 

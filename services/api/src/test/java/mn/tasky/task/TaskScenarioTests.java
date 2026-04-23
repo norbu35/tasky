@@ -341,8 +341,8 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-014 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-TASK-014: Deterministic job scope summary is generated from intake answers before submit and persisted")
+    @DisplayName("SCN-TASK-014: Deterministic job scope summary is generated from intake answers"
+            + " before submit and persisted")
     void scopeSummaryGeneratedAndPersisted() {
         Map<String, Object> body = new HashMap<>();
         body.put("category_id", categoryId);
@@ -372,8 +372,8 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-015 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-TASK-015: Summary rendering failure falls back to canonical key-value summary without blocking posting")
+    @DisplayName("SCN-TASK-015: Summary rendering failure falls back to canonical key-value summary"
+            + " without blocking posting")
     void summaryFallbackDoesNotBlockPosting() {
         // Test the ScopeSummaryGenerator directly: malformed schema falls back
         ScopeSummaryGenerator.SummaryResult result =
@@ -400,8 +400,8 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-017 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-TASK-017: Draft submit validates against its bound schema version even after a newer version is activated")
+    @DisplayName("SCN-TASK-017: Draft submit validates against its bound schema version"
+            + " even after a newer version is activated")
     void draftSubmitUsesBindVersion() {
         // Create a draft bound to version 1
         ResponseEntity<Map> draftResp =
@@ -462,8 +462,8 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-019 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-TASK-019: Deactivated category blocks new draft and create requests but existing tasks keep their lifecycle")
+    @DisplayName("SCN-TASK-019: Deactivated category blocks new draft and create requests"
+            + " but existing tasks keep their lifecycle")
     void deactivatedCategoryBlocksNewTasksNotExistingOnes() {
         String adminToken = adminJwt();
 
