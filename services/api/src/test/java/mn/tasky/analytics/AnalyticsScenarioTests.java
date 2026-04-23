@@ -188,4 +188,11 @@ class AnalyticsScenarioTests {
         assertThat(completedProps).contains("task_id");
         assertThat(completedProps).contains("tasker-2");
     }
+
+    // SCN-ANALYTICS-004 is an IMPLEMENTATION GAP: TaskApplicationService.applyToTask()
+    // tracks APPLICATION_SUBMITTED, not QUALIFIED_APPLICATION. The scenario requires an
+    // event with {task_id, tasker_id, category_id, pricing_mode}. Deferred to implementation work.
+
+    // SCN-ANALYTICS-005 is an IMPLEMENTATION GAP: RescueScheduler creates TaskRescueEvent
+    // but does NOT call AnalyticsService.track(). Deferred to implementation work.
 }

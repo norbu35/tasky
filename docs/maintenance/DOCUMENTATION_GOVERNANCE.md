@@ -88,6 +88,14 @@ Scenario files are additionally checked by `tooling/scripts/governance/validate-
 Every `tests/scenarios/*.md` `**PRD:**` reference must resolve to a live PRD ID, and the check warns when a
 non-deferred `REQ-P1-*` requirement has no high-or-critical scenario coverage.
 
+OpenAPI rollout scope is checked by `tooling/scripts/contracts/validate-openapi-phase.mjs`.
+Any deferred path or schema in `docs/openapi/**` must declare `x-tasky-status: deferred` and `x-tasky-phase`, and
+active architecture/scenario docs must not reference non-Phase-1 OpenAPI surfaces.
+
+Design component drift is checked by `tooling/scripts/governance/validate-design-contracts.py`.
+Implemented component entries in `docs/design/component-contract.yaml` must point at an exported component; future
+component entries and prop mismatches are reported as warnings until their implementation path is active.
+
 False positives and intentional historical references belong in
 `tooling/config/doc-references-allowlist.yaml`.
 

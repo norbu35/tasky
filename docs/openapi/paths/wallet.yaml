@@ -1,4 +1,7 @@
 /wallet:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_3
+  x-tasky-target-phase: phase_3
   get:
     tags:
       - Wallet
@@ -23,6 +26,9 @@
             schema:
               $ref: ../components/schemas/common.yaml#/Error
 /wallet/transactions:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_3
+  x-tasky-target-phase: phase_3
   get:
     tags:
       - Wallet
@@ -60,6 +66,9 @@
             schema:
               $ref: ../components/schemas/common.yaml#/Error
 /wallet/payouts:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_3
+  x-tasky-target-phase: phase_3
   post:
     tags:
       - Wallet

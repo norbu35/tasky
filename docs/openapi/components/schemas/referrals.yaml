@@ -1,4 +1,6 @@
 ReferralSummary:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_2
   type: object
   required:
     - referral_code

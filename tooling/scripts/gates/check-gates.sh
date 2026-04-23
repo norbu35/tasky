@@ -20,8 +20,9 @@ if [ ! -f "$REGISTRY" ]; then
 fi
 
 python3 - "$GATE" "$REGISTRY" <<'PYEOF'
-import sys, yaml, re
+import sys, yaml, re, subprocess
 from datetime import datetime, timezone, timedelta
+from pathlib import Path
 
 gate = sys.argv[1]
 registry_path = sys.argv[2]
@@ -32,6 +33,8 @@ registry_path = sys.argv[2]
 import os
 PIT_STALENESS_HOURS = int(os.environ.get("MUTATION_STALENESS_HOURS", "25"))
 NEEDS_SCENARIO_MAX_DAYS = int(os.environ.get("NEEDS_SCENARIO_MAX_DAYS", "30"))
+SMOKE_MUTATION_DIFF_BASE = os.environ.get("MUTATION_DIFF_BASE", "").strip()
+SMOKE_MUTATION_CRITICAL_FLOOR = int(os.environ.get("SMOKE_MUTATION_CRITICAL_FLOOR", "75"))
 
 if gate not in ("smoke", "regression", "full"):
     print(f"[gate] ERROR: unknown gate '{gate}'. Use: smoke | regression | full")
@@ -42,6 +45,62 @@ with open(registry_path) as f:
 scenarios = data.get("scenarios") or {}
 
 failures = []
+
+def run_git(args):
+    return subprocess.run(
+        ["git", *args],
+        cwd=Path(registry_path).resolve().parents[1],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    )
+
+def changed_production_domains(diff_base):
+    if not diff_base:
+        return set()
+    merge_base = run_git(["merge-base", diff_base, "HEAD"])
+    if merge_base.returncode != 0 or not merge_base.stdout.strip():
+        return set()
+    changed = run_git(["diff", "--name-only", merge_base.stdout.strip(), "HEAD"])
+    if changed.returncode != 0:
+        return set()
+    domains = set()
+    pattern = re.compile(r"^services/api/src/main/java/mn/tasky/([^/]+)/")
+    for line in changed.stdout.splitlines():
+        match = pattern.match(line.strip())
+        if match:
+            domains.add(match.group(1))
+    return domains
+
+def mutation_timestamp_is_fresh(raw):
+    if not raw:
+        return False
+    try:
+        parsed = datetime.strptime(str(raw), "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except ValueError:
+        return False
+    return datetime.now(timezone.utc) - parsed <= timedelta(hours=PIT_STALENESS_HOURS)
+
+def domain_mutation_inventory():
+    tier_order = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+    domain_tier = {}
+    domain_kill = {}
+    domain_updated_at = {}
+    for entry in scenarios.values():
+        domain = entry["domain"]
+        risk = entry["risk"]
+        current = domain_tier.get(domain, "low")
+        if tier_order.get(risk, 3) < tier_order.get(current, 3):
+            domain_tier[domain] = risk
+
+        rate = entry.get("mutation_kill_rate")
+        if rate is None:
+            continue
+        if domain not in domain_kill or rate < domain_kill[domain]:
+            domain_kill[domain] = rate
+            domain_updated_at[domain] = entry.get("mutation_kill_rate_updated_at")
+    return domain_tier, domain_kill, domain_updated_at
 
 # ── Gate 1 (Smoke): Critical scenarios must all be covered ───────────────────
 if gate in ("smoke", "regression", "full"):
@@ -54,8 +113,31 @@ if gate in ("smoke", "regression", "full"):
                 f"[SMOKE] Critical scenario not covered: {scn_id} — {entry['title']}"
             )
 
+    if gate == "smoke" and SMOKE_MUTATION_DIFF_BASE:
+        changed_domains = changed_production_domains(SMOKE_MUTATION_DIFF_BASE)
+        domain_tier, domain_kill, domain_updated_at = domain_mutation_inventory()
+        for domain in sorted(changed_domains):
+            if domain_tier.get(domain) != "critical":
+                continue
+            if domain not in domain_kill:
+                failures.append(
+                    f"[SMOKE-MUTATION] No PIT data for changed critical domain '{domain}'"
+                )
+                continue
+            if not mutation_timestamp_is_fresh(domain_updated_at.get(domain)):
+                failures.append(
+                    f"[SMOKE-MUTATION] Stale PIT data for changed critical domain '{domain}'"
+                )
+                continue
+            rate = domain_kill[domain]
+            if rate < SMOKE_MUTATION_CRITICAL_FLOOR:
+                failures.append(
+                    f"[SMOKE-MUTATION] Changed critical domain '{domain}' mutation kill "
+                    f"{rate}% < floor {SMOKE_MUTATION_CRITICAL_FLOOR}%"
+                )
+
 # ── Gate 2 (Regression): High scenarios + API contract truth ───────────────────
-# Mutation enforcement is intentionally deferred to Gate 3 (nightly/full).
+# Broad mutation enforcement is intentionally deferred to Gate 3 (nightly/full).
 # Gate 2 stays behavior-first so it can block deploys on scenario truth instead of
 # broad coverage optics or long-running mutation infrastructure.
 if gate in ("regression", "full"):

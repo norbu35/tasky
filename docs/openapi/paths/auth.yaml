@@ -106,6 +106,7 @@
                     - HALF_OPEN
 /auth/dev/login:
   x-tasky-status: deferred
+  x-tasky-phase: dev_only
   x-tasky-target-phase: dev_only
   post:
     tags:
@@ -197,6 +198,7 @@
               $ref: ../components/schemas/common.yaml#/Error
 /auth/otp/request:
   x-tasky-status: deferred
+  x-tasky-phase: phase_2
   x-tasky-target-phase: phase_2
   post:
     tags:
@@ -249,6 +251,7 @@
         $ref: ../components/responses.yaml#/TooManyRequests
 /auth/otp/verify:
   x-tasky-status: deferred
+  x-tasky-phase: phase_2
   x-tasky-target-phase: phase_2
   post:
     tags:

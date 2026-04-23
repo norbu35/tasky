@@ -82,11 +82,13 @@ Pick the smallest lane that matches the job:
 | `tooling/scripts/gates/check-tooling-surface.mjs`              | Enforces script classification and live callers         | `pnpm repo:tooling:check`                                     |
 | `tooling/scripts/governance/check-doc-governance.py`           | Documentation governance                                | `pnpm repo:docs:check`, `pnpm verify:cleanup`                 |
 | `tooling/scripts/contracts/bundle-openapi.mjs`                 | Bundle `docs/openapi/**` into `docs/API.yaml`           | `pnpm contract:openapi:bundle`, `pnpm contract:openapi:check` |
+| `tooling/scripts/contracts/validate-openapi-phase.mjs`         | Enforce OpenAPI rollout phase metadata                  | `pnpm contract:openapi:check`, `pnpm repo:docs:check`         |
 | `tooling/scripts/contracts/validate-sdk-contract-drift.sh`     | Regenerate SDK and fail on drift                        | `pnpm contract:sdk:drift`                                     |
 | `tooling/scripts/governance/validate-workspace-boundaries.mjs` | Workspace boundary enforcement                          | `pnpm repo:workspace:boundaries`, `pnpm verify:cleanup`       |
 | `tooling/scripts/governance/validate-migrations.py`            | Flyway migration naming and immutability checks         | `pnpm verify:cleanup`, staging and release workflows          |
 | `tooling/scripts/governance/validate-schema-parity.py`         | Schema inventory drift check                            | `pnpm verify:cleanup`                                         |
 | `tooling/scripts/governance/validate-prd-scenario-links.py`    | PRD requirement to scenario traceability                | `pnpm repo:docs:check`, `pnpm verify:scenario:smoke`          |
+| `tooling/scripts/governance/validate-design-contracts.py`      | Design component contract drift check                   | `pnpm repo:docs:check`                                        |
 | `tooling/scripts/governance/validate-doc-claims.py`            | Validate architecture and AGENTS surface refs stay live | `pnpm repo:docs:check`, `pnpm verify:cleanup`                 |
 | `tooling/scripts/governance/validate-doc-references.py`        | Verify pnpm/file refs in AGENTS.md and adapters resolve | `pnpm repo:docs:check`, `pnpm verify:cleanup`                 |
 | `tooling/scripts/governance/check-trivyignore-expiry.sh`       | Expiring security-ignore audit                          | `pnpm verify:cleanup`                                         |

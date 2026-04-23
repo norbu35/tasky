@@ -1,4 +1,6 @@
 CreditBalance:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_2
   type: object
   required:
     - balance
@@ -16,6 +18,8 @@ CreditBalance:
     total_refunded:
       type: integer
 CreditTransaction:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_2
   type: object
   required:
     - id
@@ -42,6 +46,8 @@ CreditTransaction:
       type: string
       format: date-time
 CreditPack:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_2
   type: object
   required:
     - id
@@ -64,6 +70,8 @@ CreditPack:
     is_active:
       type: boolean
 WalletBalance:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_3
   type: object
   required:
     - available_balance
@@ -82,6 +90,8 @@ WalletBalance:
       type: string
       example: MNT
 LedgerEntry:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_3
   type: object
   required:
     - id
@@ -115,6 +125,8 @@ LedgerEntry:
       type: string
       format: date-time
 PayoutRequest:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_3
   type: object
   required:
     - id
@@ -173,6 +185,8 @@ FeatureToggle:
       type: string
       format: date-time
 LeadUnlockPrice:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_2
   type: object
   required:
     - id
@@ -200,6 +214,8 @@ LeadUnlockPrice:
       format: date-time
       nullable: true
 TaskerSubscription:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_3
   type: object
   required:
     - id
@@ -227,6 +243,8 @@ TaskerSubscription:
       format: date-time
       nullable: true
 BusinessAccount:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_4
   type: object
   required:
     - id
@@ -251,6 +269,8 @@ BusinessAccount:
       type: string
       format: date-time
 LeadUnlockPricePayload:
+  x-tasky-status: deferred
+  x-tasky-phase: phase_2
   type: object
   required:
     - category_id

@@ -1702,6 +1702,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
   /auth/dev/login:
     x-tasky-status: deferred
+    x-tasky-phase: dev_only
     x-tasky-target-phase: dev_only
     post:
       tags:
@@ -1793,6 +1794,7 @@ paths:
                 $ref: "#/components/schemas/Error"
   /auth/otp/request:
     x-tasky-status: deferred
+    x-tasky-phase: phase_2
     x-tasky-target-phase: phase_2
     post:
       tags:
@@ -1845,6 +1847,7 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
   /auth/otp/verify:
     x-tasky-status: deferred
+    x-tasky-phase: phase_2
     x-tasky-target-phase: phase_2
     post:
       tags:
@@ -3513,6 +3516,7 @@ paths:
                 $ref: "#/components/schemas/Error"
   /booking-intents/{id}/decline:
     x-tasky-status: deferred
+    x-tasky-phase: phase_2
     x-tasky-target-phase: phase_2
     post:
       tags:
@@ -5166,6 +5170,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   /admin/payouts/pending:
+    x-tasky-status: deferred
+    x-tasky-phase: phase_3
+    x-tasky-target-phase: phase_3
     get:
       tags:
         - Admin
@@ -5204,6 +5211,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   /admin/payouts/{id}/process:
+    x-tasky-status: deferred
+    x-tasky-phase: phase_3
+    x-tasky-target-phase: phase_3
     post:
       tags:
         - Admin
@@ -5367,6 +5377,9 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
   /wallet:
+    x-tasky-status: deferred
+    x-tasky-phase: phase_3
+    x-tasky-target-phase: phase_3
     get:
       tags:
         - Wallet
@@ -5391,6 +5404,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   /wallet/transactions:
+    x-tasky-status: deferred
+    x-tasky-phase: phase_3
+    x-tasky-target-phase: phase_3
     get:
       tags:
         - Wallet
@@ -5428,6 +5444,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   /wallet/payouts:
+    x-tasky-status: deferred
+    x-tasky-phase: phase_3
+    x-tasky-target-phase: phase_3
     post:
       tags:
         - Wallet
@@ -5487,6 +5506,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   /payments/bookings/{id}/initiate:
+    x-tasky-status: deferred
+    x-tasky-phase: phase_3
+    x-tasky-target-phase: phase_3
     post:
       tags:
         - Payments
@@ -5554,6 +5576,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   /payments/qpay/callback:
+    x-tasky-status: deferred
+    x-tasky-phase: phase_3
+    x-tasky-target-phase: phase_3
     post:
       tags:
         - Payments
@@ -5624,6 +5649,7 @@ paths:
                 $ref: "#/components/schemas/Error"
   /subscriptions/tasker:
     x-tasky-status: deferred
+    x-tasky-phase: phase_3
     x-tasky-target-phase: phase_3
     post:
       tags:
@@ -5667,6 +5693,7 @@ paths:
                 $ref: "#/components/schemas/Error"
   /credits/balance:
     x-tasky-status: deferred
+    x-tasky-phase: phase_2
     x-tasky-target-phase: phase_2
     get:
       tags:
@@ -5695,6 +5722,7 @@ paths:
                 $ref: "#/components/schemas/Error"
   /credits/transactions:
     x-tasky-status: deferred
+    x-tasky-phase: phase_2
     x-tasky-target-phase: phase_2
     get:
       tags:
@@ -5733,6 +5761,7 @@ paths:
                 $ref: "#/components/schemas/Error"
   /credits/packs:
     x-tasky-status: deferred
+    x-tasky-phase: phase_2
     x-tasky-target-phase: phase_2
     get:
       tags:
@@ -5765,6 +5794,7 @@ paths:
                 $ref: "#/components/schemas/Error"
   /credits/purchase:
     x-tasky-status: deferred
+    x-tasky-phase: phase_2
     x-tasky-target-phase: phase_2
     post:
       tags:
@@ -5819,6 +5849,7 @@ paths:
                 $ref: "#/components/schemas/Error"
   /referrals/me:
     x-tasky-status: deferred
+    x-tasky-phase: phase_2
     x-tasky-target-phase: phase_2
     get:
       tags:

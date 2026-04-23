@@ -9,6 +9,7 @@ const scriptsDir = path.join(repoRoot, "tooling", "scripts");
 
 const registry = {
     "contracts/bundle-openapi.mjs": "active",
+    "contracts/validate-openapi-phase.mjs": "active",
     "contracts/validate-sdk-contract-drift.sh": "active",
     "deploy/bootstrap-private-staging-vps.sh": "active",
     "deploy/deploy-private-staging.sh": "active",
@@ -21,6 +22,7 @@ const registry = {
     "gates/check-tooling-surface.mjs": "active",
     "governance/check-doc-governance.py": "active",
     "governance/validate-doc-claims.py": "active",
+    "governance/validate-design-contracts.py": "active",
     "governance/validate-prd-scenario-links.py": "active",
     "governance/check-gitleaks-secret-scan.sh": "active",
     "governance/check-trivyignore-expiry.sh": "active",

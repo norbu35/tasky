@@ -426,6 +426,7 @@
               $ref: ../components/schemas/common.yaml#/Error
 /booking-intents/{id}/decline:
   x-tasky-status: deferred
+  x-tasky-phase: phase_2
   x-tasky-target-phase: phase_2
   post:
     tags:
