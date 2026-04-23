@@ -1,173 +1,179 @@
 # Screen Spec: Inbox — Chat Detail
 screen_id: SCR-SHARED-011
-name: "Inbox — Chat Detail"
-route: "/inbox/:conversationId"
+name: 'Inbox — Chat Detail'
+route: '/inbox/:conversationId'
 role: [customer, tasker]
-phase: "0-1"
+phase: '0-1'
 template: detail
-figma_page: "Shared/Inbox Chat Detail"
-feature: "messaging"
+figma_page: 'Shared/Inbox Chat Detail'
+feature: 'messaging'
 
 layout:
   template: detail
   density: default
-  structure: "safe_area -> nav_header(back + counterparty_name + avatar) -> scrollview(messages) -> sticky_bottom(input_bar)"
+  structure: 'safe_area -> nav_header(back + counterparty_name + avatar) -> scrollview(messages) -> sticky_bottom(input_bar)'
 
 components:
   - id: COMP-PROFILEAVATAR
-    usage: "Counterparty avatar in nav header; tappable to view profile"
+    usage: 'Counterparty avatar in nav header; tappable to view profile'
     props:
-      size: "sm"
+      size: 'sm'
       isVerified: false
     variant: sm
 
   - id: COMP-INPUT
-    usage: "Message text input field in the sticky bottom bar"
+    usage: 'Message text input field in the sticky bottom bar'
     props:
-      placeholder: "Мессеж бичих..."
+      placeholder: 'Мессеж бичих...'
       maxLength: 500
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Send button in the message input bar"
+    usage: 'Send button in the message input bar'
     props:
-      label: ""
+      label: ''
       variant: primary
       size: md
-      icon: "send"
+      icon: 'send'
       disabled: true
     variant: primary
 
   - id: COMP-LOADINGSKELETON
-    usage: "Skeleton loading state for message bubbles"
+    usage: 'Skeleton loading state for message bubbles'
     props:
-      variant: "list_row"
+      variant: 'list_row'
       count: 8
     variant: list_row
 
   - id: COMP-TOAST
-    usage: "Warning toast when phone number pattern is detected in a message"
+    usage: 'Warning toast when phone number pattern is detected in a message'
     props:
-      variant: "error"
-      message: "Утасны дугаар илгээхийг хориглоно"
+      variant: 'error'
+      message: 'Утасны дугаар илгээхийг хориглоно'
     variant: error
 
 states:
   - id: loading_initial
-    description: "Chat messages are loading for the first time"
+    description: 'Chat messages are loading for the first time'
     components_visible: [nav_header, loading_skeleton]
-    components_hidden: [message_list, input_bar, phone_warning, error_message, offline_banner, send_failed]
+    components_hidden:
+      [message_list, input_bar, phone_warning, error_message, offline_banner, send_failed]
 
   - id: populated
-    description: "Messages loaded and displayed; input bar active"
+    description: 'Messages loaded and displayed; input bar active'
     components_visible: [nav_header, message_list, input_bar]
     components_hidden: [loading_skeleton, phone_warning, error_message, offline_banner, send_failed]
 
   - id: sending
-    description: "A message is being sent; optimistic rendering with pending indicator"
+    description: 'A message is being sent; optimistic rendering with pending indicator'
     components_visible: [nav_header, message_list, input_bar_disabled, sending_indicator]
     components_hidden: [loading_skeleton, phone_warning, error_message, offline_banner, send_failed]
 
   - id: send_failed
-    description: "Message failed to send; retry affordance shown on the failed message bubble"
+    description: 'Message failed to send; retry affordance shown on the failed message bubble'
     components_visible: [nav_header, message_list, input_bar, failed_message_retry]
-    components_hidden: [loading_skeleton, phone_warning, error_message, offline_banner, sending_indicator]
+    components_hidden:
+      [loading_skeleton, phone_warning, error_message, offline_banner, sending_indicator]
 
   - id: phone_warning
-    description: "Phone number pattern detected in typed message; warning banner shown"
+    description: 'Phone number pattern detected in typed message; warning banner shown'
     components_visible: [nav_header, message_list, input_bar, phone_warning_banner]
-    components_hidden: [loading_skeleton, error_message, offline_banner, send_failed, sending_indicator]
+    components_hidden:
+      [loading_skeleton, error_message, offline_banner, send_failed, sending_indicator]
 
   - id: error_network
-    description: "Network error loading messages; retry available"
+    description: 'Network error loading messages; retry available'
     components_visible: [nav_header, error_message, retry_button]
-    components_hidden: [message_list, input_bar, loading_skeleton, phone_warning, offline_banner, send_failed]
+    components_hidden:
+      [message_list, input_bar, loading_skeleton, phone_warning, offline_banner, send_failed]
 
   - id: offline_cached
-    description: "Device is offline; cached messages shown with disabled input"
+    description: 'Device is offline; cached messages shown with disabled input'
     components_visible: [nav_header, message_list_cached, offline_banner, input_bar_disabled]
-    components_hidden: [loading_skeleton, phone_warning, error_message, send_failed, sending_indicator]
+    components_hidden:
+      [loading_skeleton, phone_warning, error_message, send_failed, sending_indicator]
 
 copy:
   - key: input_placeholder
-    mn: "Мессеж бичих..."
-    en: "Type a message..."
+    mn: 'Мессеж бичих...'
+    en: 'Type a message...'
     max_chars: 25
 
   - key: phone_warning_banner
-    mn: "Аюулгүй байдлын үүднээс утасны дугаар болон хувийн мэдээлэл илгээхгүй байхыг зөвлөж байна"
-    en: "For your safety, we advise not sharing phone numbers or personal information"
+    mn: 'Аюулгүй байдлын үүднээс утасны дугаар болон хувийн мэдээлэл илгээхгүй байхыг зөвлөж байна'
+    en: 'For your safety, we advise not sharing phone numbers or personal information'
     max_chars: 100
 
   - key: send_failed_message
-    mn: "Мессеж илгээгдсэнгүй. Товшиж дахин оролдоно уу."
-    en: "Message not sent. Tap to retry."
+    mn: 'Мессеж илгээгдсэнгүй. Товшиж дахин оролдоно уу.'
+    en: 'Message not sent. Tap to retry.'
     max_chars: 50
 
   - key: error_message
-    mn: "Мессежүүдийг ачаалж чадсангүй"
-    en: "Failed to load messages"
+    mn: 'Мессежүүдийг ачаалж чадсангүй'
+    en: 'Failed to load messages'
     max_chars: 35
 
   - key: retry_label
-    mn: "Дахин оролдох"
-    en: "Retry"
+    mn: 'Дахин оролдох'
+    en: 'Retry'
     max_chars: 15
 
   - key: offline_banner
-    mn: "Офлайн байна. Мессеж илгээх боломжгүй."
-    en: "You are offline. Cannot send messages."
+    mn: 'Офлайн байна. Мессеж илгээх боломжгүй.'
+    en: 'You are offline. Cannot send messages.'
     max_chars: 50
 
   - key: today_label
-    mn: "Өнөөдөр"
-    en: "Today"
+    mn: 'Өнөөдөр'
+    en: 'Today'
     max_chars: 10
 
   - key: yesterday_label
-    mn: "Өчигдөр"
-    en: "Yesterday"
+    mn: 'Өчигдөр'
+    en: 'Yesterday'
     max_chars: 10
 
 api_endpoints:
   - method: GET
-    path: "/conversations/:id/messages"
-    purpose: "Fetch message history for the conversation"
+    path: '/conversations/:id/messages'
+    purpose: 'Fetch message history for a post-confirmation booking conversation'
   - method: POST
-    path: "/conversations/:id/messages"
-    purpose: "Send a new message in the conversation"
+    path: '/conversations/:id/messages'
+    purpose: 'Send a new message in a post-confirmation booking conversation'
 
 analytics_events:
-  - event: "chat_detail_viewed"
-    trigger: "Chat detail screen becomes visible; includes conversation_id"
-  - event: "message_sent"
-    trigger: "User successfully sends a message"
-  - event: "message_send_failed"
-    trigger: "Message fails to send"
-  - event: "message_retry_tapped"
-    trigger: "User taps retry on a failed message"
-  - event: "phone_number_warning_shown"
-    trigger: "Phone number pattern detected in typed message"
-  - event: "counterparty_profile_tapped"
-    trigger: "User taps counterparty avatar in nav header"
-  - event: "task_reference_tapped"
-    trigger: "User taps a task reference link within a message"
+  - event: 'chat_detail_viewed'
+    trigger: 'Chat detail screen becomes visible; includes conversation_id'
+  - event: 'message_sent'
+    trigger: 'User successfully sends a message'
+  - event: 'message_send_failed'
+    trigger: 'Message fails to send'
+  - event: 'message_retry_tapped'
+    trigger: 'User taps retry on a failed message'
+  - event: 'phone_number_warning_shown'
+    trigger: 'Phone number pattern detected in typed message'
+  - event: 'counterparty_profile_tapped'
+    trigger: 'User taps counterparty avatar in nav header'
+  - event: 'task_reference_tapped'
+    trigger: 'User taps a task reference link within a message'
 
 acceptance_criteria:
-  - "Messages are displayed in chronological order with date separators"
-  - "Own messages are right-aligned; counterparty messages are left-aligned"
-  - "Each message bubble shows timestamp"
-  - "Send button is disabled when input field is empty"
-  - "Sent messages appear optimistically before server confirmation"
-  - "Failed messages show a retry indicator; tapping retries the send"
-  - "Phone number regex pattern detection shows warning banner above input"
-  - "Warning banner does not block sending; it is advisory only"
-  - "Tapping counterparty avatar in nav header pushes to Tasker Public Profile (SCR-CUST-013) for customers"
-  - "Tapping task reference in a message pushes to Task Detail (SCR-CUST-009)"
-  - "Back button pops to Conversation List (SCR-SHARED-010)"
-  - "Loading state shows skeleton matching message bubble layout"
-  - "Network error shows error message with retry button"
-  - "Offline state shows cached messages with disabled input and offline banner"
-  - "Input field supports keyboard-aware scrolling; messages scroll above keyboard"
-  - "Message input max length is 500 characters"
-  - "Relative timestamps for messages within 24 hours; absolute YYYY.MM.DD for older"
+  - 'Messages are displayed in chronological order with date separators'
+  - 'Own messages are right-aligned; counterparty messages are left-aligned'
+  - 'Each message bubble shows timestamp'
+  - 'Send button is disabled when input field is empty'
+  - 'Sent messages appear optimistically before server confirmation'
+  - 'Failed messages show a retry indicator; tapping retries the send'
+  - 'Phone number regex pattern detection shows warning banner above input'
+  - 'Warning banner does not block sending; it is advisory only'
+  - 'Tapping counterparty avatar in nav header pushes to Tasker Public Profile (SCR-CUST-013) for customers'
+  - 'Tapping task reference in a message pushes to Task Detail (SCR-CUST-009)'
+  - 'Chat Detail is available only for confirmed-booking conversations'
+  - 'Back button pops to Conversation List (SCR-SHARED-010)'
+  - 'Loading state shows skeleton matching message bubble layout'
+  - 'Network error shows error message with retry button'
+  - 'Offline state shows cached messages with disabled input and offline banner'
+  - 'Input field supports keyboard-aware scrolling; messages scroll above keyboard'
+  - 'Message input max length is 500 characters'
+  - 'Relative timestamps for messages within 24 hours; absolute YYYY.MM.DD for older'

@@ -68,7 +68,7 @@ components:
     variant: display
 
   - id: COMP-VERIFICATIONBADGE
-    usage: 'Verification and Pro Badge status display in stats header'
+    usage: 'Verification status display in stats header'
     props:
       isVerified: true
       isPro: false
@@ -177,21 +177,6 @@ copy:
     en: 'Based on completion rate, punctuality, ratings, and cancellation history'
     max_chars: 80
 
-  - key: pro_badge_status
-    mn: 'Pro Badge'
-    en: 'Pro Badge'
-    max_chars: 12
-
-  - key: pro_badge_eligible
-    mn: '15+ ажил, 4.5+ үнэлгээтэй бол Pro Badge авна'
-    en: 'Earn Pro Badge with 15+ jobs and 4.5+ rating'
-    max_chars: 55
-
-  - key: pro_badge_earned
-    mn: 'Pro Badge олдсон!'
-    en: 'Pro Badge earned!'
-    max_chars: 20
-
   - key: activity_heading
     mn: 'Идэвхжил'
     en: 'Activity'
@@ -228,7 +213,7 @@ acceptance_criteria:
   - 'Reliability description explains score inputs (completion rate, punctuality, ratings, cancellations)'
   - 'Application success rate is shown in the activity section'
   - 'Cancellation count shows rolling 30-day count for strike awareness'
-  - 'Pro Badge status shows earned or eligible state using the current launch thresholds'
+  - 'Header shows verification status and review-backed activity summary without future monetization badges'
   - 'Back button returns to My Profile (SCR-SHARED-012)'
   - 'Network error displays retry button'
   - 'All StatCard values use appropriate typography (price_display for numbers)'

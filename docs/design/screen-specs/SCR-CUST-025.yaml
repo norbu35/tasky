@@ -62,7 +62,7 @@ states:
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: closed_insufficient
-    description: 'Dispute auto-closed due to insufficient evidence (evidence not provided within 24 hours after reminder)'
+    description: 'Dispute closed as insufficient evidence after the reminder window elapsed without enough evidence'
     components_visible: [COMP-STATUSBADGE]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
@@ -144,7 +144,7 @@ copy:
 
   - key: closed_insufficient_description
     mn: 'Нотлох баримт 24 цагийн дотор ирүүлээгүй тул маргаан хаагдлаа.'
-    en: 'Dispute closed because evidence was not provided within 24 hours.'
+    en: 'Dispute closed because enough evidence was not provided after the reminder window.'
     max_chars: 80
 
   - key: phase1_note

@@ -28,8 +28,8 @@ entities:
         side_effects:
           - 'persist task with intake_schema_version and pricing mode'
           - 'generate job scope summary'
-          - 'surface task to verified Taskers with matching service area and matching notifications'
-          - 'start 120-min no-applicant timer (08:00-22:00)'
+          - 'surface task to verified Taskers and use service-area preferences for notification targeting only'
+          - 'start 8-hour no-qualified-application evaluation window'
         phase: '0-1'
 
       - id: TASK-T02
@@ -50,20 +50,21 @@ entities:
         trigger: selected_tasker_confirms_selection
         guard: 'active booking intent exists and selected Tasker accepts within SLA'
         side_effects:
-          - 'create booking(ASSIGNED)'
+          - 'create confirmed booking record'
           - 'reject remaining applicants'
           - 'reveal exact address to Tasker'
-          - 'cancel no-applicant timer'
+          - 'cancel no-qualified-application evaluation window'
         phase: '0-1'
 
       - id: TASK-T04
         source: OPEN
-        target: ASSIGNED
-        trigger: concierge_assigns_tasker
-        guard: 'admin role, task in rescue queue'
+        target: OPEN
+        trigger: admin_manual_rescue_recorded
+        guard: 'admin role, task requires task-specific rescue'
         side_effects:
-          - 'create booking(ASSIGNED)'
-          - 'notify customer and tasker'
+          - 'mark intervention_type=manual_rescue'
+          - 'persist auditable rescue note and intervention_stage'
+          - 'route rescued outreach back into the standard application and selection flow'
         phase: '0-1'
 
       - id: TASK-T05
@@ -73,7 +74,7 @@ entities:
         guard: 'category liquidity >= 10 verified Taskers >4.0 in-district'
         side_effects:
           - 'auto-assign highest-ranked Tasker'
-          - 'create booking(ASSIGNED)'
+          - 'create confirmed booking record'
         phase: '3+'
 
       - id: TASK-T06
@@ -94,7 +95,7 @@ entities:
         guard: 'task.status == OPEN'
         side_effects:
           - 'notify applied Taskers'
-          - 'cancel no-applicant timer'
+          - 'cancel no-qualified-application evaluation window'
         phase: '0-1'
 
       - id: TASK-T08
@@ -174,7 +175,7 @@ entities:
         phase: '2'
 
     business_rules:
-      - 'Pricing mode must be either budget or quote; budget mode requires > 1,000 MNT'
+      - 'Pricing mode must be either budget or quote'
       - 'Max 3 photos per task'
       - 'Approximate location in browse surfaces; exact address only after confirmed booking'
       - 'Intake answers persist with schema version'
@@ -303,16 +304,6 @@ entities:
           - 'push both parties to update status'
         phase: '0-1'
 
-      - id: BOOK-T11
-        source: null
-        target: ASSIGNED
-        trigger: rebook_shortcut
-        guard: 'previous booking completed with same Tasker, same category'
-        side_effects:
-          - 'create new task + booking in one flow'
-          - 'pre-fill from previous booking'
-        phase: '0-1'
-
     business_rules:
       - 'Booking is separate from Task and begins only after the selected Tasker accepts within SLA'
       - 'Free cancellation applies more than 4 hours before schedule'
@@ -342,7 +333,7 @@ entities:
         source: null
         target: APPLIED
         trigger: tasker_applies
-        guard: 'tasker.verification == APPROVED, task.status == OPEN, under application cap'
+        guard: 'tasker.verification == APPROVED, task.status == OPEN, user is not banned or suspended'
         side_effects:
           - 'increment task.application_count'
           - 'notify customer'
@@ -455,7 +446,7 @@ entities:
         trigger: tasker_submits_id
         guard: 'ID card front + back + selfie uploaded'
         side_effects:
-          - 'start 24h SLA timer'
+          - 'start verification queue-age tracking'
           - 'add to admin verification queue'
           - 'show pending screen to Tasker'
         phase: '0-1'
@@ -488,7 +479,7 @@ entities:
         trigger: tasker_resubmits
         guard: 'new ID images uploaded'
         side_effects:
-          - 'reset 24h SLA timer'
+          - 'reset verification queue-age tracking'
           - 're-add to verification queue'
         phase: '0-1'
 
@@ -513,8 +504,7 @@ entities:
         phase: '2'
 
     business_rules:
-      - '24-hour SLA for manual review'
-      - 'First 50 Taskers: may include video/in-person interview'
+      - 'Verification operations must expose queue age and turnaround posture for admin review'
       - 'Unverified Taskers can browse feed but cannot apply'
       - 'DAN fast-path is future-phase only'
       - 'ID card front, back, and selfie all required'
@@ -541,7 +531,7 @@ entities:
         source: null
         target: OPEN
         trigger: party_raises_dispute
-        guard: 'booking ASSIGNED or within 24h of COMPLETED, at least 1 evidence artifact'
+        guard: 'booking ASSIGNED or within the allowed post-completion window, with evidence attached or grace path opened'
         side_effects:
           - 'create dispute record'
           - 'notify counterparty'
@@ -602,16 +592,16 @@ entities:
         source: OPEN
         target: CLOSED_INSUFFICIENT_EVIDENCE
         trigger: evidence_timeout
-        guard: 'no evidence provided after 24h reminder'
+        guard: 'no evidence provided after the grace reminder window'
         side_effects:
           - 'auto-close dispute'
           - 'notify raising party'
         phase: '0-1'
 
     business_rules:
-      - 'Can raise during ASSIGNED or within 24 hours of COMPLETED'
+      - 'Can raise during ASSIGNED or within the allowed post-completion window'
       - 'At least 1 evidence artifact required: chat, photo, or written timeline'
-      - 'Auto-close after 24 hours if evidence is not provided'
+      - 'Grace-path disputes may close as insufficient evidence if evidence is not provided'
       - 'Open dispute triggers review hard lock for both parties'
       - 'Dispute resolution affects trust metrics'
       - 'Admin can resolve from both OPEN and ESCALATED states'
@@ -778,12 +768,12 @@ entities:
         source: VERIFIED
         target: VERIFIED
         trigger: tasker_polishes_profile
-        guard: 'role == TASKER, user explicitly accepts AI-suggested copy before save'
+        guard: 'Phase 2, role == TASKER, user explicitly accepts AI-suggested copy before save'
         side_effects:
           - 'persist updated profile description'
           - 'retain editable pre-polish draft until confirmation'
           - 'emit profile quality analytics event'
-        phase: '0-1'
+        phase: '2'
 
     business_rules:
       - 'Duplicate prevention: one account per facebook_id'
@@ -794,8 +784,6 @@ entities:
       - 'First suspension: 7 days'
       - 'Repeat suspension (within repeat window): configurable longer'
       - 'Auto-unsuspend toggle: admin-configurable'
-      - 'Pro badge: assigned at >=4.5 avg, revoked at <4.0 (hysteresis)'
-      - 'Grandfathered flag: 5+ bookings before first paid launch → 5% discount'
       - 'Account deletion: soft delete, anonymize PII, retain metrics'
       - 'Facebook OAuth outage: existing sessions survive, new login is unavailable'
       - 'Phase 0-1 launch auth is Facebook only'

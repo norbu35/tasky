@@ -8,10 +8,11 @@ This design system supports the Phase 1 Ulaanbaatar launch. Product behavior is 
 
 ### Active vs future specs
 
-- Active Phase 1 specs: `SCR-CUST-*`, `SCR-TASK-*`, `SCR-SHARED-*`
-- Draft / Future specs: `SCR-P2-*`, `SCR-P3-*`, `SCR-B2B-*`
+- Active Phase 1 specs are only screen specs whose `phase` field is `"0-1"`.
+- `SCR-P2-*`, `SCR-P3-*`, and `SCR-B2B-*` are always draft / future references.
+- `SCR-SHARED-*`, `SCR-CUST-*`, and `SCR-TASK-*` ids are not automatically launch-active; their `phase` field controls authority.
 
-Future-prefixed specs are not launch authority and must not be read as active product commitments.
+Future-phase specs are reference material only and must not be read as launch commitments.
 
 ## 2. Content Fundamentals
 
@@ -25,9 +26,10 @@ Future-prefixed specs are not launch authority and must not be read as active pr
 ### Phase 1 copy constraints
 
 - Operational screens must communicate the service is live in Ulaanbaatar.
-- Pricing copy must support both `I have a budget` and `I want quotes`.
+- Pricing copy must support both `I have a budget` and `I want quotes`, including quote, counter-offer, and locked booking price states where applicable.
 - Do not promise payment hold, payment protection, or escrow.
 - Do not imply open-ended pre-booking chat.
+- Before confirmation, show only approximate location. Exact address appears only after confirmed booking.
 
 ## 3. Product Experience Rules
 

@@ -113,7 +113,7 @@ acceptance_criteria:
   - 'Free cancellation state shows no-penalty messaging when >4 hours before scheduled time'
   - 'Late cancellation warning appears when <4 hours before scheduled time'
   - 'Late cancel incident count state shows elevated warning when customer has 1 existing incident in trailing 28 days'
-  - '2 incidents in trailing 28 days triggers ranking penalty and potential strike review per PRD Section 6.4.5'
+  - 'Repeated late cancellations show the elevated reliability warning defined by operations policy'
   - 'Cancel button uses danger variant requiring explicit tap'
   - 'Confirming state shows loading spinner on button while PUT /bookings/:id/cancel is in progress'
   - 'On successful cancellation, sheet dismisses and navigates via replace to Customer Bookings List (SCR-CUST-016)'

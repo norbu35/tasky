@@ -73,12 +73,12 @@ copy:
 
   - key: description
     mn: 'Таны иргэний үнэмлэх болон зургийг манай баг хянаж байна. Энэ нь ихэвчлэн 24 цагийн дотор хийгдэнэ.'
-    en: 'Our team is reviewing your ID and photos. This usually takes up to 24 hours.'
+    en: 'Our team is reviewing your ID and photos. Queue timing depends on current verification volume.'
     max_chars: 100
 
   - key: sla_info
     mn: 'Хүлээгдэж буй хугацаа: 24 цаг хүртэл'
-    en: 'Expected wait: up to 24 hours'
+    en: 'Expected wait: shown from current queue status'
     max_chars: 35
 
   - key: sla_approaching_warning
@@ -138,6 +138,6 @@ acceptance_criteria:
   - 'Push notification for approval navigates to Verification Approved (SCR-TASK-008)'
   - 'Push notification for rejection navigates to Verification Rejected (SCR-TASK-009)'
   - 'SLA approaching state shows when within last 4 hours of the 24-hour window'
-  - 'Optional SLA breached state shows contact support option if 24 hours have passed'
+  - 'Optional delayed-review state shows contact support guidance when the queue runs longer than expected'
   - 'Comfortable density with breathing room for reassuring messaging'
   - 'Notification hint informs user they will be notified of the result'

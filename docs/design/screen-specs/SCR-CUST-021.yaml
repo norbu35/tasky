@@ -131,7 +131,7 @@ analytics_events:
     trigger: 'Customer dismisses the sheet without flagging'
 
 acceptance_criteria:
-  - 'Pre-reminder appears at scheduled start +10 minutes per PRD Section 6.4.3'
+  - 'Pre-reminder appears at scheduled start +10 minutes per launch no-show policy'
   - 'No-show flag button activates only at scheduled start +15 minutes'
   - 'Flag button is only active if the system verifies neither party posted an in-app status update or check-in in the preceding 30 minutes'
   - 'Flag button is disabled if an accepted in-app reschedule has superseded the original schedule'

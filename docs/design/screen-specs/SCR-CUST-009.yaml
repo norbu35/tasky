@@ -43,7 +43,7 @@ components:
     variant: default
 
   - id: COMP-BUTTON
-    usage: 'Context-dependent CTAs: View Applicants, Cancel, review selected Tasker, Message Tasker, or Confirm Complete'
+    usage: 'Context-dependent CTAs: View Applicants, Cancel, review selected Tasker, open booking contact, or Confirm Complete'
     props:
       label: 'Хүсэлтүүдийг харах'
       variant: primary
@@ -83,7 +83,7 @@ states:
     components_hidden: [COMP-PROFILEAVATAR, COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: assigned
-    description: 'Task is ASSIGNED; shows assigned Tasker info, booking details, and Message Tasker CTA'
+    description: 'Task is ASSIGNED; shows assigned Tasker info, booking details, and booking contact CTA'
     components_visible:
       [COMP-STATUSBADGE, COMP-CARD, COMP-PROFILEAVATAR, COMP-TRUSTBANNER, COMP-BUTTON]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
@@ -100,7 +100,7 @@ states:
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: completed
-    description: 'Task is COMPLETED; final summary shown with review prompt or rebook option'
+    description: 'Task is COMPLETED; final summary shown with review prompt and lifecycle summary'
     components_visible: [COMP-STATUSBADGE, COMP-CARD, COMP-PROFILEAVATAR]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
@@ -143,10 +143,10 @@ copy:
     en: 'Schedule'
     max_chars: 15
 
-  - key: section_budget
-    mn: 'Төсөв'
-    en: 'Budget'
-    max_chars: 15
+  - key: section_pricing
+    mn: 'Үнэ / Үнийн нөхцөл'
+    en: 'Pricing'
+    max_chars: 18
 
   - key: section_applicants
     mn: 'Хүсэлтүүд'
@@ -195,7 +195,7 @@ copy:
 
   - key: cta_message_tasker
     mn: 'Зурвас илгээх'
-    en: 'Message Tasker'
+    en: 'Contact Tasker'
     max_chars: 20
 
   - key: cta_confirm_complete
@@ -227,18 +227,18 @@ analytics_events:
   - event: 'cancel_task_tapped'
     trigger: 'User taps Cancel Task'
   - event: 'message_tasker_tapped'
-    trigger: 'User taps Message Tasker from assigned task detail'
+    trigger: 'User taps the booking contact CTA from assigned task detail'
   - event: 'confirm_complete_tapped'
     trigger: 'User taps Confirm Complete when Tasker has marked done'
 
 acceptance_criteria:
-  - 'Task detail displays category, description/scope summary, photos, approximate location, schedule (YYYY.MM.DD format), and budget (₮ format)'
+  - 'Task detail displays category, description/scope summary, photos, approximate location, schedule (YYYY.MM.DD format), and pricing summary'
   - 'StatusBadge shows current task status with correct color mapping'
   - 'OPEN state with no applicants shows waiting message'
   - 'OPEN state with applicants shows count badge and View Applicants CTA navigating (push) to SCR-CUST-011'
   - 'Awaiting-tasker-acceptance state shows the selected Tasker summary, response-window status, and no direct contact CTA before booking confirmation'
   - 'ASSIGNED state shows assigned Tasker profile with avatar, name, verification badge, and rating'
-  - 'ASSIGNED state shows Message Tasker CTA navigating (push) to SCR-SHARED-010'
+  - 'ASSIGNED state shows booking contact CTA navigating (push) to SCR-SHARED-010 for the confirmed booking conversation'
   - 'Tasker marked done state shows prominent Confirm Complete CTA'
   - 'Cancel CTA opens modal sheet SCR-CUST-010 for cancellation confirmation'
   - 'COMPLETED state shows final task summary'

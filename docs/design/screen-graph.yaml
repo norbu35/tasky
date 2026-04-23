@@ -4,6 +4,7 @@
 # Status: Derived
 # Active scope is any node whose underlying screen spec has `phase: "0-1"`.
 # Phase-gated nodes remain draft / future reference even when they use `SCR-SHARED-*`, `SCR-CUST-*`, or `SCR-TASK-*` ids.
+# Entry points, edges, and labels must therefore be read together with the screen-spec phase field.
 
 # Navigation model: Expo Router file-based routing
 # Tab groups: (customer) and (tasker) with role-aware switching
@@ -144,7 +145,7 @@ nodes:
         guard: 'tap stats, role == tasker'
       - to: SCR-B2B-001
         type: push
-        guard: 'tap business accounts, role == customer, b2b_enabled'
+        guard: 'Phase 2, tap business accounts, role == customer, b2b_enabled'
     data_deps: [user_id, profile]
     tab: profile
 
@@ -156,7 +157,7 @@ nodes:
         guard: 'save success or cancel'
       - to: SCR-TASK-019
         type: push
-        guard: "tap 'AI polish', role == tasker"
+        guard: "Phase 2, tap 'AI polish', role == tasker"
     data_deps: [user_id, profile]
 
   SCR-SHARED-014:
@@ -523,7 +524,7 @@ nodes:
         guard: "tap 'Cancel Booking'"
       - to: SCR-CUST-023
         type: push
-        guard: "tap 'Rebook', status == COMPLETED"
+        guard: "Phase 2, tap 'Repeat from past booking', status == COMPLETED"
       - to: SCR-CUST-024
         type: push
         guard: "tap 'Report Issue'"
@@ -588,7 +589,7 @@ nodes:
     data_deps: [booking_id, hours_to_schedule]
 
   SCR-CUST-023:
-    label: 'Rebook Shortcut'
+    label: 'Repeat from Past Booking'
     edges:
       - to: SCR-CUST-014
         type: push

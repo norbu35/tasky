@@ -1,30 +1,30 @@
 # Screen Spec: Verification — Approved
 screen_id: SCR-TASK-008
-name: "Verification — Approved"
-route: "/(tasker)/verification/approved"
+name: 'Verification — Approved'
+route: '/(tasker)/verification/approved'
 role: [tasker]
-phase: "0-1"
+phase: '0-1'
 template: success_celebration
-figma_page: "Tasker/Verification Approved"
-feature: "verification"
+figma_page: 'Tasker/Verification Approved'
+feature: 'verification'
 
 layout:
   template: success_celebration
   density: comfortable
-  structure: "safe_area -> centered(animated_checkmark + heading + description + next_steps + primary_cta)"
+  structure: 'safe_area -> centered(animated_checkmark + heading + description + next_steps + primary_cta)'
 
 components:
   - id: COMP-ANIMATEDCHECKMARK
-    usage: "Animated success checkmark celebrating verification approval"
+    usage: 'Animated success checkmark celebrating verification approval'
     props:
-      size: "xl"
-      color: "verified"
+      size: 'xl'
+      color: 'verified'
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Primary CTA to start browsing and applying to tasks"
+    usage: 'Primary CTA to start browsing and applying to tasks'
     props:
-      label: "Даалгавар хайж эхлэх"
+      label: 'Даалгавар хайж эхлэх'
       variant: primary
       size: xl
     variant: primary
@@ -34,59 +34,67 @@ components:
     props:
       isVerified: true
       isPro: false
-      size: "lg"
+      size: 'lg'
     variant: default
 
 states:
   - id: default
-    description: "Celebration screen — tasker has been approved and can now apply to tasks"
-    components_visible: [animated_checkmark, verification_badge, heading, description, next_steps, start_browsing_button]
+    description: 'Celebration screen — tasker has been approved and can now apply to tasks'
+    components_visible:
+      [
+        animated_checkmark,
+        verification_badge,
+        heading,
+        description,
+        next_steps,
+        start_browsing_button,
+      ]
     components_hidden: []
 
 copy:
   - key: heading
-    mn: "Баталгаажлаа!"
+    mn: 'Баталгаажлаа!'
     en: "You're Verified!"
     max_chars: 20
 
   - key: description
-    mn: "Таны хаяг амжилттай баталгаажлаа. Одоо даалгавруудад анкет илгээж, ажил хийх боломжтой."
-    en: "Your identity has been verified. You can now apply to tasks and start earning."
+    mn: 'Таны хаяг амжилттай баталгаажлаа. Одоо даалгавруудад анкет илгээж, ажил хийх боломжтой.'
+    en: 'Your identity has been verified. You can now apply to tasks and start earning.'
     max_chars: 90
 
   - key: next_steps_heading
-    mn: "Дараагийн алхам"
+    mn: 'Дараагийн алхам'
     en: "What's next"
     max_chars: 20
 
   - key: next_step_browse
-    mn: "Даалгаврууд хайж, сонирхсон даалгавартаа анкет илгээнэ үү"
-    en: "Browse tasks and apply to ones that interest you"
+    mn: 'Даалгаврууд хайж, сонирхсон даалгавартаа анкет илгээнэ үү'
+    en: 'Browse tasks and apply to ones that interest you'
     max_chars: 65
 
   - key: next_step_profile
-    mn: "Профайлаа бөглөж, захиалагчдад илүү итгэл төрүүлнэ үү"
-    en: "Complete your profile to build trust with customers"
+    mn: 'Профайлаа бөглөж, захиалагчдад илүү итгэл төрүүлнэ үү'
+    en: 'Complete your profile to build trust with customers'
     max_chars: 60
 
   - key: start_browsing_cta
-    mn: "Даалгавар хайж эхлэх"
-    en: "Start Browsing"
+    mn: 'Даалгавар хайж эхлэх'
+    en: 'Start Browsing'
     max_chars: 25
 
 api_endpoints: []
 
 analytics_events:
-  - event: "verification_approved_viewed"
-    trigger: "Approved celebration screen becomes visible"
-  - event: "verification_approved_browse_tapped"
-    trigger: "User taps Start Browsing to go to task feed"
+  - event: 'verification_approved_viewed'
+    trigger: 'Approved celebration screen becomes visible'
+  - event: 'verification_approved_browse_tapped'
+    trigger: 'User taps Start Browsing to go to task feed'
 
 acceptance_criteria:
-  - "Animated checkmark plays spring animation with bounce on screen entry"
-  - "Verification badge is prominently displayed alongside success message"
+  - 'Animated checkmark plays spring animation with bounce on screen entry'
+  - 'Verification badge is prominently displayed alongside success message'
   - "Heading and description confirm the tasker's new verified status"
-  - "Next steps section guides the tasker on what to do after verification"
+  - 'Next steps section guides the tasker on what to do after verification'
   - "Tapping 'Даалгавар хайж эхлэх' navigates to Task Feed (SCR-TASK-001) via replace"
-  - "Comfortable density for celebratory emotional impact"
-  - "This screen is reached via push notification for approval or from DAN success"
+  - 'Comfortable density for celebratory emotional impact'
+  - 'This screen is reached via push notification for approval or after the app refreshes approved verification state'

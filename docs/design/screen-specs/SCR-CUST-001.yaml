@@ -1,165 +1,165 @@
 # Screen Spec: My Tasks — Task List
 screen_id: SCR-CUST-001
-name: "My Tasks — Task List"
-route: "/(customer)/tasks"
+name: 'My Tasks — Task List'
+route: '/(customer)/tasks'
 role: [customer]
-phase: "0-1"
+phase: '0-1'
 template: feed_list
-figma_page: "Customer/My Tasks Task List"
-feature: "tasks"
+figma_page: 'Customer/My Tasks Task List'
+feature: 'tasks'
 
 layout:
   template: feed_list
   density: default
-  structure: "safe_area -> sticky_header(page_title + notifications_bell) -> scrollview(task_cards) -> fab_overlay"
+  structure: 'safe_area -> sticky_header(page_title + notifications_bell) -> scrollview(task_cards) -> fab_overlay'
 
 components:
   - id: COMP-SPLITCARD
-    usage: "Task cards in the feed showing task title, category, status, budget, and schedule"
+    usage: 'Task cards in the feed showing task title, category, status, pricing summary, and schedule'
     props:
-      headerContent: "{tasker_avatar_if_assigned, budget_display}"
-      bodyContent: "{task_title, category, schedule, status_badge}"
-      status: "open"
+      headerContent: '{tasker_avatar_if_assigned, budget_display}'
+      bodyContent: '{task_title, category, schedule, status_badge}'
+      status: 'open'
     variant: task
 
   - id: COMP-STATUSBADGE
-    usage: "Inline status indicator on each task card (open, assigned, completed, cancelled)"
+    usage: 'Inline status indicator on each task card (open, assigned, completed, cancelled)'
     props:
-      status: "open"
-      size: "sm"
+      status: 'open'
+      size: 'sm'
     variant: open
 
   - id: COMP-FAB
-    usage: "Floating action button for posting a new task; hides on scroll down, appears on scroll up"
+    usage: 'Floating action button for posting a new task; hides on scroll down, appears on scroll up'
     props:
-      icon: "plus"
-      label: "Даалгавар нэмэх"
-      onPress: "navigate(SCR-CUST-002)"
+      icon: 'plus'
+      label: 'Даалгавар нэмэх'
+      onPress: 'navigate(SCR-CUST-002)'
     variant: default
 
   - id: COMP-EMPTYSTATE
-    usage: "Shown when user has no tasks; activation variant with CTA to post first task"
+    usage: 'Shown when user has no tasks; activation variant with CTA to post first task'
     props:
-      illustration: "tasks_empty"
-      headline: "Танд даалгавар байхгүй байна"
-      description: "Эхний даалгавараа оруулаад найдвартай гүйцэтгэгч олоорой"
-      ctaLabel: "Даалгавар оруулах"
-      onCtaPress: "navigate(SCR-CUST-002)"
+      illustration: 'tasks_empty'
+      headline: 'Танд даалгавар байхгүй байна'
+      description: 'Эхний даалгавараа оруулаад найдвартай гүйцэтгэгч олоорой'
+      ctaLabel: 'Даалгавар оруулах'
+      onCtaPress: 'navigate(SCR-CUST-002)'
     variant: activation
 
   - id: COMP-LOADINGSKELETON
-    usage: "Card-shaped skeleton placeholders shown during initial load and pagination"
+    usage: 'Card-shaped skeleton placeholders shown during initial load and pagination'
     props:
       variant: card
       count: 4
     variant: card
 
   - id: COMP-TOAST
-    usage: "Error toast for network failures and success toast after task actions"
+    usage: 'Error toast for network failures and success toast after task actions'
     props:
-      message: "Сүлжээний алдаа гарлаа"
+      message: 'Сүлжээний алдаа гарлаа'
       variant: error
       duration: 6000
     variant: error
 
 states:
   - id: loading_initial
-    description: "First load; API call GET /tasks/mine in progress"
+    description: 'First load; API call GET /tasks/mine in progress'
     components_visible: [COMP-LOADINGSKELETON]
     components_hidden: [COMP-SPLITCARD, COMP-EMPTYSTATE, COMP-FAB, COMP-TOAST]
 
   - id: empty_activation
-    description: "User has zero tasks; show activation empty state with CTA to post first task"
+    description: 'User has zero tasks; show activation empty state with CTA to post first task'
     components_visible: [COMP-EMPTYSTATE, COMP-FAB]
     components_hidden: [COMP-SPLITCARD, COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: populated
-    description: "User has one or more tasks; task cards rendered in reverse-chronological order"
+    description: 'User has one or more tasks; task cards rendered in reverse-chronological order'
     components_visible: [COMP-SPLITCARD, COMP-STATUSBADGE, COMP-FAB]
     components_hidden: [COMP-EMPTYSTATE, COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: loading_refresh
-    description: "Pull-to-refresh triggered; spinner at top while data reloads"
+    description: 'Pull-to-refresh triggered; spinner at top while data reloads'
     components_visible: [COMP-SPLITCARD, COMP-FAB]
     components_hidden: [COMP-EMPTYSTATE, COMP-LOADINGSKELETON]
 
   - id: error_network
-    description: "GET /tasks/mine failed due to network error; error toast shown with retry"
+    description: 'GET /tasks/mine failed due to network error; error toast shown with retry'
     components_visible: [COMP-TOAST]
     components_hidden: [COMP-SPLITCARD, COMP-EMPTYSTATE, COMP-LOADINGSKELETON]
 
   - id: offline_cached
-    description: "Device offline; cached task cards shown with offline banner at top"
+    description: 'Device offline; cached task cards shown with offline banner at top'
     components_visible: [COMP-SPLITCARD, COMP-FAB]
     components_hidden: [COMP-EMPTYSTATE, COMP-LOADINGSKELETON]
 
 copy:
   - key: page_title
-    mn: "Миний даалгаврууд"
-    en: "My Tasks"
+    mn: 'Миний даалгаврууд'
+    en: 'My Tasks'
     max_chars: 30
 
   - key: fab_label
-    mn: "Даалгавар нэмэх"
-    en: "Post Task"
+    mn: 'Даалгавар нэмэх'
+    en: 'Post Task'
     max_chars: 20
 
   - key: empty_headline
-    mn: "Танд даалгавар байхгүй байна"
-    en: "You have no tasks yet"
+    mn: 'Танд даалгавар байхгүй байна'
+    en: 'You have no tasks yet'
     max_chars: 40
 
   - key: empty_description
-    mn: "Эхний даалгавараа оруулаад найдвартай гүйцэтгэгч олоорой"
-    en: "Post your first task and find a trusted tasker"
+    mn: 'Эхний даалгавараа оруулаад найдвартай гүйцэтгэгч олоорой'
+    en: 'Post your first task and find a trusted tasker'
     max_chars: 80
 
   - key: empty_cta
-    mn: "Даалгавар оруулах"
-    en: "Post a Task"
+    mn: 'Даалгавар оруулах'
+    en: 'Post a Task'
     max_chars: 20
 
   - key: error_network
-    mn: "Сүлжээний алдаа гарлаа. Дахин оролдоно уу"
-    en: "Network error. Please try again"
+    mn: 'Сүлжээний алдаа гарлаа. Дахин оролдоно уу'
+    en: 'Network error. Please try again'
     max_chars: 50
 
   - key: offline_banner
-    mn: "Офлайн горимд байна"
-    en: "You are offline"
+    mn: 'Офлайн горимд байна'
+    en: 'You are offline'
     max_chars: 30
 
   - key: notifications_bell_label
-    mn: "Мэдэгдэл"
-    en: "Notifications"
+    mn: 'Мэдэгдэл'
+    en: 'Notifications'
     max_chars: 15
 
 api_endpoints:
   - method: GET
-    path: "/tasks/mine"
+    path: '/tasks/mine'
     purpose: "Fetch customer's task list with status, applicant counts, and booking info"
 
 analytics_events:
-  - event: "my_tasks_viewed"
-    trigger: "Screen becomes visible"
-  - event: "my_tasks_refreshed"
-    trigger: "Pull-to-refresh completes"
-  - event: "task_card_tapped"
-    trigger: "User taps a task card to view detail"
-  - event: "fab_post_task_tapped"
-    trigger: "User taps the FAB to start posting a new task"
-  - event: "notifications_bell_tapped"
-    trigger: "User taps the notifications bell icon"
+  - event: 'my_tasks_viewed'
+    trigger: 'Screen becomes visible'
+  - event: 'my_tasks_refreshed'
+    trigger: 'Pull-to-refresh completes'
+  - event: 'task_card_tapped'
+    trigger: 'User taps a task card to view detail'
+  - event: 'fab_post_task_tapped'
+    trigger: 'User taps the FAB to start posting a new task'
+  - event: 'notifications_bell_tapped'
+    trigger: 'User taps the notifications bell icon'
 
 acceptance_criteria:
-  - "Task list displays SplitCard for each task with dark teal header and light body"
-  - "Each task card shows category, title, budget (formatted as MNT with comma separator), schedule, and status badge"
-  - "FAB with plus icon is visible in bottom-right corner and hides on scroll down"
+  - 'Task list displays SplitCard for each task with dark teal header and light body'
+  - 'Each task card shows category, title, pricing summary, schedule, and status badge'
+  - 'FAB with plus icon is visible in bottom-right corner and hides on scroll down'
   - "Empty state shows activation illustration, headline, description, and 'Post a Task' CTA"
-  - "Pull-to-refresh reloads the task list from GET /tasks/mine"
-  - "Tapping a task card navigates (push) to Task Detail SCR-CUST-009"
-  - "Tapping the FAB navigates (push) to Category Selection SCR-CUST-002"
-  - "Tapping the notifications bell navigates (push) to Notification Center SCR-SHARED-016"
-  - "Offline state shows cached tasks with an offline banner"
-  - "Network error shows error toast with retry action"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'Pull-to-refresh reloads the task list from GET /tasks/mine'
+  - 'Tapping a task card navigates (push) to Task Detail SCR-CUST-009'
+  - 'Tapping the FAB navigates (push) to Category Selection SCR-CUST-002'
+  - 'Tapping the notifications bell navigates (push) to Notification Center SCR-SHARED-016'
+  - 'Offline state shows cached tasks with an offline banner'
+  - 'Network error shows error toast with retry action'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

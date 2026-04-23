@@ -1,159 +1,160 @@
 # Screen Spec: Inbox — Conversation List
 screen_id: SCR-SHARED-010
-name: "Inbox — Conversation List"
-route: "/inbox"
+name: 'Inbox — Conversation List'
+route: '/inbox'
 role: [customer, tasker]
-phase: "0-1"
+phase: '0-1'
 template: feed_list
-figma_page: "Shared/Inbox Conversation List"
-feature: "messaging"
+figma_page: 'Shared/Inbox Conversation List'
+feature: 'messaging'
 
 layout:
   template: feed_list
   density: default
-  structure: "safe_area -> sticky_header(nav_title + search_bar) -> scrollview(conversation_cards) -> tab_bar"
+  structure: 'safe_area -> sticky_header(nav_title + search_bar) -> scrollview(conversation_cards) -> tab_bar'
 
 components:
   - id: COMP-SEARCHBAR
-    usage: "Search conversations by counterparty name or message content"
+    usage: 'Search conversations by counterparty name or message content'
     props:
-      placeholder: "Хайх..."
-      value: ""
+      placeholder: 'Хайх...'
+      value: ''
     variant: default
 
   - id: COMP-CARD
-    usage: "Conversation row displaying avatar, name, last message preview, timestamp, unread badge"
+    usage: 'Conversation row displaying avatar, name, last message preview, timestamp, unread badge'
     props:
-      onPress: "openConversation"
+      onPress: 'openConversation'
     variant: default
 
   - id: COMP-PROFILEAVATAR
-    usage: "Counterparty avatar shown in each conversation row"
+    usage: 'Counterparty avatar shown in each conversation row'
     props:
-      size: "md"
+      size: 'md'
       isVerified: false
     variant: md
 
   - id: COMP-EMPTYSTATE
-    usage: "Empty state when user has no conversations yet"
+    usage: 'Empty state when user has no conversations yet'
     props:
-      headline: "Мессеж байхгүй"
-      description: "Захиалга хийсний дараа энд мессежүүд харагдана"
+      headline: 'Мессеж байхгүй'
+      description: 'Баталгаажсан захиалгын дараа энд мессежүүд харагдана'
       ctaLabel: null
     variant: no_results
 
   - id: COMP-LOADINGSKELETON
-    usage: "Skeleton loading state matching conversation list row layout"
+    usage: 'Skeleton loading state matching conversation list row layout'
     props:
-      variant: "list_row"
+      variant: 'list_row'
       count: 6
     variant: list_row
 
 states:
   - id: loading_initial
-    description: "Conversation list is loading for the first time"
+    description: 'Conversation list is loading for the first time'
     components_visible: [nav_title, loading_skeleton]
     components_hidden: [search_bar, conversation_list, empty_state, error_message, offline_banner]
 
   - id: empty
-    description: "User has no conversations; activation empty state shown"
+    description: 'User has no conversations; activation empty state shown'
     components_visible: [nav_title, search_bar, empty_state]
     components_hidden: [conversation_list, loading_skeleton, error_message, offline_banner]
 
   - id: populated
-    description: "Conversations loaded and displayed in chronological order"
+    description: 'Conversations loaded and displayed in chronological order'
     components_visible: [nav_title, search_bar, conversation_list]
     components_hidden: [empty_state, loading_skeleton, error_message, offline_banner]
 
   - id: loading_refresh
-    description: "Pull-to-refresh in progress; existing content remains visible"
+    description: 'Pull-to-refresh in progress; existing content remains visible'
     components_visible: [nav_title, search_bar, conversation_list, pull_to_refresh_indicator]
     components_hidden: [empty_state, loading_skeleton, error_message, offline_banner]
 
   - id: error_network
-    description: "Network error loading conversations; retry available"
+    description: 'Network error loading conversations; retry available'
     components_visible: [nav_title, error_message, retry_button]
-    components_hidden: [search_bar, conversation_list, empty_state, loading_skeleton, offline_banner]
+    components_hidden:
+      [search_bar, conversation_list, empty_state, loading_skeleton, offline_banner]
 
   - id: offline
-    description: "Device is offline; cached conversations shown if available, offline banner at top"
+    description: 'Device is offline; cached conversations shown if available, offline banner at top'
     components_visible: [nav_title, offline_banner, conversation_list_cached]
     components_hidden: [search_bar, empty_state, loading_skeleton, error_message]
 
 copy:
   - key: nav_title
-    mn: "Чат"
-    en: "Inbox"
+    mn: 'Чат'
+    en: 'Inbox'
     max_chars: 10
 
   - key: search_placeholder
-    mn: "Хайх..."
-    en: "Search..."
+    mn: 'Хайх...'
+    en: 'Search...'
     max_chars: 10
 
   - key: empty_heading
-    mn: "Мессеж байхгүй"
-    en: "No messages"
+    mn: 'Мессеж байхгүй'
+    en: 'No messages'
     max_chars: 20
 
   - key: empty_description
-    mn: "Захиалга хийсний дараа энд мессежүүд харагдана"
-    en: "Messages will appear here after you make a booking"
+    mn: 'Баталгаажсан захиалгын дараа энд мессежүүд харагдана'
+    en: 'Messages will appear here after a booking is confirmed'
     max_chars: 60
 
   - key: error_message
-    mn: "Мессежүүдийг ачаалж чадсангүй"
-    en: "Failed to load messages"
+    mn: 'Мессежүүдийг ачаалж чадсангүй'
+    en: 'Failed to load messages'
     max_chars: 35
 
   - key: retry_label
-    mn: "Дахин оролдох"
-    en: "Retry"
+    mn: 'Дахин оролдох'
+    en: 'Retry'
     max_chars: 15
 
   - key: offline_banner
-    mn: "Офлайн байна. Хуучин мессежүүд харагдаж байна."
-    en: "You are offline. Showing cached messages."
+    mn: 'Офлайн байна. Хуучин мессежүүд харагдаж байна.'
+    en: 'You are offline. Showing cached messages.'
     max_chars: 55
 
   - key: unread_badge_label
-    mn: "шинэ"
-    en: "new"
+    mn: 'шинэ'
+    en: 'new'
     max_chars: 5
 
   - key: last_message_you_prefix
-    mn: "Та: "
-    en: "You: "
+    mn: 'Та: '
+    en: 'You: '
     max_chars: 5
 
 api_endpoints:
   - method: GET
-    path: "/conversations"
-    purpose: "Fetch list of conversations for the current user"
+    path: '/conversations'
+    purpose: 'Fetch list of post-confirmation conversations for the current user'
 
 analytics_events:
-  - event: "inbox_viewed"
-    trigger: "Conversation list screen becomes visible"
-  - event: "inbox_search_used"
-    trigger: "User types in the search bar"
-  - event: "conversation_tapped"
-    trigger: "User taps a conversation row; includes conversation_id"
-  - event: "inbox_pull_to_refresh"
-    trigger: "User pulls to refresh the conversation list"
-  - event: "inbox_empty_state_viewed"
-    trigger: "Empty state is displayed"
+  - event: 'inbox_viewed'
+    trigger: 'Conversation list screen becomes visible'
+  - event: 'inbox_search_used'
+    trigger: 'User types in the search bar'
+  - event: 'conversation_tapped'
+    trigger: 'User taps a conversation row; includes conversation_id'
+  - event: 'inbox_pull_to_refresh'
+    trigger: 'User pulls to refresh the conversation list'
+  - event: 'inbox_empty_state_viewed'
+    trigger: 'Empty state is displayed'
 
 acceptance_criteria:
-  - "Conversation list is sorted by most recent message timestamp descending"
-  - "Each row shows counterparty avatar, name, last message preview (50 chars max), and timestamp"
-  - "Unread conversations show an unread indicator badge"
-  - "Last message preview truncates at 1 line with ellipsis"
-  - "Search bar filters conversations by counterparty name"
-  - "Pull-to-refresh reloads the conversation list"
-  - "Tapping a conversation row pushes to Chat Detail (SCR-SHARED-011)"
-  - "Empty state displays when no conversations exist"
-  - "Loading state shows skeleton matching conversation row layout"
-  - "Network error shows error message with retry button"
-  - "Offline state shows cached conversations with offline banner"
-  - "Tab bar is visible with Inbox tab highlighted"
-  - "Relative timestamps used for messages within 24 hours"
+  - 'Conversation list is sorted by most recent message timestamp descending'
+  - 'Each row shows counterparty avatar, name, last message preview (50 chars max), and timestamp'
+  - 'Unread conversations show an unread indicator badge'
+  - 'Last message preview truncates at 1 line with ellipsis'
+  - 'Search bar filters conversations by counterparty name'
+  - 'Pull-to-refresh reloads the conversation list'
+  - 'Tapping a conversation row pushes to Chat Detail (SCR-SHARED-011)'
+  - 'Empty state displays when no confirmed-booking conversations exist'
+  - 'Loading state shows skeleton matching conversation row layout'
+  - 'Network error shows error message with retry button'
+  - 'Offline state shows cached conversations with offline banner'
+  - 'Tab bar is visible with Inbox tab highlighted'
+  - 'Relative timestamps used for messages within 24 hours'

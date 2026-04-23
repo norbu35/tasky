@@ -124,13 +124,13 @@ journeys:
     name: 'Messaging'
     actor: [customer, tasker]
     phase: '0-1'
-    goal: 'Exchange messages about a booking'
+    goal: 'Exchange messages about a confirmed booking'
     entry: SCR-SHARED-010
     exit: [SCR-SHARED-011]
     happy_path:
       - step: 1
         screen: SCR-SHARED-010
-        action: 'Open conversation list'
+        action: 'Open inbox for confirmed bookings'
         next: SCR-SHARED-011
       - step: 2
         screen: SCR-SHARED-011
@@ -267,7 +267,7 @@ journeys:
         next: SCR-CUST-006
       - step: 6
         screen: SCR-CUST-006
-        action: 'Set schedule and budget'
+        action: 'Set schedule and pricing'
         next: SCR-CUST-007
       - step: 7
         screen: SCR-CUST-007
@@ -425,21 +425,20 @@ journeys:
         lifecycle: 'BOOK-T08 (reschedule_accepted) or BOOK-T09 (reschedule_declined)'
 
   - id: JRN-CUST-05
-    name: 'Rebook Tasker'
+    name: 'Repeat from Past Booking'
     actor: [customer]
     phase: '0-1'
-    goal: 'Quickly rebook a previously hired Tasker'
+    goal: 'Reuse a completed booking as a future-posting template when that shortcut is enabled'
     entry: SCR-CUST-017
     exit: [SCR-CUST-015]
     happy_path:
       - step: 1
         screen: SCR-CUST-017
-        action: "Tap 'Rebook' on completed booking"
+        action: "Phase 2, tap 'Repeat from past booking' on completed booking"
         next: SCR-CUST-023
-        lifecycle: 'BOOK-T11 (rebook_shortcut)'
       - step: 2
         screen: SCR-CUST-023
-        action: 'Review prefilled task, edit if needed'
+        action: 'Review the prefilled posting template, edit if needed'
         next: SCR-CUST-014
       - step: 3
         screen: SCR-CUST-014
@@ -600,7 +599,7 @@ journeys:
         next: SCR-TASK-007
       - step: 6
         screen: SCR-TASK-007
-        action: 'Wait for admin review (24h SLA)'
+        action: 'Wait for admin review in the verification queue'
         next: SCR-TASK-008
         lifecycle: 'VER-T02 (admin_approves)'
     alternate_paths:
@@ -618,13 +617,6 @@ journeys:
         screens: [SCR-TASK-009, SCR-TASK-005]
         outcome: 'Re-enters verification queue'
         lifecycle: 'VER-T04 (tasker_resubmits)'
-      - id: JRN-TASK-01-A3
-        name: 'DAN fast-path (Phase 2)'
-        branch_at: 2
-        condition: 'Phase 2, E-Mongolia available'
-        screens: [SCR-TASK-006]
-        outcome: 'Auto-verified via DAN'
-        lifecycle: 'VER-T05 (dan_fast_path)'
 
   - id: JRN-TASK-02
     name: 'Browse & Apply to Task'
