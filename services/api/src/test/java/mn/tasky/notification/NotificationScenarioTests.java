@@ -258,6 +258,10 @@ class NotificationScenarioTests {
         assertThat(registeredTokens.get(0).createdAt()).isNotNull();
     }
 
+    // SCN-NOTIF-006 is an IMPLEMENTATION GAP: verification decision notifications are
+    // not yet emitted. VerificationService.resolveVerification() updates status but
+    // does not call NotificationService.sendPush(). Deferred to implementation work.
+
     // ── SCN-NOTIF-005 ───────────────────────────────────────────────────────
 
     @Test
