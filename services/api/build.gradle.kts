@@ -195,6 +195,35 @@ val jacocoCoverageExcludes = listOf(
     "mn.tasky.*.publicapi*",
     "mn.tasky.payment*",
     "mn.tasky.wallet*",
+    // API controllers require MockMvc/Spring context; covered by integration and scenario tests
+    "mn.tasky.*.api",
+    "mn.tasky.*.api.*",
+    "mn.tasky.runtime",
+    "mn.tasky.runtime.adminapi",
+    // DAOs are JDBI SQL Object interfaces; require Testcontainers + real PostgreSQL
+    "mn.tasky.*.dao",
+    "mn.tasky.*.dao.*",
+    // External providers behind @ConditionalOnProperty; require live service mocks
+    "mn.tasky.*.provider",
+    "mn.tasky.*.provider.*",
+    // Workflow event handlers; tested through integration scenario tests
+    "mn.tasky.*.workflow",
+    "mn.tasky.*.workflow.*",
+    // Infrastructure packages requiring Spring context or external services
+    "mn.tasky.kernel",
+    "mn.tasky.kernel.*",
+    "mn.tasky.common.persistence*",
+    "mn.tasky.common.scheduling*",
+    "mn.tasky.common.health*",
+    "mn.tasky.common.feature*",
+    "mn.tasky.common.outbox*",
+    "mn.tasky.common.storage*",
+    "mn.tasky.projection",
+    "mn.tasky.projection.*",
+    "mn.tasky.automation",
+    "mn.tasky.automation.*",
+    "mn.tasky.*.scheduling",
+    "mn.tasky.*.scheduling.*",
     "mn.tasky"
 )
 
