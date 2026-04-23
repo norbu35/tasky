@@ -707,7 +707,7 @@ components:
           maxLength: 2000
         budget:
           type: integer
-          minimum: 5000
+          minimum: 20000
           nullable: true
           description: Budget in MNT. Required when pricing_mode is BUDGET. Ignored for QUOTE mode.
         pricing_mode:
@@ -1701,6 +1701,8 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
   /auth/dev/login:
+    x-tasky-status: deferred
+    x-tasky-target-phase: dev_only
     post:
       tags:
         - Auth
@@ -1789,6 +1791,127 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /auth/otp/request:
+    x-tasky-status: deferred
+    x-tasky-target-phase: phase_2
+    post:
+      tags:
+        - Auth
+      summary: Request OTP code (Phase 2+)
+      description: |
+        **Not yet active — Phase 2+ forward reference. Returns 403 until OTP is enabled.**
+        Sends a one-time password to the given phone number. Requires `tasky.otp.enabled=true`.
+      operationId: requestOtp
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+              properties:
+                phone:
+                  type: string
+                  format: phone
+                  description: Phone number in E.164 format.
+                  example: '+97699112233'
+      responses:
+        '200':
+          description: OTP sent successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                  - masked_phone
+                properties:
+                  message:
+                    type: string
+                  masked_phone:
+                    type: string
+                    description: Masked phone number confirming the delivery target.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          description: OTP authentication is disabled for the current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /auth/otp/verify:
+    x-tasky-status: deferred
+    x-tasky-target-phase: phase_2
+    post:
+      tags:
+        - Auth
+      summary: Verify OTP code (Phase 2+)
+      description: |
+        **Not yet active — Phase 2+ forward reference. Returns 403 until OTP is enabled.**
+        Verifies the OTP code sent to the given phone number. Optionally links a Facebook
+        access token for account migration. Requires `tasky.otp.enabled=true`.
+      operationId: verifyOtp
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+                - code
+              properties:
+                phone:
+                  type: string
+                  format: phone
+                  description: Phone number in E.164 format.
+                  example: '+97699112233'
+                code:
+                  type: string
+                  description: 4-6 digit OTP code.
+                  minLength: 4
+                  maxLength: 6
+                facebook_access_token:
+                  type: string
+                  description: Optional Facebook access token for account linking/migration.
+                  maxLength: 512
+      responses:
+        '200':
+          description: Authentication successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - access_token
+                  - refresh_token
+                  - user
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid or expired OTP code.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: OTP authentication is disabled for the current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
   /users/me:
     get:
       tags:
@@ -2601,7 +2724,7 @@ paths:
                 quote_price:
                   type: integer
                   nullable: true
-                  minimum: 5000
+                  minimum: 20000
                   maximum: 50000000
                   description: Tasker's price response. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the required quote.
       responses:
@@ -3231,6 +3354,105 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /bookings/{id}/rebook:
+    post:
+      tags:
+        - Bookings
+      summary: Rebook a completed booking
+      description: |
+        Creates a booking intent to rebook the same tasker for a completed booking.
+        The original booking must be in COMPLETED status.
+        Requires Idempotency-Key header.
+      operationId: rebookBooking
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      responses:
+        '200':
+          description: Rebook intent created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingIntent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Original booking is not eligible for rebooking.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tasks/{id}/booking-intents:
+    post:
+      tags:
+        - Bookings
+      summary: Create booking intent for a task
+      description: |
+        Customer creates a booking intent for a task, selecting a tasker.
+        Supports REBOOK source (from a previous booking) and INSTANT_MATCH source.
+        The task must be in a state that allows booking intent creation.
+        Requires Idempotency-Key header.
+      operationId: createBookingIntent
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - source
+                - tasker_id
+              properties:
+                source:
+                  type: string
+                  enum:
+                    - REBOOK
+                    - INSTANT_MATCH
+                  description: Booking intent source type.
+                tasker_id:
+                  type: string
+                  format: uuid
+                  description: Selected tasker ID.
+                original_booking_id:
+                  type: string
+                  format: uuid
+                  description: Original booking ID (required for REBOOK source).
+                offer_id:
+                  type: string
+                  format: uuid
+                  description: Associated offer ID (for INSTANT_MATCH source).
+      responses:
+        '201':
+          description: Booking intent created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingIntent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Task is not open or booking not eligible for intent creation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /booking-intents/{id}:
     get:
       tags:
@@ -3290,6 +3512,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
   /booking-intents/{id}/decline:
+    x-tasky-status: deferred
+    x-tasky-target-phase: phase_2
     post:
       tags:
         - Bookings
@@ -4941,6 +5165,104 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /admin/payouts/pending:
+    get:
+      tags:
+        - Admin
+      summary: List pending payouts
+      description: |
+        Returns a paginated list of payout requests awaiting admin processing.
+        Gated by the `escrow_enabled` feature toggle.
+      operationId: adminListPendingPayouts
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Paginated list of pending payout requests.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - cursor
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: ../components/schemas/monetization.yaml#/PayoutRequest
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '503':
+          description: Payout operations are deferred during the liquidity-first MVP phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /admin/payouts/{id}/process:
+    post:
+      tags:
+        - Admin
+      summary: Process a payout
+      description: |
+        Admin processes (approves or rejects) a pending payout request.
+        Payouts can only be processed on Tuesdays and Fridays.
+        Gated by the `escrow_enabled` feature toggle.
+        Requires Idempotency-Key header.
+      operationId: adminProcessPayout
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reason
+              properties:
+                reason:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                  description: Admin reason for the processing decision.
+      responses:
+        '200':
+          description: Payout processed successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Payout is not eligible for processing (e.g. wrong weekday).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Payout operations are deferred during the liquidity-first MVP phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /admin/outbox/events/replay-all:
     post:
       tags:
@@ -5044,3 +5366,483 @@ paths:
                 $ref: '#/components/schemas/LocationSearchResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
+  /wallet:
+    get:
+      tags:
+        - Wallet
+      summary: Get wallet balance
+      description: Phase-gated endpoint. Returns wallet balance and pending payout amount.
+      operationId: getWalletBalance
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Wallet balance.
+          content:
+            application/json:
+              schema:
+                $ref: ../components/schemas/monetization.yaml#/WalletBalance
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
+          description: Monetization feature is disabled for the current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wallet/transactions:
+    get:
+      tags:
+        - Wallet
+      summary: List wallet transactions
+      description: Phase-gated endpoint. Returns paginated transaction history.
+      operationId: listWalletTransactions
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated transaction history.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - cursor
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: ../components/schemas/monetization.yaml#/LedgerEntry
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
+          description: Monetization feature is disabled for the current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wallet/payouts:
+    post:
+      tags:
+        - Wallet
+      summary: Request payout
+      description: |
+        Phase-gated endpoint.
+        Tasker requests a payout from their wallet balance to a bank account.
+        Payouts are processed by admin on Tuesdays and Fridays.
+        Requires Idempotency-Key header.
+      operationId: requestPayout
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - bank_name
+                - bank_account
+              properties:
+                amount:
+                  type: integer
+                  minimum: 10000
+                  description: Payout amount in MNT. Minimum 10,000 MNT.
+                bank_name:
+                  type: string
+                  example: Хаан банк
+                bank_account:
+                  type: string
+                  example: '5012345678'
+      responses:
+        '201':
+          description: Payout request created.
+          content:
+            application/json:
+              schema:
+                $ref: ../components/schemas/monetization.yaml#/PayoutRequest
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Insufficient balance or existing pending payout.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Monetization feature is disabled for the current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /payments/bookings/{id}/initiate:
+    post:
+      tags:
+        - Payments
+      summary: Initiate QPay payment for a booking
+      description: |
+        Phase-gated endpoint. Enabled only when the current rollout phase activates this feature.
+        Generates a QPay payment link and QR code for the booking.
+        The booking must be in ASSIGNED status and monetization must be enabled.
+        Requires Idempotency-Key header.
+        Requires explicit liability disclaimer acceptance.
+      operationId: initiatePayment
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - liability_disclaimer_accepted
+              properties:
+                liability_disclaimer_accepted:
+                  type: boolean
+                  description: Must be `true` to initiate payment.
+                  enum:
+                    - true
+      responses:
+        '200':
+          description: Payment link generated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - payment_url
+                  - qr_code
+                properties:
+                  payment_url:
+                    type: string
+                    format: uri
+                    description: QPay deeplink URL for app-to-app payment.
+                  qr_code:
+                    type: string
+                    description: Base64-encoded QR code image for scanning.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Booking is not eligible for payment initiation or payment already initiated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Monetization feature is disabled for the current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /payments/qpay/callback:
+    post:
+      tags:
+        - Payments
+      summary: QPay payment webhook callback
+      security: []
+      description: |
+        Phase-gated endpoint. Enabled only when the current rollout phase activates this feature.
+        Receives payment confirmation from QPay. No Bearer auth — secured via signature verification.
+        On successful payment: booking status may be updated per monetization state machine.
+        Must be idempotent (handle duplicate callbacks gracefully).
+      operationId: qpayCallback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: QPay callback payload. Schema defined by QPay integration.
+              required:
+                - payment_id
+                - status
+                - timestamp
+                - signature
+              properties:
+                payment_id:
+                  type: string
+                object_type:
+                  type: string
+                  enum:
+                    - BOOKING_ESCROW
+                    - CREDIT_PACK
+                object_id:
+                  type: string
+                  description: Booking ID or credit purchase intent ID passed during payment initiation.
+                amount:
+                  type: integer
+                status:
+                  type: string
+                timestamp:
+                  type: integer
+                  format: int64
+                  description: Unix epoch seconds, included in HMAC payload.
+                signature:
+                  type: string
+                  description: HMAC signature for verification.
+      responses:
+        '200':
+          description: Callback processed successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+        '400':
+          description: Invalid callback payload or signature.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Monetization feature is disabled for the current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /subscriptions/tasker:
+    x-tasky-status: deferred
+    x-tasky-target-phase: phase_3
+    post:
+      tags:
+        - Payments
+      summary: Activate tasker subscription (Phase 3+)
+      description: |
+        **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
+        Enables monthly subscription for eligible Pro taskers.
+      operationId: activateTaskerSubscription
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - plan_code
+              properties:
+                plan_code:
+                  type: string
+      responses:
+        '200':
+          description: Subscription activated.
+          content:
+            application/json:
+              schema:
+                $ref: ../components/schemas/monetization.yaml#/TaskerSubscription
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '503':
+          description: Subscription feature disabled for current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /credits/balance:
+    x-tasky-status: deferred
+    x-tasky-target-phase: phase_2
+    get:
+      tags:
+        - Credits
+      summary: Get lead-unlock credit balance
+      description: |
+        **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
+        Tasker credit balance for lead-unlock purchases.
+      operationId: getCreditBalance
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Credit balance.
+          content:
+            application/json:
+              schema:
+                $ref: ../components/schemas/monetization.yaml#/CreditBalance
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
+          description: Credit system disabled for current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /credits/transactions:
+    x-tasky-status: deferred
+    x-tasky-target-phase: phase_2
+    get:
+      tags:
+        - Credits
+      summary: List credit transactions
+      operationId: listCreditTransactions
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated credit transaction history.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - cursor
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: ../components/schemas/monetization.yaml#/CreditTransaction
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
+          description: Credit system disabled for current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /credits/packs:
+    x-tasky-status: deferred
+    x-tasky-target-phase: phase_2
+    get:
+      tags:
+        - Credits
+      summary: List available credit packs
+      operationId: listCreditPacks
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Active credit packs.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: ../components/schemas/monetization.yaml#/CreditPack
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
+          description: Credit system disabled for current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /credits/purchase:
+    x-tasky-status: deferred
+    x-tasky-target-phase: phase_2
+    post:
+      tags:
+        - Credits
+      summary: Purchase credit pack via QPay
+      description: Creates a QPay checkout intent for selected credit pack.
+      operationId: purchaseCreditPack
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pack_id
+              properties:
+                pack_id:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Purchase intent created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - payment_url
+                  - qr_code
+                  - pack
+                properties:
+                  payment_url:
+                    type: string
+                    format: uri
+                  qr_code:
+                    type: string
+                  pack:
+                    $ref: ../components/schemas/monetization.yaml#/CreditPack
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '503':
+          description: Credit system disabled for current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /referrals/me:
+    x-tasky-status: deferred
+    x-tasky-target-phase: phase_2
+    get:
+      tags:
+        - Referrals
+      summary: Get my referral link and monthly reward status
+      description: |
+        **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
+        Returns referral code/link, current monthly conversion count,
+        and remaining reward-eligible slots under fraud-cap policy.
+      operationId: getMyReferralSummary
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Referral summary.
+          content:
+            application/json:
+              schema:
+                $ref: ../components/schemas/referrals.yaml#/ReferralSummary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
+          description: Referral feature is disabled for the current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

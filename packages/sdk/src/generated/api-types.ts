@@ -36,10 +36,7 @@ export interface paths {
         /**
          * Authenticate with Facebook OAuth
          * @description Validates a Facebook user access token and returns JWT tokens.
-         *     Phase 0-1: primary authentication endpoint.
-         *     Phase 2+: available only for legacy identity linkage/migration flows.
-         *     Phase 0-1 behavior: creates a new user when `facebook_id` has not been seen before.
-         *     Phase 2+ behavior: does not create new users from Facebook-only identity.
+         *     This is the launch authentication endpoint for the active Phase 1 contract.
          */
         post: operations["loginWithFacebook"];
         delete?: never;
@@ -90,48 +87,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/otp/request": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Request OTP code
-         * @description Sends a one-time password (OTP) to a phone number.
-         *     Phase 2+ endpoint used for primary phone authentication and Facebook-user migration.
-         */
-        post: operations["requestOtp"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/otp/verify": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Verify OTP and authenticate
-         * @description Verifies OTP code and issues JWT tokens.
-         *     In Phase 2+, this is the primary auth endpoint for new users and migrated Facebook users.
-         */
-        post: operations["verifyOtp"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/auth/dev/login": {
         parameters: {
             query?: never;
@@ -167,6 +122,49 @@ export interface paths {
          * @description Exchange a valid refresh token for a new token pair.
          */
         post: operations["refreshToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/otp/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request OTP code (Phase 2+)
+         * @description **Not yet active — Phase 2+ forward reference. Returns 403 until OTP is enabled.**
+         *     Sends a one-time password to the given phone number. Requires `tasky.otp.enabled=true`.
+         */
+        post: operations["requestOtp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/otp/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify OTP code (Phase 2+)
+         * @description **Not yet active — Phase 2+ forward reference. Returns 403 until OTP is enabled.**
+         *     Verifies the OTP code sent to the given phone number. Optionally links a Facebook
+         *     access token for account migration. Requires `tasky.otp.enabled=true`.
+         */
+        post: operations["verifyOtp"];
         delete?: never;
         options?: never;
         head?: never;
@@ -659,27 +657,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/tasks/{id}/booking-intents": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Create booking intent for non-application confirmation sources
-         * @description Creates a booking intent for a customer-owned OPEN task.
-         *     `REBOOK` is the only active non-application source in the current contract.
-         */
-        post: operations["createBookingIntent"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/bookings": {
         parameters: {
             query?: never;
@@ -885,11 +862,35 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Rebook from completed booking
-         * @description Creates a new OPEN task prefilled from a completed booking (same category, location, budget).
-         *     Intake answers use the current active schema version.
+         * Rebook a completed booking
+         * @description Creates a booking intent to rebook the same tasker for a completed booking.
+         *     The original booking must be in COMPLETED status.
+         *     Requires Idempotency-Key header.
          */
-        post: operations["rebookFromBooking"];
+        post: operations["rebookBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tasks/{id}/booking-intents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create booking intent for a task
+         * @description Customer creates a booking intent for a task, selecting a tasker.
+         *     Supports REBOOK source (from a previous booking) and INSTANT_MATCH source.
+         *     The task must be in a state that allows booking intent creation.
+         *     Requires Idempotency-Key header.
+         */
+        post: operations["createBookingIntent"];
         delete?: never;
         options?: never;
         head?: never;
@@ -953,116 +954,6 @@ export interface paths {
          *     The customer can then return to the applicant list and choose another tasker.
          */
         post: operations["declineBookingIntent"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/payments/bookings/{id}/initiate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Initiate QPay payment for a booking
-         * @description Phase-gated endpoint. Enabled only when the current rollout phase activates this feature.
-         *     Generates a QPay payment link and QR code for the booking.
-         *     The booking must be in ASSIGNED status and monetization must be enabled.
-         *     Requires Idempotency-Key header.
-         *     Requires explicit liability disclaimer acceptance.
-         */
-        post: operations["initiatePayment"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/payments/qpay/callback": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * QPay payment webhook callback
-         * @description Phase-gated endpoint. Enabled only when the current rollout phase activates this feature.
-         *     Receives payment confirmation from QPay. No Bearer auth — secured via signature verification.
-         *     On successful payment: booking status may be updated per monetization state machine.
-         *     Must be idempotent (handle duplicate callbacks gracefully).
-         */
-        post: operations["qpayCallback"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/wallet": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get wallet balance
-         * @description Phase-gated endpoint. Returns wallet balance and pending payout amount.
-         */
-        get: operations["getWalletBalance"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/wallet/transactions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List wallet transactions
-         * @description Phase-gated endpoint. Returns paginated transaction history.
-         */
-        get: operations["listWalletTransactions"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/wallet/payouts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Request payout
-         * @description Phase-gated endpoint.
-         *     Tasker requests a payout from their wallet balance to a bank account.
-         *     Payouts are processed by admin on Tuesdays and Fridays.
-         *     Requires Idempotency-Key header.
-         */
-        post: operations["requestPayout"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1315,8 +1206,7 @@ export interface paths {
         };
         /**
          * Search users
-         * @description Search users by phone number (exact normalized match). Phase 0-1 implementation is phone-only.
-         *     Name and Facebook ID search criteria are Phase 2+ additions (not yet implemented).
+         * @description Search users by phone number (exact normalized match, E.164 recommended).
          */
         get: operations["adminSearchUsers"];
         put?: never;
@@ -1551,50 +1441,6 @@ export interface paths {
          */
         put: operations["adminUpdateStrikePolicy"];
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/admin/payouts/pending": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List pending payouts
-         * @description Phase-gated endpoint. Returns paginated pending payout requests.
-         */
-        get: operations["adminListPendingPayouts"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/admin/payouts/{id}/process": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Mark payout as processed
-         * @description Phase-gated endpoint.
-         *     Admin marks a payout request as processed after completing the bank transfer.
-         *     This debits the tasker's wallet and creates a ledger entry.
-         *     Processing is allowed only on Tuesdays and Fridays in platform timezone.
-         *     Requires Idempotency-Key header.
-         */
-        post: operations["adminProcessPayout"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1894,6 +1740,50 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/payouts/pending": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List pending payouts
+         * @description Returns a paginated list of payout requests awaiting admin processing.
+         *     Gated by the `escrow_enabled` feature toggle.
+         */
+        get: operations["adminListPendingPayouts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/payouts/{id}/process": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Process a payout
+         * @description Admin processes (approves or rejects) a pending payout request.
+         *     Payouts can only be processed on Tuesdays and Fridays.
+         *     Gated by the `escrow_enabled` feature toggle.
+         *     Requires Idempotency-Key header.
+         */
+        post: operations["adminProcessPayout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/outbox/events/replay-all": {
         parameters: {
             query?: never;
@@ -1956,6 +1846,234 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/wallet": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get wallet balance
+         * @description Phase-gated endpoint. Returns wallet balance and pending payout amount.
+         */
+        get: operations["getWalletBalance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/wallet/transactions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List wallet transactions
+         * @description Phase-gated endpoint. Returns paginated transaction history.
+         */
+        get: operations["listWalletTransactions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/wallet/payouts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request payout
+         * @description Phase-gated endpoint.
+         *     Tasker requests a payout from their wallet balance to a bank account.
+         *     Payouts are processed by admin on Tuesdays and Fridays.
+         *     Requires Idempotency-Key header.
+         */
+        post: operations["requestPayout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payments/bookings/{id}/initiate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Initiate QPay payment for a booking
+         * @description Phase-gated endpoint. Enabled only when the current rollout phase activates this feature.
+         *     Generates a QPay payment link and QR code for the booking.
+         *     The booking must be in ASSIGNED status and monetization must be enabled.
+         *     Requires Idempotency-Key header.
+         *     Requires explicit liability disclaimer acceptance.
+         */
+        post: operations["initiatePayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payments/qpay/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * QPay payment webhook callback
+         * @description Phase-gated endpoint. Enabled only when the current rollout phase activates this feature.
+         *     Receives payment confirmation from QPay. No Bearer auth — secured via signature verification.
+         *     On successful payment: booking status may be updated per monetization state machine.
+         *     Must be idempotent (handle duplicate callbacks gracefully).
+         */
+        post: operations["qpayCallback"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/subscriptions/tasker": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Activate tasker subscription (Phase 3+)
+         * @description **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
+         *     Enables monthly subscription for eligible Pro taskers.
+         */
+        post: operations["activateTaskerSubscription"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/credits/balance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get lead-unlock credit balance
+         * @description **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
+         *     Tasker credit balance for lead-unlock purchases.
+         */
+        get: operations["getCreditBalance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/credits/transactions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List credit transactions */
+        get: operations["listCreditTransactions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/credits/packs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List available credit packs */
+        get: operations["listCreditPacks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/credits/purchase": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Purchase credit pack via QPay
+         * @description Creates a QPay checkout intent for selected credit pack.
+         */
+        post: operations["purchaseCreditPack"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referrals/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get my referral link and monthly reward status
+         * @description **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
+         *     Returns referral code/link, current monthly conversion count,
+         *     and remaining reward-eligible slots under fraud-cap policy.
+         */
+        get: operations["getMyReferralSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1997,7 +2115,7 @@ export interface components {
             /** @example fb-user-123 */
             facebook_id?: string | null;
             /** @enum {string} */
-            primary_auth: "FACEBOOK" | "PHONE_OTP";
+            primary_auth: "FACEBOOK";
             /** @enum {string} */
             role: "CUSTOMER" | "TASKER" | "ADMIN";
             /** @enum {string} */
@@ -2024,11 +2142,6 @@ export interface components {
              * @example 4.7
              */
             rating_avg: number;
-            /**
-             * Format: double
-             * @description Composite reliability score used in ranking (Phase 2+).
-             */
-            reliability_score?: number | null;
             /** @example 12 */
             completed_tasks: number;
             /** @description Auto-assigned when completed_tasks > 15 AND rating_avg > 4.5 in Phase 0-1; threshold may change in later phases. */
@@ -2374,13 +2487,8 @@ export interface components {
             /** Format: date-time */
             liability_disclaimer_accepted_at?: string | null;
             /** @enum {string} */
-            settlement_mode?: "DIRECT" | "LEAD_UNLOCK" | "ESCROW";
-            /** @enum {string|null} */
-            escrow_status?: "UNPAID" | "PAID" | "HELD" | "RELEASED" | null;
+            settlement_mode?: "DIRECT";
             late_cancel_incident?: boolean;
-            customer_contact_unlocked?: boolean | null;
-            /** @description Phase-gated monetization field. Null when the current phase keeps cancellation fees disabled. */
-            cancellation_fee?: number | null;
             /** @description Number of completion reminders sent for this booking. */
             completion_reminder_count?: number;
             /**
@@ -2403,15 +2511,11 @@ export interface components {
             /** Format: uuid */
             customer_id: string;
             /** @enum {string} */
-            source: "APPLICATION_SELECTION" | "REBOOK" | "INSTANT_MATCH";
+            source: "APPLICATION_SELECTION";
             /** @enum {string} */
             status: "PENDING" | "CONFIRMED" | "DECLINED" | "EXPIRED" | "CANCELLED";
             /** Format: uuid */
             selected_application_id?: string | null;
-            /** Format: uuid */
-            original_booking_id?: string | null;
-            /** Format: uuid */
-            offer_id?: string | null;
             /** Format: date-time */
             expires_at?: string | null;
             /** Format: uuid */
@@ -2437,55 +2541,6 @@ export interface components {
             reason?: string | null;
             /** Format: date-time */
             created_at: string;
-        };
-        WalletBalance: {
-            /**
-             * @description Available balance in MNT.
-             * @example 250000
-             */
-            available_balance: number;
-            /**
-             * @description Pending balance in MNT (not yet eligible for payout).
-             * @example 100000
-             */
-            pending_balance: number;
-            /** @example MNT */
-            currency: string;
-        };
-        LedgerEntry: {
-            /** Format: uuid */
-            id: string;
-            /** @description Signed amount in MNT. Positive = credit, negative = debit. */
-            amount: number;
-            /** @enum {string} */
-            type: "DEPOSIT" | "FEE" | "PAYOUT" | "REFUND";
-            /**
-             * Format: uuid
-             * @description Related booking or payout ID.
-             */
-            reference_id?: string | null;
-            /** @example Цэвэрлэгээ ажил #1234 — орлого */
-            description: string;
-            /** Format: date-time */
-            created_at: string;
-        };
-        PayoutRequest: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            user_id?: string;
-            /** @description Payout amount in MNT. */
-            amount: number;
-            /** @example Хаан банк */
-            bank_name: string;
-            /** @example 5012345678 */
-            bank_account: string;
-            /** @enum {string} */
-            status: "PENDING" | "PROCESSED" | "REJECTED";
-            /** Format: date-time */
-            created_at: string;
-            /** Format: date-time */
-            processed_at?: string | null;
         };
         PendingReview: {
             /** Format: uuid */
@@ -2589,11 +2644,8 @@ export interface components {
             created_at: string;
         };
         FeatureToggle: {
-            /**
-             * @description Seeded feature toggle names; current runtime consumer status varies by toggle. Future-facing names such as `promoted_listings_enabled` and `b2b_enabled` are not part of the current API toggle enum because this sweep found no confirmed seeded runtime support for them.
-             * @enum {string}
-             */
-            feature_name: "lead_fee_enabled" | "subscription_enabled" | "escrow_enabled" | "ai_scope_summary_enabled";
+            /** @description Feature toggle key. Active launch docs do not treat toggle presence as rollout scope. */
+            feature_name: string;
             is_enabled: boolean;
             /** Format: uuid */
             updated_by?: string | null;
@@ -2688,6 +2740,99 @@ export interface components {
             intake_enabled: boolean;
             is_active?: boolean;
         };
+        PayoutRequest: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            user_id?: string;
+            /** @description Payout amount in MNT. */
+            amount: number;
+            /** @example Хаан банк */
+            bank_name: string;
+            /** @example 5012345678 */
+            bank_account: string;
+            /** @enum {string} */
+            status: "PENDING" | "PROCESSED" | "REJECTED";
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            processed_at?: string | null;
+        };
+        WalletBalance: {
+            /**
+             * @description Available balance in MNT.
+             * @example 250000
+             */
+            available_balance: number;
+            /**
+             * @description Pending balance in MNT (not yet eligible for payout).
+             * @example 100000
+             */
+            pending_balance: number;
+            /** @example MNT */
+            currency: string;
+        };
+        LedgerEntry: {
+            /** Format: uuid */
+            id: string;
+            /** @description Signed amount in MNT. Positive = credit, negative = debit. */
+            amount: number;
+            /** @enum {string} */
+            type: "DEPOSIT" | "FEE" | "PAYOUT" | "REFUND";
+            /**
+             * Format: uuid
+             * @description Related booking or payout ID.
+             */
+            reference_id?: string | null;
+            /** @example Цэвэрлэгээ ажил #1234 — орлого */
+            description: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        TaskerSubscription: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tasker_id: string;
+            /** @enum {string} */
+            status: "ACTIVE" | "CANCELLED" | "EXPIRED";
+            /** Format: date-time */
+            started_at: string;
+            /** Format: date-time */
+            expires_at?: string | null;
+        };
+        CreditBalance: {
+            balance: number;
+            total_purchased: number;
+            total_spent: number;
+            total_refunded: number;
+        };
+        CreditTransaction: {
+            /** Format: uuid */
+            id: string;
+            amount: number;
+            /** @enum {string} */
+            type: "PURCHASE" | "SPEND" | "REFUND" | "SIGNUP_BONUS";
+            reference_id?: string | null;
+            /** Format: date-time */
+            created_at: string;
+        };
+        CreditPack: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            credit_count: number;
+            price_mnt: number;
+            is_active: boolean;
+        };
+        ReferralSummary: {
+            referral_code: string;
+            /** Format: uri */
+            referral_link: string;
+            successful_referrals_this_month: number;
+            /** @description Remaining successful referrals eligible for rewards within monthly cap. */
+            remaining_reward_capacity_this_month?: number;
+        };
     };
     responses: {
         /** @description Invalid request parameters or body. */
@@ -2708,10 +2853,7 @@ export interface components {
                 "application/json": components["schemas"]["Error"];
             };
         };
-        /**
-         * @description Insufficient permissions or policy gate active for this action.
-         *     Common codes: `FORBIDDEN`, `VERIFICATION_REQUIRED`, `OTP_MIGRATION_REQUIRED`, `ADDRESS_LOCKED`, `USER_BANNED`.
-         */
+        /** @description Insufficient permissions or policy gate active for this action. Common codes: `FORBIDDEN`, `VERIFICATION_REQUIRED`, `ADDRESS_LOCKED`, `USER_BANNED`. */
         Forbidden: {
             headers: {
                 [name: string]: unknown;
@@ -2834,7 +2976,7 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
-            /** @description In Phase 2+, Facebook-only signup is disabled for new users. */
+            /** @description Account state conflict prevents authentication. */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -2896,102 +3038,6 @@ export interface operations {
                 content?: never;
             };
             401: components["responses"]["Unauthorized"];
-        };
-    };
-    requestOtp: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @example +97699001122 */
-                    phone_number: string;
-                };
-            };
-        };
-        responses: {
-            /** @description OTP request accepted. */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example OTP sent */
-                        message: string;
-                    };
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            /** @description OTP authentication disabled for current rollout phase (`FEATURE_DISABLED`). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-            429: components["responses"]["TooManyRequests"];
-        };
-    };
-    verifyOtp: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @example +97699001122 */
-                    phone_number: string;
-                    /** @example 123456 */
-                    otp_code: string;
-                    /** @description Optional token used during Phase 2 migration to link prior Facebook identity. */
-                    facebook_access_token?: string | null;
-                };
-            };
-        };
-        responses: {
-            /** @description Authentication successful. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        access_token: string;
-                        refresh_token: string;
-                        user: components["schemas"]["User"];
-                    };
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            /** @description Invalid or expired OTP code. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-            /** @description OTP authentication disabled for current rollout phase (`FEATURE_DISABLED`). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-            429: components["responses"]["TooManyRequests"];
         };
     };
     devLogin: {
@@ -3064,6 +3110,110 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
+        };
+    };
+    requestOtp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: phone
+                     * @description Phone number in E.164 format.
+                     * @example +97699112233
+                     */
+                    phone: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OTP sent successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message: string;
+                        /** @description Masked phone number confirming the delivery target. */
+                        masked_phone: string;
+                    };
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            /** @description OTP authentication is disabled for the current rollout phase. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            429: components["responses"]["TooManyRequests"];
+        };
+    };
+    verifyOtp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: phone
+                     * @description Phone number in E.164 format.
+                     * @example +97699112233
+                     */
+                    phone: string;
+                    /** @description 4-6 digit OTP code. */
+                    code: string;
+                    /** @description Optional Facebook access token for account linking/migration. */
+                    facebook_access_token?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Authentication successful. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        access_token: string;
+                        refresh_token: string;
+                        user: components["schemas"]["User"];
+                    };
+                };
+            };
+            /** @description Invalid or expired OTP code. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description OTP authentication is disabled for the current rollout phase. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            429: components["responses"]["TooManyRequests"];
         };
     };
     getMyProfile: {
@@ -4012,54 +4162,6 @@ export interface operations {
             };
         };
     };
-    createBookingIntent: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: components["parameters"]["PathId"];
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @enum {string} */
-                    source: "REBOOK";
-                    /** Format: uuid */
-                    tasker_id: string;
-                    /** Format: uuid */
-                    original_booking_id?: string | null;
-                    /** Format: uuid */
-                    offer_id?: string | null;
-                };
-            };
-        };
-        responses: {
-            /** @description Booking intent created. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BookingIntent"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            /** @description Task or source constraints not satisfiable. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
     listBookings: {
         parameters: {
             query?: {
@@ -4395,10 +4497,13 @@ export interface operations {
             };
         };
     };
-    rebookFromBooking: {
+    rebookBooking: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
+            };
             path: {
                 id: components["parameters"]["PathId"];
             };
@@ -4406,19 +4511,82 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description New task created from completed booking. */
-            201: {
+            /** @description Rebook intent created. */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Task"];
+                    "application/json": components["schemas"]["BookingIntent"];
                 };
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
-            /** @description Booking is not in COMPLETED status. */
+            /** @description Original booking is not eligible for rebooking. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    createBookingIntent: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
+            };
+            path: {
+                id: components["parameters"]["PathId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Booking intent source type.
+                     * @enum {string}
+                     */
+                    source: "REBOOK" | "INSTANT_MATCH";
+                    /**
+                     * Format: uuid
+                     * @description Selected tasker ID.
+                     */
+                    tasker_id: string;
+                    /**
+                     * Format: uuid
+                     * @description Original booking ID (required for REBOOK source).
+                     */
+                    original_booking_id?: string;
+                    /**
+                     * Format: uuid
+                     * @description Associated offer ID (for INSTANT_MATCH source).
+                     */
+                    offer_id?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Booking intent created. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingIntent"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Task is not open or booking not eligible for intent creation. */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -4519,252 +4687,6 @@ export interface operations {
             404: components["responses"]["NotFound"];
             /** @description Intent is not pending or already resolved. */
             409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    initiatePayment: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
-                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
-            };
-            path: {
-                id: components["parameters"]["PathId"];
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description Must be `true` to initiate payment.
-                     * @enum {boolean}
-                     */
-                    liability_disclaimer_accepted: true;
-                };
-            };
-        };
-        responses: {
-            /** @description Payment link generated. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /**
-                         * Format: uri
-                         * @description QPay deeplink URL for app-to-app payment.
-                         */
-                        payment_url: string;
-                        /** @description Base64-encoded QR code image for scanning. */
-                        qr_code: string;
-                    };
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            /** @description Booking is not eligible for payment initiation or payment already initiated. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-            /** @description Monetization feature is disabled for the current rollout phase. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    qpayCallback: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    payment_id: string;
-                    /** @enum {string} */
-                    object_type?: "BOOKING_ESCROW" | "CREDIT_PACK";
-                    /** @description Booking ID or credit purchase intent ID passed during payment initiation. */
-                    object_id?: string;
-                    amount?: number;
-                    status: string;
-                    /**
-                     * Format: int64
-                     * @description Unix epoch seconds, included in HMAC payload.
-                     */
-                    timestamp: number;
-                    /** @description HMAC signature for verification. */
-                    signature: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Callback processed successfully. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example ok */
-                        status?: string;
-                    };
-                };
-            };
-            /** @description Invalid callback payload or signature. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-            /** @description Monetization feature is disabled for the current rollout phase. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    getWalletBalance: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Wallet balance. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WalletBalance"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            /** @description Monetization feature is disabled for the current rollout phase. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    listWalletTransactions: {
-        parameters: {
-            query?: {
-                /** @description Opaque cursor for pagination. Pass the `next` value from a previous response. */
-                cursor?: components["parameters"]["CursorParam"];
-                /** @description Maximum number of items to return (default 20, max 100). */
-                limit?: components["parameters"]["LimitParam"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Paginated transaction history. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data: components["schemas"]["LedgerEntry"][];
-                        cursor: components["schemas"]["CursorPagination"];
-                    };
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            /** @description Monetization feature is disabled for the current rollout phase. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    requestPayout: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
-                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Payout amount in MNT. Minimum 10,000 MNT. */
-                    amount: number;
-                    /** @example Хаан банк */
-                    bank_name: string;
-                    /** @example 5012345678 */
-                    bank_account: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Payout request created. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PayoutRequest"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            /** @description Insufficient balance or existing pending payout. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-            /** @description Monetization feature is disabled for the current rollout phase. */
-            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5623,91 +5545,6 @@ export interface operations {
             403: components["responses"]["Forbidden"];
         };
     };
-    adminListPendingPayouts: {
-        parameters: {
-            query?: {
-                /** @description Opaque cursor for pagination. Pass the `next` value from a previous response. */
-                cursor?: components["parameters"]["CursorParam"];
-                /** @description Maximum number of items to return (default 20, max 100). */
-                limit?: components["parameters"]["LimitParam"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Paginated list of pending payouts. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data: components["schemas"]["PayoutRequest"][];
-                        cursor: components["schemas"]["CursorPagination"];
-                    };
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            /** @description Monetization feature is disabled for the current rollout phase. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    adminProcessPayout: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
-                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
-            };
-            path: {
-                id: components["parameters"]["PathId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Payout processed. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PayoutRequest"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            /** @description Payout is not in PENDING status. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-            /** @description Monetization feature is disabled for the current rollout phase. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
     adminListFeatureToggles: {
         parameters: {
             query?: never;
@@ -5742,11 +5579,8 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /**
-                     * @description Seeded feature toggle names only; presence in this enum does not imply a confirmed runtime consumer in the current launch posture.
-                     * @enum {string}
-                     */
-                    feature_name: "lead_fee_enabled" | "subscription_enabled" | "escrow_enabled" | "ai_scope_summary_enabled";
+                    /** @description Feature toggle key. Presence in this endpoint does not widen Phase 1 product scope. */
+                    feature_name: string;
                     is_enabled: boolean;
                 };
             };
@@ -6241,6 +6075,96 @@ export interface operations {
             };
         };
     };
+    adminListPendingPayouts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated list of pending payout requests. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["PayoutRequest"][];
+                        cursor: components["schemas"]["CursorPagination"];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description Payout operations are deferred during the liquidity-first MVP phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    adminProcessPayout: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
+            };
+            path: {
+                id: components["parameters"]["PathId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Admin reason for the processing decision. */
+                    reason: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Payout processed successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        status?: string;
+                    };
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Payout is not eligible for processing (e.g. wrong weekday). */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Payout operations are deferred during the liquidity-first MVP phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     adminReplayAllOutboxEvents: {
         parameters: {
             query?: never;
@@ -6314,6 +6238,468 @@ export interface operations {
                 };
             };
             401: components["responses"]["Unauthorized"];
+        };
+    };
+    getWalletBalance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Wallet balance. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WalletBalance"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Monetization feature is disabled for the current rollout phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listWalletTransactions: {
+        parameters: {
+            query?: {
+                /** @description Opaque cursor for pagination. Pass the `next` value from a previous response. */
+                cursor?: components["parameters"]["CursorParam"];
+                /** @description Maximum number of items to return (default 20, max 100). */
+                limit?: components["parameters"]["LimitParam"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated transaction history. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["LedgerEntry"][];
+                        cursor: components["schemas"]["CursorPagination"];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Monetization feature is disabled for the current rollout phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    requestPayout: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Payout amount in MNT. Minimum 10,000 MNT. */
+                    amount: number;
+                    /** @example Хаан банк */
+                    bank_name: string;
+                    /** @example 5012345678 */
+                    bank_account: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Payout request created. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PayoutRequest"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            /** @description Insufficient balance or existing pending payout. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Monetization feature is disabled for the current rollout phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    initiatePayment: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
+            };
+            path: {
+                id: components["parameters"]["PathId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Must be `true` to initiate payment.
+                     * @enum {boolean}
+                     */
+                    liability_disclaimer_accepted: true;
+                };
+            };
+        };
+        responses: {
+            /** @description Payment link generated. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * Format: uri
+                         * @description QPay deeplink URL for app-to-app payment.
+                         */
+                        payment_url: string;
+                        /** @description Base64-encoded QR code image for scanning. */
+                        qr_code: string;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Booking is not eligible for payment initiation or payment already initiated. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Monetization feature is disabled for the current rollout phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    qpayCallback: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    payment_id: string;
+                    /** @enum {string} */
+                    object_type?: "BOOKING_ESCROW" | "CREDIT_PACK";
+                    /** @description Booking ID or credit purchase intent ID passed during payment initiation. */
+                    object_id?: string;
+                    amount?: number;
+                    status: string;
+                    /**
+                     * Format: int64
+                     * @description Unix epoch seconds, included in HMAC payload.
+                     */
+                    timestamp: number;
+                    /** @description HMAC signature for verification. */
+                    signature: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Callback processed successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example ok */
+                        status?: string;
+                    };
+                };
+            };
+            /** @description Invalid callback payload or signature. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Monetization feature is disabled for the current rollout phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    activateTaskerSubscription: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    plan_code: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Subscription activated. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskerSubscription"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description Subscription feature disabled for current rollout phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getCreditBalance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Credit balance. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreditBalance"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Credit system disabled for current rollout phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listCreditTransactions: {
+        parameters: {
+            query?: {
+                /** @description Opaque cursor for pagination. Pass the `next` value from a previous response. */
+                cursor?: components["parameters"]["CursorParam"];
+                /** @description Maximum number of items to return (default 20, max 100). */
+                limit?: components["parameters"]["LimitParam"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated credit transaction history. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["CreditTransaction"][];
+                        cursor: components["schemas"]["CursorPagination"];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Credit system disabled for current rollout phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listCreditPacks: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Active credit packs. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["CreditPack"][];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Credit system disabled for current rollout phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    purchaseCreditPack: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    pack_id: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Purchase intent created. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uri */
+                        payment_url: string;
+                        qr_code: string;
+                        pack: components["schemas"]["CreditPack"];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+            /** @description Credit system disabled for current rollout phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getMyReferralSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Referral summary. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralSummary"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            /** @description Referral feature is disabled for the current rollout phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
         };
     };
 }
