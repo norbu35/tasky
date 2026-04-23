@@ -7,7 +7,7 @@ set -euo pipefail
 
 ./gradlew --no-daemon :services:api:openApiValidate
 pnpm repo:docs:check
-pnpm -r typecheck
+turbo run typecheck
 pnpm repo:workspace:boundaries
 pnpm --filter @tasky/mobile structure:check
 python3 tooling/scripts/governance/validate-migrations.py

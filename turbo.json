@@ -32,7 +32,7 @@
     "format:check": {
       "outputs": []
     },
-    "sdk:generate": {
+    "generate": {
       "outputs": ["src/generated/**"]
     }
   }
