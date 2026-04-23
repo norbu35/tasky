@@ -5,7 +5,7 @@
 ## SCN-VERIF-001
 
 **Risk:** High
-**PRD:** REQ-P1-SAFE-01
+**PRD:** REQ-P1-SAFE-01, REQ-P1-COVER-05
 **Title:** User requests tasker role activation before verification
 
 Given an authenticated user with role CUSTOMER

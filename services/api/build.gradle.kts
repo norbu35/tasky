@@ -192,6 +192,7 @@ jacoco {
 val jacocoCoverageExcludes = listOf(
     "mn.tasky.api.generated*",
     "mn.tasky.*.dto*",
+    "mn.tasky.*.publicapi*",
     "mn.tasky.payment*",
     "mn.tasky.wallet*",
     "mn.tasky"

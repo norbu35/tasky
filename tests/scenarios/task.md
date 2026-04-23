@@ -49,7 +49,7 @@ And the response identifies budget as below the allowed minimum
 ## SCN-TASK-005
 
 **Risk:** High
-**PRD:** REQ-P1-PRICE-01
+**PRD:** REQ-P1-PRICE-01, REQ-P1-TASK-02
 **Title:** Budget of 20000 MNT is accepted, 19999 is rejected
 
 Given a customer submits a task with all required fields present

@@ -5,7 +5,7 @@
 ## SCN-CATEGORY-001
 
 **Risk:** High
-**PRD:** REQ-P1-CAT-04
+**PRD:** REQ-P1-CAT-04, REQ-P1-ADMIN-02
 **Title:** Admin can add a new service category
 
 Given an authenticated admin is managing categories
@@ -15,7 +15,7 @@ Then the category is stored as available for category management
 ## SCN-CATEGORY-002
 
 **Risk:** High
-**PRD:** REQ-P1-CAT-04
+**PRD:** REQ-P1-CAT-04, REQ-P1-ADMIN-02
 **Title:** Admin can edit, deactivate, and reorder categories with immediate picker propagation
 
 Given one or more categories already exist

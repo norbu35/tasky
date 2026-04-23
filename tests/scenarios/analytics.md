@@ -4,8 +4,8 @@
 
 ## SCN-ANALYTICS-001
 
-**Risk:** Medium
-**PRD:** REQ-P1-KPI-04
+**Risk:** High
+**PRD:** REQ-P1-KPI-04, REQ-P1-KPI-01
 **Title:** Task posted event is emitted when a customer creates a task
 
 Given a customer creates a task
@@ -14,8 +14,8 @@ Then a TASK_POSTED analytics event is emitted with category_id, task_id, locale,
 
 ## SCN-ANALYTICS-002
 
-**Risk:** Medium
-**PRD:** REQ-P1-KPI-04
+**Risk:** High
+**PRD:** REQ-P1-KPI-04, REQ-P1-KPI-01
 **Title:** Booking confirmed event is emitted when an application is accepted
 
 Given a customer accepts a tasker application
@@ -24,8 +24,8 @@ Then a BOOKING_CONFIRMED analytics event is emitted
 
 ## SCN-ANALYTICS-003
 
-**Risk:** Medium
-**PRD:** REQ-P1-KPI-04
+**Risk:** High
+**PRD:** REQ-P1-KPI-04, REQ-P1-KPI-01
 **Title:** Booking completed event is emitted when a booking transitions to COMPLETED
 
 Given a booking is in ASSIGNED status
@@ -34,8 +34,8 @@ Then a BOOKING_COMPLETED analytics event is emitted
 
 ## SCN-ANALYTICS-004
 
-**Risk:** Medium
-**PRD:** REQ-P1-KPI-04
+**Risk:** High
+**PRD:** REQ-P1-KPI-04, REQ-P1-KPI-03
 **Title:** Qualified application submitted event is emitted when a verified tasker applies
 
 Given a verified tasker submits an application to an eligible task
@@ -44,8 +44,8 @@ Then a QUALIFIED_APPLICATION analytics event is emitted with task_id, tasker_id,
 
 ## SCN-ANALYTICS-005
 
-**Risk:** Medium
-**PRD:** REQ-P1-KPI-04
+**Risk:** High
+**PRD:** REQ-P1-KPI-04, REQ-P1-KPI-03
 **Title:** Intervention recorded event is emitted when assisted distribution or manual rescue is used
 
 Given an eligible task has received no qualified application within 8 hours and external distribution is triggered

@@ -10,10 +10,10 @@ scenarios:
     notes: '2026-04-02 rehab: mutation kill rate is 0; prioritize assertion-strength
       follow-up (P2).'
     override_status: null
-    prd_ref: REQ-P1-KPI-04
-    risk: medium
+    prd_ref: REQ-P1-KPI-04, REQ-P1-KPI-01
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: Task posted event is emitted when a customer creates a task
   SCN-ANALYTICS-002:
     domain: analytics
@@ -22,10 +22,10 @@ scenarios:
     notes: '2026-04-02 rehab: mutation kill rate is 0; prioritize assertion-strength
       follow-up (P2).'
     override_status: null
-    prd_ref: REQ-P1-KPI-04
-    risk: medium
+    prd_ref: REQ-P1-KPI-04, REQ-P1-KPI-01
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: Booking confirmed event is emitted when an application is accepted
   SCN-ANALYTICS-003:
     domain: analytics
@@ -34,10 +34,10 @@ scenarios:
     notes: '2026-04-02 rehab: mutation kill rate is 0; prioritize assertion-strength
       follow-up (P2).'
     override_status: null
-    prd_ref: REQ-P1-KPI-04
-    risk: medium
+    prd_ref: REQ-P1-KPI-04, REQ-P1-KPI-01
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: Booking completed event is emitted when a booking transitions to COMPLETED
   SCN-ANALYTICS-004:
     domain: analytics
@@ -45,10 +45,10 @@ scenarios:
     mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-P1-KPI-04
-    risk: medium
+    prd_ref: REQ-P1-KPI-04, REQ-P1-KPI-03
+    risk: high
     status: untested
-    test_type: medium-unit
+    test_type: domain-unit
     title: Qualified application submitted event is emitted when a verified tasker
       applies
   SCN-ANALYTICS-005:
@@ -57,10 +57,10 @@ scenarios:
     mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-P1-KPI-04
-    risk: medium
+    prd_ref: REQ-P1-KPI-04, REQ-P1-KPI-03
+    risk: high
     status: untested
-    test_type: medium-unit
+    test_type: domain-unit
     title: Intervention recorded event is emitted when assisted distribution or manual
       rescue is used
   SCN-ASSIST-001:
@@ -602,7 +602,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-P1-CAT-04
+    prd_ref: REQ-P1-CAT-04, REQ-P1-ADMIN-02
     risk: high
     status: covered
     test_type: domain-unit
@@ -613,7 +613,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-P1-CAT-04
+    prd_ref: REQ-P1-CAT-04, REQ-P1-ADMIN-02
     risk: high
     status: covered
     test_type: domain-unit
@@ -814,7 +814,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-P1-SAFE-16
+    prd_ref: REQ-P1-SAFE-16, REQ-P1-SAFE-12, REQ-P1-ADMIN-05
     risk: high
     status: covered
     test_type: domain-unit
@@ -827,9 +827,9 @@ scenarios:
     notes: null
     override_status: null
     prd_ref: REQ-P1-MSG-02
-    risk: medium
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: Conversation is created when a tasker applies to a task
   SCN-MSG-002:
     domain: messaging
@@ -838,9 +838,9 @@ scenarios:
     notes: null
     override_status: null
     prd_ref: REQ-P1-MSG-02
-    risk: medium
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: Message sent to a conversation is persisted and retrievable
   SCN-MSG-003:
     domain: messaging
@@ -849,9 +849,9 @@ scenarios:
     notes: null
     override_status: null
     prd_ref: REQ-P1-MSG-03
-    risk: medium
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: Non-participant cannot read or send messages in a conversation
   SCN-MSG-004:
     domain: messaging
@@ -860,9 +860,9 @@ scenarios:
     notes: null
     override_status: null
     prd_ref: REQ-P1-MSG-05
-    risk: medium
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: Message containing a phone number pattern is flagged for admin review
   SCN-MSG-005:
     domain: messaging
@@ -870,10 +870,10 @@ scenarios:
     mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-P1-MSG-01
-    risk: medium
+    prd_ref: REQ-P1-MSG-01, REQ-P1-MATCH-06, REQ-P1-MATCH-07
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: No pre-booking chat exists in Phase 1
   SCN-NOTIF-001:
     domain: notification
@@ -882,9 +882,9 @@ scenarios:
     notes: null
     override_status: null
     prd_ref: REQ-P1-NOTIF-01
-    risk: medium
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: New task matching a tasker's category triggers a push notification to that
       tasker
   SCN-NOTIF-002:
@@ -894,9 +894,9 @@ scenarios:
     notes: null
     override_status: null
     prd_ref: REQ-P1-NOTIF-02
-    risk: medium
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: Booking confirmation sends hired notification to the tasker
   SCN-NOTIF-003:
     domain: notification
@@ -905,9 +905,9 @@ scenarios:
     notes: null
     override_status: null
     prd_ref: REQ-P1-NOTIF-04
-    risk: medium
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: No-show reminder sends notification to both booking participants
   SCN-NOTIF-004:
     domain: notification
@@ -916,9 +916,9 @@ scenarios:
     notes: null
     override_status: null
     prd_ref: REQ-P1-NOTIF-07
-    risk: medium
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: Registering a device token stores it for the authenticated user
   SCN-NOTIF-005:
     domain: notification
@@ -927,9 +927,9 @@ scenarios:
     notes: null
     override_status: null
     prd_ref: REQ-P1-NOTIF-07
-    risk: medium
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: Unregistering a device token removes it for the authenticated user
   SCN-NOTIF-006:
     domain: notification
@@ -938,9 +938,9 @@ scenarios:
     notes: null
     override_status: null
     prd_ref: REQ-P1-NOTIF-06
-    risk: medium
+    risk: high
     status: untested
-    test_type: medium-unit
+    test_type: domain-unit
     title: Verification decision notification is sent to the affected tasker
   SCN-NOTIF-007:
     domain: notification
@@ -949,9 +949,9 @@ scenarios:
     notes: null
     override_status: null
     prd_ref: REQ-P1-NOTIF-05
-    risk: medium
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: Completion prompt and review obligation notification is sent to both participants
   SCN-REVIEW-001:
     domain: review
@@ -959,7 +959,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-P1-SAFE-06
+    prd_ref: REQ-P1-SAFE-06, REQ-P1-SAFE-10, REQ-P1-SAFE-11
     risk: high
     status: covered
     test_type: domain-unit
@@ -1105,7 +1105,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-P1-MSG-04
+    prd_ref: REQ-P1-MSG-04, REQ-P1-BOOK-08
     risk: critical
     status: covered
     test_type: domain-unit
@@ -1116,7 +1116,7 @@ scenarios:
     mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-P1-MSG-04
+    prd_ref: REQ-P1-MSG-04, REQ-P1-BOOK-08, REQ-P1-SAFE-18
     risk: critical
     status: covered
     test_type: domain-unit
@@ -1252,7 +1252,7 @@ scenarios:
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-P1-PRICE-01
+    prd_ref: REQ-P1-PRICE-01, REQ-P1-TASK-02
     risk: high
     status: covered
     test_type: domain-unit
@@ -1533,7 +1533,7 @@ scenarios:
     mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-P1-SAFE-01
+    prd_ref: REQ-P1-SAFE-01, REQ-P1-COVER-05
     risk: high
     status: covered
     test_type: domain-unit

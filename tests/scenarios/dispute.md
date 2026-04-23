@@ -86,7 +86,7 @@ And the insufficient-evidence auto-close path is not applied
 ## SCN-DISPUTE-008
 
 **Risk:** High
-**PRD:** REQ-P1-SAFE-16
+**PRD:** REQ-P1-SAFE-16, REQ-P1-SAFE-12, REQ-P1-ADMIN-05
 **Title:** Phase 1 dispute resolution is limited to evidence-only outcomes and admin misconduct notes
 
 Given an admin is resolving a dispute in Phase 1

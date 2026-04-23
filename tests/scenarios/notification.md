@@ -4,7 +4,7 @@
 
 ## SCN-NOTIF-001
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-NOTIF-01
 **Title:** New task matching a tasker's category triggers a push notification to that tasker
 
@@ -14,7 +14,7 @@ Then a push notification is sent to the tasker's device token
 
 ## SCN-NOTIF-002
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-NOTIF-02
 **Title:** Booking confirmation sends hired notification to the tasker
 
@@ -24,7 +24,7 @@ Then a push notification is sent to the tasker indicating they are hired
 
 ## SCN-NOTIF-003
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-NOTIF-04
 **Title:** No-show reminder sends notification to both booking participants
 
@@ -34,7 +34,7 @@ Then both customer and tasker receive a push notification
 
 ## SCN-NOTIF-004
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-NOTIF-07
 **Title:** Registering a device token stores it for the authenticated user
 
@@ -44,7 +44,7 @@ Then the token is stored and associated with the user
 
 ## SCN-NOTIF-005
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-NOTIF-07
 **Title:** Unregistering a device token removes it for the authenticated user
 
@@ -54,7 +54,7 @@ Then the token is no longer associated with the user
 
 ## SCN-NOTIF-006
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-NOTIF-06
 **Title:** Verification decision notification is sent to the affected tasker
 
@@ -64,7 +64,7 @@ Then the affected tasker receives a push notification informing them of the deci
 
 ## SCN-NOTIF-007
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-NOTIF-05
 **Title:** Completion prompt and review obligation notification is sent to both participants
 

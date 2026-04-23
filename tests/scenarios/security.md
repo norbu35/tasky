@@ -84,7 +84,7 @@ And other authorized users do not receive those exact address fields
 ## SCN-SEC-008
 
 **Risk:** Critical
-**PRD:** REQ-P1-MSG-04
+**PRD:** REQ-P1-MSG-04, REQ-P1-BOOK-08
 **Title:** Customer-facing payloads never expose tasker phone fields
 
 Given a customer views tasker-related profile, booking, chat, or receipt payloads
@@ -94,7 +94,7 @@ Then no tasker phone field is present anywhere in the customer-facing payload
 ## SCN-SEC-011
 
 **Risk:** Critical
-**PRD:** REQ-P1-MSG-04
+**PRD:** REQ-P1-MSG-04, REQ-P1-BOOK-08, REQ-P1-SAFE-18
 **Title:** Customer phone is not exposed in tasker-facing payloads in Phase 1
 
 Given the product is in Phase 1 with no contact-unlock mechanism

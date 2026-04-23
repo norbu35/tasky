@@ -4,7 +4,7 @@
 
 ## SCN-MSG-001
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-MSG-02
 **Title:** Conversation is created when a tasker applies to a task
 
@@ -14,7 +14,7 @@ Then a conversation exists between that tasker and the task owner
 
 ## SCN-MSG-002
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-MSG-02
 **Title:** Message sent to a conversation is persisted and retrievable
 
@@ -25,7 +25,7 @@ And both participants can retrieve it from the conversation history
 
 ## SCN-MSG-003
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-MSG-03
 **Title:** Non-participant cannot read or send messages in a conversation
 
@@ -35,7 +35,7 @@ Then the request is rejected with 403 or 404
 
 ## SCN-MSG-004
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-MSG-05
 **Title:** Message containing a phone number pattern is flagged for admin review
 
@@ -45,8 +45,8 @@ Then the message is stored with a phone_number_flagged indicator
 
 ## SCN-MSG-005
 
-**Risk:** Medium
-**PRD:** REQ-P1-MSG-01
+**Risk:** High
+**PRD:** REQ-P1-MSG-01, REQ-P1-MATCH-06, REQ-P1-MATCH-07
 **Title:** No pre-booking chat exists in Phase 1
 
 Given a task is in OPEN status with no confirmed booking

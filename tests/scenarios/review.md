@@ -5,7 +5,7 @@
 ## SCN-REVIEW-001
 
 **Risk:** High
-**PRD:** REQ-P1-SAFE-06
+**PRD:** REQ-P1-SAFE-06, REQ-P1-SAFE-10, REQ-P1-SAFE-11
 **Title:** Booking completion creates structured review prompts for both customer and tasker
 
 Given a booking transitions to COMPLETED
