@@ -60,6 +60,7 @@ repomix-*.xml
 node_modules/
 apps/*/node_modules/
 packages/*/node_modules/
+*.tsbuildinfo
 apps/*/dist/
 packages/*/dist/
 .expo/
