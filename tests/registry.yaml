@@ -352,8 +352,8 @@ scenarios:
     domain: booking
     mutation_kill_rate: 33
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
-    notes: Tasker 3-strike suspension not yet implemented; deferred to next sprint.
-    override_status: waived pending tasker-suspension feature
+    notes: Tasker 3-strike suspension not yet implemented; deferred to next sprint. Pending tasker-suspension feature implementation.
+    override_status: waived
     prd_ref: REQ-P1-BOOK-17
     risk: critical
     status: untested

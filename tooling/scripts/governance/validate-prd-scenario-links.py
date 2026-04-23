@@ -24,17 +24,17 @@ SCENARIOS_DIR = REPO_ROOT / "tests" / "scenarios"
 
 PRD_SECTION_START_RE = re.compile(r"^## 11\. ", re.MULTILINE)
 PRD_SECTION_END_RE = re.compile(r"^## 16\. ", re.MULTILINE)
-CANONICAL_PRD_ID_RE = re.compile(r"\b(?:REQ-P1|NFR)-[A-Z]+-\d+\b")
-REQ_P1_RE = re.compile(r"\bREQ-P1-[A-Z]+-\d+\b")
+CANONICAL_PRD_ID_RE = re.compile(r"\b(?:REQ-P1|NFR)-[A-Z]+-\d{2}\b")
+REQ_P1_RE = re.compile(r"\bREQ-P1-[A-Z]+-\d{2}\b")  # Enforce 2-digit zero-padded
 SCENARIO_PRD_TOKEN_RE = re.compile(r"\b(?:REQ|NFR)-[A-Z0-9-]+\b")
-SCENARIO_HEADER_RE = re.compile(r"^## (SCN-[A-Z]+\d*-\d+)\s*$", re.MULTILINE)
-RISK_RE = re.compile(r"^\*\*Risk:\*\*\s*(\w+)\s*$", re.MULTILINE)
+SCENARIO_HEADER_RE = re.compile(r"^## (SCN-[A-Z]+\d*-\d{3})\s*$", re.MULTILINE)  # Enforce 3-digit
+RISK_RE = re.compile(r"^\*\*Risk:\*\*\s*(Critical|High|Medium)\s*$", re.MULTILINE)  # Enforce capitalization
 PRD_LINE_RE = re.compile(r"^\*\*PRD:\*\*\s*(.+?)\s*$", re.MULTILINE)
 TITLE_RE = re.compile(r"^\*\*Title:\*\*\s*(.+?)\s*$", re.MULTILINE)
-DEFERRED_MARKER_RE = re.compile(r"tasky:req-deferred\s+((?:REQ-P1|NFR)-[A-Z]+-\d+)")
+DEFERRED_MARKER_RE = re.compile(r"tasky:req-deferred\s+((?:REQ-P1|NFR)-[A-Z]+-\d{2})")
 
 HIGH_COVERAGE_RISKS = {"critical", "high"}
-VALID_RISKS = {"critical", "high", "medium", "low"}
+VALID_RISKS = {"critical", "high", "medium"}  # Phase 1: no "low" risk tier
 
 
 @dataclass(frozen=True)

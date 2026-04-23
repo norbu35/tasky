@@ -20,4 +20,46 @@ if echo "$STAGED_FILES" | grep -Eq '^(apps|services)/' \
   exit 1
 fi
 
+# Identifier format enforcement
+if echo "$STAGED_FILES" | grep -q 'tests/scenarios/'; then
+  echo "Validating scenario identifiers..."
+  ERRORS=0
+
+  # Check SCN format: 3-digit zero-padded
+  if git diff --cached -- tests/scenarios/*.md | grep -Eq '^\+## SCN-[A-Z]+-[0-9]{1,2}'; then
+    echo "ERROR: SCN identifiers must be 3-digit zero-padded (SCN-DOMAIN-NNN, not NNN)." >&2
+    git diff --cached -- tests/scenarios/*.md | grep '^\+## SCN-' >&2
+    ERRORS=$((ERRORS + 1))
+  fi
+
+  # Check Risk format: capitalized (Critical|High|Medium)
+  if git diff --cached -- tests/scenarios/*.md | grep -Eq '^\+\*\*Risk:\*\* (critical|high|medium|low)'; then
+    echo "ERROR: Risk tier must be capitalized (Critical, High, or Medium; not low for Phase 1)." >&2
+    git diff --cached -- tests/scenarios/*.md | grep '^\+\*\*Risk:\*\*' >&2
+    ERRORS=$((ERRORS + 1))
+  fi
+
+  # Check PRD ref format: 2-digit zero-padded
+  if git diff --cached -- tests/scenarios/*.md | grep -Eq '^\+\*\*PRD:\*\*.*REQ-P1-[A-Z]+-[0-9]{1}[^0-9]'; then
+    echo "ERROR: REQ-P1 identifiers in PRD field must be 2-digit zero-padded (REQ-P1-DOMAIN-NN, not N)." >&2
+    git diff --cached -- tests/scenarios/*.md | grep '^\+\*\*PRD:\*\*' >&2
+    ERRORS=$((ERRORS + 1))
+  fi
+
+  if [ $ERRORS -gt 0 ]; then
+    exit 1
+  fi
+fi
+
+if echo "$STAGED_FILES" | grep -q 'docs/PRD.md'; then
+  echo "Validating PRD requirement identifiers..."
+
+  # Check REQ-P1 format: 2-digit zero-padded
+  if git diff --cached -- docs/PRD.md | grep -Eq '^\+.*REQ-P1-[A-Z]+-[0-9]{1}[^0-9]'; then
+    echo "ERROR: REQ-P1 identifiers must be 2-digit zero-padded (REQ-P1-DOMAIN-NN, not N)." >&2
+    git diff --cached -- docs/PRD.md | grep '^\+.*REQ-P1-' >&2
+    exit 1
+  fi
+fi
+
 pnpm exec lint-staged

@@ -46,7 +46,7 @@ scenarios = {}
 parse_errors = []
 duplicate_ids = []
 
-VALID_RISKS = {"critical", "high", "medium", "low"}
+VALID_RISKS = {"critical", "high", "medium"}  # Phase 1: no "low" risk tier
 
 for md_file in sorted(scenarios_dir.glob("*.md")):
     domain = md_file.stem
@@ -56,14 +56,15 @@ for md_file in sorted(scenarios_dir.glob("*.md")):
     blocks = re.split(r'\n(?=## SCN-)', content)
     for block in blocks:
         # Detect SCN header presence before full parse — catches malformed blocks
-        header_match = re.match(r'## (SCN-[A-Z]+\d*-\d+)', block)
+        # Enforce 3-digit zero-padded format: SCN-DOMAIN-NNN
+        header_match = re.match(r'## (SCN-[A-Z]+\d*-\d{3})', block)
         if not header_match:
             continue  # Not a scenario block (e.g., file header text)
 
         scn_id_candidate = header_match.group(1)
 
         m = re.match(
-            r'## (SCN-[A-Z]+\d*-\d+)\n+\*\*Risk:\*\* (\w+)\n\*\*PRD:\*\* ([^\n]+)\n\*\*Title:\*\* ([^\n]+)',
+            r'## (SCN-[A-Z]+\d*-\d{3})\n+\*\*Risk:\*\* (Critical|High|Medium)\n\*\*PRD:\*\* ([^\n]+)\n\*\*Title:\*\* ([^\n]+)',
             block
         )
         if not m:
