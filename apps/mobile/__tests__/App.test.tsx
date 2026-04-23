@@ -166,7 +166,7 @@ const mockUseSignOut = useSignOut as jest.MockedFunction<typeof useSignOut>;
 const baseUser: User = {
   id: 'user-1',
   phone: '+97699001122',
-  primary_auth: 'PHONE_OTP',
+  primary_auth: 'FACEBOOK',
   role: 'CUSTOMER',
   status: 'PENDING',
   created_at: '2026-02-14T00:00:00Z',
@@ -229,7 +229,6 @@ const baseBooking: Booking = {
   price: 120000,
   status: 'ASSIGNED',
   confirmed_scheduled_at: '2026-02-16T10:00:00Z',
-  cancellation_fee: null,
   created_at: '2026-02-14T00:00:00Z',
 };
 

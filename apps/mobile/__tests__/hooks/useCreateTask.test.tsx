@@ -50,7 +50,7 @@ describe('useCreateTask', () => {
         user: {
           id: 'customer-1',
           phone: '+97692000001',
-          primary_auth: 'PHONE_OTP',
+          primary_auth: 'FACEBOOK',
           role: 'CUSTOMER',
           status: 'VERIFIED',
           created_at: '2026-02-14T00:00:00Z',

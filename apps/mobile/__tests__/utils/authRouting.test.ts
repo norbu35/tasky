@@ -7,7 +7,7 @@ const baseSession: AuthTokens = {
   user: {
     id: 'user-1',
     phone: '+97699001122',
-    primary_auth: 'PHONE_OTP',
+    primary_auth: 'FACEBOOK',
     role: 'CUSTOMER',
     status: 'PENDING',
     created_at: '2026-02-14T00:00:00Z',
