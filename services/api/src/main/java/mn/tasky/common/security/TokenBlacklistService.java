@@ -1,5 +1,6 @@
 package mn.tasky.common.security;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mn.tasky.common.config.CacheConfig;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -22,6 +23,9 @@ public class TokenBlacklistService {
 
     private final Cache cache;
 
+    @SuppressFBWarnings(
+            value = "CT_CONSTRUCTOR_THROW",
+            justification = "Constructor validates required cache bean and must fail fast when misconfigured.")
     public TokenBlacklistService(CacheManager cacheManager) {
         this.cache = cacheManager.getCache(CacheConfig.TOKEN_BLACKLIST_CACHE);
         if (this.cache == null) {

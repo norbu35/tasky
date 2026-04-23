@@ -10,6 +10,7 @@ import com.google.firebase.messaging.Aps;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -40,6 +41,9 @@ public class FirebasePushProvider implements PushNotificationProvider {
     private final FirebaseMessaging messaging;
 
     @Autowired
+    @SuppressFBWarnings(
+            value = "CT_CONSTRUCTOR_THROW",
+            justification = "Constructor validates Firebase SDK config and must fail fast when misconfigured.")
     public FirebasePushProvider(@Value("${FIREBASE_SERVICE_ACCOUNT_JSON:}") String serviceAccountJson) {
         this.messaging = initFirebase(serviceAccountJson);
     }

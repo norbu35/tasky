@@ -1,5 +1,6 @@
 package mn.tasky.task.application;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -378,7 +379,7 @@ public class TaskCreationService {
                 return null;
             }
             return String.join(" ", errors);
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             log.warn("Failed to validate intake answers against schema", e);
             return "Failed to validate intake answers: " + e.getMessage();
         }
