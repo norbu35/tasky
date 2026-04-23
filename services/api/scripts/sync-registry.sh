@@ -98,6 +98,16 @@ for md_file in sorted(scenarios_dir.glob("*.md")):
             test_type = "integration"
 
         prev = existing.get(scn_id) or {}
+
+        override_status = prev.get("override_status")
+        valid_override_statuses = {None, "covered", "untested", "waived", "pending"}
+        if override_status not in valid_override_statuses:
+            parse_errors.append(
+                f"  INVALID override_status '{override_status}' for {scn_id} "
+                f"— must be one of: {', '.join(str(s) for s in sorted(valid_override_statuses) if s)}"
+            )
+            continue
+
         scenarios[scn_id] = {
             "title": title,
             "domain": domain,
@@ -108,7 +118,7 @@ for md_file in sorted(scenarios_dir.glob("*.md")):
             "mutation_kill_rate": prev.get("mutation_kill_rate"),
             "mutation_kill_rate_updated_at": prev.get("mutation_kill_rate_updated_at"),
             "notes": prev.get("notes"),
-            "override_status": prev.get("override_status"),
+            "override_status": override_status,
         }
 
 # Report parse errors as warnings (stderr)
