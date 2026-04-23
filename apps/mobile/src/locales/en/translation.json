@@ -1297,7 +1297,7 @@
     "submitUnexpectedResponse": "Unexpected server response. Please try again."
   },
   "ScheduleBudgetScreen": {
-    "budgetError": "Budget must be at least ₮5,000",
+    "budgetError": "Budget must be at least ₮20,000",
     "schedulePastError": "Cannot select a past date/time",
     "schedulePageTitle": "Schedule & Budget",
     "scheduleInstruction": "Pick when the task should happen and set your budget.",
@@ -1307,7 +1307,7 @@
     "scheduleDatePlaceholder": "Pick a date",
     "scheduleTimePlaceholder": "Pick a time",
     "budgetLabel": "Budget",
-    "budgetHelper": "Enter a fixed amount. Minimum: ₮5,000",
+    "budgetHelper": "Enter a fixed amount. Minimum: ₮20,000",
     "budgetPlaceholder": "₮50,000",
     "budgetGoldHint": "Set a fair budget to attract skilled Taskers",
     "budgetTypicalRange": "💡 Most tasks in this category range from ₮30,000 – ₮80,000",

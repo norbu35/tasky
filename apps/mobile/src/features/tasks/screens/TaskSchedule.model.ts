@@ -1,4 +1,4 @@
-export const MIN_BUDGET = 5000;
+export const MIN_BUDGET = 20000;
 
 export type PickerMode = 'date' | 'time' | null;
 export type ActivePickerState = { mode: Exclude<PickerMode, null>; draftValue: Date } | null;
