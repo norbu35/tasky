@@ -150,6 +150,10 @@ def main() -> int:
         print("doc-references: FAIL")
         for failure in failures:
             print(f" - {failure}")
+        print("autonomous remediation:")
+        print(" - update the stale command or path in the governing doc instead of working around the check")
+        print(" - if a script was renamed, refresh package.json and doc references together")
+        print(" - rerun: pnpm repo:docs:check")
         return 1
 
     print(f"doc-references: PASS ({len(scan_files)} files scanned)")

@@ -6,7 +6,7 @@ Scenario-centric test lifecycle from curation to mutation coverage.
 flowchart TD
     subgraph CURATOR["Scenario Curation  (single curator per brief)"]
         C1["Read PRD.md + STRATEGY.md\n+ ROLLOUT_PHASES.md\n+ active openapi/** + active design/**"] --> C2["Reconcile against\ntests/registry.yaml baseline"]
-        C2 --> C3["Edit tests/scenarios/domain.md\n\nFormat:\n## SCN-DOMAIN-NNN\n**Risk:** critical|high|medium|low\n**PRD:** REQ-P1-*\n**Title:** ...\nGiven / When / Then / And"]
+        C2 --> C3["Edit tests/scenarios/domain.md\n\nFormat:\n## SCN-DOMAIN-NNN\n**Risk:** Critical|High|Medium\n**PRD:** REQ-P1-* or NFR-*\n**Title:** ...\nGiven / When / Then / And"]
         C3 --> C4["sync-registry.sh\n→ upserts registry.yaml\n→ fails on duplicate SCN IDs\n→ fails on unknown SCN refs in test source"]
         C4 --> REG[(tests/registry.yaml\nstatus: untested)]
     end
@@ -36,8 +36,8 @@ flowchart TD
     end
 
     subgraph COVERAGE_CHECK["Coverage Validation"]
-        CV1["validate-prd-scenario-links.py\nEvery scenario PRD ref resolves\nto live REQ-P1-* in docs/PRD.md"]
-        CV2["Coverage warning:\nREQ-P1-* with no high/critical\nscenario → warning only"]
+        CV1["validate-prd-scenario-links.py\nEvery scenario PRD ref resolves\nto live REQ-P1-* or NFR-* in docs/PRD.md"]
+        CV2["Coverage warning:\nREQ-P1 launch requirements with no\nhigh/critical scenario coverage → warning only"]
         CV1 --> CV2
     end
 

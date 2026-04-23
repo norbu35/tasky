@@ -5,7 +5,7 @@ Dispute raise/view flow for booking participants and admin resolution helpers.
 ## Implemented API
 
 | Method | Path                             | Notes                                |
-|--------|----------------------------------|--------------------------------------|
+| ------ | -------------------------------- | ------------------------------------ |
 | `POST` | `/api/v1/bookings/{id}/disputes` | Raise dispute; idempotent            |
 | `GET`  | `/api/v1/disputes/{id}`          | Participant view; admin can view any |
 
@@ -26,9 +26,9 @@ Admin resolution endpoints are in `admin` module.
 
 ## Idempotency
 
-| Endpoint                       | Operation key   |
-|--------------------------------|-----------------|
-| `POST /bookings/{id}/disputes` | `dispute.raise` |
+| Endpoint                              | Operation key   |
+| ------------------------------------- | --------------- |
+| `POST /api/v1/bookings/{id}/disputes` | `dispute.raise` |
 
 ## Admin-side Resolution Contract (service level)
 

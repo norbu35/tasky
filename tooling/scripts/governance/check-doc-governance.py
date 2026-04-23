@@ -9,6 +9,13 @@ ROOT = Path(__file__).resolve().parents[3]
 
 FAILURES: list[str] = []
 
+
+def print_remediation() -> None:
+    print("autonomous remediation:")
+    print(" - fix the live governing doc or routing surface named above; do not suppress active drift")
+    print(" - keep AGENTS/doc discovery aligned with docs/PRD.md, docs/STRATEGY.md, and docs/maintenance/DOCUMENTATION_GOVERNANCE.md")
+    print(" - rerun: pnpm repo:docs:check")
+
 REQUIRED_FILES = [
     ROOT / "AGENTS.md",
     ROOT / "CLAUDE.md",
@@ -154,6 +161,7 @@ if FAILURES:
     print("documentation-governance: FAIL")
     for failure in FAILURES:
         print(f" - {failure}")
+    print_remediation()
     sys.exit(1)
 
 print("documentation-governance: PASS")

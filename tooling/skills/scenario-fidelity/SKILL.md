@@ -1,11 +1,17 @@
 ---
 name: scenario-fidelity
-description: Report-only triage for likely weak tests behind covered scenarios. Not a blocking gate. Use for manual review and nightly informational runs.
+description: Report-only triage for likely weak tests behind covered scenarios. Not a blocking gate. Use after writing or strengthening scenario-linked tests, and only consider CI wiring as a non-blocking nightly informational step.
 ---
 
 # Scenario Fidelity Triage
 
 Use this skill to find covered scenarios where the test implementation may be weaker than the scenario risk warrants.
+
+Use it when:
+
+- you have added or strengthened scenario-linked tests and want a fast heuristic review
+- mutation or coverage signals regressed and you want candidate weak tests
+- you are evaluating whether the report is mature enough for a non-blocking nightly step
 
 ## Quick Start
 
@@ -33,9 +39,9 @@ The helper uses a combination of heuristic signals to identify candidates:
 
 ## CI Posture
 
-- **Manual and local use only** in v1
+- Manual and local by default in v1
 - Exit 0 always (report-only)
-- Optional nightly informational step only after the command is proven useful
+- A non-blocking nightly informational step is acceptable only after the command is proven useful on local output
 - Do not add to `verify:scenario:smoke`, `verify:cleanup`, or pre-push
 
 ## Guard Rails

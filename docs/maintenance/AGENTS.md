@@ -36,15 +36,34 @@ Use this file when the change touches operational surfaces rather than product b
 
 ## Verification
 
+Run the smallest command set that matches the operational claim.
+
+Default ops and gate validation:
+
 ```bash
 pnpm verify:cleanup
 pnpm verify:ops
 pnpm verify:drift
 pnpm verify:backend
 pnpm repo:docs:check
+```
+
+Conditional docs and skill helpers:
+
+```bash
 pnpm repo:design:check
 pnpm repo:docs:claims:triage
 pnpm repo:docs:claims:audit
 pnpm repo:prd:diff-ids
 pnpm verify:scenario:fidelity
 ```
+
+Use the conditional helpers only when their trigger applies:
+
+- `pnpm repo:design:check` for `screen-graph.yaml`, `journey-catalog.yaml`, or `domain-lifecycles.yaml` edits, or when those validators fail through `pnpm repo:docs:check`
+- `pnpm repo:docs:claims:triage` when the doc-claims validator failed
+- `pnpm repo:docs:claims:audit` for proactive audit while editing architecture docs, maintenance docs, or backend module `AGENTS.md` files that name live repo surfaces
+- `pnpm repo:prd:diff-ids` when `docs/PRD.md` changed and ripple review is required
+- `pnpm verify:scenario:fidelity` only as report-only weak-test triage, not as a default blocking ops check
+
+`pnpm repo:docs:check` remains the canonical docs lane; do not swap it out for narrower helper commands unless the task is explicitly triage-only.

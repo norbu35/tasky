@@ -30,11 +30,13 @@ echo "Push target includes 'main' — running full local gate."
 
 # Detect docs-only changes to avoid full test costs on main for doc edits.
 # docs/openapi/** and docs/API.yaml are contract surfaces, not pure docs.
+# tests/scenarios/** are gate inputs and must still run scenario smoke.
 CHANGED_FILES=$(git diff --name-only @{push}.. 2>/dev/null || git diff --name-only HEAD~1)
 NON_DOC_FILES=$(echo "$CHANGED_FILES" | grep -v -E '\.(md|txt)$|^research/|^README' | grep -v -E '^docs/' || true)
 CONTRACT_FILES=$(echo "$CHANGED_FILES" | grep -E '^docs/(openapi/|API\.yaml)' || true)
+SCENARIO_FILES=$(echo "$CHANGED_FILES" | grep -E '^tests/scenarios/' || true)
 
-if [ -z "$NON_DOC_FILES" ] && [ -z "$CONTRACT_FILES" ]; then
+if [ -z "$NON_DOC_FILES" ] && [ -z "$CONTRACT_FILES" ] && [ -z "$SCENARIO_FILES" ]; then
   echo "Docs-only change detected on main push — running docs and ops checks."
   pnpm repo:docs:check
   pnpm verify:ops

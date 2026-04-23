@@ -5,7 +5,7 @@ Booking-based bilateral reviews and profile rating updates.
 ## Implemented API
 
 | Method | Path                            | Notes                         |
-|--------|---------------------------------|-------------------------------|
+| ------ | ------------------------------- | ----------------------------- |
 | `POST` | `/api/v1/bookings/{id}/reviews` | Submit review                 |
 | `GET`  | `/api/v1/users/{id}/reviews`    | List reviews received by user |
 
@@ -24,4 +24,4 @@ Booking-based bilateral reviews and profile rating updates.
 
 ## Pagination
 
-- `GET /users/{id}/reviews` uses cursor + `limit` (controller fetches `limit+1` for `has_more`).
+- `GET /api/v1/users/{id}/reviews` uses cursor + `limit` (controller fetches `limit+1` for `has_more`).

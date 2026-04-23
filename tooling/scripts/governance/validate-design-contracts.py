@@ -19,6 +19,9 @@ try:
     import yaml
 except ImportError:
     print("design-contracts: ERROR: pyyaml not installed. Run: pip3 install pyyaml", file=sys.stderr)
+    print("autonomous remediation:", file=sys.stderr)
+    print(" - install the missing dependency in the active environment", file=sys.stderr)
+    print(" - rerun the narrow lane: python3 tooling/scripts/governance/validate-design-contracts.py", file=sys.stderr)
     sys.exit(1)
 
 
@@ -118,6 +121,10 @@ def main() -> int:
             print(f" - {finding.message}")
         for finding in warnings:
             print(f" - warning: {finding.message}")
+        print("autonomous remediation:")
+        print(" - fix docs/design/component-contract.yaml or the exported component path it names")
+        print(" - implemented entries must resolve to a real exported component; future entries may stay warning-only")
+        print(" - rerun: pnpm repo:docs:check")
         return 1
 
     print(f"design-contracts: PASS ({len(warnings)} warning(s))")

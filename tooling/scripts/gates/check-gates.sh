@@ -16,6 +16,7 @@ REGISTRY="${ROOT_DIR}/tests/registry.yaml"
 
 if [ ! -f "$REGISTRY" ]; then
     echo "[gate] ERROR: $REGISTRY not found. Run ${ROOT_DIR}/services/api/scripts/sync-registry.sh first."
+    echo "[gate] autonomous remediation: regenerate tests/registry.yaml, commit it, then rerun pnpm verify:scenario:smoke."
     exit 1
 fi
 
@@ -38,6 +39,7 @@ SMOKE_MUTATION_CRITICAL_FLOOR = int(os.environ.get("SMOKE_MUTATION_CRITICAL_FLOO
 
 if gate not in ("smoke", "regression", "full"):
     print(f"[gate] ERROR: unknown gate '{gate}'. Use: smoke | regression | full")
+    print("[gate] autonomous remediation: rerun with one of the supported gates or use the pnpm verify:scenario:smoke entrypoint.")
     sys.exit(1)
 
 with open(registry_path) as f:
@@ -227,6 +229,10 @@ if failures:
     print(f"\n❌  Gate '{gate}' FAILED  ({len(failures)} issue(s)):\n")
     for msg in failures:
         print(f"  •  {msg}")
+    print("\nautonomous remediation:")
+    print("  •  update tests/registry.yaml or the backing scenarios/tests so the failing coverage claim becomes true")
+    print("  •  if scenarios changed, run bash services/api/scripts/sync-registry.sh before rerunning the gate")
+    print(f"  •  rerun the narrow gate: bash tooling/scripts/gates/check-gates.sh {gate}")
     print()
     sys.exit(1)
 else:

@@ -102,7 +102,7 @@ Design navigation and lifecycle structure is checked by `pnpm repo:design:check`
 - `tooling/skills/design-surface-drift/scripts/check_journeys.py` — cross-validates screens against screen-graph, lifecycle refs against domain-lifecycles
 - `tooling/skills/design-surface-drift/scripts/check_lifecycles.py` — entity/transition uniqueness, state self-consistency, phase enforcement
 
-These run as part of `pnpm repo:docs:check` and are blocking. See `tooling/skills/design-surface-drift/SKILL.md`.
+These run as part of `pnpm repo:docs:check` and are blocking. Use `tooling/skills/design-surface-drift/SKILL.md` when editing `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, or `docs/design/domain-lifecycles.yaml`, or when one of those validators fails.
 
 False positives and intentional historical references belong in
 `tooling/config/doc-references-allowlist.yaml`.
@@ -110,12 +110,11 @@ False positives and intentional historical references belong in
 Agent-facing remediation workflows live in repo-owned skills:
 
 - `tooling/skills/doc-claims-remediation/SKILL.md` — for validator failures and proactive audit.
-  Use `pnpm repo:docs:claims:triage` for grouped failure summary and `pnpm repo:docs:claims:audit` for proactive
-  discovery of load-bearing references that lack a claim block.
+  Use `pnpm repo:docs:claims:triage` for grouped failure summary when the validator fails, and `pnpm repo:docs:claims:audit` for proactive discovery while editing architecture docs, maintenance docs, or backend module `AGENTS.md` files that name live repo surfaces.
 - `tooling/skills/intake-to-prd/SKILL.md` — for PRD-first routing and ripple review.
-  Use `pnpm repo:prd:diff-ids` to extract changed REQ-P1/NFR IDs from a PRD git diff.
-- `tooling/skills/design-surface-drift/SKILL.md` — for design doc structure validation.
-- `tooling/skills/scenario-fidelity/SKILL.md` — for report-only weak-test triage (`pnpm verify:scenario:fidelity`).
+  Use the narrowest matching `pnpm repo:prd:diff-ids` mode for the current workflow state (`--staged` only when the PRD delta is actually staged).
+- `tooling/skills/design-surface-drift/SKILL.md` — for structural validation of `screen-graph.yaml`, `journey-catalog.yaml`, and `domain-lifecycles.yaml`.
+- `tooling/skills/scenario-fidelity/SKILL.md` — for report-only weak-test triage after writing or strengthening scenario-linked tests; any nightly use must stay non-blocking.
 
 Allowlist rules:
 
@@ -133,5 +132,5 @@ Allowlist rules:
 - If content became future-only or historical, was it moved out of the active reading path?
 - If OpenAPI changed, were both `docs/openapi/**` and `docs/API.yaml` updated together?
 - If a doc names a code/config/schema surface, does it resolve under `validate-doc-claims.py` without a stale suppress entry?
-- If `docs/design/*.yaml` changed, does `pnpm repo:design:check` still pass?
+- If `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, or `docs/design/domain-lifecycles.yaml` changed, does `pnpm repo:design:check` still pass?
 - If `docs/PRD.md` changed, were affected scenarios, architecture, maintenance, design, and contract surfaces reviewed (use `pnpm repo:prd:diff-ids`)?

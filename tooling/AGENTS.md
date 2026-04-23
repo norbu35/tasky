@@ -25,6 +25,13 @@ Pick the smallest lane that matches the job:
 | `deploy`   | Private staging push/deploy/smoke and performance smoke                | `tooling/scripts/deploy/**`                                                                                                                                                                                                     |
 | `manual`   | Human-only diagnostics not used by default automation                  | `tooling/scripts/manual/**`                                                                                                                                                                                                     |
 
+Not every command in a lane is a default finish gate. Treat these as conditional helpers:
+
+- `pnpm repo:design:check` only when editing `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, or `docs/design/domain-lifecycles.yaml`, or when those validators fail through `pnpm repo:docs:check`
+- `pnpm repo:docs:claims:audit` only for proactive audit while editing architecture docs, maintenance docs, or backend module `AGENTS.md` files that name live repo surfaces
+- `pnpm repo:prd:diff-ids` only when `docs/PRD.md` changed and ripple review is in scope
+- `pnpm verify:scenario:fidelity` only for report-only weak-test triage; it is not a default blocking verification command
+
 ## Read Next
 
 1. `AGENTS.md`
@@ -41,6 +48,8 @@ Pick the smallest lane that matches the job:
   Gradle, compose, or a runbook.
 - Manual-only scripts must stay explicitly documented as manual helpers.
 - Generated outputs must be regenerated through their owning script, not hand-maintained as independent authority.
+- Merge-gate workflow edits must keep `pnpm repo:docs:check` wired into `quality-gates.yml`, and any change to that wiring must update `tooling/scripts/gates/check-ops-config.mjs` plus the docs that describe the gate in the same change.
+- Design navigation and lifecycle docs are machine-readable contracts: keep ID-bearing fields free of prose placeholders, and require canonical `SCR-*`, `JRN-*`, and lifecycle IDs before considering the change complete.
 - Deploy inputs must be deterministic: workflow refs, image tags, and config refs must resolve to one exact target.
 - Observability config must run as checked in. Do not rely on undocumented template expansion.
 - Compatibility aliases such as `openapi:*`, `sdk:*`, `docs:check`, `tooling:check`, and `workspace:boundaries`
@@ -79,36 +88,36 @@ Pick the smallest lane that matches the job:
 
 ## Tooling Inventory
 
-| Surface                                                                 | Function                                                | Called from                                                   |
-| ----------------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------- |
-| `tooling/scripts/gates/check-cleanup-gate.sh`                           | Structural repo gate                                    | `pnpm verify:cleanup`, merge structural gate                  |
-| `tooling/scripts/gates/check-ops-config.mjs`                            | Workflow wiring and compose config validation           | `pnpm verify:ops`                                             |
-| `tooling/scripts/gates/check-tooling-surface.mjs`                       | Enforces script classification and live callers         | `pnpm repo:tooling:check`                                     |
-| `tooling/scripts/governance/check-doc-governance.py`                    | Documentation governance                                | `pnpm repo:docs:check`, `pnpm verify:cleanup`                 |
-| `tooling/scripts/contracts/bundle-openapi.mjs`                          | Bundle `docs/openapi/**` into `docs/API.yaml`           | `pnpm contract:openapi:bundle`, `pnpm contract:openapi:check` |
-| `tooling/scripts/contracts/validate-openapi-phase.mjs`                  | Enforce OpenAPI rollout phase metadata                  | `pnpm contract:openapi:check`, `pnpm repo:docs:check`         |
-| `tooling/scripts/contracts/validate-sdk-contract-drift.sh`              | Regenerate SDK and fail on drift                        | `pnpm contract:sdk:drift`                                     |
-| `tooling/scripts/governance/validate-workspace-boundaries.mjs`          | Workspace boundary enforcement                          | `pnpm repo:workspace:boundaries`, `pnpm verify:cleanup`       |
-| `tooling/scripts/governance/validate-migrations.py`                     | Flyway migration naming and immutability checks         | `pnpm verify:cleanup`, staging and release workflows          |
-| `tooling/scripts/governance/validate-schema-parity.py`                  | Schema inventory drift check                            | `pnpm verify:cleanup`                                         |
-| `tooling/scripts/governance/validate-prd-scenario-links.py`             | PRD requirement to scenario traceability                | `pnpm repo:docs:check`, `pnpm verify:scenario:smoke`          |
-| `tooling/scripts/governance/validate-design-contracts.py`               | Design component contract drift check                   | `pnpm repo:docs:check`                                        |
-| `tooling/skills/design-surface-drift/scripts/`                          | Design screen-graph, journey, and lifecycle structure   | `pnpm repo:design:check`, `pnpm repo:docs:check`              |
-| `tooling/skills/intake-to-prd/scripts/extract_prd_diff_ids.py`          | Extract changed REQ-P1/NFR IDs from PRD git diff        | `pnpm repo:prd:diff-ids`                                      |
-| `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`    | Grouped doc-claims failure triage                       | `pnpm repo:docs:claims:triage`                                |
-| `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py` | Proactive unclaimed reference audit                     | `pnpm repo:docs:claims:audit`                                 |
-| `tooling/skills/scenario-fidelity/scripts/find_weak_coverage.py`        | Report-only weak-test triage                            | `pnpm verify:scenario:fidelity`                               |
-| `tooling/scripts/governance/validate-doc-claims.py`                     | Validate architecture and AGENTS surface refs stay live | `pnpm repo:docs:check`, `pnpm verify:cleanup`                 |
-| `tooling/scripts/governance/validate-doc-references.py`                 | Verify pnpm/file refs in AGENTS.md and adapters resolve | `pnpm repo:docs:check`, `pnpm verify:cleanup`                 |
-| `tooling/scripts/governance/check-trivyignore-expiry.sh`                | Expiring security-ignore audit                          | `pnpm verify:cleanup`                                         |
-| `tooling/scripts/gates/check-gates.sh`                                  | Scenario gate evaluator for smoke/regression/full       | `services/api/build.gradle.kts`                               |
-| `tooling/scripts/deploy/performance-smoke.sh`                           | Latency smoke against live or locally booted backend    | release gate                                                  |
-| `tooling/scripts/observability/start-alertmanager.sh`                   | Render Alertmanager config from env at startup          | `docker-compose.observability.yml`                            |
-| `tooling/scripts/deploy/bootstrap-private-staging-vps.sh`               | Host bootstrap for private staging                      | staging runbook / manual                                      |
-| `tooling/scripts/deploy/push-private-staging.sh`                        | Push repo and env to private staging and trigger deploy | staging runbook / manual                                      |
-| `tooling/scripts/deploy/deploy-private-staging.sh`                      | Compose deployment on private staging host              | staging runbook / manual                                      |
-| `tooling/scripts/deploy/smoke-private-staging.sh`                       | Post-deploy staging smoke checks                        | staging runbook / manual                                      |
-| `tooling/scripts/manual/analyze_i18n.py`                                | Manual locale diagnostic                                | manual only                                                   |
+| Surface                                                                 | Function                                                | Called from                                                                   |
+| ----------------------------------------------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `tooling/scripts/gates/check-cleanup-gate.sh`                           | Structural repo gate                                    | `pnpm verify:cleanup`, merge structural gate                                  |
+| `tooling/scripts/gates/check-ops-config.mjs`                            | Workflow wiring and compose config validation           | `pnpm verify:ops`                                                             |
+| `tooling/scripts/gates/check-tooling-surface.mjs`                       | Enforces script classification and live callers         | `pnpm repo:tooling:check`                                                     |
+| `tooling/scripts/governance/check-doc-governance.py`                    | Documentation governance                                | `pnpm repo:docs:check`, `pnpm verify:cleanup`                                 |
+| `tooling/scripts/contracts/bundle-openapi.mjs`                          | Bundle `docs/openapi/**` into `docs/API.yaml`           | `pnpm contract:openapi:bundle`, `pnpm contract:openapi:check`                 |
+| `tooling/scripts/contracts/validate-openapi-phase.mjs`                  | Enforce OpenAPI rollout phase metadata                  | `pnpm contract:openapi:check`, `pnpm repo:docs:check`                         |
+| `tooling/scripts/contracts/validate-sdk-contract-drift.sh`              | Regenerate SDK and fail on drift                        | `pnpm contract:sdk:drift`                                                     |
+| `tooling/scripts/governance/validate-workspace-boundaries.mjs`          | Workspace boundary enforcement                          | `pnpm repo:workspace:boundaries`, `pnpm verify:cleanup`                       |
+| `tooling/scripts/governance/validate-migrations.py`                     | Flyway migration naming and immutability checks         | `pnpm verify:cleanup`, staging and release workflows                          |
+| `tooling/scripts/governance/validate-schema-parity.py`                  | Schema inventory drift check                            | `pnpm verify:cleanup`                                                         |
+| `tooling/scripts/governance/validate-prd-scenario-links.py`             | PRD requirement to scenario traceability                | `pnpm repo:docs:check`, `pnpm verify:scenario:smoke`                          |
+| `tooling/scripts/governance/validate-design-contracts.py`               | Design component contract drift check                   | `pnpm repo:docs:check`                                                        |
+| `tooling/skills/design-surface-drift/scripts/`                          | Design screen-graph, journey, and lifecycle structure   | `pnpm repo:design:check`, `pnpm repo:docs:check` for those validator failures |
+| `tooling/skills/intake-to-prd/scripts/extract_prd_diff_ids.py`          | Extract changed REQ-P1/NFR IDs from PRD git diff        | `pnpm repo:prd:diff-ids` when `docs/PRD.md` changes                           |
+| `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`    | Grouped doc-claims failure triage                       | `pnpm repo:docs:claims:triage`                                                |
+| `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py` | Proactive unclaimed reference audit                     | `pnpm repo:docs:claims:audit` during tracked-doc edits                        |
+| `tooling/skills/scenario-fidelity/scripts/find_weak_coverage.py`        | Report-only weak-test triage                            | `pnpm verify:scenario:fidelity` for manual review or optional nightly info    |
+| `tooling/scripts/governance/validate-doc-claims.py`                     | Validate architecture and AGENTS surface refs stay live | `pnpm repo:docs:check`, `pnpm verify:cleanup`                                 |
+| `tooling/scripts/governance/validate-doc-references.py`                 | Verify pnpm/file refs in AGENTS.md and adapters resolve | `pnpm repo:docs:check`, `pnpm verify:cleanup`                                 |
+| `tooling/scripts/governance/check-trivyignore-expiry.sh`                | Expiring security-ignore audit                          | `pnpm verify:cleanup`                                                         |
+| `tooling/scripts/gates/check-gates.sh`                                  | Scenario gate evaluator for smoke/regression/full       | `services/api/build.gradle.kts`                                               |
+| `tooling/scripts/deploy/performance-smoke.sh`                           | Latency smoke against live or locally booted backend    | release gate                                                                  |
+| `tooling/scripts/observability/start-alertmanager.sh`                   | Render Alertmanager config from env at startup          | `docker-compose.observability.yml`                                            |
+| `tooling/scripts/deploy/bootstrap-private-staging-vps.sh`               | Host bootstrap for private staging                      | staging runbook / manual                                                      |
+| `tooling/scripts/deploy/push-private-staging.sh`                        | Push repo and env to private staging and trigger deploy | staging runbook / manual                                                      |
+| `tooling/scripts/deploy/deploy-private-staging.sh`                      | Compose deployment on private staging host              | staging runbook / manual                                                      |
+| `tooling/scripts/deploy/smoke-private-staging.sh`                       | Post-deploy staging smoke checks                        | staging runbook / manual                                                      |
+| `tooling/scripts/manual/analyze_i18n.py`                                | Manual locale diagnostic                                | manual only                                                                   |
 
 ## Agent Finish Rules
 
@@ -121,10 +130,13 @@ When claiming tooling or ops work complete, run the smallest matching lane:
 - private staging / observability config changes: `docker compose -f docker-compose.observability.yml config`
 
 Do not escalate to broader suites unless the touched surface requires them.
+Do not treat report-only helpers such as `pnpm repo:docs:claims:audit`, `pnpm repo:prd:diff-ids`, or `pnpm verify:scenario:fidelity` as default finish gates unless the task explicitly called for them.
 
 ## Verification
 
-Run the smallest gate that matches the claim:
+Run the smallest gate that matches the claim.
+
+Default blocking gates:
 
 ```bash
 pnpm verify:cleanup
@@ -135,16 +147,20 @@ pnpm verify:scenario:smoke
 pnpm verify:drift
 pnpm repo:tooling:check
 pnpm repo:docs:check
-pnpm repo:design:check
 pnpm repo:docs:claims
-pnpm repo:docs:claims:triage
-pnpm repo:docs:claims:audit
-pnpm repo:prd:diff-ids
-pnpm verify:scenario:fidelity
 pnpm repo:docs:claims:triage
 pnpm contract:openapi:check
 pnpm contract:sdk:drift
 docker compose -f docker-compose.observability.yml config
+```
+
+Conditional helper commands:
+
+```bash
+pnpm repo:design:check
+pnpm repo:docs:claims:audit
+pnpm repo:prd:diff-ids
+pnpm verify:scenario:fidelity
 ```
 
 If a check fails in current product code, treat it as application drift unless the failure is clearly caused by broken

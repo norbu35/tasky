@@ -34,6 +34,7 @@ const textExpectations = [
     {
         file: ".husky/pre-push",
         needs: [
+            "tests/scenarios/",
             "pnpm verify:cleanup",
             "pnpm verify:ops",
             "pnpm verify:backend",
@@ -49,6 +50,7 @@ const textExpectations = [
             "staging",
             "pnpm verify:cleanup",
             "pnpm verify:ops",
+            "pnpm repo:docs:check",
             "pnpm verify:backend",
             "pnpm verify:scenario:smoke",
             "pnpm verify:frontend",
@@ -117,6 +119,13 @@ const composeEnv = {
 
 const failures = [];
 
+function printRemediation() {
+    console.error("autonomous remediation:");
+    console.error(" - inspect the failing file/path above and update the canonical workflow or compose surface there");
+    console.error(" - if wiring drift is unclear, compare package.json, .husky/pre-push, and .github/workflows/quality-gates.yml");
+    console.error(" - rerun the narrow lane: pnpm verify:ops");
+}
+
 function resolveDockerBinary() {
     const candidates = [
         process.env.DOCKER_BIN,
@@ -183,6 +192,7 @@ if (failures.length > 0) {
     for (const failure of failures) {
         console.error(` - ${failure}`);
     }
+    printRemediation();
     process.exit(1);
 }
 

@@ -50,6 +50,13 @@ const allowedToolingDeps = new Set([
 
 const violations = [];
 
+function printRemediation() {
+    console.error("autonomous remediation:");
+    console.error(" - move the dependency to an allowed shared package or invert the boundary");
+    console.error(" - apps cannot depend on services/tooling, services cannot depend on apps/tooling, and packages stay reusable");
+    console.error(" - rerun: pnpm repo:workspace:boundaries");
+}
+
 for (const pkg of packageIndex.values()) {
     const fromZone = getZone(pkg.location);
     for (const depName of Object.keys(pkg.dependencies)) {
@@ -84,6 +91,7 @@ if (violations.length > 0) {
     for (const violation of violations) {
         console.error(`- ${violation}`);
     }
+    printRemediation();
     process.exit(1);
 }
 

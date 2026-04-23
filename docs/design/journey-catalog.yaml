@@ -676,7 +676,9 @@ journeys:
     goal: Recover from network/session errors
     entry: SCR-INFRA-001
     exit:
-      - previous screen
+      - SCR-INFRA-001
+      - SCR-INFRA-002
+      - SCR-INFRA-003
     paths:
       - name: Network error
         screens:

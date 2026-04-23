@@ -6,6 +6,12 @@ description: Use when `tooling/scripts/governance/validate-doc-claims.py` fails,
 # Doc Claims Remediation
 
 Use this skill to repair doc-surface drift without weakening the validator.
+Trigger it in two cases:
+
+- Reactively, when `validate-doc-claims.py` fails.
+- Proactively, when editing architecture docs, maintenance docs, or backend module `AGENTS.md` files that name live repo surfaces.
+
+Do not route generic prose cleanup here unless the doc names code, schema, env vars, config keys, endpoints, Flyway migrations, or workflows that the validator is expected to track.
 
 ## Quick Start
 

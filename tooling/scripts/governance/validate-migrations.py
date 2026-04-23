@@ -12,6 +12,13 @@ VERSIONED_RE = re.compile(r"^V([0-9]+(?:_[0-9]+)*)__[A-Za-z0-9_]+\.sql$")
 REPEATABLE_RE = re.compile(r"^R__[A-Za-z0-9_]+\.sql$")
 
 
+def print_remediation() -> None:
+    print("autonomous remediation:", file=sys.stderr)
+    print(" - versioned Flyway migrations are immutable once introduced", file=sys.stderr)
+    print(" - create a new V* migration for follow-up schema changes instead of editing or renaming an existing one", file=sys.stderr)
+    print(" - rerun: python3 tooling/scripts/governance/validate-migrations.py", file=sys.stderr)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Validate Flyway migration naming and immutability."
@@ -185,6 +192,7 @@ def main() -> int:
 
     if not MIGRATION_DIR.exists():
         print(f"Migration directory missing: {MIGRATION_DIR}", file=sys.stderr)
+        print_remediation()
         return 1
 
     files = sorted(p for p in MIGRATION_DIR.glob("*.sql"))
@@ -204,6 +212,7 @@ def main() -> int:
         print("Migration validation errors:", file=sys.stderr)
         for item in unique_errors:
             print(f"- {item}", file=sys.stderr)
+        print_remediation()
         return 1
 
     print(f"Migration safety check passed. Files checked: {len(files)}")

@@ -6,6 +6,8 @@ description: Deterministic structural validation for design navigation, journey,
 # Design Surface Drift
 
 Use this skill to validate the structural integrity of design navigation and lifecycle documents.
+Treat `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, and `docs/design/domain-lifecycles.yaml` as machine-readable contracts: ID-bearing fields must use canonical IDs, not prose placeholders, and any structural edit to those three files must be followed by `pnpm repo:design:check` (and `pnpm repo:docs:check` when the wider docs lane is implicated).
+Do not trigger this skill for unrelated design docs such as component contracts, screen specs, or visual-token files unless a failing validator points back to screen, journey, or lifecycle structure.
 
 ## Quick Start
 
@@ -32,7 +34,7 @@ python3 tooling/skills/design-surface-drift/scripts/check_lifecycles.py
 - every node has a `label`
 - every `edges` list has valid `to:` targets pointing to defined nodes
 - deep link and tab bar roots resolve to defined nodes
-- screen IDs follow SCR-[PREFIX]-NNN convention
+- screen IDs follow SCR-[A-Z0-9]+-\d{3} convention
 
 ### journey-catalog.yaml
 
@@ -56,11 +58,11 @@ python3 tooling/skills/design-surface-drift/scripts/check_lifecycles.py
 
 These follow the repo identifier-consistency audit:
 
-| Kind       | Pattern            | Example            |
-| ---------- | ------------------ | ------------------ |
-| Screen     | `SCR-[A-Z]+-\d{3}` | SCR-CUST-001       |
-| Journey    | `JRN-[A-Z]+-\d{2}` | JRN-CUST-01        |
-| Transition | `[A-Z]+-T\d{2}`    | TASK-T01, BOOK-T07 |
+| Kind       | Pattern               | Example            |
+| ---------- | --------------------- | ------------------ |
+| Screen     | `SCR-[A-Z0-9]+-\d{3}` | SCR-CUST-001       |
+| Journey    | `JRN-[A-Z]+-\d{2}`    | JRN-CUST-01        |
+| Transition | `[A-Z]+-T\d{2}`       | TASK-T01, BOOK-T07 |
 
 ## Guard Rails
 
@@ -70,6 +72,7 @@ These follow the repo identifier-consistency audit:
 
 ## When to Use This Skill
 
-- After editing any file in `docs/design/*.yaml`
-- When `pnpm repo:docs:check` fails on a design check
-- When adding new screens, journeys, or lifecycle transitions
+- After editing `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, or `docs/design/domain-lifecycles.yaml`
+- When `pnpm repo:design:check` fails
+- When `pnpm repo:docs:check` fails on `check_screen_graph.py`, `check_journeys.py`, or `check_lifecycles.py`
+- When adding or renaming screens, journey IDs, lifecycle IDs, or links between them

@@ -346,6 +346,8 @@ def main() -> int:
 
     if not MIGRATION_DIR.exists():
         print(f"Migration directory not found: {MIGRATION_DIR}", file=sys.stderr)
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - restore the Flyway migration directory before running schema parity", file=sys.stderr)
         return 2
 
     migration_files = sorted(
@@ -354,6 +356,8 @@ def main() -> int:
     )
     if not migration_files:
         print("No migration files found.", file=sys.stderr)
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - schema parity expects versioned Flyway migrations under services/api/src/main/resources/db/migration", file=sys.stderr)
         return 2
 
     v_first = VERSION_RE.match(migration_files[0].name).group(1)
@@ -413,6 +417,9 @@ def main() -> int:
             file=sys.stderr,
         )
         print("Run with --update-expected to generate it.", file=sys.stderr)
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - if a migration changed the schema inventory, run: python3 tooling/scripts/governance/validate-schema-parity.py --update-expected", file=sys.stderr)
+        print(" - commit the refreshed tooling/config/expected-schema.json in the same change", file=sys.stderr)
         return 2
 
     try:
@@ -421,6 +428,8 @@ def main() -> int:
         )
     except json.JSONDecodeError as exc:
         print(f"Invalid JSON in {EXPECTED_SCHEMA_FILE}: {exc}", file=sys.stderr)
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - regenerate the expected inventory from current migrations with --update-expected", file=sys.stderr)
         return 2
 
     errors, warnings = compare_schemas(actual_json, expected_json)
@@ -434,6 +443,9 @@ def main() -> int:
         print("\nDRIFT DETECTED:", file=sys.stderr)
         for e in errors:
             print(f"  ERROR: {e}", file=sys.stderr)
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - if the migration intentionally changed schema shape, run: python3 tooling/scripts/governance/validate-schema-parity.py --update-expected", file=sys.stderr)
+        print(" - otherwise fix the migration so it matches the committed expected inventory", file=sys.stderr)
         return 1
 
     print("Schema parity check PASSED.")

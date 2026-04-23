@@ -27,9 +27,18 @@ Additional references:
 
 ## Verification
 
+Default web validation:
+
 ```bash
 pnpm --filter @tasky/web typecheck
 pnpm --filter @tasky/web test:unit
-pnpm --filter @tasky/web test:e2e:smoke
 pnpm --filter @tasky/web lint
 ```
+
+Conditional browser-flow validation:
+
+```bash
+pnpm --filter @tasky/web test:e2e:smoke
+```
+
+Use the smoke run when the change affects route flows, auth, or browser-visible interactions that unit tests do not cover well.

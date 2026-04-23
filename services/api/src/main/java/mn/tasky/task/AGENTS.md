@@ -47,9 +47,9 @@ Task feed, task management, application flow, acceptance, and task photo upload 
 
 ## Idempotency
 
-| Endpoint                                               | Operation key             |
-| ------------------------------------------------------ | ------------------------- |
-| `POST /tasks/{id}/applications/{applicationId}/accept` | `task.accept_application` |
+| Endpoint                                                      | Operation key             |
+| ------------------------------------------------------------- | ------------------------- |
+| `POST /api/v1/tasks/{id}/applications/{applicationId}/accept` | `task.accept_application` |
 
 ## Explicitly Not Implemented
 

@@ -32,6 +32,9 @@ try:
     import yaml
 except ImportError:
     print("check_lifecycles: ERROR: pyyaml not installed. Run: pip3 install pyyaml", file=sys.stderr)
+    print("autonomous remediation:", file=sys.stderr)
+    print(" - install the missing dependency in the current environment", file=sys.stderr)
+    print(" - rerun: python3 tooling/skills/design-surface-drift/scripts/check_lifecycles.py", file=sys.stderr)
     sys.exit(1)
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
@@ -43,6 +46,8 @@ TRANSITION_ID_RE = re.compile(r"^[A-Z]+-T\d{2}$")
 def main() -> int:
     if not LIFECYCLES.exists():
         print(f"check_lifecycles: FAIL — file not found: {LIFECYCLES}", file=sys.stderr)
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - restore docs/design/domain-lifecycles.yaml or update the design lane to point at the canonical file", file=sys.stderr)
         return 1
 
     with LIFECYCLES.open(encoding="utf-8") as handle:
@@ -55,10 +60,14 @@ def main() -> int:
     entities = data.get("entities")
     if entities is None:
         print("check_lifecycles: FAIL — missing top-level `entities`", file=sys.stderr)
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - rebuild docs/design/domain-lifecycles.yaml with a top-level `entities` mapping", file=sys.stderr)
         return 1
 
     if not isinstance(entities, dict):
         print("check_lifecycles: FAIL — `entities` is not a mapping", file=sys.stderr)
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - convert docs/design/domain-lifecycles.yaml `entities` back to a mapping keyed by domain entity", file=sys.stderr)
         return 1
 
     # 2. global transition ID uniqueness
@@ -185,6 +194,10 @@ def main() -> int:
             print(f" - {f}")
         for w in warnings:
             print(f" - warning: {w}")
+        print("autonomous remediation:")
+        print(" - fix docs/design/domain-lifecycles.yaml so states and transition ids are structurally self-consistent")
+        print(" - follow tooling/skills/design-surface-drift/SKILL.md if you need the expected lifecycle schema")
+        print(" - rerun: pnpm repo:design:check")
         return 1
 
     total_transitions = len(all_transition_ids)

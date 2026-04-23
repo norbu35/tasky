@@ -125,6 +125,7 @@ flowchart LR
 | ----------------- | ---------------------------------------------------- | ------------------------------------------------ |
 | Cleanup           | `pnpm verify:cleanup`                                | Structural, docs, schema, migration              |
 | Ops               | `pnpm verify:ops`                                    | Tooling surface and workflow wiring              |
+| Docs              | `pnpm repo:docs:check`                               | Governance, design navigation/journeys, OpenAPI  |
 | Backend           | `pnpm verify:backend`                                | Compile, test, coverage, OpenAPI                 |
 | Frontend          | `pnpm verify:frontend`                               | Full lint, typecheck, test                       |
 | Frontend affected | `pnpm verify:frontend:affected`                      | Merge-branch fast path                           |
@@ -135,4 +136,4 @@ flowchart LR
 
 ## Design implication for this proposal
 
-If `repo:design:check` is implemented, it should be added to `repo:docs:check`, not directly to `check-cleanup-gate.sh`. That keeps design-doc validation inside the same docs lane as governance, references, doc-claims, design-contracts, and OpenAPI phase checks.
+`repo:design:check` is part of `repo:docs:check`, not `check-cleanup-gate.sh`. That keeps design-doc validation inside the same docs lane as governance, references, doc-claims, design-contracts, journey checks, and OpenAPI phase checks.

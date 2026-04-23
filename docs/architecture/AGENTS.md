@@ -42,7 +42,8 @@ maintained source.
 - `web.md` — web-only structural contract
 - `mobile.md` — mobile structural contract
 - `shared-frontend.md` — tokens, parity baseline, intake renderer contract, TID test-naming rule
-- `docs/design/*.yaml` — screen graph, journey catalog, domain lifecycles, component contracts (validated by `pnpm repo:design:check`)
+- `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, `docs/design/domain-lifecycles.yaml` — machine-readable structural docs validated by `pnpm repo:design:check`
+- `docs/design/component-contract.yaml` — component inventory validated by `python3 tooling/scripts/governance/validate-design-contracts.py` or `pnpm repo:docs:check`
 
 New structural guidance belongs in the doc whose scope matches, not in this router.
 

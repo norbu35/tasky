@@ -82,6 +82,8 @@ apps/mobile/src/components/
 
 **Critical rule:** Every test block must include its `TID-*` identifier directly in the `it()` or `test()` description string — bare, with no brackets or decorators. The self-verification script discovers AC coverage by scanning for this string in test runner output.
 
+TID identifiers use the repo convention `TID-[A-Z]+-\d{3}-[A-Z0-9-]+`, for example `TID-TASK-080-WEB-AUTH-OAUTH-FLOW`.
+
 ```typescript
 it('TID-TASK-080-WEB-AUTH-OAUTH-FLOW should allow user to continue with Facebook and redirect to feed', async () => {
   // test logic

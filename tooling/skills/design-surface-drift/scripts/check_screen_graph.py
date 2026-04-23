@@ -9,7 +9,7 @@ Deterministic checks:
   - every edge `to:` target resolves to a defined node
 
 Identifier convention (from identifier-consistency audit):
-  - Screen IDs follow SCR-[A-Z]+-\\d{3} (3-digit zero-padded)
+  - Screen IDs follow SCR-[A-Z0-9]+-\\d{3} (3-digit zero-padded)
   - Edge types: replace, push, pop, modal, dismiss
 
 Output convention:
@@ -29,18 +29,23 @@ try:
     import yaml
 except ImportError:
     print("check_screen_graph: ERROR: pyyaml not installed. Run: pip3 install pyyaml", file=sys.stderr)
+    print("autonomous remediation:", file=sys.stderr)
+    print(" - install the missing dependency in the current environment", file=sys.stderr)
+    print(" - rerun: python3 tooling/skills/design-surface-drift/scripts/check_screen_graph.py", file=sys.stderr)
     sys.exit(1)
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 SCREEN_GRAPH = REPO_ROOT / "docs" / "design" / "screen-graph.yaml"
 
-SCREEN_ID_RE = re.compile(r"^SCR-[A-Z]+-\d{3}$")
+SCREEN_ID_RE = re.compile(r"^SCR-[A-Z0-9]+-\d{3}$")
 VALID_EDGE_TYPES = {"replace", "push", "pop", "modal", "dismiss"}
 
 
 def main() -> int:
     if not SCREEN_GRAPH.exists():
         print(f"check_screen_graph: FAIL — file not found: {SCREEN_GRAPH}", file=sys.stderr)
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - restore docs/design/screen-graph.yaml or update the design lane to point at the canonical file", file=sys.stderr)
         return 1
 
     with SCREEN_GRAPH.open(encoding="utf-8") as handle:
@@ -53,10 +58,14 @@ def main() -> int:
     nodes = data.get("nodes")
     if nodes is None:
         print("check_screen_graph: FAIL — missing top-level `nodes`", file=sys.stderr)
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - rebuild docs/design/screen-graph.yaml as a mapping keyed by canonical SCR-* screen ids", file=sys.stderr)
         return 1
 
     if not isinstance(nodes, dict):
         print("check_screen_graph: FAIL — `nodes` is not a mapping", file=sys.stderr)
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - convert docs/design/screen-graph.yaml `nodes` back to a mapping keyed by SCR-* ids", file=sys.stderr)
         return 1
 
     node_ids = set(nodes.keys())
@@ -64,7 +73,7 @@ def main() -> int:
     # 2. identifier format enforcement
     for nid in sorted(node_ids):
         if not SCREEN_ID_RE.match(nid):
-            warnings.append(f"node {nid}: does not match SCR-[PREFIX]-NNN format")
+            warnings.append(f"node {nid}: does not match SCR-[A-Z0-9]+-NNN format")
 
     # 3. duplicate node IDs (dict keys are unique by construction, but check
     #    for future-proofing in case the loader behaves differently)
@@ -141,6 +150,10 @@ def main() -> int:
             print(f" - {f}")
         for w in warnings:
             print(f" - warning: {w}")
+        print("autonomous remediation:")
+        print(" - fix docs/design/screen-graph.yaml so every node/edge target resolves structurally")
+        print(" - follow tooling/skills/design-surface-drift/SKILL.md if the relationship model is unclear")
+        print(" - rerun: pnpm repo:design:check")
         return 1
 
     print(f"check_screen_graph: PASS ({len(node_ids)} nodes, {len(warnings)} warning(s))")

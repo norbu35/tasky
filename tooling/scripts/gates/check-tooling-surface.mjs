@@ -43,6 +43,13 @@ const skipDirs = new Set([
     "node_modules",
 ]);
 
+function printRemediation() {
+    console.error("autonomous remediation:");
+    console.error(" - classify every tooling script in tooling/scripts/gates/check-tooling-surface.mjs");
+    console.error(" - keep active scripts referenced from package.json, workflows, docs, or shared gate entrypoints");
+    console.error(" - rerun the narrow lane: pnpm repo:tooling:check");
+}
+
 const textExtensions = new Set([
     ".js",
     ".json",
@@ -87,6 +94,7 @@ function relativeRef(filePath) {
 
 if (!existsSync(scriptsDir)) {
     console.error("tooling surface check failed: tooling/scripts directory missing");
+    printRemediation();
     process.exit(1);
 }
 
@@ -142,6 +150,7 @@ if (failures.length > 0) {
     for (const failure of failures) {
         console.error(` - ${failure}`);
     }
+    printRemediation();
     process.exit(1);
 }
 

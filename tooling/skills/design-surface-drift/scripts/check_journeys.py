@@ -11,7 +11,7 @@ Deterministic checks:
     domain-lifecycles.yaml transition IDs
 
 Identifier convention (from identifier-consistency audit):
-  - Screen IDs: SCR-[A-Z]+-\\d{3}
+  - Screen IDs: SCR-[A-Z0-9]+-\\d{3}
   - Transition IDs: [A-Z]+-T\\d{2} (tolerant: \\b[A-Z]+-T\\d+\\b)
   - Journey IDs: JRN-[A-Z]+-\\d{2}
   - Lifecycle strings may contain free text with mixed references like
@@ -38,6 +38,9 @@ try:
     import yaml
 except ImportError:
     print("check_journeys: ERROR: pyyaml not installed. Run: pip3 install pyyaml", file=sys.stderr)
+    print("autonomous remediation:", file=sys.stderr)
+    print(" - install the missing dependency in the current environment", file=sys.stderr)
+    print(" - rerun: python3 tooling/skills/design-surface-drift/scripts/check_journeys.py", file=sys.stderr)
     sys.exit(1)
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
@@ -90,6 +93,8 @@ def extract_lifecycle_ids(text: str) -> list[str]:
 def main() -> int:
     if not JOURNEY_CATALOG.exists():
         print(f"check_journeys: FAIL — file not found: {JOURNEY_CATALOG}", file=sys.stderr)
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - restore docs/design/journey-catalog.yaml or update the design lane to point at the canonical file", file=sys.stderr)
         return 1
 
     data = load_yaml(JOURNEY_CATALOG)
@@ -114,10 +119,14 @@ def main() -> int:
     journeys = data.get("journeys")
     if journeys is None:
         print("check_journeys: FAIL — missing top-level `journeys`", file=sys.stderr)
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - rebuild docs/design/journey-catalog.yaml with a top-level `journeys` list of JRN-* entries", file=sys.stderr)
         return 1
 
     if not isinstance(journeys, list):
         print("check_journeys: FAIL — `journeys` is not a list", file=sys.stderr)
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - convert docs/design/journey-catalog.yaml `journeys` back to a list of journey mappings", file=sys.stderr)
         return 1
 
     for journey in journeys:
@@ -147,14 +156,12 @@ def main() -> int:
         elif isinstance(exit_raw, list):
             for ex in exit_raw:
                 ex_str = str(ex)
-                # Tolerate prose exit values (e.g. "previous screen") as warnings
-                # only hard-fail on values that look like screen IDs but are unresolved
                 if ex_str.startswith("SCR-") and screen_ids and ex_str not in screen_ids:
                     failures.append(
                         f"journey `{jid}`: exit `{ex_str}` not in screen-graph.yaml"
                     )
-                elif not ex_str.startswith("SCR-") and screen_ids:
-                    warnings.append(
+                elif not ex_str.startswith("SCR-"):
+                    failures.append(
                         f"journey `{jid}`: exit `{ex_str}` is not a screen ID"
                     )
         else:
@@ -266,6 +273,10 @@ def main() -> int:
             print(f" - {f}")
         for w in warnings:
             print(f" - warning: {w}")
+        print("autonomous remediation:")
+        print(" - fix docs/design/journey-catalog.yaml so every entry/exit/path/lifecycle reference resolves against the active design docs")
+        print(" - follow tooling/skills/design-surface-drift/SKILL.md for the allowed structure")
+        print(" - rerun: pnpm repo:design:check")
         return 1
 
     print(

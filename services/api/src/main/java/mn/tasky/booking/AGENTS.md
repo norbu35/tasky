@@ -4,16 +4,16 @@ Booking lifecycle transitions and booking-side effects.
 
 ## Implemented API
 
-| Method | Path                              | Notes                                                |
-|--------|-----------------------------------|------------------------------------------------------|
-| `GET`  | `/api/v1/bookings`                | List bookings for caller; role/status/cursor filters |
-| `GET`  | `/api/v1/bookings/{id}`           | Only customer/tasker participants can view           |
-| `POST` | `/api/v1/bookings/{id}/cancel`    | Customer or tasker; idempotent                       |
-| `POST` | `/api/v1/bookings/{id}/complete`  | Customer only; idempotent                            |
-| `POST` | `/api/v1/bookings/{id}/mark-done` | Tasker only; idempotent                              |
-| `POST` | `/api/v1/bookings/{id}/reschedule` | Either party requests reschedule; idempotent         |
-| `POST` | `/api/v1/bookings/{id}/reschedule/{eventId}/respond` | Counterparty accepts or declines request |
-| `POST` | `/api/v1/bookings/{id}/no-show/flag` | Either party flags no-show after rule checks; idempotent |
+| Method | Path                                                 | Notes                                                    |
+| ------ | ---------------------------------------------------- | -------------------------------------------------------- |
+| `GET`  | `/api/v1/bookings`                                   | List bookings for caller; role/status/cursor filters     |
+| `GET`  | `/api/v1/bookings/{id}`                              | Only customer/tasker participants can view               |
+| `POST` | `/api/v1/bookings/{id}/cancel`                       | Customer or tasker; idempotent                           |
+| `POST` | `/api/v1/bookings/{id}/complete`                     | Customer only; idempotent                                |
+| `POST` | `/api/v1/bookings/{id}/mark-done`                    | Tasker only; idempotent                                  |
+| `POST` | `/api/v1/bookings/{id}/reschedule`                   | Either party requests reschedule; idempotent             |
+| `POST` | `/api/v1/bookings/{id}/reschedule/{eventId}/respond` | Counterparty accepts or declines request                 |
+| `POST` | `/api/v1/bookings/{id}/no-show/flag`                 | Either party flags no-show after rule checks; idempotent |
 
 ## Booking Statuses in Code
 
@@ -42,14 +42,14 @@ Booking lifecycle transitions and booking-side effects.
 
 ## Idempotency
 
-| Endpoint                        | Operation key       |
-|---------------------------------|---------------------|
-| `POST /bookings/{id}/cancel`    | `booking.cancel`    |
-| `POST /bookings/{id}/complete`  | `booking.complete`  |
-| `POST /bookings/{id}/mark-done` | `booking.mark_done` |
-| `POST /bookings/{id}/reschedule` | `booking.reschedule_request` |
-| `POST /bookings/{id}/reschedule/{eventId}/respond` | `booking.reschedule_respond` |
-| `POST /bookings/{id}/no-show/flag` | `booking.no_show_flag` |
+| Endpoint                                                  | Operation key                |
+| --------------------------------------------------------- | ---------------------------- |
+| `POST /api/v1/bookings/{id}/cancel`                       | `booking.cancel`             |
+| `POST /api/v1/bookings/{id}/complete`                     | `booking.complete`           |
+| `POST /api/v1/bookings/{id}/mark-done`                    | `booking.mark_done`          |
+| `POST /api/v1/bookings/{id}/reschedule`                   | `booking.reschedule_request` |
+| `POST /api/v1/bookings/{id}/reschedule/{eventId}/respond` | `booking.reschedule_respond` |
+| `POST /api/v1/bookings/{id}/no-show/flag`                 | `booking.no_show_flag`       |
 
 Missing `Idempotency-Key` causes `400 IDEMPOTENCY_KEY_REQUIRED`.
 

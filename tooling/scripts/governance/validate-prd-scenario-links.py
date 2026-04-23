@@ -26,8 +26,8 @@ PRD_SECTION_START_RE = re.compile(r"^## 11\. ", re.MULTILINE)
 PRD_SECTION_END_RE = re.compile(r"^## 16\. ", re.MULTILINE)
 CANONICAL_PRD_ID_RE = re.compile(r"\b(?:REQ-P1|NFR)-[A-Z]+-\d{2}\b")
 REQ_P1_RE = re.compile(r"\bREQ-P1-[A-Z]+-\d{2}\b")  # Enforce 2-digit zero-padded
-SCENARIO_PRD_TOKEN_RE = re.compile(r"\b(?:REQ|NFR)-[A-Z0-9-]+\b")
-SCENARIO_HEADER_RE = re.compile(r"^## (SCN-[A-Z]+\d*-\d{3})\s*$", re.MULTILINE)  # Enforce 3-digit
+SCENARIO_PRD_TOKEN_RE = re.compile(r"\b(?:REQ-P1|NFR)-[A-Z]+-\d{2}\b")
+SCENARIO_HEADER_RE = re.compile(r"^## (SCN-[A-Z]+-\d{3})\s*$", re.MULTILINE)  # Enforce 3-digit
 RISK_RE = re.compile(r"^\*\*Risk:\*\*\s*(Critical|High|Medium)\s*$", re.MULTILINE)  # Enforce capitalization
 PRD_LINE_RE = re.compile(r"^\*\*PRD:\*\*\s*(.+?)\s*$", re.MULTILINE)
 TITLE_RE = re.compile(r"^\*\*Title:\*\*\s*(.+?)\s*$", re.MULTILINE)
@@ -113,7 +113,7 @@ def build_prd_inventory() -> PrdInventory:
 
 
 def parse_scenario_block(block: str, source_file: Path, line: int) -> tuple[Scenario | None, Finding | None]:
-    header = re.match(r"## (SCN-[A-Z]+\d*-\d+)", block)
+    header = re.match(r"## (SCN-[A-Z]+-\d{3})", block)
     if not header:
         return None, None
 
@@ -194,7 +194,7 @@ def validate_refs(scenarios: list[Scenario], prd: PrdInventory) -> list[Finding]
                 Finding(
                     scenario.source_file,
                     scenario.line,
-                    f"{scenario.scenario_id} references PRD id `{ref}`, which is not live in docs/PRD.md §11-§15.",
+                    f"{scenario.scenario_id} references PRD id `{ref}`, which is not live in docs/PRD.md.",
                     f"Did you mean `{suggestion}`?" if suggestion else None,
                 )
             )
@@ -257,6 +257,11 @@ def main() -> int:
         print(f" - {warning.source_file.as_posix()}:{warning.line}: warning: {warning.message}")
     if failures:
         print(f"prd-scenario-links: {len(failures)} failure(s)")
+        print("autonomous remediation:")
+        print(" - reconcile tests/scenarios/** with live IDs in docs/PRD.md before writing new backend tests")
+        print(" - if the issue is scenario structure, fix the scenario file; if the PRD changed, re-route through the active PRD baseline")
+        print(" - rerun: python3 tooling/scripts/governance/validate-prd-scenario-links.py")
+        print(" - if registry drift is involved, then run: bash services/api/scripts/sync-registry.sh")
     else:
         print(
             "prd-scenario-links: "

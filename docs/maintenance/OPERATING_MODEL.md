@@ -83,6 +83,8 @@ python3 tooling/scripts/governance/validate-schema-parity.py
 - Nightly extended regression: `nightly-regression` when manually dispatched plus `./gradlew gateRegression`
 - Full extended suite: `./gradlew gateFull`
 
+Merge CI includes the docs lane via `pnpm repo:docs:check`, which covers journey validation through `pnpm repo:design:check`.
+
 `gateSmoke` remains useful locally, but it is not the only verification surface.
 
 ## Documentation policy

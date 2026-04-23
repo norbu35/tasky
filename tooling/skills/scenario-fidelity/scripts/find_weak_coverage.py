@@ -24,6 +24,9 @@ try:
     import yaml
 except ImportError:
     print("find_weak_coverage: ERROR: pyyaml not installed. Run: pip3 install pyyaml", file=sys.stderr)
+    print("autonomous remediation:", file=sys.stderr)
+    print(" - install the missing dependency in the current environment", file=sys.stderr)
+    print(" - rerun: pnpm verify:scenario:fidelity", file=sys.stderr)
     sys.exit(1)
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
@@ -255,6 +258,11 @@ def main() -> int:
 
     print(json.dumps(output, indent=2))
     print(f"\nscenario-fidelity: {len(output)} candidate(s) found", file=sys.stderr)
+    if output:
+        print("autonomous remediation:", file=sys.stderr)
+        print(" - treat each candidate as a test-strengthening queue, not an automatic production-code change", file=sys.stderr)
+        print(" - confirm an existing scenario covers the behavior before editing backend tests", file=sys.stderr)
+        print(" - rerun: pnpm verify:scenario:fidelity after strengthening the affected tests/registry data", file=sys.stderr)
     return 0
 
 

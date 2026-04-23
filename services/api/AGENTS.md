@@ -52,9 +52,20 @@ Quick reference:
 
 ## Verification
 
+Run the smallest backend gate set that matches the change.
+
+Default backend validation:
+
 ```bash
 ./gradlew --no-daemon :services:api:test
 ./gradlew --no-daemon :services:api:openApiValidate
 ./gradlew --no-daemon gateSmoke
+```
+
+Conditional drift and schema checks:
+
+```bash
 python3 tooling/scripts/governance/validate-schema-parity.py
 ```
+
+Use the conditional check only when the change touches Flyway migrations or schema-owned tables and columns.

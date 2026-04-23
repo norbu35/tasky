@@ -1304,6 +1304,11 @@ def main() -> int:
             f"doc-claims: {len(failures)} failure(s) across "
             f"{len({failure.source_file for failure in failures})} file(s). Run with --json for structured output."
         )
+        print("autonomous remediation:")
+        print(" - run: pnpm repo:docs:claims:triage")
+        print(" - follow: tooling/skills/doc-claims-remediation/SKILL.md")
+        print(" - fix prose first, add claim blocks for load-bearing assertions, touch allowlist only for intentional historical/external refs")
+        print(" - rerun: pnpm repo:docs:check")
     else:
         print(f"doc-claims: PASS ({len(scan_files)} files scanned)")
 

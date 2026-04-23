@@ -5,7 +5,7 @@ Tasker identity verification upload + submission flow.
 ## Implemented API
 
 | Method | Path                              | Notes                             |
-|--------|-----------------------------------|-----------------------------------|
+| ------ | --------------------------------- | --------------------------------- |
 | `POST` | `/api/v1/verification/upload-url` | Signed upload URL for ID images   |
 | `POST` | `/api/v1/verification/submit`     | Submit front/back keys for review |
 | `GET`  | `/api/v1/verification/status`     | Current verification status       |
@@ -19,7 +19,7 @@ Tasker identity verification upload + submission flow.
 
 ## Status Model
 
-`GET /status` returns one of:
+`GET /api/v1/verification/status` returns one of:
 
 - `NOT_SUBMITTED`
 - `PENDING`

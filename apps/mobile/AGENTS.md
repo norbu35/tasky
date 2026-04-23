@@ -34,9 +34,18 @@ Additional references:
 
 ## Verification
 
+Default mobile validation:
+
 ```bash
 pnpm --filter @tasky/mobile typecheck
 pnpm --filter @tasky/mobile test:unit
-pnpm --filter @tasky/mobile structure:check
 pnpm --filter @tasky/mobile lint
 ```
+
+Conditional structural validation:
+
+```bash
+pnpm --filter @tasky/mobile structure:check
+```
+
+Run the structure gate after navigation, route-shell, import-boundary, or other mobile architectural changes.

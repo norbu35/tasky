@@ -68,10 +68,10 @@ Frontend tasks run through Turborepo via `pnpm <task>`. Backend tasks use `./gra
 Reusable repo-owned agent workflows live under `tooling/skills/**`.
 
 - Skills must remain harness-agnostic. Any harness should be able to use them by reading the nearest `SKILL.md` and running bundled scripts directly.
-- For doc-surface drift or `validate-doc-claims.py` failures, use `tooling/skills/doc-claims-remediation/SKILL.md`.
-- For PRD-first routing and ripple review, use `tooling/skills/intake-to-prd/SKILL.md`.
-- For design doc structure validation, use `tooling/skills/design-surface-drift/SKILL.md` (runs as part of `pnpm repo:docs:check`).
-- For scenario fidelity triage (report-only), use `tooling/skills/scenario-fidelity/SKILL.md`.
+- For doc-surface drift, use `tooling/skills/doc-claims-remediation/SKILL.md` reactively when `validate-doc-claims.py` fails, or proactively when editing architecture / maintenance docs or backend module `AGENTS.md` files that name live repo surfaces.
+- For PRD-first routing and ripple review, use `tooling/skills/intake-to-prd/SKILL.md`; run the narrowest matching `pnpm repo:prd:diff-ids` mode for the current workflow state instead of assuming `--staged`.
+- For design doc structure validation, use `tooling/skills/design-surface-drift/SKILL.md` only for `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, `docs/design/domain-lifecycles.yaml`, or when `pnpm repo:design:check` / `pnpm repo:docs:check` fails on those validators.
+- For scenario fidelity triage (report-only), use `tooling/skills/scenario-fidelity/SKILL.md` after writing or strengthening scenario-linked tests, or before proposing non-blocking nightly wiring.
 
 ## Workflow Rules
 
@@ -80,6 +80,8 @@ Reusable repo-owned agent workflows live under `tooling/skills/**`.
 - Merge to `staging` for integration feedback; promote `staging` to `main` only after full local verification passes.
 - Do not use `--no-verify` (or equivalent hook bypass) for pushes that target `staging` or `main`.
 - If the API changes, update `docs/openapi/**` first, regenerate `docs/API.yaml`, then regenerate `@tasky/sdk`, then implement.
+- If you edit `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, or `docs/design/domain-lifecycles.yaml`, keep machine-readable fields ID-only: use canonical screen/journey/lifecycle IDs, not prose placeholders, and run `pnpm repo:design:check` plus `pnpm repo:docs:check`.
+- If you edit `.github/workflows/quality-gates.yml` or other merge-gate wiring, keep the docs lane wired into the gate and update the matching ops/config checks and docs in the same change.
 - If a Flyway migration adds, drops, or renames a column or table, run `python3 tooling/scripts/governance/validate-schema-parity.py --update-expected` and commit the updated `tooling/config/expected-schema.json`.
 - Use the active issue or approved execution brief as the task source. Do not rely on archived plan directories.
 - Keep changes vertical and reviewable.
