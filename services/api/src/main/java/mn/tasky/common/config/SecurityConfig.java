@@ -93,6 +93,16 @@ public class SecurityConfig {
                         .hasRole("CUSTOMER")
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/tasks/*/applications")
                         .hasRole("TASKER")
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.POST,
+                                "/api/v1/tasks/*/applications/*/accept",
+                                "/api/v1/tasks/*/applications/*/select")
+                        .hasRole("CUSTOMER")
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.POST,
+                                "/api/v1/tasks/*/applications/*/confirm",
+                                "/api/v1/tasks/*/applications/*/withdraw")
+                        .hasRole("TASKER")
                         .requestMatchers("/api/v1/security/tasker/**")
                         .hasRole("TASKER")
                         .requestMatchers("/api/v1/taskers/me/service-areas")

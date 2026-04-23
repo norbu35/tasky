@@ -1223,3 +1223,84 @@
         $ref: ../components/responses.yaml#/Unauthorized
       '403':
         $ref: ../components/responses.yaml#/Forbidden
+
+/admin/bookings/{id}:
+  get:
+    tags:
+      - Admin
+    summary: Get booking detail (admin)
+    description: Retrieves full booking details for admin inspection.
+    operationId: adminGetBooking
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+    responses:
+      '200':
+        description: Booking detail.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/Booking
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+
+/admin/bookings/{id}/override-status:
+  post:
+    tags:
+      - Admin
+    summary: Override booking status (admin)
+    description: |
+      Forces a booking status transition. Used for admin dispute resolution
+      and manual intervention. Requires idempotency key.
+    operationId: adminOverrideBookingStatus
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - new_status
+              - reason
+            properties:
+              new_status:
+                type: string
+                enum:
+                  - ASSIGNED
+                  - PAID
+                  - COMPLETED
+                  - CANCELLED
+                  - NO_SHOW
+                  - DISPUTED
+              reason:
+                type: string
+                maxLength: 500
+    responses:
+      '200':
+        description: Status overridden successfully.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/bookings.yaml#/Booking
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Invalid status transition.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error

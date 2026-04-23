@@ -40,4 +40,7 @@ public interface BookingCommandPort {
 
     // Admin override
     BookingTransitionResult forceTransition(String bookingId, String newStatus);
+
+    // Dispute transition
+    void transitionToDisputed(String bookingId);
 }

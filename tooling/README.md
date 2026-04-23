@@ -4,15 +4,15 @@ This directory contains repository-level engineering tooling for maintenance and
 
 ## Layout
 
-| Path | Role | Entrypoints |
-| --- | --- | --- |
-| `tooling/config/` | Shared lint, format, TS, Vitest, and static-analysis config | Imported by workspace package configs and backend Gradle |
-| `tooling/scripts/contracts/` | OpenAPI and SDK contract automation | `package.json`, `services/api/build.gradle.kts`, `packages/sdk/package.json` |
-| `tooling/scripts/gates/` | Verification gates and wiring audits | `package.json`, `.github/workflows/**`, `services/api/build.gradle.kts` |
-| `tooling/scripts/governance/` | Docs, migration, schema, workspace, and security-ignore governance | `package.json`, `.github/workflows/**`, policy docs |
-| `tooling/scripts/deploy/` | Private staging deploy helpers and performance smoke | workflows, runbooks |
-| `tooling/scripts/manual/` | Manual diagnostics not used by default automation | humans only |
-| `tooling/observability/` | Prometheus, Grafana, and Alertmanager config | `docker-compose.observability.yml`, `tooling/scripts/observability/start-alertmanager.sh` |
+| Path                          | Role                                                               | Entrypoints                                                                               |
+| ----------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| `tooling/config/`             | Shared lint, format, TS, Vitest, and static-analysis config        | Imported by workspace package configs and backend Gradle                                  |
+| `tooling/scripts/contracts/`  | OpenAPI and SDK contract automation                                | `package.json`, `services/api/build.gradle.kts`, `packages/sdk/package.json`              |
+| `tooling/scripts/gates/`      | Verification gates and wiring audits                               | `package.json`, `.github/workflows/**`, `services/api/build.gradle.kts`                   |
+| `tooling/scripts/governance/` | Docs, migration, schema, workspace, and security-ignore governance | `package.json`, `.github/workflows/**`, policy docs                                       |
+| `tooling/scripts/deploy/`     | Private staging deploy helpers and performance smoke               | workflows, runbooks                                                                       |
+| `tooling/scripts/manual/`     | Manual diagnostics not used by default automation                  | humans only                                                                               |
+| `tooling/observability/`      | Prometheus, Grafana, and Alertmanager config                       | `docker-compose.observability.yml`, `tooling/scripts/observability/start-alertmanager.sh` |
 
 ## Canonical Entrypoints
 

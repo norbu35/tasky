@@ -115,7 +115,9 @@ public class TaskQueryService {
         List<RecentLocation> candidates = taskDao.findRecentLocationCandidates(UUID.fromString(userId));
         List<RecentLocation> accepted = new ArrayList<>();
         for (RecentLocation c : candidates) {
-            if (accepted.size() >= maxResults) break;
+            if (accepted.size() >= maxResults) {
+                break;
+            }
             boolean tooClose = accepted.stream().anyMatch(a -> isWithin200m(a, c));
             if (!tooClose) {
                 accepted.add(c);

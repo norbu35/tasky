@@ -540,6 +540,7 @@ public class TaskController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
             @PathVariable String applicationId,
+            @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
             HttpServletRequest request) {
         TaskAcceptResult result = marketplaceCommandPort.confirmAcceptance(principal.userId(), applicationId);
         if (result.isSuccess()) {
@@ -551,21 +552,15 @@ public class TaskController {
         }
         return switch (result.errorCode()) {
             case TaskAcceptResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of(
-                            "code",
-                            "NOT_FOUND",
-                            "message",
-                            "Application not found.",
-                            "trace_id",
-                            resolveTraceId(request)));
+                    .body(errorBody("NOT_FOUND", "Application not found.", request));
+            case TaskAcceptResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(errorBody("FORBIDDEN", "You do not have permission to confirm this application.", request));
+            case TaskAcceptResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(errorBody("TASK_NOT_OPEN", "Task is no longer open.", request));
+            case TaskAcceptResult.DISCLAIMER_REQUIRED -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(errorBody("DISCLAIMER_REQUIRED", "Liability disclaimer must be accepted.", request));
             case TaskAcceptResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of(
-                            "code",
-                            "CONFLICT",
-                            "message",
-                            "Selection expired or application already processed.",
-                            "trace_id",
-                            resolveTraceId(request)));
+                    .body(errorBody("CONFLICT", "Selection expired or application already processed.", request));
             default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
         };
@@ -587,21 +582,12 @@ public class TaskController {
         }
         return switch (result.errorCode()) {
             case TaskWithdrawResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of(
-                            "code",
-                            "NOT_FOUND",
-                            "message",
-                            "Application not found.",
-                            "trace_id",
-                            resolveTraceId(request)));
+                    .body(errorBody("NOT_FOUND", "Application not found.", request));
+            case TaskWithdrawResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(errorBody("FORBIDDEN", "You do not have permission to withdraw this application.", request));
             case TaskWithdrawResult.INVALID_STATUS -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of(
-                            "code",
-                            "INVALID_STATUS",
-                            "message",
-                            "Application cannot be withdrawn in its current status.",
-                            "trace_id",
-                            resolveTraceId(request)));
+                    .body(errorBody(
+                            "INVALID_STATUS", "Application cannot be withdrawn in its current status.", request));
             default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
         };

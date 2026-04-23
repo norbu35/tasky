@@ -9,7 +9,6 @@ import mn.tasky.admin.publicapi.AdminAuditCommandPort;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.publicapi.BookingCommandPort;
 import mn.tasky.booking.publicapi.BookingQueryPort;
-import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyService;
@@ -25,7 +24,6 @@ public class AdminBookingCompositionService {
     private final BookingQueryPort bookingQueryPort;
     private final BookingCommandPort bookingCommandPort;
     private final AdminAuditCommandPort adminAuditCommandPort;
-    private final AuditEventDao auditEventDao;
     private final IdempotencyService idempotencyService;
     private final ObjectMapper objectMapper;
 
@@ -33,13 +31,11 @@ public class AdminBookingCompositionService {
             BookingQueryPort bookingQueryPort,
             BookingCommandPort bookingCommandPort,
             AdminAuditCommandPort adminAuditCommandPort,
-            AuditEventDao auditEventDao,
             IdempotencyService idempotencyService,
             ObjectMapper objectMapper) {
         this.bookingQueryPort = bookingQueryPort;
         this.bookingCommandPort = bookingCommandPort;
         this.adminAuditCommandPort = adminAuditCommandPort;
-        this.auditEventDao = auditEventDao;
         this.idempotencyService = idempotencyService;
         this.objectMapper = objectMapper;
     }
@@ -85,7 +81,6 @@ public class AdminBookingCompositionService {
                     "reason", reason));
             adminAuditCommandPort.recordAdminAction(
                     adminId, "BOOKING_STATUS_OVERRIDE", "BOOKING", bookingId, metadataJson);
-            auditEventDao.insert(adminId, "BOOKING_STATUS_OVERRIDE", "BOOKING", bookingId, metadataJson);
 
             idempotencyService.completeWithResource(
                     adminId, IdempotencyOperations.CONCIERGE_ASSIGN, idempotencyKey, "BOOKING", bookingId);

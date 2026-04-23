@@ -11,4 +11,5 @@ public record ReviewRequest(
         @JsonProperty("communication_rating") @Min(1) @Max(5) Integer communicationRating,
         @JsonProperty("clarity_rating") @Min(1) @Max(5) Integer clarityRating,
         @JsonProperty("respectfulness_rating") @Min(1) @Max(5) Integer respectfulnessRating,
+        @JsonProperty("would_book_again") Boolean wouldBookAgain,
         @Size(max = 1000) String comment) {}

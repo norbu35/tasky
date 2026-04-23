@@ -95,6 +95,8 @@ class BookingScenarioTests {
                                     "DIRECT",
                                     false,
                                     null,
+                                    0,
+                                    null,
                                     createdAt,
                                     updatedAt));
                     return null;
@@ -147,6 +149,8 @@ class BookingScenarioTests {
                                         ex.settlementMode(),
                                         ex.lateCancelIncident(),
                                         ex.liabilityDisclaimerAcceptedAt(),
+                                        0,
+                                        null,
                                         ex.createdAt(),
                                         updatedAt));
                     }

@@ -31,26 +31,24 @@ public class CompletionTimeoutService {
         this.notificationService = notificationService;
     }
 
-    @Transactional
     public void processCompletionTimeouts() {
         Instant now = Instant.now();
 
-        // 72h: auto-complete
+        // Each tier runs in its own transaction so a failure in one doesn't roll back the others.
         processAutoComplete(now);
-
-        // 48h: push + SMS reminder
         processSecondReminder(now);
-
-        // 24h: push reminder
         processFirstReminder(now);
     }
 
-    private void processAutoComplete(Instant now) {
+    @Transactional
+    public void processAutoComplete(Instant now) {
         Instant threshold = now.minusSeconds(AUTOCOMPLETE_HOURS * 3600L);
         List<BookingState> candidates = bookingDao.findPendingCompletion(threshold, BATCH_LIMIT);
         for (BookingState booking : candidates) {
             try {
-                if (booking.completionReminderCount() < 2) continue;
+                if (booking.completionReminderCount() < 2) {
+                    continue;
+                }
                 bookingLifecycleService.completeBooking(booking.customerId(), booking.id());
                 notificationService.sendPush(
                         booking.customerId(),
@@ -69,12 +67,15 @@ public class CompletionTimeoutService {
         }
     }
 
-    private void processSecondReminder(Instant now) {
+    @Transactional
+    public void processSecondReminder(Instant now) {
         Instant threshold = now.minusSeconds(REMINDER_SECOND_HOURS * 3600L);
         List<BookingState> candidates = bookingDao.findPendingCompletion(threshold, BATCH_LIMIT);
         for (BookingState booking : candidates) {
             try {
-                if (booking.completionReminderCount() != 1) continue;
+                if (booking.completionReminderCount() != 1) {
+                    continue;
+                }
                 bookingDao.updateCompletionReminder(booking.id(), 2, now);
                 notificationService.sendPushWithSmsFallback(
                         booking.customerId(),
@@ -89,12 +90,15 @@ public class CompletionTimeoutService {
         }
     }
 
-    private void processFirstReminder(Instant now) {
+    @Transactional
+    public void processFirstReminder(Instant now) {
         Instant threshold = now.minusSeconds(REMINDER_FIRST_HOURS * 3600L);
         List<BookingState> candidates = bookingDao.findPendingCompletion(threshold, BATCH_LIMIT);
         for (BookingState booking : candidates) {
             try {
-                if (booking.completionReminderCount() >= 1) continue;
+                if (booking.completionReminderCount() >= 1) {
+                    continue;
+                }
                 bookingDao.updateCompletionReminder(booking.id(), 1, now);
                 notificationService.sendPush(
                         booking.customerId(),

@@ -47,8 +47,9 @@ public interface ConversationDao {
         return isParticipant(required(userId, "userId"), required(conversationId, "conversationId"));
     }
 
-    @SqlQuery(
-            "SELECT EXISTS(SELECT 1 FROM conversations WHERE id = :id AND (customer_id = :userId OR tasker_id = :userId))")
+    @SqlQuery("SELECT EXISTS("
+            + "SELECT 1 FROM conversations "
+            + "WHERE id = :id AND (customer_id = :userId OR tasker_id = :userId))")
     boolean isParticipant(@Bind("userId") UUID userId, @Bind("id") UUID conversationId);
 
     default Optional<Conversation> findByTaskAndParticipants(String taskId, String customerId, String taskerId) {

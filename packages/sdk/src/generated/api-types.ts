@@ -70,6 +70,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Logout and revoke access token
+         * @description Revokes the current access token. The token cannot be used after this call.
+         */
+        post: operations["logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/otp/request": {
         parameters: {
             query?: never;
@@ -224,6 +244,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/users/me/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get current user stats
+         * @description Returns aggregate statistics for the authenticated user.
+         */
+        get: operations["getMyStats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/verification/upload-url": {
         parameters: {
             query?: never;
@@ -279,28 +319,6 @@ export interface paths {
         get: operations["getVerificationStatus"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/verification/dan/verify": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Verify via E-Mongolia DAN (Phase 2+)
-         * @description **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
-         *     Optional fast-path verification using DAN. On provider failure/unavailability,
-         *     manual verification remains available as fallback.
-         */
-        post: operations["verifyWithDan"];
         delete?: never;
         options?: never;
         head?: never;
@@ -543,7 +561,8 @@ export interface paths {
         /**
          * Apply to a task
          * @description Tasker applies to an OPEN task. Only verified taskers can apply.
-         *     A conversation is automatically created between the customer and tasker.
+         *     The current live contract captures a short application note and optional quote_price.
+         *     Phase 1 launch UX does not expose open-ended pre-booking chat.
          */
         post: operations["applyToTask"];
         delete?: never;
@@ -562,14 +581,15 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Accept a tasker's application
-         * @description Customer accepts a tasker's application. This creates a booking in ASSIGNED status.
-         *     Phase 2+: selected tasker must complete lead unlock to reveal Customer contact details.
+         * Select a tasker's application
+         * @description Customer selects a tasker's application. This creates a pending booking intent and marks the
+         *     application as `SELECTED`.
          *     Requires `liability_disclaimer_accepted=true`.
-         *     All other pending applications for this task are automatically rejected.
+         *     The selected tasker then has the default 4-hour response window to confirm or decline.
+         *     Other applications remain available until a booking is confirmed.
          *     Requires Idempotency-Key header.
          */
-        post: operations["acceptApplication"];
+        post: operations["selectApplication"];
         delete?: never;
         options?: never;
         head?: never;
@@ -588,31 +608,9 @@ export interface paths {
         /**
          * Create booking intent for non-application confirmation sources
          * @description Creates a booking intent for a customer-owned OPEN task.
-         *     `REBOOK` is implemented. `INSTANT_MATCH` remains deferred until Phase 3+.
+         *     `REBOOK` is the only active non-application source in the current contract.
          */
         post: operations["createBookingIntent"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/tasks/{id}/instant-match": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Start instant match (Phase 3+)
-         * @description **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
-         *     Starts instant-match flow for eligible high-liquidity categories/districts.
-         *     Offer window is 5 minutes per tasker; after 3 declines/timeouts flow falls back to standard applications.
-         */
-        post: operations["startInstantMatch"];
         delete?: never;
         options?: never;
         head?: never;
@@ -674,30 +672,6 @@ export interface paths {
         get: operations["listBookingScheduleEvents"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/bookings/{id}/lead-unlock": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Tasker accepts lead and unlocks customer contact
-         * @description **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
-         *     Selected tasker accepts or declines lead within configured timeout window.
-         *     Accepting spends configured lead-unlock credits and unlocks customer contact details.
-         *     Declining does not spend credits and keeps contact details locked.
-         *     Requires Idempotency-Key header.
-         */
-        post: operations["unlockBookingLead"];
         delete?: never;
         options?: never;
         head?: never;
@@ -868,7 +842,7 @@ export interface paths {
         };
         /**
          * Get booking intent
-         * @description Returns booking intent details for the owner.
+         * @description Returns booking intent details for the owner or the selected tasker.
          */
         get: operations["getBookingIntent"];
         put?: never;
@@ -889,11 +863,33 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Confirm booking intent
-         * @description Confirms a booking intent and creates an ASSIGNED booking.
-         *     Requires `liability_disclaimer_accepted=true` and Idempotency-Key header.
+         * Tasker confirms booking intent
+         * @description The selected tasker confirms a pending booking intent within the default 4-hour response window.
+         *     This creates an ASSIGNED booking and closes the remaining applications for the task.
+         *     Requires Idempotency-Key header.
          */
         post: operations["confirmBookingIntent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/booking-intents/{id}/decline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Tasker declines booking intent
+         * @description The selected tasker declines a pending booking intent.
+         *     The customer can then return to the applicant list and choose another tasker.
+         */
+        post: operations["declineBookingIntent"];
         delete?: never;
         options?: never;
         head?: never;
@@ -941,123 +937,6 @@ export interface paths {
          *     Must be idempotent (handle duplicate callbacks gracefully).
          */
         post: operations["qpayCallback"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/credits/balance": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get lead-unlock credit balance
-         * @description **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
-         *     Tasker credit balance for lead-unlock purchases.
-         */
-        get: operations["getCreditBalance"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/credits/transactions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List credit transactions */
-        get: operations["listCreditTransactions"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/credits/packs": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List available credit packs */
-        get: operations["listCreditPacks"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/credits/purchase": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Purchase credit pack via QPay
-         * @description Creates a QPay checkout intent for selected credit pack.
-         */
-        post: operations["purchaseCreditPack"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/subscriptions/tasker": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Activate tasker subscription (Phase 3+)
-         * @description **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
-         *     Enables monthly subscription for eligible Pro taskers.
-         */
-        post: operations["activateTaskerSubscription"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/business/accounts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Create business account (future B2B path)
-         * @description **Not yet implemented — future B2B forward reference. Returns 404 until implemented.**
-         *     Creates B2B account for recurring scheduling and organization billing.
-         */
-        post: operations["createBusinessAccount"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1180,28 +1059,6 @@ export interface paths {
          * @description Returns paginated reviews received by a user.
          */
         get: operations["getUserReviews"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/referrals/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get my referral link and monthly reward status
-         * @description **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
-         *     Returns referral code/link, current monthly conversion count,
-         *     and remaining reward-eligible slots under fraud-cap policy.
-         */
-        get: operations["getMyReferralSummary"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1705,27 +1562,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/lead-unlock-prices": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List lead unlock prices
-         * @description Returns active and scheduled lead-unlock pricing rows by category and district.
-         */
-        get: operations["adminListLeadUnlockPrices"];
-        put?: never;
-        /** Create or schedule lead unlock price */
-        post: operations["adminCreateLeadUnlockPrice"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/admin/categories": {
         parameters: {
             query?: never;
@@ -2061,7 +1897,7 @@ export interface components {
             /** @enum {string} */
             role: "CUSTOMER" | "TASKER" | "ADMIN";
             /** @enum {string} */
-            status: "PENDING" | "VERIFIED" | "BANNED" | "SUSPENDED";
+            status: "PENDING" | "VERIFIED" | "ACTIVE" | "BANNED" | "SUSPENDED" | "DELETED";
             /** Format: date-time */
             created_at: string;
         };
@@ -2073,7 +1909,7 @@ export interface components {
             /** @enum {string} */
             role: "CUSTOMER" | "TASKER" | "ADMIN";
             /** @enum {string} */
-            status: "PENDING" | "VERIFIED" | "BANNED" | "SUSPENDED";
+            status: "PENDING" | "VERIFIED" | "ACTIVE" | "BANNED" | "SUSPENDED" | "DELETED";
             /** @example Бат-Эрдэнэ */
             full_name: string;
             /** Format: uri */
@@ -2202,15 +2038,23 @@ export interface components {
                 full_name: string;
                 /** Format: uri */
                 avatar_url: string | null;
-                /** Format: double */
+                /**
+                 * Format: double
+                 * @description Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
+                 */
                 rating_avg: number;
             };
             description: string;
             /**
-             * @description Fixed budget in MNT.
+             * @description Budget in MNT when pricing_mode is BUDGET. Null for QUOTE mode tasks.
              * @example 50000
              */
-            budget: number;
+            budget: number | null;
+            /**
+             * @description BUDGET = customer sets a budget, taskers accept or counter-offer. QUOTE = taskers submit price quotes.
+             * @enum {string}
+             */
+            pricing_mode?: "BUDGET" | "QUOTE";
             /**
              * @description Fuzzed location (district/khoroo level). Exact address hidden until booking.
              * @example Хан-Уул дүүрэг, 15-р хороо
@@ -2245,10 +2089,15 @@ export interface components {
             customer_id?: string;
             description: string;
             /**
-             * @description Fixed budget in MNT.
+             * @description Budget in MNT when pricing_mode is BUDGET. Null for QUOTE mode tasks.
              * @example 50000
              */
-            budget: number;
+            budget: number | null;
+            /**
+             * @description BUDGET = customer sets a budget, taskers accept or counter-offer. QUOTE = taskers submit price quotes.
+             * @enum {string}
+             */
+            pricing_mode?: "BUDGET" | "QUOTE";
             /** Format: double */
             location_lat: number;
             /** Format: double */
@@ -2298,8 +2147,13 @@ export interface components {
             /** Format: uuid */
             category_id: string;
             description: string;
-            /** @description Fixed budget in MNT. Must be at least ₮5,000. */
-            budget: number;
+            /** @description Budget in MNT. Required when pricing_mode is BUDGET. Ignored for QUOTE mode. */
+            budget?: number | null;
+            /**
+             * @description BUDGET = customer has a budget. QUOTE = customer wants taskers to quote a price.
+             * @enum {string}
+             */
+            pricing_mode: "BUDGET" | "QUOTE";
             /** Format: double */
             location_lat: number;
             /** Format: double */
@@ -2369,18 +2223,28 @@ export interface components {
                 full_name: string;
                 /** Format: uri */
                 avatar_url: string | null;
-                /** Format: double */
+                /**
+                 * Format: double
+                 * @description Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
+                 */
                 rating_avg: number;
                 completed_tasks: number;
                 is_pro: boolean;
             };
-            /** @description Tasker's cover message. */
+            /** @description Tasker's short structured application note. */
             message: string;
+            /** @description Tasker's price. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the quote (required). */
+            quote_price?: number | null;
             /** @enum {string} */
-            status: "APPLIED" | "SELECTED" | "ACCEPTED" | "DECLINED" | "EXPIRED";
+            status: "APPLIED" | "SELECTED" | "ACCEPTED" | "DECLINED" | "EXPIRED" | "WITHDRAWN";
             /** Format: double */
             relevance_score?: number | null;
             recommended?: boolean | null;
+            /**
+             * Format: date-time
+             * @description Deadline for the tasker to respond after being selected.
+             */
+            respond_by_at?: string | null;
             /** Format: date-time */
             created_at: string;
         };
@@ -2399,7 +2263,7 @@ export interface components {
             /** @description Agreed price in MNT. */
             price: number;
             /** @enum {string} */
-            status: "ASSIGNED" | "COMPLETED" | "CANCELLED" | "NO_SHOW";
+            status: "ASSIGNED" | "COMPLETED" | "CANCELLED" | "NO_SHOW" | "DISPUTED";
             /** Format: date-time */
             confirmed_scheduled_at: string;
             liability_disclaimer_accepted?: boolean;
@@ -2413,6 +2277,13 @@ export interface components {
             customer_contact_unlocked?: boolean | null;
             /** @description Phase-gated monetization field. Null when the current phase keeps cancellation fees disabled. */
             cancellation_fee?: number | null;
+            /** @description Number of completion reminders sent for this booking. */
+            completion_reminder_count?: number;
+            /**
+             * Format: date-time
+             * @description Timestamp of the most recent completion reminder.
+             */
+            completion_reminder_last_at?: string | null;
             /** Format: date-time */
             created_at: string;
             /** Format: date-time */
@@ -2428,9 +2299,11 @@ export interface components {
             /** Format: uuid */
             customer_id: string;
             /** @enum {string} */
-            source: "REBOOK" | "INSTANT_MATCH";
+            source: "APPLICATION_SELECTION" | "REBOOK" | "INSTANT_MATCH";
             /** @enum {string} */
-            status: "PENDING" | "CONFIRMED" | "EXPIRED" | "CANCELLED";
+            status: "PENDING" | "CONFIRMED" | "DECLINED" | "EXPIRED" | "CANCELLED";
+            /** Format: uuid */
+            selected_application_id?: string | null;
             /** Format: uuid */
             original_booking_id?: string | null;
             /** Format: uuid */
@@ -2460,30 +2333,6 @@ export interface components {
             reason?: string | null;
             /** Format: date-time */
             created_at: string;
-        };
-        CreditBalance: {
-            balance: number;
-            total_purchased: number;
-            total_spent: number;
-            total_refunded: number;
-        };
-        CreditTransaction: {
-            /** Format: uuid */
-            id: string;
-            amount: number;
-            /** @enum {string} */
-            type: "PURCHASE" | "SPEND" | "REFUND" | "SIGNUP_BONUS";
-            reference_id?: string | null;
-            /** Format: date-time */
-            created_at: string;
-        };
-        CreditPack: {
-            /** Format: uuid */
-            id: string;
-            name: string;
-            credit_count: number;
-            price_mnt: number;
-            is_active: boolean;
         };
         WalletBalance: {
             /**
@@ -2565,6 +2414,8 @@ export interface components {
             clarity_rating?: number;
             respectfulness_rating?: number;
             comment?: string | null;
+            /** @description Whether the reviewer would book again. */
+            would_book_again?: boolean | null;
             /** Format: date-time */
             created_at: string;
         };
@@ -2645,50 +2496,6 @@ export interface components {
             /** Format: date-time */
             updated_at: string;
         };
-        LeadUnlockPrice: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            category_id: string;
-            district_id: string;
-            credits_required: number;
-            /** Format: date-time */
-            effective_from: string;
-            /** Format: date-time */
-            effective_to?: string | null;
-        };
-        TaskerSubscription: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            tasker_id: string;
-            /** @enum {string} */
-            status: "ACTIVE" | "CANCELLED" | "EXPIRED";
-            /** Format: date-time */
-            started_at: string;
-            /** Format: date-time */
-            expires_at?: string | null;
-        };
-        BusinessAccount: {
-            /** Format: uuid */
-            id: string;
-            name: string;
-            /** @enum {string} */
-            status: "ACTIVE" | "INACTIVE";
-            billing_profile?: {
-                [key: string]: unknown;
-            };
-            /** Format: date-time */
-            created_at: string;
-        };
-        ReferralSummary: {
-            referral_code: string;
-            /** Format: uri */
-            referral_link: string;
-            successful_referrals_this_month: number;
-            /** @description Remaining successful referrals eligible for rewards within monthly cap. */
-            remaining_reward_capacity_this_month?: number;
-        };
         ReverseGeocodeResponse: {
             formatted_address: string;
             district: string;
@@ -2748,15 +2555,6 @@ export interface components {
             /** Format: double */
             lng: number;
             district?: string | null;
-        };
-        LeadUnlockPricePayload: {
-            category_id: string;
-            district_id: string;
-            credits_required: number;
-            /** Format: date-time */
-            effective_from: string;
-            /** Format: date-time */
-            effective_to?: string | null;
         };
         AdminDisputeDetail: {
             dispute: {
@@ -2975,6 +2773,25 @@ export interface operations {
                     };
                 };
             };
+        };
+    };
+    logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Token revoked successfully. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
         };
     };
     requestOtp: {
@@ -3284,6 +3101,39 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
         };
     };
+    getMyStats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User statistics. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example 12 */
+                        completed_tasks: number;
+                        /**
+                         * Format: double
+                         * @example 4.8
+                         */
+                        rating_avg: number;
+                        /** Format: date-time */
+                        last_active_at?: string | null;
+                        /** Format: date-time */
+                        joined_at?: string | null;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
     getVerificationUploadUrl: {
         parameters: {
             query?: never;
@@ -3379,42 +3229,6 @@ export interface operations {
                 };
             };
             401: components["responses"]["Unauthorized"];
-        };
-    };
-    verifyWithDan: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    dan_token: string;
-                };
-            };
-        };
-        responses: {
-            /** @description DAN verification processed. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VerificationStatus"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            /** @description DAN provider unavailable. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
         };
     };
     listCategories: {
@@ -3881,8 +3695,10 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** @description Cover message explaining why the tasker is a good fit. */
+                    /** @description Short application note. */
                     message: string;
+                    /** @description Tasker's price response. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the required quote. */
+                    quote_price?: number | null;
                 };
             };
         };
@@ -3919,7 +3735,7 @@ export interface operations {
             };
         };
     };
-    acceptApplication: {
+    selectApplication: {
         parameters: {
             query?: never;
             header: {
@@ -3936,7 +3752,7 @@ export interface operations {
             content: {
                 "application/json": {
                     /**
-                     * @description Must be `true` to confirm booking.
+                     * @description Must be `true` to create the booking request.
                      * @enum {boolean}
                      */
                     liability_disclaimer_accepted: true;
@@ -3944,19 +3760,19 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Application accepted, booking created. */
-            200: {
+            /** @description Booking intent created for the selected application. */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Booking"];
+                    "application/json": components["schemas"]["BookingIntent"];
                 };
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
-            /** @description Application already processed or task is not OPEN. */
+            /** @description Application already processed, selection already pending, or task is not OPEN. */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -3989,7 +3805,7 @@ export interface operations {
             content: {
                 "application/json": {
                     /** @enum {string} */
-                    source: "REBOOK" | "INSTANT_MATCH";
+                    source: "REBOOK";
                     /** Format: uuid */
                     tasker_id: string;
                     /** Format: uuid */
@@ -4014,47 +3830,6 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             /** @description Task or source constraints not satisfiable. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    startInstantMatch: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
-                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
-            };
-            path: {
-                id: components["parameters"]["PathId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Instant match started or booking immediately assigned. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @enum {string} */
-                        mode?: "INSTANT_MATCH_STARTED" | "BOOKING_ASSIGNED" | "FALLBACK_TO_APPLICATIONS";
-                        booking?: components["schemas"]["Booking"];
-                    };
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            /** @description Task not eligible for instant match. */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -4149,75 +3924,6 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
-        };
-    };
-    unlockBookingLead: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
-                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
-            };
-            path: {
-                id: components["parameters"]["PathId"];
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description True spends credits and unlocks contact; false declines without debit. */
-                    accept: boolean;
-                };
-            };
-        };
-        responses: {
-            /** @description Lead response processed. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        booking: components["schemas"]["Booking"];
-                        /** @enum {boolean} */
-                        accepted: true;
-                        /** @example 1 */
-                        credits_spent: number;
-                        /** @enum {boolean} */
-                        customer_contact_unlocked: true;
-                    } | {
-                        booking: components["schemas"]["Booking"];
-                        /** @enum {boolean} */
-                        accepted: false;
-                        /** @enum {integer} */
-                        credits_spent: 0;
-                        /** @enum {boolean} */
-                        customer_contact_unlocked: false;
-                    };
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            /** @description Booking is not eligible for lead unlock or has already been unlocked. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-            /** @description Monetization feature is disabled for the current rollout phase. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
         };
     };
     cancelBooking: {
@@ -4539,14 +4245,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @enum {boolean} */
-                    liability_disclaimer_accepted: true;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Booking created from intent. */
             200: {
@@ -4562,6 +4261,43 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             /** @description Intent or task status does not allow confirmation. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    declineBookingIntent: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
+            };
+            path: {
+                id: components["parameters"]["PathId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Booking intent declined. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingIntent"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Intent is not pending or already resolved. */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -4686,232 +4422,6 @@ export interface operations {
                 };
             };
             /** @description Monetization feature is disabled for the current rollout phase. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    getCreditBalance: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Credit balance. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CreditBalance"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            /** @description Credit system disabled for current rollout phase. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    listCreditTransactions: {
-        parameters: {
-            query?: {
-                /** @description Opaque cursor for pagination. Pass the `next` value from a previous response. */
-                cursor?: components["parameters"]["CursorParam"];
-                /** @description Maximum number of items to return (default 20, max 100). */
-                limit?: components["parameters"]["LimitParam"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Paginated credit transaction history. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data: components["schemas"]["CreditTransaction"][];
-                        cursor: components["schemas"]["CursorPagination"];
-                    };
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            /** @description Credit system disabled for current rollout phase. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    listCreditPacks: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Active credit packs. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data: components["schemas"]["CreditPack"][];
-                    };
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            /** @description Credit system disabled for current rollout phase. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    purchaseCreditPack: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
-                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** Format: uuid */
-                    pack_id: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Purchase intent created. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** Format: uri */
-                        payment_url: string;
-                        qr_code: string;
-                        pack: components["schemas"]["CreditPack"];
-                    };
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            404: components["responses"]["NotFound"];
-            /** @description Credit system disabled for current rollout phase. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    activateTaskerSubscription: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
-                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    plan_code: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Subscription activated. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TaskerSubscription"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            /** @description Subscription feature disabled for current rollout phase. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    createBusinessAccount: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    name: string;
-                    billing_profile?: {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-        };
-        responses: {
-            /** @description Business account created. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BusinessAccount"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            /** @description B2B feature disabled for current rollout phase. */
             503: {
                 headers: {
                     [name: string]: unknown;
@@ -5143,36 +4653,6 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
-        };
-    };
-    getMyReferralSummary: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Referral summary. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReferralSummary"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            /** @description Referral feature is disabled for the current rollout phase. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
         };
     };
     raiseDispute: {
@@ -6057,72 +5537,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FeatureToggle"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-        };
-    };
-    adminListLeadUnlockPrices: {
-        parameters: {
-            query?: {
-                /** @description Opaque cursor for pagination. Pass the `next` value from a previous response. */
-                cursor?: components["parameters"]["CursorParam"];
-                /** @description Maximum number of items to return (default 20, max 100). */
-                limit?: components["parameters"]["LimitParam"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Paginated price rows. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        data: components["schemas"]["LeadUnlockPrice"][];
-                        cursor: components["schemas"]["CursorPagination"];
-                    };
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-        };
-    };
-    adminCreateLeadUnlockPrice: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** Format: uuid */
-                    category_id: string;
-                    district_id: string;
-                    credits_required: number;
-                    /** Format: date-time */
-                    effective_from: string;
-                    /** Format: date-time */
-                    effective_to?: string | null;
-                };
-            };
-        };
-        responses: {
-            /** @description Price row created. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LeadUnlockPrice"];
                 };
             };
             400: components["responses"]["BadRequest"];

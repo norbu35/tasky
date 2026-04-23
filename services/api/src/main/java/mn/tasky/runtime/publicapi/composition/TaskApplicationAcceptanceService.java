@@ -27,10 +27,13 @@ public class TaskApplicationAcceptanceService {
             String idempotencyKey) {
         IdempotencyClaim claim =
                 idempotencyService.claim(customerId, IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey);
-        if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) return TaskApplicationAcceptanceOutcome.inProgress();
+        if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
+            return TaskApplicationAcceptanceOutcome.inProgress();
+        }
         if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
-            if (claim.record() == null || claim.record().resourceId() == null)
+            if (claim.record() == null || claim.record().resourceId() == null) {
                 return TaskApplicationAcceptanceOutcome.replayMissing();
+            }
             Map<String, Object> body =
                     Map.of("application_id", claim.record().resourceId().toString(), "status", "SELECTED");
             return TaskApplicationAcceptanceOutcome.success(body);

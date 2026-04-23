@@ -64,22 +64,35 @@ public class TaskApplicationService {
 
     public TaskApplyResult applyToTask(
             String taskerId, String taskerRole, String taskId, String message, Integer quotePrice) {
-        if (reviewEnforcementService.isUserLocked(taskerId))
+        if (reviewEnforcementService.isUserLocked(taskerId)) {
             return new TaskApplyResult(null, TaskApplyResult.REVIEW_LOCK_ACTIVE);
+        }
         Optional<TaskState> taskOpt = taskDao.findById(taskId);
-        if (taskOpt.isEmpty()) return TaskApplyResult.NOT_FOUND_RESULT;
+        if (taskOpt.isEmpty()) {
+            return TaskApplyResult.NOT_FOUND_RESULT;
+        }
         TaskState task = taskOpt.get();
-        if (!"TASKER".equals(taskerRole) || task.customerId().equals(taskerId)) return TaskApplyResult.FORBIDDEN_RESULT;
-        if (!"OPEN".equals(task.status()) || taskApplicationDao.hasAccepted(taskId))
+        if (!"TASKER".equals(taskerRole) || task.customerId().equals(taskerId)) {
+            return TaskApplyResult.FORBIDDEN_RESULT;
+        }
+        if (!"OPEN".equals(task.status()) || taskApplicationDao.hasAccepted(taskId)) {
             return TaskApplyResult.TASK_NOT_OPEN_RESULT;
+        }
         Optional<UserProfile> profileOpt = userProfileService.getProfile(taskerId);
-        if (profileOpt.isEmpty()) return TaskApplyResult.FORBIDDEN_RESULT;
+        if (profileOpt.isEmpty()) {
+            return TaskApplyResult.FORBIDDEN_RESULT;
+        }
         UserProfile profile = profileOpt.get();
-        if (!"VERIFIED".equals(profile.status())) return TaskApplyResult.FORBIDDEN_RESULT;
-        if (taskApplicationDao.existsByTaskIdAndTaskerId(taskId, taskerId))
+        if (!"VERIFIED".equals(profile.status())) {
+            return TaskApplyResult.FORBIDDEN_RESULT;
+        }
+        if (taskApplicationDao.existsByTaskIdAndTaskerId(taskId, taskerId)) {
             return TaskApplyResult.DUPLICATE_APPLICATION_RESULT;
+        }
         boolean isQuoteMode = PricingMode.QUOTE.name().equals(task.pricingMode());
-        if (isQuoteMode && quotePrice == null) return new TaskApplyResult(null, TaskApplyResult.QUOTE_PRICE_REQUIRED);
+        if (isQuoteMode && quotePrice == null) {
+            return new TaskApplyResult(null, TaskApplyResult.QUOTE_PRICE_REQUIRED);
+        }
         String applicationId = UUID.randomUUID().toString();
         String sanitizedMessage = TextSanitizer.plainText(message);
         taskApplicationDao.insert(
@@ -116,9 +129,13 @@ public class TaskApplicationService {
 
     public TaskApplicationsListResult listTaskApplications(String userId, String taskId, String cursor, int limit) {
         Optional<TaskState> taskOpt = taskDao.findById(taskId);
-        if (taskOpt.isEmpty()) return TaskApplicationsListResult.NOT_FOUND_RESULT;
+        if (taskOpt.isEmpty()) {
+            return TaskApplicationsListResult.NOT_FOUND_RESULT;
+        }
         TaskState task = taskOpt.get();
-        if (!task.customerId().equals(userId)) return TaskApplicationsListResult.FORBIDDEN_RESULT;
+        if (!task.customerId().equals(userId)) {
+            return TaskApplicationsListResult.FORBIDDEN_RESULT;
+        }
         List<TaskApplicationState> applications = taskApplicationDao.findByTaskId(taskId, cursor, limit);
         return TaskApplicationsListResult.success(List.copyOf(applications));
     }
@@ -130,16 +147,27 @@ public class TaskApplicationService {
     @Transactional
     public TaskSelectResult selectApplication(String customerId, String taskId, String applicationId) {
         Optional<TaskState> taskOpt = taskDao.findById(taskId);
-        if (taskOpt.isEmpty()) return TaskSelectResult.NOT_FOUND_RESULT;
-        TaskState task = taskOpt.get();
-        if (!task.customerId().equals(customerId)) return TaskSelectResult.FORBIDDEN_RESULT;
-        if (!"OPEN".equals(task.status())) return TaskSelectResult.TASK_NOT_OPEN_RESULT;
-        if (taskApplicationDao.hasAccepted(taskId)) return TaskSelectResult.CONFLICT_RESULT;
-        Optional<TaskApplicationState> selectedOpt = taskApplicationDao.findById(applicationId);
-        if (selectedOpt.isEmpty() || !taskId.equals(selectedOpt.get().taskId()))
+        if (taskOpt.isEmpty()) {
             return TaskSelectResult.NOT_FOUND_RESULT;
+        }
+        TaskState task = taskOpt.get();
+        if (!task.customerId().equals(customerId)) {
+            return TaskSelectResult.FORBIDDEN_RESULT;
+        }
+        if (!"OPEN".equals(task.status())) {
+            return TaskSelectResult.TASK_NOT_OPEN_RESULT;
+        }
+        if (taskApplicationDao.hasAccepted(taskId)) {
+            return TaskSelectResult.CONFLICT_RESULT;
+        }
+        Optional<TaskApplicationState> selectedOpt = taskApplicationDao.findById(applicationId);
+        if (selectedOpt.isEmpty() || !taskId.equals(selectedOpt.get().taskId())) {
+            return TaskSelectResult.NOT_FOUND_RESULT;
+        }
         TaskApplicationState selected = selectedOpt.get();
-        if (!"APPLIED".equals(selected.status())) return TaskSelectResult.CONFLICT_RESULT;
+        if (!"APPLIED".equals(selected.status())) {
+            return TaskSelectResult.CONFLICT_RESULT;
+        }
         Instant now = Instant.now();
         Instant respondBy = now.plusSeconds(SELECTION_WINDOW_HOURS * 3600);
         taskApplicationDao.updateSelection(selected.id(), "SELECTED", now, respondBy);
@@ -166,20 +194,31 @@ public class TaskApplicationService {
     @Transactional
     public TaskAcceptResult confirmAcceptance(String taskerId, String applicationId) {
         Optional<TaskApplicationState> selectedOpt = taskApplicationDao.findByTaskerAndId(taskerId, applicationId);
-        if (selectedOpt.isEmpty()) return TaskAcceptResult.NOT_FOUND_RESULT;
+        if (selectedOpt.isEmpty()) {
+            return TaskAcceptResult.NOT_FOUND_RESULT;
+        }
         TaskApplicationState selected = selectedOpt.get();
-        if (!"SELECTED".equals(selected.status())) return TaskAcceptResult.CONFLICT_RESULT;
-        if (selected.respondByAt() != null && Instant.now().isAfter(selected.respondByAt()))
+        if (!"SELECTED".equals(selected.status())) {
             return TaskAcceptResult.CONFLICT_RESULT;
+        }
+        if (selected.respondByAt() != null && Instant.now().isAfter(selected.respondByAt())) {
+            return TaskAcceptResult.CONFLICT_RESULT;
+        }
         Optional<TaskState> taskOpt = taskDao.findById(selected.taskId());
-        if (taskOpt.isEmpty()) return TaskAcceptResult.NOT_FOUND_RESULT;
+        if (taskOpt.isEmpty()) {
+            return TaskAcceptResult.NOT_FOUND_RESULT;
+        }
         TaskState task = taskOpt.get();
-        if (taskApplicationDao.hasAccepted(selected.taskId())) return TaskAcceptResult.CONFLICT_RESULT;
+        if (taskApplicationDao.hasAccepted(selected.taskId())) {
+            return TaskAcceptResult.CONFLICT_RESULT;
+        }
         taskApplicationDao.updateStatus(selected.id(), "ACCEPTED");
         taskApplicationDao.rejectOthers(selected.taskId(), selected.id());
         int bookingPrice;
         if (PricingMode.QUOTE.name().equals(task.pricingMode())) {
-            if (selected.quotePrice() == null) return new TaskAcceptResult(null, "QUOTE_PRICE_MISSING");
+            if (selected.quotePrice() == null) {
+                return new TaskAcceptResult(null, "QUOTE_PRICE_MISSING");
+            }
             bookingPrice = selected.quotePrice();
         } else {
             bookingPrice = task.budget() != null ? task.budget() : 0;
@@ -235,10 +274,13 @@ public class TaskApplicationService {
     @Transactional
     public TaskWithdrawResult withdrawApplication(String taskerId, String applicationId) {
         Optional<TaskApplicationState> appOpt = taskApplicationDao.findByTaskerAndId(taskerId, applicationId);
-        if (appOpt.isEmpty()) return TaskWithdrawResult.NOT_FOUND_RESULT;
+        if (appOpt.isEmpty()) {
+            return TaskWithdrawResult.NOT_FOUND_RESULT;
+        }
         TaskApplicationState application = appOpt.get();
-        if (!"APPLIED".equals(application.status()) && !"SELECTED".equals(application.status()))
+        if (!"APPLIED".equals(application.status()) && !"SELECTED".equals(application.status())) {
             return TaskWithdrawResult.INVALID_STATUS_RESULT;
+        }
         taskApplicationDao.updateStatus(application.id(), "WITHDRAWN");
         boolean wasSelected = "SELECTED".equals(application.status());
         if (wasSelected) {
@@ -277,22 +319,37 @@ public class TaskApplicationService {
     public TaskAcceptResult acceptApplication(
             String customerId, String taskId, String applicationId, boolean liabilityDisclaimerAccepted) {
         Optional<TaskState> taskOpt = taskDao.findById(taskId);
-        if (taskOpt.isEmpty()) return TaskAcceptResult.NOT_FOUND_RESULT;
-        TaskState task = taskOpt.get();
-        if (!task.customerId().equals(customerId)) return TaskAcceptResult.FORBIDDEN_RESULT;
-        if (!"OPEN".equals(task.status())) return TaskAcceptResult.TASK_NOT_OPEN_RESULT;
-        if (!liabilityDisclaimerAccepted) return TaskAcceptResult.DISCLAIMER_REQUIRED_RESULT;
-        if (taskApplicationDao.hasAccepted(taskId)) return TaskAcceptResult.CONFLICT_RESULT;
-        Optional<TaskApplicationState> selectedOpt = taskApplicationDao.findById(applicationId);
-        if (selectedOpt.isEmpty() || !taskId.equals(selectedOpt.get().taskId()))
+        if (taskOpt.isEmpty()) {
             return TaskAcceptResult.NOT_FOUND_RESULT;
+        }
+        TaskState task = taskOpt.get();
+        if (!task.customerId().equals(customerId)) {
+            return TaskAcceptResult.FORBIDDEN_RESULT;
+        }
+        if (!"OPEN".equals(task.status())) {
+            return TaskAcceptResult.TASK_NOT_OPEN_RESULT;
+        }
+        if (!liabilityDisclaimerAccepted) {
+            return TaskAcceptResult.DISCLAIMER_REQUIRED_RESULT;
+        }
+        if (taskApplicationDao.hasAccepted(taskId)) {
+            return TaskAcceptResult.CONFLICT_RESULT;
+        }
+        Optional<TaskApplicationState> selectedOpt = taskApplicationDao.findById(applicationId);
+        if (selectedOpt.isEmpty() || !taskId.equals(selectedOpt.get().taskId())) {
+            return TaskAcceptResult.NOT_FOUND_RESULT;
+        }
         TaskApplicationState selected = selectedOpt.get();
-        if (!"APPLIED".equals(selected.status())) return TaskAcceptResult.CONFLICT_RESULT;
+        if (!"APPLIED".equals(selected.status())) {
+            return TaskAcceptResult.CONFLICT_RESULT;
+        }
         taskApplicationDao.updateStatus(selected.id(), "ACCEPTED");
         taskApplicationDao.rejectOthers(taskId, selected.id());
         int bookingPrice;
         if (PricingMode.QUOTE.name().equals(task.pricingMode())) {
-            if (selected.quotePrice() == null) return new TaskAcceptResult(null, "QUOTE_PRICE_MISSING");
+            if (selected.quotePrice() == null) {
+                return new TaskAcceptResult(null, "QUOTE_PRICE_MISSING");
+            }
             bookingPrice = selected.quotePrice();
         } else {
             bookingPrice = task.budget() != null ? task.budget() : 0;

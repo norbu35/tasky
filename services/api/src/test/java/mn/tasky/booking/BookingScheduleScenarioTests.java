@@ -67,6 +67,8 @@ class BookingScheduleScenarioTests {
                 "DIRECT",
                 false,
                 null,
+                0,
+                null,
                 Instant.now().minus(1, ChronoUnit.HOURS),
                 Instant.now());
     }
@@ -145,6 +147,8 @@ class BookingScheduleScenarioTests {
                 "DIRECT",
                 false,
                 null,
+                0,
+                null,
                 Instant.now().minus(1, ChronoUnit.HOURS),
                 Instant.now());
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(booking));
@@ -188,6 +192,8 @@ class BookingScheduleScenarioTests {
                 originalSchedule,
                 "DIRECT",
                 false,
+                null,
+                0,
                 null,
                 Instant.now().minus(1, ChronoUnit.HOURS),
                 Instant.now());

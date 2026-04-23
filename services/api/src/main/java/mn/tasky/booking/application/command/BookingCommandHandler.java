@@ -95,4 +95,9 @@ public class BookingCommandHandler implements BookingCommandPort {
     public BookingTransitionResult forceTransition(String bookingId, String newStatus) {
         return bookingService.forceTransition(bookingId, newStatus);
     }
+
+    @Override
+    public void transitionToDisputed(String bookingId) {
+        bookingService.transitionToDisputed(bookingId);
+    }
 }

@@ -46,6 +46,10 @@
                 type: string
                 maxLength: 1000
                 nullable: true
+              would_book_again:
+                type: boolean
+                nullable: true
+                description: Whether the reviewer would book again (customer-only).
     responses:
       '201':
         description: Review submitted.

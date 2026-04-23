@@ -105,7 +105,9 @@ public class BookingService {
 
     public Optional<BookingState> recordDisclaimerAcceptance(String bookingId) {
         Optional<BookingState> bookingOpt = bookingDao.findById(bookingId);
-        if (bookingOpt.isEmpty()) return Optional.empty();
+        if (bookingOpt.isEmpty()) {
+            return Optional.empty();
+        }
         BookingState current = bookingOpt.get();
         Instant now = Instant.now();
         bookingDao.update(bookingId, current.status(), current.cancellationFee(), true, now);
@@ -121,8 +123,11 @@ public class BookingService {
     }
 
     public List<BookingState> listBookings(String userId, String role, String status, String cursor, int limit) {
-        if ("customer".equalsIgnoreCase(role)) return bookingDao.findByCustomerId(userId, status, cursor, limit);
-        else if ("tasker".equalsIgnoreCase(role)) return bookingDao.findByTaskerId(userId, status, cursor, limit);
+        if ("customer".equalsIgnoreCase(role)) {
+            return bookingDao.findByCustomerId(userId, status, cursor, limit);
+        } else if ("tasker".equalsIgnoreCase(role)) {
+            return bookingDao.findByTaskerId(userId, status, cursor, limit);
+        }
         return bookingDao.findByParticipant(userId, status, cursor, limit);
     }
 
@@ -133,9 +138,13 @@ public class BookingService {
 
     private BookingTransitionResult transition(String bookingId, String newStatus, List<String> allowedFrom) {
         Optional<BookingState> currentOpt = bookingDao.findByIdForUpdate(bookingId);
-        if (currentOpt.isEmpty()) return BookingTransitionResult.NOT_FOUND_RESULT;
+        if (currentOpt.isEmpty()) {
+            return BookingTransitionResult.NOT_FOUND_RESULT;
+        }
         BookingState current = currentOpt.get();
-        if (!allowedFrom.contains(current.status())) return BookingTransitionResult.INVALID_TRANSITION_RESULT;
+        if (!allowedFrom.contains(current.status())) {
+            return BookingTransitionResult.INVALID_TRANSITION_RESULT;
+        }
         String oldStatus = current.status();
         Instant now = Instant.now();
         Integer fee = current.cancellationFee();
@@ -167,22 +176,32 @@ public class BookingService {
     @Transactional
     public BookingTransitionResult completeBooking(String userId, String bookingId) {
         Optional<BookingState> bookingOpt = bookingDao.findById(bookingId);
-        if (bookingOpt.isEmpty()) return BookingTransitionResult.NOT_FOUND_RESULT;
+        if (bookingOpt.isEmpty()) {
+            return BookingTransitionResult.NOT_FOUND_RESULT;
+        }
         BookingState booking = bookingOpt.get();
-        if (!booking.customerId().equals(userId)) return BookingTransitionResult.FORBIDDEN_RESULT;
+        if (!booking.customerId().equals(userId)) {
+            return BookingTransitionResult.FORBIDDEN_RESULT;
+        }
         BookingTransitionResult result = transition(bookingId, "COMPLETED", List.of("ASSIGNED", "PAID", "DISPUTED"));
-        if (result.isSuccess()) userProfileService.updateUserStats(booking.taskerId(), 0, true);
+        if (result.isSuccess()) {
+            userProfileService.updateUserStats(booking.taskerId(), 0, true);
+        }
         return result;
     }
 
     @Transactional
     public BookingTransitionResult cancelBooking(String userId, String bookingId, Instant scheduledAt) {
         Optional<BookingState> bookingOpt = bookingDao.findById(bookingId);
-        if (bookingOpt.isEmpty()) return BookingTransitionResult.NOT_FOUND_RESULT;
+        if (bookingOpt.isEmpty()) {
+            return BookingTransitionResult.NOT_FOUND_RESULT;
+        }
         BookingState booking = bookingOpt.get();
         boolean isCustomer = booking.customerId().equals(userId);
         boolean isTasker = booking.taskerId().equals(userId);
-        if (!isCustomer && !isTasker) return BookingTransitionResult.FORBIDDEN_RESULT;
+        if (!isCustomer && !isTasker) {
+            return BookingTransitionResult.FORBIDDEN_RESULT;
+        }
         boolean lateCustomerCancellation = isCustomer && isLateCancellation(scheduledAt);
         BookingTransitionResult result = transition(bookingId, "CANCELLED", List.of("ASSIGNED", "PAID", "DISPUTED"));
         if (result.isSuccess() && lateCustomerCancellation) {
@@ -201,14 +220,17 @@ public class BookingService {
                             ? "Customer cancelled within 4 hours. Warning issued."
                             : "Customer cancelled within 4 hours. Ranking penalty and Instant Match disabled.",
                     Instant.now());
-            if ("CUSTOMER_LATE_CANCEL_PENALTY".equals(incidentType))
+            if ("CUSTOMER_LATE_CANCEL_PENALTY".equals(incidentType)) {
                 userProfileService.revokeInstantMatch(userId, java.time.Duration.ofDays(30));
+            }
         }
         return result;
     }
 
     private boolean isLateCancellation(Instant scheduledAt) {
-        if (scheduledAt == null) return false;
+        if (scheduledAt == null) {
+            return false;
+        }
         return Instant.now().isAfter(scheduledAt.minus(4, java.time.temporal.ChronoUnit.HOURS));
     }
 
@@ -219,16 +241,23 @@ public class BookingService {
     public BookingMarkDoneResult markBookingDone(
             String userId, String bookingId, @Nullable String proofPhotoKey, @Nullable String proofNote) {
         Optional<BookingState> bookingOpt = bookingDao.findById(bookingId);
-        if (bookingOpt.isEmpty()) return BookingMarkDoneResult.NOT_FOUND_RESULT;
+        if (bookingOpt.isEmpty()) {
+            return BookingMarkDoneResult.NOT_FOUND_RESULT;
+        }
         BookingState booking = bookingOpt.get();
-        if (!booking.taskerId().equals(userId)) return BookingMarkDoneResult.FORBIDDEN_RESULT;
-        if (!"ASSIGNED".equals(booking.status()) && !"PAID".equals(booking.status()))
+        if (!booking.taskerId().equals(userId)) {
+            return BookingMarkDoneResult.FORBIDDEN_RESULT;
+        }
+        if (!"ASSIGNED".equals(booking.status()) && !"PAID".equals(booking.status())) {
             return BookingMarkDoneResult.INVALID_TRANSITION_RESULT;
+        }
         Instant now = Instant.now();
         int inserted;
-        if (proofPhotoKey != null || proofNote != null)
+        if (proofPhotoKey != null || proofNote != null) {
             inserted = bookingCompletionSignalDao.markDoneWithProof(bookingId, userId, now, proofPhotoKey, proofNote);
-        else inserted = bookingCompletionSignalDao.markDone(bookingId, userId, now);
+        } else {
+            inserted = bookingCompletionSignalDao.markDone(bookingId, userId, now);
+        }
         log.info("Tasker {} marked booking {} as done", userId, bookingId);
         Instant markedDoneAt = bookingCompletionSignalDao
                 .findByBookingId(bookingId)
@@ -244,7 +273,9 @@ public class BookingService {
     @Transactional
     public BookingTransitionResult forceTransition(String bookingId, String newStatus) {
         var bookingOpt = bookingDao.findByIdForUpdate(bookingId);
-        if (bookingOpt.isEmpty()) return BookingTransitionResult.NOT_FOUND_RESULT;
+        if (bookingOpt.isEmpty()) {
+            return BookingTransitionResult.NOT_FOUND_RESULT;
+        }
         BookingState current = bookingOpt.get();
         Instant now = Instant.now();
         bookingDao.updateStatus(bookingId, newStatus, now);
@@ -260,10 +291,13 @@ public class BookingService {
     @Transactional
     public BookingTransitionResult transitionToDisputed(String bookingId) {
         var bookingOpt = bookingDao.findByIdForUpdate(bookingId);
-        if (bookingOpt.isEmpty()) return BookingTransitionResult.NOT_FOUND_RESULT;
+        if (bookingOpt.isEmpty()) {
+            return BookingTransitionResult.NOT_FOUND_RESULT;
+        }
         BookingState current = bookingOpt.get();
-        if (!"ASSIGNED".equals(current.status()) && !"PAID".equals(current.status()))
+        if (!"ASSIGNED".equals(current.status()) && !"PAID".equals(current.status())) {
             return BookingTransitionResult.error("INVALID_TRANSITION", "Can only dispute ASSIGNED or PAID bookings");
+        }
         Instant now = Instant.now();
         bookingDao.updateStatus(bookingId, "DISPUTED", now);
         meterRegistry

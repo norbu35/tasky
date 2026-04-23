@@ -58,7 +58,8 @@ public class ReviewService {
             Integer communicationRating,
             Integer clarityRating,
             Integer respectfulnessRating,
-            String comment) {
+            String comment,
+            Boolean wouldBookAgain) {
 
         var bookingOpt = bookingService.getBooking(bookingId);
         if (bookingOpt.isEmpty()) {
@@ -130,6 +131,7 @@ public class ReviewService {
                 effectiveClarityRating,
                 effectiveRespectfulnessRating,
                 sanitizedComment,
+                isCustomerReviewingTasker ? wouldBookAgain : null,
                 now);
         reviewDao.insert(
                 id,
@@ -142,6 +144,7 @@ public class ReviewService {
                 effectiveClarityRating,
                 effectiveRespectfulnessRating,
                 sanitizedComment,
+                isCustomerReviewingTasker ? wouldBookAgain : null,
                 now);
 
         userProfileService.updateUserStats(targetUserId, reviewAverage, false);

@@ -47,6 +47,7 @@ public class UserProfileService {
     private final RefreshSessionDao refreshSessionDao;
     private final boolean otpEnabled;
     private final boolean devAuthEnabled;
+    private final int minReviewCountForPublicRating;
 
     public UserProfileService(
             UserDao userDao,
@@ -59,7 +60,8 @@ public class UserProfileService {
             JwtTokenService jwtTokenService,
             RefreshSessionDao refreshSessionDao,
             @Value("${tasky.otp.enabled:false}") boolean otpEnabled,
-            @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled) {
+            @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled,
+            @Value("${tasky.reviews.min-count-for-public-rating:3}") int minReviewCountForPublicRating) {
         this.userDao = userDao;
         this.profileDao = profileDao;
         this.badgeDao = badgeDao;
@@ -71,6 +73,7 @@ public class UserProfileService {
         this.refreshSessionDao = refreshSessionDao;
         this.otpEnabled = otpEnabled;
         this.devAuthEnabled = devAuthEnabled;
+        this.minReviewCountForPublicRating = minReviewCountForPublicRating;
     }
 
     /**
@@ -268,6 +271,7 @@ public class UserProfileService {
     private UserProfile toProfile(AuthUser user, UserProfileState profile) {
         boolean isPro =
                 badgeDao.findActiveByTaskerId(user.id()).stream().anyMatch(badge -> "PRO".equals(badge.badgeType()));
+        Double ratingAvg = profile.completedTasks() < minReviewCountForPublicRating ? null : profile.ratingAvg();
         return new UserProfile(
                 user.id(),
                 decryptPhone(user.phone()),
@@ -276,7 +280,7 @@ public class UserProfileService {
                 profile.fullName(),
                 profile.avatarUrl(),
                 profile.bio(),
-                profile.ratingAvg(),
+                ratingAvg,
                 profile.completedTasks(),
                 isPro,
                 user.createdAt().toString());

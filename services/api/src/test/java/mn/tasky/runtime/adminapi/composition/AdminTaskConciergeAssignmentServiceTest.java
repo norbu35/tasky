@@ -138,6 +138,8 @@ class AdminTaskConciergeAssignmentServiceTest {
                 "CONCIERGE",
                 false,
                 Instant.now(),
+                0,
+                null,
                 Instant.now(),
                 Instant.now());
         when(bookingCommandPort.createBooking(anyString(), anyString(), anyString(), anyInt(), anyBoolean(), any()))

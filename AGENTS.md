@@ -75,13 +75,13 @@ Frontend tasks run through Turborepo via `pnpm <task>`. Backend tasks use `./gra
 
 Use the right gate for the claim you are making.
 
-| Level                         | Command / source                                                                                                                     | Meaning                                                  |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
-| Local baseline                | `pnpm verify:cleanup`, `:services:api:test`, `:services:api:openApiValidate`, `pnpm -r typecheck`, `pnpm -r test`                          | Minimum local confidence before claiming completion      |
+| Level                         | Command / source                                                                                                                                              | Meaning                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Local baseline                | `pnpm verify:cleanup`, `:services:api:test`, `:services:api:openApiValidate`, `pnpm -r typecheck`, `pnpm -r test`                                             | Minimum local confidence before claiming completion      |
 | Local boundary / drift checks | `:services:api:architectureTest`, `pnpm repo:workspace:boundaries`, `pnpm contract:sdk:drift`, `python3 tooling/scripts/governance/validate-schema-parity.py` | Use when the change touches those surfaces               |
-| PR CI gate                    | `quality-gates.yml`                                                                                                                  | Actual every-PR enforcement                              |
-| Release gate                  | `release-gate.yml`                                                                                                                   | Deploy-time enforcement                                  |
-| Nightly regression            | `./gradlew gateRegression`, `./gradlew gateFull`                                                                                     | Broader or scheduled confidence, not the default PR gate |
+| PR CI gate                    | `quality-gates.yml`                                                                                                                                           | Actual every-PR enforcement                              |
+| Release gate                  | `release-gate.yml`                                                                                                                                            | Deploy-time enforcement                                  |
+| Nightly regression            | `./gradlew gateRegression`, `./gradlew gateFull`                                                                                                              | Broader or scheduled confidence, not the default PR gate |
 
 Do not describe `./gradlew gateSmoke` as the singular pre-PR source of truth. It remains a useful local smoke gate,
 but CI and release workflows are the governing enforcement surfaces.

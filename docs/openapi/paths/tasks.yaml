@@ -732,3 +732,133 @@
           application/json:
             schema:
               $ref: ../components/schemas/common.yaml#/Error
+
+/tasks/{id}/applications/{applicationId}/select:
+  post:
+    tags:
+      - Tasks
+    summary: Select an applicant (customer action)
+    description: |
+      Customer selects a tasker's application, starting the 4-hour acceptance window.
+      The tasker receives a push notification to confirm.
+    operationId: selectApplication
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Application selected. Tasker has 4 hours to confirm.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/tasks.yaml#/TaskApplication
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Application already processed or task assigned.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+
+/tasks/{id}/applications/{applicationId}/confirm:
+  post:
+    tags:
+      - Tasks
+    summary: Confirm acceptance (tasker action)
+    description: |
+      Tasker confirms their selection within the 4-hour window.
+      Creates a booking and rejects other pending applications.
+    operationId: confirmAcceptance
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    responses:
+      '200':
+        description: Booking created successfully.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                booking_id:
+                  type: string
+                  format: uuid
+                status:
+                  type: string
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Selection expired or already processed.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+
+/tasks/{id}/applications/{applicationId}/withdraw:
+  post:
+    tags:
+      - Tasks
+    summary: Withdraw an application (tasker action)
+    description: |
+      Tasker withdraws their application. If the application was SELECTED,
+      the task is reopened for new applications.
+    operationId: withdrawApplication
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: ../components/parameters.yaml#/PathId
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Application withdrawn.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                application_id:
+                  type: string
+                  format: uuid
+                status:
+                  type: string
+      '401':
+        $ref: ../components/responses.yaml#/Unauthorized
+      '403':
+        $ref: ../components/responses.yaml#/Forbidden
+      '404':
+        $ref: ../components/responses.yaml#/NotFound
+      '409':
+        description: Application cannot be withdrawn in its current status.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error

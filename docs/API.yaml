@@ -2986,6 +2986,133 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /tasks/{id}/applications/{applicationId}/select:
+    post:
+      tags:
+        - Tasks
+      summary: Select an applicant (customer action)
+      description: |
+        Customer selects a tasker's application, starting the 4-hour acceptance window.
+        The tasker receives a push notification to confirm.
+      operationId: selectApplication
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Application selected. Tasker has 4 hours to confirm.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskApplication"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Application already processed or task assigned.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /tasks/{id}/applications/{applicationId}/confirm:
+    post:
+      tags:
+        - Tasks
+      summary: Confirm acceptance (tasker action)
+      description: |
+        Tasker confirms their selection within the 4-hour window.
+        Creates a booking and rejects other pending applications.
+      operationId: confirmAcceptance
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+      responses:
+        "200":
+          description: Booking created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  booking_id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Selection expired or already processed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /tasks/{id}/applications/{applicationId}/withdraw:
+    post:
+      tags:
+        - Tasks
+      summary: Withdraw an application (tasker action)
+      description: |
+        Tasker withdraws their application. If the application was SELECTED,
+        the task is reopened for new applications.
+      operationId: withdrawApplication
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Application withdrawn.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  application_id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Application cannot be withdrawn in its current status.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /tasks/{id}/booking-intents:
     post:
       tags:
@@ -3842,6 +3969,10 @@ paths:
                   type: string
                   maxLength: 1000
                   nullable: true
+                would_book_again:
+                  type: boolean
+                  nullable: true
+                  description: Whether the reviewer would book again (customer-only).
       responses:
         "201":
           description: Review submitted.
@@ -5413,6 +5544,85 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "409":
           description: Event is not in FAILED status.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /admin/bookings/{id}:
+    get:
+      tags:
+        - Admin
+      summary: Get booking detail (admin)
+      description: Retrieves full booking details for admin inspection.
+      operationId: adminGetBooking
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      responses:
+        "200":
+          description: Booking detail.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /admin/bookings/{id}/override-status:
+    post:
+      tags:
+        - Admin
+      summary: Override booking status (admin)
+      description: |
+        Forces a booking status transition. Used for admin dispute resolution
+        and manual intervention. Requires idempotency key.
+      operationId: adminOverrideBookingStatus
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - new_status
+                - reason
+              properties:
+                new_status:
+                  type: string
+                  enum:
+                    - ASSIGNED
+                    - PAID
+                    - COMPLETED
+                    - CANCELLED
+                    - NO_SHOW
+                    - DISPUTED
+                reason:
+                  type: string
+                  maxLength: 500
+      responses:
+        "200":
+          description: Status overridden successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Invalid status transition.
           content:
             application/json:
               schema:

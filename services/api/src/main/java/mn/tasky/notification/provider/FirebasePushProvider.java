@@ -50,7 +50,9 @@ public class FirebasePushProvider implements PushNotificationProvider {
     }
 
     private static String maskToken(String token) {
-        if (token == null || token.length() <= 8) return "***";
+        if (token == null || token.length() <= 8) {
+            return "***";
+        }
         return token.substring(0, 8) + "...";
     }
 

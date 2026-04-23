@@ -93,7 +93,8 @@ class UserProfileServiceTests {
                 jwtTokenService,
                 refreshSessionDao,
                 false,
-                false);
+                false,
+                3);
     }
 
     // ── getProfile ──────────────────────────────────────────────────────────
@@ -163,7 +164,7 @@ class UserProfileServiceTests {
 
             assertThat(result).isPresent();
             assertThat(result.get().fullName()).isEqualTo("Tasky User");
-            assertThat(result.get().ratingAvg()).isEqualTo(0.0);
+            assertThat(result.get().ratingAvg()).isNull();
             assertThat(result.get().completedTasks()).isZero();
         }
     }
@@ -460,7 +461,8 @@ class UserProfileServiceTests {
                     jwtTokenService,
                     refreshSessionDao,
                     true,
-                    false);
+                    false,
+                    3);
 
             AuthUser facebookOnlyUser = new AuthUser(
                     USER_ID, null, "fb-123", "CUSTOMER", "ACTIVE", "FACEBOOK", Instant.now(), Instant.now());

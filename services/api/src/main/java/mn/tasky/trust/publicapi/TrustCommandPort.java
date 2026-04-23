@@ -15,7 +15,8 @@ public interface TrustCommandPort {
             Integer communicationRating,
             Integer clarityRating,
             Integer respectfulnessRating,
-            String comment);
+            String comment,
+            Boolean wouldBookAgain);
 
     DisputeRaiseResult raiseDispute(
             String userId, String bookingId, String reason, List<DisputeRequest.EvidenceItem> evidenceItems);
