@@ -49,7 +49,7 @@ import org.springframework.http.ResponseEntity;
  *
  * <p>SCN-BOOK-005 (tasker cancel reopens task) is covered by BookingIntegrationTests
  * because it requires BookingLifecycleService + TaskService coordination.
- * SCN-BOOK-004/006 are waived in registry — not yet implemented.
+ * SCN-BOOK-006 is waived in registry — not yet implemented.
  */
 class BookingScenarioTests {
 
@@ -234,12 +234,13 @@ class BookingScenarioTests {
     // ── SCN-BOOK-004 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-BOOK-004: Customer cancels late 2 times within 28 days - Instant Match disabled")
-    void customerCancelLateMultipleTimes() {
+    @DisplayName("SCN-BOOK-004: Late-cancel enforcement escalates from warning-only on first occurrence"
+            + " to 'Low Customer Reliability' flag on second occurrence in 28 days")
+    void lateCancelEnforcementEscalatesOnSecondOccurrence() {
         BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50_000);
         Instant scheduledAt = Instant.now().plus(2, ChronoUnit.HOURS);
 
-        // Mock that they already have 1 recent incident
+        // Mock that they already have 1 recent incident (first was a warning)
         org.mockito.Mockito.when(incidentDao.countRecentIncidents(
                         org.mockito.ArgumentMatchers.eq("customer-1"),
                         org.mockito.ArgumentMatchers.eq("CUSTOMER_LATE_CANCEL%"),
@@ -249,6 +250,7 @@ class BookingScenarioTests {
         BookingTransitionResult result = bookingService.cancelBooking("customer-1", booking.id(), scheduledAt);
 
         assertThat(result.isSuccess()).isTrue();
+        // Second occurrence records PENALTY incident (Phase 1: reliability flag only, no Instant Match)
         verify(incidentDao)
                 .insert(
                         anyString(),
@@ -257,10 +259,6 @@ class BookingScenarioTests {
                         org.mockito.ArgumentMatchers.eq("CUSTOMER_LATE_CANCEL_PENALTY"),
                         anyString(),
                         any());
-        verify(userProfileService)
-                .revokeInstantMatch(
-                        org.mockito.ArgumentMatchers.eq("customer-1"),
-                        org.mockito.ArgumentMatchers.eq(java.time.Duration.ofDays(30)));
     }
 
     // ── SCN-BOOK-006 ─────────────────────────────────────────────────────────

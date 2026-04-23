@@ -33,9 +33,7 @@ import org.springframework.http.ResponseEntity;
  * filter chain, OTP controller, or Facebook auth controller to be exercised.
  *
  * <p>SCN-AUTH-002/003 require OTP to be DISABLED (Phase 0-1 behaviour).
- * SCN-AUTH-007/011/012/013 run with OTP enabled (normal test profile).
- * We override otp.enabled=false here; individual tests that need OTP enabled
- * use a nested @Nested + @SpringBootTest override.
+ * SCN-AUTH-007/012/013 run with OTP disabled (normal test profile).
  *
  * <p>Tests run against a real database (Testcontainers) via IntegrationTestBase.
  */
@@ -147,39 +145,6 @@ class AuthHttpScenarioTests extends IntegrationTestBase {
         // Then: the existing session is still authorized (not 401 or 403 from auth)
         assertThat(response.getStatusCode()).isNotEqualTo(HttpStatus.UNAUTHORIZED);
         assertThat(response.getStatusCode()).isNotEqualTo(HttpStatus.FORBIDDEN);
-    }
-
-    // ── SCN-AUTH-011 (nested — requires OTP enabled) ─────────────────────────
-
-    @org.junit.jupiter.api.Nested
-    @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "tasky.otp.enabled=true")
-    class OtpEnabledScenarios extends IntegrationTestBase {
-
-        private final TestRestTemplate restTemplate = new TestRestTemplate();
-
-        @LocalServerPort
-        private int port;
-
-        @Test
-        @DisplayName("SCN-AUTH-011: Valid OTP verification returns an authenticated session")
-        void validOtpReturnsAuthenticatedSession() {
-            // Given: OTP is enabled, phone exists, test code is "123456" (from test properties)
-            post("/api/v1/auth/otp/request", Map.of("phone", "+97699008800"));
-
-            // When: correct OTP code submitted
-            ResponseEntity<Map> response =
-                    post("/api/v1/auth/otp/verify", Map.of("phone", "+97699008800", "code", "123456"));
-
-            // Then: authenticated session returned
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).containsKey("access_token");
-            assertThat(response.getBody()).containsKey("refresh_token");
-            assertThat(response.getBody()).containsKey("user");
-        }
-
-        private ResponseEntity<Map> post(String path, Object body) {
-            return restTemplate.postForEntity("http://localhost:" + port + path, body, Map.class);
-        }
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

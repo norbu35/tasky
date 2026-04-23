@@ -1,6 +1,6 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fireEvent, render as rtlRender, screen } from '@testing-library/react-native';
+import { render as rtlRender, screen } from '@testing-library/react-native';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 const queryClient = new QueryClient({
@@ -19,8 +19,7 @@ import { Button, Card, FormField, Input, Toast } from '../src/components/ui';
 import { FormWizardTemplate } from '../src/components/templates/FormWizardTemplate';
 import { mobileTheme } from '../src/design/tokenAdapter';
 import { RoleProvider } from '../src/providers/RoleProvider';
-import { LoginForm } from '../src/features/auth/components/LoginForm';
-import { useRequestOtp, useVerifyOtp, useDevLogin } from '../src/features/auth/hooks/useAuth';
+import { useDevLogin } from '../src/features/auth/hooks/useAuth';
 import { useBookings } from '../src/features/bookings/hooks/useBookings';
 import {
   useMyProfile,
@@ -140,8 +139,6 @@ jest.mock('expo-router', () => {
 });
 
 jest.mock('../src/features/auth/hooks/useAuth', () => ({
-  useRequestOtp: jest.fn(),
-  useVerifyOtp: jest.fn(),
   useDevLogin: jest.fn(),
 }));
 
@@ -159,8 +156,6 @@ jest.mock('../src/features/profile/hooks/useProfile', () => ({
   useSignOut: jest.fn(),
 }));
 
-const mockUseRequestOtp = useRequestOtp as jest.MockedFunction<typeof useRequestOtp>;
-const mockUseVerifyOtp = useVerifyOtp as jest.MockedFunction<typeof useVerifyOtp>;
 const mockUseDevLogin = useDevLogin as jest.MockedFunction<typeof useDevLogin>;
 const mockUseTasks = useTasks as jest.MockedFunction<typeof useTasks>;
 const mockUseBookings = useBookings as jest.MockedFunction<typeof useBookings>;
@@ -249,18 +244,6 @@ function resetStores(): void {
 }
 
 function installDefaultHookMocks(): void {
-  mockUseRequestOtp.mockReturnValue({
-    mutate: jest.fn(),
-    isPending: false,
-    error: null,
-  } as unknown as ReturnType<typeof useRequestOtp>);
-
-  mockUseVerifyOtp.mockReturnValue({
-    mutate: jest.fn(),
-    isPending: false,
-    error: null,
-  } as unknown as ReturnType<typeof useVerifyOtp>);
-
   mockUseDevLogin.mockReturnValue({
     mutate: jest.fn(),
     isPending: false,
@@ -398,51 +381,6 @@ describe('mobile app structure', () => {
     expect(matrix).toContain('FormField.tsx');
     expect(matrix).toContain('Toast.tsx');
     expect(matrix).toContain('TID-TASK-071-MOBILE-*');
-  });
-
-  it('TID-TASK-082-MOBILE-AUTH-OTP-FLOW supports OTP request and verification sequence', () => {
-    const requestMutate = jest.fn((phone: string, options?: { onSuccess?: () => void }) => {
-      expect(phone).toBe('+97699112233');
-      options?.onSuccess?.();
-    });
-    const verifyMutate = jest.fn();
-
-    mockUseRequestOtp.mockReturnValue({
-      mutate: requestMutate,
-      isPending: false,
-      error: null,
-    } as unknown as ReturnType<typeof useRequestOtp>);
-
-    mockUseVerifyOtp.mockReturnValue({
-      mutate: verifyMutate,
-      isPending: false,
-      error: null,
-    } as unknown as ReturnType<typeof useVerifyOtp>);
-
-    mockUseDevLogin.mockReturnValue({
-      mutate: jest.fn(),
-      isPending: false,
-      error: null,
-    } as unknown as ReturnType<typeof useDevLogin>);
-
-    render(<LoginForm />);
-
-    // LoginForm starts at "options" step — navigate to phone entry
-    fireEvent.press(screen.getByText('Login with Phone (OTP)'));
-
-    fireEvent.changeText(screen.getByPlaceholderText('+976...'), '+97699112233');
-    fireEvent.press(screen.getByText('Continue'));
-
-    expect(requestMutate).toHaveBeenCalledTimes(1);
-    expect(screen.getByPlaceholderText('123456')).toBeTruthy();
-
-    fireEvent.changeText(screen.getByPlaceholderText('123456'), '123456');
-    fireEvent.press(screen.getByText('Verify & Login'));
-
-    expect(verifyMutate).toHaveBeenCalledWith({
-      phone: '+97699112233',
-      code: '123456',
-    });
   });
 
   it('TID-TASK-082-MOBILE-TASK-APPLICATION-FLOW renders discoverable task feed cards', () => {

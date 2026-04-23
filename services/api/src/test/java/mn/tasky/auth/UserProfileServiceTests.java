@@ -1,14 +1,12 @@
 package mn.tasky.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -377,98 +375,6 @@ class UserProfileServiceTests {
         void missingUserReturnsEmpty() {
             when(userDao.findById(USER_ID)).thenReturn(Optional.empty());
             assertThat(service.createAvatarUploadUrl(USER_ID, "image/jpeg")).isEmpty();
-        }
-    }
-
-    // ── Instant Match ──────────────────────────────────────────────────────
-
-    @Nested
-    @DisplayName("instantMatch")
-    class InstantMatch {
-
-        @Test
-        @DisplayName("revokeInstantMatch writes future revocation timestamp")
-        void revokeSetsTimestamp() {
-            service.revokeInstantMatch(USER_ID, Duration.ofDays(30));
-
-            verify(profileDao).setInstantMatchRevokedUntil(eq(USER_ID), any(Instant.class));
-        }
-
-        @Test
-        @DisplayName("isInstantMatchAllowed returns true when no revocation exists")
-        void allowedWhenNoRevocation() {
-            when(profileDao.findByUserId(USER_ID))
-                    .thenReturn(Optional.of(new UserProfileState("User", null, null, 0.0, 0, null)));
-
-            assertThat(service.isInstantMatchAllowed(USER_ID)).isTrue();
-        }
-
-        @Test
-        @DisplayName("isInstantMatchAllowed returns false when revocation is in the future")
-        void blockedWhenRevocationInFuture() {
-            Instant futureRevocation = Instant.now().plus(Duration.ofDays(15));
-            when(profileDao.findByUserId(USER_ID))
-                    .thenReturn(Optional.of(new UserProfileState("User", null, null, 0.0, 0, futureRevocation)));
-
-            assertThat(service.isInstantMatchAllowed(USER_ID)).isFalse();
-        }
-
-        @Test
-        @DisplayName("isInstantMatchAllowed returns true when revocation has expired")
-        void allowedWhenRevocationExpired() {
-            Instant pastRevocation = Instant.now().minus(Duration.ofDays(1));
-            when(profileDao.findByUserId(USER_ID))
-                    .thenReturn(Optional.of(new UserProfileState("User", null, null, 0.0, 0, pastRevocation)));
-
-            assertThat(service.isInstantMatchAllowed(USER_ID)).isTrue();
-        }
-
-        @Test
-        @DisplayName("isInstantMatchAllowed returns true when user profile does not exist")
-        void allowedWhenNoProfile() {
-            when(profileDao.findByUserId(USER_ID)).thenReturn(Optional.empty());
-
-            assertThat(service.isInstantMatchAllowed(USER_ID)).isTrue();
-        }
-    }
-
-    // ── requiresOtpMigration ──────────────────────────────────────────────
-
-    @Nested
-    @DisplayName("requiresOtpMigration")
-    class RequiresOtpMigration {
-
-        @Test
-        @DisplayName("Returns false when OTP is disabled")
-        void falseWhenOtpDisabled() {
-            // service was constructed with otpEnabled=false
-            assertThat(service.requiresOtpMigration(USER_ID)).isFalse();
-        }
-
-        @Test
-        @DisplayName("Returns true when OTP enabled and user has Facebook but no phone")
-        void trueForFacebookUserWithoutPhone() {
-            // Reconstruct with OTP enabled
-            JwtTokenService jwtTokenService = new JwtTokenService(TEST_JWT_SECRET, 900L, 1209600L);
-            UserProfileService otpService = new UserProfileService(
-                    userDao,
-                    profileDao,
-                    badgeDao,
-                    storageService,
-                    storageKeyPolicy,
-                    userStatusResolver,
-                    cryptoService,
-                    jwtTokenService,
-                    refreshSessionDao,
-                    true,
-                    false,
-                    3);
-
-            AuthUser facebookOnlyUser = new AuthUser(
-                    USER_ID, null, "fb-123", "CUSTOMER", "ACTIVE", "FACEBOOK", Instant.now(), Instant.now());
-            when(userDao.findById(USER_ID)).thenReturn(Optional.of(facebookOnlyUser));
-
-            assertThat(otpService.requiresOtpMigration(USER_ID)).isTrue();
         }
     }
 }
