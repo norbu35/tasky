@@ -9,7 +9,7 @@ afterEach(() => {
 });
 
 describe('Auth Integration', () => {
-  it('TID-TASK-080-WEB-AUTH-OAUTH-FLOW supports Facebook OAuth auth and profile setup', async () => {
+  it('SCN-AUTH-004: Valid Facebook OAuth token creates a CUSTOMER session', async () => {
     const facebookLogin = vi.fn(
       (callback: (response: { authResponse: { accessToken: string } }) => void) => {
         callback({

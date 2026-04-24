@@ -24,7 +24,8 @@ Use `docs/PRD.md` as the authority for active Phase 1 web behavior. Use `docs/RO
 - Use Radix UI + Tailwind components only. Do not introduce Material UI, Chakra, Ant Design, or another competing UI system.
 - Styling flows through `@tasky/design-tokens`.
 - Accessibility is not optional: touched flows need visible focus states and minimum AA contrast.
-- Consume generated types from `@tasky/sdk`; do not hand-write fetch contracts when an API schema already exists.
+- Consume generated types from `@tasky/sdk`.
+- Keep transport code in `apps/web/src/lib/apiClient.ts` and `apps/web/src/lib/adminApiClient.ts`; do not spread raw API calls through route components when those boundaries already exist.
 
 ## Local Ownership
 
@@ -34,18 +35,18 @@ Use `docs/PRD.md` as the authority for active Phase 1 web behavior. Use `docs/RO
 apps/web/
   src/
     components/
-      ui/          # shared web primitives
-      feature/     # domain compositions built from ui/
-      landing/     # marketing-only sections
-      task-creation/
-    layout/        # app shell and layout boundaries
-    lib/           # transport/client utilities
-    locales/       # i18n resources
-    pages/         # route-level page components
-    router/        # route tree and guards
-    test/          # local test setup helpers
-  tests/           # integration and accessibility tests
-  e2e/             # Playwright end-to-end coverage
+      ui/               # shared web primitives
+      feature/
+        landing/        # marketing-only sections
+        task-creation/  # structured task-posting components
+    layout/             # app shell and layout boundaries
+    lib/                # transport/client utilities and SDK-bound wrappers
+    locales/            # i18n resources
+    pages/              # route-level page components
+    router/             # route tree and guards
+    test/               # local test setup helpers
+  tests/                # integration and accessibility tests
+  e2e/                  # Playwright end-to-end coverage
 ```
 
 ### Route And Composition Rules
@@ -62,6 +63,8 @@ apps/web/
 - E2E tests: Playwright.
 - Accessibility checks for touched flows belong in the web test surface, not as ad hoc manual notes.
 - Every touched API flow must remain aligned with `docs/openapi/**`, the bundled `docs/API.yaml`, and generated SDK output.
+- For new or touched launch-behavior integration/E2E tests, reuse `SCN-*` names from `tests/scenarios/*.md` when there is a clean scenario match.
+- Keep `TID-*` for technical web checks that do not map to a single curated scenario.
 
 ## Verification Commands
 

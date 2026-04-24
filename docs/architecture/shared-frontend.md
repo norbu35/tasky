@@ -72,21 +72,29 @@ apps/mobile/src/components/
 2. If not, create them first according to the platform rules for the affected surface.
 3. Assemble Molecules/Organisms exclusively from those Atoms using spacing/layout variables from `@tasky/design-tokens`.
 
-## 7. Test Location and TID Naming Rule
+## 7. Test Location and Naming Rules
 
 | Platform | Test type      | Location                                                                |
 | -------- | -------------- | ----------------------------------------------------------------------- |
 | Web      | Unit/component | `apps/web/src/**/*.test.tsx` or `apps/web/tests/**/*.test.tsx` (Vitest) |
-| Web      | E2E            | `apps/web/e2e/**/*.test.ts` (Playwright)                                |
+| Web      | E2E            | `apps/web/e2e/**/*.spec.ts` (Playwright)                                |
 | Mobile   | Unit/component | `apps/mobile/__tests__/**/*.test.tsx` (Jest)                            |
 
-**Critical rule:** Every test block must include its `TID-*` identifier directly in the `it()` or `test()` description string — bare, with no brackets or decorators. The self-verification script discovers AC coverage by scanning for this string in test runner output.
+**Behavioral rule for new or touched frontend flow tests:** When an integration or E2E test maps cleanly to an existing launch scenario in `tests/scenarios/*.md`, name that test `SCN-XXX-NNN: <exact title from scenario file>`. This keeps frontend launch evidence aligned with the same scenario spine used by backend tests.
 
-TID identifiers use the repo convention `TID-[A-Z]+-\d{3}-[A-Z0-9-]+`, for example `TID-TASK-080-WEB-AUTH-OAUTH-FLOW`.
+**Technical rule:** Use `TID-*` only for frontend-specific technical checks that do not have a single scenario source of truth, such as token binding, parity, accessibility, shell rendering, and API-client boundary tests.
+
+**Flow rule:** If a frontend test covers multiple launch behaviors, split it into scenario-backed tests or keep it technical. Do not force a fake one-to-one SCN mapping.
+
+Examples:
 
 ```typescript
-it('TID-TASK-080-WEB-AUTH-OAUTH-FLOW should allow user to continue with Facebook and redirect to feed', async () => {
-  // test logic
+it('SCN-AUTH-004: Valid Facebook OAuth token creates a CUSTOMER session', async () => {
+  // scenario-backed frontend behavior
+});
+
+it('TID-TASK-070-WEB-TOKEN-BINDING binds shared tokens to tailwind theme variables', () => {
+  // frontend-only technical check
 });
 ```
 

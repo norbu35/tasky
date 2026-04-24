@@ -91,7 +91,7 @@ If contract behavior changes:
 
 ### 5. scenario
 
-Before backend tests:
+Before backend tests or frontend behavioral integration/E2E tests:
 
 - check `tests/registry.yaml`
 - read the relevant `tests/scenarios/<domain>.md`
@@ -99,6 +99,8 @@ Before backend tests:
 Rules:
 
 - implementation agents do not rewrite scenarios by default
+- when a touched frontend behavioral test has a clean scenario match, use `SCN-XXX-NNN: <exact title from scenario file>` naming
+- keep `TID-*` only for frontend-specific technical checks such as parity, accessibility, token binding, and API-client boundary tests
 - if no scenario covers the behavior and you are not explicitly the designated scenario curator, stop and report the gap
 - if scenario files change, run `./services/api/scripts/sync-registry.sh`
 

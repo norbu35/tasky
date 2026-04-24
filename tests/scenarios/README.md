@@ -17,6 +17,8 @@ Each scenario:
 
 - @DisplayName must be exactly: "SCN-XXX-NNN: <title>"
 - @DisplayName SCN IDs must exist in `tests/scenarios/*.md`; `sync-registry.sh` fails on stale IDs
+- Frontend behavioral integration and E2E tests should reuse `SCN-XXX-NNN: <title>` when they map cleanly to an existing launch scenario
+- Frontend-only technical checks that do not map to a single curated scenario may use local technical IDs such as `TID-*`
 - Implementation agents must not modify this directory; if no scenario fits, stop and report the gap
 - The designated scenario curator may update this directory only during an approved scenario-baseline pass that reconciles `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, active `docs/openapi/**`, and active `docs/design/**`
 - Phase 1 scenarios use `Critical`, `High`, or `Medium`; `Low` is reserved for deferred/future discussion and should not appear in the active baseline

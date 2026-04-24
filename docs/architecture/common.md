@@ -208,7 +208,7 @@ class: mn.tasky.common.outbox.OutboxRelayService
 | Design tokens and parity         | `shared-frontend.md` §2–§4                             |
 | Accessibility baseline           | `shared-frontend.md` §5                                |
 | Frontend file structure          | `shared-frontend.md` §6                                |
-| TID test naming                  | `shared-frontend.md` §7                                |
+| Frontend test naming             | `shared-frontend.md` §7                                |
 | Intake renderer contract         | `shared-frontend.md` §8                                |
 | Web structural contract          | `web.md`                                               |
 | Mobile structural contract       | `mobile.md`                                            |

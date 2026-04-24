@@ -60,7 +60,6 @@ describe('Shared parity pages', () => {
         <ChatDetailPage />
       </>,
     );
-    screen.debug();
 
     expect(screen.getByRole('heading', { name: 'Inbox' })).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Search conversations')).toBeInTheDocument();

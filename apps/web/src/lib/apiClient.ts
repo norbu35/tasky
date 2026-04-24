@@ -1,3 +1,5 @@
+import { HttpTransport, normalizeBaseUrl } from '@tasky/core/http';
+
 import type {
   User,
   Profile,
@@ -18,13 +20,15 @@ import type {
   Category,
   CreateTaskRequest,
 } from './apiTypes';
+
 export type * from './apiTypes';
-import { HttpTransport, normalizeBaseUrl } from '@tasky/core/http';
 export { ApiError } from '@tasky/core/http';
 export type { TokenRefreshDelegate } from '@tasky/core/http';
 
 export interface ApiClient {
   loginWithFacebook(accessToken: string): Promise<AuthTokens>;
+
+  getFacebookAuthStatus(): Promise<{ available: boolean }>;
 
   getMyProfile(accessToken: string): Promise<Profile>;
 
@@ -136,7 +140,7 @@ export interface ApiClient {
 
   unregisterDevice(accessToken: string, token: string): Promise<void>;
 
-  devLogin(phone: string, role: 'CUSTOMER' | 'TASKER'): Promise<AuthTokens>;
+  devLogin(phone: string, role: 'CUSTOMER' | 'TASKER' | 'ADMIN'): Promise<AuthTokens>;
 
   // ─── Verification Methods ─────────────────────────────────────────
 
@@ -212,6 +216,12 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
       refreshToken: response.refresh_token,
       user: response.user,
     }));
+  }
+
+  getFacebookAuthStatus(): Promise<{ available: boolean }> {
+    return this.requestJson<{ available: boolean }>('/auth/facebook/status', {
+      method: 'GET',
+    });
   }
 
   getMyProfile(accessToken: string): Promise<Profile> {
@@ -564,7 +574,7 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
     );
   }
 
-  devLogin(phone: string, role: 'CUSTOMER' | 'TASKER'): Promise<AuthTokens> {
+  devLogin(phone: string, role: 'CUSTOMER' | 'TASKER' | 'ADMIN'): Promise<AuthTokens> {
     return this.requestJson<{ access_token: string; refresh_token: string; user: User }>(
       '/auth/dev/login',
       {

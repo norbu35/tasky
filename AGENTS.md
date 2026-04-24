@@ -127,6 +127,15 @@ If no scenario covers the behavior, stop and report the gap unless you are the d
 | Regression | `./gradlew gateRegression` | nightly / extended validation |
 | Full       | `./gradlew gateFull`       | full suite / mutation testing |
 
+## Frontend Behavioral Testing Rules
+
+Before writing or changing frontend integration or E2E tests for launch behavior: check `tests/registry.yaml` for an existing scenario and read the relevant `tests/scenarios/<domain>.md`.
+
+- If a touched frontend behavioral test has a clear scenario match, name it `SCN-XXX-NNN: <exact title from scenario file>`
+- Keep `TID-*` for frontend-only technical checks such as token binding, parity, accessibility, API-client boundaries, and shell smoke coverage
+- Prefer splitting broad flow tests so each SCN-backed test covers one primary behavior
+- If no scenario covers the behavior and you are not the designated scenario curator for the current execution brief, stop and report the gap rather than inventing a frontend-only launch behavior
+
 Frontend: Web uses Vitest + RTL; Mobile uses Jest + RNTL. For auth, payments, wallet, migrations, or
 `SecurityConfig` changes, write positive and negative tests and call them out in the PR.
 

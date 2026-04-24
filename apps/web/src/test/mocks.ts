@@ -20,6 +20,7 @@ import {
 export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClient {
   return {
     loginWithFacebook: vi.fn().mockResolvedValue(makeSession()),
+    getFacebookAuthStatus: vi.fn().mockResolvedValue({ available: true }),
     getMyProfile: vi.fn().mockResolvedValue(makeProfile()),
     updateMyProfile: vi.fn().mockImplementation(async (_token, payload) => ({
       ...makeProfile(),

@@ -91,7 +91,41 @@ describe('Customer phase 1 parity', () => {
     expect(screen.getByRole('button', { name: 'Post new task' })).toBeInTheDocument();
   });
 
-  it('renders the customer task wizard with intake, photo, location, and submit controls', async () => {
+  it('SCN-TASK-001: Task-post form loads the active intake schema for the selected category', async () => {
+    const apiClient = createMockApiClient({
+      listCategories: vi.fn().mockResolvedValue({
+        data: [
+          {
+            ...makeCategory(),
+            intake_enabled: true,
+            intake_schema_version: 1,
+            intake_schema_json: [
+              {
+                key: 'room_count',
+                label: 'Room count',
+                label_mn: 'Өрөөний тоо',
+                type: 'numeric_counter',
+                required: true,
+                min: 1,
+                max: 5,
+              },
+            ],
+          },
+        ],
+        cursor: { next: null, has_more: false },
+      }),
+    });
+
+    renderWithProviders(<CustomerTaskWizardPage />, apiClient);
+
+    expect(await screen.findByRole('heading', { name: 'Post a new task' })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Room count')).toBeInTheDocument();
+    });
+    expect(screen.getByRole('spinbutton', { name: /Room count/i })).toBeInTheDocument();
+  });
+
+  it('TID-TASK-000-WEB-TASK-WIZARD-SUBMIT renders the routed task wizard with location, budget, and submit controls', async () => {
     const apiClient = createMockApiClient({
       listCategories: vi.fn().mockResolvedValue({
         data: [
@@ -136,7 +170,7 @@ describe('Customer phase 1 parity', () => {
 
     expect(await screen.findByRole('heading', { name: 'Post a new task' })).toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getByText('Room count')).toBeInTheDocument();
+      expect(screen.getByRole('spinbutton', { name: /Room count/i })).toBeInTheDocument();
     });
 
     await user.type(screen.getByRole('spinbutton', { name: /Room count/i }), '2');

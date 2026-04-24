@@ -2,8 +2,8 @@ import { Client } from '@stomp/stompjs';
 import { Bell, BellOff, MessageSquareText, Search, Send } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import SockJS from 'sockjs-client';
+import { toast } from 'sonner';
 
 import { Avatar, AvatarFallback } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';

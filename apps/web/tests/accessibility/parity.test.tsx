@@ -43,6 +43,7 @@ function createMockApiClient(): ApiClient {
         created_at: '2026-02-14T00:00:00Z',
       },
     }),
+    getFacebookAuthStatus: vi.fn().mockResolvedValue({ available: true }),
     getMyProfile: vi.fn().mockResolvedValue({
       id: 'user-1',
       phone: '+97699001122',

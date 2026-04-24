@@ -94,13 +94,14 @@ To waive or defer a scenario:
 
 ## Frontend and Design Identifiers
 
-| Kind    | Pattern                       | Example                            |
-| ------- | ----------------------------- | ---------------------------------- |
-| Screen  | `SCR-[A-Z0-9]+-\d{3}`         | `SCR-P2-001`, `SCR-CUST-019`       |
-| Journey | `JRN-[A-Z]+-\d{2}`            | `JRN-CUST-01`, `JRN-INFRA-01`      |
-| Test ID | `TID-[A-Z]+-\d{3}-[A-Z0-9-]+` | `TID-TASK-080-WEB-AUTH-OAUTH-FLOW` |
+| Kind                  | Pattern                       | Example                                                               |
+| --------------------- | ----------------------------- | --------------------------------------------------------------------- |
+| Screen                | `SCR-[A-Z0-9]+-\d{3}`         | `SCR-P2-001`, `SCR-CUST-019`                                          |
+| Journey               | `JRN-[A-Z]+-\d{2}`            | `JRN-CUST-01`, `JRN-INFRA-01`                                         |
+| Scenario-backed test  | `SCN-DOMAIN-NNN`              | `SCN-AUTH-004: Valid Facebook OAuth token creates a CUSTOMER session` |
+| Frontend technical ID | `TID-[A-Z]+-\d{3}-[A-Z0-9-]+` | `TID-TASK-070-WEB-TOKEN-BINDING`                                      |
 
-These identifiers are enforced by the design-surface-drift tooling and frontend test naming rules.
+Use `SCN-*` for frontend behavioral tests when an existing scenario is the source of truth for the behavior. Reserve `TID-*` for frontend-only technical checks that do not map to a single curated scenario.
 
 ## Related
 

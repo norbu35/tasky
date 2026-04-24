@@ -16,6 +16,9 @@ React web client for Tasky.
 apps/web/
   src/
     components/
+      feature/
+        landing/
+        task-creation/
     layout/
     lib/
     locales/
@@ -25,6 +28,8 @@ apps/web/
   tests/
   e2e/
 ```
+
+`src/lib/apiClient.ts` and `src/lib/adminApiClient.ts` are the canonical web HTTP boundaries. `@tasky/sdk` remains the generated API type source.
 
 ## Commands
 
@@ -42,4 +47,6 @@ pnpm --filter @tasky/web test:e2e:smoke
 
 - Unit/component: Vitest + React Testing Library
 - E2E: Playwright
+- For new or touched launch-behavior integration/E2E tests, reuse `SCN-*` names from `tests/scenarios/*.md` when there is a direct scenario match
+- Keep `TID-*` for web-only technical checks such as tokens, parity, accessibility, and API-client boundaries
 - Accessibility checks for touched flows belong in the test surface, not in ad hoc notes

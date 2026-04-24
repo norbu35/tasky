@@ -153,15 +153,10 @@ export function AuthPage() {
   }, [facebookAppId]);
 
   useEffect(() => {
-    const apiBase =
-      (import.meta.env['VITE_API_BASE_URL'] as string | undefined)?.replace(/\/$/, '') ?? '';
     const check = async () => {
       try {
-        const res = await fetch(`${apiBase}/api/v1/auth/facebook/status`);
-        if (res.ok) {
-          const data = (await res.json()) as { available: boolean };
-          setFacebookOutage(!data.available);
-        }
+        const data = await apiClient.getFacebookAuthStatus();
+        setFacebookOutage(!data.available);
       } catch {
         // silently ignore — banner stays in last known state
       }
@@ -169,7 +164,7 @@ export function AuthPage() {
     void check();
     const id = setInterval(() => void check(), 30_000);
     return () => clearInterval(id);
-  }, []);
+  }, [apiClient]);
 
   const handleFacebookLogin = async (): Promise<void> => {
     if (!window.FB) {
@@ -213,7 +208,7 @@ export function AuthPage() {
     try {
       const devPhone =
         role === 'ADMIN' ? '+97694000001' : role === 'TASKER' ? '+97693000001' : '+97692000001';
-      const session = await apiClient.devLogin(devPhone, role as 'CUSTOMER' | 'TASKER');
+      const session = await apiClient.devLogin(devPhone, role);
       setSession(session);
       setProfile(null);
       await loadProfile(session.accessToken);

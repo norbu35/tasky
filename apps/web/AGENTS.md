@@ -20,10 +20,18 @@ Additional references:
 
 - UI primitives live in `src/components/ui/`.
 - Use Radix UI + Tailwind only.
-- Prefer `@tasky/sdk` over handwritten fetch contracts.
+- Use `@tasky/sdk` as the generated API type source.
+- Keep HTTP wrappers centralized in `apps/web/src/lib/apiClient.ts` and `apps/web/src/lib/adminApiClient.ts`; do not scatter ad hoc `fetch` calls through pages.
 - Route structure belongs in `src/router/` and `src/pages/`.
 - Shared layouts belong in `src/layout/`.
 - Accessibility and focus behavior are part of the contract, not post-hoc polish.
+
+## Testing Rules
+
+- Before writing or changing web integration or E2E tests for launch behavior, check `tests/registry.yaml` and the relevant `tests/scenarios/<domain>.md`
+- If a touched web behavioral test has a clean scenario match, name it `SCN-XXX-NNN: <exact title from scenario file>`
+- Keep `TID-*` for web-only technical checks such as token binding, parity, accessibility, API-client boundaries, and shell smoke
+- Split broad flow tests when needed rather than forcing one SCN onto multiple behaviors
 
 ## Verification
 

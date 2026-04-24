@@ -41,7 +41,7 @@ maintained source.
 - `api.md` — backend module layout, request-path architecture, data schemas and flows, API/security contracts, backend runtime concerns, backend testing
 - `web.md` — web-only structural contract
 - `mobile.md` — mobile structural contract
-- `shared-frontend.md` — tokens, parity baseline, intake renderer contract, TID test-naming rule
+- `shared-frontend.md` — tokens, parity baseline, intake renderer contract, frontend behavioral/technical test naming rules
 - `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, `docs/design/domain-lifecycles.yaml` — machine-readable structural docs validated by `pnpm repo:design:check`
 - `docs/design/component-contract.yaml` — component inventory validated by `python3 tooling/scripts/governance/validate-design-contracts.py` or `pnpm repo:docs:check`
 
