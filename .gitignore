@@ -32,6 +32,7 @@ monorepo-hardening-report.md
 !.pi/prompts/**
 .pi/extensions/
 .pi/sessions/
+sessions/
 
 # Generated audit / analysis snapshots (session artifacts)
 docs/DEPENDENCY_VERSION_MATRIX.md

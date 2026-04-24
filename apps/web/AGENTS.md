@@ -25,7 +25,8 @@ Additional references:
 - Route structure belongs in `src/router/` and `src/pages/`.
 - Shared layouts belong in `src/layout/`.
 - Accessibility and focus behavior are part of the contract, not post-hoc polish.
-- All user-visible copy must come from `react-i18next` locale keys. Do not add inline copy, literal `t(...)` fallbacks, hardcoded aria labels, placeholders, toast text, or empty/error state strings.
+- Web locale files are app-owned and live under `apps/web/src/locales/{en,mn}/translation.json`; do not use or create shared client locale files.
+- All user-visible copy must come from `react-i18next` locale keys in the web locale files. Do not add inline copy, literal `t(...)` fallbacks, hardcoded aria labels, placeholders, toast text, or empty/error state strings.
 - Locale changes must update every supported locale and preserve identical interpolation placeholders.
 
 ## Testing Rules

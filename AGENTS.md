@@ -67,7 +67,8 @@ Frontend tasks run through Turborepo via `pnpm <task>`. Backend tasks use `./gra
 
 Frontend implementation must use i18n for user-visible copy.
 
-- Do not introduce hardcoded user-facing strings in web or mobile UI, validation messages, toast/snackbar text, empty/error states, accessibility labels, placeholders, or test-only rendered copy. Add or reuse keys in the relevant `translation.json` files instead.
+- Web and mobile locale files are app-owned and separate: web uses `apps/web/src/locales/{en,mn}/translation.json`; mobile uses `apps/mobile/src/locales/{en,mn}/translation.json`. Do not create shared client locale files unless the architecture is intentionally changed.
+- Do not introduce hardcoded user-facing strings in web or mobile UI, validation messages, toast/snackbar text, empty/error states, accessibility labels, placeholders, or test-only rendered copy. Add or reuse keys in the relevant app's `translation.json` files instead.
 - Do not pass literal fallback text to `t(...)`; call `t('namespace.key')` and keep the source of truth in locale files.
 - Keep key shape domain-scoped and stable. Avoid one-off generic keys unless the copy is genuinely shared.
 - When adding, renaming, or removing translation keys, update every supported locale in the same change and keep interpolation placeholders identical across locales.

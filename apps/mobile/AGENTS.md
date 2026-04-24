@@ -24,7 +24,8 @@ Additional references:
 - Consume generated SDK types from `@tasky/sdk`.
 - Respect the structural contract in `docs/architecture/mobile.md`.
 - Run the structure gate after any mobile architectural change.
-- All user-visible copy must come from `react-i18next` locale keys. Do not add inline copy, literal `t(...)` fallbacks, hardcoded accessibility labels, placeholders, alert/snackbar text, or empty/error state strings.
+- Mobile locale files are app-owned and live under `apps/mobile/src/locales/{en,mn}/translation.json`; do not use or create shared client locale files.
+- All user-visible copy must come from `react-i18next` locale keys in the mobile locale files. Do not add inline copy, literal `t(...)` fallbacks, hardcoded accessibility labels, placeholders, alert/snackbar text, or empty/error state strings.
 - Locale changes must update every supported locale and preserve identical interpolation placeholders.
 
 ## Quick Reference
