@@ -164,7 +164,9 @@
     "quotePlaceholder": "Enter your price",
     "counterPlaceholder": "Optional",
     "quoteRequiredHint": "Required — the customer is waiting for your price.",
-    "quotePriceRequired": "You must provide a quote price for this task."
+    "quotePriceRequired": "You must provide a quote price for this task.",
+    "withdrawAction": "Withdraw application",
+    "withdrawSuccess": "Application withdrawn."
   },
   "bookingConfirmation": {
     "invalidRequestTitle": "Invalid Request",

@@ -47,6 +47,7 @@ export function TaskerFeedPage() {
   const [quotePrices, setQuotePrices] = useState<Record<string, string>>({});
   const [working, setWorking] = useState(false);
   const [sentTaskId, setSentTaskId] = useState<string | null>(null);
+  const [sentApplicationId, setSentApplicationId] = useState<string | null>(null);
   const [openDialogId, setOpenDialogId] = useState<string | null>(null);
 
   const { data: categoriesPage } = useCategoriesQuery(apiClient, session?.accessToken);
@@ -89,13 +90,35 @@ export function TaskerFeedPage() {
     try {
       const rawQuote = quotePrices[taskId]?.trim();
       const quotePrice = rawQuote ? Number(rawQuote) : null;
-      await apiClient.applyToTask(session.accessToken, taskId, draft, quotePrice);
+      const application = await apiClient.applyToTask(
+        session.accessToken,
+        taskId,
+        draft,
+        quotePrice,
+      );
       setApplyDrafts((prev) => ({ ...prev, [taskId]: '' }));
       setQuotePrices((prev) => ({ ...prev, [taskId]: '' }));
-      setApplyDrafts((prev) => ({ ...prev, [taskId]: '' }));
       setOpenDialogId(null);
       setSentTaskId(taskId);
+      setSentApplicationId(application.id);
       trackClientEvent('APPLICATION_SUBMITTED', { taskId });
+      void refetchTasks();
+    } catch (error) {
+      toast.error(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const withdrawApplication = async (): Promise<void> => {
+    if (!session || !sentTaskId || !sentApplicationId) return;
+
+    setWorking(true);
+    try {
+      await apiClient.withdrawApplication(session.accessToken, sentTaskId, sentApplicationId);
+      toast.success(t('taskerFeed.withdrawSuccess', 'Application withdrawn.'));
+      setSentTaskId(null);
+      setSentApplicationId(null);
       void refetchTasks();
     } catch (error) {
       toast.error(parseError(error));
@@ -196,12 +219,22 @@ export function TaskerFeedPage() {
                 {t('taskerPages.applicationSent.sentDesc', 'Application sent.')}
               </p>
             </CardContent>
-            <CardFooter className="justify-end">
+            <CardFooter className="justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={working}
+                onClick={() => void withdrawApplication()}
+              >
+                {working ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                {t('taskerFeed.withdrawAction', 'Withdraw application')}
+              </Button>
               <Button
                 type="button"
                 variant="secondary"
                 onClick={() => {
                   setSentTaskId(null);
+                  setSentApplicationId(null);
                 }}
               >
                 {t('taskerPages.applicationSent.backToFeed', 'Back to feed')}

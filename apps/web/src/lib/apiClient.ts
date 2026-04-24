@@ -69,6 +69,12 @@ export interface ApiClient {
     quotePrice?: number | null,
   ): Promise<TaskApplication>;
 
+  withdrawApplication(
+    accessToken: string,
+    taskId: string,
+    applicationId: string,
+  ): Promise<{ application_id: string; status: string }>;
+
   listTaskApplications(accessToken: string, taskId: string): Promise<CursorPage<TaskApplication>>;
 
   acceptApplication(
@@ -365,6 +371,18 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
         method: 'POST',
         body: JSON.stringify(body),
       },
+      accessToken,
+    );
+  }
+
+  withdrawApplication(
+    accessToken: string,
+    taskId: string,
+    applicationId: string,
+  ): Promise<{ application_id: string; status: string }> {
+    return this.requestJson<{ application_id: string; status: string }>(
+      `/tasks/${taskId}/applications/${applicationId}/withdraw`,
+      { method: 'POST' },
       accessToken,
     );
   }

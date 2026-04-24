@@ -60,6 +60,10 @@ export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClie
       created_at: '2026-02-14T00:00:00Z',
     }),
     listTaskApplications: vi.fn().mockResolvedValue(makeCursorPage([])),
+    withdrawApplication: vi.fn().mockResolvedValue({
+      application_id: 'app-1',
+      status: 'WITHDRAWN',
+    }),
     acceptApplication: vi.fn().mockResolvedValue(makeBooking()),
     createBookingIntent: vi.fn().mockResolvedValue({
       id: 'intent-1',

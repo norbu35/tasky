@@ -164,7 +164,9 @@
     "quotePlaceholder": "Үнээ оруул",
     "counterPlaceholder": "Нэмэлт",
     "quoteRequiredHint": "Заавал — захиалагч таны үнийн саналыг хүлээж байна.",
-    "quotePriceRequired": "Энэ даалгаварт үнийн санал заавал оруулах шаардлагатай."
+    "quotePriceRequired": "Энэ даалгаварт үнийн санал заавал оруулах шаардлагатай.",
+    "withdrawAction": "Хүсэлтээ буцаах",
+    "withdrawSuccess": "Хүсэлт амжилттай буцаагдлаа."
   },
   "bookingConfirmation": {
     "invalidRequestTitle": "Буруу хүсэлт",
