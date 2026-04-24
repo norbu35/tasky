@@ -11,6 +11,7 @@ import type {
   TaskApplication,
   Booking,
   BookingIntent,
+  BookingScheduleEvent,
   BookingFilters,
   Review,
   Dispute,
@@ -104,7 +105,30 @@ export interface ApiClient {
 
   getBooking(accessToken: string, bookingId: string): Promise<Booking>;
 
-  cancelBooking(accessToken: string, bookingId: string, idempotencyKey: string): Promise<Booking>;
+  cancelBooking(
+    accessToken: string,
+    bookingId: string,
+    idempotencyKey: string,
+    reason?: string,
+  ): Promise<Booking>;
+
+  requestReschedule(
+    accessToken: string,
+    bookingId: string,
+    proposedScheduledAt: string,
+    idempotencyKey: string,
+    reason?: string,
+  ): Promise<BookingScheduleEvent>;
+
+  respondReschedule(
+    accessToken: string,
+    bookingId: string,
+    eventId: string,
+    action: 'ACCEPT' | 'DECLINE',
+    idempotencyKey: string,
+  ): Promise<BookingScheduleEvent>;
+
+  flagNoShow(accessToken: string, bookingId: string, idempotencyKey: string): Promise<Booking>;
 
   completeBooking(accessToken: string, bookingId: string, idempotencyKey: string): Promise<Booking>;
 
@@ -455,9 +479,72 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
     return this.requestJson<Booking>(`/bookings/${bookingId}`, { method: 'GET' }, accessToken);
   }
 
-  cancelBooking(accessToken: string, bookingId: string, idempotencyKey: string): Promise<Booking> {
+  cancelBooking(
+    accessToken: string,
+    bookingId: string,
+    idempotencyKey: string,
+    reason?: string,
+  ): Promise<Booking> {
+    const body = reason ? { reason } : undefined;
     return this.requestJson<Booking>(
       `/bookings/${bookingId}/cancel`,
+      {
+        method: 'POST',
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
+        ...(body ? { body: JSON.stringify(body) } : {}),
+      },
+      accessToken,
+    );
+  }
+
+  requestReschedule(
+    accessToken: string,
+    bookingId: string,
+    proposedScheduledAt: string,
+    idempotencyKey: string,
+    reason?: string,
+  ): Promise<BookingScheduleEvent> {
+    return this.requestJson<BookingScheduleEvent>(
+      `/bookings/${bookingId}/reschedule`,
+      {
+        method: 'POST',
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
+        body: JSON.stringify({
+          proposed_scheduled_at: proposedScheduledAt,
+          ...(reason ? { reason } : {}),
+        }),
+      },
+      accessToken,
+    );
+  }
+
+  respondReschedule(
+    accessToken: string,
+    bookingId: string,
+    eventId: string,
+    action: 'ACCEPT' | 'DECLINE',
+    idempotencyKey: string,
+  ): Promise<BookingScheduleEvent> {
+    return this.requestJson<BookingScheduleEvent>(
+      `/bookings/${bookingId}/reschedule/${eventId}/respond`,
+      {
+        method: 'POST',
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
+        body: JSON.stringify({ action }),
+      },
+      accessToken,
+    );
+  }
+
+  flagNoShow(accessToken: string, bookingId: string, idempotencyKey: string): Promise<Booking> {
+    return this.requestJson<Booking>(
+      `/bookings/${bookingId}/no-show/flag`,
       {
         method: 'POST',
         headers: {

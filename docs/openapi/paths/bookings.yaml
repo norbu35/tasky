@@ -294,7 +294,7 @@
     summary: Flag and adjudicate no-show
     description: |
       No-show adjudication follows deterministic rules:
-      reminder at scheduled +10m; no-show flag eligibility at +15m; rejected if either party
+      reminder at scheduled +30m; no-show flag eligibility at +1h; rejected if either party
       posted a status/check-in in trailing 30 minutes or a newer accepted reschedule supersedes schedule.
       On success, both booking and linked task transition to NO_SHOW in one transaction.
       Requires Idempotency-Key header.

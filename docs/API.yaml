@@ -159,7 +159,7 @@ components:
         phone:
           type: string
           nullable: true
-          example: "+97699001122"
+          example: '+97699001122'
         facebook_id:
           type: string
           nullable: true
@@ -435,7 +435,7 @@ components:
         options:
           type: array
           items:
-            $ref: "#/IntakeFieldOption"
+            $ref: '#/IntakeFieldOption'
           nullable: true
         min:
           type: integer
@@ -489,7 +489,7 @@ components:
               additionalProperties: true
             - type: array
               items:
-                $ref: "#/IntakeFieldSchema"
+                $ref: '#/IntakeFieldSchema'
     PublicTask:
       type: object
       required:
@@ -509,7 +509,7 @@ components:
           type: string
           format: uuid
         category:
-          $ref: "#/components/schemas/Category"
+          $ref: '#/components/schemas/Category'
         customer:
           type: object
           required:
@@ -597,7 +597,7 @@ components:
           type: string
           format: uuid
         category:
-          $ref: "#/components/schemas/Category"
+          $ref: '#/components/schemas/Category'
         customer_id:
           type: string
           format: uuid
@@ -914,17 +914,17 @@ components:
           type: string
           format: uuid
         task:
-          $ref: "#/components/schemas/Task"
+          $ref: '#/components/schemas/Task'
         tasker_id:
           type: string
           format: uuid
         tasker:
-          $ref: "#/components/schemas/Profile"
+          $ref: '#/components/schemas/Profile'
         customer_id:
           type: string
           format: uuid
         customer:
-          $ref: "#/components/schemas/Profile"
+          $ref: '#/components/schemas/Profile'
         price:
           type: integer
           description: Agreed price in MNT.
@@ -1113,7 +1113,7 @@ components:
           type: string
           format: uuid
         reviewer:
-          $ref: "#/components/schemas/Profile"
+          $ref: '#/components/schemas/Profile'
         reviewee_id:
           type: string
           format: uuid
@@ -1164,7 +1164,7 @@ components:
           type: string
           format: uuid
         booking:
-          $ref: "#/components/schemas/Booking"
+          $ref: '#/components/schemas/Booking'
         raised_by:
           type: string
           format: uuid
@@ -1200,7 +1200,7 @@ components:
         evidence:
           type: array
           items:
-            $ref: "#/DisputeEvidence"
+            $ref: '#/DisputeEvidence'
         created_at:
           type: string
           format: date-time
@@ -1349,7 +1349,7 @@ components:
         results:
           type: array
           items:
-            $ref: "#/LocationSearchResult"
+            $ref: '#/LocationSearchResult'
     OutboxSummary:
       type: object
       required:
@@ -1444,7 +1444,7 @@ components:
         events:
           type: array
           items:
-            $ref: "#/OutboxEvent"
+            $ref: '#/OutboxEvent'
         total:
           type: integer
         offset:
@@ -1534,37 +1534,37 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
     Unauthorized:
       description: Missing or invalid authentication token.
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
     Forbidden:
-      description: "Insufficient permissions or policy gate active for this action. Common codes: `FORBIDDEN`, `VERIFICATION_REQUIRED`, `ADDRESS_LOCKED`, `USER_BANNED`."
+      description: 'Insufficient permissions or policy gate active for this action. Common codes: `FORBIDDEN`, `VERIFICATION_REQUIRED`, `ADDRESS_LOCKED`, `USER_BANNED`.'
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
     NotFound:
       description: Requested resource not found.
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
     Conflict:
       description: Conflict with current resource state.
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
     TooManyRequests:
       description: Rate limit exceeded.
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
 paths:
   /system/version:
     get:
@@ -1575,7 +1575,7 @@ paths:
       operationId: getSystemVersion
       security: []
       responses:
-        "200":
+        '200':
           description: Version info
           content:
             application/json:
@@ -1618,7 +1618,7 @@ paths:
                   description: Facebook user access token from the client SDK.
                   example: EAABsbCS1...
       responses:
-        "200":
+        '200':
           description: Authentication successful.
           content:
             application/json:
@@ -1634,29 +1634,29 @@ paths:
                   refresh_token:
                     type: string
                   user:
-                    $ref: "#/components/schemas/User"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
           description: Invalid or mismatched Facebook token.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "409":
+                $ref: '#/components/schemas/Error'
+        '409':
           description: Account state conflict prevents authentication.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "429":
-          $ref: "#/components/responses/TooManyRequests"
-        "503":
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '503':
           description: OAuth provider unavailable in Phase 0-1 (`AUTH_PROVIDER_UNAVAILABLE`).
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /auth/facebook/status:
     get:
       tags:
@@ -1669,7 +1669,7 @@ paths:
       operationId: getFacebookStatus
       security: []
       responses:
-        "200":
+        '200':
           description: Circuit breaker state.
           content:
             application/json:
@@ -1696,10 +1696,10 @@ paths:
         Revokes the current access token. The token cannot be used after this call.
       operationId: logout
       responses:
-        "204":
+        '204':
           description: Token revoked successfully.
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /auth/dev/login:
     x-tasky-status: deferred
     x-tasky-phase: dev_only
@@ -1733,7 +1733,7 @@ paths:
                     - TASKER
                     - ADMIN
       responses:
-        "200":
+        '200':
           description: Auth session with tokens.
           content:
             application/json:
@@ -1749,9 +1749,9 @@ paths:
                   refresh_token:
                     type: string
                   user:
-                    $ref: "#/components/schemas/User"
-        "400":
-          $ref: "#/components/responses/BadRequest"
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
   /auth/token/refresh:
     post:
       tags:
@@ -1772,7 +1772,7 @@ paths:
                 refresh_token:
                   type: string
       responses:
-        "200":
+        '200':
           description: Tokens refreshed successfully.
           content:
             application/json:
@@ -1786,12 +1786,12 @@ paths:
                     type: string
                   refresh_token:
                     type: string
-        "401":
+        '401':
           description: Invalid or expired refresh token.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /auth/otp/request:
     x-tasky-status: deferred
     x-tasky-phase: phase_2
@@ -1818,9 +1818,9 @@ paths:
                   type: string
                   format: phone
                   description: Phone number in E.164 format.
-                  example: "+97699112233"
+                  example: '+97699112233'
       responses:
-        "200":
+        '200':
           description: OTP sent successfully.
           content:
             application/json:
@@ -1835,16 +1835,16 @@ paths:
                   masked_phone:
                     type: string
                     description: Masked phone number confirming the delivery target.
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "403":
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
           description: OTP authentication is disabled for the current rollout phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "429":
-          $ref: "#/components/responses/TooManyRequests"
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
   /auth/otp/verify:
     x-tasky-status: deferred
     x-tasky-phase: phase_2
@@ -1873,7 +1873,7 @@ paths:
                   type: string
                   format: phone
                   description: Phone number in E.164 format.
-                  example: "+97699112233"
+                  example: '+97699112233'
                 code:
                   type: string
                   description: 4-6 digit OTP code.
@@ -1884,7 +1884,7 @@ paths:
                   description: Optional Facebook access token for account linking/migration.
                   maxLength: 512
       responses:
-        "200":
+        '200':
           description: Authentication successful.
           content:
             application/json:
@@ -1900,21 +1900,21 @@ paths:
                   refresh_token:
                     type: string
                   user:
-                    $ref: "#/components/schemas/User"
-        "401":
+                    $ref: '#/components/schemas/User'
+        '401':
           description: Invalid or expired OTP code.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "403":
+                $ref: '#/components/schemas/Error'
+        '403':
           description: OTP authentication is disabled for the current rollout phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "429":
-          $ref: "#/components/responses/TooManyRequests"
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
   /users/me:
     get:
       tags:
@@ -1925,14 +1925,14 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: User profile.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Profile"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/Profile'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     put:
       tags:
         - Users
@@ -1960,16 +1960,16 @@ paths:
                   type: string
                   maxLength: 200
       responses:
-        "200":
+        '200':
           description: Profile updated.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Profile"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/Profile'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags:
         - Users
@@ -1980,7 +1980,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Account deletion requested.
           content:
             application/json:
@@ -1992,8 +1992,8 @@ paths:
                   message:
                     type: string
                     example: Account deletion requested. Data will be removed after 90-day retention period.
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /users/me/role/tasker:
     post:
       tags:
@@ -2006,20 +2006,20 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Role updated to TASKER.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "409":
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
           description: User is already TASKER or ADMIN.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /users/me/avatar/upload-url:
     post:
       tags:
@@ -2050,16 +2050,16 @@ paths:
                     - image/webp
                   example: image/jpeg
       responses:
-        "200":
+        '200':
           description: Presigned upload URL generated.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PresignedUrlResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /users/me/stats:
     get:
       tags:
@@ -2070,7 +2070,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: User statistics.
           content:
             application/json:
@@ -2095,8 +2095,8 @@ paths:
                     type: string
                     format: date-time
                     nullable: true
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /verification/upload-url:
     post:
       tags:
@@ -2121,16 +2121,16 @@ paths:
                   description: MIME type of the verification image (e.g. image/jpeg, image/png).
                   example: image/jpeg
       responses:
-        "200":
+        '200':
           description: Presigned upload URL generated.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PresignedUrlResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /verification/submit:
     post:
       tags:
@@ -2168,22 +2168,22 @@ paths:
                   enum:
                     - true
       responses:
-        "200":
+        '200':
           description: Verification submitted successfully.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VerificationStatus"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "409":
+                $ref: '#/components/schemas/VerificationStatus'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
           description: Verification already submitted or approved.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /verification/status:
     get:
       tags:
@@ -2194,14 +2194,14 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Current verification status.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VerificationStatus"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/VerificationStatus'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /categories:
     get:
       tags:
@@ -2212,10 +2212,10 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated list of active categories.
           content:
             application/json:
@@ -2228,11 +2228,11 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Category"
+                      $ref: '#/components/schemas/Category'
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /tasks/drafts:
     post:
       tags:
@@ -2257,22 +2257,22 @@ paths:
                   type: string
                   format: uuid
       responses:
-        "201":
+        '201':
           description: Draft created.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TaskDraft"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "409":
+                $ref: '#/components/schemas/TaskDraft'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
           description: Category inactive or schema mismatch.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /tasks/drafts/{id}:
     get:
       tags:
@@ -2282,24 +2282,24 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       responses:
-        "200":
+        '200':
           description: Draft details.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TaskDraft"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
+                $ref: '#/components/schemas/TaskDraft'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
           description: Exact address is locked for current user/state (`ADDRESS_LOCKED`).
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/NotFound'
     put:
       tags:
         - Tasks
@@ -2308,7 +2308,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       requestBody:
         required: true
         content:
@@ -2335,16 +2335,16 @@ paths:
                   nullable: true
                   maxLength: 500
       responses:
-        "200":
+        '200':
           description: Draft updated.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TaskDraft"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/TaskDraft'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /tasks/photos/upload-url:
     post:
       tags:
@@ -2369,16 +2369,16 @@ paths:
                   type: string
                   example: image/jpeg
       responses:
-        "200":
+        '200':
           description: Presigned upload URL generated.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PresignedUrlResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /tasks:
     get:
       tags:
@@ -2417,10 +2417,10 @@ paths:
             format: double
             default: 10
             maximum: 50
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated list of open tasks.
           content:
             application/json:
@@ -2433,13 +2433,13 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/PublicTask"
+                      $ref: '#/components/schemas/PublicTask'
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                    $ref: '#/components/schemas/CursorPagination'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags:
         - Tasks
@@ -2457,20 +2457,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateTaskRequest"
+              $ref: '#/components/schemas/CreateTaskRequest'
       responses:
-        "201":
+        '201':
           description: Task created successfully.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Task"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+                $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /tasks/mine:
     get:
       tags:
@@ -2504,10 +2504,10 @@ paths:
               - COMPLETED
               - CANCELLED
               - NO_SHOW
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated list of tasks for authenticated user scope.
           content:
             application/json:
@@ -2520,13 +2520,13 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Task"
+                      $ref: '#/components/schemas/Task'
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                    $ref: '#/components/schemas/CursorPagination'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /tasks/mine/recent-locations:
     get:
       tags:
@@ -2540,7 +2540,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: List of recent distinct locations (may be empty).
           content:
             application/json:
@@ -2553,9 +2553,9 @@ paths:
                     type: array
                     maxItems: 3
                     items:
-                      $ref: "#/components/schemas/RecentLocation"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                      $ref: '#/components/schemas/RecentLocation'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /tasks/{id}:
     get:
       tags:
@@ -2568,24 +2568,24 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       responses:
-        "200":
+        '200':
           description: Task details.
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/Task"
-                  - $ref: "#/components/schemas/PublicTask"
+                  - $ref: '#/components/schemas/Task'
+                  - $ref: '#/components/schemas/PublicTask'
                 description: |
                   Returns role-scoped task details.
                   - Owners and booked taskers receive full `Task` (exact location fields populated).
                   - Other authorized users receive redacted `PublicTask` (approximate location only).
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     put:
       tags:
         - Tasks
@@ -2596,34 +2596,34 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateTaskRequest"
+              $ref: '#/components/schemas/UpdateTaskRequest'
       responses:
-        "200":
+        '200':
           description: Task updated.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Task"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Task is not in OPEN status and cannot be updated.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /tasks/{id}/cancel:
     post:
       tags:
@@ -2636,26 +2636,26 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       responses:
-        "200":
+        '200':
           description: Task cancelled.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Task"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/Task'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Task cannot be cancelled in its current status.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /tasks/{id}/photos/upload-url:
     post:
       tags:
@@ -2668,7 +2668,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       requestBody:
         required: true
         content:
@@ -2682,20 +2682,20 @@ paths:
                   type: string
                   example: image/jpeg
       responses:
-        "200":
+        '200':
           description: Presigned upload URL generated.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PresignedUrlResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /tasks/{id}/applications:
     post:
       tags:
@@ -2709,7 +2709,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       requestBody:
         required: true
         content:
@@ -2731,30 +2731,30 @@ paths:
                   maximum: 50000000
                   description: Tasker's price response. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the required quote.
       responses:
-        "201":
+        '201':
           description: Application submitted.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TaskApplication"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
+                $ref: '#/components/schemas/TaskApplication'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
           description: User is not a verified tasker.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Tasker already applied or task is not OPEN.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
               examples:
                 applicationCap:
                   summary: Application cap reached
@@ -2773,11 +2773,11 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated list of applications.
           content:
             application/json:
@@ -2790,15 +2790,15 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/TaskApplication"
+                      $ref: '#/components/schemas/TaskApplication'
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /tasks/{id}/applications/{applicationId}/accept:
     post:
       tags:
@@ -2815,8 +2815,8 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
         - name: applicationId
           in: path
           required: true
@@ -2838,30 +2838,30 @@ paths:
                   enum:
                     - true
       responses:
-        "201":
+        '201':
           description: Booking intent created for the selected application.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookingIntent"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/BookingIntent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Application already processed, selection already pending, or task is not OPEN.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "422":
+                $ref: '#/components/schemas/Error'
+        '422':
           description: Liability disclaimer not accepted.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /tasks/{id}/applications/{applicationId}/select:
     post:
       tags:
@@ -2874,7 +2874,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
         - name: applicationId
           in: path
           required: true
@@ -2882,24 +2882,24 @@ paths:
             type: string
             format: uuid
       responses:
-        "200":
+        '200':
           description: Application selected. Tasker has 4 hours to confirm.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TaskApplication"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/TaskApplication'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Application already processed or task assigned.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /tasks/{id}/applications/{applicationId}/confirm:
     post:
       tags:
@@ -2912,16 +2912,16 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
         - name: applicationId
           in: path
           required: true
           schema:
             type: string
             format: uuid
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       responses:
-        "200":
+        '200':
           description: Booking created successfully.
           content:
             application/json:
@@ -2933,18 +2933,18 @@ paths:
                     format: uuid
                   status:
                     type: string
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Selection expired or already processed.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /tasks/{id}/applications/{applicationId}/withdraw:
     post:
       tags:
@@ -2957,7 +2957,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
         - name: applicationId
           in: path
           required: true
@@ -2965,7 +2965,7 @@ paths:
             type: string
             format: uuid
       responses:
-        "200":
+        '200':
           description: Application withdrawn.
           content:
             application/json:
@@ -2977,18 +2977,18 @@ paths:
                     format: uuid
                   status:
                     type: string
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Application cannot be withdrawn in its current status.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /bookings:
     get:
       tags:
@@ -3019,10 +3019,10 @@ paths:
               - COMPLETED
               - CANCELLED
               - NO_SHOW
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated list of bookings.
           content:
             application/json:
@@ -3035,13 +3035,13 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Booking"
+                      $ref: '#/components/schemas/Booking'
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                    $ref: '#/components/schemas/CursorPagination'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /bookings/{id}:
     get:
       tags:
@@ -3052,20 +3052,20 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       responses:
-        "200":
+        '200':
           description: Booking details.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Booking"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Booking'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /bookings/{id}/schedule-events:
     get:
       tags:
@@ -3076,9 +3076,9 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       responses:
-        "200":
+        '200':
           description: Schedule events.
           content:
             application/json:
@@ -3090,13 +3090,13 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/BookingScheduleEvent"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                      $ref: '#/components/schemas/BookingScheduleEvent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /bookings/{id}/cancel:
     post:
       tags:
@@ -3111,8 +3111,8 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       requestBody:
         required: false
         content:
@@ -3124,24 +3124,24 @@ paths:
                   type: string
                   description: Optional cancellation reason. Taskers can use "Safety/Fraud" to bypass strikes.
       responses:
-        "200":
+        '200':
           description: Booking cancelled.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Booking"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/Booking'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Booking cannot be cancelled in its current status.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /bookings/{id}/complete:
     post:
       tags:
@@ -3156,27 +3156,27 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       responses:
-        "200":
+        '200':
           description: Booking completed.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Booking"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/Booking'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Booking is not in ASSIGNED status.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /bookings/{id}/reschedule:
     post:
       tags:
@@ -3190,8 +3190,8 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       requestBody:
         required: true
         content:
@@ -3209,24 +3209,24 @@ paths:
                   nullable: true
                   maxLength: 1000
       responses:
-        "201":
+        '201':
           description: Reschedule request created.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookingScheduleEvent"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/BookingScheduleEvent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Booking is not in ASSIGNED status or proposed time invalid.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /bookings/{id}/reschedule/{eventId}/respond:
     post:
       tags:
@@ -3237,14 +3237,14 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
         - name: eventId
           in: path
           required: true
           schema:
             type: string
             format: uuid
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       requestBody:
         required: true
         content:
@@ -3260,24 +3260,24 @@ paths:
                     - ACCEPT
                     - DECLINE
       responses:
-        "200":
+        '200':
           description: Reschedule request responded.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookingScheduleEvent"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/BookingScheduleEvent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Request already finalized or booking not eligible.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /bookings/{id}/no-show/flag:
     post:
       tags:
@@ -3285,7 +3285,7 @@ paths:
       summary: Flag and adjudicate no-show
       description: |
         No-show adjudication follows deterministic rules:
-        reminder at scheduled +10m; no-show flag eligibility at +15m; rejected if either party
+        reminder at scheduled +30m; no-show flag eligibility at +1h; rejected if either party
         posted a status/check-in in trailing 30 minutes or a newer accepted reschedule supersedes schedule.
         On success, both booking and linked task transition to NO_SHOW in one transaction.
         Requires Idempotency-Key header.
@@ -3293,27 +3293,27 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       responses:
-        "200":
+        '200':
           description: No-show confirmed.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Booking"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/Booking'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: No-show rules not satisfied (`NO_SHOW_NOT_ELIGIBLE`).
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /bookings/{id}/mark-done:
     post:
       tags:
@@ -3327,10 +3327,10 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       responses:
-        "200":
+        '200':
           description: Booking marked done by tasker.
           content:
             application/json:
@@ -3341,22 +3341,22 @@ paths:
                   - tasker_marked_done_at
                 properties:
                   booking:
-                    $ref: "#/components/schemas/Booking"
+                    $ref: '#/components/schemas/Booking'
                   tasker_marked_done_at:
                     type: string
                     format: date-time
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Booking is not in ASSIGNED status.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /bookings/{id}/rebook:
     post:
       tags:
@@ -3370,27 +3370,27 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       responses:
-        "200":
+        '200':
           description: Rebook intent created.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookingIntent"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/BookingIntent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Original booking is not eligible for rebooking.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /tasks/{id}/booking-intents:
     post:
       tags:
@@ -3405,8 +3405,8 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       requestBody:
         required: true
         content:
@@ -3436,26 +3436,26 @@ paths:
                   format: uuid
                   description: Associated offer ID (for INSTANT_MATCH source).
       responses:
-        "201":
+        '201':
           description: Booking intent created.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookingIntent"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/BookingIntent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Task is not open or booking not eligible for intent creation.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /booking-intents/{id}:
     get:
       tags:
@@ -3466,18 +3466,18 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       responses:
-        "200":
+        '200':
           description: Booking intent details.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookingIntent"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/BookingIntent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /booking-intents/{id}/confirm:
     post:
       tags:
@@ -3491,29 +3491,29 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       responses:
-        "200":
+        '200':
           description: Booking created from intent.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Booking"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/Booking'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Intent or task status does not allow confirmation.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /booking-intents/{id}/decline:
     x-tasky-status: deferred
     x-tasky-phase: phase_2
@@ -3529,27 +3529,27 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       responses:
-        "200":
+        '200':
           description: Booking intent declined.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookingIntent"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/BookingIntent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Intent is not pending or already resolved.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /bookings/{id}/reviews:
     post:
       tags:
@@ -3562,7 +3562,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       requestBody:
         required: true
         content:
@@ -3603,26 +3603,26 @@ paths:
                   nullable: true
                   description: Whether the reviewer would book again (customer-only).
       responses:
-        "201":
+        '201':
           description: Review submitted.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Review"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/Review'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Review already submitted for this booking or booking is not COMPLETED.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /me/pending-reviews:
     get:
       tags:
@@ -3633,7 +3633,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Pending reviews for the authenticated user.
           content:
             application/json:
@@ -3645,9 +3645,9 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/PendingReview"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                      $ref: '#/components/schemas/PendingReview'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /users/{id}/reviews:
     get:
       tags:
@@ -3658,11 +3658,11 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated reviews.
           content:
             application/json:
@@ -3675,13 +3675,13 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Review"
+                      $ref: '#/components/schemas/Review'
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /bookings/{id}/disputes:
     post:
       tags:
@@ -3698,8 +3698,8 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       requestBody:
         required: true
         content:
@@ -3718,28 +3718,28 @@ paths:
                   type: array
                   minItems: 1
                   items:
-                    $ref: "#/components/schemas/DisputeEvidence"
+                    $ref: '#/components/schemas/DisputeEvidence'
       responses:
-        "201":
+        '201':
           description: Dispute raised.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Dispute"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/Dispute'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Dispute already raised or booking status/timing does not allow disputes.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /disputes/{id}:
     get:
       tags:
@@ -3750,20 +3750,20 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       responses:
-        "200":
+        '200':
           description: Dispute details.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Dispute"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Dispute'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /conversations:
     get:
       tags:
@@ -3774,10 +3774,10 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated conversations.
           content:
             application/json:
@@ -3790,11 +3790,11 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Conversation"
+                      $ref: '#/components/schemas/Conversation'
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /conversations/{id}/messages:
     get:
       tags:
@@ -3807,11 +3807,11 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated messages.
           content:
             application/json:
@@ -3824,15 +3824,15 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Message"
+                      $ref: '#/components/schemas/Message'
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags:
         - Conversations
@@ -3845,7 +3845,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       requestBody:
         required: true
         content:
@@ -3860,20 +3860,20 @@ paths:
                   minLength: 1
                   maxLength: 2000
       responses:
-        "201":
+        '201':
           description: Message sent.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Message"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Message'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /notifications/devices:
     post:
       tags:
@@ -3903,7 +3903,7 @@ paths:
                     - ANDROID
                     - WEB
       responses:
-        "200":
+        '200':
           description: Device registered.
           content:
             application/json:
@@ -3913,10 +3913,10 @@ paths:
                   message:
                     type: string
                     example: Device registered successfully.
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /notifications/devices/{token}:
     delete:
       tags:
@@ -3933,12 +3933,12 @@ paths:
           schema:
             type: string
       responses:
-        "204":
+        '204':
           description: Device unregistered.
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /taskers/me/service-areas:
     get:
       tags:
@@ -3949,7 +3949,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Configured service areas.
           content:
             application/json:
@@ -3976,10 +3976,10 @@ paths:
                           type: string
                         slug:
                           type: string
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
     put:
       tags:
         - Users
@@ -4000,12 +4000,12 @@ paths:
                   items:
                     type: string
       responses:
-        "204":
+        '204':
           description: Service areas updated.
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /admin/messages/flagged:
     get:
       tags:
@@ -4016,10 +4016,10 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated list of phone-flagged messages.
           content:
             application/json:
@@ -4032,13 +4032,13 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Message"
+                      $ref: '#/components/schemas/Message'
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /admin/users:
     get:
       tags:
@@ -4056,10 +4056,10 @@ paths:
           description: Phone number to search for (exact normalized match, E.164 recommended).
           schema:
             type: string
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated list of users.
           content:
             application/json:
@@ -4072,13 +4072,13 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/User"
+                      $ref: '#/components/schemas/User'
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /admin/users/{id}/ban:
     post:
       tags:
@@ -4091,7 +4091,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       requestBody:
         required: true
         content:
@@ -4105,24 +4105,24 @@ paths:
                   type: string
                   minLength: 1
       responses:
-        "200":
+        '200':
           description: User banned.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: User is already banned.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /admin/users/{id}/unban:
     post:
       tags:
@@ -4133,26 +4133,26 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       responses:
-        "200":
+        '200':
           description: User unbanned.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: User is not banned.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /admin/tasks/{id}/concierge-assign:
     post:
       tags:
@@ -4166,8 +4166,8 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       requestBody:
         required: true
         content:
@@ -4191,26 +4191,26 @@ paths:
                   enum:
                     - true
       responses:
-        "200":
+        '200':
           description: Concierge assignment completed.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Booking"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/Booking'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Task not eligible for assignment or tasker not eligible.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /admin/verifications/pending:
     get:
       tags:
@@ -4221,10 +4221,10 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated list of pending verifications.
           content:
             application/json:
@@ -4237,13 +4237,13 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/VerificationDetail"
+                      $ref: '#/components/schemas/VerificationDetail'
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /admin/verifications/{id}:
     get:
       tags:
@@ -4254,20 +4254,20 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       responses:
-        "200":
+        '200':
           description: Verification detail.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VerificationDetail"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/VerificationDetail'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /admin/verifications/{id}/approve:
     post:
       tags:
@@ -4278,26 +4278,26 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       responses:
-        "200":
+        '200':
           description: Verification approved.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VerificationDetail"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/VerificationDetail'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Verification is not in PENDING status.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /admin/verifications/{id}/reject:
     post:
       tags:
@@ -4308,7 +4308,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       requestBody:
         required: true
         content:
@@ -4323,24 +4323,24 @@ paths:
                   minLength: 1
                   description: Reason for rejection, visible to the tasker.
       responses:
-        "200":
+        '200':
           description: Verification rejected.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VerificationDetail"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/VerificationDetail'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Verification is not in PENDING status.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /admin/disputes:
     get:
       tags:
@@ -4351,10 +4351,10 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated list of open disputes.
           content:
             application/json:
@@ -4367,13 +4367,13 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Dispute"
+                      $ref: '#/components/schemas/Dispute'
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /admin/disputes/{id}:
     get:
       tags:
@@ -4386,9 +4386,9 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       responses:
-        "200":
+        '200':
           description: Dispute detail payload for admin review.
           content:
             application/json:
@@ -4396,9 +4396,9 @@ paths:
                 type: object
                 properties:
                   dispute:
-                    $ref: "#/components/schemas/Dispute"
+                    $ref: '#/components/schemas/Dispute'
                   booking:
-                    $ref: "#/components/schemas/Booking"
+                    $ref: '#/components/schemas/Booking'
                   conversation_id:
                     type: string
                     format: uuid
@@ -4406,13 +4406,13 @@ paths:
                   evidence_messages:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Message"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                      $ref: '#/components/schemas/Message'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /admin/disputes/{id}/resolve:
     post:
       tags:
@@ -4426,8 +4426,8 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       requestBody:
         required: true
         content:
@@ -4448,26 +4448,26 @@ paths:
                   maxLength: 2000
                   description: Admin notes on the resolution decision.
       responses:
-        "200":
+        '200':
           description: Dispute resolved.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Dispute"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/Dispute'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Dispute is already resolved.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /admin/moderation/strike-policy:
     get:
       tags:
@@ -4478,16 +4478,16 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Current strike policy.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StrikePolicy"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+                $ref: '#/components/schemas/StrikePolicy'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
     put:
       tags:
         - Admin
@@ -4502,20 +4502,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/StrikePolicyUpdateRequest"
+              $ref: '#/components/schemas/StrikePolicyUpdateRequest'
       responses:
-        "200":
+        '200':
           description: Strike policy updated.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StrikePolicy"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+                $ref: '#/components/schemas/StrikePolicy'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /admin/features/toggles:
     get:
       tags:
@@ -4526,7 +4526,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Current feature toggle states.
           content:
             application/json:
@@ -4538,11 +4538,11 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/FeatureToggle"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+                      $ref: '#/components/schemas/FeatureToggle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
     put:
       tags:
         - Admin
@@ -4567,18 +4567,18 @@ paths:
                 is_enabled:
                   type: boolean
       responses:
-        "200":
+        '200':
           description: Feature toggle updated.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FeatureToggle"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+                $ref: '#/components/schemas/FeatureToggle'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /admin/categories:
     get:
       tags:
@@ -4589,10 +4589,10 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated list of all categories.
           content:
             application/json:
@@ -4605,13 +4605,13 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Category"
+                      $ref: '#/components/schemas/Category'
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
     post:
       tags:
         - Admin
@@ -4649,18 +4649,18 @@ paths:
                   type: boolean
                   default: true
       responses:
-        "201":
+        '201':
           description: Category created.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Category"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /admin/categories/{id}:
     put:
       tags:
@@ -4671,7 +4671,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       requestBody:
         required: true
         content:
@@ -4695,20 +4695,20 @@ paths:
                 intake_enabled:
                   type: boolean
       responses:
-        "200":
+        '200':
           description: Category updated.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Category"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /admin/categories/{id}/schemas:
     get:
       tags:
@@ -4718,9 +4718,9 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       responses:
-        "200":
+        '200':
           description: Schema versions for category.
           content:
             application/json:
@@ -4754,10 +4754,10 @@ paths:
                         created_at:
                           type: string
                           format: date-time
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
     post:
       tags:
         - Admin
@@ -4767,7 +4767,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       requestBody:
         required: true
         content:
@@ -4787,7 +4787,7 @@ paths:
                     - CANARY
                     - ACTIVE
       responses:
-        "201":
+        '201':
           description: Schema version created.
           content:
             application/json:
@@ -4801,12 +4801,12 @@ paths:
                     type: integer
                   status:
                     type: string
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /admin/categories/{id}/schemas/{version}/activate:
     post:
       tags:
@@ -4816,7 +4816,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
         - name: version
           in: path
           required: true
@@ -4838,7 +4838,7 @@ paths:
                     - ACTIVE
                     - ROLLBACK_TO_LAST_KNOWN_GOOD
       responses:
-        "200":
+        '200':
           description: Schema activation state updated.
           content:
             application/json:
@@ -4849,14 +4849,14 @@ paths:
                     type: integer
                   status:
                     type: string
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /security/customer/ping:
     get:
       tags:
@@ -4870,7 +4870,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Auth scope confirmed.
           content:
             application/json:
@@ -4886,10 +4886,10 @@ paths:
                   userId:
                     type: string
                     format: uuid
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /security/tasker/ping:
     get:
       tags:
@@ -4903,7 +4903,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Auth scope confirmed.
           content:
             application/json:
@@ -4919,10 +4919,10 @@ paths:
                   userId:
                     type: string
                     format: uuid
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /security/admin/ping:
     get:
       tags:
@@ -4936,7 +4936,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Auth scope confirmed.
           content:
             application/json:
@@ -4952,10 +4952,10 @@ paths:
                   userId:
                     type: string
                     format: uuid
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /admin/outbox/summary:
     get:
       tags:
@@ -4966,16 +4966,16 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Outbox summary.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/OutboxSummary"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+                $ref: '#/components/schemas/OutboxSummary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /admin/outbox/events:
     get:
       tags:
@@ -5013,16 +5013,16 @@ paths:
             default: 0
             minimum: 0
       responses:
-        "200":
+        '200':
           description: Paginated list of outbox events.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/OutboxEventPage"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+                $ref: '#/components/schemas/OutboxEventPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /admin/outbox/events/{id}:
     get:
       tags:
@@ -5040,18 +5040,18 @@ paths:
             type: string
             format: uuid
       responses:
-        "200":
+        '200':
           description: Outbox event detail.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/OutboxEvent"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/OutboxEvent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /admin/outbox/events/{id}/replay:
     post:
       tags:
@@ -5069,7 +5069,7 @@ paths:
             type: string
             format: uuid
       responses:
-        "200":
+        '200':
           description: Event replay initiated.
           content:
             application/json:
@@ -5080,16 +5080,16 @@ paths:
                     type: string
                   eventId:
                     type: string
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "409":
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
           description: Event is not in FAILED status.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /admin/bookings/{id}:
     get:
       tags:
@@ -5100,20 +5100,20 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
+        - $ref: '#/components/parameters/PathId'
       responses:
-        "200":
+        '200':
           description: Booking detail.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Booking"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Booking'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /admin/bookings/{id}/override-status:
     post:
       tags:
@@ -5126,8 +5126,8 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       requestBody:
         required: true
         content:
@@ -5151,24 +5151,24 @@ paths:
                   type: string
                   maxLength: 500
       responses:
-        "200":
+        '200':
           description: Status overridden successfully.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Booking"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+                $ref: '#/components/schemas/Booking'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Invalid status transition.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /admin/payouts/pending:
     x-tasky-status: deferred
     x-tasky-phase: phase_3
@@ -5184,7 +5184,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Paginated list of pending payout requests.
           content:
             application/json:
@@ -5199,17 +5199,17 @@ paths:
                     items:
                       $ref: ../components/schemas/monetization.yaml#/PayoutRequest
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "503":
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '503':
           description: Payout operations are deferred during the liquidity-first MVP phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /admin/payouts/{id}/process:
     x-tasky-status: deferred
     x-tasky-phase: phase_3
@@ -5227,8 +5227,8 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       requestBody:
         required: true
         content:
@@ -5244,7 +5244,7 @@ paths:
                   maxLength: 500
                   description: Admin reason for the processing decision.
       responses:
-        "200":
+        '200':
           description: Payout processed successfully.
           content:
             application/json:
@@ -5253,26 +5253,26 @@ paths:
                 properties:
                   status:
                     type: string
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Payout is not eligible for processing (e.g. wrong weekday).
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "503":
+                $ref: '#/components/schemas/Error'
+        '503':
           description: Payout operations are deferred during the liquidity-first MVP phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /admin/outbox/events/replay-all:
     post:
       tags:
@@ -5283,7 +5283,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Bulk replay initiated.
           content:
             application/json:
@@ -5296,10 +5296,10 @@ paths:
                     type: integer
                   total_failed:
                     type: integer
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /location/reverse-geocode:
     get:
       tags:
@@ -5329,14 +5329,14 @@ paths:
             minimum: -180
             maximum: 180
       responses:
-        "200":
+        '200':
           description: District-level address resolved.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ReverseGeocodeResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/ReverseGeocodeResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /location/search:
     get:
       tags:
@@ -5368,14 +5368,14 @@ paths:
             type: number
             format: double
       responses:
-        "200":
+        '200':
           description: Search results returned (may be empty).
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/LocationSearchResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/LocationSearchResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /wallet:
     x-tasky-status: deferred
     x-tasky-phase: phase_3
@@ -5389,20 +5389,20 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Wallet balance.
           content:
             application/json:
               schema:
                 $ref: ../components/schemas/monetization.yaml#/WalletBalance
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "503":
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
           description: Monetization feature is disabled for the current rollout phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /wallet/transactions:
     x-tasky-status: deferred
     x-tasky-phase: phase_3
@@ -5416,10 +5416,10 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated transaction history.
           content:
             application/json:
@@ -5434,15 +5434,15 @@ paths:
                     items:
                       $ref: ../components/schemas/monetization.yaml#/LedgerEntry
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "503":
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
           description: Monetization feature is disabled for the current rollout phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /wallet/payouts:
     x-tasky-status: deferred
     x-tasky-phase: phase_3
@@ -5460,7 +5460,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       requestBody:
         required: true
         content:
@@ -5481,30 +5481,30 @@ paths:
                   example: Хаан банк
                 bank_account:
                   type: string
-                  example: "5012345678"
+                  example: '5012345678'
       responses:
-        "201":
+        '201':
           description: Payout request created.
           content:
             application/json:
               schema:
                 $ref: ../components/schemas/monetization.yaml#/PayoutRequest
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "409":
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
           description: Insufficient balance or existing pending payout.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "503":
+                $ref: '#/components/schemas/Error'
+        '503':
           description: Monetization feature is disabled for the current rollout phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /payments/bookings/{id}/initiate:
     x-tasky-status: deferred
     x-tasky-phase: phase_3
@@ -5523,8 +5523,8 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/PathId"
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       requestBody:
         required: true
         content:
@@ -5540,7 +5540,7 @@ paths:
                   enum:
                     - true
       responses:
-        "200":
+        '200':
           description: Payment link generated.
           content:
             application/json:
@@ -5557,24 +5557,24 @@ paths:
                   qr_code:
                     type: string
                     description: Base64-encoded QR code image for scanning.
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
           description: Booking is not eligible for payment initiation or payment already initiated.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "503":
+                $ref: '#/components/schemas/Error'
+        '503':
           description: Monetization feature is disabled for the current rollout phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /payments/qpay/callback:
     x-tasky-status: deferred
     x-tasky-phase: phase_3
@@ -5625,7 +5625,7 @@ paths:
                   type: string
                   description: HMAC signature for verification.
       responses:
-        "200":
+        '200':
           description: Callback processed successfully.
           content:
             application/json:
@@ -5635,18 +5635,18 @@ paths:
                   status:
                     type: string
                     example: ok
-        "400":
+        '400':
           description: Invalid callback payload or signature.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "503":
+                $ref: '#/components/schemas/Error'
+        '503':
           description: Monetization feature is disabled for the current rollout phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /subscriptions/tasker:
     x-tasky-status: deferred
     x-tasky-phase: phase_3
@@ -5662,7 +5662,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       requestBody:
         required: true
         content:
@@ -5675,22 +5675,22 @@ paths:
                 plan_code:
                   type: string
       responses:
-        "200":
+        '200':
           description: Subscription activated.
           content:
             application/json:
               schema:
                 $ref: ../components/schemas/monetization.yaml#/TaskerSubscription
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "503":
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '503':
           description: Subscription feature disabled for current rollout phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /credits/balance:
     x-tasky-status: deferred
     x-tasky-phase: phase_2
@@ -5706,20 +5706,20 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Credit balance.
           content:
             application/json:
               schema:
                 $ref: ../components/schemas/monetization.yaml#/CreditBalance
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "503":
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
           description: Credit system disabled for current rollout phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /credits/transactions:
     x-tasky-status: deferred
     x-tasky-phase: phase_2
@@ -5732,10 +5732,10 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/CursorParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
       responses:
-        "200":
+        '200':
           description: Paginated credit transaction history.
           content:
             application/json:
@@ -5750,15 +5750,15 @@ paths:
                     items:
                       $ref: ../components/schemas/monetization.yaml#/CreditTransaction
                   cursor:
-                    $ref: "#/components/schemas/CursorPagination"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "503":
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
           description: Credit system disabled for current rollout phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /credits/packs:
     x-tasky-status: deferred
     x-tasky-phase: phase_2
@@ -5771,7 +5771,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Active credit packs.
           content:
             application/json:
@@ -5784,14 +5784,14 @@ paths:
                     type: array
                     items:
                       $ref: ../components/schemas/monetization.yaml#/CreditPack
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "503":
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
           description: Credit system disabled for current rollout phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /credits/purchase:
     x-tasky-status: deferred
     x-tasky-phase: phase_2
@@ -5805,7 +5805,7 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
       requestBody:
         required: true
         content:
@@ -5819,7 +5819,7 @@ paths:
                   type: string
                   format: uuid
       responses:
-        "200":
+        '200':
           description: Purchase intent created.
           content:
             application/json:
@@ -5837,16 +5837,16 @@ paths:
                     type: string
                   pack:
                     $ref: ../components/schemas/monetization.yaml#/CreditPack
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "503":
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '503':
           description: Credit system disabled for current rollout phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /referrals/me:
     x-tasky-status: deferred
     x-tasky-phase: phase_2
@@ -5863,17 +5863,17 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Referral summary.
           content:
             application/json:
               schema:
                 $ref: ../components/schemas/referrals.yaml#/ReferralSummary
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "503":
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
           description: Referral feature is disabled for the current rollout phase.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'

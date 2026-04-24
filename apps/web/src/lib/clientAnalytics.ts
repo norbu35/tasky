@@ -5,7 +5,9 @@ export type ClientEventName =
   | 'BOOKING_CONFIRMED'
   | 'PAYMENT_INITIATED'
   | 'BOOKING_COMPLETED'
+  | 'BOOKING_CANCELLED'
   | 'DISPUTE_RAISED'
+  | 'RESCHEDULE_REQUESTED'
   | 'ERROR_LOGGED';
 
 export type ActorRole = 'CUSTOMER' | 'TASKER' | 'ADMIN' | 'UNKNOWN';

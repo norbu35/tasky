@@ -244,7 +244,7 @@ describe('Tasker phase 1 parity', () => {
     expect(screen.getByRole('heading', { name: 'My Bookings' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'My jobs' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Booking detail' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'No-show reminder' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Flag no-show' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Cancel booking' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tasker stats' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Privacy policy' })).toBeInTheDocument();

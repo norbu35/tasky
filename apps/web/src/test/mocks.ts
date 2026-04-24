@@ -87,6 +87,26 @@ export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClie
       ...makeBooking(),
       status: 'CANCELLED',
     }),
+    requestReschedule: vi.fn().mockResolvedValue({
+      id: 'event-1',
+      booking_id: 'booking-1',
+      event_type: 'RESCHEDULE_REQUESTED',
+      proposed_scheduled_at: new Date().toISOString(),
+      status: 'PENDING',
+      created_at: new Date().toISOString(),
+    }),
+    respondReschedule: vi.fn().mockResolvedValue({
+      id: 'event-1',
+      booking_id: 'booking-1',
+      event_type: 'RESCHEDULE_ACCEPTED',
+      proposed_scheduled_at: new Date().toISOString(),
+      status: 'ACCEPTED',
+      created_at: new Date().toISOString(),
+    }),
+    flagNoShow: vi.fn().mockResolvedValue({
+      ...makeBooking(),
+      status: 'NO_SHOW',
+    }),
     completeBooking: vi.fn().mockResolvedValue({
       ...makeBooking(),
       status: 'COMPLETED',

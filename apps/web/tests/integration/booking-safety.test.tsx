@@ -77,6 +77,23 @@ describe('Booking Safety Integration', () => {
         return { data: [], cursor: { next: null, has_more: false } };
       }),
       cancelBooking: vi.fn().mockResolvedValue({ ...activeBooking, status: 'CANCELLED' }),
+      requestReschedule: vi.fn().mockResolvedValue({
+        id: 'event-1',
+        booking_id: 'active-bkg',
+        event_type: 'RESCHEDULE_REQUESTED',
+        proposed_scheduled_at: new Date().toISOString(),
+        status: 'PENDING',
+        created_at: new Date().toISOString(),
+      }),
+      respondReschedule: vi.fn().mockResolvedValue({
+        id: 'event-1',
+        booking_id: 'active-bkg',
+        event_type: 'RESCHEDULE_ACCEPTED',
+        proposed_scheduled_at: new Date().toISOString(),
+        status: 'ACCEPTED',
+        created_at: new Date().toISOString(),
+      }),
+      flagNoShow: vi.fn().mockResolvedValue({ ...activeBooking, status: 'NO_SHOW' }),
       completeBooking: vi.fn().mockResolvedValue({ ...activeBooking, status: 'COMPLETED' }),
       submitReview: vi.fn().mockResolvedValue(makeReview()),
       raiseDispute: vi.fn().mockResolvedValue(makeDispute()),

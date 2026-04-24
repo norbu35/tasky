@@ -150,7 +150,7 @@ entities:
         side_effects:
           - create booking record
           - reveal exact address to Tasker
-          - schedule no-show reminder at start +10min
+          - schedule no-show reminder at start +30min
         phase: 0-1
       - id: BOOK-T02
         source: ASSIGNED

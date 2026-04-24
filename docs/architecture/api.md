@@ -439,7 +439,7 @@ No SQL views or materialized projections are currently part of the architecture 
 3. **Reschedule, cancellation, and no-show authority**
    - Only accepted in-app reschedule events change the canonical schedule.
    - Late-cancel and no-show timers always read the latest accepted in-app schedule.
-   - No-show reminder triggers at scheduled start +10 minutes; no-show flag is allowed no earlier than +15 minutes.
+   - No-show reminder triggers at scheduled start +30 minutes; no-show flag is allowed no earlier than +1 hour.
    - Recent in-app activity and accepted future reschedules block premature no-show adjudication.
 4. **Completion, review gate, and disputes**
    - Completion sequence is: tasker marks complete → customer confirms or disputes → reminder on silence → timeout auto-complete → ops fallback for edge cases.
@@ -589,7 +589,7 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
   - Booking is confirmed only after the selected tasker accepts within the active four-hour response window.
   - Expired or declined selections do not create bookings and return the task to applicant-review state.
   - Applicant ranking is allowed, but the customer remains free to inspect and choose across the full application set.
-  - No-show policy is deterministic: reminder at `+10m`, no-show flag eligibility at `+15m`, activity lookback protection, and accepted-reschedule precedence over earlier schedules.
+  - No-show policy is deterministic: reminder at `+30m`, no-show flag eligibility at `+1h`, activity lookback protection, and accepted-reschedule precedence over earlier schedules.
   - Launch lifecycle transitions align with the PRD: tasks move through open/assigned/completed-or-terminal states, and bookings move through confirmed/completed-or-terminal states without requiring payment-gated intermediates.
 - **Pricing contract**:
   - Every launch-category task uses exactly one of the two Phase 1 pricing modes: `I have a budget` or `I want quotes`.

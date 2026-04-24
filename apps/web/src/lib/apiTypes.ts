@@ -9,6 +9,7 @@ export type CreateTaskRequest = components['schemas']['CreateTaskRequest'];
 export type TaskApplication = components['schemas']['TaskApplication'];
 export type Booking = components['schemas']['Booking'];
 export type BookingIntent = components['schemas']['BookingIntent'];
+export type BookingScheduleEvent = components['schemas']['BookingScheduleEvent'];
 export type Review = components['schemas']['Review'];
 export type Dispute = components['schemas']['Dispute'];
 export type Conversation = components['schemas']['Conversation'];

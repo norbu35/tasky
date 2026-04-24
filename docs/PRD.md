@@ -303,7 +303,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 1. **No qualified application window**: if an eligible task has no qualified application within 8 hours of posting, the system may trigger external distribution for eligible categories.
 2. **Selected tasker timeout**: selected-tasker acceptance expires after 4 hours. Expiry returns the task to selectable-applicant state without confirming booking.
 3. **Reschedule authority**: only mutually accepted in-app reschedules change the canonical schedule. Chat-only schedule changes do not affect timers.
-4. **No-show rule**: at scheduled start +10 minutes, both parties receive a reminder to update status. At +15 minutes, a no-show flag is allowed only if recent activity and accepted reschedules do not block it.
+4. **No-show rule**: at scheduled start +30 minutes, both parties receive a reminder to update status. At +1 hour, a no-show flag is allowed only if recent activity and accepted reschedules do not block it.
 5. **Late cancellation rule**: customer cancellation more than 4 hours before start is non-incident; cancellation at or within 4 hours creates a reliability incident.
 6. **Dispute evidence rule**: disputes must include evidence artifacts or enter a grace path that can close as insufficient evidence.
 7. **Review enforcement rule**: after completion, both parties owe a review, and unresolved review debt blocks the next posting or applying action.
@@ -407,8 +407,8 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 - **REQ-P1-BOOK-16**: Tasker cancellation of a confirmed booking MUST reopen the linked task to eligible supply unless the customer cancels instead.
 - **REQ-P1-BOOK-17**: Repeated tasker cancellation behavior MUST support reliability enforcement, including suspension thresholds defined in derived operations policy.
 - **REQ-P1-BOOK-18**: Safety or fraud-coded tasker cancellations MUST bypass ordinary automated strike logic and open the appropriate trust-and-safety handling path.
-- **REQ-P1-BOOK-19**: The system MUST send a no-show reminder to both participants at scheduled start plus ten minutes if the booking remains unresolved.
-- **REQ-P1-BOOK-20**: A no-show flag MUST NOT be accepted before fifteen minutes after scheduled start.
+- **REQ-P1-BOOK-19**: The system MUST send a no-show reminder to both participants at scheduled start plus thirty minutes if the booking remains unresolved.
+- **REQ-P1-BOOK-20**: A no-show flag MUST NOT be accepted before one hour after scheduled start.
 - **REQ-P1-BOOK-21**: Recent in-app activity within the configured lookback window MUST block premature no-show adjudication.
 - **REQ-P1-BOOK-22**: A future accepted in-app reschedule MUST supersede no-show adjudication on the original schedule.
 - **REQ-P1-BOOK-23**: A valid no-show adjudication MUST transition booking and task state consistently and leave an audit trail.
