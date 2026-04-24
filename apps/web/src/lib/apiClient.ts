@@ -78,14 +78,6 @@ export interface ApiClient {
 
   listTaskApplications(accessToken: string, taskId: string): Promise<CursorPage<TaskApplication>>;
 
-  acceptApplication(
-    accessToken: string,
-    taskId: string,
-    applicationId: string,
-    liabilityDisclaimerAccepted: boolean,
-    idempotencyKey: string,
-  ): Promise<Booking>;
-
   createBookingIntent(
     accessToken: string,
     taskId: string,
@@ -433,28 +425,6 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
       { method: 'GET' },
       accessToken,
       { limit: 100 },
-    );
-  }
-
-  acceptApplication(
-    accessToken: string,
-    taskId: string,
-    applicationId: string,
-    liabilityDisclaimerAccepted: boolean,
-    idempotencyKey: string,
-  ): Promise<Booking> {
-    return this.requestJson<Booking>(
-      `/tasks/${taskId}/applications/${applicationId}/accept`,
-      {
-        method: 'POST',
-        headers: {
-          'Idempotency-Key': idempotencyKey,
-        },
-        body: JSON.stringify({
-          liability_disclaimer_accepted: liabilityDisclaimerAccepted,
-        }),
-      },
-      accessToken,
     );
   }
 

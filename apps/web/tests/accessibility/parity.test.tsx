@@ -67,7 +67,6 @@ function createMockApiClient(): ApiClient {
     applyToTask: vi.fn(),
     withdrawApplication: vi.fn(),
     listTaskApplications: vi.fn(),
-    acceptApplication: vi.fn(),
     createBookingIntent: vi.fn(),
     confirmBookingIntent: vi.fn(),
     initiatePayment: vi.fn(),

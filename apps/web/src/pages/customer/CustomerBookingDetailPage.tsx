@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { MessageSquareText } from 'lucide-react';
+import { Clock, MessageSquareText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { useAppContext } from '../../context/AppContext';
@@ -22,6 +23,15 @@ export function CustomerBookingDetailPage() {
       }
 
       return apiClient.getBooking(session.accessToken, bookingId);
+    },
+    enabled: !!session && !!bookingId,
+  });
+
+  const { data: scheduleEvents } = useQuery({
+    queryKey: ['bookingScheduleEvents', session, bookingId, apiClient],
+    queryFn: async () => {
+      if (!session || !bookingId) return { data: [], cursor: { next: null, has_more: false } };
+      return apiClient.listBookingScheduleEvents(session.accessToken, bookingId);
     },
     enabled: !!session && !!bookingId,
   });
@@ -102,6 +112,25 @@ export function CustomerBookingDetailPage() {
             <div>
               {t('customerPages.bookingDetail.taskerLabel', 'Tasker:')} {data.tasker_id}
             </div>
+            {scheduleEvents?.data && scheduleEvents.data.length > 0 && (
+              <div className="mt-3 border-t pt-3 space-y-2">
+                <div className="font-medium text-foreground flex items-center gap-1">
+                  <Clock className="h-4 w-4" />
+                  {t('customerPages.bookingDetail.timelineTitle', 'Reschedule Timeline')}
+                </div>
+                {scheduleEvents.data.map((event) => (
+                  <div key={event.id} className="flex items-center gap-2 text-xs">
+                    <span className="font-mono text-muted-foreground">
+                      {new Date(event.created_at).toLocaleString()}
+                    </span>
+                    <Badge variant="outline">{event.event_type}</Badge>
+                    {event.reason && (
+                      <span className="text-muted-foreground">— {event.reason}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       ) : (

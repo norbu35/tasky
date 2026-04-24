@@ -64,7 +64,6 @@ export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClie
       application_id: 'app-1',
       status: 'WITHDRAWN',
     }),
-    acceptApplication: vi.fn().mockResolvedValue(makeBooking()),
     createBookingIntent: vi.fn().mockResolvedValue({
       id: 'intent-1',
       task_id: 'task-1',
