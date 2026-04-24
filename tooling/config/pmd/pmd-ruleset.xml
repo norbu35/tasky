@@ -1,81 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         name="Tasky PMD Ruleset"
-         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
-                             https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+<ruleset
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  name="Tasky PMD Ruleset"
+  xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+                             https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+>
+  <description>Curated PMD 7 ruleset for Tasky backend service.</description>
 
-    <description>Curated PMD 7 ruleset for Tasky backend service.</description>
+  <!-- Exclude generated OpenAPI sources -->
+  <exclude-pattern>.*/generated-sources/.*</exclude-pattern>
+  <exclude-pattern>.*/build/generated/.*</exclude-pattern>
 
-    <!-- Exclude generated OpenAPI sources -->
-    <exclude-pattern>.*/generated-sources/.*</exclude-pattern>
-    <exclude-pattern>.*/build/generated/.*</exclude-pattern>
+  <!-- ===== Best Practices ===== -->
+  <rule ref="category/java/bestpractices.xml">
+    <!-- Formatting / naming — covered by Checkstyle -->
+    <exclude name="AbstractClassWithoutAbstractMethod"/>
+    <!-- Too noisy for service layers -->
+    <exclude name="LiteralsFirstInComparisons"/>
+    <!-- Conflicts with Spring's standard @Autowired constructors -->
+    <exclude name="LooseCoupling"/>
+    <!-- Too strict for expressive behavior-focused tests -->
+    <exclude name="UnitTestContainsTooManyAsserts"/>
+    <!-- Test and fixture helpers frequently use local setup placeholders -->
+    <exclude name="UnusedLocalVariable"/>
+    <exclude name="UnusedPrivateMethod"/>
+    <!-- Test-only localhost usage should not fail quality gates -->
+    <exclude name="AvoidUsingHardCodedIP"/>
+    <!-- Parameterized logging is already lazy in SLF4J -->
+    <exclude name="GuardLogStatement"/>
+    <!-- AccessorClassGeneration conflicts with record and immutable-DTO pattern -->
+    <exclude name="AccessorClassGeneration"/>
+    <exclude name="AccessorMethodGeneration"/>
+  </rule>
 
-    <!-- ===== Best Practices ===== -->
-    <rule ref="category/java/bestpractices.xml">
-        <!-- Formatting / naming — covered by Checkstyle -->
-        <exclude name="AbstractClassWithoutAbstractMethod"/>
-        <!-- Too noisy for service layers -->
-        <exclude name="LiteralsFirstInComparisons"/>
-        <!-- Conflicts with Spring's standard @Autowired constructors -->
-        <exclude name="LooseCoupling"/>
-        <!-- Too strict for expressive behavior-focused tests -->
-        <exclude name="UnitTestContainsTooManyAsserts"/>
-        <!-- Test and fixture helpers frequently use local setup placeholders -->
-        <exclude name="UnusedLocalVariable"/>
-        <exclude name="UnusedPrivateMethod"/>
-        <!-- Test-only localhost usage should not fail quality gates -->
-        <exclude name="AvoidUsingHardCodedIP"/>
-        <!-- Parameterized logging is already lazy in SLF4J -->
-        <exclude name="GuardLogStatement"/>
-        <!-- AccessorClassGeneration conflicts with record and immutable-DTO pattern -->
-        <exclude name="AccessorClassGeneration"/>
-        <exclude name="AccessorMethodGeneration"/>
-    </rule>
+  <!-- ===== Error Prone ===== -->
+  <rule ref="category/java/errorprone.xml">
+    <!-- Too noisy — misidentifies intentional null checks -->
+    <exclude name="NullAssignment"/>
+    <!-- Triggers on Spring Security config — intentional -->
+    <exclude name="AvoidLiteralsInIfCondition"/>
+    <!-- Noisy with Lombok / record patterns -->
+    <exclude name="MissingSerialVersionUID"/>
+    <!-- Relies on JDK internals, false positives on Spring proxies -->
+    <exclude name="CloseResource"/>
+    <!-- Too strict for test code patterns -->
+    <exclude name="TestClassWithoutTestCases"/>
+    <!-- Low-signal across DTO/controller-heavy code -->
+    <exclude name="AvoidDuplicateLiterals"/>
+    <!-- Valid pattern for compact domain exceptions with accessor methods -->
+    <exclude name="AvoidFieldNameMatchingMethodName"/>
+  </rule>
 
-    <!-- ===== Error Prone ===== -->
-    <rule ref="category/java/errorprone.xml">
-        <!-- Too noisy — misidentifies intentional null checks -->
-        <exclude name="NullAssignment"/>
-        <!-- Triggers on Spring Security config — intentional -->
-        <exclude name="AvoidLiteralsInIfCondition"/>
-        <!-- Noisy with Lombok / record patterns -->
-        <exclude name="MissingSerialVersionUID"/>
-        <!-- Relies on JDK internals, false positives on Spring proxies -->
-        <exclude name="CloseResource"/>
-        <!-- Too strict for test code patterns -->
-        <exclude name="TestClassWithoutTestCases"/>
-        <!-- Low-signal across DTO/controller-heavy code -->
-        <exclude name="AvoidDuplicateLiterals"/>
-        <!-- Valid pattern for compact domain exceptions with accessor methods -->
-        <exclude name="AvoidFieldNameMatchingMethodName"/>
-    </rule>
+  <!-- ===== Performance ===== -->
+  <rule ref="category/java/performance.xml">
+    <!-- Conflicts with idiomatic Java patterns used in this codebase -->
+    <exclude name="AvoidInstantiatingObjectsInLoops"/>
+    <exclude name="UseIndexOfChar"/>
+  </rule>
 
-    <!-- ===== Performance ===== -->
-    <rule ref="category/java/performance.xml">
-        <!-- Conflicts with idiomatic Java patterns used in this codebase -->
-        <exclude name="AvoidInstantiatingObjectsInLoops"/>
-        <exclude name="UseIndexOfChar"/>
-    </rule>
+  <!-- ===== Security ===== -->
+  <rule ref="category/java/security.xml"/>
 
-    <!-- ===== Security ===== -->
-    <rule ref="category/java/security.xml"/>
+  <!-- ===== Design (selective — high signal only) ===== -->
+  <rule ref="category/java/design.xml/AvoidDeeplyNestedIfStmts"/>
+  <rule ref="category/java/design.xml/CollapsibleIfStatements"/>
+  <rule ref="category/java/design.xml/SimplifyBooleanExpressions"/>
+  <rule ref="category/java/design.xml/SimplifyBooleanReturns"/>
+  <rule ref="category/java/design.xml/SingularField"/>
+  <rule ref="category/java/design.xml/ImmutableField"/>
+  <rule ref="category/java/design.xml/FinalFieldCouldBeStatic"/>
+  <rule ref="category/java/design.xml/LogicInversion"/>
 
-    <!-- ===== Design (selective — high signal only) ===== -->
-    <rule ref="category/java/design.xml/AvoidDeeplyNestedIfStmts"/>
-    <rule ref="category/java/design.xml/CollapsibleIfStatements"/>
-    <rule ref="category/java/design.xml/SimplifyBooleanExpressions"/>
-    <rule ref="category/java/design.xml/SimplifyBooleanReturns"/>
-    <rule ref="category/java/design.xml/SingularField"/>
-    <rule ref="category/java/design.xml/ImmutableField"/>
-    <rule ref="category/java/design.xml/FinalFieldCouldBeStatic"/>
-    <rule ref="category/java/design.xml/LogicInversion"/>
-
-    <!-- ===== Multithreading (selective — high signal only) ===== -->
-    <rule ref="category/java/multithreading.xml/AvoidSynchronizedAtMethodLevel"/>
-    <rule ref="category/java/multithreading.xml/AvoidUsingVolatile"/>
-    <rule ref="category/java/multithreading.xml/UnsynchronizedStaticFormatter"/>
-    <rule ref="category/java/multithreading.xml/NonThreadSafeSingleton"/>
-    <rule ref="category/java/multithreading.xml/UseNotifyAllInsteadOfNotify"/>
-
+  <!-- ===== Multithreading (selective — high signal only) ===== -->
+  <rule ref="category/java/multithreading.xml/AvoidSynchronizedAtMethodLevel"/>
+  <rule ref="category/java/multithreading.xml/AvoidUsingVolatile"/>
+  <rule ref="category/java/multithreading.xml/UnsynchronizedStaticFormatter"/>
+  <rule ref="category/java/multithreading.xml/NonThreadSafeSingleton"/>
+  <rule ref="category/java/multithreading.xml/UseNotifyAllInsteadOfNotify"/>
 </ruleset>

@@ -12,6 +12,14 @@
   "engines": {
     "node": ">=22"
   },
+  "scripts": {
+    "build": "pnpm run typecheck",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
+    "test": "pnpm run typecheck"
+  },
   "peerDependencies": {
     "react": "^19.0.0",
     "vitest": "^4.0.0"

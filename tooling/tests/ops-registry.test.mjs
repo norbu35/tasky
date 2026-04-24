@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
@@ -146,6 +147,58 @@ test("root package scripts avoid retired aliases and circular dependencies", () 
         "retired root aliases should stay removed; use canonical verify:, contract:, and repo: lanes",
     );
     assert.deepEqual(findScriptCycles(scripts), [], "root package scripts must not call each other cyclically");
+});
+
+function turboDryRun(args) {
+    const result = spawnSync("pnpm", ["turbo", "run", ...args, "--dry=json"], {
+        cwd: repoRoot,
+        encoding: "utf8",
+        maxBuffer: 100 * 1024 * 1024,
+    });
+
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    const jsonStart = result.stdout.indexOf("{");
+    assert.notEqual(jsonStart, -1, "turbo dry-run output must include a JSON payload");
+    return JSON.parse(result.stdout.slice(jsonStart));
+}
+
+test("turborepo graph has concrete commands for canonical workspace tasks", () => {
+    const cases = [
+        ["build"],
+        ["lint", "typecheck", "test"],
+        ["format"],
+        ["format:check"],
+        ["test:coverage", "--filter=@tasky/web", "--filter=@tasky/mobile", "--filter=@tasky/core"],
+        ["generate", "--filter=@tasky/sdk"],
+    ];
+    const phantomTasks = cases.flatMap((args) =>
+        turboDryRun(args)
+            .tasks.filter((task) => task.command === "<NONEXISTENT>")
+            .map((task) => `${args.join(" ")}: ${task.taskId}`),
+    );
+
+    assert.deepEqual(
+        phantomTasks,
+        [],
+        "canonical turbo task graphs must not rely on implicit <NONEXISTENT> package tasks",
+    );
+});
+
+test("sdk generation turbo cache tracks OpenAPI and contract tooling inputs", () => {
+    const sdkGenerateTask = turboDryRun(["generate", "--filter=@tasky/sdk"]).tasks.find(
+        (task) => task.taskId === "@tasky/sdk#generate",
+    );
+    assert.ok(sdkGenerateTask, "turbo dry-run must include @tasky/sdk#generate");
+
+    const inputs = Object.keys(sdkGenerateTask.inputs ?? {});
+    assert.ok(
+        inputs.some((input) => input.endsWith("docs/openapi/openapi.yaml")),
+        "@tasky/sdk#generate must hash the split OpenAPI source",
+    );
+    assert.ok(
+        inputs.some((input) => input.endsWith("tooling/scripts/contracts/bundle-openapi.mjs")),
+        "@tasky/sdk#generate must hash the contract bundler script",
+    );
 });
 
 test("ops inventory documentation is generated from the registry", () => {

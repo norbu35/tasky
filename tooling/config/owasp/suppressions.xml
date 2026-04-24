@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-    <!--
+  <!--
         Add project-specific CVE suppressions here as needed.
         Each suppression should include a justification comment and a review date.
 

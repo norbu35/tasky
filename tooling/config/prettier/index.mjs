@@ -5,4 +5,8 @@ export default {
   printWidth: 100,
   tabWidth: 2,
   bracketSpacing: true,
+  bracketSameLine: false,
+  plugins: ['@prettier/plugin-xml'],
+  xmlSelfClosingSpace: false,
+  xmlWhitespaceSensitivity: 'ignore',
 };

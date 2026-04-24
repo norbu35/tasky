@@ -33,6 +33,11 @@
       "outputs": []
     },
     "generate": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/docs/openapi/**",
+        "$TURBO_ROOT$/tooling/scripts/contracts/**"
+      ],
       "outputs": ["src/generated/**"]
     }
   }
