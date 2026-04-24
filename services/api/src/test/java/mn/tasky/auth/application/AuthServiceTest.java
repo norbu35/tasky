@@ -1,6 +1,7 @@
 package mn.tasky.auth.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -284,7 +285,7 @@ class AuthServiceTest {
 
             when(environment.getActiveProfiles()).thenReturn(new String[] {"local"});
 
-            localService.validateOtpConfiguration();
+            assertThatNoException().isThrownBy(localService::validateOtpConfiguration);
         }
 
         @Test
@@ -312,7 +313,7 @@ class AuthServiceTest {
 
             when(environment.getActiveProfiles()).thenReturn(new String[] {"dev"});
 
-            noOtpService.validateOtpConfiguration();
+            assertThatNoException().isThrownBy(noOtpService::validateOtpConfiguration);
         }
     }
 

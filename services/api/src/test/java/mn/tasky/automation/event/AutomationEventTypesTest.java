@@ -3,6 +3,7 @@ package mn.tasky.automation.event;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,8 +22,6 @@ class AutomationEventTypesTest {
     @DisplayName("private constructor prevents instantiation")
     void privateConstructor() throws Exception {
         Constructor<AutomationEventTypes> ctor = AutomationEventTypes.class.getDeclaredConstructor();
-        ctor.setAccessible(true);
-        AutomationEventTypes instance = ctor.newInstance();
-        assertThat(instance).isNotNull();
+        assertThat(Modifier.isPrivate(ctor.getModifiers())).isTrue();
     }
 }

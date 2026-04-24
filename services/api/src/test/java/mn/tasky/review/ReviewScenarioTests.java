@@ -62,8 +62,8 @@ class ReviewScenarioTests {
     // ── SCN-REVIEW-001 ───────────────────────────────────────────────────────
 
     @Test
-    @DisplayName(
-            "SCN-REVIEW-001: Reviewable terminal outcome creates structured review prompts for both customer and tasker")
+    @DisplayName("SCN-REVIEW-001: Reviewable terminal outcome creates structured review prompts for both customer "
+            + "and tasker")
     void bookingCompletionCreatesCasesForBothParticipants() {
         service.createCasesForBooking(BOOKING_ID, CUSTOMER_ID, TASKER_ID);
 

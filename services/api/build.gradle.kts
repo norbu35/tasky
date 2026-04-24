@@ -375,6 +375,9 @@ tasks.withType<Pmd>().configureEach {
         xml.required = false
     }
 }
+tasks.named<Pmd>("pmdTest") {
+    ruleSetFiles = files("${rootProject.projectDir}/tooling/config/pmd/pmd-test-ruleset.xml")
+}
 
 // SpotBugs
 spotbugs {

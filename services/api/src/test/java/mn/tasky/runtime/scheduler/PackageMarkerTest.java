@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import org.junit.jupiter.api.Test;
 
 class PackageMarkerTest {
@@ -17,8 +18,6 @@ class PackageMarkerTest {
     void constructorIsPrivate() throws Exception {
         Constructor<PackageMarker> ctor = PackageMarker.class.getDeclaredConstructor();
         assertThat(ctor.canAccess(null)).isFalse();
-        ctor.setAccessible(true);
-        PackageMarker instance = ctor.newInstance();
-        assertThat(instance).isNotNull();
+        assertThat(Modifier.isPrivate(ctor.getModifiers())).isTrue();
     }
 }

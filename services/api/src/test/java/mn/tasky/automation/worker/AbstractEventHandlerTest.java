@@ -1,6 +1,7 @@
 package mn.tasky.automation.worker;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -82,7 +83,8 @@ class AbstractEventHandlerTest {
     @DisplayName("tryClaimEventComplete is no-op when guard is null")
     void tryClaimEventCompleteNoOpWhenNull() {
         AbstractEventHandler handler = createHandler(null);
-        handler.tryClaimEventComplete(testEnvelope());
+
+        assertThatNoException().isThrownBy(() -> handler.tryClaimEventComplete(testEnvelope()));
     }
 
     @Test

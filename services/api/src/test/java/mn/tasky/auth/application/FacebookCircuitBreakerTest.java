@@ -3,12 +3,12 @@ package mn.tasky.auth.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-import java.lang.reflect.Field;
 import java.time.Instant;
 import mn.tasky.auth.application.FacebookCircuitBreaker.State;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * Unit tests for {@link FacebookCircuitBreaker} in the application package.
@@ -74,9 +74,7 @@ class FacebookCircuitBreakerTest {
         assertThat(breaker.getState()).isEqualTo(State.CLOSED);
     }
 
-    private static void setWindowStart(FacebookCircuitBreaker target, Instant value) throws Exception {
-        Field field = FacebookCircuitBreaker.class.getDeclaredField("windowStart");
-        field.setAccessible(true);
-        field.set(target, value);
+    private static void setWindowStart(FacebookCircuitBreaker target, Instant value) {
+        ReflectionTestUtils.setField(target, "windowStart", value);
     }
 }
