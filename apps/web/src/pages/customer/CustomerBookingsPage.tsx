@@ -26,11 +26,8 @@ export function CustomerBookingsPage() {
 
   return (
     <ResponsiveFeedShell
-      title={t('customerPages.bookings.title', 'Bookings')}
-      description={t(
-        'customerPages.bookings.description',
-        'Track active, completed, and cancelled bookings in one place.',
-      )}
+      title={t('customerPages.bookings.title')}
+      description={t('customerPages.bookings.description')}
     >
       <div className="grid gap-4 md:grid-cols-2">
         {bookings.map((booking) => (

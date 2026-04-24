@@ -8,20 +8,12 @@ export function VerificationSubmittedPage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('verification.submitted.title', 'Verification submitted')}
-      description={t(
-        'verification.submitted.description',
-        'Your verification documents are in the queue.',
-      )}
+      title={t('verification.submitted.title')}
+      description={t('verification.submitted.description')}
     >
       <Card>
         <CardContent className="space-y-3 p-4 text-sm text-muted-foreground">
-          <p>
-            {t(
-              'verification.submitted.content',
-              'Submission is recorded and waiting for the reviewer queue.',
-            )}
-          </p>
+          <p>{t('verification.submitted.content')}</p>
         </CardContent>
       </Card>
     </ResponsiveDetailShell>

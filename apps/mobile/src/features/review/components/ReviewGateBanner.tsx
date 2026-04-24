@@ -28,24 +28,14 @@ export function ReviewGateBanner({ pendingReview }: ReviewGateBannerProps) {
     >
       <View className="gap-xs">
         <Text className="text-subtitle font-bold text-foreground">
-          {isHardBlocked
-            ? t('reviewGate.hardLockedTitle', 'Review Required')
-            : t('reviewGate.softLockedTitle', 'Pending Review')}
+          {isHardBlocked ? t('reviewGate.hardLockedTitle') : t('reviewGate.softLockedTitle')}
         </Text>
         <Text className="text-body text-text-secondary leading-normal">
-          {isHardBlocked
-            ? t(
-                'reviewGate.hardLockedBody',
-                'You must submit a review for your past booking before you can apply to new tasks or confirm new bookings.',
-              )
-            : t(
-                'reviewGate.softLockedBody',
-                'You have a pending review. Please submit it soon to keep the community safe.',
-              )}
+          {isHardBlocked ? t('reviewGate.hardLockedBody') : t('reviewGate.softLockedBody')}
         </Text>
       </View>
       <Button
-        label={t('reviewGate.cta', 'Submit Review')}
+        label={t('reviewGate.cta')}
         variant={isHardBlocked ? 'default' : 'outline'}
         onPress={handlePress}
       />

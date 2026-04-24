@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View, Text, Pressable } from 'react-native';
@@ -6,6 +5,7 @@ import { View, Text, Pressable } from 'react-native';
 import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
+import { setStoredLanguage } from '@/utils/i18n';
 
 const { colors, spacing, typography } = mobileTheme;
 
@@ -21,9 +21,7 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
   const changeLanguage = async (lng: string) => {
     if (lng !== currentLang) {
       await i18n.changeLanguage(lng);
-      // Optionally persist it if needed, but react-i18next handles mem caching.
-      // Saving to async storage manually just to be explicitly safe across boots.
-      await AsyncStorage.setItem('user-language', lng);
+      await setStoredLanguage(lng);
     }
   };
 

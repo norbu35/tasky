@@ -30,23 +30,12 @@ export function PhotoUploadManager({
     if (!file) return;
 
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-      setError(
-        t(
-          'taskCreation.photoUpload.invalidType',
-          'Invalid file type. Only JPG, PNG, and WebP are allowed.',
-        ),
-      );
+      setError(t('taskCreation.photoUpload.invalidType'));
       return;
     }
 
     if (photoKeys.length >= maxPhotos) {
-      setError(
-        t(
-          'taskCreation.photoUpload.maxPhotosError',
-          'You can only upload up to {{maxPhotos}} photos.',
-          { maxPhotos },
-        ),
-      );
+      setError(t('taskCreation.photoUpload.maxPhotosError', { maxPhotos }));
       return;
     }
 
@@ -71,9 +60,7 @@ export function PhotoUploadManager({
       });
 
       if (!uploadResponse.ok) {
-        setError(
-          t('taskCreation.photoUpload.uploadFailed', 'Failed to upload image to storage layer.'),
-        );
+        setError(t('taskCreation.photoUpload.uploadFailed'));
         return;
       }
 
@@ -95,7 +82,7 @@ export function PhotoUploadManager({
   return (
     <div className="grid gap-2">
       <Label>
-        {t('taskCreation.photoUpload.label', 'Task Photos')} ({photoKeys.length}/{maxPhotos})
+        {t('taskCreation.photoUpload.label')} ({photoKeys.length}/{maxPhotos})
       </Label>
       <div className="flex flex-wrap gap-4">
         {photoKeys.map((key, index) => (
@@ -132,7 +119,7 @@ export function PhotoUploadManager({
               <>
                 <ImagePlus className="h-6 w-6 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">
-                  {t('taskCreation.photoUpload.addPhoto', 'Add Photo')}
+                  {t('taskCreation.photoUpload.addPhoto')}
                 </span>
               </>
             )}

@@ -20,11 +20,11 @@ function TaskCard({ task }: { task: Task }) {
     ? 'mn-MN'
     : 'en-US';
   const statusLabelMap: Record<string, string> = {
-    OPEN: t('customerDashboard.statusOpen', 'Open'),
-    ASSIGNED: t('customerDashboard.statusAssigned', 'Assigned'),
-    COMPLETED: t('customerDashboard.statusCompleted', 'Completed'),
-    CANCELLED: t('customerDashboard.statusCancelled', 'Cancelled'),
-    NO_SHOW: t('customerDashboard.statusNoShow', 'No-show'),
+    OPEN: t('customerDashboard.statusOpen'),
+    ASSIGNED: t('customerDashboard.statusAssigned'),
+    COMPLETED: t('customerDashboard.statusCompleted'),
+    CANCELLED: t('customerDashboard.statusCancelled'),
+    NO_SHOW: t('customerDashboard.statusNoShow'),
   };
 
   const statusBadgeVariant: Record<string, React.ComponentProps<typeof Badge>['variant']> = {
@@ -105,39 +105,36 @@ export function CustomerDashboardPage() {
               })}
             </p>
             <h1 className="text-2xl font-display font-bold">
-              {t('customerDashboard.greeting', 'Sain baina uu')},{' '}
+              {t('customerDashboard.greeting')},{' '}
               <span className="text-primary">
-                {profile?.full_name?.split(' ')[0] ?? t('customerDashboard.friend', 'there')}
+                {profile?.full_name?.split(' ')[0] ?? t('customerDashboard.friend')}
               </span>
               {'!'}
             </h1>
             <p className="text-sm text-muted-foreground">
               {isLoading
-                ? t('customerDashboard.loadingTasks', 'Loading your tasks...')
+                ? t('customerDashboard.loadingTasks')
                 : t('customerDashboard.activeTasksToday', {
                     count: openTasks.length + activeTasks.length,
-                    defaultValue: 'You have {{count}} active task(s) today.',
                   })}
             </p>
           </div>
           <Button
-            aria-label={t('customerDashboard.postNewTask', 'Post new task')}
+            aria-label={t('customerDashboard.postNewTask')}
             onClick={() => navigate('/customer/tasks/new')}
             className="gap-2 flex-shrink-0"
           >
             <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline">
-              {t('customerDashboard.postNewTask', 'Post new task')}
-            </span>
+            <span className="hidden sm:inline">{t('customerDashboard.postNewTask')}</span>
           </Button>
         </div>
 
         {error ? (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>{t('customerDashboard.errorTitle', 'Error')}</AlertTitle>
+            <AlertTitle>{t('customerDashboard.errorTitle')}</AlertTitle>
             <AlertDescription>
-              {error.message ?? t('customerDashboard.errorFailedLoad', 'Failed to load tasks')}
+              {error.message ?? t('customerDashboard.errorFailedLoad')}
             </AlertDescription>
           </Alert>
         ) : isLoading ? (
@@ -161,31 +158,20 @@ export function CustomerDashboardPage() {
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
               <Plus className="h-6 w-6 text-primary" />
             </div>
-            <p className="font-semibold mb-1">
-              {t('customerDashboard.noTasksTitle', 'No tasks posted yet')}
-            </p>
+            <p className="font-semibold mb-1">{t('customerDashboard.noTasksTitle')}</p>
             <p className="text-sm text-muted-foreground mb-6 max-w-sm">
-              {t(
-                'customerDashboard.noTasksDesc',
-                "You haven't posted any tasks. Create your first task to find taskers to help you out.",
-              )}
+              {t('customerDashboard.noTasksDesc')}
             </p>
             <Button onClick={() => navigate('/customer/tasks/new')}>
-              {t('customerDashboard.postFirstTask', 'Post your first task')}
+              {t('customerDashboard.postFirstTask')}
             </Button>
           </Card>
         ) : (
           <Tabs defaultValue="open" className="w-full mt-4">
             <TabsList className="mb-4">
-              <TabsTrigger value="open">
-                {t('customerDashboard.tabOpen', 'Open Requests')}
-              </TabsTrigger>
-              <TabsTrigger value="active">
-                {t('customerDashboard.tabActive', 'Active Bookings')}
-              </TabsTrigger>
-              <TabsTrigger value="past">
-                {t('customerDashboard.tabPast', 'Past Submissions')}
-              </TabsTrigger>
+              <TabsTrigger value="open">{t('customerDashboard.tabOpen')}</TabsTrigger>
+              <TabsTrigger value="active">{t('customerDashboard.tabActive')}</TabsTrigger>
+              <TabsTrigger value="past">{t('customerDashboard.tabPast')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="open" className="mt-0">
@@ -195,7 +181,7 @@ export function CustomerDashboardPage() {
                 ))}
                 {openTasks.length === 0 && (
                   <div className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
-                    {t('customerDashboard.emptyOpen', 'No open task requests.')}
+                    {t('customerDashboard.emptyOpen')}
                   </div>
                 )}
               </div>
@@ -208,7 +194,7 @@ export function CustomerDashboardPage() {
                 ))}
                 {activeTasks.length === 0 && (
                   <div className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
-                    {t('customerDashboard.emptyActive', 'No active bookings.')}
+                    {t('customerDashboard.emptyActive')}
                   </div>
                 )}
               </div>
@@ -221,7 +207,7 @@ export function CustomerDashboardPage() {
                 ))}
                 {pastTasks.length === 0 && (
                   <div className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
-                    {t('customerDashboard.emptyPast', 'No past tasks.')}
+                    {t('customerDashboard.emptyPast')}
                   </div>
                 )}
               </div>

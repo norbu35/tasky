@@ -71,18 +71,14 @@ export function TaskerFeedPage() {
 
     const draft = (applyDrafts[taskId] ?? '').trim();
     if (draft.length < 10) {
-      toast.error(
-        t('taskerFeed.msgMinLength', 'Application message must be at least 10 characters.'),
-      );
+      toast.error(t('taskerFeed.msgMinLength'));
       return;
     }
 
     const task = taskCards.find((tc) => tc.id === taskId);
     const rawQuote = quotePrices[taskId]?.trim();
     if (task?.pricing_mode === 'QUOTE' && (!rawQuote || Number(rawQuote) < 20000)) {
-      toast.error(
-        t('taskerFeed.quotePriceRequired', 'You must provide a quote price for this task.'),
-      );
+      toast.error(t('taskerFeed.quotePriceRequired'));
       return;
     }
 
@@ -116,7 +112,7 @@ export function TaskerFeedPage() {
     setWorking(true);
     try {
       await apiClient.withdrawApplication(session.accessToken, sentTaskId, sentApplicationId);
-      toast.success(t('taskerFeed.withdrawSuccess', 'Application withdrawn.'));
+      toast.success(t('taskerFeed.withdrawSuccess'));
       setSentTaskId(null);
       setSentApplicationId(null);
       void refetchTasks();
@@ -133,14 +129,9 @@ export function TaskerFeedPage() {
         {/* Page header */}
         <div className="mb-4">
           <h1 className="text-2xl font-display font-bold tracking-tight">
-            {t('taskerFeed.title', 'Open task feed')}
+            {t('taskerFeed.title')}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {t(
-              'taskerFeed.subtitle',
-              'Find nearby opportunities in Ulaanbaatar based on your skills.',
-            )}
-          </p>
+          <p className="text-sm text-muted-foreground mt-1">{t('taskerFeed.subtitle')}</p>
         </div>
 
         {/* Category filter chips & Radius Selector */}
@@ -156,7 +147,7 @@ export function TaskerFeedPage() {
                   : 'bg-card text-muted-foreground border-border hover:border-primary/50'
               }`}
             >
-              {t('taskerFeed.allCategories', 'All')}
+              {t('taskerFeed.allCategories')}
             </button>
             {categories.map((c) => (
               <button
@@ -179,7 +170,7 @@ export function TaskerFeedPage() {
           <div className="flex items-center gap-2 shrink-0 bg-card border border-border/60 px-4 py-1.5 rounded-full shadow-sm">
             <MapPin className="w-4 h-4 text-primary/70" />
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
-              {t('taskerFeed.distance', 'Distance')}:
+              {t('taskerFeed.distance')}:
             </span>
             <select
               title="Search radius"
@@ -205,18 +196,15 @@ export function TaskerFeedPage() {
           <Card className="border-primary/30 bg-primary/5 shadow-sm">
             <CardHeader className="space-y-2">
               <CardTitle className="text-2xl font-display font-semibold">
-                {t('taskerPages.applicationSent.title', 'Application sent')}
+                {t('taskerPages.applicationSent.title')}
               </CardTitle>
               <p className="text-sm text-muted-foreground">
-                {t(
-                  'taskerPages.applicationSent.description',
-                  'Your application has been sent to the customer and is waiting for review.',
-                )}
+                {t('taskerPages.applicationSent.description')}
               </p>
             </CardHeader>
             <CardContent className="pt-0">
               <p className="text-sm text-muted-foreground">
-                {t('taskerPages.applicationSent.sentDesc', 'Application sent.')}
+                {t('taskerPages.applicationSent.sentDesc')}
               </p>
             </CardContent>
             <CardFooter className="justify-end gap-2">
@@ -227,7 +215,7 @@ export function TaskerFeedPage() {
                 onClick={() => void withdrawApplication()}
               >
                 {working ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-                {t('taskerFeed.withdrawAction', 'Withdraw application')}
+                {t('taskerFeed.withdrawAction')}
               </Button>
               <Button
                 type="button"
@@ -237,7 +225,7 @@ export function TaskerFeedPage() {
                   setSentApplicationId(null);
                 }}
               >
-                {t('taskerPages.applicationSent.backToFeed', 'Back to feed')}
+                {t('taskerPages.applicationSent.backToFeed')}
               </Button>
             </CardFooter>
           </Card>
@@ -247,18 +235,14 @@ export function TaskerFeedPage() {
           {loadingTasks && (
             <div className="flex py-12 items-center justify-center text-muted-foreground flex-col gap-4">
               <Loader2 className="w-6 h-6 animate-spin" />
-              <p className="text-sm font-medium">
-                {t('taskerFeed.scanningMsg', 'Scanning for available tasks...')}
-              </p>
+              <p className="text-sm font-medium">{t('taskerFeed.scanningMsg')}</p>
             </div>
           )}
 
           {!loadingTasks && taskCards.length === 0 && !tasksError && (
             <div className="flex py-12 items-center justify-center text-muted-foreground flex-col gap-4 bg-muted/20 rounded-xl border border-dashed border-border">
               <Search className="w-6 h-6 opacity-20" />
-              <p className="text-sm font-medium opacity-60">
-                {t('taskerFeed.noTasksFound', 'No open tasks found in this area.')}
-              </p>
+              <p className="text-sm font-medium opacity-60">{t('taskerFeed.noTasksFound')}</p>
             </div>
           )}
 
@@ -272,13 +256,13 @@ export function TaskerFeedPage() {
                   <div className="flex flex-col gap-3">
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge variant="secondary" className="hover:bg-secondary/80 px-2.5 py-0.5">
-                        {task.category?.name || t('taskerFeed.categoryFallback', 'Task')}
+                        {task.category?.name || t('taskerFeed.categoryFallback')}
                       </Badge>
                       <Badge
                         variant="outline"
                         className="text-emerald-500 border-emerald-500/30 bg-emerald-500/5 px-2.5 py-0.5 font-semibold"
                       >
-                        {t('taskerFeed.statusOpen', 'Open')}
+                        {t('taskerFeed.statusOpen')}
                       </Badge>
                     </div>
                     <CardTitle className="text-xl leading-snug font-medium line-clamp-2">
@@ -287,7 +271,7 @@ export function TaskerFeedPage() {
                     <div className="text-2xl font-display font-bold text-foreground mt-1">
                       {task.pricing_mode === 'QUOTE' ? (
                         <span className="text-base font-medium text-muted-foreground">
-                          {t('taskerFeed.acceptingQuotes', 'Accepting quotes')}
+                          {t('taskerFeed.acceptingQuotes')}
                         </span>
                       ) : (
                         <>
@@ -307,12 +291,12 @@ export function TaskerFeedPage() {
                     <Coins className="w-4 h-4 shrink-0 text-primary/70" />
                     <span>
                       {task.pricing_mode === 'QUOTE'
-                        ? t('taskerFeed.quoteRequest', 'Customer wants quotes')
+                        ? t('taskerFeed.quoteRequest')
                         : task.budget
-                          ? t('taskerFeed.budgetLabel', 'Budget: {{amount}} MNT', {
+                          ? t('taskerFeed.budgetLabel', {
                               amount: task.budget.toLocaleString(locale),
                             })
-                          : t('taskerFeed.fixedPrice', 'Fixed price')}
+                          : t('taskerFeed.fixedPrice')}
                     </span>
                   </div>
                 </CardContent>
@@ -323,20 +307,17 @@ export function TaskerFeedPage() {
                   >
                     <DialogTrigger asChild>
                       <Button className="w-full rounded-xl shadow-md hover:-translate-y-[1px] transition-all font-semibold active:translate-y-0">
-                        {t('taskerFeed.viewAndApply', 'View Details & Apply')}
+                        {t('taskerFeed.viewAndApply')}
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-[95vw] sm:max-w-[600px] rounded-2xl border-border/60 shadow-2xl overflow-y-auto max-h-[90vh] p-0 flex flex-col hidden-scrollbar">
                       <div className="p-6 pb-2">
                         <DialogHeader className="mb-6">
                           <DialogTitle className="text-2xl font-display font-semibold">
-                            {t('taskerFeed.applyToTask', 'Task Details & Application')}
+                            {t('taskerFeed.applyToTask')}
                           </DialogTitle>
                           <DialogDescription className="text-sm">
-                            {t(
-                              'taskerFeed.applyDescription',
-                              'Review the details before submitting your application.',
-                            )}
+                            {t('taskerFeed.applyDescription')}
                           </DialogDescription>
                         </DialogHeader>
 
@@ -356,7 +337,7 @@ export function TaskerFeedPage() {
                               </Avatar>
                               <div>
                                 <h3 className="font-semibold text-base leading-tight">
-                                  {task.customer?.full_name || t('common.customer', 'Customer')}
+                                  {task.customer?.full_name || t('common.customer')}
                                 </h3>
                                 <div className="flex items-center text-sm text-amber-500 font-medium mt-0.5">
                                   <Star className="w-4 h-4 fill-current mr-1" />
@@ -368,10 +349,10 @@ export function TaskerFeedPage() {
                               {task.pricing_mode === 'QUOTE' ? (
                                 <div>
                                   <div className="text-base font-semibold text-primary font-display">
-                                    {t('taskerFeed.acceptingQuotes', 'Accepting quotes')}
+                                    {t('taskerFeed.acceptingQuotes')}
                                   </div>
                                   <div className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
-                                    {t('taskerFeed.quoteOnly', 'Quote only')}
+                                    {t('taskerFeed.quoteOnly')}
                                   </div>
                                 </div>
                               ) : (
@@ -392,7 +373,7 @@ export function TaskerFeedPage() {
                             <div className="flex flex-col gap-1.5 p-3 bg-muted/10 rounded-xl border border-border/30">
                               <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
                                 <MapPin className="w-4 h-4 mr-1.5 text-primary/70" />
-                                {t('taskerFeed.locationLabel', 'Location')}
+                                {t('taskerFeed.locationLabel')}
                               </div>
                               <span
                                 className="font-medium text-sm line-clamp-1"
@@ -404,7 +385,7 @@ export function TaskerFeedPage() {
                             <div className="flex flex-col gap-1.5 p-3 bg-muted/10 rounded-xl border border-border/30">
                               <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
                                 <Calendar className="w-4 h-4 mr-1.5 text-primary/70" />
-                                {t('taskerFeed.dateLabel', 'Date')}
+                                {t('taskerFeed.dateLabel')}
                               </div>
                               <span className="font-medium text-sm line-clamp-1">
                                 {new Date(task.scheduled_at).toLocaleDateString(locale, {
@@ -418,11 +399,10 @@ export function TaskerFeedPage() {
                             <div className="flex flex-col gap-1.5 p-3 bg-muted/10 rounded-xl border border-border/30 col-span-2 md:col-span-1">
                               <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
                                 <Users className="w-4 h-4 mr-1.5 text-primary/70" />
-                                {t('taskerFeed.applicantsLabel', 'Applicants')}
+                                {t('taskerFeed.applicantsLabel')}
                               </div>
                               <span className="font-medium text-sm line-clamp-1">
-                                {task.application_count}{' '}
-                                {t('taskerFeed.applicantsSuffix', 'applied')}
+                                {task.application_count} {t('taskerFeed.applicantsSuffix')}
                               </span>
                             </div>
                           </div>
@@ -430,7 +410,7 @@ export function TaskerFeedPage() {
                           {/* Task Description */}
                           <div className="space-y-3">
                             <h4 className="text-xs uppercase tracking-[0.075em] font-semibold text-muted-foreground">
-                              {t('taskerFeed.descriptionLabel', 'Task Description')}
+                              {t('taskerFeed.descriptionLabel')}
                             </h4>
                             <div className="text-sm font-medium leading-relaxed text-foreground bg-background p-4 rounded-xl border border-border/40 shadow-sm whitespace-pre-wrap">
                               {task.description}
@@ -442,7 +422,7 @@ export function TaskerFeedPage() {
                             <div className="space-y-3">
                               <h4 className="text-xs uppercase tracking-[0.075em] font-semibold text-muted-foreground flex items-center gap-1.5">
                                 <ImageIcon className="w-4 h-4" />
-                                {t('taskerFeed.photosLabel', 'Photos')}
+                                {t('taskerFeed.photosLabel')}
                               </h4>
                               <div className="flex flex-wrap gap-3">
                                 {task.photo_urls.map((url, idx) => (
@@ -470,7 +450,7 @@ export function TaskerFeedPage() {
                             htmlFor={`apply-${task.id}`}
                             className="text-xs uppercase font-bold text-primary tracking-[0.075em]"
                           >
-                            {t('taskerFeed.appMessageLabel', 'Application message')}
+                            {t('taskerFeed.appMessageLabel')}
                           </Label>
                           <Textarea
                             id={`apply-${task.id}`}
@@ -479,21 +459,15 @@ export function TaskerFeedPage() {
                             onChange={(e) =>
                               setApplyDrafts((prev) => ({ ...prev, [task.id]: e.target.value }))
                             }
-                            placeholder={t(
-                              'taskerFeed.appMessagePlaceholder',
-                              'Explain why you are the best fit for this task...',
-                            )}
+                            placeholder={t('taskerFeed.appMessagePlaceholder')}
                           />
                         </div>
 
                         <div className="flex flex-col gap-2 mt-4">
                           <Label htmlFor={`quote-${task.id}`}>
                             {task.pricing_mode === 'QUOTE'
-                              ? t('taskerFeed.yourQuoteLabel', 'Your quote (MNT)')
-                              : t(
-                                  'taskerFeed.counterOfferLabel',
-                                  'Counter-offer (MNT) — leave blank to accept budget',
-                                )}
+                              ? t('taskerFeed.yourQuoteLabel')
+                              : t('taskerFeed.counterOfferLabel')}
                           </Label>
                           <Input
                             id={`quote-${task.id}`}
@@ -501,8 +475,8 @@ export function TaskerFeedPage() {
                             min="20000"
                             placeholder={
                               task.pricing_mode === 'QUOTE'
-                                ? t('taskerFeed.quotePlaceholder', 'Enter your price')
-                                : t('taskerFeed.counterPlaceholder', 'Optional')
+                                ? t('taskerFeed.quotePlaceholder')
+                                : t('taskerFeed.counterPlaceholder')
                             }
                             value={quotePrices[task.id] ?? ''}
                             onChange={(e) =>
@@ -511,10 +485,7 @@ export function TaskerFeedPage() {
                           />
                           {task.pricing_mode === 'QUOTE' && (
                             <p className="text-xs text-muted-foreground">
-                              {t(
-                                'taskerFeed.quoteRequiredHint',
-                                'Required — the customer is waiting for your price.',
-                              )}
+                              {t('taskerFeed.quoteRequiredHint')}
                             </p>
                           )}
                         </div>
@@ -526,7 +497,7 @@ export function TaskerFeedPage() {
                             className="w-full rounded-xl font-bold py-6 text-base shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all border border-primary/20"
                           >
                             {working ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
-                            {t('taskerFeed.applySubmit', 'Apply to task')}
+                            {t('taskerFeed.applySubmit')}
                           </Button>
                         </div>
                       </div>

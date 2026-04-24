@@ -27,19 +27,19 @@ function formatTimeAgo(value: string, t: TFunction): string {
   const diffMinutes = Math.floor(diffMs / 60000);
 
   if (diffMinutes < 1) {
-    return t('customerTaskDetails.justNow', 'just now');
+    return t('customerTaskDetails.justNow');
   }
   if (diffMinutes < 60) {
-    return t('customerTaskDetails.m_ago', '{{count}}m ago', { count: diffMinutes });
+    return t('customerTaskDetails.m_ago', { count: diffMinutes });
   }
 
   const diffHours = Math.floor(diffMinutes / 60);
   if (diffHours < 24) {
-    return t('customerTaskDetails.h_ago', '{{count}}h ago', { count: diffHours });
+    return t('customerTaskDetails.h_ago', { count: diffHours });
   }
 
   const diffDays = Math.floor(diffHours / 24);
-  return t('customerTaskDetails.d_ago', '{{count}}d ago', { count: diffDays });
+  return t('customerTaskDetails.d_ago', { count: diffDays });
 }
 
 export function CustomerTaskDetailsPage() {
@@ -104,16 +104,11 @@ export function CustomerTaskDetailsPage() {
     return (
       <ScreenFrame>
         <Alert variant="destructive">
-          <AlertTitle>{t('customerTaskDetails.notFoundTitle', 'Not Found')}</AlertTitle>
-          <AlertDescription>
-            {t(
-              'customerTaskDetails.notFoundDesc',
-              "Task not found or you don't have permission to view it.",
-            )}
-          </AlertDescription>
+          <AlertTitle>{t('customerTaskDetails.notFoundTitle')}</AlertTitle>
+          <AlertDescription>{t('customerTaskDetails.notFoundDesc')}</AlertDescription>
         </Alert>
         <Button variant="ghost" onClick={() => navigate('/customer/tasks')} className="mt-4">
-          {t('customerTaskDetails.backToMyTasks', 'Back to My Tasks')}
+          {t('customerTaskDetails.backToMyTasks')}
         </Button>
       </ScreenFrame>
     );
@@ -142,7 +137,7 @@ export function CustomerTaskDetailsPage() {
                         ? i18n.language === 'mn'
                           ? task.category.name_mn
                           : task.category.name
-                        : t('category.' + task.category_id)}
+                        : t('common.unknown')}
                     </CardTitle>
                     <CardDescription className="mt-1 flex items-center gap-2">
                       <MapPin className="w-4 h-4" />
@@ -166,8 +161,8 @@ export function CustomerTaskDetailsPage() {
                       >
                         <Trash2 className="mr-1 h-3 w-3" />
                         {cancelTaskMutation.isPending
-                          ? t('customerTaskDetails.cancelling', 'Cancelling...')
-                          : t('customerTaskDetails.cancelTask', 'Cancel Task')}
+                          ? t('customerTaskDetails.cancelling')
+                          : t('customerTaskDetails.cancelTask')}
                       </Button>
                     )}
                   </div>
@@ -186,7 +181,7 @@ export function CustomerTaskDetailsPage() {
                 </div>
                 <div className="space-y-3 sm:text-right">
                   <div className="text-sm text-muted-foreground uppercase tracking-[0.075em] font-semibold">
-                    {t('customerTaskDetails.budgetLabel', 'Budget')}
+                    {t('customerTaskDetails.budgetLabel')}
                   </div>
                   <div className="text-2xl font-bold font-display text-foreground">
                     ₮{(task.budget ?? 0).toLocaleString()}
@@ -198,7 +193,7 @@ export function CustomerTaskDetailsPage() {
           <div className="lg:w-2/5">
             <div className="space-y-4">
               <h2 className="text-xl font-semibold font-display mt-4 lg:mt-0">
-                {t('customerTaskDetails.applicantsTitle', 'Applicants')}
+                {t('customerTaskDetails.applicantsTitle')}
               </h2>
 
               {isAssigned ? (
@@ -206,27 +201,20 @@ export function CustomerTaskDetailsPage() {
                   <CardContent className="flex flex-col items-center justify-center p-8 text-center">
                     <UserCheck className="w-6 h-6 text-primary mb-4" />
                     <CardTitle className="mb-2">
-                      {t('customerTaskDetails.taskAssignedTitle', 'Task is assigned')}
+                      {t('customerTaskDetails.taskAssignedTitle')}
                     </CardTitle>
                     <CardDescription className="mb-4">
-                      {t(
-                        'customerTaskDetails.taskAssignedDesc',
-                        'You have already accepted a Tasker for this task.',
-                      )}
+                      {t('customerTaskDetails.taskAssignedDesc')}
                     </CardDescription>
                     <Button onClick={() => navigate('/booking/safety')}>
-                      {t('customerTaskDetails.goToBookingManagement', 'Go to Booking Management')}
+                      {t('customerTaskDetails.goToBookingManagement')}
                     </Button>
                   </CardContent>
                 </Card>
               ) : applicationsError ? (
                 <Alert variant="destructive">
                   <AlertDescription>
-                    {applicationsError.message ??
-                      t(
-                        'customerTaskDetails.failedToLoadApplications',
-                        'Failed to load applications',
-                      )}
+                    {applicationsError.message ?? t('customerTaskDetails.failedToLoadApplications')}
                   </AlertDescription>
                 </Alert>
               ) : applicationsLoading ? (
@@ -237,7 +225,7 @@ export function CustomerTaskDetailsPage() {
                 </div>
               ) : !applicationsPage?.data || applicationsPage.data.length === 0 ? (
                 <Card className="border-dashed p-8 text-center text-muted-foreground">
-                  {t('customerTaskDetails.waitingForTaskers', 'Waiting for Taskers to apply...')}
+                  {t('customerTaskDetails.waitingForTaskers')}
                 </Card>
               ) : (
                 <div className="grid gap-4">
@@ -291,7 +279,7 @@ function ApplicationCard({
                 </span>
                 <span>•</span>
                 <span>
-                  {t('customerTaskDetails.tasksDone', '{{count}} tasks done', {
+                  {t('customerTaskDetails.tasksDone', {
                     count: application.tasker.completed_tasks,
                   })}
                 </span>
@@ -305,7 +293,7 @@ function ApplicationCard({
               )
             }
           >
-            {t('customerTaskDetails.reviewAndAccept', 'Review & Accept')}
+            {t('customerTaskDetails.reviewAndAccept')}
           </Button>
         </div>
       </CardHeader>
@@ -313,7 +301,7 @@ function ApplicationCard({
         "{application.message}"
       </CardContent>
       <CardFooter className="px-4 py-3 bg-muted/10 text-xs text-muted-foreground border-t">
-        {t('customerTaskDetails.appliedAgo', 'Applied {{timeAgo}}', {
+        {t('customerTaskDetails.appliedAgo', {
           timeAgo: formatTimeAgo(application.created_at, t),
         })}
       </CardFooter>

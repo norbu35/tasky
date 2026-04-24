@@ -43,10 +43,9 @@ export default function BookingTimelineScreen() {
                 className="text-micro font-bold text-secondary uppercase"
                 style={{ letterSpacing: bookingTimeline.titleTracking }}
               >
-                {t(
-                  'customer.bookings.timelineId',
-                  `ID: #${(booking?.task_id ?? bookingId).slice(-6)}`,
-                )}
+                {t('customer.bookings.timelineId', {
+                  id: (booking?.task_id ?? bookingId).slice(-6),
+                })}
               </Text>
               <Text
                 className="text-title font-bold text-primary-deep leading-tight"

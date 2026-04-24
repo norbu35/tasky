@@ -9,28 +9,20 @@ export function CustomerBookingConfirmedPage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('customerPages.bookingConfirmed.title', 'Booking confirmed')}
-      description={t(
-        'customerPages.bookingConfirmed.description',
-        'The tasker has been booked and the customer flow can continue to timeline or safety.',
-      )}
+      title={t('customerPages.bookingConfirmed.title')}
+      description={t('customerPages.bookingConfirmed.description')}
       primaryAction={
         <Button type="button" variant="secondary">
-          {t('customerPages.bookingConfirmed.backToBookings', 'Back to bookings')}
+          {t('customerPages.bookingConfirmed.backToBookings')}
         </Button>
       }
     >
       <Card className="border-border/60 shadow-sm">
         <CardHeader>
-          <CardTitle>
-            {t('customerPages.bookingConfirmed.summaryTitle', 'Confirmation summary')}
-          </CardTitle>
+          <CardTitle>{t('customerPages.bookingConfirmed.summaryTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground">
-          {t(
-            'customerPages.bookingConfirmed.summaryDesc',
-            'The booking confirmation surface stays available for Phase 1 direct settlement.',
-          )}
+          {t('customerPages.bookingConfirmed.summaryDesc')}
         </CardContent>
       </Card>
     </ResponsiveDetailShell>

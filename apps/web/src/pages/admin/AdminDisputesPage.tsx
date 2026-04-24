@@ -25,6 +25,20 @@ function disputeStatusVariant(status: string): 'default' | 'secondary' | 'outlin
   }
 }
 
+const DISPUTE_STATUS_LABEL_KEYS = {
+  OPEN: 'admin.disputes.statusLabel.OPEN',
+  RESOLVED_CUSTOMER: 'admin.disputes.statusLabel.RESOLVED_CUSTOMER',
+  RESOLVED_TASKER: 'admin.disputes.statusLabel.RESOLVED_TASKER',
+  ESCALATED: 'admin.disputes.statusLabel.ESCALATED',
+  CLOSED_INSUFFICIENT_EVIDENCE: 'admin.disputes.statusLabel.CLOSED_INSUFFICIENT_EVIDENCE',
+  UNKNOWN: 'admin.disputes.statusLabel.UNKNOWN',
+} as const;
+
+function getDisputeStatusLabelKey(status: string): string {
+  const key = status as keyof typeof DISPUTE_STATUS_LABEL_KEYS;
+  return DISPUTE_STATUS_LABEL_KEYS[key] ?? DISPUTE_STATUS_LABEL_KEYS.UNKNOWN;
+}
+
 function truncate(text: string, max: number): string {
   return text.length > max ? text.slice(0, max) + '...' : text;
 }
@@ -51,7 +65,7 @@ export function AdminDisputesPage() {
       const result = await adminApiClient.adminListDisputes(session.accessToken);
       setDisputes(result.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('common.unknownError', 'Unknown error'));
+      setError(err instanceof Error ? err.message : t('common.unknownError'));
     } finally {
       setLoading(false);
     }
@@ -64,7 +78,7 @@ export function AdminDisputesPage() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title', 'Disputes')}</h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title')}</h1>
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <Card key={i}>
@@ -81,13 +95,11 @@ export function AdminDisputesPage() {
   if (error) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title', 'Disputes')}</h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title')}</h1>
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
-            <p className="text-destructive">
-              {t('admin.disputes.error', 'Error loading disputes')}
-            </p>
-            <Button onClick={fetchDisputes}>{t('common.retry', 'Retry')}</Button>
+            <p className="text-destructive">{t('admin.disputes.error')}</p>
+            <Button onClick={fetchDisputes}>{t('common.retry')}</Button>
           </CardContent>
         </Card>
       </div>
@@ -97,12 +109,10 @@ export function AdminDisputesPage() {
   if (disputes.length === 0) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title', 'Disputes')}</h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title')}</h1>
         <Card>
           <CardContent className="p-6 text-center">
-            <p className="text-muted-foreground">
-              {t('admin.disputes.empty', 'No disputes found.')}
-            </p>
+            <p className="text-muted-foreground">{t('admin.disputes.empty')}</p>
           </CardContent>
         </Card>
       </div>
@@ -111,20 +121,14 @@ export function AdminDisputesPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title', 'Disputes')}</h1>
+      <h1 className="text-2xl font-bold font-display">{t('admin.disputes.title')}</h1>
       <div className="overflow-x-auto rounded-lg border">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b bg-muted/50">
-              <th className="px-4 py-3 text-left font-medium">
-                {t('admin.disputes.reason', 'Reason')}
-              </th>
-              <th className="px-4 py-3 text-left font-medium">
-                {t('admin.disputes.status', 'Status')}
-              </th>
-              <th className="px-4 py-3 text-left font-medium">
-                {t('admin.disputes.createdAt', 'Created')}
-              </th>
+              <th className="px-4 py-3 text-left font-medium">{t('admin.disputes.reason')}</th>
+              <th className="px-4 py-3 text-left font-medium">{t('admin.disputes.status')}</th>
+              <th className="px-4 py-3 text-left font-medium">{t('admin.disputes.createdAt')}</th>
             </tr>
           </thead>
           <tbody>
@@ -138,7 +142,7 @@ export function AdminDisputesPage() {
                 <td className="px-4 py-3">{truncate(dispute.reason, 80)}</td>
                 <td className="px-4 py-3">
                   <Badge variant={disputeStatusVariant(dispute.status)}>
-                    {t(`admin.disputes.status_${dispute.status}`, dispute.status)}
+                    {t(getDisputeStatusLabelKey(dispute.status))}
                   </Badge>
                 </td>
                 <td className="px-4 py-3">{formatDate(dispute.created_at)}</td>

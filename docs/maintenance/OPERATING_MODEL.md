@@ -84,6 +84,8 @@ python3 tooling/scripts/governance/validate-schema-parity.py
 - Full extended suite: `./gradlew gateFull`
 
 Merge CI includes the docs lane via `pnpm repo:docs:check`, which covers journey validation through `pnpm repo:design:check`.
+Frontend merge quality runs `pnpm verify:frontend:affected`, which includes `pnpm verify:i18n` before affected lint,
+typecheck, and tests.
 
 `gateSmoke` remains useful locally, but it is not the only verification surface.
 

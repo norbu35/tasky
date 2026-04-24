@@ -40,22 +40,22 @@ export function SettingsPage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('sharedPages.settings.title', 'Settings')}
-      description={t('sharedPages.settings.description', 'Account, safety, and session controls.')}
+      title={t('sharedPages.settings.title')}
+      description={t('sharedPages.settings.description')}
     >
       <div className="space-y-6">
         <section>
-          <SectionTitle>{t('sharedPages.settings.preferences', 'Preferences')}</SectionTitle>
+          <SectionTitle>{t('sharedPages.settings.preferences')}</SectionTitle>
           <ActionRow
             icon={<Bell className="h-5 w-5 text-primary" />}
-            label={t('sharedPages.settings.notificationsAction', 'Notification preferences')}
+            label={t('sharedPages.settings.notificationsAction')}
           />
         </section>
         <section>
-          <SectionTitle>{t('sharedPages.settings.account', 'Account')}</SectionTitle>
+          <SectionTitle>{t('sharedPages.settings.account')}</SectionTitle>
           <ActionRow
             icon={<LogOut className="h-5 w-5 text-primary" />}
-            label={t('sharedPages.settings.signOutAction', 'Sign out')}
+            label={t('sharedPages.settings.signOutAction')}
           />
         </section>
       </div>

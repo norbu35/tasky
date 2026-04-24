@@ -22,6 +22,14 @@ const CANCEL_REASONS = [
   'OTHER',
 ] as const;
 
+const REASON_LABEL_KEYS: Readonly<Record<(typeof CANCEL_REASONS)[number], string>> = {
+  SCHEDULE_CONFLICT: 'taskerPages.cancelDialog.reasonLabel.SCHEDULE_CONFLICT',
+  UNABLE_TO_COMPLETE: 'taskerPages.cancelDialog.reasonLabel.UNABLE_TO_COMPLETE',
+  SAFETY_FRAUD: 'taskerPages.cancelDialog.reasonLabel.SAFETY_FRAUD',
+  PERSONAL_EMERGENCY: 'taskerPages.cancelDialog.reasonLabel.PERSONAL_EMERGENCY',
+  OTHER: 'taskerPages.cancelDialog.reasonLabel.OTHER',
+};
+
 export function TaskerCancelDialog() {
   const { t } = useTranslation();
   const { apiClient, session, trackClientEvent } = useAppContext();
@@ -47,7 +55,7 @@ export function TaskerCancelDialog() {
     },
     onSuccess: () => {
       trackClientEvent('BOOKING_CANCELLED', { bookingId });
-      toast.success(t('taskerPages.cancelDialog.success', 'Booking cancelled.'));
+      toast.success(t('taskerPages.cancelDialog.success'));
       navigate(-1);
     },
     onError: (err) => toast.error(parseError(err)),
@@ -61,27 +69,20 @@ export function TaskerCancelDialog() {
         <div>
           <h1 className="text-2xl font-display font-bold tracking-tight flex items-center gap-2">
             <XCircle className="w-6 h-6 text-destructive" />
-            {t('taskerPages.cancelDialog.title', 'Cancel booking')}
+            {t('taskerPages.cancelDialog.title')}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {t(
-              'taskerPages.cancelDialog.description',
-              'Cancel an assigned booking. The task will reopen for other taskers.',
-            )}
+            {t('taskerPages.cancelDialog.description')}
           </p>
         </div>
 
         <Card className="border-border/60 shadow-sm">
           <CardHeader>
-            <CardTitle>
-              {t('taskerPages.cancelDialog.reasonTitle', 'Cancellation reason')}
-            </CardTitle>
+            <CardTitle>{t('taskerPages.cancelDialog.reasonTitle')}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
-              <Label>
-                {t('taskerPages.cancelDialog.selectReasonLabel', 'Why are you cancelling?')}
-              </Label>
+              <Label>{t('taskerPages.cancelDialog.selectReasonLabel')}</Label>
               <div className="grid gap-2">
                 {CANCEL_REASONS.map((r) => (
                   <button
@@ -94,24 +95,19 @@ export function TaskerCancelDialog() {
                         : 'border-border/60 bg-background text-muted-foreground hover:border-primary/40'
                     }`}
                   >
-                    {t(`taskerPages.cancelDialog.reason_${r}`, r.replace(/_/g, ' '))}
+                    {t(REASON_LABEL_KEYS[r])}
                   </button>
                 ))}
               </div>
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="cancel-details">
-                {t('taskerPages.cancelDialog.detailsLabel', 'Additional details (optional)')}
-              </Label>
+              <Label htmlFor="cancel-details">{t('taskerPages.cancelDialog.detailsLabel')}</Label>
               <Textarea
                 id="cancel-details"
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
-                placeholder={t(
-                  'taskerPages.cancelDialog.detailsPlaceholder',
-                  'Provide more context...',
-                )}
+                placeholder={t('taskerPages.cancelDialog.detailsPlaceholder')}
                 rows={3}
                 maxLength={1000}
               />
@@ -120,20 +116,14 @@ export function TaskerCancelDialog() {
             {selectedReason === 'SAFETY_FRAUD' && (
               <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3">
                 <p className="text-xs text-amber-600 font-medium">
-                  {t(
-                    'taskerPages.cancelDialog.safetyNotice',
-                    'Safety/fraud cancellations bypass automated strike logic and are handled by the trust & safety team.',
-                  )}
+                  {t('taskerPages.cancelDialog.safetyNotice')}
                 </p>
               </div>
             )}
 
             <div className="bg-muted/30 border border-border/40 rounded-lg p-3">
               <p className="text-xs text-muted-foreground">
-                {t(
-                  'taskerPages.cancelDialog.strikeNotice',
-                  'Cancellations may affect your reliability record. The task will reopen for other taskers.',
-                )}
+                {t('taskerPages.cancelDialog.strikeNotice')}
               </p>
             </div>
 
@@ -144,7 +134,7 @@ export function TaskerCancelDialog() {
                 onClick={() => navigate(-1)}
                 disabled={cancelMutation.isPending}
               >
-                {t('taskerPages.cancelDialog.keepBooking', 'Keep booking')}
+                {t('taskerPages.cancelDialog.keepBooking')}
               </Button>
               <Button
                 type="button"
@@ -153,7 +143,7 @@ export function TaskerCancelDialog() {
                 onClick={() => cancelMutation.mutate()}
               >
                 {cancelMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                {t('taskerPages.cancelDialog.confirmButton', 'Confirm cancellation')}
+                {t('taskerPages.cancelDialog.confirmButton')}
               </Button>
             </div>
           </CardContent>

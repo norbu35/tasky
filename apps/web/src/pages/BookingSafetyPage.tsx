@@ -109,7 +109,7 @@ export function BookingSafetyPage() {
     onSuccess: () => {
       invalidateBookings();
       closeDialog();
-      toast.success(t('bookingSafety.cancelSuccess', 'Booking cancelled successfully.'));
+      toast.success(t('bookingSafety.cancelSuccess'));
     },
     onError: (err) => toast.error(parseError(err)),
   });
@@ -126,7 +126,7 @@ export function BookingSafetyPage() {
       trackClientEvent('BOOKING_COMPLETED', { bookingId: booking.id, taskId: booking.task_id });
       invalidateBookings();
       closeDialog();
-      toast.success(t('bookingSafety.completeSuccess', 'Booking marked as completed.'));
+      toast.success(t('bookingSafety.completeSuccess'));
     },
     onError: (err) => toast.error(parseError(err)),
   });
@@ -150,9 +150,7 @@ export function BookingSafetyPage() {
       trackClientEvent('BOOKING_MARKED_DONE', { bookingId: booking.id, taskId: booking.task_id });
       invalidateBookings();
       closeDialog();
-      toast.success(
-        t('bookingSafety.markDoneSuccess', 'Task marked as done. Awaiting customer confirmation.'),
-      );
+      toast.success(t('bookingSafety.markDoneSuccess'));
     },
     onError: (err) => toast.error(parseError(err)),
   });
@@ -169,9 +167,7 @@ export function BookingSafetyPage() {
       trackClientEvent('BOOKING_REBOOKED', { bookingId: selectedBooking?.id });
       invalidateBookings();
       closeDialog();
-      toast.success(
-        t('bookingSafety.rebookSuccess', 'Rebook request sent. The tasker will be notified.'),
-      );
+      toast.success(t('bookingSafety.rebookSuccess'));
     },
     onError: (err) => toast.error(parseError(err)),
   });
@@ -201,7 +197,7 @@ export function BookingSafetyPage() {
     onSuccess: () => {
       invalidateBookings();
       closeDialog();
-      toast.success(t('bookingSafety.reviewSuccess', 'Review submitted successfully.'));
+      toast.success(t('bookingSafety.reviewSuccess'));
     },
     onError: (err) => toast.error(parseError(err)),
   });
@@ -225,7 +221,7 @@ export function BookingSafetyPage() {
       });
       invalidateBookings();
       closeDialog();
-      toast.success(t('bookingSafety.disputeSuccess', 'Dispute raised successfully.'));
+      toast.success(t('bookingSafety.disputeSuccess'));
     },
     onError: (err) => toast.error(parseError(err)),
   });
@@ -240,32 +236,23 @@ export function BookingSafetyPage() {
       <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold font-display tracking-tight">
-            {t('bookingSafety.bookingManagement', 'Booking Management')}
+            {t('bookingSafety.bookingManagement')}
           </h1>
-          <p className="text-muted-foreground mt-1">
-            {t(
-              'bookingSafety.manageBookings',
-              'Manage your active bookings, reviews and safety concerns.',
-            )}
-          </p>
+          <p className="text-muted-foreground mt-1">{t('bookingSafety.manageBookings')}</p>
         </div>
 
         {error && (
           <Alert variant="destructive">
-            <AlertTitle>{t('bookingSafety.errorLoading', 'Error Loading Bookings')}</AlertTitle>
+            <AlertTitle>{t('bookingSafety.errorLoading')}</AlertTitle>
             <AlertDescription>{parseError(error)}</AlertDescription>
           </Alert>
         )}
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 max-w-md bg-muted/50 border">
-            <TabsTrigger value="ASSIGNED">{t('bookingSafety.tabActive', 'Active')}</TabsTrigger>
-            <TabsTrigger value="COMPLETED">
-              {t('bookingSafety.tabCompleted', 'Completed')}
-            </TabsTrigger>
-            <TabsTrigger value="CANCELLED">
-              {t('bookingSafety.tabCancelled', 'Cancelled')}
-            </TabsTrigger>
+            <TabsTrigger value="ASSIGNED">{t('bookingSafety.tabActive')}</TabsTrigger>
+            <TabsTrigger value="COMPLETED">{t('bookingSafety.tabCompleted')}</TabsTrigger>
+            <TabsTrigger value="CANCELLED">{t('bookingSafety.tabCancelled')}</TabsTrigger>
           </TabsList>
 
           <div className="mt-6">
@@ -276,9 +263,7 @@ export function BookingSafetyPage() {
               </div>
             ) : bookingsArray.length === 0 ? (
               <div className="text-center py-16 border-2 border-dashed rounded-lg bg-muted/10">
-                <p className="text-muted-foreground">
-                  {t('bookingSafety.noBookings', 'No bookings found in this state.')}
-                </p>
+                <p className="text-muted-foreground">{t('bookingSafety.noBookings')}</p>
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2">
@@ -293,7 +278,7 @@ export function BookingSafetyPage() {
                           className="text-base font-semibold leading-tight line-clamp-1 truncate mr-2"
                           title={booking.id}
                         >
-                          {t('bookingSafety.bookingPrefix', 'Booking ')}
+                          {t('bookingSafety.bookingPrefix')}
                           {booking.id.substring(0, 8)}...
                         </CardTitle>
                         <Badge
@@ -309,7 +294,7 @@ export function BookingSafetyPage() {
                         </Badge>
                       </div>
                       <CardDescription>
-                        {t('bookingSafety.taskerId', 'Tasker ID:')}{' '}
+                        {t('bookingSafety.taskerId')}{' '}
                         <span className="font-mono text-xs">
                           {booking.tasker_id.slice(0, 8)}...
                         </span>
@@ -318,13 +303,13 @@ export function BookingSafetyPage() {
                     <CardContent className="pb-4">
                       <div className="text-sm grid gap-2 text-muted-foreground">
                         <div className="flex justify-between">
-                          <span>{t('bookingSafety.task', 'Task')}</span>
+                          <span>{t('bookingSafety.task')}</span>
                           <span className="font-mono text-xs">
                             {booking.task_id.substring(0, 8)}...
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span>{t('bookingSafety.created', 'Created')}</span>
+                          <span>{t('bookingSafety.created')}</span>
                           <span>{new Date(booking.created_at).toLocaleDateString()}</span>
                         </div>
                       </div>
@@ -334,9 +319,7 @@ export function BookingSafetyPage() {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">
-                              {t('bookingSafety.openMenu', 'Open menu')}
-                            </span>
+                            <span className="sr-only">{t('bookingSafety.openMenu')}</span>
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -346,39 +329,38 @@ export function BookingSafetyPage() {
                               {!isUserCustomer && (
                                 <DropdownMenuItem onClick={() => openDialog('MARK_DONE', booking)}>
                                   <CheckCircle className="mr-2 h-4 w-4" />{' '}
-                                  {t('bookingSafety.markDoneTask', 'Mark as Done')}
+                                  {t('bookingSafety.markDoneTask')}
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuItem onClick={() => openDialog('COMPLETE', booking)}>
                                 <CheckCircle className="mr-2 h-4 w-4" />{' '}
-                                {t('bookingSafety.completeTask', 'Complete Task')}
+                                {t('bookingSafety.completeTask')}
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => openDialog('CANCEL', booking)}
                                 className="text-destructive"
                               >
                                 <XCircle className="mr-2 h-4 w-4" />{' '}
-                                {t('bookingSafety.cancelBooking', 'Cancel Booking')}
+                                {t('bookingSafety.cancelBooking')}
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => openDialog('DISPUTE', booking)}
                                 className="text-accent focus:text-accent"
                               >
                                 <ShieldAlert className="mr-2 h-4 w-4" />{' '}
-                                {t('bookingSafety.raiseDispute', 'Raise Dispute')}
+                                {t('bookingSafety.raiseDispute')}
                               </DropdownMenuItem>
                             </>
                           )}
                           {booking.status === 'COMPLETED' && (
                             <>
                               <DropdownMenuItem onClick={() => openDialog('REVIEW', booking)}>
-                                <Star className="mr-2 h-4 w-4" />{' '}
-                                {t('bookingSafety.leaveReview', 'Leave Review')}
+                                <Star className="mr-2 h-4 w-4" /> {t('bookingSafety.leaveReview')}
                               </DropdownMenuItem>
                               {isUserCustomer && (
                                 <DropdownMenuItem onClick={() => handleRebook(booking)}>
                                   <RefreshCw className="mr-2 h-4 w-4" />{' '}
-                                  {t('bookingSafety.rebookAction', 'Rebook')}
+                                  {t('bookingSafety.rebookAction')}
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuItem
@@ -386,13 +368,13 @@ export function BookingSafetyPage() {
                                 className="text-accent focus:text-accent"
                               >
                                 <ShieldAlert className="mr-2 h-4 w-4" />{' '}
-                                {t('bookingSafety.raiseDispute', 'Raise Dispute')}
+                                {t('bookingSafety.raiseDispute')}
                               </DropdownMenuItem>
                             </>
                           )}
                           {booking.status === 'CANCELLED' && (
                             <DropdownMenuItem disabled>
-                              {t('bookingSafety.noActions', 'No actions available')}
+                              {t('bookingSafety.noActions')}
                             </DropdownMenuItem>
                           )}
                         </DropdownMenuContent>
@@ -410,17 +392,12 @@ export function BookingSafetyPage() {
       <Dialog open={actionDialog === 'CANCEL'} onOpenChange={closeDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('bookingSafety.cancelTitle', 'Cancel Booking')}</DialogTitle>
-            <DialogDescription>
-              {t(
-                'bookingSafety.cancelDesc',
-                'Are you sure you want to cancel this booking? This action cannot be undone.',
-              )}
-            </DialogDescription>
+            <DialogTitle>{t('bookingSafety.cancelTitle')}</DialogTitle>
+            <DialogDescription>{t('bookingSafety.cancelDesc')}</DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4">
             <Button variant="secondary" onClick={closeDialog} disabled={cancelMutation.isPending}>
-              {t('bookingSafety.closeBtn', 'Close')}
+              {t('bookingSafety.closeBtn')}
             </Button>
             <Button
               className="bg-red-600 hover:bg-red-700 text-white"
@@ -428,8 +405,8 @@ export function BookingSafetyPage() {
               disabled={cancelMutation.isPending}
             >
               {cancelMutation.isPending
-                ? t('bookingSafety.cancellingBtn', 'Cancelling...')
-                : t('bookingSafety.yesCancelBtn', 'Yes, Cancel')}
+                ? t('bookingSafety.cancellingBtn')
+                : t('bookingSafety.yesCancelBtn')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -439,22 +416,20 @@ export function BookingSafetyPage() {
       <Dialog open={actionDialog === 'COMPLETE'} onOpenChange={closeDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('bookingSafety.completeTitle', 'Complete Booking')}</DialogTitle>
-            <DialogDescription>
-              {t('bookingSafety.completeDesc', 'Mark this booking as successfully completed.')}
-            </DialogDescription>
+            <DialogTitle>{t('bookingSafety.completeTitle')}</DialogTitle>
+            <DialogDescription>{t('bookingSafety.completeDesc')}</DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4">
             <Button variant="secondary" onClick={closeDialog} disabled={completeMutation.isPending}>
-              {t('bookingSafety.closeBtn', 'Close')}
+              {t('bookingSafety.closeBtn')}
             </Button>
             <Button
               onClick={() => completeMutation.mutate(selectedBooking!.id)}
               disabled={completeMutation.isPending}
             >
               {completeMutation.isPending
-                ? t('bookingSafety.completingBtn', 'Completing...')
-                : t('bookingSafety.markCompletedBtn', 'Mark Completed')}
+                ? t('bookingSafety.completingBtn')
+                : t('bookingSafety.markCompletedBtn')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -464,25 +439,20 @@ export function BookingSafetyPage() {
       <Dialog open={actionDialog === 'MARK_DONE'} onOpenChange={closeDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('bookingSafety.markDoneTitle', 'Mark Task as Done')}</DialogTitle>
-            <DialogDescription>
-              {t(
-                'bookingSafety.markDoneDesc',
-                'Signal that the work is finished. The customer will be notified to confirm.',
-              )}
-            </DialogDescription>
+            <DialogTitle>{t('bookingSafety.markDoneTitle')}</DialogTitle>
+            <DialogDescription>{t('bookingSafety.markDoneDesc')}</DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4">
             <Button variant="secondary" onClick={closeDialog} disabled={markDoneMutation.isPending}>
-              {t('bookingSafety.closeBtn', 'Close')}
+              {t('bookingSafety.closeBtn')}
             </Button>
             <Button
               onClick={() => markDoneMutation.mutate({ bookingId: selectedBooking!.id })}
               disabled={markDoneMutation.isPending}
             >
               {markDoneMutation.isPending
-                ? t('bookingSafety.markingDoneBtn', 'Marking done...')
-                : t('bookingSafety.markDoneBtn', 'Mark Done')}
+                ? t('bookingSafety.markingDoneBtn')
+                : t('bookingSafety.markDoneBtn')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -492,20 +462,18 @@ export function BookingSafetyPage() {
       <Dialog open={actionDialog === 'REVIEW'} onOpenChange={closeDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('bookingSafety.reviewTitle', 'Leave a Review')}</DialogTitle>
+            <DialogTitle>{t('bookingSafety.reviewTitle')}</DialogTitle>
             <DialogDescription>
               {isUserCustomer
-                ? t('bookingSafety.reviewDescCustomer', 'Rate your experience with the Tasker.')
-                : t('bookingSafety.reviewDescTasker', 'Rate your experience with the Customer.')}
+                ? t('bookingSafety.reviewDescCustomer')
+                : t('bookingSafety.reviewDescTasker')}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {isUserCustomer ? (
               <>
                 <div className="grid gap-2">
-                  <Label htmlFor="qualityRating">
-                    {t('bookingSafety.qualityRatingLabel', 'Quality (1-5)')}
-                  </Label>
+                  <Label htmlFor="qualityRating">{t('bookingSafety.qualityRatingLabel')}</Label>
                   <Input
                     id="qualityRating"
                     type="number"
@@ -517,7 +485,7 @@ export function BookingSafetyPage() {
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="punctualityRating">
-                    {t('bookingSafety.punctualityRatingLabel', 'Punctuality (1-5)')}
+                    {t('bookingSafety.punctualityRatingLabel')}
                   </Label>
                   <Input
                     id="punctualityRating"
@@ -530,7 +498,7 @@ export function BookingSafetyPage() {
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="communicationRating">
-                    {t('bookingSafety.communicationRatingLabel', 'Communication (1-5)')}
+                    {t('bookingSafety.communicationRatingLabel')}
                   </Label>
                   <Input
                     id="communicationRating"
@@ -545,9 +513,7 @@ export function BookingSafetyPage() {
             ) : (
               <>
                 <div className="grid gap-2">
-                  <Label htmlFor="clarityRating">
-                    {t('bookingSafety.clarityRatingLabel', 'Clarity (1-5)')}
-                  </Label>
+                  <Label htmlFor="clarityRating">{t('bookingSafety.clarityRatingLabel')}</Label>
                   <Input
                     id="clarityRating"
                     type="number"
@@ -559,7 +525,7 @@ export function BookingSafetyPage() {
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="respectfulnessRating">
-                    {t('bookingSafety.respectfulnessRatingLabel', 'Respectfulness (1-5)')}
+                    {t('bookingSafety.respectfulnessRatingLabel')}
                   </Label>
                   <Input
                     id="respectfulnessRating"
@@ -572,7 +538,7 @@ export function BookingSafetyPage() {
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="punctualityRatingTasker">
-                    {t('bookingSafety.punctualityRatingLabel', 'Punctuality (1-5)')}
+                    {t('bookingSafety.punctualityRatingLabel')}
                   </Label>
                   <Input
                     id="punctualityRatingTasker"
@@ -586,10 +552,10 @@ export function BookingSafetyPage() {
               </>
             )}
             <div className="grid gap-2">
-              <Label htmlFor="comment">{t('bookingSafety.commentLabel', 'Comment')}</Label>
+              <Label htmlFor="comment">{t('bookingSafety.commentLabel')}</Label>
               <Textarea
                 id="comment"
-                placeholder={t('bookingSafety.commentPlaceholder', 'How was the service?')}
+                placeholder={t('bookingSafety.commentPlaceholder')}
                 value={reviewComment}
                 onChange={(e) => setReviewComment(e.target.value)}
                 maxLength={1000}
@@ -597,9 +563,7 @@ export function BookingSafetyPage() {
             </div>
             {isUserCustomer && (
               <div className="grid gap-2">
-                <Label>
-                  {t('bookingSafety.wouldBookAgainLabel', 'Would you book this tasker again?')}
-                </Label>
+                <Label>{t('bookingSafety.wouldBookAgainLabel')}</Label>
                 <div className="flex gap-2">
                   <Button
                     type="button"
@@ -607,7 +571,7 @@ export function BookingSafetyPage() {
                     variant={wouldBookAgain === true ? 'default' : 'outline'}
                     onClick={() => setWouldBookAgain(true)}
                   >
-                    {t('bookingSafety.wouldBookAgainYes', 'Yes')}
+                    {t('bookingSafety.wouldBookAgainYes')}
                   </Button>
                   <Button
                     type="button"
@@ -615,7 +579,7 @@ export function BookingSafetyPage() {
                     variant={wouldBookAgain === false ? 'default' : 'outline'}
                     onClick={() => setWouldBookAgain(false)}
                   >
-                    {t('bookingSafety.wouldBookAgainNo', 'No')}
+                    {t('bookingSafety.wouldBookAgainNo')}
                   </Button>
                 </div>
               </div>
@@ -623,15 +587,15 @@ export function BookingSafetyPage() {
           </div>
           <DialogFooter>
             <Button variant="secondary" onClick={closeDialog} disabled={reviewMutation.isPending}>
-              {t('bookingSafety.cancelActionBtn', 'Cancel')}
+              {t('bookingSafety.cancelActionBtn')}
             </Button>
             <Button
               onClick={() => reviewMutation.mutate(selectedBooking!.id)}
               disabled={reviewMutation.isPending}
             >
               {reviewMutation.isPending
-                ? t('bookingSafety.submittingBtn', 'Submitting...')
-                : t('bookingSafety.submitReviewBtn', 'Submit Review')}
+                ? t('bookingSafety.submittingBtn')
+                : t('bookingSafety.submitReviewBtn')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -642,56 +606,33 @@ export function BookingSafetyPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="text-destructive flex items-center gap-2">
-              <ShieldAlert className="w-5 h-5" />{' '}
-              {t('bookingSafety.disputeTitle', 'Raise a Dispute')}
+              <ShieldAlert className="w-5 h-5" /> {t('bookingSafety.disputeTitle')}
             </DialogTitle>
-            <DialogDescription>
-              {t(
-                'bookingSafety.disputeDesc',
-                'If you have issues with a completed task (e.g., poor quality, damage), you can raise a dispute for our Trust & Safety team to review.',
-              )}
-            </DialogDescription>
+            <DialogDescription>{t('bookingSafety.disputeDesc')}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="disputeCategory">
-                {t('bookingSafety.reasonCategoryLabel', 'Reason Category')}
-              </Label>
+              <Label htmlFor="disputeCategory">{t('bookingSafety.reasonCategoryLabel')}</Label>
               <Select value={disputeCategory} onValueChange={setDisputeCategory}>
                 <SelectTrigger>
-                  <SelectValue
-                    placeholder={t('bookingSafety.selectReason', 'Select a reason...')}
-                  />
+                  <SelectValue placeholder={t('bookingSafety.selectReason')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="POOR_QUALITY">
-                    {t('bookingSafety.reasonQuality', 'Poor Quality of Work')}
-                  </SelectItem>
-                  <SelectItem value="LATE_OR_NO_SHOW">
-                    {t('bookingSafety.reasonLate', 'Tasker was Late or No Show')}
-                  </SelectItem>
-                  <SelectItem value="DAMAGE_CAUSED">
-                    {t('bookingSafety.reasonDamage', 'Damage Caused during Task')}
-                  </SelectItem>
+                  <SelectItem value="POOR_QUALITY">{t('bookingSafety.reasonQuality')}</SelectItem>
+                  <SelectItem value="LATE_OR_NO_SHOW">{t('bookingSafety.reasonLate')}</SelectItem>
+                  <SelectItem value="DAMAGE_CAUSED">{t('bookingSafety.reasonDamage')}</SelectItem>
                   <SelectItem value="UNPROFESSIONAL">
-                    {t('bookingSafety.reasonUnprofessional', 'Unprofessional Behavior')}
+                    {t('bookingSafety.reasonUnprofessional')}
                   </SelectItem>
-                  <SelectItem value="OTHER">
-                    {t('bookingSafety.reasonOther', 'Other Issue')}
-                  </SelectItem>
+                  <SelectItem value="OTHER">{t('bookingSafety.reasonOther')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="disputeReason">
-                {t('bookingSafety.detailsLabel', 'Additional Details')}
-              </Label>
+              <Label htmlFor="disputeReason">{t('bookingSafety.detailsLabel')}</Label>
               <Textarea
                 id="disputeReason"
-                placeholder={t(
-                  'bookingSafety.detailsPlaceholder',
-                  'Please explain the issue in detail (min 10 characters)...',
-                )}
+                placeholder={t('bookingSafety.detailsPlaceholder')}
                 value={disputeReason}
                 onChange={(e) => setDisputeReason(e.target.value)}
                 rows={4}
@@ -700,7 +641,7 @@ export function BookingSafetyPage() {
           </div>
           <DialogFooter>
             <Button variant="secondary" onClick={closeDialog} disabled={disputeMutation.isPending}>
-              {t('bookingSafety.cancelActionBtn', 'Cancel')}
+              {t('bookingSafety.cancelActionBtn')}
             </Button>
             <Button
               className="bg-red-600 hover:bg-red-700 text-white"
@@ -708,8 +649,8 @@ export function BookingSafetyPage() {
               disabled={disputeMutation.isPending || disputeReason.length < 10 || !disputeCategory}
             >
               {disputeMutation.isPending
-                ? t('bookingSafety.submittingBtn', 'Submitting...')
-                : t('bookingSafety.submitDisputeBtn', 'Submit Dispute')}
+                ? t('bookingSafety.submittingBtn')
+                : t('bookingSafety.submitDisputeBtn')}
             </Button>
           </DialogFooter>
         </DialogContent>

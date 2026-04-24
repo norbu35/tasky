@@ -58,6 +58,35 @@ const CONFIG: Record<
   },
 };
 
+const PERMISSION_COPY_KEYS: Record<
+  PermissionType,
+  {
+    titleKey: string;
+    descriptionKey: string;
+    deniedKey: string;
+    settingsHintKey: string;
+  }
+> = {
+  camera: {
+    titleKey: 'auth.permissions.camera.title',
+    descriptionKey: 'auth.permissions.camera.description',
+    deniedKey: 'auth.permissions.camera.denied',
+    settingsHintKey: 'auth.permissions.camera.settingsHint',
+  },
+  location: {
+    titleKey: 'auth.permissions.location.title',
+    descriptionKey: 'auth.permissions.location.description',
+    deniedKey: 'auth.permissions.location.denied',
+    settingsHintKey: 'auth.permissions.location.settingsHint',
+  },
+  notifications: {
+    titleKey: 'auth.permissions.notifications.title',
+    descriptionKey: 'auth.permissions.notifications.description',
+    deniedKey: 'auth.permissions.notifications.denied',
+    settingsHintKey: 'auth.permissions.notifications.settingsHint',
+  },
+};
+
 const REQUEST_FNS: Record<PermissionType, () => Promise<{ status: string }>> = {
   camera: requestCameraPermission,
   location: requestLocationPermission,
@@ -76,6 +105,7 @@ export default function PermissionScreen({ permissionType }: PermissionScreenPro
   const [isDenied, setIsDenied] = React.useState(false);
   const completeOnboarding = useAppStore((state) => state.completeOnboarding);
   const cfg = CONFIG[permissionType];
+  const copyKeys = PERMISSION_COPY_KEYS[permissionType];
 
   const goNext = () => {
     if (cfg.isLast) {
@@ -95,19 +125,16 @@ export default function PermissionScreen({ permissionType }: PermissionScreenPro
     setIsDenied(true);
   };
 
-  const key = permissionType as string;
-  const titleKey = `auth.permissions.${key}.title`;
-  const deniedKey = `auth.permissions.${key}.denied`;
-  const capKey = `Permission${key.charAt(0).toUpperCase()}${key.slice(1)}Screen`;
+  const { titleKey, descriptionKey, deniedKey, settingsHintKey } = copyKeys;
 
   return (
     <ScreenContainer testID={cfg.screenTestID}>
       <PermissionPrimer
         icon={ICONS[permissionType]}
         title={t(titleKey)}
-        description={t(`${capKey}.copy1`)}
+        description={t(descriptionKey)}
         deniedMessage={t(deniedKey)}
-        settingsHint={t(`${capKey}.copy2`)}
+        settingsHint={t(settingsHintKey)}
         continueLabel={t('auth.permissions.continueLabel')}
         allowLabel={t('auth.permissions.allowLabel')}
         skipLabel={t('auth.permissions.skipLabel')}

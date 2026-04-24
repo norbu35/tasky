@@ -9,30 +9,22 @@ export function CustomerTaskSuccessPage() {
 
   return (
     <ResponsiveWizardShell
-      title={t('customerPages.taskSuccess.title', 'Task posted successfully')}
-      description={t(
-        'customerPages.taskSuccess.description',
-        'Your task is live and ready for taskers to review.',
-      )}
-      stepLabel={t('customerPages.taskSuccess.stepLabel', 'Customer posting complete')}
+      title={t('customerPages.taskSuccess.title')}
+      description={t('customerPages.taskSuccess.description')}
+      stepLabel={t('customerPages.taskSuccess.stepLabel')}
       footer={
         <div className="flex flex-wrap gap-3">
-          <Button type="button">
-            {t('customerPages.taskSuccess.backToTasks', 'Back to tasks')}
-          </Button>
+          <Button type="button">{t('customerPages.taskSuccess.backToTasks')}</Button>
           <Button type="button" variant="secondary">
-            {t('customerPages.taskSuccess.postAnother', 'Post another task')}
+            {t('customerPages.taskSuccess.postAnother')}
           </Button>
         </div>
       }
     >
       <StatePanel
         icon={<CheckCircle2 className="h-5 w-5 text-status-completed" />}
-        title={t('customerPages.taskSuccess.panelTitle', 'Task live')}
-        description={t(
-          'customerPages.taskSuccess.panelDesc',
-          'Taskers can now browse, review, and apply.',
-        )}
+        title={t('customerPages.taskSuccess.panelTitle')}
+        description={t('customerPages.taskSuccess.panelDesc')}
         tone="muted"
       />
     </ResponsiveWizardShell>

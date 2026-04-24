@@ -39,18 +39,12 @@ export function CustomerBookingDetailPage() {
   if (!bookingId) {
     return (
       <ResponsiveDetailShell
-        title={t('customerPages.bookingDetail.title', 'Booking detail')}
-        description={t(
-          'customerPages.bookingDetail.description',
-          'Review the booking status, message the tasker, or continue to safety actions.',
-        )}
+        title={t('customerPages.bookingDetail.title')}
+        description={t('customerPages.bookingDetail.description')}
       >
         <StatePanel
-          title={t('customerPages.bookingDetail.loadingTitle', 'Loading booking detail')}
-          description={t(
-            'customerPages.bookingDetail.invalidDesc',
-            'Booking ID is missing from the route.',
-          )}
+          title={t('customerPages.bookingDetail.loadingTitle')}
+          description={t('customerPages.bookingDetail.invalidDesc')}
           tone="destructive"
         />
       </ResponsiveDetailShell>
@@ -59,26 +53,23 @@ export function CustomerBookingDetailPage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('customerPages.bookingDetail.title', 'Booking detail')}
-      description={t(
-        'customerPages.bookingDetail.description',
-        'Review the booking status, message the tasker, or continue to safety actions.',
-      )}
+      title={t('customerPages.bookingDetail.title')}
+      description={t('customerPages.bookingDetail.description')}
       primaryAction={
         <Button
           type="button"
           variant="secondary"
           onClick={() => navigate(`/booking/safety?bookingId=${bookingId}`)}
         >
-          {t('customerPages.bookingDetail.openSafety', 'Open booking safety')}
+          {t('customerPages.bookingDetail.openSafety')}
         </Button>
       }
       detailRail={
         <ActionRail
-          title={t('customerPages.bookingDetail.nextStep', 'Next step')}
+          title={t('customerPages.bookingDetail.nextStep')}
           primaryAction={
             <Button type="button" className="w-full" onClick={() => navigate('/communication')}>
-              {t('customerPages.bookingDetail.messageTasker', 'Message tasker')}
+              {t('customerPages.bookingDetail.messageTasker')}
             </Button>
           }
           secondaryActions={
@@ -88,7 +79,7 @@ export function CustomerBookingDetailPage() {
               className="w-full"
               onClick={() => navigate(`/booking/safety?bookingId=${bookingId}`)}
             >
-              {t('customerPages.bookingDetail.openSafety', 'Open booking safety')}
+              {t('customerPages.bookingDetail.openSafety')}
             </Button>
           }
         />
@@ -100,23 +91,23 @@ export function CustomerBookingDetailPage() {
             <div>
               <CardTitle>{data.id}</CardTitle>
               <p className="text-sm text-muted-foreground">
-                {t('customerPages.bookingDetail.taskLabel', 'Task {{id}}', { id: data.task_id })}
+                {t('customerPages.bookingDetail.taskLabel', { id: data.task_id })}
               </p>
             </div>
             <MessageSquareText className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent className="grid gap-2 text-sm text-muted-foreground">
             <div>
-              {t('customerPages.bookingDetail.statusLabel', 'Status:')} {data.status}
+              {t('customerPages.bookingDetail.statusLabel')} {data.status}
             </div>
             <div>
-              {t('customerPages.bookingDetail.taskerLabel', 'Tasker:')} {data.tasker_id}
+              {t('customerPages.bookingDetail.taskerLabel')} {data.tasker_id}
             </div>
             {scheduleEvents?.data && scheduleEvents.data.length > 0 && (
               <div className="mt-3 border-t pt-3 space-y-2">
                 <div className="font-medium text-foreground flex items-center gap-1">
                   <Clock className="h-4 w-4" />
-                  {t('customerPages.bookingDetail.timelineTitle', 'Reschedule Timeline')}
+                  {t('customerPages.bookingDetail.timelineTitle')}
                 </div>
                 {scheduleEvents.data.map((event) => (
                   <div key={event.id} className="flex items-center gap-2 text-xs">
@@ -135,8 +126,8 @@ export function CustomerBookingDetailPage() {
         </Card>
       ) : (
         <StatePanel
-          title={t('customerPages.bookingDetail.loadingTitle', 'Loading booking detail')}
-          description={t('customerPages.bookingDetail.loadingDesc', 'Loading booking information.')}
+          title={t('customerPages.bookingDetail.loadingTitle')}
+          description={t('customerPages.bookingDetail.loadingDesc')}
           tone="muted"
         />
       )}

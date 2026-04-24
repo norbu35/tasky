@@ -71,7 +71,7 @@ export function AdminModerationPage() {
       setPolicy(updated);
       setEditing(false);
       setDraft(null);
-      toast.success(t('admin.moderation.saved', 'Strike policy updated'));
+      toast.success(t('admin.moderation.saved'));
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to save policy');
     } finally {
@@ -84,7 +84,7 @@ export function AdminModerationPage() {
       <div className="space-y-4">
         <h1 className="text-2xl font-bold font-display flex items-center gap-2">
           <Scale className="h-6 w-6" />
-          {t('admin.moderation.title', 'Moderation')}
+          {t('admin.moderation.title')}
         </h1>
         <Card data-testid="moderation-loading">
           <CardContent className="p-6 space-y-4">
@@ -102,14 +102,12 @@ export function AdminModerationPage() {
       <div className="space-y-4">
         <h1 className="text-2xl font-bold font-display flex items-center gap-2">
           <Scale className="h-6 w-6" />
-          {t('admin.moderation.title', 'Moderation')}
+          {t('admin.moderation.title')}
         </h1>
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
-            <p className="text-destructive">
-              {t('admin.moderation.loadError', 'Failed to load moderation policy')}
-            </p>
-            <Button onClick={fetchPolicy}>{t('common.retry', 'Retry')}</Button>
+            <p className="text-destructive">{t('admin.moderation.loadError')}</p>
+            <Button onClick={fetchPolicy}>{t('common.retry')}</Button>
           </CardContent>
         </Card>
       </div>
@@ -125,42 +123,42 @@ export function AdminModerationPage() {
   }> = [
     {
       key: 'strikeWindowDays',
-      label: t('admin.moderation.strikeWindowDays', 'Strike Window (days)'),
+      label: t('admin.moderation.strikeWindowDays'),
       type: 'number',
       min: 1,
       max: 365,
     },
     {
       key: 'strikeThreshold',
-      label: t('admin.moderation.strikeThreshold', 'Strike Threshold'),
+      label: t('admin.moderation.strikeThreshold'),
       type: 'number',
       min: 1,
       max: 10,
     },
     {
       key: 'firstSuspensionDays',
-      label: t('admin.moderation.firstSuspensionDays', 'First Suspension (days)'),
+      label: t('admin.moderation.firstSuspensionDays'),
       type: 'number',
       min: 1,
       max: 365,
     },
     {
       key: 'repeatSuspensionDays',
-      label: t('admin.moderation.repeatSuspensionDays', 'Repeat Suspension (days)'),
+      label: t('admin.moderation.repeatSuspensionDays'),
       type: 'number',
       min: 1,
       max: 365,
     },
     {
       key: 'repeatOffenseWindowDays',
-      label: t('admin.moderation.repeatOffenseWindowDays', 'Repeat Offense Window (days)'),
+      label: t('admin.moderation.repeatOffenseWindowDays'),
       type: 'number',
       min: 1,
       max: 730,
     },
     {
       key: 'autoUnsuspendEnabled',
-      label: t('admin.moderation.autoUnsuspend', 'Auto-unsuspend'),
+      label: t('admin.moderation.autoUnsuspend'),
       type: 'boolean',
     },
   ];
@@ -170,11 +168,11 @@ export function AdminModerationPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold font-display flex items-center gap-2">
           <Scale className="h-6 w-6" />
-          {t('admin.moderation.title', 'Moderation')}
+          {t('admin.moderation.title')}
         </h1>
         {!editing && (
           <Button variant="outline" onClick={handleEdit}>
-            {t('common.edit', 'Edit')}
+            {t('common.edit')}
           </Button>
         )}
       </div>
@@ -221,16 +219,16 @@ export function AdminModerationPage() {
           {editing && (
             <div className="flex gap-3 pt-2">
               <Button onClick={handleSave} disabled={saving}>
-                {t('common.save', 'Save')}
+                {t('common.save')}
               </Button>
               <Button variant="secondary" onClick={handleCancel} disabled={saving}>
-                {t('common.cancel', 'Cancel')}
+                {t('common.cancel')}
               </Button>
             </div>
           )}
 
           <p className="text-xs text-muted-foreground pt-2">
-            {t('admin.moderation.updatedAt', 'Last updated')}:{' '}
+            {t('admin.moderation.updatedAt')}:{' '}
             {policy.updatedAt ? new Date(policy.updatedAt).toLocaleString() : '—'}
           </p>
         </CardContent>

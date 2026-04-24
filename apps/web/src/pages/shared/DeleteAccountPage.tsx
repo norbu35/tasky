@@ -12,11 +12,8 @@ export function DeleteAccountPage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('sharedPages.deleteAccount.title', 'Delete account')}
-      description={t(
-        'sharedPages.deleteAccount.description',
-        'This action is permanent and should stay frictionful.',
-      )}
+      title={t('sharedPages.deleteAccount.title')}
+      description={t('sharedPages.deleteAccount.description')}
     >
       <div className="space-y-4">
         <div className="flex items-start gap-3">
@@ -25,15 +22,10 @@ export function DeleteAccountPage() {
             id="delete-confirm"
             onCheckedChange={(value) => setConfirmed(value === true)}
           />
-          <Label htmlFor="delete-confirm">
-            {t(
-              'sharedPages.deleteAccount.confirmLabel',
-              'I understand that my account and history will be removed.',
-            )}
-          </Label>
+          <Label htmlFor="delete-confirm">{t('sharedPages.deleteAccount.confirmLabel')}</Label>
         </div>
         <Button disabled={!confirmed} type="button" variant="destructive">
-          {t('sharedPages.deleteAccount.deleteAction', 'Delete permanently')}
+          {t('sharedPages.deleteAccount.deleteAction')}
         </Button>
       </div>
     </ResponsiveDetailShell>

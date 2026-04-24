@@ -3,6 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -11,8 +12,8 @@ import { queryClient } from '../lib/react-query';
 import { AppBootstrapProvider } from '../providers/AppBootstrapProvider';
 import { NotificationProvider } from '../providers/NotificationProvider';
 import { RoleProvider } from '../providers/RoleProvider';
+import { initializeI18n } from '../utils/i18n';
 
-import '../utils/i18n';
 import '../design/nativewind-interop';
 
 import '../../global.css';
@@ -46,6 +47,10 @@ if (!isExpoGo) {
 }
 
 export default function RootLayout() {
+  useEffect(() => {
+    void initializeI18n();
+  }, []);
+
   return (
     <GestureHandlerRootView className="flex-1">
       <SafeAreaProvider>

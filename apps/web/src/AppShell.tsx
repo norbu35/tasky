@@ -9,7 +9,12 @@ import { AppContext } from './context/AppContext';
 import type { AppContextValue } from './context/AppContext';
 import { HttpApiClient } from './lib/apiClient';
 import type { ApiClient, AuthTokens, Profile, User } from './lib/apiClient';
-import type { ActorRole, ClientAnalyticsTracker, ClientEventName } from './lib/clientAnalytics';
+import {
+  resolveClientLocale,
+  type ActorRole,
+  type ClientAnalyticsTracker,
+  type ClientEventName,
+} from './lib/clientAnalytics';
 import { parseError } from './lib/errorHandling';
 import { AppRoutes } from './router/AppRoutes';
 
@@ -28,6 +33,7 @@ export function AppShell({
   const [profile, setProfile] = useState<Profile | null>(null);
   const [profileBusy, setProfileBusy] = useState(Boolean(initialSession));
   const [profileError, setProfileError] = useState<string | null>(null);
+  const [activeLocale, setActiveLocale] = useState(() => resolveClientLocale(locale));
 
   const loadProfile = useCallback(
     async (accessToken: string): Promise<void> => {
@@ -38,12 +44,12 @@ export function AppShell({
         const loaded = await apiClient.getMyProfile(accessToken);
         setProfile(loaded);
       } catch (error) {
-        setProfileError(parseError(error, analyticsTracker));
+        setProfileError(parseError(error, analyticsTracker, activeLocale));
       } finally {
         setProfileBusy(false);
       }
     },
-    [analyticsTracker, apiClient],
+    [activeLocale, analyticsTracker, apiClient],
   );
 
   const refreshProfile = useCallback(async (): Promise<void> => {
@@ -59,7 +65,19 @@ export function AppShell({
     void refreshProfile();
   }, [refreshProfile]);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    const syncLocale = () => {
+      setActiveLocale(resolveClientLocale(i18n.resolvedLanguage ?? i18n.language ?? locale));
+    };
+
+    syncLocale();
+    i18n.on('languageChanged', syncLocale);
+    return () => {
+      i18n.off('languageChanged', syncLocale);
+    };
+  }, [i18n, locale]);
 
   const signOut = useCallback(() => {
     if (session?.accessToken) {
@@ -98,7 +116,7 @@ export function AppShell({
   useEffect(() => {
     const handleUnauthorized = () => {
       signOut();
-      toast.error(t('errors.sessionExpired', 'Session expired. Please log in again.'));
+      toast.error(t('errors.sessionExpired'));
     };
 
     window.addEventListener('tasky:unauthorized', handleUnauthorized);
@@ -123,20 +141,20 @@ export function AppShell({
       analyticsTracker({
         event_name: eventName,
         platform: 'WEB',
-        locale,
+        locale: activeLocale,
         actor_role: actorRole,
         task_id: refs?.taskId,
         booking_id: refs?.bookingId,
         timestamp: new Date().toISOString(),
       });
     },
-    [analyticsTracker, locale, profile?.role, session?.user?.role],
+    [analyticsTracker, activeLocale, profile?.role, session?.user?.role],
   );
 
   const value = useMemo<AppContextValue>(
     () => ({
       apiClient,
-      locale,
+      locale: activeLocale,
       session,
       profile,
       profileBusy,
@@ -152,7 +170,7 @@ export function AppShell({
     }),
     [
       apiClient,
-      locale,
+      activeLocale,
       loadProfile,
       profile,
       profileBusy,

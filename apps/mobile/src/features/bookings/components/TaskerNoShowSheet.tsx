@@ -94,7 +94,7 @@ export function TaskerNoShowSheet({
           </Text>
           <View className="bg-muted rounded-md p-md">
             <Text className="text-micro text-muted-foreground leading-[18px]">
-              {t('tasker.jobs.noShow.warning', t('TaskerNoShowSheet.copy4'))}
+              {t('tasker.jobs.noShow.warning')}
             </Text>
           </View>
           <Button

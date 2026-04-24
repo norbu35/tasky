@@ -19,6 +19,7 @@ const registry = {
     "gates/check-cleanup-gate.sh": "active",
     "gates/check-gates.sh": "active",
     "gates/check-ops-config.mjs": "active",
+    "gates/check-tdd-gate.sh": "active",
     "gates/check-tooling-surface.mjs": "active",
     "governance/check-doc-governance.py": "active",
     "governance/validate-doc-claims.py": "active",
@@ -26,11 +27,11 @@ const registry = {
     "governance/validate-prd-scenario-links.py": "active",
     "governance/check-gitleaks-secret-scan.sh": "active",
     "governance/check-trivyignore-expiry.sh": "active",
+    "governance/validate-i18n.py": "active",
     "governance/validate-doc-references.py": "active",
     "governance/validate-migrations.py": "active",
     "governance/validate-schema-parity.py": "active",
     "governance/validate-workspace-boundaries.mjs": "active",
-    "manual/analyze_i18n.py": "manual",
     "observability/start-alertmanager.sh": "active",
 };
 

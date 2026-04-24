@@ -39,7 +39,7 @@ export function CustomerReschedulePage() {
     },
     onSuccess: () => {
       trackClientEvent('RESCHEDULE_REQUESTED', { bookingId });
-      toast.success(t('customerPages.reschedule.success', 'Reschedule request sent.'));
+      toast.success(t('customerPages.reschedule.success'));
       navigate(-1);
     },
     onError: (err) => toast.error(parseError(err)),
@@ -53,25 +53,20 @@ export function CustomerReschedulePage() {
         <div>
           <h1 className="text-2xl font-display font-bold tracking-tight flex items-center gap-2">
             <CalendarClock className="w-6 h-6 text-primary" />
-            {t('customerPages.reschedule.title', 'Reschedule booking')}
+            {t('customerPages.reschedule.title')}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {t(
-              'customerPages.reschedule.description',
-              'Propose a new time. The other party must accept before the schedule changes.',
-            )}
+            {t('customerPages.reschedule.description')}
           </p>
         </div>
 
         <Card className="border-border/60 shadow-sm">
           <CardHeader>
-            <CardTitle>{t('customerPages.reschedule.cardTitle', 'Choose a new time')}</CardTitle>
+            <CardTitle>{t('customerPages.reschedule.cardTitle')}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="reschedule-date">
-                {t('customerPages.reschedule.dateLabel', 'New date')}
-              </Label>
+              <Label htmlFor="reschedule-date">{t('customerPages.reschedule.dateLabel')}</Label>
               <Input
                 id="reschedule-date"
                 type="date"
@@ -82,9 +77,7 @@ export function CustomerReschedulePage() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="reschedule-time">
-                {t('customerPages.reschedule.timeLabel', 'New time')}
-              </Label>
+              <Label htmlFor="reschedule-time">{t('customerPages.reschedule.timeLabel')}</Label>
               <Input
                 id="reschedule-time"
                 type="time"
@@ -94,15 +87,10 @@ export function CustomerReschedulePage() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="reschedule-reason">
-                {t('customerPages.reschedule.reasonLabel', 'Reason (optional)')}
-              </Label>
+              <Label htmlFor="reschedule-reason">{t('customerPages.reschedule.reasonLabel')}</Label>
               <Textarea
                 id="reschedule-reason"
-                placeholder={t(
-                  'customerPages.reschedule.reasonPlaceholder',
-                  'Why do you need to reschedule?',
-                )}
+                placeholder={t('customerPages.reschedule.reasonPlaceholder')}
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 maxLength={1000}
@@ -112,10 +100,7 @@ export function CustomerReschedulePage() {
 
             <div className="bg-muted/30 border border-border/40 rounded-lg p-3">
               <p className="text-xs text-muted-foreground">
-                {t(
-                  'customerPages.reschedule.policyNotice',
-                  'If accepted, the new schedule becomes the official booking time. Policy timers reset automatically.',
-                )}
+                {t('customerPages.reschedule.policyNotice')}
               </p>
             </div>
 
@@ -126,7 +111,7 @@ export function CustomerReschedulePage() {
                 onClick={() => navigate(-1)}
                 disabled={rescheduleMutation.isPending}
               >
-                {t('customerPages.reschedule.cancel', 'Cancel')}
+                {t('customerPages.reschedule.cancel')}
               </Button>
               <Button
                 type="button"
@@ -134,7 +119,7 @@ export function CustomerReschedulePage() {
                 onClick={() => rescheduleMutation.mutate()}
               >
                 {rescheduleMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                {t('customerPages.reschedule.saveChanges', 'Save changes')}
+                {t('customerPages.reschedule.saveChanges')}
               </Button>
             </div>
           </CardContent>

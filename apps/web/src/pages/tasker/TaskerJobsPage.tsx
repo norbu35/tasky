@@ -61,7 +61,7 @@ export function TaskerJobsPage() {
       setConfirmBookingId(null);
       setConfirmTaskId(null);
       setConfirmApplicationId(null);
-      toast.success(t('taskerPages.jobs.confirmSuccess', 'Booking confirmed!'));
+      toast.success(t('taskerPages.jobs.confirmSuccess'));
     },
     onError: (err) => toast.error(parseError(err)),
   });
@@ -76,26 +76,19 @@ export function TaskerJobsPage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('taskerPages.jobs.title', 'My Jobs')}
-      description={t(
-        'taskerPages.jobs.description',
-        'Track active and completed work in one place.',
-      )}
+      title={t('taskerPages.jobs.title')}
+      description={t('taskerPages.jobs.description')}
     >
       {isLoading ? (
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">
-              {t('taskerPages.jobs.loading', 'Loading jobs...')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('taskerPages.jobs.loading')}</p>
           </CardContent>
         </Card>
       ) : bookings.length === 0 ? (
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">
-              {t('taskerPages.jobs.empty', 'No jobs yet. Apply to tasks to get started.')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('taskerPages.jobs.empty')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -105,7 +98,7 @@ export function TaskerJobsPage() {
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium">
-                    {t('taskerPages.jobs.bookingId', 'Booking')} {booking.id.substring(0, 8)}...
+                    {t('taskerPages.jobs.bookingId')} {booking.id.substring(0, 8)}...
                   </CardTitle>
                   <StatusBadge status={booking.status} />
                 </div>
@@ -120,7 +113,7 @@ export function TaskerJobsPage() {
                   <div className="flex gap-2">
                     <Button size="sm" onClick={() => openConfirm(booking)}>
                       <CheckCircle className="mr-1 h-3 w-3" />
-                      {t('taskerPages.jobs.confirmBtn', 'Confirm Booking')}
+                      {t('taskerPages.jobs.confirmBtn')}
                     </Button>
                     <Button
                       size="sm"
@@ -131,14 +124,12 @@ export function TaskerJobsPage() {
                       }}
                     >
                       <XCircle className="mr-1 h-3 w-3" />
-                      {t('taskerPages.jobs.declineBtn', 'Decline')}
+                      {t('taskerPages.jobs.declineBtn')}
                     </Button>
                   </div>
                 )}
                 {booking.status === 'COMPLETED' && (
-                  <p className="text-xs text-muted-foreground">
-                    {t('taskerPages.jobs.completed', 'Job completed successfully.')}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{t('taskerPages.jobs.completed')}</p>
                 )}
               </CardContent>
             </Card>
@@ -159,13 +150,8 @@ export function TaskerJobsPage() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('taskerPages.jobs.confirmTitle', 'Confirm Booking')}</DialogTitle>
-            <DialogDescription>
-              {t(
-                'taskerPages.jobs.confirmDesc',
-                'Confirm this booking to proceed. You are agreeing to complete the task as described.',
-              )}
-            </DialogDescription>
+            <DialogTitle>{t('taskerPages.jobs.confirmTitle')}</DialogTitle>
+            <DialogDescription>{t('taskerPages.jobs.confirmDesc')}</DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4">
             <Button
@@ -177,15 +163,15 @@ export function TaskerJobsPage() {
               }}
               disabled={confirmMutation.isPending}
             >
-              {t('taskerPages.jobs.cancelBtn', 'Cancel')}
+              {t('taskerPages.jobs.cancelBtn')}
             </Button>
             <Button
               onClick={() => confirmMutation.mutate()}
               disabled={confirmMutation.isPending || !confirmApplicationId}
             >
               {confirmMutation.isPending
-                ? t('taskerPages.jobs.confirmingBtn', 'Confirming...')
-                : t('taskerPages.jobs.confirmBtn', 'Confirm Booking')}
+                ? t('taskerPages.jobs.confirmingBtn')
+                : t('taskerPages.jobs.confirmBtn')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -201,28 +187,28 @@ function StatusBadge({ status }: { status: string }) {
       return (
         <Badge variant="outline" className="gap-1">
           <Clock className="h-3 w-3" />
-          {t('taskerPages.jobs.statusAssigned', 'Active')}
+          {t('taskerPages.jobs.statusAssigned')}
         </Badge>
       );
     case 'COMPLETED':
       return (
         <Badge variant="outline" className="gap-1 text-green-600">
           <CheckCircle className="h-3 w-3" />
-          {t('taskerPages.jobs.statusCompleted', 'Completed')}
+          {t('taskerPages.jobs.statusCompleted')}
         </Badge>
       );
     case 'CANCELLED':
       return (
         <Badge variant="outline" className="gap-1 text-destructive">
           <XCircle className="h-3 w-3" />
-          {t('taskerPages.jobs.statusCancelled', 'Cancelled')}
+          {t('taskerPages.jobs.statusCancelled')}
         </Badge>
       );
     case 'NO_SHOW':
       return (
         <Badge variant="outline" className="gap-1 text-destructive">
           <Briefcase className="h-3 w-3" />
-          {t('taskerPages.jobs.statusNoShow', 'No Show')}
+          {t('taskerPages.jobs.statusNoShow')}
         </Badge>
       );
     default:

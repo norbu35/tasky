@@ -45,51 +45,51 @@ function AnimatedTaskFeed() {
 
   const sampleTasks: SampleTask[] = [
     {
-      title: t('landing.task1', 'Deep clean 2-bedroom apartment'),
+      title: t('landing.task1'),
       price: '₮65,000',
-      district: t('landing.distBayangol', 'Bayangol'),
+      district: t('landing.distBayangol'),
       category: 'cleaning',
     },
     {
-      title: t('landing.task2', 'Mount shelves and tighten cabinet doors'),
+      title: t('landing.task2'),
       price: '₮40,000',
-      district: t('landing.distSukhbaatar', 'Sukhbaatar'),
+      district: t('landing.distSukhbaatar'),
       category: 'handyman',
     },
     {
-      title: t('landing.task3', 'Move studio to 1-bedroom'),
+      title: t('landing.task3'),
       price: '₮85,000',
-      district: t('landing.distChingeltei', 'Chingeltei'),
+      district: t('landing.distChingeltei'),
       category: 'moving',
     },
     {
-      title: t('landing.task4', 'Assemble wardrobe and desk'),
+      title: t('landing.task4'),
       price: '₮30,000',
-      district: t('landing.distKhanUul', 'Khan-Uul'),
+      district: t('landing.distKhanUul'),
       category: 'furniture',
     },
     {
-      title: t('landing.task5', 'Weekly apartment cleaning'),
+      title: t('landing.task5'),
       price: '₮45,000',
-      district: t('landing.distBayanzurkh', 'Bayanzurkh'),
+      district: t('landing.distBayanzurkh'),
       category: 'cleaning',
     },
     {
-      title: t('landing.task6', 'Assemble flat-pack shelves'),
+      title: t('landing.task6'),
       price: '₮25,000',
-      district: t('landing.distSukhbaatar', 'Sukhbaatar'),
+      district: t('landing.distSukhbaatar'),
       category: 'furniture',
     },
     {
-      title: t('landing.task7', 'Move office — 3 rooms'),
+      title: t('landing.task7'),
       price: '₮120,000',
-      district: t('landing.distSonginokhairkhan', 'Songinokhairkhan'),
+      district: t('landing.distSonginokhairkhan'),
       category: 'moving',
     },
     {
-      title: t('landing.task8', 'Hang curtains and patch small wall holes'),
+      title: t('landing.task8'),
       price: '₮35,000',
-      district: t('landing.distKhanUul', 'Khan-Uul'),
+      district: t('landing.distKhanUul'),
       category: 'handyman',
     },
   ];
@@ -130,7 +130,7 @@ function AnimatedTaskFeed() {
             </div>
             <span className="text-[10px] font-bold bg-verified/10 text-verified border border-verified/20 px-2.5 py-1 rounded-full flex items-center gap-1 flex-shrink-0 backdrop-blur-md">
               <BadgeCheck className="w-4 h-4" />
-              {t('landing.verified', 'Verified')}
+              {t('landing.verified')}
             </span>
           </motion.div>
         ))}
@@ -161,7 +161,7 @@ export function LandingPage() {
               onClick={() => navigate('/auth')}
             >
               <User className="w-4 h-4" />
-              {t('auth.login', 'Login')}
+              {t('auth.login')}
             </Button>
           </div>
         </div>
@@ -188,16 +188,13 @@ export function LandingPage() {
               className="space-y-8 text-center lg:text-left"
             >
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tighter leading-[1.05] text-white drop-shadow-sm">
-                {t('landing.heroTitle1', 'Trusted help,')}
+                {t('landing.heroTitle1')}
                 <br />
-                {t('landing.heroTitle2', 'clear pricing.')}
+                {t('landing.heroTitle2')}
               </h1>
 
               <p className="text-lg sm:text-xl text-white/80 font-medium leading-relaxed max-w-lg mx-auto lg:mx-0">
-                {t(
-                  'landing.heroSubtitle',
-                  'Choose a budget or request quotes from ID-verified Taskers. Local Ulaanbaatar support when you need it.',
-                )}
+                {t('landing.heroSubtitle')}
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
@@ -206,7 +203,7 @@ export function LandingPage() {
                   className="w-full sm:w-auto h-14 px-8 text-lg font-bold bg-accent text-accent-foreground hover:bg-accent/90 shadow-xl shadow-accent/20 transition-all hover:scale-105 active:scale-95 group"
                   onClick={() => navigate('/auth')}
                 >
-                  {t('landing.postTaskBtn', 'Post a Task')}
+                  {t('landing.postTaskBtn')}
                   <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Button>
                 <Button
@@ -215,7 +212,7 @@ export function LandingPage() {
                   className="w-full sm:w-auto h-14 px-8 text-lg font-semibold text-primary-foreground/90 border border-white/20 hover:bg-white/10 backdrop-blur-sm transition-all hover:scale-105 active:scale-95 hover:border-white/40 hover:text-white"
                   onClick={() => navigate('/auth')}
                 >
-                  {t('landing.becomeTaskerBtn', 'Become a Tasker')}
+                  {t('landing.becomeTaskerBtn')}
                 </Button>
               </div>
 
@@ -243,14 +240,9 @@ export function LandingPage() {
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
               <div className="max-w-xl">
                 <h2 className="text-4xl font-black text-foreground tracking-tighter mb-4 uppercase">
-                  {t('landing.featuredServices', 'What do you need done?')}
+                  {t('landing.featuredServices')}
                 </h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  {t(
-                    'landing.featuredDesc',
-                    'Post in active Ulaanbaatar launch services: cleaning, furniture assembly, moving help, and minor handyman. Choose a budget or request quotes.',
-                  )}
-                </p>
+                <p className="text-muted-foreground leading-relaxed">{t('landing.featuredDesc')}</p>
               </div>
               <div className="h-[2px] flex-grow mx-12 bg-border opacity-30 hidden md:block"></div>
             </div>
@@ -262,23 +254,20 @@ export function LandingPage() {
                 onClick={() => navigate('/auth')}
               >
                 <img
-                  alt={t('landing.featCleaningAlt', 'Apartment cleaning service')}
+                  alt={t('landing.featCleaningAlt')}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   src="/images/feat-cleaning.png"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/40 to-transparent"></div>
                 <div className="absolute bottom-0 left-0 p-8 sm:p-10 w-full">
                   <h3 className="text-3xl font-bold font-display text-primary-foreground mb-2">
-                    {t('landing.featCleaning', 'Deep Cleaning')}
+                    {t('landing.featCleaning')}
                   </h3>
                   <p className="text-primary-foreground/80 max-w-sm mb-6">
-                    {t(
-                      'landing.featCleaningDesc',
-                      'Apartments, offices, move-out cleans. Set a budget or request quotes, pick a time, and compare Taskers.',
-                    )}
+                    {t('landing.featCleaningDesc')}
                   </p>
                   <span className="text-accent font-bold tracking-[0.075em] uppercase text-sm flex items-center gap-2">
-                    {t('landing.postTask', 'Post a Task')}{' '}
+                    {t('landing.postTask')}{' '}
                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
                   </span>
                 </div>
@@ -295,17 +284,14 @@ export function LandingPage() {
                       <Wrench className="w-6 h-6 text-accent" />
                     </div>
                     <h3 className="text-2xl font-bold font-display text-foreground mb-4">
-                      {t('landing.featRepair', 'Minor Handyman')}
+                      {t('landing.featRepair')}
                     </h3>
                     <p className="text-muted-foreground text-sm leading-relaxed mb-8">
-                      {t(
-                        'landing.featRepairDesc',
-                        'Small home fixes, shelf mounting, and simple touch-ups. All Taskers are ID-verified.',
-                      )}
+                      {t('landing.featRepairDesc')}
                     </p>
                   </div>
                   <img
-                    alt={t('landing.featRepairAlt', 'Handyman repair work')}
+                    alt={t('landing.featRepairAlt')}
                     className="w-full h-48 object-cover rounded-lg"
                     src="/images/feat-repair.png"
                   />
@@ -320,20 +306,17 @@ export function LandingPage() {
                 <div className="p-8 sm:p-10">
                   <Wrench className="w-6 h-6 mb-6 text-accent" />
                   <h3 className="text-2xl font-bold font-display mb-4">
-                    {t('landing.featFurniture', 'Furniture Assembly')}
+                    {t('landing.featFurniture')}
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed mb-10">
-                    {t(
-                      'landing.featFurnitureDesc',
-                      'Flat-pack wardrobes, desks, shelves, and bed frames. Choose a budget or ask for quotes before booking.',
-                    )}
+                    {t('landing.featFurnitureDesc')}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-[0.075em]">
-                      {t('landing.tagVerified', 'ID Verified')}
+                      {t('landing.tagVerified')}
                     </span>
                     <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-[0.075em]">
-                      {t('landing.tagQuote', 'Budget or Quote')}
+                      {t('landing.tagQuote')}
                     </span>
                   </div>
                 </div>
@@ -347,13 +330,10 @@ export function LandingPage() {
                 <div className="p-8 sm:p-10 grid md:grid-cols-2 gap-8 items-center h-full">
                   <div>
                     <h3 className="text-3xl font-black tracking-[0.075em] uppercase mb-4">
-                      {t('landing.featMoving', 'Movers & Help')}
+                      {t('landing.featMoving')}
                     </h3>
                     <p className="text-primary-foreground/80 mb-6 leading-relaxed">
-                      {t(
-                        'landing.featMovingDesc',
-                        'Studio to apartment, office relocations, heavy lifting. Post your move, set the budget, and pick from verified Taskers.',
-                      )}
+                      {t('landing.featMovingDesc')}
                     </p>
                     <Button
                       className="px-6 py-5 bg-accent text-accent-foreground font-bold rounded-md hover:bg-accent/90"
@@ -362,12 +342,12 @@ export function LandingPage() {
                         navigate('/auth');
                       }}
                     >
-                      {t('landing.postTask', 'Post a Task')}
+                      {t('landing.postTask')}
                     </Button>
                   </div>
                   <div className="relative h-full flex items-center">
                     <img
-                      alt={t('landing.featMovingAlt', 'Moving service')}
+                      alt={t('landing.featMovingAlt')}
                       className="relative z-10 w-full h-48 md:h-56 object-cover rounded-lg"
                       src="/images/feat-moving.png"
                     />
@@ -383,13 +363,10 @@ export function LandingPage() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-20">
               <h2 className="text-3xl sm:text-5xl font-display font-bold mb-6 tracking-tight">
-                {t('landing.howItWorksTitle', 'How Tasky Works')}
+                {t('landing.howItWorksTitle')}
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-medium">
-                {t(
-                  'landing.howItWorksSub',
-                  'A simple, secure, and transparent ecosystem designed to bridge trust between customers and vetted professionals.',
-                )}
+                {t('landing.howItWorksSub')}
               </p>
             </div>
 
@@ -404,11 +381,9 @@ export function LandingPage() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[100px] -z-0" />
                 <div className="relative z-10 space-y-3 mb-8">
                   <h3 className="text-3xl font-display font-bold text-primary-deep">
-                    {t('landing.forCustomers', 'For Customers')}
+                    {t('landing.forCustomers')}
                   </h3>
-                  <p className="text-muted-foreground text-lg">
-                    {t('landing.customerDesc', 'Get your to-do list done securely.')}
-                  </p>
+                  <p className="text-muted-foreground text-lg">{t('landing.customerDesc')}</p>
                 </div>
 
                 <div className="relative z-10">
@@ -419,33 +394,24 @@ export function LandingPage() {
                   {[
                     {
                       num: 1,
-                      title: t('landing.cStep1Title', 'Post your requirements'),
-                      desc: t(
-                        'landing.cStep1Desc',
-                        'Describe what you need done, set your budget, and choose a time & location.',
-                      ),
+                      title: t('landing.cStep1Title'),
+                      desc: t('landing.cStep1Desc'),
                       bg: 'bg-primary/10',
                       text: 'text-primary',
                       hoverBg: 'group-hover:bg-primary',
                     },
                     {
                       num: 2,
-                      title: t('landing.cStep2Title', 'Choose the best fit'),
-                      desc: t(
-                        'landing.cStep2Desc',
-                        'Review profiles, ratings, and past work of interested Taskers before hiring.',
-                      ),
+                      title: t('landing.cStep2Title'),
+                      desc: t('landing.cStep2Desc'),
                       bg: 'bg-trust/10',
                       text: 'text-trust',
                       hoverBg: 'group-hover:bg-trust',
                     },
                     {
                       num: 3,
-                      title: t('landing.cStep3Title', 'Book with confidence'),
-                      desc: t(
-                        'landing.cStep3Desc',
-                        'Confirm the right Tasker, keep the exact address private until booking, and use dispute support if something goes wrong.',
-                      ),
+                      title: t('landing.cStep3Title'),
+                      desc: t('landing.cStep3Desc'),
                       bg: 'bg-verified/10',
                       text: 'text-verified',
                       hoverBg: 'group-hover:bg-verified',
@@ -483,11 +449,9 @@ export function LandingPage() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-bl-[100px] -z-0" />
                 <div className="relative z-10 space-y-3 mb-8">
                   <h3 className="text-3xl font-display font-bold text-secondary">
-                    {t('landing.forTaskers', 'For Taskers')}
+                    {t('landing.forTaskers')}
                   </h3>
-                  <p className="text-muted-foreground text-lg">
-                    {t('landing.taskerDesc', 'Find flexible work and earn securely.')}
-                  </p>
+                  <p className="text-muted-foreground text-lg">{t('landing.taskerDesc')}</p>
                 </div>
 
                 <div className="relative z-10">
@@ -498,33 +462,24 @@ export function LandingPage() {
                   {[
                     {
                       num: 1,
-                      title: t('landing.tStep1Title', 'Find local jobs'),
-                      desc: t(
-                        'landing.tStep1Desc',
-                        'Browse a live feed of tasks near you that match your skills.',
-                      ),
+                      title: t('landing.tStep1Title'),
+                      desc: t('landing.tStep1Desc'),
                       bg: 'bg-secondary/10',
                       text: 'text-secondary',
                       hoverBg: 'group-hover:bg-secondary',
                     },
                     {
                       num: 2,
-                      title: t('landing.tStep2Title', 'Send proposals'),
-                      desc: t(
-                        'landing.tStep2Desc',
-                        'Apply to tasks you want to do with a quick message to the customer.',
-                      ),
+                      title: t('landing.tStep2Title'),
+                      desc: t('landing.tStep2Desc'),
                       bg: 'bg-accent/10',
                       text: 'text-accent',
                       hoverBg: 'group-hover:bg-accent',
                     },
                     {
                       num: 3,
-                      title: t('landing.tStep3Title', 'Build trust and repeat work'),
-                      desc: t(
-                        'landing.tStep3Desc',
-                        'Complete jobs well, collect reviews, and grow your reputation during the launch period.',
-                      ),
+                      title: t('landing.tStep3Title'),
+                      desc: t('landing.tStep3Desc'),
                       bg: 'bg-verified/10',
                       text: 'text-verified',
                       hoverBg: 'group-hover:bg-verified',
@@ -569,16 +524,13 @@ export function LandingPage() {
             >
               <div className="relative z-10">
                 <p className="text-sm font-bold uppercase tracking-[0.075em] text-accent mb-8">
-                  {t('landing.trustReality', 'The reality')}
+                  {t('landing.trustReality')}
                 </p>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-6 text-white">
-                  {t(
-                    'landing.trustPainLine',
-                    '10 phone calls. 3 no-shows. 1 stranger at your door.',
-                  )}
+                  {t('landing.trustPainLine')}
                 </h2>
                 <p className="text-lg text-primary-foreground/50 max-w-md">
-                  {t('landing.trustPainDesc', "That's the Facebook group experience.")}
+                  {t('landing.trustPainDesc')}
                 </p>
               </div>
             </motion.div>
@@ -592,7 +544,7 @@ export function LandingPage() {
               className="bg-background text-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28 relative z-10 lg:-ml-6 shadow-[var(--shadow-elevated)] rounded-l-3xl lg:rounded-l-[3rem]"
             >
               <h3 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-10">
-                {t('landing.trustRelief', 'Or just use Tasky.')}
+                {t('landing.trustRelief')}
               </h3>
 
               <div className="space-y-6 mb-12">
@@ -600,26 +552,17 @@ export function LandingPage() {
                   {
                     icon: <BadgeCheck className="w-5 h-5" />,
                     color: 'text-verified bg-verified/10',
-                    text: t(
-                      'landing.trustProof1',
-                      'Every Tasker is ID-verified before their first job',
-                    ),
+                    text: t('landing.trustProof1'),
                   },
                   {
                     icon: <Banknote className="w-5 h-5" />,
                     color: 'text-accent bg-accent/10',
-                    text: t(
-                      'landing.trustProof2',
-                      'Budget or quote before booking. Clear expectations, no blind haggling.',
-                    ),
+                    text: t('landing.trustProof2'),
                   },
                   {
                     icon: <Star className="w-5 h-5" />,
                     color: 'text-secondary bg-secondary/10',
-                    text: t(
-                      'landing.trustProof3',
-                      'Mandatory reviews build real, portable reputation',
-                    ),
+                    text: t('landing.trustProof3'),
                   },
                 ].map((item, i) => (
                   <motion.div
@@ -645,7 +588,7 @@ export function LandingPage() {
                 className="w-fit h-14 px-10 text-lg font-bold shadow-[var(--shadow-fab)] bg-gradient-to-r from-primary-deep to-primary"
                 onClick={() => navigate('/auth')}
               >
-                {t('landing.joinTrust', 'Join the Trusted Network')}
+                {t('landing.joinTrust')}
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </motion.div>
@@ -665,7 +608,7 @@ export function LandingPage() {
             >
               <img
                 src="/images/promise-handshake.png"
-                alt={t('landing.promiseImageAlt', 'Customer and tasker shaking hands')}
+                alt={t('landing.promiseImageAlt')}
                 className="w-full h-full object-cover"
               />
             </motion.div>
@@ -674,13 +617,10 @@ export function LandingPage() {
             <div className="order-1">
               <div className="mb-10 text-center lg:text-left">
                 <h2 className="text-3xl sm:text-5xl font-display font-bold mb-5 tracking-tight">
-                  {t('landing.promiseTitle', 'The Tasky Promise')}
+                  {t('landing.promiseTitle')}
                 </h2>
                 <p className="text-lg text-muted-foreground font-medium">
-                  {t(
-                    'landing.promiseSub',
-                    'We built Tasky because finding help shouldn’t feel like a gamble. Accountability is built into our foundation.',
-                  )}
+                  {t('landing.promiseSub')}
                 </p>
               </div>
 
@@ -698,13 +638,10 @@ export function LandingPage() {
                   </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-display font-bold mb-1">
-                      {t('landing.pillar1Title', '100% ID Verified')}
+                      {t('landing.pillar1Title')}
                     </h3>
                     <p className="text-muted-foreground leading-relaxed text-sm">
-                      {t(
-                        'landing.pillar1Desc',
-                        'Every single Tasker must pass a strict identity check before joining. No anonymous profiles. Zero burner accounts.',
-                      )}
+                      {t('landing.pillar1Desc')}
                     </p>
                   </div>
                 </motion.div>
@@ -722,13 +659,10 @@ export function LandingPage() {
                   </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-display font-bold mb-1">
-                      {t('landing.pillar2Title', 'Power of the Rating')}
+                      {t('landing.pillar2Title')}
                     </h3>
                     <p className="text-muted-foreground leading-relaxed text-sm">
-                      {t(
-                        'landing.pillar2Desc',
-                        'Every completed job earns a mandatory review. A strong track record means more bookings — they have every reason to be punctual and professional.',
-                      )}
+                      {t('landing.pillar2Desc')}
                     </p>
                   </div>
                 </motion.div>
@@ -746,13 +680,10 @@ export function LandingPage() {
                   </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-display font-bold mb-1">
-                      {t('landing.pillar3Title', 'Ulaanbaatar-Based Support')}
+                      {t('landing.pillar3Title')}
                     </h3>
                     <p className="text-muted-foreground leading-relaxed text-sm">
-                      {t(
-                        'landing.pillar3Desc',
-                        "If a Tasker no-shows or work isn't up to standard, our local Ulaanbaatar support team is here to mediate and resolve the issue.",
-                      )}
+                      {t('landing.pillar3Desc')}
                     </p>
                   </div>
                 </motion.div>
@@ -771,7 +702,7 @@ export function LandingPage() {
               <div className="absolute inset-0 bg-primary-deep/20 mix-blend-multiply z-10" />
               <img
                 src="/images/download_app.png"
-                alt={t('landing.appLifestyleAlt', 'Tasky app lifestyle')}
+                alt={t('landing.appLifestyleAlt')}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -780,16 +711,13 @@ export function LandingPage() {
             <div className="w-full md:w-1/2 px-8 py-20 lg:px-24 xl:px-32 relative z-10 space-y-8 text-center md:text-left">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-accent font-semibold text-sm">
                 <Smartphone className="w-4 h-4" />
-                <span>{t('landing.mobileApp', 'Mobile App')}</span>
+                <span>{t('landing.mobileApp')}</span>
               </div>
               <h2 className="text-3xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight">
-                {t('landing.appTitle', 'Take back your free time, anywhere.')}
+                {t('landing.appTitle')}
               </h2>
               <p className="text-lg text-primary-foreground/80 max-w-lg mx-auto md:mx-0">
-                {t(
-                  'landing.appDesc',
-                  'Download the Tasky mobile app to post jobs, track Taskers, and handle everything on the go.',
-                )}
+                {t('landing.appDesc')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center md:justify-start">
                 <Button
@@ -828,12 +756,7 @@ export function LandingPage() {
               <Shield className="w-6 h-6 text-primary" />
               <span className="font-display font-bold text-2xl tracking-tight">Tasky</span>
             </div>
-            <p className="text-sm leading-relaxed max-w-sm">
-              {t(
-                'landing.footerDesc',
-                'Tasky connects Ulaanbaatar households with ID-verified Taskers for launch services like cleaning, furniture assembly, moving help, and minor handyman work.',
-              )}
-            </p>
+            <p className="text-sm leading-relaxed max-w-sm">{t('landing.footerDesc')}</p>
             <div className="flex gap-3 pt-4">
               <a
                 href="#"
@@ -859,27 +782,27 @@ export function LandingPage() {
           {/* Services Column */}
           <div className="space-y-4">
             <h4 className="text-foreground font-bold font-display tracking-[0.075em] uppercase text-sm">
-              {t('landing.footerServices', 'Services')}
+              {t('landing.footerServices')}
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link to="#" className="hover:text-foreground transition-colors">
-                  {t('landing.catCleaning', 'Deep Cleaning')}
+                  {t('landing.catCleaning')}
                 </Link>
               </li>
               <li>
                 <Link to="#" className="hover:text-foreground transition-colors">
-                  {t('landing.catHandyman', 'Minor Handyman')}
+                  {t('landing.catHandyman')}
                 </Link>
               </li>
               <li>
                 <Link to="#" className="hover:text-foreground transition-colors">
-                  {t('landing.catMoving', 'Movers & Help')}
+                  {t('landing.catMoving')}
                 </Link>
               </li>
               <li>
                 <Link to="#" className="hover:text-foreground transition-colors">
-                  {t('landing.catFurniture', 'Furniture Assembly')}
+                  {t('landing.catFurniture')}
                 </Link>
               </li>
             </ul>
@@ -888,27 +811,27 @@ export function LandingPage() {
           {/* Company Column */}
           <div className="space-y-4">
             <h4 className="text-foreground font-bold font-display tracking-[0.075em] uppercase text-sm">
-              {t('landing.footerCompany', 'Company')}
+              {t('landing.footerCompany')}
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link to="#" className="hover:text-foreground transition-colors">
-                  {t('landing.about', 'About Us')}
+                  {t('landing.about')}
                 </Link>
               </li>
               <li>
                 <Link to="#" className="hover:text-foreground transition-colors">
-                  {t('landing.careers', 'Careers')}
+                  {t('landing.careers')}
                 </Link>
               </li>
               <li>
                 <Link to="#" className="hover:text-foreground transition-colors">
-                  {t('landing.blog', 'Blog')}
+                  {t('landing.blog')}
                 </Link>
               </li>
               <li>
                 <Link to="#" className="hover:text-foreground transition-colors">
-                  {t('landing.contact', 'Contact')}
+                  {t('landing.contact')}
                 </Link>
               </li>
             </ul>
@@ -917,22 +840,22 @@ export function LandingPage() {
           {/* Legal Column */}
           <div className="space-y-4">
             <h4 className="text-foreground font-bold font-display tracking-[0.075em] uppercase text-sm">
-              {t('landing.footerLegal', 'Legal')}
+              {t('landing.footerLegal')}
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link to="#" className="hover:text-foreground transition-colors">
-                  {t('landing.terms', 'Terms of Service')}
+                  {t('landing.terms')}
                 </Link>
               </li>
               <li>
                 <Link to="#" className="hover:text-foreground transition-colors">
-                  {t('landing.privacy', 'Privacy Policy')}
+                  {t('landing.privacy')}
                 </Link>
               </li>
               <li>
                 <Link to="#" className="hover:text-foreground transition-colors">
-                  {t('landing.trustSupport', 'Trust & Safety')}
+                  {t('landing.trustSupport')}
                 </Link>
               </li>
             </ul>
@@ -940,11 +863,11 @@ export function LandingPage() {
         </div>
 
         <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
-          <p>{t('auth.copyright', '© 2026 Tasky Network. All rights reserved.')}</p>
+          <p>{t('auth.copyright')}</p>
           <div className="flex items-center gap-2">
-            <span>{t('landing.madeWith', 'Crafted with')}</span>
+            <span>{t('landing.madeWith')}</span>
             <span className="text-accent">❤</span>
-            <span>{t('landing.inUlaanbaatar', 'in Ulaanbaatar')}</span>
+            <span>{t('landing.inUlaanbaatar')}</span>
           </div>
         </div>
       </footer>

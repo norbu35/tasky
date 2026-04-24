@@ -78,14 +78,10 @@ function CategoryFormDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {isEdit
-              ? t('admin.categories.editTitle', 'Edit Category')
-              : t('admin.categories.createTitle', 'Create Category')}
+            {isEdit ? t('admin.categories.editTitle') : t('admin.categories.createTitle')}
           </DialogTitle>
           <DialogDescription>
-            {isEdit
-              ? t('admin.categories.editDesc', 'Update category details.')
-              : t('admin.categories.createDesc', 'Add a new service category.')}
+            {isEdit ? t('admin.categories.editDesc') : t('admin.categories.createDesc')}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
@@ -127,10 +123,10 @@ function CategoryFormDialog({
         </div>
         <DialogFooter>
           <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={submitting}>
-            {t('common.cancel', 'Cancel')}
+            {t('common.cancel')}
           </Button>
           <Button onClick={handleSubmit} disabled={submitting}>
-            {t('common.save', 'Save')}
+            {t('common.save')}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -173,7 +169,7 @@ function SchemaFormDialog({
         setSubmitting(false);
       }
     } catch {
-      setParseError(t('admin.categories.invalidJson', 'Invalid JSON'));
+      setParseError(t('admin.categories.invalidJson'));
     }
   };
 
@@ -181,15 +177,8 @@ function SchemaFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {t('admin.categories.createSchemaTitle', 'Create Schema Version')}
-          </DialogTitle>
-          <DialogDescription>
-            {t(
-              'admin.categories.createSchemaDesc',
-              'Paste the intake schema JSON array. Each field needs: key, label, label_mn, type, required. Option types need options as [{value, label, label_mn}]. Text types need max_length.',
-            )}
-          </DialogDescription>
+          <DialogTitle>{t('admin.categories.createSchemaTitle')}</DialogTitle>
+          <DialogDescription>{t('admin.categories.createSchemaDesc')}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="space-y-2">
@@ -217,10 +206,10 @@ function SchemaFormDialog({
         </div>
         <DialogFooter>
           <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={submitting}>
-            {t('common.cancel', 'Cancel')}
+            {t('common.cancel')}
           </Button>
           <Button onClick={handleSubmit} disabled={submitting}>
-            {t('common.save', 'Save')}
+            {t('common.save')}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -262,11 +251,7 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
       const result = await adminApiClient.adminListCategorySchemas(session.accessToken, categoryId);
       setVersions(result);
     } catch (err) {
-      toast.error(
-        err instanceof Error
-          ? err.message
-          : t('admin.categories.loadSchemasError', 'Failed to load schemas'),
-      );
+      toast.error(err instanceof Error ? err.message : t('admin.categories.loadSchemasError'));
     } finally {
       setLoading(false);
     }
@@ -286,13 +271,9 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
         undefined,
       );
       setVersions((prev) => [...prev, created]);
-      toast.success(t('admin.categories.schemaCreated', 'Schema version created'));
+      toast.success(t('admin.categories.schemaCreated'));
     } catch (err) {
-      toast.error(
-        err instanceof Error
-          ? err.message
-          : t('admin.categories.createSchemaError', 'Failed to create schema'),
-      );
+      toast.error(err instanceof Error ? err.message : t('admin.categories.createSchemaError'));
     }
   };
 
@@ -306,13 +287,9 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
         'ACTIVE',
       );
       setVersions((prev) => prev.map((v) => (v.version === updated.version ? updated : v)));
-      toast.success(t('admin.categories.schemaActivated', 'Schema version activated'));
+      toast.success(t('admin.categories.schemaActivated'));
     } catch (err) {
-      toast.error(
-        err instanceof Error
-          ? err.message
-          : t('admin.categories.activateSchemaError', 'Failed to activate schema'),
-      );
+      toast.error(err instanceof Error ? err.message : t('admin.categories.activateSchemaError'));
     }
   };
 
@@ -326,13 +303,9 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
         'rollback',
       );
       setVersions((prev) => prev.map((v) => (v.version === updated.version ? updated : v)));
-      toast.success(t('admin.categories.schemaRolledBack', 'Schema version rolled back'));
+      toast.success(t('admin.categories.schemaRolledBack'));
     } catch (err) {
-      toast.error(
-        err instanceof Error
-          ? err.message
-          : t('admin.categories.rollbackSchemaError', 'Failed to rollback schema'),
-      );
+      toast.error(err instanceof Error ? err.message : t('admin.categories.rollbackSchemaError'));
     }
   };
 
@@ -348,18 +321,14 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
   return (
     <div className="space-y-3 border-t p-4">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-semibold">
-          {t('admin.categories.schemaVersions', 'Schema Versions')}
-        </h4>
+        <h4 className="text-sm font-semibold">{t('admin.categories.schemaVersions')}</h4>
         <Button size="sm" variant="outline" onClick={() => setSchemaDialogOpen(true)}>
-          {t('admin.categories.createSchema', 'Create Schema')}
+          {t('admin.categories.createSchema')}
         </Button>
       </div>
 
       {versions.length === 0 && (
-        <p className="text-sm text-muted-foreground">
-          {t('admin.categories.noSchemas', 'No schema versions yet.')}
-        </p>
+        <p className="text-sm text-muted-foreground">{t('admin.categories.noSchemas')}</p>
       )}
 
       {versions.map((sv) => (
@@ -376,12 +345,12 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
           <div className="flex gap-2">
             {(sv.status === 'DRAFT' || sv.status === 'CANARY') && (
               <Button size="sm" variant="default" onClick={() => handleActivate(sv.version)}>
-                {t('admin.categories.activate', 'Activate')}
+                {t('admin.categories.activate')}
               </Button>
             )}
             {sv.status === 'ACTIVE' && (
               <Button size="sm" variant="destructive" onClick={() => handleRollback(sv.version)}>
-                {t('admin.categories.rollback', 'Rollback')}
+                {t('admin.categories.rollback')}
               </Button>
             )}
           </div>
@@ -423,11 +392,7 @@ export function AdminCategoriesPage() {
       const result = await adminApiClient.adminListCategories(session.accessToken);
       setCategories(result.data);
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : t('admin.categories.loadError', 'Failed to load categories'),
-      );
+      setError(err instanceof Error ? err.message : t('admin.categories.loadError'));
     } finally {
       setLoading(false);
     }
@@ -466,18 +431,14 @@ export function AdminCategoriesPage() {
           payload,
         );
         setCategories((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
-        toast.success(t('admin.categories.updated', 'Category updated'));
+        toast.success(t('admin.categories.updated'));
       } else {
         const created = await adminApiClient.adminCreateCategory(session.accessToken, payload);
         setCategories((prev) => [...prev, created]);
-        toast.success(t('admin.categories.created', 'Category created'));
+        toast.success(t('admin.categories.created'));
       }
     } catch (err) {
-      toast.error(
-        err instanceof Error
-          ? err.message
-          : t('admin.categories.saveError', 'Failed to save category'),
-      );
+      toast.error(err instanceof Error ? err.message : t('admin.categories.saveError'));
     }
   };
 
@@ -489,16 +450,10 @@ export function AdminCategoriesPage() {
       });
       setCategories((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
       toast.success(
-        updated.is_active
-          ? t('admin.categories.activated', 'Category activated')
-          : t('admin.categories.deactivated', 'Category deactivated'),
+        updated.is_active ? t('admin.categories.activated') : t('admin.categories.deactivated'),
       );
     } catch (err) {
-      toast.error(
-        err instanceof Error
-          ? err.message
-          : t('admin.categories.toggleStatusError', 'Failed to toggle category status'),
-      );
+      toast.error(err instanceof Error ? err.message : t('admin.categories.toggleStatusError'));
     }
   };
 
@@ -510,9 +465,7 @@ export function AdminCategoriesPage() {
   if (loading) {
     return (
       <div data-testid="categories-loading" className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">
-          {t('admin.categories.title', 'Categories')}
-        </h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.categories.title')}</h1>
         {[1, 2, 3].map((i) => (
           <Card key={i}>
             <CardContent className="flex items-center justify-between p-6">
@@ -532,15 +485,11 @@ export function AdminCategoriesPage() {
   if (error) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">
-          {t('admin.categories.title', 'Categories')}
-        </h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.categories.title')}</h1>
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
-            <p className="text-destructive">
-              {t('admin.categories.loadError', 'Failed to load categories')}
-            </p>
-            <Button onClick={fetchCategories}>{t('common.retry', 'Retry')}</Button>
+            <p className="text-destructive">{t('admin.categories.loadError')}</p>
+            <Button onClick={fetchCategories}>{t('common.retry')}</Button>
           </CardContent>
         </Card>
       </div>
@@ -550,19 +499,15 @@ export function AdminCategoriesPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold font-display">
-          {t('admin.categories.title', 'Categories')}
-        </h1>
-        <Button onClick={handleCreate}>{t('admin.categories.create', 'Create Category')}</Button>
+        <h1 className="text-2xl font-bold font-display">{t('admin.categories.title')}</h1>
+        <Button onClick={handleCreate}>{t('admin.categories.create')}</Button>
       </div>
 
       {/* Empty state */}
       {categories.length === 0 && (
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
-            <p className="text-muted-foreground">
-              {t('admin.categories.empty', 'No categories found.')}
-            </p>
+            <p className="text-muted-foreground">{t('admin.categories.empty')}</p>
           </CardContent>
         </Card>
       )}
@@ -581,20 +526,18 @@ export function AdminCategoriesPage() {
                     <p className="text-base font-medium">{category.name}</p>
                     <Badge variant={category.is_active ? 'default' : 'secondary'}>
                       {category.is_active
-                        ? t('admin.categories.active', 'Active')
-                        : t('admin.categories.inactive', 'Inactive')}
+                        ? t('admin.categories.active')
+                        : t('admin.categories.inactive')}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">{category.name_mn}</p>
                   <div className="flex gap-4 text-xs text-muted-foreground">
                     <span>
-                      {t('admin.categories.sortOrder', 'Sort')}: {category.sort_order}
+                      {t('admin.categories.sortOrder')}: {category.sort_order}
                     </span>
                     <span>
-                      {t('admin.categories.intake', 'Intake')}:{' '}
-                      {category.intake_enabled
-                        ? t('common.enabled', 'Enabled')
-                        : t('common.disabled', 'Disabled')}
+                      {t('admin.categories.intake')}:{' '}
+                      {category.intake_enabled ? t('common.enabled') : t('common.disabled')}
                     </span>
                   </div>
                 </div>
@@ -606,10 +549,10 @@ export function AdminCategoriesPage() {
                   aria-label={`Toggle ${category.name}`}
                 />
                 <Button size="sm" variant="outline" onClick={() => handleEdit(category)}>
-                  {t('common.edit', 'Edit')}
+                  {t('common.edit')}
                 </Button>
                 <Button size="sm" variant="ghost" onClick={() => handleToggleSchemas(category.id)}>
-                  {t('admin.categories.schemas', 'Schemas')}
+                  {t('admin.categories.schemas')}
                 </Button>
               </div>
             </div>

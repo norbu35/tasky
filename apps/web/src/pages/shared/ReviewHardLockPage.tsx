@@ -9,11 +9,8 @@ export function ReviewHardLockPage() {
   return (
     <ScreenFrame maxWidth="narrow">
       <StatePanel
-        title={t('sharedPages.reviewHardLock.title', 'Reviews required')}
-        description={t(
-          'sharedPages.reviewHardLock.description',
-          'Complete the pending review before continuing with new bookings.',
-        )}
+        title={t('sharedPages.reviewHardLock.title')}
+        description={t('sharedPages.reviewHardLock.description')}
         tone="warning"
       />
     </ScreenFrame>

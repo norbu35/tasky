@@ -14,11 +14,8 @@ export function CustomerNoApplicantRescuePage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('customerPages.noApplicantRescue.title', 'No applicants yet')}
-      description={t(
-        'customerPages.noApplicantRescue.description',
-        'Nobody has applied to your task yet. Try one of the options below to attract Taskers.',
-      )}
+      title={t('customerPages.noApplicantRescue.title')}
+      description={t('customerPages.noApplicantRescue.description')}
       primaryAction={
         <Button
           type="button"
@@ -26,53 +23,39 @@ export function CustomerNoApplicantRescuePage() {
           onClick={() => navigate(taskId ? `/customer/tasks/${taskId}/edit` : '/customer/tasks')}
         >
           <Pencil className="w-4 h-4 mr-2" />
-          {t('customerPages.noApplicantRescue.editTask', 'Edit task details')}
+          {t('customerPages.noApplicantRescue.editTask')}
         </Button>
       }
     >
       <div className="space-y-4">
         <StatePanel
           icon={<Users className="h-5 w-5 text-primary" />}
-          title={t('customerPages.noApplicantRescue.recoveryTitle', 'Recovery options')}
-          description={t(
-            'customerPages.noApplicantRescue.recoveryDesc',
-            'Adjust the price, timing, or description to make your task more appealing.',
-          )}
+          title={t('customerPages.noApplicantRescue.recoveryTitle')}
+          description={t('customerPages.noApplicantRescue.recoveryDesc')}
           tone="muted"
         />
 
         <Card className="border-border/60 shadow-sm">
           <CardHeader>
-            <CardTitle>
-              {t('customerPages.noApplicantRescue.rescueTitle', 'What you can do')}
-            </CardTitle>
+            <CardTitle>{t('customerPages.noApplicantRescue.rescueTitle')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex items-start gap-3">
               <Pencil className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
               <p className="text-sm text-muted-foreground">
-                {t(
-                  'customerPages.noApplicantRescue.tipEdit',
-                  'Edit your task to raise the budget or add more detail.',
-                )}
+                {t('customerPages.noApplicantRescue.tipEdit')}
               </p>
             </div>
             <div className="flex items-start gap-3">
               <Clock className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
               <p className="text-sm text-muted-foreground">
-                {t(
-                  'customerPages.noApplicantRescue.tipExtend',
-                  'Extend the deadline so more Taskers can see it.',
-                )}
+                {t('customerPages.noApplicantRescue.tipExtend')}
               </p>
             </div>
             <div className="flex items-start gap-3">
               <Share2 className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
               <p className="text-sm text-muted-foreground">
-                {t(
-                  'customerPages.noApplicantRescue.tipShare',
-                  'Share your task link with friends who might know a Tasker.',
-                )}
+                {t('customerPages.noApplicantRescue.tipShare')}
               </p>
             </div>
           </CardContent>

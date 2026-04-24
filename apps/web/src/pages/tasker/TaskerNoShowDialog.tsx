@@ -26,7 +26,7 @@ export function TaskerNoShowDialog() {
       return apiClient.flagNoShow(session.accessToken, bookingId, createIdempotencyKey('noshow'));
     },
     onSuccess: () => {
-      toast.success(t('taskerPages.noShow.success', 'No-show flagged successfully.'));
+      toast.success(t('taskerPages.noShow.success'));
       navigate(-1);
     },
     onError: (err) => toast.error(parseError(err)),
@@ -40,13 +40,10 @@ export function TaskerNoShowDialog() {
         <div>
           <h1 className="text-2xl font-display font-bold tracking-tight flex items-center gap-2">
             <UserX className="w-6 h-6 text-destructive" />
-            {t('taskerPages.noShow.title', 'Flag no-show')}
+            {t('taskerPages.noShow.title')}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {t(
-              'taskerPages.noShow.description',
-              'Flag the other party as a no-show. The system validates eligibility automatically.',
-            )}
+            {t('taskerPages.noShow.description')}
           </p>
         </div>
 
@@ -54,17 +51,17 @@ export function TaskerNoShowDialog() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="w-5 h-5 text-amber-500" />
-              {t('taskerPages.noShow.timingTitle', 'Timing rules')}
+              {t('taskerPages.noShow.timingTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm space-y-2">
             <div className="flex items-start gap-2">
               <span className="text-muted-foreground">30 min</span>
-              <span>{t('taskerPages.noShow.reminderRule', 'Reminder sent automatically')}</span>
+              <span>{t('taskerPages.noShow.reminderRule')}</span>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-muted-foreground">1 hr</span>
-              <span>{t('taskerPages.noShow.eligibleRule', 'No-show flag becomes eligible')}</span>
+              <span>{t('taskerPages.noShow.eligibleRule')}</span>
             </div>
           </CardContent>
         </Card>
@@ -74,28 +71,11 @@ export function TaskerNoShowDialog() {
             <div className="flex gap-3">
               <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
               <div className="text-sm">
-                <p className="font-medium">
-                  {t('taskerPages.noShow.warningTitle', 'Before you flag')}
-                </p>
+                <p className="font-medium">{t('taskerPages.noShow.warningTitle')}</p>
                 <ul className="mt-2 space-y-1 text-muted-foreground list-disc list-inside">
-                  <li>
-                    {t(
-                      'taskerPages.noShow.warningActivity',
-                      'Recent in-app activity blocks premature flags.',
-                    )}
-                  </li>
-                  <li>
-                    {t(
-                      'taskerPages.noShow.warningReschedule',
-                      'An accepted reschedule supersedes the original schedule.',
-                    )}
-                  </li>
-                  <li>
-                    {t(
-                      'taskerPages.noShow.warningAudit',
-                      'No-show adjudication creates an audit trail.',
-                    )}
-                  </li>
+                  <li>{t('taskerPages.noShow.warningActivity')}</li>
+                  <li>{t('taskerPages.noShow.warningReschedule')}</li>
+                  <li>{t('taskerPages.noShow.warningAudit')}</li>
                 </ul>
               </div>
             </div>
@@ -104,11 +84,11 @@ export function TaskerNoShowDialog() {
 
         <Card className="border-border/60 shadow-sm">
           <CardHeader>
-            <CardTitle>{t('taskerPages.noShow.confirmTitle', 'Confirm no-show')}</CardTitle>
+            <CardTitle>{t('taskerPages.noShow.confirmTitle')}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
-              <Label>{t('taskerPages.noShow.confirmLabel', 'Type NO-SHOW to confirm')}</Label>
+              <Label>{t('taskerPages.noShow.confirmLabel')}</Label>
               <input
                 className="flex h-12 w-full rounded-md border-[1.5px] border-border bg-background px-4 py-3 text-base font-sans text-foreground transition-colors placeholder:text-text-tertiary focus-visible:outline-none focus-visible:border-foreground"
                 value={confirmText}
@@ -123,7 +103,7 @@ export function TaskerNoShowDialog() {
                 onClick={() => navigate(-1)}
                 disabled={flagMutation.isPending}
               >
-                {t('taskerPages.noShow.cancel', 'Cancel')}
+                {t('taskerPages.noShow.cancel')}
               </Button>
               <Button
                 type="button"
@@ -132,7 +112,7 @@ export function TaskerNoShowDialog() {
                 onClick={() => flagMutation.mutate()}
               >
                 {flagMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                {t('taskerPages.noShow.flagButton', 'Flag no-show')}
+                {t('taskerPages.noShow.flagButton')}
               </Button>
             </div>
           </CardContent>

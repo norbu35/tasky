@@ -19,7 +19,7 @@ Pick the smallest lane that matches the job:
 
 | Lane       | Use for                                                                | Primary commands                                                                                                                                                                                                                |
 | ---------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `verify`   | CI-local verification, hook surfaces, merge gates, release gate wiring | `pnpm verify:cleanup`, `pnpm verify:ops`, `pnpm verify:backend`, `pnpm verify:frontend`, `pnpm verify:scenario:smoke`, `pnpm verify:scenario:fidelity`, `pnpm verify:drift`                                                     |
+| `verify`   | CI-local verification, hook surfaces, merge gates, release gate wiring | `pnpm verify:cleanup`, `pnpm verify:ops`, `pnpm verify:i18n`, `pnpm verify:backend`, `pnpm verify:frontend`, `pnpm verify:scenario:smoke`, `pnpm verify:scenario:fidelity`, `pnpm verify:drift`                                 |
 | `contract` | OpenAPI bundle, generated SDK, contract drift                          | `pnpm contract:openapi:bundle`, `pnpm contract:openapi:check`, `pnpm contract:sdk:generate`, `pnpm contract:sdk:drift`                                                                                                          |
 | `repo`     | Docs governance, script-surface audit, workspace boundaries            | `pnpm repo:docs:check`, `pnpm repo:docs:claims`, `pnpm repo:docs:claims:triage`, `pnpm repo:docs:claims:audit`, `pnpm repo:design:check`, `pnpm repo:prd:diff-ids`, `pnpm repo:tooling:check`, `pnpm repo:workspace:boundaries` |
 | `deploy`   | Private staging push/deploy/smoke and performance smoke                | `tooling/scripts/deploy/**`                                                                                                                                                                                                     |
@@ -92,8 +92,10 @@ Not every command in a lane is a default finish gate. Treat these as conditional
 | ----------------------------------------------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | `tooling/scripts/gates/check-cleanup-gate.sh`                           | Structural repo gate                                    | `pnpm verify:cleanup`, merge structural gate                                  |
 | `tooling/scripts/gates/check-ops-config.mjs`                            | Workflow wiring and compose config validation           | `pnpm verify:ops`                                                             |
+| `tooling/scripts/gates/check-tdd-gate.sh`                               | Test-discipline gate for touched production surfaces    | `pnpm verify:tdd`, local pre-push                                             |
 | `tooling/scripts/gates/check-tooling-surface.mjs`                       | Enforces script classification and live callers         | `pnpm repo:tooling:check`                                                     |
 | `tooling/scripts/governance/check-doc-governance.py`                    | Documentation governance                                | `pnpm repo:docs:check`, `pnpm verify:cleanup`                                 |
+| `tooling/scripts/governance/validate-i18n.py`                           | Locale parity, interpolation, and i18n callsite audit   | `pnpm verify:i18n`, `pnpm verify:frontend`, merge frontend quality            |
 | `tooling/scripts/contracts/bundle-openapi.mjs`                          | Bundle `docs/openapi/**` into `docs/API.yaml`           | `pnpm contract:openapi:bundle`, `pnpm contract:openapi:check`                 |
 | `tooling/scripts/contracts/validate-openapi-phase.mjs`                  | Enforce OpenAPI rollout phase metadata                  | `pnpm contract:openapi:check`, `pnpm repo:docs:check`                         |
 | `tooling/scripts/contracts/validate-sdk-contract-drift.sh`              | Regenerate SDK and fail on drift                        | `pnpm contract:sdk:drift`                                                     |
@@ -117,7 +119,6 @@ Not every command in a lane is a default finish gate. Treat these as conditional
 | `tooling/scripts/deploy/push-private-staging.sh`                        | Push repo and env to private staging and trigger deploy | staging runbook / manual                                                      |
 | `tooling/scripts/deploy/deploy-private-staging.sh`                      | Compose deployment on private staging host              | staging runbook / manual                                                      |
 | `tooling/scripts/deploy/smoke-private-staging.sh`                       | Post-deploy staging smoke checks                        | staging runbook / manual                                                      |
-| `tooling/scripts/manual/analyze_i18n.py`                                | Manual locale diagnostic                                | manual only                                                                   |
 
 ## Agent Finish Rules
 
@@ -141,6 +142,7 @@ Default blocking gates:
 ```bash
 pnpm verify:cleanup
 pnpm verify:ops
+pnpm verify:i18n
 pnpm verify:backend
 pnpm verify:frontend
 pnpm verify:scenario:smoke

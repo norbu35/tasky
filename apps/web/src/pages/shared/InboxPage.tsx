@@ -10,23 +10,20 @@ export function InboxPage() {
 
   return (
     <ResponsiveFeedShell
-      title={t('sharedPages.inbox.title', 'Inbox')}
-      description={t(
-        'sharedPages.inbox.description',
-        'Stay on top of customer and tasker conversations.',
-      )}
+      title={t('sharedPages.inbox.title')}
+      description={t('sharedPages.inbox.description')}
       sideRail={
         <Card>
           <CardContent className="p-4 text-sm text-muted-foreground">
-            {t('sharedPages.inbox.sideRail', 'Pinned threads and booking updates appear here.')}
+            {t('sharedPages.inbox.sideRail')}
           </CardContent>
         </Card>
       }
     >
       <div className="space-y-4">
         <Input
-          aria-label={t('sharedPages.inbox.searchPlaceholder', 'Search conversations')}
-          placeholder={t('sharedPages.inbox.searchPlaceholder', 'Search conversations')}
+          aria-label={t('sharedPages.inbox.searchPlaceholder')}
+          placeholder={t('sharedPages.inbox.searchPlaceholder')}
         />
         <Card>
           <CardContent className="flex items-start gap-3 p-4">
@@ -36,12 +33,12 @@ export function InboxPage() {
             <div className="min-w-0 flex-1 space-y-1">
               <div className="flex items-center justify-between gap-2">
                 <span className="font-semibold text-foreground">
-                  {t('sharedPages.inbox.sampleThreadTitle', 'Apartment cleaning')}
+                  {t('sharedPages.inbox.sampleThreadTitle')}
                 </span>
                 <span className="shrink-0 text-[11px] text-text-tertiary">10:30</span>
               </div>
               <div className="text-sm text-muted-foreground">
-                {t('sharedPages.inbox.sampleThreadPreview', 'Tasker confirmed the Saturday slot.')}
+                {t('sharedPages.inbox.sampleThreadPreview')}
               </div>
             </div>
             <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-foreground text-[11px] font-semibold text-card">

@@ -8,17 +8,12 @@ export function VerificationGatePage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('verification.gate.title', 'Identity verification')}
-      description={t('verification.gate.description', 'Start your tasker verification flow.')}
+      title={t('verification.gate.title')}
+      description={t('verification.gate.description')}
     >
       <Card>
         <CardContent className="space-y-3 p-4 text-sm text-muted-foreground">
-          <p>
-            {t(
-              'verification.gate.content',
-              'Manual review is required before a tasker can accept jobs.',
-            )}
-          </p>
+          <p>{t('verification.gate.content')}</p>
         </CardContent>
       </Card>
     </ResponsiveDetailShell>

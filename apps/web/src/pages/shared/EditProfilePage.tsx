@@ -11,31 +11,18 @@ export function EditProfilePage() {
 
   return (
     <ResponsiveWizardShell
-      title={t('sharedPages.editProfile.title', 'Edit profile')}
-      description={t(
-        'sharedPages.editProfile.description',
-        'Refresh your public details without leaving the core profile flow.',
-      )}
-      footer={
-        <Button type="button">{t('sharedPages.editProfile.saveAction', 'Save profile')}</Button>
-      }
+      title={t('sharedPages.editProfile.title')}
+      description={t('sharedPages.editProfile.description')}
+      footer={<Button type="button">{t('sharedPages.editProfile.saveAction')}</Button>}
     >
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="shared-edit-name">
-            {t('sharedPages.editProfile.displayName', 'Display name')}
-          </Label>
-          <Input
-            defaultValue={t('sharedPages.editProfile.defaultName', 'Tasky User')}
-            id="shared-edit-name"
-          />
+          <Label htmlFor="shared-edit-name">{t('sharedPages.editProfile.displayName')}</Label>
+          <Input defaultValue={t('sharedPages.editProfile.defaultName')} id="shared-edit-name" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="shared-edit-bio">{t('sharedPages.editProfile.bioLabel', 'Bio')}</Label>
-          <Textarea
-            defaultValue={t('sharedPages.editProfile.defaultBio', 'Reliable and responsive.')}
-            id="shared-edit-bio"
-          />
+          <Label htmlFor="shared-edit-bio">{t('sharedPages.editProfile.bioLabel')}</Label>
+          <Textarea defaultValue={t('sharedPages.editProfile.defaultBio')} id="shared-edit-bio" />
         </div>
       </div>
     </ResponsiveWizardShell>

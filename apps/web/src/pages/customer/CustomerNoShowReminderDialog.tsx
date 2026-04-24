@@ -25,17 +25,12 @@ export function CustomerNoShowReminderDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t('customerPages.noShowReminder.title', 'No-show reminder')}</DialogTitle>
-          <DialogDescription>
-            {t(
-              'customerPages.noShowReminder.description',
-              'Remind the tasker that the booking is still active and the customer is waiting.',
-            )}
-          </DialogDescription>
+          <DialogTitle>{t('customerPages.noShowReminder.title')}</DialogTitle>
+          <DialogDescription>{t('customerPages.noShowReminder.description')}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
-            {t('customerPages.noShowReminder.close', 'Close')}
+            {t('customerPages.noShowReminder.close')}
           </Button>
         </DialogFooter>
       </DialogContent>

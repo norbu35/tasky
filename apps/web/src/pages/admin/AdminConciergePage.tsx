@@ -87,11 +87,7 @@ export function AdminConciergePage() {
       setBooking(result);
       setPageState('success');
     } catch (err) {
-      setAssignError(
-        err instanceof Error
-          ? err.message
-          : t('admin.concierge.assignmentFailed', 'Assignment failed'),
-      );
+      setAssignError(err instanceof Error ? err.message : t('admin.concierge.assignmentFailed'));
       setPageState('assign-error');
     }
   };
@@ -99,15 +95,11 @@ export function AdminConciergePage() {
   if (pageState === 'error') {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">
-          {t('admin.concierge.title', 'Concierge Dispatch')}
-        </h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.concierge.title')}</h1>
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
-            <p className="text-destructive">
-              {t('admin.concierge.loadError', 'Failed to load tasks.')}
-            </p>
-            <Button onClick={loadTasks}>{t('common.retry', 'Retry')}</Button>
+            <p className="text-destructive">{t('admin.concierge.loadError')}</p>
+            <Button onClick={loadTasks}>{t('common.retry')}</Button>
           </CardContent>
         </Card>
       </div>
@@ -117,19 +109,17 @@ export function AdminConciergePage() {
   if (pageState === 'success' && booking) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">
-          {t('admin.concierge.title', 'Concierge Dispatch')}
-        </h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.concierge.title')}</h1>
         <Card>
           <CardContent className="p-6 space-y-2" data-testid="assignment-success">
             <h2 className="text-lg font-semibold font-display">
-              {t('admin.concierge.assignmentSuccess', 'Assignment Successful')}
+              {t('admin.concierge.assignmentSuccess')}
             </h2>
             <p>
-              {t('admin.concierge.bookingId', 'Booking ID')}: {booking.id}
+              {t('admin.concierge.bookingId')}: {booking.id}
             </p>
             <p>
-              {t('admin.concierge.status', 'Status')}: {booking.status}
+              {t('admin.concierge.status')}: {booking.status}
             </p>
           </CardContent>
         </Card>
@@ -140,9 +130,7 @@ export function AdminConciergePage() {
   if (pageState === 'loading' || pageState === 'idle') {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">
-          {t('admin.concierge.title', 'Concierge Dispatch')}
-        </h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.concierge.title')}</h1>
         <div data-testid="concierge-loading" className="space-y-3">
           {[1, 2, 3].map((i) => (
             <Card key={i}>
@@ -158,15 +146,11 @@ export function AdminConciergePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold font-display">
-        {t('admin.concierge.title', 'Concierge Dispatch')}
-      </h1>
+      <h1 className="text-2xl font-bold font-display">{t('admin.concierge.title')}</h1>
 
       {/* Section 1: Open Tasks */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold font-display">
-          {t('admin.concierge.selectTask', 'Select an Open Task')}
-        </h2>
+        <h2 className="text-lg font-semibold font-display">{t('admin.concierge.selectTask')}</h2>
         <div className="space-y-2">
           {tasks.map((task) => (
             <Card
@@ -182,7 +166,7 @@ export function AdminConciergePage() {
                 <p className="font-medium">{task.description}</p>
                 <p className="text-sm text-muted-foreground">
                   {task.category.name} &middot; {(task.budget ?? 0).toLocaleString()}
-                  {t('common.currency', ' MNT')}
+                  {t('common.currency')}
                 </p>
               </CardContent>
             </Card>
@@ -192,17 +176,15 @@ export function AdminConciergePage() {
 
       {/* Section 2: Find a Tasker */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold font-display">
-          {t('admin.concierge.findTasker', 'Find a Tasker')}
-        </h2>
+        <h2 className="text-lg font-semibold font-display">{t('admin.concierge.findTasker')}</h2>
         <div className="flex gap-2">
           <Input
-            placeholder={t('admin.concierge.phonePlaceholder', 'Phone number')}
+            placeholder={t('admin.concierge.phonePlaceholder')}
             value={phoneQuery}
             onChange={(e) => setPhoneQuery(e.target.value)}
           />
           <Button onClick={handleSearchTaskers} disabled={searchLoading}>
-            {t('admin.concierge.search', 'Search')}
+            {t('admin.concierge.search')}
           </Button>
         </div>
         {taskerResults.length > 0 && (
@@ -234,10 +216,10 @@ export function AdminConciergePage() {
       {/* Section 3: Assignment Form */}
       <section className="space-y-3">
         <h2 className="text-lg font-semibold font-display">
-          {t('admin.concierge.assignmentForm', 'Assignment')}
+          {t('admin.concierge.assignmentForm')}
         </h2>
         <Input
-          placeholder={t('admin.concierge.reasonPlaceholder', 'Override reason (min 3 chars)')}
+          placeholder={t('admin.concierge.reasonPlaceholder')}
           value={overrideReason}
           onChange={(e) => setOverrideReason(e.target.value)}
         />
@@ -248,9 +230,7 @@ export function AdminConciergePage() {
             checked={disclaimerChecked}
             onChange={(e) => setDisclaimerChecked(e.target.checked)}
           />
-          <Label htmlFor="concierge-disclaimer">
-            {t('admin.concierge.disclaimerLabel', 'I accept liability for this manual assignment')}
-          </Label>
+          <Label htmlFor="concierge-disclaimer">{t('admin.concierge.disclaimerLabel')}</Label>
         </div>
 
         {pageState === 'assign-error' && assignError && (
@@ -260,9 +240,7 @@ export function AdminConciergePage() {
         )}
 
         <Button onClick={handleAssign} disabled={!canAssign || pageState === 'assigning'}>
-          {pageState === 'assigning'
-            ? t('common.loading', 'Loading...')
-            : t('admin.concierge.assign', 'Assign')}
+          {pageState === 'assigning' ? t('common.loading') : t('admin.concierge.assign')}
         </Button>
       </section>
     </div>

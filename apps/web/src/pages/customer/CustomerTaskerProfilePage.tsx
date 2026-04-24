@@ -11,27 +11,24 @@ export function CustomerTaskerProfilePage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('customerPages.taskerProfile.title', 'Tasker profile')}
-      description={t(
-        'customerPages.taskerProfile.description',
-        'Review the tasker before you confirm or message them.',
-      )}
+      title={t('customerPages.taskerProfile.title')}
+      description={t('customerPages.taskerProfile.description')}
       primaryAction={
         <Button type="button" variant="secondary">
-          {t('customerPages.taskerProfile.openProfile', 'Open profile')}
+          {t('customerPages.taskerProfile.openProfile')}
         </Button>
       }
       detailRail={
         <ActionRail
-          title={t('customerPages.taskerProfile.railTitle', 'Primary actions')}
+          title={t('customerPages.taskerProfile.railTitle')}
           primaryAction={
             <Button type="button" className="w-full">
-              {t('customerPages.taskerProfile.messageTasker', 'Message tasker')}
+              {t('customerPages.taskerProfile.messageTasker')}
             </Button>
           }
           secondaryActions={
             <Button type="button" variant="outline" className="w-full">
-              {t('customerPages.taskerProfile.openChat', 'Open chat')}
+              {t('customerPages.taskerProfile.openChat')}
             </Button>
           }
         />
@@ -43,28 +40,20 @@ export function CustomerTaskerProfilePage() {
             <AvatarFallback className="bg-primary/10 text-primary">VT</AvatarFallback>
           </Avatar>
           <div className="space-y-1">
-            <CardTitle>
-              {t('customerPages.taskerProfile.verifiedTasker', 'Verified Tasker')}
-            </CardTitle>
+            <CardTitle>{t('customerPages.taskerProfile.verifiedTasker')}</CardTitle>
             <p className="text-sm text-muted-foreground">
-              {t(
-                'customerPages.taskerProfile.trustedDesc',
-                'Trusted for Phase 1 customer bookings and direct settlement flows.',
-              )}
+              {t('customerPages.taskerProfile.trustedDesc')}
             </p>
           </div>
         </CardHeader>
         <CardContent className="grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
           <div className="flex items-center gap-2">
             <Star className="h-4 w-4 text-sun-light" />
-            {t('customerPages.taskerProfile.ratingText', '4.9 rating from 37 jobs')}
+            {t('customerPages.taskerProfile.ratingText')}
           </div>
           <div className="flex items-center gap-2">
             <MessageSquareText className="h-4 w-4 text-primary" />
-            {t(
-              'customerPages.taskerProfile.respondsQuickly',
-              'Responds quickly during business hours',
-            )}
+            {t('customerPages.taskerProfile.respondsQuickly')}
           </div>
         </CardContent>
       </Card>

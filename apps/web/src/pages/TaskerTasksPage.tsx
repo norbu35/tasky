@@ -50,18 +50,16 @@ function TaskerBookingCard({ task }: { task: Task }) {
           {task.status === 'COMPLETED' ? (
             <>
               <CheckCircle className="w-4 h-4 text-green-600" />
-              <span className="text-green-600 font-medium">
-                {t('taskerTasks.completed', 'Completed')}
-              </span>
+              <span className="text-green-600 font-medium">{t('taskerTasks.completed')}</span>
             </>
           ) : (
-            <span className="font-medium">{t('taskerTasks.assigned', 'Assigned')}</span>
+            <span className="font-medium">{t('taskerTasks.assigned')}</span>
           )}
         </div>
         <Button size="sm" onClick={() => navigate(`/booking/safety?taskId=${task.id}`)}>
           {task.status === 'COMPLETED'
-            ? t('taskerTasks.viewDetails', 'View Details')
-            : t('taskerTasks.manageBooking', 'Manage Booking')}
+            ? t('taskerTasks.viewDetails')
+            : t('taskerTasks.manageBooking')}
         </Button>
       </CardFooter>
     </Card>
@@ -109,28 +107,22 @@ export function TaskerTasksPage() {
         <div className="flex justify-between items-end gap-4">
           <div>
             <h1 className="text-3xl font-bold font-display tracking-tight">
-              {t('taskerTasks.title', 'My Bookings')}
+              {t('taskerTasks.title')}
             </h1>
-            <p className="text-muted-foreground mt-1">
-              {t('taskerTasks.subtitle', 'Manage your accepted jobs and past work.')}
-            </p>
+            <p className="text-muted-foreground mt-1">{t('taskerTasks.subtitle')}</p>
           </div>
           <Button onClick={() => navigate('/tasker/tasks')} variant="secondary" className="gap-2">
             <Rocket className="w-4 h-4" />
-            <span className="hidden sm:inline">
-              {t('taskerTasks.findMoreWork', 'Find more work')}
-            </span>
-            <span className="sm:hidden">{t('taskerTasks.find', 'Find')}</span>
+            <span className="hidden sm:inline">{t('taskerTasks.findMoreWork')}</span>
+            <span className="sm:hidden">{t('taskerTasks.find')}</span>
           </Button>
         </div>
 
         {error ? (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>{t('taskerTasks.errorTitle', 'Error')}</AlertTitle>
-            <AlertDescription>
-              {error.message ?? t('taskerTasks.errorFailedLoad', 'Failed to load bookings')}
-            </AlertDescription>
+            <AlertTitle>{t('taskerTasks.errorTitle')}</AlertTitle>
+            <AlertDescription>{error.message ?? t('taskerTasks.errorFailedLoad')}</AlertDescription>
           </Alert>
         ) : isLoading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -155,26 +147,19 @@ export function TaskerTasksPage() {
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
               <Rocket className="h-6 w-6 text-primary" />
             </div>
-            <CardTitle className="mb-2">
-              {t('taskerTasks.noBookingsTitle', 'No bookings yet')}
-            </CardTitle>
+            <CardTitle className="mb-2">{t('taskerTasks.noBookingsTitle')}</CardTitle>
             <CardDescription className="mb-6 max-w-sm">
-              {t(
-                'taskerTasks.noBookingsDesc',
-                "You haven't been assigned to any tasks yet. Head over to the feed to find and apply for jobs.",
-              )}
+              {t('taskerTasks.noBookingsDesc')}
             </CardDescription>
             <Button onClick={() => navigate('/tasker/tasks')}>
-              {t('taskerTasks.browseAvailableTasks', 'Browse available tasks')}
+              {t('taskerTasks.browseAvailableTasks')}
             </Button>
           </Card>
         ) : (
           <Tabs defaultValue="active" className="w-full mt-4">
             <TabsList className="mb-4">
-              <TabsTrigger value="active">
-                {t('taskerTasks.tabActive', 'Active Bookings')}
-              </TabsTrigger>
-              <TabsTrigger value="past">{t('taskerTasks.tabPast', 'Past Work')}</TabsTrigger>
+              <TabsTrigger value="active">{t('taskerTasks.tabActive')}</TabsTrigger>
+              <TabsTrigger value="past">{t('taskerTasks.tabPast')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="active" className="mt-0">
@@ -186,7 +171,7 @@ export function TaskerTasksPage() {
                   ))}
                 {tasksList.filter((t) => t.status === 'ASSIGNED').length === 0 && (
                   <div className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
-                    {t('taskerTasks.emptyActive', 'No active bookings.')}
+                    {t('taskerTasks.emptyActive')}
                   </div>
                 )}
               </div>
@@ -201,7 +186,7 @@ export function TaskerTasksPage() {
                   ))}
                 {tasksList.filter((t) => t.status === 'COMPLETED').length === 0 && (
                   <div className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
-                    {t('taskerTasks.emptyPast', 'No past work completed yet.')}
+                    {t('taskerTasks.emptyPast')}
                   </div>
                 )}
               </div>

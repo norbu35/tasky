@@ -23,6 +23,12 @@ import { createIdempotencyKey } from '../../lib/idempotency';
 
 const EVIDENCE_TYPES = ['WRITTEN_TIMELINE', 'CHAT_EXCERPT', 'PHOTO'] as const;
 
+const EVIDENCE_TYPE_LABEL_KEYS = {
+  WRITTEN_TIMELINE: 'customerPages.disputeRaise.evidenceType.WRITTEN_TIMELINE',
+  CHAT_EXCERPT: 'customerPages.disputeRaise.evidenceType.CHAT_EXCERPT',
+  PHOTO: 'customerPages.disputeRaise.evidenceType.PHOTO',
+} as const;
+
 export function CustomerDisputeRaisePage() {
   const { t } = useTranslation();
   const { apiClient, session, trackClientEvent } = useAppContext();
@@ -56,7 +62,7 @@ export function CustomerDisputeRaisePage() {
     },
     onSuccess: (dispute) => {
       trackClientEvent('DISPUTE_RAISED', { bookingId: dispute.booking_id });
-      toast.success(t('customerPages.disputeRaise.success', 'Dispute submitted successfully.'));
+      toast.success(t('customerPages.disputeRaise.success'));
       navigate(`/customer/disputes/${dispute.id}`, { replace: true });
     },
     onError: (err) => {
@@ -72,31 +78,23 @@ export function CustomerDisputeRaisePage() {
         <div>
           <h1 className="text-2xl font-display font-bold tracking-tight flex items-center gap-2">
             <ShieldAlert className="w-6 h-6 text-destructive" />
-            {t('customerPages.disputeRaise.title', 'Raise dispute')}
+            {t('customerPages.disputeRaise.title')}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {t(
-              'customerPages.disputeRaise.description',
-              'Describe the issue and provide evidence. Our team will review it within 24 hours.',
-            )}
+            {t('customerPages.disputeRaise.description')}
           </p>
         </div>
 
         <Card className="border-border/60 shadow-sm">
           <CardHeader>
-            <CardTitle>{t('customerPages.disputeRaise.cardTitle', 'Dispute details')}</CardTitle>
+            <CardTitle>{t('customerPages.disputeRaise.cardTitle')}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="dispute-reason">
-                {t('customerPages.disputeRaise.reasonLabel', 'What went wrong?')}
-              </Label>
+              <Label htmlFor="dispute-reason">{t('customerPages.disputeRaise.reasonLabel')}</Label>
               <Textarea
                 id="dispute-reason"
-                placeholder={t(
-                  'customerPages.disputeRaise.reasonPlaceholder',
-                  'Describe the issue in detail (minimum 10 characters)...',
-                )}
+                placeholder={t('customerPages.disputeRaise.reasonPlaceholder')}
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 minLength={10}
@@ -105,19 +103,17 @@ export function CustomerDisputeRaisePage() {
               />
               <p className="text-xs text-muted-foreground">
                 {reason.length < 10
-                  ? t(
-                      'customerPages.disputeRaise.reasonMinLength',
-                      '{{remaining}} more characters needed',
-                      { remaining: 10 - reason.length },
-                    )
-                  : t('customerPages.disputeRaise.charCount', '{{count}}/2000', {
+                  ? t('customerPages.disputeRaise.reasonMinLength', {
+                      remaining: 10 - reason.length,
+                    })
+                  : t('customerPages.disputeRaise.charCount', {
                       count: reason.length,
                     })}
               </p>
             </div>
 
             <div className="grid gap-2">
-              <Label>{t('customerPages.disputeRaise.evidenceTypeLabel', 'Evidence type')}</Label>
+              <Label>{t('customerPages.disputeRaise.evidenceTypeLabel')}</Label>
               <Select value={evidenceType} onValueChange={setEvidenceType}>
                 <SelectTrigger>
                   <SelectValue />
@@ -125,7 +121,7 @@ export function CustomerDisputeRaisePage() {
                 <SelectContent>
                   {EVIDENCE_TYPES.map((type) => (
                     <SelectItem key={type} value={type}>
-                      {t(`customerPages.disputeRaise.evidenceType_${type}`, type)}
+                      {t(EVIDENCE_TYPE_LABEL_KEYS[type])}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -135,14 +131,11 @@ export function CustomerDisputeRaisePage() {
             {evidenceType !== 'PHOTO' && (
               <div className="grid gap-2">
                 <Label htmlFor="evidence-text">
-                  {t('customerPages.disputeRaise.evidenceTextLabel', 'Evidence description')}
+                  {t('customerPages.disputeRaise.evidenceTextLabel')}
                 </Label>
                 <Textarea
                   id="evidence-text"
-                  placeholder={t(
-                    'customerPages.disputeRaise.evidenceTextPlaceholder',
-                    'Provide context or a timeline of events...',
-                  )}
+                  placeholder={t('customerPages.disputeRaise.evidenceTextPlaceholder')}
                   value={evidenceText}
                   onChange={(e) => setEvidenceText(e.target.value)}
                   rows={3}
@@ -153,24 +146,16 @@ export function CustomerDisputeRaisePage() {
 
             {evidenceType === 'PHOTO' && (
               <div className="grid gap-2">
-                <Label>
-                  {t('customerPages.disputeRaise.photoEvidenceLabel', 'Photo evidence')}
-                </Label>
+                <Label>{t('customerPages.disputeRaise.photoEvidenceLabel')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  {t(
-                    'customerPages.disputeRaise.photoEvidenceHint',
-                    'Photo upload will be available in a future update. Your written reason will be used as evidence.',
-                  )}
+                  {t('customerPages.disputeRaise.photoEvidenceHint')}
                 </p>
               </div>
             )}
 
             <div className="bg-muted/30 border border-border/40 rounded-lg p-3">
               <p className="text-xs text-muted-foreground">
-                {t(
-                  'customerPages.disputeRaise.phase1Notice',
-                  'Phase 1 disputes are resolved through evidence-based moderation. No payment holds or escrow are involved.',
-                )}
+                {t('customerPages.disputeRaise.phase1Notice')}
               </p>
             </div>
 
@@ -181,7 +166,7 @@ export function CustomerDisputeRaisePage() {
                 onClick={() => navigate(-1)}
                 disabled={raiseDisputeMutation.isPending}
               >
-                {t('customerPages.disputeRaise.cancel', 'Cancel')}
+                {t('customerPages.disputeRaise.cancel')}
               </Button>
               <Button
                 type="button"
@@ -191,7 +176,7 @@ export function CustomerDisputeRaisePage() {
                 {raiseDisputeMutation.isPending && (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 )}
-                {t('customerPages.disputeRaise.submitAction', 'Submit dispute')}
+                {t('customerPages.disputeRaise.submitAction')}
               </Button>
             </div>
           </CardContent>

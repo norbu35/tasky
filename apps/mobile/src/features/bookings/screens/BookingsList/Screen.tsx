@@ -17,6 +17,10 @@ import { useBookingsListScreen } from './useBookingsListScreen';
 
 const { colors, spacing } = mobileTheme;
 const { bookingList } = mobileSurfaces;
+const TAB_LABEL_KEYS: Readonly<Record<(typeof TAB_IDS)[number], string>> = {
+  active: 'BookingsListScreen.tab.active',
+  completed: 'BookingsListScreen.tab.completed',
+};
 
 export default function BookingsListScreen() {
   const { t } = useTranslation();
@@ -61,7 +65,7 @@ export default function BookingsListScreen() {
           {TAB_IDS.map((tab) => (
             <FilterTab
               key={tab}
-              label={t(`BookingsListScreen.tab.${tab}`)}
+              label={t(TAB_LABEL_KEYS[tab])}
               active={activeTab === tab}
               onPress={() => setActiveTab(tab)}
             />

@@ -53,7 +53,8 @@ flowchart TD
         end
 
         subgraph FRONTEND["verify:frontend / verify:frontend:affected"]
-            FE1["D  turbo lint + typecheck + test"]
+            FE1["D  validate-i18n.py"]
+            FE2["D  turbo lint + typecheck + test"]
         end
 
         subgraph DRIFT["verify:drift"]

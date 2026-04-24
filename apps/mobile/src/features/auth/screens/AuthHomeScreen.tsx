@@ -14,6 +14,7 @@ import {
   DEV_LOGIN_TASKER_PHONE,
   useDevLogin,
 } from '@/features/auth/hooks/useAuth';
+import { setStoredLanguage } from '@/utils/i18n';
 
 const { colors } = mobileTheme;
 
@@ -49,7 +50,11 @@ export default function AuthHomeScreen() {
   };
 
   const toggleLanguage = () => {
-    void i18n.changeLanguage(i18n.language === 'mn' ? 'en' : 'mn');
+    void (async () => {
+      const nextLanguage = i18n.language === 'mn' ? 'en' : 'mn';
+      await i18n.changeLanguage(nextLanguage);
+      await setStoredLanguage(nextLanguage);
+    })();
   };
 
   return (

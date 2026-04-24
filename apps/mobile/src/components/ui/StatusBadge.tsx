@@ -37,11 +37,19 @@ interface StatusBadgeProps {
   testID?: string;
 }
 
+const STATUS_LABEL_KEYS: Readonly<Record<StatusType, string>> = {
+  open: 'status.open',
+  assigned: 'status.assigned',
+  completed: 'status.completed',
+  cancelled: 'status.cancelled',
+  no_show: 'status.no_show',
+};
+
 export function StatusBadge({ status, className, testID }: StatusBadgeProps) {
   const { t } = useTranslation();
   return (
     <View className={cn(badgeVariants({ status }), className)} testID={testID}>
-      <Text className={textVariants({ status })}>{t(`status.${status}`)}</Text>
+      <Text className={textVariants({ status })}>{t(STATUS_LABEL_KEYS[status])}</Text>
     </View>
   );
 }

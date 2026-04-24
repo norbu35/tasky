@@ -84,14 +84,14 @@ export function Header() {
               className="text-sm font-semibold h-9 px-4 rounded-xl"
               onClick={signOut}
             >
-              {t('nav.logout', 'Sign out')}
+              {t('nav.logout')}
             </Button>
           ) : (
             <Button
               className="text-sm font-bold h-9 px-4 rounded-xl"
               onClick={() => navigate('/auth')}
             >
-              {t('auth.login', 'Login')}
+              {t('auth.login')}
             </Button>
           )}
         </div>

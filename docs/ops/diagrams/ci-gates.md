@@ -20,7 +20,7 @@ flowchart TD
         end
 
         subgraph FQ["frontend-quality"]
-            FQ1["pnpm verify:frontend:affected\nturbo lint + typecheck + test"]
+            FQ1["pnpm verify:frontend:affected\ni18n audit + turbo lint + typecheck + test"]
         end
 
         subgraph E2EWEB["e2e-web"]
@@ -127,8 +127,9 @@ flowchart LR
 | Ops               | `pnpm verify:ops`                                    | Tooling surface and workflow wiring              |
 | Docs              | `pnpm repo:docs:check`                               | Governance, design navigation/journeys, OpenAPI  |
 | Backend           | `pnpm verify:backend`                                | Compile, test, coverage, OpenAPI                 |
-| Frontend          | `pnpm verify:frontend`                               | Full lint, typecheck, test                       |
-| Frontend affected | `pnpm verify:frontend:affected`                      | Merge-branch fast path                           |
+| I18n              | `pnpm verify:i18n`                                   | Locale parity, placeholders, fallback callsites  |
+| Frontend          | `pnpm verify:frontend`                               | I18n audit plus full lint, typecheck, test       |
+| Frontend affected | `pnpm verify:frontend:affected`                      | I18n audit plus merge-branch fast path           |
 | Scenario smoke    | `pnpm verify:scenario:smoke`                         | PRD-to-scenario links, registry sync, smoke gate |
 | Drift             | `pnpm verify:drift`                                  | SDK drift and ArchUnit                           |
 | Regression        | `./gradlew --no-daemon :services:api:gateRegression` | Extended backend scenario gate                   |

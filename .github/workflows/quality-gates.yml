@@ -148,7 +148,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run frontend quality checks (affected only)
+      - name: Run frontend quality checks (affected only, includes i18n)
         run: pnpm verify:frontend:affected
 
   e2e-web:

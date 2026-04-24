@@ -44,6 +44,14 @@ const textExpectations = [
         ],
     },
     {
+        file: "package.json",
+        needs: [
+            "\"verify:i18n\": \"python3 tooling/scripts/governance/validate-i18n.py\"",
+            "\"verify:frontend\": \"pnpm verify:i18n && turbo run lint typecheck test\"",
+            "\"verify:frontend:affected\": \"pnpm verify:i18n && turbo run lint typecheck test --affected\"",
+        ],
+    },
+    {
         file: ".github/workflows/quality-gates.yml",
         needs: [
             "push:",
@@ -53,6 +61,7 @@ const textExpectations = [
             "pnpm repo:docs:check",
             "pnpm verify:backend",
             "pnpm verify:scenario:smoke",
+            "includes i18n",
             "pnpm verify:frontend",
             "pnpm verify:drift",
         ],

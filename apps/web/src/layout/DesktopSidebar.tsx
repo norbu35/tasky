@@ -85,7 +85,7 @@ export function DesktopSidebar() {
             className="w-full justify-start text-sm font-medium text-muted-foreground hover:text-foreground"
             onClick={signOut}
           >
-            {t('nav.logout', 'Sign out')}
+            {t('nav.logout')}
           </Button>
         )}
       </div>

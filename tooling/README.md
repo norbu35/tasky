@@ -17,17 +17,17 @@ This directory contains repository-level engineering tooling for maintenance and
 
 ## Canonical Entrypoints
 
-- Verify lane: `pnpm verify:cleanup`, `pnpm verify:ops`, `pnpm verify:backend`, `pnpm verify:frontend`, `pnpm verify:scenario:smoke`, `pnpm verify:scenario:fidelity`, `pnpm verify:drift`
+- Verify lane: `pnpm verify:cleanup`, `pnpm verify:ops`, `pnpm verify:tdd`, `pnpm verify:i18n`, `pnpm verify:backend`, `pnpm verify:frontend`, `pnpm verify:scenario:smoke`, `pnpm verify:scenario:fidelity`, `pnpm verify:drift`
 - Contract lane: `pnpm contract:openapi:bundle`, `pnpm contract:openapi:check`, `pnpm contract:sdk:generate`, `pnpm contract:sdk:drift`
 - Repo lane: `pnpm repo:docs:check`, `pnpm repo:design:check`, `pnpm repo:docs:claims`, `pnpm repo:docs:claims:triage`, `pnpm repo:docs:claims:audit`, `pnpm repo:prd:diff-ids`, `pnpm repo:workspace:boundaries`, `pnpm repo:tooling:check`
 - Backend scenario gates: `services/api/build.gradle.kts` -> `tooling/scripts/gates/check-gates.sh`
 - Private staging deploy path: `tooling/scripts/deploy/push-private-staging.sh`, `tooling/scripts/deploy/deploy-private-staging.sh`, `tooling/scripts/deploy/smoke-private-staging.sh`
 
-## Manual-Only Helpers
+## Locale Gate
 
-- `tooling/scripts/manual/analyze_i18n.py`
-
-These are diagnostic helpers, not default gates.
+- `tooling/scripts/governance/validate-i18n.py` is the active locale audit. It checks client locale key parity,
+  interpolation placeholder parity, backend message key/placeholder parity, and literal `t('key', 'fallback')`
+  callsites.
 
 ## Out Of Scope
 

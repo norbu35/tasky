@@ -9,7 +9,7 @@ export function LoadingCard({ message }: { message: string }) {
       <section className="mx-auto grid w-full max-w-xl gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>{t('common.loadingTitle', 'Loading')}</CardTitle>
+            <CardTitle>{t('common.loadingTitle')}</CardTitle>
             <CardDescription>{message}</CardDescription>
           </CardHeader>
         </Card>

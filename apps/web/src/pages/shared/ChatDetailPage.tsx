@@ -10,19 +10,13 @@ export function ChatDetailPage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('sharedPages.chatDetail.title', 'Chat detail')}
-      description={t(
-        'sharedPages.chatDetail.description',
-        'Keep booking communication in one thread.',
-      )}
-      backLabel={t('sharedPages.chatDetail.backLabel', 'Back')}
+      title={t('sharedPages.chatDetail.title')}
+      description={t('sharedPages.chatDetail.description')}
+      backLabel={t('sharedPages.chatDetail.backLabel')}
       detailRail={
         <Card>
           <CardContent className="p-4 text-sm text-muted-foreground">
-            {t(
-              'sharedPages.chatDetail.railContent',
-              'Booking details and quick actions will live in this rail.',
-            )}
+            {t('sharedPages.chatDetail.railContent')}
           </CardContent>
         </Card>
       }
@@ -36,7 +30,7 @@ export function ChatDetailPage() {
               </div>
               <div className="max-w-[75%] space-y-1">
                 <div className="rounded-2xl rounded-bl-sm bg-card px-3 py-2 text-sm text-foreground">
-                  {t('sharedPages.chatDetail.sampleMessage', 'I can arrive by 10:00 tomorrow.')}
+                  {t('sharedPages.chatDetail.sampleMessage')}
                 </div>
                 <span className="block text-right text-[11px] text-text-tertiary">10:15</span>
               </div>
@@ -53,11 +47,11 @@ export function ChatDetailPage() {
         </Card>
         <div className="space-y-3 border-t border-border pt-3">
           <Textarea
-            aria-label={t('sharedPages.chatDetail.draftLabel', 'Message draft')}
-            placeholder={t('sharedPages.chatDetail.replyPlaceholder', 'Type your reply')}
+            aria-label={t('sharedPages.chatDetail.draftLabel')}
+            placeholder={t('sharedPages.chatDetail.replyPlaceholder')}
           />
-          <Button aria-label={t('sharedPages.chatDetail.sendLabel', 'Send message')} type="button">
-            {t('sharedPages.chatDetail.sendLabel', 'Send message')}
+          <Button aria-label={t('sharedPages.chatDetail.sendLabel')} type="button">
+            {t('sharedPages.chatDetail.sendLabel')}
           </Button>
         </div>
       </div>

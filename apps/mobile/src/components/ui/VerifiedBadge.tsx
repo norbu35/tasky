@@ -31,6 +31,7 @@ export function VerifiedBadge({ status, size = 'sm', testID, className }: Verifi
   const isVerified = status === 'verified';
   const iconSize = iconSizeMap[size];
   const Icon = isVerified ? ShieldCheck : Shield;
+  const statusLabelKey = isVerified ? 'verification.verified' : 'verification.pending';
 
   return (
     <View
@@ -42,12 +43,12 @@ export function VerifiedBadge({ status, size = 'sm', testID, className }: Verifi
         className,
       )}
       testID={testID}
-      accessibilityLabel={t(`verification.${status}`)}
+      accessibilityLabel={t(statusLabelKey)}
     >
       <Icon size={iconSize} color={colors.primaryForeground} />
       {size === 'md' && (
         <Text className="text-label font-sans-bold text-primary-foreground">
-          {t(`verification.${status}`)}
+          {t(statusLabelKey)}
         </Text>
       )}
     </View>
