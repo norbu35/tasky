@@ -63,6 +63,17 @@ Do not use repomix for narrow symbol lookups that Serena can answer.
 
 Frontend tasks run through Turborepo via `pnpm <task>`. Backend tasks use `./gradlew` and never system `gradle`.
 
+## I18n Rules
+
+Frontend implementation must use i18n for user-visible copy.
+
+- Do not introduce hardcoded user-facing strings in web or mobile UI, validation messages, toast/snackbar text, empty/error states, accessibility labels, placeholders, or test-only rendered copy. Add or reuse keys in the relevant `translation.json` files instead.
+- Do not pass literal fallback text to `t(...)`; call `t('namespace.key')` and keep the source of truth in locale files.
+- Keep key shape domain-scoped and stable. Avoid one-off generic keys unless the copy is genuinely shared.
+- When adding, renaming, or removing translation keys, update every supported locale in the same change and keep interpolation placeholders identical across locales.
+- Tests should assert translated UI through i18n-backed text or semantic roles, not by relying on inline fallback strings or mocks that return fallback arguments.
+- Run `pnpm verify:i18n` after touching frontend copy, locale files, i18n setup, or tests that render translated UI.
+
 ## Repo Skills
 
 Reusable repo-owned agent workflows live under `tooling/skills/**`.
@@ -135,6 +146,7 @@ Before writing or changing frontend integration or E2E tests for launch behavior
 - Keep `TID-*` for frontend-only technical checks such as token binding, parity, accessibility, API-client boundaries, and shell smoke coverage
 - Prefer splitting broad flow tests so each SCN-backed test covers one primary behavior
 - If no scenario covers the behavior and you are not the designated scenario curator for the current execution brief, stop and report the gap rather than inventing a frontend-only launch behavior
+- Test setup must exercise the same i18n contract as production: do not mock `t` to consume fallback arguments, and add locale keys for any text a test expects to render.
 
 Frontend: Web uses Vitest + RTL; Mobile uses Jest + RNTL. For auth, payments, wallet, migrations, or
 `SecurityConfig` changes, write positive and negative tests and call them out in the PR.

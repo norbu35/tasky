@@ -24,6 +24,8 @@ Additional references:
 - Consume generated SDK types from `@tasky/sdk`.
 - Respect the structural contract in `docs/architecture/mobile.md`.
 - Run the structure gate after any mobile architectural change.
+- All user-visible copy must come from `react-i18next` locale keys. Do not add inline copy, literal `t(...)` fallbacks, hardcoded accessibility labels, placeholders, alert/snackbar text, or empty/error state strings.
+- Locale changes must update every supported locale and preserve identical interpolation placeholders.
 
 ## Quick Reference
 
@@ -32,11 +34,17 @@ Additional references:
 - `screens/` is not a dumping ground for helpers or barrels.
 - Orchestration hooks under `screens/` use the `Screen` suffix; domain hooks outside `screens/` do not.
 
+## Testing Rules
+
+- Tests that render UI must use the production i18n contract or a test i18n instance loaded from locale files. Do not mock `t` to return fallback arguments.
+- If a test expects visible copy, add the locale key first and assert the rendered translated text or an accessibility role/name.
+
 ## Verification
 
 Default mobile validation:
 
 ```bash
+pnpm verify:i18n
 pnpm --filter @tasky/mobile typecheck
 pnpm --filter @tasky/mobile test:unit
 pnpm --filter @tasky/mobile lint

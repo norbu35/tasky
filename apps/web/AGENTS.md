@@ -25,6 +25,8 @@ Additional references:
 - Route structure belongs in `src/router/` and `src/pages/`.
 - Shared layouts belong in `src/layout/`.
 - Accessibility and focus behavior are part of the contract, not post-hoc polish.
+- All user-visible copy must come from `react-i18next` locale keys. Do not add inline copy, literal `t(...)` fallbacks, hardcoded aria labels, placeholders, toast text, or empty/error state strings.
+- Locale changes must update every supported locale and preserve identical interpolation placeholders.
 
 ## Testing Rules
 
@@ -32,12 +34,15 @@ Additional references:
 - If a touched web behavioral test has a clean scenario match, name it `SCN-XXX-NNN: <exact title from scenario file>`
 - Keep `TID-*` for web-only technical checks such as token binding, parity, accessibility, API-client boundaries, and shell smoke
 - Split broad flow tests when needed rather than forcing one SCN onto multiple behaviors
+- Tests that render UI must use the production i18n contract or a test i18n instance loaded from locale files. Do not mock `t` to return fallback arguments.
+- If a test expects visible copy, add the locale key first and assert the rendered translated text or an accessible role/name.
 
 ## Verification
 
 Default web validation:
 
 ```bash
+pnpm verify:i18n
 pnpm --filter @tasky/web typecheck
 pnpm --filter @tasky/web test:unit
 pnpm --filter @tasky/web lint
