@@ -61,7 +61,12 @@ export interface ApiClient {
 
   listMyTasks(accessToken: string): Promise<CursorPage<Task>>;
 
-  applyToTask(accessToken: string, taskId: string, message: string): Promise<TaskApplication>;
+  applyToTask(
+    accessToken: string,
+    taskId: string,
+    message: string,
+    quotePrice?: number | null,
+  ): Promise<TaskApplication>;
 
   listTaskApplications(accessToken: string, taskId: string): Promise<CursorPage<TaskApplication>>;
 
@@ -318,12 +323,21 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
     });
   }
 
-  applyToTask(accessToken: string, taskId: string, message: string): Promise<TaskApplication> {
+  applyToTask(
+    accessToken: string,
+    taskId: string,
+    message: string,
+    quotePrice?: number | null,
+  ): Promise<TaskApplication> {
+    const body: Record<string, unknown> = { message };
+    if (quotePrice != null) {
+      body['quote_price'] = quotePrice;
+    }
     return this.requestJson<TaskApplication>(
       `/tasks/${taskId}/applications`,
       {
         method: 'POST',
-        body: JSON.stringify({ message }),
+        body: JSON.stringify(body),
       },
       accessToken,
     );

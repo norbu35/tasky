@@ -154,7 +154,17 @@
     "fixedPrice": "Fixed price",
     "appMessageLabel": "Application message",
     "appMessagePlaceholder": "Explain why you are the best fit for this task...",
-    "applyButton": "Apply to task"
+    "applyButton": "Apply to task",
+    "acceptingQuotes": "Accepting quotes",
+    "quoteOnly": "Quote only",
+    "quoteRequest": "Customer wants quotes",
+    "budgetLabel": "Budget: {{amount}} MNT",
+    "yourQuoteLabel": "Your quote (MNT)",
+    "counterOfferLabel": "Counter-offer (MNT) — leave blank to accept budget",
+    "quotePlaceholder": "Enter your price",
+    "counterPlaceholder": "Optional",
+    "quoteRequiredHint": "Required — the customer is waiting for your price.",
+    "quotePriceRequired": "You must provide a quote price for this task."
   },
   "bookingConfirmation": {
     "invalidRequestTitle": "Invalid Request",
@@ -513,7 +523,12 @@
       "budgetInfo": "This is an estimate. Final price is agreed with the tasker.",
       "invalidBudget": "Please enter a valid budget relative to the minimum category price.",
       "photosTitle": "Task Photos",
-      "photosHelp": "Help taskers understand the work."
+      "photosHelp": "Help taskers understand the work.",
+      "pricingModeLabel": "Pricing",
+      "budgetMode": "I have a budget",
+      "quoteMode": "I want quotes",
+      "quoteModeHint": "Taskers will send you price quotes",
+      "quoteModeDesc": "You don't set a price. Taskers will submit their quotes and you pick the best offer."
     },
     "taskerProfile": {
       "title": "Tasker profile",

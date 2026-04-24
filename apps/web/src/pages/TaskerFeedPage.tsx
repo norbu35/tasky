@@ -17,6 +17,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '../components/ui/dialog';
+import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { useAppContext } from '../context/AppContext';
@@ -43,6 +44,7 @@ export function TaskerFeedPage() {
   });
 
   const [applyDrafts, setApplyDrafts] = useState<Record<string, string>>({});
+  const [quotePrices, setQuotePrices] = useState<Record<string, string>>({});
   const [working, setWorking] = useState(false);
   const [sentTaskId, setSentTaskId] = useState<string | null>(null);
   const [openDialogId, setOpenDialogId] = useState<string | null>(null);
@@ -74,9 +76,22 @@ export function TaskerFeedPage() {
       return;
     }
 
+    const task = taskCards.find((tc) => tc.id === taskId);
+    const rawQuote = quotePrices[taskId]?.trim();
+    if (task?.pricing_mode === 'QUOTE' && (!rawQuote || Number(rawQuote) < 20000)) {
+      toast.error(
+        t('taskerFeed.quotePriceRequired', 'You must provide a quote price for this task.'),
+      );
+      return;
+    }
+
     setWorking(true);
     try {
-      await apiClient.applyToTask(session.accessToken, taskId, draft);
+      const rawQuote = quotePrices[taskId]?.trim();
+      const quotePrice = rawQuote ? Number(rawQuote) : null;
+      await apiClient.applyToTask(session.accessToken, taskId, draft, quotePrice);
+      setApplyDrafts((prev) => ({ ...prev, [taskId]: '' }));
+      setQuotePrices((prev) => ({ ...prev, [taskId]: '' }));
       setApplyDrafts((prev) => ({ ...prev, [taskId]: '' }));
       setOpenDialogId(null);
       setSentTaskId(taskId);
@@ -237,9 +252,16 @@ export function TaskerFeedPage() {
                       {task.description}
                     </CardTitle>
                     <div className="text-2xl font-display font-bold text-foreground mt-1">
-                      {(task.budget ?? 0).toLocaleString(locale)}
-                      {' }'}
-                      <span className="text-sm font-normal text-muted-foreground">MNT</span>
+                      {task.pricing_mode === 'QUOTE' ? (
+                        <span className="text-base font-medium text-muted-foreground">
+                          {t('taskerFeed.acceptingQuotes', 'Accepting quotes')}
+                        </span>
+                      ) : (
+                        <>
+                          {(task.budget ?? 0).toLocaleString(locale)}{' '}
+                          <span className="text-sm font-normal text-muted-foreground">MNT</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </CardHeader>
@@ -250,7 +272,15 @@ export function TaskerFeedPage() {
                   </div>
                   <div className="flex items-center gap-2.5 text-foreground font-medium bg-muted/20 p-2.5 rounded-lg border border-border/30 shadow-sm">
                     <Coins className="w-4 h-4 shrink-0 text-primary/70" />
-                    <span>{t('taskerFeed.fixedPrice', 'Fixed price')}</span>
+                    <span>
+                      {task.pricing_mode === 'QUOTE'
+                        ? t('taskerFeed.quoteRequest', 'Customer wants quotes')
+                        : task.budget
+                          ? t('taskerFeed.budgetLabel', 'Budget: {{amount}} MNT', {
+                              amount: task.budget.toLocaleString(locale),
+                            })
+                          : t('taskerFeed.fixedPrice', 'Fixed price')}
+                    </span>
                   </div>
                 </CardContent>
                 <CardFooter className="bg-muted/10 border-t border-border/40 p-4 mt-auto">
@@ -302,12 +332,25 @@ export function TaskerFeedPage() {
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-2xl font-bold text-primary font-display">
-                                {(task.budget ?? 0).toLocaleString(locale)}
-                              </div>
-                              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
-                                MNT
-                              </div>
+                              {task.pricing_mode === 'QUOTE' ? (
+                                <div>
+                                  <div className="text-base font-semibold text-primary font-display">
+                                    {t('taskerFeed.acceptingQuotes', 'Accepting quotes')}
+                                  </div>
+                                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
+                                    {t('taskerFeed.quoteOnly', 'Quote only')}
+                                  </div>
+                                </div>
+                              ) : (
+                                <div>
+                                  <div className="text-2xl font-bold text-primary font-display">
+                                    {(task.budget ?? 0).toLocaleString(locale)}
+                                  </div>
+                                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
+                                    MNT
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           </div>
 
@@ -409,6 +452,40 @@ export function TaskerFeedPage() {
                             )}
                           />
                         </div>
+
+                        <div className="flex flex-col gap-2 mt-4">
+                          <Label htmlFor={`quote-${task.id}`}>
+                            {task.pricing_mode === 'QUOTE'
+                              ? t('taskerFeed.yourQuoteLabel', 'Your quote (MNT)')
+                              : t(
+                                  'taskerFeed.counterOfferLabel',
+                                  'Counter-offer (MNT) — leave blank to accept budget',
+                                )}
+                          </Label>
+                          <Input
+                            id={`quote-${task.id}`}
+                            type="number"
+                            min="20000"
+                            placeholder={
+                              task.pricing_mode === 'QUOTE'
+                                ? t('taskerFeed.quotePlaceholder', 'Enter your price')
+                                : t('taskerFeed.counterPlaceholder', 'Optional')
+                            }
+                            value={quotePrices[task.id] ?? ''}
+                            onChange={(e) =>
+                              setQuotePrices((prev) => ({ ...prev, [task.id]: e.target.value }))
+                            }
+                          />
+                          {task.pricing_mode === 'QUOTE' && (
+                            <p className="text-xs text-muted-foreground">
+                              {t(
+                                'taskerFeed.quoteRequiredHint',
+                                'Required — the customer is waiting for your price.',
+                              )}
+                            </p>
+                          )}
+                        </div>
+
                         <div className="mt-5">
                           <Button
                             disabled={working || (applyDrafts[task.id] ?? '').trim().length < 10}

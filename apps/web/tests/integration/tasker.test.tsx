@@ -160,6 +160,7 @@ describe('Tasker phase 1 parity', () => {
         'access-token',
         'public-task-1',
         'I can complete this task quickly and safely.',
+        null,
       );
     });
 

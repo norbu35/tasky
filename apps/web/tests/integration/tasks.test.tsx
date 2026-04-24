@@ -145,6 +145,7 @@ describe('Tasks Integration', () => {
         'access-token',
         'public-task-privacy-1',
         'I can complete this task quickly and safely.',
+        null,
       );
     });
     expect(await screen.findByText('Application sent.')).toBeInTheDocument();

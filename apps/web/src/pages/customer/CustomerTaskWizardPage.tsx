@@ -22,6 +22,9 @@ import { ResponsiveWizardShell, StatePanel } from '../../layout/parity';
 import type { Category, Task } from '../../lib/apiClient';
 import { parseError } from '../../lib/errorHandling';
 
+const PRICING_MODES = ['BUDGET', 'QUOTE'] as const;
+type PricingMode = (typeof PRICING_MODES)[number];
+
 export function CustomerTaskWizardPage() {
   const { t, i18n } = useTranslation();
   const { apiClient, session, trackClientEvent } = useAppContext();
@@ -30,6 +33,7 @@ export function CustomerTaskWizardPage() {
   const [intakeAnswers, setIntakeAnswers] = useState<Record<string, unknown>>({});
   const [summaryManuallyEdited, setSummaryManuallyEdited] = useState(false);
   const [description, setDescription] = useState('');
+  const [pricingMode, setPricingMode] = useState<PricingMode>('BUDGET');
   const [budget, setBudget] = useState('50000');
   const [locationText, setLocationText] = useState('');
   const [locationLat, setLocationLat] = useState(47.9184);
@@ -105,10 +109,12 @@ export function CustomerTaskWizardPage() {
     setSuccessMessage(null);
 
     try {
+      const parsedBudget = pricingMode === 'BUDGET' ? Number(budget) : null;
+
       const payload = createTaskSchema.parse({
         category_id: categoryId,
         description: description.trim(),
-        budget: Number(budget),
+        budget: parsedBudget,
         location_lat: locationLat,
         location_lng: locationLng,
         location_text: locationText.trim(),
@@ -118,7 +124,8 @@ export function CustomerTaskWizardPage() {
 
       const created = await apiClient.createTask(session.accessToken, {
         ...payload,
-        pricing_mode: 'BUDGET',
+        pricing_mode: pricingMode,
+        budget: parsedBudget,
         intake_answers: intakeSchema ? intakeAnswers : {},
         intake_schema_version: intakeSchema?.version ?? 1,
         scope_summary: intakeSchema ? description.trim() : null,
@@ -258,17 +265,53 @@ export function CustomerTaskWizardPage() {
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
             <div className="grid gap-2">
-              <Label htmlFor="task-budget">
-                {t('customerPages.taskWizard.budgetLabel', 'Budget (MNT)')}
-              </Label>
-              <Input
-                id="task-budget"
-                type="number"
-                min="0"
-                value={budget}
-                onChange={(event) => setBudget(event.target.value)}
-              />
+              <Label>{t('customerPages.taskWizard.pricingModeLabel', 'Pricing')}</Label>
+              <div className="flex gap-2">
+                {PRICING_MODES.map((mode) => (
+                  <Button
+                    key={mode}
+                    type="button"
+                    variant={pricingMode === mode ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setPricingMode(mode)}
+                  >
+                    {mode === 'BUDGET'
+                      ? t('customerPages.taskWizard.budgetMode', 'I have a budget')
+                      : t('customerPages.taskWizard.quoteMode', 'I want quotes')}
+                  </Button>
+                ))}
+              </div>
             </div>
+
+            {pricingMode === 'BUDGET' ? (
+              <div className="grid gap-2">
+                <Label htmlFor="task-budget">
+                  {t('customerPages.taskWizard.budgetLabel', 'Budget (MNT)')}
+                </Label>
+                <Input
+                  id="task-budget"
+                  type="number"
+                  min="20000"
+                  value={budget}
+                  onChange={(event) => setBudget(event.target.value)}
+                />
+              </div>
+            ) : (
+              <div className="grid gap-2">
+                <Label>
+                  {t(
+                    'customerPages.taskWizard.quoteModeHint',
+                    'Taskers will send you price quotes',
+                  )}
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  {t(
+                    'customerPages.taskWizard.quoteModeDesc',
+                    "You don't set a price. Taskers will submit their quotes and you pick the best offer.",
+                  )}
+                </p>
+              </div>
+            )}
 
             <div className="grid gap-2">
               <Label htmlFor="task-scheduled-at">
