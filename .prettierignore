@@ -9,6 +9,7 @@ ios
 playwright-report
 test-results
 packages/sdk/src/generated
+docs/API.yaml
 repomix-output.xml
 apps/mobile/repomix-output.xml
 apps/web/repomix-output.xml

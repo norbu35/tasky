@@ -19,7 +19,7 @@ Pick the smallest lane that matches the job:
 
 | Lane       | Use for                                                                    | Primary commands                                                                                                                                                                                                                                      |
 | ---------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `verify`   | CI-local verification, hook surfaces, merge gates, release gate wiring     | `pnpm prepare:push`, `pnpm verify:cleanup`, `pnpm verify:ops`, `pnpm verify:i18n`, `pnpm verify:backend:static`, `pnpm verify:backend`, `pnpm verify:frontend`, `pnpm verify:scenario:smoke`, `pnpm verify:scenario:fidelity`, `pnpm verify:drift`    |
+| `verify`   | CI-local verification, hook surfaces, merge gates, release gate wiring     | `pnpm verify:cleanup`, `pnpm verify:ops`, `pnpm verify:i18n`, `pnpm verify:backend:static`, `pnpm verify:backend`, `pnpm verify:frontend`, `pnpm verify:scenario:smoke`, `pnpm verify:scenario:fidelity`, `pnpm verify:drift`                         |
 | `contract` | OpenAPI bundle, generated SDK, contract drift                              | `pnpm contract:openapi:bundle`, `pnpm contract:openapi:check`, `pnpm contract:sdk:generate`, `pnpm contract:sdk:drift`                                                                                                                                |
 | `repo`     | Docs governance, script-surface audit, ops inventory, workspace boundaries | `pnpm repo:docs:check`, `pnpm repo:docs:claims`, `pnpm repo:docs:claims:triage`, `pnpm repo:docs:claims:audit`, `pnpm repo:design:check`, `pnpm repo:prd:diff-ids`, `pnpm repo:ops:sync`, `pnpm repo:tooling:check`, `pnpm repo:workspace:boundaries` |
 | `deploy`   | Private staging push/deploy/smoke and performance smoke                    | `tooling/scripts/deploy/**`                                                                                                                                                                                                                           |
@@ -57,8 +57,8 @@ Not every command in a lane is a default finish gate. Treat these as conditional
 - Design navigation and lifecycle docs are machine-readable contracts: keep ID-bearing fields free of prose placeholders, and require canonical `SCR-*`, `JRN-*`, and lifecycle IDs before considering the change complete.
 - Deploy inputs must be deterministic: workflow refs, image tags, and config refs must resolve to one exact target.
 - Observability config must run as checked in. Do not rely on undocumented template expansion.
-- Compatibility aliases such as `openapi:*`, `sdk:*`, `docs:check`, `tooling:check`, and `workspace:boundaries`
-  exist for transition only. Prefer the lane names above in new work.
+- Use the canonical lane names above. Retired transition aliases such as `openapi:*`, `sdk:*`, `docs:check`,
+  `tooling:check`, and `workspace:boundaries` must stay removed.
 - Branch flow is `feature/*` -> `staging` -> `main`; keep verification wiring aligned with that route.
 - Do not bypass hooks with `--no-verify` for `staging`/`main` pushes.
 
@@ -151,7 +151,6 @@ Run the smallest gate that matches the claim.
 Default blocking gates:
 
 ```bash
-pnpm prepare:push
 pnpm verify:cleanup
 pnpm verify:ops
 pnpm verify:i18n

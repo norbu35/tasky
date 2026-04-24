@@ -27,6 +27,10 @@ packageScripts:
     lifecycle: blocking
     lane: backend_quality
     command: 'pnpm verify:backend:static && ./gradlew --no-daemon :services:api:check :services:api:jacocoTestCoverageVerification :services:api:openApiValidate'
+  verify:backend:slice:
+    lifecycle: manual
+    lane: backend_quality
+    command: './gradlew --no-daemon :services:api:jacocoSliceReport :services:api:jacocoSliceCoverageVerification'
   verify:i18n:
     lifecycle: blocking
     lane: frontend_quality
@@ -55,22 +59,42 @@ packageScripts:
     lifecycle: blocking
     lane: local_main_prepush
     command: 'pnpm verify:cleanup && pnpm verify:ops && pnpm verify:tdd && pnpm verify:backend && pnpm verify:frontend && pnpm verify:scenario:smoke && pnpm verify:drift'
-  verify:main-prepush:
-    lifecycle: blocking
-    lane: local_main_prepush
-    command: 'pnpm verify:prepush'
   contract:openapi:bundle:
-    lifecycle: blocking
+    lifecycle: manual
     lane: contract
     command: 'node tooling/scripts/contracts/bundle-openapi.mjs'
   contract:openapi:check:
     lifecycle: blocking
     lane: contract
     command: 'node tooling/scripts/contracts/validate-openapi-phase.mjs && node tooling/scripts/contracts/bundle-openapi.mjs --check && python3 tooling/scripts/contracts/validate-openapi-backend-contracts.py'
+  contract:sdk:generate:
+    lifecycle: manual
+    lane: contract
+    command: 'turbo run generate --filter=@tasky/sdk'
   contract:sdk:drift:
     lifecycle: blocking
     lane: contract
     command: 'bash tooling/scripts/contracts/validate-sdk-contract-drift.sh'
+  repo:docs:claims:
+    lifecycle: blocking
+    lane: docs
+    command: 'python3 tooling/scripts/governance/validate-doc-claims.py'
+  repo:docs:claims:triage:
+    lifecycle: manual
+    lane: docs
+    command: 'python3 tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py'
+  repo:docs:claims:audit:
+    lifecycle: report_only
+    lane: docs
+    command: 'python3 tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py'
+  repo:prd:diff-ids:
+    lifecycle: report_only
+    lane: docs
+    command: 'python3 tooling/skills/intake-to-prd/scripts/extract_prd_diff_ids.py'
+  repo:design:check:
+    lifecycle: blocking
+    lane: docs
+    command: 'python3 tooling/skills/design-surface-drift/scripts/check_screen_graph.py && python3 tooling/skills/design-surface-drift/scripts/check_journeys.py && python3 tooling/skills/design-surface-drift/scripts/check_lifecycles.py'
   repo:docs:check:
     lifecycle: blocking
     lane: docs
@@ -82,7 +106,59 @@ packageScripts:
   repo:tooling:check:
     lifecycle: blocking
     lane: tooling
-    command: "find tooling/scripts -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n && find tooling/scripts -type f -name '*.py' -print0 | xargs -0 -n1 python3 -m py_compile && node --test tooling/tests/ops-registry.test.mjs && node tooling/scripts/gates/check-tooling-surface.mjs"
+    command: "find tooling/scripts -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n && find tooling/scripts -type f -name '*.py' -print0 | xargs -0 -n1 python3 -m py_compile && node --test tooling/tests/*.test.mjs && node tooling/scripts/gates/check-tooling-surface.mjs"
+  repo:workspace:boundaries:
+    lifecycle: blocking
+    lane: repo
+    command: 'node tooling/scripts/governance/validate-workspace-boundaries.mjs'
+  build:
+    lifecycle: manual
+    lane: workspace
+    command: 'turbo build'
+  test:
+    lifecycle: manual
+    lane: workspace
+    command: 'turbo test'
+  test:coverage:
+    lifecycle: manual
+    lane: workspace
+    command: 'turbo test:coverage'
+  lint:
+    lifecycle: manual
+    lane: workspace
+    command: 'turbo lint'
+  format:
+    lifecycle: manual
+    lane: workspace
+    command: 'turbo format'
+  format:check:
+    lifecycle: manual
+    lane: workspace
+    command: 'turbo format:check'
+  typecheck:
+    lifecycle: manual
+    lane: workspace
+    command: 'turbo typecheck'
+  pack:
+    lifecycle: manual
+    lane: context_pack
+    command: 'repomix --split-output 2mb'
+  pack:backend:
+    lifecycle: manual
+    lane: context_pack
+    command: "repomix --include 'services/api/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,services/api/AGENTS.md,AGENTS.md,tests/**,tooling/config/**,build.gradle.kts,settings.gradle.kts,gradle.properties' -o repomix-backend.xml"
+  pack:web:
+    lifecycle: manual
+    lane: context_pack
+    command: "repomix --include 'apps/web/**,packages/core/**,packages/design-tokens/**,packages/sdk/**,packages/test-utils/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/web.md,docs/architecture/shared-frontend.md,apps/web/AGENTS.md,AGENTS.md,packages/core/AGENTS.md,packages/design-tokens/AGENTS.md,packages/sdk/AGENTS.md,packages/test-utils/AGENTS.md,tsconfig.json' -o repomix-web.xml"
+  pack:mobile:
+    lifecycle: manual
+    lane: context_pack
+    command: "repomix --include 'apps/mobile/**,packages/core/**,packages/design-tokens/**,packages/sdk/**,packages/test-utils/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/mobile.md,docs/architecture/shared-frontend.md,apps/mobile/AGENTS.md,AGENTS.md,packages/core/AGENTS.md,packages/design-tokens/AGENTS.md,packages/sdk/AGENTS.md,packages/test-utils/AGENTS.md' -o repomix-mobile.xml"
+  prepare:
+    lifecycle: manual
+    lane: package_lifecycle
+    command: 'husky'
 
 hooks:
   .husky/pre-commit:
@@ -94,14 +170,11 @@ hooks:
   .husky/pre-push:
     lifecycle: blocking
     requiredFragments:
+      - 'git diff --quiet'
+      - 'git diff --cached --quiet'
+      - 'pnpm verify:prepush'
       - 'pnpm verify:cleanup'
       - 'pnpm verify:ops'
-      - 'pnpm verify:tdd'
-      - 'pnpm verify:backend'
-      - 'pnpm verify:frontend'
-      - 'pnpm verify:scenario:smoke'
-      - 'pnpm verify:drift'
-      - 'tests/scenarios/'
   .husky/commit-msg:
     lifecycle: blocking
     requiredFragments:

@@ -235,7 +235,7 @@ def main() -> int:
             print(f" - {failure}", file=sys.stderr)
         print("autonomous remediation:", file=sys.stderr)
         print(" - update docs/openapi/** request schemas to include backend request DTO JSON fields", file=sys.stderr)
-        print(" - run: pnpm openapi:bundle && pnpm sdk:generate", file=sys.stderr)
+        print(" - run: pnpm contract:openapi:bundle && pnpm contract:sdk:generate", file=sys.stderr)
         return 1
 
     print(f"openapi-backend-contracts: PASS ({len(endpoints)} request DTO endpoint(s) checked)")

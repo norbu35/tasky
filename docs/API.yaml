@@ -1,5 +1,5 @@
 # GENERATED FILE. Do not edit directly.
-# Edit docs/openapi/** and run `pnpm openapi:bundle`.
+# Edit docs/openapi/** and run `pnpm contract:openapi:bundle`.
 openapi: 3.0.3
 info:
   title: Tasky API

@@ -23,8 +23,8 @@ pnpm --filter @tasky/sdk typecheck
 Conditional contract-regeneration validation:
 
 ```bash
-pnpm openapi:bundle
-pnpm --filter @tasky/sdk generate
+pnpm contract:openapi:bundle
+pnpm contract:sdk:generate
 pnpm --filter @tasky/sdk drift:check
 ```
 

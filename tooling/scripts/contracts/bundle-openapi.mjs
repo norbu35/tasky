@@ -12,7 +12,7 @@ const sourceRoot = path.join(repoRoot, "docs", "openapi", "openapi.yaml");
 const bundlePath = path.join(repoRoot, "docs", "API.yaml");
 const bundleHeader = [
     "# GENERATED FILE. Do not edit directly.",
-    "# Edit docs/openapi/** and run `pnpm openapi:bundle`.",
+    "# Edit docs/openapi/** and run `pnpm contract:openapi:bundle`.",
     "",
 ].join("\n");
 
@@ -166,7 +166,7 @@ function main() {
     if (checkOnly) {
         const existing = fs.existsSync(bundlePath) ? fs.readFileSync(bundlePath, "utf8") : "";
         if (existing !== bundle) {
-            console.error("OpenAPI bundle drift detected. Run `pnpm openapi:bundle`.");
+            console.error("OpenAPI bundle drift detected. Run `pnpm contract:openapi:bundle`.");
             process.exit(1);
         }
         console.log("OpenAPI bundle is up to date.");

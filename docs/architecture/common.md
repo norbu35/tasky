@@ -190,7 +190,7 @@ class: mn.tasky.common.outbox.OutboxRelayService
 
 1. **Pick up a task**: Use the active issue, ticket, or approved execution brief.
 2. **Design**: Update `docs/openapi/**` first (contract-first) when the API changes, then regenerate `docs/API.yaml`.
-3. **Generate**: Run `pnpm sdk:generate` to regenerate TypeScript SDK types from the contract.
+3. **Generate**: Run `pnpm contract:sdk:generate` to regenerate TypeScript SDK types from the contract.
 4. **Implement**: Write controller implementations and JDBI repositories.
 5. **Test**: Write tests for every "Done When" criterion. Run `./gradlew --no-daemon test`.
 6. **Verify**: Run `./gradlew openApiValidate`, `pnpm -r typecheck`, `pnpm -r test`.

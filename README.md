@@ -57,7 +57,7 @@ curl http://127.0.0.1:8080/actuator/health
 
 ```bash
 pnpm install
-pnpm sdk:generate
+pnpm contract:sdk:generate
 pnpm --filter @tasky/web dev
 pnpm --filter @tasky/mobile start
 ```
