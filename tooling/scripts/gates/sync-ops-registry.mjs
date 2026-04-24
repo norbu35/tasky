@@ -18,10 +18,15 @@ export const generatedInventoryPath = "docs/maintenance/generated/OPS_INVENTORY.
 
 function markdownTable(headers, rows) {
     const escapeCell = (value) => String(value ?? "").replaceAll("|", "\\|");
-    const header = `| ${headers.map(escapeCell).join(" | ")} |`;
-    const separator = `| ${headers.map(() => "---").join(" | ")} |`;
-    const body = rows.map((row) => `| ${row.map(escapeCell).join(" | ")} |`);
-    return [header, separator, ...body].join("\n");
+    const tableRows = [headers, ...rows].map((row) => row.map(escapeCell));
+    const widths = headers.map((_, columnIndex) =>
+        Math.max(3, ...tableRows.map((row) => row[columnIndex]?.length ?? 0)),
+    );
+    const formatRow = (row) =>
+        `| ${row.map((cell, columnIndex) => cell.padEnd(widths[columnIndex], " ")).join(" | ")} |`;
+    const separator = `| ${widths.map((width) => "-".repeat(width)).join(" | ")} |`;
+
+    return [formatRow(tableRows[0]), separator, ...tableRows.slice(1).map(formatRow)].join("\n");
 }
 
 function sortedEntries(record) {
