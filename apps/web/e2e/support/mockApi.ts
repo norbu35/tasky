@@ -46,6 +46,7 @@ function makeCategories() {
         is_active: true,
         sort_order: 1,
         intake_enabled: true,
+        assisted_distribution_enabled: true,
         intake_schema_version: 1,
         intake_schema_json: [
           {

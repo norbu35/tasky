@@ -10,9 +10,11 @@ import static org.mockito.Mockito.when;
 import java.time.Instant;
 import java.util.List;
 import mn.tasky.notification.application.NotificationService;
+import mn.tasky.task.application.TaskAssistanceService;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
-import mn.tasky.task.dao.TaskRescueEventDao;
+import mn.tasky.task.dto.AssistanceEvaluation;
+import mn.tasky.task.dto.TaskRescueEvent;
 import mn.tasky.task.dto.TaskState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +32,7 @@ class RescueSchedulerTest {
     private TaskApplicationDao taskApplicationDao;
 
     @Mock
-    private TaskRescueEventDao taskRescueEventDao;
+    private TaskAssistanceService taskAssistanceService;
 
     @Mock
     private NotificationService notificationService;
@@ -39,7 +41,7 @@ class RescueSchedulerTest {
 
     @BeforeEach
     void setUp() {
-        scheduler = new RescueScheduler(taskDao, taskApplicationDao, taskRescueEventDao, notificationService);
+        scheduler = new RescueScheduler(taskDao, taskApplicationDao, taskAssistanceService, notificationService);
     }
 
     @Test
@@ -64,12 +66,22 @@ class RescueSchedulerTest {
                 Instant.now());
         when(taskDao.findOpenOlderThan(any(Instant.class), eq(200))).thenReturn(List.of(task));
         when(taskApplicationDao.countByTaskId("t1")).thenReturn(0);
-        when(taskRescueEventDao.existsByTaskId("t1")).thenReturn(false);
+        when(taskAssistanceService.evaluateExternalDistribution(eq(task), eq(0), any(Instant.class)))
+                .thenReturn(new AssistanceEvaluation(true, AssistanceEvaluation.ALLOWED));
+        when(taskAssistanceService.recordExternalDistribution(eq(task), eq("DAYTIME"), any(Instant.class)))
+                .thenReturn(new TaskRescueEvent(
+                        "event-1",
+                        "t1",
+                        Instant.now(),
+                        "DAYTIME",
+                        "{}",
+                        TaskAssistanceService.INTERVENTION_EXTERNAL_DISTRIBUTION,
+                        TaskAssistanceService.INTERVENTION_STAGE_PRE_MATCH,
+                        Instant.now()));
 
         scheduler.processRescue();
 
-        verify(taskRescueEventDao)
-                .insert(anyString(), eq("t1"), any(Instant.class), eq("DAYTIME"), anyString(), eq("SYSTEM_ASSISTED"));
+        verify(taskAssistanceService).recordExternalDistribution(eq(task), eq("DAYTIME"), any(Instant.class));
         verify(notificationService).sendPush(eq("c1"), anyString(), anyString(), eq("RESCUE_INFO"));
     }
 
@@ -95,11 +107,13 @@ class RescueSchedulerTest {
                 Instant.now());
         when(taskDao.findOpenOlderThan(any(Instant.class), eq(200))).thenReturn(List.of(task));
         when(taskApplicationDao.countByTaskId("t1")).thenReturn(3);
+        when(taskAssistanceService.evaluateExternalDistribution(eq(task), eq(3), any(Instant.class)))
+                .thenReturn(new AssistanceEvaluation(false, AssistanceEvaluation.QUALIFIED_APPLICATION_EXISTS));
 
         scheduler.processRescue();
 
-        verify(taskRescueEventDao, never())
-                .insert(anyString(), anyString(), any(Instant.class), anyString(), anyString(), anyString());
+        verify(taskAssistanceService, never())
+                .recordExternalDistribution(any(TaskState.class), anyString(), any(Instant.class));
     }
 
     @Test
@@ -124,12 +138,13 @@ class RescueSchedulerTest {
                 Instant.now());
         when(taskDao.findOpenOlderThan(any(Instant.class), eq(200))).thenReturn(List.of(task));
         when(taskApplicationDao.countByTaskId("t1")).thenReturn(0);
-        when(taskRescueEventDao.existsByTaskId("t1")).thenReturn(true);
+        when(taskAssistanceService.evaluateExternalDistribution(eq(task), eq(0), any(Instant.class)))
+                .thenReturn(new AssistanceEvaluation(false, AssistanceEvaluation.INTERVENTION_ALREADY_EXISTS));
 
         scheduler.processRescue();
 
-        verify(taskRescueEventDao, never())
-                .insert(anyString(), anyString(), any(Instant.class), anyString(), anyString(), anyString());
+        verify(taskAssistanceService, never())
+                .recordExternalDistribution(any(TaskState.class), anyString(), any(Instant.class));
     }
 
     @Test
@@ -138,8 +153,8 @@ class RescueSchedulerTest {
 
         scheduler.processRescue();
 
-        verify(taskRescueEventDao, never())
-                .insert(anyString(), anyString(), any(Instant.class), anyString(), anyString(), anyString());
+        verify(taskAssistanceService, never())
+                .recordExternalDistribution(any(TaskState.class), anyString(), any(Instant.class));
     }
 
     @Test
@@ -183,11 +198,21 @@ class RescueSchedulerTest {
         when(taskDao.findOpenOlderThan(any(Instant.class), eq(200))).thenReturn(List.of(task1, task2));
         when(taskApplicationDao.countByTaskId("t1")).thenThrow(new RuntimeException("DB error"));
         when(taskApplicationDao.countByTaskId("t2")).thenReturn(0);
-        when(taskRescueEventDao.existsByTaskId("t2")).thenReturn(false);
+        when(taskAssistanceService.evaluateExternalDistribution(eq(task2), eq(0), any(Instant.class)))
+                .thenReturn(new AssistanceEvaluation(true, AssistanceEvaluation.ALLOWED));
+        when(taskAssistanceService.recordExternalDistribution(eq(task2), eq("DAYTIME"), any(Instant.class)))
+                .thenReturn(new TaskRescueEvent(
+                        "event-2",
+                        "t2",
+                        Instant.now(),
+                        "DAYTIME",
+                        "{}",
+                        TaskAssistanceService.INTERVENTION_EXTERNAL_DISTRIBUTION,
+                        TaskAssistanceService.INTERVENTION_STAGE_PRE_MATCH,
+                        Instant.now()));
 
         scheduler.processRescue();
 
-        verify(taskRescueEventDao)
-                .insert(anyString(), eq("t2"), any(Instant.class), eq("DAYTIME"), anyString(), eq("SYSTEM_ASSISTED"));
+        verify(taskAssistanceService).recordExternalDistribution(eq(task2), eq("DAYTIME"), any(Instant.class));
     }
 }

@@ -422,6 +422,8 @@ export interface paths {
          * @description Creates a new task in OPEN status using schema-driven intake payload.
          *     Deterministic scope summary generation runs before final submit; if generation fails,
          *     server falls back to canonical key-value summary and still returns success.
+         *     Task coordinates are validated against the Ulaanbaatar service area at posting time;
+         *     outside-area locations return `400 OUTSIDE_SERVICE_AREA`.
          *     Only authenticated customers can create tasks.
          */
         post: operations["createTask"];
@@ -818,7 +820,7 @@ export interface paths {
         /**
          * Flag and adjudicate no-show
          * @description No-show adjudication follows deterministic rules:
-         *     reminder at scheduled +10m; no-show flag eligibility at +15m; rejected if either party
+         *     reminder at scheduled +30m; no-show flag eligibility at +1h; rejected if either party
          *     posted a status/check-in in trailing 30 minutes or a newer accepted reschedule supersedes schedule.
          *     On success, both booking and linked task transition to NO_SHOW in one transaction.
          *     Requires Idempotency-Key header.
@@ -2239,6 +2241,8 @@ export interface components {
             is_active: boolean;
             sort_order: number;
             intake_enabled: boolean;
+            /** @description Admin launch-control flag for task-level assisted distribution. */
+            assisted_distribution_enabled: boolean;
             intake_schema_version: number;
             /** @description Active intake schema payload for task-posting clients. */
             intake_schema_json?: ({
@@ -2738,6 +2742,7 @@ export interface components {
             icon_url: string;
             sort_order: number;
             intake_enabled: boolean;
+            assisted_distribution_enabled: boolean;
             is_active?: boolean;
         };
         PayoutRequest: {

@@ -120,6 +120,18 @@ public class TaskApplicationService {
                 AnalyticsService.EVENT_APPLICATION_SUBMITTED,
                 taskerId,
                 Map.of(AnalyticsService.PROPERTY_TASK_ID, taskId, "application_id", application.id()));
+        analyticsService.track(
+                AnalyticsService.EVENT_QUALIFIED_APPLICATION,
+                taskerId,
+                Map.of(
+                        AnalyticsService.PROPERTY_TASK_ID,
+                        taskId,
+                        AnalyticsService.PROPERTY_TASKER_ID,
+                        taskerId,
+                        AnalyticsService.PROPERTY_CATEGORY_ID,
+                        task.categoryId(),
+                        AnalyticsService.PROPERTY_PRICING_MODE,
+                        task.pricingMode()));
         return TaskApplyResult.success(application);
     }
 

@@ -30,6 +30,7 @@ interface CategoryFormValues {
   icon_url: string;
   sort_order: number;
   intake_enabled: boolean;
+  assisted_distribution_enabled: boolean;
 }
 
 function CategoryFormDialog({
@@ -52,6 +53,7 @@ function CategoryFormDialog({
     icon_url: '',
     sort_order: 0,
     intake_enabled: true,
+    assisted_distribution_enabled: false,
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -59,7 +61,14 @@ function CategoryFormDialog({
     if (open && initial) {
       setForm(initial);
     } else if (open && !initial) {
-      setForm({ name: '', name_mn: '', icon_url: '', sort_order: 0, intake_enabled: true });
+      setForm({
+        name: '',
+        name_mn: '',
+        icon_url: '',
+        sort_order: 0,
+        intake_enabled: true,
+        assisted_distribution_enabled: false,
+      });
     }
   }, [open, initial]);
 
@@ -117,6 +126,26 @@ function CategoryFormDialog({
               value={form.sort_order}
               onChange={(e) =>
                 setForm((f) => ({ ...f, sort_order: parseInt(e.target.value, 10) || 0 }))
+              }
+            />
+          </div>
+          <div className="flex items-center justify-between rounded-md border p-3">
+            <Label htmlFor="cat-intake-enabled">{t('admin.categories.intake')}</Label>
+            <Switch
+              id="cat-intake-enabled"
+              checked={form.intake_enabled}
+              onCheckedChange={(checked) => setForm((f) => ({ ...f, intake_enabled: checked }))}
+            />
+          </div>
+          <div className="flex items-center justify-between rounded-md border p-3">
+            <Label htmlFor="cat-assisted-distribution">
+              {t('admin.categories.assistedDistribution')}
+            </Label>
+            <Switch
+              id="cat-assisted-distribution"
+              checked={form.assisted_distribution_enabled}
+              onCheckedChange={(checked) =>
+                setForm((f) => ({ ...f, assisted_distribution_enabled: checked }))
               }
             />
           </div>
@@ -300,7 +329,7 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
         session.accessToken,
         categoryId,
         version,
-        'rollback',
+        'ROLLBACK_TO_LAST_KNOWN_GOOD',
       );
       setVersions((prev) => prev.map((v) => (v.version === updated.version ? updated : v)));
       toast.success(t('admin.categories.schemaRolledBack'));
@@ -421,6 +450,7 @@ export function AdminCategoriesPage() {
       icon_url: values.icon_url,
       sort_order: values.sort_order,
       intake_enabled: values.intake_enabled,
+      assisted_distribution_enabled: values.assisted_distribution_enabled,
     };
 
     try {
@@ -539,6 +569,12 @@ export function AdminCategoriesPage() {
                       {t('admin.categories.intake')}:{' '}
                       {category.intake_enabled ? t('common.enabled') : t('common.disabled')}
                     </span>
+                    <span>
+                      {t('admin.categories.assistedDistribution')}:{' '}
+                      {category.assisted_distribution_enabled
+                        ? t('common.enabled')
+                        : t('common.disabled')}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -575,6 +611,7 @@ export function AdminCategoriesPage() {
                 icon_url: editingCategory.icon_url,
                 sort_order: editingCategory.sort_order,
                 intake_enabled: editingCategory.intake_enabled,
+                assisted_distribution_enabled: editingCategory.assisted_distribution_enabled,
               }
             : null
         }

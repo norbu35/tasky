@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.util.Optional;
 import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.task.application.TaskApplicationService;
+import mn.tasky.task.application.TaskAssistanceService;
 import mn.tasky.task.application.TaskCreationService;
 import mn.tasky.task.application.TaskDraftService;
 import mn.tasky.task.application.TaskLifecycleService;
@@ -51,6 +52,9 @@ class MarketplaceCommandHandlerTest {
     @Mock
     private TaskDraftService taskDraftService;
 
+    @Mock
+    private TaskAssistanceService taskAssistanceService;
+
     private MarketplaceCommandHandler handler;
 
     private final Instant now = Instant.now();
@@ -65,7 +69,8 @@ class MarketplaceCommandHandlerTest {
                 taskLifecycleService,
                 taskApplicationService,
                 taskPhotoService,
-                taskDraftService);
+                taskDraftService,
+                taskAssistanceService);
     }
 
     @Test
@@ -177,6 +182,13 @@ class MarketplaceCommandHandlerTest {
         handler.updateTaskStatus("t1", "COMPLETED");
 
         verify(taskLifecycleService).updateTaskStatus("t1", "COMPLETED");
+    }
+
+    @Test
+    void recordManualRescueIntervention_delegatesToTaskAssistanceService() {
+        handler.recordManualRescueIntervention("t1", "pre_match", "admin1");
+
+        verify(taskAssistanceService).recordManualRescue("t1", "pre_match", "admin1");
     }
 
     @Test

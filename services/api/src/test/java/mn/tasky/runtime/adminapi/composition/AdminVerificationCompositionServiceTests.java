@@ -8,6 +8,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -138,6 +139,22 @@ class AdminVerificationCompositionServiceTests {
 
             assertThat(page.data()).hasSize(1);
             assertThat(page.data().getFirst().userPhone()).isNull();
+        }
+
+        @Test
+        @DisplayName("SCN-VERIF-005: Verification queue exposes queue age and SLA posture for operational review")
+        void verificationQueueExposesQueueAgeAndSlaPosture() {
+            Instant submittedAt = Instant.parse("2026-04-10T00:00:00Z");
+            AdminVerificationQueueRow row = new AdminVerificationQueueRow(
+                    "v-sla", "u-sla", null, "SLA User", null, null, "PENDING", null, submittedAt, null);
+            when(queueProjectionService.listPending(null, 2)).thenReturn(List.of(row));
+
+            AdminVerificationPage page = service.pendingVerifications(null, 1);
+
+            VerificationDetailResponse response = page.data().getFirst();
+            assertThat(response.submittedAt()).isEqualTo(submittedAt.toString());
+            assertThat(response.slaDeadlineAt())
+                    .isEqualTo(submittedAt.plus(Duration.ofHours(24)).toString());
         }
 
         @Test

@@ -37,7 +37,7 @@ TEST_ROOT = REPO_ROOT / "services" / "api" / "src" / "test" / "java"
 SCENARIO_HEADER_RE = re.compile(r"^## (SCN-[A-Z]+-\d+)")
 THEN_RE = re.compile(r"^\s*Then\b", re.IGNORECASE)
 AND_RE = re.compile(r"^\s*And\b", re.IGNORECASE)
-DISPLAY_NAME_RE = re.compile(r'@DisplayName\("SCN-([A-Z]+-\d+)')
+DISPLAY_NAME_RE = re.compile(r"\bSCN-[A-Z]+\d*-\d+\b")
 ASSERTION_RE = re.compile(r"\b(?:assertThat|assertEquals|assertTrue|assertFalse|assertNotNull|assertNull|assertThrows|verify|assertAll)\b")
 
 
@@ -99,23 +99,37 @@ def build_display_name_index() -> dict[str, list[tuple[str, str]]]:
             continue
 
         current_method = None
-        current_display = None
+        current_display_ids: list[str] = []
+        display_buffer: list[str] = []
 
         for line in lines:
-            dn_match = DISPLAY_NAME_RE.search(line)
-            if dn_match:
-                current_display = dn_match.group(1)
+            if display_buffer:
+                display_buffer.append(line)
+                if ")" in line:
+                    current_display_ids = DISPLAY_NAME_RE.findall(" ".join(display_buffer))
+                    display_buffer = []
+                    current_method = None
+                continue
+
+            if "@DisplayName" in line:
+                if ")" in line:
+                    current_display_ids = DISPLAY_NAME_RE.findall(line)
+                else:
+                    display_buffer = [line]
+                    current_display_ids = []
+                current_method = None
+                continue
 
             method_match = java_method_re.match(line)
             if method_match:
                 current_method = method_match.group(1)
 
             # Associate display name with the method that follows
-            if current_display and current_method:
-                scn_id = f"SCN-{current_display}"
+            if current_display_ids and current_method:
                 rel = java_file.relative_to(REPO_ROOT).as_posix()
-                index.setdefault(scn_id, []).append((rel, current_method))
-                current_display = None
+                for scn_id in current_display_ids:
+                    index.setdefault(scn_id, []).append((rel, current_method))
+                current_display_ids = []
                 current_method = None
 
     return index

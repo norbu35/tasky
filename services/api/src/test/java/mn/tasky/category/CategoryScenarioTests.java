@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  */
 class CategoryScenarioTests {
 
-    // Three valid required fields — minimal passing schema (new contract with label_mn + structured options)
+    // Three valid required fields - minimal passing schema (new contract with label_mn + structured options)
     private static final String VALID_3_FIELD_SCHEMA =
             "[{\"key\":\"a\",\"label\":\"A\",\"label_mn\":\"A_mn\",\"type\":\"yes_no\",\"required\":true},"
                     + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\",\"type\":\"yes_no\",\"required\":true},"
@@ -94,7 +94,7 @@ class CategoryScenarioTests {
 
     private CategoryState activeCategory() {
         return new CategoryState(
-                CAT_ID, "Test", "Тест", "https://example.com/icon.png", true, 1, true, 1, VALID_3_FIELD_SCHEMA);
+                CAT_ID, "Test", "Тест", "https://example.com/icon.png", true, 1, true, true, 1, VALID_3_FIELD_SCHEMA);
     }
 
     private CategorySchemaVersion schemaVersion(int version, String status) {
@@ -114,8 +114,8 @@ class CategoryScenarioTests {
     @Test
     @DisplayName("SCN-CATEGORY-001: Admin can add a new service category")
     void adminCanAddNewCategory() {
-        CategoryState result =
-                categoryService.createCategory(new CreateCategory("Test", "Тест", "https://example.com/icon.png", 1));
+        CategoryState result = categoryService.createCategory(
+                new CreateCategory("Test", "Тест", "https://example.com/icon.png", 1, true, true));
 
         assertThat(result).isNotNull();
         assertThat(result.name()).isEqualTo("Test");
@@ -132,7 +132,8 @@ class CategoryScenarioTests {
         when(categoryDao.findById(CAT_ID)).thenReturn(Optional.of(current));
 
         Optional<CategoryState> result = categoryService.updateCategory(
-                CAT_ID, new UpdateCategory("Updated", "Шинэчлэгдсэн", "https://example.com/icon2.png", false, 5));
+                CAT_ID,
+                new UpdateCategory("Updated", "Шинэчлэгдсэн", "https://example.com/icon2.png", false, 5, true, false));
 
         assertThat(result).isPresent();
         assertThat(result.get().isActive()).isFalse();
@@ -183,6 +184,86 @@ class CategoryScenarioTests {
         schemaVersionService.activate(CAT_ID, 1);
 
         verify(schemaVersionDao).updateStatusAndActivatedAt(eq(rolledBack.id()), eq("ACTIVE"));
+    }
+
+    // ── SCN-CATEGORY-006 ─────────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("SCN-CATEGORY-006: Canary activation publishes a new schema version without rebinding existing drafts")
+    void canaryActivationPublishesNewSchemaVersionWithoutRebindingExistingDrafts() {
+        CategorySchemaVersion activeV1 = schemaVersion(1, "ACTIVE");
+        CategorySchemaVersion draftV2 = schemaVersion(2, "DRAFT");
+        CategorySchemaVersion activeV2 = schemaVersion(2, "ACTIVE");
+        when(schemaVersionDao.findByCategoryIdAndVersion(CAT_ID, 2))
+                .thenReturn(Optional.of(draftV2), Optional.of(activeV2));
+        when(schemaVersionDao.findActiveByCategoryId(CAT_ID)).thenReturn(Optional.of(activeV1));
+        when(categoryDao.findById(CAT_ID)).thenReturn(Optional.of(activeCategory()));
+
+        CategorySchemaVersion result = schemaVersionService.canaryActivate(CAT_ID, 2);
+
+        assertThat(result.version()).isEqualTo(2);
+        assertThat(result.status()).isEqualTo("ACTIVE");
+        verify(schemaVersionDao).updateStatus(eq(activeV1.id()), eq("ROLLED_BACK"));
+        verify(schemaVersionDao).updateStatusAndActivatedAt(eq(draftV2.id()), eq("ACTIVE"));
+        verify(categoryDao)
+                .update(
+                        eq(CAT_ID),
+                        eq("Test"),
+                        eq("Тест"),
+                        eq("https://example.com/icon.png"),
+                        eq(true),
+                        eq(1),
+                        eq(true),
+                        eq(true),
+                        eq(2),
+                        eq(draftV2.schemaJson()));
+    }
+
+    // ── SCN-CATEGORY-007 ─────────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("SCN-CATEGORY-007: Rollback restores the last-known-good schema version")
+    void rollbackRestoresLastKnownGoodSchemaVersion() {
+        CategorySchemaVersion fallbackV1 = schemaVersion(1, "ROLLED_BACK");
+        CategorySchemaVersion activeV2 = schemaVersion(2, "ACTIVE");
+        CategorySchemaVersion restoredV1 = schemaVersion(1, "ACTIVE");
+        when(schemaVersionDao.findLastKnownGoodByCategoryId(CAT_ID)).thenReturn(Optional.of(fallbackV1));
+        when(schemaVersionDao.findByCategoryIdAndVersion(CAT_ID, 1))
+                .thenReturn(Optional.of(fallbackV1), Optional.of(restoredV1));
+        when(schemaVersionDao.findActiveByCategoryId(CAT_ID)).thenReturn(Optional.of(activeV2));
+        when(categoryDao.findById(CAT_ID)).thenReturn(Optional.of(activeCategory()));
+
+        CategorySchemaVersion result = schemaVersionService.rollbackToLastKnownGood(CAT_ID);
+
+        assertThat(result.version()).isEqualTo(1);
+        assertThat(result.status()).isEqualTo("ACTIVE");
+        verify(schemaVersionDao).updateStatus(eq(activeV2.id()), eq("ROLLED_BACK"));
+        verify(schemaVersionDao).updateStatusAndActivatedAt(eq(fallbackV1.id()), eq("ACTIVE"));
+        verify(categoryDao)
+                .update(
+                        eq(CAT_ID),
+                        eq("Test"),
+                        eq("Тест"),
+                        eq("https://example.com/icon.png"),
+                        eq(true),
+                        eq(1),
+                        eq(true),
+                        eq(true),
+                        eq(1),
+                        eq(fallbackV1.schemaJson()));
+    }
+
+    // ── SCN-CATEGORY-008 ─────────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("SCN-CATEGORY-008: Rollback without a last-known-good schema fails with NO_FALLBACK")
+    void rollbackWithoutLastKnownGoodFailsWithNoFallback() {
+        when(schemaVersionDao.findLastKnownGoodByCategoryId(CAT_ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> schemaVersionService.rollbackToLastKnownGood(CAT_ID))
+                .isInstanceOf(CategorySchemaVersionService.NoFallbackException.class)
+                .extracting("code")
+                .isEqualTo("NO_FALLBACK");
     }
 
     // ── needs-scenario: label_mn validation ───────────────────────────────

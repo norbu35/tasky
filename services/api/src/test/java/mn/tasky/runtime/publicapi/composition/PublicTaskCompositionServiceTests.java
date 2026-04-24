@@ -104,6 +104,7 @@ class PublicTaskCompositionServiceTests {
                 true,
                 1,
                 true,
+                false,
                 1,
                 "{\"fields\":[]}");
     }

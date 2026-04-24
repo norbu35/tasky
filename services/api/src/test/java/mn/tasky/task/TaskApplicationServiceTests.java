@@ -3,6 +3,7 @@ package mn.tasky.task;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -291,6 +292,30 @@ class TaskApplicationServiceTests {
                             any(Instant.class));
             verify(notificationService).sendPush(eq(CUSTOMER_ID), anyString(), anyString(), eq("TASKER_APPLIED"));
             verify(analyticsService).track(eq(AnalyticsService.EVENT_APPLICATION_SUBMITTED), eq(TASKER_ID), any());
+        }
+
+        @Test
+        @DisplayName(
+                "SCN-ANALYTICS-004: Qualified application submitted event is emitted when a verified tasker applies")
+        void qualifiedApplicationAnalyticsEventEmitted() {
+            when(reviewEnforcementService.isUserLocked(TASKER_ID)).thenReturn(false);
+            when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(openTask()));
+            when(taskApplicationDao.hasAccepted(TASK_ID)).thenReturn(false);
+            when(userProfileService.getProfile(TASKER_ID)).thenReturn(Optional.of(verifiedTaskerProfile()));
+            when(taskApplicationDao.existsByTaskIdAndTaskerId(TASK_ID, TASKER_ID))
+                    .thenReturn(false);
+
+            TaskApplyResult result = service.applyToTask(TASKER_ID, "TASKER", TASK_ID, "I can do this", null);
+
+            assertThat(result.isSuccess()).isTrue();
+            verify(analyticsService)
+                    .track(
+                            eq(AnalyticsService.EVENT_QUALIFIED_APPLICATION),
+                            eq(TASKER_ID),
+                            argThat(properties -> TASK_ID.equals(properties.get(AnalyticsService.PROPERTY_TASK_ID))
+                                    && TASKER_ID.equals(properties.get(AnalyticsService.PROPERTY_TASKER_ID))
+                                    && "cat-1".equals(properties.get(AnalyticsService.PROPERTY_CATEGORY_ID))
+                                    && "BUDGET".equals(properties.get(AnalyticsService.PROPERTY_PRICING_MODE))));
         }
     }
 

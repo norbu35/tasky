@@ -217,7 +217,16 @@ class TaskApplicationScenarioTests {
     @DisplayName("SCN-TASK-020: Task location outside Ulaanbaatar service area is rejected at posting")
     void rejectsTaskCreationOutsideUlaanbaatarServiceArea() {
         CategoryState activeCategory = new CategoryState(
-                CATEGORY_ID, "Cleaning", "Cleaning MN", "https://example.com/icon.png", true, 1, null, null, null);
+                CATEGORY_ID,
+                "Cleaning",
+                "Cleaning MN",
+                "https://example.com/icon.png",
+                true,
+                1,
+                null,
+                false,
+                null,
+                null);
         when(categoryService.getCategory(CATEGORY_ID)).thenReturn(Optional.of(activeCategory));
         when(reviewEnforcementService.isUserLocked(CUSTOMER_ID)).thenReturn(false);
         when(taskPhotoKeyHelper.areOwnedTaskPhotoKeys(List.of(), CUSTOMER_ID)).thenReturn(true);
@@ -275,6 +284,7 @@ class TaskApplicationScenarioTests {
                 true,
                 1,
                 null,
+                false,
                 null,
                 null);
         when(categoryService.getCategory(CATEGORY_ID)).thenReturn(Optional.of(activeAdminCategory));

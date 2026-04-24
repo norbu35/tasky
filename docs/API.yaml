@@ -459,6 +459,7 @@ components:
         - is_active
         - sort_order
         - intake_enabled
+        - assisted_distribution_enabled
         - intake_schema_version
       properties:
         id:
@@ -479,6 +480,9 @@ components:
           type: integer
         intake_enabled:
           type: boolean
+        assisted_distribution_enabled:
+          type: boolean
+          description: Admin launch-control flag for task-level assisted distribution.
         intake_schema_version:
           type: integer
         intake_schema_json:
@@ -1514,6 +1518,7 @@ components:
         - icon_url
         - sort_order
         - intake_enabled
+        - assisted_distribution_enabled
       properties:
         name:
           type: string
@@ -1525,6 +1530,8 @@ components:
         sort_order:
           type: integer
         intake_enabled:
+          type: boolean
+        assisted_distribution_enabled:
           type: boolean
         is_active:
           type: boolean

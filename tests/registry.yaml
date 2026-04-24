@@ -47,7 +47,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-KPI-04, REQ-P1-KPI-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Qualified application submitted event is emitted when a verified tasker
       applies
@@ -59,7 +59,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-KPI-04, REQ-P1-KPI-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Intervention recorded event is emitted when assisted distribution or manual
       rescue is used
@@ -71,7 +71,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-ASSIST-01
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Task outcome is classified as self-serve when no intervention occurred
   SCN-ASSIST-002:
@@ -82,7 +82,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-ASSIST-01
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Task outcome is classified as system-assisted when external distribution
       was used
@@ -94,7 +94,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-ASSIST-01
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Task outcome is classified as manual-assisted when operator performed rescue
   SCN-ASSIST-004:
@@ -105,7 +105,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-ASSIST-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: External distribution triggers only after 8 hours without qualified application
   SCN-ASSIST-005:
@@ -116,7 +116,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-ASSIST-04
     risk: medium
-    status: untested
+    status: covered
     test_type: medium-unit
     title: External distribution is limited to admin-eligible categories
   SCN-ASSIST-006:
@@ -127,7 +127,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-ASSIST-05
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: External distribution payloads do not expose exact address, raw contacts,
       or unsupported trust claims
@@ -139,7 +139,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-ASSIST-06
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Tasks advanced through external distribution are excluded from self-serve
       fulfillment reporting
@@ -151,7 +151,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-ASSIST-07
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Manual task-specific rescue is recorded as intervention
   SCN-AUTH-001:
@@ -660,7 +660,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-ADMIN-09
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Canary activation publishes a new schema version without rebinding existing
       drafts
@@ -672,7 +672,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-ADMIN-09
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Rollback restores the last-known-good schema version
   SCN-CATEGORY-008:
@@ -683,7 +683,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-ADMIN-09
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Rollback without a last-known-good schema fails with NO_FALLBACK
   SCN-CONTRACT-400:
@@ -939,7 +939,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-NOTIF-06
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Verification decision notification is sent to the affected tasker
   SCN-NOTIF-007:
@@ -1579,6 +1579,6 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-ADMIN-10
     risk: medium
-    status: untested
+    status: covered
     test_type: medium-unit
     title: Verification queue exposes queue age and SLA posture for operational review

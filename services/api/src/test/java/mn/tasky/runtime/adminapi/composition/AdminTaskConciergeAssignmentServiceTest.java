@@ -154,6 +154,7 @@ class AdminTaskConciergeAssignmentServiceTest {
         verify(adminAuditCommandPort)
                 .recordAdminAction(
                         eq(adminId), eq("CONCIERGE_ASSIGN"), eq("BOOKING"), eq(bookingId), metadataCaptor.capture());
+        verify(marketplaceCommandPort).recordManualRescueIntervention(eq(taskId), eq("pre_match"), eq(adminId));
 
         // Verify the audit metadata contains the key evidence fields
         String metadata = metadataCaptor.getValue();

@@ -35,6 +35,8 @@ public interface MarketplaceCommandPort {
 
     void updateTaskStatus(String taskId, String status);
 
+    void recordManualRescueIntervention(String taskId, String interventionStage, String actorUserId);
+
     TaskDraft createDraft(String customerId, String categoryId);
 
     TaskDraft updateDraft(

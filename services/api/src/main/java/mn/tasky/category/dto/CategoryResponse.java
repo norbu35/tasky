@@ -10,5 +10,6 @@ public record CategoryResponse(
         @JsonProperty("is_active") boolean isActive,
         @JsonProperty("sort_order") int sortOrder,
         @JsonProperty("intake_enabled") boolean intakeEnabled,
+        @JsonProperty("assisted_distribution_enabled") boolean assistedDistributionEnabled,
         @JsonProperty("intake_schema_version") int intakeSchemaVersion,
         @JsonProperty("intake_schema_json") Object intakeSchemaJson) {}

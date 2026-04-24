@@ -117,6 +117,7 @@ const assignedBooking: Booking = {
       is_active: true,
       sort_order: 1,
       intake_enabled: false,
+      assisted_distribution_enabled: false,
       intake_schema_version: 0,
     },
     customer_id: 'customer-1',

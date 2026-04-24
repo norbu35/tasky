@@ -10,5 +10,6 @@ public record CategoryState(
         boolean isActive,
         int sortOrder,
         @Nullable Boolean intakeEnabled,
+        @Nullable Boolean assistedDistributionEnabled,
         @Nullable Integer intakeSchemaVersion,
         @Nullable String intakeSchemaJson) {}

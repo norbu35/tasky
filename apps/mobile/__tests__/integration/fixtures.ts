@@ -68,6 +68,7 @@ export const baseTask: PublicTask = {
     is_active: true,
     sort_order: 1,
     intake_enabled: false,
+    assisted_distribution_enabled: false,
     intake_schema_version: 0,
   },
   customer: {
@@ -98,6 +99,7 @@ export const repairTask: PublicTask = {
     is_active: true,
     sort_order: 2,
     intake_enabled: false,
+    assisted_distribution_enabled: false,
     intake_schema_version: 0,
   },
   customer: {

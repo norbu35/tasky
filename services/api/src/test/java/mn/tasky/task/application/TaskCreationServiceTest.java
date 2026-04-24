@@ -77,7 +77,7 @@ class TaskCreationServiceTest {
     private TaskCreationService service;
 
     private final CategoryState activeCategory =
-            new CategoryState("cat1", "Plumbing", "desc", null, true, 0, false, null, null);
+            new CategoryState("cat1", "Plumbing", "desc", null, true, 0, false, false, null, null);
 
     @BeforeEach
     void setUp() {
@@ -154,7 +154,8 @@ class TaskCreationServiceTest {
         @DisplayName("returns INVALID_CATEGORY when category inactive")
         void categoryInactive() {
             when(reviewEnforcementService.isUserLocked("c1")).thenReturn(false);
-            CategoryState inactive = new CategoryState("cat1", "Plumbing", "desc", null, false, 0, false, null, null);
+            CategoryState inactive =
+                    new CategoryState("cat1", "Plumbing", "desc", null, false, 0, false, false, null, null);
             when(categoryService.getCategory("cat1")).thenReturn(Optional.of(inactive));
             assertThat(service.createTask("c1", validCommand()).errorCode())
                     .isEqualTo(TaskCreateResult.INVALID_CATEGORY);

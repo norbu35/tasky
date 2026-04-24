@@ -37,7 +37,7 @@ class TaskDraftServiceTest {
     private TaskDraftService service;
 
     private final CategoryState activeCategory =
-            new CategoryState("cat1", "Plumbing", "desc", null, true, 0, true, null, null);
+            new CategoryState("cat1", "Plumbing", "desc", null, true, 0, true, false, null, null);
 
     private final CategorySchemaVersion schemaVersion = new CategorySchemaVersion(
             "sv1", "cat1", 1, "[{\"key\":\"q1\"}]", "ACTIVE", "admin", Instant.now(), Instant.now());
@@ -66,7 +66,7 @@ class TaskDraftServiceTest {
         @Test
         @DisplayName("throws when category is inactive")
         void inactiveCategory() {
-            CategoryState inactive = new CategoryState("cat1", "Pl", "d", null, false, 0, true, null, null);
+            CategoryState inactive = new CategoryState("cat1", "Pl", "d", null, false, 0, true, false, null, null);
             when(categoryDao.findById("cat1")).thenReturn(Optional.of(inactive));
             assertThatThrownBy(() -> service.createDraft("c1", "cat1"))
                     .isInstanceOf(IllegalStateException.class)
@@ -76,7 +76,7 @@ class TaskDraftServiceTest {
         @Test
         @DisplayName("throws when intake not enabled")
         void intakeNotEnabled() {
-            CategoryState noIntake = new CategoryState("cat1", "Pl", "d", null, true, 0, false, null, null);
+            CategoryState noIntake = new CategoryState("cat1", "Pl", "d", null, true, 0, false, false, null, null);
             when(categoryDao.findById("cat1")).thenReturn(Optional.of(noIntake));
             assertThatThrownBy(() -> service.createDraft("c1", "cat1"))
                     .isInstanceOf(IllegalStateException.class)
