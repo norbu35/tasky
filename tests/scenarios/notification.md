@@ -66,8 +66,8 @@ Then the affected tasker receives a push notification informing them of the deci
 
 **Risk:** High
 **PRD:** REQ-P1-NOTIF-05
-**Title:** Completion prompt and review obligation notification is sent to both participants
+**Title:** Review obligation notification is sent to both participants
 
-Given a booking has just transitioned to COMPLETED
-When the completion workflow finishes
+Given a reviewable terminal outcome has created review debt
+When the review obligation workflow finishes
 Then both the customer and tasker receive a notification prompting them to submit their owed review

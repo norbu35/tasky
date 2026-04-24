@@ -131,7 +131,7 @@
             properties:
               reason:
                 type: string
-                description: Optional cancellation reason. Taskers can use "Safety/Fraud" to bypass strikes.
+                description: Optional cancellation reason. Taskers can use `SAFETY_FRAUD` to mark a safety/fraud cancellation.
     responses:
       '200':
         description: Booking cancelled.
@@ -403,6 +403,20 @@
     parameters:
       - $ref: ../components/parameters.yaml#/PathId
       - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - liability_disclaimer_accepted
+            properties:
+              liability_disclaimer_accepted:
+                type: boolean
+                enum:
+                  - true
+                description: Customer liability disclaimer acceptance required before booking confirmation.
     responses:
       '200':
         description: Booking created from intent.

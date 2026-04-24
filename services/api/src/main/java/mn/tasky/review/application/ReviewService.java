@@ -2,6 +2,7 @@ package mn.tasky.review.application;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import mn.tasky.auth.application.BadgeEvaluationService;
 import mn.tasky.auth.application.UserProfileService;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Service responsible for managing user reviews and ratings.
- * Allows participants of a completed booking to review each other.
+ * Allows participants of a reviewable terminal booking outcome to review each other.
  */
 @Service
 public class ReviewService {
@@ -24,6 +25,7 @@ public class ReviewService {
     private final ReviewDao reviewDao;
     private final ReviewEnforcementService reviewEnforcementService;
     private final BadgeEvaluationService badgeEvaluationService;
+    private static final Set<String> REVIEWABLE_STATUSES = Set.of("COMPLETED", "CANCELLED", "NO_SHOW");
 
     public ReviewService(
             BookingService bookingService,
@@ -39,14 +41,13 @@ public class ReviewService {
     }
 
     /**
-     * Submits a rating and review for a completed booking.
-     * Validates that the submitter is a participant, the booking is completed,
+     * Submits a rating and review for a reviewable terminal booking.
+     * Validates that the submitter is a participant, the booking is reviewable,
      * and that the submitter hasn't already reviewed this booking.
      * Updates the target user's aggregate rating statistics.
      *
      * @param authorId  The ID of the user submitting the review.
-     * @param bookingId The ID of the completed booking.
-     * @param rating    The integer rating (1 to 5).
+     * @param bookingId The ID of the reviewable booking.
      * @param comment   An optional text review/comment.
      * @return A {@link ReviewSubmitResult} containing the created Review or an error.
      */
@@ -67,7 +68,7 @@ public class ReviewService {
         }
         var booking = bookingOpt.get();
 
-        if (!"COMPLETED".equals(booking.status())) {
+        if (!REVIEWABLE_STATUSES.contains(booking.status())) {
             return new ReviewSubmitResult(null, "BOOKING_NOT_COMPLETED");
         }
 
@@ -83,7 +84,12 @@ public class ReviewService {
             return new ReviewSubmitResult(null, "NOT_PARTICIPANT");
         }
 
-        // Role-specific rating validation (REQ-SAFE-02)
+        if (!"COMPLETED".equals(booking.status())
+                && !reviewEnforcementService.hasCaseForBookingAndUser(bookingId, authorId)) {
+            return new ReviewSubmitResult(null, "BOOKING_NOT_COMPLETED");
+        }
+
+        // Role-specific rating validation (REQ-P1-SAFE-02)
         double reviewAverage;
         Integer effectiveClarityRating = clarityRating;
         Integer effectiveRespectfulnessRating = respectfulnessRating;

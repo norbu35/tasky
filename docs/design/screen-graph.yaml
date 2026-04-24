@@ -184,6 +184,7 @@ nodes:
     data_deps:
       - booking_id
       - counterparty_profile
+    note: Shows three role-specific star categories and labels the text field as optional
   SCR-SHARED-018:
     label: Review Reminder
     edges:
@@ -695,7 +696,7 @@ nodes:
         guard: tap 'Message'
       - to: SCR-SHARED-017
         type: push
-        guard: tap 'Leave Review', after completion
+        guard: tap 'Leave Review', after review debt exists
       - to: SCR-TASK-012
         type: pop
         guard: back

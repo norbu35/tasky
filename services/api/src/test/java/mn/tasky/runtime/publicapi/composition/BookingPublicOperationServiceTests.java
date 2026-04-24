@@ -13,7 +13,14 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import mn.tasky.booking.dto.*;
+import mn.tasky.booking.dto.BookingMarkDoneResult;
+import mn.tasky.booking.dto.BookingScheduleEvent;
+import mn.tasky.booking.dto.BookingState;
+import mn.tasky.booking.dto.BookingTransitionResult;
+import mn.tasky.booking.dto.NoShowFlagResult;
+import mn.tasky.booking.dto.RebookResult;
+import mn.tasky.booking.dto.RescheduleRequest;
+import mn.tasky.booking.dto.RescheduleRespondRequest;
 import mn.tasky.booking.publicapi.BookingCommandPort;
 import mn.tasky.booking.publicapi.BookingQueryPort;
 import mn.tasky.common.idempotency.IdempotencyClaim;
@@ -157,6 +164,25 @@ class BookingPublicOperationServiceTests {
             verify(idempotencyService)
                     .completeWithResource(
                             userId, IdempotencyOperations.CANCEL_BOOKING, idempotencyKey, "BOOKING", bookingId);
+        }
+
+        @Test
+        @DisplayName("NEW claim with cancellation reason forwards reason to command port")
+        void newClaimSuccessWithReason() {
+            when(idempotencyService.claim(userId, IdempotencyOperations.CANCEL_BOOKING, idempotencyKey))
+                    .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
+
+            BookingState booking = defaultBooking();
+            when(bookingCommandPort.cancelBooking(userId, bookingId, "[SAFETY_FRAUD] suspicious behavior"))
+                    .thenReturn(BookingTransitionResult.success(booking));
+            when(bookingResponseCompositionService.bookingResponse(booking)).thenReturn(Map.of("id", bookingId));
+
+            BookingOperationOutcome outcome =
+                    service.cancelBooking(userId, bookingId, idempotencyKey, "[SAFETY_FRAUD] suspicious behavior");
+
+            assertThat(outcome.status()).isEqualTo(BookingOperationOutcome.Status.SUCCESS);
+            verify(bookingCommandPort).cancelBooking(userId, bookingId, "[SAFETY_FRAUD] suspicious behavior");
+            verify(bookingCommandPort, never()).cancelBooking(userId, bookingId);
         }
 
         @Test

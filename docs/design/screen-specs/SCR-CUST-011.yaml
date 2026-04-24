@@ -138,11 +138,6 @@ copy:
     en: 'Accepts your budget'
     max_chars: 26
 
-  - key: pricing_counter_offer
-    mn: 'Эсрэг үнэ: ₮{amount}'
-    en: 'Counter-offer: ₮{amount}'
-    max_chars: 28
-
   - key: pricing_quote
     mn: 'Үнийн санал: ₮{amount}'
     en: 'Quote: ₮{amount}'
@@ -219,7 +214,7 @@ acceptance_criteria:
   - 'Applicant cards use SplitCard application variant with Tasker avatar, name, verification badge, completed-jobs trust cues, and structured pricing response summary'
   - 'Each applicant card has a tappable area to view Tasker profile (push to SCR-CUST-013) and a Select button'
   - 'Customers can review all applications, and the UI may optionally highlight a suggested subset without hiding the rest'
-  - 'If the task is in budget mode, each card clearly shows whether the Tasker accepts the budget or proposes a structured counter-offer; if the task is in quote mode, each card shows the submitted quote'
+  - 'If the task is in budget mode, each card shows that the Tasker accepts the posted budget; if the task is in quote mode, each card shows the submitted quote'
   - 'Public rating and review count appear only when the Tasker has crossed the minimum review-count threshold; otherwise trust cues rely on verification and completed-job history'
   - 'Tapping Select opens a confirmation bottom sheet before proceeding'
   - 'Confirming Select navigates (push) to Booking Request Confirmation SCR-CUST-014'

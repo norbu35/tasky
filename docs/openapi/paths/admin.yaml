@@ -640,6 +640,10 @@
               intake_enabled:
                 type: boolean
                 default: true
+              assisted_distribution_enabled:
+                type: boolean
+                default: false
+                description: Admin launch-control flag for task-level assisted distribution.
     responses:
       '201':
         description: Category created.
@@ -686,6 +690,9 @@
                 type: integer
               intake_enabled:
                 type: boolean
+              assisted_distribution_enabled:
+                type: boolean
+                description: Admin launch-control flag for task-level assisted distribution.
     responses:
       '200':
         description: Category updated.

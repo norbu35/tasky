@@ -315,21 +315,21 @@ And an application without a price quote is rejected
 
 **Risk:** High
 **PRD:** REQ-P1-PRICE-03
-**Title:** Tasker counter-offer on budget-mode task is structured and recorded
+**Title:** Budget-mode application rejects counter-offer price
 
 Given a customer created a task with a budget of 50000 MNT
-When a tasker submits an application with a counter-offer of 60000 MNT
-Then the counter-offer is recorded as a structured pricing response
-And the counter-offer is distinguishable from budget acceptance
+When a tasker submits an application with a price response of 60000 MNT
+Then the application is rejected
+And the tasker must apply by accepting the posted budget
 
 ## SCN-TASK-029
 
 **Risk:** High
 **PRD:** REQ-P1-PRICE-05
-**Title:** Customer sees original budget and counter-offer where both exist
+**Title:** Customer sees posted budget for budget-mode applications
 
 Given a task has budget-mode pricing
-And at least one application includes a counter-offer different from the posted budget
+And at least one application accepts the posted budget
 When the customer reviews applications
-Then the response includes both the original posted budget and each counter-offer amount
-And the customer can compare the original budget against counter-offers side by side
+Then the original posted budget remains visible
+And the application does not include a separate counter-offer amount

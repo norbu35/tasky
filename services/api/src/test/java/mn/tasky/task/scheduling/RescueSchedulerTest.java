@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.List;
-import mn.tasky.notification.application.NotificationService;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
 import mn.tasky.task.application.TaskAssistanceService;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
@@ -35,13 +35,13 @@ class RescueSchedulerTest {
     private TaskAssistanceService taskAssistanceService;
 
     @Mock
-    private NotificationService notificationService;
+    private NotificationCommandPort notificationCommandPort;
 
     private RescueScheduler scheduler;
 
     @BeforeEach
     void setUp() {
-        scheduler = new RescueScheduler(taskDao, taskApplicationDao, taskAssistanceService, notificationService);
+        scheduler = new RescueScheduler(taskDao, taskApplicationDao, taskAssistanceService, notificationCommandPort);
     }
 
     @Test
@@ -82,7 +82,7 @@ class RescueSchedulerTest {
         scheduler.processRescue();
 
         verify(taskAssistanceService).recordExternalDistribution(eq(task), eq("DAYTIME"), any(Instant.class));
-        verify(notificationService).sendPush(eq("c1"), anyString(), anyString(), eq("RESCUE_INFO"));
+        verify(notificationCommandPort).sendPush(eq("c1"), anyString(), anyString(), eq("RESCUE_INFO"));
     }
 
     @Test

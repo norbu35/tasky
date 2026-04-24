@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.analytics.application.AnalyticsService;
-import mn.tasky.category.dao.CategoryDao;
 import mn.tasky.category.dto.CategoryState;
+import mn.tasky.category.publicapi.CategoryQueryPort;
 import mn.tasky.task.dao.TaskRescueEventDao;
 import mn.tasky.task.dto.AssistanceEvaluation;
 import mn.tasky.task.dto.AssistanceOutcomeType;
@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class TaskAssistanceService {
 
-    public static final String INTERVENTION_EXTERNAL_DISTRIBUTION = "EXTERNAL_DISTRIBUTION";
-    public static final String INTERVENTION_MANUAL_ASSISTED = "MANUAL_ASSISTED";
+    public static final String INTERVENTION_EXTERNAL_DISTRIBUTION = "external_distribution";
+    public static final String INTERVENTION_MANUAL_RESCUE = "manual_rescue";
     public static final String INTERVENTION_STAGE_PRE_MATCH = "pre_match";
     public static final int EXTERNAL_DISTRIBUTION_THRESHOLD_HOURS = 8;
 
@@ -30,13 +30,15 @@ public class TaskAssistanceService {
             "{\"actions\":[\"MANUAL_TASK_RESCUE\",\"INTERVENTION_CREATED\"]}";
 
     private final TaskRescueEventDao taskRescueEventDao;
-    private final CategoryDao categoryDao;
+    private final CategoryQueryPort categoryQueryPort;
     private final AnalyticsService analyticsService;
 
     public TaskAssistanceService(
-            TaskRescueEventDao taskRescueEventDao, CategoryDao categoryDao, AnalyticsService analyticsService) {
+            TaskRescueEventDao taskRescueEventDao,
+            CategoryQueryPort categoryQueryPort,
+            AnalyticsService analyticsService) {
         this.taskRescueEventDao = taskRescueEventDao;
-        this.categoryDao = categoryDao;
+        this.categoryQueryPort = categoryQueryPort;
         this.analyticsService = analyticsService;
     }
 
@@ -61,7 +63,7 @@ public class TaskAssistanceService {
     }
 
     public boolean isCategoryEligibleForExternalDistribution(String categoryId) {
-        Optional<CategoryState> category = categoryDao.findById(categoryId);
+        Optional<CategoryState> category = categoryQueryPort.getCategory(categoryId);
         return category.filter(CategoryState::isActive)
                 .map(CategoryState::assistedDistributionEnabled)
                 .filter(Boolean.TRUE::equals)
@@ -116,16 +118,16 @@ public class TaskAssistanceService {
                 now,
                 "DAYTIME",
                 MANUAL_RESCUE_ACTIONS_JSON,
-                INTERVENTION_MANUAL_ASSISTED,
+                INTERVENTION_MANUAL_RESCUE,
                 interventionStage);
-        trackIntervention(taskId, INTERVENTION_MANUAL_ASSISTED, interventionStage, actorUserId);
+        trackIntervention(taskId, INTERVENTION_MANUAL_RESCUE, interventionStage, actorUserId);
         return new TaskRescueEvent(
                 eventId,
                 taskId,
                 now,
                 "DAYTIME",
                 MANUAL_RESCUE_ACTIONS_JSON,
-                INTERVENTION_MANUAL_ASSISTED,
+                INTERVENTION_MANUAL_RESCUE,
                 interventionStage,
                 now);
     }
@@ -140,7 +142,7 @@ public class TaskAssistanceService {
         }
 
         String type = intervention.get().interventionType();
-        if (INTERVENTION_MANUAL_ASSISTED.equals(type)) {
+        if (INTERVENTION_MANUAL_RESCUE.equals(type)) {
             return new TaskOutcomeClassification(AssistanceOutcomeType.MANUAL_ASSISTED, false, true);
         }
         return new TaskOutcomeClassification(AssistanceOutcomeType.SYSTEM_ASSISTED, false, true);
@@ -148,8 +150,6 @@ public class TaskAssistanceService {
 
     private void trackIntervention(
             String taskId, String storedInterventionType, String interventionStage, String userId) {
-        String eventInterventionType =
-                INTERVENTION_MANUAL_ASSISTED.equals(storedInterventionType) ? "manual_rescue" : "external_distribution";
         analyticsService.track(
                 AnalyticsService.EVENT_INTERVENTION_RECORDED,
                 userId,
@@ -157,7 +157,7 @@ public class TaskAssistanceService {
                         AnalyticsService.PROPERTY_TASK_ID,
                         taskId,
                         AnalyticsService.PROPERTY_INTERVENTION_TYPE,
-                        eventInterventionType,
+                        storedInterventionType,
                         AnalyticsService.PROPERTY_INTERVENTION_STAGE,
                         interventionStage));
     }

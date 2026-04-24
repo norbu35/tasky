@@ -4,22 +4,22 @@ Coverage tables for REQ-P1 and NFR → SCN traceability. For rules and enforceme
 
 ## REQ-P1 → SCN Coverage Matrix
 
-| REQ-P1 Domain | Total   | Covered      | Uncovered IDs                  | Priority |
-| ------------- | ------- | ------------ | ------------------------------ | -------- |
-| AUTH          | 6       | 6            | —                              | ✓        |
-| TASK          | 15      | 10           | 08, 11, 12, 13, 14             | 🟡       |
-| SAFE          | 18      | 14           | 03, 04, 13, 17                 | 🔴       |
-| MSG           | 5       | 5            | —                              | ✓        |
-| BOOK          | 28      | 25           | 17, 27, 28                     | 🔴       |
-| PRICE         | 8       | 6            | 06, 08                         | 🟡       |
-| MATCH         | 7       | 6            | 04                             | 🟡       |
-| NOTIF         | 7       | 5            | 03, 06                         | 🟡       |
-| ASSIST        | 8       | 0            | 01, 02, 03, 04, 05, 06, 07, 08 | 🔴       |
-| KPI           | 6       | 2            | 02, 03, 05, 06                 | 🔴       |
-| COVER         | 4       | 2            | 01, 06                         | 🔴       |
-| CAT           | 5       | 3            | 02, 03                         | 🟡       |
-| ADMIN         | 10      | 4            | 03, 04, 06, 07, 08, 10         | 🔴       |
-| **Total**     | **127** | **88 (69%)** | **39**                         |          |
+| REQ-P1 Domain | Total   | Covered      | Uncovered IDs          | Priority |
+| ------------- | ------- | ------------ | ---------------------- | -------- |
+| AUTH          | 6       | 6            | —                      | ✓        |
+| TASK          | 15      | 11           | 11, 12, 13, 14         | 🟡       |
+| SAFE          | 18      | 14           | 03, 04, 13, 17         | 🔴       |
+| MSG           | 5       | 5            | —                      | ✓        |
+| BOOK          | 28      | 26           | 27, 28                 | 🔴       |
+| PRICE         | 8       | 6            | 06, 08                 | 🟡       |
+| MATCH         | 7       | 6            | 04                     | 🟡       |
+| NOTIF         | 7       | 6            | 03                     | 🟡       |
+| ASSIST        | 8       | 5            | 02, 04, 08             | 🔴       |
+| KPI           | 6       | 3            | 02, 05, 06             | 🔴       |
+| COVER         | 4       | 2            | 01, 06                 | 🔴       |
+| CAT           | 5       | 3            | 02, 03                 | 🟡       |
+| ADMIN         | 10      | 4            | 03, 04, 06, 07, 08, 10 | 🔴       |
+| **Total**     | **127** | **97 (76%)** | **30**                 |          |
 
 ## SCN Domain → REQ-P1 Domain Map
 
@@ -30,7 +30,7 @@ Coverage tables for REQ-P1 and NFR → SCN traceability. For rules and enforceme
 | TASK         | 29        | TASK                         | domain-unit, integration |
 | SECURITY     | 11        | SAFE, NFR-SEC                | domain-unit, integration |
 | REVIEW       | 6         | SAFE                         | domain-unit              |
-| CATEGORY     | 8         | CAT                          | domain-unit              |
+| CATEGORY     | 13        | CAT, ADMIN                   | domain-unit              |
 | DISPUTE      | 8         | BOOK, SAFE                   | domain-unit              |
 | NOTIFICATION | 7         | NOTIF                        | domain-unit              |
 | ASSISTANCE   | 8         | ASSIST                       | domain-unit              |
@@ -39,7 +39,7 @@ Coverage tables for REQ-P1 and NFR → SCN traceability. For rules and enforceme
 | ANALYTICS    | 5         | KPI                          | domain-unit              |
 | CONTRACT     | 4         | NFR-API-02                   | integration              |
 | INTEGRATION  | 5         | AUTH, BOOK, TASK, NFR-API-02 | integration              |
-| **Total**    | **140**   |                              |                          |
+| **Total**    | **145**   |                              |                          |
 
 ## NFR → Phase 1 Status
 
@@ -53,11 +53,11 @@ Coverage tables for REQ-P1 and NFR → SCN traceability. For rules and enforceme
 | LEGAL      | 01–03 | Required       | SAFE, AUTH         |
 | LOC        | 01–03 | Phase 2+       | TASK, NOTIF, PRICE |
 
-## Registry State (2026-04-24)
+## Registry State (2026-04-25)
 
 | Status   | Count | Meaning                                    |
 | -------- | ----- | ------------------------------------------ |
-| covered  | 123   | Test implemented                           |
-| untested | 17    | Scenario defined; test pending             |
+| covered  | 145   | Test implemented                           |
+| untested | 0     | Scenario defined; test pending             |
 | waived   | 0     | No active waivers in the live registry     |
 | null     | 0     | No uncategorized rows in the live registry |

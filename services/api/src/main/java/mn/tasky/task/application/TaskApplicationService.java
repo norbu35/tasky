@@ -93,6 +93,9 @@ public class TaskApplicationService {
         if (isQuoteMode && quotePrice == null) {
             return new TaskApplyResult(null, TaskApplyResult.QUOTE_PRICE_REQUIRED);
         }
+        if (!isQuoteMode && quotePrice != null) {
+            return new TaskApplyResult(null, TaskApplyResult.BUDGET_PRICE_NOT_ALLOWED);
+        }
         String applicationId = UUID.randomUUID().toString();
         String sanitizedMessage = TextSanitizer.plainText(message);
         taskApplicationDao.insert(

@@ -51,7 +51,7 @@ PublicTask:
       enum:
         - BUDGET
         - QUOTE
-      description: 'BUDGET = customer sets a budget, taskers accept or counter-offer. QUOTE = taskers submit price quotes.'
+      description: 'BUDGET = customer sets a fixed budget that taskers accept to apply. QUOTE = taskers submit price quotes.'
     approximate_location:
       type: string
       description: Fuzzed location (district/khoroo level). Exact address hidden until booking.
@@ -121,7 +121,7 @@ Task:
       enum:
         - BUDGET
         - QUOTE
-      description: 'BUDGET = customer sets a budget, taskers accept or counter-offer. QUOTE = taskers submit price quotes.'
+      description: 'BUDGET = customer sets a fixed budget that taskers accept to apply. QUOTE = taskers submit price quotes.'
     location_lat:
       type: number
       format: double
@@ -378,7 +378,7 @@ TaskApplication:
     quote_price:
       type: integer
       nullable: true
-      description: "Tasker's price. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the quote (required)."
+      description: "Tasker's quote for QUOTE tasks. Omit or send null for BUDGET tasks, where applying accepts the posted budget."
     status:
       type: string
       enum:

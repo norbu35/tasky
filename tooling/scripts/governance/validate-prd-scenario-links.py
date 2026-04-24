@@ -21,6 +21,7 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[3]
 PRD_FILE = REPO_ROOT / "docs" / "PRD.md"
 SCENARIOS_DIR = REPO_ROOT / "tests" / "scenarios"
+BACKEND_TEST_DIR = REPO_ROOT / "services" / "api" / "src" / "test" / "java"
 
 PRD_SECTION_START_RE = re.compile(r"^## 11\. ", re.MULTILINE)
 PRD_SECTION_END_RE = re.compile(r"^## 16\. ", re.MULTILINE)
@@ -32,6 +33,7 @@ RISK_RE = re.compile(r"^\*\*Risk:\*\*\s*(Critical|High|Medium)\s*$", re.MULTILIN
 PRD_LINE_RE = re.compile(r"^\*\*PRD:\*\*\s*(.+?)\s*$", re.MULTILINE)
 TITLE_RE = re.compile(r"^\*\*Title:\*\*\s*(.+?)\s*$", re.MULTILINE)
 DEFERRED_MARKER_RE = re.compile(r"tasky:req-deferred\s+((?:REQ-P1|NFR)-[A-Z]+-\d{2})")
+NEEDS_SCENARIO_RE = re.compile(r"needs-scenario:", re.IGNORECASE)
 
 HIGH_COVERAGE_RISKS = {"critical", "high"}
 VALID_RISKS = {"critical", "high", "medium"}  # Phase 1: no "low" risk tier
@@ -221,11 +223,28 @@ def coverage_warnings(scenarios: list[Scenario], prd: PrdInventory) -> list[Find
     ]
 
 
+def validate_backend_tests_do_not_use_needs_scenario() -> list[Finding]:
+    failures: list[Finding] = []
+    if not BACKEND_TEST_DIR.exists():
+        return failures
+    for path in sorted(BACKEND_TEST_DIR.rglob("*.java")):
+        text = path.read_text(encoding="utf-8")
+        for match in NEEDS_SCENARIO_RE.finditer(text):
+            failures.append(
+                Finding(
+                    relative(path),
+                    text.count("\n", 0, match.start()) + 1,
+                    "`needs-scenario:` markers are not allowed in backend tests; add a curated SCN entry first.",
+                )
+            )
+    return failures
+
+
 def main() -> int:
     args = parse_args()
     prd = build_prd_inventory()
     scenarios, parse_failures = parse_scenarios()
-    failures = parse_failures + validate_refs(scenarios, prd)
+    failures = parse_failures + validate_refs(scenarios, prd) + validate_backend_tests_do_not_use_needs_scenario()
     warnings = coverage_warnings(scenarios, prd)
 
     failures = sorted(failures, key=lambda item: (item.source_file.as_posix(), item.line, item.message))

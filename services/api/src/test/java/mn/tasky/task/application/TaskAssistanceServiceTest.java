@@ -6,8 +6,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 import mn.tasky.analytics.application.AnalyticsService;
-import mn.tasky.category.dao.CategoryDao;
 import mn.tasky.category.dto.CategoryState;
+import mn.tasky.category.publicapi.CategoryQueryPort;
 import mn.tasky.task.dao.TaskRescueEventDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,22 +15,24 @@ import org.junit.jupiter.api.Test;
 
 class TaskAssistanceServiceTest {
 
-    private CategoryDao categoryDao;
+    private CategoryQueryPort categoryQueryPort;
     private TaskAssistanceService service;
 
     @BeforeEach
     void setUp() {
-        categoryDao = mock(CategoryDao.class);
-        service = new TaskAssistanceService(mock(TaskRescueEventDao.class), categoryDao, mock(AnalyticsService.class));
+        categoryQueryPort = mock(CategoryQueryPort.class);
+        service = new TaskAssistanceService(
+                mock(TaskRescueEventDao.class), categoryQueryPort, mock(AnalyticsService.class));
     }
 
     @Test
     @DisplayName("category eligibility requires both active category and admin assisted-distribution flag")
     void categoryEligibilityRequiresActiveCategoryAndAdminAssistedDistributionFlag() {
-        when(categoryDao.findById("active-assisted")).thenReturn(Optional.of(category("active-assisted", true, true)));
-        when(categoryDao.findById("inactive-assisted"))
+        when(categoryQueryPort.getCategory("active-assisted"))
+                .thenReturn(Optional.of(category("active-assisted", true, true)));
+        when(categoryQueryPort.getCategory("inactive-assisted"))
                 .thenReturn(Optional.of(category("inactive-assisted", false, true)));
-        when(categoryDao.findById("active-unassisted"))
+        when(categoryQueryPort.getCategory("active-unassisted"))
                 .thenReturn(Optional.of(category("active-unassisted", true, false)));
 
         assertThat(service.isCategoryEligibleForExternalDistribution("active-assisted"))

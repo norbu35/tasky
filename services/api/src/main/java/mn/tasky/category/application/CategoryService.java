@@ -102,7 +102,7 @@ public class CategoryService {
                 command.iconUrl().trim(),
                 true,
                 command.sortOrder(),
-                command.intakeEnabled() == null ? true : command.intakeEnabled(),
+                command.intakeEnabled() == null ? Boolean.TRUE : command.intakeEnabled(),
                 Boolean.TRUE.equals(command.assistedDistributionEnabled()),
                 null,
                 null);

@@ -31,7 +31,9 @@ Task feed, task management, application flow, acceptance, and task photo upload 
 - Create/update sanitize text fields and validate schedule in future.
 - Create validates task coordinates against the Ulaanbaatar service area before persistence.
 - Max 3 photo keys per task.
-- Apply requires caller role `TASKER`, non-self-application, task `OPEN`, and profile status `VERIFIED`.
+- Apply requires caller role `TASKER`, non-self-application, task `OPEN`, profile status `VERIFIED`, and a
+  pricing response that matches the task pricing mode. Budget-mode applications accept the posted budget; quote-mode
+  applications require a quote.
 - Accept requires owner, task `OPEN`, selected app `PENDING`, and liability disclaimer acceptance.
 
 ## Side Effects

@@ -33,12 +33,13 @@ Booking lifecycle transitions and booking-side effects.
 
 ## Side Effects
 
-- Customer cancel: task transitions to `CANCELLED`.
+- Customer cancel: task transitions to `CANCELLED`; late customer cancellation creates review debt.
 - Tasker cancel: task reopens to `OPEN`; non-safety cancellations add a `TASKER_CANCELLATION` strike and may suspend the tasker under the moderation policy.
 - Late customer cancel (<4 hours before task schedule): reliability incident row is inserted.
 - Complete: task transitions to `COMPLETED` and outbox event `BOOKING_COMPLETED` is published.
 - Mark-done: sends customer push notification when newly marked.
-- No-show: task transitions to `NO_SHOW`, writes immutable timeline + audit events, and records strike when tasker is at fault.
+- No-show: task transitions to `NO_SHOW`, writes immutable timeline + audit events, records strike when tasker is at fault,
+  and creates bilateral review debt.
 
 ## Idempotency
 

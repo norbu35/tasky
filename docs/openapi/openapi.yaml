@@ -67,7 +67,7 @@ tags:
   - name: Bookings
     description: Booking lifecycle
   - name: Reviews
-    description: Post-completion reviews
+    description: Terminal-outcome reviews
   - name: Disputes
     description: Booking disputes
   - name: Conversations

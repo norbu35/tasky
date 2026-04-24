@@ -390,6 +390,14 @@ public class TaskController {
                             "Quote price is required for QUOTE pricing mode tasks.",
                             "trace_id",
                             resolveTraceId(request)));
+            case TaskApplyResult.BUDGET_PRICE_NOT_ALLOWED -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of(
+                            "code",
+                            "BUDGET_PRICE_NOT_ALLOWED",
+                            "message",
+                            "Budget-mode applications accept the posted budget and cannot include a quote price.",
+                            "trace_id",
+                            resolveTraceId(request)));
             default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
         };

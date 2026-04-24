@@ -561,7 +561,8 @@ export interface paths {
         /**
          * Apply to a task
          * @description Tasker applies to an OPEN task. Only verified taskers can apply.
-         *     The current live contract captures a short application note and optional quote_price.
+         *     The current live contract captures a short application note and quote_price for QUOTE tasks.
+         *     BUDGET task applications accept the posted budget and must omit quote_price or send it as null.
          *     Phase 1 launch UX does not expose open-ended pre-booking chat.
          */
         post: operations["applyToTask"];
@@ -973,7 +974,9 @@ export interface paths {
         put?: never;
         /**
          * Submit a review
-         * @description Submit a review for a COMPLETED booking. Both customer and tasker can review each other.
+         * @description Submit a review for a reviewable terminal booking outcome. Both customer and tasker can review each other.
+         *     COMPLETED bookings are always reviewable for participants.
+         *     NO_SHOW and CANCELLED bookings are reviewable only when the caller has an enforcement case for that booking.
          *     Each party can only submit one review per booking.
          */
         post: operations["submitReview"];
@@ -2272,7 +2275,7 @@ export interface components {
              */
             budget: number | null;
             /**
-             * @description BUDGET = customer sets a budget, taskers accept or counter-offer. QUOTE = taskers submit price quotes.
+             * @description BUDGET = customer sets a fixed budget that taskers accept to apply. QUOTE = taskers submit price quotes.
              * @enum {string}
              */
             pricing_mode?: "BUDGET" | "QUOTE";
@@ -2315,7 +2318,7 @@ export interface components {
              */
             budget: number | null;
             /**
-             * @description BUDGET = customer sets a budget, taskers accept or counter-offer. QUOTE = taskers submit price quotes.
+             * @description BUDGET = customer sets a fixed budget that taskers accept to apply. QUOTE = taskers submit price quotes.
              * @enum {string}
              */
             pricing_mode?: "BUDGET" | "QUOTE";
@@ -2454,7 +2457,7 @@ export interface components {
             };
             /** @description Tasker's short structured application note. */
             message: string;
-            /** @description Tasker's price. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the quote (required). */
+            /** @description Tasker's quote for QUOTE tasks. Omit or send null for BUDGET tasks, where applying accepts the posted budget. */
             quote_price?: number | null;
             /** @enum {string} */
             status: "APPLIED" | "SELECTED" | "ACCEPTED" | "DECLINED" | "EXPIRED" | "WITHDRAWN";
@@ -2576,6 +2579,7 @@ export interface components {
             communication_rating?: number;
             clarity_rating?: number;
             respectfulness_rating?: number;
+            /** @description Optional free-text review comment. */
             comment?: string | null;
             /** @description Whether the reviewer would book again. */
             would_book_again?: boolean | null;
@@ -3653,7 +3657,15 @@ export interface operations {
                     "application/json": components["schemas"]["PresignedUrlResponse"];
                 };
             };
-            400: components["responses"]["BadRequest"];
+            /** @description Bad request for pricing-mode validation. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
             401: components["responses"]["Unauthorized"];
         };
     };
@@ -3956,7 +3968,7 @@ export interface operations {
                 "application/json": {
                     /** @description Short application note. */
                     message: string;
-                    /** @description Tasker's price response. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the required quote. */
+                    /** @description Tasker's price response for QUOTE tasks. For BUDGET tasks, omit or send null because applying accepts the posted budget. */
                     quote_price?: number | null;
                 };
             };
@@ -3971,7 +3983,15 @@ export interface operations {
                     "application/json": components["schemas"]["TaskApplication"];
                 };
             };
-            400: components["responses"]["BadRequest"];
+            /** @description Bad request for pricing-mode validation. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
             401: components["responses"]["Unauthorized"];
             /** @description User is not a verified tasker. */
             403: {
@@ -4268,7 +4288,7 @@ export interface operations {
         requestBody?: {
             content: {
                 "application/json": {
-                    /** @description Optional cancellation reason. Taskers can use "Safety/Fraud" to bypass strikes. */
+                    /** @description Optional cancellation reason. Taskers can use `SAFETY_FRAUD` to mark a safety/fraud cancellation. */
                     reason?: string;
                 };
             };
@@ -4638,7 +4658,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Customer liability disclaimer acceptance required before booking confirmation.
+                     * @enum {boolean}
+                     */
+                    liability_disclaimer_accepted: true;
+                };
+            };
+        };
         responses: {
             /** @description Booking created from intent. */
             200: {
@@ -4738,7 +4768,7 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
-            /** @description Review already submitted for this booking or booking is not COMPLETED. */
+            /** @description Review already submitted for this booking or booking is not reviewable. */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -5654,6 +5684,11 @@ export interface operations {
                     sort_order: number;
                     /** @default true */
                     intake_enabled?: boolean;
+                    /**
+                     * @description Admin launch-control flag for task-level assisted distribution.
+                     * @default false
+                     */
+                    assisted_distribution_enabled?: boolean;
                 };
             };
         };
@@ -5691,6 +5726,8 @@ export interface operations {
                     is_active?: boolean;
                     sort_order?: number;
                     intake_enabled?: boolean;
+                    /** @description Admin launch-control flag for task-level assisted distribution. */
+                    assisted_distribution_enabled?: boolean;
                 };
             };
         };

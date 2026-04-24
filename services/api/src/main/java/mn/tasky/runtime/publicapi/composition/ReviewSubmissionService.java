@@ -39,7 +39,7 @@ public class ReviewSubmissionService {
                 case "BOOKING_NOT_COMPLETED" -> ReviewSubmissionOutcome.failure(
                         ReviewSubmissionOutcome.Status.BOOKING_NOT_COMPLETED,
                         "BOOKING_NOT_COMPLETED",
-                        "Reviews allowed only on completed bookings");
+                        "Reviews allowed only on reviewable terminal bookings");
                 case "NOT_PARTICIPANT" -> ReviewSubmissionOutcome.failure(
                         ReviewSubmissionOutcome.Status.FORBIDDEN,
                         "FORBIDDEN",

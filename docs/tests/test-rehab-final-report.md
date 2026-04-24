@@ -86,8 +86,8 @@ Generated: 2026-04-23
 | REQ-P1-MATCH-05 | SCN-TASK-025: Tasker withdraws application               | **UNTESTED**                         | —   | —      |
 | REQ-P1-PRICE-02 | SCN-TASK-026: Budget mode shows posted budget            | **UNTESTED**                         | —   | —      |
 | REQ-P1-PRICE-04 | SCN-TASK-027: Quote mode requires tasker price           | **UNTESTED**                         | —   | —      |
-| REQ-P1-PRICE-03 | SCN-TASK-028: Counter-offer on budget mode               | **UNTESTED**                         | —   | —      |
-| REQ-P1-PRICE-05 | SCN-TASK-029: Customer sees budget + counter             | **UNTESTED**                         | —   | —      |
+| REQ-P1-PRICE-03 | SCN-TASK-028: Budget mode rejects counter price          | **UNTESTED**                         | —   | —      |
+| REQ-P1-PRICE-05 | SCN-TASK-029: Customer sees posted budget                | **UNTESTED**                         | —   | —      |
 
 ### Booking (14 covered, 8 untested)
 
@@ -264,11 +264,11 @@ These tests test real service behavior but have no corresponding scenario in the
 | Booking price lock       | SCN-BOOK-025 (1)          | Critical | Price locked at confirmation                                      |
 | Booking disclaimer       | SCN-BOOK-007 (1)          | Critical | Disclaimer acceptance required                                    |
 | Task application         | SCN-TASK-022-025 (4)      | High     | Verified tasker apply, pricing+note, review all, withdraw         |
-| Task pricing modes       | SCN-TASK-026-029 (4)      | High     | Budget mode, quote mode, counter-offer, display                   |
+| Task pricing modes       | SCN-TASK-026-029 (4)      | High     | Budget mode, quote mode, accept-only budget, display              |
 | Task service area        | SCN-TASK-021 (1)          | High     | Admin-active category gate                                        |
 | Category canary/rollback | SCN-CATEGORY-006-008 (3)  | High     | Canary activation, rollback, no-fallback                          |
 | Verification             | SCN-VERIF-001-005 (5)     | High     | Full manual verification flow                                     |
-| Notification             | SCN-NOTIF-006-007 (2)     | Medium   | Verification decision, completion prompt                          |
+| Notification             | SCN-NOTIF-006-007 (2)     | Medium   | Verification decision, review obligation prompt                   |
 | Analytics                | SCN-ANALYTICS-004-005 (2) | Medium   | Qualified application, intervention events                        |
 | Messaging                | SCN-MSG-005 (1)           | Medium   | No pre-booking chat guarantee                                     |
 

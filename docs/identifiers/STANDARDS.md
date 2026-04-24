@@ -57,26 +57,26 @@ python3 tooling/scripts/governance/validate-prd-scenario-links.py
 ./services/api/scripts/sync-registry.sh
 ```
 
-## Coverage State (2026-04-24)
+## Coverage State (2026-04-25)
 
 This table tracks launch REQ-P1 coverage only. NFR and frontend/design identifiers are documented separately.
 
-| Domain    | REQ count | Covered      | Uncovered IDs                  |
-| --------- | --------- | ------------ | ------------------------------ |
-| AUTH      | 6         | 6            | —                              |
-| TASK      | 15        | 10           | 08, 11, 12, 13, 14             |
-| SAFE      | 18        | 14           | 03, 04, 13, 17                 |
-| MSG       | 5         | 5            | —                              |
-| BOOK      | 28        | 25           | 17, 27, 28                     |
-| PRICE     | 8         | 6            | 06, 08                         |
-| MATCH     | 7         | 6            | 04                             |
-| NOTIF     | 7         | 5            | 03, 06                         |
-| ASSIST    | 8         | 0            | 01, 02, 03, 04, 05, 06, 07, 08 |
-| KPI       | 6         | 2            | 02, 03, 05, 06                 |
-| COVER     | 4         | 2            | 01, 06                         |
-| CAT       | 5         | 3            | 02, 03                         |
-| ADMIN     | 10        | 4            | 03, 04, 06, 07, 08, 10         |
-| **Total** | **127**   | **88 (69%)** | **39 gaps**                    |
+| Domain    | REQ count | Covered      | Uncovered IDs          |
+| --------- | --------- | ------------ | ---------------------- |
+| AUTH      | 6         | 6            | —                      |
+| TASK      | 15        | 11           | 11, 12, 13, 14         |
+| SAFE      | 18        | 14           | 03, 04, 13, 17         |
+| MSG       | 5         | 5            | —                      |
+| BOOK      | 28        | 26           | 27, 28                 |
+| PRICE     | 8         | 6            | 06, 08                 |
+| MATCH     | 7         | 6            | 04                     |
+| NOTIF     | 7         | 6            | 03                     |
+| ASSIST    | 8         | 5            | 02, 04, 08             |
+| KPI       | 6         | 3            | 02, 05, 06             |
+| COVER     | 4         | 2            | 01, 06                 |
+| CAT       | 5         | 3            | 02, 03                 |
+| ADMIN     | 10        | 4            | 03, 04, 06, 07, 08, 10 |
+| **Total** | **127**   | **97 (76%)** | **30 gaps**            |
 
 Coverage warnings are reported by `python3 tooling/scripts/governance/validate-prd-scenario-links.py`.
 

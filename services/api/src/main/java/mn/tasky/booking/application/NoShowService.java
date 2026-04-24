@@ -16,6 +16,7 @@ import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
 import mn.tasky.messaging.dto.Conversation;
 import mn.tasky.notification.application.NotificationService;
+import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.TaskLifecycleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,7 @@ public class NoShowService {
     private final ModerationService moderationService;
     private final NotificationService notificationService;
     private final AuditEventDao auditEventDao;
+    private final ReviewEnforcementService reviewEnforcementService;
 
     public NoShowService(
             BookingDao bookingDao,
@@ -59,7 +61,8 @@ public class NoShowService {
             TaskLifecycleService taskLifecycleService,
             ModerationService moderationService,
             NotificationService notificationService,
-            AuditEventDao auditEventDao) {
+            AuditEventDao auditEventDao,
+            ReviewEnforcementService reviewEnforcementService) {
         this.bookingDao = bookingDao;
         this.timelineService = timelineService;
         this.bookingTimelineEventDao = bookingTimelineEventDao;
@@ -70,6 +73,7 @@ public class NoShowService {
         this.moderationService = moderationService;
         this.notificationService = notificationService;
         this.auditEventDao = auditEventDao;
+        this.reviewEnforcementService = reviewEnforcementService;
     }
 
     /**
@@ -180,6 +184,9 @@ public class NoShowService {
         if (booking.taskerId().equals(noShowPartyId)) {
             moderationService.addStrike(noShowPartyId, "NO_SHOW", bookingId);
         }
+
+        reviewEnforcementService.createCasesForBooking(
+                bookingId, booking.customerId(), booking.taskerId(), ReviewEnforcementService.REASON_BOOKING_NO_SHOW);
 
         // Return updated booking
         BookingState updated = bookingDao.findById(bookingId).orElse(booking);

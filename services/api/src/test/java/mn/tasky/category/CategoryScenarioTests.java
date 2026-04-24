@@ -24,8 +24,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Domain-unit tests for category management scenarios SCN-CATEGORY-001 through SCN-CATEGORY-005.
- * Additional schema validation tests (needs-scenario) cover real Phase 1 behavior not yet backed by registry entries.
+ * Domain-unit tests for category management scenarios SCN-CATEGORY-001 through SCN-CATEGORY-013.
  */
 class CategoryScenarioTests {
 
@@ -171,10 +170,10 @@ class CategoryScenarioTests {
                 .hasMessageContaining("unsupported type");
     }
 
-    // ── needs-scenario: activation from ROLLED_BACK ────────────────────────
+    // ── SCN-CATEGORY-009 ─────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("needs-scenario: Admin can activate a schema version, including from ROLLED_BACK status")
+    @DisplayName("SCN-CATEGORY-009: Admin can activate a schema version from ROLLED_BACK status")
     void activationFromRolledBackStatusSucceeds() {
         CategorySchemaVersion rolledBack = schemaVersion(1, "ROLLED_BACK");
         when(schemaVersionDao.findByCategoryIdAndVersion(CAT_ID, 1)).thenReturn(Optional.of(rolledBack));
@@ -266,20 +265,20 @@ class CategoryScenarioTests {
                 .isEqualTo("NO_FALLBACK");
     }
 
-    // ── needs-scenario: label_mn validation ───────────────────────────────
+    // ── SCN-CATEGORY-010 ─────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("needs-scenario: Schema with missing label_mn is rejected")
+    @DisplayName("SCN-CATEGORY-010: Schema lint rejects fields missing Mongolian labels")
     void schemaWithMissingLabelMnRejected() {
         assertThatThrownBy(() -> schemaVersionService.createVersion(CAT_ID, MISSING_LABEL_MN_SCHEMA, ADMIN_ID))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("label_mn");
     }
 
-    // ── needs-scenario: text/textarea field types ────────────────────────
+    // ── SCN-CATEGORY-011 ─────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("needs-scenario: Schema with text and textarea field types is accepted")
+    @DisplayName("SCN-CATEGORY-011: Schema lint accepts text and textarea field types")
     void schemaWithTextAndTextareaTypesAccepted() {
         when(schemaVersionDao.findMaxVersion(CAT_ID)).thenReturn(Optional.of(0));
         when(schemaVersionDao.findByCategoryIdAndVersion(eq(CAT_ID), eq(1)))
@@ -290,20 +289,20 @@ class CategoryScenarioTests {
         assertThat(result).isNotNull();
     }
 
-    // ── needs-scenario: text field max_length ─────────────────────────────
+    // ── SCN-CATEGORY-012 ─────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("needs-scenario: Text field without max_length is rejected")
+    @DisplayName("SCN-CATEGORY-012: Schema lint rejects text fields without max_length")
     void textFieldWithoutMaxLengthRejected() {
         assertThatThrownBy(() -> schemaVersionService.createVersion(CAT_ID, TEXT_MISSING_MAX_LENGTH_SCHEMA, ADMIN_ID))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("max_length");
     }
 
-    // ── needs-scenario: option label_mn validation ───────────────────────
+    // ── SCN-CATEGORY-013 ─────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("needs-scenario: Option objects missing label_mn are rejected")
+    @DisplayName("SCN-CATEGORY-013: Schema lint rejects options missing Mongolian labels")
     void optionWithMissingLabelMnRejected() {
         assertThatThrownBy(() -> schemaVersionService.createVersion(CAT_ID, INVALID_OPTIONS_SCHEMA, ADMIN_ID))
                 .isInstanceOf(IllegalArgumentException.class)

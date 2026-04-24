@@ -5,7 +5,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import mn.tasky.notification.application.NotificationService;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
 import mn.tasky.task.application.TaskAssistanceService;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  * 8 hours. Triggers backend-controlled rescue actions: broadened tasker
  * push, concierge flag, and intervention tracking.
  *
- * REQ-P1-ASSIST-03A: customers are not asked to choose rescue behavior.
+ * REQ-P1-ASSIST-03: customers are not asked to choose rescue behavior.
  * Only runs during daytime hours (08:00-21:59) in Asia/Ulaanbaatar timezone.
  */
 @Component
@@ -37,17 +37,17 @@ public class RescueScheduler {
     private final TaskDao taskDao;
     private final TaskApplicationDao taskApplicationDao;
     private final TaskAssistanceService taskAssistanceService;
-    private final NotificationService notificationService;
+    private final NotificationCommandPort notificationCommandPort;
 
     public RescueScheduler(
             TaskDao taskDao,
             TaskApplicationDao taskApplicationDao,
             TaskAssistanceService taskAssistanceService,
-            NotificationService notificationService) {
+            NotificationCommandPort notificationCommandPort) {
         this.taskDao = taskDao;
         this.taskApplicationDao = taskApplicationDao;
         this.taskAssistanceService = taskAssistanceService;
-        this.notificationService = notificationService;
+        this.notificationCommandPort = notificationCommandPort;
     }
 
     @Scheduled(fixedDelay = 300000)
@@ -90,7 +90,7 @@ public class RescueScheduler {
         Instant now = Instant.now();
         var event = taskAssistanceService.recordExternalDistribution(task, triggerWindow, now);
 
-        notificationService.sendPush(
+        notificationCommandPort.sendPush(
                 task.customerId(), "Finding taskers", "We're expanding the search for your task.", "RESCUE_INFO");
 
         // Concierge / admin notification - send to the task's customer ID channel as a proxy;

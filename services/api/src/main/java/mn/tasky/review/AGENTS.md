@@ -1,6 +1,6 @@
 # Feature: review
 
-Booking-based bilateral reviews and profile rating updates.
+Booking-based bilateral reviews, review debt enforcement, and profile rating updates.
 
 ## Implemented API
 
@@ -12,11 +12,13 @@ Booking-based bilateral reviews and profile rating updates.
 ## Submit Rules
 
 - Rating must be `1..5`.
-- Booking must exist and be `COMPLETED`.
+- Booking must exist and be a reviewable terminal outcome: `COMPLETED`, validated `NO_SHOW`, or a fault-attributed
+  post-confirmation cancellation with an enforcement case.
 - Caller must be booking participant (customer or tasker).
 - One review per booking per author.
 - Target user is inferred as the opposite participant.
 - Comment is sanitized plain text.
+- Comment is optional.
 
 ## Side Effects
 

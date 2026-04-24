@@ -78,6 +78,7 @@ Rules:
 - District is drilldown.
 - Alerts are required only for the four hard-gate metrics.
 - KPI computation must come from backend-exported business metrics, not ad hoc dashboard SQL.
+- Native confirmation and self-serve reporting must not count successes that occur after assisted or manual intervention.
 
 ## 8. Incident severity and ownership
 

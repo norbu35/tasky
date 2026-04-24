@@ -40,6 +40,11 @@ public class BookingPublicOperationService {
     }
 
     public BookingOperationOutcome cancelBooking(String userId, String bookingId, String idempotencyKey) {
+        return cancelBooking(userId, bookingId, idempotencyKey, null);
+    }
+
+    public BookingOperationOutcome cancelBooking(
+            String userId, String bookingId, String idempotencyKey, String reason) {
         IdempotencyClaim claim = idempotencyService.claim(userId, IdempotencyOperations.CANCEL_BOOKING, idempotencyKey);
         if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
             return BookingOperationOutcome.inProgress();
@@ -49,7 +54,9 @@ public class BookingPublicOperationService {
         }
 
         try {
-            BookingTransitionResult result = bookingCommandPort.cancelBooking(userId, bookingId);
+            BookingTransitionResult result = reason == null
+                    ? bookingCommandPort.cancelBooking(userId, bookingId)
+                    : bookingCommandPort.cancelBooking(userId, bookingId, reason);
             if (result.isSuccess()) {
                 idempotencyService.completeWithResource(
                         userId,

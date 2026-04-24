@@ -135,7 +135,8 @@ class BookingSelectionScenarioTests {
                 taskLifecycleService,
                 moderationService,
                 lifecycleOutbox,
-                trustQueryPort);
+                trustQueryPort,
+                reviewEnforcementService);
 
         completionTimeoutService =
                 new CompletionTimeoutService(bookingDao, bookingLifecycleService, notificationService);

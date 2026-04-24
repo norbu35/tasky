@@ -37,8 +37,8 @@ class ScopeSummaryGeneratorTest {
         @Test
         @DisplayName("skips fields not present in answers")
         void missingFieldsSkipped() {
-            String schema =
-                    "[{\"key\":\"rooms\",\"label\":\"Rooms\",\"type\":\"number\"},{\"key\":\"size\",\"label\":\"Size\",\"type\":\"text\"}]";
+            String schema = "[{\"key\":\"rooms\",\"label\":\"Rooms\",\"type\":\"number\"},"
+                    + "{\"key\":\"size\",\"label\":\"Size\",\"type\":\"text\"}]";
             String answers = "{\"rooms\":2}";
 
             ScopeSummaryGenerator.SummaryResult result = generator.generate(schema, answers);
@@ -50,7 +50,8 @@ class ScopeSummaryGeneratorTest {
         @DisplayName("resolves option labels for single value")
         void optionLabels() {
             String schema = "[{\"key\":\"type\",\"label\":\"Job type\",\"type\":\"select\","
-                    + "\"options\":[{\"value\":\"repair\",\"label\":\"Repair\"},{\"value\":\"install\",\"label\":\"Installation\"}]}]";
+                    + "\"options\":[{\"value\":\"repair\",\"label\":\"Repair\"},"
+                    + "{\"value\":\"install\",\"label\":\"Installation\"}]}]";
             String answers = "{\"type\":\"repair\"}";
 
             ScopeSummaryGenerator.SummaryResult result = generator.generate(schema, answers);
@@ -62,7 +63,8 @@ class ScopeSummaryGeneratorTest {
         @DisplayName("resolves option labels for list values")
         void optionLabelsList() {
             String schema = "[{\"key\":\"services\",\"label\":\"Services\",\"type\":\"multiselect\","
-                    + "\"options\":[{\"value\":\"clean\",\"label\":\"Cleaning\"},{\"value\":\"paint\",\"label\":\"Painting\"}]}]";
+                    + "\"options\":[{\"value\":\"clean\",\"label\":\"Cleaning\"},"
+                    + "{\"value\":\"paint\",\"label\":\"Painting\"}]}]";
             String answers = "{\"services\":[\"clean\",\"paint\"]}";
 
             ScopeSummaryGenerator.SummaryResult result = generator.generate(schema, answers);

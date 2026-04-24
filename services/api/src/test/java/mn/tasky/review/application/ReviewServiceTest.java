@@ -1,8 +1,16 @@
 package mn.tasky.review.application;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.List;
@@ -282,6 +290,71 @@ class ReviewServiceTest {
             verify(userProfileService).updateUserStats(eq(TASKER_ID), eq((4 + 5 + 4) / 3.0), eq(false));
             verify(reviewEnforcementService).resolveCase(BOOKING_ID, CUSTOMER_ID);
             verify(badgeEvaluationService).evaluate(TASKER_ID);
+        }
+
+        @Test
+        @DisplayName("Success after validated no-show review enforcement case")
+        void submitReview_successAfterValidatedNoShow() {
+            BookingState noShowBooking = new BookingState(
+                    BOOKING_ID,
+                    "task-1",
+                    TASKER_ID,
+                    CUSTOMER_ID,
+                    100,
+                    "NO_SHOW",
+                    null,
+                    false,
+                    null,
+                    "SPLIT",
+                    false,
+                    null,
+                    0,
+                    null,
+                    Instant.now().minusSeconds(3600),
+                    Instant.now());
+            when(bookingService.getBooking(BOOKING_ID)).thenReturn(Optional.of(noShowBooking));
+            when(reviewEnforcementService.hasCaseForBookingAndUser(BOOKING_ID, CUSTOMER_ID))
+                    .thenReturn(true);
+            when(reviewDao.existsByBookingIdAndReviewerId(BOOKING_ID, CUSTOMER_ID))
+                    .thenReturn(false);
+
+            ReviewSubmitResult result =
+                    reviewService.submitReview(CUSTOMER_ID, BOOKING_ID, 1, 1, 1, null, null, "No show", false);
+
+            assertTrue(result.isSuccess());
+            assertNull(result.error());
+            verify(reviewEnforcementService).resolveCase(BOOKING_ID, CUSTOMER_ID);
+        }
+
+        @Test
+        @DisplayName("BOOKING_NOT_COMPLETED when canceled booking has no review enforcement case")
+        void submitReview_cancelledWithoutReviewEnforcementCaseRejected() {
+            BookingState cancelledBooking = new BookingState(
+                    BOOKING_ID,
+                    "task-1",
+                    TASKER_ID,
+                    CUSTOMER_ID,
+                    100,
+                    "CANCELLED",
+                    null,
+                    false,
+                    null,
+                    "SPLIT",
+                    false,
+                    null,
+                    0,
+                    null,
+                    Instant.now().minusSeconds(3600),
+                    Instant.now());
+            when(bookingService.getBooking(BOOKING_ID)).thenReturn(Optional.of(cancelledBooking));
+            when(reviewEnforcementService.hasCaseForBookingAndUser(BOOKING_ID, CUSTOMER_ID))
+                    .thenReturn(false);
+
+            ReviewSubmitResult result =
+                    reviewService.submitReview(CUSTOMER_ID, BOOKING_ID, 1, 1, 1, null, null, "Early cancel", false);
+
+            assertFalse(result.isSuccess());
+            assertEquals("BOOKING_NOT_COMPLETED", result.error());
         }
 
         @Test

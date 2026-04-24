@@ -542,8 +542,8 @@ class TaskApplicationScenarioTests {
     // ── SCN-TASK-028 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-028: Tasker counter-offer on budget-mode task is structured and recorded")
-    void counterOfferOnBudgetModeTaskRecorded() {
+    @DisplayName("SCN-TASK-028: Budget-mode application rejects counter-offer price")
+    void budgetModeRejectsCounterOfferPrice() {
         // Given: a BUDGET mode task with budget 50000 MNT
         TaskState budgetTask = openBudgetTask(50000);
         when(reviewEnforcementService.isUserLocked(TASKER_ID)).thenReturn(false);
@@ -552,41 +552,29 @@ class TaskApplicationScenarioTests {
         when(userProfileService.getProfile(TASKER_ID)).thenReturn(Optional.of(verifiedProfile()));
         when(taskApplicationDao.existsByTaskIdAndTaskerId(TASK_ID, TASKER_ID)).thenReturn(false);
 
-        // When: tasker submits a counter-offer of 60000 MNT (different from posted budget)
+        // When: tasker submits a price different from the posted budget
         TaskApplyResult result = applicationService.applyToTask(TASKER_ID, "TASKER", TASK_ID, "Counter-offer", 60000);
 
-        // Then: the counter-offer is recorded as a structured pricing response
-        assertThat(result.isSuccess()).isTrue();
-        assertThat(result.application().quotePrice()).isEqualTo(60000);
+        // Then: the application is rejected because budget mode is accept-only
+        assertThat(result.isSuccess()).isFalse();
+        assertThat(result.errorCode()).isEqualTo(TaskApplyResult.BUDGET_PRICE_NOT_ALLOWED);
 
-        // And: the counter-offer is distinguishable from budget acceptance
-        assertThat(result.application().quotePrice()).isNotEqualTo(budgetTask.budget());
-
-        // Verify the DAO persisted the counter-offer price
-        verify(taskApplicationDao)
-                .insert(
-                        anyString(),
-                        eq(TASK_ID),
-                        eq(TASKER_ID),
-                        anyString(),
-                        eq(60000),
-                        eq("APPLIED"),
-                        any(Instant.class));
+        verify(taskApplicationDao, never())
+                .insert(anyString(), anyString(), anyString(), anyString(), any(), anyString(), any());
     }
 
     // ── SCN-TASK-029 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-029: Customer sees original budget and counter-offer where both exist")
-    void customerSeesBudgetAndCounterOffer() {
+    @DisplayName("SCN-TASK-029: Customer sees posted budget for budget-mode applications")
+    void customerSeesPostedBudgetForBudgetApplications() {
         // Given: a BUDGET mode task with posted budget 50000 MNT
         int postedBudget = 50000;
         TaskState budgetTask = openBudgetTask(postedBudget);
         when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(budgetTask));
 
-        // And: at least one application with a counter-offer of 60000 MNT
-        int counterOffer = 60000;
-        TaskApplicationState appWithCounterOffer = new TaskApplicationState(
+        // And: at least one application that accepted the posted budget
+        TaskApplicationState appWithBudgetAcceptance = new TaskApplicationState(
                 APPLICATION_ID,
                 TASK_ID,
                 TASKER_ID,
@@ -595,31 +583,28 @@ class TaskApplicationScenarioTests {
                 4.5,
                 10,
                 false,
-                "My counter-offer",
-                counterOffer,
+                "I accept the posted budget",
+                null,
                 "APPLIED",
                 null,
                 null,
                 null,
                 null,
                 Instant.now());
-        when(taskApplicationDao.findByTaskId(TASK_ID, null, 50)).thenReturn(List.of(appWithCounterOffer));
+        when(taskApplicationDao.findByTaskId(TASK_ID, null, 50)).thenReturn(List.of(appWithBudgetAcceptance));
 
         // When: customer reviews applications
         TaskApplicationsListResult result = applicationService.listTaskApplications(CUSTOMER_ID, TASK_ID);
 
-        // Then: the response includes both the original posted budget and the counter-offer
+        // Then: the original posted budget remains the pricing value for comparison
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.applications()).hasSize(1);
 
         // Original posted budget is accessible on the task used in the listing flow
         assertThat(budgetTask.budget()).isEqualTo(postedBudget);
 
-        // Counter-offer is accessible on the application
+        // Budget-mode applications do not carry a separate quote/counter-offer
         TaskApplicationState app = result.applications().get(0);
-        assertThat(app.quotePrice()).isEqualTo(counterOffer);
-
-        // Customer can compare both values side by side
-        assertThat(budgetTask.budget()).isNotEqualTo(app.quotePrice());
+        assertThat(app.quotePrice()).isNull();
     }
 }

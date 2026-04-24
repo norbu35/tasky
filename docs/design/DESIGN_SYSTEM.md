@@ -26,7 +26,7 @@ Product behavior is defined in the PRD.
 ### Phase 1 copy constraints
 
 - Operational screens must communicate that the service is live across Ulaanbaatar.
-- Pricing copy must support both `I have a budget` and `I want quotes`, including quote, counter-offer, and locked booking price states where applicable.
+- Pricing copy must support both `I have a budget` and `I want quotes`, including posted-budget acceptance, quote, and locked booking price states where applicable.
 - Do not promise payment hold, payment protection, wallet protection, or escrow.
 - Do not imply open-ended pre-booking chat.
 - Before confirmation, show only approximate location. Exact address appears only after confirmed booking.

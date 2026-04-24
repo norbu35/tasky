@@ -40,10 +40,11 @@ Category is the primary decision slice. District is drilldown only.
 
 ### 3.3 Post -> Confirmed Booking Rate within 48h
 
-`% of eligible_task posts that reach confirmed_booking within 48h of posting`
+`% of eligible_task posts that reach confirmed_booking within 48h of posting before any system-assisted or manual-assisted intervention`
 
 - Confirmed booking means customer selects + tasker accepts + system confirms
 - Customer abandonment counts as failure
+- Tasks that require intervention remain in the denominator but do not count as native confirmation success
 - Paired diagnostic: median time from posting to confirmed booking
 
 ### 3.4 Booking Completion Rate
@@ -70,9 +71,7 @@ Category is the primary decision slice. District is drilldown only.
 
 ### 3.7 Verification Queue Turnaround
 
-Median and p95 from complete document submission to final decision.
-
-- Split identity verification turnaround vs category-vetting turnaround
+Median and p95 from complete identity verification document submission to final decision.
 
 ## 4. Thresholds
 
@@ -87,12 +86,11 @@ Median and p95 from complete document submission to final decision.
 
 ### 4.2 Monitored targets
 
-| Metric                           | Target                         |
-| -------------------------------- | ------------------------------ |
-| Self-Serve Fulfillment Rate      | `>= 15%`                       |
-| Booking Completion Rate          | `>= 65%`                       |
-| Identity Verification Turnaround | median `<= 36h`, p95 `<= 96h`  |
-| Category Vetting Turnaround      | median `<= 72h`, p95 `<= 120h` |
+| Metric                           | Target                        |
+| -------------------------------- | ----------------------------- |
+| Self-Serve Fulfillment Rate      | `>= 15%`                      |
+| Booking Completion Rate          | `>= 65%`                      |
+| Identity Verification Turnaround | median `<= 36h`, p95 `<= 96h` |
 
 ## 5. Event and vocabulary rules
 
@@ -118,4 +116,4 @@ KPI computation should come from backend-exported business metrics derived from 
 
 1. KPI decisions are valid only when the denominator threshold for that KPI is met.
 2. If core event exports are degraded, pause KPI-based go / no-go decisions until tracking is repaired.
-3. Native self-serve reporting must exclude both system-assisted and manual-assisted outcomes.
+3. Native self-serve reporting and native confirmation success must exclude successes that occur after system-assisted or manual-assisted intervention.

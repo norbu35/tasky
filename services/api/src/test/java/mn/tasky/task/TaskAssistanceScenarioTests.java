@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.analytics.application.AnalyticsService;
-import mn.tasky.category.dao.CategoryDao;
 import mn.tasky.category.dto.CategoryState;
+import mn.tasky.category.publicapi.CategoryQueryPort;
 import mn.tasky.task.application.TaskAssistanceService;
 import mn.tasky.task.dao.TaskRescueEventDao;
 import mn.tasky.task.dto.AssistanceEvaluation;
@@ -42,7 +42,7 @@ class TaskAssistanceScenarioTests {
     private TaskRescueEventDao taskRescueEventDao;
 
     @Mock
-    private CategoryDao categoryDao;
+    private CategoryQueryPort categoryQueryPort;
 
     @Mock
     private AnalyticsService analyticsService;
@@ -51,7 +51,7 @@ class TaskAssistanceScenarioTests {
 
     @BeforeEach
     void setUp() {
-        service = new TaskAssistanceService(taskRescueEventDao, categoryDao, analyticsService);
+        service = new TaskAssistanceService(taskRescueEventDao, categoryQueryPort, analyticsService);
     }
 
     private TaskState openTaskCreatedHoursAgo(long hoursAgo) {
@@ -116,7 +116,7 @@ class TaskAssistanceScenarioTests {
     void manualAssistedOutcomeWhenOperatorPerformedRescue() {
         when(taskRescueEventDao.findLatestByTaskId(TASK_ID))
                 .thenReturn(Optional.of(intervention(
-                        TaskAssistanceService.INTERVENTION_MANUAL_ASSISTED,
+                        TaskAssistanceService.INTERVENTION_MANUAL_RESCUE,
                         TaskAssistanceService.INTERVENTION_STAGE_PRE_MATCH)));
 
         TaskOutcomeClassification classification = service.classifyOutcome(TASK_ID);
@@ -129,7 +129,7 @@ class TaskAssistanceScenarioTests {
     @Test
     @DisplayName("SCN-ASSIST-004: External distribution triggers only after 8 hours without qualified application")
     void externalDistributionTriggersOnlyAfterEightHoursWithoutQualifiedApplication() {
-        when(categoryDao.findById(CATEGORY_ID)).thenReturn(Optional.of(category("Home cleaning", true, true)));
+        when(categoryQueryPort.getCategory(CATEGORY_ID)).thenReturn(Optional.of(category("Home cleaning", true, true)));
         when(taskRescueEventDao.existsByTaskId(TASK_ID)).thenReturn(false);
 
         AssistanceEvaluation tooEarly = service.evaluateExternalDistribution(openTaskCreatedHoursAgo(7), 0, NOW);
@@ -147,7 +147,7 @@ class TaskAssistanceScenarioTests {
     @Test
     @DisplayName("SCN-ASSIST-005: External distribution is limited to admin-eligible categories")
     void externalDistributionLimitedToAdminEligibleCategories() {
-        when(categoryDao.findById(CATEGORY_ID)).thenReturn(Optional.of(category("Dog walking", true, false)));
+        when(categoryQueryPort.getCategory(CATEGORY_ID)).thenReturn(Optional.of(category("Dog walking", true, false)));
         when(taskRescueEventDao.existsByTaskId(TASK_ID)).thenReturn(false);
 
         AssistanceEvaluation evaluation = service.evaluateExternalDistribution(openTaskCreatedHoursAgo(9), 0, NOW);
@@ -159,7 +159,8 @@ class TaskAssistanceScenarioTests {
     @Test
     @DisplayName("SCN-ASSIST-005: External distribution is limited to admin-eligible categories")
     void adminLaunchControlMarksInitialSeedCategoriesEligible() {
-        when(categoryDao.findById(CATEGORY_ID)).thenReturn(Optional.of(category("Moving & Hauling", true, true)));
+        when(categoryQueryPort.getCategory(CATEGORY_ID))
+                .thenReturn(Optional.of(category("Moving & Hauling", true, true)));
         when(taskRescueEventDao.existsByTaskId(TASK_ID)).thenReturn(false);
 
         AssistanceEvaluation evaluation = service.evaluateExternalDistribution(openTaskCreatedHoursAgo(9), 0, NOW);
@@ -168,8 +169,8 @@ class TaskAssistanceScenarioTests {
     }
 
     @Test
-    @DisplayName(
-            "SCN-ASSIST-006: External distribution payloads do not expose exact address, raw contacts, or unsupported trust claims")
+    @DisplayName("SCN-ASSIST-006: External distribution payloads do not expose exact address, raw contacts, "
+            + "or unsupported trust claims")
     void externalDistributionPayloadIsSanitized() {
         Map<String, Object> payload = service.buildExternalDistributionPayload(openTaskCreatedHoursAgo(9));
 
@@ -189,8 +190,8 @@ class TaskAssistanceScenarioTests {
     }
 
     @Test
-    @DisplayName(
-            "SCN-ASSIST-007: Tasks advanced through external distribution are excluded from self-serve fulfillment reporting")
+    @DisplayName("SCN-ASSIST-007: Tasks advanced through external distribution are excluded from self-serve "
+            + "fulfillment reporting")
     void externalDistributionExcludedFromSelfServeFulfillmentReporting() {
         TaskOutcomeClassification classification = service.classifyOutcome(Optional.of(intervention(
                 TaskAssistanceService.INTERVENTION_EXTERNAL_DISTRIBUTION,
@@ -213,7 +214,7 @@ class TaskAssistanceScenarioTests {
                         any(Instant.class),
                         eq("DAYTIME"),
                         anyString(),
-                        eq(TaskAssistanceService.INTERVENTION_MANUAL_ASSISTED),
+                        eq(TaskAssistanceService.INTERVENTION_MANUAL_RESCUE),
                         eq(TaskAssistanceService.INTERVENTION_STAGE_PRE_MATCH));
         verify(analyticsService)
                 .track(
@@ -226,8 +227,8 @@ class TaskAssistanceScenarioTests {
     }
 
     @Test
-    @DisplayName(
-            "SCN-ANALYTICS-005: Intervention recorded event is emitted when assisted distribution or manual rescue is used")
+    @DisplayName("SCN-ANALYTICS-005: Intervention recorded event is emitted when assisted distribution or manual "
+            + "rescue is used")
     void interventionRecordedAnalyticsEventEmitted() {
         service.recordExternalDistribution(openTaskCreatedHoursAgo(9), "DAYTIME", NOW);
 

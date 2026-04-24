@@ -299,7 +299,7 @@ The backend is a single deployable unit (`tasky-server`) organized by business d
 | **Booking**      | `booking`      | Booking intent window, confirmation, reschedule, cancellation, no-show, completion         | `BookingCommandPort`, `BookingIntentCommandPort`, `BookingQueryPort` |
 | **Location**     | `location`     | District and service-area lookup used for eligibility and notification targeting           | `LocationQueryPort` (read-only)                                      |
 | **Trust**        | `trust`        | Cross-cutting facade for review, dispute, reliability, and moderation signals              | `TrustCommandPort`, `TrustQueryPort`                                 |
-| **Review**       | `review`       | Post-completion review workflow and review debt enforcement                                | _(ports not yet extracted)_                                          |
+| **Review**       | `review`       | Terminal-outcome review workflow and review debt enforcement                               | _(ports not yet extracted)_                                          |
 | **Dispute**      | `dispute`      | Evidence-backed dispute handling and admin outcomes                                        | _(ports not yet extracted)_                                          |
 | **Messaging**    | `messaging`    | Platform-mediated post-confirmation messaging and auditability                             | `MessagingCommandPort`, `MessagingQueryPort`                         |
 | **Notification** | `notification` | Push/SMS notification delivery                                                             | `NotificationCommandPort`                                            |
@@ -398,7 +398,7 @@ For exact column definitions, use the Flyway migrations in `services/api/src/mai
 
 #### Trust, disputes, and moderation
 
-- `booking_reviews`: bilateral structured review submissions after completion.
+- `booking_reviews`: bilateral structured review submissions after reviewable terminal outcomes.
 - `review_enforcement_cases`: reminder cadence and lock state for owed reviews.
 - `tasker_reliability_scores`: derived reliability data used for ranking and trust operations.
 - `tasker_badges`: trust badge assignments. Badge display remains subordinate to verification and threshold-based public reputation policy.
@@ -443,7 +443,7 @@ No SQL views or materialized projections are currently part of the architecture 
    - Recent in-app activity and accepted future reschedules block premature no-show adjudication.
 4. **Completion, review gate, and disputes**
    - Completion sequence is: tasker marks complete → customer confirms or disputes → reminder on silence → timeout auto-complete → ops fallback for edge cases.
-   - Every completed booking creates bilateral review debt.
+   - Every reviewable terminal booking outcome creates bilateral review debt.
    - Customer posting and tasker application actions remain blocked until the owed review is submitted.
    - Disputes remain evidence-backed moderation flows, not escrow or payout flows.
 5. **Assistance and rescue**
@@ -596,7 +596,7 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
   - Launch lifecycle transitions align with the PRD: tasks move through open/assigned/completed-or-terminal states, and bookings move through confirmed/completed-or-terminal states without requiring payment-gated intermediates.
 - **Pricing contract**:
   - Every Phase 1 task uses exactly one of the two launch pricing modes: `I have a budget` or `I want quotes`.
-  - Structured application pricing must support budget acceptance, counter-offer, and quote submission as required by the PRD.
+  - Structured application pricing must support budget acceptance for budget-mode tasks and one quote submission for quote-mode tasks. Counter-offers are not part of the Phase 1 budget flow.
 - **Trust contract**:
   - Disputes may be opened during active bookings and for the limited post-completion window defined by product policy.
   - Evidence-backed moderation remains the dispute model for Phase 1.

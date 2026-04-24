@@ -39,7 +39,7 @@ components:
     variant: ghost
 
   - id: COMP-BUTTON
-    usage: 'Ghost link to leave a review after completion'
+    usage: 'Ghost link to leave a review when review debt exists'
     props:
       label: 'Үнэлгээ өгөх'
       variant: outline
@@ -304,7 +304,7 @@ analytics_events:
   - event: 'booking_cancel_tapped'
     trigger: 'Tasker taps Cancel Booking link'
   - event: 'booking_review_tapped'
-    trigger: 'Tasker taps Leave Review button after completion'
+    trigger: 'Tasker taps Leave Review button when review debt exists'
 
 acceptance_criteria:
   - 'Exact address is shown only after booking is assigned and visible only to the confirmed tasker'
@@ -316,7 +316,7 @@ acceptance_criteria:
   - 'Cancel link opens Booking Cancel modal (SCR-TASK-015)'
   - 'No-show flag modal (SCR-TASK-014) is triggered based on schedule timing'
   - 'Message button navigates to Chat Detail (SCR-SHARED-011)'
-  - 'Leave Review button navigates to Review Form (SCR-SHARED-017) after completion'
+  - 'Leave Review button navigates to Review Form (SCR-SHARED-017) when review debt exists'
   - 'Approaching reminder highlights when within 2 hours of scheduled time'
   - 'Completed state shows booking in read-only mode with review CTA'
   - 'Cancelled and No-Show states show relevant details and reason'

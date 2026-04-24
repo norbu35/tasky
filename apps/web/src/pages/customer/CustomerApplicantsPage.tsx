@@ -10,6 +10,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { useAppContext } from '../../context/AppContext';
 import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../layout/parity';
 
+function formatMnt(amount: number): string {
+  return `${amount.toLocaleString()} MNT`;
+}
+
 export function CustomerApplicantsPage() {
   const { apiClient, session } = useAppContext();
   const { t } = useTranslation();
@@ -166,6 +170,17 @@ export function CustomerApplicantsPage() {
                           })}
                         </span>
                         {application.tasker.is_pro ? <Badge variant="secondary">PRO</Badge> : null}
+                        <Badge variant="outline">
+                          {task.pricing_mode === 'QUOTE'
+                            ? application.quote_price != null
+                              ? t('customerPages.applicants.quotePrice', {
+                                  amount: formatMnt(application.quote_price),
+                                })
+                              : t('customerPages.applicants.quoteMissing')
+                            : t('customerPages.applicants.postedBudget', {
+                                amount: formatMnt(task.budget ?? 0),
+                              })}
+                        </Badge>
                       </div>
                     </div>
                   </div>

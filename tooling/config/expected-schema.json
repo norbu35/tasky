@@ -1,5 +1,5 @@
 {
-  "_generated_from_migrations": "V1 through V33",
+  "_generated_from_migrations": "V1 through V34",
   "_description": "Canonical schema inventory. Regenerate with: python3 tooling/scripts/governance/validate-schema-parity.py --update-expected",
   "tables": {
     "analytics_events": {
@@ -388,7 +388,7 @@
       ],
       "check_constraints": {
         "intervention_stage": ["completion_rescue", "post_booking", "post_match", "pre_match"],
-        "intervention_type": ["EXTERNAL_DISTRIBUTION", "MANUAL_ASSISTED", "SYSTEM_ASSISTED"],
+        "intervention_type": ["external_distribution", "manual_rescue", "ops_override"],
         "trigger_window": ["DAYTIME", "OFF_HOURS"]
       }
     },

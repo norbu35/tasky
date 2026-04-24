@@ -65,7 +65,7 @@ entities:
         guard: tasker_marked_done == true
         side_effects:
           - booking → COMPLETED
-          - trigger review prompts for both parties
+          - trigger review debt and prompts for both parties
           - record completion metrics
         phase: 0-1
       - id: TASK-T07
@@ -85,6 +85,7 @@ entities:
         side_effects:
           - booking → CANCELLED
           - record reliability incident if < 4h to schedule
+          - create review debt if cancellation is fault-attributed
         phase: 0-1
       - id: TASK-T09
         source: ASSIGNED
@@ -94,6 +95,7 @@ entities:
         side_effects:
           - booking → CANCELLED
           - record Tasker strike (3 in 30d → 7d suspension)
+          - create review debt unless safety/fraud handling defers fault attribution
           - task re-opens for applications
         phase: 0-1
       - id: TASK-T10
@@ -104,6 +106,7 @@ entities:
         side_effects:
           - booking → NO_SHOW
           - enter admin reliability review
+          - trigger review debt and prompts for both parties
           - 2+ no-shows in 28d → strike review
         phase: 0-1
       - id: TASK-T11
@@ -169,7 +172,7 @@ entities:
         guard: tasker_marked_done == true
         side_effects:
           - task → COMPLETED
-          - trigger bilateral review prompts
+          - trigger bilateral review debt and prompts
         phase: 0-1
       - id: BOOK-T04
         source: ASSIGNED
@@ -178,6 +181,7 @@ entities:
         guard: booking.status == ASSIGNED
         side_effects:
           - record reliability incident if < 4h to schedule
+          - create review debt if cancellation is fault-attributed
           - 'first incident in 28d: warning only'
           - '2 incidents in 28d: ranking penalty + strike review'
         phase: 0-1
@@ -189,6 +193,7 @@ entities:
         side_effects:
           - task → OPEN (re-opens for applications)
           - record Tasker cancellation strike
+          - create review debt unless safety/fraud handling defers fault attribution
           - 3 cancellations in 30d → 7-day suspension
         phase: 0-1
       - id: BOOK-T06
@@ -199,6 +204,7 @@ entities:
         side_effects:
           - task → NO_SHOW
           - enter admin reliability review
+          - trigger bilateral review debt and prompts
           - 2+ no-shows in 28d → strike review
         phase: 0-1
       - id: BOOK-T07
@@ -244,6 +250,7 @@ entities:
       - Free cancellation applies more than 4 hours before schedule
       - Late cancellation records a reliability incident
       - Tasker cancel re-opens the task and records a strike
+      - Review debt follows completed, no-show, and fault-attributed cancellation outcomes
       - Chat-only schedule changes do not affect timers
       - Reschedule requires counterparty acceptance
       - Timeline events are immutable audit records

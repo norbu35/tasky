@@ -78,11 +78,8 @@ public class AdminUserController {
 
     @PostMapping("/{id}/unban")
     public ResponseEntity<?> unban(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @PathVariable String id,
-            @Valid @RequestBody AdminActionRequest body,
-            HttpServletRequest request) {
-        boolean success = adminUserCompositionService.unbanUser(principal.userId(), id, body.reason());
+            @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id, HttpServletRequest request) {
+        boolean success = adminUserCompositionService.unbanUser(principal.userId(), id, "admin_unban");
         if (!success) {
             return ResponseEntity.status(404).body(errorBody("NOT_FOUND", "User not found.", request));
         }

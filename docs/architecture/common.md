@@ -166,7 +166,8 @@ class: mn.tasky.common.outbox.OutboxRelayService
 - **Product Metrics (Required)**:
   - Required launch KPIs are the seven metrics defined in `docs/METRICS.md`.
   - Category is the primary slice; district is drilldown.
-  - Native self-serve reporting must exclude both system-assisted and manual-assisted outcomes.
+  - Native self-serve reporting and native confirmation success must exclude outcomes after system-assisted or
+    manual-assisted intervention.
 - **Operational Alerts**:
   - Alert on the four hard-gate KPI families defined in `docs/METRICS.md`.
   - Alert on verification SLA breaches and OAuth outage active windows.

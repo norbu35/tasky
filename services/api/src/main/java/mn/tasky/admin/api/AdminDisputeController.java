@@ -63,7 +63,7 @@ public class AdminDisputeController {
             @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
             HttpServletRequest request) {
         AdminDisputeResolutionOutcome outcome = disputeResolutionService.resolveDispute(
-                principal.userId(), id, body.outcome(), body.notes(), idempotencyKey);
+                principal.userId(), id, body.resolution(), body.notes(), idempotencyKey);
 
         return switch (outcome.status()) {
             case IN_PROGRESS, REPLAY_MISSING -> ResponseEntity.status(409).body(outcome.body());

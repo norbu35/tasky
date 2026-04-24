@@ -329,7 +329,7 @@ def compare_schemas(
             av = a_checks.get(col, [])
             ev = e_checks.get(col, [])
             if av != ev:
-                warnings.append(
+                errors.append(
                     f"Table '{t}': CHECK on '{col}' differs — "
                     f"expected {ev}, got {av}"
                 )

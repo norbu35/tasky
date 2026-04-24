@@ -160,14 +160,14 @@ journeys:
       - customer
       - tasker
     phase: 0-1
-    goal: Submit mandatory review after booking completion
+    goal: Submit mandatory review after a reviewable terminal booking outcome
     entry: SCR-SHARED-017
     exit:
       - SCR-SHARED-017
     happy_path:
       - step: 1
         screen: SCR-SHARED-017
-        action: Rate categories + optional freetext
+        action: Rate three role-specific categories + optional text marked not required
         next: SCR-SHARED-017
       - step: 2
         screen: SCR-SHARED-017
@@ -180,11 +180,11 @@ journeys:
         condition: User doesn't review immediately
         screens:
           - SCR-SHARED-018
-        outcome: 24h reminder → 72h reminder → hard lock if risk-triggered
+        outcome: 24h reminder → 72h reminder → hard lock while review debt remains
       - id: JRN-SHARED-07-A2
         name: Hard lock
         branch_at: 0
-        condition: 'Risk conditions: open dispute, 2 missed reviews, investigation'
+        condition: User has any open review enforcement case
         screens:
           - SCR-SHARED-019
         outcome: Cannot post/apply until review submitted

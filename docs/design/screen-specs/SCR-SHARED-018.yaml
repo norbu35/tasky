@@ -1,104 +1,104 @@
 # Screen Spec: Review Reminder
 screen_id: SCR-SHARED-018
-name: "Review Reminder"
+name: 'Review Reminder'
 route: null
 role: [customer, tasker]
-phase: "0-1"
+phase: '0-1'
 template: modal_sheet
-figma_page: "Shared/Review Reminder"
-feature: "reviews"
+figma_page: 'Shared/Review Reminder'
+feature: 'reviews'
 
 layout:
   template: modal_sheet
   density: default
-  structure: "scrim -> sheet(handle_bar + icon + title + body_text + cta_button)"
+  structure: 'scrim -> sheet(handle_bar + icon + title + body_text + cta_button)'
 
 components:
   - id: COMP-MODALSHEET
-    usage: "Bottom sheet overlay for review reminder; non-blocking, user can dismiss"
+    usage: 'Bottom sheet overlay for review reminder; non-blocking, user can dismiss'
     props:
       visible: true
-      onClose: "handleDismiss"
-      title: "Сэтгэгдэл үлдээнэ үү"
-      primaryAction: "Одоо үнэлэх"
-      secondaryAction: "Дараа"
+      onClose: 'handleDismiss'
+      title: 'Сэтгэгдэл үлдээнэ үү'
+      primaryAction: 'Одоо үнэлэх'
+      secondaryAction: 'Дараа'
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Primary CTA to navigate to review form"
+    usage: 'Primary CTA to navigate to review form'
     props:
-      label: "Одоо үнэлэх"
+      label: 'Одоо үнэлэх'
       variant: primary
       size: lg
     variant: primary
 
   - id: COMP-BUTTON
-    usage: "Secondary dismiss button to postpone review"
+    usage: 'Secondary dismiss button to postpone review'
     props:
-      label: "Дараа"
+      label: 'Дараа'
       variant: ghost
       size: lg
     variant: ghost
 
 states:
   - id: reminder_24h
-    description: "First reminder shown 24 hours after booking completion; gentle tone encouraging review"
+    description: 'First reminder shown 24 hours after review debt creation; gentle tone encouraging review'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: []
 
   - id: reminder_72h
-    description: "Second reminder shown 72 hours after booking completion; more urgent tone warning about review requirement"
+    description: 'Second reminder shown 72 hours after review debt creation; more urgent tone warning about review requirement'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: []
 
 copy:
   - key: title_24h
-    mn: "Сэтгэгдэл үлдээнэ үү"
-    en: "Leave a review"
+    mn: 'Сэтгэгдэл үлдээнэ үү'
+    en: 'Leave a review'
     max_chars: 25
 
   - key: body_24h
-    mn: "Таны захиалга дуусснаас хойш нэг хоног өнгөрлөө. Гүйцэтгэгчдээ үнэлгээ өгнө үү!"
+    mn: 'Таны захиалга дуусснаас хойш нэг хоног өнгөрлөө. Гүйцэтгэгчдээ үнэлгээ өгнө үү!'
     en: "It's been a day since your booking completed. Please rate your Tasker!"
     max_chars: 120
 
   - key: title_72h
-    mn: "Сэтгэгдэл шаардлагатай"
-    en: "Review required"
+    mn: 'Сэтгэгдэл шаардлагатай'
+    en: 'Review required'
     max_chars: 25
 
   - key: body_72h
-    mn: "Та сэтгэгдлээ үлдээгээгүй байна. Шинэ даалгавар нийтлэх эсвэл ажилд орохын тулд сэтгэгдлээ бичнэ үү."
+    mn: 'Та сэтгэгдлээ үлдээгээгүй байна. Шинэ даалгавар нийтлэх эсвэл ажилд орохын тулд сэтгэгдлээ бичнэ үү.'
     en: "You haven't left your review yet. Please submit your review to continue posting tasks or applying to jobs."
     max_chars: 150
 
   - key: cta_review_now
-    mn: "Одоо үнэлэх"
-    en: "Review Now"
+    mn: 'Одоо үнэлэх'
+    en: 'Review Now'
     max_chars: 15
 
   - key: cta_later
-    mn: "Дараа"
-    en: "Later"
+    mn: 'Дараа'
+    en: 'Later'
     max_chars: 10
 
 api_endpoints: []
 
 analytics_events:
-  - event: "review_reminder_shown"
-    trigger: "Review reminder bottom sheet appears (with reminder_type: 24h or 72h)"
-  - event: "review_reminder_accepted"
+  - event: 'review_reminder_shown'
+    trigger: 'Review reminder bottom sheet appears (with reminder_type: 24h or 72h)'
+  - event: 'review_reminder_accepted'
     trigger: "User taps 'Review Now' to go to review form"
-  - event: "review_reminder_dismissed"
+  - event: 'review_reminder_dismissed'
     trigger: "User taps 'Later' or drags sheet to dismiss"
 
 acceptance_criteria:
-  - "Sheet appears as a non-blocking bottom sheet overlay on any screen 24h after booking completion"
-  - "24h reminder uses gentle, encouraging tone"
-  - "72h reminder uses more urgent tone mentioning that review is required to continue using the app"
+  - 'Sheet appears as a non-blocking bottom sheet overlay on any screen 24h after review debt creation'
+  - '24h reminder uses gentle, encouraging tone'
+  - '72h reminder uses more urgent tone mentioning that review is required to continue using the app'
   - "Tapping 'Одоо үнэлэх' navigates (push) to SCR-SHARED-017 with the pending booking_id"
   - "Tapping 'Дараа' or drag-to-dismiss closes the sheet; reminder will re-appear on next app session"
-  - "Sheet handle bar is visible for drag-to-dismiss gesture"
-  - "Scrim uses branded primaryDeep at 35% opacity"
-  - "This is a bottom sheet overlay, not a standalone route — it appears on top of the current screen"
-  - "72h reminder cannot be permanently dismissed; it will keep appearing until the review is submitted"
+  - 'Sheet handle bar is visible for drag-to-dismiss gesture'
+  - 'Scrim uses branded primaryDeep at 35% opacity'
+  - 'This is a bottom sheet overlay, not a standalone route — it appears on top of the current screen'
+  - '72h reminder cannot be permanently dismissed; it will keep appearing until the review is submitted'

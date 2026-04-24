@@ -25,6 +25,7 @@ import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
 import mn.tasky.messaging.dto.Conversation;
 import mn.tasky.notification.application.NotificationService;
+import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.TaskLifecycleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,6 +66,9 @@ class NoShowServiceTest {
     @Mock
     private AuditEventDao auditEventDao;
 
+    @Mock
+    private ReviewEnforcementService reviewEnforcementService;
+
     private NoShowService service;
     private final Instant now = Instant.now();
 
@@ -80,7 +84,8 @@ class NoShowServiceTest {
                 taskLifecycleService,
                 moderationService,
                 notificationService,
-                auditEventDao);
+                auditEventDao,
+                reviewEnforcementService);
     }
 
     private BookingState assignedBooking(String bookingId, String customerId, String taskerId) {
@@ -330,6 +335,7 @@ class NoShowServiceTest {
                 .recordEvent(eq("b1"), eq(BookingTimelineService.NO_SHOW_CONFIRMED), eq("c1"), anyString());
         verify(auditEventDao).insert(eq("c1"), eq("NO_SHOW_FLAGGED"), eq("BOOKING"), eq("b1"), anyString());
         verify(moderationService).addStrike(eq("tk1"), eq("NO_SHOW"), eq("b1"));
+        verify(reviewEnforcementService).createCasesForBooking(eq("b1"), eq("c1"), eq("tk1"), eq("BOOKING_NO_SHOW"));
     }
 
     @Test
@@ -367,6 +373,7 @@ class NoShowServiceTest {
         verify(taskLifecycleService).transitionToNoShow("task1");
         verify(auditEventDao).insert(eq("tk1"), eq("NO_SHOW_FLAGGED"), eq("BOOKING"), eq("b1"), anyString());
         verify(moderationService, never()).addStrike(anyString(), anyString(), anyString());
+        verify(reviewEnforcementService).createCasesForBooking(eq("b1"), eq("c1"), eq("tk1"), eq("BOOKING_NO_SHOW"));
     }
 
     @Test

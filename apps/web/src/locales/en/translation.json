@@ -163,9 +163,8 @@
     "quoteRequest": "Customer wants quotes",
     "budgetLabel": "Budget: {{amount}} MNT",
     "yourQuoteLabel": "Your quote (MNT)",
-    "counterOfferLabel": "Counter-offer (MNT) — leave blank to accept budget",
     "quotePlaceholder": "Enter your price",
-    "counterPlaceholder": "Optional",
+    "budgetAcceptHint": "Applying accepts the posted budget.",
     "quoteRequiredHint": "Required — the customer is waiting for your price.",
     "quotePriceRequired": "You must provide a quote price for this task.",
     "withdrawAction": "Withdraw application",
@@ -281,7 +280,7 @@
     "reviewTitle": "Leave a Review",
     "reviewDesc": "Rate your experience with the Tasker.",
     "ratingLabel": "Rating (1-5)",
-    "commentLabel": "Comment",
+    "commentLabel": "Comment (optional)",
     "commentPlaceholder": "How was the service?",
     "wouldBookAgainLabel": "Would you book this tasker again?",
     "wouldBookAgainYes": "Yes",
@@ -492,7 +491,10 @@
       "reviewTask": "Review task",
       "summary": "{{count}} applicant(s) ready for review.",
       "taskContext": "Task: {{description}}",
-      "viewProfile": "View profile"
+      "viewProfile": "View profile",
+      "postedBudget": "Posted budget: {{amount}}",
+      "quotePrice": "Quoted price: {{amount}}",
+      "quoteMissing": "Quote missing"
     },
     "bookingConfirmed": {
       "title": "Booking confirmed",

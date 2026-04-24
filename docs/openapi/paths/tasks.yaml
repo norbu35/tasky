@@ -141,7 +141,24 @@
             schema:
               $ref: ../components/schemas/common.yaml#/PresignedUrlResponse
       '400':
-        $ref: ../components/responses.yaml#/BadRequest
+        description: Bad request for pricing-mode validation.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+            examples:
+              quotePriceRequired:
+                summary: QUOTE task missing quote_price
+                value:
+                  code: QUOTE_PRICE_REQUIRED
+                  message: Quote price is required for QUOTE pricing mode tasks.
+                  trace_id: abc-123
+              budgetPriceNotAllowed:
+                summary: BUDGET task includes quote_price
+                value:
+                  code: BUDGET_PRICE_NOT_ALLOWED
+                  message: Budget-mode applications accept the posted budget and cannot include a quote price.
+                  trace_id: abc-123
       '401':
         $ref: ../components/responses.yaml#/Unauthorized
 /tasks:
@@ -470,7 +487,8 @@
     summary: Apply to a task
     description: |
       Tasker applies to an OPEN task. Only verified taskers can apply.
-      The current live contract captures a short application note and optional quote_price.
+      The current live contract captures a short application note and quote_price for QUOTE tasks.
+      BUDGET task applications accept the posted budget and must omit quote_price or send it as null.
       Phase 1 launch UX does not expose open-ended pre-booking chat.
     operationId: applyToTask
     security:
@@ -496,7 +514,7 @@
                 nullable: true
                 minimum: 20000
                 maximum: 50000000
-                description: "Tasker's price response. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the required quote."
+                description: "Tasker's price response for QUOTE tasks. For BUDGET tasks, omit or send null because applying accepts the posted budget."
     responses:
       '201':
         description: Application submitted.
@@ -505,7 +523,24 @@
             schema:
               $ref: ../components/schemas/tasks.yaml#/TaskApplication
       '400':
-        $ref: ../components/responses.yaml#/BadRequest
+        description: Bad request for pricing-mode validation.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+            examples:
+              quotePriceRequired:
+                summary: QUOTE task missing quote_price
+                value:
+                  code: QUOTE_PRICE_REQUIRED
+                  message: Quote price is required for QUOTE pricing mode tasks.
+                  trace_id: abc-123
+              budgetPriceNotAllowed:
+                summary: BUDGET task includes quote_price
+                value:
+                  code: BUDGET_PRICE_NOT_ALLOWED
+                  message: Budget-mode applications accept the posted budget and cannot include a quote price.
+                  trace_id: abc-123
       '401':
         $ref: ../components/responses.yaml#/Unauthorized
       '403':

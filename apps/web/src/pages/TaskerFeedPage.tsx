@@ -84,8 +84,7 @@ export function TaskerFeedPage() {
 
     setWorking(true);
     try {
-      const rawQuote = quotePrices[taskId]?.trim();
-      const quotePrice = rawQuote ? Number(rawQuote) : null;
+      const quotePrice = task?.pricing_mode === 'QUOTE' && rawQuote ? Number(rawQuote) : null;
       const application = await apiClient.applyToTask(
         session.accessToken,
         taskId,
@@ -463,32 +462,30 @@ export function TaskerFeedPage() {
                           />
                         </div>
 
-                        <div className="flex flex-col gap-2 mt-4">
-                          <Label htmlFor={`quote-${task.id}`}>
-                            {task.pricing_mode === 'QUOTE'
-                              ? t('taskerFeed.yourQuoteLabel')
-                              : t('taskerFeed.counterOfferLabel')}
-                          </Label>
-                          <Input
-                            id={`quote-${task.id}`}
-                            type="number"
-                            min="20000"
-                            placeholder={
-                              task.pricing_mode === 'QUOTE'
-                                ? t('taskerFeed.quotePlaceholder')
-                                : t('taskerFeed.counterPlaceholder')
-                            }
-                            value={quotePrices[task.id] ?? ''}
-                            onChange={(e) =>
-                              setQuotePrices((prev) => ({ ...prev, [task.id]: e.target.value }))
-                            }
-                          />
-                          {task.pricing_mode === 'QUOTE' && (
+                        {task.pricing_mode === 'QUOTE' ? (
+                          <div className="flex flex-col gap-2 mt-4">
+                            <Label htmlFor={`quote-${task.id}`}>
+                              {t('taskerFeed.yourQuoteLabel')}
+                            </Label>
+                            <Input
+                              id={`quote-${task.id}`}
+                              type="number"
+                              min="20000"
+                              placeholder={t('taskerFeed.quotePlaceholder')}
+                              value={quotePrices[task.id] ?? ''}
+                              onChange={(e) =>
+                                setQuotePrices((prev) => ({ ...prev, [task.id]: e.target.value }))
+                              }
+                            />
                             <p className="text-xs text-muted-foreground">
                               {t('taskerFeed.quoteRequiredHint')}
                             </p>
-                          )}
-                        </div>
+                          </div>
+                        ) : (
+                          <p className="mt-4 text-sm text-muted-foreground">
+                            {t('taskerFeed.budgetAcceptHint')}
+                          </p>
+                        )}
 
                         <div className="mt-5">
                           <Button

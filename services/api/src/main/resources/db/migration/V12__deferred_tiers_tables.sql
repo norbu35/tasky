@@ -41,8 +41,8 @@ CREATE INDEX IF NOT EXISTS idx_booking_timeline_events_booking
 -- ============================================================
 -- 3. task_rescue_events
 --    One rescue event per task (idempotent). Written by RescueScheduler
---    when an OPEN task has zero applications at 120min mark.
---    actions_json documents the 3 rescue actions per REQ-BOOK-09.
+--    when an OPEN task has zero qualified applications after 8 hours.
+--    actions_json documents rescue actions per REQ-P1-ASSIST-03.
 -- ============================================================
 CREATE TABLE IF NOT EXISTS task_rescue_events (
     id             UUID        PRIMARY KEY DEFAULT gen_random_uuid(),

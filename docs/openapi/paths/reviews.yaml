@@ -4,7 +4,9 @@
       - Reviews
     summary: Submit a review
     description: |
-      Submit a review for a COMPLETED booking. Both customer and tasker can review each other.
+      Submit a review for a reviewable terminal booking outcome. Both customer and tasker can review each other.
+      COMPLETED bookings are always reviewable for participants.
+      NO_SHOW and CANCELLED bookings are reviewable only when the caller has an enforcement case for that booking.
       Each party can only submit one review per booking.
     operationId: submitReview
     security:
@@ -19,6 +21,7 @@
             type: object
             description: |
               Role-specific validation: customers must provide quality + punctuality + communication; taskers must provide clarity + respectfulness + punctuality.
+              Comment text is optional.
             required:
               - punctuality_rating
             properties:
@@ -66,7 +69,7 @@
       '404':
         $ref: ../components/responses.yaml#/NotFound
       '409':
-        description: Review already submitted for this booking or booking is not COMPLETED.
+        description: Review already submitted for this booking or booking is not reviewable.
         content:
           application/json:
             schema:

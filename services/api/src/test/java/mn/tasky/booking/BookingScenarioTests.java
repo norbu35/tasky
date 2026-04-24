@@ -317,7 +317,8 @@ class BookingScenarioTests {
                         taskLifecycleService,
                         realModerationService,
                         mock(mn.tasky.common.outbox.DomainEventOutboxService.class),
-                        mock(mn.tasky.trust.publicapi.TrustQueryPort.class));
+                        mock(mn.tasky.trust.publicapi.TrustQueryPort.class),
+                        mock(mn.tasky.review.application.ReviewEnforcementService.class));
 
         Instant beforeCancel = Instant.now();
         BookingTransitionResult result = lifecycleService.cancelBooking("tasker-1", booking.id(), "Schedule conflict");
@@ -350,7 +351,7 @@ class BookingScenarioTests {
     }
 
     @Test
-    @DisplayName("SCN-BOOK-021: Tasker cancellation with Safety/Fraud reason bypasses automated strike"
+    @DisplayName("SCN-BOOK-021: Tasker cancellation with SAFETY_FRAUD reason bypasses automated strike"
             + " and opens Trust and Safety ticket")
     void taskerCancelForSafetyDoesNotAddStrike() {
         BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50_000);
@@ -373,7 +374,8 @@ class BookingScenarioTests {
                         taskLifecycleService,
                         moderationService,
                         mock(mn.tasky.common.outbox.DomainEventOutboxService.class),
-                        mock(mn.tasky.trust.publicapi.TrustQueryPort.class));
+                        mock(mn.tasky.trust.publicapi.TrustQueryPort.class),
+                        mock(mn.tasky.review.application.ReviewEnforcementService.class));
 
         // Use standard cancellation reason
         lifecycleService.cancelBooking("tasker-1", booking.id(), "Car broke down");
@@ -381,9 +383,9 @@ class BookingScenarioTests {
 
         org.mockito.Mockito.reset(moderationService);
 
-        // Use Safety/Fraud reason
+        // Use SAFETY_FRAUD reason
         BookingState booking2 = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50_000);
-        lifecycleService.cancelBooking("tasker-1", booking2.id(), "Safety/Fraud");
+        lifecycleService.cancelBooking("tasker-1", booking2.id(), "[SAFETY_FRAUD] safety concern");
 
         // No strike applied
         verify(moderationService, org.mockito.Mockito.never()).addStrike(anyString());

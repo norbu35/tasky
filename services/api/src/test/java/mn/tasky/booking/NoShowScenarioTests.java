@@ -26,6 +26,7 @@ import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
 import mn.tasky.notification.application.NotificationService;
+import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.TaskLifecycleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -51,6 +52,7 @@ class NoShowScenarioTests {
     private ModerationService moderationService;
     private AuditEventDao auditEventDao;
     private TaskLifecycleService taskLifecycleService;
+    private ReviewEnforcementService reviewEnforcementService;
     private NoShowService noShowService;
 
     @BeforeEach
@@ -65,6 +67,7 @@ class NoShowScenarioTests {
         moderationService = mock(ModerationService.class);
         auditEventDao = mock(AuditEventDao.class);
         taskLifecycleService = mock(TaskLifecycleService.class);
+        reviewEnforcementService = mock(ReviewEnforcementService.class);
 
         // flagNoShow uses findByIdForUpdate; other paths use findById
         when(bookingDao.findByIdForUpdate(anyString()))
@@ -80,7 +83,8 @@ class NoShowScenarioTests {
                 taskLifecycleService,
                 moderationService,
                 notificationService,
-                auditEventDao);
+                auditEventDao,
+                reviewEnforcementService);
 
         // Default: no recent activity, no accepted reschedule, no conversation
         when(timelineEventDao.existsRecentByBookingId(anyString(), any())).thenReturn(false);
@@ -220,6 +224,8 @@ class NoShowScenarioTests {
         verify(timelineService)
                 .recordEvent(eq(BOOKING_ID), eq(BookingTimelineService.NO_SHOW_CONFIRMED), anyString(), anyString());
         verify(auditEventDao).insert(anyString(), eq("NO_SHOW_FLAGGED"), eq("BOOKING"), eq(BOOKING_ID), anyString());
+        verify(reviewEnforcementService)
+                .createCasesForBooking(eq(BOOKING_ID), eq(CUSTOMER_ID), eq(TASKER_ID), eq("BOOKING_NO_SHOW"));
     }
 
     // ── SCN-BOOK-015 ─────────────────────────────────────────────────────────

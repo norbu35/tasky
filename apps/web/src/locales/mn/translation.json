@@ -163,9 +163,8 @@
     "quoteRequest": "Захиалагч үнийн санал хүсч байна",
     "budgetLabel": "Төсөв: {{amount}} MNT",
     "yourQuoteLabel": "Таны үнийн санал (MNT)",
-    "counterOfferLabel": "Бусад үнийн санал (MNT) — хоосон үлдээвэл төсвийг хүлээж авна",
     "quotePlaceholder": "Үнээ оруул",
-    "counterPlaceholder": "Нэмэлт",
+    "budgetAcceptHint": "Илгээснээр нийтэлсэн төсвийг хүлээн зөвшөөрнө.",
     "quoteRequiredHint": "Заавал — захиалагч таны үнийн саналыг хүлээж байна.",
     "quotePriceRequired": "Энэ даалгаварт үнийн санал заавал оруулах шаардлагатай.",
     "withdrawAction": "Хүсэлтээ буцаах",
@@ -281,7 +280,7 @@
     "reviewTitle": "Үнэлгээ үлдээх",
     "reviewDesc": "Ажилтны үйлчилгээнд үнэлгээ өгнө үү.",
     "ratingLabel": "Үнэлгээ (1-5)",
-    "commentLabel": "Сэтгэгдэл",
+    "commentLabel": "Сэтгэгдэл (заавал биш)",
     "commentPlaceholder": "Үйлчилгээ ямар байсан бэ?",
     "wouldBookAgainLabel": "Энэ таскерийг дахин захиалах уу?",
     "wouldBookAgainYes": "Тийм",
@@ -492,7 +491,10 @@
       "reviewTask": "Ажил шалгах",
       "summary": "Шалгах шаардлагатай {{count}} хүсэлт байна.",
       "taskContext": "Ажил: {{description}}",
-      "viewProfile": "Профайл үзэх"
+      "viewProfile": "Профайл үзэх",
+      "postedBudget": "Нийтэлсэн төсөв: {{amount}}",
+      "quotePrice": "Үнийн санал: {{amount}}",
+      "quoteMissing": "Үнийн санал дутуу"
     },
     "bookingConfirmed": {
       "title": "Захиалга баталгаажсан",

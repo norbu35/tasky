@@ -16,6 +16,7 @@ import mn.tasky.auth.application.ModerationService;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import mn.tasky.common.outbox.DomainEventOutboxService;
+import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.TaskLifecycleService;
 import mn.tasky.task.application.TaskQueryService;
 import mn.tasky.task.dto.TaskState;
@@ -50,6 +51,9 @@ class BookingLifecycleServiceTest {
     @Mock
     private TrustQueryPort trustQueryPort;
 
+    @Mock
+    private ReviewEnforcementService reviewEnforcementService;
+
     private BookingLifecycleService service;
     private final Instant now = Instant.now();
 
@@ -62,7 +66,8 @@ class BookingLifecycleServiceTest {
                 taskLifecycleService,
                 moderationService,
                 domainEventOutboxService,
-                trustQueryPort);
+                trustQueryPort,
+                reviewEnforcementService);
     }
 
     private BookingState assignedBooking(String bookingId, String taskId, String customerId, String taskerId) {
@@ -126,12 +131,35 @@ class BookingLifecycleServiceTest {
     }
 
     private TaskState openTask(String taskId) {
+        return openTask(taskId, now);
+    }
+
+    private TaskState openTask(String taskId, Instant scheduledAt) {
         return new TaskState(
-                taskId, "c1", "cat1", "desc", 5000, 47.9, 106.9, "UB", "OPEN", now, "BUDGET", null, null, null, null,
-                now, now);
+                taskId,
+                "c1",
+                "cat1",
+                "desc",
+                5000,
+                47.9,
+                106.9,
+                "UB",
+                "OPEN",
+                scheduledAt,
+                "BUDGET",
+                null,
+                null,
+                null,
+                null,
+                now,
+                now);
     }
 
     private TaskState assignedTask(String taskId) {
+        return assignedTask(taskId, now);
+    }
+
+    private TaskState assignedTask(String taskId, Instant scheduledAt) {
         return new TaskState(
                 taskId,
                 "c1",
@@ -142,7 +170,7 @@ class BookingLifecycleServiceTest {
                 106.9,
                 "UB",
                 "ASSIGNED",
-                now,
+                scheduledAt,
                 "BUDGET",
                 null,
                 null,
@@ -187,6 +215,7 @@ class BookingLifecycleServiceTest {
         assertThat(result.isSuccess()).isTrue();
         verify(taskLifecycleService).reopenTask("t1");
         verify(moderationService).addStrike(eq("tk1"), eq("TASKER_CANCELLATION"), eq("b1"));
+        verify(reviewEnforcementService).createCasesForBooking(eq("b1"), eq("c1"), eq("tk1"), eq("BOOKING_CANCELLED"));
         verify(timelineService)
                 .recordEvent(eq("b1"), eq(BookingTimelineService.BOOKING_CANCELLED), eq("tk1"), eq(null));
     }
@@ -203,20 +232,23 @@ class BookingLifecycleServiceTest {
                 .thenReturn(BookingTransitionResult.success(cancelled));
         when(taskLifecycleService.reopenTask("t1")).thenReturn(Optional.of(openTask("t1")));
 
-        BookingTransitionResult result = service.cancelBooking("tk1", "b1", "Safety concern");
+        BookingTransitionResult result = service.cancelBooking("tk1", "b1", "[SAFETY_FRAUD] risk signal");
         assertThat(result.isSuccess()).isTrue();
         verify(taskLifecycleService).reopenTask("t1");
         verify(moderationService, never()).addStrike(anyString(), anyString(), anyString());
+        verify(reviewEnforcementService, never())
+                .createCasesForBooking(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
-    void cancelBooking_customerCancel_transitionsTaskToCancelled() {
+    void cancelBooking_customerLateCancel_transitionsTaskToCancelled_andCreatesReviewDebt() {
         BookingState booking = assignedBooking("b1", "t1", "c1", "tk1");
         BookingState cancelled = cancelledBooking("b1", "t1", "c1", "tk1");
 
         when(bookingService.getBooking("b1")).thenReturn(Optional.of(booking), Optional.of(cancelled));
         when(trustQueryPort.hasOpenDispute("b1")).thenReturn(false);
-        when(taskQueryService.getTask("t1")).thenReturn(Optional.of(assignedTask("t1")));
+        when(taskQueryService.getTask("t1"))
+                .thenReturn(Optional.of(assignedTask("t1", Instant.now().minusSeconds(30 * 60))));
         when(bookingService.cancelBooking(eq("c1"), eq("b1"), any()))
                 .thenReturn(BookingTransitionResult.success(cancelled));
         when(taskLifecycleService.transitionToCancelled("t1")).thenReturn(Optional.of(openTask("t1")));
@@ -224,6 +256,28 @@ class BookingLifecycleServiceTest {
         BookingTransitionResult result = service.cancelBooking("c1", "b1");
         assertThat(result.isSuccess()).isTrue();
         verify(taskLifecycleService).transitionToCancelled("t1");
+        verify(reviewEnforcementService).createCasesForBooking(eq("b1"), eq("c1"), eq("tk1"), eq("BOOKING_CANCELLED"));
+        verify(timelineService).recordEvent(eq("b1"), eq(BookingTimelineService.BOOKING_CANCELLED), eq("c1"), eq(null));
+    }
+
+    @Test
+    void cancelBooking_customerEarlyCancel_transitionsTaskToCancelled_withoutReviewDebt() {
+        BookingState booking = assignedBooking("b1", "t1", "c1", "tk1");
+        BookingState cancelled = cancelledBooking("b1", "t1", "c1", "tk1");
+
+        when(bookingService.getBooking("b1")).thenReturn(Optional.of(booking), Optional.of(cancelled));
+        when(trustQueryPort.hasOpenDispute("b1")).thenReturn(false);
+        when(taskQueryService.getTask("t1"))
+                .thenReturn(Optional.of(assignedTask("t1", Instant.now().plusSeconds(24 * 60 * 60))));
+        when(bookingService.cancelBooking(eq("c1"), eq("b1"), any()))
+                .thenReturn(BookingTransitionResult.success(cancelled));
+        when(taskLifecycleService.transitionToCancelled("t1")).thenReturn(Optional.of(openTask("t1")));
+
+        BookingTransitionResult result = service.cancelBooking("c1", "b1");
+        assertThat(result.isSuccess()).isTrue();
+        verify(taskLifecycleService).transitionToCancelled("t1");
+        verify(reviewEnforcementService, never())
+                .createCasesForBooking(anyString(), anyString(), anyString(), anyString());
         verify(timelineService).recordEvent(eq("b1"), eq(BookingTimelineService.BOOKING_CANCELLED), eq("c1"), eq(null));
     }
 

@@ -7,6 +7,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 import { AppContext, type AppContextValue } from '../../src/context/AppContext';
+import i18n from '../../src/lib/i18n';
 import { createMockApiClient } from '../../src/test/mocks';
 import {
   makeBooking,
@@ -206,6 +207,118 @@ describe('W1: Pricing mode', () => {
     });
   });
 
+  it('TID-WEB-001B budget apply modal hides quote input and submits null quote_price', async () => {
+    const apiClient = createMockApiClient({
+      listTasks: vi.fn().mockResolvedValue({
+        data: [
+          {
+            id: 'budget-task-1',
+            category: { id: 'cat-1', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
+            customer: { id: 'cust-1', full_name: 'Customer', avatar_url: null, rating_avg: 4.5 },
+            description: 'Budget-mode task',
+            budget: 75000,
+            pricing_mode: 'BUDGET',
+            approximate_location: 'Sukhbaatar',
+            approximate_lat: 47.92,
+            approximate_lng: 106.92,
+            status: 'OPEN',
+            scheduled_at: '2026-02-15T00:00:00Z',
+            photo_urls: [],
+            application_count: 0,
+            created_at: '2026-02-14T00:00:00Z',
+          },
+        ],
+        cursor: { next: null, has_more: false },
+      }),
+      listCategories: vi.fn().mockResolvedValue({
+        data: [makeCategory()],
+        cursor: { next: null, has_more: false },
+      }),
+      applyToTask: vi.fn().mockResolvedValue({
+        id: 'app-budget-1',
+        task_id: 'budget-task-1',
+        tasker: {
+          id: 'tasker-1',
+          full_name: 'Tasker',
+          avatar_url: null,
+          rating_avg: 4.6,
+          completed_tasks: 7,
+          is_pro: true,
+        },
+        message: 'Accepting your posted budget.',
+        status: 'PENDING',
+        quote_price: null,
+        created_at: '2026-02-14T00:00:00Z',
+      }),
+    });
+
+    const { TaskerFeedPage } = await import('../../src/pages/TaskerFeedPage');
+    const ctx = createTaskerContext({ apiClient });
+    renderWithProviders(<TaskerFeedPage />, ctx);
+
+    fireEvent.click(await screen.findByRole('button', { name: 'View Details & Apply' }));
+    expect(screen.queryByLabelText(/Your quote \(MNT\)/i)).not.toBeInTheDocument();
+
+    fireEvent.change(await screen.findByLabelText('Application message'), {
+      target: { value: 'Accepting your posted budget.' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Apply to task' }));
+
+    await waitFor(() => {
+      expect(apiClient.applyToTask).toHaveBeenCalledWith(
+        'access-token',
+        'budget-task-1',
+        'Accepting your posted budget.',
+        null,
+      );
+    });
+  });
+
+  it('TID-WEB-001C quote apply modal requires quote input', async () => {
+    const apiClient = createMockApiClient({
+      listTasks: vi.fn().mockResolvedValue({
+        data: [
+          {
+            id: 'quote-task-required',
+            category: { id: 'cat-1', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
+            customer: { id: 'cust-1', full_name: 'Customer', avatar_url: null, rating_avg: 4.5 },
+            description: 'Quote required task',
+            budget: null,
+            pricing_mode: 'QUOTE',
+            approximate_location: 'Sukhbaatar',
+            approximate_lat: 47.92,
+            approximate_lng: 106.92,
+            status: 'OPEN',
+            scheduled_at: '2026-02-15T00:00:00Z',
+            photo_urls: [],
+            application_count: 0,
+            created_at: '2026-02-14T00:00:00Z',
+          },
+        ],
+        cursor: { next: null, has_more: false },
+      }),
+      listCategories: vi.fn().mockResolvedValue({
+        data: [makeCategory()],
+        cursor: { next: null, has_more: false },
+      }),
+      applyToTask: vi.fn(),
+    });
+
+    const { TaskerFeedPage } = await import('../../src/pages/TaskerFeedPage');
+    const ctx = createTaskerContext({ apiClient });
+    renderWithProviders(<TaskerFeedPage />, ctx);
+
+    fireEvent.click(await screen.findByRole('button', { name: 'View Details & Apply' }));
+    fireEvent.change(await screen.findByLabelText('Application message'), {
+      target: { value: 'I can do this quickly and safely.' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Apply to task' }));
+
+    await waitFor(() => {
+      expect(apiClient.applyToTask).not.toHaveBeenCalled();
+    });
+  });
+
   it('TID-WEB-002 shows "Accepting quotes" for QUOTE mode tasks in the feed', async () => {
     const apiClient = createMockApiClient({
       listTasks: vi.fn().mockResolvedValue({
@@ -283,6 +396,15 @@ describe('W2: Structured reviews', () => {
     expect(payload).toHaveProperty('punctuality_rating', 5);
     expect(payload).not.toHaveProperty('clarity_rating');
     expect(payload).not.toHaveProperty('respectfulness_rating');
+  });
+
+  it('TID-WEB-004B review comment label carries optional copy in en and mn locales', async () => {
+    expect(i18n.getResource('en', 'translation', 'bookingSafety.commentLabel')).toBe(
+      'Comment (optional)',
+    );
+    expect(i18n.getResource('mn', 'translation', 'bookingSafety.commentLabel')).toBe(
+      'Сэтгэгдэл (заавал биш)',
+    );
   });
 });
 
@@ -476,7 +598,7 @@ describe('W4: Reschedule, no-show, cancel', () => {
     expect(await screen.findByRole('heading', { name: 'Cancel booking' })).toBeInTheDocument();
 
     // Select reason
-    fireEvent.click(screen.getByText('SCHEDULE CONFLICT'));
+    fireEvent.click(screen.getByText(/Schedule conflict/i));
 
     // Submit
     fireEvent.click(screen.getByRole('button', { name: 'Confirm cancellation' }));

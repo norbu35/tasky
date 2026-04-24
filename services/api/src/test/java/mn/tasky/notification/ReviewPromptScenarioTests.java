@@ -49,9 +49,9 @@ class ReviewPromptScenarioTests {
     // ── SCN-NOTIF-007 ───────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-NOTIF-007: Completion prompt and review obligation notification is sent to both participants")
+    @DisplayName("SCN-NOTIF-007: Review obligation notification is sent to both participants")
     void completionPromptSendsReviewNotificationToBothParticipants() {
-        // When the booking transitions to COMPLETED and createCasesForBooking is called
+        // When a reviewable terminal outcome calls createCasesForBooking
         reviewEnforcementService.createCasesForBooking(BOOKING_ID, CUSTOMER_ID, TASKER_ID);
 
         // Then a REVIEW_PROMPT notification is sent to the customer with event-keyed dedup

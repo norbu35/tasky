@@ -80,6 +80,7 @@ Review:
     comment:
       type: string
       nullable: true
+      description: Optional free-text review comment.
     would_book_again:
       type: boolean
       nullable: true
