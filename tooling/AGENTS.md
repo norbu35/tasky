@@ -17,13 +17,13 @@ configuration rather than product behavior.
 
 Pick the smallest lane that matches the job:
 
-| Lane       | Use for                                                                | Primary commands                                                                                                                                                                                                                |
-| ---------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `verify`   | CI-local verification, hook surfaces, merge gates, release gate wiring | `pnpm verify:cleanup`, `pnpm verify:ops`, `pnpm verify:i18n`, `pnpm verify:backend`, `pnpm verify:frontend`, `pnpm verify:scenario:smoke`, `pnpm verify:scenario:fidelity`, `pnpm verify:drift`                                 |
-| `contract` | OpenAPI bundle, generated SDK, contract drift                          | `pnpm contract:openapi:bundle`, `pnpm contract:openapi:check`, `pnpm contract:sdk:generate`, `pnpm contract:sdk:drift`                                                                                                          |
-| `repo`     | Docs governance, script-surface audit, workspace boundaries            | `pnpm repo:docs:check`, `pnpm repo:docs:claims`, `pnpm repo:docs:claims:triage`, `pnpm repo:docs:claims:audit`, `pnpm repo:design:check`, `pnpm repo:prd:diff-ids`, `pnpm repo:tooling:check`, `pnpm repo:workspace:boundaries` |
-| `deploy`   | Private staging push/deploy/smoke and performance smoke                | `tooling/scripts/deploy/**`                                                                                                                                                                                                     |
-| `manual`   | Human-only diagnostics not used by default automation                  | `tooling/scripts/manual/**`                                                                                                                                                                                                     |
+| Lane       | Use for                                                                | Primary commands                                                                                                                                                                                                                                   |
+| ---------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `verify`   | CI-local verification, hook surfaces, merge gates, release gate wiring | `pnpm prepare:push`, `pnpm verify:cleanup`, `pnpm verify:ops`, `pnpm verify:i18n`, `pnpm verify:backend:static`, `pnpm verify:backend`, `pnpm verify:frontend`, `pnpm verify:scenario:smoke`, `pnpm verify:scenario:fidelity`, `pnpm verify:drift` |
+| `contract` | OpenAPI bundle, generated SDK, contract drift                          | `pnpm contract:openapi:bundle`, `pnpm contract:openapi:check`, `pnpm contract:sdk:generate`, `pnpm contract:sdk:drift`                                                                                                                             |
+| `repo`     | Docs governance, script-surface audit, workspace boundaries            | `pnpm repo:docs:check`, `pnpm repo:docs:claims`, `pnpm repo:docs:claims:triage`, `pnpm repo:docs:claims:audit`, `pnpm repo:design:check`, `pnpm repo:prd:diff-ids`, `pnpm repo:tooling:check`, `pnpm repo:workspace:boundaries`                    |
+| `deploy`   | Private staging push/deploy/smoke and performance smoke                | `tooling/scripts/deploy/**`                                                                                                                                                                                                                        |
+| `manual`   | Human-only diagnostics not used by default automation                  | `tooling/scripts/manual/**`                                                                                                                                                                                                                        |
 
 Not every command in a lane is a default finish gate. Treat these as conditional helpers:
 
@@ -66,6 +66,7 @@ Not every command in a lane is a default finish gate. Treat these as conditional
 | Merge structural gate        | Repo drift, docs, boundaries, migrations, schema checks              | `pnpm verify:cleanup`                      |
 | Merge ops/config validation  | Tooling surface, workflow wiring, compose config validation          | `pnpm verify:ops`                          |
 | Merge backend quality        | Backend compile, tests, coverage, OpenAPI validation                 | `pnpm verify:backend`                      |
+| Backend static quality       | Backend formatting, Checkstyle, and PMD before heavier backend tests | `pnpm verify:backend:static`               |
 | Merge frontend quality       | Frontend lint and tests                                              | `pnpm verify:frontend`                     |
 | Main image build             | Build and publish API and web images                                 | `.github/workflows/build-and-push.yml`     |
 | Staging deploy               | Promote a verified build to private staging                          | `.github/workflows/deploy-staging.yml`     |
@@ -143,9 +144,11 @@ Run the smallest gate that matches the claim.
 Default blocking gates:
 
 ```bash
+pnpm prepare:push
 pnpm verify:cleanup
 pnpm verify:ops
 pnpm verify:i18n
+pnpm verify:backend:static
 pnpm verify:backend
 pnpm verify:frontend
 pnpm verify:scenario:smoke

@@ -47,8 +47,12 @@ const textExpectations = [
         file: "package.json",
         needs: [
             "\"verify:i18n\": \"python3 tooling/scripts/governance/validate-i18n.py\"",
+            "\"verify:backend:static\": \"./gradlew --no-daemon :services:api:spotlessCheck :services:api:checkstyleMain :services:api:checkstyleTest :services:api:pmdMain :services:api:pmdTest\"",
+            "\"verify:backend\": \"pnpm verify:backend:static && ./gradlew --no-daemon :services:api:check :services:api:jacocoTestCoverageVerification :services:api:openApiValidate\"",
             "\"verify:frontend\": \"pnpm verify:i18n && turbo run lint typecheck test\"",
             "\"verify:frontend:affected\": \"pnpm verify:i18n && turbo run lint typecheck test --affected\"",
+            "\"verify:main-prepush\": \"pnpm verify:prepush\"",
+            "\"prepare:push\": \"pnpm exec lint-staged --allow-empty && ./gradlew --no-daemon spotlessApply -x test\"",
         ],
     },
     {
