@@ -258,7 +258,7 @@ export function AuthPage() {
           >
             {t(
               'auth.connectSecurely',
-              'Connect with verified professionals securely. Fast, reliable, and completely guaranteed.',
+              'Connect with ID-verified professionals. Structured booking, transparent reviews, and local dispute support.',
             )}
           </motion.p>
         </div>

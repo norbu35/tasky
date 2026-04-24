@@ -728,7 +728,7 @@ export function LandingPage() {
                     <p className="text-muted-foreground leading-relaxed text-sm">
                       {t(
                         'landing.pillar2Desc',
-                        'Taskers are financially incentivized to do a great job. A high rating is their livelihood—they have every reason to be punctual and polite.',
+                        'Every completed job earns a mandatory review. A strong track record means more bookings — they have every reason to be punctual and professional.',
                       )}
                     </p>
                   </div>
