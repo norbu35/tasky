@@ -146,7 +146,9 @@ describe('Booking Safety Integration', () => {
 
     // Inside Review Dialog
     await screen.findByRole('heading', { name: 'Leave a Review' });
-    fireEvent.change(screen.getByLabelText('Comment'), { target: { value: 'Great job!' } });
+    fireEvent.change(screen.getByLabelText('Comment (optional)'), {
+      target: { value: 'Great job!' },
+    });
     fireEvent.click(screen.getByRole('button', { name: 'Submit Review' }));
 
     await waitFor(() => {

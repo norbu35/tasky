@@ -85,6 +85,10 @@ export function createReactI18nextMock(initialLanguage: string = 'en') {
   currentLanguage = resolveLanguage(initialLanguage);
 
   return {
+    initReactI18next: {
+      type: '3rdParty',
+      init: () => {},
+    },
     useTranslation: () => ({
       t: translate,
       i18n,
