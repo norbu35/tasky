@@ -52,7 +52,9 @@ pnpm --filter @tasky/web lint
 Conditional browser-flow validation:
 
 ```bash
+pnpm --filter @tasky/web test:e2e:install
 pnpm --filter @tasky/web test:e2e:smoke
 ```
 
 Use the smoke run when the change affects route flows, auth, or browser-visible interactions that unit tests do not cover well.
+Use `pnpm --filter @tasky/web test:e2e` when validating full browser coverage, mobile viewport behavior, accessibility scan attachments, or route screenshots for agent inspection.

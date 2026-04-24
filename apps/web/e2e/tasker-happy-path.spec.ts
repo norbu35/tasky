@@ -1,12 +1,11 @@
-import { expect, test } from '@playwright/test';
-
-import { loginThroughDevAuth } from './support/mockApi';
+import { expect, test } from './support/fixtures';
 
 test.describe('Tasker happy path', () => {
   test('TID-TASK-000-WEB-TASKER-HAPPY-PATH @smoke tasker can browse and apply to a task', async ({
+    loginAs,
     page,
   }) => {
-    await loginThroughDevAuth(page, 'TASKER');
+    await loginAs('TASKER');
     await expect(page).toHaveURL(/\/tasker\/feed/);
 
     await expect(page.getByRole('heading', { name: 'Open task feed' })).toBeVisible();

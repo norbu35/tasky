@@ -72,7 +72,9 @@ apps/web/
 pnpm --filter @tasky/web dev
 pnpm --filter @tasky/web build
 pnpm --filter @tasky/web test:unit
+pnpm --filter @tasky/web test:e2e:install
 pnpm --filter @tasky/web test:e2e:smoke
+pnpm --filter @tasky/web test:e2e
 pnpm --filter @tasky/web lint
 pnpm --filter @tasky/web typecheck
 ```

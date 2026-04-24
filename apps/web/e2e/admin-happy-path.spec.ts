@@ -1,12 +1,11 @@
-import { expect, test } from '@playwright/test';
-
-import { loginThroughDevAuth } from './support/mockApi';
+import { expect, test } from './support/fixtures';
 
 test.describe('Admin happy path', () => {
   test('TID-TASK-000-WEB-ADMIN-HAPPY-PATH @smoke admin can review and approve a pending verification', async ({
+    loginAs,
     page,
   }) => {
-    await loginThroughDevAuth(page, 'ADMIN');
+    await loginAs('ADMIN');
     await expect(page).toHaveURL(/\/admin(?:\/verifications)?$/);
 
     await expect(page.getByRole('heading', { name: 'Verifications' })).toBeVisible();

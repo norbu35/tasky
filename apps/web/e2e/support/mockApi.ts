@@ -1,6 +1,6 @@
 import type { Page, Route } from '@playwright/test';
 
-type Role = 'CUSTOMER' | 'TASKER' | 'ADMIN';
+export type Role = 'CUSTOMER' | 'TASKER' | 'ADMIN';
 
 const NOW = '2026-04-24T00:00:00Z';
 
@@ -124,7 +124,7 @@ function makeVerificationList() {
   ];
 }
 
-async function installMockApi(page: Page, role: Role) {
+export async function installMockApi(page: Page, role: Role) {
   let pendingVerifications = makeVerificationList();
 
   await page.route('**/api/v1/**', async (route) => {

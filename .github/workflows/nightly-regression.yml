@@ -115,6 +115,13 @@ jobs:
           key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: pnpm-${{ runner.os }}-
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: playwright-${{ runner.os }}-
+
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v6
 
@@ -153,10 +160,21 @@ jobs:
           TASKY_QPAY_WEBHOOK_SECRET: ${{ secrets.CI_QPAY_WEBHOOK_SECRET }}
 
       - name: Install Playwright Chromium
-        run: pnpm --filter @tasky/web exec playwright install --with-deps chromium
+        run: pnpm --filter @tasky/web test:e2e:install:ci
 
       - name: Run full Playwright regression suite
         run: pnpm --filter @tasky/web test:e2e
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-playwright-regression
+          path: |
+            apps/web/playwright-report/
+            apps/web/test-results/
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Stop infrastructure
         if: always()

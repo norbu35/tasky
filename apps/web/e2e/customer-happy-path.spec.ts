@@ -1,12 +1,12 @@
-import { expect, test } from '@playwright/test';
-
-import { loginThroughDevAuth, nextLocalDateTimeInput } from './support/mockApi';
+import { expect, test } from './support/fixtures';
+import { nextLocalDateTimeInput } from './support/mockApi';
 
 test.describe('Customer happy path', () => {
   test('TID-TASK-000-WEB-CUSTOMER-HAPPY-PATH @smoke customer can create a task through the browser wizard', async ({
+    loginAs,
     page,
   }) => {
-    await loginThroughDevAuth(page, 'CUSTOMER');
+    await loginAs('CUSTOMER');
     await expect(page).toHaveURL(/\/customer\/dashboard/);
     await page.getByRole('button', { name: 'Post new task' }).click();
 

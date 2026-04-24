@@ -5,6 +5,23 @@
       "command": "serena",
       "args": ["start-mcp-server", "--context", "claude-code", "--project-from-cwd"],
       "env": {}
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "pnpm",
+      "args": [
+        "dlx",
+        "@playwright/mcp@0.0.70",
+        "--headless",
+        "--viewport-size",
+        "1440x1000",
+        "--output-dir",
+        "apps/web/test-results/mcp",
+        "--save-session",
+        "--test-id-attribute",
+        "data-testid"
+      ],
+      "env": {}
     }
   }
 }
