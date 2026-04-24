@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CheckCircle, MoreVertical, ShieldAlert, Star, XCircle } from 'lucide-react';
+import { CheckCircle, MoreVertical, RefreshCw, ShieldAlert, Star, XCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -48,7 +48,7 @@ export function BookingSafetyPage() {
   // UI State
   const [activeTab, setActiveTab] = useState('ASSIGNED');
   const [actionDialog, setActionDialog] = useState<
-    'CANCEL' | 'COMPLETE' | 'REVIEW' | 'DISPUTE' | null
+    'CANCEL' | 'COMPLETE' | 'REVIEW' | 'DISPUTE' | 'MARK_DONE' | null
   >(null);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
@@ -130,6 +130,55 @@ export function BookingSafetyPage() {
     },
     onError: (err) => toast.error(parseError(err)),
   });
+
+  const markDoneMutation = useMutation({
+    mutationFn: async ({
+      bookingId,
+      proof,
+    }: {
+      bookingId: string;
+      proof?: { photo_key?: string; note?: string };
+    }) => {
+      return apiClient.markBookingDone(
+        session!.accessToken,
+        bookingId,
+        createIdempotencyKey('mark-done'),
+        proof,
+      );
+    },
+    onSuccess: (booking) => {
+      trackClientEvent('BOOKING_MARKED_DONE', { bookingId: booking.id, taskId: booking.task_id });
+      invalidateBookings();
+      closeDialog();
+      toast.success(
+        t('bookingSafety.markDoneSuccess', 'Task marked as done. Awaiting customer confirmation.'),
+      );
+    },
+    onError: (err) => toast.error(parseError(err)),
+  });
+
+  const rebookMutation = useMutation({
+    mutationFn: async (bookingId: string) => {
+      return apiClient.rebookBooking(
+        session!.accessToken,
+        bookingId,
+        createIdempotencyKey('rebook'),
+      );
+    },
+    onSuccess: () => {
+      trackClientEvent('BOOKING_REBOOKED', { bookingId: selectedBooking?.id });
+      invalidateBookings();
+      closeDialog();
+      toast.success(
+        t('bookingSafety.rebookSuccess', 'Rebook request sent. The tasker will be notified.'),
+      );
+    },
+    onError: (err) => toast.error(parseError(err)),
+  });
+
+  const handleRebook = (booking: Booking) => {
+    rebookMutation.mutate(booking.id);
+  };
 
   const isUserCustomer =
     selectedBooking != null && session != null
@@ -294,6 +343,12 @@ export function BookingSafetyPage() {
                         <DropdownMenuContent align="end" className="w-[160px]">
                           {booking.status === 'ASSIGNED' && (
                             <>
+                              {!isUserCustomer && (
+                                <DropdownMenuItem onClick={() => openDialog('MARK_DONE', booking)}>
+                                  <CheckCircle className="mr-2 h-4 w-4" />{' '}
+                                  {t('bookingSafety.markDoneTask', 'Mark as Done')}
+                                </DropdownMenuItem>
+                              )}
                               <DropdownMenuItem onClick={() => openDialog('COMPLETE', booking)}>
                                 <CheckCircle className="mr-2 h-4 w-4" />{' '}
                                 {t('bookingSafety.completeTask', 'Complete Task')}
@@ -320,6 +375,12 @@ export function BookingSafetyPage() {
                                 <Star className="mr-2 h-4 w-4" />{' '}
                                 {t('bookingSafety.leaveReview', 'Leave Review')}
                               </DropdownMenuItem>
+                              {isUserCustomer && (
+                                <DropdownMenuItem onClick={() => handleRebook(booking)}>
+                                  <RefreshCw className="mr-2 h-4 w-4" />{' '}
+                                  {t('bookingSafety.rebookAction', 'Rebook')}
+                                </DropdownMenuItem>
+                              )}
                               <DropdownMenuItem
                                 onClick={() => openDialog('DISPUTE', booking)}
                                 className="text-accent focus:text-accent"
@@ -394,6 +455,34 @@ export function BookingSafetyPage() {
               {completeMutation.isPending
                 ? t('bookingSafety.completingBtn', 'Completing...')
                 : t('bookingSafety.markCompletedBtn', 'Mark Completed')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Mark Done Dialog (Tasker) */}
+      <Dialog open={actionDialog === 'MARK_DONE'} onOpenChange={closeDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('bookingSafety.markDoneTitle', 'Mark Task as Done')}</DialogTitle>
+            <DialogDescription>
+              {t(
+                'bookingSafety.markDoneDesc',
+                'Signal that the work is finished. The customer will be notified to confirm.',
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4">
+            <Button variant="secondary" onClick={closeDialog} disabled={markDoneMutation.isPending}>
+              {t('bookingSafety.closeBtn', 'Close')}
+            </Button>
+            <Button
+              onClick={() => markDoneMutation.mutate({ bookingId: selectedBooking!.id })}
+              disabled={markDoneMutation.isPending}
+            >
+              {markDoneMutation.isPending
+                ? t('bookingSafety.markingDoneBtn', 'Marking done...')
+                : t('bookingSafety.markDoneBtn', 'Mark Done')}
             </Button>
           </DialogFooter>
         </DialogContent>

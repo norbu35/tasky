@@ -91,6 +91,15 @@ function createMockApiClient(): ApiClient {
     getVerificationUploadUrl: vi.fn(),
     submitVerification: vi.fn(),
     getVerificationStatus: vi.fn(),
+    // Wave 6: Contract hygiene
+    selectApplication: vi.fn(),
+    confirmAcceptance: vi.fn(),
+    markBookingDone: vi.fn(),
+    rebookBooking: vi.fn(),
+    cancelTask: vi.fn(),
+    listMyRecentLocations: vi.fn(),
+    listBookingScheduleEvents: vi.fn(),
+    logout: vi.fn(),
   };
 }
 afterEach(() => {

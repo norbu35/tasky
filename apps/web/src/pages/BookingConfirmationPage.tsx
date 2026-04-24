@@ -13,7 +13,7 @@ import { Separator } from '../components/ui/separator';
 import { Skeleton } from '../components/ui/skeleton';
 import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
-import type { Booking } from '../lib/apiClient';
+import type { Booking, TaskApplication } from '../lib/apiClient';
 import { parseError } from '../lib/errorHandling';
 import { createIdempotencyKey } from '../lib/idempotency';
 
@@ -58,18 +58,31 @@ export function BookingConfirmationPage() {
         );
       }
       if (!taskId || !applicationId) throw new Error('Missing requirements');
-      return apiClient.acceptApplication(
-        session.accessToken,
-        taskId,
-        applicationId,
-        disclaimerAccepted,
-        createIdempotencyKey('accept'),
-      );
+      return apiClient.selectApplication(session.accessToken, taskId, applicationId);
     },
-    onSuccess: (booking) => {
-      setSuccessBooking(booking);
-      trackClientEvent('TASKER_ACCEPTED', { taskId: taskId || undefined, bookingId: booking.id });
-      trackClientEvent('BOOKING_CONFIRMED', { taskId: taskId || undefined, bookingId: booking.id });
+    onSuccess: (result) => {
+      if ('status' in result && result.status === 'SELECTED') {
+        // selectApplication returns TaskApplication — show selection confirmed
+        const app = result as TaskApplication;
+        setSuccessBooking({
+          id: app.task_id,
+          task_id: app.task_id,
+          tasker_id: app.tasker.id,
+          customer_id: '',
+          price: 0,
+          status: 'ASSIGNED',
+          confirmed_scheduled_at: '',
+          created_at: app.created_at,
+        });
+        trackClientEvent('TASKER_ACCEPTED', { taskId: taskId || undefined, bookingId: app.id });
+      } else {
+        const booking = result as Booking;
+        setSuccessBooking(booking);
+        trackClientEvent('BOOKING_CONFIRMED', {
+          taskId: taskId || undefined,
+          bookingId: booking.id,
+        });
+      }
     },
   });
 

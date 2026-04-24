@@ -30,6 +30,8 @@ export type PayoutRequest = components['schemas']['PayoutRequest'];
 export type AdminDisputeDetail = components['schemas']['AdminDisputeDetail'];
 export type CategorySchemaVersion = components['schemas']['CategorySchemaVersion'];
 export type AdminCategoryPayload = components['schemas']['AdminCategoryPayload'];
+export type TaskDraft = components['schemas']['TaskDraft'];
+export type RecentLocation = components['schemas']['RecentLocation'];
 
 export interface LeadUnlockPrice {
   id: string;

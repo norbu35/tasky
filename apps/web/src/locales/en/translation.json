@@ -284,7 +284,15 @@
     "reasonOther": "Other Issue",
     "detailsLabel": "Additional Details",
     "detailsPlaceholder": "Please explain the issue in detail (min 10 characters)...",
-    "submitDisputeBtn": "Submit Dispute"
+    "submitDisputeBtn": "Submit Dispute",
+    "markDoneSuccess": "Task marked as done. Awaiting customer confirmation.",
+    "markDoneTask": "Mark as Done",
+    "markDoneTitle": "Mark Task as Done",
+    "markDoneDesc": "Signal that the work is finished. The customer will be notified to confirm.",
+    "markingDoneBtn": "Marking done...",
+    "markDoneBtn": "Mark Done",
+    "rebookAction": "Rebook",
+    "rebookSuccess": "Rebook request sent. The tasker will be notified."
   },
   "landing": {
     "getStarted": "Get Started",
@@ -533,7 +541,8 @@
       "budgetMode": "I have a budget",
       "quoteMode": "I want quotes",
       "quoteModeHint": "Taskers will send you price quotes",
-      "quoteModeDesc": "You don't set a price. Taskers will submit their quotes and you pick the best offer."
+      "quoteModeDesc": "You don't set a price. Taskers will submit their quotes and you pick the best offer.",
+      "recentLocations": "Recent:"
     },
     "taskerProfile": {
       "title": "Tasker profile",

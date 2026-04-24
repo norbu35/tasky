@@ -57,6 +57,15 @@ export function CustomerTaskWizardPage() {
     enabled: Boolean(session),
   });
 
+  const { data: recentLocations } = useQuery({
+    queryKey: ['recentLocations', session, apiClient],
+    queryFn: async () => {
+      if (!session) return [];
+      return apiClient.listMyRecentLocations(session.accessToken);
+    },
+    enabled: Boolean(session),
+  });
+
   useEffect(() => {
     if (categoriesPage?.data) {
       setCategories(categoriesPage.data);
@@ -329,6 +338,27 @@ export function CustomerTaskWizardPage() {
               <Label htmlFor="task-location-text">
                 {t('customerPages.taskWizard.addressLabel', 'Address description')}
               </Label>
+              {recentLocations && recentLocations.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-1">
+                  <span className="text-xs text-muted-foreground">
+                    {t('customerPages.taskWizard.recentLocations', 'Recent:')}
+                  </span>
+                  {recentLocations.map((loc, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className="text-xs text-primary underline underline-offset-2 hover:text-primary/80"
+                      onClick={() => {
+                        setLocationText(loc.location_text);
+                        setLocationLat(loc.location_lat);
+                        setLocationLng(loc.location_lng);
+                      }}
+                    >
+                      {loc.location_text}
+                    </button>
+                  ))}
+                </div>
+              )}
               <Input
                 id="task-location-text"
                 placeholder={t(

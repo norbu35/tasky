@@ -147,6 +147,54 @@ export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClie
       submitted_at: null,
       reviewed_at: null,
     }),
+
+    // Wave 6: Contract hygiene methods
+    selectApplication: vi.fn().mockResolvedValue({
+      id: 'app-1',
+      task_id: 'task-1',
+      tasker: {
+        id: 'tasker-1',
+        full_name: 'Tasker',
+        avatar_url: null,
+        rating_avg: 4.6,
+        completed_tasks: 7,
+        is_pro: true,
+      },
+      message: 'I can do this task.',
+      status: 'SELECTED',
+      respond_by_at: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
+      created_at: '2026-02-14T00:00:00Z',
+    }),
+    confirmAcceptance: vi.fn().mockResolvedValue({
+      booking_id: 'booking-new',
+    }),
+    markBookingDone: vi.fn().mockResolvedValue({
+      ...makeBooking(),
+      status: 'COMPLETED',
+    }),
+    rebookBooking: vi.fn().mockResolvedValue({
+      id: 'intent-rebook',
+      task_id: 'task-1',
+      tasker_id: 'tasker-1',
+      customer_id: 'customer-1',
+      source: 'REBOOK',
+      status: 'PENDING',
+      original_booking_id: 'booking-1',
+      offer_id: null,
+      expires_at: null,
+      confirmed_booking_id: null,
+      confirmed_at: null,
+      created_at: '2026-02-14T00:00:00Z',
+      updated_at: '2026-02-14T00:00:00Z',
+    }),
+    cancelTask: vi.fn().mockResolvedValue({
+      ...makeTask(),
+      status: 'CANCELLED',
+    }),
+    listMyRecentLocations: vi.fn().mockResolvedValue([]),
+    listBookingScheduleEvents: vi.fn().mockResolvedValue(makeCursorPage([])),
+    logout: vi.fn().mockResolvedValue(undefined),
+
     ...overrides,
   } as unknown as ApiClient;
 }

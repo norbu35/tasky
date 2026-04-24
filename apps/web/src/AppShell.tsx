@@ -62,11 +62,16 @@ export function AppShell({
   const { t } = useTranslation();
 
   const signOut = useCallback(() => {
+    if (session?.accessToken) {
+      apiClient.logout(session.accessToken).catch(() => {
+        // Best-effort: clear session regardless of API response
+      });
+    }
     setSession(null);
     setProfile(null);
     setProfileError(null);
     setProfileBusy(false);
-  }, []);
+  }, [session?.accessToken, apiClient]);
 
   const sessionRef = useRef(session);
   sessionRef.current = session;

@@ -13,6 +13,7 @@ import type {
   BookingIntent,
   BookingScheduleEvent,
   BookingFilters,
+  RecentLocation,
   Review,
   Dispute,
   Conversation,
@@ -197,6 +198,45 @@ export interface ApiClient {
   ): Promise<VerificationStatus>;
 
   getVerificationStatus(accessToken: string): Promise<VerificationStatus>;
+
+  // ─── Wave 6: Contract Hygiene ───────────────────────────────────
+
+  selectApplication(
+    accessToken: string,
+    taskId: string,
+    applicationId: string,
+  ): Promise<TaskApplication>;
+
+  confirmAcceptance(
+    accessToken: string,
+    taskId: string,
+    applicationId: string,
+    idempotencyKey: string,
+  ): Promise<{ booking_id: string }>;
+
+  markBookingDone(
+    accessToken: string,
+    bookingId: string,
+    idempotencyKey: string,
+    proof?: { photo_key?: string; note?: string },
+  ): Promise<Booking>;
+
+  rebookBooking(
+    accessToken: string,
+    bookingId: string,
+    idempotencyKey: string,
+  ): Promise<BookingIntent>;
+
+  cancelTask(accessToken: string, taskId: string): Promise<Task>;
+
+  listMyRecentLocations(accessToken: string): Promise<RecentLocation[]>;
+
+  listBookingScheduleEvents(
+    accessToken: string,
+    bookingId: string,
+  ): Promise<CursorPage<BookingScheduleEvent>>;
+
+  logout(accessToken: string): Promise<void>;
 }
 
 function inferRuntimeOrigin(): string | null {
@@ -758,6 +798,101 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
       { method: 'GET' },
       accessToken,
     );
+  }
+
+  // ─── Wave 6: Contract Hygiene ───────────────────────────────────
+
+  selectApplication(
+    accessToken: string,
+    taskId: string,
+    applicationId: string,
+  ): Promise<TaskApplication> {
+    return this.requestJson<TaskApplication>(
+      `/tasks/${taskId}/applications/${applicationId}/select`,
+      { method: 'POST' },
+      accessToken,
+    );
+  }
+
+  confirmAcceptance(
+    accessToken: string,
+    taskId: string,
+    applicationId: string,
+    idempotencyKey: string,
+  ): Promise<{ booking_id: string }> {
+    return this.requestJson<{ booking_id: string }>(
+      `/tasks/${taskId}/applications/${applicationId}/confirm`,
+      {
+        method: 'POST',
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
+      },
+      accessToken,
+    );
+  }
+
+  markBookingDone(
+    accessToken: string,
+    bookingId: string,
+    idempotencyKey: string,
+    proof?: { photo_key?: string; note?: string },
+  ): Promise<Booking> {
+    return this.requestJson<Booking>(
+      `/bookings/${bookingId}/mark-done`,
+      {
+        method: 'POST',
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
+        body: JSON.stringify(proof ?? {}),
+      },
+      accessToken,
+    );
+  }
+
+  rebookBooking(
+    accessToken: string,
+    bookingId: string,
+    idempotencyKey: string,
+  ): Promise<BookingIntent> {
+    return this.requestJson<BookingIntent>(
+      `/bookings/${bookingId}/rebook`,
+      {
+        method: 'POST',
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
+      },
+      accessToken,
+    );
+  }
+
+  cancelTask(accessToken: string, taskId: string): Promise<Task> {
+    return this.requestJson<Task>(`/tasks/${taskId}/cancel`, { method: 'POST' }, accessToken);
+  }
+
+  listMyRecentLocations(accessToken: string): Promise<RecentLocation[]> {
+    return this.requestJson<RecentLocation[]>(
+      '/tasks/mine/recent-locations',
+      { method: 'GET' },
+      accessToken,
+    );
+  }
+
+  listBookingScheduleEvents(
+    accessToken: string,
+    bookingId: string,
+  ): Promise<CursorPage<BookingScheduleEvent>> {
+    return this.requestJson<CursorPage<BookingScheduleEvent>>(
+      `/bookings/${bookingId}/schedule-events`,
+      { method: 'GET' },
+      accessToken,
+    );
+  }
+
+  logout(accessToken: string): Promise<void> {
+    return this.requestVoid('/auth/logout', { method: 'POST' }, accessToken);
   }
 }
 
