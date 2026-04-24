@@ -155,14 +155,14 @@ class ModerationServiceTests {
         }
 
         @Test
-        @DisplayName("Three-arg overload delegates to single-arg logic")
-        void threeArgDelegatesToSingleArg() {
+        @DisplayName("Three-arg overload records reason and booking context")
+        void threeArgRecordsReasonAndBookingContext() {
             when(moderationPolicyDao.findActive()).thenReturn(Optional.of(ModerationPolicy.DEFAULT));
             when(strikeDao.countSince(eq(USER_ID), any(Instant.class))).thenReturn(1L);
 
             service.addStrike(USER_ID, "NO_SHOW", "booking-123");
 
-            verify(strikeDao).insert(anyString(), eq(USER_ID), any(), any(), any(Instant.class));
+            verify(strikeDao).insert(anyString(), eq(USER_ID), eq("NO_SHOW"), eq("booking-123"), any(Instant.class));
         }
     }
 

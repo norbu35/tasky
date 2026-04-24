@@ -95,7 +95,7 @@ Generated: 2026-04-23
 | ----------------- | ------------------------------------------------------- | --------------------------------------- | --- | ------ |
 | REQ-BOOK-04       | SCN-BOOK-001-004: Cancellation policy (4 scenarios)     | `BookingScenarioTests`                  | —   | —      |
 | REQ-BOOK-06       | SCN-BOOK-005: Tasker cancel reopens task                | `BookingScenarioTests` + `ScnSmokeTest` | —   | —      |
-| REQ-BOOK-06       | SCN-BOOK-006: 3-strike tasker suspension                | **UNTESTED** (waived)                   | —   | —      |
+| REQ-BOOK-06       | SCN-BOOK-006: 3-strike tasker suspension                | `BookingScenarioTests`                  | —   | —      |
 | REQ-BOOK-03       | SCN-BOOK-007: Disclaimer acceptance required            | **UNTESTED**                            | —   | —      |
 | REQ-BOOK-03       | SCN-BOOK-008: Disclaimer timestamp recorded             | `BookingScenarioTests`                  | —   | —      |
 | REQ-BOOK-05       | SCN-BOOK-009: Terminal state transitions                | `BookingScenarioTests`                  | —   | —      |
@@ -291,14 +291,14 @@ These tests test real service behavior but have no corresponding scenario in the
 
 ## Summary Statistics
 
-| Metric                        | Count                                  |
-| ----------------------------- | -------------------------------------- |
-| Total active scenarios        | **134**                                |
-| Covered by tests              | **94** (70%)                           |
-| Untested (implementation gap) | **8** (assistance domain)              |
-| Untested (needs test written) | **31**                                 |
-| Waived (pending feature)      | **1** (SCN-BOOK-006 tasker suspension) |
-| Files deleted (dead tests)    | **3**                                  |
-| Files modified (cleanup)      | **8**                                  |
-| Pre-existing failures         | **4** (2 backend + 2 mobile)           |
-| Test-rehab regressions        | **0**                                  |
+| Metric                        | Count                        |
+| ----------------------------- | ---------------------------- |
+| Total active scenarios        | **134**                      |
+| Covered by tests              | **95** (71%)                 |
+| Untested (implementation gap) | **8** (assistance domain)    |
+| Untested (needs test written) | **31**                       |
+| Waived (pending feature)      | **0**                        |
+| Files deleted (dead tests)    | **3**                        |
+| Files modified (cleanup)      | **8**                        |
+| Pre-existing failures         | **4** (2 backend + 2 mobile) |
+| Test-rehab regressions        | **0**                        |

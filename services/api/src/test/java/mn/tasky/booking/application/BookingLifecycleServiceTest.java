@@ -186,7 +186,7 @@ class BookingLifecycleServiceTest {
         BookingTransitionResult result = service.cancelBooking("tk1", "b1", "schedule conflict");
         assertThat(result.isSuccess()).isTrue();
         verify(taskLifecycleService).reopenTask("t1");
-        verify(moderationService).addStrike(eq("tk1"), eq("schedule conflict"), eq("b1"));
+        verify(moderationService).addStrike(eq("tk1"), eq("TASKER_CANCELLATION"), eq("b1"));
         verify(timelineService)
                 .recordEvent(eq("b1"), eq(BookingTimelineService.BOOKING_CANCELLED), eq("tk1"), eq(null));
     }

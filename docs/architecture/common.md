@@ -122,11 +122,15 @@ class: mn.tasky.common.outbox.OutboxRelayService
 - **String management**:
   - **Backend**: API error messages and notification templates use keyed message bundles (`messages_en.properties`,
     `messages_mn.properties`) resolved via Spring `MessageSource`.
-  - **Web**: JSON translation files per locale (`en.json`, `mn.json`) loaded by `react-i18next`.
-  - **Mobile**: Same JSON files bundled via `react-i18next` + Expo localization.
+  - **Web**: App-owned JSON translation files under `apps/web/src/locales/{en,mn}/translation.json` loaded by
+    `react-i18next`.
+  - **Mobile**: App-owned JSON translation files under `apps/mobile/src/locales/{en,mn}/translation.json` loaded by
+    `react-i18next` + Expo localization.
 - **Translation workflow**: English remains the technical source for keys, code, and fallback structure. Mongolian
   copy must be authored and reviewed so it reads naturally in Mongolian rather than as machine-translated English.
-  Translation files live under `src/main/resources/i18n/` (backend) and `locales/` (clients).
+  Translation files live under `src/main/resources/i18n/` (backend) and each client's `src/locales/` directory. Web
+  and mobile locale files are not shared artifacts; they are validated together by `pnpm verify:i18n` for key parity
+  within each app, placeholder parity, missing used keys, empty values, and disallowed `t(...)` fallback strings.
 - **Database content**: User-generated content (task descriptions, reviews) is stored as-is. Admin-managed content (
   category names) has explicit `name` (English) and `name_mn` (Mongolian) columns.
 - **API contract**: The API returns server-driven strings (error messages, notification text) localized based on the

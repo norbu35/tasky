@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BookingLifecycleService {
+    private static final String TASKER_CANCELLATION_STRIKE_REASON = "TASKER_CANCELLATION";
+
     private final BookingService bookingService;
     private final BookingTimelineService timelineService;
     private final TaskQueryService taskQueryService;
@@ -69,7 +71,7 @@ public class BookingLifecycleService {
             boolean isSafetyOrFraud =
                     reason != null && reason.toLowerCase(java.util.Locale.ROOT).contains("safety");
             if (!isSafetyOrFraud) {
-                moderationService.addStrike(actorUserId, reason, bookingId);
+                moderationService.addStrike(actorUserId, TASKER_CANCELLATION_STRIKE_REASON, bookingId);
             }
         } else if (updated.customerId().equals(actorUserId)) {
             requireTaskUpdate(

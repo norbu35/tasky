@@ -21,6 +21,13 @@ import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.auth.application.ModerationService;
 import mn.tasky.auth.application.UserProfileService;
+import mn.tasky.auth.application.UserStatusResolver;
+import mn.tasky.auth.dao.ModerationPolicyDao;
+import mn.tasky.auth.dao.StrikeDao;
+import mn.tasky.auth.dao.SuspensionEventDao;
+import mn.tasky.auth.dao.UserDao;
+import mn.tasky.auth.dto.AuthUser;
+import mn.tasky.auth.dto.ModerationPolicy;
 import mn.tasky.booking.application.BookingLifecycleService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dao.BookingCompletionSignalDao;
@@ -29,11 +36,13 @@ import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import mn.tasky.common.IntegrationTestBase;
+import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.task.application.TaskQueryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -49,7 +58,6 @@ import org.springframework.http.ResponseEntity;
  *
  * <p>SCN-BOOK-005 (tasker cancel reopens task) is covered by BookingIntegrationTests
  * because it requires BookingLifecycleService + TaskService coordination.
- * SCN-BOOK-006 is waived in registry — not yet implemented.
  */
 class BookingScenarioTests {
 
@@ -263,6 +271,85 @@ class BookingScenarioTests {
     // ── SCN-BOOK-006 ─────────────────────────────────────────────────────────
 
     @Test
+    @DisplayName("SCN-BOOK-006: Third tasker cancellation without safety override in a rolling 30 days"
+            + " suspends the tasker for 7 days")
+    void thirdTaskerCancellationSuspendsTaskerForSevenDays() {
+        BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50_000);
+        StrikeDao strikeDao = mock(StrikeDao.class);
+        SuspensionEventDao suspensionEventDao = mock(SuspensionEventDao.class);
+        ModerationPolicyDao moderationPolicyDao = mock(ModerationPolicyDao.class);
+        UserDao userDao = mock(UserDao.class);
+        AuditEventDao auditEventDao = mock(AuditEventDao.class);
+        UserStatusResolver userStatusResolver = mock(UserStatusResolver.class);
+        ModerationService realModerationService = new ModerationService(
+                strikeDao,
+                suspensionEventDao,
+                moderationPolicyDao,
+                userDao,
+                auditEventDao,
+                userStatusResolver,
+                new com.fasterxml.jackson.databind.ObjectMapper());
+
+        when(moderationPolicyDao.findActive()).thenReturn(Optional.of(ModerationPolicy.DEFAULT));
+        when(strikeDao.countSince(org.mockito.ArgumentMatchers.eq("tasker-1"), any(Instant.class)))
+                .thenReturn(3L);
+        Instant now = Instant.now();
+        when(userDao.findById("tasker-1"))
+                .thenReturn(
+                        Optional.of(new AuthUser("tasker-1", null, null, "TASKER", "ACTIVE", "FACEBOOK", now, now)));
+        when(userStatusResolver.resolve("tasker-1", "ACTIVE")).thenReturn("ACTIVE");
+        when(suspensionEventDao.countSince(org.mockito.ArgumentMatchers.eq("tasker-1"), any(Instant.class)))
+                .thenReturn(0L);
+
+        mn.tasky.task.application.TaskQueryService taskQueryService =
+                mock(mn.tasky.task.application.TaskQueryService.class);
+        mn.tasky.task.application.TaskLifecycleService taskLifecycleService =
+                mock(mn.tasky.task.application.TaskLifecycleService.class);
+        mn.tasky.task.dto.TaskState task = mock(mn.tasky.task.dto.TaskState.class);
+        when(taskQueryService.getTask("task-1")).thenReturn(Optional.of(task));
+        when(taskLifecycleService.reopenTask("task-1")).thenReturn(Optional.of(task));
+
+        mn.tasky.booking.application.BookingLifecycleService lifecycleService =
+                new mn.tasky.booking.application.BookingLifecycleService(
+                        bookingService,
+                        mock(mn.tasky.booking.application.BookingTimelineService.class),
+                        taskQueryService,
+                        taskLifecycleService,
+                        realModerationService,
+                        mock(mn.tasky.common.outbox.DomainEventOutboxService.class),
+                        mock(mn.tasky.trust.publicapi.TrustQueryPort.class));
+
+        Instant beforeCancel = Instant.now();
+        BookingTransitionResult result = lifecycleService.cancelBooking("tasker-1", booking.id(), "Schedule conflict");
+
+        assertThat(result.isSuccess()).isTrue();
+        verify(strikeDao)
+                .insert(
+                        anyString(),
+                        org.mockito.ArgumentMatchers.eq("tasker-1"),
+                        org.mockito.ArgumentMatchers.eq("TASKER_CANCELLATION"),
+                        org.mockito.ArgumentMatchers.eq(booking.id()),
+                        any(Instant.class));
+        ArgumentCaptor<Instant> suspensionEnd = ArgumentCaptor.forClass(Instant.class);
+        verify(userDao)
+                .updateStatusAndSuspensionEnd(
+                        org.mockito.ArgumentMatchers.eq("tasker-1"),
+                        org.mockito.ArgumentMatchers.eq("SUSPENDED"),
+                        suspensionEnd.capture());
+        assertThat(suspensionEnd.getValue())
+                .isAfterOrEqualTo(beforeCancel.plus(7, ChronoUnit.DAYS))
+                .isBefore(Instant.now().plus(7, ChronoUnit.DAYS).plusSeconds(5));
+        verify(suspensionEventDao)
+                .insert(
+                        anyString(),
+                        org.mockito.ArgumentMatchers.eq("tasker-1"),
+                        org.mockito.ArgumentMatchers.eq(3),
+                        org.mockito.ArgumentMatchers.eq(7),
+                        any(Instant.class),
+                        any());
+    }
+
+    @Test
     @DisplayName("SCN-BOOK-021: Tasker cancellation with Safety/Fraud reason bypasses automated strike"
             + " and opens Trust and Safety ticket")
     void taskerCancelForSafetyDoesNotAddStrike() {
@@ -290,7 +377,7 @@ class BookingScenarioTests {
 
         // Use standard cancellation reason
         lifecycleService.cancelBooking("tasker-1", booking.id(), "Car broke down");
-        verify(moderationService).addStrike("tasker-1", "Car broke down", booking.id());
+        verify(moderationService).addStrike("tasker-1", "TASKER_CANCELLATION", booking.id());
 
         org.mockito.Mockito.reset(moderationService);
 
