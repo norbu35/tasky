@@ -13,5 +13,7 @@ public interface GeocodingProvider {
 
     ReverseGeocodeResponse reverseGeocode(double lat, double lng);
 
+    boolean isWithinServiceArea(double lat, double lng);
+
     List<LocationSearchResult> search(String query, Double biasLat, Double biasLng);
 }

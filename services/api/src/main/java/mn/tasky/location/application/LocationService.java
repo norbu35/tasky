@@ -17,6 +17,10 @@ public class LocationService {
         return geocodingProvider.reverseGeocode(lat, lng);
     }
 
+    public boolean isWithinServiceArea(double lat, double lng) {
+        return geocodingProvider.isWithinServiceArea(lat, lng);
+    }
+
     public LocationSearchResponse search(String query, Double biasLat, Double biasLng) {
         return new LocationSearchResponse(geocodingProvider.search(query, biasLat, biasLng));
     }

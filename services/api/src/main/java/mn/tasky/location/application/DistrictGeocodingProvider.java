@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 public class DistrictGeocodingProvider implements GeocodingProvider {
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DistrictGeocodingProvider.class);
+    private static final double SERVICE_AREA_MARGIN_DEGREES = 0.35d;
 
     private final DistrictGeoDao districtGeoDao;
 
@@ -36,6 +37,41 @@ public class DistrictGeocodingProvider implements GeocodingProvider {
                 nearest.nameMn(),
                 nearest.centroidLat(),
                 nearest.centroidLng());
+    }
+
+    @Override
+    public boolean isWithinServiceArea(double lat, double lng) {
+        if (!Double.isFinite(lat) || !Double.isFinite(lng)) {
+            return false;
+        }
+
+        List<DistrictCentroid> districts = districtGeoDao.findAllCentroids();
+        if (districts.isEmpty()) {
+            log.warn("findAllCentroids returned empty list; rejecting service-area validation fail-closed");
+            return false;
+        }
+
+        double minLat = districts.stream()
+                .mapToDouble(DistrictCentroid::centroidLat)
+                .min()
+                .orElseThrow();
+        double maxLat = districts.stream()
+                .mapToDouble(DistrictCentroid::centroidLat)
+                .max()
+                .orElseThrow();
+        double minLng = districts.stream()
+                .mapToDouble(DistrictCentroid::centroidLng)
+                .min()
+                .orElseThrow();
+        double maxLng = districts.stream()
+                .mapToDouble(DistrictCentroid::centroidLng)
+                .max()
+                .orElseThrow();
+
+        return lat >= minLat - SERVICE_AREA_MARGIN_DEGREES
+                && lat <= maxLat + SERVICE_AREA_MARGIN_DEGREES
+                && lng >= minLng - SERVICE_AREA_MARGIN_DEGREES
+                && lng <= maxLng + SERVICE_AREA_MARGIN_DEGREES;
     }
 
     @Override

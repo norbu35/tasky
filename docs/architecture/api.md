@@ -581,6 +581,9 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 - **Draft contract**:
   - Draft create/update APIs persist the schema version bound at form start.
   - Final task submission validates against the bound schema version and returns field-level errors for missing or invalid required answers.
+- **Location eligibility contract**:
+  - Final task submission validates coordinates against the Ulaanbaatar service area through the location public query port before persistence.
+  - The launch district-centroid provider uses active UB district centroid bounds as a deterministic fail-closed approximation until polygon-backed service-area data exists.
 - **Summary contract**:
   - Task submission performs deterministic scope summary generation.
   - On summary-generation failure, the server still returns success with a canonical fallback summary and records the failure event.

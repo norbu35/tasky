@@ -17,6 +17,7 @@ import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.category.application.CategoryService;
 import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.category.dto.CategoryState;
+import mn.tasky.location.publicapi.LocationQueryPort;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.dao.TaskApplicationDao;
@@ -48,6 +49,9 @@ class TaskCreationServiceTest {
 
     @Mock
     private ReviewEnforcementService reviewEnforcementService;
+
+    @Mock
+    private LocationQueryPort locationQueryPort;
 
     @Mock
     private ScopeSummaryGenerator scopeSummaryGenerator;
@@ -82,6 +86,7 @@ class TaskCreationServiceTest {
                 notificationService,
                 analyticsService,
                 reviewEnforcementService,
+                locationQueryPort,
                 scopeSummaryGenerator,
                 taskDao,
                 taskPhotoDao,
@@ -291,6 +296,7 @@ class TaskCreationServiceTest {
             when(reviewEnforcementService.isUserLocked("c1")).thenReturn(false);
             when(categoryService.getCategory("cat1")).thenReturn(Optional.of(activeCategory));
             when(taskPhotoKeyHelper.areOwnedTaskPhotoKeys(List.of(), "c1")).thenReturn(true);
+            when(locationQueryPort.isWithinServiceArea(47.9, 106.9)).thenReturn(true);
             when(taskApplicationDao.findNearbyTaskerCandidates(
                             any(), anyDouble(), anyDouble(), anyDouble(), anyString(), anyInt()))
                     .thenReturn(List.of());
@@ -310,6 +316,7 @@ class TaskCreationServiceTest {
             when(categoryService.getCategory("cat1")).thenReturn(Optional.of(activeCategory));
             when(taskPhotoKeyHelper.areOwnedTaskPhotoKeys(List.of("key1", "key2"), "c1"))
                     .thenReturn(true);
+            when(locationQueryPort.isWithinServiceArea(47.9, 106.9)).thenReturn(true);
             when(taskApplicationDao.findNearbyTaskerCandidates(
                             any(), anyDouble(), anyDouble(), anyDouble(), anyString(), anyInt()))
                     .thenReturn(List.of());
@@ -341,6 +348,7 @@ class TaskCreationServiceTest {
             when(reviewEnforcementService.isUserLocked("c1")).thenReturn(false);
             when(categoryService.getCategory("cat1")).thenReturn(Optional.of(activeCategory));
             when(taskPhotoKeyHelper.areOwnedTaskPhotoKeys(List.of(), "c1")).thenReturn(true);
+            when(locationQueryPort.isWithinServiceArea(47.9, 106.9)).thenReturn(true);
             when(taskApplicationDao.findNearbyTaskerCandidates(
                             any(), anyDouble(), anyDouble(), anyDouble(), anyString(), anyInt()))
                     .thenReturn(List.of("tk1", "tk2"));

@@ -24,6 +24,7 @@ import mn.tasky.category.application.CategoryService;
 import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.category.dto.CategoryState;
 import mn.tasky.common.outbox.DomainEventOutboxService;
+import mn.tasky.location.publicapi.LocationQueryPort;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.ScopeSummaryGenerator;
@@ -52,11 +53,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 /**
  * Domain-unit tests for task application, pricing, and service-area scenarios
  * SCN-TASK-021 through SCN-TASK-029.
- *
- * <p>GAP: SCN-TASK-020 (UB service-area rejection at posting) has no implementation.
- * TaskCreationService accepts any lat/lng without validating against UB district boundaries.
- * The DistrictGeocodingProvider only performs reverse-geocoding (nearest district match)
- * and never rejects coordinates outside the service area.
  *
  * <p>No Spring context. DAOs and external boundaries are mocked.
  * Services under test are real instances constructed with mocked dependencies.
@@ -87,6 +83,9 @@ class TaskApplicationScenarioTests {
 
     @Mock
     private ReviewEnforcementService reviewEnforcementService;
+
+    @Mock
+    private LocationQueryPort locationQueryPort;
 
     @Mock
     private TaskDao taskDao;
@@ -132,6 +131,7 @@ class TaskApplicationScenarioTests {
                 notificationService,
                 analyticsService,
                 reviewEnforcementService,
+                locationQueryPort,
                 scopeSummaryGenerator,
                 taskDao,
                 taskPhotoDao,
@@ -211,6 +211,56 @@ class TaskApplicationScenarioTests {
                 Instant.now().toString());
     }
 
+    // ── SCN-TASK-020 ─────────────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("SCN-TASK-020: Task location outside Ulaanbaatar service area is rejected at posting")
+    void rejectsTaskCreationOutsideUlaanbaatarServiceArea() {
+        CategoryState activeCategory = new CategoryState(
+                CATEGORY_ID, "Cleaning", "Cleaning MN", "https://example.com/icon.png", true, 1, null, null, null);
+        when(categoryService.getCategory(CATEGORY_ID)).thenReturn(Optional.of(activeCategory));
+        when(reviewEnforcementService.isUserLocked(CUSTOMER_ID)).thenReturn(false);
+        when(taskPhotoKeyHelper.areOwnedTaskPhotoKeys(List.of(), CUSTOMER_ID)).thenReturn(true);
+        when(locationQueryPort.isWithinServiceArea(49.4867, 105.9228)).thenReturn(false);
+
+        CreateTask command = new CreateTask(
+                CATEGORY_ID,
+                "Valid description",
+                50000,
+                49.4867,
+                105.9228,
+                "Darkhan",
+                Instant.now().plusSeconds(3600).toString(),
+                PricingMode.BUDGET.name(),
+                List.of(),
+                null,
+                null,
+                null,
+                null);
+
+        TaskCreateResult result = creationService.createTask(CUSTOMER_ID, command);
+
+        assertThat(result.errorCode()).isEqualTo(TaskCreateResult.OUTSIDE_SERVICE_AREA);
+        verify(taskDao, never())
+                .insert(
+                        anyString(),
+                        anyString(),
+                        anyString(),
+                        anyString(),
+                        any(),
+                        anyDouble(),
+                        anyDouble(),
+                        anyString(),
+                        anyString(),
+                        any(),
+                        anyString(),
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any());
+    }
+
     // ── SCN-TASK-021 ─────────────────────────────────────────────────────────
 
     @Test
@@ -230,6 +280,7 @@ class TaskApplicationScenarioTests {
         when(categoryService.getCategory(CATEGORY_ID)).thenReturn(Optional.of(activeAdminCategory));
         when(reviewEnforcementService.isUserLocked(CUSTOMER_ID)).thenReturn(false);
         when(taskPhotoKeyHelper.areOwnedTaskPhotoKeys(List.of(), CUSTOMER_ID)).thenReturn(true);
+        when(locationQueryPort.isWithinServiceArea(47.9, 106.9)).thenReturn(true);
         when(taskApplicationDao.findNearbyTaskerCandidates(
                         anyString(), anyDouble(), anyDouble(), anyDouble(), anyString(), anyInt()))
                 .thenReturn(List.of());

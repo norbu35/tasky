@@ -78,7 +78,7 @@ Generated: 2026-04-23
 | REQ-TASK-09     | SCN-TASK-017: Draft validates bound schema               | `TaskScenarioTests`                  | —   | —      |
 | REQ-TASK-09     | SCN-TASK-018: Draft uses bound schema                    | `TaskScenarioTests`                  | —   | —      |
 | REQ-TASK-11     | SCN-TASK-019: Deactivated category blocks new            | `TaskScenarioTests`                  | —   | —      |
-| REQ-P1-TASK-08  | SCN-TASK-020: Outside UB service area rejected           | **UNTESTED**                         | —   | —      |
+| REQ-P1-TASK-08  | SCN-TASK-020: Outside UB service area rejected           | `TaskApplicationScenarioTests`       | —   | —      |
 | REQ-P1-COVER-02 | SCN-TASK-021: Non-launch category rejected               | **UNTESTED**                         | —   | —      |
 | REQ-P1-MATCH-01 | SCN-TASK-022: Only verified taskers apply                | **UNTESTED**                         | —   | —      |
 | REQ-P1-MATCH-02 | SCN-TASK-023: Application needs pricing+note             | **UNTESTED**                         | —   | —      |
@@ -265,7 +265,7 @@ These tests test real service behavior but have no corresponding scenario in the
 | Booking disclaimer       | SCN-BOOK-007 (1)          | Critical | Disclaimer acceptance required                                    |
 | Task application         | SCN-TASK-022-025 (4)      | High     | Verified tasker apply, pricing+note, review all, withdraw         |
 | Task pricing modes       | SCN-TASK-026-029 (4)      | High     | Budget mode, quote mode, counter-offer, display                   |
-| Task service area        | SCN-TASK-020-021 (2)      | High     | UB boundary, launch category gate                                 |
+| Task service area        | SCN-TASK-021 (1)          | High     | Admin-active category gate                                        |
 | Category canary/rollback | SCN-CATEGORY-006-008 (3)  | High     | Canary activation, rollback, no-fallback                          |
 | Verification             | SCN-VERIF-001-005 (5)     | High     | Full manual verification flow                                     |
 | Notification             | SCN-NOTIF-006-007 (2)     | Medium   | Verification decision, completion prompt                          |

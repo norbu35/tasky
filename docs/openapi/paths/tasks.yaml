@@ -213,6 +213,8 @@
       Creates a new task in OPEN status using schema-driven intake payload.
       Deterministic scope summary generation runs before final submit; if generation fails,
       server falls back to canonical key-value summary and still returns success.
+      Task coordinates are validated against the Ulaanbaatar service area at posting time;
+      outside-area locations return `400 OUTSIDE_SERVICE_AREA`.
       Only authenticated customers can create tasks.
     operationId: createTask
     security:

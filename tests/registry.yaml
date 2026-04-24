@@ -1426,7 +1426,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-TASK-08
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Task location outside Ulaanbaatar service area is rejected at posting
   SCN-TASK-021:

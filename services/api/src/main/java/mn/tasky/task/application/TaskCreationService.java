@@ -17,6 +17,7 @@ import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.category.dto.CategorySchemaVersion;
 import mn.tasky.category.dto.CategoryState;
 import mn.tasky.common.validation.TextSanitizer;
+import mn.tasky.location.publicapi.LocationQueryPort;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.dao.TaskApplicationDao;
@@ -55,6 +56,7 @@ public class TaskCreationService {
     private final TaskDraftDao taskDraftDao;
     private final ObjectMapper objectMapper;
     private final ReviewEnforcementService reviewEnforcementService;
+    private final LocationQueryPort locationQueryPort;
     private final TaskPhotoKeyHelper taskPhotoKeyHelper;
     private final double taskMatchNotificationRadiusKm;
     private final int taskMatchNotificationLimit;
@@ -64,6 +66,7 @@ public class TaskCreationService {
             NotificationService notificationService,
             AnalyticsService analyticsService,
             ReviewEnforcementService reviewEnforcementService,
+            LocationQueryPort locationQueryPort,
             ScopeSummaryGenerator scopeSummaryGenerator,
             TaskDao taskDao,
             TaskPhotoDao taskPhotoDao,
@@ -78,6 +81,7 @@ public class TaskCreationService {
         this.notificationService = notificationService;
         this.analyticsService = analyticsService;
         this.reviewEnforcementService = reviewEnforcementService;
+        this.locationQueryPort = locationQueryPort;
         this.scopeSummaryGenerator = scopeSummaryGenerator;
         this.taskDao = taskDao;
         this.taskPhotoDao = taskPhotoDao;
@@ -145,6 +149,12 @@ public class TaskCreationService {
             }
         } catch (Exception e) {
             return TaskCreateResult.error(TaskCreateResult.INVALID_SCHEDULE, "Invalid schedule date format.");
+        }
+
+        if (!locationQueryPort.isWithinServiceArea(command.locationLat(), command.locationLng())) {
+            return TaskCreateResult.error(
+                    TaskCreateResult.OUTSIDE_SERVICE_AREA,
+                    "Task location must be within the Ulaanbaatar service area.");
         }
 
         String intakeAnswersJson = command.intakeAnswersJson();
