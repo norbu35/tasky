@@ -52,6 +52,7 @@ export function BookingSafetyPage() {
   const [clarityRating, setClarityRating] = useState(5);
   const [respectfulnessRating, setRespectfulnessRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
+  const [wouldBookAgain, setWouldBookAgain] = useState<boolean | null>(null);
   const [disputeCategory, setDisputeCategory] = useState('');
   const [disputeReason, setDisputeReason] = useState('');
 
@@ -81,6 +82,7 @@ export function BookingSafetyPage() {
     setCommunicationRating(5);
     setClarityRating(5);
     setRespectfulnessRating(5);
+    setWouldBookAgain(null);
     setDisputeCategory('');
     setDisputeReason('');
   };
@@ -131,12 +133,13 @@ export function BookingSafetyPage() {
     mutationFn: async (bookingId: string) => {
       const userIsCustomer = session!.user.id === selectedBooking!.customer_id;
       return apiClient.submitReview(session!.accessToken, bookingId, {
-        quality_rating: userIsCustomer ? qualityRating : 0,
+        ...(userIsCustomer ? { quality_rating: qualityRating } : {}),
         punctuality_rating: punctualityRating,
-        communication_rating: userIsCustomer ? communicationRating : 0,
-        clarity_rating: userIsCustomer ? 0 : clarityRating,
-        respectfulness_rating: userIsCustomer ? 0 : respectfulnessRating,
+        ...(userIsCustomer ? { communication_rating: communicationRating } : {}),
+        ...(!userIsCustomer ? { clarity_rating: clarityRating } : {}),
+        ...(!userIsCustomer ? { respectfulness_rating: respectfulnessRating } : {}),
         comment: reviewComment.trim() || null,
+        ...(userIsCustomer && wouldBookAgain !== null ? { would_book_again: wouldBookAgain } : {}),
       });
     },
     onSuccess: () => {
@@ -496,6 +499,31 @@ export function BookingSafetyPage() {
                 maxLength={1000}
               />
             </div>
+            {isUserCustomer && (
+              <div className="grid gap-2">
+                <Label>
+                  {t('bookingSafety.wouldBookAgainLabel', 'Would you book this tasker again?')}
+                </Label>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={wouldBookAgain === true ? 'default' : 'outline'}
+                    onClick={() => setWouldBookAgain(true)}
+                  >
+                    {t('bookingSafety.wouldBookAgainYes', 'Yes')}
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={wouldBookAgain === false ? 'default' : 'outline'}
+                    onClick={() => setWouldBookAgain(false)}
+                  >
+                    {t('bookingSafety.wouldBookAgainNo', 'No')}
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="secondary" onClick={closeDialog} disabled={reviewMutation.isPending}>

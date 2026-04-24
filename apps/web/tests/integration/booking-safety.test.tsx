@@ -10,6 +10,7 @@ import {
   makeProfile,
   makeReview,
   makeSession,
+  makeUser,
 } from '../../src/test/factories';
 import type { Booking } from '../../src/lib/apiClient';
 
@@ -33,6 +34,7 @@ describe('Booking Safety Integration', () => {
   it('TID-TASK-081-WEB-BOOKING-SAFETY-FLOW supports booking transitions, review, and dispute actions', async () => {
     const activeBooking: Booking = { ...makeBooking(), status: 'ASSIGNED', id: 'active-bkg' };
     const completedBooking: Booking = { ...makeBooking(), status: 'COMPLETED', id: 'complete-bkg' };
+    const session = makeSession({ user: { ...makeUser(), id: 'cust-1' } });
 
     const apiClient = createMockApiClient({
       getMyProfile: vi.fn().mockResolvedValue(makeProfile()),
@@ -49,9 +51,7 @@ describe('Booking Safety Integration', () => {
       raiseDispute: vi.fn().mockResolvedValue(makeDispute()),
     });
 
-    render(
-      <App apiClient={apiClient} initialRoute="/booking/safety" initialSession={makeSession()} />,
-    );
+    render(<App apiClient={apiClient} initialRoute="/booking/safety" initialSession={session} />);
 
     await screen.findByRole('heading', { name: /Booking Management/i });
 
@@ -105,7 +105,12 @@ describe('Booking Safety Integration', () => {
       expect(apiClient.submitReview).toHaveBeenCalledWith(
         'access-token',
         'complete-bkg',
-        expect.objectContaining({ comment: 'Great job!' }),
+        expect.objectContaining({
+          comment: 'Great job!',
+          quality_rating: 5,
+          punctuality_rating: 5,
+          communication_rating: 5,
+        }),
       );
     });
 

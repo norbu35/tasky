@@ -112,12 +112,13 @@ export interface ApiClient {
     accessToken: string,
     bookingId: string,
     payload: {
-      quality_rating: number;
+      quality_rating?: number;
       punctuality_rating: number;
-      communication_rating: number;
-      clarity_rating: number;
-      respectfulness_rating: number;
+      communication_rating?: number;
+      clarity_rating?: number;
+      respectfulness_rating?: number;
       comment?: string | null;
+      would_book_again?: boolean | null;
     },
   ): Promise<Review>;
 
@@ -487,12 +488,13 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
     accessToken: string,
     bookingId: string,
     payload: {
-      quality_rating: number;
+      quality_rating?: number;
       punctuality_rating: number;
-      communication_rating: number;
-      clarity_rating: number;
-      respectfulness_rating: number;
+      communication_rating?: number;
+      clarity_rating?: number;
+      respectfulness_rating?: number;
       comment?: string | null;
+      would_book_again?: boolean | null;
     },
   ): Promise<Review> {
     return this.requestJson<Review>(

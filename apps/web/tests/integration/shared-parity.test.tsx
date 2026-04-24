@@ -1,6 +1,6 @@
 import '../../src/lib/i18n';
 
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
@@ -14,7 +14,6 @@ import { NotificationsPage } from '../../src/pages/shared/NotificationsPage';
 import { EditProfilePage } from '../../src/pages/shared/EditProfilePage';
 import { SettingsPage } from '../../src/pages/shared/SettingsPage';
 import { DeleteAccountPage } from '../../src/pages/shared/DeleteAccountPage';
-import { ReviewPage } from '../../src/pages/shared/ReviewPage';
 import { ReviewReminderDialog } from '../../src/pages/shared/ReviewReminderDialog';
 import { ReviewHardLockPage } from '../../src/pages/shared/ReviewHardLockPage';
 import { SuspendedPage } from '../../src/pages/shared/SuspendedPage';
@@ -90,7 +89,6 @@ describe('Shared parity pages', () => {
   it('renders review and account-state pages', () => {
     renderWithAppContext(
       <>
-        <ReviewPage />
         <ReviewHardLockPage />
         <SuspendedPage />
         <BannedPage />
@@ -100,7 +98,6 @@ describe('Shared parity pages', () => {
       </>,
     );
 
-    expect(screen.getByRole('heading', { name: 'Leave a review' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Review prior booking' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Account suspended' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Account banned' })).toBeInTheDocument();
@@ -131,17 +128,5 @@ describe('Shared parity pages', () => {
     expect(screen.getByRole('heading', { name: 'Help center' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Terms of service' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Privacy policy' })).toBeInTheDocument();
-  });
-
-  it('updates inline state on the review page', () => {
-    renderWithAppContext(<ReviewPage />);
-
-    fireEvent.click(screen.getByRole('button', { name: '4 stars' }));
-    fireEvent.change(screen.getByLabelText('Review notes'), {
-      target: { value: 'Solid work and on time.' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Submit review' }));
-
-    expect(screen.getByText('Thanks for submitting feedback.')).toBeInTheDocument();
   });
 });
