@@ -114,7 +114,9 @@
     "waitingForTaskers": "Waiting for Taskers to apply...",
     "tasksDone": "{{count}} tasks done",
     "reviewAndAccept": "Review & Accept",
-    "appliedAgo": "Applied {{timeAgo}}"
+    "appliedAgo": "Applied {{timeAgo}}",
+    "cancelling": "Cancelling...",
+    "cancelTask": "Cancel Task"
   },
   "taskerTasks": {
     "completed": "Completed",
@@ -717,7 +719,23 @@
       "title": "My jobs",
       "description": "Track active and completed tasks you have been hired for.",
       "cardTitle": "Jobs feed",
-      "cardDesc": "Switch between active and past work histories."
+      "cardDesc": "Switch between active and past work histories.",
+      "loading": "Loading jobs...",
+      "empty": "No jobs yet. Apply to tasks to get started.",
+      "bookingId": "Booking",
+      "confirmBtn": "Confirm Booking",
+      "declineBtn": "Decline",
+      "completed": "Job completed successfully.",
+      "confirmTitle": "Confirm Booking",
+      "confirmDesc": "Confirm this booking to proceed. You are agreeing to complete the task as described.",
+      "cancelBtn": "Cancel",
+      "confirmingBtn": "Confirming...",
+      "confirmSuccess": "Booking confirmed!",
+      "statusAssigned": "Active",
+      "statusCompleted": "Completed",
+      "statusCancelled": "Cancelled",
+      "statusNoShow": "No Show",
+      "statusUnknown": "Unknown"
     },
     "noShowDialog": {
       "title": "No-show reminder",

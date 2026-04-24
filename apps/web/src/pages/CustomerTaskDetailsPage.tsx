@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { TFunction } from 'i18next';
-import { Calendar, ChevronLeft, Clock, MapPin, Star, UserCheck } from 'lucide-react';
+import { Calendar, ChevronLeft, Clock, MapPin, Star, Trash2, UserCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -47,6 +47,7 @@ export function CustomerTaskDetailsPage() {
   const { apiClient, session } = useAppContext();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: tasksPage, isLoading: tasksLoading } = useQuery({
     queryKey: ['customerTasks', session, apiClient],
@@ -75,6 +76,18 @@ export function CustomerTaskDetailsPage() {
   });
 
   const isAssigned = task?.status === 'ASSIGNED' || task?.status === 'COMPLETED';
+  const isOpen = task?.status === 'OPEN';
+
+  const cancelTaskMutation = useMutation({
+    mutationFn: async () => {
+      if (!session || !taskId) throw new Error('Missing requirements');
+      return apiClient.cancelTask(session.accessToken, taskId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['customerTasks'] });
+      navigate('/customer/tasks');
+    },
+  });
 
   if (tasksLoading) {
     return (
@@ -136,12 +149,28 @@ export function CustomerTaskDetailsPage() {
                       {task.location_text}
                     </CardDescription>
                   </div>
-                  <Badge
-                    className="text-sm px-3 py-1"
-                    variant={task.status === 'OPEN' ? 'default' : 'secondary'}
-                  >
-                    {task.status}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      className="text-sm px-3 py-1"
+                      variant={task.status === 'OPEN' ? 'default' : 'secondary'}
+                    >
+                      {task.status}
+                    </Badge>
+                    {isOpen && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-destructive"
+                        onClick={() => cancelTaskMutation.mutate()}
+                        disabled={cancelTaskMutation.isPending}
+                      >
+                        <Trash2 className="mr-1 h-3 w-3" />
+                        {cancelTaskMutation.isPending
+                          ? t('customerTaskDetails.cancelling', 'Cancelling...')
+                          : t('customerTaskDetails.cancelTask', 'Cancel Task')}
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="grid sm:grid-cols-2 gap-4 pb-4">
