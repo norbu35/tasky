@@ -378,7 +378,7 @@ journeys:
         condition: Tasker doesn't show up
         screens:
           - SCR-CUST-021
-        outcome: Flag no-show after 15min
+        outcome: Flag no-show after 1 hour
         lifecycle: BOOK-T06 (counterparty_flags_no_show)
       - id: JRN-CUST-04-A4
         name: View timeline
@@ -641,7 +641,7 @@ journeys:
         condition: Customer doesn't show
         screens:
           - SCR-TASK-014
-        outcome: Flag no-show after 15min
+        outcome: Flag no-show after 1 hour
         lifecycle: BOOK-T06 (counterparty_flags_no_show)
       - id: JRN-TASK-04-A3
         name: Tasker cancels (Safety/Fraud)

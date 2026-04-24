@@ -2,6 +2,8 @@ package mn.tasky.task;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -212,13 +214,25 @@ class TaskApplicationScenarioTests {
     // ── SCN-TASK-021 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-021: Task creation in a non-launch category is rejected")
-    void taskCreationInactiveCategoryRejected() {
-        // Given: an inactive category
-        CategoryState inactiveCategory = new CategoryState(
-                CATEGORY_ID, "Inactive", "Inactive MN", "https://example.com/icon.png", false, 1, null, null, null);
-        when(categoryService.getCategory(CATEGORY_ID)).thenReturn(Optional.of(inactiveCategory));
+    @DisplayName("SCN-TASK-021: Task creation eligibility uses the admin-active category catalog")
+    void taskCreationUsesAdminActiveCategoryCatalog() {
+        // Given: an admin-active category, regardless of whether it was in the initial launch seed.
+        CategoryState activeAdminCategory = new CategoryState(
+                CATEGORY_ID,
+                "Admin Active",
+                "Admin Active MN",
+                "https://example.com/icon.png",
+                true,
+                1,
+                null,
+                null,
+                null);
+        when(categoryService.getCategory(CATEGORY_ID)).thenReturn(Optional.of(activeAdminCategory));
         when(reviewEnforcementService.isUserLocked(CUSTOMER_ID)).thenReturn(false);
+        when(taskPhotoKeyHelper.areOwnedTaskPhotoKeys(List.of(), CUSTOMER_ID)).thenReturn(true);
+        when(taskApplicationDao.findNearbyTaskerCandidates(
+                        anyString(), anyDouble(), anyDouble(), anyDouble(), anyString(), anyInt()))
+                .thenReturn(List.of());
 
         CreateTask command = new CreateTask(
                 CATEGORY_ID,
@@ -238,10 +252,27 @@ class TaskApplicationScenarioTests {
         // When
         TaskCreateResult result = creationService.createTask(CUSTOMER_ID, command);
 
-        // Then: rejected with INVALID_CATEGORY identifying the category as unavailable
-        assertThat(result.isSuccess()).isFalse();
-        assertThat(result.errorCode()).isEqualTo(TaskCreateResult.INVALID_CATEGORY);
-        assertThat(result.errorMessage()).contains("inactive");
+        // Then: the active admin catalog, not the initial seed list, controls category availability.
+        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.task().categoryId()).isEqualTo(CATEGORY_ID);
+        verify(taskDao)
+                .insert(
+                        anyString(),
+                        eq(CUSTOMER_ID),
+                        eq(CATEGORY_ID),
+                        anyString(),
+                        any(),
+                        anyDouble(),
+                        anyDouble(),
+                        anyString(),
+                        eq("OPEN"),
+                        any(),
+                        eq(PricingMode.BUDGET.name()),
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any());
     }
 
     // ── SCN-TASK-022 ─────────────────────────────────────────────────────────

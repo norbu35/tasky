@@ -100,7 +100,7 @@ entities:
         source: ASSIGNED
         target: NO_SHOW
         trigger: counterparty_flags_no_show
-        guard: schedule_start + 15min elapsed, no check-in in 30min, no accepted reschedule
+        guard: schedule_start + 1h elapsed, no check-in in 30min, no accepted reschedule
         side_effects:
           - booking → NO_SHOW
           - enter admin reliability review
@@ -195,7 +195,7 @@ entities:
         source: ASSIGNED
         target: NO_SHOW
         trigger: counterparty_flags_no_show
-        guard: schedule_start + 15min, no check-in in 30min, no accepted reschedule
+        guard: schedule_start + 1h, no check-in in 30min, no accepted reschedule
         side_effects:
           - task → NO_SHOW
           - enter admin reliability review

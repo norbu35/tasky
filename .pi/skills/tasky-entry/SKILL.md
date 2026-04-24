@@ -120,10 +120,75 @@ Common examples:
 
 ### 7. test
 
-- Write or update tests against existing scenario coverage.
+TDD is mandatory. Write tests **before** touching production code. Follow red → green order and record evidence at both phases.
+
+#### Red phase (required before stage 8)
+
+1. Write the test(s) against existing scenario coverage.
+2. Run the tests and confirm they **fail** for the right reason.
+3. Record the failing test output as red-phase evidence in the session. Do not proceed to stage 8 without this evidence.
+
+```bash
+# Backend red phase
+./gradlew --no-daemon :services:api:test --tests "<TestClassName>" 2>&1 | tail -20
+
+# Frontend red phase
+pnpm --filter @tasky/<app> test --testPathPattern="<TestFile>" 2>&1 | tail -20
+```
+
+#### Test authoring rules
+
 - Backend `@DisplayName` must be exactly `SCN-XXX-NNN: <title>` for scenario-backed tests.
+- Frontend behavioral integration, E2E, and mobile screen-flow tests should use `SCN-XXX-NNN: <title>` when they map cleanly to a curated scenario.
+- Frontend-only technical checks keep `TID-*`; mobile design/visual navigation flows keep `SCR-*` and `JRN-*`.
 - Domain-unit tests: no `@SpringBootTest`, `@Autowired`, or `@MockBean`.
 - Mock only external boundaries: `FacebookGraphClient`, `FirebasePushProvider`, `S3StorageService`.
+
+#### TDD evidence file
+
+After the red phase, create a TDD evidence file:
+
+```bash
+mkdir -p .pi/sessions/<session-id>
+cat > .pi/sessions/<session-id>/tdd-evidence.json << 'EOF'
+{
+  "red": {
+    "cmd": "./gradlew --no-daemon :services:api:test --tests '<TestClassName>'",
+    "exit": 1,
+    "tail": "<last 10-20 lines of failing test output>"
+  },
+  "green": {
+    "cmd": "./gradlew --no-daemon :services:api:test --tests '<TestClassName>'",
+    "exit": 0,
+    "tail": "<last 10-20 lines of passing test output>"
+  }
+}
+EOF
+```
+
+Fill in the `green` section after running the green phase in stage 9.
+
+#### Gate check
+
+After writing tests (before stage 8), run the structural TDD gate to confirm:
+
+```bash
+pnpm verify:tdd
+```
+
+This gate enforces four mechanical checks:
+
+| Gate | What it checks                                | When it fires                                                                                                                       |
+| ---- | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | New production files have matching test files | Any newly-added file in `src/main/java` or `apps/*/src` (excluding DTOs, Config, Exceptions, Mappers, generated code, test helpers) |
+| 2    | Change-implies-test                           | If production code changed, at least one test file must also be in the diff                                                         |
+| 3    | Commit ordering                               | No commit may introduce production code without a test in the same or an earlier commit                                             |
+| 4    | TDD evidence                                  | `.pi/sessions/<id>/tdd-evidence.json` must exist with `red.exit=1` → `green.exit=0`                                                 |
+
+Stage 8 (implementation) may only begin after:
+
+- Red-phase evidence is recorded, AND
+- `pnpm verify:tdd` passes.
 
 ### 8. implementation
 
@@ -136,7 +201,27 @@ Common examples:
 
 Run the smallest verification lane that matches the claim.
 
-Typical lanes:
+For any non-trivial change, always start with the structural baseline:
+
+```bash
+pnpm verify:cleanup   # structural gate: docs, migrations, schema, boundaries
+pnpm verify:ops       # wiring audit: hooks, workflows, compose config
+pnpm verify:tdd       # TDD gate: 4 mechanical checks (new-file, change-implies-test, commit-ordering, evidence)
+```
+
+Green phase — confirm tests pass after implementation (required TDD evidence):
+
+```bash
+# Backend green phase
+./gradlew --no-daemon :services:api:test --tests "<TestClassName>"
+
+# Frontend green phase
+pnpm --filter @tasky/<app> test --testPathPattern="<TestFile>"
+```
+
+Update the `green` section of `.pi/sessions/<id>/tdd-evidence.json` with the passing output.
+
+Then the smallest domain lane on top:
 
 - `pnpm repo:docs:check`
 - `pnpm verify:scenario:smoke`
@@ -145,7 +230,7 @@ Typical lanes:
 - `pnpm verify:frontend`
 - `pnpm verify:drift`
 
-Record the command evidence before claiming completion.
+Record both red-phase (failing) and green-phase (passing) test output as evidence before claiming completion. Do not claim completion without `verify:cleanup`, `verify:tdd`, and the smallest matching domain lane all passing.
 
 ### 10. docs_review
 

@@ -54,9 +54,9 @@ Then external distribution may be triggered for eligible categories
 
 **Risk:** Medium
 **PRD:** REQ-P1-ASSIST-04
-**Title:** External distribution is limited to launch categories
+**Title:** External distribution is limited to admin-eligible categories
 
-Given an eligible task exists in a category outside the four launch categories
+Given an eligible task exists in an active category that is not marked eligible for external distribution in admin launch controls
 When the assistance evaluation runs at 8 hours with no qualified application
 Then external distribution is not triggered for that task
 

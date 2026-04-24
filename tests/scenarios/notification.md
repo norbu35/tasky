@@ -28,7 +28,7 @@ Then a push notification is sent to the tasker indicating they are hired
 **PRD:** REQ-P1-NOTIF-04
 **Title:** No-show reminder sends notification to both booking participants
 
-Given a booking is past scheduled start plus 10 minutes with no check-in
+Given a booking is past scheduled start plus 30 minutes with no check-in
 When the no-show reminder job runs
 Then both customer and tasker receive a push notification
 

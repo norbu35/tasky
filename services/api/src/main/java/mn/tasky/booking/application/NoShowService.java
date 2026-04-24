@@ -25,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Handles NO_SHOW adjudication for bookings.
  * <p>
- * A booking is eligible for a no-show reminder 10 minutes after its confirmed schedule.
- * A booking can be flagged as NO_SHOW 15 minutes after its confirmed schedule,
+ * A booking is eligible for a no-show reminder 30 minutes after its confirmed schedule.
+ * A booking can be flagged as NO_SHOW 1 hour after its confirmed schedule,
  * provided there is no recent activity from either party and no future reschedule.
  */
 @Service
@@ -34,8 +34,8 @@ public class NoShowService {
 
     private static final Logger log = LoggerFactory.getLogger(NoShowService.class);
 
-    private static final int REMINDER_DELAY_MINUTES = 10;
-    private static final int FLAG_ELIGIBILITY_MINUTES = 15;
+    private static final int REMINDER_DELAY_MINUTES = 30;
+    private static final int FLAG_ELIGIBILITY_MINUTES = 60;
     private static final int INACTIVITY_WINDOW_MINUTES = 30;
 
     private final BookingDao bookingDao;
@@ -73,7 +73,7 @@ public class NoShowService {
     }
 
     /**
-     * Finds ASSIGNED bookings past their confirmed schedule by 10+ minutes
+     * Finds ASSIGNED bookings past their confirmed schedule by 30+ minutes
      * that have not yet received a NO_SHOW_REMINDER_SENT timeline event.
      */
     public List<BookingState> findBookingsNeedingReminder() {
@@ -126,7 +126,7 @@ public class NoShowService {
             return NoShowFlagResult.error("FORBIDDEN");
         }
 
-        // 2. now() >= confirmedScheduledAt + 15 minutes
+        // 2. now() >= confirmedScheduledAt + 1 hour
         Instant now = Instant.now();
         if (booking.confirmedScheduledAt() == null) {
             return NoShowFlagResult.error("NO_SCHEDULE");

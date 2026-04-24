@@ -1,0 +1,50 @@
+name: security-review
+
+on:
+  pull_request:
+    branches:
+      - main
+      - staging
+
+jobs:
+  security-critical-guard:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check for security-critical file changes
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          SECURITY_PATTERN="SecurityConfig\.java|JwtAuthenticationFilter\.java|JwtTokenService\.java|TokenBlacklistService\.java|StompRateLimitInterceptor\.java|ChannelInterceptorConfig\.java|Caddyfile\.production"
+          TOUCHED_SECURITY=$(echo "$CHANGED" | grep -E "$SECURITY_PATTERN" || true)
+
+          if [ -z "$TOUCHED_SECURITY" ]; then
+            echo "No security-critical files changed — guard passed."
+            exit 0
+          fi
+
+          echo "Security-critical files changed:"
+          echo "$TOUCHED_SECURITY" | sed 's/^/  /'
+          echo ""
+
+          if echo "$PR_BODY" | grep -q 'SECURITY-REVIEW:'; then
+            echo "SECURITY-REVIEW marker found in PR body — acknowledgement present."
+            exit 0
+          fi
+
+          echo "ERROR: This PR touches security-critical files but the PR body does not contain 'SECURITY-REVIEW:'."
+          echo ""
+          echo "Add a line to the PR body describing the security impact, for example:"
+          echo "  SECURITY-REVIEW: narrowed public path list in SecurityConfig; no new endpoints opened"
+          echo ""
+          echo "Files from AGENTS.md §Security-Critical Files that were changed:"
+          echo "$TOUCHED_SECURITY" | sed 's/^/  /'
+          exit 1

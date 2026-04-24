@@ -46,6 +46,7 @@ fi
 
 pnpm verify:cleanup
 pnpm verify:ops
+pnpm verify:tdd
 
 pnpm verify:backend
 pnpm verify:frontend

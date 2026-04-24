@@ -378,9 +378,9 @@ For exact column definitions, use the Flyway migrations in `services/api/src/mai
 
 #### Marketplace and booking
 
-- `tasks`: customer task record with launch category, pricing mode (`BUDGET` / `QUOTE`), structured intake answers, schedule, approximate/exact location fields, lifecycle status, and summary provenance. Launch summary generation is deterministic; any LLM-related provenance must remain dormant.
+- `tasks`: customer task record with admin-active category, pricing mode (`BUDGET` / `QUOTE`), structured intake answers, schedule, approximate/exact location fields, lifecycle status, and summary provenance. Launch summary generation is deterministic; any LLM-related provenance must remain dormant.
 - `task_drafts`: draft posting state bound to a specific intake schema version.
-- `categories`: launch category catalog and active intake schema pointers.
+- `categories`: admin-governed category catalog and active intake schema pointers.
 - `category_schema_versions`: versioned structured-intake definitions with draft/canary/active lifecycle.
 - `task_applications`: tasker applications, structured pricing response data, selection state, and response-window timestamps.
 - `bookings`: confirmed work agreement between customer and selected tasker. Phase 1 lifecycle centers on confirmed, completed, canceled, disputed, and no-show outcomes. If physical schema includes monetization-oriented states or settlement modes, they remain dormant outside launch.
@@ -577,7 +577,7 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 - **Category intake contract**:
   - Category endpoints must expose `intake_enabled`, `intake_schema_version`, and the active schema payload needed by posting clients.
-  - Launch task creation is category-specific. Generic free-form posting is not the primary creation path.
+  - Launch task creation is category-specific and uses the current admin-active category catalog. Generic free-form posting is not the primary creation path.
 - **Draft contract**:
   - Draft create/update APIs persist the schema version bound at form start.
   - Final task submission validates against the bound schema version and returns field-level errors for missing or invalid required answers.
@@ -592,7 +592,7 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
   - No-show policy is deterministic: reminder at `+30m`, no-show flag eligibility at `+1h`, activity lookback protection, and accepted-reschedule precedence over earlier schedules.
   - Launch lifecycle transitions align with the PRD: tasks move through open/assigned/completed-or-terminal states, and bookings move through confirmed/completed-or-terminal states without requiring payment-gated intermediates.
 - **Pricing contract**:
-  - Every launch-category task uses exactly one of the two Phase 1 pricing modes: `I have a budget` or `I want quotes`.
+  - Every Phase 1 task uses exactly one of the two launch pricing modes: `I have a budget` or `I want quotes`.
   - Structured application pricing must support budget acceptance, counter-offer, and quote submission as required by the PRD.
 - **Trust contract**:
   - Disputes may be opened during active bookings and for the limited post-completion window defined by product policy.

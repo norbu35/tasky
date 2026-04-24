@@ -219,7 +219,7 @@ public class BookingPublicOperationService {
                 case "TOO_EARLY" -> BookingOperationOutcome.failure(
                         BookingOperationOutcome.Status.TOO_EARLY,
                         "TOO_EARLY",
-                        "Cannot flag no-show before 15 minutes past scheduled time.");
+                        "Cannot flag no-show before 1 hour past scheduled time.");
                 case "NO_SCHEDULE" -> BookingOperationOutcome.failure(
                         BookingOperationOutcome.Status.NO_SCHEDULE,
                         "NO_SCHEDULE",

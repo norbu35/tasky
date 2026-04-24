@@ -1,3 +1,7 @@
+---
+description: Index file for the tooling package
+---
+
 # Tasky Repo Skills
 
 Use this file when the task touches `tooling/skills/**`.

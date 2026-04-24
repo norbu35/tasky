@@ -171,7 +171,7 @@ The launch depends on an operator-managed backstop. Admin is not a future abstra
 
 ### 6.2 Launch categories
 
-Phase 1 launches only the following service categories:
+Phase 1 launch starts with the following seed service categories:
 
 1. Home cleaning
 2. Furniture assembly
@@ -179,6 +179,9 @@ Phase 1 launches only the following service categories:
 4. Minor handyman
 
 Minor handyman is subtype-based and excludes regulated, dangerous, or diagnosis-heavy work.
+
+The admin dashboard is the runtime source of truth for category activation. Operators may activate or deactivate
+category templates during Phase 1, so the exact count of active posting categories can vary without changing this PRD.
 
 ### 6.3 Out of scope for launch
 
@@ -208,7 +211,8 @@ The following remain out of scope for Phase 1 launch and must not be treated as 
 
 ### 8.1 Eligible task
 
-An `eligible_task` is a task whose service location is within Ulaanbaatar, belongs to a launch category, and is not invalidated by spam, fraud, or admin rejection.
+An `eligible_task` is a task whose service location is within Ulaanbaatar, belongs to the current admin-active
+category catalog, and is not invalidated by spam, fraud, or admin rejection.
 
 ### 8.2 Qualified application
 
@@ -264,7 +268,7 @@ The following events support KPI computation:
 ### 9.1 Customer journey
 
 1. Sign in with Facebook OAuth.
-2. Browse available categories and select a launch category.
+2. Browse currently active categories and select one.
 3. Start a category-specific intake flow.
 4. Provide task location, date, time window, structured scope details, pricing mode, optional photos, and short title.
 5. Post the task and await applications.
@@ -290,7 +294,7 @@ The following events support KPI computation:
 ### 9.3 Admin journey
 
 1. Review verification submissions.
-2. Manage launch categories and intake schemas.
+2. Manage category activation state and intake schemas.
 3. Manage feature activation posture.
 4. Moderate users and resolve disputes or serious complaints.
 5. Trigger or monitor assisted distribution when native matching fails.
@@ -313,7 +317,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 ### 11.1 Coverage and availability
 
 - **REQ-P1-COVER-01**: The product MUST present itself as built for Ulaanbaatar. Live posting is available citywide.
-- **REQ-P1-COVER-02**: The system MUST determine task eligibility from the task location, launch category membership, and fraud/spam status.
+- **REQ-P1-COVER-02**: The system MUST determine task eligibility from the task location, current admin-active category availability, and fraud/spam status.
 - **REQ-P1-COVER-05**: Taskers MAY onboard from anywhere in Ulaanbaatar. Service-area preferences are used for notification targeting, not posting gates.
 - **REQ-P1-COVER-06**: Public launch copy and onboarding copy MUST communicate that the service is live in Ulaanbaatar.
 
@@ -337,7 +341,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 ### 11.4 Category model and fixed templates
 
 - **REQ-P1-CAT-01**: Phase 1 task creation MUST use category-specific intake templates. A generic free-form posting flow MUST NOT be the primary creation path.
-- **REQ-P1-CAT-02**: The launch category catalog MUST include home cleaning, furniture assembly, moving help / lifting help, and minor handyman.
+- **REQ-P1-CAT-02**: The initial launch category catalog MUST include home cleaning, furniture assembly, moving help / lifting help, and minor handyman.
 - **REQ-P1-CAT-03**: Minor handyman MUST be subtype-based and MUST exclude regulated, dangerous, or diagnosis-heavy work.
 - **REQ-P1-CAT-04**: Admin MUST be able to add, edit, activate, deactivate, and reorder category templates.
 - **REQ-P1-CAT-05**: Deactivating a category MUST block new draft and create requests for that category while preserving existing task lifecycle continuity.
@@ -460,7 +464,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 - **REQ-P1-ASSIST-01**: The product MUST classify task outcomes as self-serve, system-assisted, or manual-assisted.
 - **REQ-P1-ASSIST-02**: Task-level external distribution MUST NOT be used by default.
 - **REQ-P1-ASSIST-03**: External distribution MAY trigger only when an eligible task has received no qualified application within eight hours of posting.
-- **REQ-P1-ASSIST-04**: External distribution MUST be limited in Phase 1 to home cleaning, furniture assembly, moving help, and minor handyman.
+- **REQ-P1-ASSIST-04**: External distribution MUST be limited in Phase 1 to categories explicitly eligible for assisted distribution in admin launch controls. The initial assisted-distribution set is home cleaning, furniture assembly, moving help, and minor handyman.
 - **REQ-P1-ASSIST-05**: External distribution payloads MUST be sanitized and MUST NOT expose exact address, raw contact details, or unsupported trust claims.
 - **REQ-P1-ASSIST-06**: Tasks advanced through external distribution MUST remain eligible for booking and completion metrics but MUST be excluded from self-serve fulfillment reporting.
 - **REQ-P1-ASSIST-07**: Manual task-specific rescue performed by the operator MUST be recorded as intervention.
@@ -686,12 +690,12 @@ They must not enter the launch baseline without an explicit PRD change.
 
 The current rollout shape is:
 
-| Phase       | Purpose                                      | Capabilities intended for that phase                                                                                                                                                                    | Still out of scope in that phase                                                                                                               |
-| ----------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Phase 1** | Launch baseline                              | Citywide Ulaanbaatar posting, four launch categories, structured intake, budget-or-quote pricing, open application, direct settlement, verification, reviews, disputes, moderation, measured assistance | OTP-primary auth, DAN, lead fees, promoted listings, subscriptions, escrow, wallet, payouts, referrals, B2B, instant match, runtime AI posting |
-| **Phase 2** | Liquidity systems and soft monetization      | Algorithm-assisted application, OTP migration, DAN fast-path, lead credits if justified, promoted listings if justified, direct settlement still standard                                               | Escrow, wallet, payouts, subscriptions, instant match by default, geographic expansion                                                         |
-| **Phase 3** | Stronger trust rails and supply monetization | Tasker subscription, opt-in escrow, wallet and payout operations, tighter anti-leakage enforcement, instant match only after liquidity proof                                                            | Geographic expansion, managed B2B, broad revenue diversification                                                                               |
-| **Phase 4** | Expansion and broader revenue mix            | Additional payment rails, customer subscription products, geographic expansion, managed B2B only if earlier validation exists                                                                           | None by default; every addition still requires explicit scope approval                                                                         |
+| Phase       | Purpose                                      | Capabilities intended for that phase                                                                                                                                                                             | Still out of scope in that phase                                                                                                               |
+| ----------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1** | Launch baseline                              | Citywide Ulaanbaatar posting, initial launch category catalog, structured intake, budget-or-quote pricing, open application, direct settlement, verification, reviews, disputes, moderation, measured assistance | OTP-primary auth, DAN, lead fees, promoted listings, subscriptions, escrow, wallet, payouts, referrals, B2B, instant match, runtime AI posting |
+| **Phase 2** | Liquidity systems and soft monetization      | Algorithm-assisted application, OTP migration, DAN fast-path, lead credits if justified, promoted listings if justified, direct settlement still standard                                                        | Escrow, wallet, payouts, subscriptions, instant match by default, geographic expansion                                                         |
+| **Phase 3** | Stronger trust rails and supply monetization | Tasker subscription, opt-in escrow, wallet and payout operations, tighter anti-leakage enforcement, instant match only after liquidity proof                                                                     | Geographic expansion, managed B2B, broad revenue diversification                                                                               |
+| **Phase 4** | Expansion and broader revenue mix            | Additional payment rails, customer subscription products, geographic expansion, managed B2B only if earlier validation exists                                                                                    | None by default; every addition still requires explicit scope approval                                                                         |
 
 ### 18.3 Rollout rules
 

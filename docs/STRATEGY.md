@@ -26,16 +26,16 @@ Later phases stay conditional. A draft screen, dormant toggle, or placeholder co
 3. Jobs complete without heavy manual intervention.
 4. Trust outcomes are strong enough to support expansion.
 
-### 2.3 Launch categories
+### 2.3 Launch category seed
 
-The initial liquidity bet is:
+The initial liquidity bet starts with:
 
 1. Home cleaning
 2. Furniture assembly
 3. Moving help / lifting help
 4. Minor handyman
 
-These categories are a good fit for structured intake, concrete scoping fields, and selective assisted distribution when native matching falls short.
+These categories are a good fit for structured intake, concrete scoping fields, and selective assisted distribution when native matching falls short. Runtime category activation is governed by the admin dashboard, so the active category count can change as operators activate or deactivate templates.
 
 ## 3. Matching and assistance model
 
@@ -85,12 +85,12 @@ Rules:
 
 The rollout sequence beyond launch is recorded in `docs/ROLLOUT_PHASES.md`. The strategy view is:
 
-| Phase       | Strategic job                                                                                   | Notes                                                                                              |
-| ----------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| **Phase 1** | Prove the marketplace works across Ulaanbaatar with the launch categories and direct settlement | This is the current product.                                                                       |
-| **Phase 2** | Improve matching quality and test light monetization without changing the settlement model      | Lead credits and promoted listings are optional tools inside the phase, not automatic commitments. |
-| **Phase 3** | Add stronger trust rails and supply-side monetization                                           | Escrow, wallet, payouts, and subscription belong here if earlier evidence supports them.           |
-| **Phase 4** | Expand geography and revenue mix                                                                | This is where broader payment rails, customer plans, and any managed B2B layer belong.             |
+| Phase       | Strategic job                                                                                      | Notes                                                                                              |
+| ----------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Phase 1** | Prove the marketplace works across Ulaanbaatar with the launch category seed and direct settlement | This is the current product.                                                                       |
+| **Phase 2** | Improve matching quality and test light monetization without changing the settlement model         | Lead credits and promoted listings are optional tools inside the phase, not automatic commitments. |
+| **Phase 3** | Add stronger trust rails and supply-side monetization                                              | Escrow, wallet, payouts, and subscription belong here if earlier evidence supports them.           |
+| **Phase 4** | Expand geography and revenue mix                                                                   | This is where broader payment rails, customer plans, and any managed B2B layer belong.             |
 
 ### 6.1 Conditional tracks
 

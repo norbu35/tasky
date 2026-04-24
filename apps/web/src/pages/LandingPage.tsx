@@ -29,15 +29,14 @@ interface SampleTask {
   title: string;
   price: string;
   district: string;
-  category: 'cleaning' | 'repair' | 'moving' | 'electric' | 'childcare';
+  category: 'cleaning' | 'handyman' | 'moving' | 'furniture';
 }
 
 const CATEGORY_COLORS: Record<SampleTask['category'], string> = {
   cleaning: 'bg-accent',
-  repair: 'bg-secondary',
+  handyman: 'bg-secondary',
   moving: 'bg-trust',
-  electric: 'bg-primary',
-  childcare: 'bg-verified',
+  furniture: 'bg-primary',
 };
 
 function AnimatedTaskFeed() {
@@ -52,10 +51,10 @@ function AnimatedTaskFeed() {
       category: 'cleaning',
     },
     {
-      title: t('landing.task2', 'Fix bathroom pipe leak'),
+      title: t('landing.task2', 'Mount shelves and tighten cabinet doors'),
       price: '₮40,000',
       district: t('landing.distSukhbaatar', 'Sukhbaatar'),
-      category: 'repair',
+      category: 'handyman',
     },
     {
       title: t('landing.task3', 'Move studio to 1-bedroom'),
@@ -64,10 +63,10 @@ function AnimatedTaskFeed() {
       category: 'moving',
     },
     {
-      title: t('landing.task4', 'Install ceiling light fixtures'),
+      title: t('landing.task4', 'Assemble wardrobe and desk'),
       price: '₮30,000',
       district: t('landing.distKhanUul', 'Khan-Uul'),
-      category: 'electric',
+      category: 'furniture',
     },
     {
       title: t('landing.task5', 'Weekly apartment cleaning'),
@@ -76,10 +75,10 @@ function AnimatedTaskFeed() {
       category: 'cleaning',
     },
     {
-      title: t('landing.task6', 'Assemble IKEA furniture'),
+      title: t('landing.task6', 'Assemble flat-pack shelves'),
       price: '₮25,000',
       district: t('landing.distSukhbaatar', 'Sukhbaatar'),
-      category: 'repair',
+      category: 'furniture',
     },
     {
       title: t('landing.task7', 'Move office — 3 rooms'),
@@ -88,10 +87,10 @@ function AnimatedTaskFeed() {
       category: 'moving',
     },
     {
-      title: t('landing.task8', 'Babysitter for 2 children (4hrs)'),
+      title: t('landing.task8', 'Hang curtains and patch small wall holes'),
       price: '₮35,000',
       district: t('landing.distKhanUul', 'Khan-Uul'),
-      category: 'childcare',
+      category: 'handyman',
     },
   ];
 
@@ -191,13 +190,13 @@ export function LandingPage() {
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tighter leading-[1.05] text-white drop-shadow-sm">
                 {t('landing.heroTitle1', 'Trusted help,')}
                 <br />
-                {t('landing.heroTitle2', 'fixed price.')}
+                {t('landing.heroTitle2', 'clear pricing.')}
               </h1>
 
               <p className="text-lg sm:text-xl text-white/80 font-medium leading-relaxed max-w-lg mx-auto lg:mx-0">
                 {t(
                   'landing.heroSubtitle',
-                  'ID-verified workers. Upfront budgets. Local support when you need it.',
+                  'Choose a budget or request quotes from ID-verified Taskers. Local Ulaanbaatar support when you need it.',
                 )}
               </p>
 
@@ -249,7 +248,7 @@ export function LandingPage() {
                 <p className="text-muted-foreground leading-relaxed">
                   {t(
                     'landing.featuredDesc',
-                    'Post a task in any category. Set your budget. Get matched with verified Taskers nearby.',
+                    'Post in active Ulaanbaatar launch services: cleaning, furniture assembly, moving help, and minor handyman. Choose a budget or request quotes.',
                   )}
                 </p>
               </div>
@@ -275,7 +274,7 @@ export function LandingPage() {
                   <p className="text-primary-foreground/80 max-w-sm mb-6">
                     {t(
                       'landing.featCleaningDesc',
-                      'Apartments, offices, move-out cleans. Set your budget, pick a time, get matched.',
+                      'Apartments, offices, move-out cleans. Set a budget or request quotes, pick a time, and compare Taskers.',
                     )}
                   </p>
                   <span className="text-accent font-bold tracking-[0.075em] uppercase text-sm flex items-center gap-2">
@@ -285,7 +284,7 @@ export function LandingPage() {
                 </div>
               </div>
 
-              {/* Handyman & Repairs */}
+              {/* Minor Handyman */}
               <div
                 className="group relative overflow-hidden rounded-xl bg-card hover:shadow-[var(--shadow-elevated)] transition-all hover:-translate-y-1 cursor-pointer border border-border/50"
                 onClick={() => navigate('/auth')}
@@ -296,12 +295,12 @@ export function LandingPage() {
                       <Wrench className="w-6 h-6 text-accent" />
                     </div>
                     <h3 className="text-2xl font-bold font-display text-foreground mb-4">
-                      {t('landing.featRepair', 'Handyman & Repairs')}
+                      {t('landing.featRepair', 'Minor Handyman')}
                     </h3>
                     <p className="text-muted-foreground text-sm leading-relaxed mb-8">
                       {t(
                         'landing.featRepairDesc',
-                        'Plumbing, furniture assembly, appliance fixes. All Taskers are ID-verified.',
+                        'Small home fixes, shelf mounting, and simple touch-ups. All Taskers are ID-verified.',
                       )}
                     </p>
                   </div>
@@ -313,7 +312,7 @@ export function LandingPage() {
                 </div>
               </div>
 
-              {/* Electrician */}
+              {/* Furniture Assembly */}
               <div
                 className="group relative overflow-hidden rounded-xl bg-card border border-border/50 text-foreground hover:shadow-[var(--shadow-elevated)] transition-all hover:-translate-y-1 cursor-pointer"
                 onClick={() => navigate('/auth')}
@@ -321,12 +320,12 @@ export function LandingPage() {
                 <div className="p-8 sm:p-10">
                   <Wrench className="w-6 h-6 mb-6 text-accent" />
                   <h3 className="text-2xl font-bold font-display mb-4">
-                    {t('landing.featElectric', 'Electrician')}
+                    {t('landing.featFurniture', 'Furniture Assembly')}
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed mb-10">
                     {t(
-                      'landing.featElectricDesc',
-                      'Light fixtures, wiring, panel work. Fixed price upfront — no hourly surprises.',
+                      'landing.featFurnitureDesc',
+                      'Flat-pack wardrobes, desks, shelves, and bed frames. Choose a budget or ask for quotes before booking.',
                     )}
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -334,7 +333,7 @@ export function LandingPage() {
                       {t('landing.tagVerified', 'ID Verified')}
                     </span>
                     <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-[0.075em]">
-                      {t('landing.tagFixed', 'Fixed Price')}
+                      {t('landing.tagQuote', 'Budget or Quote')}
                     </span>
                   </div>
                 </div>
@@ -611,7 +610,7 @@ export function LandingPage() {
                     color: 'text-accent bg-accent/10',
                     text: t(
                       'landing.trustProof2',
-                      'Fixed price upfront. No haggling, no surprises.',
+                      'Budget or quote before booking. Clear expectations, no blind haggling.',
                     ),
                   },
                   {
@@ -832,7 +831,7 @@ export function LandingPage() {
             <p className="text-sm leading-relaxed max-w-sm">
               {t(
                 'landing.footerDesc',
-                "Mongolia's premier platform for trusted domestic services. Connecting verified professionals with homes that need them, safely and efficiently.",
+                'Tasky connects Ulaanbaatar households with ID-verified Taskers for launch services like cleaning, furniture assembly, moving help, and minor handyman work.',
               )}
             </p>
             <div className="flex gap-3 pt-4">
@@ -870,7 +869,7 @@ export function LandingPage() {
               </li>
               <li>
                 <Link to="#" className="hover:text-foreground transition-colors">
-                  {t('landing.catHandyman', 'Handyman Repairs')}
+                  {t('landing.catHandyman', 'Minor Handyman')}
                 </Link>
               </li>
               <li>
@@ -879,9 +878,9 @@ export function LandingPage() {
                 </Link>
               </li>
               <li>
-                <span className="text-muted-foreground/40 cursor-not-allowed">
-                  {t('landing.catPlumbing', 'Plumbing')} (Soon)
-                </span>
+                <Link to="#" className="hover:text-foreground transition-colors">
+                  {t('landing.catFurniture', 'Furniture Assembly')}
+                </Link>
               </li>
             </ul>
           </div>

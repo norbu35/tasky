@@ -118,7 +118,7 @@ scenarios:
     risk: medium
     status: untested
     test_type: medium-unit
-    title: External distribution is limited to launch categories
+    title: External distribution is limited to admin-eligible categories
   SCN-ASSIST-006:
     domain: assistance
     mutation_kill_rate: null
@@ -404,7 +404,7 @@ scenarios:
     risk: critical
     status: covered
     test_type: domain-unit
-    title: Scheduled start plus 10 minutes sends no-show reminder to both parties
+    title: Scheduled start plus 30 minutes sends no-show reminder to both parties
   SCN-BOOK-011:
     domain: booking
     mutation_kill_rate: 33
@@ -415,7 +415,7 @@ scenarios:
     risk: critical
     status: covered
     test_type: domain-unit
-    title: No-show flag before 15 minutes after schedule returns TOO_EARLY
+    title: No-show flag before 1 hour after schedule returns TOO_EARLY
   SCN-BOOK-012:
     domain: booking
     mutation_kill_rate: 33
@@ -1439,7 +1439,7 @@ scenarios:
     risk: high
     status: covered
     test_type: domain-unit
-    title: Task creation in a non-launch category is rejected
+    title: Task creation eligibility uses the admin-active category catalog
   SCN-TASK-022:
     domain: task
     mutation_kill_rate: null

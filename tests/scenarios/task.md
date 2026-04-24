@@ -234,12 +234,13 @@ And the response identifies the location as outside the supported service area
 
 **Risk:** High
 **PRD:** REQ-P1-COVER-02
-**Title:** Task creation in a non-launch category is rejected
+**Title:** Task creation eligibility uses the admin-active category catalog
 
-Given a category exists in the system but is not one of the four launch categories
-When a customer attempts to create a task in that category
-Then the request is rejected
-And the response identifies the category as not available for task creation
+Given a customer selects a category currently active for posting in the admin dashboard
+And task location, fraud, and spam checks otherwise pass
+When the customer creates the task
+Then category eligibility is accepted from the current admin catalog
+And the request is not rejected only because the category is outside the initial launch seed list
 
 ## SCN-TASK-022
 

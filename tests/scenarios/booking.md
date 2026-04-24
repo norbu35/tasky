@@ -126,9 +126,9 @@ And the terminal booking statuses do not change
 
 **Risk:** Critical
 **PRD:** REQ-P1-BOOK-19
-**Title:** Scheduled start plus 10 minutes sends no-show reminder to both parties
+**Title:** Scheduled start plus 30 minutes sends no-show reminder to both parties
 
-Given a booking remains ASSIGNED at 10 minutes after the current confirmed schedule
+Given a booking remains ASSIGNED at 30 minutes after the current confirmed schedule
 When the no-show reminder job runs
 Then the customer receives a no-show reminder notification
 And the tasker receives a no-show reminder notification
@@ -138,10 +138,10 @@ And a NO_SHOW_REMINDER_SENT timeline event is recorded
 
 **Risk:** Critical
 **PRD:** REQ-P1-BOOK-20
-**Title:** No-show flag before 15 minutes after schedule returns TOO_EARLY
+**Title:** No-show flag before 1 hour after schedule returns TOO_EARLY
 
 Given a booking remains ASSIGNED
-And fewer than 15 minutes have passed since the current confirmed schedule
+And fewer than 1 hour has passed since the current confirmed schedule
 When either participant tries to flag the booking as NO_SHOW
 Then the request is rejected
 And the error code is TOO_EARLY
@@ -153,7 +153,7 @@ And the error code is TOO_EARLY
 **Title:** Recent in-app activity within 30 minutes blocks no-show flag
 
 Given a booking remains ASSIGNED
-And at least 15 minutes have passed since the current confirmed schedule
+And at least 1 hour has passed since the current confirmed schedule
 And either participant has posted an in-app status update, check-in, or message within the last 30 minutes
 When the counterparty tries to flag the booking as NO_SHOW
 Then the request is rejected
@@ -178,7 +178,7 @@ And the error code is RESCHEDULE_SUPERSEDES
 **Title:** Valid no-show flag transitions booking and task to NO_SHOW and records audit history
 
 Given a booking remains ASSIGNED
-And at least 15 minutes have passed since the current confirmed schedule
+And at least 1 hour has passed since the current confirmed schedule
 And neither participant has recent in-app activity in the prior 30 minutes
 And no accepted in-app reschedule supersedes the current schedule
 When a participant validly flags the booking as NO_SHOW
