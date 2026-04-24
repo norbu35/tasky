@@ -24,6 +24,13 @@ import {
 } from '../components/ui/dropdown-menu';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
 import { Skeleton } from '../components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Textarea } from '../components/ui/textarea';
@@ -561,29 +568,30 @@ export function BookingSafetyPage() {
               <Label htmlFor="disputeCategory">
                 {t('bookingSafety.reasonCategoryLabel', 'Reason Category')}
               </Label>
-              <select
-                id="disputeCategory"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={disputeCategory}
-                onChange={(e) => setDisputeCategory(e.target.value)}
-              >
-                <option value="" disabled>
-                  {t('bookingSafety.selectReason', 'Select a reason...')}
-                </option>
-                <option value="POOR_QUALITY">
-                  {t('bookingSafety.reasonQuality', 'Poor Quality of Work')}
-                </option>
-                <option value="LATE_OR_NO_SHOW">
-                  {t('bookingSafety.reasonLate', 'Tasker was Late or No Show')}
-                </option>
-                <option value="DAMAGE_CAUSED">
-                  {t('bookingSafety.reasonDamage', 'Damage Caused during Task')}
-                </option>
-                <option value="UNPROFESSIONAL">
-                  {t('bookingSafety.reasonUnprofessional', 'Unprofessional Behavior')}
-                </option>
-                <option value="OTHER">{t('bookingSafety.reasonOther', 'Other Issue')}</option>
-              </select>
+              <Select value={disputeCategory} onValueChange={setDisputeCategory}>
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder={t('bookingSafety.selectReason', 'Select a reason...')}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="POOR_QUALITY">
+                    {t('bookingSafety.reasonQuality', 'Poor Quality of Work')}
+                  </SelectItem>
+                  <SelectItem value="LATE_OR_NO_SHOW">
+                    {t('bookingSafety.reasonLate', 'Tasker was Late or No Show')}
+                  </SelectItem>
+                  <SelectItem value="DAMAGE_CAUSED">
+                    {t('bookingSafety.reasonDamage', 'Damage Caused during Task')}
+                  </SelectItem>
+                  <SelectItem value="UNPROFESSIONAL">
+                    {t('bookingSafety.reasonUnprofessional', 'Unprofessional Behavior')}
+                  </SelectItem>
+                  <SelectItem value="OTHER">
+                    {t('bookingSafety.reasonOther', 'Other Issue')}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="disputeReason">

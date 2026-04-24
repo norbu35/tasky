@@ -129,6 +129,7 @@ export interface ApiClient {
     bookingId: string,
     reason: string,
     idempotencyKey: string,
+    evidence?: Array<{ type: string; text_payload?: string }>,
   ): Promise<Dispute>;
 
   getDispute(accessToken: string, disputeId: string): Promise<Dispute>;
@@ -521,6 +522,7 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
     bookingId: string,
     reason: string,
     idempotencyKey: string,
+    evidence?: Array<{ type: string; text_payload?: string }>,
   ): Promise<Dispute> {
     return this.requestJson<Dispute>(
       `/bookings/${bookingId}/disputes`,
@@ -529,7 +531,10 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
         headers: {
           'Idempotency-Key': idempotencyKey,
         },
-        body: JSON.stringify({ reason }),
+        body: JSON.stringify({
+          reason,
+          evidence: evidence ?? [{ type: 'WRITTEN_TIMELINE', text_payload: reason }],
+        }),
       },
       accessToken,
     );

@@ -30,6 +30,37 @@ vi.mock('../../src/components/ui/dropdown-menu', () => ({
   ),
 }));
 
+// 2. Mock Radix Select to render as a native select for JSDOM testing
+vi.mock('../../src/components/ui/select', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Select: ({ children, value, onValueChange }: any) => (
+    <select
+      aria-label="Reason Category"
+      value={value}
+      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onValueChange(e.target.value)}
+    >
+      {children}
+    </select>
+  ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SelectTrigger: ({ children }: any) => <>{children}</>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SelectValue: ({ placeholder }: any) => (
+    <option value="" disabled>
+      {placeholder}
+    </option>
+  ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SelectContent: ({ children }: any) => <>{children}</>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SelectItem: ({ children, value }: any) => <option value={value}>{children}</option>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SelectGroup: ({ children }: any) => <>{children}</>,
+  SelectSeparator: () => null,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SelectLabel: ({ children }: any) => <>{children}</>,
+}));
+
 describe('Booking Safety Integration', () => {
   it('TID-TASK-081-WEB-BOOKING-SAFETY-FLOW supports booking transitions, review, and dispute actions', async () => {
     const activeBooking: Booking = { ...makeBooking(), status: 'ASSIGNED', id: 'active-bkg' };
@@ -123,6 +154,7 @@ describe('Booking Safety Integration', () => {
     fireEvent.change(screen.getByLabelText('Reason Category'), {
       target: { value: 'POOR_QUALITY' },
     });
+
     fireEvent.change(screen.getByLabelText('Additional Details'), {
       target: { value: 'There was a quality issue with part of the service.' },
     });
