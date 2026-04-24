@@ -31,6 +31,9 @@ The helper uses a combination of heuristic signals to identify candidates:
 | `assertion_scarcity`      | Assertion count < half of Then+And lines in the scenario                       |
 | `zero_assertions`         | No assertions found in the matched test method despite behavioral expectations |
 
+Mutation-only findings are summarized by domain and omitted from the weak-test candidate queue. Treat that summary as
+PIT/registry-data maintenance, not as evidence that a specific scenario-linked test is weak.
+
 ## Data Sources
 
 - `tests/registry.yaml` — scenario status, risk, mutation data

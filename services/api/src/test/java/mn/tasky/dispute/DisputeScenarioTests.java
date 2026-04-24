@@ -202,6 +202,7 @@ class DisputeScenarioTests {
         DisputeEvidenceGraceScheduler scheduler = new DisputeEvidenceGraceScheduler(disputeDao, disputeEvidenceDao);
         scheduler.closeStaleDisputes();
 
+        verify(disputeEvidenceDao).countByDisputeId(stale.id());
         verify(disputeDao)
                 .update(
                         org.mockito.ArgumentMatchers.eq(stale.id()),

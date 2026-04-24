@@ -38,7 +38,10 @@ SCENARIO_HEADER_RE = re.compile(r"^## (SCN-[A-Z]+-\d+)")
 THEN_RE = re.compile(r"^\s*Then\b", re.IGNORECASE)
 AND_RE = re.compile(r"^\s*And\b", re.IGNORECASE)
 DISPLAY_NAME_RE = re.compile(r"\bSCN-[A-Z]+\d*-\d+\b")
-ASSERTION_RE = re.compile(r"\b(?:assertThat|assertEquals|assertTrue|assertFalse|assertNotNull|assertNull|assertThrows|verify|assertAll)\b")
+ASSERTION_RE = re.compile(
+    r"\b(?:assertThat|assertThatThrownBy|assertThatCode|assertDoesNotThrow|assertEquals|assertTrue|assertFalse|"
+    r"assertNotNull|assertNull|assertThrows|verify|assertAll|fail)\b"
+)
 
 
 @dataclass
@@ -185,6 +188,7 @@ def main() -> int:
             scenario_counts.update(parse_scenario_file(sf))
 
     candidates: list[WeakCandidate] = []
+    mutation_only_summary: dict[str, dict[str, Any]] = {}
 
     for scn_id, entry in sorted(registry.items()):
         status = entry.get("status")
@@ -216,31 +220,33 @@ def main() -> int:
             assertion_count = count_assertions_in_test(test_file, test_method)
 
         # Heuristic signals
-        signals: list[str] = []
+        mutation_signals: list[str] = []
 
         # Signal: low mutation kill rate for risk tier
         if mutation_rate is not None and mutation_rate < 50:
             if risk in ("critical", "high"):
-                signals.append("low_domain_mutation")
+                mutation_signals.append("low_domain_mutation")
         elif mutation_rate is None:
             if risk in ("critical", "high"):
-                signals.append("missing_domain_mutation")
+                mutation_signals.append("missing_domain_mutation")
 
         # Signal: stale mutation data
         updated_at = entry.get("mutation_kill_rate_updated_at")
         if mutation_rate is not None and updated_at is None:
-            signals.append("stale_mutation_data")
+            mutation_signals.append("stale_mutation_data")
 
         # Signal: assertion scarcity
+        source_signals: list[str] = []
         expected_min = then_count + and_count
         if expected_min > 0 and assertion_count < max(1, expected_min // 2):
-            signals.append("assertion_scarcity")
+            source_signals.append("assertion_scarcity")
 
         # Signal: zero assertions for covered scenario
         if assertion_count == 0 and (then_count + and_count) > 0:
-            signals.append("zero_assertions")
+            source_signals.append("zero_assertions")
 
-        if signals:
+        if source_signals:
+            signals = mutation_signals + source_signals
             candidates.append(WeakCandidate(
                 scenario_id=scn_id,
                 domain=domain,
@@ -253,6 +259,19 @@ def main() -> int:
                 mutation_kill_rate=mutation_rate,
                 risk=risk,
             ))
+        elif mutation_signals:
+            domain_summary = mutation_only_summary.setdefault(
+                domain,
+                {
+                    "scenario_count": 0,
+                    "signals": {},
+                    "risks": {},
+                },
+            )
+            domain_summary["scenario_count"] += 1
+            domain_summary["risks"][risk] = domain_summary["risks"].get(risk, 0) + 1
+            for signal in mutation_signals:
+                domain_summary["signals"][signal] = domain_summary["signals"].get(signal, 0) + 1
 
     output = [
         {
@@ -271,12 +290,26 @@ def main() -> int:
     ]
 
     print(json.dumps(output, indent=2))
-    print(f"\nscenario-fidelity: {len(output)} candidate(s) found", file=sys.stderr)
+    print(f"\nscenario-fidelity: {len(output)} weak-test candidate(s) found", file=sys.stderr)
     if output:
         print("autonomous remediation:", file=sys.stderr)
         print(" - treat each candidate as a test-strengthening queue, not an automatic production-code change", file=sys.stderr)
         print(" - confirm an existing scenario covers the behavior before editing backend tests", file=sys.stderr)
         print(" - rerun: pnpm verify:scenario:fidelity after strengthening the affected tests/registry data", file=sys.stderr)
+    if mutation_only_summary:
+        total_mutation_only = sum(entry["scenario_count"] for entry in mutation_only_summary.values())
+        print(
+            "mutation-data-only summary: "
+            f"{total_mutation_only} scenario(s) across {len(mutation_only_summary)} domain(s) omitted from the "
+            "weak-test queue",
+            file=sys.stderr,
+        )
+        for domain, summary in sorted(mutation_only_summary.items()):
+            signal_text = ", ".join(
+                f"{signal}:{count}" for signal, count in sorted(summary["signals"].items())
+            )
+            risk_text = ", ".join(f"{risk}:{count}" for risk, count in sorted(summary["risks"].items()))
+            print(f" - {domain}: {summary['scenario_count']} ({signal_text}; {risk_text})", file=sys.stderr)
     return 0
 
 
