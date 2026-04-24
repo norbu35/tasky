@@ -1,0 +1,270 @@
+version: 1
+
+policy:
+  opsDiagrams: ephemeral
+  notes:
+    - 'Executable ops truth lives in package scripts, hooks, workflows, Gradle tasks, and tooling scripts.'
+    - 'docs/ops/diagrams/** are human sketches only and must not be used as validation inputs.'
+
+packageScripts:
+  verify:cleanup:
+    lifecycle: blocking
+    lane: local_structural
+    command: 'bash tooling/scripts/gates/check-cleanup-gate.sh'
+  verify:ops:
+    lifecycle: blocking
+    lane: ops_wiring
+    command: 'pnpm repo:tooling:check && pnpm repo:ops:sync --check && node tooling/scripts/gates/check-ops-config.mjs'
+  verify:tdd:
+    lifecycle: blocking
+    lane: local_tdd
+    command: 'bash tooling/scripts/gates/check-tdd-gate.sh'
+  verify:backend:static:
+    lifecycle: blocking
+    lane: backend_static
+    command: './gradlew --no-daemon :services:api:spotlessCheck :services:api:checkstyleMain :services:api:checkstyleTest :services:api:pmdMain :services:api:pmdTest'
+  verify:backend:
+    lifecycle: blocking
+    lane: backend_quality
+    command: 'pnpm verify:backend:static && ./gradlew --no-daemon :services:api:check :services:api:jacocoTestCoverageVerification :services:api:openApiValidate'
+  verify:i18n:
+    lifecycle: blocking
+    lane: frontend_quality
+    command: 'python3 tooling/scripts/governance/validate-i18n.py'
+  verify:frontend:
+    lifecycle: blocking
+    lane: frontend_quality
+    command: 'pnpm verify:i18n && turbo run lint typecheck test'
+  verify:frontend:affected:
+    lifecycle: blocking
+    lane: frontend_quality
+    command: 'pnpm verify:i18n && turbo run lint typecheck test --affected'
+  verify:scenario:smoke:
+    lifecycle: blocking
+    lane: scenario_smoke
+    command: 'python3 tooling/scripts/governance/validate-prd-scenario-links.py && bash services/api/scripts/sync-registry.sh && bash tooling/scripts/gates/check-gates.sh smoke'
+  verify:scenario:fidelity:
+    lifecycle: report_only
+    lane: scenario_fidelity
+    command: 'python3 tooling/skills/scenario-fidelity/scripts/find_weak_coverage.py'
+  verify:drift:
+    lifecycle: blocking
+    lane: drift
+    command: 'pnpm contract:sdk:drift && ./gradlew --no-daemon :services:api:architectureTest'
+  verify:prepush:
+    lifecycle: blocking
+    lane: local_main_prepush
+    command: 'pnpm verify:cleanup && pnpm verify:ops && pnpm verify:tdd && pnpm verify:backend && pnpm verify:frontend && pnpm verify:scenario:smoke && pnpm verify:drift'
+  verify:main-prepush:
+    lifecycle: blocking
+    lane: local_main_prepush
+    command: 'pnpm verify:prepush'
+  contract:openapi:bundle:
+    lifecycle: blocking
+    lane: contract
+    command: 'node tooling/scripts/contracts/bundle-openapi.mjs'
+  contract:openapi:check:
+    lifecycle: blocking
+    lane: contract
+    command: 'node tooling/scripts/contracts/validate-openapi-phase.mjs && node tooling/scripts/contracts/bundle-openapi.mjs --check && python3 tooling/scripts/contracts/validate-openapi-backend-contracts.py'
+  contract:sdk:drift:
+    lifecycle: blocking
+    lane: contract
+    command: 'bash tooling/scripts/contracts/validate-sdk-contract-drift.sh'
+  repo:docs:check:
+    lifecycle: blocking
+    lane: docs
+    command: 'python3 tooling/scripts/governance/check-doc-governance.py && python3 tooling/scripts/governance/validate-doc-references.py && python3 tooling/scripts/governance/validate-prd-scenario-links.py && python3 tooling/scripts/governance/validate-requirement-references.py && python3 tooling/scripts/governance/validate-assistance-vocabulary.py && python3 tooling/scripts/governance/validate-doc-claims.py && python3 tooling/scripts/governance/validate-design-contracts.py && pnpm repo:design:check && pnpm contract:openapi:check'
+  repo:ops:sync:
+    lifecycle: blocking
+    lane: ops_wiring
+    command: 'node tooling/scripts/gates/sync-ops-registry.mjs'
+  repo:tooling:check:
+    lifecycle: blocking
+    lane: tooling
+    command: "find tooling/scripts -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n && find tooling/scripts -type f -name '*.py' -print0 | xargs -0 -n1 python3 -m py_compile && node --test tooling/tests/ops-registry.test.mjs && node tooling/scripts/gates/check-tooling-surface.mjs"
+
+hooks:
+  .husky/pre-commit:
+    lifecycle: blocking
+    requiredFragments:
+      - 'gitleaks git --pre-commit --staged --config .gitleaks.toml'
+      - 'python3 tooling/scripts/governance/validate-prd-scenario-links.py'
+      - 'pnpm exec lint-staged'
+  .husky/pre-push:
+    lifecycle: blocking
+    requiredFragments:
+      - 'pnpm verify:cleanup'
+      - 'pnpm verify:ops'
+      - 'pnpm verify:tdd'
+      - 'pnpm verify:backend'
+      - 'pnpm verify:frontend'
+      - 'pnpm verify:scenario:smoke'
+      - 'pnpm verify:drift'
+      - 'tests/scenarios/'
+  .husky/commit-msg:
+    lifecycle: blocking
+    requiredFragments:
+      - 'feat|fix|refactor|test|docs|chore|perf|security'
+  .husky/post-checkout:
+    lifecycle: manual
+    requiredFragments:
+      - 'pnpm install --frozen-lockfile'
+
+workflows:
+  .github/workflows/build-and-push.yml:
+    lifecycle: blocking
+    jobs:
+      - build-backend
+      - build-web
+      - scan-images
+    requiredCommands:
+      - 'short_sha=${GITHUB_SHA::7}'
+      - 'steps.tag.outputs.short_sha'
+      - 'aquasecurity/trivy-action'
+  .github/workflows/deploy-production.yml:
+    lifecycle: deploy
+    jobs:
+      - release-gate
+      - verify-image
+      - deploy
+      - post-deploy-smoke
+    requiredCommands:
+      - './.github/workflows/release-gate.yml'
+      - 'docker manifest inspect'
+      - 'docker compose -f docker-compose.production.yml up -d --no-build --remove-orphans'
+  .github/workflows/deploy-staging.yml:
+    lifecycle: deploy
+    jobs:
+      - pre-deploy-checks
+      - deploy
+      - smoke-test
+    requiredCommands:
+      - 'python3 tooling/scripts/governance/validate-migrations.py'
+      - 'docker compose -f docker-compose.private-staging.yml up -d --no-build --remove-orphans'
+  .github/workflows/nightly-mobile.yml:
+    lifecycle: manual
+    jobs:
+      - e2e-android
+    requiredCommands:
+      - 'pnpm --filter @tasky/mobile test:e2e'
+  .github/workflows/nightly-regression.yml:
+    lifecycle: manual
+    jobs:
+      - full-regression
+      - web-e2e-regression
+    requiredCommands:
+      - ':services:api:gateRegression'
+      - ':services:api:dependencyCheckAnalyze'
+      - 'pnpm --filter @tasky/web test:e2e'
+  .github/workflows/quality-gates.yml:
+    lifecycle: blocking
+    jobs:
+      - structural-gate
+      - backend-quality
+      - frontend-quality
+      - e2e-web
+      - e2e-android
+      - contracts
+      - security
+    requiredCommands:
+      - 'pnpm verify:cleanup'
+      - 'pnpm verify:ops'
+      - 'pnpm verify:backend'
+      - 'pnpm verify:scenario:smoke'
+      - 'pnpm verify:frontend:affected'
+      - 'pnpm verify:drift'
+      - 'bash tooling/scripts/governance/check-gitleaks-secret-scan.sh'
+  .github/workflows/release-gate.yml:
+    lifecycle: deploy
+    jobs:
+      - migration-safety
+      - rollback-readiness
+      - performance-smoke
+      - web-e2e-smoke
+      - mobile-e2e-smoke
+      - security-scan
+      - scenario-regression
+      - release-readiness-checklist
+    requiredCommands:
+      - 'python3 tooling/scripts/governance/validate-migrations.py'
+      - ':services:api:dependencyCheckAnalyze'
+      - ':services:api:gateRegression'
+      - 'bash tooling/scripts/deploy/performance-smoke.sh'
+  .github/workflows/security-review.yml:
+    lifecycle: blocking
+    jobs:
+      - security-critical-guard
+    requiredCommands:
+      - 'Security-critical files changed:'
+
+composeFiles:
+  - docker-compose.yml
+  - docker-compose.web.yml
+  - docker-compose.observability.yml
+  - docker-compose.private-staging.yml
+  - docker-compose.production.yml
+
+toolingScripts:
+  contracts/bundle-openapi.mjs:
+    lifecycle: blocking
+  contracts/validate-openapi-backend-contracts.py:
+    lifecycle: blocking
+  contracts/validate-openapi-phase.mjs:
+    lifecycle: blocking
+  contracts/validate-sdk-contract-drift.sh:
+    lifecycle: blocking
+  deploy/bootstrap-private-staging-vps.sh:
+    lifecycle: manual
+  deploy/deploy-private-staging.sh:
+    lifecycle: called_by_script
+  deploy/performance-smoke.sh:
+    lifecycle: blocking
+  deploy/push-private-staging.sh:
+    lifecycle: manual
+  deploy/smoke-private-staging.sh:
+    lifecycle: manual
+  gates/check-cleanup-gate.sh:
+    lifecycle: blocking
+  gates/check-gates.sh:
+    lifecycle: blocking
+  gates/lib/ops-registry.mjs:
+    lifecycle: called_by_script
+    referencePatterns:
+      - './lib/ops-registry.mjs'
+  gates/check-ops-config.mjs:
+    lifecycle: blocking
+  gates/check-tdd-gate.sh:
+    lifecycle: blocking
+  gates/check-tooling-surface.mjs:
+    lifecycle: blocking
+  gates/sync-ops-registry.mjs:
+    lifecycle: blocking
+  governance/check-doc-governance.py:
+    lifecycle: blocking
+  governance/check-gitleaks-secret-scan.sh:
+    lifecycle: blocking
+  governance/check-trivyignore-expiry.sh:
+    lifecycle: blocking
+  governance/validate-assistance-vocabulary.py:
+    lifecycle: blocking
+  governance/validate-design-contracts.py:
+    lifecycle: report_only
+  governance/validate-doc-claims.py:
+    lifecycle: blocking
+  governance/validate-doc-references.py:
+    lifecycle: blocking
+  governance/validate-i18n.py:
+    lifecycle: blocking
+  governance/validate-migrations.py:
+    lifecycle: blocking
+  governance/validate-prd-scenario-links.py:
+    lifecycle: blocking
+  governance/validate-requirement-references.py:
+    lifecycle: blocking
+  governance/validate-schema-parity.py:
+    lifecycle: blocking
+  governance/validate-workspace-boundaries.mjs:
+    lifecycle: blocking
+  observability/start-alertmanager.sh:
+    lifecycle: manual

@@ -31,7 +31,6 @@ run_step() {
   fi
 }
 
-run_step "backend OpenAPI validation" ./gradlew --no-daemon :services:api:openApiValidate
 run_step "repo docs lane" pnpm repo:docs:check
 run_step "workspace typecheck" turbo run typecheck
 run_step "workspace boundary validation" pnpm repo:workspace:boundaries

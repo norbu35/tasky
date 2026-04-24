@@ -1,151 +1,106 @@
 #!/usr/bin/env node
 
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import {
+    allowedToolingScriptLifecycles,
+    listToolingScriptFiles,
+    listWorkflowFiles,
+    loadOpsRegistry,
+    repoRoot,
+} from "./lib/ops-registry.mjs";
 
-const repoRoot = process.cwd();
 const scriptsDir = path.join(repoRoot, "tooling", "scripts");
-
-const registry = {
-    "contracts/bundle-openapi.mjs": "active",
-    "contracts/validate-openapi-backend-contracts.py": "active",
-    "contracts/validate-openapi-phase.mjs": "active",
-    "contracts/validate-sdk-contract-drift.sh": "active",
-    "deploy/bootstrap-private-staging-vps.sh": "active",
-    "deploy/deploy-private-staging.sh": "active",
-    "deploy/performance-smoke.sh": "active",
-    "deploy/push-private-staging.sh": "active",
-    "deploy/smoke-private-staging.sh": "active",
-    "gates/check-cleanup-gate.sh": "active",
-    "gates/check-gates.sh": "active",
-    "gates/check-ops-config.mjs": "active",
-    "gates/check-tdd-gate.sh": "active",
-    "gates/check-tooling-surface.mjs": "active",
-    "governance/check-doc-governance.py": "active",
-    "governance/validate-doc-claims.py": "active",
-    "governance/validate-design-contracts.py": "active",
-    "governance/validate-assistance-vocabulary.py": "active",
-    "governance/validate-prd-scenario-links.py": "active",
-    "governance/validate-requirement-references.py": "active",
-    "governance/check-gitleaks-secret-scan.sh": "active",
-    "governance/check-trivyignore-expiry.sh": "active",
-    "governance/validate-i18n.py": "active",
-    "governance/validate-doc-references.py": "active",
-    "governance/validate-migrations.py": "active",
-    "governance/validate-schema-parity.py": "active",
-    "governance/validate-workspace-boundaries.mjs": "active",
-    "observability/start-alertmanager.sh": "active",
-};
-
-const skipDirs = new Set([
-    ".git",
-    ".gradle",
-    "archive",
-    "build",
-    "dist",
-    "node_modules",
-]);
+const registry = loadOpsRegistry();
+const failures = [];
 
 function printRemediation() {
     console.error("autonomous remediation:");
-    console.error(" - classify every tooling script in tooling/scripts/gates/check-tooling-surface.mjs");
-    console.error(" - keep active scripts referenced from package.json, workflows, docs, or shared gate entrypoints");
+    console.error(" - classify every tooling script in tooling/config/ops-registry.yaml");
+    console.error(" - keep blocking and called_by_script entries wired from package.json, workflows, hooks, Gradle, compose, or another script");
     console.error(" - rerun the narrow lane: pnpm repo:tooling:check");
 }
 
-const textExtensions = new Set([
-    ".js",
-    ".json",
-    ".md",
-    ".mjs",
-    ".py",
-    ".sh",
-    ".ts",
-    ".tsx",
-    ".yaml",
-    ".yml",
-]);
-
-function walk(dir) {
-    const entries = readdirSync(dir, { withFileTypes: true });
-    let files = [];
-    for (const entry of entries) {
-        const fullPath = path.join(dir, entry.name);
-        const relative = path.relative(repoRoot, fullPath);
-        const topLevel = relative.split(path.sep)[0];
-        if (skipDirs.has(topLevel)) {
-            continue;
-        }
-        if (entry.isDirectory() && entry.name === "__pycache__") {
-            continue;
-        }
-        if (entry.isDirectory()) {
-            files = files.concat(walk(fullPath));
-            continue;
-        }
-        if (!textExtensions.has(path.extname(entry.name))) {
-            continue;
-        }
-        files.push(fullPath);
+function readIfExists(relativePath) {
+    const fullPath = path.join(repoRoot, relativePath);
+    if (!existsSync(fullPath)) {
+        return null;
     }
-    return files;
+    return readFileSync(fullPath, "utf8");
 }
 
-function relativeRef(filePath) {
-    return path.relative(repoRoot, filePath).replaceAll(path.sep, "/");
+function listFiles(dir, prefix) {
+    if (!existsSync(dir)) {
+        return [];
+    }
+    return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+        const fullPath = path.join(dir, entry.name);
+        const relative = path.join(prefix, entry.name).replaceAll(path.sep, "/");
+        if (entry.isDirectory()) {
+            if (entry.name === "__pycache__") {
+                return [];
+            }
+            return listFiles(fullPath, relative);
+        }
+        return [relative];
+    });
+}
+
+function executableReferenceFiles() {
+    return [
+        "package.json",
+        "services/api/build.gradle.kts",
+        ...listFiles(path.join(repoRoot, ".husky"), ".husky"),
+        ...listWorkflowFiles(),
+        ...listFiles(path.join(repoRoot, "tooling", "scripts"), "tooling/scripts"),
+        ...readdirSync(repoRoot)
+            .filter((file) => file.startsWith("docker-compose") && (file.endsWith(".yml") || file.endsWith(".yaml")))
+            .map((file) => file),
+    ];
 }
 
 if (!existsSync(scriptsDir)) {
-    console.error("tooling surface check failed: tooling/scripts directory missing");
+    console.error("tooling-surface: FAIL (tooling/scripts directory missing)");
     printRemediation();
     process.exit(1);
 }
 
-const failures = [];
-
-const scriptFiles = walk(scriptsDir)
-    .filter((filePath) => {
-        const ext = path.extname(filePath);
-        return ext === ".mjs" || ext === ".py" || ext === ".sh";
-    })
-    .map((filePath) => relativeRef(filePath).replace("tooling/scripts/", ""))
-    .sort();
+const registryScripts = registry.toolingScripts ?? {};
+const scriptFiles = listToolingScriptFiles();
 
 for (const file of scriptFiles) {
-    if (!(file in registry)) {
-        failures.push(`tooling script is not classified in check-tooling-surface.mjs: ${file}`);
+    if (!(file in registryScripts)) {
+        failures.push(`tooling script is not classified in tooling/config/ops-registry.yaml: ${file}`);
     }
 }
 
-for (const file of Object.keys(registry)) {
+for (const [file, entry] of Object.entries(registryScripts)) {
     if (!existsSync(path.join(scriptsDir, file))) {
         failures.push(`tooling script declared but missing from tooling/scripts: ${file}`);
+        continue;
+    }
+    if (!allowedToolingScriptLifecycles.has(entry?.lifecycle)) {
+        failures.push(`tooling script has invalid lifecycle '${entry?.lifecycle}': ${file}`);
     }
 }
 
-const searchFiles = walk(repoRoot);
-for (const [scriptName, classification] of Object.entries(registry)) {
-    if (classification !== "active") {
+const executableTexts = executableReferenceFiles()
+    .map((file) => [file, readIfExists(file)])
+    .filter(([, text]) => text !== null);
+
+for (const [scriptName, entry] of Object.entries(registryScripts)) {
+    if (!["blocking", "called_by_script"].includes(entry.lifecycle)) {
         continue;
     }
 
-    const needle = `tooling/scripts/${scriptName}`;
-    const refs = [];
-
-    for (const file of searchFiles) {
-        const relative = relativeRef(file);
-        if (relative === needle) {
-            continue;
-        }
-        const text = readFileSync(file, "utf8");
-        if (text.includes(needle)) {
-            refs.push(relative);
-        }
-    }
+    const needles = [`tooling/scripts/${scriptName}`, ...(entry.referencePatterns ?? [])];
+    const refs = executableTexts
+        .filter(([file, text]) => file !== `tooling/scripts/${scriptName}` && needles.some((needle) => text.includes(needle)))
+        .map(([file]) => file);
 
     if (refs.length === 0) {
-        failures.push(`active tooling script has no live caller/reference: ${scriptName}`);
+        failures.push(`${entry.lifecycle} tooling script has no executable caller/reference: ${scriptName}`);
     }
 }
 

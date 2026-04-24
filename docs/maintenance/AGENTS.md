@@ -8,6 +8,7 @@ Use this file when the change touches operational surfaces rather than product b
 - `.github/workflows/**`
 - `docker-compose*.yml`
 - `docker/**`
+- `tooling/config/ops-registry.yaml`
 - `tooling/scripts/**` for deploy, gate, governance, or environment automation
 - root operational docs such as `README.md` when updating runbooks, verification, or deploy guidance
 
@@ -26,13 +27,18 @@ Use this file when the change touches operational surfaces rather than product b
 ## Operating Rules
 
 - Keep one canonical operational story across hooks, scripts, workflows, and manuals.
+- Treat `tooling/config/ops-registry.yaml` as the executable inventory for package scripts, hooks, workflows,
+  compose files, and tooling-script lifecycle classification.
+- Treat `docs/maintenance/generated/OPS_INVENTORY.md` as generated output from that registry. Refresh it with
+  `pnpm repo:ops:sync --fix`; do not edit it by hand.
 - Prefer updating shared gate scripts over duplicating logic in each workflow.
 - Deployment workflows must use deterministic image tags and deterministic config refs.
 - Private staging remains a private VPS sandbox until a release-grade staging environment exists.
 - `docs/API.yaml` is generated output only; do not use it as independent authority for ops decisions.
 - Branch execution model is `feature/*` -> `staging` -> `main`.
 - Do not use `--no-verify` for pushes targeting `staging` or `main`.
-- Treat `.husky/pre-push` and `quality-gates.yml` as the canonical enforcement surfaces for merge flow.
+- Treat `.husky/pre-push`, `quality-gates.yml`, and `tooling/config/ops-registry.yaml` as the canonical enforcement
+  surfaces for merge flow.
 
 ## Verification
 

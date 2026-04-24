@@ -93,7 +93,8 @@ Reusable repo-owned agent workflows live under `tooling/skills/**`.
 - Do not use `--no-verify` (or equivalent hook bypass) for pushes that target `staging` or `main`.
 - If the API changes, update `docs/openapi/**` first, regenerate `docs/API.yaml`, then regenerate `@tasky/sdk`, then implement.
 - If you edit `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, or `docs/design/domain-lifecycles.yaml`, keep machine-readable fields ID-only: use canonical screen/journey/lifecycle IDs, not prose placeholders, and run `pnpm repo:design:check` plus `pnpm repo:docs:check`.
-- If you edit `.github/workflows/quality-gates.yml` or other merge-gate wiring, keep the docs lane wired into the gate and update the matching ops/config checks and docs in the same change.
+- If you edit `.github/workflows/quality-gates.yml` or other merge-gate wiring, keep the docs lane wired into the gate and update `tooling/config/ops-registry.yaml`, the matching ops/config checks, and docs in the same change.
+- If you edit package-script, hook, workflow, compose, or tooling-script ops wiring, run `pnpm repo:ops:sync --fix` to refresh generated ops inventory, then run `pnpm verify:ops`.
 - If a Flyway migration adds, drops, or renames a column or table, run `python3 tooling/scripts/governance/validate-schema-parity.py --update-expected` and commit the updated `tooling/config/expected-schema.json`.
 - Use the active issue or approved execution brief as the task source. Do not rely on archived plan directories.
 - Keep changes vertical and reviewable.
@@ -113,8 +114,8 @@ Use the right gate for the claim you are making.
 | Release gate                  | `release-gate.yml`                                                                                                                                                                   | Deploy-time enforcement                                  |
 | Nightly regression            | `./gradlew gateRegression`, `./gradlew gateFull`                                                                                                                                     | Broader or scheduled confidence, not the default PR gate |
 
-Do not describe `./gradlew gateSmoke` as the singular pre-merge source of truth. It remains a useful local smoke gate,
-but CI and release workflows are the governing enforcement surfaces.
+Do not describe `./gradlew gateSmoke` as the singular pre-merge source of truth. It is a fast local smoke gate for
+critical scenario coverage, while CI and release workflows are the governing enforcement surfaces.
 
 ## Backend Testing Rules
 
@@ -133,11 +134,11 @@ If no scenario covers the behavior, stop and report the gap unless you are the d
 - Never use `@DirtiesContext`
 - PIT survived mutation: fix the assertion, not production code; if no scenario covers it, report the gap
 
-| Gate       | Command                    | Blocks                        |
-| ---------- | -------------------------- | ----------------------------- |
-| Smoke      | `./gradlew gateSmoke`      | fast local confidence         |
-| Regression | `./gradlew gateRegression` | nightly / extended validation |
-| Full       | `./gradlew gateFull`       | full suite / mutation testing |
+| Gate       | Command                    | Blocks                                  |
+| ---------- | -------------------------- | --------------------------------------- |
+| Smoke      | `./gradlew gateSmoke`      | fast local critical-scenario confidence |
+| Regression | `./gradlew gateRegression` | nightly / extended validation           |
+| Full       | `./gradlew gateFull`       | full suite / mutation testing           |
 
 ## Frontend Behavioral Testing Rules
 

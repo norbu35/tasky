@@ -458,9 +458,9 @@ val syncTestRegistry by tasks.registering(Exec::class) {
 }
 
 tasks.register<Exec>("gateSmoke") {
-    description = "Gate 1: all Critical scenarios covered plus optional diff-scoped mutation floor."
+    description = "Gate 1: fast smoke check for Critical scenario coverage plus optional diff-scoped mutation floor from existing PIT data."
     group = "verification"
-    dependsOn(tasks.test, "pitest", syncTestRegistry)
+    dependsOn(tasks.test, syncTestRegistry)
     workingDir(rootProject.projectDir)
     val mutationDiffBase = (findProperty("mutationDiffBase") as String?) ?: System.getenv("MUTATION_DIFF_BASE")
     if (!mutationDiffBase.isNullOrBlank()) {

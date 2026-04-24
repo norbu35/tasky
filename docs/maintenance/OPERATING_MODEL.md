@@ -83,11 +83,15 @@ python3 tooling/scripts/governance/validate-schema-parity.py
 - Nightly extended regression: `nightly-regression` when manually dispatched plus `./gradlew gateRegression`
 - Full extended suite: `./gradlew gateFull`
 
-Merge CI includes the docs lane via `pnpm repo:docs:check`, which covers journey validation through `pnpm repo:design:check`.
+Merge CI includes the docs lane through `quality-gates.yml` -> `pnpm verify:cleanup` -> `pnpm repo:docs:check`,
+which covers journey validation through `pnpm repo:design:check`.
+Ops wiring validation runs through `pnpm verify:ops`, which checks `tooling/config/ops-registry.yaml` and verifies
+that `docs/maintenance/generated/OPS_INVENTORY.md` is fresh. Refresh mechanical ops inventory drift with
+`pnpm repo:ops:sync --fix`.
 Frontend merge quality runs `pnpm verify:frontend:affected`, which includes `pnpm verify:i18n` before affected lint,
 typecheck, and tests.
 
-`gateSmoke` remains useful locally, but it is not the only verification surface.
+`gateSmoke` remains useful locally as a fast critical-scenario smoke gate, but it is not the only verification surface.
 
 ## Documentation policy
 

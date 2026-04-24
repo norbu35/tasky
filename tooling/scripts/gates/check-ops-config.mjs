@@ -1,107 +1,20 @@
 #!/usr/bin/env node
 
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { spawnSync } from "node:child_process";
 import YAML from "yaml";
+import {
+    collectStrings,
+    listWorkflowFiles,
+    loadOpsRegistry,
+    readRepoFile,
+    repoRoot,
+} from "./lib/ops-registry.mjs";
 
-const repoRoot = process.cwd();
-
-const yamlFiles = [
-    ".github/workflows/build-and-push.yml",
-    ".github/workflows/deploy-production.yml",
-    ".github/workflows/deploy-staging.yml",
-    ".github/workflows/nightly-mobile.yml",
-    ".github/workflows/nightly-regression.yml",
-    ".github/workflows/quality-gates.yml",
-    ".github/workflows/release-gate.yml",
-    "docker-compose.observability.yml",
-    "docker-compose.private-staging.yml",
-    "docker-compose.production.yml",
-    "docker-compose.web.yml",
-    "docker-compose.yml",
-];
-
-const textExpectations = [
-    {
-        file: ".husky/pre-commit",
-        needs: [
-            "gitleaks git --pre-commit --staged --config .gitleaks.toml",
-            "pnpm exec lint-staged",
-        ],
-    },
-    {
-        file: ".husky/pre-push",
-        needs: [
-            "tests/scenarios/",
-            "pnpm verify:cleanup",
-            "pnpm verify:ops",
-            "pnpm verify:backend",
-            "pnpm verify:frontend",
-            "pnpm verify:scenario:smoke",
-            "pnpm verify:drift",
-        ],
-    },
-    {
-        file: "package.json",
-        needs: [
-            "\"verify:i18n\": \"python3 tooling/scripts/governance/validate-i18n.py\"",
-            "\"verify:backend:static\": \"./gradlew --no-daemon :services:api:spotlessCheck :services:api:checkstyleMain :services:api:checkstyleTest :services:api:pmdMain :services:api:pmdTest\"",
-            "\"verify:backend\": \"pnpm verify:backend:static && ./gradlew --no-daemon :services:api:check :services:api:jacocoTestCoverageVerification :services:api:openApiValidate\"",
-            "\"verify:frontend\": \"pnpm verify:i18n && turbo run lint typecheck test\"",
-            "\"verify:frontend:affected\": \"pnpm verify:i18n && turbo run lint typecheck test --affected\"",
-            "\"verify:main-prepush\": \"pnpm verify:prepush\"",
-            "\"prepare:push\": \"pnpm exec lint-staged --allow-empty && ./gradlew --no-daemon spotlessApply -x test\"",
-        ],
-    },
-    {
-        file: ".github/workflows/quality-gates.yml",
-        needs: [
-            "push:",
-            "staging",
-            "pnpm verify:cleanup",
-            "pnpm verify:ops",
-            "pnpm repo:docs:check",
-            "pnpm verify:backend",
-            "pnpm verify:scenario:smoke",
-            "includes i18n",
-            "pnpm verify:frontend",
-            "pnpm verify:drift",
-        ],
-    },
-    {
-        file: ".github/workflows/release-gate.yml",
-        needs: [
-            "python3 tooling/scripts/governance/validate-migrations.py",
-            ":services:api:dependencyCheckAnalyze",
-            ":services:api:gateRegression",
-            "bash tooling/scripts/deploy/performance-smoke.sh",
-        ],
-    },
-    {
-        file: ".github/workflows/nightly-regression.yml",
-        needs: [
-            ":services:api:gateRegression",
-            ":services:api:dependencyCheckAnalyze",
-        ],
-    },
-    {
-        file: ".github/workflows/build-and-push.yml",
-        needs: [
-            "short_sha=${GITHUB_SHA::7}",
-            "steps.tag.outputs.short_sha",
-        ],
-    },
-];
-
-const composeFiles = [
-    "docker-compose.yml",
-    "docker-compose.web.yml",
-    "docker-compose.observability.yml",
-    "docker-compose.private-staging.yml",
-    "docker-compose.production.yml",
-];
+const registry = loadOpsRegistry();
+const failures = [];
 
 const composeEnv = {
     ...process.env,
@@ -130,13 +43,28 @@ const composeEnv = {
     VITE_FACEBOOK_APP_ID: process.env.VITE_FACEBOOK_APP_ID ?? "test-facebook-app-id",
 };
 
-const failures = [];
-
 function printRemediation() {
     console.error("autonomous remediation:");
-    console.error(" - inspect the failing file/path above and update the canonical workflow or compose surface there");
-    console.error(" - if wiring drift is unclear, compare package.json, .husky/pre-push, and .github/workflows/quality-gates.yml");
+    console.error(" - update package.json, hooks, workflows, compose files, or tooling/config/ops-registry.yaml so they agree");
+    console.error(" - keep docs/ops/diagrams/** out of executable validation semantics");
     console.error(" - rerun the narrow lane: pnpm verify:ops");
+}
+
+function parseYaml(relativePath) {
+    try {
+        return YAML.parse(readRepoFile(relativePath));
+    } catch (error) {
+        failures.push(`invalid YAML in ${relativePath}: ${error.message}`);
+        return null;
+    }
+}
+
+function sameMembers(actual, expected, label) {
+    const actualSorted = [...actual].sort();
+    const expectedSorted = [...expected].sort();
+    if (JSON.stringify(actualSorted) !== JSON.stringify(expectedSorted)) {
+        failures.push(`${label} mismatch: expected [${expectedSorted.join(", ")}], got [${actualSorted.join(", ")}]`);
+    }
 }
 
 function resolveDockerBinary() {
@@ -163,30 +91,54 @@ function resolveDockerBinary() {
     return null;
 }
 
-for (const file of yamlFiles) {
-    const fullPath = path.join(repoRoot, file);
-    try {
-        YAML.parse(readFileSync(fullPath, "utf8"));
-    } catch (error) {
-        failures.push(`invalid YAML in ${file}: ${error.message}`);
+if (registry.policy?.opsDiagrams !== "ephemeral") {
+    failures.push("registry policy must mark docs/ops/diagrams/** as ephemeral");
+}
+
+const packageJson = JSON.parse(readRepoFile("package.json"));
+for (const [scriptName, expectation] of Object.entries(registry.packageScripts ?? {})) {
+    if (packageJson.scripts?.[scriptName] !== expectation.command) {
+        failures.push(`package script drift for ${scriptName}: expected '${expectation.command}', got '${packageJson.scripts?.[scriptName] ?? "<missing>"}'`);
     }
 }
 
-for (const { file, needs } of textExpectations) {
-    const text = readFileSync(path.join(repoRoot, file), "utf8");
-    for (const needle of needs) {
-        if (!text.includes(needle)) {
-            failures.push(`missing expected wiring '${needle}' in ${file}`);
+for (const [hookPath, expectation] of Object.entries(registry.hooks ?? {})) {
+    const text = readRepoFile(hookPath);
+    for (const fragment of expectation.requiredFragments ?? []) {
+        if (!text.includes(fragment)) {
+            failures.push(`missing hook fragment '${fragment}' in ${hookPath}`);
         }
     }
 }
 
-const dockerBinary = resolveDockerBinary();
+sameMembers(Object.keys(registry.workflows ?? {}), listWorkflowFiles(), "registered workflows");
 
+for (const [workflowPath, expectation] of Object.entries(registry.workflows ?? {})) {
+    const parsed = parseYaml(workflowPath);
+    if (!parsed) {
+        continue;
+    }
+
+    const actualJobs = Object.keys(parsed.jobs ?? {});
+    sameMembers(actualJobs, expectation.jobs ?? [], `${workflowPath} jobs`);
+
+    const workflowStrings = collectStrings(parsed).join("\n");
+    for (const command of expectation.requiredCommands ?? []) {
+        if (!workflowStrings.includes(command)) {
+            failures.push(`missing workflow command '${command}' in ${workflowPath}`);
+        }
+    }
+}
+
+for (const file of registry.composeFiles ?? []) {
+    parseYaml(file);
+}
+
+const dockerBinary = resolveDockerBinary();
 if (!dockerBinary) {
     failures.push("docker compose is required for ops config validation");
 } else {
-    for (const file of composeFiles) {
+    for (const file of registry.composeFiles ?? []) {
         const result = spawnSync(dockerBinary, ["compose", "-f", file, "config"], {
             cwd: repoRoot,
             env: composeEnv,

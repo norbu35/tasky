@@ -19,7 +19,7 @@
   },
   "scripts": {
     "verify:cleanup": "bash tooling/scripts/gates/check-cleanup-gate.sh",
-    "verify:ops": "pnpm repo:tooling:check && node tooling/scripts/gates/check-ops-config.mjs",
+    "verify:ops": "pnpm repo:tooling:check && pnpm repo:ops:sync --check && node tooling/scripts/gates/check-ops-config.mjs",
     "verify:tdd": "bash tooling/scripts/gates/check-tdd-gate.sh",
     "verify:backend:static": "./gradlew --no-daemon :services:api:spotlessCheck :services:api:checkstyleMain :services:api:checkstyleTest :services:api:pmdMain :services:api:pmdTest",
     "verify:backend": "pnpm verify:backend:static && ./gradlew --no-daemon :services:api:check :services:api:jacocoTestCoverageVerification :services:api:openApiValidate",
@@ -44,7 +44,8 @@
     "repo:prd:diff-ids": "python3 tooling/skills/intake-to-prd/scripts/extract_prd_diff_ids.py",
     "repo:design:check": "python3 tooling/skills/design-surface-drift/scripts/check_screen_graph.py && python3 tooling/skills/design-surface-drift/scripts/check_journeys.py && python3 tooling/skills/design-surface-drift/scripts/check_lifecycles.py",
     "repo:docs:check": "python3 tooling/scripts/governance/check-doc-governance.py && python3 tooling/scripts/governance/validate-doc-references.py && python3 tooling/scripts/governance/validate-prd-scenario-links.py && python3 tooling/scripts/governance/validate-requirement-references.py && python3 tooling/scripts/governance/validate-assistance-vocabulary.py && python3 tooling/scripts/governance/validate-doc-claims.py && python3 tooling/scripts/governance/validate-design-contracts.py && pnpm repo:design:check && pnpm contract:openapi:check",
-    "repo:tooling:check": "find tooling/scripts -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n && find tooling/scripts -type f -name '*.py' -print0 | xargs -0 -n1 python3 -m py_compile && node tooling/scripts/gates/check-tooling-surface.mjs",
+    "repo:ops:sync": "node tooling/scripts/gates/sync-ops-registry.mjs",
+    "repo:tooling:check": "find tooling/scripts -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n && find tooling/scripts -type f -name '*.py' -print0 | xargs -0 -n1 python3 -m py_compile && node --test tooling/tests/ops-registry.test.mjs && node tooling/scripts/gates/check-tooling-surface.mjs",
     "repo:workspace:boundaries": "node tooling/scripts/governance/validate-workspace-boundaries.mjs",
     "build": "turbo build",
     "test": "turbo test",

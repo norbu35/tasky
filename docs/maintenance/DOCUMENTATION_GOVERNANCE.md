@@ -8,8 +8,9 @@ This document defines the live documentation structure for the repository. It is
 | ---------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | Governing  | Product, strategy, rollout, and operating policy                  | `AGENTS.md`, `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, selected `docs/maintenance/*.md` |
 | Derived    | Active implementation design and UX detail for the current phase  | `docs/architecture/*.md`, `docs/BRAND.md`, active `docs/design/**`, active `docs/openapi/**`               |
-| Generated  | Bundled or machine-produced output from another maintained source | `docs/API.yaml`                                                                                            |
+| Generated  | Bundled or machine-produced output from another maintained source | `docs/API.yaml`, `docs/maintenance/generated/OPS_INVENTORY.md`                                             |
 | Router     | Entry points that send readers to the smallest relevant document  | `apps/*/AGENTS.md`, `services/api/AGENTS.md`, `docs/openapi/AGENTS.md`                                     |
+| Ephemeral  | Human sketches that may aid discussion but do not define gates    | `docs/ops/diagrams/**`                                                                                     |
 | Historical | Archived material kept for reference only                         | `archive/**`, `docs/audits/**`                                                                             |
 
 ## Precedence
@@ -38,6 +39,8 @@ Lower-order documents must be corrected when they drift.
 8. Active documents must not rely on `archive/**` for authority.
 9. `docs/openapi/**` is the maintained active API contract source; `docs/API.yaml` is the bundled output and must be refreshed in the same change.
 10. Do not use an ADR system in the live docs path until the team deliberately adopts one.
+11. `docs/ops/diagrams/**` are ephemeral sketches. Do not use them as validation inputs or source-of-truth surfaces.
+12. `docs/maintenance/generated/OPS_INVENTORY.md` is generated from `tooling/config/ops-registry.yaml`; refresh it with `pnpm repo:ops:sync --fix`.
 
 ## Machine-Checked Claims
 
