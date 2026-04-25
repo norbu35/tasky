@@ -69,11 +69,15 @@ describe('Token Binding', () => {
     );
 
     expect(sharedTokenSource).toContain('--interaction-pressed-opacity: 0.85;');
-    expect(sharedTokenSource).toContain('--overlay-scrim-modal: rgba(16, 38, 56, 0.50);');
+    expect(sharedTokenSource).toMatch(
+      /--overlay-scrim-modal:\s*rgba\(16,\s*38,\s*56,\s*0\.5(?:0)?\);/,
+    );
     expect(sharedTokenSource).toContain('--icon-size-md: 24px;');
     expect(sharedTokenSource).toContain('--z-modal: 40;');
     expect(sharedTokenSource).toContain('--animation-sheet-open-duration: 400ms;');
-    expect(sharedTokenSource).toContain('--color-primary-10: rgba(27, 58, 92, 0.10);');
+    expect(sharedTokenSource).toMatch(
+      /--color-primary-10:\s*rgba\(27,\s*58,\s*92,\s*0\.1(?:0)?\);/,
+    );
     expect(sharedTokenSource).toContain('--typography-page-heading-letter-spacing: 0em;');
     expect(sharedTokenSource).not.toContain('--letter-spacing-tight: -');
     expect(tailwindConfigSource).toContain("pressed: 'var(--interaction-pressed-opacity)'");
@@ -81,7 +85,7 @@ describe('Token Binding', () => {
     expect(tailwindConfigSource).toContain("modal: 'var(--z-modal)'");
     expect(tailwindConfigSource).toContain("fab: 'var(--shadow-fab)'");
     expect(tailwindConfigSource).toContain("'icon-sm': webTokens.iconSizes.sm");
-    expect(tailwindConfigSource).toContain("'badge': [");
+    expect(tailwindConfigSource).toMatch(/\bbadge:\s*\[/);
   });
 
   it('TID-TASK-115-WEB-RUNTIME-TOKEN-COMPONENTS bind promoted tokens in runtime UI', () => {
