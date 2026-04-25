@@ -23,6 +23,11 @@ Use the governance docs in this order when reading shared architecture:
 
 If a deferred integration appears in code or infrastructure before its planned phase, keep it labeled dormant. Its existence does not make it part of the active runtime contract.
 
+Dormant does not mean disposable. Deferred payment, escrow, payout, monetization, alternate-auth, and runtime-AI
+surfaces may remain in the repo as future-ready scaffolding when they are default-off, feature-gated, excluded from
+launch UX, and mapped to a target phase in `docs/ROLLOUT_PHASES.md`. Agents should preserve that switchability unless a
+governing doc explicitly retires the feature.
+
 ---
 
 ## 2. System Context & Boundaries
@@ -38,7 +43,9 @@ Tasky acts as a trusted intermediary between **Customers** (Demand) and **Tasker
   - **Push Provider (Firebase Cloud Messaging)**: mobile notifications via FCM for Android and the FCM → APNs bridge for iOS. Expo Push relay is explicitly not used.
   - **Object Storage (MinIO / S3)**: private storage for uploads such as verification artifacts and images.
 
-Deferred payment, escrow, payout, alternate-auth, and runtime-LLM integrations are not part of the launch baseline even if dormant scaffolding exists in code or schema.
+Deferred payment, escrow, payout, alternate-auth, and runtime-LLM integrations are not part of the launch baseline even
+if dormant scaffolding exists in code or schema. When such scaffolding exists, it should stay behind an explicit switch
+or provider guard and remain easy to activate only after the correct rollout phase is approved.
 
 ### 2.2 Modular Monolith Structure
 

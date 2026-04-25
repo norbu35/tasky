@@ -100,6 +100,14 @@ Reusable repo-owned agent workflows live under `tooling/skills/**`.
 - Keep changes vertical and reviewable.
 - Update `CHANGELOG.md` when the repo convention requires it.
 
+## Rollout Phase And Dormant Feature Rules
+
+- The current product phase is **Phase 1 launch baseline** unless `docs/PRD.md` explicitly changes that fact.
+- `docs/ROLLOUT_PHASES.md` is the AI-readable phase map for future capabilities. Use it to determine which phase owns a deferred feature and whether an existing toggle is only a dormant switch.
+- Dormant future-phase code, schemas, routes, and toggles may exist intentionally so the product is future-ready. Keep them off by default and do not expose them in launch UX or copy until the governing docs approve activation.
+- A toggle being present or switchable is not product readiness. Activating a future-phase toggle requires PRD, strategy, maintenance policy, contract, UX/copy, verification, monitoring, and rollback updates in the same workflow.
+- When working on a dormant feature, preserve the off state and switchability. Do not remove dormant scaffolding merely because it is not Phase 1 scope, and do not treat the scaffolding as live behavior.
+
 ## Verification Model
 
 Use the right gate for the claim you are making.
