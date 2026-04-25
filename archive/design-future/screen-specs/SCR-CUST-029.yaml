@@ -1,0 +1,145 @@
+# Screen Spec: Task Boost Payment
+screen_id: SCR-CUST-029
+name: 'Task Boost Payment'
+route: '/(customer)/tasks/:taskId/boost/pay'
+role: [customer]
+phase: '2'
+template: detail
+figma_page: 'Customer/Task Boost Payment'
+feature: 'monetization'
+
+layout:
+  template: detail
+  density: default
+  structure: 'safe_area -> nav_header -> scrollview(qpay_card + payment_status) -> sticky_bottom_cta'
+
+components:
+  - id: COMP-CARD
+    usage: 'QPay QR card with selected boost summary and amount'
+    props:
+      onPress: null
+    variant: elevated
+
+  - id: COMP-BUTTON
+    usage: 'Primary CTA to open QPay deeplink'
+    props:
+      label: 'QPay аппаар нээх'
+      variant: primary
+      size: lg
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: 'Secondary CTA to go back to boost options'
+    props:
+      label: 'Буцах'
+      variant: ghost
+      size: md
+    variant: ghost
+
+  - id: COMP-STATUSBADGE
+    usage: 'Payment state badge for pending or activated status'
+    props:
+      status: 'open'
+      size: sm
+    variant: open
+
+  - id: COMP-ANIMATEDCHECKMARK
+    usage: 'Success confirmation after payment verification'
+    props:
+      size: 64
+    variant: default
+
+  - id: COMP-EMPTYSTATE
+    usage: 'Failure or timeout state for boost payment'
+    props:
+      illustration: 'payment_failed'
+      headline: 'Төлбөр амжилтгүй'
+      ctaLabel: 'Дахин оролдох'
+    variant: error
+
+states:
+  - id: qr_display
+    description: 'Selected boost payment QR and deeplink are displayed'
+    components_visible: [COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    components_hidden: [COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE]
+
+  - id: deeplink_redirect
+    description: 'User tapped the QPay deeplink and app switching is in progress'
+    components_visible: [COMP-CARD, COMP-BUTTON.primary]
+    components_hidden: [COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE]
+
+  - id: payment_pending
+    description: 'Payment is pending confirmation and status polling is active'
+    components_visible: [COMP-STATUSBADGE, COMP-BUTTON.ghost]
+    components_hidden: [COMP-CARD, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE]
+
+  - id: payment_success
+    description: 'Boost payment succeeded and task visibility upgrade is now active'
+    components_visible: [COMP-ANIMATEDCHECKMARK, COMP-BUTTON.ghost]
+    components_hidden: [COMP-CARD, COMP-STATUSBADGE, COMP-EMPTYSTATE]
+
+  - id: payment_failed
+    description: 'Boost payment failed or was rejected'
+    components_visible: [COMP-EMPTYSTATE, COMP-BUTTON.ghost]
+    components_hidden: [COMP-CARD, COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK]
+
+  - id: payment_timeout
+    description: 'Boost payment was not confirmed in time and should be retried'
+    components_visible: [COMP-EMPTYSTATE, COMP-BUTTON.ghost]
+    components_hidden: [COMP-CARD, COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK]
+
+copy:
+  - key: nav_title
+    mn: 'Boost төлбөр'
+    en: 'Boost Payment'
+    max_chars: 20
+
+  - key: selected_product
+    mn: 'Сонгосон бүтээгдэхүүн'
+    en: 'Selected product'
+    max_chars: 22
+
+  - key: cta_open_qpay
+    mn: 'QPay аппаар нээх'
+    en: 'Open in QPay'
+    max_chars: 20
+
+  - key: payment_success
+    mn: 'Boost амжилттай идэвхжлээ'
+    en: 'Boost activated successfully'
+    max_chars: 32
+
+  - key: payment_failed
+    mn: 'Төлбөр баталгаажаагүй байна. Дахин оролдоно уу'
+    en: 'Payment was not confirmed. Please try again'
+    max_chars: 60
+
+  - key: back_label
+    mn: 'Буцах'
+    en: 'Back'
+    max_chars: 10
+
+api_endpoints:
+  - method: POST
+    path: '/tasks/:id/boost-purchases'
+    purpose: 'Initiate promoted or urgent boost purchase and generate QPay payment data'
+  - method: GET
+    path: '/payments/:id/status'
+    purpose: 'Poll boost payment status until confirmed, failed, or timed out'
+
+analytics_events:
+  - event: 'task_boost_payment_started'
+    trigger: 'Boost payment QR is shown'
+  - event: 'task_boost_payment_qpay_opened'
+    trigger: 'Customer taps Open in QPay'
+  - event: 'task_boost_payment_success'
+    trigger: 'Boost payment confirmed'
+  - event: 'task_boost_payment_failed'
+    trigger: 'Boost payment failed or timed out'
+
+acceptance_criteria:
+  - 'Payment flow reuses the QPay pattern used elsewhere in the mobile design system'
+  - 'Successful payment activates the selected boost and returns the customer to SCR-CUST-009'
+  - 'Urgent purchase yields higher feed priority than promoted after activation'
+  - 'Payment status polling continues until confirmed, failed, or timeout'
+  - 'Back button returns to SCR-CUST-028 without duplicating a paid activation'

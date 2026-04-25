@@ -30,7 +30,9 @@ Rules for agents:
 - A hidden route, dormant table, feature toggle, or legacy code path does not move the product into a later phase.
 - Active derivative docs must describe the current phase only.
 - Future implementation detail should be reintroduced into design, API, architecture, and test derivatives only when that phase is actually being prepared for rollout.
-- Archived future drafts may exist for reference, but they are not authoritative.
+- Archived future drafts may exist for reference under `archive/design-future/**`, but they are not authoritative.
+  Restore a draft to active docs only when its phase is being prepared through the PRD, strategy, activation policy,
+  contracts, UX/copy, verification, monitoring, and rollback updates together.
 
 ## 2. Phase map
 

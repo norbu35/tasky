@@ -1,0 +1,227 @@
+# Screen Spec: Escrow — Payment Flow
+screen_id: SCR-P3-003
+name: 'Escrow — Payment Flow'
+route: '/(customer)/bookings/:bookingId/escrow'
+role: [customer]
+phase: '3+'
+template: detail
+figma_page: 'Phase 3+/Escrow Payment'
+feature: 'escrow'
+
+layout:
+  template: detail
+  density: default
+  structure: 'safe_area -> nav_header -> scrollview(escrow_info + payment_section) -> sticky_bottom_cta'
+
+components:
+  - id: COMP-CARD
+    usage: 'Information card explaining escrow concept and benefits to the customer'
+    props:
+      onPress: null
+    variant: elevated
+
+  - id: COMP-CARD
+    usage: 'QPay QR code card for escrow payment (reused from credits payment pattern)'
+    props:
+      onPress: null
+    variant: elevated
+
+  - id: COMP-BUTTON
+    usage: 'Primary CTA for opt-in to escrow or QPay deeplink'
+    props:
+      label: 'Эскроу ашиглах'
+      variant: primary
+      size: lg
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: 'Secondary skip button for opt-in prompt'
+    props:
+      label: 'Үгүй, алгасах'
+      variant: ghost
+      size: md
+    variant: ghost
+
+  - id: COMP-STATUSBADGE
+    usage: 'Badge showing escrow payment status (pending, held, released)'
+    props:
+      status: 'assigned'
+    variant: assigned
+
+  - id: COMP-ANIMATEDCHECKMARK
+    usage: 'Success animation when escrow payment is confirmed'
+    props:
+      size: 64
+      color: 'verified'
+    variant: default
+
+  - id: COMP-EMPTYSTATE
+    usage: 'Error state when escrow payment fails'
+    props:
+      illustration: 'payment_failed'
+      headline: 'Төлбөр амжилтгүй'
+      description: 'Эскроу төлбөр хийхэд алдаа гарлаа'
+      ctaLabel: 'Дахин оролдох'
+    variant: error
+
+states:
+  - id: opt_in_prompt
+    description: 'Customer is offered the option to use escrow payment for this booking'
+    components_visible: [COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    components_hidden: [COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE]
+
+  - id: qpay_payment
+    description: 'Customer opted in; QPay QR code displayed for escrow deposit'
+    components_visible: [COMP-CARD, COMP-BUTTON.primary]
+    components_hidden: [COMP-BUTTON.ghost, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE]
+
+  - id: payment_pending
+    description: 'Escrow payment initiated; polling for QPay confirmation'
+    components_visible: [COMP-STATUSBADGE]
+    components_hidden: [COMP-CARD, COMP-BUTTON, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE]
+
+  - id: escrowed_confirmation
+    description: 'Payment confirmed; funds held in escrow until task completion'
+    components_visible: [COMP-ANIMATEDCHECKMARK, COMP-STATUSBADGE, COMP-BUTTON.ghost]
+    components_hidden: [COMP-CARD, COMP-BUTTON.primary, COMP-EMPTYSTATE]
+
+  - id: error_payment_failed
+    description: 'QPay payment failed or was rejected'
+    components_visible: [COMP-EMPTYSTATE, COMP-BUTTON.ghost]
+    components_hidden: [COMP-CARD, COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK, COMP-BUTTON.primary]
+
+copy:
+  - key: nav_title
+    mn: 'Эскроу төлбөр'
+    en: 'Escrow Payment'
+    max_chars: 20
+
+  - key: opt_in_heading
+    mn: 'Эскроу төлбөрөөр хамгаалалт нэмэх'
+    en: 'Add protection with escrow'
+    max_chars: 40
+
+  - key: opt_in_description
+    mn: 'Төлбөрийг аюулгүй данс руу байршуулна. Ажил дууссаны дараа л гүйцэтгэгч мөнгөө авна'
+    en: 'Funds held safely in escrow. Tasker gets paid only after task completion'
+    max_chars: 120
+
+  - key: opt_in_benefit_1
+    mn: 'Мөнгөн хамгаалалт'
+    en: 'Payment protection'
+    max_chars: 25
+
+  - key: opt_in_benefit_2
+    mn: 'Маргаан шийдвэрлэх боломж'
+    en: 'Dispute resolution support'
+    max_chars: 30
+
+  - key: opt_in_benefit_3
+    mn: 'Автомат шилжүүлэг'
+    en: 'Automatic release on completion'
+    max_chars: 35
+
+  - key: cta_opt_in
+    mn: 'Эскроу ашиглах'
+    en: 'Use escrow'
+    max_chars: 20
+
+  - key: cta_skip
+    mn: 'Үгүй, алгасах'
+    en: 'No, skip'
+    max_chars: 15
+
+  - key: escrow_amount_label
+    mn: 'Эскроу дүн'
+    en: 'Escrow amount'
+    max_chars: 20
+
+  - key: escrow_amount_value
+    mn: '₮{amount}'
+    en: '₮{amount}'
+    max_chars: 15
+
+  - key: qpay_instruction
+    mn: 'QPay аппаар доорх QR кодыг уншуулна уу'
+    en: 'Scan the QR code below with your QPay app'
+    max_chars: 60
+
+  - key: cta_open_qpay
+    mn: 'QPay аппаар нээх'
+    en: 'Open in QPay'
+    max_chars: 20
+
+  - key: status_pending
+    mn: 'Төлбөр хүлээгдэж байна...'
+    en: 'Payment pending...'
+    max_chars: 30
+
+  - key: status_escrowed
+    mn: 'Мөнгө аюулгүй хадгалагдлаа'
+    en: 'Funds securely held'
+    max_chars: 30
+
+  - key: escrowed_headline
+    mn: 'Эскроу амжилттай!'
+    en: 'Escrow confirmed!'
+    max_chars: 25
+
+  - key: escrowed_description
+    mn: '₮{amount} аюулгүй данс руу байршлаа. Ажил дууссаны дараа автоматаар шилжүүлнэ'
+    en: '₮{amount} held in escrow. Will be released automatically upon task completion'
+    max_chars: 120
+
+  - key: error_headline
+    mn: 'Төлбөр амжилтгүй'
+    en: 'Payment failed'
+    max_chars: 25
+
+  - key: error_description
+    mn: 'Эскроу төлбөр хийхэд алдаа гарлаа. Дахин оролдоно уу'
+    en: 'Escrow payment failed. Please try again'
+    max_chars: 60
+
+  - key: error_retry
+    mn: 'Дахин оролдох'
+    en: 'Try again'
+    max_chars: 20
+
+  - key: cta_done
+    mn: 'Буцах'
+    en: 'Done'
+    max_chars: 10
+
+api_endpoints:
+  - method: POST
+    path: '/payments/escrow'
+    purpose: 'Initiate escrow payment and generate QPay payment link'
+  - method: GET
+    path: '/payments/:id/status'
+    purpose: 'Poll escrow payment status until confirmed or failed'
+
+analytics_events:
+  - event: 'escrow_opt_in_shown'
+    trigger: 'Escrow opt-in prompt displayed'
+  - event: 'escrow_opted_in'
+    trigger: "Customer taps 'Use escrow'"
+  - event: 'escrow_skipped'
+    trigger: "Customer taps 'No, skip'"
+  - event: 'escrow_payment_started'
+    trigger: 'QPay QR code displayed for escrow deposit'
+  - event: 'escrow_qpay_deeplink'
+    trigger: "Customer taps 'Open in QPay'"
+  - event: 'escrow_confirmed'
+    trigger: 'Escrow payment confirmed and funds held'
+  - event: 'escrow_payment_failed'
+    trigger: 'Escrow payment failed'
+
+acceptance_criteria:
+  - 'Opt-in prompt clearly explains escrow benefits with 3 bullet points'
+  - 'Escrow is opt-in only; customer can skip without penalty'
+  - 'QPay QR code state reuses the same pattern as credit purchase (SCR-P2-002)'
+  - 'Payment pending state polls GET /payments/:id/status every 3 seconds'
+  - 'Escrowed confirmation shows animated checkmark with held amount'
+  - 'Payment failed state shows error illustration with retry CTA'
+  - 'Back/done button returns to SCR-CUST-017 (Booking Detail)'
+  - 'Escrow amount matches the booking budget displayed in price_display typography'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

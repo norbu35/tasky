@@ -18,7 +18,10 @@ Product behavior is defined in the PRD.
   this prose contract and `@tasky/design-tokens`, then remove the static handoff files from the active docs path.
 - Only screen specs with `phase: "0-1"` remain in the live design path.
 - Deferred-phase design drafts have been removed from the active path so launch UX can be checked directly against the current product baseline.
-- Historical future drafts, if needed, belong under `archive/**` and are not authoritative.
+- Historical future drafts, if needed, belong under `archive/design-future/**` and are not authoritative.
+- A screen spec may return from `archive/design-future/screen-specs/**` to `docs/design/screen-specs/**` only when
+  the governing product and rollout documents activate that phase. Reactivation must update the affected design
+  contracts, copy, verification, monitoring, and rollback guidance in the same workflow.
 
 ## 2. Content fundamentals
 
