@@ -18,6 +18,7 @@ public class BookingIntentService {
 
     public static final String SOURCE_REBOOK = "REBOOK";
     public static final String SOURCE_INSTANT_MATCH = "INSTANT_MATCH";
+    public static final String SOURCE_APPLICATION_SELECTION = "APPLICATION_SELECTION";
 
     private final BookingIntentDao bookingIntentDao;
     private final BookingService bookingService;
@@ -50,6 +51,54 @@ public class BookingIntentService {
         public boolean isSuccess() {
             return intent != null;
         }
+    }
+
+    @Transactional
+    public CreateResult createApplicationSelectionIntent(
+            String customerId, String taskId, String applicationId, String taskerId, Instant expiresAt) {
+        if (!StringUtils.hasText(applicationId) || !StringUtils.hasText(taskerId)) {
+            return CreateResult.error(CreateResult.INVALID_REQUEST, "Missing booking intent request fields.");
+        }
+
+        Optional<TaskState> taskOpt = taskDao.findById(taskId);
+        if (taskOpt.isEmpty()) {
+            return CreateResult.error(CreateResult.NOT_FOUND, "Task not found.");
+        }
+        TaskState task = taskOpt.get();
+        if (!customerId.equals(task.customerId())) {
+            return CreateResult.error(CreateResult.FORBIDDEN, "Only the task owner can create booking intents.");
+        }
+        if (!"OPEN".equals(task.status())) {
+            return CreateResult.error(CreateResult.TASK_NOT_OPEN, "Task is not OPEN.");
+        }
+
+        Instant now = Instant.now();
+        bookingIntentDao.expirePendingApplicationSelectionForTask(taskId, now);
+        if (bookingIntentDao
+                .findPendingApplicationSelectionByTaskId(taskId, now)
+                .isPresent()) {
+            return CreateResult.error(
+                    CreateResult.CONFLICT, "A pending application selection already exists for this task.");
+        }
+
+        String intentId = UUID.randomUUID().toString();
+        bookingIntentDao.insert(
+                intentId,
+                taskId,
+                taskerId,
+                customerId,
+                SOURCE_APPLICATION_SELECTION,
+                "PENDING",
+                applicationId,
+                null,
+                null,
+                expiresAt,
+                now,
+                now);
+        return bookingIntentDao
+                .findById(intentId)
+                .map(CreateResult::success)
+                .orElseGet(() -> CreateResult.error(CreateResult.NOT_FOUND, "Booking intent was not persisted."));
     }
 
     @Transactional
@@ -147,6 +196,11 @@ public class BookingIntentService {
             return BookingIntentConfirmResult.error(
                     BookingIntentConfirmResult.DEFERRED, "Instant match booking intents are not implemented.");
         }
+        if (SOURCE_APPLICATION_SELECTION.equals(intent.source())) {
+            return BookingIntentConfirmResult.error(
+                    BookingIntentConfirmResult.CONFLICT,
+                    "Application-selection intents are confirmed by tasker acceptance.");
+        }
         if ("CONFIRMED".equals(intent.status()) && intent.confirmedBookingId() != null) {
             Optional<BookingState> existingBooking = bookingService.getBooking(intent.confirmedBookingId());
             return existingBooking
@@ -178,5 +232,18 @@ public class BookingIntentService {
         Instant now = Instant.now();
         bookingIntentDao.markConfirmed(intent.id(), booking.id(), now, now);
         return BookingIntentConfirmResult.success(booking);
+    }
+
+    public Optional<BookingIntentState> findPendingApplicationSelectionIntent(
+            String taskId, String applicationId, Instant now) {
+        return bookingIntentDao.findPendingApplicationSelectionByApplicationId(taskId, applicationId, now);
+    }
+
+    public int expirePendingApplicationSelectionForTask(String taskId, Instant now) {
+        return bookingIntentDao.expirePendingApplicationSelectionForTask(taskId, now);
+    }
+
+    public void markIntentConfirmed(String intentId, String bookingId, Instant confirmedAt) {
+        bookingIntentDao.markConfirmed(intentId, bookingId, confirmedAt, confirmedAt);
     }
 }

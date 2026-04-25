@@ -597,27 +597,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/tasks/{id}/applications/{applicationId}/select": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Select an applicant (customer action)
-         * @description Customer selects a tasker's application, starting the 4-hour acceptance window.
-         *     The tasker receives a push notification to confirm.
-         */
-        post: operations["selectApplication"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/tasks/{id}/applications/{applicationId}/confirm": {
         parameters: {
             query?: never;
@@ -2518,11 +2497,15 @@ export interface components {
             /** Format: uuid */
             customer_id: string;
             /** @enum {string} */
-            source: "APPLICATION_SELECTION";
+            source: "APPLICATION_SELECTION" | "REBOOK" | "INSTANT_MATCH";
             /** @enum {string} */
             status: "PENDING" | "CONFIRMED" | "DECLINED" | "EXPIRED" | "CANCELLED";
             /** Format: uuid */
             selected_application_id?: string | null;
+            /** Format: uuid */
+            original_booking_id?: string | null;
+            /** Format: uuid */
+            offer_id?: string | null;
             /** Format: date-time */
             expires_at?: string | null;
             /** Format: uuid */
@@ -4062,41 +4045,6 @@ export interface operations {
             };
             /** @description Liability disclaimer not accepted. */
             422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    selectApplication: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: components["parameters"]["PathId"];
-                applicationId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Application selected. Tasker has 4 hours to confirm. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TaskApplication"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            /** @description Application already processed or task assigned. */
-            409: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -236,8 +236,6 @@ paths:
     $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications
   /tasks/{id}/applications/{applicationId}/accept:
     $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications~1{applicationId}~1accept
-  /tasks/{id}/applications/{applicationId}/select:
-    $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications~1{applicationId}~1select
   /tasks/{id}/applications/{applicationId}/confirm:
     $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications~1{applicationId}~1confirm
   /tasks/{id}/applications/{applicationId}/withdraw:

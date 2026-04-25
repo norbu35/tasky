@@ -13,7 +13,7 @@ import { Separator } from '../components/ui/separator';
 import { Skeleton } from '../components/ui/skeleton';
 import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
-import type { Booking, TaskApplication } from '../lib/apiClient';
+import type { Booking, BookingIntent } from '../lib/apiClient';
 import { parseError } from '../lib/errorHandling';
 import { createIdempotencyKey } from '../lib/idempotency';
 
@@ -30,6 +30,7 @@ export function BookingConfirmationPage() {
 
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
   const [successBooking, setSuccessBooking] = useState<Booking | null>(null);
+  const [pendingSelection, setPendingSelection] = useState<BookingIntent | null>(null);
 
   // Fetch Task and Application strictly for displaying info nicely (if possible)
   const { data: tasksPage, isLoading: loadingTask } = useQuery({
@@ -58,23 +59,22 @@ export function BookingConfirmationPage() {
         );
       }
       if (!taskId || !applicationId) throw new Error('Missing requirements');
-      return apiClient.selectApplication(session.accessToken, taskId, applicationId);
+      return apiClient.acceptApplication(
+        session.accessToken,
+        taskId,
+        applicationId,
+        disclaimerAccepted,
+        createIdempotencyKey('accept-application'),
+      );
     },
     onSuccess: (result) => {
-      if ('status' in result && result.status === 'SELECTED') {
-        // selectApplication returns TaskApplication — show selection confirmed
-        const app = result as TaskApplication;
-        setSuccessBooking({
-          id: app.task_id,
-          task_id: app.task_id,
-          tasker_id: app.tasker.id,
-          customer_id: '',
-          price: 0,
-          status: 'ASSIGNED',
-          confirmed_scheduled_at: '',
-          created_at: app.created_at,
+      if ('source' in result && result.source === 'APPLICATION_SELECTION') {
+        const intent = result as BookingIntent;
+        setPendingSelection(intent);
+        trackClientEvent('APPLICATION_SELECTED', {
+          taskId: intent.task_id,
+          bookingId: intent.id,
         });
-        trackClientEvent('TASKER_ACCEPTED', { taskId: taskId || undefined, bookingId: app.id });
       } else {
         const booking = result as Booking;
         setSuccessBooking(booking);
@@ -118,6 +118,62 @@ export function BookingConfirmationPage() {
   const application = applicationId
     ? appsPage?.data.find((a) => a.id === applicationId)
     : undefined;
+
+  if (pendingSelection) {
+    return (
+      <ScreenFrame maxWidth="narrow">
+        <div className="flex flex-col items-center justify-center text-center py-12">
+          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+            <ClipboardList className="w-6 h-6 text-primary" />
+          </div>
+          <h1 className="text-3xl font-bold font-display tracking-tight mb-2">
+            {t('bookingConfirmation.selectionRequestedTitle')}
+          </h1>
+          <p className="text-muted-foreground mb-8">
+            {t('bookingConfirmation.selectionRequestedDesc')}
+          </p>
+
+          <Card className="w-full text-left mb-8 shadow-sm">
+            <CardHeader className="bg-muted/30 pb-4">
+              <CardTitle className="text-lg">
+                {t('bookingConfirmation.selectionRequestDetails')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4 grid gap-3">
+              <div className="flex justify-between gap-4">
+                <span className="text-muted-foreground">
+                  {t('bookingConfirmation.selectionRequestId')}
+                </span>
+                <span className="font-medium text-right break-all">{pendingSelection.id}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">{t('bookingConfirmation.status')}</span>
+                <span className="font-medium text-primary">{pendingSelection.status}</span>
+              </div>
+              {pendingSelection.expires_at && (
+                <div className="flex justify-between gap-4">
+                  <span className="text-muted-foreground">
+                    {t('bookingConfirmation.respondBy')}
+                  </span>
+                  <span className="font-medium text-right">
+                    {new Date(pendingSelection.expires_at).toLocaleString()}
+                  </span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={() => navigate('/customer/tasks')}
+          >
+            {t('bookingConfirmation.backToTasks')}
+          </Button>
+        </div>
+      </ScreenFrame>
+    );
+  }
 
   if (successBooking) {
     return (

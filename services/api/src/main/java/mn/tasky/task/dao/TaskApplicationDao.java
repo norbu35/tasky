@@ -114,6 +114,24 @@ public interface TaskApplicationDao {
     @SqlQuery("SELECT EXISTS(SELECT 1 FROM task_applications WHERE task_id = :taskId AND status = 'ACCEPTED')")
     boolean hasAccepted(@Bind("taskId") UUID taskId);
 
+    default boolean hasActiveSelection(String taskId, Instant now) {
+        return hasActiveSelection(required(taskId, "taskId"), now);
+    }
+
+    @SqlQuery("SELECT EXISTS(SELECT 1 FROM task_applications "
+            + "WHERE task_id = :taskId "
+            + "AND status = 'SELECTED' "
+            + "AND (respond_by_at IS NULL OR respond_by_at >= :now))")
+    boolean hasActiveSelection(@Bind("taskId") UUID taskId, @Bind("now") Instant now);
+
+    default int expireSelectedForTask(String taskId, Instant now) {
+        return expireSelectedForTask(required(taskId, "taskId"), now);
+    }
+
+    @SqlUpdate("UPDATE task_applications SET status = 'EXPIRED' "
+            + "WHERE task_id = :taskId AND status = 'SELECTED' AND respond_by_at < :now")
+    int expireSelectedForTask(@Bind("taskId") UUID taskId, @Bind("now") Instant now);
+
     default int countByTaskId(String taskId) {
         return countByTaskId(required(taskId, "taskId"));
     }
@@ -133,7 +151,7 @@ public interface TaskApplicationDao {
     }
 
     @SqlUpdate("UPDATE task_applications SET status = 'DECLINED' "
-            + "WHERE task_id = :taskId AND status = 'APPLIED' AND id != :excludeId")
+            + "WHERE task_id = :taskId AND status IN ('APPLIED', 'SELECTED') AND id != :excludeId")
     void rejectOthers(@Bind("taskId") UUID taskId, @Bind("excludeId") UUID excludeId);
 
     default void updateSelection(String id, String status, Instant selectedAt, Instant respondByAt) {

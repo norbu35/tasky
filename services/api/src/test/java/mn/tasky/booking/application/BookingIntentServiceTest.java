@@ -97,6 +97,7 @@ class BookingIntentServiceTest {
                 customerId,
                 source,
                 "PENDING",
+                null,
                 originalBookingId,
                 null,
                 null,
@@ -121,6 +122,7 @@ class BookingIntentServiceTest {
                 customerId,
                 source,
                 "CONFIRMED",
+                null,
                 originalBookingId,
                 null,
                 null,
@@ -367,7 +369,7 @@ class BookingIntentServiceTest {
     @Test
     void confirmIntent_statusNotPending_returnsConflict() {
         BookingIntentState intent = new BookingIntentState(
-                "i1", "t1", "tk1", "c1", "REBOOK", "EXPIRED", "b1", null, null, null, null, now, now);
+                "i1", "t1", "tk1", "c1", "REBOOK", "EXPIRED", null, "b1", null, null, null, null, now, now);
         when(bookingIntentDao.findById("i1")).thenReturn(Optional.of(intent));
         BookingIntentConfirmResult result = service.confirmIntent("c1", "i1", true);
         assertThat(result.isSuccess()).isFalse();

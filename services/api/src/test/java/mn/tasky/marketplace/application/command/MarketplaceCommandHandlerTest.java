@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.Optional;
+import mn.tasky.booking.dto.BookingIntentCreateResult;
 import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.task.application.TaskApplicationService;
 import mn.tasky.task.application.TaskAssistanceService;
@@ -20,7 +21,6 @@ import mn.tasky.task.dto.TaskApplyResult;
 import mn.tasky.task.dto.TaskCancelResult;
 import mn.tasky.task.dto.TaskCreateResult;
 import mn.tasky.task.dto.TaskDraft;
-import mn.tasky.task.dto.TaskSelectResult;
 import mn.tasky.task.dto.TaskState;
 import mn.tasky.task.dto.TaskUpdateResult;
 import mn.tasky.task.dto.TaskWithdrawResult;
@@ -119,20 +119,10 @@ class MarketplaceCommandHandlerTest {
 
     @Test
     void acceptApplication_delegatesToTaskApplicationService() {
-        TaskAcceptResult expected = new TaskAcceptResult(null, null);
+        BookingIntentCreateResult expected = new BookingIntentCreateResult(Optional.empty(), null, null);
         when(taskApplicationService.acceptApplication("c1", "t1", "a1", true)).thenReturn(expected);
 
-        TaskAcceptResult result = handler.acceptApplication("c1", "t1", "a1", true);
-
-        assertThat(result).isSameAs(expected);
-    }
-
-    @Test
-    void selectApplication_delegatesToTaskApplicationService() {
-        TaskSelectResult expected = new TaskSelectResult(null, null);
-        when(taskApplicationService.selectApplication("c1", "t1", "a1")).thenReturn(expected);
-
-        TaskSelectResult result = handler.selectApplication("c1", "t1", "a1");
+        BookingIntentCreateResult result = handler.acceptApplication("c1", "t1", "a1", true);
 
         assertThat(result).isSameAs(expected);
     }
@@ -140,9 +130,9 @@ class MarketplaceCommandHandlerTest {
     @Test
     void confirmAcceptance_delegatesToTaskApplicationService() {
         TaskAcceptResult expected = new TaskAcceptResult(null, null);
-        when(taskApplicationService.confirmAcceptance("tasker1", "a1")).thenReturn(expected);
+        when(taskApplicationService.confirmAcceptance("tasker1", "t1", "a1")).thenReturn(expected);
 
-        TaskAcceptResult result = handler.confirmAcceptance("tasker1", "a1");
+        TaskAcceptResult result = handler.confirmAcceptance("tasker1", "t1", "a1");
 
         assertThat(result).isSameAs(expected);
     }

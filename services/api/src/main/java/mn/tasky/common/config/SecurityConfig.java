@@ -94,9 +94,7 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/tasks/*/applications")
                         .hasRole("TASKER")
                         .requestMatchers(
-                                org.springframework.http.HttpMethod.POST,
-                                "/api/v1/tasks/*/applications/*/accept",
-                                "/api/v1/tasks/*/applications/*/select")
+                                org.springframework.http.HttpMethod.POST, "/api/v1/tasks/*/applications/*/accept")
                         .hasRole("CUSTOMER")
                         .requestMatchers(
                                 org.springframework.http.HttpMethod.POST,

@@ -8,12 +8,13 @@ import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.UUID;
+import mn.tasky.booking.dto.BookingIntentCreateResult;
+import mn.tasky.booking.dto.BookingIntentState;
+import mn.tasky.booking.publicapi.BookingIntentCommandPort;
 import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyService;
 import mn.tasky.marketplace.publicapi.MarketplaceCommandPort;
-import mn.tasky.task.dto.TaskApplicationState;
-import mn.tasky.task.dto.TaskSelectResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,6 +32,9 @@ class TaskApplicationAcceptanceServiceTests {
     @Mock
     private IdempotencyService idempotencyService;
 
+    @Mock
+    private BookingIntentCommandPort bookingIntentCommandPort;
+
     private TaskApplicationAcceptanceService service;
 
     private final String customerId = "customer-001";
@@ -38,29 +42,32 @@ class TaskApplicationAcceptanceServiceTests {
     private final String applicationId = "app-001";
     private final String idempotencyKey = "idemp-" + UUID.randomUUID();
 
-    private TaskApplicationState defaultApplication() {
-        return new TaskApplicationState(
-                applicationId,
+    private BookingIntentState defaultIntent() {
+        Instant now = Instant.now();
+        return new BookingIntentState(
+                UUID.randomUUID().toString(),
                 taskId,
                 "tasker-001",
-                "Bold",
-                "avatar.png",
-                4.8,
-                15,
-                true,
-                "I can do it",
-                12000,
-                "SELECTED",
-                null,
+                customerId,
+                "APPLICATION_SELECTION",
+                "PENDING",
+                applicationId,
                 null,
                 null,
                 Instant.now().plusSeconds(3600),
-                Instant.now());
+                null,
+                null,
+                now,
+                now);
     }
 
     @BeforeEach
     void setUp() {
-        service = new TaskApplicationAcceptanceService(marketplaceCommandPort, idempotencyService);
+        service = new TaskApplicationAcceptanceService(
+                marketplaceCommandPort,
+                bookingIntentCommandPort,
+                new BookingIntentCompositionService(),
+                idempotencyService);
     }
 
     @Nested
@@ -95,12 +102,15 @@ class TaskApplicationAcceptanceServiceTests {
                     Instant.now());
             when(idempotencyService.claim(customerId, IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey))
                     .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED, record));
+            when(bookingIntentCommandPort.getIntent(record.resourceId().toString()))
+                    .thenReturn(java.util.Optional.of(defaultIntent()));
 
             TaskApplicationAcceptanceOutcome outcome =
                     service.acceptApplication(customerId, taskId, applicationId, true, idempotencyKey);
 
             assertThat(outcome.status()).isEqualTo(TaskApplicationAcceptanceOutcome.Status.SUCCESS);
-            assertThat(outcome.body()).containsEntry("status", "SELECTED");
+            assertThat(outcome.body()).containsEntry("status", "PENDING");
+            assertThat(outcome.body()).containsEntry("selected_application_id", applicationId);
             verifyNoInteractions(marketplaceCommandPort);
         }
 
@@ -135,23 +145,24 @@ class TaskApplicationAcceptanceServiceTests {
             when(idempotencyService.claim(customerId, IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey))
                     .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
 
-            TaskApplicationState application = defaultApplication();
-            when(marketplaceCommandPort.selectApplication(customerId, taskId, applicationId))
-                    .thenReturn(TaskSelectResult.success(application));
+            BookingIntentState intent = defaultIntent();
+            when(marketplaceCommandPort.acceptApplication(customerId, taskId, applicationId, true))
+                    .thenReturn(BookingIntentCreateResult.success(intent));
 
             TaskApplicationAcceptanceOutcome outcome =
                     service.acceptApplication(customerId, taskId, applicationId, true, idempotencyKey);
 
             assertThat(outcome.status()).isEqualTo(TaskApplicationAcceptanceOutcome.Status.SUCCESS);
-            assertThat(outcome.body()).containsEntry("application_id", applicationId);
-            assertThat(outcome.body()).containsEntry("status", "SELECTED");
+            assertThat(outcome.body()).containsEntry("id", intent.id());
+            assertThat(outcome.body()).containsEntry("status", "PENDING");
+            assertThat(outcome.body()).containsEntry("selected_application_id", applicationId);
             verify(idempotencyService)
                     .completeWithResource(
                             customerId,
                             IdempotencyOperations.ACCEPT_APPLICATION,
                             idempotencyKey,
-                            "TASK_APPLICATION",
-                            applicationId);
+                            "BOOKING_INTENT",
+                            intent.id());
         }
 
         @Test
@@ -159,8 +170,8 @@ class TaskApplicationAcceptanceServiceTests {
         void notFound() {
             when(idempotencyService.claim(customerId, IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey))
                     .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
-            when(marketplaceCommandPort.selectApplication(customerId, taskId, applicationId))
-                    .thenReturn(TaskSelectResult.NOT_FOUND_RESULT);
+            when(marketplaceCommandPort.acceptApplication(customerId, taskId, applicationId, true))
+                    .thenReturn(BookingIntentCreateResult.error(BookingIntentCreateResult.NOT_FOUND, "not found"));
 
             TaskApplicationAcceptanceOutcome outcome =
                     service.acceptApplication(customerId, taskId, applicationId, true, idempotencyKey);
@@ -174,8 +185,8 @@ class TaskApplicationAcceptanceServiceTests {
         void forbidden() {
             when(idempotencyService.claim(customerId, IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey))
                     .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
-            when(marketplaceCommandPort.selectApplication(customerId, taskId, applicationId))
-                    .thenReturn(TaskSelectResult.FORBIDDEN_RESULT);
+            when(marketplaceCommandPort.acceptApplication(customerId, taskId, applicationId, true))
+                    .thenReturn(BookingIntentCreateResult.error(BookingIntentCreateResult.FORBIDDEN, "forbidden"));
 
             TaskApplicationAcceptanceOutcome outcome =
                     service.acceptApplication(customerId, taskId, applicationId, true, idempotencyKey);
@@ -188,8 +199,8 @@ class TaskApplicationAcceptanceServiceTests {
         void taskNotOpen() {
             when(idempotencyService.claim(customerId, IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey))
                     .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
-            when(marketplaceCommandPort.selectApplication(customerId, taskId, applicationId))
-                    .thenReturn(TaskSelectResult.TASK_NOT_OPEN_RESULT);
+            when(marketplaceCommandPort.acceptApplication(customerId, taskId, applicationId, true))
+                    .thenReturn(BookingIntentCreateResult.error(BookingIntentCreateResult.TASK_NOT_OPEN, "not open"));
 
             TaskApplicationAcceptanceOutcome outcome =
                     service.acceptApplication(customerId, taskId, applicationId, true, idempotencyKey);
@@ -202,8 +213,8 @@ class TaskApplicationAcceptanceServiceTests {
         void conflict() {
             when(idempotencyService.claim(customerId, IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey))
                     .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
-            when(marketplaceCommandPort.selectApplication(customerId, taskId, applicationId))
-                    .thenReturn(TaskSelectResult.CONFLICT_RESULT);
+            when(marketplaceCommandPort.acceptApplication(customerId, taskId, applicationId, true))
+                    .thenReturn(BookingIntentCreateResult.error(BookingIntentCreateResult.CONFLICT, "conflict"));
 
             TaskApplicationAcceptanceOutcome outcome =
                     service.acceptApplication(customerId, taskId, applicationId, true, idempotencyKey);
@@ -216,8 +227,8 @@ class TaskApplicationAcceptanceServiceTests {
         void unknownError() {
             when(idempotencyService.claim(customerId, IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey))
                     .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
-            when(marketplaceCommandPort.selectApplication(customerId, taskId, applicationId))
-                    .thenReturn(new TaskSelectResult(null, "WEIRD_CODE"));
+            when(marketplaceCommandPort.acceptApplication(customerId, taskId, applicationId, true))
+                    .thenReturn(BookingIntentCreateResult.error("WEIRD_CODE", "weird"));
 
             TaskApplicationAcceptanceOutcome outcome =
                     service.acceptApplication(customerId, taskId, applicationId, true, idempotencyKey);
@@ -230,7 +241,7 @@ class TaskApplicationAcceptanceServiceTests {
         void runtimeException() {
             when(idempotencyService.claim(customerId, IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey))
                     .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
-            when(marketplaceCommandPort.selectApplication(customerId, taskId, applicationId))
+            when(marketplaceCommandPort.acceptApplication(customerId, taskId, applicationId, true))
                     .thenThrow(new RuntimeException("DB error"));
 
             assertThatThrownBy(() -> service.acceptApplication(customerId, taskId, applicationId, true, idempotencyKey))

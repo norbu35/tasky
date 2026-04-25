@@ -14,7 +14,7 @@ Task feed, task management, application flow, acceptance, and task photo upload 
 | `POST` | `/api/v1/tasks/{id}/cancel`                              | Cancel open task                                                |
 | `POST` | `/api/v1/tasks/{id}/applications`                        | Verified tasker applies                                         |
 | `GET`  | `/api/v1/tasks/{id}/applications`                        | Task owner lists applications                                   |
-| `POST` | `/api/v1/tasks/{id}/applications/{applicationId}/accept` | Accept application and create booking; idempotent               |
+| `POST` | `/api/v1/tasks/{id}/applications/{applicationId}/accept` | Select application and create pending booking intent            |
 | `POST` | `/api/v1/tasks/{id}/photos/upload-url`                   | Owner upload URL (post-create, max 3 photos)                    |
 | `POST` | `/api/v1/tasks/photos/upload-url`                        | Upload URL before task create                                   |
 
@@ -34,14 +34,17 @@ Task feed, task management, application flow, acceptance, and task photo upload 
 - Apply requires caller role `TASKER`, non-self-application, task `OPEN`, profile status `VERIFIED`, and a
   pricing response that matches the task pricing mode. Budget-mode applications accept the posted budget; quote-mode
   applications require a quote.
-- Accept requires owner, task `OPEN`, selected app `PENDING`, and liability disclaimer acceptance.
+- Selection requires owner, task `OPEN`, selected app `APPLIED`, and liability disclaimer acceptance. It creates a
+  pending booking intent; the selected tasker must still confirm within the response window before a booking exists.
 
 ## Side Effects
 
 - Create: analytics `TASK_POSTED` and nearby-tasker push notifications.
-- Apply: conversation bootstrap, push (`TASKER_APPLIED`), analytics `APPLICATION_SUBMITTED`.
-- Accept: marks selected application accepted, rejects others, creates booking, sets task to `ASSIGNED`, publishes
-  outbox `TASK_APPLICATION_ACCEPTED`.
+- Apply: push (`TASKER_APPLIED`) and analytics `APPLICATION_SUBMITTED`. It does not bootstrap conversation access.
+- Selection: starts the selected-tasker acceptance window and notifies the selected tasker. It does not assign the task
+  or create a confirmed booking.
+- Confirmation: accepts the selected application, rejects others, creates the booking, sets task to `ASSIGNED`, publishes
+  outbox `TASK_APPLICATION_ACCEPTED`, and enables post-confirmation conversation access.
 
 ## Location Privacy
 

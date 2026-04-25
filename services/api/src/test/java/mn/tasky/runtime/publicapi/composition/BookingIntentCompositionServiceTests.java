@@ -37,6 +37,7 @@ class BookingIntentCompositionServiceTests {
                     "cust-1",
                     "SELF_SERVE",
                     "CONFIRMED",
+                    "application-1",
                     "booking-prev-1",
                     "offer-1",
                     expiresAt,
@@ -53,6 +54,7 @@ class BookingIntentCompositionServiceTests {
             assertThat(response).containsEntry("customer_id", "cust-1");
             assertThat(response).containsEntry("source", "SELF_SERVE");
             assertThat(response).containsEntry("status", "CONFIRMED");
+            assertThat(response).containsEntry("selected_application_id", "application-1");
             assertThat(response).containsEntry("original_booking_id", "booking-prev-1");
             assertThat(response).containsEntry("offer_id", "offer-1");
             assertThat(response).containsEntry("expires_at", expiresAt.toString());
@@ -78,12 +80,14 @@ class BookingIntentCompositionServiceTests {
                     null,
                     null,
                     null,
+                    null,
                     now,
                     now);
 
             Map<String, Object> response = service.bookingIntentResponse(intent);
 
             assertThat(response).containsEntry("original_booking_id", null);
+            assertThat(response).containsEntry("selected_application_id", null);
             assertThat(response).containsEntry("offer_id", null);
             assertThat(response).containsEntry("expires_at", null);
             assertThat(response).containsEntry("confirmed_booking_id", null);

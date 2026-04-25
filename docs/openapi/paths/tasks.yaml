@@ -664,44 +664,6 @@
           application/json:
             schema:
               $ref: ../components/schemas/common.yaml#/Error
-/tasks/{id}/applications/{applicationId}/select:
-  post:
-    tags:
-      - Tasks
-    summary: Select an applicant (customer action)
-    description: |
-      Customer selects a tasker's application, starting the 4-hour acceptance window.
-      The tasker receives a push notification to confirm.
-    operationId: selectApplication
-    security:
-      - BearerAuth: []
-    parameters:
-      - $ref: ../components/parameters.yaml#/PathId
-      - name: applicationId
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-    responses:
-      '200':
-        description: Application selected. Tasker has 4 hours to confirm.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/tasks.yaml#/TaskApplication
-      '401':
-        $ref: ../components/responses.yaml#/Unauthorized
-      '403':
-        $ref: ../components/responses.yaml#/Forbidden
-      '404':
-        $ref: ../components/responses.yaml#/NotFound
-      '409':
-        description: Application already processed or task assigned.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/common.yaml#/Error
 /tasks/{id}/applications/{applicationId}/confirm:
   post:
     tags:

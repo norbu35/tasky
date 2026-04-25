@@ -35,7 +35,6 @@ import mn.tasky.task.dto.TaskDraft;
 import mn.tasky.task.dto.TaskDraftResponse;
 import mn.tasky.task.dto.TaskPage;
 import mn.tasky.task.dto.TaskPhotoUploadUrlRequest;
-import mn.tasky.task.dto.TaskSelectResult;
 import mn.tasky.task.dto.TaskState;
 import mn.tasky.task.dto.TaskUpdateResult;
 import mn.tasky.task.dto.TaskWithdrawResult;
@@ -469,7 +468,7 @@ public class TaskController {
         return switch (outcome.status()) {
             case IN_PROGRESS -> idempotencyInProgress(request);
             case REPLAY_MISSING -> idempotencyReplayMissing(request);
-            case SUCCESS -> ResponseEntity.ok(outcome.body());
+            case SUCCESS -> ResponseEntity.status(HttpStatus.CREATED).body(outcome.body());
             case NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
                             "code", outcome.errorCode(),
@@ -485,60 +484,12 @@ public class TaskController {
                             "code", outcome.errorCode(),
                             "message", outcome.errorMessage(),
                             "trace_id", resolveTraceId(request)));
-            case DISCLAIMER_REQUIRED -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            case DISCLAIMER_REQUIRED -> ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                     .body(Map.of(
                             "code", outcome.errorCode(),
                             "message", outcome.errorMessage(),
                             "trace_id", resolveTraceId(request)));
             case INTERNAL_ERROR -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
-        };
-    }
-
-    @PostMapping("/{id}/applications/{applicationId}/select")
-    public ResponseEntity<?> selectApplication(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @PathVariable String id,
-            @PathVariable String applicationId,
-            HttpServletRequest request) {
-        TaskSelectResult result = marketplaceCommandPort.selectApplication(principal.userId(), id, applicationId);
-        if (result.isSuccess()) {
-            return ResponseEntity.ok(taskCompositionService.toTaskApplicationResponse(result.application()));
-        }
-        return switch (result.errorCode()) {
-            case TaskSelectResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of(
-                            "code",
-                            "NOT_FOUND",
-                            "message",
-                            "Task or application not found.",
-                            "trace_id",
-                            resolveTraceId(request)));
-            case TaskSelectResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of(
-                            "code",
-                            "FORBIDDEN",
-                            "message",
-                            "Only the task owner can select applicants.",
-                            "trace_id",
-                            resolveTraceId(request)));
-            case TaskSelectResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of(
-                            "code",
-                            "TASK_NOT_OPEN",
-                            "message",
-                            "Task is no longer open.",
-                            "trace_id",
-                            resolveTraceId(request)));
-            case TaskSelectResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of(
-                            "code",
-                            "CONFLICT",
-                            "message",
-                            "Application already processed or task assigned.",
-                            "trace_id",
-                            resolveTraceId(request)));
-            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
         };
     }
@@ -550,7 +501,7 @@ public class TaskController {
             @PathVariable String applicationId,
             @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
             HttpServletRequest request) {
-        TaskAcceptResult result = marketplaceCommandPort.confirmAcceptance(principal.userId(), applicationId);
+        TaskAcceptResult result = marketplaceCommandPort.confirmAcceptance(principal.userId(), id, applicationId);
         if (result.isSuccess()) {
             return ResponseEntity.ok(Map.of(
                     "booking_id",

@@ -1,5 +1,6 @@
 package mn.tasky.booking.application.command;
 
+import java.time.Instant;
 import java.util.Optional;
 import mn.tasky.booking.application.BookingIntentService;
 import mn.tasky.booking.dto.BookingIntentConfirmResult;
@@ -40,7 +41,34 @@ public class BookingIntentCommandHandler implements BookingIntentCommandPort {
     }
 
     @Override
+    public BookingIntentCreateResult createApplicationSelectionIntent(
+            String customerId, String taskId, String applicationId, String taskerId, Instant expiresAt) {
+        BookingIntentService.CreateResult result = bookingIntentService.createApplicationSelectionIntent(
+                customerId, taskId, applicationId, taskerId, expiresAt);
+        if (result.isSuccess()) {
+            return BookingIntentCreateResult.success(result.intent());
+        }
+        return BookingIntentCreateResult.error(result.errorCode(), result.errorMessage());
+    }
+
+    @Override
     public Optional<BookingIntentState> getIntent(String intentId) {
         return bookingIntentService.getIntent(intentId);
+    }
+
+    @Override
+    public Optional<BookingIntentState> findPendingApplicationSelectionIntent(
+            String taskId, String applicationId, Instant now) {
+        return bookingIntentService.findPendingApplicationSelectionIntent(taskId, applicationId, now);
+    }
+
+    @Override
+    public int expirePendingApplicationSelectionForTask(String taskId, Instant now) {
+        return bookingIntentService.expirePendingApplicationSelectionForTask(taskId, now);
+    }
+
+    @Override
+    public void markIntentConfirmed(String intentId, String bookingId, Instant confirmedAt) {
+        bookingIntentService.markIntentConfirmed(intentId, bookingId, confirmedAt);
     }
 }
