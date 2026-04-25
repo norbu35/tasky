@@ -1,7 +1,26 @@
-import { semanticTokens } from '../semantic';
+import {
+  animationPresetTokens,
+  colorOpacityTokens,
+  contentRuleTokens,
+  densityTokens,
+  elevationTokens,
+  iconSizeTokens,
+  interactionTokens,
+  overlayTokens,
+  typographyVariantTokens,
+} from '../core/additions';
+import { semanticTokens } from '../core/semantic';
 
 const px = (value: number) => `${value}px`;
 const em = (value: number) => `${value}em`;
+const ms = (value: number) => `${value}ms`;
+const toCssShadow = (shadow: {
+  readonly color: string;
+  readonly offset: { readonly width: number; readonly height: number };
+  readonly opacity: number;
+  readonly radius: number;
+}) =>
+  `${px(shadow.offset.width)} ${px(shadow.offset.height)} ${px(shadow.radius)} rgba(0, 0, 0, ${shadow.opacity})`;
 
 const webSpacing = {
   xs: px(semanticTokens.spacing.xs),
@@ -50,6 +69,127 @@ const webTypography = {
   minBodySize: px(semanticTokens.typography.minBodySize),
 } as const;
 
+const webInteraction = {
+  pressed: {
+    opacity: interactionTokens.pressed.opacity,
+    scale: interactionTokens.pressed.scale,
+  },
+  focused: {
+    ringWidth: px(interactionTokens.focused.ringWidth),
+    ringColor: interactionTokens.focused.ringColor.hsl,
+    ringOffset: px(interactionTokens.focused.ringOffset),
+  },
+  disabled: {
+    opacity: interactionTokens.disabled.opacity,
+    textColor: interactionTokens.disabled.textColor.hsl,
+    backgroundColor: interactionTokens.disabled.backgroundColor.hsl,
+  },
+  hover: {
+    opacity: interactionTokens.hover.opacity,
+  },
+} as const;
+
+const webIconSizes = {
+  xs: px(iconSizeTokens.xs),
+  sm: px(iconSizeTokens.sm),
+  md: px(iconSizeTokens.md),
+  lg: px(iconSizeTokens.lg),
+  xl: px(iconSizeTokens.xl),
+  semantic: {
+    navigation: px(iconSizeTokens.semantic.navigation),
+    tabBar: px(iconSizeTokens.semantic.tabBar),
+    tabBarActive: px(iconSizeTokens.semantic.tabBarActive),
+    avatarBadge: px(iconSizeTokens.semantic.avatarBadge),
+    inputIcon: px(iconSizeTokens.semantic.inputIcon),
+    fab: px(iconSizeTokens.semantic.fab),
+    status: px(iconSizeTokens.semantic.status),
+  },
+  touchTargetMin: px(iconSizeTokens.touchTargetMin),
+} as const;
+
+const webTypographyVariants = Object.fromEntries(
+  Object.entries(typographyVariantTokens).map(([name, variant]) => [
+    name,
+    {
+      fontFamily: variant.fontFamily.web,
+      fontSize: px(variant.fontSize),
+      fontWeight: variant.fontWeight,
+      lineHeight: `${variant.lineHeight}`,
+      letterSpacing: em(variant.letterSpacing),
+    },
+  ]),
+) as {
+  readonly [Key in keyof typeof typographyVariantTokens]: {
+    readonly fontFamily: (typeof typographyVariantTokens)[Key]['fontFamily']['web'];
+    readonly fontSize: string;
+    readonly fontWeight: (typeof typographyVariantTokens)[Key]['fontWeight'];
+    readonly lineHeight: string;
+    readonly letterSpacing: string;
+  };
+};
+
+const webAnimationPresets = Object.fromEntries(
+  Object.entries(animationPresetTokens).map(([name, preset]) => [
+    name,
+    {
+      duration: ms(preset.duration),
+      easing: preset.easing,
+      ...('loop' in preset ? { loop: preset.loop } : {}),
+    },
+  ]),
+) as {
+  readonly [Key in keyof typeof animationPresetTokens]: {
+    readonly duration: string;
+    readonly easing: (typeof animationPresetTokens)[Key]['easing'];
+    readonly loop?: true;
+  };
+};
+
+const webDensity = {
+  compact: {
+    multiplier: densityTokens.compact.multiplier,
+    spacing: {
+      xs: px(densityTokens.compact.spacing.xs),
+      sm: px(densityTokens.compact.spacing.sm),
+      md: px(densityTokens.compact.spacing.md),
+      lg: px(densityTokens.compact.spacing.lg),
+      xl: px(densityTokens.compact.spacing.xl),
+    },
+  },
+  default: {
+    multiplier: densityTokens.default.multiplier,
+    spacing: webSpacing,
+  },
+  comfortable: {
+    multiplier: densityTokens.comfortable.multiplier,
+    spacing: {
+      xs: px(densityTokens.comfortable.spacing.xs),
+      sm: px(densityTokens.comfortable.spacing.sm),
+      md: px(densityTokens.comfortable.spacing.md),
+      lg: px(densityTokens.comfortable.spacing.lg),
+      xl: px(densityTokens.comfortable.spacing.xl),
+    },
+  },
+} as const;
+
+const webElevation = {
+  base: elevationTokens.base,
+  sticky: elevationTokens.sticky,
+  dropdown: elevationTokens.dropdown,
+  sheet: {
+    zIndex: elevationTokens.sheet.zIndex,
+    shadow: toCssShadow(elevationTokens.sheet.shadow),
+    scrim: elevationTokens.sheet.scrim,
+  },
+  modal: {
+    zIndex: elevationTokens.modal.zIndex,
+    shadow: toCssShadow(elevationTokens.modal.shadow),
+    scrim: elevationTokens.modal.scrim,
+  },
+  toast: elevationTokens.toast,
+  system: elevationTokens.system,
+} as const;
+
 const cssVariables = {
   '--color-background': semanticTokens.colors.background.hsl,
   '--color-foreground': semanticTokens.colors.foreground.hsl,
@@ -95,6 +235,22 @@ const cssVariables = {
   '--font-family-sans': webTypography.fontFamily.sans,
   '--font-family-display': webTypography.fontFamily.display,
   '--font-size-body': webTypography.fontSize.body,
+  '--interaction-pressed-opacity': `${interactionTokens.pressed.opacity}`,
+  '--interaction-pressed-scale': `${interactionTokens.pressed.scale}`,
+  '--interaction-focused-ring-width': px(interactionTokens.focused.ringWidth),
+  '--interaction-focused-ring-offset': px(interactionTokens.focused.ringOffset),
+  '--interaction-disabled-opacity': `${interactionTokens.disabled.opacity}`,
+  '--interaction-hover-opacity': `${interactionTokens.hover.opacity}`,
+  '--overlay-scrim-modal': overlayTokens.scrim.modal,
+  '--overlay-scrim-sheet': overlayTokens.scrim.sheet,
+  '--overlay-scrim-toast-backdrop': overlayTokens.scrim.toastBackdrop,
+  '--icon-size-md': webIconSizes.md,
+  '--z-modal': `${elevationTokens.modal.zIndex}`,
+  '--animation-sheet-open-duration': webAnimationPresets.sheetOpen.duration,
+  '--animation-sheet-open-easing': webAnimationPresets.sheetOpen.easing,
+  '--color-primary-10': colorOpacityTokens.primary[10],
+  '--typography-page-heading-letter-spacing': webTypographyVariants.pageHeading.letterSpacing,
+  '--content-mongolian-min-body-size': px(contentRuleTokens.mongolianCyrillic.minBodySize),
 } as const;
 
 export const webTokens = {
@@ -102,6 +258,15 @@ export const webTokens = {
   spacing: webSpacing,
   radius: webRadius,
   typography: webTypography,
+  interaction: webInteraction,
+  overlays: overlayTokens,
+  iconSizes: webIconSizes,
+  elevation: webElevation,
+  typographyVariants: webTypographyVariants,
+  density: webDensity,
+  animationPresets: webAnimationPresets,
+  colorOpacity: colorOpacityTokens,
+  contentRules: contentRuleTokens,
   cssVariables,
 } as const;
 

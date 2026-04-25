@@ -6,7 +6,7 @@ import { Text, View } from 'react-native';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
-const { colors } = mobileTheme;
+const { colors, iconSizes } = mobileTheme;
 
 type VerificationStatus = 'verified' | 'pending' | 'unverified';
 type BadgeSize = 'sm' | 'md';
@@ -19,8 +19,8 @@ interface VerifiedBadgeProps {
 }
 
 const iconSizeMap: Record<BadgeSize, number> = {
-  sm: 16,
-  md: 16,
+  sm: iconSizes.semantic.status,
+  md: iconSizes.semantic.status,
 };
 
 export function VerifiedBadge({ status, size = 'sm', testID, className }: VerifiedBadgeProps) {

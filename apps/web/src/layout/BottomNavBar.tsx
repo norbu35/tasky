@@ -5,17 +5,17 @@ import { NavLink } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 
 const CUSTOMER_TABS = [
-  { to: '/customer/dashboard', icon: Home, label: 'nav.home', fallback: 'Home' },
-  { to: '/customer/tasks', icon: Briefcase, label: 'nav.tasks', fallback: 'Tasks' },
-  { to: '/communication', icon: MessageSquare, label: 'nav.inbox', fallback: 'Inbox' },
-  { to: '/profile', icon: User, label: 'nav.profile', fallback: 'Profile' },
+  { to: '/customer/dashboard', icon: Home, label: 'nav.home' },
+  { to: '/customer/tasks', icon: Briefcase, label: 'nav.tasks' },
+  { to: '/communication', icon: MessageSquare, label: 'nav.inbox' },
+  { to: '/profile', icon: User, label: 'nav.profile' },
 ];
 
 const TASKER_TABS = [
-  { to: '/tasker/feed', icon: Search, label: 'nav.findWork', fallback: 'Find Work' },
-  { to: '/tasker/jobs', icon: Briefcase, label: 'nav.myJobs', fallback: 'My Jobs' },
-  { to: '/communication', icon: MessageSquare, label: 'nav.inbox', fallback: 'Inbox' },
-  { to: '/profile', icon: User, label: 'nav.profile', fallback: 'Profile' },
+  { to: '/tasker/feed', icon: Search, label: 'nav.findWork' },
+  { to: '/tasker/jobs', icon: Briefcase, label: 'nav.myJobs' },
+  { to: '/communication', icon: MessageSquare, label: 'nav.inbox' },
+  { to: '/profile', icon: User, label: 'nav.profile' },
 ];
 
 export function BottomNavBar() {
@@ -28,11 +28,11 @@ export function BottomNavBar() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/60 backdrop-blur-lg md:hidden shadow-[var(--shadow-nav)]"
+      className="fixed bottom-0 left-0 right-0 z-sticky border-t border-border bg-background md:hidden shadow-nav"
       aria-label={t('nav.bottomNavigation')}
     >
       <div className="mx-auto flex w-full max-w-lg items-center justify-around px-2 py-2">
-        {tabs.map(({ to, icon: Icon, label, fallback }) => (
+        {tabs.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
@@ -45,11 +45,11 @@ export function BottomNavBar() {
           >
             {({ isActive }) => (
               <>
-                <Icon className="w-5 h-5" />
+                <Icon className="w-icon-sm h-icon-sm" />
                 <span
-                  className={`text-[11px] tracking-wide truncate font-sans ${isActive ? 'font-semibold' : 'font-medium'}`}
+                  className={`text-nav tracking-normal truncate font-sans ${isActive ? 'font-semibold' : 'font-medium'}`}
                 >
-                  {t(label, fallback)}
+                  {t(label)}
                 </span>
               </>
             )}

@@ -1,0 +1,351 @@
+:root {
+  /* ===== Primitives (--tenger-*) ===== */
+  --tenger-canvas: 40 22% 96%;
+  --tenger-ink: 212 43% 23%;
+  --tenger-ink-deep: 210 55% 14%;
+  --tenger-surface: 0 0% 100%;
+  --tenger-sun: 40 72% 31%;
+  --tenger-sun-light: 38 52% 50%;
+  --tenger-sun-wash: 42 97% 71%;
+  --tenger-sky: 200 34% 58%;
+  --tenger-sky-soft: 205 51% 80%;
+  --tenger-line: 210 16% 80%;
+  --tenger-field: 210 13% 88%;
+  --tenger-subtle: 36 20% 94%;
+  --tenger-muted-text: 210 13% 39%;
+  --tenger-text-secondary: 208 13% 40%;
+  --tenger-text-tertiary: 208 12% 55%;
+  --tenger-verified: 160 34% 42%;
+  --tenger-trust: 212 49% 42%;
+  --tenger-trust-muted: 212 27% 77%;
+  --tenger-danger: 0 84% 60%;
+  --tenger-nav-inactive: 207 12% 48%;
+  --tenger-chip-inactive: 210 12% 86%;
+  --tenger-status-open: 35 15% 90%;
+  --tenger-status-open-fg: 210 12% 45%;
+  --tenger-status-assigned: 212 43% 23%;
+  --tenger-status-assigned-fg: 0 0% 100%;
+  --tenger-status-completed: 160 34% 42%;
+  --tenger-status-completed-fg: 0 0% 100%;
+  --tenger-status-cancelled: 36 20% 94%;
+  --tenger-status-cancelled-fg: 210 13% 39%;
+
+  /* ===== Semantic aliases (--color-*) ===== */
+  --color-background: var(--tenger-canvas);
+  --color-foreground: var(--tenger-ink);
+  --color-foreground-deep: var(--tenger-ink-deep);
+  --color-card: var(--tenger-surface);
+  --color-card-fg: var(--tenger-ink);
+  --color-popover: var(--tenger-surface);
+  --color-popover-fg: var(--tenger-ink);
+  --color-primary: var(--tenger-ink);
+  --color-primary-fg: var(--tenger-canvas);
+  --color-primary-deep: var(--tenger-ink-deep);
+  --color-secondary: var(--tenger-sun);
+  --color-secondary-fg: var(--tenger-surface);
+  --color-muted: var(--tenger-subtle);
+  --color-muted-fg: var(--tenger-muted-text);
+  --color-accent: var(--tenger-sky);
+  --color-accent-fg: var(--tenger-surface);
+  --color-border: var(--tenger-line);
+  --color-input: var(--tenger-field);
+  --color-ring: var(--tenger-ink);
+  --color-destructive: var(--tenger-danger);
+  --color-destructive-fg: var(--tenger-surface);
+  --color-trust: var(--tenger-trust);
+  --color-trust-fg: var(--tenger-surface);
+  --color-trust-muted: var(--tenger-trust-muted);
+  --color-verified: var(--tenger-verified);
+  --color-verified-fg: var(--tenger-surface);
+  --color-status-open: var(--tenger-status-open);
+  --color-status-open-fg: var(--tenger-status-open-fg);
+  --color-status-assigned: var(--tenger-status-assigned);
+  --color-status-assigned-fg: var(--tenger-status-assigned-fg);
+  --color-status-completed: var(--tenger-status-completed);
+  --color-status-completed-fg: var(--tenger-status-completed-fg);
+  --color-status-cancelled: var(--tenger-status-cancelled);
+  --color-status-cancelled-fg: var(--tenger-status-cancelled-fg);
+  --color-chip-inactive: var(--tenger-chip-inactive);
+  --color-text-secondary: var(--tenger-text-secondary);
+  --color-text-tertiary: var(--tenger-text-tertiary);
+  --color-nav-inactive: var(--tenger-nav-inactive);
+  --color-sun-light: var(--tenger-sun-light);
+  --color-sun-wash: var(--tenger-sun-wash);
+  --color-sky-soft: var(--tenger-sky-soft);
+  --color-subtle-violet: var(--tenger-subtle);
+
+  /* ===== Radius ===== */
+  --radius: 12px;
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* ===== Typography ===== */
+  --tenger-font-display: 'Manrope', Roboto, system-ui, -apple-system, sans-serif;
+  --tenger-font-sans: 'Plus Jakarta Sans', Roboto, system-ui, -apple-system, sans-serif;
+  --tenger-letter-spacing-caps: 0.075em;
+  --font-family-sans: var(--tenger-font-sans);
+  --font-family-display: var(--tenger-font-display);
+  --font-size-display-xl: 48px;
+  --font-size-display-lg: 36px;
+  --font-size-heading-1: 28px;
+  --font-size-heading-2: 22px;
+  --font-size-heading-3: 18px;
+  --font-size-body-lg: 18px;
+  --font-size-body: 16px;
+  --font-size-body-sm: 14px;
+  --font-size-label: 14px;
+  --font-size-label-ui: 13px;
+  --font-size-caption: 12px;
+  --font-size-overline: 11px;
+  --font-size-nav: 11px;
+  --font-size-micro: 10px;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --line-height-tight: 1.3;
+  --line-height-normal: 1.6;
+  --line-height-loose: 1.8;
+  --letter-spacing-tight: 0em;
+  --letter-spacing-normal: 0em;
+  --letter-spacing-caps: 0.075em;
+
+  /* ===== Composed Typography Variants ===== */
+  --typography-hero-title-font-size: 30px;
+  --typography-hero-title-font-weight: 700;
+  --typography-hero-title-line-height: 1.3;
+  --typography-hero-title-letter-spacing: 0em;
+  --typography-page-heading-font-size: 24px;
+  --typography-page-heading-font-weight: 700;
+  --typography-page-heading-line-height: 1.3;
+  --typography-page-heading-letter-spacing: 0em;
+  --typography-section-heading-font-size: 20px;
+  --typography-section-heading-font-weight: 600;
+  --typography-section-heading-line-height: 1.3;
+  --typography-section-heading-letter-spacing: 0em;
+  --typography-card-title-font-size: 16px;
+  --typography-card-title-font-weight: 600;
+  --typography-card-title-line-height: 1.3;
+  --typography-card-title-letter-spacing: 0em;
+  --typography-body-default-font-size: 16px;
+  --typography-body-default-font-weight: 400;
+  --typography-body-default-line-height: 1.6;
+  --typography-body-default-letter-spacing: 0em;
+  --typography-body-emphasis-font-size: 16px;
+  --typography-body-emphasis-font-weight: 600;
+  --typography-body-emphasis-line-height: 1.6;
+  --typography-body-emphasis-letter-spacing: 0em;
+  --typography-label-font-size: 14px;
+  --typography-label-font-weight: 500;
+  --typography-label-line-height: 1.3;
+  --typography-label-letter-spacing: 0em;
+  --typography-caption-font-size: 14px;
+  --typography-caption-font-weight: 400;
+  --typography-caption-line-height: 1.4;
+  --typography-caption-letter-spacing: 0em;
+  --typography-button-label-font-size: 16px;
+  --typography-button-label-font-weight: 600;
+  --typography-button-label-line-height: 1;
+  --typography-button-label-letter-spacing: 0em;
+  --typography-nav-label-font-size: 11px;
+  --typography-nav-label-font-weight: 500;
+  --typography-nav-label-line-height: 1;
+  --typography-nav-label-letter-spacing: 0em;
+  --typography-price-display-font-size: 20px;
+  --typography-price-display-font-weight: 700;
+  --typography-price-display-line-height: 1;
+  --typography-price-display-letter-spacing: 0em;
+  --typography-badge-text-font-size: 11px;
+  --typography-badge-text-font-weight: 600;
+  --typography-badge-text-line-height: 1;
+  --typography-badge-text-letter-spacing: 0em;
+
+  /* ===== Motion ===== */
+  --tenger-duration-instant: 80ms;
+  --tenger-duration-fast: 150ms;
+  --tenger-duration-normal: 250ms;
+  --tenger-duration-slow: 400ms;
+  --tenger-duration-skeleton: 1500ms;
+  --tenger-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --tenger-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --tenger-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --tenger-easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ===== Interaction States ===== */
+  --interaction-pressed-opacity: 0.85;
+  --interaction-pressed-scale: 0.98;
+  --interaction-focused-ring-width: 2px;
+  --interaction-focused-ring-color: var(--color-primary);
+  --interaction-focused-ring-offset: 2px;
+  --interaction-disabled-opacity: 0.4;
+  --interaction-disabled-text-color: var(--color-text-tertiary);
+  --interaction-disabled-background-color: var(--color-muted);
+  --interaction-hover-opacity: 0.92;
+
+  /* ===== Overlays ===== */
+  --overlay-scrim-modal: rgba(16, 38, 56, 0.5);
+  --overlay-scrim-sheet: rgba(16, 38, 56, 0.35);
+  --overlay-scrim-toast-backdrop: rgba(16, 38, 56, 0.2);
+  --overlay-image-text-readability: linear-gradient(transparent 0%, rgba(16, 38, 56, 0.7) 100%);
+  --overlay-image-subtle: linear-gradient(transparent 0%, rgba(16, 38, 56, 0.4) 100%);
+
+  /* ===== Icon Sizes ===== */
+  --icon-size-xs: 16px;
+  --icon-size-sm: 20px;
+  --icon-size-md: 24px;
+  --icon-size-lg: 32px;
+  --icon-size-xl: 48px;
+  --icon-size-navigation: 24px;
+  --icon-size-tab-bar: 24px;
+  --icon-size-avatar-badge: 16px;
+  --icon-size-input: 20px;
+  --icon-size-fab: 24px;
+  --icon-size-status: 16px;
+  --icon-touch-target-min: 44px;
+
+  /* ===== Elevation Layers ===== */
+  --z-base: 0;
+  --z-sticky: 10;
+  --z-dropdown: 20;
+  --z-sheet: 30;
+  --z-modal: 40;
+  --z-toast: 50;
+  --z-system: 60;
+
+  /* ===== Shadows ===== */
+  --tenger-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --tenger-shadow-elevated: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --tenger-shadow-fab: 0 4px 6px -4px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --tenger-shadow-nav: 0 -4px 24px rgba(26, 28, 26, 0.04);
+  --tenger-shadow-deep: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  /* ===== Animation Presets ===== */
+  --animation-card-expand-duration: 250ms;
+  --animation-card-expand-easing: var(--tenger-easing-standard);
+  --animation-sheet-open-duration: 400ms;
+  --animation-sheet-open-easing: var(--tenger-easing-decelerate);
+  --animation-sheet-close-duration: 250ms;
+  --animation-sheet-close-easing: var(--tenger-easing-accelerate);
+  --animation-page-enter-duration: 250ms;
+  --animation-page-enter-easing: var(--tenger-easing-decelerate);
+  --animation-page-exit-duration: 250ms;
+  --animation-page-exit-easing: var(--tenger-easing-accelerate);
+  --animation-fab-appear-duration: 150ms;
+  --animation-fab-appear-easing: var(--tenger-easing-spring);
+  --animation-fab-disappear-duration: 150ms;
+  --animation-fab-disappear-easing: var(--tenger-easing-accelerate);
+  --animation-success-checkmark-duration: 400ms;
+  --animation-success-checkmark-easing: var(--tenger-easing-spring);
+  --animation-skeleton-pulse-duration: 1500ms;
+  --animation-skeleton-pulse-easing: var(--tenger-easing-standard);
+  --animation-badge-pop-duration: 150ms;
+  --animation-badge-pop-easing: var(--tenger-easing-spring);
+  --animation-toast-slide-in-duration: 250ms;
+  --animation-toast-slide-in-easing: var(--tenger-easing-decelerate);
+  --animation-toast-slide-out-duration: 150ms;
+  --animation-toast-slide-out-easing: var(--tenger-easing-accelerate);
+  --animation-pull-to-refresh-duration: 250ms;
+  --animation-pull-to-refresh-easing: var(--tenger-easing-decelerate);
+
+  /* ===== Opacity Color Steps ===== */
+  --color-primary-5: rgba(27, 58, 92, 0.05);
+  --color-primary-10: rgba(27, 58, 92, 0.1);
+  --color-primary-15: rgba(27, 58, 92, 0.15);
+  --color-primary-20: rgba(27, 58, 92, 0.2);
+  --color-primary-30: rgba(27, 58, 92, 0.3);
+  --color-primary-40: rgba(27, 58, 92, 0.4);
+  --color-primary-50: rgba(27, 58, 92, 0.5);
+  --color-primary-60: rgba(27, 58, 92, 0.6);
+  --color-primary-80: rgba(27, 58, 92, 0.8);
+  --color-secondary-5: rgba(196, 154, 60, 0.05);
+  --color-secondary-10: rgba(196, 154, 60, 0.1);
+  --color-secondary-15: rgba(196, 154, 60, 0.15);
+  --color-secondary-20: rgba(196, 154, 60, 0.2);
+  --color-accent-5: rgba(107, 163, 190, 0.05);
+  --color-accent-10: rgba(107, 163, 190, 0.1);
+  --color-accent-15: rgba(107, 163, 190, 0.15);
+  --color-accent-20: rgba(107, 163, 190, 0.2);
+  --color-trust-5: rgba(53, 104, 161, 0.05);
+  --color-trust-10: rgba(53, 104, 161, 0.1);
+  --color-trust-15: rgba(53, 104, 161, 0.15);
+  --color-trust-20: rgba(53, 104, 161, 0.2);
+  --color-verified-5: rgba(70, 145, 120, 0.05);
+  --color-verified-10: rgba(70, 145, 120, 0.1);
+  --color-verified-15: rgba(70, 145, 120, 0.15);
+  --color-verified-20: rgba(70, 145, 120, 0.2);
+  --color-danger-5: rgba(239, 68, 68, 0.05);
+  --color-danger-10: rgba(239, 68, 68, 0.1);
+  --color-danger-15: rgba(239, 68, 68, 0.15);
+
+  /* ===== Density ===== */
+  --density-compact-multiplier: 0.75;
+  --density-compact-spacing-xs: 3px;
+  --density-compact-spacing-sm: 6px;
+  --density-compact-spacing-md: 9px;
+  --density-compact-spacing-lg: 12px;
+  --density-compact-spacing-xl: 18px;
+  --density-default-multiplier: 1;
+  --density-comfortable-multiplier: 1.5;
+  --density-comfortable-spacing-xs: 6px;
+  --density-comfortable-spacing-sm: 12px;
+  --density-comfortable-spacing-md: 18px;
+  --density-comfortable-spacing-lg: 24px;
+  --density-comfortable-spacing-xl: 36px;
+
+  /* ===== Content Rules ===== */
+  --content-mongolian-expansion-factor: 1.2;
+  --content-mongolian-min-body-size: 16px;
+  --content-mongolian-min-secondary-size: 14px;
+  --content-mongolian-min-nav-size: 11px;
+  --content-mongolian-line-height-body: 1.6;
+  --content-card-title-max-length: 40;
+  --content-button-label-max-length: 20;
+  --content-card-description-lines: 2;
+}
+
+.dark {
+  --color-background: 212 35% 6%;
+  --color-foreground: 40 30% 88%;
+  --color-card: 212 28% 10%;
+  --color-card-fg: 40 30% 88%;
+  --color-popover: 212 28% 10%;
+  --color-popover-fg: 40 30% 88%;
+  --color-primary: 200 35% 58%;
+  --color-primary-fg: 212 35% 6%;
+  --color-primary-deep: 211 35% 40%;
+  --color-secondary: 42 48% 55%;
+  --color-secondary-fg: 0 0% 100%;
+  --color-muted: 212 15% 13%;
+  --color-muted-fg: 210 12% 55%;
+  --color-accent: 200 32% 55%;
+  --color-accent-fg: 0 0% 100%;
+  --color-border: 212 12% 18%;
+  --color-input: 212 12% 18%;
+  --color-ring: 200 35% 58%;
+  --color-destructive: 0 72% 55%;
+  --color-destructive-fg: 0 0% 100%;
+  --color-trust: 211 45% 58%;
+  --color-trust-fg: 0 0% 100%;
+  --color-trust-muted: 211 18% 25%;
+  --color-verified: 160 32% 55%;
+  --color-verified-fg: 0 0% 100%;
+  --color-status-open: 212 12% 18%;
+  --color-status-open-fg: 210 15% 65%;
+  --color-status-assigned: 200 35% 58%;
+  --color-status-assigned-fg: 212 35% 6%;
+  --color-status-completed: 160 32% 55%;
+  --color-status-completed-fg: 0 0% 100%;
+  --color-status-cancelled: 212 15% 13%;
+  --color-status-cancelled-fg: 210 12% 55%;
+  --color-chip-inactive: 211 10% 20%;
+  --color-text-secondary: 210 12% 62%;
+  --color-text-tertiary: 210 10% 50%;
+  --color-nav-inactive: 210 10% 50%;
+  --color-subtle-violet: 212 15% 13%;
+  --color-sun-light: 42 48% 55%;
+  --color-sun-wash: 42 60% 65%;
+  --color-sky-soft: 205 30% 35%;
+}

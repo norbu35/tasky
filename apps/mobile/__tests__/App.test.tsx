@@ -9,7 +9,7 @@ const queryClient = new QueryClient({
 const render = (ui: React.ReactElement, options?: any) =>
   rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
 
-import { designTokens } from '../../../packages/design-tokens/tokens';
+import { designTokens } from '@tasky/design-tokens';
 import { resetTestI18n } from './test-utils/mockI18n';
 import AuthScreen from '../src/app/(auth)/index';
 import IndexScreen from '../src/app/index';

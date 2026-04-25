@@ -16,17 +16,17 @@ import { useAppContext } from '../context/AppContext';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
 const CUSTOMER_NAV = [
-  { to: '/customer/dashboard', label: 'nav.home', fallback: 'Home', icon: LayoutDashboard },
-  { to: '/customer/tasks', label: 'nav.tasks', fallback: 'Tasks', icon: ClipboardList },
-  { to: '/communication', label: 'nav.inbox', fallback: 'Inbox', icon: MessageSquare },
-  { to: '/profile', label: 'nav.profile', fallback: 'Profile', icon: User },
+  { to: '/customer/dashboard', label: 'nav.home', icon: LayoutDashboard },
+  { to: '/customer/tasks', label: 'nav.tasks', icon: ClipboardList },
+  { to: '/communication', label: 'nav.inbox', icon: MessageSquare },
+  { to: '/profile', label: 'nav.profile', icon: User },
 ];
 
 const TASKER_NAV = [
-  { to: '/tasker/feed', label: 'nav.findWork', fallback: 'Find Work', icon: Search },
-  { to: '/tasker/jobs', label: 'nav.myJobs', fallback: 'My Jobs', icon: Briefcase },
-  { to: '/communication', label: 'nav.inbox', fallback: 'Inbox', icon: MessageSquare },
-  { to: '/profile', label: 'nav.profile', fallback: 'Profile', icon: User },
+  { to: '/tasker/feed', label: 'nav.findWork', icon: Search },
+  { to: '/tasker/jobs', label: 'nav.myJobs', icon: Briefcase },
+  { to: '/communication', label: 'nav.inbox', icon: MessageSquare },
+  { to: '/profile', label: 'nav.profile', icon: User },
 ];
 
 export function DesktopSidebar() {
@@ -38,16 +38,16 @@ export function DesktopSidebar() {
     profile?.role === 'CUSTOMER' ? CUSTOMER_NAV : profile?.role === 'TASKER' ? TASKER_NAV : null;
 
   return (
-    <aside className="hidden md:flex md:flex-col md:w-56 md:shrink-0 border-r border-border bg-surface min-h-screen sticky top-0 h-screen">
+    <aside className="hidden md:flex md:flex-col md:w-56 md:shrink-0 border-r border-border bg-card min-h-screen sticky top-0 h-screen">
       {/* Logo */}
       <div
         className="flex items-center gap-2.5 px-4 h-16 cursor-pointer group border-b border-border"
         onClick={() => navigate('/')}
       >
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-deep to-primary flex items-center justify-center text-primary-foreground shadow-sm group-hover:shadow-md transition-all">
-          <Shield className="w-4 h-4" strokeWidth={3} />
+        <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-card group-hover:shadow-elevated transition-all">
+          <Shield className="w-icon-xs h-icon-xs" strokeWidth={3} />
         </div>
-        <span className="text-xl font-extrabold font-display tracking-tight text-foreground">
+        <span className="text-xl font-extrabold font-display tracking-normal text-foreground">
           Tasky
         </span>
       </div>
@@ -55,7 +55,7 @@ export function DesktopSidebar() {
       {/* Nav links */}
       {navLinks && (
         <nav className="flex flex-col gap-1 p-3 flex-1" aria-label="Main navigation">
-          {navLinks.map(({ to, label, fallback, icon: Icon }) => (
+          {navLinks.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
@@ -68,8 +68,8 @@ export function DesktopSidebar() {
                 ].join(' ')
               }
             >
-              <Icon className="h-4 w-4 shrink-0" />
-              {t(label, fallback)}
+              <Icon className="h-icon-xs w-icon-xs shrink-0" />
+              {t(label)}
             </NavLink>
           ))}
         </nav>

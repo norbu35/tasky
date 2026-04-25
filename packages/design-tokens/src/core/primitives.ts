@@ -103,7 +103,7 @@ const typography = {
     loose: 1.8,
   },
   letterSpacing: {
-    tight: -0.01,
+    tight: 0,
     normal: 0,
   },
   minBodySize: 16,

@@ -1,6 +1,6 @@
 import { Easing, withSpring } from 'react-native-reanimated';
 
-import { motionTokens } from '@tasky/design-tokens';
+import { motionTokens, nativeTokens } from '@tasky/design-tokens';
 
 const motionCurvePattern = /^cubic-bezier\(([^)]+)\)$/;
 
@@ -24,22 +24,33 @@ export const easings = {
   spring: toEasing(motionTokens.easing.spring),
 } as const;
 
+const toAnimationPreset = (
+  preset: (typeof nativeTokens.animationPresets)[keyof typeof nativeTokens.animationPresets],
+) => ({
+  duration: preset.duration,
+  easing: toEasing(preset.easing),
+});
+
 export const animationPresets = {
+  cardExpand: toAnimationPreset(nativeTokens.animationPresets.cardExpand),
+  pageEnter: toAnimationPreset(nativeTokens.animationPresets.pageEnter),
+  pageExit: toAnimationPreset(nativeTokens.animationPresets.pageExit),
+  fabAppear: toAnimationPreset(nativeTokens.animationPresets.fabAppear),
+  fabDisappear: toAnimationPreset(nativeTokens.animationPresets.fabDisappear),
+  badgePop: toAnimationPreset(nativeTokens.animationPresets.badgePop),
+  toastSlideIn: toAnimationPreset(nativeTokens.animationPresets.toastSlideIn),
+  toastSlideOut: toAnimationPreset(nativeTokens.animationPresets.toastSlideOut),
+  pullToRefresh: toAnimationPreset(nativeTokens.animationPresets.pullToRefresh),
   press: { duration: durations.instant, easing: easings.standard },
-  enter: { duration: durations.normal, easing: easings.decelerate },
-  sheetOpen: { duration: durations.slow, easing: easings.decelerate },
-  sheetClose: { duration: durations.normal, easing: easings.accelerate },
+  enter: toAnimationPreset(nativeTokens.animationPresets.pageEnter),
+  sheetOpen: toAnimationPreset(nativeTokens.animationPresets.sheetOpen),
+  sheetClose: toAnimationPreset(nativeTokens.animationPresets.sheetClose),
   fade: { duration: durations.fast, easing: easings.standard },
-  skeleton: { duration: durations.skeleton, easing: easings.standard },
-  celebration: { duration: durations.slow, easing: easings.spring },
+  skeleton: toAnimationPreset(nativeTokens.animationPresets.skeletonPulse),
+  celebration: toAnimationPreset(nativeTokens.animationPresets.successCheckmark),
 } as const;
 
-// Interactive state values from design-system-additions.yaml
-export const interactiveStates = {
-  pressed: { opacity: 0.85, scale: 0.98 },
-  disabled: { opacity: 0.4 },
-  hover: { opacity: 0.92 },
-} as const;
+export const interactiveStates = nativeTokens.interaction;
 
 export const springs = motionTokens.spring;
 

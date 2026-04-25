@@ -1,4 +1,4 @@
-import { motionTokens, nativeTokens } from '@tasky/design-tokens';
+import { nativeTokens } from '@tasky/design-tokens';
 
 export const mobileTheme = {
   colors: {
@@ -7,8 +7,17 @@ export const mobileTheme = {
   radius: nativeTokens.radius,
   spacing: nativeTokens.spacing,
   typography: nativeTokens.typography.scale,
+  typographyVariants: nativeTokens.typographyVariants,
+  interaction: nativeTokens.interaction,
+  overlays: nativeTokens.overlays,
+  iconSizes: nativeTokens.iconSizes,
+  elevation: nativeTokens.elevation,
+  density: nativeTokens.density,
+  animationPresets: nativeTokens.animationPresets,
+  colorOpacity: nativeTokens.colorOpacity,
+  contentRules: nativeTokens.contentRules,
   shadows: nativeTokens.shadows,
-  motion: motionTokens,
+  motion: nativeTokens.motion,
 } as const;
 
 export type MobileTheme = typeof mobileTheme;

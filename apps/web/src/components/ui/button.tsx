@@ -5,15 +5,14 @@ import * as React from 'react';
 import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-bold transition-all duration-200 active:opacity-85 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-40 disabled:shadow-none ring-offset-background',
+  'inline-flex min-h-touch-target-min items-center justify-center whitespace-nowrap rounded-lg text-button font-semibold transition-all duration-sheet-close ease-sheet-close active:opacity-pressed active:scale-pressed focus-visible:outline-none focus-visible:ring-[length:var(--interaction-focused-ring-width)] focus-visible:ring-ring focus-visible:ring-offset-[length:var(--interaction-focused-ring-offset)] disabled:pointer-events-none disabled:opacity-disabled disabled:shadow-none ring-offset-background',
   {
     variants: {
       variant: {
-        default:
-          'bg-primary text-primary-foreground shadow-[var(--shadow-fab)] hover:bg-primary/90',
-        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        default: 'bg-primary text-primary-foreground shadow-fab hover:opacity-hover',
+        destructive: 'bg-destructive text-destructive-foreground hover:opacity-hover',
         outline: 'bg-transparent text-primary border-[1.5px] border-border hover:bg-muted',
-        secondary: 'bg-sun-light text-white hover:bg-sun-light/90',
+        secondary: 'bg-sun-light text-secondary-foreground hover:opacity-hover',
         ghost: 'bg-transparent text-primary hover:bg-muted',
       },
       size: {

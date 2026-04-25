@@ -15,29 +15,26 @@ import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
-const { colors } = mobileTheme;
+const { colors, iconSizes, interaction } = mobileTheme;
 
-const buttonVariants = cva(
-  'flex-row items-center justify-center rounded-md active:opacity-85 active:scale-[0.98]',
-  {
-    variants: {
-      variant: {
-        default: 'bg-primary',
-        secondary: 'bg-sun-light',
-        outline: 'bg-transparent border-[1.5px] border-border',
-        ghost: 'bg-transparent',
-        destructive: 'bg-danger',
-      },
-      size: {
-        default: 'px-lg py-sm min-h-[48px]',
-        sm: 'px-md min-h-[40px]',
-        lg: 'px-xl min-h-[56px]',
-        icon: 'w-[36px] h-[36px] p-0',
-      },
+const buttonVariants = cva('flex-row items-center justify-center rounded-md', {
+  variants: {
+    variant: {
+      default: 'bg-primary',
+      secondary: 'bg-sun-light',
+      outline: 'bg-transparent border-[1.5px] border-border',
+      ghost: 'bg-transparent',
+      destructive: 'bg-danger',
     },
-    defaultVariants: { variant: 'default', size: 'default' },
+    size: {
+      default: 'px-lg py-sm min-h-[48px]',
+      sm: 'px-md min-h-[40px]',
+      lg: 'px-xl min-h-[56px]',
+      icon: 'w-[36px] h-[36px] p-0',
+    },
   },
-);
+  defaultVariants: { variant: 'default', size: 'default' },
+});
 
 const textVariants = cva('text-center font-sans-bold', {
   variants: {
@@ -117,7 +114,16 @@ export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, Butto
     return (
       <Pressable
         ref={ref}
-        style={[variant === 'default' && elevations.card, style]}
+        style={({ pressed }) => [
+          variant === 'default' && elevations.card,
+          pressed &&
+            isInteractive && {
+              opacity: interaction.pressed.opacity,
+              transform: [{ scale: interaction.pressed.scale }],
+            },
+          !isInteractive && { opacity: interaction.disabled.opacity },
+          style,
+        ]}
         className={cn(buttonVariants({ variant, size }), !isInteractive && 'opacity-40', className)}
         disabled={!isInteractive}
         onPressIn={handlePressIn}
@@ -126,7 +132,7 @@ export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, Butto
       >
         <View className="flex-row items-center justify-center">
           {isLoading ? (
-            <ActivityIndicator color={textColor} />
+            <ActivityIndicator color={textColor} size={iconSizes.semantic.status} />
           ) : children ? (
             children
           ) : (

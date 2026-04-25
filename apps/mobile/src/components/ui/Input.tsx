@@ -22,11 +22,10 @@ export const Input = forwardRef<TextInput, Props>(function Input(
       ref={ref}
       editable={isEditable}
       placeholderTextColor={mobileTheme.colors.textTertiary}
-      style={style}
+      style={[!isEditable && { opacity: mobileTheme.interaction.disabled.opacity }, style]}
       className={cn(
         'h-12 rounded-sm border-[1.5px] border-border bg-background px-md py-sm text-body font-sans text-foreground',
         invalid && 'border-danger',
-        !isEditable && 'opacity-60',
         className,
       )}
       {...props}

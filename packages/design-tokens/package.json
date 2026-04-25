@@ -11,13 +11,12 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./primitives": "./src/primitives.ts",
-    "./semantic": "./src/semantic.ts",
+    "./primitives": "./src/core/primitives.ts",
+    "./semantic": "./src/core/semantic.ts",
     "./platform/native": "./src/platform/native.ts",
     "./platform/web": "./src/platform/web.ts",
-    "./motion": "./src/motion.ts",
-    "./tokens": "./tokens.ts",
-    "./tokens.css": "./tokens.css"
+    "./motion": "./src/core/motion.ts",
+    "./tokens.css": "./src/styles/tokens.css"
   },
   "scripts": {
     "clean": "rm -rf dist",
@@ -26,7 +25,7 @@
     "lint": "eslint \"src/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
-    "test": "tsc --noEmit"
+    "test": "node scripts/check-package-structure.mjs && tsc --noEmit"
   },
   "devDependencies": {
     "@tasky/tooling-config": "workspace:*",

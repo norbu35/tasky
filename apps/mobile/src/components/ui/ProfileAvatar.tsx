@@ -6,7 +6,7 @@ import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
-const { colors, radius } = mobileTheme;
+const { colors, iconSizes, radius } = mobileTheme;
 
 type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -42,7 +42,7 @@ export function ProfileAvatar({
         .slice(0, 2)
         .toUpperCase()
     : '?';
-  const badgeSize = Math.max(20, dim * 0.22);
+  const badgeSize = Math.max(iconSizes.semantic.avatarBadge, dim * 0.22);
   const borderRadius = size === 'xl' ? radius.full : radius.md;
 
   return (

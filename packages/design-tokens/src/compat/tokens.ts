@@ -1,6 +1,6 @@
-import { motionTokens } from './motion';
-import { nativeTokens } from './platform/native';
-import { semanticTokens } from './semantic';
+import { motionTokens } from '../core/motion';
+import { semanticTokens } from '../core/semantic';
+import { nativeTokens } from '../platform/native';
 
 export const designTokens = {
   colors: semanticTokens.colors,

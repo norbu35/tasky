@@ -13,11 +13,17 @@ Phase-specific UI behavior must follow `docs/PRD.md` for the active launch basel
 
 ## 2. Design Tokens
 
-- The governing design-token source for implementation is `packages/design-tokens`, structured as primitive values,
-  semantic aliases, and platform outputs.
-- Web consumes the token graph via Tailwind/theme variables (`packages/design-tokens/tokens.css` for CSS variables).
+- The canonical design system documentation lives in `docs/design/**`. The runtime token implementation lives in
+  `packages/design-tokens` and must stay derived from that design surface.
+- `packages/design-tokens` is code-only: `src/core/**` owns primitive, semantic, motion, and promoted system-addition definitions;
+  `src/platform/**` owns web/native outputs; `src/compat/**` owns legacy aggregate exports; `src/styles/tokens.css`
+  owns runtime CSS.
+- Web consumes the token graph via Tailwind/theme variables (`@tasky/design-tokens/tokens.css` for CSS variables).
 - Mobile consumes the token graph via NativeWind theme bindings and shared shell/primitive adapters.
 - Token contract: all parity components consume the canonical token graph from `packages/design-tokens` via platform outputs.
+- Active design docs describe the design-system contract in prose and machine-readable contracts. Static UI-kit
+  prototypes and handoff CSS must not be imported at runtime and should not remain as duplicate active implementation
+  snippets once their intent is promoted into `@tasky/design-tokens`.
 - During the NativeWind foundation refactor, the parity baseline table (§4) is reference-only and does not drive implementation sequencing.
 
 ## 3. Component Ownership by Platform

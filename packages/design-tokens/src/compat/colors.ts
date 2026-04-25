@@ -1,4 +1,4 @@
-import { semanticTokens } from './semantic';
+import { semanticTokens } from '../core/semantic';
 
 export const colors = {
   primary: {

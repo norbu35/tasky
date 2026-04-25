@@ -3,40 +3,54 @@ import plugin from 'tailwindcss/plugin';
 
 import { nativeTokens } from '@tasky/design-tokens';
 
-const scale = nativeTokens.typography.scale;
+const typographyVariants = nativeTokens.typographyVariants;
+
+const px = (value: number) => `${value}px`;
 
 export const screenTypographyPlugin = plugin(function ({ addUtilities }) {
   addUtilities({
     '.font-screen-greeting': {
-      fontSize: `${scale.caption}px`,
-      fontFamily: 'PlusJakartaSans_700Bold',
-      letterSpacing: '1px',
+      fontSize: px(typographyVariants.badgeText.fontSize),
+      fontFamily: typographyVariants.badgeText.fontFamily,
+      fontWeight: typographyVariants.badgeText.fontWeight,
+      lineHeight: px(typographyVariants.badgeText.lineHeight),
+      letterSpacing: px(typographyVariants.badgeText.letterSpacing),
       textTransform: 'uppercase',
     },
     '.font-screen-title': {
-      fontSize: `${scale.heroTitle + 2}px`,
-      fontFamily: 'Manrope_700Bold',
-      letterSpacing: '-0.5px',
+      fontSize: px(typographyVariants.pageHeading.fontSize),
+      fontFamily: typographyVariants.pageHeading.fontFamily,
+      fontWeight: typographyVariants.pageHeading.fontWeight,
+      lineHeight: px(typographyVariants.pageHeading.lineHeight),
+      letterSpacing: px(typographyVariants.pageHeading.letterSpacing),
     },
     '.font-screen-section': {
-      fontSize: `${scale.heading}px`,
-      fontFamily: 'Manrope_700Bold',
-      lineHeight: `${Math.round(scale.heading * 1.25)}px`,
+      fontSize: px(typographyVariants.sectionHeading.fontSize),
+      fontFamily: typographyVariants.sectionHeading.fontFamily,
+      fontWeight: typographyVariants.sectionHeading.fontWeight,
+      lineHeight: px(typographyVariants.sectionHeading.lineHeight),
+      letterSpacing: px(typographyVariants.sectionHeading.letterSpacing),
     },
     '.font-screen-card-title': {
-      fontSize: `${scale.body}px`,
-      fontFamily: 'PlusJakartaSans_700Bold',
-      lineHeight: `${Math.round(scale.body * 1.35)}px`,
+      fontSize: px(typographyVariants.cardTitle.fontSize),
+      fontFamily: typographyVariants.cardTitle.fontFamily,
+      fontWeight: typographyVariants.cardTitle.fontWeight,
+      lineHeight: px(typographyVariants.cardTitle.lineHeight),
+      letterSpacing: px(typographyVariants.cardTitle.letterSpacing),
     },
     '.font-screen-subtitle': {
-      fontSize: String(scale.subtitle),
-      fontFamily: 'PlusJakartaSans_600SemiBold',
-      lineHeight: String(Math.round(scale.subtitle * 1.35)),
+      fontSize: px(typographyVariants.bodyEmphasis.fontSize),
+      fontFamily: typographyVariants.bodyEmphasis.fontFamily,
+      fontWeight: typographyVariants.bodyEmphasis.fontWeight,
+      lineHeight: px(typographyVariants.bodyEmphasis.lineHeight),
+      letterSpacing: px(typographyVariants.bodyEmphasis.letterSpacing),
     },
     '.font-screen-label': {
-      fontSize: String(scale.label),
-      fontFamily: 'PlusJakartaSans_500Medium',
-      lineHeight: String(Math.round(scale.label * 1.3)),
+      fontSize: px(typographyVariants.label.fontSize),
+      fontFamily: typographyVariants.label.fontFamily,
+      fontWeight: typographyVariants.label.fontWeight,
+      lineHeight: px(typographyVariants.label.lineHeight),
+      letterSpacing: px(typographyVariants.label.letterSpacing),
     },
   });
 });

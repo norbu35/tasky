@@ -9,17 +9,17 @@ import { useAppContext } from '../context/AppContext';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
 const CUSTOMER_NAV = [
-  { to: '/customer/dashboard', label: 'nav.home', fallback: 'Home' },
-  { to: '/customer/tasks', label: 'nav.tasks', fallback: 'Tasks' },
-  { to: '/communication', label: 'nav.inbox', fallback: 'Inbox' },
-  { to: '/profile', label: 'nav.profile', fallback: 'Profile' },
+  { to: '/customer/dashboard', label: 'nav.home' },
+  { to: '/customer/tasks', label: 'nav.tasks' },
+  { to: '/communication', label: 'nav.inbox' },
+  { to: '/profile', label: 'nav.profile' },
 ];
 
 const TASKER_NAV = [
-  { to: '/tasker/feed', label: 'nav.findWork', fallback: 'Find Work' },
-  { to: '/tasker/jobs', label: 'nav.myJobs', fallback: 'My Jobs' },
-  { to: '/communication', label: 'nav.inbox', fallback: 'Inbox' },
-  { to: '/profile', label: 'nav.profile', fallback: 'Profile' },
+  { to: '/tasker/feed', label: 'nav.findWork' },
+  { to: '/tasker/jobs', label: 'nav.myJobs' },
+  { to: '/communication', label: 'nav.inbox' },
+  { to: '/profile', label: 'nav.profile' },
 ];
 
 export function Header() {
@@ -34,7 +34,7 @@ export function Header() {
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed top-0 left-0 right-0 z-50 rounded-b-xl border-b border-border bg-background/70 backdrop-blur-xl md:hidden shadow-[var(--shadow-nav)]"
+      className="fixed top-0 left-0 right-0 z-sticky rounded-b-xl border-b border-border bg-background md:hidden shadow-nav"
     >
       <div className="flex items-center justify-between px-4 md:px-6 h-14 md:h-16">
         {/* Logo */}
@@ -42,10 +42,10 @@ export function Header() {
           className="flex items-center gap-2.5 cursor-pointer group"
           onClick={() => navigate('/')}
         >
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-deep to-primary flex items-center justify-center text-primary-foreground shadow-sm group-hover:shadow-md transition-all">
-            <Shield className="w-4 h-4" strokeWidth={3} />
+          <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-card group-hover:shadow-elevated transition-all">
+            <Shield className="w-icon-xs h-icon-xs" strokeWidth={3} />
           </div>
-          <span className="text-xl font-extrabold font-display tracking-tight text-foreground">
+          <span className="text-xl font-extrabold font-display tracking-normal text-foreground">
             Tasky
           </span>
         </div>
@@ -53,7 +53,7 @@ export function Header() {
         {/* Desktop nav links */}
         {navLinks && (
           <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">
-            {navLinks.map(({ to, label, fallback }) => (
+            {navLinks.map(({ to, label }) => (
               <NavLink
                 key={to}
                 to={to}
@@ -63,7 +63,7 @@ export function Header() {
                     : 'text-muted-foreground hover:text-foreground text-sm'
                 }
               >
-                {t(label, fallback)}
+                {t(label)}
               </NavLink>
             ))}
           </nav>

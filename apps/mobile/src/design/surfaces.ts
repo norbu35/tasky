@@ -1,20 +1,25 @@
+import { nativeTokens } from '@tasky/design-tokens';
+
 import { mobileTheme, withAlpha } from './theme';
 
 const { colors, radius } = mobileTheme;
+const colorOpacity = nativeTokens.colorOpacity;
+const iconSizes = nativeTokens.iconSizes;
+const contentRules = nativeTokens.contentRules;
 
 export const mobileSurfaces = {
   tint: {
-    primarySubtle: withAlpha(colors.primary, 0.1),
-    primarySoft: withAlpha(colors.primary, 0.12),
-    primaryStrong: withAlpha(colors.primary, 0.15),
+    primarySubtle: colorOpacity.primary[10],
+    primarySoft: colorOpacity.primary[15],
+    primaryStrong: colorOpacity.primary[20],
     primaryForegroundSoft: withAlpha(colors.primaryForeground, 0.1),
-    primaryForegroundMuted: withAlpha(colors.primaryForeground, 0.6),
-    dangerSoft: withAlpha(colors.danger, 0.08),
-    dangerSubtle: withAlpha(colors.danger, 0.1),
-    dangerMedium: withAlpha(colors.danger, 0.12),
-    trustSoft: withAlpha(colors.trust, 0.13),
-    verifiedSoft: withAlpha(colors.verified, 0.1),
-    categoryPill: withAlpha(colors.primary, 0.12),
+    primaryForegroundMuted: colorOpacity.primary[60],
+    dangerSoft: colorOpacity.danger[10],
+    dangerSubtle: colorOpacity.danger[10],
+    dangerMedium: colorOpacity.danger[15],
+    trustSoft: colorOpacity.trust[15],
+    verifiedSoft: colorOpacity.verified[10],
+    categoryPill: colorOpacity.primary[15],
     borderSoft: withAlpha(colors.border, 0.5),
   },
   onboarding: {
@@ -23,7 +28,7 @@ export const mobileSurfaces = {
       height: 407,
       radius: 32,
       rotation: '-3deg',
-      iconSize: 24,
+      iconSize: iconSizes.md,
       badgeOffset: 24,
     },
     pagination: {
@@ -53,10 +58,10 @@ export const mobileSurfaces = {
   },
   otpMigration: {
     heroTopInset: 72,
-    iconButton: 40,
+    iconButton: iconSizes.touchTargetMin,
     heroCard: 96,
     halo: 144,
-    headingTracking: -0.6,
+    headingTracking: contentRules.mongolianCyrillic.letterSpacing,
     bodyMaxWidth: 320,
     phonePrefixInset: 64,
     submitHeight: 56,
@@ -66,7 +71,7 @@ export const mobileSurfaces = {
     brandSize: 56,
     markBox: 64,
     markRadius: 16,
-    markIcon: 24,
+    markIcon: iconSizes.md,
     markBorder: withAlpha(colors.primaryForeground, 0.12),
     markSurface: withAlpha(colors.primaryForeground, 0.08),
     progressRailWidth: 136,
@@ -119,7 +124,7 @@ export const mobileSurfaces = {
     badgeSize: 32,
     badgeBorder: 4,
     titleSize: 24,
-    titleTracking: -0.5,
+    titleTracking: contentRules.mongolianCyrillic.letterSpacing,
     bodyLineHeight: 24,
     hintLineHeight: 20,
     footerLineHeight: 18,
@@ -153,7 +158,7 @@ export const mobileSurfaces = {
   },
   iconButton: {
     sm: 40,
-    md: 42,
+    md: iconSizes.touchTargetMin,
     lg: 44,
   },
   artwork: {

@@ -1,6 +1,6 @@
-import { webTokens } from './platform/web';
-import { primitiveTokens } from './primitives';
-import { semanticTokens } from './semantic';
+import { primitiveTokens } from '../core/primitives';
+import { semanticTokens } from '../core/semantic';
+import { webTokens } from '../platform/web';
 
 const px = (value: number) => `${value}px`;
 

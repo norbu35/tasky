@@ -8,8 +8,17 @@ Use this file when the change touches `packages/design-tokens/**`.
 
 ## Boundaries
 
-- Token source-of-truth only: no app-local component logic.
-- Outputs (CSS variables, NativeWind bindings) are derived; do not hand-edit generated output.
+- Runtime token implementation only: no app-local component logic and no pure design documentation.
+- Canonical design documentation lives under `docs/design/**`; this package should derive runtime code from that surface.
+- Keep source organized by role:
+  - `src/core/**` for primitive, semantic, and motion token definitions.
+  - `packages/design-tokens/src/core/additions.ts` for promoted system-level additions such as interaction states,
+    overlays, icon sizes, elevation, typography variants, density, animation presets, opacity colors, and content rules.
+  - `src/platform/**` for web and native outputs.
+  - `src/compat/**` for legacy aggregate exports.
+  - `packages/design-tokens/src/styles/tokens.css` for runtime CSS consumed through the package CSS export.
+- Do not add handoff CSS, UI-kit previews, or documentation-only artifacts to this package.
+- Keep the root package export and both platform outputs aligned when adding a token category.
 - Changes here affect both web and mobile consumers.
 
 ## Verification
