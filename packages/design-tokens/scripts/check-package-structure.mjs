@@ -94,6 +94,12 @@ if (unexpectedExports.length > 0) {
   failures.push(`Unexpected package exports: ${unexpectedExports.join(', ')}`);
 }
 
+for (const scriptName of ['format', 'format:check']) {
+  if (!packageJson.scripts?.[scriptName]?.includes('css')) {
+    failures.push(`package.json script ${scriptName} must include runtime CSS token files.`);
+  }
+}
+
 const requiredRootExports = [
   'interactionTokens',
   'overlayTokens',

@@ -23,8 +23,8 @@
     "build": "pnpm run clean && tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint \"src/**/*.ts\"",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.{ts,css}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,css}\"",
     "test": "node scripts/check-package-structure.mjs && tsc --noEmit"
   },
   "devDependencies": {
