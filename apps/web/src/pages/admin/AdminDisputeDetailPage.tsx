@@ -92,7 +92,7 @@ export function AdminDisputeDetailPage() {
         );
         navigate('/admin/disputes');
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Resolution failed');
+        setError(err instanceof Error ? err.message : t('admin.disputeDetail.resolutionFailed'));
       } finally {
         setResolving(false);
       }

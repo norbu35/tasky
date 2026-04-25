@@ -26,6 +26,9 @@ export function useTaskScheduleScreen() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(parsedSchedule);
   const [selectedTime, setSelectedTime] = useState<Date | null>(parsedSchedule);
   const [activePicker, setActivePicker] = useState<ActivePickerState>(null);
+  const [pricingMode, setPricingMode] = useState<'BUDGET' | 'QUOTE'>(
+    draft?.pricingMode ?? 'BUDGET',
+  );
   const [budget, setBudget] = useState(draft?.budget != null ? String(draft.budget) : '');
   const [touchedBudget, setTouchedBudget] = useState(false);
   const [touchedSchedule, setTouchedSchedule] = useState(false);
@@ -39,10 +42,12 @@ export function useTaskScheduleScreen() {
   const isBudgetValid =
     budget !== '' && Number.isFinite(budgetNumber) && budgetNumber >= MIN_BUDGET;
   const isScheduleValid = Boolean(schedule) && schedule!.getTime() > Date.now();
-  const canContinue = isBudgetValid && isScheduleValid;
+  const canContinue = isScheduleValid && (pricingMode === 'QUOTE' || isBudgetValid);
 
   const budgetError =
-    touchedBudget && budget !== '' && !isBudgetValid ? t('ScheduleBudgetScreen.budgetError') : '';
+    pricingMode === 'BUDGET' && touchedBudget && budget !== '' && !isBudgetValid
+      ? t('ScheduleBudgetScreen.budgetError')
+      : '';
   const scheduleError =
     touchedSchedule && selectedDate && selectedTime && !isScheduleValid
       ? t('ScheduleBudgetScreen.schedulePastError')
@@ -108,7 +113,8 @@ export function useTaskScheduleScreen() {
     if (!canContinue || !schedule || schedule.getTime() <= Date.now()) return;
     updateDraft(draftId, {
       scheduledAt: schedule.toISOString(),
-      budget: Number(budget) || 0,
+      pricingMode,
+      budget: pricingMode === 'BUDGET' ? Number(budget) || 0 : null,
       currentStep: 4,
     });
     router.push({
@@ -121,6 +127,7 @@ export function useTaskScheduleScreen() {
     selectedDate,
     selectedTime,
     activePicker,
+    pricingMode,
     budget,
     budgetError,
     scheduleError,
@@ -129,6 +136,7 @@ export function useTaskScheduleScreen() {
     handlePickerChange,
     handlePickerCancel,
     handlePickerConfirm,
+    setPricingMode,
     handleBudgetChange,
     handleBudgetBlur,
     handleNext,

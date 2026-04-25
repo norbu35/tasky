@@ -172,7 +172,7 @@ export function TaskerFeedPage() {
               {t('taskerFeed.distance')}:
             </span>
             <select
-              title="Search radius"
+              title={t('taskerFeed.searchRadiusTitle')}
               className="bg-transparent text-sm font-bold text-foreground focus:outline-none cursor-pointer border-none"
               value={filters.radiusKm}
               onChange={(e) => setFilters((prev) => ({ ...prev, radiusKm: e.target.value }))}
@@ -327,7 +327,7 @@ export function TaskerFeedPage() {
                               <Avatar className="w-12 h-12 border border-border shadow-sm">
                                 <AvatarImage
                                   src={task.customer?.avatar_url || ''}
-                                  alt={task.customer?.full_name || 'Customer'}
+                                  alt={task.customer?.full_name || t('common.customer')}
                                   className="object-cover"
                                 />
                                 <AvatarFallback className="bg-primary/10 text-primary font-bold">
@@ -340,7 +340,10 @@ export function TaskerFeedPage() {
                                 </h3>
                                 <div className="flex items-center text-sm text-amber-500 font-medium mt-0.5">
                                   <Star className="w-4 h-4 fill-current mr-1" />
-                                  <span>{task.customer?.rating_avg?.toFixed(1) || 'NEW'}</span>
+                                  <span>
+                                    {task.customer?.rating_avg?.toFixed(1) ||
+                                      t('taskerFeed.newCustomerRating')}
+                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -431,7 +434,7 @@ export function TaskerFeedPage() {
                                   >
                                     <img
                                       src={url}
-                                      alt={`Task media ${idx + 1}`}
+                                      alt={t('taskerFeed.taskMediaAlt', { count: idx + 1 })}
                                       className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
                                     />
                                   </div>

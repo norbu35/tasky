@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 
 import { normalizeIntakeSchema } from '@tasky/core';
 
-import { parseError } from '@/utils/errorHandling';
 import { useTaskDraftStore, isDraftComplete } from '@/features/tasks/draft';
+import { parseError } from '@/utils/errorHandling';
 
 import { useCreateTask } from '../hooks/useCreateTask';
 
@@ -21,6 +21,7 @@ export interface ReviewSubmitDraft {
   categoryName: string;
   locationText: string;
   scheduledAt: string;
+  pricingMode: 'BUDGET' | 'QUOTE';
   budget: string;
 }
 
@@ -52,6 +53,7 @@ export function useTaskReviewSubmitScreen() {
   const categoryName = taskDraft?.categoryName ?? '';
   const locationText = taskDraft?.location?.text ?? '';
   const scheduledAt = taskDraft?.scheduledAt ?? '';
+  const pricingMode = taskDraft?.pricingMode ?? 'BUDGET';
 
   const isValid = isDraftComplete(taskDraft);
 
@@ -65,6 +67,7 @@ export function useTaskReviewSubmitScreen() {
     categoryName,
     locationText,
     scheduledAt,
+    pricingMode,
     budget,
   };
 
@@ -78,8 +81,8 @@ export function useTaskReviewSubmitScreen() {
       const createdTask = await mutateAsync({
         category_id: categoryId,
         description,
-        budget: Number(budget) || 0,
-        pricing_mode: 'BUDGET' as const,
+        budget: pricingMode === 'BUDGET' ? Number(budget) || 0 : null,
+        pricing_mode: pricingMode,
         intake_answers: intakeAnswers,
         intake_schema_version: intakeSchemaVersion,
         location_lat: Number.isFinite(locationLat) ? locationLat : 0,

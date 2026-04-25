@@ -9,6 +9,15 @@ afterEach(() => {
 });
 
 describe('Auth Integration', () => {
+  it('TID-AUTH-001-WEB-LAUNCH-UX exposes Facebook as the only launch login option', () => {
+    const apiClient = createMockApiClient();
+
+    render(<App apiClient={apiClient} initialRoute="/auth" />);
+
+    expect(screen.getByRole('button', { name: 'Continue with Facebook' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /phone|otp|verification disabled/i })).toBeNull();
+  });
+
   it('SCN-AUTH-004: Valid Facebook OAuth token creates a CUSTOMER session', async () => {
     const facebookLogin = vi.fn(
       (callback: (response: { authResponse: { accessToken: string } }) => void) => {

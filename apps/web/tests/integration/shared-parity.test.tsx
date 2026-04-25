@@ -64,6 +64,7 @@ describe('Shared parity pages', () => {
     expect(screen.getByPlaceholderText('Search conversations')).toBeInTheDocument();
     expect(screen.getByText('Apartment cleaning')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Conversation' })).toBeInTheDocument();
+    expect(screen.getByText('Thanks, I will keep updates here.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Send message' })).toBeInTheDocument();
   });
 

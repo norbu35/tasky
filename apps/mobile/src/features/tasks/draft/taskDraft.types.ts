@@ -14,6 +14,7 @@ export interface TaskDraft {
     text: string;
   };
   scheduledAt?: string;
-  budget?: number;
+  pricingMode?: 'BUDGET' | 'QUOTE';
+  budget?: number | null;
   currentStep: number;
 }

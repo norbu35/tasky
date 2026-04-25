@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 
 import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 
+import { PricingModeSelector, QuoteModeNotice } from './TaskSchedule.PricingMode';
 import { DateCard, BudgetField, PickerSection } from './TaskSchedule.ScheduleForm';
 import { useTaskScheduleScreen } from './useTaskScheduleScreen';
 
@@ -13,6 +14,7 @@ export default function TaskScheduleScreen() {
     selectedDate,
     selectedTime,
     activePicker,
+    pricingMode,
     budget,
     budgetError,
     scheduleError,
@@ -21,6 +23,7 @@ export default function TaskScheduleScreen() {
     handlePickerChange,
     handlePickerCancel,
     handlePickerConfirm,
+    setPricingMode,
     handleBudgetChange,
     handleBudgetBlur,
     handleNext,
@@ -53,12 +56,18 @@ export default function TaskScheduleScreen() {
         onOpenPicker={openPicker}
       />
 
-      <BudgetField
-        budget={budget}
-        budgetError={budgetError}
-        onBudgetChange={handleBudgetChange}
-        onBudgetBlur={handleBudgetBlur}
-      />
+      <PricingModeSelector pricingMode={pricingMode} onChange={setPricingMode} />
+
+      {pricingMode === 'BUDGET' ? (
+        <BudgetField
+          budget={budget}
+          budgetError={budgetError}
+          onBudgetChange={handleBudgetChange}
+          onBudgetBlur={handleBudgetBlur}
+        />
+      ) : (
+        <QuoteModeNotice />
+      )}
 
       <PickerSection
         activePicker={activePicker}

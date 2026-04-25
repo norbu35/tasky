@@ -320,25 +320,6 @@ export function AuthPage() {
                   {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
                 </Button>
 
-                <div className="relative my-4">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border"></div>
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase tracking-[0.075em]">
-                    <span className="bg-card px-2 text-text-tertiary font-medium tracking-[0.075em]">
-                      {t('auth.later')}
-                    </span>
-                  </div>
-                </div>
-
-                <Button
-                  variant="secondary"
-                  className="w-full text-muted-foreground opacity-50"
-                  disabled={true}
-                >
-                  {t('auth.continuePhone')}
-                </Button>
-
                 {!facebookReady && !facebookOutage && (
                   <p className="text-sm text-muted-foreground text-center">
                     {t('auth.initializing')}

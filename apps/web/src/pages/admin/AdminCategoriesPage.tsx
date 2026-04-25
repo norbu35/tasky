@@ -582,7 +582,9 @@ export function AdminCategoriesPage() {
                 <Switch
                   checked={category.is_active}
                   onCheckedChange={() => handleToggleActive(category)}
-                  aria-label={`Toggle ${category.name}`}
+                  aria-label={t('admin.categories.toggleCategoryAria', {
+                    name: category.name,
+                  })}
                 />
                 <Button size="sm" variant="outline" onClick={() => handleEdit(category)}>
                   {t('common.edit')}

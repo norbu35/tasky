@@ -38,7 +38,7 @@ export function ChatDetailPage() {
             <div className="flex items-end justify-end gap-2">
               <div className="max-w-[75%] space-y-1">
                 <div className="rounded-2xl rounded-br-sm bg-foreground px-3 py-2 text-sm text-card">
-                  Sounds great, see you then!
+                  {t('sharedPages.chatDetail.sampleReply')}
                 </div>
                 <span className="block text-right text-[11px] text-text-tertiary">10:16</span>
               </div>

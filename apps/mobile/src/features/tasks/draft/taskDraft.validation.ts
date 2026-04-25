@@ -23,7 +23,15 @@ export function isStep3Valid(draft: TaskDraft | undefined): boolean {
 }
 
 export function isStep4Valid(draft: TaskDraft | undefined): boolean {
-  return Boolean(draft?.scheduledAt) && draft?.budget != null && draft.budget > 0;
+  if (!draft?.scheduledAt) {
+    return false;
+  }
+
+  if (draft.pricingMode === 'QUOTE') {
+    return true;
+  }
+
+  return draft?.budget != null && draft.budget > 0;
 }
 
 export function isDraftComplete(draft: TaskDraft | undefined): boolean {

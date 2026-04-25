@@ -18,10 +18,8 @@
     "continueFacebook": "Continue with Facebook",
     "initializing": "Initializing Facebook login...",
     "missingConfig": "Missing `VITE_FACEBOOK_APP_ID` configuration.",
-    "later": "Later",
     "devBypass": "Developer Bypass",
     "loginAsAdmin": "Admin",
-    "continuePhone": "Phone verification disabled for MVP",
     "facebookOutage": "Facebook login is temporarily unavailable. We're working on it.",
     "heroImageAlt": "Premium abstract interior",
     "sdkBindingLabel": "SDK Binding",
@@ -167,6 +165,9 @@
     "budgetAcceptHint": "Applying accepts the posted budget.",
     "quoteRequiredHint": "Required — the customer is waiting for your price.",
     "quotePriceRequired": "You must provide a quote price for this task.",
+    "searchRadiusTitle": "Search radius",
+    "newCustomerRating": "New",
+    "taskMediaAlt": "Task media {{count}}",
     "withdrawAction": "Withdraw application",
     "withdrawSuccess": "Application withdrawn.",
     "applicantsLabel": "Applicants",
@@ -760,6 +761,7 @@
       "railContent": "Booking details and quick actions will live in this rail.",
       "replyPlaceholder": "Type your reply",
       "sampleMessage": "I can arrive by 10:00 tomorrow.",
+      "sampleReply": "Thanks, I will keep updates here.",
       "sendLabel": "Send message"
     },
     "deleteAccount": {
@@ -1101,6 +1103,7 @@
       "schemaVersions": "Schema versions",
       "sortOrder": "Sort order",
       "title": "Title",
+      "toggleCategoryAria": "Toggle {{name}}",
       "toggleStatusError": "Toggle status error",
       "updated": "Updated"
     },
@@ -1133,6 +1136,7 @@
       "notesRequired": "Notes required",
       "reason": "Reason",
       "resolution": "Resolution",
+      "resolutionFailed": "Resolution failed",
       "resolveCustomer": "Resolve customer",
       "resolveTasker": "Resolve tasker",
       "schedule": "Schedule",
@@ -1158,11 +1162,28 @@
       "title": "Title"
     },
     "features": {
-      "confirmTitle": "Confirm title",
-      "loadError": "Load error",
-      "title": "Title",
+      "confirmTitle": "Confirm feature toggle change",
+      "loadError": "Feature toggles could not be loaded.",
+      "title": "Feature activation controls",
       "updatedBy": "Updated by {{name}} — ",
-      "confirmDesc": "You are about to {{action}} \"{{feature}}\". This change will take effect immediately."
+      "confirmDesc": "You are about to {{action}} \"{{feature}}\". This change will take effect immediately.",
+      "loadTogglesError": "Failed to load feature toggles",
+      "updateToggleError": "Failed to update toggle",
+      "toggleAriaLabel": "Toggle {{feature}}",
+      "toggleEnabledToast": "{{feature}} enabled",
+      "toggleDisabledToast": "{{feature}} disabled",
+      "featureLabels": {
+        "lead_fee_enabled": "Lead fee controls (deferred)",
+        "subscription_enabled": "Subscriptions (deferred)",
+        "escrow_enabled": "Escrow controls (deferred)",
+        "ai_scope_summary_enabled": "AI scope summary (deferred)"
+      },
+      "featureDescriptions": {
+        "lead_fee_enabled": "Deferred monetization control. It must remain off unless the PRD, contracts, launch UX, monitoring, and rollback evidence all approve activation.",
+        "subscription_enabled": "Deferred tasker subscription control. It must remain off unless the PRD, contracts, launch UX, monitoring, and rollback evidence all approve activation.",
+        "escrow_enabled": "Deferred payment-trust control. It is not a Phase 1 payment-protection promise and must remain off unless later-phase activation is approved.",
+        "ai_scope_summary_enabled": "Deferred summary-polish control. It must stay outside the posting critical path unless the PRD and rollout controls approve activation."
+      }
     },
     "moderation": {
       "autoUnsuspend": "Auto unsuspend",

@@ -18,10 +18,8 @@
     "continueFacebook": "Facebook-ээр үргэлжлүүлэх",
     "initializing": "Facebook нэвтрэлтийг бэлтгэж байна...",
     "missingConfig": "`VITE_FACEBOOK_APP_ID` тохиргоо дутуу байна.",
-    "later": "Дараа",
     "devBypass": "Хөгжүүлэгчийн нэвтрэлт",
     "loginAsAdmin": "Админ",
-    "continuePhone": "Утасны баталгаажуулалт MVP-д идэвхгүй",
     "facebookOutage": "Facebook нэвтрэлт түр боломжгүй байна. Бид засаж байна.",
     "heroImageAlt": "Дээд зэрэглэлийн хийсвэр интерьер",
     "sdkBindingLabel": "SDK холболт",
@@ -167,6 +165,9 @@
     "budgetAcceptHint": "Илгээснээр нийтэлсэн төсвийг хүлээн зөвшөөрнө.",
     "quoteRequiredHint": "Заавал — захиалагч таны үнийн саналыг хүлээж байна.",
     "quotePriceRequired": "Энэ даалгаварт үнийн санал заавал оруулах шаардлагатай.",
+    "searchRadiusTitle": "Хайлтын радиус",
+    "newCustomerRating": "Шинэ",
+    "taskMediaAlt": "Ажлын зураг {{count}}",
     "withdrawAction": "Хүсэлтээ буцаах",
     "withdrawSuccess": "Хүсэлт амжилттай буцаагдлаа.",
     "applicantsLabel": "Горилогчид",
@@ -754,13 +755,14 @@
       "description": "Идэвхтэй захиалгатай холбоотой шууд чат.",
       "sendMessage": "Зурвас илгээх",
       "messageHistory": "Зурвасын түүх",
-      "historyDesc": "Chat UI нь 0-р үе шатны энгийн текстүүд илгээх зориулалттай.",
-      "backLabel": "Back",
-      "draftLabel": "Message draft",
-      "railContent": "Booking details and quick actions will live in this rail.",
-      "replyPlaceholder": "Type your reply",
-      "sampleMessage": "I can arrive by 10:00 tomorrow.",
-      "sendLabel": "Send message"
+      "historyDesc": "Чатын интерфейс нь эхний үе шатанд энгийн текст солилцоход зориулагдсан.",
+      "backLabel": "Буцах",
+      "draftLabel": "Зурвасын ноорог",
+      "railContent": "Захиалгын дэлгэрэнгүй болон хурдан үйлдлүүд энэ хэсэгт харагдана.",
+      "replyPlaceholder": "Хариу бичих",
+      "sampleMessage": "Би маргааш 10:00 гэхэд очиж чадна.",
+      "sampleReply": "Баярлалаа, шинэ мэдээллийг энд үлдээе.",
+      "sendLabel": "Зурвас илгээх"
     },
     "deleteAccount": {
       "title": "Бүртгэл устгах",
@@ -1101,6 +1103,7 @@
       "schemaVersions": "Схемийн хувилбарууд",
       "sortOrder": "Эрэмбэлэх дараалал",
       "title": "Гарчиг",
+      "toggleCategoryAria": "{{name}} ангиллыг сэлгэх",
       "toggleStatusError": "Статусын алдааг сэлгэх",
       "updated": "Шинэчлэгдсэн"
     },
@@ -1133,6 +1136,7 @@
       "notesRequired": "Шаардлагатай тэмдэглэл",
       "reason": "Шалтгаан",
       "resolution": "Шийдвэр",
+      "resolutionFailed": "Шийдвэрлэхэд алдаа гарлаа",
       "resolveCustomer": "Үйлчлүүлэгчийг шийдэх",
       "resolveTasker": "Даалгаврыг шийдвэрлэх",
       "schedule": "Хуваарь",
@@ -1158,11 +1162,28 @@
       "title": "Гарчиг"
     },
     "features": {
-      "confirmTitle": "Гарчгийг баталгаажуулна уу",
-      "loadError": "Ачаалах алдаа",
-      "title": "Гарчиг",
+      "confirmTitle": "Feature toggle өөрчлөлтийг баталгаажуулах",
+      "loadError": "Feature toggle жагсаалтыг ачаалж чадсангүй.",
+      "title": "Feature идэвхжүүлэлтийн удирдлага",
       "updatedBy": "Шинэчлэгдсэн {{name}} — ",
-      "confirmDesc": "You are about to {{action}} \"{{feature}}\". This change will take effect immediately."
+      "confirmDesc": "Та \"{{feature}}\"-г {{action}} гэж байна. Энэ өөрчлөлт шууд хэрэгжинэ.",
+      "loadTogglesError": "Feature toggle жагсаалтыг ачаалж чадсангүй",
+      "updateToggleError": "Toggle шинэчлэхэд алдаа гарлаа",
+      "toggleAriaLabel": "{{feature}} toggle",
+      "toggleEnabledToast": "{{feature}} идэвхжлээ",
+      "toggleDisabledToast": "{{feature}} идэвхгүй боллоо",
+      "featureLabels": {
+        "lead_fee_enabled": "Lead fee удирдлага (хойшлуулсан)",
+        "subscription_enabled": "Subscription удирдлага (хойшлуулсан)",
+        "escrow_enabled": "Escrow удирдлага (хойшлуулсан)",
+        "ai_scope_summary_enabled": "AI scope summary (хойшлуулсан)"
+      },
+      "featureDescriptions": {
+        "lead_fee_enabled": "Хойшлуулсан орлогын удирдлага. PRD, гэрээ, launch UX, мониторинг, rollback нотолгоо бүгд батлаагүй бол идэвхгүй хэвээр байна.",
+        "subscription_enabled": "Хойшлуулсан tasker subscription удирдлага. PRD, гэрээ, launch UX, мониторинг, rollback нотолгоо бүгд батлаагүй бол идэвхгүй хэвээр байна.",
+        "escrow_enabled": "Хойшлуулсан төлбөрийн итгэлцлийн удирдлага. Энэ нь Phase 1 payment-protection амлалт биш бөгөөд дараагийн үеийн идэвхжүүлэлт батлагдаагүй бол идэвхгүй хэвээр байна.",
+        "ai_scope_summary_enabled": "Хойшлуулсан summary-polish удирдлага. PRD болон rollout удирдлага батлаагүй бол task нийтлэх үндсэн урсгалаас гадуур байна."
+      }
     },
     "moderation": {
       "autoUnsuspend": "Автомат түр зогсоох",

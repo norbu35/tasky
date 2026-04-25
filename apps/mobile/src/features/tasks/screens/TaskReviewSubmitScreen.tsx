@@ -102,12 +102,22 @@ export default function TaskReviewSubmitScreen() {
       />
 
       <SectionCard
-        label={t('ReviewSubmitScreen.sectionBudget')}
-        value={formatBudget(draft.budget || '0')}
+        label={t('ReviewSubmitScreen.sectionPricing')}
+        value={
+          draft.pricingMode === 'QUOTE'
+            ? t('ReviewSubmitScreen.pricingModeQuote')
+            : formatBudget(draft.budget || '0')
+        }
         onEdit={navigateToSchedule}
-        testID="review-section-budget"
+        testID="review-section-pricing"
         icon={<CircleDollarSign size={16} color={colors.accent} />}
-      />
+      >
+        <Text className="text-caption text-text-secondary leading-relaxed">
+          {draft.pricingMode === 'QUOTE'
+            ? t('ReviewSubmitScreen.quoteModeHelper')
+            : t('ReviewSubmitScreen.budgetModeHelper')}
+        </Text>
+      </SectionCard>
 
       <View className="rounded-md bg-muted p-md flex-row items-start gap-sm mb-sm">
         <CircleAlert size={16} color={colors.accent} />

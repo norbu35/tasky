@@ -1,4 +1,3 @@
-import { createMobileApiClient } from '@/lib/mobileApiClient';
 import type {
   Category,
   CreateTaskRequest,
@@ -9,6 +8,7 @@ import type {
   TaskFilters,
   RecentLocation,
 } from '@/lib/api/types';
+import { createMobileApiClient } from '@/lib/mobileApiClient';
 
 const getClient = () => createMobileApiClient();
 
@@ -57,12 +57,21 @@ export async function applyToTask(
   accessToken: string,
   taskId: string,
   message: string,
+  quotePrice?: number | null,
 ): Promise<TaskApplication> {
+  const body =
+    quotePrice == null
+      ? { message }
+      : {
+          message,
+          quote_price: quotePrice,
+        };
+
   return getClient().requestJson<TaskApplication>(
     `/tasks/${taskId}/applications`,
     {
       method: 'POST',
-      body: JSON.stringify({ message }),
+      body: JSON.stringify(body),
     },
     accessToken,
   );

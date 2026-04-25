@@ -6,6 +6,7 @@ import type { PublicTask } from '../../../src/lib/api/types';
 const mockPush = jest.fn();
 const mockBack = jest.fn();
 const mockReplace = jest.fn();
+const mockRequestJson = jest.fn();
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: mockReplace, back: mockBack }),
@@ -37,14 +38,7 @@ jest.mock('../../../src/features/tasks/hooks/useTasks', () => ({
 
 jest.mock('../../../src/lib/mobileApiClient', () => ({
   createMobileApiClient: () => ({
-    requestJson: jest.fn().mockResolvedValue({
-      id: 'app-1',
-      task_id: 'task-123',
-      tasker_id: 'tasker-1',
-      message: 'I can do this',
-      status: 'PENDING',
-      created_at: '2026-03-23T00:00:00Z',
-    }),
+    requestJson: mockRequestJson,
     requestVoid: jest.fn(),
   }),
   ApiError: class ApiError extends Error {
@@ -106,6 +100,7 @@ const baseTask: PublicTask = {
   },
   description: 'Deep clean a 3-bedroom apartment',
   budget: 75000,
+  pricing_mode: 'BUDGET',
   approximate_location: 'Bayangol district',
   approximate_lat: 47.91,
   approximate_lng: 106.91,
@@ -118,6 +113,15 @@ const baseTask: PublicTask = {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  mockRequestJson.mockResolvedValue({
+    id: 'app-1',
+    task_id: 'task-123',
+    tasker_id: 'tasker-1',
+    message: 'I can do this',
+    quote_price: null,
+    status: 'PENDING',
+    created_at: '2026-03-23T00:00:00Z',
+  });
   resetTestI18n();
   setTestLanguage('mn');
 });
@@ -236,11 +240,58 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     const TaskDetailScreen = require('../../../src/app/task/[id]').default;
     render(<TaskDetailScreen />);
 
+    fireEvent.changeText(screen.getByTestId('application-note-input'), 'I can do this carefully.');
     fireEvent.press(screen.getByText('Ажилд өргөдөл гаргах'));
 
     await waitFor(() => {
       expect(screen.getByText('Өргөдөл илгээгдлээ!')).toBeTruthy();
     });
+    expect(mockRequestJson).toHaveBeenCalledWith(
+      '/tasks/task-123/applications',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ message: 'I can do this carefully.' }),
+      }),
+      'test-token',
+    );
+  });
+
+  it('SCN-TASK-046: quote mode requires a tasker price quote in the application', async () => {
+    mockUseTaskDetail.mockReturnValue({
+      task: {
+        ...baseTask,
+        pricing_mode: 'QUOTE',
+        budget: null,
+      },
+      isLoading: false,
+      isError: false,
+      isVerified: true,
+      hasApplied: false,
+      capReached: false,
+    });
+
+    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
+    render(<TaskDetailScreen />);
+
+    expect(screen.getByText('Захиалагч үнийн санал хүсэж байна')).toBeTruthy();
+    expect(screen.getByTestId('application-quote-input')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-002-cta')).toBeDisabled();
+
+    fireEvent.changeText(screen.getByTestId('application-note-input'), 'I can bring supplies.');
+    fireEvent.changeText(screen.getByTestId('application-quote-input'), '90000');
+    fireEvent.press(screen.getByTestId('SCR-TASK-002-cta'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Өргөдөл илгээгдлээ!')).toBeTruthy();
+    });
+    expect(mockRequestJson).toHaveBeenCalledWith(
+      '/tasks/task-123/applications',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ message: 'I can bring supplies.', quote_price: 90000 }),
+      }),
+      'test-token',
+    );
   });
 
   it('shows error state with retry', () => {
@@ -259,7 +310,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     expect(screen.getByTestId('SCR-TASK-002-error')).toBeTruthy();
   });
 
-  it('shows a secondary message button for verified taskers', () => {
+  it('SCN-MSG-005: does not show pre-booking message CTA for verified taskers', () => {
     mockUseTaskDetail.mockReturnValue({
       task: baseTask,
       isLoading: false,
@@ -272,7 +323,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     const TaskDetailScreen = require('../../../src/app/task/[id]').default;
     render(<TaskDetailScreen />);
 
-    expect(screen.getByText('Зурвас илгээх')).toBeTruthy();
+    expect(screen.queryByText('Зурвас илгээх')).toBeNull();
   });
 
   it('renders task photos and approximate location note', () => {
