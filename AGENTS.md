@@ -24,6 +24,7 @@ product intent. `archive/**` is historical only.
 | ---------------------------------- | -------------------------------------------------------------- |
 | Whole repo or shared contract work | `docs/architecture/AGENTS.md`                                  |
 | `docs/openapi/**`                  | `docs/openapi/AGENTS.md`                                       |
+| `docs/design/**`                   | `docs/design/AGENTS.md`                                        |
 | `services/api/**`                  | `services/api/AGENTS.md`, then the affected module `AGENTS.md` |
 | `apps/web/**`                      | `apps/web/AGENTS.md`                                           |
 | `apps/mobile/**`                   | `apps/mobile/AGENTS.md`                                        |
@@ -93,6 +94,7 @@ Reusable repo-owned agent workflows live under `tooling/skills/**`.
 - Do not use `--no-verify` (or equivalent hook bypass) for pushes that target `staging` or `main`.
 - If the API changes, update `docs/openapi/**` first, regenerate `docs/API.yaml`, then regenerate `@tasky/sdk`, then implement.
 - If you edit `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, or `docs/design/domain-lifecycles.yaml`, keep machine-readable fields ID-only: use canonical screen/journey/lifecycle IDs, not prose placeholders, and run `pnpm repo:design:check` plus `pnpm repo:docs:check`.
+- If you edit `docs/design/screen-specs/SCR-*.yaml`, keep the screen-spec traceability block wired through live `REQ-P1`/`NFR`, `JRN`, `SCR`, and existing `SCN` IDs. New or materially changed specs should use `traceability.status: validated`; `pending_audit` is only for an explicitly scoped follow-up audit. Run `python3 tooling/scripts/governance/validate-screen-spec-traceability.py` plus `pnpm repo:docs:check`.
 - If you edit `.github/workflows/quality-gates.yml` or other merge-gate wiring, keep the docs lane wired into the gate and update `tooling/config/ops-registry.yaml`, the matching ops/config checks, and docs in the same change.
 - If you edit package-script, hook, workflow, compose, or tooling-script ops wiring, run `pnpm repo:ops:sync --fix` to refresh generated ops inventory, then run `pnpm verify:ops`.
 - If a Flyway migration adds, drops, or renames a column or table, run `python3 tooling/scripts/governance/validate-schema-parity.py --update-expected` and commit the updated `tooling/config/expected-schema.json`.

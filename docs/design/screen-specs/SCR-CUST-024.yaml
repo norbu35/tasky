@@ -4,6 +4,23 @@ name: 'Dispute — Raise'
 route: '/(customer)/bookings/:bookingId/dispute'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-024
+  prd_refs:
+    - REQ-P1-SAFE-14
+    - REQ-P1-SAFE-15
+    - REQ-P1-SAFE-16
+    - REQ-P1-BOOK-28
+  journey_refs:
+    - JRN-CUST-06:step-2
+    - JRN-CUST-06-A1
+  scenario_refs:
+    - SCN-DISPUTE-001
+    - SCN-DISPUTE-002
+    - SCN-DISPUTE-003
+    - SCN-DISPUTE-004
+    - SCN-DISPUTE-005
 template: form_wizard
 figma_page: 'Customer/Dispute Raise'
 feature: 'dispute'
@@ -53,7 +70,7 @@ components:
 
 states:
   - id: default
-    description: 'Form shown with booking reference at top, reason selector, evidence upload area, and description field. At least one evidence artifact is required'
+    description: 'Form shown with booking reference at top, reason selector, evidence upload area, and description field. Evidence can be attached immediately or added during the grace path'
     components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
@@ -82,8 +99,8 @@ states:
     components_visible: [COMP-TOAST]
     components_hidden: [COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON]
 
-  - id: validation_no_evidence
-    description: 'User attempted to submit without any evidence artifact; inline validation error shown on evidence section'
+  - id: evidence_grace
+    description: 'User submits without an evidence artifact; dispute opens in evidence-needed grace state with deadline notice'
     components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
@@ -114,8 +131,8 @@ copy:
     max_chars: 20
 
   - key: evidence_helper
-    mn: 'Дор хаяж 1 нотлох баримт шаардлагатай: зураг, чатын хэсэг, эсвэл бичгэн тайлбар'
-    en: 'At least 1 evidence artifact required: photo, chat excerpt, or written timeline'
+    mn: 'Зураг, чатын хэсэг, эсвэл бичгэн тайлбар нэмнэ үү. Одоо нэмээгүй бол сануулах хугацаанд нэмж болно'
+    en: 'Add a photo, chat excerpt, or written timeline. If you cannot add evidence now, you may add it during the reminder window'
     max_chars: 100
 
   - key: label_description
@@ -153,10 +170,10 @@ copy:
     en: 'Back'
     max_chars: 20
 
-  - key: validation_no_evidence_error
-    mn: 'Дор хаяж 1 нотлох баримт шаардлагатай'
-    en: 'At least 1 evidence artifact is required'
-    max_chars: 50
+  - key: evidence_grace_notice
+    mn: 'Нотлох баримтгүй илгээвэл сануулах хугацаанд баримт нэмэх шаардлагатай'
+    en: 'If you submit without evidence, you must add evidence during the reminder window'
+    max_chars: 80
 
   - key: toast_success
     mn: 'Маргаан амжилттай илгээлээ'
@@ -194,19 +211,19 @@ analytics_events:
     trigger: 'User writes text-based evidence'
   - event: 'dispute_submitted'
     trigger: 'User taps submit and POST /disputes is sent'
-  - event: 'dispute_validation_no_evidence'
-    trigger: 'Submit attempted without any evidence artifact'
+  - event: 'dispute_submitted_without_evidence'
+    trigger: 'User submits into the evidence-needed grace path without an evidence artifact'
   - event: 'dispute_submit_error'
     trigger: 'Network error during dispute submission'
 
 acceptance_criteria:
   - 'Disputes can only be raised when booking is ASSIGNED or within the allowed post-completion window'
-  - 'At least one evidence artifact is required: photo, chat excerpt, or written timeline'
-  - 'Submitting without evidence shows inline validation error on evidence section'
+  - 'Submitting with evidence attaches at least one artifact: photo, chat excerpt, or written timeline'
+  - 'Submitting without evidence is allowed only as the evidence-needed grace path and shows the deadline notice'
   - 'Photo evidence uses presigned URL upload with per-photo progress'
   - 'Chat excerpt selection allows highlighting relevant message range'
   - 'Written timeline has 500 character limit'
-  - 'Submit button sends POST /disputes with all evidence artifacts and enters loading state'
+  - 'Submit button sends POST /disputes with evidence artifacts when present, or a grace-path marker when evidence is absent, and enters loading state'
   - 'On success, navigates via replace to Dispute Status (SCR-CUST-025)'
   - 'Evidence note warns that a dispute may close as insufficient evidence if follow-up evidence is not provided'
   - 'Back button navigates via pop to Booking Detail (SCR-CUST-017)'

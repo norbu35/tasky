@@ -4,6 +4,22 @@ name: 'Inbox — Chat Detail'
 route: '/inbox/:conversationId'
 role: [customer, tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-SHARED-011
+  prd_refs:
+    - REQ-P1-MSG-02
+    - REQ-P1-MSG-03
+    - REQ-P1-MSG-05
+    - REQ-P1-BOOK-08
+  journey_refs:
+    - JRN-SHARED-04:step-2
+    - JRN-SHARED-04-A1
+  scenario_refs:
+    - SCN-MSG-002
+    - SCN-MSG-003
+    - SCN-MSG-004
+    - SCN-MSG-005
 template: detail
 figma_page: 'Shared/Inbox Chat Detail'
 feature: 'messaging'

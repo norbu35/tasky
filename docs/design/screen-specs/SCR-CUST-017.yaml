@@ -4,6 +4,26 @@ name: 'Booking Detail (Customer)'
 route: '/(customer)/bookings/:bookingId'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-017
+  prd_refs:
+    - REQ-P1-BOOK-07
+    - REQ-P1-BOOK-08
+    - REQ-P1-BOOK-09
+    - REQ-P1-BOOK-13
+    - REQ-P1-BOOK-25
+    - REQ-P1-MSG-02
+  journey_refs:
+    - JRN-CUST-04:step-2
+    - JRN-CUST-04:step-3
+    - JRN-CUST-04-A5
+    - JRN-CUST-06:step-1
+  scenario_refs:
+    - SCN-SEC-007
+    - SCN-MSG-003
+    - SCN-BOOK-009
+    - SCN-BOOK-026
 template: detail
 figma_page: 'Customer/Booking Detail Customer'
 feature: 'booking'

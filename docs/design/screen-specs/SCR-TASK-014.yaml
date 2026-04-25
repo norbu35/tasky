@@ -4,6 +4,25 @@ name: 'No-Show Flag (Tasker)'
 route: null
 role: [tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-014
+  prd_refs:
+    - REQ-P1-BOOK-19
+    - REQ-P1-BOOK-20
+    - REQ-P1-BOOK-21
+    - REQ-P1-BOOK-22
+    - REQ-P1-BOOK-23
+  journey_refs:
+    - JRN-TASK-04-A2
+  scenario_refs:
+    - SCN-BOOK-010
+    - SCN-BOOK-011
+    - SCN-BOOK-012
+    - SCN-BOOK-013
+    - SCN-BOOK-014
+    - SCN-BOOK-015
+    - SCN-BOOK-016
 template: modal_sheet
 figma_page: 'Tasker/No-Show Flag Tasker'
 feature: 'tasker-bookings'
@@ -83,7 +102,7 @@ copy:
     max_chars: 30
 
   - key: reminder_description
-    mn: 'Хуваарьт цагаас 10 минут өнгөрлөө. Ирсэн эсэхээ мэдэгдэнэ үү.'
+    mn: 'Хуваарьт цагаас 30 минут өнгөрлөө. Ирсэн эсэхээ мэдэгдэнэ үү.'
     en: '30 minutes past scheduled time. Please update your arrival status.'
     max_chars: 70
 
@@ -98,7 +117,7 @@ copy:
     max_chars: 30
 
   - key: flag_description
-    mn: 'Хуваарьт цагаас 15 минут өнгөрсөн бөгөөд захиалагч холбогдоогүй байна.'
+    mn: 'Хуваарьт цагаас 1 цаг өнгөрсөн бөгөөд захиалагч холбогдоогүй байна.'
     en: '1 hour past scheduled time and the customer has not checked in.'
     max_chars: 80
 

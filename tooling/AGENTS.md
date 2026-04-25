@@ -28,6 +28,7 @@ Pick the smallest lane that matches the job:
 Not every command in a lane is a default finish gate. Treat these as conditional helpers:
 
 - `pnpm repo:design:check` only when editing `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, or `docs/design/domain-lifecycles.yaml`, or when those validators fail through `pnpm repo:docs:check`
+- `python3 tooling/scripts/governance/validate-screen-spec-traceability.py` only when editing `docs/design/screen-specs/SCR-*.yaml`, or when that validator fails through `pnpm repo:docs:check`
 - `pnpm repo:docs:claims:audit` only for proactive audit while editing architecture docs, maintenance docs, or backend module `AGENTS.md` files that name live repo surfaces
 - `pnpm repo:prd:diff-ids` only when `docs/PRD.md` changed and ripple review is in scope
 - `pnpm verify:scenario:fidelity` only for report-only weak-test triage; it is not a default blocking verification command
@@ -55,6 +56,7 @@ Not every command in a lane is a default finish gate. Treat these as conditional
   and any change to that wiring must update `tooling/config/ops-registry.yaml`,
   `tooling/scripts/gates/check-ops-config.mjs`, and the docs that describe the gate in the same change.
 - Design navigation and lifecycle docs are machine-readable contracts: keep ID-bearing fields free of prose placeholders, and require canonical `SCR-*`, `JRN-*`, and lifecycle IDs before considering the change complete.
+- Screen specs are traceable UX contracts: active `SCR-*` specs must carry `traceability.status`, `screen_graph_node`, `prd_refs`, `journey_refs`, and `scenario_refs`; use `validated` for new or materially changed specs.
 - Deploy inputs must be deterministic: workflow refs, image tags, and config refs must resolve to one exact target.
 - Observability config must run as checked in. Do not rely on undocumented template expansion.
 - Use the canonical lane names above. Retired transition aliases such as `openapi:*`, `sdk:*`, `docs:check`,
@@ -115,6 +117,7 @@ Not every command in a lane is a default finish gate. Treat these as conditional
 | `tooling/scripts/governance/validate-requirement-references.py`         | Live REQ/NFR reference validation                                        | `pnpm repo:docs:check`                                                        |
 | `tooling/scripts/governance/validate-assistance-vocabulary.py`          | Assistance/intervention vocabulary parity                                | `pnpm repo:docs:check`                                                        |
 | `tooling/scripts/governance/validate-design-contracts.py`               | Design component contract drift check                                    | `pnpm repo:docs:check`                                                        |
+| `tooling/scripts/governance/validate-screen-spec-traceability.py`       | Screen-spec traceability from PRD/JRN/SCR/SCN IDs                        | `pnpm repo:docs:check`                                                        |
 | `tooling/skills/design-surface-drift/scripts/`                          | Design screen-graph, journey, and lifecycle structure                    | `pnpm repo:design:check`, `pnpm repo:docs:check` for those validator failures |
 | `tooling/skills/intake-to-prd/scripts/extract_prd_diff_ids.py`          | Extract changed REQ-P1/NFR IDs from PRD git diff                         | `pnpm repo:prd:diff-ids` when `docs/PRD.md` changes                           |
 | `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`    | Grouped doc-claims failure triage                                        | `pnpm repo:docs:claims:triage`                                                |

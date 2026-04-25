@@ -1,99 +1,110 @@
 # Screen Spec: Terms of Service
 screen_id: SCR-INFRA-004
-name: "Terms of Service"
-route: "/legal/terms"
+name: 'Terms of Service'
+route: '/legal/terms'
 role: [customer, tasker]
-phase: "0-1"
+phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-INFRA-004
+  prd_refs:
+    - NFR-LEGAL-01
+    - NFR-LEGAL-02
+    - NFR-LEGAL-03
+  journey_refs:
+    - JRN-SHARED-06-A3
+  scenario_refs: []
 template: detail
-figma_page: "Infrastructure/Terms of Service"
-feature: "legal"
+figma_page: 'Infrastructure/Terms of Service'
+feature: 'legal'
 
 layout:
   template: detail
   density: default
-  structure: "safe_area -> nav_header -> scrollview(content) -> sticky_bottom_cta"
+  structure: 'safe_area -> nav_header -> scrollview(content) -> sticky_bottom_cta'
 
 components:
   - id: COMP-LOADINGSKELETON
-    usage: "Detail skeleton placeholder while terms content loads"
+    usage: 'Detail skeleton placeholder while terms content loads'
     props:
       variant: detail
       count: 1
     variant: detail
 
   - id: COMP-BUTTON
-    usage: "Back navigation button in nav header"
+    usage: 'Back navigation button in nav header'
     props:
-      label: "Буцах"
+      label: 'Буцах'
       variant: ghost
-      icon: "arrow_left"
-      iconPosition: "left"
+      icon: 'arrow_left'
+      iconPosition: 'left'
     variant: ghost
 
   - id: COMP-EMPTYSTATE
-    usage: "Error state when terms content fails to load"
+    usage: 'Error state when terms content fails to load'
     props:
-      illustration: "error_document"
-      headline: "Ачааллах боломжгүй"
-      description: "Үйлчилгээний нөхцлийг ачааллахад алдаа гарлаа"
-      ctaLabel: "Дахин оролдох"
+      illustration: 'error_document'
+      headline: 'Ачааллах боломжгүй'
+      description: 'Үйлчилгээний нөхцлийг ачааллахад алдаа гарлаа'
+      ctaLabel: 'Дахин оролдох'
     variant: error
 
 states:
   - id: loading
-    description: "Terms of service content is loading"
+    description: 'Terms of service content is loading'
     components_visible: [COMP-LOADINGSKELETON, COMP-BUTTON]
     components_hidden: [COMP-EMPTYSTATE]
 
   - id: loaded
-    description: "Terms content successfully loaded and displayed as rich text"
+    description: 'Terms content successfully loaded and displayed as rich text'
     components_visible: [COMP-BUTTON]
     components_hidden: [COMP-LOADINGSKELETON, COMP-EMPTYSTATE]
 
   - id: error_network
-    description: "Terms content failed to load due to network error"
+    description: 'Terms content failed to load due to network error'
     components_visible: [COMP-EMPTYSTATE, COMP-BUTTON]
     components_hidden: [COMP-LOADINGSKELETON]
 
 copy:
   - key: nav_title
-    mn: "Үйлчилгээний нөхцөл"
-    en: "Terms of Service"
+    mn: 'Үйлчилгээний нөхцөл'
+    en: 'Terms of Service'
     max_chars: 30
 
   - key: nav_back
-    mn: "Буцах"
-    en: "Back"
+    mn: 'Буцах'
+    en: 'Back'
     max_chars: 10
 
   - key: error_headline
-    mn: "Ачааллах боломжгүй"
-    en: "Unable to load"
+    mn: 'Ачааллах боломжгүй'
+    en: 'Unable to load'
     max_chars: 30
 
   - key: error_description
-    mn: "Үйлчилгээний нөхцлийг ачааллахад алдаа гарлаа. Дахин оролдоно уу"
-    en: "Failed to load Terms of Service. Please try again"
+    mn: 'Үйлчилгээний нөхцлийг ачааллахад алдаа гарлаа. Дахин оролдоно уу'
+    en: 'Failed to load Terms of Service. Please try again'
     max_chars: 80
 
   - key: error_retry
-    mn: "Дахин оролдох"
-    en: "Try again"
+    mn: 'Дахин оролдох'
+    en: 'Try again'
     max_chars: 20
 
 api_endpoints: []
 
 analytics_events:
-  - event: "terms_viewed"
-    trigger: "Terms of Service screen loaded successfully"
-  - event: "terms_load_error"
-    trigger: "Terms content failed to load"
+  - event: 'terms_viewed'
+    trigger: 'Terms of Service screen loaded successfully'
+  - event: 'terms_load_error'
+    trigger: 'Terms content failed to load'
 
 acceptance_criteria:
-  - "Loading state shows detail skeleton matching the terms layout"
-  - "Loaded state renders terms content as scrollable rich text"
-  - "Network error state shows error illustration with retry CTA"
-  - "Back button in nav header pops to previous screen"
-  - "Terms content supports both Mongolian and English based on app language"
-  - "Content scrolls independently with nav header fixed at top"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'Loading state shows detail skeleton matching the terms layout'
+  - 'Loaded state renders terms content as scrollable rich text'
+  - 'Network error state shows error illustration with retry CTA'
+  - 'Back button in nav header pops to previous screen'
+  - 'Terms content supports both Mongolian and English based on app language'
+  - 'Terms content states Phase 1 direct settlement clearly and does not promise payment hold, payment protection, wallet protection, or escrow'
+  - 'Content scrolls independently with nav header fixed at top'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

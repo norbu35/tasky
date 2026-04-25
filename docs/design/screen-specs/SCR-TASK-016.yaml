@@ -4,6 +4,25 @@ name: 'Tasker Stats Dashboard'
 route: '/(tasker)/stats'
 role: [tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-016
+  prd_refs:
+    - REQ-P1-KPI-01
+    - REQ-P1-KPI-02
+    - REQ-P1-KPI-03
+    - REQ-P1-KPI-04
+    - REQ-P1-KPI-05
+    - REQ-P1-KPI-06
+    - REQ-P1-SAFE-13
+  journey_refs:
+    - JRN-SHARED-05-A2
+  scenario_refs:
+    - SCN-ANALYTICS-001
+    - SCN-ANALYTICS-002
+    - SCN-ANALYTICS-003
+    - SCN-ANALYTICS-004
+    - SCN-ANALYTICS-005
 template: detail
 figma_page: 'Tasker/Tasker Stats'
 feature: 'tasker-profile'
@@ -60,7 +79,7 @@ components:
     variant: default
 
   - id: COMP-STARRATING
-    usage: 'Per-category rating breakdown display — task clarity, respectfulness, punctuality'
+    usage: 'Per-category rating breakdown display — quality, punctuality, communication'
     props:
       value: 4.7
       readonly: true
@@ -71,7 +90,6 @@ components:
     usage: 'Verification status display in stats header'
     props:
       isVerified: true
-      isPro: false
       size: 'md'
     variant: default
 
@@ -147,14 +165,14 @@ copy:
     en: 'Rating Breakdown'
     max_chars: 25
 
-  - key: rating_task_clarity
-    mn: 'Даалгаврын тодорхой байдал'
-    en: 'Task Clarity'
+  - key: rating_quality
+    mn: 'Ажлын чанар'
+    en: 'Quality of work'
     max_chars: 30
 
-  - key: rating_respectfulness
-    mn: 'Хүндэтгэлтэй хандлага'
-    en: 'Respectfulness'
+  - key: rating_communication
+    mn: 'Харилцаа'
+    en: 'Communication'
     max_chars: 25
 
   - key: rating_punctuality
@@ -208,7 +226,7 @@ analytics_events:
 acceptance_criteria:
   - 'Stats display in StatCard grid layout with label, value, and trend'
   - 'StatCard components show loading skeleton during initial fetch'
-  - 'Overall rating displayed with per-category breakdown (task clarity, respectfulness, punctuality)'
+  - 'Overall rating displayed with customer-to-tasker breakdown (quality, punctuality, communication)'
   - 'Tasker Reliability Score is surfaced with a short explanation of its inputs'
   - 'Reliability description explains score inputs (completion rate, punctuality, ratings, cancellations)'
   - 'Application success rate is shown in the activity section'

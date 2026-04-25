@@ -1,120 +1,132 @@
 # Screen Spec: Permission Primer — Camera
 screen_id: SCR-SHARED-007
-name: "Permission Primer — Camera"
-route: "/onboarding/permission-camera"
+name: 'Permission Primer — Camera'
+route: '/onboarding/permission-camera'
 role: [customer, tasker]
-phase: "0-1"
+phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-SHARED-007
+  prd_refs:
+    - REQ-P1-TASK-02
+    - REQ-P1-TASK-03
+    - REQ-P1-SAFE-05
+  journey_refs:
+    - JRN-SHARED-01:step-5
+  scenario_refs:
+    - SCN-TASK-006
+    - SCN-VERIF-003
 template: modal_sheet
-figma_page: "Shared/Permission Primer Camera"
-feature: "onboarding"
+figma_page: 'Shared/Permission Primer Camera'
+feature: 'onboarding'
 
 layout:
   template: modal_sheet
   density: comfortable
-  structure: "scrim -> sheet(handle_bar + icon + heading + description + primary_action + secondary_action)"
+  structure: 'scrim -> sheet(handle_bar + icon + heading + description + primary_action + secondary_action)'
 
 components:
   - id: COMP-MODALSHEET
-    usage: "Bottom sheet explaining why camera permission is needed"
+    usage: 'Bottom sheet explaining why camera permission is needed'
     props:
       visible: true
-      title: "Камерын зөвшөөрөл"
+      title: 'Камерын зөвшөөрөл'
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Primary CTA to trigger the OS camera permission dialog"
+    usage: 'Primary CTA to trigger the OS camera permission dialog'
     props:
-      label: "Зөвшөөрөх"
+      label: 'Зөвшөөрөх'
       variant: primary
       size: xl
     variant: primary
 
   - id: COMP-BUTTON
-    usage: "Secondary action to skip camera permission"
+    usage: 'Secondary action to skip camera permission'
     props:
-      label: "Дараа хийх"
+      label: 'Дараа хийх'
       variant: ghost
       size: md
     variant: ghost
 
 states:
   - id: default
-    description: "Permission primer shown explaining why camera access is needed"
+    description: 'Permission primer shown explaining why camera access is needed'
     components_visible: [camera_icon, heading, description, allow_button, skip_link]
     components_hidden: [granted_message, denied_message]
 
   - id: granted
-    description: "Camera permission granted by the OS; screen auto-advances"
+    description: 'Camera permission granted by the OS; screen auto-advances'
     components_visible: [camera_icon, granted_message]
     components_hidden: [heading, description, allow_button, skip_link, denied_message]
 
   - id: denied
-    description: "Camera permission denied by the OS; fallback guidance shown"
+    description: 'Camera permission denied by the OS; fallback guidance shown'
     components_visible: [camera_icon, denied_message, settings_hint, continue_button]
     components_hidden: [heading, description, allow_button, skip_link, granted_message]
 
 copy:
   - key: heading
-    mn: "Камерын зөвшөөрөл"
-    en: "Camera Permission"
+    mn: 'Камерын зөвшөөрөл'
+    en: 'Camera Permission'
     max_chars: 25
 
   - key: description
-    mn: "Зураг оруулах, баталгаажуулалт хийхэд камер хэрэгтэй"
-    en: "Camera is needed for photos and verification"
+    mn: 'Зураг оруулах, баталгаажуулалт хийхэд камер хэрэгтэй'
+    en: 'Camera is needed for photos and verification'
     max_chars: 70
 
   - key: allow_button_label
-    mn: "Зөвшөөрөх"
-    en: "Allow"
+    mn: 'Зөвшөөрөх'
+    en: 'Allow'
     max_chars: 15
 
   - key: skip_label
-    mn: "Дараа хийх"
-    en: "Do it later"
+    mn: 'Дараа хийх'
+    en: 'Do it later'
     max_chars: 15
 
   - key: granted_message
-    mn: "Камер зөвшөөрөгдлөө"
-    en: "Camera access granted"
+    mn: 'Камер зөвшөөрөгдлөө'
+    en: 'Camera access granted'
     max_chars: 30
 
   - key: denied_message
-    mn: "Камерын зөвшөөрөл хаагдсан"
-    en: "Camera permission denied"
+    mn: 'Камерын зөвшөөрөл хаагдсан'
+    en: 'Camera permission denied'
     max_chars: 35
 
   - key: settings_hint
-    mn: "Тохиргооноос камерыг нээх боломжтой"
-    en: "You can enable camera in Settings"
+    mn: 'Тохиргооноос камерыг нээх боломжтой'
+    en: 'You can enable camera in Settings'
     max_chars: 50
 
   - key: continue_label
-    mn: "Үргэлжлүүлэх"
-    en: "Continue"
+    mn: 'Үргэлжлүүлэх'
+    en: 'Continue'
     max_chars: 15
 
 api_endpoints: []
 
 analytics_events:
-  - event: "permission_primer_camera_viewed"
-    trigger: "Camera permission primer becomes visible"
-  - event: "permission_camera_allow_tapped"
-    trigger: "User taps Allow button"
-  - event: "permission_camera_granted"
-    trigger: "OS returns granted status for camera"
-  - event: "permission_camera_denied"
-    trigger: "OS returns denied status for camera"
-  - event: "permission_camera_skipped"
+  - event: 'permission_primer_camera_viewed'
+    trigger: 'Camera permission primer becomes visible'
+  - event: 'permission_camera_allow_tapped'
+    trigger: 'User taps Allow button'
+  - event: 'permission_camera_granted'
+    trigger: 'OS returns granted status for camera'
+  - event: 'permission_camera_denied'
+    trigger: 'OS returns denied status for camera'
+  - event: 'permission_camera_skipped'
     trigger: "User taps 'Do it later'"
 
 acceptance_criteria:
-  - "Bottom sheet displays camera icon, explanation heading, and description"
-  - "Allow button triggers the OS native camera permission dialog"
-  - "If granted, screen auto-advances to Permission Primer Location (SCR-SHARED-008)"
-  - "If denied, fallback message shows with a hint to open device Settings"
-  - "Skip link allows user to proceed without granting permission"
-  - "Skipping also advances to Permission Primer Location (SCR-SHARED-008)"
-  - "Sheet has drag handle but is not dismissible by dragging (onboarding context)"
-  - "No API calls are made on this screen"
-  - "Comfortable density provides breathing room for permission explanation"
+  - 'Bottom sheet displays camera icon, explanation heading, and description'
+  - 'Allow button triggers the OS native camera permission dialog'
+  - 'If granted, screen auto-advances to Permission Primer Location (SCR-SHARED-008)'
+  - 'If denied, fallback message shows with a hint to open device Settings'
+  - 'Skip link allows user to proceed without granting permission'
+  - 'Skipping also advances to Permission Primer Location (SCR-SHARED-008)'
+  - 'Sheet has drag handle but is not dismissible by dragging (onboarding context)'
+  - 'No API calls are made on this screen'
+  - 'Comfortable density provides breathing room for permission explanation'

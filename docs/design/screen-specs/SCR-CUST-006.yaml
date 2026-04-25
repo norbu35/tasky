@@ -4,6 +4,22 @@ name: 'Post Task — Schedule & Pricing'
 route: '/(customer)/tasks/new/schedule'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-006
+  prd_refs:
+    - REQ-P1-TASK-01
+    - REQ-P1-PRICE-01
+    - REQ-P1-PRICE-02
+    - REQ-P1-PRICE-04
+  journey_refs:
+    - JRN-CUST-01:step-6
+  scenario_refs:
+    - SCN-TASK-004
+    - SCN-TASK-005
+    - SCN-TASK-026
+    - SCN-TASK-027
+    - SCN-TASK-028
 template: form_wizard
 figma_page: 'Customer/Post Task Schedule Pricing'
 feature: 'task_posting'

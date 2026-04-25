@@ -67,6 +67,7 @@ pnpm verify:scenario:fidelity
 Use the conditional helpers only when their trigger applies:
 
 - `pnpm repo:design:check` for `screen-graph.yaml`, `journey-catalog.yaml`, or `domain-lifecycles.yaml` edits, or when those validators fail through `pnpm repo:docs:check`
+- `python3 tooling/scripts/governance/validate-screen-spec-traceability.py` for `docs/design/screen-specs/SCR-*.yaml` edits, or when `pnpm repo:docs:check` reports screen-spec traceability failures
 - `pnpm repo:docs:claims:triage` when the doc-claims validator failed
 - `pnpm repo:docs:claims:audit` for proactive audit while editing architecture docs, maintenance docs, or backend module `AGENTS.md` files that name live repo surfaces
 - `pnpm repo:prd:diff-ids` when `docs/PRD.md` changed and ripple review is required

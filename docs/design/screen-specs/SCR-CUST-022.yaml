@@ -4,6 +4,19 @@ name: 'Booking Cancel (Customer)'
 route: null
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-022
+  prd_refs:
+    - REQ-P1-BOOK-14
+    - REQ-P1-BOOK-15
+  journey_refs:
+    - JRN-CUST-04-A2
+  scenario_refs:
+    - SCN-BOOK-001
+    - SCN-BOOK-002
+    - SCN-BOOK-003
+    - SCN-BOOK-004
 template: modal_sheet
 figma_page: 'Customer/Booking Cancel Customer'
 feature: 'booking'

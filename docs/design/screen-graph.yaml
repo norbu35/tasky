@@ -289,7 +289,7 @@ nodes:
   SCR-CUST-004:
     label: Photo Upload
     edges:
-      - to: SCR-CUST-007
+      - to: SCR-CUST-005
         type: push
         guard: photos uploaded or skipped
       - to: SCR-CUST-003
@@ -298,23 +298,24 @@ nodes:
     data_deps:
       - photo_upload_urls
   SCR-CUST-007:
-    label: Job Scope Summary
+    label: Review & Submit
     edges:
-      - to: SCR-CUST-005
-        type: push
-        guard: summary reviewed
-      - to: SCR-CUST-004
+      - to: SCR-CUST-008
+        type: replace
+        guard: submit success
+      - to: SCR-CUST-006
         type: pop
         guard: back
     data_deps:
       - job_scope_summary
+      - task_draft
   SCR-CUST-005:
     label: Location Pin
     edges:
       - to: SCR-CUST-006
         type: push
         guard: location set
-      - to: SCR-CUST-007
+      - to: SCR-CUST-004
         type: pop
         guard: back
     data_deps:
@@ -322,11 +323,11 @@ nodes:
       - location_lng
       - location_text
   SCR-CUST-006:
-    label: Schedule, Budget & Submit
+    label: Schedule & Pricing
     edges:
-      - to: SCR-CUST-008
-        type: replace
-        guard: submit success
+      - to: SCR-CUST-007
+        type: push
+        guard: schedule and pricing set
       - to: SCR-CUST-005
         type: pop
         guard: back
@@ -357,9 +358,9 @@ nodes:
       - to: SCR-CUST-017
         type: push
         guard: tap booking section, status == ASSIGNED
-      - to: SCR-SHARED-010
+      - to: SCR-SHARED-011
         type: push
-        guard: tap 'Message Tasker'
+        guard: tap 'Message Tasker', status == ASSIGNED
       - to: SCR-CUST-001
         type: pop
         guard: back
@@ -378,8 +379,6 @@ nodes:
         guard: cancellation confirmed
     data_deps:
       - task_id
-      - booking_id
-      - hours_to_schedule
   SCR-CUST-011:
     label: Applicants List
     edges:
@@ -471,7 +470,7 @@ nodes:
       - to: SCR-CUST-024
         type: push
         guard: tap 'Report Issue'
-      - to: SCR-SHARED-010
+      - to: SCR-SHARED-011
         type: push
         guard: tap 'Message'
       - to: SCR-CUST-013
@@ -578,9 +577,6 @@ nodes:
       - to: SCR-TASK-003
         type: push
         guard: tap 'Apply', unverified
-      - to: SCR-SHARED-010
-        type: push
-        guard: tap 'Message'
       - to: SCR-TASK-001
         type: pop
         guard: back
@@ -636,7 +632,7 @@ nodes:
         guard: back
     data_deps:
       - verification_status
-      - sla_deadline
+      - verification_queue_status
   SCR-TASK-008:
     label: Verification Approved
     edges:
@@ -691,9 +687,15 @@ nodes:
       - to: SCR-TASK-014
         type: modal
         guard: no-show flag available
-      - to: SCR-SHARED-010
+      - to: SCR-SHARED-011
         type: push
         guard: tap 'Message'
+      - to: SCR-TASK-013
+        type: replace
+        guard: tap 'Mark Done', API success updates booking state
+      - to: SCR-TASK-013
+        type: modal
+        guard: tap 'Reschedule' or respond to reschedule request
       - to: SCR-SHARED-017
         type: push
         guard: tap 'Leave Review', after review debt exists
@@ -704,6 +706,8 @@ nodes:
       - booking_id
       - booking_detail
       - exact_address
+      - current_schedule
+      - reschedule_requests
   SCR-TASK-014:
     label: No-Show Flag (Tasker)
     edges:
@@ -817,10 +821,11 @@ deep_links:
   - notification: verification_rejected
     target: SCR-TASK-009
     params: []
-  - notification: lead_unlock_request
+  - notification: booking_request_selected
     target: SCR-TASK-017
     params:
-      - application_id
+      - booking_intent_id
+      - task_id
   - notification: no_show_reminder
     target: SCR-CUST-021
     params:

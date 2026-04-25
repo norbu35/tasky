@@ -4,6 +4,18 @@ name: 'Selected Tasker Declined / Expired'
 route: null
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-012
+  prd_refs:
+    - REQ-P1-BOOK-02
+    - REQ-P1-BOOK-03
+    - REQ-P1-NOTIF-02
+  journey_refs:
+    - JRN-CUST-02-A3
+    - JRN-CUST-02-A4
+  scenario_refs:
+    - SCN-BOOK-023
 template: modal_sheet
 figma_page: 'Customer/Selected Tasker Declined Expired'
 feature: 'matching'

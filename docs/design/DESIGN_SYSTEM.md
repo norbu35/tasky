@@ -79,3 +79,42 @@ The active runtime token graph includes:
 
 Web consumes those tokens through Tailwind/theme variables and `@tasky/design-tokens/tokens.css`. Mobile consumes the
 same graph through `nativeTokens`, NativeWind configuration, and native shell/primitive adapters.
+
+`docs/design/component-contract.yaml` records the active mobile component contract. Entries may map a stable design
+component name to a differently named runtime export with `runtime_name`, and they must classify implementation posture
+with `implementation_status` when the component is implemented as a template, screen-local implementation, or deferred
+intent. Deferred entries preserve design vocabulary only; they are not active runtime promises.
+
+## 5. Screen Traceability Contract
+
+Screen specs are the per-screen bridge from product intent to implementation. They do not own product behavior; they
+translate the governing product chain into concrete UX contracts:
+
+```text
+docs/PRD.md -> REQ-P1/NFR ids -> journey-catalog.yaml JRN ids -> screen-graph.yaml SCR ids -> screen-specs/SCR-*.yaml -> app implementation and tests
+```
+
+`tests/registry.yaml` supplies optional `SCN-*` coverage references when a scenario-backed test already exists.
+
+Every active screen spec must contain a `traceability` block:
+
+```yaml
+traceability:
+  status: pending_audit | validated
+  screen_graph_node: SCR-...
+  prd_refs: []
+  journey_refs: []
+  scenario_refs: []
+```
+
+Use `pending_audit` only for an explicitly scoped traceability-audit pass. A new or materially changed screen spec
+should be `validated` before implementation begins. In `validated` state, `prd_refs` and `journey_refs` must be
+non-empty and all references must resolve to live IDs. `journey_refs` may use journey IDs, `JRN-*:step-N`,
+alternate-path IDs, or journey `paths[].id` refs. `scenario_refs` should name existing `SCN-*` IDs when a
+scenario-backed test exists; otherwise keep it empty rather than inventing a scenario outside the scenario-curation
+workflow.
+
+Implementation work should read the screen spec as a contract for layout, states, copy intent, data dependencies, and
+acceptance criteria, then realize it through the appropriate app architecture. Mobile screens use the screen-family
+contract in `docs/architecture/mobile.md`; web screens use the web structure in `docs/architecture/web.md`. Both must
+consume shared tokens and primitives rather than one-off styling.

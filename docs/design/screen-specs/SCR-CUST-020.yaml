@@ -4,6 +4,21 @@ name: 'Reschedule'
 route: '/(customer)/bookings/:bookingId/reschedule'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-020
+  prd_refs:
+    - REQ-P1-BOOK-09
+    - REQ-P1-BOOK-10
+    - REQ-P1-BOOK-11
+    - REQ-P1-BOOK-12
+  journey_refs:
+    - JRN-CUST-04-A1
+  scenario_refs:
+    - SCN-BOOK-017
+    - SCN-BOOK-018
+    - SCN-BOOK-019
+    - SCN-BOOK-020
 template: form_wizard
 figma_page: 'Customer/Reschedule'
 feature: 'booking'

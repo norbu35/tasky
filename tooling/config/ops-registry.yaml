@@ -98,7 +98,7 @@ packageScripts:
   repo:docs:check:
     lifecycle: blocking
     lane: docs
-    command: 'python3 tooling/scripts/governance/check-doc-governance.py && python3 tooling/scripts/governance/validate-doc-references.py && python3 tooling/scripts/governance/validate-prd-scenario-links.py && python3 tooling/scripts/governance/validate-requirement-references.py && python3 tooling/scripts/governance/validate-assistance-vocabulary.py && python3 tooling/scripts/governance/validate-doc-claims.py && python3 tooling/scripts/governance/validate-design-contracts.py && pnpm repo:design:check && pnpm contract:openapi:check'
+    command: 'python3 tooling/scripts/governance/check-doc-governance.py && python3 tooling/scripts/governance/validate-doc-references.py && python3 tooling/scripts/governance/validate-prd-scenario-links.py && python3 tooling/scripts/governance/validate-requirement-references.py && python3 tooling/scripts/governance/validate-assistance-vocabulary.py && python3 tooling/scripts/governance/validate-doc-claims.py && python3 tooling/scripts/governance/validate-design-contracts.py && python3 tooling/scripts/governance/validate-screen-spec-traceability.py && pnpm repo:design:check && pnpm contract:openapi:check'
   repo:ops:sync:
     lifecycle: blocking
     lane: ops_wiring
@@ -334,6 +334,8 @@ toolingScripts:
   governance/validate-prd-scenario-links.py:
     lifecycle: blocking
   governance/validate-requirement-references.py:
+    lifecycle: blocking
+  governance/validate-screen-spec-traceability.py:
     lifecycle: blocking
   governance/validate-schema-parity.py:
     lifecycle: blocking

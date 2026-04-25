@@ -4,6 +4,19 @@ name: 'Splash / Launch Screen'
 route: '/'
 role: [customer, tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-SHARED-001
+  prd_refs:
+    - REQ-P1-AUTH-01
+    - REQ-P1-AUTH-03
+    - REQ-P1-AUTH-05
+  journey_refs:
+    - JRN-SHARED-01:step-1
+    - JRN-SHARED-01-A2
+  scenario_refs:
+    - SCN-AUTH-006
+    - SCN-AUTH-008
 template: auth
 figma_page: 'Shared/Splash Launch Screen'
 feature: 'auth'

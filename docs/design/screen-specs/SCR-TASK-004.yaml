@@ -4,6 +4,16 @@ name: 'Verification — Consent'
 route: '/(tasker)/verification/consent'
 role: [tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-004
+  prd_refs:
+    - REQ-P1-SAFE-05
+    - NFR-SEC-02
+  journey_refs:
+    - JRN-TASK-01:step-3
+  scenario_refs:
+    - SCN-VERIF-003
 template: detail
 figma_page: 'Tasker/Verification Consent'
 feature: 'verification'

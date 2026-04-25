@@ -4,6 +4,23 @@ name: 'Applicants List'
 route: '/(customer)/tasks/:taskId/applicants'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-011
+  prd_refs:
+    - REQ-P1-MATCH-03
+    - REQ-P1-MATCH-04
+    - REQ-P1-PRICE-05
+  journey_refs:
+    - JRN-CUST-02:step-2
+    - JRN-CUST-02:step-4
+    - JRN-CUST-02-A1
+    - JRN-CUST-02-A3
+    - JRN-CUST-02-A4
+  scenario_refs:
+    - SCN-TASK-024
+    - SCN-TASK-029
+    - SCN-BOOK-022
 template: feed_list
 figma_page: 'Customer/Applicants List'
 feature: 'matching'
@@ -18,7 +35,7 @@ components:
     usage: 'Applicant cards showing Tasker avatar, name, verification/trust cues, optional public reputation when thresholded, and structured pricing response summary'
     props:
       headerContent: '{tasker_avatar, tasker_name, trust_summary}'
-      bodyContent: '{verification_badge, category_match, distance, pricing_response_summary}'
+      bodyContent: '{verification_badge, completed_jobs, pricing_response_summary}'
       status: 'open'
     variant: application
 

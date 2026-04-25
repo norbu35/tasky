@@ -4,6 +4,24 @@ name: 'Browse — Task Feed'
 route: '/(tasker)/browse'
 role: [tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-001
+  prd_refs:
+    - REQ-P1-MATCH-01
+    - REQ-P1-TASK-09
+    - REQ-P1-COVER-02
+    - REQ-P1-SAFE-04
+    - NFR-API-01
+  journey_refs:
+    - JRN-TASK-02:step-1
+    - JRN-TASK-02-A4
+  scenario_refs:
+    - SCN-TASK-007
+    - SCN-TASK-008
+    - SCN-TASK-012
+    - SCN-TASK-013
+    - SCN-NOTIF-001
 template: feed_list
 figma_page: 'Tasker/Browse Task Feed'
 feature: 'task-browse'
@@ -22,7 +40,7 @@ components:
     variant: with_filter
 
   - id: COMP-FILTERBAR
-    usage: 'Horizontal scrolling category chips and distance filter below search bar'
+    usage: 'Horizontal scrolling category chips and distance filter below search bar; filters change the view only and do not gate application eligibility'
     props:
       filters: [category, distance]
       activeFilters: []
@@ -40,7 +58,6 @@ components:
           timeAgo: '15 минутын өмнө',
         }
       status: 'open'
-      isPromoted: false
       isUrgent: false
     variant: task
 
@@ -52,7 +69,7 @@ components:
     variant: default
 
   - id: COMP-EMPTYSTATE
-    usage: 'Shown when no tasks match current filters or location'
+    usage: 'Shown when no open tasks match the current view filters'
     props:
       illustration: 'empty_tasks'
       headline: 'Одоогоор даалгавар байхгүй байна'
@@ -81,7 +98,7 @@ states:
     components_hidden: [split_cards, empty_state, trust_banner, pagination_footer]
 
   - id: empty_activation
-    description: "No open tasks in the tasker's area or category — activation empty state with guidance"
+    description: 'No open tasks match the current category or distance view filters; activation empty state with guidance'
     components_visible: [search_bar, filter_bar, empty_state]
     components_hidden: [split_cards, loading_skeleton, pagination_footer, trust_banner]
 
@@ -158,8 +175,8 @@ copy:
     max_chars: 20
 
   - key: empty_activation_headline
-    mn: 'Танай бүсэд даалгавар байхгүй байна'
-    en: 'No tasks in your area yet'
+    mn: 'Таны шүүлтүүрт тохирох даалгавар алга'
+    en: 'No tasks match your filters yet'
     max_chars: 40
 
   - key: empty_activation_description
@@ -200,7 +217,7 @@ copy:
 api_endpoints:
   - method: GET
     path: '/tasks'
-    purpose: 'Fetch paginated list of open tasks with optional category and location filters'
+    purpose: 'Fetch paginated list of open tasks with optional category and approximate-distance view filters'
 
 analytics_events:
   - event: 'task_feed_viewed'
@@ -227,7 +244,7 @@ acceptance_criteria:
   - 'Task cards show either posted budget or quote-request pricing state, depending on task pricing mode'
   - 'Search bar is sticky at top and supports keyword filtering of task titles'
   - 'Category chips in FilterBar are horizontally scrollable'
-  - "Distance filter adjusts results based on tasker's current location"
+  - "Distance filter adjusts the visible list based on tasker's current location but does not change whether a verified tasker may apply"
   - 'Pull-to-refresh reloads the task list from the API'
   - 'Infinite scroll loads additional pages with footer spinner'
   - 'Empty activation state shows CTA to enable push notifications'

@@ -4,6 +4,19 @@ name: 'Verification — Rejected'
 route: '/(tasker)/verification/rejected'
 role: [tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-009
+  prd_refs:
+    - REQ-P1-SAFE-02
+    - REQ-P1-SAFE-05
+    - REQ-P1-NOTIF-06
+  journey_refs:
+    - JRN-TASK-01-A1
+    - JRN-TASK-01-A2
+  scenario_refs:
+    - SCN-VERIF-004
+    - SCN-NOTIF-006
 template: error_state
 figma_page: 'Tasker/Verification Rejected'
 feature: 'verification'

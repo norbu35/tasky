@@ -4,6 +4,16 @@ name: 'Customer Bookings List'
 route: '/(customer)/bookings'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-016
+  prd_refs:
+    - REQ-P1-BOOK-13
+    - NFR-RELI-04
+  journey_refs:
+    - JRN-CUST-04:step-1
+  scenario_refs:
+    - SCN-BOOK-009
 template: feed_list
 figma_page: 'Customer/Customer Bookings List'
 feature: 'booking'

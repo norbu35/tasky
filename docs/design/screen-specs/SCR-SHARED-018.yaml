@@ -4,6 +4,17 @@ name: 'Review Reminder'
 route: null
 role: [customer, tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-SHARED-018
+  prd_refs:
+    - REQ-P1-SAFE-09
+  journey_refs:
+    - JRN-SHARED-07-A1
+  scenario_refs:
+    - SCN-REVIEW-002
+    - SCN-REVIEW-003
+    - SCN-REVIEW-004
 template: modal_sheet
 figma_page: 'Shared/Review Reminder'
 feature: 'reviews'

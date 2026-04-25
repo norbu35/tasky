@@ -4,6 +4,24 @@ name: 'Post Task — Review & Submit'
 route: '/(customer)/tasks/new/review'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-007
+  prd_refs:
+    - REQ-P1-TASK-06
+    - REQ-P1-TASK-07
+    - REQ-P1-TASK-08
+    - REQ-P1-TASK-05
+    - REQ-P1-PRICE-01
+    - REQ-P1-KPI-04
+  journey_refs:
+    - JRN-CUST-01:step-7
+    - JRN-CUST-01-A1
+  scenario_refs:
+    - SCN-TASK-014
+    - SCN-TASK-015
+    - SCN-TASK-020
+    - SCN-ANALYTICS-001
 template: detail
 figma_page: 'Customer/Post Task Review Submit'
 feature: 'task_posting'
@@ -56,11 +74,6 @@ states:
   - id: review
     description: 'All task data displayed in summary sections; user reviews before submitting'
     components_visible: [COMP-STEPINDICATOR, COMP-CARD, COMP-STATUSBADGE, COMP-BUTTON]
-    components_hidden: [COMP-TOAST]
-
-  - id: editing_summary
-    description: 'User tapped edit on the Job Scope Summary; text becomes editable'
-    components_visible: [COMP-STEPINDICATOR, COMP-CARD, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: submitting
@@ -124,10 +137,10 @@ copy:
     en: 'Edit'
     max_chars: 10
 
-  - key: scope_summary_edit_hint
-    mn: 'Товч тайлбарыг засах боломжтой'
-    en: 'You can edit the summary'
-    max_chars: 40
+  - key: scope_summary_source_hint
+    mn: 'Товч тайлбар нь маягтын хариултаас автоматаар үүснэ'
+    en: 'The summary is generated from your structured answers'
+    max_chars: 60
 
   - key: pricing_note
     mn: 'Төсөвтэй эсвэл үнийн санал авах горимын сонголт харагдана'
@@ -157,8 +170,6 @@ api_endpoints:
 analytics_events:
   - event: 'task_review_viewed'
     trigger: 'Review screen becomes visible with complete task summary'
-  - event: 'task_scope_summary_edited'
-    trigger: 'User edits the auto-generated Job Scope Summary'
   - event: 'task_submitted'
     trigger: 'User taps Post Task and POST /tasks succeeds; includes task_id'
   - event: 'task_submit_failed'
@@ -169,8 +180,9 @@ analytics_events:
 acceptance_criteria:
   - "StepIndicator shows step 6 of 7 with 'Хянах' label highlighted"
   - 'Summary displays all collected data in outlined Card sections: category, intake answers, photos, location, schedule, pricing'
-  - 'Job Scope Summary section is auto-generated from intake answers and is editable by the customer'
-  - 'Each section has an Edit link that navigates back to the corresponding wizard step'
+  - 'Job Scope Summary section is deterministically generated from intake answers and is not directly editable'
+  - 'Each source section has an Edit link that navigates back to the corresponding wizard step so the generated summary updates from structured data'
+  - 'Submit-time validation uses the draft-bound intake schema version even if a newer schema has been activated'
   - 'Budget mode shows the budget in ₮ format with comma separator; quote mode clearly indicates that taskers will send structured offers'
   - 'Location shows the pin text description and approximate area'
   - 'Photos show thumbnail previews of uploaded images'

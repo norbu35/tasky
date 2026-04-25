@@ -1,74 +1,88 @@
 # Screen Spec: Review Form
 screen_id: SCR-SHARED-017
-name: "Review Form"
-route: "/(shared)/review/:bookingId"
+name: 'Review Form'
+route: '/(shared)/review/:bookingId'
 role: [customer, tasker]
-phase: "0-1"
+phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-SHARED-017
+  prd_refs:
+    - REQ-P1-SAFE-06
+    - REQ-P1-SAFE-07
+    - REQ-P1-SAFE-08
+    - REQ-P1-SAFE-10
+    - REQ-P1-SAFE-11
+  journey_refs:
+    - JRN-SHARED-07:step-1
+    - JRN-SHARED-07:step-2
+  scenario_refs:
+    - SCN-REVIEW-001
+    - SCN-REVIEW-006
 template: form_wizard
-figma_page: "Shared/Review Form"
-feature: "reviews"
+figma_page: 'Shared/Review Form'
+feature: 'reviews'
 
 layout:
   template: form_wizard
   density: default
-  structure: "safe_area -> nav_header(close + title) -> scrollview(counterparty_info + star_ratings_quality + star_ratings_punctuality + star_ratings_communication + text_input) -> bottom_nav(submit)"
+  structure: 'safe_area -> nav_header(close + title) -> scrollview(counterparty_info + three_role_specific_star_ratings + optional_would_book_again + text_input) -> bottom_nav(submit)'
 
 components:
   - id: COMP-PROFILEAVATAR
-    usage: "Counterparty avatar shown at top of review form for context"
+    usage: 'Counterparty avatar shown at top of review form for context'
     props:
-      imageUrl: "https://cdn.tasky.mn/avatars/counterparty.jpg"
+      imageUrl: 'https://cdn.tasky.mn/avatars/counterparty.jpg'
       size: md
       isVerified: true
-      isPro: false
     variant: md
 
   - id: COMP-STARRATING
-    usage: "Interactive star rating input for quality dimension"
+    usage: 'Interactive star rating input for the first role-specific dimension'
     props:
       value: 0
-      onChange: "handleQualityRating"
+      onChange: 'handleFirstRating'
       readonly: false
       size: lg
     variant: input
 
   - id: COMP-STARRATING
-    usage: "Interactive star rating input for punctuality dimension"
+    usage: 'Interactive star rating input for punctuality dimension'
     props:
       value: 0
-      onChange: "handlePunctualityRating"
+      onChange: 'handlePunctualityRating'
       readonly: false
       size: lg
     variant: input
 
   - id: COMP-STARRATING
-    usage: "Interactive star rating input for communication dimension"
+    usage: 'Interactive star rating input for the third role-specific dimension'
     props:
       value: 0
-      onChange: "handleCommunicationRating"
+      onChange: 'handleThirdRating'
       readonly: false
       size: lg
     variant: input
 
   - id: COMP-FORMFIELD
-    usage: "Wrapper for optional freetext review comment"
+    usage: 'Wrapper for optional freetext review comment'
     props:
-      label: "Нэмэлт тайлбар (сонголтот)"
+      label: 'Нэмэлт тайлбар (сонголтот)'
       required: false
     variant: default
 
   - id: COMP-INPUT
-    usage: "Multiline text input for optional review comment"
+    usage: 'Multiline text input for optional review comment'
     props:
-      value: ""
-      placeholder: "Туршлагаасаа хуваалцана уу..."
+      value: ''
+      placeholder: 'Туршлагаасаа хуваалцана уу...'
       maxLength: 500
     variant: multiline
 
   - id: COMP-BUTTON
-    usage: "Submit review button in bottom navigation bar"
+    usage: 'Submit review button in bottom navigation bar'
     props:
-      label: "Сэтгэгдэл илгээх"
+      label: 'Сэтгэгдэл илгээх'
       variant: primary
       size: lg
       loading: false
@@ -76,157 +90,181 @@ components:
     variant: primary
 
   - id: COMP-ANIMATEDCHECKMARK
-    usage: "Animated success checkmark displayed after successful review submission"
+    usage: 'Animated success checkmark displayed after successful review submission'
     props:
       size: 80
-      color: "verified"
+      color: 'verified'
     variant: default
 
   - id: COMP-TOAST
-    usage: "Error toast when review submission fails"
+    usage: 'Error toast when review submission fails'
     props:
-      message: "Сэтгэгдэл илгээхэд алдаа гарлаа"
+      message: 'Сэтгэгдэл илгээхэд алдаа гарлаа'
       variant: error
       duration: 6000
     variant: error
 
 states:
   - id: default
-    description: "Review form loaded showing counterparty info and empty star rating inputs; submit disabled"
-    components_visible: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    description: 'Review form loaded showing counterparty info and empty star rating inputs; submit disabled'
+    components_visible:
+      [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-TOAST]
 
   - id: rating_quality
-    description: "User is interacting with the quality star rating; stars highlight on touch"
-    components_visible: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    description: 'User is interacting with the first role-specific star rating; stars highlight on touch'
+    components_visible:
+      [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-TOAST]
 
   - id: rating_punctuality
-    description: "User is interacting with the punctuality star rating"
-    components_visible: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    description: 'User is interacting with the punctuality star rating'
+    components_visible:
+      [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-TOAST]
 
-  - id: rating_communication
-    description: "User is interacting with the communication star rating"
-    components_visible: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+  - id: rating_third_dimension
+    description: 'User is interacting with the third role-specific star rating'
+    components_visible:
+      [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-TOAST]
 
   - id: text_entry
-    description: "User is typing optional freetext comment; keyboard visible, form scrolls to keep input visible"
-    components_visible: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    description: 'User is typing optional freetext comment; keyboard visible, form scrolls to keep input visible'
+    components_visible:
+      [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-TOAST]
 
   - id: submitting
-    description: "POST /bookings/:id/reviews is in flight; submit button shows loading spinner"
-    components_visible: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    description: 'POST /bookings/:id/reviews is in flight; submit button shows loading spinner'
+    components_visible:
+      [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-TOAST]
 
   - id: success
-    description: "Review submitted successfully; animated checkmark plays, then navigates back"
+    description: 'Review submitted successfully; animated checkmark plays, then navigates back'
     components_visible: [COMP-ANIMATEDCHECKMARK]
-    components_hidden: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST]
+    components_hidden:
+      [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST]
 
   - id: error_network
-    description: "Review submission failed due to network error; error toast shown with retry option"
-    components_visible: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST]
+    description: 'Review submission failed due to network error; error toast shown with retry option'
+    components_visible:
+      [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST]
     components_hidden: [COMP-ANIMATEDCHECKMARK]
 
 copy:
   - key: nav_title
-    mn: "Сэтгэгдэл бичих"
-    en: "Write Review"
+    mn: 'Сэтгэгдэл бичих'
+    en: 'Write Review'
     max_chars: 20
 
   - key: counterparty_prompt_customer
-    mn: "Гүйцэтгэгчийг үнэлнэ үү"
-    en: "Rate the Tasker"
+    mn: 'Гүйцэтгэгчийг үнэлнэ үү'
+    en: 'Rate the Tasker'
     max_chars: 30
 
   - key: counterparty_prompt_tasker
-    mn: "Захиалагчийг үнэлнэ үү"
-    en: "Rate the Customer"
+    mn: 'Захиалагчийг үнэлнэ үү'
+    en: 'Rate the Customer'
     max_chars: 30
 
   - key: label_quality
-    mn: "Ажлын чанар"
-    en: "Quality of work"
+    mn: 'Ажлын чанар'
+    en: 'Quality of work'
+    max_chars: 20
+
+  - key: label_clarity
+    mn: 'Тодорхой байдал'
+    en: 'Clarity'
     max_chars: 20
 
   - key: label_punctuality
-    mn: "Цаг баримтлал"
-    en: "Punctuality"
+    mn: 'Цаг баримтлал'
+    en: 'Punctuality'
     max_chars: 20
 
   - key: label_communication
-    mn: "Харилцаа"
-    en: "Communication"
+    mn: 'Харилцаа'
+    en: 'Communication'
     max_chars: 20
 
+  - key: label_respectfulness
+    mn: 'Хүндэтгэл'
+    en: 'Respectfulness'
+    max_chars: 20
+
+  - key: label_would_book_again
+    mn: 'Дахин захиалах уу?'
+    en: 'Would book again?'
+    max_chars: 25
+
   - key: label_comment
-    mn: "Нэмэлт тайлбар (сонголтот)"
-    en: "Additional comments (optional)"
+    mn: 'Нэмэлт тайлбар (сонголтот)'
+    en: 'Additional comments (optional)'
     max_chars: 40
 
   - key: placeholder_comment
-    mn: "Туршлагаасаа хуваалцана уу..."
-    en: "Share your experience..."
+    mn: 'Туршлагаасаа хуваалцана уу...'
+    en: 'Share your experience...'
     max_chars: 40
 
   - key: cta_submit
-    mn: "Сэтгэгдэл илгээх"
-    en: "Submit Review"
+    mn: 'Сэтгэгдэл илгээх'
+    en: 'Submit Review'
     max_chars: 20
 
   - key: success_headline
-    mn: "Баярлалаа!"
-    en: "Thank you!"
+    mn: 'Баярлалаа!'
+    en: 'Thank you!'
     max_chars: 15
 
   - key: success_body
-    mn: "Таны сэтгэгдэл амжилттай бүртгэгдлээ"
-    en: "Your review has been submitted successfully"
+    mn: 'Таны сэтгэгдэл амжилттай бүртгэгдлээ'
+    en: 'Your review has been submitted successfully'
     max_chars: 50
 
   - key: error_submit
-    mn: "Сэтгэгдэл илгээхэд алдаа гарлаа. Дахин оролдоно уу."
-    en: "Failed to submit review. Please try again."
+    mn: 'Сэтгэгдэл илгээхэд алдаа гарлаа. Дахин оролдоно уу.'
+    en: 'Failed to submit review. Please try again.'
     max_chars: 60
 
   - key: validation_rating_required
-    mn: "Бүх үнэлгээг бөглөнө үү"
-    en: "Please rate all categories"
+    mn: 'Бүх үнэлгээг бөглөнө үү'
+    en: 'Please rate all categories'
     max_chars: 40
 
 api_endpoints:
   - method: POST
-    path: "/bookings/:id/reviews"
-    purpose: "Submit a review for a completed booking with quality, punctuality, communication ratings and optional text"
+    path: '/bookings/:id/reviews'
+    purpose: 'Submit a role-specific review for a reviewable booking outcome with three required ratings and optional text'
 
 analytics_events:
-  - event: "review_form_opened"
-    trigger: "Review form screen loads with counterparty data"
-  - event: "review_quality_rated"
-    trigger: "User selects a quality star rating"
-  - event: "review_punctuality_rated"
-    trigger: "User selects a punctuality star rating"
-  - event: "review_communication_rated"
-    trigger: "User selects a communication star rating"
-  - event: "review_comment_entered"
-    trigger: "User types in the optional comment field"
-  - event: "review_submitted"
-    trigger: "User taps Submit and POST succeeds"
-  - event: "review_submit_failed"
-    trigger: "POST /bookings/:id/reviews returns an error"
+  - event: 'review_form_opened'
+    trigger: 'Review form screen loads with counterparty data'
+  - event: 'review_dimension_rated'
+    trigger: 'User selects one of the three role-specific star ratings'
+  - event: 'review_would_book_again_selected'
+    trigger: 'Customer selects whether they would book the tasker again'
+  - event: 'review_comment_entered'
+    trigger: 'User types in the optional comment field'
+  - event: 'review_submitted'
+    trigger: 'User taps Submit and POST succeeds'
+  - event: 'review_submit_failed'
+    trigger: 'POST /bookings/:id/reviews returns an error'
 
 acceptance_criteria:
-  - "Form displays counterparty avatar, name, and three separate star rating inputs (quality, punctuality, communication)"
-  - "Submit button is disabled until all three rating dimensions have a value of at least 1 star"
-  - "Star ratings use whole-star input only (no half stars)"
-  - "Optional freetext field accepts up to 500 characters with character counter"
-  - "Submit button shows loading spinner during POST /bookings/:id/reviews"
-  - "Success state plays animated checkmark with spring animation, then auto-navigates back after 1.5s"
-  - "Customer review pops back to SCR-CUST-017; Tasker review pops back to SCR-TASK-013"
-  - "Network error shows error toast with retry action (6s duration)"
-  - "Keyboard-aware scrolling ensures text input is visible when keyboard appears"
-  - "All star rating labels render in body_default (16px) typography"
-  - "Review is mandatory per journey JRN-SHARED-07; form cannot be dismissed without submitting"
+  - 'Form displays counterparty avatar, name, and three separate role-specific star rating inputs'
+  - 'Customer-to-tasker review labels are quality, punctuality, and communication'
+  - 'Tasker-to-customer review labels are clarity, punctuality, and respectfulness'
+  - 'Customer-to-tasker review includes a would-book-again choice'
+  - 'Submit button is disabled until all three rating dimensions have a value of at least 1 star'
+  - 'Star ratings use whole-star input only (no half stars)'
+  - 'Optional freetext field accepts up to 500 characters with character counter'
+  - 'Submit button shows loading spinner during POST /bookings/:id/reviews'
+  - 'Success state plays animated checkmark with spring animation, then auto-navigates back after 1.5s'
+  - 'Customer review pops back to SCR-CUST-017; Tasker review pops back to SCR-TASK-013'
+  - 'Network error shows error toast with retry action (6s duration)'
+  - 'Keyboard-aware scrolling ensures text input is visible when keyboard appears'
+  - 'All star rating labels render in body_default (16px) typography'
+  - 'If opened from the hard-lock gate, leaving without submitting preserves the post/apply block until review debt is resolved'

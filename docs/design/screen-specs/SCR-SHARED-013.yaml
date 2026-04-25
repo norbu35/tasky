@@ -1,245 +1,255 @@
 # Screen Spec: Profile — Edit Profile
 screen_id: SCR-SHARED-013
-name: "Profile — Edit Profile"
-route: "/profile/edit"
+name: 'Profile — Edit Profile'
+route: '/profile/edit'
 role: [customer, tasker]
-phase: "0-1"
+phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-SHARED-013
+  prd_refs:
+    - REQ-P1-SAFE-13
+    - NFR-LOC-01
+    - NFR-LOC-03
+  journey_refs:
+    - JRN-SHARED-05:step-2
+    - JRN-SHARED-05-A1
+  scenario_refs: []
 template: form_wizard
-figma_page: "Shared/Profile — Edit Profile"
-feature: "profile"
+figma_page: 'Shared/Profile — Edit Profile'
+feature: 'profile'
 
 layout:
   template: form_wizard
   density: default
-  structure: "safe_area -> nav_header(back + title) -> scrollview(avatar_upload + form_fields) -> bottom_nav(cancel + save)"
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(avatar_upload + form_fields) -> bottom_nav(cancel + save)'
 
 components:
   - id: COMP-PROFILEAVATAR
-    usage: "Editable avatar with camera overlay icon; tapping triggers photo picker"
+    usage: 'Editable avatar with camera overlay icon; tapping triggers photo picker'
     props:
-      imageUrl: "https://cdn.tasky.mn/avatars/user123.jpg"
+      imageUrl: 'https://cdn.tasky.mn/avatars/user123.jpg'
       size: lg
       isVerified: false
-      isPro: false
     variant: lg
 
   - id: COMP-PHOTOPICKER
-    usage: "Avatar photo selection from camera or gallery"
+    usage: 'Avatar photo selection from camera or gallery'
     props:
       photos: []
       maxPhotos: 1
-      onAdd: "handleAvatarSelect"
-      onRemove: "handleAvatarRemove"
+      onAdd: 'handleAvatarSelect'
+      onRemove: 'handleAvatarRemove'
     variant: default
 
   - id: COMP-FORMFIELD
-    usage: "Wrapper for each editable profile field with label and inline error"
+    usage: 'Wrapper for each editable profile field with label and inline error'
     props:
-      label: "Нэр"
-      error: ""
+      label: 'Нэр'
+      error: ''
       required: true
     variant: default
 
   - id: COMP-INPUT
-    usage: "Text input fields for name, bio, and phone number"
+    usage: 'Text input fields for name, bio, and phone number'
     props:
-      value: "Батбаяр"
-      placeholder: "Нэрээ оруулна уу"
-      label: "Нэр"
+      value: 'Батбаяр'
+      placeholder: 'Нэрээ оруулна уу'
+      label: 'Нэр'
       maxLength: 50
     variant: default
 
   - id: COMP-INPUT
-    usage: "Multiline text input for bio/about me field"
+    usage: 'Multiline text input for bio/about me field'
     props:
-      value: ""
-      placeholder: "Өөрийнхөө тухай бичнэ үү"
-      label: "Миний тухай"
+      value: ''
+      placeholder: 'Өөрийнхөө тухай бичнэ үү'
+      label: 'Миний тухай'
       maxLength: 200
     variant: multiline
 
   - id: COMP-BUTTON
-    usage: "Save button in bottom navigation bar"
+    usage: 'Save button in bottom navigation bar'
     props:
-      label: "Хадгалах"
+      label: 'Хадгалах'
       variant: primary
       size: lg
       loading: false
     variant: primary
 
   - id: COMP-BUTTON
-    usage: "Cancel button in bottom navigation bar"
+    usage: 'Cancel button in bottom navigation bar'
     props:
-      label: "Болих"
+      label: 'Болих'
       variant: ghost
       size: lg
     variant: ghost
 
   - id: COMP-LOADINGSKELETON
-    usage: "Form skeleton while initial profile data loads"
+    usage: 'Form skeleton while initial profile data loads'
     props:
       variant: detail
       count: 1
     variant: detail
 
   - id: COMP-TOAST
-    usage: "Success toast after profile saved; error toast on save failure"
+    usage: 'Success toast after profile saved; error toast on save failure'
     props:
-      message: "Профайл амжилттай хадгалагдлаа"
+      message: 'Профайл амжилттай хадгалагдлаа'
       variant: success
       duration: 4000
     variant: success
 
 states:
   - id: default
-    description: "Form loaded with current profile data pre-filled in fields"
+    description: 'Form loaded with current profile data pre-filled in fields'
     components_visible: [COMP-PROFILEAVATAR, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: editing
-    description: "User has modified one or more fields; save button becomes enabled"
+    description: 'User has modified one or more fields; save button becomes enabled'
     components_visible: [COMP-PROFILEAVATAR, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: uploading_avatar
-    description: "Avatar photo is being uploaded via POST /users/me/avatar/upload-url; spinner overlays avatar"
+    description: 'Avatar photo is being uploaded via POST /users/me/avatar/upload-url; spinner overlays avatar'
     components_visible: [COMP-PROFILEAVATAR, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-LOADINGSKELETON]
 
   - id: saving
-    description: "PUT /users/me is in flight; save button shows loading spinner"
+    description: 'PUT /users/me is in flight; save button shows loading spinner'
     components_visible: [COMP-PROFILEAVATAR, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-LOADINGSKELETON]
 
   - id: validation_error
-    description: "One or more fields failed client-side validation; inline errors shown below affected fields"
+    description: 'One or more fields failed client-side validation; inline errors shown below affected fields'
     components_visible: [COMP-PROFILEAVATAR, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
     components_hidden: [COMP-LOADINGSKELETON]
 
   - id: success
-    description: "Profile saved successfully; success toast shown, navigates back to My Profile"
+    description: 'Profile saved successfully; success toast shown, navigates back to My Profile'
     components_visible: [COMP-TOAST]
     components_hidden: [COMP-LOADINGSKELETON]
 
   - id: error_network
-    description: "Save or avatar upload failed due to network error; error toast with retry"
+    description: 'Save or avatar upload failed due to network error; error toast with retry'
     components_visible: [COMP-PROFILEAVATAR, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST]
     components_hidden: [COMP-LOADINGSKELETON]
 
 copy:
   - key: nav_title
-    mn: "Профайл засах"
-    en: "Edit Profile"
+    mn: 'Профайл засах'
+    en: 'Edit Profile'
     max_chars: 20
 
   - key: label_name
-    mn: "Нэр"
-    en: "Name"
+    mn: 'Нэр'
+    en: 'Name'
     max_chars: 10
 
   - key: placeholder_name
-    mn: "Нэрээ оруулна уу"
-    en: "Enter your name"
+    mn: 'Нэрээ оруулна уу'
+    en: 'Enter your name'
     max_chars: 30
 
   - key: label_bio
-    mn: "Миний тухай"
-    en: "About me"
+    mn: 'Миний тухай'
+    en: 'About me'
     max_chars: 20
 
   - key: placeholder_bio
-    mn: "Өөрийнхөө тухай бичнэ үү"
-    en: "Write about yourself"
+    mn: 'Өөрийнхөө тухай бичнэ үү'
+    en: 'Write about yourself'
     max_chars: 40
 
   - key: label_phone
-    mn: "Утасны дугаар"
-    en: "Phone number"
+    mn: 'Утасны дугаар'
+    en: 'Phone number'
     max_chars: 20
 
   - key: placeholder_phone
-    mn: "Утасны дугаараа оруулна уу"
-    en: "Enter phone number"
+    mn: 'Утасны дугаараа оруулна уу'
+    en: 'Enter phone number'
     max_chars: 40
 
   - key: label_avatar
-    mn: "Зураг солих"
-    en: "Change photo"
+    mn: 'Зураг солих'
+    en: 'Change photo'
     max_chars: 20
 
   - key: cta_save
-    mn: "Хадгалах"
-    en: "Save"
+    mn: 'Хадгалах'
+    en: 'Save'
     max_chars: 15
 
   - key: cta_cancel
-    mn: "Болих"
-    en: "Cancel"
+    mn: 'Болих'
+    en: 'Cancel'
     max_chars: 10
 
   - key: error_name_required
-    mn: "Нэрээ оруулна уу"
-    en: "Name is required"
+    mn: 'Нэрээ оруулна уу'
+    en: 'Name is required'
     max_chars: 30
 
   - key: error_name_too_long
-    mn: "Нэр хэт урт байна"
-    en: "Name is too long"
+    mn: 'Нэр хэт урт байна'
+    en: 'Name is too long'
     max_chars: 30
 
   - key: error_bio_too_long
-    mn: "Тайлбар хэт урт байна"
-    en: "Bio is too long"
+    mn: 'Тайлбар хэт урт байна'
+    en: 'Bio is too long'
     max_chars: 30
 
   - key: toast_save_success
-    mn: "Профайл амжилттай хадгалагдлаа"
-    en: "Profile saved successfully"
+    mn: 'Профайл амжилттай хадгалагдлаа'
+    en: 'Profile saved successfully'
     max_chars: 40
 
   - key: toast_save_error
-    mn: "Хадгалахад алдаа гарлаа. Дахин оролдоно уу."
-    en: "Failed to save. Please try again."
+    mn: 'Хадгалахад алдаа гарлаа. Дахин оролдоно уу.'
+    en: 'Failed to save. Please try again.'
     max_chars: 50
 
   - key: toast_avatar_error
-    mn: "Зураг оруулахад алдаа гарлаа"
-    en: "Failed to upload photo"
+    mn: 'Зураг оруулахад алдаа гарлаа'
+    en: 'Failed to upload photo'
     max_chars: 40
 
 api_endpoints:
   - method: PUT
-    path: "/users/me"
+    path: '/users/me'
     purpose: "Update the authenticated user's profile fields (name, bio, phone)"
   - method: POST
-    path: "/users/me/avatar/upload-url"
-    purpose: "Request a presigned URL for avatar image upload to S3"
+    path: '/users/me/avatar/upload-url'
+    purpose: 'Request a presigned URL for avatar image upload to S3'
 
 analytics_events:
-  - event: "profile_edit_started"
-    trigger: "Screen loads with pre-filled form data"
-  - event: "profile_avatar_changed"
-    trigger: "User selects a new avatar photo"
-  - event: "profile_save_attempted"
-    trigger: "User taps Save button"
-  - event: "profile_save_success"
-    trigger: "PUT /users/me returns 200"
-  - event: "profile_save_failed"
-    trigger: "PUT /users/me returns an error"
-  - event: "profile_edit_cancelled"
-    trigger: "User taps Cancel or back button without saving"
+  - event: 'profile_edit_started'
+    trigger: 'Screen loads with pre-filled form data'
+  - event: 'profile_avatar_changed'
+    trigger: 'User selects a new avatar photo'
+  - event: 'profile_save_attempted'
+    trigger: 'User taps Save button'
+  - event: 'profile_save_success'
+    trigger: 'PUT /users/me returns 200'
+  - event: 'profile_save_failed'
+    trigger: 'PUT /users/me returns an error'
+  - event: 'profile_edit_cancelled'
+    trigger: 'User taps Cancel or back button without saving'
 
 acceptance_criteria:
-  - "Form pre-fills with current profile data from GET /users/me"
-  - "Save button is disabled until at least one field is modified"
-  - "Tapping avatar triggers camera/gallery picker for new photo"
-  - "Avatar upload shows progress spinner overlay on the avatar image"
-  - "Inline validation errors appear below the affected field on blur"
+  - 'Form pre-fills with current profile data from GET /users/me'
+  - 'Save button is disabled until at least one field is modified'
+  - 'Tapping avatar triggers camera/gallery picker for new photo'
+  - 'Avatar upload shows progress spinner overlay on the avatar image'
+  - 'Inline validation errors appear below the affected field on blur'
   - "Name field is required; empty name shows error 'Нэрээ оруулна уу'"
-  - "Save button shows loading spinner during PUT /users/me"
-  - "Success toast appears and screen navigates back (pop) to SCR-SHARED-012 on save"
-  - "Network error on save shows error toast with retry action"
-  - "Cancel or back navigates (pop) to SCR-SHARED-012 without saving"
-  - "Keyboard-aware scrolling prevents form fields from being hidden behind keyboard"
-  - "All form labels render at 14px minimum (label typography)"
-  - "All input text renders at 16px minimum (body_default typography)"
+  - 'Save button shows loading spinner during PUT /users/me'
+  - 'Success toast appears and screen navigates back (pop) to SCR-SHARED-012 on save'
+  - 'Network error on save shows error toast with retry action'
+  - 'Cancel or back navigates (pop) to SCR-SHARED-012 without saving'
+  - 'Keyboard-aware scrolling prevents form fields from being hidden behind keyboard'
+  - 'All form labels render at 14px minimum (label typography)'
+  - 'All input text renders at 16px minimum (body_default typography)'

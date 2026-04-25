@@ -4,6 +4,23 @@ name: 'Booking Request Confirmation'
 route: '/(customer)/bookings/confirm'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-014
+  prd_refs:
+    - REQ-P1-MATCH-04
+    - REQ-P1-BOOK-01
+    - REQ-P1-BOOK-05
+    - REQ-P1-BOOK-06
+    - REQ-P1-PRICE-07
+    - NFR-LEGAL-01
+  journey_refs:
+    - JRN-CUST-02:step-5
+  scenario_refs:
+    - SCN-BOOK-007
+    - SCN-BOOK-008
+    - SCN-BOOK-022
+    - SCN-BOOK-025
 template: detail
 figma_page: 'Customer/Booking Request Confirmation'
 feature: 'booking'

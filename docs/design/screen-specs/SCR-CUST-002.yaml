@@ -4,6 +4,20 @@ name: 'Post Task — Category Selection'
 route: '/(customer)/tasks/new/category'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-002
+  prd_refs:
+    - REQ-P1-CAT-01
+    - REQ-P1-CAT-02
+    - REQ-P1-CAT-05
+    - REQ-P1-COVER-02
+  journey_refs:
+    - JRN-CUST-01:step-2
+  scenario_refs:
+    - SCN-TASK-001
+    - SCN-TASK-019
+    - SCN-CATEGORY-002
 template: feed_list
 figma_page: 'Customer/Post Task Category Selection'
 feature: 'task_posting'

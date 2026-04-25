@@ -4,6 +4,31 @@ name: 'Booking Detail (Tasker)'
 route: '/(tasker)/jobs/:bookingId'
 role: [tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-013
+  prd_refs:
+    - REQ-P1-BOOK-07
+    - REQ-P1-BOOK-08
+    - REQ-P1-BOOK-09
+    - REQ-P1-BOOK-10
+    - REQ-P1-BOOK-11
+    - REQ-P1-BOOK-12
+    - REQ-P1-BOOK-13
+    - REQ-P1-BOOK-25
+    - REQ-P1-MSG-02
+  journey_refs:
+    - JRN-TASK-04:step-2
+    - JRN-TASK-04:step-3
+    - JRN-TASK-04:step-4
+    - JRN-TASK-04-A4
+    - JRN-TASK-04-A5
+  scenario_refs:
+    - SCN-BOOK-005
+    - SCN-BOOK-009
+    - SCN-BOOK-026
+    - SCN-SEC-007
+    - SCN-MSG-003
 template: detail
 figma_page: 'Tasker/Booking Detail Tasker'
 feature: 'tasker-bookings'
@@ -11,7 +36,7 @@ feature: 'tasker-bookings'
 layout:
   template: detail
   density: default
-  structure: 'safe_area -> nav_header(back + title) -> scrollview(status_section + customer_info + task_description + exact_address + schedule + payment_note + action_section) -> sticky_bottom_cta(primary_action)'
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(status_section + customer_info + task_description + exact_address + schedule + payment_note + action_section) -> sticky_bottom_cta(primary_action + secondary_actions)'
 
 components:
   - id: COMP-BUTTON
@@ -26,6 +51,14 @@ components:
     usage: 'Secondary CTA — Message customer'
     props:
       label: 'Зурвас илгээх'
+      variant: outline
+      size: lg
+    variant: outline
+
+  - id: COMP-BUTTON
+    usage: 'Secondary CTA — Request or respond to a booking reschedule'
+    props:
+      label: 'Цаг өөрчлөх'
       variant: outline
       size: lg
     variant: outline
@@ -86,6 +119,7 @@ states:
         schedule,
         payment_note,
         message_button,
+        reschedule_button,
         cancel_link,
       ]
     components_hidden: [mark_done_button, review_button, completion_status, no_show_status]
@@ -103,6 +137,7 @@ states:
         schedule_highlighted,
         payment_note,
         message_button,
+        reschedule_button,
         cancel_link,
       ]
     components_hidden: [mark_done_button, review_button]
@@ -120,6 +155,7 @@ states:
         payment_note,
         mark_done_button,
         message_button,
+        reschedule_button,
       ]
     components_hidden: [cancel_link, review_button]
 
@@ -249,6 +285,16 @@ copy:
     en: 'Message'
     max_chars: 15
 
+  - key: reschedule_button
+    mn: 'Цаг өөрчлөх'
+    en: 'Reschedule'
+    max_chars: 20
+
+  - key: reschedule_pending
+    mn: 'Цаг өөрчлөх хүсэлтийн хариу хүлээж байна'
+    en: 'Waiting for reschedule response'
+    max_chars: 50
+
   - key: cancel_link
     mn: 'Захиалга цуцлах'
     en: 'Cancel Booking'
@@ -291,6 +337,12 @@ api_endpoints:
   - method: PUT
     path: '/bookings/:id/mark-done'
     purpose: 'Mark booking as done — triggers customer confirmation flow'
+  - method: POST
+    path: '/bookings/:id/reschedule-requests'
+    purpose: 'Request a new schedule for the confirmed booking'
+  - method: PUT
+    path: '/bookings/:id/reschedule-requests/:requestId'
+    purpose: 'Accept or decline a pending reschedule request'
 
 analytics_events:
   - event: 'booking_detail_tasker_viewed'
@@ -301,6 +353,8 @@ analytics_events:
     trigger: 'Mark Done API call succeeds'
   - event: 'booking_message_tapped'
     trigger: 'Tasker taps Message button'
+  - event: 'booking_reschedule_tapped'
+    trigger: 'Tasker taps Reschedule button or responds to a pending reschedule request'
   - event: 'booking_cancel_tapped'
     trigger: 'Tasker taps Cancel Booking link'
   - event: 'booking_review_tapped'
@@ -314,6 +368,10 @@ acceptance_criteria:
   - 'Mark Done button triggers PUT /bookings/:id/mark-done'
   - 'After marking done, awaiting confirmation banner replaces Mark Done button'
   - 'Cancel link opens Booking Cancel modal (SCR-TASK-015)'
+  - 'Reschedule action opens the in-app reschedule flow for requesting or responding to schedule changes'
+  - 'Reschedule actions are in-app only; external phone or SMS flows are not used'
+  - 'Accepted reschedule updates the canonical booking schedule and recalculates time-based reminders'
+  - 'Declined or expired reschedule request preserves the prior confirmed schedule'
   - 'No-show flag modal (SCR-TASK-014) is triggered based on schedule timing'
   - 'Message button navigates to Chat Detail (SCR-SHARED-011)'
   - 'Leave Review button navigates to Review Form (SCR-SHARED-017) when review debt exists'

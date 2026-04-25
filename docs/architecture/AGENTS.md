@@ -43,6 +43,7 @@ maintained source.
 - `mobile.md` — mobile structural contract
 - `shared-frontend.md` — tokens, parity baseline, intake renderer contract, frontend behavioral/technical test naming rules
 - `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, `docs/design/domain-lifecycles.yaml` — machine-readable structural docs validated by `pnpm repo:design:check`
+- `docs/design/screen-specs/SCR-*.yaml` — per-screen UX contracts with traceability back to live PRD, journey, screen graph, and scenario IDs; validated by `python3 tooling/scripts/governance/validate-screen-spec-traceability.py` or `pnpm repo:docs:check`
 - `docs/design/component-contract.yaml` — component inventory validated by `python3 tooling/scripts/governance/validate-design-contracts.py` or `pnpm repo:docs:check`
 
 New structural guidance belongs in the doc whose scope matches, not in this router.
