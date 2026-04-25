@@ -46,7 +46,7 @@ packageScripts:
   verify:scenario:smoke:
     lifecycle: blocking
     lane: scenario_smoke
-    command: 'python3 tooling/scripts/governance/validate-prd-scenario-links.py && bash services/api/scripts/sync-registry.sh && bash tooling/scripts/gates/check-gates.sh smoke'
+    command: 'python3 tooling/scripts/governance/validate-prd-scenario-links.py && ./gradlew --no-daemon :services:api:gateSmoke'
   verify:scenario:fidelity:
     lifecycle: report_only
     lane: scenario_fidelity

@@ -170,6 +170,22 @@ test('root package scripts avoid retired aliases and circular dependencies', () 
   );
 });
 
+test('scenario smoke package script refreshes backend test results before registry sync', () => {
+  const packageJson = JSON.parse(readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+  const script = packageJson.scripts?.['verify:scenario:smoke'] ?? '';
+
+  assert.match(
+    script,
+    /(^|\s)\.\/gradlew\s+--no-daemon\s+:services:api:gateSmoke(?=\s|$)/,
+    'verify:scenario:smoke must delegate to the Gradle smoke gate so sync-registry reads fresh backend test XML',
+  );
+  assert.doesNotMatch(
+    script,
+    /sync-registry\.sh\s*&&\s*bash\s+tooling\/scripts\/gates\/check-gates\.sh\s+smoke/,
+    'verify:scenario:smoke must not evaluate stale pre-existing test XML directly',
+  );
+});
+
 test('mobile coverage gate exits deterministically after Jest finishes', () => {
   const packageJson = JSON.parse(
     readFileSync(path.join(repoRoot, 'apps', 'mobile', 'package.json'), 'utf8'),
