@@ -50,7 +50,7 @@ Or the admin can reject the verification and the tasker is informed of the rejec
 
 ## SCN-VERIF-005
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-ADMIN-10
 **Title:** Verification queue exposes queue age and SLA posture for operational review
 

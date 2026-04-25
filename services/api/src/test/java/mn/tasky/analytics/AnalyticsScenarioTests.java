@@ -129,8 +129,8 @@ class AnalyticsScenarioTests {
     // ── SCN-ANALYTICS-002 ───────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-ANALYTICS-002: Booking confirmed event is emitted when an application is accepted")
-    void bookingConfirmedEventEmittedOnApplicationAccepted() throws Exception {
+    @DisplayName("SCN-ANALYTICS-002: Booking confirmed event is emitted when selected tasker accepts")
+    void bookingConfirmedEventEmittedWhenSelectedTaskerAccepts() throws Exception {
         when(messagingCommandPort.startConversation(anyString(), anyString(), anyString()))
                 .thenReturn("conv-123");
 

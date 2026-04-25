@@ -134,12 +134,12 @@ class MessagingScenarioTests {
     // ── SCN-MSG-001 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-MSG-001: Conversation is created when a tasker applies to a task")
-    void conversationCreatedWhenTaskerApplies() {
-        // When a tasker applies to a task, the system calls startConversation
+    @DisplayName("SCN-MSG-001: Conversation is created only after booking confirmation")
+    void conversationCreatedAfterBookingConfirmation() {
+        // When a booking is confirmed, the system provisions a post-confirmation conversation.
         String conversationId = messagingService.startConversation(TASK_ID, TASKER_ID, CUSTOMER_ID);
 
-        // Then a conversation exists between that tasker and the task owner
+        // Then a conversation exists between the confirmed booking participants.
         assertThat(conversationId).isNotNull();
         assertThat(conversationStore).hasSize(1);
 
@@ -160,7 +160,7 @@ class MessagingScenarioTests {
     @Test
     @DisplayName("SCN-MSG-002: Message sent to a conversation is persisted and retrievable")
     void messageSentIsPersistedAndRetrievable() {
-        // Given a conversation exists between two participants
+        // Given a post-confirmation conversation exists between two participants
         String conversationId = messagingService.startConversation(TASK_ID, TASKER_ID, CUSTOMER_ID);
 
         // When one participant sends a message
@@ -191,7 +191,7 @@ class MessagingScenarioTests {
     @Test
     @DisplayName("SCN-MSG-003: Non-participant cannot read or send messages in a conversation")
     void nonParticipantCannotReadOrSend() {
-        // Given a conversation exists between a customer and a tasker
+        // Given a post-confirmation conversation exists between a customer and a tasker
         String conversationId = messagingService.startConversation(TASK_ID, TASKER_ID, CUSTOMER_ID);
 
         // When a third user attempts to send a message in that conversation
@@ -210,7 +210,7 @@ class MessagingScenarioTests {
     @Test
     @DisplayName("SCN-MSG-004: Message containing a phone number pattern is flagged for admin review")
     void messageContainingPhoneNumberIsFlagged() {
-        // Given a conversation exists
+        // Given a post-confirmation conversation exists
         String conversationId = messagingService.startConversation(TASK_ID, TASKER_ID, CUSTOMER_ID);
 
         // When a participant sends a message containing a phone number pattern

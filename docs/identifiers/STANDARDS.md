@@ -11,7 +11,7 @@ Canonical rules for REQ-P1, SCN, NFR, and related frontend/design identifiers. E
 | NFR    | `NFR-CATEGORY-NN`  | `NFR-SEC-01`     | `docs/PRD.md` (§12)           | 2-digit zero-padded; informational only |
 
 **REQ-P1 domains:** AUTH, BOOK, ADMIN, ASSIST, TASK, MATCH, PRICE, SAFE, NOTIF, KPI, COVER, CAT, MSG  
-**SCN domains:** ANALYTICS, ASSISTANCE, AUTH, BOOK, CATEGORY, CONTRACT, DISPUTE, INTEGRATION, MESSAGING, NOTIFICATION, REVIEW, SECURITY, TASK, VERIFICATION
+**SCN domains:** ADMIN, ANALYTICS, ASSISTANCE, AUTH, BOOK, CATEGORY, CONTRACT, COVERAGE, DISPUTE, INTEGRATION, MESSAGING, NOTIFICATION, REVIEW, SECURITY, TASK, VERIFICATION
 **NFR categories:** SEC, PERF, OBS, LOC, LEGAL, API, RELI
 
 ## Rules (Enforced by Pre-Commit + Scripts)
@@ -61,22 +61,22 @@ python3 tooling/scripts/governance/validate-prd-scenario-links.py
 
 This table tracks launch REQ-P1 coverage only. NFR and frontend/design identifiers are documented separately.
 
-| Domain    | REQ count | Covered      | Uncovered IDs          |
-| --------- | --------- | ------------ | ---------------------- |
-| AUTH      | 6         | 6            | —                      |
-| TASK      | 15        | 11           | 11, 12, 13, 14         |
-| SAFE      | 18        | 14           | 03, 04, 13, 17         |
-| MSG       | 5         | 5            | —                      |
-| BOOK      | 28        | 26           | 27, 28                 |
-| PRICE     | 8         | 6            | 06, 08                 |
-| MATCH     | 7         | 6            | 04                     |
-| NOTIF     | 7         | 6            | 03                     |
-| ASSIST    | 8         | 5            | 02, 04, 08             |
-| KPI       | 6         | 3            | 02, 05, 06             |
-| COVER     | 4         | 2            | 01, 06                 |
-| CAT       | 5         | 3            | 02, 03                 |
-| ADMIN     | 10        | 4            | 03, 04, 06, 07, 08, 10 |
-| **Total** | **127**   | **97 (76%)** | **30 gaps**            |
+| Domain    | REQ count | Covered | Uncovered IDs |
+| --------- | --------- | ------- | ------------- |
+| AUTH      | 6         | 6       | —             |
+| TASK      | 15        | 15      | —             |
+| SAFE      | 18        | 18      | —             |
+| MSG       | 5         | 5       | —             |
+| BOOK      | 28        | 28      | —             |
+| PRICE     | 8         | 8       | —             |
+| MATCH     | 7         | 7       | —             |
+| NOTIF     | 7         | 7       | —             |
+| ASSIST    | 8         | 8       | —             |
+| KPI       | 6         | 6       | —             |
+| COVER     | 4         | 4       | —             |
+| CAT       | 5         | 5       | —             |
+| ADMIN     | 10        | 10      | —             |
+| **Total** | **127**   | **127** | **0 gaps**    |
 
 Coverage warnings are reported by `python3 tooling/scripts/governance/validate-prd-scenario-links.py`.
 

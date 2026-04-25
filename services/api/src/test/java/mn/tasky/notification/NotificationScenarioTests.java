@@ -152,33 +152,41 @@ class NotificationScenarioTests {
     // ── SCN-NOTIF-002 ───────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-NOTIF-002: Booking confirmation sends hired notification to the tasker")
-    void bookingConfirmationSendsHiredNotification() {
+    @DisplayName("SCN-NOTIF-002: Selected tasker notification is sent when chosen by a customer")
+    void selectedTaskerNotificationSentWhenChosenByCustomer() {
         // Given a tasker has a registered device
         DeviceToken taskerDevice = new DeviceToken(TASKER_TOKEN, "IOS", Instant.now());
         when(deviceTokenDao.findByUserId(TASKER_ID)).thenReturn(List.of(taskerDevice));
 
-        String bookingId = "booking-42";
+        String selectionId = "selection-42";
 
-        // When the booking is confirmed (outbox processor calls sendPushWithEventKey)
+        // When the customer chooses the tasker, the outbox processor calls sendPushWithEventKey.
         notificationService.sendPushWithEventKey(
-                TASKER_ID, "You are hired!", "Your application has been accepted.", "HIRED", "HIRED_" + bookingId);
+                TASKER_ID,
+                "You were chosen!",
+                "Please accept the booking request.",
+                "SELECTED",
+                "SELECTED_" + selectionId);
 
-        // Then a push notification is sent to the tasker indicating they are hired
+        // Then a push notification is sent to the selected tasker.
         ArgumentCaptor<String> titleCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> bodyCaptor = ArgumentCaptor.forClass(String.class);
         verify(pushProvider)
                 .sendPush(eq(TASKER_TOKEN), eq("IOS"), titleCaptor.capture(), bodyCaptor.capture(), any(Map.class));
 
-        assertThat(titleCaptor.getValue()).contains("hired");
-        assertThat(bodyCaptor.getValue()).contains("accepted");
+        assertThat(titleCaptor.getValue()).contains("chosen");
+        assertThat(bodyCaptor.getValue()).contains("accept");
 
         // Verify idempotency: duplicate event key is silently skipped
-        when(notificationLogDao.existsByEventKey("HIRED_" + bookingId)).thenReturn(true);
+        when(notificationLogDao.existsByEventKey("SELECTED_" + selectionId)).thenReturn(true);
         org.mockito.Mockito.reset(pushProvider);
 
         notificationService.sendPushWithEventKey(
-                TASKER_ID, "You are hired!", "Your application has been accepted.", "HIRED", "HIRED_" + bookingId);
+                TASKER_ID,
+                "You were chosen!",
+                "Please accept the booking request.",
+                "SELECTED",
+                "SELECTED_" + selectionId);
 
         // Push NOT sent again (idempotent)
         verify(pushProvider, never()).sendPush(anyString(), anyString(), anyString(), anyString(), any());

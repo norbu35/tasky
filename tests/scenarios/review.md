@@ -65,3 +65,14 @@ Given a user has an open review enforcement case
 And the user submits their owed review
 When lock eligibility is evaluated
 Then no hard lock is applied
+
+## SCN-REVIEW-007
+
+**Risk:** High
+**PRD:** REQ-P1-SAFE-13
+**Title:** Public reputation hides ratings until minimum review threshold
+
+Given a tasker has verification and trust badge state but fewer reviews than the public rating threshold
+When the public profile or reputation summary is rendered
+Then verification and trust badges are shown according to current state
+And aggregate rating display remains hidden until the minimum review-count threshold is met

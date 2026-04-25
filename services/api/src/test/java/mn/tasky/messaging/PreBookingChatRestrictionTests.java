@@ -67,8 +67,7 @@ class PreBookingChatRestrictionTests {
     }
 
     @Test
-    @DisplayName(
-            "SCN-MSG-005: No pre-booking chat exists in Phase 1 - controller exposes no conversation creation endpoint")
+    @DisplayName("SCN-MSG-005: No pre-booking chat exists in Phase 1")
     void controllerExposesNoConversationCreationEndpoint() {
         // Given the MessagingController class
         // When inspecting its public methods
@@ -87,7 +86,7 @@ class PreBookingChatRestrictionTests {
     }
 
     @Test
-    @DisplayName("SCN-MSG-005: No pre-booking chat exists in Phase 1 - startConversation requires task context")
+    @DisplayName("SCN-MSG-005: No pre-booking chat exists in Phase 1")
     void startConversationRequiresTaskContext() {
         // Given a user with no bookings has no conversations
         when(conversationDao.findByUserId(anyString())).thenReturn(List.of());
