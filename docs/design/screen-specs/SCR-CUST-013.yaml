@@ -22,6 +22,32 @@ layout:
   density: default
   structure: 'safe_area -> nav_header(back + title) -> scrollview(avatar_hero + trust_summary + categories + reviews)'
 
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: balanced
+  trust_cues:
+    - verified_badge_as_eligibility
+    - completed_jobs
+    - review_threshold_state
+    - service_categories
+    - no_direct_contact_before_booking
+  non_goals:
+    - no_fake_top_candidate_ranking
+    - no_payment_protection_claims
+
+profile_redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: balanced
+  trust_cues:
+    - verified_eligibility
+    - review_threshold
+    - completed_jobs
+    - role_specific_review_dimensions
+    - neutral_no_review_state
+  non_goals:
+    - no_provider_level_badges
+    - no_unbacked_reputation_claims
+
 components:
   - id: COMP-PROFILEAVATAR
     usage: 'Large Tasker avatar with verification badge at top of profile'

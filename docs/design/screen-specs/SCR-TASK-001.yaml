@@ -31,6 +31,18 @@ layout:
   density: default
   structure: 'safe_area -> sticky_header(search_bar + filter_bar) -> scrollview(split_cards + trust_banner) -> pagination_footer'
 
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: operational
+  trust_cues:
+    - verified_required_apply_state
+    - approximate_location
+    - structured_application_not_chat
+    - task_freshness_status
+  non_goals:
+    - no_instant_match_claim
+    - no_tasker_ranking_tiers
+
 components:
   - id: COMP-SEARCHBAR
     usage: 'Text search at top of feed for keyword filtering of task titles and descriptions'

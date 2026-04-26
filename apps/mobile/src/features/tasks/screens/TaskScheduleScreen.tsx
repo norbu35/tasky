@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
+import { PostingGuidanceCard } from '@/features/tasks/components/PostingGuidance';
 
 import { PricingModeSelector, QuoteModeNotice } from './TaskSchedule.PricingMode';
 import { DateCard, BudgetField, PickerSection } from './TaskSchedule.ScheduleForm';
@@ -54,6 +55,12 @@ export default function TaskScheduleScreen() {
         selectedTime={selectedTime}
         scheduleError={scheduleError}
         onOpenPicker={openPicker}
+      />
+
+      <PostingGuidanceCard
+        titleKey="PostingGuidance.pricingTitle"
+        bodyKey="PostingGuidance.pricingBody"
+        testID="posting-guidance-pricing"
       />
 
       <PricingModeSelector pricingMode={pricingMode} onChange={setPricingMode} />

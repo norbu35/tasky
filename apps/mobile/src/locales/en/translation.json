@@ -586,6 +586,22 @@
     "toneLabel": "Tone",
     "polishedLabel": "Suggested version"
   },
+  "PostingGuidance": {
+    "structuredTitle": "Structured tasks get clearer applications",
+    "structuredBody": "The details you add here become the task record taskers use to apply.",
+    "addressPrivacyTitle": "Approximate location first",
+    "addressPrivacyBody": "The exact address is shared only after booking is confirmed.",
+    "pricingTitle": "Budget or quote is clear",
+    "pricingBody": "Choose a posted budget or ask verified taskers to send structured quotes.",
+    "summaryTitle": "Review before posting",
+    "summaryBody": "Check scope, photos, location, schedule, and pricing before the task goes live.",
+    "nextStepsTitle": "What happens next",
+    "nextStepsBody": "Verified taskers can apply. You choose from structured applications when they arrive.",
+    "checkStructuredScope": "Structured scope",
+    "checkAddressPrivacy": "Approximate location first",
+    "checkPricingClarity": "Budget or quote is clear",
+    "checkStructuredApplications": "Taskers apply with structured responses"
+  },
   "PrivacyPolicyScreen": {
     "copy1": "We collect information you provide directly, such as your name, phone number, and profile photo, as well as data generated during your use of Tasky.",
     "copy2": "Your information is used to deliver and improve the service, match tasks with taskers, and maintain platform security.",

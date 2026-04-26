@@ -6,6 +6,7 @@ import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE, UrlTile } from 'rea
 
 import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 import { elevations } from '@/design/elevations';
+import { PostingGuidanceCard } from '@/features/tasks/components/PostingGuidance';
 
 import {
   DEFAULT_DELTA,
@@ -61,6 +62,12 @@ export default function TaskLocationScreen() {
           {t('LocationScreen.locationInstruction')}
         </Text>
       </View>
+
+      <PostingGuidanceCard
+        titleKey="PostingGuidance.addressPrivacyTitle"
+        bodyKey="PostingGuidance.addressPrivacyBody"
+        testID="posting-guidance-address-privacy"
+      />
 
       <View className="rounded-lg overflow-hidden bg-muted min-h-[280px]" style={elevations.soft}>
         <MapView

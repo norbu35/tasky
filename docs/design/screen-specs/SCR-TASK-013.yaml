@@ -38,6 +38,20 @@ layout:
   density: default
   structure: 'safe_area -> nav_header(back + title) -> scrollview(status_section + customer_info + task_description + exact_address + schedule + payment_note + action_section) -> sticky_bottom_cta(primary_action + secondary_actions)'
 
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: balanced
+  trust_cues:
+    - lifecycle_timeline
+    - exact_address_reveal_rule
+    - platform_mediated_contact
+    - cancellation_no_show_warning
+    - dispute_entry
+  non_goals:
+    - no_escrow_claim
+    - no_wallet_claim
+    - no_payment_protection_claim
+
 components:
   - id: COMP-BUTTON
     usage: "Primary CTA — context-dependent: 'Mark Done' when work is complete, 'Message' when assigned"

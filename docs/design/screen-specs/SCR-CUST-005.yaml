@@ -29,6 +29,22 @@ layout:
   density: default
   structure: 'safe_area -> nav_header(back + title) -> step_indicator(step 4/7) -> scrollview(map_picker + text_field) -> bottom_nav(back + next)'
 
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: guided
+  proof_scope: customer_posting_wizard_surface
+  cue_scope: flow_level_cues_not_required_on_every_step
+  trust_cues:
+    - structured_scope
+    - pricing_mode_clarity
+    - address_privacy
+    - deterministic_summary
+    - next_step_guidance
+  non_goals:
+    - no_runtime_ai_posting
+    - no_payment_protection_claims
+    - no_open_ended_pre_booking_chat
+
 components:
   - id: COMP-STEPINDICATOR
     usage: 'Shows step 4 of 7 in the Post Task wizard flow'

@@ -25,6 +25,22 @@ layout:
   density: comfortable
   structure: 'safe_area -> centered(animated_checkmark + headline + next_steps + ctas)'
 
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: guided
+  proof_scope: customer_posting_wizard_surface
+  cue_scope: flow_level_cues_not_required_on_every_step
+  trust_cues:
+    - structured_scope
+    - pricing_mode_clarity
+    - address_privacy
+    - deterministic_summary
+    - next_step_guidance
+  non_goals:
+    - no_runtime_ai_posting
+    - no_payment_protection_claims
+    - no_open_ended_pre_booking_chat
+
 components:
   - id: COMP-ANIMATEDCHECKMARK
     usage: 'Animated success checkmark with spring bounce animation'

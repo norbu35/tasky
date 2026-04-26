@@ -30,6 +30,19 @@ layout:
   density: default
   structure: 'safe_area -> nav_header(back + title + applicant_count) -> scrollview(applicant_cards)'
 
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: balanced
+  trust_cues:
+    - verified_badge_as_eligibility
+    - completed_jobs
+    - review_threshold_state
+    - structured_pricing_response
+    - approximate_location_until_booking
+  non_goals:
+    - no_fake_top_candidate_ranking
+    - no_payment_protection_claims
+
 components:
   - id: COMP-SPLITCARD
     usage: 'Applicant cards showing Tasker avatar, name, verification/trust cues, optional public reputation when thresholded, and structured pricing response summary'

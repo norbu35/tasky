@@ -22,6 +22,19 @@ layout:
   density: default
   structure: 'safe_area -> nav_header -> scrollview(hero_avatar + stats_summary + info_sections + reviews) -> sticky_bottom_cta(edit)'
 
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: balanced
+  trust_cues:
+    - verified_eligibility
+    - review_threshold
+    - completed_jobs
+    - role_specific_review_dimensions
+    - neutral_no_review_state
+  non_goals:
+    - no_provider_level_badges
+    - no_unbacked_reputation_claims
+
 components:
   - id: COMP-PROFILEAVATAR
     usage: 'Large centered avatar at top of profile hero section'
