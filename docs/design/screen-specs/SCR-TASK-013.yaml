@@ -51,6 +51,12 @@ redesign_proof:
     - no_escrow_claim
     - no_wallet_claim
     - no_payment_protection_claim
+  airbnb_scaffold:
+    - timeline_first_detail
+    - address_visibility_rule
+    - direct_settlement_payment_note
+    - cancellation_completion_actions
+    - support_reason_sheet
 
 components:
   - id: COMP-BUTTON

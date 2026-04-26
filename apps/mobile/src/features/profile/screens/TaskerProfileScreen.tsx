@@ -10,7 +10,10 @@ import { elevations } from '@/design/elevations';
 import { mobileSurfaces } from '@/design/surfaces';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { useTaskerProfile } from '@/features/profile/hooks/useTaskerProfile';
-import type { Profile, Review } from '@/lib/api/types';
+import { canShowPublicRating, formatPublicRating } from '@/features/profile/model';
+import type { Profile } from '@/lib/api/types';
+
+import { TaskerProfileReviewsSection } from './TaskerProfile.ReviewsSection';
 
 interface TaskerProfileDetail extends Profile {
   bio?: string;
@@ -26,10 +29,12 @@ export default function TaskerProfileScreen() {
   const { profile: profileQuery, reviews: reviewsQuery } = useTaskerProfile(taskerId);
 
   const profile = profileQuery.data;
+  const detail = profile as TaskerProfileDetail | undefined;
   const reviews = reviewsQuery.data?.data ?? [];
   const isLoading = profileQuery.isLoading;
   const isError = profileQuery.isError;
-  const categories = ((profile as TaskerProfileDetail)?.categories ?? []) as string[];
+  const categories = (detail?.categories ?? []) as string[];
+  const publicRatingVisible = canShowPublicRating(detail?.completed_tasks, detail?.rating_avg);
 
   return (
     <DetailTemplate
@@ -49,18 +54,20 @@ export default function TaskerProfileScreen() {
               uri={profile.avatar_url}
               name={profile.full_name}
               size="xl"
-              showVerified={(profile as TaskerProfileDetail).is_pro}
+              showVerified={detail?.is_pro}
             />
             <Text className="text-heroTitle font-sans-bold text-foreground mt-sm">
               {profile.full_name}
             </Text>
-            <View className="flex-row items-center gap-[8px]">
-              <Star size={16} color={colors.accent} fill={colors.accent} />
-              <Text className="text-subtitle font-sans-bold text-foreground">
-                {((profile as TaskerProfileDetail).rating_avg ?? 0).toFixed(1)}
-              </Text>
-            </View>
-            {(profile as TaskerProfileDetail).is_pro ? (
+            {publicRatingVisible ? (
+              <View className="flex-row items-center gap-[8px]">
+                <Star size={16} color={colors.accent} fill={colors.accent} />
+                <Text className="text-subtitle font-sans-bold text-foreground">
+                  {formatPublicRating(detail?.rating_avg)}
+                </Text>
+              </View>
+            ) : null}
+            {detail?.is_pro ? (
               <View className="flex-row items-center gap-[8px] bg-trust px-md py-xs rounded-full">
                 <ShieldCheck size={16} color={colors.trustMuted} />
                 <Text className="text-label font-sans-bold text-trust-muted">
@@ -73,9 +80,7 @@ export default function TaskerProfileScreen() {
               <Text className="text-caption text-text-secondary">
                 {t('customer.taskerProfile.memberSince').replace(
                   '{date}',
-                  new Date(
-                    (profile as TaskerProfileDetail).created_at ?? Date.now(),
-                  ).toLocaleDateString(),
+                  new Date(detail?.created_at ?? Date.now()).toLocaleDateString(),
                 )}
               </Text>
             </View>
@@ -88,23 +93,25 @@ export default function TaskerProfileScreen() {
               style={elevations.soft}
             >
               <Text className="text-heroTitle font-sans-bold text-foreground">
-                {(profile as TaskerProfileDetail).completed_tasks ?? 0}
+                {detail?.completed_tasks ?? 0}
               </Text>
               <Text className="text-caption text-text-secondary text-center">
                 {t('customer.taskerProfile.completedJobs')}
               </Text>
             </View>
-            <View
-              className="flex-1 bg-muted rounded-lg p-lg items-center gap-xs"
-              style={elevations.soft}
-            >
-              <Text className="text-heroTitle font-sans-bold text-foreground">
-                {((profile as TaskerProfileDetail).rating_avg ?? 0).toFixed(1)}
-              </Text>
-              <Text className="text-caption text-text-secondary text-center">
-                {t('customer.taskerProfile.rating')}
-              </Text>
-            </View>
+            {publicRatingVisible ? (
+              <View
+                className="flex-1 bg-muted rounded-lg p-lg items-center gap-xs"
+                style={elevations.soft}
+              >
+                <Text className="text-heroTitle font-sans-bold text-foreground">
+                  {formatPublicRating(detail?.rating_avg)}
+                </Text>
+                <Text className="text-caption text-text-secondary text-center">
+                  {t('customer.taskerProfile.rating')}
+                </Text>
+              </View>
+            ) : null}
           </View>
 
           {/* About */}
@@ -113,7 +120,7 @@ export default function TaskerProfileScreen() {
               {t('customer.taskerProfile.about')}
             </Text>
             <Text className="text-body text-text-secondary leading-[24px]">
-              {(profile as TaskerProfileDetail).bio ?? t('customer.taskerProfile.noBio')}
+              {detail?.bio ?? t('customer.taskerProfile.noBio')}
             </Text>
           </View>
 
@@ -143,41 +150,11 @@ export default function TaskerProfileScreen() {
             </View>
           </View>
 
-          {/* Reviews */}
-          <View className="gap-md">
-            <Text className="text-heading font-sans-bold text-primary-deep">
-              {t('customer.taskerProfile.reviews')}
-            </Text>
-
-            {reviews.length === 0 ? (
-              <Text className="text-body text-text-secondary text-center py-xl">
-                {t('customer.taskerProfile.noReviews')}
-              </Text>
-            ) : (
-              <View className="gap-md">
-                {reviews.map((review: Review) => (
-                  <View key={review.id} className="bg-muted rounded-lg p-lg gap-sm">
-                    <View className="flex-row justify-between items-center">
-                      <Text className="text-label font-sans-bold text-foreground">
-                        {review.reviewer?.full_name ?? ''}
-                      </Text>
-                      <View className="flex-row items-center gap-xs">
-                        <Star size={16} color={colors.accent} fill={colors.accent} />
-                        <Text className="text-label font-sans-bold text-foreground">
-                          {review.quality_rating}
-                        </Text>
-                      </View>
-                    </View>
-                    {review.comment ? (
-                      <Text className="text-body text-muted-foreground leading-[24px]">
-                        {review.comment}
-                      </Text>
-                    ) : null}
-                  </View>
-                ))}
-              </View>
-            )}
-          </View>
+          <TaskerProfileReviewsSection
+            publicRatingVisible={publicRatingVisible}
+            completedTasks={detail?.completed_tasks}
+            reviews={reviews}
+          />
         </View>
       ) : null}
     </DetailTemplate>

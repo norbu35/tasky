@@ -192,6 +192,27 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
     expect(filterBar).toBeTruthy();
   });
 
+  it('opens the filter sheet with a result-count CTA', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask, secondTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    renderTaskFeed();
+
+    fireEvent.press(screen.getByTestId('task-feed-open-filters'));
+
+    expect(screen.getByTestId('task-feed-filter-sheet')).toBeTruthy();
+    expect(screen.getByText('2 даалгавар боломжтой')).toBeTruthy();
+    expect(screen.getByTestId('task-feed-filter-sheet-show-results')).toBeTruthy();
+  });
+
   it('filters tasks by search text', () => {
     mockUseTasks.mockReturnValue({
       data: {
@@ -210,6 +231,30 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
 
     expect(screen.queryByText('Deep clean apartment')).toBeNull();
     expect(screen.getByText('Fix kitchen sink')).toBeTruthy();
+  });
+
+  it('shows active filter summary and no-results remediation', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask, secondTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    renderTaskFeed();
+
+    fireEvent.changeText(screen.getByPlaceholderText('Асуулт хайх...'), 'not-a-match');
+
+    expect(screen.getByText('0 даалгавар таны шүүлтүүрт таарч байна')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Шүүлтүүрээ арилгах эсвэл хайлтаа өргөтгөж илүү олон нээлттэй даалгавар харна уу.',
+      ),
+    ).toBeTruthy();
   });
 
   it('renders trust banner in populated state', () => {

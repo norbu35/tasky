@@ -1,12 +1,11 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { CalendarDays } from 'lucide-react-native';
+import { CalendarDays, Check } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
-import { Button } from '@/components/ui/Button';
 import { FormField } from '@/components/ui/FormField';
 import { Input } from '@/components/ui/Input';
+import { ModalSheet } from '@/components/ui/ModalSheet';
 import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
 import { mobileSurfaces } from '@/design/surfaces';
@@ -16,8 +15,12 @@ import { cn } from '@/lib/cn';
 import {
   type ActivePickerState,
   createDefaultScheduleDate,
+  createScheduleDateOptions,
+  createScheduleTimeOptions,
   formatDateValue,
   formatTimeValue,
+  isSameScheduleDate,
+  isSameScheduleTime,
   toValidDate,
 } from './TaskSchedule.model';
 
@@ -151,14 +154,14 @@ export function BudgetField({
 
 interface PickerSectionProps {
   activePicker: ActivePickerState;
-  onPickerChange: (event: { type?: string }, pickedValue?: Date) => void;
+  onPickerDraftChange: (pickedValue: Date) => void;
   onPickerCancel: () => void;
   onPickerConfirm: () => void;
 }
 
 export function PickerSection({
   activePicker,
-  onPickerChange,
+  onPickerDraftChange,
   onPickerCancel,
   onPickerConfirm,
 }: PickerSectionProps) {
@@ -166,58 +169,76 @@ export function PickerSection({
 
   if (!activePicker) return null;
 
-  if (Platform.OS === 'ios') {
-    return (
-      <View
-        className="rounded-lg border border-border bg-card p-md gap-sm"
-        testID="schedule-ios-picker-card"
-      >
-        <View className="gap-xs">
-          <Text className="text-label font-bold text-primary-deep uppercase tracking-[0.6px]">
-            {activePicker.mode === 'date'
-              ? t('ScheduleBudgetScreen.scheduleDate')
-              : t('ScheduleBudgetScreen.scheduleTime')}
-          </Text>
-          <Text className="text-caption text-text-secondary">
-            {t('ScheduleBudgetScreen.schedulePickerHint')}
-          </Text>
-        </View>
-        <View className="flex-row gap-sm mt-xs">
-          <Button
-            testID="schedule-picker-cancel"
-            label={t('common.cancel')}
-            variant="outline"
-            onPress={onPickerCancel}
-            className="flex-1"
-          />
-          <Button
-            testID="schedule-picker-confirm"
-            label={t('common.confirm')}
-            onPress={onPickerConfirm}
-            className="flex-1"
-          />
-        </View>
-        <DateTimePicker
-          testID={activePicker.mode === 'date' ? 'schedule-date-picker' : 'schedule-time-picker'}
-          value={toValidDate(activePicker.draftValue, createDefaultScheduleDate())}
-          mode={activePicker.mode}
-          display="spinner"
-          is24Hour
-          onChange={onPickerChange}
-          minimumDate={activePicker.mode === 'date' ? new Date() : undefined}
-        />
-      </View>
-    );
-  }
+  const draftValue = toValidDate(activePicker.draftValue, createDefaultScheduleDate());
+  const options =
+    activePicker.mode === 'date'
+      ? createScheduleDateOptions()
+      : createScheduleTimeOptions(draftValue);
 
   return (
-    <DateTimePicker
-      testID={activePicker.mode === 'date' ? 'schedule-date-picker' : 'schedule-time-picker'}
-      value={toValidDate(activePicker.draftValue, createDefaultScheduleDate())}
-      mode={activePicker.mode}
-      is24Hour
-      onChange={onPickerChange}
-      minimumDate={activePicker.mode === 'date' ? new Date() : undefined}
-    />
+    <ModalSheet
+      visible
+      title={
+        activePicker.mode === 'date'
+          ? t('ScheduleBudgetScreen.scheduleDate')
+          : t('ScheduleBudgetScreen.scheduleTime')
+      }
+      onClose={onPickerCancel}
+      testID="schedule-picker-sheet"
+      primaryAction={{
+        label: t('common.confirm'),
+        onPress: onPickerConfirm,
+        testID: 'schedule-picker-confirm',
+      }}
+      secondaryAction={{
+        label: t('common.cancel'),
+        onPress: onPickerCancel,
+        testID: 'schedule-picker-cancel',
+      }}
+    >
+      <Text className="text-caption text-text-secondary">
+        {t('ScheduleBudgetScreen.schedulePickerHint')}
+      </Text>
+      <ScrollView style={{ maxHeight: 320 }} showsVerticalScrollIndicator={false}>
+        <View className="gap-sm">
+          {options.map((option, index) => {
+            const selected =
+              activePicker.mode === 'date'
+                ? isSameScheduleDate(option, draftValue)
+                : isSameScheduleTime(option, draftValue);
+            const label =
+              activePicker.mode === 'date' ? formatDateValue(option) : formatTimeValue(option);
+            const testID =
+              activePicker.mode === 'date'
+                ? `schedule-date-option-${index}`
+                : `schedule-time-option-${index}`;
+
+            return (
+              <Touchable
+                key={option.toISOString()}
+                testID={testID}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
+                onPress={() => onPickerDraftChange(option)}
+                className="min-h-[48px] flex-row items-center justify-between rounded-md border px-md py-sm"
+                style={({ pressed }) => ({
+                  borderColor: selected ? colors.primaryDeep : colors.border,
+                  backgroundColor: selected ? colors.primaryDeep : colors.card,
+                  opacity: pressed ? 0.86 : 1,
+                })}
+              >
+                <Text
+                  className="text-body font-sans-bold"
+                  style={{ color: selected ? colors.primaryForeground : colors.foreground }}
+                >
+                  {label}
+                </Text>
+                {selected ? <Check size={18} color={colors.primaryForeground} /> : null}
+              </Touchable>
+            );
+          })}
+        </View>
+      </ScrollView>
+    </ModalSheet>
   );
 }

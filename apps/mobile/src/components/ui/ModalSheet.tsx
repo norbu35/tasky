@@ -26,6 +26,7 @@ type Props = {
   };
   dismissible?: boolean;
   className?: string;
+  testID?: string;
 };
 
 export function ModalSheet({
@@ -37,6 +38,7 @@ export function ModalSheet({
   secondaryAction,
   dismissible = true,
   className,
+  testID,
 }: Props) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
@@ -57,6 +59,7 @@ export function ModalSheet({
         <View
           className={cn('bg-card rounded-tl-lg rounded-tr-lg px-lg py-xl gap-md', className)}
           style={[elevations.elevated, { paddingBottom: insets.bottom + mobileTheme.spacing.xl }]}
+          testID={testID}
         >
           <View className="self-center w-11 h-[5px] rounded-full bg-muted" />
           <Text className="text-body font-sans-bold text-foreground">{title}</Text>

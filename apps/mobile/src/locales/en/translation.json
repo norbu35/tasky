@@ -22,7 +22,6 @@
     "copy2": "A new version of the app is available. Update for a better experience"
   },
   "Applicants": {
-    "recommended": "Recommended",
     "accept": "Accept",
     "viewProfile": "View Profile",
     "taskTitleFallback": "Task",
@@ -1023,7 +1022,6 @@
   },
   "applicants": {
     "title": "Applicants",
-    "recommended": "Recommended",
     "otherApplicants": "Other Applicants",
     "reviews": "reviews",
     "jobs": "jobs",
@@ -1261,7 +1259,6 @@
       "errorBody": "Please check your connection and try again.",
       "accept": "Accept",
       "viewProfile": "View Profile",
-      "recommended": "Recommended",
       "confirmCancel": "Go Back",
       "confirmBody": "After selecting, you will proceed to booking confirmation",
       "confirmCta": "Confirm",
@@ -1269,7 +1266,12 @@
       "count": "{{count}} applications",
       "errorNetwork": "Failed to load applications",
       "pageTitle": "Applications",
-      "taskTitleFallback": "Task"
+      "taskTitleFallback": "Task",
+      "signalVerified": "Verified identity",
+      "signalDetailedResponse": "Detailed response",
+      "signalBriefResponse": "Brief response",
+      "signalCompletedJobs": "{{count}} completed jobs",
+      "signalQuote": "Quote: {{amount}}"
     },
     "bookings": {
       "title": "My Bookings",
@@ -1514,6 +1516,9 @@
       "noBio": "No bio yet",
       "noCategories": "No categories listed",
       "noReviews": "No reviews yet",
+      "reviewSearchPlaceholder": "Search reviews",
+      "filterAll": "All",
+      "filterFiveStar": "5-star",
       "title": "Tasker Profile"
     },
     "cancelSheet": {
@@ -1529,6 +1534,26 @@
     },
     "rebook": {
       "title": "Rebook"
+    }
+  },
+  "booking": {
+    "lifecycle": {
+      "title": "Booking timeline",
+      "requested": "Task posted",
+      "confirmed": "Booking confirmed",
+      "scheduled": "Scheduled work",
+      "pending": "Pending",
+      "confirmedTimestamp": "Confirmed with both parties",
+      "addressNote": "Exact address is shown only after the booking is confirmed."
+    },
+    "support": {
+      "title": "Choose what you need help with",
+      "description": "Pick the closest reason so Tasky can route the next step without changing the booking contract.",
+      "cta": "Get help",
+      "primary": "Continue",
+      "reasonArrival": "Arrival or no-show",
+      "reasonSchedule": "Schedule change",
+      "reasonSafety": "Safety or conduct concern"
     }
   },
   "detail": {
@@ -1599,7 +1624,7 @@
       "qWhatIsTasky": "What is Tasky?",
       "aWhatIsTasky": "Tasky is a trusted service marketplace connecting customers with service providers in Mongolia.",
       "qHowItWorks": "How does Tasky work?",
-      "aHowItWorks": "Post a task, receive applications, choose the best match, and track the booking through completion.",
+      "aHowItWorks": "Post a task, receive applications, choose the applicant you want, and track the booking through completion.",
       "qPostTask": "How do I post a task?",
       "aPostTask": "Open Post Task, add your details, choose a budget, and submit once everything looks correct.",
       "qCancelBooking": "Can I cancel a booking?",
@@ -1782,6 +1807,8 @@
       "roleTasker": "Tasker",
       "trustTitle": "Verified Tasker",
       "noBio": "No bio yet",
+      "lowReviewTitle": "Not enough reviews yet",
+      "lowReviewBody": "Public ratings appear after {{count}} completed reviewable jobs. {{remaining}} more needed.",
       "understood": "Understood",
       "viewStats": "View Stats",
       "uploadError": "Failed to upload photo. Please try again."
@@ -1973,7 +2000,17 @@
       "emptyCta": "Clear Filters",
       "searchPlaceholder": "Search tasks...",
       "subtitle": "New tasks nearby",
-      "trustTitle": "Verified Task Provider"
+      "trustTitle": "Verified Task Provider",
+      "openFilters": "Open filters",
+      "resultSummary": "{{count}} tasks match your filters",
+      "resultCount": "{{count}} tasks available",
+      "showResults": "Show {{count}} results",
+      "clearFilters": "Clear filters",
+      "noResultsRemediation": "Clear filters or widen your search to see more open tasks.",
+      "filterSheetTitle": "Filter tasks",
+      "filterSheetDescription": "Choose categories and search terms before returning to the feed.",
+      "applicationCount": "{{count}} applicants",
+      "postedAt": "Posted {{date}}"
     },
     "taskDetail": {
       "applyButton": "Apply for Task",

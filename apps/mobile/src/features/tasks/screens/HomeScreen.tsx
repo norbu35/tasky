@@ -1,64 +1,27 @@
 import { useRouter } from 'expo-router';
-import { Clock } from 'lucide-react-native';
+import { SlidersHorizontal } from 'lucide-react-native';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { CustomerTasksScreen } from '@/features/tasks';
 import { FeedListTemplate } from '@/components/templates/FeedListTemplate';
-import { CategoryChip } from '@/components/ui/CategoryChip';
 import { FilterBar } from '@/components/ui/FilterBar';
-import { LocationPin } from '@/components/ui/LocationPin';
-import { PriceTag } from '@/components/ui/PriceTag';
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { SearchBar } from '@/components/ui/SearchBar';
-import { SplitCard } from '@/components/ui/SplitCard';
+import { Touchable } from '@/components/ui/Touchable';
 import { TrustBanner } from '@/components/ui/TrustBanner';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { ReviewGateBanner } from '@/features/review/components/ReviewGateBanner';
 import { useReviewGate } from '@/features/review/components/ReviewGateProvider';
+import { CustomerTasksScreen } from '@/features/tasks';
+import { TaskFeedCard } from '@/features/tasks/components/TaskFeedCard';
+import { TaskFeedFilterSheet } from '@/features/tasks/components/TaskFeedFilterSheet';
 import { useCategories } from '@/features/tasks/hooks/useCategories';
 import { useTasks } from '@/features/tasks/hooks/useTasks';
 import type { PublicTask } from '@/lib/api/types';
 import { useRole } from '@/providers/RoleProvider';
-import { formatShortDate } from '@/utils/formatDate';
 
 const { colors } = mobileTheme;
-
-function TaskCardHeader({ task }: { task: PublicTask }) {
-  return (
-    <View className="flex-row items-center justify-between">
-      <View className="flex-row items-center flex-1 mr-sm gap-sm">
-        {task.category && <CategoryChip label={task.category.name} isActive />}
-        <PriceTag amount={task.budget} size="sm" />
-      </View>
-    </View>
-  );
-}
-
-function TaskCardBody({ task }: { task: PublicTask }) {
-  return (
-    <View className="gap-sm">
-      <Text className="text-body font-sans-medium text-foreground" numberOfLines={2}>
-        {task.description}
-      </Text>
-      <View className="flex-row flex-wrap items-center gap-sm mt-xs">
-        {task.approximate_location && <LocationPin text={task.approximate_location} compact />}
-        {task.scheduled_at && (
-          <View className="flex-row items-center gap-xs">
-            <Clock size={16} color={colors.textSecondary} />
-            <Text className="text-caption text-text-secondary">
-              {formatShortDate(task.scheduled_at)}
-            </Text>
-          </View>
-        )}
-        <Text className="text-caption text-text-secondary" numberOfLines={1}>
-          {task.customer.full_name}
-        </Text>
-      </View>
-    </View>
-  );
-}
 
 function TaskerBrowseScreen() {
   const { t } = useTranslation();
@@ -74,6 +37,7 @@ function TaskerBrowseScreen() {
 
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const { data: categoriesData } = useCategories();
   const categories = useMemo(() => {
     const apiCategories = (categoriesData?.data ?? []).map(
@@ -88,6 +52,7 @@ function TaskerBrowseScreen() {
   const handleClearFilters = useCallback(() => {
     setActiveFilters([]);
     setSearchQuery('');
+    setIsFilterSheetOpen(false);
   }, []);
 
   const filteredTasks = useMemo(() => {
@@ -105,6 +70,8 @@ function TaskerBrowseScreen() {
       return matchesCategory && matchesSearch;
     });
   }, [data, activeFilters, searchQuery]);
+
+  const hasActiveBrowseFilters = activeFilters.length > 0 || searchQuery.trim().length > 0;
 
   const handleToggleFilter = useCallback((id: string) => {
     setActiveFilters((prev) => {
@@ -127,9 +94,8 @@ function TaskerBrowseScreen() {
   const renderItem = useCallback(
     (task: PublicTask, index: number) => (
       <View testID={`task-card-index-${index}`} style={{ opacity: isLocked ? 0.5 : 1 }}>
-        <SplitCard
-          headerContent={<TaskCardHeader task={task} />}
-          bodyContent={<TaskCardBody task={task} />}
+        <TaskFeedCard
+          task={task}
           onPress={() => handleTaskPress(task)}
           testID={`task-card-${task.id}`}
         />
@@ -156,16 +122,35 @@ function TaskerBrowseScreen() {
           <View className="gap-md mb-md">
             <ScreenHeader title={t('tasker.browse.title')} subtitle={t('tasker.browse.subtitle')} />
             {hasPending && oldestPending && <ReviewGateBanner pendingReview={oldestPending} />}
-            <SearchBar
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder={t('tasker.browse.searchPlaceholder')}
-            />
+            <View className="flex-row items-center gap-sm">
+              <View className="flex-1">
+                <SearchBar
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  placeholder={t('tasker.browse.searchPlaceholder')}
+                />
+              </View>
+              <Touchable
+                accessibilityRole="button"
+                accessibilityLabel={t('tasker.browse.openFilters')}
+                className="items-center justify-center rounded-md border border-border bg-card"
+                style={{ width: 48, height: 48 }}
+                onPress={() => setIsFilterSheetOpen(true)}
+                testID="task-feed-open-filters"
+              >
+                <SlidersHorizontal size={20} color={colors.primaryDeep} />
+              </Touchable>
+            </View>
+            <Text className="text-caption font-sans-semibold text-text-secondary">
+              {t('tasker.browse.resultSummary', { count: filteredTasks.length })}
+            </Text>
             <TrustBanner title={t('tasker.browse.trustTitle')} description={t('HomeTab.copy1')} />
           </View>
         }
         emptyTitle={t('tasker.browse.emptyTitle')}
-        emptyDescription={t('HomeTab.copy2')}
+        emptyDescription={
+          hasActiveBrowseFilters ? t('tasker.browse.noResultsRemediation') : t('HomeTab.copy2')
+        }
         emptyCtaLabel={t('tasker.browse.emptyCta')}
         emptyCtaOnPress={handleClearFilters}
         errorMessage={t('common.error')}
@@ -178,6 +163,15 @@ function TaskerBrowseScreen() {
           />
         }
         testID="task-feed"
+      />
+      <TaskFeedFilterSheet
+        visible={isFilterSheetOpen}
+        categories={categories}
+        activeFilters={activeFilters}
+        resultCount={filteredTasks.length}
+        onToggleFilter={handleToggleFilter}
+        onClearFilters={handleClearFilters}
+        onClose={() => setIsFilterSheetOpen(false)}
       />
     </View>
   );

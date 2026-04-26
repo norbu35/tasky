@@ -5,7 +5,9 @@ export interface ApplicantItem {
   avatarUrl?: string;
   rating: number;
   reviewCount: number;
+  publicRatingVisible: boolean;
   isVerified: boolean;
-  isRecommended: boolean;
   message: string;
+  quotePrice?: number | null;
+  responseSignal: 'detailed' | 'brief';
 }

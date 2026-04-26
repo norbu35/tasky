@@ -2,6 +2,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { canShowPublicRating } from '@/features/profile/model';
+
 import { useApplications } from '../hooks/useApplications';
 import { useCustomerTaskDetail } from '../hooks/useCustomerTaskDetail';
 
@@ -19,17 +21,24 @@ export function useApplicantsSelectionScreen() {
 
   const applicants: ApplicantItem[] = useMemo(
     () =>
-      (data?.data ?? []).map((a, index: number) => ({
-        id: a.id,
-        taskerId: a.tasker?.id ?? a.task_id ?? '',
-        name: a.tasker?.full_name ?? '',
-        avatarUrl: a.tasker?.avatar_url ?? undefined,
-        rating: a.tasker?.rating_avg ?? 0,
-        reviewCount: a.tasker?.completed_tasks ?? 0,
-        isVerified: a.tasker?.is_pro ?? false,
-        isRecommended: Boolean(a.recommended ?? index === 0),
-        message: a.message ?? '',
-      })),
+      (data?.data ?? []).map((a) => {
+        const rating = a.tasker?.rating_avg ?? 0;
+        const reviewCount = a.tasker?.completed_tasks ?? 0;
+        const message = a.message ?? '';
+        return {
+          id: a.id,
+          taskerId: a.tasker?.id ?? a.task_id ?? '',
+          name: a.tasker?.full_name ?? '',
+          avatarUrl: a.tasker?.avatar_url ?? undefined,
+          rating,
+          reviewCount,
+          publicRatingVisible: canShowPublicRating(reviewCount, rating),
+          isVerified: a.tasker?.is_pro ?? false,
+          message,
+          quotePrice: a.quote_price ?? null,
+          responseSignal: message.trim().length >= 24 ? 'detailed' : 'brief',
+        };
+      }),
     [data?.data],
   );
 

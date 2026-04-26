@@ -1,7 +1,6 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform } from 'react-native';
 
 import { useTaskDraftStore } from '@/features/tasks/draft';
 
@@ -61,29 +60,10 @@ export function useTaskScheduleScreen() {
     setActivePicker({ mode, draftValue: currentValue });
   };
 
-  const handlePickerChange = (event: { type?: string }, pickedValue?: Date) => {
-    const pickerMode = activePicker?.mode;
-
-    if (event.type === 'dismissed' || !pickedValue || !pickerMode) {
-      if (Platform.OS === 'android') {
-        setActivePicker(null);
-      }
-      return;
-    }
-
-    if (Platform.OS === 'ios') {
-      setActivePicker((prev) =>
-        prev ? { ...prev, draftValue: toValidDate(pickedValue, prev.draftValue) } : prev,
-      );
-      return;
-    }
-
-    if (pickerMode === 'date') {
-      setSelectedDate(pickedValue);
-    } else {
-      setSelectedTime(pickedValue);
-    }
-    setActivePicker(null);
+  const handlePickerDraftChange = (pickedValue: Date) => {
+    setActivePicker((prev) =>
+      prev ? { ...prev, draftValue: toValidDate(pickedValue, prev.draftValue) } : prev,
+    );
   };
 
   const handlePickerCancel = () => {
@@ -133,7 +113,7 @@ export function useTaskScheduleScreen() {
     scheduleError,
     canContinue,
     openPicker,
-    handlePickerChange,
+    handlePickerDraftChange,
     handlePickerCancel,
     handlePickerConfirm,
     setPricingMode,

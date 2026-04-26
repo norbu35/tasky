@@ -4,13 +4,16 @@ import { useTranslation } from 'react-i18next';
 import { Alert, Text, View } from 'react-native';
 
 import { DetailTemplate } from '@/components/templates/DetailTemplate';
-import { Button } from '@/components/ui/Button';
 import { ConfirmSheet } from '@/components/ui/ConfirmSheet';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { BookingLifecyclePreview } from '@/features/bookings/components/BookingLifecyclePreview';
+import { BookingSupportSheet } from '@/features/bookings/components/BookingSupportSheet';
 import { TaskerCancelSheet } from '@/features/bookings/components/TaskerCancelSheet';
 import { useBookingDetail } from '@/features/bookings/hooks/useBookingDetail';
 import { useFlagNoShow } from '@/features/bookings/hooks/useFlagNoShow';
 import { useMarkBookingDone } from '@/features/bookings/hooks/useMarkBookingDone';
+
+import { TaskerJobDetailActions } from './TaskerJobDetail.Actions';
 
 export default function TaskerJobDetailScreen() {
   const { t } = useTranslation();
@@ -21,6 +24,7 @@ export default function TaskerJobDetailScreen() {
   const flagNoShow = useFlagNoShow();
   const [cancelSheetOpen, setCancelSheetOpen] = useState(false);
   const [showNoShowSheet, setShowNoShowSheet] = useState(false);
+  const [supportSheetOpen, setSupportSheetOpen] = useState(false);
   const bookingStatus = booking?.status as string | undefined;
 
   const isAssigned = bookingStatus === 'ASSIGNED';
@@ -60,6 +64,12 @@ export default function TaskerJobDetailScreen() {
               <StatusBadge status={status} />
             </View>
           )}
+
+          <BookingLifecyclePreview
+            status={bookingStatus}
+            createdAt={booking.created_at}
+            scheduledAt={booking.confirmed_scheduled_at ?? booking.task?.scheduled_at}
+          />
 
           {/* Customer Info */}
           <View className="gap-xs">
@@ -138,42 +148,19 @@ export default function TaskerJobDetailScreen() {
             </View>
           )}
 
-          {/* Cancel & No-Show Buttons */}
-          {isAssigned && (
-            <View className="items-center pt-md gap-sm">
-              <Button
-                label={t('tasker.jobs.noShowFlag')}
-                variant="ghost"
-                onPress={() => setShowNoShowSheet(true)}
-                labelClassName="text-danger"
-                testID="booking-detail-tasker-no-show"
-              />
-              <Button
-                label={t('tasker.jobs.cancelBooking')}
-                variant="ghost"
-                onPress={() => setCancelSheetOpen(true)}
-                labelClassName="text-danger"
-                testID="booking-detail-tasker-cancel"
-              />
-            </View>
-          )}
-
-          {/* Completed state */}
-          {isCompleted && (
-            <View className="gap-xs">
-              <Button
-                label={t('tasker.jobs.leaveReview')}
-                variant="outline"
-                onPress={() =>
-                  router.push({
-                    pathname: '/(shared)/review/[bookingId]',
-                    params: { bookingId: booking.id, role: 'tasker' },
-                  })
-                }
-                testID="booking-detail-tasker-review"
-              />
-            </View>
-          )}
+          <TaskerJobDetailActions
+            isAssigned={isAssigned}
+            isCompleted={isCompleted}
+            onOpenSupport={() => setSupportSheetOpen(true)}
+            onOpenNoShow={() => setShowNoShowSheet(true)}
+            onOpenCancel={() => setCancelSheetOpen(true)}
+            onLeaveReview={() =>
+              router.push({
+                pathname: '/(shared)/review/[bookingId]',
+                params: { bookingId: booking.id, role: 'tasker' },
+              })
+            }
+          />
 
           {cancelSheetOpen ? (
             <TaskerCancelSheet
@@ -210,6 +197,14 @@ export default function TaskerJobDetailScreen() {
               );
             }}
             isDestructive
+          />
+          <BookingSupportSheet
+            isOpen={supportSheetOpen}
+            onClose={() => setSupportSheetOpen(false)}
+            onPrimary={() => {
+              setSupportSheetOpen(false);
+              router.push(`/inbox/${bookingId}`);
+            }}
           />
         </View>
       )}

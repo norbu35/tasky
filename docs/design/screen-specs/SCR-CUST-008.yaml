@@ -40,6 +40,13 @@ redesign_proof:
     - no_runtime_ai_posting
     - no_payment_protection_claims
     - no_open_ended_pre_booking_chat
+  airbnb_scaffold:
+    - guided_creation_step_rhythm
+    - progressive_disclosure
+    - bottom_sheet_pickers
+    - sticky_cta
+    - review_before_post
+    - edit_in_place_summary_rows
 
 components:
   - id: COMP-ANIMATEDCHECKMARK

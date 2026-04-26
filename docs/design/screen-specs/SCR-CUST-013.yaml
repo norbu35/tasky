@@ -34,6 +34,12 @@ redesign_proof:
   non_goals:
     - no_fake_top_candidate_ranking
     - no_payment_protection_claims
+  airbnb_scaffold:
+    - structured_comparison_signals
+    - no_recommended_ranking
+    - review_threshold_state
+    - review_search_filter
+    - verification_and_eligibility_evidence
 
 profile_redesign_proof:
   thesis: warm_marketplace_with_operational_spine
@@ -47,6 +53,11 @@ profile_redesign_proof:
   non_goals:
     - no_provider_level_badges
     - no_unbacked_reputation_claims
+  airbnb_scaffold:
+    - review_summary_search_filter
+    - thresholded_rating
+    - neutral_low_review_state
+    - anchored_review_sections
 
 components:
   - id: COMP-PROFILEAVATAR

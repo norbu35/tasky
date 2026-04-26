@@ -172,6 +172,27 @@ describe('MyProfileScreen (SCR-SHARED-012)', () => {
     expect(screen.getByText('4.7')).toBeTruthy();
   });
 
+  it('tasker view hides aggregate rating below the public review threshold', () => {
+    mockUseRole.mockReturnValue({
+      currentRole: 'tasker',
+      isCustomer: false,
+      isTasker: true,
+      switchRole: jest.fn(),
+      setRole: jest.fn(),
+    });
+    mockUseMyProfile.mockReturnValue({
+      data: { ...MOCK_TASKER_PROFILE, completed_tasks: 2, rating_avg: 4.7 },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    const MyProfileScreen = require('../../../../src/app/(tabs)/profile').default;
+    render(<MyProfileScreen />);
+
+    expect(screen.queryByText('4.7')).toBeNull();
+    expect(screen.getByText('Одоогоор хангалттай шүүмж алга')).toBeTruthy();
+  });
+
   it('shows error state with retry', () => {
     const mockRefetch = jest.fn();
     mockUseMyProfile.mockReturnValue({

@@ -187,6 +187,7 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
+    expect(screen.getByTestId('booking-lifecycle-preview')).toBeTruthy();
     expect(screen.getByText('John Customer')).toBeTruthy();
     expect(screen.getByText('Deep clean a 3-bedroom apartment')).toBeTruthy();
   });
@@ -298,6 +299,24 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
 
     fireEvent.press(screen.getByTestId('booking-detail-tasker-cancel'));
     expect(screen.getByTestId('tasker-cancel-sheet')).toBeTruthy();
+  });
+
+  it('opens a support reason sheet from booking detail', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: assignedBooking,
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useBookingDetail>);
+
+    const BookingDetailScreen =
+      require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
+    render(<BookingDetailScreen />);
+
+    fireEvent.press(screen.getByTestId('booking-detail-tasker-support'));
+
+    expect(screen.getByTestId('booking-support-sheet')).toBeTruthy();
+    expect(screen.getByText('Ямар тусламж хэрэгтэйг сонгоно уу')).toBeTruthy();
   });
 
   it('shows awaiting confirmation banner after tasker marked done', () => {

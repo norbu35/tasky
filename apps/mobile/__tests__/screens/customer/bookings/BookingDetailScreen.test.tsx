@@ -137,6 +137,7 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
       refetch: jest.fn(),
     });
     render(<BookingDetailScreen />);
+    expect(screen.getByTestId('booking-lifecycle-preview')).toBeTruthy();
     expect(screen.getByText('Fix my sink')).toBeTruthy();
     expect(screen.getByText('Bold')).toBeTruthy();
   });
@@ -200,6 +201,8 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
     render(<BookingDetailScreen />);
 
     fireEvent.press(screen.getByTestId('booking-detail-screen-report-issue-link'));
+    expect(screen.getByTestId('booking-support-sheet')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('booking-support-sheet-primary'));
     expect(mockPush).toHaveBeenCalledWith('/(customer)/bookings/b-1/dispute');
   });
 

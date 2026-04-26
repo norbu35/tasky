@@ -42,6 +42,12 @@ redesign_proof:
   non_goals:
     - no_fake_top_candidate_ranking
     - no_payment_protection_claims
+  airbnb_scaffold:
+    - structured_comparison_signals
+    - no_recommended_ranking
+    - review_threshold_state
+    - quote_and_timing_evidence
+    - verification_and_eligibility_evidence
 
 components:
   - id: COMP-STATUSBADGE

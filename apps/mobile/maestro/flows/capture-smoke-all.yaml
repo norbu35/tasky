@@ -96,7 +96,7 @@ appId: mn.tasky.mobile
     id: 'schedule-date-input'
 - extendedWaitUntil:
     visible:
-      id: 'schedule-ios-picker-card'
+      id: 'schedule-picker-sheet'
     timeout: 5000
 - tapOn:
     id: 'schedule-picker-confirm'
@@ -105,7 +105,7 @@ appId: mn.tasky.mobile
     id: 'schedule-time-input'
 - extendedWaitUntil:
     visible:
-      id: 'schedule-ios-picker-card'
+      id: 'schedule-picker-sheet'
     timeout: 5000
 - tapOn:
     id: 'schedule-picker-confirm'

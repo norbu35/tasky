@@ -42,6 +42,12 @@ redesign_proof:
   non_goals:
     - no_instant_match_claim
     - no_tasker_ranking_tiers
+  airbnb_scaffold:
+    - filter_sheet
+    - active_filter_summary
+    - result_count_cta
+    - no_results_remediation
+    - dense_task_cards
 
 components:
   - id: COMP-SEARCHBAR

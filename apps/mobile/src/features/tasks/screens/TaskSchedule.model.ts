@@ -10,6 +10,30 @@ export function createDefaultScheduleDate(): Date {
   return date;
 }
 
+export function createScheduleDateOptions(referenceDate = new Date(), days = 30): Date[] {
+  const firstDate = new Date(referenceDate);
+  firstDate.setDate(firstDate.getDate() + 1);
+  firstDate.setHours(10, 0, 0, 0);
+
+  return Array.from({ length: days }, (_, index) => {
+    const option = new Date(firstDate);
+    option.setDate(firstDate.getDate() + index);
+    return option;
+  });
+}
+
+export function createScheduleTimeOptions(referenceDate = createDefaultScheduleDate()): Date[] {
+  const options: Date[] = [];
+  for (let hour = 8; hour <= 21; hour += 1) {
+    for (const minute of [0, 30]) {
+      const option = new Date(referenceDate);
+      option.setHours(hour, minute, 0, 0);
+      options.push(option);
+    }
+  }
+  return options;
+}
+
 export function formatDateValue(value: Date): string {
   const year = value.getFullYear();
   const month = String(value.getMonth() + 1).padStart(2, '0');
@@ -21,6 +45,18 @@ export function formatTimeValue(value: Date): string {
   const hours = String(value.getHours()).padStart(2, '0');
   const minutes = String(value.getMinutes()).padStart(2, '0');
   return `${hours}:${minutes}`;
+}
+
+export function isSameScheduleDate(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}
+
+export function isSameScheduleTime(a: Date, b: Date): boolean {
+  return a.getHours() === b.getHours() && a.getMinutes() === b.getMinutes();
 }
 
 export function combineDateAndTime(dateValue: Date, timeValue: Date): Date {

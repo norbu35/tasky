@@ -14,7 +14,9 @@ import { StatCard } from '@/components/ui/StatCard';
 import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
 import { screenLayout } from '@/design/screenLayout';
 import { mobileTheme } from '@/design/tokenAdapter';
+import { ReviewThresholdSummary } from '@/features/profile/components/ReviewThresholdSummary';
 import { useMyProfile } from '@/features/profile/hooks/useProfile';
+import { canShowPublicRating, formatPublicRating } from '@/features/profile/model';
 import { useRole } from '@/providers/RoleProvider';
 import { useAuthStore } from '@/store/authStore';
 
@@ -37,6 +39,9 @@ function AuthenticatedProfile() {
   const { data: profile, isLoading, isError, refetch } = useMyProfile();
   const { isTasker } = useRole();
   const insets = useSafeAreaInsets();
+  const canShowRating = isTasker
+    ? canShowPublicRating(profile?.completed_tasks, profile?.rating_avg)
+    : false;
   return (
     <DetailTemplate
       testID="SCR-SHARED-012"
@@ -70,7 +75,9 @@ function AuthenticatedProfile() {
             {isTasker && profile.status === 'VERIFIED' && (
               <VerifiedBadge status="verified" size="md" testID="verified-badge" />
             )}
-            {isTasker && <RatingStars value={Math.round(profile.rating_avg)} readonly size={20} />}
+            {canShowRating && (
+              <RatingStars value={Math.round(profile.rating_avg)} readonly size={20} />
+            )}
           </View>
 
           {/* Stats Section */}
@@ -79,10 +86,17 @@ function AuthenticatedProfile() {
               value={String(profile.completed_tasks)}
               label={t('shared.profile.completedJobs')}
             />
-            {isTasker && (
-              <StatCard value={String(profile.rating_avg)} label={t('shared.profile.avgRating')} />
+            {canShowRating && (
+              <StatCard
+                value={formatPublicRating(profile.rating_avg)}
+                label={t('shared.profile.avgRating')}
+              />
             )}
           </View>
+
+          {isTasker && !canShowRating ? (
+            <ReviewThresholdSummary completedTasks={profile.completed_tasks} />
+          ) : null}
 
           {/* Info Section */}
           <View className="bg-muted rounded-md p-lg gap-md">

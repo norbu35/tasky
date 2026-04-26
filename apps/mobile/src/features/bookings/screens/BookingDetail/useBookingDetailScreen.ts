@@ -5,6 +5,7 @@ import { Alert } from 'react-native';
 
 import { useBookingDetail } from '@/features/bookings/hooks/useBookingDetail';
 import { useFlagNoShow } from '@/features/bookings/hooks/useFlagNoShow';
+
 import { getCtaConfig, type CustomerBooking } from './model';
 
 export interface BookingDetailScreenState {
@@ -17,14 +18,17 @@ export interface BookingDetailScreenState {
   showCompletionSheet: boolean;
   showCancelSheet: boolean;
   showNoShowSheet: boolean;
+  showSupportSheet: boolean;
   setShowCompletionSheet: React.Dispatch<React.SetStateAction<boolean>>;
   setShowCancelSheet: React.Dispatch<React.SetStateAction<boolean>>;
   setShowNoShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSupportSheet: React.Dispatch<React.SetStateAction<boolean>>;
   handleCtaPress: () => void;
   handleTimeline: () => void;
   handleReschedule: () => void;
   handleLeaveReview: () => void;
   handleReportIssue: () => void;
+  handleSupportPrimary: () => void;
   handleFlagNoShow: () => void;
   handleTaskerPress: () => void;
   handleCancelConfirmed: () => void;
@@ -40,6 +44,7 @@ export function useBookingDetailScreen(): BookingDetailScreenState {
   const [showCompletionSheet, setShowCompletionSheet] = useState(false);
   const [showCancelSheet, setShowCancelSheet] = useState(false);
   const [showNoShowSheet, setShowNoShowSheet] = useState(false);
+  const [showSupportSheet, setShowSupportSheet] = useState(false);
 
   const status: string = booking?.status ?? 'ASSIGNED';
   const ctaConfig = getCtaConfig(booking, t);
@@ -98,6 +103,11 @@ export function useBookingDetailScreen(): BookingDetailScreenState {
   }, [router, bookingId]);
 
   const handleReportIssue = useCallback(() => {
+    setShowSupportSheet(true);
+  }, []);
+
+  const handleSupportPrimary = useCallback(() => {
+    setShowSupportSheet(false);
     router.push(`/(customer)/bookings/${bookingId}/dispute`);
   }, [router, bookingId]);
 
@@ -138,14 +148,17 @@ export function useBookingDetailScreen(): BookingDetailScreenState {
     showCompletionSheet,
     showCancelSheet,
     showNoShowSheet,
+    showSupportSheet,
     setShowCompletionSheet,
     setShowCancelSheet,
     setShowNoShowSheet,
+    setShowSupportSheet,
     handleCtaPress,
     handleTimeline,
     handleReschedule,
     handleLeaveReview,
     handleReportIssue,
+    handleSupportPrimary,
     handleFlagNoShow,
     handleTaskerPress,
     handleCancelConfirmed,

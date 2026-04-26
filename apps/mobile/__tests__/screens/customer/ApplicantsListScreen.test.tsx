@@ -125,11 +125,11 @@ describe('ApplicantsListScreen (SCR-CUST-011)', () => {
     ).toBeTruthy();
   });
 
-  it('renders applicant cards with name and rating', () => {
+  it('renders applicant cards with structured comparison signals instead of recommendations', () => {
     mockUseApplications.mockReturnValue({
       data: {
         data: [
-          makeApplicant(),
+          makeApplicant({ recommended: true, quote_price: 65000 }),
           makeApplicant({
             id: 'app-2',
             tasker_id: 'tasker-2',
@@ -151,6 +151,36 @@ describe('ApplicantsListScreen (SCR-CUST-011)', () => {
     render(<ApplicantsListScreen />);
     expect(screen.getByText('Bold Bat')).toBeTruthy();
     expect(screen.getByText('Sarnai D')).toBeTruthy();
+    expect(screen.getAllByText('Verified identity').length).toBeGreaterThan(0);
+    expect(screen.getByText('Quote: ₮65,000')).toBeTruthy();
+    expect(screen.queryByText('Recommended')).toBeNull();
+  });
+
+  it('hides applicant rating evidence below the public review threshold', () => {
+    mockUseApplications.mockReturnValue({
+      data: {
+        data: [
+          makeApplicant({
+            tasker: {
+              id: 'tasker-1',
+              full_name: 'Bold Bat',
+              avatar_url: null,
+              rating_avg: 4.9,
+              completed_tasks: 2,
+              is_pro: true,
+            },
+          }),
+        ],
+      },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+
+    render(<ApplicantsListScreen />);
+
+    expect(screen.queryByText('4.9')).toBeNull();
+    expect(screen.getByText('Not enough reviews yet')).toBeTruthy();
   });
 
   it('renders Accept buttons for each applicant', () => {

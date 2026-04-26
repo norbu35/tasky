@@ -120,6 +120,47 @@ describe('TaskerProfileScreen (SCR-CUST-013)', () => {
     expect(screen.getAllByText('4.7').length).toBeGreaterThanOrEqual(1);
   });
 
+  it('shows a neutral low-review state below the public rating threshold', () => {
+    mockUseTaskerProfile.mockReturnValue({
+      profile: {
+        data: makeProfile({ completed_tasks: 2, rating_avg: 4.7 }),
+        isLoading: false,
+        isError: false,
+      },
+      reviews: { data: { data: [makeReview()] }, isLoading: false, isError: false },
+    });
+    render(<TaskerProfileScreen />);
+
+    expect(screen.queryByText('4.7')).toBeNull();
+    expect(screen.getByText('Not enough reviews yet')).toBeTruthy();
+  });
+
+  it('adds review search and filter scaffolding when reputation can be public', () => {
+    mockUseTaskerProfile.mockReturnValue({
+      profile: { data: makeProfile(), isLoading: false, isError: false },
+      reviews: {
+        data: {
+          data: [
+            makeReview(),
+            makeReview({
+              id: 'review-2',
+              quality_rating: 4,
+              comment: 'Very reliable',
+              reviewer: { full_name: 'Customer B' },
+            }),
+          ],
+        },
+        isLoading: false,
+        isError: false,
+      },
+    });
+    render(<TaskerProfileScreen />);
+
+    expect(screen.getByPlaceholderText('Search reviews')).toBeTruthy();
+    expect(screen.getByTestId('tasker-profile-review-filter-all')).toBeTruthy();
+    expect(screen.getByTestId('tasker-profile-review-filter-five-star')).toBeTruthy();
+  });
+
   it('shows reviews list', () => {
     mockUseTaskerProfile.mockReturnValue({
       profile: { data: makeProfile(), isLoading: false, isError: false },

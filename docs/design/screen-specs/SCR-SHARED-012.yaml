@@ -34,6 +34,11 @@ redesign_proof:
   non_goals:
     - no_provider_level_badges
     - no_unbacked_reputation_claims
+  airbnb_scaffold:
+    - review_summary_search_filter
+    - thresholded_rating
+    - neutral_low_review_state
+    - anchored_review_sections
 
 components:
   - id: COMP-PROFILEAVATAR
