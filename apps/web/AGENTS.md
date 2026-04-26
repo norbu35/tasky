@@ -4,13 +4,12 @@ Use this file when the change touches `apps/web/**`.
 
 ## Read Next
 
-1. `apps/web/AGENTS.md` (this file)
-2. `docs/architecture/web.md`
-3. `docs/architecture/shared-frontend.md` — only when shared UI/tokens/parity/test naming matter
-4. `docs/architecture/common.md` — only when cross-cutting runtime/dev workflow context matters
-5. `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml` — only when API contracts change
+1. `docs/architecture/web.md`
+2. `docs/architecture/shared-frontend.md`
+3. `docs/architecture/common.md`
+4. `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml` — only when API contracts change
 
-Additional references:
+References:
 
 - Visual rules: `docs/design/DESIGN_SYSTEM.md`
 - Local commands and test entrypoints: `apps/web/README.md`
@@ -18,25 +17,24 @@ Additional references:
 
 ## Boundaries
 
-- UI primitives live in `src/components/ui/`.
-- Use Radix UI + Tailwind only.
+- UI primitives live in `src/components/ui/` and use Radix UI + Tailwind only.
 - Use `@tasky/sdk` as the generated API type source.
 - Keep HTTP wrappers centralized in `apps/web/src/lib/apiClient.ts` and `apps/web/src/lib/adminApiClient.ts`; do not scatter ad hoc `fetch` calls through pages.
-- Route structure belongs in `src/router/` and `src/pages/`.
-- Shared layouts belong in `src/layout/`.
+- Route structure belongs in `src/router/` and `src/pages/`. Shared layouts belong in `src/layout/`.
 - Accessibility and focus behavior are part of the contract, not post-hoc polish.
-- Web locale files are app-owned and live under `apps/web/src/locales/{en,mn}/translation.json`; do not use or create shared client locale files.
-- All user-visible copy must come from `react-i18next` locale keys in the web locale files. Do not add inline copy, literal `t(...)` fallbacks, hardcoded aria labels, placeholders, toast text, or empty/error state strings.
-- Locale changes must update every supported locale and preserve identical interpolation placeholders.
 
-## Testing Rules
+## I18n
 
-- Before writing or changing web integration or E2E tests for launch behavior, check `tests/registry.yaml` and the relevant `tests/scenarios/<domain>.md`
-- If a touched web behavioral test has a clean scenario match, name it `SCN-XXX-NNN: <exact title from scenario file>`
-- Keep `TID-*` for web-only technical checks such as token binding, parity, accessibility, API-client boundaries, and shell smoke
-- Split broad flow tests when needed rather than forcing one SCN onto multiple behaviors
-- Tests that render UI must use the production i18n contract or a test i18n instance loaded from locale files. Do not mock `t` to return fallback arguments.
-- If a test expects visible copy, add the locale key first and assert the rendered translated text or an accessible role/name.
+Follow the canonical i18n rules in root `AGENTS.md`. Web locale files: `apps/web/src/locales/{en,mn}/translation.json`. Do not create or use shared client locale files.
+
+## Web Testing Rules
+
+- Before writing or changing web integration or E2E tests for launch behavior, check `tests/registry.yaml` and the relevant `tests/scenarios/<domain>.md`.
+- If a touched web behavioral test has a clean scenario match, name it `SCN-XXX-NNN: <exact title from scenario file>`.
+- If no scenario covers the behavior and you are not the designated scenario curator, stop and report the gap rather than inventing web-only launch behavior.
+- Keep `TID-*` for web-only technical checks (token binding, parity, accessibility, API-client boundaries, shell smoke).
+- Split broad flow tests when needed rather than forcing one SCN onto multiple behaviors.
+- Stack: Vitest + RTL. For auth, payments, wallet, migrations, or `SecurityConfig` changes, write positive and negative tests and call them out in the PR.
 
 ## Verification
 
@@ -49,12 +47,11 @@ pnpm --filter @tasky/web test:unit
 pnpm --filter @tasky/web lint
 ```
 
-Conditional browser-flow validation:
+Browser-flow validation (when the change affects route flows, auth, or browser-visible interactions unit tests do not cover well):
 
 ```bash
 pnpm --filter @tasky/web test:e2e:install
 pnpm --filter @tasky/web test:e2e:smoke
 ```
 
-Use the smoke run when the change affects route flows, auth, or browser-visible interactions that unit tests do not cover well.
-Use `pnpm --filter @tasky/web test:e2e` when validating full browser coverage, mobile viewport behavior, accessibility scan attachments, or route screenshots for agent inspection.
+Use `pnpm --filter @tasky/web test:e2e` for full browser coverage, mobile viewport behavior, accessibility scan attachments, or route screenshots.

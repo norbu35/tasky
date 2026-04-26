@@ -1,51 +1,25 @@
 # Tasky Architecture Router
 
-Routes to the smallest derived architecture surface for the change.
+Routes to the smallest derived architecture surface for the change. The working-area routing table lives in root
+`AGENTS.md`; this file describes which architecture doc owns what content and how authority resolves.
 
 Architecture docs describe implementation reality and design. They do not govern intended product behavior. Product
 behavior lives in `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, and the relevant maintenance policy docs.
 
-## Read Order Before Architecture
-
-For non-trivial work, read in this order:
-
-1. `docs/PRD.md`
-2. `docs/STRATEGY.md`
-3. `docs/ROLLOUT_PHASES.md`
-4. relevant `docs/maintenance/*.md`
-5. the smallest relevant architecture doc below
-6. `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml` only for contract work
-
-## Routing Table
-
-| Working area                      | Read                                                                         |
-| --------------------------------- | ---------------------------------------------------------------------------- |
-| `services/api/**`                 | `services/api/AGENTS.md`, `api.md`, `common.md`, affected module `AGENTS.md` |
-| `apps/web/**`                     | `apps/web/AGENTS.md`, `web.md`, `shared-frontend.md`, `common.md`            |
-| `apps/mobile/**`                  | `apps/mobile/AGENTS.md`, `mobile.md`, `shared-frontend.md`, `common.md`      |
-| `docs/openapi/**`, `API.yaml`     | `docs/openapi/AGENTS.md`, `api.md`                                           |
-| `packages/core/**`                | `packages/core/AGENTS.md`, `shared-frontend.md`                              |
-| `packages/design-tokens/**`       | `packages/design-tokens/AGENTS.md`, `shared-frontend.md`                     |
-| `packages/sdk/**`                 | `packages/sdk/AGENTS.md`, `docs/openapi/AGENTS.md`, `api.md`                 |
-| `packages/test-utils/**`          | `packages/test-utils/AGENTS.md`, `shared-frontend.md`                        |
-| `packages/**` (other)             | `common.md` plus the nearest consumer surface doc                            |
-| `tooling/**` (other)              | `common.md` §Dev Workflow                                                    |
-| Root infra (`docker-compose`, CI) | `common.md` §Shared Tech Decisions, `common.md` §Dev Workflow                |
-
-Use `docs/API.yaml` only when you need the bundled single-file artifact. It is generated output, not an independent
-maintained source.
-
 ## What Each Doc Owns
 
-- `common.md` — system context, cross-cutting tech decisions, runtime patterns, NFR baseline, dev workflow, cross-reference index
-- `api.md` — backend module layout, request-path architecture, data schemas and flows, API/security contracts, backend runtime concerns, backend testing
-- `web.md` — web-only structural contract
-- `mobile.md` — mobile structural contract
-- `shared-frontend.md` — tokens, parity baseline, intake renderer contract, frontend behavioral/technical test naming rules
-- `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, `docs/design/domain-lifecycles.yaml` — machine-readable structural docs validated by `pnpm repo:design:check`
-- `docs/design/component-contract.yaml` — component inventory validated by `python3 tooling/scripts/governance/validate-design-contracts.py` or `pnpm repo:docs:check`
+- `common.md` — system context, cross-cutting tech decisions, runtime patterns, NFR baseline, dev workflow, cross-reference index.
+- `api.md` — backend module layout, request-path architecture, data schemas and flows, API/security contracts, backend runtime concerns, backend testing.
+- `web.md` — web-only structural contract.
+- `mobile.md` — mobile structural contract.
+- `shared-frontend.md` — tokens, parity baseline, intake renderer contract, frontend behavioral/technical test naming rules.
+- `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, `docs/design/domain-lifecycles.yaml` — machine-readable structural docs validated by `pnpm repo:design:check`.
+- `docs/design/screen-specs/SCR-*.yaml` — per-screen UX contracts with traceability back to live PRD, journey, screen graph, and scenario IDs; validated by `python3 tooling/scripts/governance/validate-screen-spec-traceability.py` or `pnpm repo:docs:check`.
+- `docs/design/component-contract.yaml` — component inventory validated by `python3 tooling/scripts/governance/validate-design-contracts.py` or `pnpm repo:docs:check`.
 
 New structural guidance belongs in the doc whose scope matches, not in this router.
+
+`docs/API.yaml` is generated output, not an independent maintained source.
 
 ## Authority Model
 
@@ -63,8 +37,7 @@ If runtime behavior differs from PRD or strategy without an explicit document ch
 
 ### Backend implementation order
 
-When backend architecture docs conflict with code or tests about current implementation reality, this is the resolution
-order:
+When backend architecture docs conflict with code or tests about current implementation reality:
 
 1. ArchUnit tests (`services/api/src/test/java/mn/tasky/architecture/`)
 2. Flyway migrations (`services/api/src/main/resources/db/migration/`)

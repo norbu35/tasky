@@ -1,29 +1,25 @@
 # Tasky Agent Operating Contract
 
-This is the canonical repo-level instruction file for agents.
+Repo-level router. Read this first, then jump to the smallest area surface that matches the change.
 
-**Status:** Canonical
+## Discovery Path
 
-## Default Discovery Path
-
-For non-trivial work, read in this order unless a more specific local `AGENTS.md` narrows the surface:
+For non-trivial work, read in order until the smallest sufficient surface is covered:
 
 1. `docs/PRD.md`
 2. `docs/STRATEGY.md`
-3. relevant `docs/maintenance/*.md` policy docs
-4. the smallest relevant derived architecture doc routed by `docs/architecture/AGENTS.md`
-5. `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml` only for request/response contract work
-6. design docs only as derived UX or copy detail
+3. `docs/ROLLOUT_PHASES.md` for phase-gated capabilities
+4. relevant `docs/maintenance/*.md` policy
+5. the area `AGENTS.md` from the table below
+6. `docs/openapi/AGENTS.md` only for request/response contract work
 
-Higher documents govern lower documents. Architecture describes implementation design; it does not silently rewrite
-product intent. `archive/**` is historical only.
+Higher documents govern lower documents. `archive/**` is historical only.
 
-## Discovery Path By Working Area
-
-| Working area                       | Read next after PRD / Strategy / maintenance policy            |
+| Working area                       | Read next                                                      |
 | ---------------------------------- | -------------------------------------------------------------- |
 | Whole repo or shared contract work | `docs/architecture/AGENTS.md`                                  |
 | `docs/openapi/**`                  | `docs/openapi/AGENTS.md`                                       |
+| `docs/design/**`                   | `docs/design/AGENTS.md`                                        |
 | `services/api/**`                  | `services/api/AGENTS.md`, then the affected module `AGENTS.md` |
 | `apps/web/**`                      | `apps/web/AGENTS.md`                                           |
 | `apps/mobile/**`                   | `apps/mobile/AGENTS.md`                                        |
@@ -32,145 +28,63 @@ product intent. `archive/**` is historical only.
 | `packages/sdk/**`                  | `packages/sdk/AGENTS.md`                                       |
 | `packages/test-utils/**`           | `packages/test-utils/AGENTS.md`                                |
 | `tooling/skills/**`                | `tooling/skills/AGENTS.md`                                     |
-| `tooling/**`                       | `tooling/AGENTS.md`                                            |
+| `tooling/**`, CI, ops              | `tooling/AGENTS.md` and `docs/maintenance/AGENTS.md`           |
 
-Read the nearest local `AGENTS.md` first when you are already inside a surfaced area. On conflict, the more specific
-surface wins unless it contradicts this file or a higher governing doc.
+On conflict, the more specific surface wins unless it contradicts a higher governing doc.
 
 ## Code Navigation
 
-### Serena (preferred when available)
+- Use Serena (`mcp__serena__*`) for symbol search, references, declarations, implementations, and safe refactors. Fall back to grep/glob if Serena returns empty or errors.
+- Use `npx repomix` for broad context only; do not use it for narrow symbol lookups Serena can answer. Pre-baked include sets live in `package.json` `pack:*` scripts.
 
-When Serena is connected, use it for symbol search, references, declarations, implementations, type hierarchies, and
-safe refactors.
+## Branch Flow And Push Discipline
 
-If Serena returns empty results or errors, fall back to grep/glob.
+- Branches flow `feature/*` → `staging` → `main`. Promote `staging` to `main` only after full local verification passes.
+- Do not bypass `.husky/pre-push` with `--no-verify` (or equivalent) for pushes that target `staging` or `main`. This is the canonical statement; downstream files do not restate it.
 
-### Repomix (broad context only)
+## I18n Rules (canonical)
 
-Use `repomix` when you need broad repository context and semantic tools are unavailable or too narrow.
+Frontend code consumes i18n via `react-i18next` with locale keys; web and mobile each own their locales.
 
-```bash
-npx repomix
-npx repomix --include "services/api/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/api.md"
-npx repomix --include "apps/web/**,packages/core/**,packages/design-tokens/**,packages/sdk/**,packages/test-utils/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/web.md,docs/architecture/shared-frontend.md,apps/web/AGENTS.md,packages/core/AGENTS.md,packages/design-tokens/AGENTS.md,packages/sdk/AGENTS.md,packages/test-utils/AGENTS.md"
-npx repomix --include "apps/mobile/**,packages/core/**,packages/design-tokens/**,packages/sdk/**,packages/test-utils/**,docs/openapi/**,docs/API.yaml,docs/architecture/common.md,docs/architecture/mobile.md,docs/architecture/shared-frontend.md,apps/mobile/AGENTS.md,packages/core/AGENTS.md,packages/design-tokens/AGENTS.md,packages/sdk/AGENTS.md,packages/test-utils/AGENTS.md"
-```
-
-Do not use repomix for narrow symbol lookups that Serena can answer.
-
-## Core Commands
-
-Frontend tasks run through Turborepo via `pnpm <task>`. Backend tasks use `./gradlew` and never system `gradle`.
-
-## I18n Rules
-
-Frontend implementation must use i18n for user-visible copy.
-
-- Web and mobile locale files are app-owned and separate: web uses `apps/web/src/locales/{en,mn}/translation.json`; mobile uses `apps/mobile/src/locales/{en,mn}/translation.json`. Do not create shared client locale files unless the architecture is intentionally changed.
-- Do not introduce hardcoded user-facing strings in web or mobile UI, validation messages, toast/snackbar text, empty/error states, accessibility labels, placeholders, or test-only rendered copy. Add or reuse keys in the relevant app's `translation.json` files instead.
-- Do not pass literal fallback text to `t(...)`; call `t('namespace.key')` and keep the source of truth in locale files.
-- Keep key shape domain-scoped and stable. Avoid one-off generic keys unless the copy is genuinely shared.
-- When adding, renaming, or removing translation keys, update every supported locale in the same change and keep interpolation placeholders identical across locales.
-- Tests should assert translated UI through i18n-backed text or semantic roles, not by relying on inline fallback strings or mocks that return fallback arguments.
+- Web locales: `apps/web/src/locales/{en,mn}/translation.json`. Mobile locales: `apps/mobile/src/locales/{en,mn}/translation.json`. Do not create shared client locale files.
+- Do not introduce hardcoded user-visible copy (UI, validation, toast/snackbar, empty/error states, accessibility labels, placeholders, test-rendered copy). Add or reuse keys instead.
+- Do not pass literal fallback text to `t(...)`; call `t('namespace.key')`.
+- When adding, renaming, or removing keys, update every supported locale in the same change and keep interpolation placeholders identical across locales.
+- Tests render translated copy through the production i18n contract (or a test instance loaded from locale files) and assert by translated text or semantic role — never by mocking `t` to return fallback args.
 - Run `pnpm verify:i18n` after touching frontend copy, locale files, i18n setup, or tests that render translated UI.
+
+`apps/web/AGENTS.md` and `apps/mobile/AGENTS.md` reference these rules; they do not restate them.
+
+## Workflow Rules (triggers)
+
+- Contract-first: if the API changes, update `docs/openapi/**` first, regenerate `docs/API.yaml`, regenerate `@tasky/sdk`, then implement.
+- Design machine-readable docs: edits to `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, or `docs/design/domain-lifecycles.yaml` must use canonical IDs (no prose placeholders) and pass `pnpm repo:design:check` plus `pnpm repo:docs:check`.
+- Screen specs: edits to `docs/design/screen-specs/SCR-*.yaml` must keep traceability wired through live `REQ-P1`/`NFR`, `JRN`, `SCR`, and existing `SCN` IDs; new or materially changed specs use `traceability.status: validated`. Run `python3 tooling/scripts/governance/validate-screen-spec-traceability.py` plus `pnpm repo:docs:check`.
+- Merge gates: edits to `.github/workflows/quality-gates.yml` or merge-gate wiring must keep the docs lane wired in and update `tooling/config/ops-registry.yaml` and ops/config checks in the same change.
+- Ops inventory: package-script, hook, workflow, compose, or tooling-script wiring changes require `pnpm repo:ops:sync --fix` then `pnpm verify:ops`.
+- Schema parity: a Flyway migration that adds, drops, or renames a column or table requires `python3 tooling/scripts/governance/validate-schema-parity.py --update-expected` and committing the updated `tooling/config/expected-schema.json`.
+- Use the active issue or approved execution brief as the task source; do not rely on archived plan directories. Keep changes vertical and reviewable. Update `CHANGELOG.md` when convention requires it.
+
+## Rollout Phase
+
+The current product phase is **Phase 1 launch baseline** unless `docs/PRD.md` says otherwise. `docs/ROLLOUT_PHASES.md` is the AI-readable phase map.
+
+Dormant future-phase code, schemas, routes, and toggles may exist intentionally. Keep them off by default and do not expose them in launch UX or copy. A toggle being switchable is not product readiness — activation requires PRD, strategy, maintenance policy, contract, UX/copy, verification, monitoring, and rollback updates in the same workflow.
 
 ## Repo Skills
 
-Reusable repo-owned agent workflows live under `tooling/skills/**`.
+Reusable repo-owned agent workflows live under `tooling/skills/**` and stay harness-agnostic. Load each skill's `SKILL.md`.
 
-- Skills must remain harness-agnostic. Any harness should be able to use them by reading the nearest `SKILL.md` and running bundled scripts directly.
-- For doc-surface drift, use `tooling/skills/doc-claims-remediation/SKILL.md` reactively when `validate-doc-claims.py` fails, or proactively when editing architecture / maintenance docs or backend module `AGENTS.md` files that name live repo surfaces.
-- For PRD-first routing and ripple review, use `tooling/skills/intake-to-prd/SKILL.md`; run the narrowest matching `pnpm repo:prd:diff-ids` mode for the current workflow state instead of assuming `--staged`.
-- For design doc structure validation, use `tooling/skills/design-surface-drift/SKILL.md` only for `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, `docs/design/domain-lifecycles.yaml`, or when `pnpm repo:design:check` / `pnpm repo:docs:check` fails on those validators.
-- For scenario fidelity triage (report-only), use `tooling/skills/scenario-fidelity/SKILL.md` after writing or strengthening scenario-linked tests, or before proposing non-blocking nightly wiring.
-
-## Workflow Rules
-
-- Read the smallest relevant governing and architecture surfaces before editing code.
-- Follow the branch flow: `feature/*` -> `staging` -> `main`.
-- Merge to `staging` for integration feedback; promote `staging` to `main` only after full local verification passes.
-- Do not use `--no-verify` (or equivalent hook bypass) for pushes that target `staging` or `main`.
-- If the API changes, update `docs/openapi/**` first, regenerate `docs/API.yaml`, then regenerate `@tasky/sdk`, then implement.
-- If you edit `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, or `docs/design/domain-lifecycles.yaml`, keep machine-readable fields ID-only: use canonical screen/journey/lifecycle IDs, not prose placeholders, and run `pnpm repo:design:check` plus `pnpm repo:docs:check`.
-- If you edit `.github/workflows/quality-gates.yml` or other merge-gate wiring, keep the docs lane wired into the gate and update `tooling/config/ops-registry.yaml`, the matching ops/config checks, and docs in the same change.
-- If you edit package-script, hook, workflow, compose, or tooling-script ops wiring, run `pnpm repo:ops:sync --fix` to refresh generated ops inventory, then run `pnpm verify:ops`.
-- If a Flyway migration adds, drops, or renames a column or table, run `python3 tooling/scripts/governance/validate-schema-parity.py --update-expected` and commit the updated `tooling/config/expected-schema.json`.
-- Use the active issue or approved execution brief as the task source. Do not rely on archived plan directories.
-- Keep changes vertical and reviewable.
-- Update `CHANGELOG.md` when the repo convention requires it.
-
-## Rollout Phase And Dormant Feature Rules
-
-- The current product phase is **Phase 1 launch baseline** unless `docs/PRD.md` explicitly changes that fact.
-- `docs/ROLLOUT_PHASES.md` is the AI-readable phase map for future capabilities. Use it to determine which phase owns a deferred feature and whether an existing toggle is only a dormant switch.
-- Dormant future-phase code, schemas, routes, and toggles may exist intentionally so the product is future-ready. Keep them off by default and do not expose them in launch UX or copy until the governing docs approve activation.
-- A toggle being present or switchable is not product readiness. Activating a future-phase toggle requires PRD, strategy, maintenance policy, contract, UX/copy, verification, monitoring, and rollback updates in the same workflow.
-- When working on a dormant feature, preserve the off state and switchability. Do not remove dormant scaffolding merely because it is not Phase 1 scope, and do not treat the scaffolding as live behavior.
-
-## Verification Model
-
-Use the right gate for the claim you are making.
-
-| Level                         | Command / source                                                                                                                                                                     | Meaning                                                  |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
-| Local baseline                | `pnpm verify:cleanup`, `pnpm verify:tdd`, `:services:api:test`, `:services:api:openApiValidate`, `pnpm -r typecheck`, `pnpm -r test`                                                 | Minimum local confidence before claiming completion      |
-| Local boundary / drift checks | `:services:api:architectureTest`, `pnpm repo:workspace:boundaries`, `pnpm contract:sdk:drift`, `python3 tooling/scripts/governance/validate-schema-parity.py`                        | Use when the change touches those surfaces               |
-| Local push gate (`main`)      | `.husky/pre-push` runs `pnpm verify:cleanup`, `pnpm verify:ops`, `pnpm verify:tdd`, `pnpm verify:backend`, `pnpm verify:frontend`, `pnpm verify:scenario:smoke`, `pnpm verify:drift` | Required before any push to `main`                       |
-| Local push gate (non-`main`)  | `.husky/pre-push` lightweight path; optional `RUN_LIGHT_PREPUSH_ON_NON_MAIN=1` for cleanup+ops                                                                                       | Fast iteration on `feature/*` and `staging`              |
-| Merge CI gate                 | `quality-gates.yml`                                                                                                                                                                  | Required merge-branch verification on `main` / `staging` |
-| Release gate                  | `release-gate.yml`                                                                                                                                                                   | Deploy-time enforcement                                  |
-| Nightly regression            | `./gradlew gateRegression`, `./gradlew gateFull`                                                                                                                                     | Broader or scheduled confidence, not the default PR gate |
-
-Do not describe `./gradlew gateSmoke` as the singular pre-merge source of truth. It is a fast local smoke gate for
-critical scenario coverage, while CI and release workflows are the governing enforcement surfaces.
-
-## Backend Testing Rules
-
-Before writing any backend test: check `tests/registry.yaml` for an existing scenario. Read `tests/scenarios/<domain>.md`.
-If no scenario covers the behavior, stop and report the gap unless you are the designated scenario curator for the current execution brief.
-
-- Identifier format rules (SCN 3-digit, REQ-P1 2-digit, capitalized Risk): `docs/identifiers/STANDARDS.md`
-- Coverage gaps and domain-to-domain map: `docs/identifiers/REFERENCE-MAP.md`
-- `@DisplayName` must be `"SCN-XXX-NNN: <exact title from scenario file>"`
-- Domain-unit tests: no `@SpringBootTest`, `@Autowired`, or `@MockBean`
-- Mock only external boundaries: `FacebookGraphClient`, `FirebasePushProvider`, `S3StorageService`
-- Scenario curation is single-owner work. Only the designated scenario curator for the current execution brief may edit `tests/scenarios/**`; all implementation agents must otherwise treat it as read-only.
-- Scenario curation must reconcile the active baseline from `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, active `docs/openapi/**`, and active `docs/design/**` before test-writing slices begin.
-- Obsolete tests tied to removed or future-phase behavior may be deleted once the active scenario set no longer covers that behavior.
-- After scenario curation or writing tests: run `./services/api/scripts/sync-registry.sh` and commit updated `tests/registry.yaml`
-- Never use `@DirtiesContext`
-- PIT survived mutation: fix the assertion, not production code; if no scenario covers it, report the gap
-
-| Gate       | Command                    | Blocks                                  |
-| ---------- | -------------------------- | --------------------------------------- |
-| Smoke      | `./gradlew gateSmoke`      | fast local critical-scenario confidence |
-| Regression | `./gradlew gateRegression` | nightly / extended validation           |
-| Full       | `./gradlew gateFull`       | full suite / mutation testing           |
-
-## Frontend Behavioral Testing Rules
-
-Before writing or changing frontend integration or E2E tests for launch behavior: check `tests/registry.yaml` for an existing scenario and read the relevant `tests/scenarios/<domain>.md`.
-
-- If a touched frontend behavioral test has a clear scenario match, name it `SCN-XXX-NNN: <exact title from scenario file>`
-- Keep `TID-*` for frontend-only technical checks such as token binding, parity, accessibility, API-client boundaries, and shell smoke coverage
-- Prefer splitting broad flow tests so each SCN-backed test covers one primary behavior
-- If no scenario covers the behavior and you are not the designated scenario curator for the current execution brief, stop and report the gap rather than inventing a frontend-only launch behavior
-- Test setup must exercise the same i18n contract as production: do not mock `t` to consume fallback arguments, and add locale keys for any text a test expects to render.
-
-Frontend: Web uses Vitest + RTL; Mobile uses Jest + RNTL. For auth, payments, wallet, migrations, or
-`SecurityConfig` changes, write positive and negative tests and call them out in the PR.
-
-## Guard Rails
-
-- `SecurityConfig.java` is security-critical. Do not simplify, remove filters, or restructure it casually.
-- Runtime DB uses `APP_DB_USER`, not `POSTGRES_USER`.
-- Do not bypass PgBouncer for runtime connections.
-- Web primitives remain Radix + Tailwind only.
-- Mobile primitives remain native and token-driven.
-- Secrets belong in environment variables only.
+| Skill                                            | When to use                                                                                                    |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `tooling/skills/doc-claims-remediation/SKILL.md` | Reactively when `validate-doc-claims.py` fails; proactively when editing architecture/maintenance/module docs. |
+| `tooling/skills/intake-to-prd/SKILL.md`          | PRD-first routing and ripple review; run the narrowest matching `pnpm repo:prd:diff-ids` mode.                 |
+| `tooling/skills/design-surface-drift/SKILL.md`   | `screen-graph.yaml`, `journey-catalog.yaml`, `domain-lifecycles.yaml` edits, or those validators failing.      |
+| `tooling/skills/scenario-fidelity/SKILL.md`      | Report-only weak-test triage after writing or strengthening scenario-linked tests. Not a blocking gate.        |
 
 ## Security-Critical Files
+
+For any file below: read the current body before editing, run the relevant gate, and call the change out explicitly in the PR.
 
 | File                             | Risk if changed carelessly                             |
 | -------------------------------- | ------------------------------------------------------ |
@@ -182,5 +96,18 @@ Frontend: Web uses Vitest + RTL; Mobile uses Jest + RNTL. For auth, payments, wa
 | `ChannelInterceptorConfig.java`  | STOMP auth and subscription authorization              |
 | `apps/web/Caddyfile.production`  | CSP widening can open XSS vectors                      |
 
-For any of these files: read the current body before editing, verify the relevant gate, and call the change out
-explicitly in the PR.
+Additional invariants: `APP_DB_USER` (not `POSTGRES_USER`) for runtime DB; never bypass PgBouncer for runtime; web primitives stay Radix + Tailwind; mobile primitives stay native and token-driven; secrets only in env vars.
+
+## Verification
+
+Pick the smallest gate that matches the claim. Areas declare their own defaults (`services/api/AGENTS.md`, `apps/web/AGENTS.md`, `apps/mobile/AGENTS.md`, `tooling/AGENTS.md`).
+
+| Surface                      | Source                                           |
+| ---------------------------- | ------------------------------------------------ |
+| Local push gate (`main`)     | `.husky/pre-push`                                |
+| Local push gate (non-`main`) | `.husky/pre-push` lightweight path               |
+| Merge CI gate                | `.github/workflows/quality-gates.yml`            |
+| Release gate                 | `.github/workflows/release-gate.yml`             |
+| Nightly regression           | `./gradlew gateRegression`, `./gradlew gateFull` |
+
+`./gradlew gateSmoke` is fast local critical-scenario confidence, not the singular pre-merge source of truth.
