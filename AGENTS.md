@@ -42,6 +42,13 @@ On conflict, the more specific surface wins unless it contradicts a higher gover
 - Branches flow `feature/*` → `staging` → `main`. Promote `staging` to `main` only after full local verification passes.
 - Do not bypass `.husky/pre-push` with `--no-verify` (or equivalent) for pushes that target `staging` or `main`. This is the canonical statement; downstream files do not restate it.
 
+## Env File Ownership
+
+- Root `.env` and `.env*.example` files are for the monorepo stack, backend runtime, infrastructure services, and deployment orchestration.
+- Web local client config lives in `apps/web/.env.local`, seeded from `apps/web/.env.example`. Keep browser-exposed values under `VITE_*`; never put secrets there.
+- Mobile local client/native config lives in `apps/mobile/.env`, seeded from `apps/mobile/.env.example`. Keep JS-exposed values under `EXPO_PUBLIC_*`; never put secrets there.
+- App code must not read the root `.env` directly for app-owned client config. Use real process env plus the app-local env file. Deployment compose/build scripts may still pass app build args from deployment env files when they are orchestration inputs.
+
 ## I18n Rules (canonical)
 
 Frontend code consumes i18n via `react-i18next` with locale keys; web and mobile each own their locales.

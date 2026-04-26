@@ -54,6 +54,7 @@ def prop_names(raw: Any) -> list[str]:
 
 def exports_component(source: str, name: str) -> bool:
     patterns = [
+        rf"\bexport\s+default\s+function\s+{re.escape(name)}\b",
         rf"\bexport\s+function\s+{re.escape(name)}\b",
         rf"\bexport\s+const\s+{re.escape(name)}\b",
         rf"\bexport\s+class\s+{re.escape(name)}\b",
@@ -67,10 +68,14 @@ def validate_component(entry: dict[str, Any], group: str) -> list[Finding]:
     findings: list[Finding] = []
     component_id = entry.get("id", "<missing id>")
     name = entry.get("name", "<missing name>")
+    runtime_name = entry.get("runtime_name", name)
+    implementation_status = str(entry.get("implementation_status", "active"))
     path_value = entry.get("path")
     required = group == "existing_components"
 
     if not path_value:
+        if implementation_status == "deferred":
+            return findings
         level = "FAIL" if required else "WARN"
         findings.append(Finding(level, f"{component_id} {name} has no implementation path."))
         return findings
@@ -82,9 +87,15 @@ def validate_component(entry: dict[str, Any], group: str) -> list[Finding]:
         return findings
 
     source = implementation.read_text(encoding="utf-8")
-    if not exports_component(source, str(name)):
+    if not exports_component(source, str(runtime_name)):
         level = "FAIL" if required else "WARN"
-        findings.append(Finding(level, f"{component_id} {name} is not exported from {relative(implementation)}."))
+        findings.append(
+            Finding(
+                level,
+                f"{component_id} {name} runtime export {runtime_name} is not exported from "
+                f"{relative(implementation)}.",
+            )
+        )
 
     missing_props = []
     for prop in prop_names(entry.get("props")):

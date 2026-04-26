@@ -4,6 +4,20 @@ name: 'Verification — ID Upload'
 route: '/(tasker)/verification/upload'
 role: [tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-005
+  prd_refs:
+    - REQ-P1-SAFE-02
+    - REQ-P1-SAFE-05
+    - NFR-SEC-01
+    - NFR-SEC-02
+  journey_refs:
+    - JRN-TASK-01:step-4
+    - JRN-TASK-01-A2
+  scenario_refs:
+    - SCN-VERIF-002
+    - SCN-VERIF-003
 template: form_wizard
 figma_page: 'Tasker/Verification ID Upload'
 feature: 'verification'

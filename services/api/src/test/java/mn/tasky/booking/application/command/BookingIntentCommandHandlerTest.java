@@ -34,7 +34,7 @@ class BookingIntentCommandHandlerTest {
 
     private BookingIntentState intentState() {
         return new BookingIntentState(
-                "i1", "t1", "tk1", "c1", "DIRECT", "PENDING", null, null, null, null, null, now, now);
+                "i1", "t1", "tk1", "c1", "DIRECT", "PENDING", null, null, null, null, null, null, now, now);
     }
 
     @Test

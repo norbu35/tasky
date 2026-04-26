@@ -4,6 +4,20 @@ name: 'Inbox — Conversation List'
 route: '/inbox'
 role: [customer, tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-SHARED-010
+  prd_refs:
+    - REQ-P1-MSG-02
+    - REQ-P1-MSG-03
+    - REQ-P1-BOOK-08
+  journey_refs:
+    - JRN-SHARED-04:step-1
+    - JRN-SHARED-04-A2
+  scenario_refs:
+    - SCN-MSG-001
+    - SCN-MSG-002
+    - SCN-MSG-003
 template: feed_list
 figma_page: 'Shared/Inbox Conversation List'
 feature: 'messaging'

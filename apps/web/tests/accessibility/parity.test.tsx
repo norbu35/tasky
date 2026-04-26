@@ -91,7 +91,7 @@ function createMockApiClient(): ApiClient {
     submitVerification: vi.fn(),
     getVerificationStatus: vi.fn(),
     // Wave 6: Contract hygiene
-    selectApplication: vi.fn(),
+    acceptApplication: vi.fn(),
     confirmAcceptance: vi.fn(),
     markBookingDone: vi.fn(),
     rebookBooking: vi.fn(),

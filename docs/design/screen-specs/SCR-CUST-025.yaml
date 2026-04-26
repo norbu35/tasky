@@ -4,6 +4,20 @@ name: 'Dispute — Status'
 route: '/(customer)/disputes/:disputeId'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-025
+  prd_refs:
+    - REQ-P1-SAFE-15
+    - REQ-P1-SAFE-16
+    - REQ-P1-ADMIN-05
+  journey_refs:
+    - JRN-CUST-06:step-3
+    - JRN-CUST-06-A2
+  scenario_refs:
+    - SCN-DISPUTE-006
+    - SCN-DISPUTE-007
+    - SCN-DISPUTE-008
 template: detail
 figma_page: 'Customer/Dispute Status'
 feature: 'dispute'

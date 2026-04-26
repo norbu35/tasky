@@ -1,5 +1,5 @@
 {
-  "_generated_from_migrations": "V1 through V34",
+  "_generated_from_migrations": "V1 through V35",
   "_description": "Canonical schema inventory. Regenerate with: python3 tooling/scripts/governance/validate-schema-parity.py --update-expected",
   "tables": {
     "analytics_events": {
@@ -29,6 +29,7 @@
         "id",
         "offer_id",
         "original_booking_id",
+        "selected_application_id",
         "source",
         "status",
         "task_id",
@@ -36,8 +37,8 @@
         "updated_at"
       ],
       "check_constraints": {
-        "source": ["INSTANT_MATCH", "REBOOK"],
-        "status": ["CANCELLED", "CONFIRMED", "EXPIRED", "PENDING"]
+        "source": ["APPLICATION_SELECTION", "INSTANT_MATCH", "REBOOK"],
+        "status": ["CANCELLED", "CONFIRMED", "DECLINED", "EXPIRED", "PENDING"]
       }
     },
     "booking_reliability_incidents": {

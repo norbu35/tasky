@@ -36,6 +36,10 @@ References:
 
 Follow the canonical i18n rules in root `AGENTS.md`. Mobile locale files: `apps/mobile/src/locales/{en,mn}/translation.json`. Do not create or use shared client locale files.
 
+## Env
+
+Mobile app env is app-local. Copy `apps/mobile/.env.example` to `apps/mobile/.env` for Expo and native builds. Use `EXPO_PUBLIC_*` only for values that may be bundled into the client, and keep native SDK keys such as Google Maps in the mobile env file. Do not read the root `.env` from mobile app or native config code for app-owned client/native settings.
+
 ## Screen Workflow
 
 For new, redesigned, or behavior-changing mobile screens:

@@ -997,6 +997,8 @@ components:
           type: string
           enum:
             - APPLICATION_SELECTION
+            - REBOOK
+            - INSTANT_MATCH
         status:
           type: string
           enum:
@@ -1006,6 +1008,14 @@ components:
             - EXPIRED
             - CANCELLED
         selected_application_id:
+          type: string
+          format: uuid
+          nullable: true
+        original_booking_id:
+          type: string
+          format: uuid
+          nullable: true
+        offer_id:
           type: string
           format: uuid
           nullable: true
@@ -1306,6 +1316,172 @@ components:
         created_at:
           type: string
           format: date-time
+    CreditBalance:
+      x-tasky-status: deferred
+      x-tasky-phase: phase_2
+      type: object
+      required:
+        - balance
+        - total_purchased
+        - total_spent
+        - total_refunded
+      properties:
+        balance:
+          type: integer
+          minimum: 0
+        total_purchased:
+          type: integer
+        total_spent:
+          type: integer
+        total_refunded:
+          type: integer
+    CreditTransaction:
+      x-tasky-status: deferred
+      x-tasky-phase: phase_2
+      type: object
+      required:
+        - id
+        - amount
+        - type
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        amount:
+          type: integer
+        type:
+          type: string
+          enum:
+            - PURCHASE
+            - SPEND
+            - REFUND
+            - SIGNUP_BONUS
+        reference_id:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+    CreditPack:
+      x-tasky-status: deferred
+      x-tasky-phase: phase_2
+      type: object
+      required:
+        - id
+        - name
+        - credit_count
+        - price_mnt
+        - is_active
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        credit_count:
+          type: integer
+          minimum: 1
+        price_mnt:
+          type: integer
+          minimum: 1
+        is_active:
+          type: boolean
+    WalletBalance:
+      x-tasky-status: deferred
+      x-tasky-phase: phase_3
+      type: object
+      required:
+        - available_balance
+        - pending_balance
+        - currency
+      properties:
+        available_balance:
+          type: integer
+          description: Available balance in MNT.
+          example: 250000
+        pending_balance:
+          type: integer
+          description: Pending balance in MNT (not yet eligible for payout).
+          example: 100000
+        currency:
+          type: string
+          example: MNT
+    LedgerEntry:
+      x-tasky-status: deferred
+      x-tasky-phase: phase_3
+      type: object
+      required:
+        - id
+        - amount
+        - type
+        - description
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        amount:
+          type: integer
+          description: Signed amount in MNT. Positive = credit, negative = debit.
+        type:
+          type: string
+          enum:
+            - DEPOSIT
+            - FEE
+            - PAYOUT
+            - REFUND
+        reference_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: Related booking or payout ID.
+        description:
+          type: string
+          example: "Цэвэрлэгээ ажил #1234 — орлого"
+        created_at:
+          type: string
+          format: date-time
+    PayoutRequest:
+      x-tasky-status: deferred
+      x-tasky-phase: phase_3
+      type: object
+      required:
+        - id
+        - amount
+        - bank_name
+        - bank_account
+        - status
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        amount:
+          type: integer
+          description: Payout amount in MNT.
+        bank_name:
+          type: string
+          example: Хаан банк
+        bank_account:
+          type: string
+          example: "5012345678"
+        status:
+          type: string
+          enum:
+            - PENDING
+            - PROCESSED
+            - REJECTED
+        created_at:
+          type: string
+          format: date-time
+        processed_at:
+          type: string
+          format: date-time
+          nullable: true
     FeatureToggle:
       type: object
       required:
@@ -1325,6 +1501,54 @@ components:
         updated_at:
           type: string
           format: date-time
+    TaskerSubscription:
+      x-tasky-status: deferred
+      x-tasky-phase: phase_3
+      type: object
+      required:
+        - id
+        - tasker_id
+        - status
+        - started_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        tasker_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - CANCELLED
+            - EXPIRED
+        started_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+    ReferralSummary:
+      x-tasky-status: deferred
+      x-tasky-phase: phase_2
+      type: object
+      required:
+        - referral_code
+        - referral_link
+        - successful_referrals_this_month
+      properties:
+        referral_code:
+          type: string
+        referral_link:
+          type: string
+          format: uri
+        successful_referrals_this_month:
+          type: integer
+        remaining_reward_capacity_this_month:
+          type: integer
+          description: Remaining successful referrals eligible for rewards within monthly cap.
     ReverseGeocodeResponse:
       type: object
       required:
@@ -2903,44 +3127,6 @@ paths:
                 $ref: "#/components/schemas/Error"
         "422":
           description: Liability disclaimer not accepted.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-  /tasks/{id}/applications/{applicationId}/select:
-    post:
-      tags:
-        - Tasks
-      summary: Select an applicant (customer action)
-      description: |
-        Customer selects a tasker's application, starting the 4-hour acceptance window.
-        The tasker receives a push notification to confirm.
-      operationId: selectApplication
-      security:
-        - BearerAuth: []
-      parameters:
-        - $ref: "#/components/parameters/PathId"
-        - name: applicationId
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        "200":
-          description: Application selected. Tasker has 4 hours to confirm.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TaskApplication"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
-          description: Application already processed or task assigned.
           content:
             application/json:
               schema:
@@ -5266,7 +5452,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: ../components/schemas/monetization.yaml#/PayoutRequest
+                      $ref: "#/components/schemas/PayoutRequest"
                   cursor:
                     $ref: "#/components/schemas/CursorPagination"
         "401":
@@ -5463,7 +5649,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ../components/schemas/monetization.yaml#/WalletBalance
+                $ref: "#/components/schemas/WalletBalance"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "503":
@@ -5501,7 +5687,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: ../components/schemas/monetization.yaml#/LedgerEntry
+                      $ref: "#/components/schemas/LedgerEntry"
                   cursor:
                     $ref: "#/components/schemas/CursorPagination"
         "401":
@@ -5557,7 +5743,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ../components/schemas/monetization.yaml#/PayoutRequest
+                $ref: "#/components/schemas/PayoutRequest"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -5749,7 +5935,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ../components/schemas/monetization.yaml#/TaskerSubscription
+                $ref: "#/components/schemas/TaskerSubscription"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
@@ -5780,7 +5966,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ../components/schemas/monetization.yaml#/CreditBalance
+                $ref: "#/components/schemas/CreditBalance"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "503":
@@ -5817,7 +6003,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: ../components/schemas/monetization.yaml#/CreditTransaction
+                      $ref: "#/components/schemas/CreditTransaction"
                   cursor:
                     $ref: "#/components/schemas/CursorPagination"
         "401":
@@ -5852,7 +6038,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: ../components/schemas/monetization.yaml#/CreditPack
+                      $ref: "#/components/schemas/CreditPack"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "503":
@@ -5905,7 +6091,7 @@ paths:
                   qr_code:
                     type: string
                   pack:
-                    $ref: ../components/schemas/monetization.yaml#/CreditPack
+                    $ref: "#/components/schemas/CreditPack"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "404":
@@ -5937,7 +6123,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ../components/schemas/referrals.yaml#/ReferralSummary
+                $ref: "#/components/schemas/ReferralSummary"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "503":

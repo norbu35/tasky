@@ -1,128 +1,98 @@
 # Screen Spec: Review Hard Lock
 screen_id: SCR-SHARED-019
-name: "Review Hard Lock"
+name: 'Review Hard Lock'
 route: null
 role: [customer, tasker]
-phase: "0-1"
+phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-SHARED-019
+  prd_refs:
+    - REQ-P1-SAFE-07
+    - REQ-P1-SAFE-08
+  journey_refs:
+    - JRN-SHARED-07-A2
+  scenario_refs:
+    - SCN-REVIEW-005
+    - SCN-REVIEW-006
 template: error_state
-figma_page: "Shared/Review Hard Lock"
-feature: "reviews"
+figma_page: 'Shared/Review Hard Lock'
+feature: 'reviews'
 
 layout:
   template: error_state
   density: comfortable
-  structure: "safe_area -> centered(lock_icon + title + body_text + reason_badge + submit_review_cta)"
+  structure: 'safe_area -> centered(lock_icon + title + body_text + reason_badge + submit_review_cta)'
 
 components:
   - id: COMP-EMPTYSTATE
-    usage: "Full-screen blocker with lock illustration, explanation text, and CTA to submit review"
+    usage: 'Full-screen blocker with lock illustration, explanation text, and CTA to submit review'
     props:
-      illustration: "lock_review"
-      headline: "Хаагдсан"
-      description: "Сэтгэгдлээ бичих хүртэл энэ үйлдлийг хийх боломжгүй"
-      ctaLabel: "Сэтгэгдэл бичих"
-      onCtaPress: "navigateToReviewForm"
+      illustration: 'lock_review'
+      headline: 'Хаагдсан'
+      description: 'Сэтгэгдлээ бичих хүртэл энэ үйлдлийг хийх боломжгүй'
+      ctaLabel: 'Сэтгэгдэл бичих'
+      onCtaPress: 'navigateToReviewForm'
     variant: error
 
   - id: COMP-BUTTON
-    usage: "Primary CTA to navigate to the review form to resolve the lock"
+    usage: 'Primary CTA to navigate to the review form to resolve the lock'
     props:
-      label: "Сэтгэгдэл бичих"
+      label: 'Сэтгэгдэл бичих'
       variant: primary
       size: lg
     variant: primary
 
   - id: COMP-STATUSBADGE
-    usage: "Badge showing the reason for the lock (dispute, missed reviews, investigation)"
+    usage: 'Badge showing pending review debt'
     props:
-      status: "cancelled"
+      status: 'cancelled'
       size: sm
     variant: cancelled
 
 states:
-  - id: locked_open_dispute
-    description: "User has an open dispute; cannot post tasks or apply to jobs until review is submitted for the disputed booking"
-    components_visible: [COMP-EMPTYSTATE, COMP-BUTTON, COMP-STATUSBADGE]
-    components_hidden: []
-
-  - id: locked_missed_reviews
-    description: "User has missed 2 or more reviews; hard lock blocks all posting and applying until reviews are submitted"
-    components_visible: [COMP-EMPTYSTATE, COMP-BUTTON, COMP-STATUSBADGE]
-    components_hidden: []
-
-  - id: locked_investigation
-    description: "User's account is under investigation; hard lock blocks all activity until review is submitted and investigation clears"
+  - id: locked_review_debt
+    description: 'User has at least one unresolved owed review; blocks posting and applying until the owed review is submitted'
     components_visible: [COMP-EMPTYSTATE, COMP-BUTTON, COMP-STATUSBADGE]
     components_hidden: []
 
 copy:
-  - key: title_dispute
-    mn: "Маргааны улмаас хаагдсан"
-    en: "Locked due to dispute"
-    max_chars: 30
-
-  - key: body_dispute
-    mn: "Танд нээлттэй маргаан байгаа тул шинэ даалгавар нийтлэх эсвэл ажилд орох боломжгүй. Сэтгэгдлээ бичиж маргааныг шийдвэрлэнэ үү."
-    en: "You have an open dispute. You cannot post tasks or apply to jobs. Please submit your review to help resolve the dispute."
-    max_chars: 200
-
-  - key: title_missed
-    mn: "Сэтгэгдэл дутуу"
-    en: "Missing reviews"
+  - key: title_review_debt
+    mn: 'Сэтгэгдэл дутуу'
+    en: 'Missing reviews'
     max_chars: 25
 
-  - key: body_missed
-    mn: "Та 2 ба түүнээс олон сэтгэгдлийг алгассан байна. Бүх сэтгэгдлийг бичих хүртэл апп ашиглах боломжгүй."
-    en: "You have missed 2 or more reviews. You cannot use the app until all reviews are submitted."
-    max_chars: 200
+  - key: body_review_debt
+    mn: 'Танд бичээгүй сэтгэгдэл байна. Шинэ даалгавар нийтлэх эсвэл ажилд орохын өмнө сэтгэгдлээ бичнэ үү.'
+    en: 'You have a pending review. Submit it before posting a new task or applying to a job.'
+    max_chars: 160
 
-  - key: title_investigation
-    mn: "Шалгалтын улмаас хаагдсан"
-    en: "Locked due to investigation"
-    max_chars: 30
-
-  - key: body_investigation
-    mn: "Таны бүртгэл шалгагдаж байна. Сэтгэгдлээ бичиж шийдвэрлэлтэд тусална уу."
-    en: "Your account is under investigation. Please submit your review to assist with the resolution."
-    max_chars: 200
-
-  - key: badge_dispute
-    mn: "Нээлттэй маргаан"
-    en: "Open dispute"
+  - key: badge_review_debt
+    mn: 'Дутуу сэтгэгдэл'
+    en: 'Pending review'
     max_chars: 20
-
-  - key: badge_missed
-    mn: "Дутуу сэтгэгдэл"
-    en: "Missed reviews"
-    max_chars: 20
-
-  - key: badge_investigation
-    mn: "Шалгалт"
-    en: "Investigation"
-    max_chars: 15
 
   - key: cta_submit_review
-    mn: "Сэтгэгдэл бичих"
-    en: "Submit Review"
+    mn: 'Сэтгэгдэл бичих'
+    en: 'Submit Review'
     max_chars: 20
 
 api_endpoints: []
 
 analytics_events:
-  - event: "review_hard_lock_shown"
-    trigger: "Hard lock screen appears (with lock_reason: dispute, missed_reviews, or investigation)"
-  - event: "review_hard_lock_cta_tapped"
+  - event: 'review_hard_lock_shown'
+    trigger: 'Hard lock screen appears with lock_reason: review_debt'
+  - event: 'review_hard_lock_cta_tapped'
     trigger: "User taps 'Submit Review' CTA to navigate to review form"
 
 acceptance_criteria:
-  - "Full-screen blocker prevents all navigation to task posting or job application screens"
-  - "Lock screen appears when user has an open dispute and tries to post/apply"
-  - "Lock screen appears when user has missed 2 or more reviews"
-  - "Lock screen appears when user's account is under investigation"
-  - "Each lock reason shows a specific title, explanation body, and reason badge"
+  - 'Full-screen blocker prevents navigation to task posting or job application screens only'
+  - 'Lock screen appears when user has unresolved review debt and tries to post/apply'
+  - 'Lock screen is not triggered solely by open disputes or investigations'
+  - 'Pending review debt shows a specific title, explanation body, and reason badge'
   - "Tapping 'Сэтгэгдэл бичих' navigates (push) to SCR-SHARED-017 with the pending booking_id"
-  - "Lock screen cannot be dismissed or navigated away from (except via the review CTA)"
-  - "Uses comfortable density for emotional weight and breathing room"
-  - "Lock icon illustration is centered above the text content"
-  - "This is a full-screen blocker, not a standalone route — it intercepts navigation to protected screens"
-  - "After review is successfully submitted, the lock is released and user returns to their intended destination"
+  - 'Lock screen cannot bypass the protected post/apply action except via the review CTA'
+  - 'Uses comfortable density for emotional weight and breathing room'
+  - 'Lock icon illustration is centered above the text content'
+  - 'This is a full-screen blocker, not a standalone route — it intercepts navigation to protected screens'
+  - 'After review is successfully submitted, the lock is released and user returns to their intended destination'

@@ -52,7 +52,7 @@ Then external distribution may be triggered for eligible categories
 
 ## SCN-ASSIST-005
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-ASSIST-04
 **Title:** External distribution is limited to admin-eligible categories
 
@@ -94,3 +94,25 @@ Given an operator performs task-specific rescue to advance a stalled task
 When the rescue action is recorded
 Then the rescue is stored as an intervention with intervention_type and intervention_stage
 And the intervention record is auditable and separately measurable from self-serve activity
+
+## SCN-ASSIST-009
+
+**Risk:** High
+**PRD:** REQ-P1-ASSIST-02
+**Title:** External distribution is not triggered by default on eligible task creation
+
+Given an eligible task is newly posted
+When the native matching window starts
+Then external distribution remains inactive
+And the task stays in the native marketplace flow until assisted-distribution criteria are met
+
+## SCN-ASSIST-010
+
+**Risk:** High
+**PRD:** REQ-P1-ASSIST-08
+**Title:** General marketing is not classified as task-level intervention
+
+Given an operator sends general marketing or broad supply-seeding communication
+When intervention reporting is computed
+Then no task-level intervention is recorded for a specific task
+And self-serve outcome classification is not changed by the general marketing activity

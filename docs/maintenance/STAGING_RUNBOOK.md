@@ -68,6 +68,9 @@ After the tunnel is up:
 | `TASKY_FEATURE_MONETIZATION_ENABLED` | `false`        | Phase 1 remains zero-monetization                               |
 | `TASKY_PUSH_PROVIDER`                | `logging`      | Safe sandbox default                                            |
 
+`VITE_DEV_AUTH_ENABLED` is a web build argument in `.env.private-staging`. `EXPO_PUBLIC_DEV_AUTH_ENABLED` is set in
+`apps/mobile/.env` only when a developer is using the mobile app against the private sandbox.
+
 ### Required services
 
 | Dependency                    | Required now                                        | Notes                                                            |

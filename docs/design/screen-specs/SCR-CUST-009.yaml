@@ -4,6 +4,23 @@ name: 'Task Detail (Customer)'
 route: '/(customer)/tasks/:taskId'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-009
+  prd_refs:
+    - REQ-P1-MATCH-03
+    - REQ-P1-PRICE-05
+    - REQ-P1-TASK-10
+    - REQ-P1-MSG-01
+    - REQ-P1-BOOK-08
+  journey_refs:
+    - JRN-CUST-02:step-1
+    - JRN-CUST-07:step-1
+  scenario_refs:
+    - SCN-TASK-024
+    - SCN-TASK-029
+    - SCN-SEC-007
+    - SCN-SEC-008
 template: detail
 figma_page: 'Customer/Task Detail Customer'
 feature: 'tasks'
@@ -238,7 +255,7 @@ acceptance_criteria:
   - 'OPEN state with applicants shows count badge and View Applicants CTA navigating (push) to SCR-CUST-011'
   - 'Awaiting-tasker-acceptance state shows the selected Tasker summary, response-window status, and no direct contact CTA before booking confirmation'
   - 'ASSIGNED state shows assigned Tasker profile with avatar, name, verification badge, and rating'
-  - 'ASSIGNED state shows booking contact CTA navigating (push) to SCR-SHARED-010 for the confirmed booking conversation'
+  - 'ASSIGNED state shows booking contact CTA navigating (push) to SCR-SHARED-011 for the confirmed booking conversation'
   - 'Tasker marked done state shows prominent Confirm Complete CTA'
   - 'Cancel CTA opens modal sheet SCR-CUST-010 for cancellation confirmation'
   - 'COMPLETED state shows final task summary'

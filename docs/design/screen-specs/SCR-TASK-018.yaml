@@ -4,6 +4,15 @@ name: 'Privacy Policy'
 route: '/legal/privacy'
 role: [tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-018
+  prd_refs:
+    - NFR-SEC-04
+    - NFR-LEGAL-03
+  journey_refs:
+    - JRN-SHARED-06-A5
+  scenario_refs: []
 template: detail
 figma_page: 'Tasker/Privacy Policy'
 feature: 'legal'

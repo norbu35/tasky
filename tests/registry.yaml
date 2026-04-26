@@ -3,6 +3,62 @@
 # Hand-edit only: notes, override_status.
 
 scenarios:
+  SCN-ADMIN-001:
+    domain: admin
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ADMIN-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Admin feature toggles are rollout controls but not readiness proof
+  SCN-ADMIN-002:
+    domain: admin
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ADMIN-04
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Admin can ban and unban users
+  SCN-ADMIN-003:
+    domain: admin
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ADMIN-06
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Admin can inspect task and booking state across the platform
+  SCN-ADMIN-004:
+    domain: admin
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ADMIN-07
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Manual rescue actions are auditable and measured separately from self-serve
+      activity
+  SCN-ADMIN-005:
+    domain: admin
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ADMIN-08
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Admin can monitor or trigger assisted distribution within launch rules
   SCN-ANALYTICS-001:
     domain: analytics
     mutation_kill_rate: 0
@@ -26,7 +82,7 @@ scenarios:
     risk: high
     status: covered
     test_type: domain-unit
-    title: Booking confirmed event is emitted when an application is accepted
+    title: Booking confirmed event is emitted when selected tasker accepts
   SCN-ANALYTICS-003:
     domain: analytics
     mutation_kill_rate: 0
@@ -63,6 +119,18 @@ scenarios:
     test_type: domain-unit
     title: Intervention recorded event is emitted when assisted distribution or manual
       rescue is used
+  SCN-ANALYTICS-006:
+    domain: analytics
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-KPI-02, REQ-P1-KPI-05, REQ-P1-KPI-06
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: KPI scorecard uses backend metrics with category default and auditable
+      source data
   SCN-ASSIST-001:
     domain: assistance
     mutation_kill_rate: null
@@ -115,9 +183,9 @@ scenarios:
     notes: null
     override_status: null
     prd_ref: REQ-P1-ASSIST-04
-    risk: medium
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: External distribution is limited to admin-eligible categories
   SCN-ASSIST-006:
     domain: assistance
@@ -154,6 +222,28 @@ scenarios:
     status: covered
     test_type: domain-unit
     title: Manual task-specific rescue is recorded as intervention
+  SCN-ASSIST-009:
+    domain: assistance
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ASSIST-02
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: External distribution is not triggered by default on eligible task creation
+  SCN-ASSIST-010:
+    domain: assistance
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-ASSIST-08
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: General marketing is not classified as task-level intervention
   SCN-AUTH-001:
     domain: auth
     mutation_kill_rate: 12
@@ -536,11 +626,12 @@ scenarios:
     mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-P1-BOOK-01
+    prd_ref: REQ-P1-BOOK-01, REQ-P1-MATCH-04
     risk: critical
     status: covered
     test_type: domain-unit
-    title: Customer selects one applicant and booking becomes ASSIGNED
+    title: Customer selects one applicant and selected tasker acceptance confirms
+      booking
   SCN-BOOK-023:
     domain: booking
     mutation_kill_rate: null
@@ -596,6 +687,39 @@ scenarios:
     status: covered
     test_type: domain-unit
     title: Customer silence after tasker-marked complete triggers timeout auto-complete
+  SCN-BOOK-028:
+    domain: booking
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-BOOK-27
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Ops can resolve stalled or contested completion before finalization
+  SCN-BOOK-029:
+    domain: booking
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-BOOK-28
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Completion or complaint evidence artifacts can be attached when required
+  SCN-BOOK-030:
+    domain: booking
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-PRICE-08
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Pricing state changes are auditable from application through booking lock
   SCN-CATEGORY-001:
     domain: category
     mutation_kill_rate: 0
@@ -741,6 +865,28 @@ scenarios:
     status: covered
     test_type: domain-unit
     title: Schema lint rejects options missing Mongolian labels
+  SCN-CATEGORY-014:
+    domain: category
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-CAT-02
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Initial launch catalog includes the four seed categories
+  SCN-CATEGORY-015:
+    domain: category
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-CAT-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Minor handyman template excludes regulated or dangerous work
   SCN-CONTRACT-400:
     domain: contract
     mutation_kill_rate: null
@@ -785,6 +931,17 @@ scenarios:
     status: covered
     test_type: domain-unit
     title: Unknown resources return 404 with standard error envelope
+  SCN-COVER-001:
+    domain: coverage
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-COVER-01, REQ-P1-COVER-06
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Launch surfaces present Tasky as live across Ulaanbaatar
   SCN-DISPUTE-001:
     domain: dispute
     mutation_kill_rate: 58
@@ -885,7 +1042,7 @@ scenarios:
     risk: high
     status: covered
     test_type: domain-unit
-    title: Conversation is created when a tasker applies to a task
+    title: Conversation is created only after booking confirmation
   SCN-MSG-002:
     domain: messaging
     mutation_kill_rate: 18
@@ -952,7 +1109,7 @@ scenarios:
     risk: high
     status: covered
     test_type: domain-unit
-    title: Booking confirmation sends hired notification to the tasker
+    title: Selected tasker notification is sent when chosen by a customer
   SCN-NOTIF-003:
     domain: notification
     mutation_kill_rate: 4
@@ -1008,6 +1165,17 @@ scenarios:
     status: covered
     test_type: domain-unit
     title: Review obligation notification is sent to both participants
+  SCN-NOTIF-008:
+    domain: notification
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-NOTIF-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Booking confirmation notification is sent to both participants
   SCN-REVIEW-001:
     domain: review
     mutation_kill_rate: 43
@@ -1075,6 +1243,17 @@ scenarios:
     status: covered
     test_type: domain-unit
     title: Hard lock is lifted when the owed review is submitted and the case is resolved
+  SCN-REVIEW-007:
+    domain: review
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-SAFE-13
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Public reputation hides ratings until minimum review threshold
   SCN-SEC-001:
     domain: security
     mutation_kill_rate: 0
@@ -1198,6 +1377,17 @@ scenarios:
     status: covered
     test_type: domain-unit
     title: DELETED user is rejected with 403
+  SCN-SEC-014:
+    domain: security
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-SAFE-17
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Trust-sensitive actions and evidence access are audit-queryable
   SCN-SMOKE-001:
     domain: integration
     mutation_kill_rate: null
@@ -1300,18 +1490,18 @@ scenarios:
     risk: high
     status: covered
     test_type: domain-unit
-    title: Budget below 20000 MNT is rejected
+    title: Budget-mode amount below 20000 MNT is rejected
   SCN-TASK-005:
     domain: task
     mutation_kill_rate: 12
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
     notes: null
     override_status: null
-    prd_ref: REQ-P1-PRICE-01, REQ-P1-TASK-02
+    prd_ref: REQ-P1-PRICE-01
     risk: high
     status: covered
     test_type: domain-unit
-    title: Budget of 20000 MNT is accepted, 19999 is rejected
+    title: Budget-mode amount of 20000 MNT is accepted, 19999 is rejected
   SCN-TASK-006:
     domain: task
     mutation_kill_rate: 12
@@ -1500,7 +1690,7 @@ scenarios:
     mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-P1-MATCH-01
+    prd_ref: REQ-P1-MATCH-01, REQ-P1-SAFE-03
     risk: high
     status: covered
     test_type: domain-unit
@@ -1582,6 +1772,50 @@ scenarios:
     status: covered
     test_type: domain-unit
     title: Customer sees posted budget for budget-mode applications
+  SCN-TASK-030:
+    domain: task
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-TASK-11, REQ-P1-TASK-12, REQ-P1-TASK-13, REQ-P1-TASK-14
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Launch category templates capture required category-specific fields
+  SCN-TASK-031:
+    domain: task
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-PRICE-06
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Application pricing response is normalized by pricing mode
+  SCN-TASK-032:
+    domain: task
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-SAFE-04
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Service-area preferences target notifications but do not gate applications
+  SCN-TASK-033:
+    domain: task
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-TASK-02
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Task photos are optional for task creation
   SCN-VERIF-001:
     domain: verification
     mutation_kill_rate: null
@@ -1633,7 +1867,7 @@ scenarios:
     notes: null
     override_status: null
     prd_ref: REQ-P1-ADMIN-10
-    risk: medium
+    risk: high
     status: covered
-    test_type: medium-unit
+    test_type: domain-unit
     title: Verification queue exposes queue age and SLA posture for operational review

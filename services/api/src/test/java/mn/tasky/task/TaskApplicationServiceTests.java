@@ -2,30 +2,32 @@ package mn.tasky.task;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.UserProfileService;
 import mn.tasky.auth.dto.UserProfile;
-import mn.tasky.booking.dto.BookingState;
+import mn.tasky.booking.dto.BookingIntentCreateResult;
+import mn.tasky.booking.dto.BookingIntentState;
 import mn.tasky.booking.publicapi.BookingCommandPort;
+import mn.tasky.booking.publicapi.BookingIntentCommandPort;
 import mn.tasky.common.outbox.DomainEventOutboxService;
-import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.TaskApplicationService;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
-import mn.tasky.task.dto.TaskAcceptResult;
 import mn.tasky.task.dto.TaskApplicationState;
 import mn.tasky.task.dto.TaskApplicationsListResult;
 import mn.tasky.task.dto.TaskApplyResult;
@@ -57,6 +59,9 @@ class TaskApplicationServiceTests {
     private BookingCommandPort bookingCommandPort;
 
     @Mock
+    private BookingIntentCommandPort bookingIntentCommandPort;
+
+    @Mock
     private NotificationService notificationService;
 
     @Mock
@@ -81,6 +86,7 @@ class TaskApplicationServiceTests {
         service = new TaskApplicationService(
                 userProfileService,
                 bookingCommandPort,
+                bookingIntentCommandPort,
                 notificationService,
                 analyticsService,
                 domainEventOutboxService,
@@ -164,6 +170,25 @@ class TaskApplicationServiceTests {
                 null,
                 null,
                 Instant.now());
+    }
+
+    private BookingIntentState pendingApplicationSelectionIntent() {
+        Instant now = Instant.now();
+        return new BookingIntentState(
+                UUID.randomUUID().toString(),
+                TASK_ID,
+                TASKER_ID,
+                CUSTOMER_ID,
+                "APPLICATION_SELECTION",
+                "PENDING",
+                APPLICATION_ID,
+                null,
+                null,
+                now.plusSeconds(4 * 3600),
+                null,
+                null,
+                now,
+                now);
     }
 
     // ── applyToTask ───────────────────────────────────────────────────────
@@ -369,9 +394,9 @@ class TaskApplicationServiceTests {
         void missingTaskNotFound() {
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.empty());
 
-            TaskAcceptResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
+            BookingIntentCreateResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
 
-            assertThat(result.errorCode()).isEqualTo(TaskAcceptResult.NOT_FOUND);
+            assertThat(result.errorCode()).isEqualTo(BookingIntentCreateResult.NOT_FOUND);
         }
 
         @Test
@@ -379,9 +404,9 @@ class TaskApplicationServiceTests {
         void nonOwnerReturnsForbidden() {
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(openTask()));
 
-            TaskAcceptResult result = service.acceptApplication("other-user", TASK_ID, APPLICATION_ID, true);
+            BookingIntentCreateResult result = service.acceptApplication("other-user", TASK_ID, APPLICATION_ID, true);
 
-            assertThat(result.errorCode()).isEqualTo(TaskAcceptResult.FORBIDDEN);
+            assertThat(result.errorCode()).isEqualTo(BookingIntentCreateResult.FORBIDDEN);
         }
 
         @Test
@@ -389,9 +414,9 @@ class TaskApplicationServiceTests {
         void nonOpenTaskReturnsNotOpen() {
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(assignedTask()));
 
-            TaskAcceptResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
+            BookingIntentCreateResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
 
-            assertThat(result.errorCode()).isEqualTo(TaskAcceptResult.TASK_NOT_OPEN);
+            assertThat(result.errorCode()).isEqualTo(BookingIntentCreateResult.TASK_NOT_OPEN);
         }
 
         @Test
@@ -399,9 +424,9 @@ class TaskApplicationServiceTests {
         void disclaimerNotAccepted() {
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(openTask()));
 
-            TaskAcceptResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, false);
+            BookingIntentCreateResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, false);
 
-            assertThat(result.errorCode()).isEqualTo(TaskAcceptResult.DISCLAIMER_REQUIRED);
+            assertThat(result.errorCode()).isEqualTo(BookingIntentCreateResult.DISCLAIMER_REQUIRED);
         }
 
         @Test
@@ -410,9 +435,9 @@ class TaskApplicationServiceTests {
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(openTask()));
             when(taskApplicationDao.hasAccepted(TASK_ID)).thenReturn(true);
 
-            TaskAcceptResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
+            BookingIntentCreateResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
 
-            assertThat(result.errorCode()).isEqualTo(TaskAcceptResult.CONFLICT);
+            assertThat(result.errorCode()).isEqualTo(BookingIntentCreateResult.CONFLICT);
         }
 
         @Test
@@ -422,9 +447,9 @@ class TaskApplicationServiceTests {
             when(taskApplicationDao.hasAccepted(TASK_ID)).thenReturn(false);
             when(taskApplicationDao.findById(APPLICATION_ID)).thenReturn(Optional.empty());
 
-            TaskAcceptResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
+            BookingIntentCreateResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
 
-            assertThat(result.errorCode()).isEqualTo(TaskAcceptResult.NOT_FOUND);
+            assertThat(result.errorCode()).isEqualTo(BookingIntentCreateResult.NOT_FOUND);
         }
 
         @Test
@@ -451,9 +476,9 @@ class TaskApplicationServiceTests {
                     Instant.now());
             when(taskApplicationDao.findById(APPLICATION_ID)).thenReturn(Optional.of(wrongTaskApp));
 
-            TaskAcceptResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
+            BookingIntentCreateResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
 
-            assertThat(result.errorCode()).isEqualTo(TaskAcceptResult.NOT_FOUND);
+            assertThat(result.errorCode()).isEqualTo(BookingIntentCreateResult.NOT_FOUND);
         }
 
         @Test
@@ -480,60 +505,31 @@ class TaskApplicationServiceTests {
                     Instant.now());
             when(taskApplicationDao.findById(APPLICATION_ID)).thenReturn(Optional.of(rejectedApp));
 
-            TaskAcceptResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
+            BookingIntentCreateResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
 
-            assertThat(result.errorCode()).isEqualTo(TaskAcceptResult.CONFLICT);
+            assertThat(result.errorCode()).isEqualTo(BookingIntentCreateResult.CONFLICT);
         }
 
         @Test
-        @DisplayName("Successful acceptance creates booking, updates statuses, and publishes outbox event")
+        @DisplayName("Successful acceptance creates pending booking intent and selection window")
         void successfulAcceptance() {
             TaskState task = openTask();
             when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(task));
             when(taskApplicationDao.hasAccepted(TASK_ID)).thenReturn(false);
             when(taskApplicationDao.findById(APPLICATION_ID)).thenReturn(Optional.of(appliedApplication()));
+            BookingIntentState intent = pendingApplicationSelectionIntent();
+            when(bookingIntentCommandPort.createApplicationSelectionIntent(
+                            eq(CUSTOMER_ID), eq(TASK_ID), eq(APPLICATION_ID), eq(TASKER_ID), any(Instant.class)))
+                    .thenReturn(BookingIntentCreateResult.success(intent));
 
-            String bookingId = UUID.randomUUID().toString();
-            BookingState booking = new BookingState(
-                    bookingId,
-                    TASK_ID,
-                    TASKER_ID,
-                    CUSTOMER_ID,
-                    5000,
-                    "ASSIGNED",
-                    null,
-                    true,
-                    task.scheduledAt(),
-                    "STANDARD",
-                    false,
-                    Instant.now(),
-                    0,
-                    null,
-                    Instant.now(),
-                    Instant.now());
-            when(bookingCommandPort.createBooking(
-                            eq(TASK_ID), eq(TASKER_ID), eq(CUSTOMER_ID), eq(5000), eq(true), any()))
-                    .thenReturn(booking);
-
-            TaskAcceptResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
+            BookingIntentCreateResult result = service.acceptApplication(CUSTOMER_ID, TASK_ID, APPLICATION_ID, true);
 
             assertThat(result.isSuccess()).isTrue();
-            assertThat(result.booking().id()).isEqualTo(bookingId);
+            assertThat(result.intent()).containsSame(intent);
 
-            // Verify application status updates
-            verify(taskApplicationDao).updateStatus(APPLICATION_ID, "ACCEPTED");
-            verify(taskApplicationDao).rejectOthers(TASK_ID, APPLICATION_ID);
-
-            // Verify task status update
-            verify(taskDao).updateStatus(eq(TASK_ID), eq("ASSIGNED"), any(Instant.class));
-
-            // Verify outbox event published
-            verify(domainEventOutboxService)
-                    .publish(
-                            eq(OutboxEventTypes.TASK_APPLICATION_ACCEPTED),
-                            eq("BOOKING"),
-                            eq(bookingId),
-                            any(Map.class));
+            verify(taskApplicationDao).updateSelection(eq(APPLICATION_ID), eq("SELECTED"), any(), any());
+            verify(bookingCommandPort, never())
+                    .createBooking(anyString(), anyString(), anyString(), anyInt(), anyBoolean(), any());
         }
     }
 

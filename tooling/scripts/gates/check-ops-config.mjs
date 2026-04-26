@@ -59,11 +59,53 @@ function parseYaml(relativePath) {
     }
 }
 
+function isPlainObject(value) {
+    return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function validateRegistryShape(value) {
+    const shapeFailures = [];
+    const objectSections = ["policy", "packageScripts", "hooks", "workflows", "toolingScripts"];
+    for (const section of objectSections) {
+        if (!isPlainObject(value[section])) {
+            shapeFailures.push(`ops registry section '${section}' must be an object`);
+        }
+    }
+    if (!Array.isArray(value.composeFiles)) {
+        shapeFailures.push("ops registry section 'composeFiles' must be a list");
+    } else {
+        for (const [index, file] of value.composeFiles.entries()) {
+            if (typeof file !== "string" || file.trim() === "") {
+                shapeFailures.push(`ops registry composeFiles[${index}] must be a non-empty string`);
+            }
+        }
+    }
+    return shapeFailures;
+}
+
+function registryRecord(section) {
+    return isPlainObject(registry[section]) ? registry[section] : {};
+}
+
+function registryList(section) {
+    return Array.isArray(registry[section]) ? registry[section] : [];
+}
+
+function describeMemberDelta(actual, expected) {
+    const actualSet = new Set(actual);
+    const expectedSet = new Set(expected);
+    return {
+        removed: [...expectedSet].filter((item) => !actualSet.has(item)).sort(),
+        added: [...actualSet].filter((item) => !expectedSet.has(item)).sort(),
+    };
+}
+
 function sameMembers(actual, expected, label) {
-    const actualSorted = [...actual].sort();
-    const expectedSorted = [...expected].sort();
-    if (JSON.stringify(actualSorted) !== JSON.stringify(expectedSorted)) {
-        failures.push(`${label} mismatch: expected [${expectedSorted.join(", ")}], got [${actualSorted.join(", ")}]`);
+    const delta = describeMemberDelta(actual, expected);
+    if (delta.removed.length > 0 || delta.added.length > 0) {
+        failures.push(
+            `${label} mismatch: removed: [${delta.removed.join(", ") || "<none>"}]; added: [${delta.added.join(", ") || "<none>"}]`,
+        );
     }
 }
 
@@ -91,18 +133,20 @@ function resolveDockerBinary() {
     return null;
 }
 
+failures.push(...validateRegistryShape(registry));
+
 if (registry.policy?.opsDiagrams !== "ephemeral") {
     failures.push("registry policy must mark docs/ops/diagrams/** as ephemeral");
 }
 
 const packageJson = JSON.parse(readRepoFile("package.json"));
-for (const [scriptName, expectation] of Object.entries(registry.packageScripts ?? {})) {
+for (const [scriptName, expectation] of Object.entries(registryRecord("packageScripts"))) {
     if (packageJson.scripts?.[scriptName] !== expectation.command) {
         failures.push(`package script drift for ${scriptName}: expected '${expectation.command}', got '${packageJson.scripts?.[scriptName] ?? "<missing>"}'`);
     }
 }
 
-for (const [hookPath, expectation] of Object.entries(registry.hooks ?? {})) {
+for (const [hookPath, expectation] of Object.entries(registryRecord("hooks"))) {
     const text = readRepoFile(hookPath);
     for (const fragment of expectation.requiredFragments ?? []) {
         if (!text.includes(fragment)) {
@@ -111,9 +155,9 @@ for (const [hookPath, expectation] of Object.entries(registry.hooks ?? {})) {
     }
 }
 
-sameMembers(Object.keys(registry.workflows ?? {}), listWorkflowFiles(), "registered workflows");
+sameMembers(Object.keys(registryRecord("workflows")), listWorkflowFiles(), "registered workflows");
 
-for (const [workflowPath, expectation] of Object.entries(registry.workflows ?? {})) {
+for (const [workflowPath, expectation] of Object.entries(registryRecord("workflows"))) {
     const parsed = parseYaml(workflowPath);
     if (!parsed) {
         continue;
@@ -130,15 +174,19 @@ for (const [workflowPath, expectation] of Object.entries(registry.workflows ?? {
     }
 }
 
-for (const file of registry.composeFiles ?? []) {
+for (const file of registryList("composeFiles")) {
     parseYaml(file);
 }
 
 const dockerBinary = resolveDockerBinary();
 if (!dockerBinary) {
-    failures.push("docker compose is required for ops config validation");
+    if (process.env.NO_DOCKER_COMPOSE_CHECK === "1") {
+        console.warn("ops-config: warning: docker compose check skipped because NO_DOCKER_COMPOSE_CHECK=1");
+    } else {
+        failures.push("docker compose is required for ops config validation; set NO_DOCKER_COMPOSE_CHECK=1 only on runners that intentionally skip compose validation");
+    }
 } else {
-    for (const file of registry.composeFiles ?? []) {
+    for (const file of registryList("composeFiles")) {
         const result = spawnSync(dockerBinary, ["compose", "-f", file, "config"], {
             cwd: repoRoot,
             env: composeEnv,

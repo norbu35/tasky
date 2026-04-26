@@ -94,6 +94,14 @@ export interface ApiClient {
     idempotencyKey: string,
   ): Promise<Booking>;
 
+  acceptApplication(
+    accessToken: string,
+    taskId: string,
+    applicationId: string,
+    liabilityDisclaimerAccepted: boolean,
+    idempotencyKey: string,
+  ): Promise<BookingIntent>;
+
   initiatePayment(
     accessToken: string,
     bookingId: string,
@@ -192,12 +200,6 @@ export interface ApiClient {
   getVerificationStatus(accessToken: string): Promise<VerificationStatus>;
 
   // ─── Wave 6: Contract Hygiene ───────────────────────────────────
-
-  selectApplication(
-    accessToken: string,
-    taskId: string,
-    applicationId: string,
-  ): Promise<TaskApplication>;
 
   confirmAcceptance(
     accessToken: string,
@@ -772,14 +774,24 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
 
   // ─── Wave 6: Contract Hygiene ───────────────────────────────────
 
-  selectApplication(
+  acceptApplication(
     accessToken: string,
     taskId: string,
     applicationId: string,
-  ): Promise<TaskApplication> {
-    return this.requestJson<TaskApplication>(
-      `/tasks/${taskId}/applications/${applicationId}/select`,
-      { method: 'POST' },
+    liabilityDisclaimerAccepted: boolean,
+    idempotencyKey: string,
+  ): Promise<BookingIntent> {
+    return this.requestJson<BookingIntent>(
+      `/tasks/${taskId}/applications/${applicationId}/accept`,
+      {
+        method: 'POST',
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
+        body: JSON.stringify({
+          liability_disclaimer_accepted: liabilityDisclaimerAccepted,
+        }),
+      },
       accessToken,
     );
   }

@@ -144,3 +144,25 @@ Given an admin is creating or updating an intake schema version
 When an option object is missing label_mn
 Then the schema is rejected by lint or preview checks
 And the version is not activated
+
+## SCN-CATEGORY-014
+
+**Risk:** High
+**PRD:** REQ-P1-CAT-02
+**Title:** Initial launch catalog includes the four seed categories
+
+Given the Phase 1 category catalog is initialized
+When the launch category catalog is read for task posting and admin preview
+Then home cleaning, furniture assembly, moving help or lifting help, and minor handyman are present
+And each seed category has a category template available for activation
+
+## SCN-CATEGORY-015
+
+**Risk:** High
+**PRD:** REQ-P1-CAT-03
+**Title:** Minor handyman template excludes regulated or dangerous work
+
+Given the minor handyman intake template is configured
+When the template subtypes and helper copy are inspected
+Then selectable subtypes are limited to minor non-regulated work
+And regulated, dangerous, or diagnosis-heavy options are not selectable

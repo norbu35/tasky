@@ -4,6 +4,22 @@ name: 'Post Task — Location Pin'
 route: '/(customer)/tasks/new/location'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-005
+  prd_refs:
+    - REQ-P1-TASK-01
+    - REQ-P1-TASK-08
+    - REQ-P1-TASK-09
+    - REQ-P1-TASK-10
+  journey_refs:
+    - JRN-CUST-01:step-5
+    - JRN-CUST-01-A3
+    - JRN-CUST-01-A4
+  scenario_refs:
+    - SCN-TASK-020
+    - SCN-SEC-006
+    - SCN-SEC-007
 template: form_wizard
 figma_page: 'Customer/Post Task Location Pin'
 feature: 'task_posting'

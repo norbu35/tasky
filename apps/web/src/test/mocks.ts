@@ -148,21 +148,21 @@ export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClie
     }),
 
     // Wave 6: Contract hygiene methods
-    selectApplication: vi.fn().mockResolvedValue({
-      id: 'app-1',
+    acceptApplication: vi.fn().mockResolvedValue({
+      id: 'intent-application-1',
       task_id: 'task-1',
-      tasker: {
-        id: 'tasker-1',
-        full_name: 'Tasker',
-        avatar_url: null,
-        rating_avg: 4.6,
-        completed_tasks: 7,
-        is_pro: true,
-      },
-      message: 'I can do this task.',
-      status: 'SELECTED',
-      respond_by_at: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
+      tasker_id: 'tasker-1',
+      customer_id: 'customer-1',
+      source: 'APPLICATION_SELECTION',
+      status: 'PENDING',
+      selected_application_id: 'app-1',
+      original_booking_id: null,
+      offer_id: null,
+      expires_at: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
+      confirmed_booking_id: null,
+      confirmed_at: null,
       created_at: '2026-02-14T00:00:00Z',
+      updated_at: '2026-02-14T00:00:00Z',
     }),
     confirmAcceptance: vi.fn().mockResolvedValue({
       booking_id: 'booking-new',

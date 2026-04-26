@@ -10,6 +10,7 @@ public record BookingIntentState(
         String customerId,
         String source,
         String status,
+        @Nullable String selectedApplicationId,
         @Nullable String originalBookingId,
         @Nullable String offerId,
         @Nullable Instant expiresAt,

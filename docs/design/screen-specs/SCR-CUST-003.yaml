@@ -4,6 +4,26 @@ name: 'Post Task — Intake Form'
 route: '/(customer)/tasks/new/intake'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-003
+  prd_refs:
+    - REQ-P1-CAT-01
+    - REQ-P1-TASK-01
+    - REQ-P1-TASK-04
+    - REQ-P1-TASK-11
+    - REQ-P1-TASK-12
+    - REQ-P1-TASK-13
+    - REQ-P1-TASK-14
+    - REQ-P1-TASK-15
+  journey_refs:
+    - JRN-CUST-01:step-3
+  scenario_refs:
+    - SCN-TASK-001
+    - SCN-TASK-002
+    - SCN-TASK-016
+    - SCN-TASK-017
+    - SCN-TASK-018
 template: form_wizard
 figma_page: 'Customer/Post Task Intake Form'
 feature: 'task_posting'
@@ -70,7 +90,7 @@ states:
     components_hidden: [COMP-FORMFIELD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON]
 
   - id: form_entry
-    description: 'Intake schema loaded; 3-5 structured questions rendered; user fills in answers'
+    description: 'Intake schema loaded; required category-specific structured questions rendered; user fills in answers'
     components_visible:
       [COMP-STEPINDICATOR, COMP-FORMFIELD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON]
     components_hidden: [COMP-LOADINGSKELETON]
@@ -120,7 +140,7 @@ copy:
 api_endpoints:
   - method: GET
     path: '/categories/:id'
-    purpose: 'Fetch the intake_schema (3-5 structured questions) for the selected category'
+    purpose: 'Fetch the intake_schema with required structured questions for the selected category'
 
 analytics_events:
   - event: 'intake_form_loaded'

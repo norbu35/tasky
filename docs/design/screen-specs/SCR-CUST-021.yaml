@@ -4,6 +4,25 @@ name: 'No-Show Flag + Reminder'
 route: null
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-021
+  prd_refs:
+    - REQ-P1-BOOK-19
+    - REQ-P1-BOOK-20
+    - REQ-P1-BOOK-21
+    - REQ-P1-BOOK-22
+    - REQ-P1-BOOK-23
+  journey_refs:
+    - JRN-CUST-04-A3
+  scenario_refs:
+    - SCN-BOOK-010
+    - SCN-BOOK-011
+    - SCN-BOOK-012
+    - SCN-BOOK-013
+    - SCN-BOOK-014
+    - SCN-BOOK-015
+    - SCN-BOOK-016
 template: modal_sheet
 figma_page: 'Customer/No-Show Flag Reminder'
 feature: 'booking'
@@ -67,7 +86,7 @@ copy:
     max_chars: 30
 
   - key: reminder_description
-    mn: 'Товлосон цагаас 10 минут өнгөрлөө. Байдлаа шинэчилнэ үү.'
+    mn: 'Товлосон цагаас 30 минут өнгөрлөө. Байдлаа шинэчилнэ үү.'
     en: '30 minutes past scheduled time. Please update the status.'
     max_chars: 80
 
@@ -87,7 +106,7 @@ copy:
     max_chars: 30
 
   - key: flag_description
-    mn: 'Товлосон цагаас 15 минут өнгөрлөө. Ирээгүй гэж тэмдэглэх үү? Энэ нь захиалгыг цуцалж, админ шалгалтад оруулна.'
+    mn: 'Товлосон цагаас 1 цаг өнгөрлөө. Ирээгүй гэж тэмдэглэх үү? Энэ нь захиалгыг цуцалж, админ шалгалтад оруулна.'
     en: '1 hour past scheduled time. Flag as no-show? This will cancel the booking and trigger an admin review.'
     max_chars: 150
 

@@ -4,6 +4,15 @@ name: 'Tasker Public Profile'
 route: '/(customer)/taskers/:taskerId'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-013
+  prd_refs:
+    - REQ-P1-SAFE-13
+    - REQ-P1-SAFE-18
+  journey_refs:
+    - JRN-CUST-02:step-3
+  scenario_refs: []
 template: detail
 figma_page: 'Customer/Tasker Public Profile'
 feature: 'profiles'
@@ -20,14 +29,12 @@ components:
       imageUrl: '{tasker_avatar}'
       size: 'lg'
       isVerified: true
-      isPro: false
     variant: lg
 
   - id: COMP-VERIFICATIONBADGE
     usage: 'Verified identity badge anchored to avatar bottom-right'
     props:
       isVerified: true
-      isPro: false
       size: 'avatar_badge'
     variant: default
 

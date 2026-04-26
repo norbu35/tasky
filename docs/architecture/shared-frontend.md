@@ -104,7 +104,31 @@ it('TID-TASK-070-WEB-TOKEN-BINDING binds shared tokens to tailwind theme variabl
 });
 ```
 
-## 8. Structured Intake Renderer Contract
+## 8. Screen Spec Traceability
+
+Frontend screen work starts from the traceable design contract, not from isolated screenshots or static prototypes.
+
+For every active screen spec in `docs/design/screen-specs/SCR-*.yaml`:
+
+- `traceability.screen_graph_node` must equal `screen_id` and resolve in `docs/design/screen-graph.yaml`.
+- `traceability.prd_refs` names the governing `REQ-P1-*` or `NFR-*` requirements from `docs/PRD.md`.
+- `traceability.journey_refs` names the relevant `JRN-*`, `JRN-*:step-N`, alternate-path IDs, or journey `paths[].id` refs from `docs/design/journey-catalog.yaml`.
+- `traceability.scenario_refs` names existing `SCN-*` tests from `tests/registry.yaml` when the behavior has scenario-backed coverage.
+
+`traceability.status: pending_audit` is permitted only for an explicitly scoped follow-up audit. New or materially
+changed screen specs should be `validated`, which requires at least one PRD reference and one journey reference. Do not
+create new scenario IDs while implementing a frontend slice unless the execution brief explicitly assigns scenario
+curation.
+
+Implementation flow:
+
+1. Read the PRD requirements named by the screen spec.
+2. Read the journey and screen-graph nodes to understand entry, exit, guards, and alternate paths.
+3. Implement through the platform architecture: route adapter -> screen family -> shared primitives/templates -> tokens.
+4. Add or update i18n-backed copy and tests using the scenario naming rules above.
+5. Run `python3 tooling/scripts/governance/validate-screen-spec-traceability.py` for spec changes and `pnpm repo:docs:check` for the full docs lane.
+
+## 9. Structured Intake Renderer Contract
 
 1. **Renderer input contract**:
    - Task-post UI loads `intake_schema_json` and `intake_schema_version` from category metadata.

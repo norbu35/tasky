@@ -4,6 +4,30 @@ name: 'Booking Request — Accept/Decline'
 route: null
 role: [tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-017
+  prd_refs:
+    - REQ-P1-BOOK-01
+    - REQ-P1-BOOK-02
+    - REQ-P1-BOOK-03
+    - REQ-P1-BOOK-04
+    - REQ-P1-PRICE-07
+    - REQ-P1-NOTIF-02
+    - REQ-P1-NOTIF-03
+  journey_refs:
+    - JRN-TASK-03:step-1
+    - JRN-TASK-03:step-2
+    - JRN-TASK-03-A1
+    - JRN-TASK-03-A2
+  scenario_refs:
+    - SCN-BOOK-022
+    - SCN-BOOK-023
+    - SCN-BOOK-024
+    - SCN-BOOK-025
+    - SCN-ANALYTICS-002
+    - SCN-NOTIF-002
+    - SCN-NOTIF-003
 template: modal_sheet
 figma_page: 'Tasker/Booking Request Accept Decline'
 feature: 'booking'

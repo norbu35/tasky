@@ -260,13 +260,15 @@ And reschedule request, accept, decline, and expiry actions are returned as immu
 ## SCN-BOOK-022
 
 **Risk:** Critical
-**PRD:** REQ-P1-BOOK-01
-**Title:** Customer selects one applicant and booking becomes ASSIGNED
+**PRD:** REQ-P1-BOOK-01, REQ-P1-MATCH-04
+**Title:** Customer selects one applicant and selected tasker acceptance confirms booking
 
 Given a task has multiple qualified applications in OPEN status
 When the customer selects exactly one applicant
+Then the selected application enters pending acceptance state
+And no booking is confirmed yet
+And when the selected tasker accepts within the active acceptance window
 Then the booking is created in ASSIGNED status
-And the selected applicant becomes the assigned tasker
 And the booking record references the selected application
 
 ## SCN-BOOK-023
@@ -329,3 +331,37 @@ When the customer does not respond within the configured timeout after reminder 
 Then the booking auto-completes via the timeout path
 And the booking transitions to COMPLETED
 And the completion is recorded as auto-completed rather than customer-confirmed
+
+## SCN-BOOK-028
+
+**Risk:** High
+**PRD:** REQ-P1-BOOK-27
+**Title:** Ops can resolve stalled or contested completion before finalization
+
+Given a booking is in customer-confirmation-pending state
+And the normal completion flow stalls or becomes contested
+When an admin reviews the completion edge case
+Then the admin can record the resolution decision before final booking finalization
+And the decision leaves an audit trail tied to the booking
+
+## SCN-BOOK-029
+
+**Risk:** High
+**PRD:** REQ-P1-BOOK-28
+**Title:** Completion or complaint evidence artifacts can be attached when required
+
+Given a completion dispute or complaint requires supporting evidence
+When a participant or admin attaches an evidence artifact
+Then the artifact is associated with the booking or completion case
+And the artifact is available to authorized admin review surfaces
+
+## SCN-BOOK-030
+
+**Risk:** High
+**PRD:** REQ-P1-PRICE-08
+**Title:** Pricing state changes are auditable from application through booking lock
+
+Given a task receives applications and one applicant is selected
+When application pricing, selection, acceptance, and booking lock events are recorded
+Then each price-relevant state change has an immutable audit event
+And the final locked booking price can be traced back to the accepted budget or quote response

@@ -148,8 +148,24 @@ components:
       $ref: ./components/schemas/messaging.yaml#/Conversation
     Message:
       $ref: ./components/schemas/messaging.yaml#/Message
+    CreditBalance:
+      $ref: ./components/schemas/monetization.yaml#/CreditBalance
+    CreditTransaction:
+      $ref: ./components/schemas/monetization.yaml#/CreditTransaction
+    CreditPack:
+      $ref: ./components/schemas/monetization.yaml#/CreditPack
+    WalletBalance:
+      $ref: ./components/schemas/monetization.yaml#/WalletBalance
+    LedgerEntry:
+      $ref: ./components/schemas/monetization.yaml#/LedgerEntry
+    PayoutRequest:
+      $ref: ./components/schemas/monetization.yaml#/PayoutRequest
     FeatureToggle:
       $ref: ./components/schemas/monetization.yaml#/FeatureToggle
+    TaskerSubscription:
+      $ref: ./components/schemas/monetization.yaml#/TaskerSubscription
+    ReferralSummary:
+      $ref: ./components/schemas/referrals.yaml#/ReferralSummary
     ReverseGeocodeResponse:
       $ref: ./components/schemas/location.yaml#/ReverseGeocodeResponse
     LocationSearchResponse:
@@ -236,8 +252,6 @@ paths:
     $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications
   /tasks/{id}/applications/{applicationId}/accept:
     $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications~1{applicationId}~1accept
-  /tasks/{id}/applications/{applicationId}/select:
-    $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications~1{applicationId}~1select
   /tasks/{id}/applications/{applicationId}/confirm:
     $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications~1{applicationId}~1confirm
   /tasks/{id}/applications/{applicationId}/withdraw:

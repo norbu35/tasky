@@ -20,6 +20,7 @@ import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.UserProfileService;
 import mn.tasky.auth.dto.UserProfile;
 import mn.tasky.booking.publicapi.BookingCommandPort;
+import mn.tasky.booking.publicapi.BookingIntentCommandPort;
 import mn.tasky.category.application.CategoryService;
 import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.category.dto.CategoryState;
@@ -73,6 +74,9 @@ class TaskApplicationScenarioTests {
     private BookingCommandPort bookingCommandPort;
 
     @Mock
+    private BookingIntentCommandPort bookingIntentCommandPort;
+
+    @Mock
     private NotificationService notificationService;
 
     @Mock
@@ -119,6 +123,7 @@ class TaskApplicationScenarioTests {
         applicationService = new TaskApplicationService(
                 userProfileService,
                 bookingCommandPort,
+                bookingIntentCommandPort,
                 notificationService,
                 analyticsService,
                 domainEventOutboxService,

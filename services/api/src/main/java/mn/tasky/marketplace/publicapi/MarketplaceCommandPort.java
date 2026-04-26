@@ -1,6 +1,7 @@
 package mn.tasky.marketplace.publicapi;
 
 import java.util.Optional;
+import mn.tasky.booking.dto.BookingIntentCreateResult;
 import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.task.dto.CreateTask;
 import mn.tasky.task.dto.TaskAcceptResult;
@@ -8,7 +9,6 @@ import mn.tasky.task.dto.TaskApplyResult;
 import mn.tasky.task.dto.TaskCancelResult;
 import mn.tasky.task.dto.TaskCreateResult;
 import mn.tasky.task.dto.TaskDraft;
-import mn.tasky.task.dto.TaskSelectResult;
 import mn.tasky.task.dto.TaskUpdateResult;
 import mn.tasky.task.dto.TaskWithdrawResult;
 import mn.tasky.task.dto.UpdateTask;
@@ -22,12 +22,10 @@ public interface MarketplaceCommandPort {
 
     TaskApplyResult applyToTask(String taskerId, String taskerRole, String taskId, String message, Integer quotePrice);
 
-    TaskAcceptResult acceptApplication(
+    BookingIntentCreateResult acceptApplication(
             String customerId, String taskId, String applicationId, boolean liabilityDisclaimerAccepted);
 
-    TaskSelectResult selectApplication(String customerId, String taskId, String applicationId);
-
-    TaskAcceptResult confirmAcceptance(String taskerId, String applicationId);
+    TaskAcceptResult confirmAcceptance(String taskerId, String taskId, String applicationId);
 
     TaskWithdrawResult withdrawApplication(String taskerId, String applicationId);
 

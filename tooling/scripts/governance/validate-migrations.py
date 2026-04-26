@@ -68,9 +68,12 @@ def resolve_base_ref(cli_base: str) -> str:
 
 def is_versioned_path(path: str) -> bool:
     path_obj = Path(path)
+    if not path_obj.is_absolute():
+        path_obj = REPO_ROOT / path_obj
+    path_obj = path_obj.resolve()
     if path_obj.suffix.lower() != ".sql":
         return False
-    if path_obj.parent != MIGRATION_DIR:
+    if path_obj.parent != MIGRATION_DIR.resolve():
         return False
     return VERSIONED_RE.match(path_obj.name) is not None
 

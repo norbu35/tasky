@@ -1,4 +1,3 @@
-import { createMobileApiClient } from '@/lib/mobileApiClient';
 import type {
   Booking,
   BookingFilters,
@@ -6,6 +5,7 @@ import type {
   BookingScheduleEvent,
   CursorPage,
 } from '@/lib/api/types';
+import { createMobileApiClient } from '@/lib/mobileApiClient';
 
 const getClient = () => createMobileApiClient();
 
@@ -107,8 +107,8 @@ export async function acceptApplication(
   applicationId: string,
   liabilityDisclaimerAccepted: boolean,
   idempotencyKey: string,
-): Promise<Booking> {
-  return getClient().requestJson<Booking>(
+): Promise<BookingIntent> {
+  return getClient().requestJson<BookingIntent>(
     `/tasks/${taskId}/applications/${applicationId}/accept`,
     {
       method: 'POST',

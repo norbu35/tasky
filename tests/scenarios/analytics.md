@@ -16,9 +16,10 @@ Then a TASK_POSTED analytics event is emitted with category_id, task_id, locale,
 
 **Risk:** High
 **PRD:** REQ-P1-KPI-04, REQ-P1-KPI-01
-**Title:** Booking confirmed event is emitted when an application is accepted
+**Title:** Booking confirmed event is emitted when selected tasker accepts
 
-Given a customer accepts a tasker application
+Given a customer has selected one applicant for a task
+And the selected tasker accepts within the active acceptance window
 When the booking is confirmed
 Then a BOOKING_CONFIRMED analytics event is emitted
 
@@ -52,3 +53,15 @@ Given an eligible task has received no qualified application within 8 hours and 
 Or an operator performs manual task-specific rescue
 When the intervention is recorded
 Then an INTERVENTION_RECORDED analytics event is emitted with task_id, intervention_type, and intervention_stage
+
+## SCN-ANALYTICS-006
+
+**Risk:** High
+**PRD:** REQ-P1-KPI-02, REQ-P1-KPI-05, REQ-P1-KPI-06
+**Title:** KPI scorecard uses backend metrics with category default and auditable source data
+
+Given the launch KPI scorecard is generated
+When metric data is loaded
+Then metric values come from backend-exported business metrics or canonical state transitions
+And category is the default scorecard slice with district available as drilldown
+And each launch-critical metric can be traced to auditable source events or state changes

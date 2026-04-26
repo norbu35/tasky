@@ -4,42 +4,44 @@ Coverage tables for REQ-P1 and NFR → SCN traceability. For rules and enforceme
 
 ## REQ-P1 → SCN Coverage Matrix
 
-| REQ-P1 Domain | Total   | Covered      | Uncovered IDs          | Priority |
-| ------------- | ------- | ------------ | ---------------------- | -------- |
-| AUTH          | 6       | 6            | —                      | ✓        |
-| TASK          | 15      | 11           | 11, 12, 13, 14         | 🟡       |
-| SAFE          | 18      | 14           | 03, 04, 13, 17         | 🔴       |
-| MSG           | 5       | 5            | —                      | ✓        |
-| BOOK          | 28      | 26           | 27, 28                 | 🔴       |
-| PRICE         | 8       | 6            | 06, 08                 | 🟡       |
-| MATCH         | 7       | 6            | 04                     | 🟡       |
-| NOTIF         | 7       | 6            | 03                     | 🟡       |
-| ASSIST        | 8       | 5            | 02, 04, 08             | 🔴       |
-| KPI           | 6       | 3            | 02, 05, 06             | 🔴       |
-| COVER         | 4       | 2            | 01, 06                 | 🔴       |
-| CAT           | 5       | 3            | 02, 03                 | 🟡       |
-| ADMIN         | 10      | 4            | 03, 04, 06, 07, 08, 10 | 🔴       |
-| **Total**     | **127** | **97 (76%)** | **30**                 |          |
+| REQ-P1 Domain | Total   | Covered | Uncovered IDs | Priority |
+| ------------- | ------- | ------- | ------------- | -------- |
+| AUTH          | 6       | 6       | —             | ✓        |
+| TASK          | 15      | 15      | —             | ✓        |
+| SAFE          | 18      | 18      | —             | ✓        |
+| MSG           | 5       | 5       | —             | ✓        |
+| BOOK          | 28      | 28      | —             | ✓        |
+| PRICE         | 8       | 8       | —             | ✓        |
+| MATCH         | 7       | 7       | —             | ✓        |
+| NOTIF         | 7       | 7       | —             | ✓        |
+| ASSIST        | 8       | 8       | —             | ✓        |
+| KPI           | 6       | 6       | —             | ✓        |
+| COVER         | 4       | 4       | —             | ✓        |
+| CAT           | 5       | 5       | —             | ✓        |
+| ADMIN         | 10      | 10      | —             | ✓        |
+| **Total**     | **127** | **127** | **0**         |          |
 
 ## SCN Domain → REQ-P1 Domain Map
 
 | SCN Domain   | Scenarios | Primary Requirement IDs      | Test Type                |
 | ------------ | --------- | ---------------------------- | ------------------------ |
+| ADMIN        | 5         | ADMIN                        | domain-unit              |
+| ANALYTICS    | 6         | KPI                          | domain-unit              |
+| ASSISTANCE   | 10        | ASSIST                       | domain-unit              |
 | AUTH         | 12        | AUTH                         | domain-unit, integration |
-| BOOK         | 27        | BOOK                         | domain-unit, integration |
-| TASK         | 29        | TASK                         | domain-unit, integration |
-| SECURITY     | 11        | SAFE, NFR-SEC                | domain-unit, integration |
-| REVIEW       | 6         | SAFE                         | domain-unit              |
-| CATEGORY     | 13        | CAT, ADMIN                   | domain-unit              |
-| DISPUTE      | 8         | BOOK, SAFE                   | domain-unit              |
-| NOTIFICATION | 7         | NOTIF                        | domain-unit              |
-| ASSISTANCE   | 8         | ASSIST                       | domain-unit              |
-| VERIFICATION | 5         | SAFE                         | domain-unit              |
-| MESSAGING    | 5         | MSG                          | domain-unit              |
-| ANALYTICS    | 5         | KPI                          | domain-unit              |
+| BOOK         | 30        | BOOK, MATCH, PRICE           | domain-unit, integration |
+| CATEGORY     | 15        | CAT, ADMIN                   | domain-unit              |
 | CONTRACT     | 4         | NFR-API-02                   | integration              |
+| COVERAGE     | 1         | COVER                        | domain-unit              |
+| DISPUTE      | 8         | BOOK, SAFE                   | domain-unit              |
 | INTEGRATION  | 5         | AUTH, BOOK, TASK, NFR-API-02 | integration              |
-| **Total**    | **145**   |                              |                          |
+| MESSAGING    | 5         | MSG                          | domain-unit              |
+| NOTIFICATION | 8         | NOTIF                        | domain-unit              |
+| REVIEW       | 7         | SAFE                         | domain-unit              |
+| SECURITY     | 12        | SAFE, NFR-SEC                | domain-unit, integration |
+| TASK         | 33        | TASK, MATCH, PRICE, SAFE     | domain-unit, integration |
+| VERIFICATION | 5         | SAFE, ADMIN                  | domain-unit              |
+| **Total**    | **166**   |                              |                          |
 
 ## NFR → Phase 1 Status
 
@@ -58,6 +60,6 @@ Coverage tables for REQ-P1 and NFR → SCN traceability. For rules and enforceme
 | Status   | Count | Meaning                                    |
 | -------- | ----- | ------------------------------------------ |
 | covered  | 145   | Test implemented                           |
-| untested | 0     | Scenario defined; test pending             |
+| untested | 21    | Scenario defined; test pending             |
 | waived   | 0     | No active waivers in the live registry     |
 | null     | 0     | No uncategorized rows in the live registry |

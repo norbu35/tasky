@@ -140,7 +140,7 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-004 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-004: Budget below 20000 MNT is rejected")
+    @DisplayName("SCN-TASK-004: Budget-mode amount below 20000 MNT is rejected")
     void budgetOf19999Rejected() {
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", taskBody(19999), custToken);
 
@@ -150,7 +150,7 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-005 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-005: Budget of 20000 MNT is accepted, 19999 is rejected")
+    @DisplayName("SCN-TASK-005: Budget-mode amount of 20000 MNT is accepted, 19999 is rejected")
     void budgetOf20000Accepted() {
         // @Min(20000) on the DTO — the actual minimum validated by Spring is 20000
         // This test documents current enforcement: 20000 is accepted, 19999 is rejected.

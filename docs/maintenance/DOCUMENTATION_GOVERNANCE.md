@@ -52,7 +52,7 @@ The validator cross-checks named repo surfaces against live inventories, includi
 - PRD requirement IDs from `docs/PRD.md`
 - Java classes and FQNs under `services/api/src/{main,test}/java`
 - DB tables and columns from `tooling/config/expected-schema.json`
-- env vars from `.env*.example`
+- env vars from root `.env*.example` files and app-level `apps/*/.env*.example` files
 - config keys from `application*.yml` plus code-backed property declarations
 - OpenAPI operationIds and method/path pairs from the bundled API contract
 - Flyway migration versions/files
@@ -99,6 +99,17 @@ Design component drift is checked by `tooling/scripts/governance/validate-design
 Implemented component entries in `docs/design/component-contract.yaml` must point at an exported component; future
 component entries and prop mismatches are reported as warnings until their implementation path is active.
 
+Screen-spec traceability is checked by `tooling/scripts/governance/validate-screen-spec-traceability.py`.
+Every active `docs/design/screen-specs/SCR-*.yaml` file must include a `traceability` block tying the screen spec to:
+
+- a `screen_graph_node` that matches the spec's `screen_id` and resolves in `docs/design/screen-graph.yaml`
+- live `REQ-P1-*` / `NFR-*` IDs from `docs/PRD.md`
+- `JRN-*`, `JRN-*:step-N`, alternate-path IDs, or journey `paths[].id` refs from `docs/design/journey-catalog.yaml`
+- existing `SCN-*` IDs from `tests/registry.yaml` when scenario-backed coverage exists
+
+`traceability.status: pending_audit` is allowed only for explicitly scoped follow-up audits. New or materially changed
+screen specs should use `validated`, which requires at least one PRD ref and one journey ref.
+
 Design navigation and lifecycle structure is checked by `pnpm repo:design:check`, which runs three validators:
 
 - `tooling/skills/design-surface-drift/scripts/check_screen_graph.py` — node uniqueness, edge resolution, deep link and tab bar root validation
@@ -136,4 +147,5 @@ Allowlist rules:
 - If OpenAPI changed, were both `docs/openapi/**` and `docs/API.yaml` updated together?
 - If a doc names a code/config/schema surface, does it resolve under `validate-doc-claims.py` without a stale suppress entry?
 - If `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, or `docs/design/domain-lifecycles.yaml` changed, does `pnpm repo:design:check` still pass?
+- If `docs/design/screen-specs/SCR-*.yaml` changed, does `python3 tooling/scripts/governance/validate-screen-spec-traceability.py` pass, and does every materially touched spec remain `validated`?
 - If `docs/PRD.md` changed, were affected scenarios, architecture, maintenance, design, and contract surfaces reviewed (use `pnpm repo:prd:diff-ids`)?

@@ -32,7 +32,8 @@ entities:
         trigger: customer_selects_applicant
         guard: applicant.status == APPLIED, customer accepts liability disclaimer
         side_effects:
-          - create booking_intent(PENDING)
+          - create booking_intent(PENDING) with selected application, accepted liability
+            disclaimer, and candidate agreed price
           - mark application as SELECTED
           - notify selected Tasker
           - start 4-hour response timer
@@ -41,10 +42,13 @@ entities:
         source: OPEN
         target: ASSIGNED
         trigger: selected_tasker_confirms_selection
-        guard: active booking intent exists and selected Tasker accepts within SLA
+        guard: active booking intent exists and selected Tasker accepts within the default
+          four-hour response window
         side_effects:
           - create confirmed booking record
           - reject remaining applicants
+          - lock agreed booking price on the booking record
+          - persist liability-disclaimer acceptance on the booking record
           - reveal exact address to Tasker
           - cancel no-qualified-application evaluation window
         phase: 0-1
@@ -152,6 +156,7 @@ entities:
         guard: task transitions OPEN → ASSIGNED
         side_effects:
           - create booking record
+          - lock agreed booking price and liability-disclaimer acceptance
           - reveal exact address to Tasker
           - schedule no-show reminder at start +30min
         phase: 0-1
@@ -240,13 +245,13 @@ entities:
         source: ASSIGNED
         target: ASSIGNED
         trigger: pre_noshow_reminder
-        guard: schedule_start + 10min elapsed
+        guard: schedule_start + 30min elapsed
         side_effects:
           - push both parties to update status
         phase: 0-1
     business_rules:
       - Booking is separate from Task and begins only after the selected Tasker accepts
-        within SLA
+        within the default four-hour response window
       - Free cancellation applies more than 4 hours before schedule
       - Late cancellation records a reliability incident
       - Tasker cancel re-opens the task and records a strike
@@ -274,8 +279,9 @@ entities:
         target: APPLIED
         trigger: tasker_applies
         guard: tasker.verification == APPROVED, task.status == OPEN, user is not banned
-          or suspended
+          or suspended, pricing response is valid for task pricing mode
         side_effects:
+          - persist structured application note and pricing response
           - increment task.application_count
           - notify customer
         phase: 0-1
@@ -335,6 +341,8 @@ entities:
         phase: 0-1
     business_rules:
       - Tasker must be verified to apply
+      - 'Application pricing response follows the task pricing mode: budget acceptance or one quote'
+      - 'Category-specific vetting and service-area preferences are not application gates in Phase 1'
       - Customers can review all applications; the UI may optionally highlight a suggested
         subset
       - Selected Tasker has the default 4-hour window to accept or decline
@@ -478,9 +486,11 @@ entities:
         phase: 0-1
     business_rules:
       - Can raise during ASSIGNED or within the allowed post-completion window
-      - 'At least 1 evidence artifact required: chat, photo, or written timeline'
+      - Disputes can be submitted with evidence, or without evidence only into the
+        evidence-needed grace path
       - Grace-path disputes may close as insufficient evidence if evidence is not provided
-      - Open dispute triggers review hard lock for both parties
+      - Open disputes do not create review debt; review gates follow reviewable terminal
+        outcomes only
       - Dispute resolution affects trust metrics
       - Admin can resolve from both OPEN and ESCALATED states
       - 'Evidence types: chat excerpt, photo, written timeline'

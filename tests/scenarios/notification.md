@@ -16,11 +16,12 @@ Then a push notification is sent to the tasker's device token
 
 **Risk:** High
 **PRD:** REQ-P1-NOTIF-02
-**Title:** Booking confirmation sends hired notification to the tasker
+**Title:** Selected tasker notification is sent when chosen by a customer
 
-Given a customer has accepted a tasker's application
-When the booking is confirmed
-Then a push notification is sent to the tasker indicating they are hired
+Given a customer selects exactly one applicant for a task
+When the pending acceptance window starts
+Then a push notification is sent to the selected tasker indicating they were chosen
+And the notification does not imply booking confirmation before tasker acceptance
 
 ## SCN-NOTIF-003
 
@@ -71,3 +72,14 @@ Then the affected tasker receives a push notification informing them of the deci
 Given a reviewable terminal outcome has created review debt
 When the review obligation workflow finishes
 Then both the customer and tasker receive a notification prompting them to submit their owed review
+
+## SCN-NOTIF-008
+
+**Risk:** High
+**PRD:** REQ-P1-NOTIF-03
+**Title:** Booking confirmation notification is sent to both participants
+
+Given a selected tasker accepts within the active acceptance window
+When the booking becomes confirmed
+Then the customer receives a booking-confirmed notification
+And the tasker receives a booking-confirmed notification

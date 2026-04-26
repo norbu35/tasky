@@ -597,27 +597,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/tasks/{id}/applications/{applicationId}/select": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Select an applicant (customer action)
-         * @description Customer selects a tasker's application, starting the 4-hour acceptance window.
-         *     The tasker receives a push notification to confirm.
-         */
-        post: operations["selectApplication"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/tasks/{id}/applications/{applicationId}/confirm": {
         parameters: {
             query?: never;
@@ -2518,11 +2497,15 @@ export interface components {
             /** Format: uuid */
             customer_id: string;
             /** @enum {string} */
-            source: "APPLICATION_SELECTION";
+            source: "APPLICATION_SELECTION" | "REBOOK" | "INSTANT_MATCH";
             /** @enum {string} */
             status: "PENDING" | "CONFIRMED" | "DECLINED" | "EXPIRED" | "CANCELLED";
             /** Format: uuid */
             selected_application_id?: string | null;
+            /** Format: uuid */
+            original_booking_id?: string | null;
+            /** Format: uuid */
+            offer_id?: string | null;
             /** Format: date-time */
             expires_at?: string | null;
             /** Format: uuid */
@@ -2651,6 +2634,79 @@ export interface components {
             /** Format: date-time */
             created_at: string;
         };
+        CreditBalance: {
+            balance: number;
+            total_purchased: number;
+            total_spent: number;
+            total_refunded: number;
+        };
+        CreditTransaction: {
+            /** Format: uuid */
+            id: string;
+            amount: number;
+            /** @enum {string} */
+            type: "PURCHASE" | "SPEND" | "REFUND" | "SIGNUP_BONUS";
+            reference_id?: string | null;
+            /** Format: date-time */
+            created_at: string;
+        };
+        CreditPack: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            credit_count: number;
+            price_mnt: number;
+            is_active: boolean;
+        };
+        WalletBalance: {
+            /**
+             * @description Available balance in MNT.
+             * @example 250000
+             */
+            available_balance: number;
+            /**
+             * @description Pending balance in MNT (not yet eligible for payout).
+             * @example 100000
+             */
+            pending_balance: number;
+            /** @example MNT */
+            currency: string;
+        };
+        LedgerEntry: {
+            /** Format: uuid */
+            id: string;
+            /** @description Signed amount in MNT. Positive = credit, negative = debit. */
+            amount: number;
+            /** @enum {string} */
+            type: "DEPOSIT" | "FEE" | "PAYOUT" | "REFUND";
+            /**
+             * Format: uuid
+             * @description Related booking or payout ID.
+             */
+            reference_id?: string | null;
+            /** @example Цэвэрлэгээ ажил #1234 — орлого */
+            description: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        PayoutRequest: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            user_id?: string;
+            /** @description Payout amount in MNT. */
+            amount: number;
+            /** @example Хаан банк */
+            bank_name: string;
+            /** @example 5012345678 */
+            bank_account: string;
+            /** @enum {string} */
+            status: "PENDING" | "PROCESSED" | "REJECTED";
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            processed_at?: string | null;
+        };
         FeatureToggle: {
             /** @description Feature toggle key. Active launch docs do not treat toggle presence as rollout scope. */
             feature_name: string;
@@ -2659,6 +2715,26 @@ export interface components {
             updated_by?: string | null;
             /** Format: date-time */
             updated_at: string;
+        };
+        TaskerSubscription: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tasker_id: string;
+            /** @enum {string} */
+            status: "ACTIVE" | "CANCELLED" | "EXPIRED";
+            /** Format: date-time */
+            started_at: string;
+            /** Format: date-time */
+            expires_at?: string | null;
+        };
+        ReferralSummary: {
+            referral_code: string;
+            /** Format: uri */
+            referral_link: string;
+            successful_referrals_this_month: number;
+            /** @description Remaining successful referrals eligible for rewards within monthly cap. */
+            remaining_reward_capacity_this_month?: number;
         };
         ReverseGeocodeResponse: {
             formatted_address: string;
@@ -2748,99 +2824,6 @@ export interface components {
             intake_enabled: boolean;
             assisted_distribution_enabled: boolean;
             is_active?: boolean;
-        };
-        PayoutRequest: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            user_id?: string;
-            /** @description Payout amount in MNT. */
-            amount: number;
-            /** @example Хаан банк */
-            bank_name: string;
-            /** @example 5012345678 */
-            bank_account: string;
-            /** @enum {string} */
-            status: "PENDING" | "PROCESSED" | "REJECTED";
-            /** Format: date-time */
-            created_at: string;
-            /** Format: date-time */
-            processed_at?: string | null;
-        };
-        WalletBalance: {
-            /**
-             * @description Available balance in MNT.
-             * @example 250000
-             */
-            available_balance: number;
-            /**
-             * @description Pending balance in MNT (not yet eligible for payout).
-             * @example 100000
-             */
-            pending_balance: number;
-            /** @example MNT */
-            currency: string;
-        };
-        LedgerEntry: {
-            /** Format: uuid */
-            id: string;
-            /** @description Signed amount in MNT. Positive = credit, negative = debit. */
-            amount: number;
-            /** @enum {string} */
-            type: "DEPOSIT" | "FEE" | "PAYOUT" | "REFUND";
-            /**
-             * Format: uuid
-             * @description Related booking or payout ID.
-             */
-            reference_id?: string | null;
-            /** @example Цэвэрлэгээ ажил #1234 — орлого */
-            description: string;
-            /** Format: date-time */
-            created_at: string;
-        };
-        TaskerSubscription: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            tasker_id: string;
-            /** @enum {string} */
-            status: "ACTIVE" | "CANCELLED" | "EXPIRED";
-            /** Format: date-time */
-            started_at: string;
-            /** Format: date-time */
-            expires_at?: string | null;
-        };
-        CreditBalance: {
-            balance: number;
-            total_purchased: number;
-            total_spent: number;
-            total_refunded: number;
-        };
-        CreditTransaction: {
-            /** Format: uuid */
-            id: string;
-            amount: number;
-            /** @enum {string} */
-            type: "PURCHASE" | "SPEND" | "REFUND" | "SIGNUP_BONUS";
-            reference_id?: string | null;
-            /** Format: date-time */
-            created_at: string;
-        };
-        CreditPack: {
-            /** Format: uuid */
-            id: string;
-            name: string;
-            credit_count: number;
-            price_mnt: number;
-            is_active: boolean;
-        };
-        ReferralSummary: {
-            referral_code: string;
-            /** Format: uri */
-            referral_link: string;
-            successful_referrals_this_month: number;
-            /** @description Remaining successful referrals eligible for rewards within monthly cap. */
-            remaining_reward_capacity_this_month?: number;
         };
     };
     responses: {
@@ -4062,41 +4045,6 @@ export interface operations {
             };
             /** @description Liability disclaimer not accepted. */
             422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    selectApplication: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: components["parameters"]["PathId"];
-                applicationId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Application selected. Tasker has 4 hours to confirm. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TaskApplication"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            /** @description Application already processed or task assigned. */
-            409: {
                 headers: {
                     [name: string]: unknown;
                 };

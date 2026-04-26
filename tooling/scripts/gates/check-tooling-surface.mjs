@@ -54,9 +54,7 @@ function executableReferenceFiles() {
         ...listFiles(path.join(repoRoot, ".husky"), ".husky"),
         ...listWorkflowFiles(),
         ...listFiles(path.join(repoRoot, "tooling", "scripts"), "tooling/scripts"),
-        ...readdirSync(repoRoot)
-            .filter((file) => file.startsWith("docker-compose") && (file.endsWith(".yml") || file.endsWith(".yaml")))
-            .map((file) => file),
+        ...(registry.composeFiles ?? []),
     ];
 }
 

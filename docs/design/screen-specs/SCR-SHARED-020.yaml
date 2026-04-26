@@ -1,136 +1,148 @@
 # Screen Spec: Suspended Account
 screen_id: SCR-SHARED-020
-name: "Suspended Account"
-route: "/account/suspended"
+name: 'Suspended Account'
+route: '/account/suspended'
 role: [customer, tasker]
-phase: "0-1"
+phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-SHARED-020
+  prd_refs:
+    - REQ-P1-AUTH-05
+    - REQ-P1-BOOK-17
+    - REQ-P1-SAFE-17
+  journey_refs:
+    - JRN-INFRA-02-P1
+  scenario_refs:
+    - SCN-AUTH-008
+    - SCN-BOOK-006
 template: error_state
-figma_page: "Shared/Suspended Account"
-feature: "account_status"
+figma_page: 'Shared/Suspended Account'
+feature: 'account_status'
 
 layout:
   template: error_state
   density: comfortable
-  structure: "safe_area -> centered(warning_icon + title + body_text + expiry_info + appeal_section + cta)"
+  structure: 'safe_area -> centered(warning_icon + title + body_text + expiry_info + appeal_section + cta)'
 
 components:
   - id: COMP-EMPTYSTATE
-    usage: "Full-screen suspension notice with warning illustration, explanation, and appeal option"
+    usage: 'Full-screen suspension notice with warning illustration, explanation, and appeal option'
     props:
-      illustration: "account_suspended"
-      headline: "Бүртгэл түдгэлзүүлсэн"
-      description: "Таны бүртгэл түр хугацаагаар түдгэлзүүлсэн байна"
-      ctaLabel: "Гомдол гаргах"
-      onCtaPress: "handleAppeal"
+      illustration: 'account_suspended'
+      headline: 'Бүртгэл түдгэлзүүлсэн'
+      description: 'Таны бүртгэл түр хугацаагаар түдгэлзүүлсэн байна'
+      ctaLabel: 'Гомдол гаргах'
+      onCtaPress: 'handleAppeal'
     variant: error
 
   - id: COMP-BUTTON
-    usage: "Appeal button for users to submit an appeal against suspension"
+    usage: 'Appeal button for users to submit an appeal against suspension'
     props:
-      label: "Гомдол гаргах"
+      label: 'Гомдол гаргах'
       variant: primary
       size: lg
     variant: primary
 
   - id: COMP-BUTTON
-    usage: "Logout button as secondary action"
+    usage: 'Logout button as secondary action'
     props:
-      label: "Гарах"
+      label: 'Гарах'
       variant: ghost
       size: lg
     variant: ghost
 
 states:
   - id: default_with_expiry
-    description: "Suspension has a known expiry date; shows countdown or date when suspension will be lifted"
+    description: 'Suspension has a known expiry date; shows countdown or date when suspension will be lifted'
     components_visible: [COMP-EMPTYSTATE, COMP-BUTTON]
     components_hidden: []
 
   - id: no_expiry
-    description: "Suspension has no set expiry (indefinite pending review); appeal CTA prominently shown"
+    description: 'Suspension has no set expiry (indefinite pending review); appeal CTA prominently shown'
     components_visible: [COMP-EMPTYSTATE, COMP-BUTTON]
     components_hidden: []
 
   - id: appeal_sent
-    description: "User has already submitted an appeal; appeal button replaced with status message indicating appeal is under review"
+    description: 'User has already submitted an appeal; appeal button replaced with status message indicating appeal is under review'
     components_visible: [COMP-EMPTYSTATE, COMP-BUTTON]
     components_hidden: []
 
 copy:
   - key: title_suspended
-    mn: "Бүртгэл түдгэлзүүлсэн"
-    en: "Account Suspended"
+    mn: 'Бүртгэл түдгэлзүүлсэн'
+    en: 'Account Suspended'
     max_chars: 30
 
   - key: body_with_expiry
-    mn: "Таны бүртгэл түр хугацаагаар түдгэлзүүлсэн байна. Дараах хугацаанд сэргэнэ:"
-    en: "Your account has been temporarily suspended. It will be restored on:"
+    mn: 'Таны бүртгэл түр хугацаагаар түдгэлзүүлсэн байна. Дараах хугацаанд сэргэнэ:'
+    en: 'Your account has been temporarily suspended. It will be restored on:'
     max_chars: 120
 
   - key: body_no_expiry
-    mn: "Таны бүртгэл хянагдаж байна. Гомдол гаргах боломжтой."
-    en: "Your account is under review. You may submit an appeal."
+    mn: 'Таны бүртгэл хянагдаж байна. Гомдол гаргах боломжтой.'
+    en: 'Your account is under review. You may submit an appeal.'
     max_chars: 100
 
   - key: label_expiry_date
-    mn: "Сэргэх огноо"
-    en: "Restoration date"
+    mn: 'Сэргэх огноо'
+    en: 'Restoration date'
     max_chars: 20
 
   - key: body_appeal_sent
-    mn: "Таны гомдол хүлээн авлаа. Бид аль болох хурдан шалгаж хариу өгнө."
-    en: "Your appeal has been received. We will review it and respond as soon as possible."
+    mn: 'Таны гомдол хүлээн авлаа. Бид аль болох хурдан шалгаж хариу өгнө.'
+    en: 'Your appeal has been received. We will review it and respond as soon as possible.'
     max_chars: 120
 
   - key: label_appeal_status
-    mn: "Гомдлын төлөв: Хянагдаж байна"
-    en: "Appeal status: Under review"
+    mn: 'Гомдлын төлөв: Хянагдаж байна'
+    en: 'Appeal status: Under review'
     max_chars: 40
 
   - key: cta_appeal
-    mn: "Гомдол гаргах"
-    en: "Submit Appeal"
+    mn: 'Гомдол гаргах'
+    en: 'Submit Appeal'
     max_chars: 20
 
   - key: cta_appeal_disabled
-    mn: "Гомдол илгээгдсэн"
-    en: "Appeal Submitted"
+    mn: 'Гомдол илгээгдсэн'
+    en: 'Appeal Submitted'
     max_chars: 20
 
   - key: cta_logout
-    mn: "Гарах"
-    en: "Logout"
+    mn: 'Гарах'
+    en: 'Logout'
     max_chars: 10
 
   - key: suspension_reason_label
-    mn: "Шалтгаан"
-    en: "Reason"
+    mn: 'Шалтгаан'
+    en: 'Reason'
     max_chars: 15
 
 api_endpoints:
   - method: GET
-    path: "/users/me"
-    purpose: "Fetch user profile to check suspension status, expiry date, and appeal status"
+    path: '/users/me'
+    purpose: 'Fetch user profile to check suspension status, expiry date, and appeal status'
 
 analytics_events:
-  - event: "suspended_screen_viewed"
-    trigger: "Suspended account screen loads (with has_expiry: boolean)"
-  - event: "suspension_appeal_tapped"
-    trigger: "User taps the Submit Appeal button"
-  - event: "suspension_appeal_submitted"
-    trigger: "Appeal submission completes successfully"
-  - event: "suspension_logout_tapped"
-    trigger: "User taps the Logout button"
+  - event: 'suspended_screen_viewed'
+    trigger: 'Suspended account screen loads (with has_expiry: boolean)'
+  - event: 'suspension_appeal_tapped'
+    trigger: 'User taps the Submit Appeal button'
+  - event: 'suspension_appeal_submitted'
+    trigger: 'Appeal submission completes successfully'
+  - event: 'suspension_logout_tapped'
+    trigger: 'User taps the Logout button'
 
 acceptance_criteria:
-  - "Screen blocks all app functionality; only appeal and logout actions are available"
-  - "With-expiry state shows the suspension end date in YYYY.MM.DD format"
-  - "No-expiry state shows indefinite suspension message with prominent appeal CTA"
+  - 'Screen blocks all app functionality; only appeal and logout actions are available'
+  - 'With-expiry state shows the suspension end date in YYYY.MM.DD format'
+  - 'No-expiry state shows indefinite suspension message with prominent appeal CTA'
   - "Appeal-sent state replaces the appeal button with 'Гомдол илгээгдсэн' disabled state and status message"
-  - "Appeal button transitions to disabled/loading state during submission"
-  - "If suspension expires while on this screen, auto-navigates (replace) to SCR-CUST-001 (customer) or SCR-TASK-001 (tasker)"
-  - "Logout button clears JWT and navigates (replace) to SCR-SHARED-002"
-  - "Uses comfortable density for emotional weight"
-  - "Warning icon/illustration is centered above the text content"
-  - "Suspension reason is shown if available from the user profile data"
-  - "All body text uses 16px minimum for Mongolian Cyrillic readability"
+  - 'Appeal button transitions to disabled/loading state during submission'
+  - 'If suspension expires while on this screen, auto-navigates (replace) to SCR-CUST-001 (customer) or SCR-TASK-001 (tasker)'
+  - 'Logout button clears JWT and navigates (replace) to SCR-SHARED-002'
+  - 'Uses comfortable density for emotional weight'
+  - 'Warning icon/illustration is centered above the text content'
+  - 'Suspension reason is shown if available from the user profile data'
+  - 'All body text uses 16px minimum for Mongolian Cyrillic readability'

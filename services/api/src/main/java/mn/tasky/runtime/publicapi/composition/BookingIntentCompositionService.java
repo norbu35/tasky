@@ -16,6 +16,7 @@ public class BookingIntentCompositionService {
         body.put("customer_id", intent.customerId());
         body.put("source", intent.source());
         body.put("status", intent.status());
+        body.put("selected_application_id", intent.selectedApplicationId());
         body.put("original_booking_id", intent.originalBookingId());
         body.put("offer_id", intent.offerId());
         body.put("expires_at", intent.expiresAt() != null ? intent.expiresAt().toString() : null);

@@ -123,3 +123,14 @@ Given a bearer token identifies a deleted user account
 When the user calls a protected product endpoint
 Then the response status is 403
 And the account is not granted access
+
+## SCN-SEC-014
+
+**Risk:** High
+**PRD:** REQ-P1-SAFE-17
+**Title:** Trust-sensitive actions and evidence access are audit-queryable
+
+Given verification decisions, review enforcement actions, complaint handling, dispute handling, and admin evidence access occur
+When an authorized audit query is run for the affected user or booking
+Then each action is returned with actor, timestamp, action type, and target record
+And admin evidence access is included in the audit history

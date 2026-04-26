@@ -31,10 +31,13 @@ import mn.tasky.booking.dao.BookingCompletionSignalDao;
 import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
 import mn.tasky.booking.dto.BookingCompletionSignal;
+import mn.tasky.booking.dto.BookingIntentCreateResult;
+import mn.tasky.booking.dto.BookingIntentState;
 import mn.tasky.booking.dto.BookingMarkDoneResult;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import mn.tasky.booking.publicapi.BookingCommandPort;
+import mn.tasky.booking.publicapi.BookingIntentCommandPort;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
@@ -45,7 +48,6 @@ import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
 import mn.tasky.task.dto.TaskAcceptResult;
 import mn.tasky.task.dto.TaskApplicationState;
-import mn.tasky.task.dto.TaskSelectResult;
 import mn.tasky.task.dto.TaskState;
 import mn.tasky.trust.publicapi.TrustQueryPort;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,6 +78,7 @@ class BookingSelectionScenarioTests {
     private TaskApplicationDao taskApplicationDao;
     private TaskDao taskDao;
     private BookingCommandPort bookingCommandPort;
+    private BookingIntentCommandPort bookingIntentCommandPort;
     private NotificationService notificationService;
     private TaskApplicationService taskApplicationService;
 
@@ -94,6 +97,7 @@ class BookingSelectionScenarioTests {
         taskApplicationDao = mock(TaskApplicationDao.class);
         taskDao = mock(TaskDao.class);
         bookingCommandPort = mock(BookingCommandPort.class);
+        bookingIntentCommandPort = mock(BookingIntentCommandPort.class);
         notificationService = mock(NotificationService.class);
         AnalyticsService analyticsService = mock(AnalyticsService.class);
         DomainEventOutboxService outboxService = mock(DomainEventOutboxService.class);
@@ -103,6 +107,7 @@ class BookingSelectionScenarioTests {
         taskApplicationService = new TaskApplicationService(
                 userProfileService,
                 bookingCommandPort,
+                bookingIntentCommandPort,
                 notificationService,
                 analyticsService,
                 outboxService,
@@ -153,10 +158,11 @@ class BookingSelectionScenarioTests {
         TaskApplicationState application = appliedApplication();
         when(taskApplicationDao.findById(APP_ID)).thenReturn(Optional.of(application));
 
-        TaskAcceptResult result = taskApplicationService.acceptApplication(CUSTOMER_ID, TASK_ID, APP_ID, false);
+        BookingIntentCreateResult result =
+                taskApplicationService.acceptApplication(CUSTOMER_ID, TASK_ID, APP_ID, false);
 
         assertThat(result.isSuccess()).isFalse();
-        assertThat(result.errorCode()).isEqualTo(TaskAcceptResult.DISCLAIMER_REQUIRED);
+        assertThat(result.errorCode()).isEqualTo(BookingIntentCreateResult.DISCLAIMER_REQUIRED);
         verify(bookingCommandPort, never())
                 .createBooking(anyString(), anyString(), anyString(), anyInt(), anyBoolean(), any());
     }
@@ -164,8 +170,8 @@ class BookingSelectionScenarioTests {
     // ── SCN-BOOK-022 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-BOOK-022: Customer selects one applicant and booking becomes ASSIGNED")
-    void customerSelectsApplicantAndBookingBecomesAssigned() {
+    @DisplayName("SCN-BOOK-022: Customer selects one applicant and selected tasker acceptance confirms booking")
+    void customerSelectsApplicantAndSelectedTaskerAcceptanceConfirmsBooking() {
         TaskState task = openBudgetTask();
         TaskApplicationState application = appliedApplication();
 
@@ -185,14 +191,23 @@ class BookingSelectionScenarioTests {
                 .when(taskApplicationDao)
                 .updateSelection(eq(APP_ID), eq("SELECTED"), any(Instant.class), any(Instant.class));
 
-        TaskSelectResult selectResult = taskApplicationService.selectApplication(CUSTOMER_ID, TASK_ID, APP_ID);
+        BookingIntentState intent = pendingApplicationSelectionIntent(respondByAt);
+        when(bookingIntentCommandPort.createApplicationSelectionIntent(
+                        eq(CUSTOMER_ID), eq(TASK_ID), eq(APP_ID), eq(TASKER_ID), any(Instant.class)))
+                .thenReturn(BookingIntentCreateResult.success(intent));
+
+        BookingIntentCreateResult selectResult =
+                taskApplicationService.acceptApplication(CUSTOMER_ID, TASK_ID, APP_ID, true);
 
         assertThat(selectResult.isSuccess()).isTrue();
-        assertThat(selectResult.application().status()).isEqualTo("SELECTED");
+        assertThat(selectResult.intent()).containsSame(intent);
         verify(taskApplicationDao).updateSelection(eq(APP_ID), eq("SELECTED"), any(Instant.class), any(Instant.class));
 
         when(taskApplicationDao.findByTaskerAndId(TASKER_ID, APP_ID)).thenReturn(Optional.of(selectedApp));
         when(taskApplicationDao.hasAccepted(TASK_ID)).thenReturn(false);
+        when(bookingIntentCommandPort.findPendingApplicationSelectionIntent(
+                        eq(TASK_ID), eq(APP_ID), any(Instant.class)))
+                .thenReturn(Optional.of(intent));
 
         BookingState booking = new BookingState(
                 UUID.randomUUID().toString(),
@@ -214,7 +229,7 @@ class BookingSelectionScenarioTests {
         when(bookingCommandPort.createBooking(TASK_ID, TASKER_ID, CUSTOMER_ID, BUDGET_PRICE, true, task.scheduledAt()))
                 .thenReturn(booking);
 
-        TaskAcceptResult acceptResult = taskApplicationService.confirmAcceptance(TASKER_ID, APP_ID);
+        TaskAcceptResult acceptResult = taskApplicationService.confirmAcceptance(TASKER_ID, TASK_ID, APP_ID);
 
         assertThat(acceptResult.isSuccess()).isTrue();
         assertThat(acceptResult.booking()).isNotNull();
@@ -226,10 +241,35 @@ class BookingSelectionScenarioTests {
         verify(taskDao).updateStatus(eq(TASK_ID), eq("ASSIGNED"), any(Instant.class));
     }
 
+    @Test
+    @DisplayName("SCN-BOOK-022: Customer selects one applicant and selected tasker acceptance confirms booking")
+    void customerCannotSelectSecondApplicantWhileFirstSelectionIsPending() {
+        String secondAppId = UUID.randomUUID().toString();
+        TaskState task = openBudgetTask();
+        TaskApplicationState secondApplication =
+                appliedApplication(secondAppId, UUID.randomUUID().toString());
+
+        when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(task));
+        when(taskApplicationDao.hasAccepted(TASK_ID)).thenReturn(false);
+        when(taskApplicationDao.hasActiveSelection(eq(TASK_ID), any(Instant.class)))
+                .thenReturn(true);
+        when(taskApplicationDao.findById(secondAppId)).thenReturn(Optional.of(secondApplication));
+
+        BookingIntentCreateResult result =
+                taskApplicationService.acceptApplication(CUSTOMER_ID, TASK_ID, secondAppId, true);
+
+        assertThat(result.isSuccess()).isFalse();
+        assertThat(result.errorCode()).isEqualTo(BookingIntentCreateResult.CONFLICT);
+        verify(taskApplicationDao, never())
+                .updateSelection(anyString(), anyString(), any(Instant.class), any(Instant.class));
+        verify(bookingCommandPort, never())
+                .createBooking(anyString(), anyString(), anyString(), anyInt(), anyBoolean(), any());
+    }
+
     // ── SCN-BOOK-023 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-BOOK-023: Selected tasker does not accept within 4 hours - selection expires")
+    @DisplayName("SCN-BOOK-023: Selected tasker does not accept within 4 hours and pending selection expires")
     void selectedTaskerDoesNotAcceptWithin4HoursSelectionExpires() {
         Instant fourHoursAgo = Instant.now().minusSeconds(4 * 3600 + 1);
         Instant fiveHoursAgo = Instant.now().minusSeconds(5 * 3600);
@@ -275,6 +315,9 @@ class BookingSelectionScenarioTests {
         when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(task));
         when(taskApplicationDao.findByTaskerAndId(TASKER_ID, APP_ID)).thenReturn(Optional.of(selectedApp));
         when(taskApplicationDao.hasAccepted(TASK_ID)).thenReturn(false);
+        when(bookingIntentCommandPort.findPendingApplicationSelectionIntent(
+                        eq(TASK_ID), eq(APP_ID), any(Instant.class)))
+                .thenReturn(Optional.of(pendingApplicationSelectionIntent(respondByAt)));
 
         BookingState booking = new BookingState(
                 UUID.randomUUID().toString(),
@@ -296,7 +339,7 @@ class BookingSelectionScenarioTests {
         when(bookingCommandPort.createBooking(eq(TASK_ID), eq(TASKER_ID), eq(CUSTOMER_ID), anyInt(), eq(true), any()))
                 .thenReturn(booking);
 
-        taskApplicationService.confirmAcceptance(TASKER_ID, APP_ID);
+        taskApplicationService.confirmAcceptance(TASKER_ID, TASK_ID, APP_ID);
 
         verify(taskApplicationDao).rejectOthers(TASK_ID, APP_ID);
     }
@@ -329,6 +372,9 @@ class BookingSelectionScenarioTests {
         when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(quoteTask));
         when(taskApplicationDao.findByTaskerAndId(TASKER_ID, APP_ID)).thenReturn(Optional.of(quoteApp));
         when(taskApplicationDao.hasAccepted(TASK_ID)).thenReturn(false);
+        when(bookingIntentCommandPort.findPendingApplicationSelectionIntent(
+                        eq(TASK_ID), eq(APP_ID), any(Instant.class)))
+                .thenReturn(Optional.of(pendingApplicationSelectionIntent(respondByAt)));
 
         BookingState quoteBooking = new BookingState(
                 UUID.randomUUID().toString(),
@@ -351,7 +397,7 @@ class BookingSelectionScenarioTests {
                         eq(TASK_ID), eq(TASKER_ID), eq(CUSTOMER_ID), eq(QUOTE_PRICE), eq(true), any()))
                 .thenReturn(quoteBooking);
 
-        TaskAcceptResult quoteResult = taskApplicationService.confirmAcceptance(TASKER_ID, APP_ID);
+        TaskAcceptResult quoteResult = taskApplicationService.confirmAcceptance(TASKER_ID, TASK_ID, APP_ID);
 
         assertThat(quoteResult.isSuccess()).isTrue();
         assertThat(quoteResult.booking().price()).isEqualTo(QUOTE_PRICE);
@@ -364,6 +410,9 @@ class BookingSelectionScenarioTests {
         when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(budgetTask));
         when(taskApplicationDao.findByTaskerAndId(TASKER_ID, APP_ID)).thenReturn(Optional.of(budgetApp));
         when(taskApplicationDao.hasAccepted(TASK_ID)).thenReturn(false);
+        when(bookingIntentCommandPort.findPendingApplicationSelectionIntent(
+                        eq(TASK_ID), eq(APP_ID), any(Instant.class)))
+                .thenReturn(Optional.of(pendingApplicationSelectionIntent(respondByAt)));
 
         BookingState budgetBooking = new BookingState(
                 UUID.randomUUID().toString(),
@@ -386,7 +435,7 @@ class BookingSelectionScenarioTests {
                         eq(TASK_ID), eq(TASKER_ID), eq(CUSTOMER_ID), eq(BUDGET_PRICE), eq(true), any()))
                 .thenReturn(budgetBooking);
 
-        TaskAcceptResult budgetResult = taskApplicationService.confirmAcceptance(TASKER_ID, APP_ID);
+        TaskAcceptResult budgetResult = taskApplicationService.confirmAcceptance(TASKER_ID, TASK_ID, APP_ID);
 
         assertThat(budgetResult.isSuccess()).isTrue();
         assertThat(budgetResult.booking().price()).isEqualTo(BUDGET_PRICE);
@@ -585,10 +634,14 @@ class BookingSelectionScenarioTests {
     }
 
     private TaskApplicationState appliedApplication() {
+        return appliedApplication(APP_ID, TASKER_ID);
+    }
+
+    private TaskApplicationState appliedApplication(String applicationId, String taskerId) {
         return new TaskApplicationState(
-                APP_ID,
+                applicationId,
                 TASK_ID,
-                TASKER_ID,
+                taskerId,
                 "Tasker Name",
                 null,
                 4.5,
@@ -622,6 +675,25 @@ class BookingSelectionScenarioTests {
                 selectedAt,
                 respondByAt,
                 Instant.now());
+    }
+
+    private BookingIntentState pendingApplicationSelectionIntent(Instant expiresAt) {
+        Instant now = Instant.now();
+        return new BookingIntentState(
+                UUID.randomUUID().toString(),
+                TASK_ID,
+                TASKER_ID,
+                CUSTOMER_ID,
+                "APPLICATION_SELECTION",
+                "PENDING",
+                APP_ID,
+                null,
+                null,
+                expiresAt,
+                null,
+                null,
+                now,
+                now);
     }
 
     /**

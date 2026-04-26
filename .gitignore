@@ -79,6 +79,7 @@ apps/*/test-results/
 
 # Local env overrides
 .env
+apps/*/.env.local
 
 # Web app local env (may contain real Facebook App ID)
 apps/web/.env.local

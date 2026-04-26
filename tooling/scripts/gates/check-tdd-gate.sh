@@ -9,8 +9,8 @@
 #            and packages.
 #   Gate 2: Change-implies-test — if any production code changed on the branch,
 #            at least one test file must also be in the diff.
-#   Gate 3: Commit-ordering — no commit may introduce production code without a
-#            test in the same or an earlier commit on the branch (red-first).
+#   Gate 3: First-production ordering — branch production code must not appear before tests.
+#            Once the branch has a test commit, Gates 1, 2, and 4 own ongoing pairing.
 #   Gate 4: TDD evidence — .pi/sessions/<id>/tdd-evidence.json must exist with a
 #            recorded red→green transition (exit 1 → exit 0) when production code changed.
 #
@@ -26,6 +26,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
 cd "$ROOT_DIR"
+
+if ! command -v jq >/dev/null 2>&1; then
+  echo "tdd-gate: error: 'jq' is required" >&2
+  exit 1
+fi
 
 # ── Branch base detection ────────────────────────────────────────────────────
 # Override: set TDD_BRANCH_BASE to force a specific commit as the diff base.
@@ -66,7 +71,7 @@ REMEDIATION
 # ── Shared patterns ──────────────────────────────────────────────────────────
 BACKEND_PROD_PATTERN='^services/api/src/main/java/.*\.java$'
 BACKEND_SKIP_PATTERN='(Dto|DTO)\.java$|(Config|Configuration|Properties|Activat)\.java$|(Exception|Error|Violation)\.java$|(Mapper|mapper|Converter)\.java$|/generated/'
-FRONTEND_PROD_PATTERN='^apps/.*/src/.*\.(ts|tsx)$'
+FRONTEND_PROD_PATTERN='^(apps|packages)/[^/]+/src/.*\.(ts|tsx)$'
 FRONTEND_SKIP_PATTERN='(\.test\.|\.spec\.|__tests__)|(\.d\.ts$|/locales/|/generated/)|(/src/test/)'
 TEST_FILE_PATTERN='(\.test\.|\.spec\.)|(/__tests__/)|(^tests/)|(/src/test/)'
 
@@ -213,9 +218,9 @@ if [ -n "$PROD_CHANGED" ] && [ -z "$TEST_CHANGED" ]; then
 fi
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Gate 3: Commit-ordering — production code must not appear before tests
+# Gate 3: First-production ordering — branch production code must not appear before tests
 # ══════════════════════════════════════════════════════════════════════════════
-echo "tdd-gate: [gate 3] checking commit ordering (red-first)..."
+echo "tdd-gate: [gate 3] checking first production commit ordering..."
 
 # Get branch commits in chronological order (oldest first)
 BRANCH_COMMITS=$(git rev-list --reverse "$BRANCH_BASE"..HEAD 2>/dev/null || true)
@@ -243,11 +248,11 @@ if [ -n "$BRANCH_COMMITS" ]; then
       fi
     done <<< "$COMMIT_CHANGED"
 
-    # Flag if this commit introduces production code without prior tests
+    # Flag if the first production commit appears before any test commit.
     if [ -n "$COMMIT_PRODS" ]; then
       if [ -z "$COMMIT_TESTS" ] && [ "$tests_seen_count" -eq 0 ]; then
         SHORT_SHA=$(git rev-parse --short "$commit")
-        add_failure "gate-3: commit ${SHORT_SHA} introduces production code without any prior test commit — write tests first (red phase)"
+        add_failure "gate-3: first production commit ${SHORT_SHA} appears before any test commit — write tests first (red phase)"
       fi
     fi
   done <<< "$BRANCH_COMMITS"
@@ -271,6 +276,9 @@ if [ -n "$PROD_CHANGED" ]; then
     # Find most recently modified evidence file
     EVIDENCE_FILE=$(find .pi/sessions -name 'tdd-evidence.json' -type f 2>/dev/null \
       | xargs ls -t 2>/dev/null | head -1 || true)
+    if [ -n "$EVIDENCE_FILE" ]; then
+      add_warning "gate-4: using most recently modified tdd evidence fallback (${EVIDENCE_FILE}); set TDD_EVIDENCE_FILE or TDD_SESSION_ID for branch-specific evidence"
+    fi
   fi
 
   if [ -z "$EVIDENCE_FILE" ]; then

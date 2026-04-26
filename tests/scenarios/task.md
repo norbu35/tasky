@@ -31,7 +31,7 @@ And the response identifies each missing required intake field
 **Title:** Task creation without required base fields returns field-specific validation errors
 
 Given a customer is creating a task
-When the request omits category, description, location, schedule, or budget
+When the request omits category, description, location, schedule, or pricing mode
 Then the task is not created
 And the response includes field-specific validation errors for each missing required field
 
@@ -39,9 +39,9 @@ And the response includes field-specific validation errors for each missing requ
 
 **Risk:** High
 **PRD:** REQ-P1-PRICE-01
-**Title:** Budget below 20000 MNT is rejected
+**Title:** Budget-mode amount below 20000 MNT is rejected
 
-Given a customer submits a task with all other required fields present
+Given a customer submits a budget-mode task with all other required fields present
 When the budget is below 20000 MNT
 Then the task is not created
 And the response identifies budget as below the allowed minimum
@@ -49,10 +49,10 @@ And the response identifies budget as below the allowed minimum
 ## SCN-TASK-005
 
 **Risk:** High
-**PRD:** REQ-P1-PRICE-01, REQ-P1-TASK-02
-**Title:** Budget of 20000 MNT is accepted, 19999 is rejected
+**PRD:** REQ-P1-PRICE-01
+**Title:** Budget-mode amount of 20000 MNT is accepted, 19999 is rejected
 
-Given a customer submits a task with all required fields present
+Given a customer submits a budget-mode task with all required fields present
 When the budget is 20000 MNT
 Then the task is created
 And the stored budget is 20000 MNT
@@ -245,7 +245,7 @@ And the request is not rejected only because the category is outside the initial
 ## SCN-TASK-022
 
 **Risk:** High
-**PRD:** REQ-P1-MATCH-01
+**PRD:** REQ-P1-MATCH-01, REQ-P1-SAFE-03
 **Title:** Only verified active taskers can submit applications to eligible tasks
 
 Given an eligible task is in OPEN status
@@ -253,7 +253,7 @@ When an unverified tasker attempts to apply
 Then the application is rejected
 And when a banned or suspended tasker attempts to apply
 Then the application is rejected
-And when a verified active tasker applies
+And when a verified active tasker without category-specific vetting applies
 Then the application is accepted
 
 ## SCN-TASK-023
@@ -333,3 +333,50 @@ And at least one application accepts the posted budget
 When the customer reviews applications
 Then the original posted budget remains visible
 And the application does not include a separate counter-offer amount
+
+## SCN-TASK-030
+
+**Risk:** High
+**PRD:** REQ-P1-TASK-11, REQ-P1-TASK-12, REQ-P1-TASK-13, REQ-P1-TASK-14
+**Title:** Launch category templates capture required category-specific fields
+
+Given active launch templates exist for home cleaning, furniture assembly, moving help, and minor handyman
+When each template schema is loaded for task posting
+Then home cleaning requires property type, room count or size bracket, cleaning type, supplies provided, pets present, preferred date, time window, and pricing mode
+And furniture assembly requires furniture type, item count, brand or model when known, delivered status, instructions availability, preferred date, time window, and pricing mode
+And moving help requires move type, load size, pickup and dropoff stairs or elevator, vehicle need, helper count, preferred date, time window, and pricing mode
+And minor handyman requires subtype, material availability, wall or surface type when relevant, item count, preferred date, time window, and pricing mode
+
+## SCN-TASK-031
+
+**Risk:** High
+**PRD:** REQ-P1-PRICE-06
+**Title:** Application pricing response is normalized by pricing mode
+
+Given budget-mode and quote-mode tasks are open for applications
+When verified taskers submit pricing responses
+Then a budget-mode application records acceptance of the posted budget without a tasker price override
+And a quote-mode application records exactly one submitted quote amount
+And applications missing the required pricing-mode response are rejected
+
+## SCN-TASK-032
+
+**Risk:** High
+**PRD:** REQ-P1-SAFE-04
+**Title:** Service-area preferences target notifications but do not gate applications
+
+Given a verified tasker has service-area preferences that do not include an eligible task's district
+When the tasker views or applies to that eligible task
+Then the application is not rejected because of the service-area preference mismatch
+And the preference mismatch may affect notification targeting without changing task eligibility
+
+## SCN-TASK-033
+
+**Risk:** High
+**PRD:** REQ-P1-TASK-02
+**Title:** Task photos are optional for task creation
+
+Given a customer submits a task with all required non-photo fields present
+When the request contains no task photos
+Then the task is created
+And the response does not require photos as a blocking validation condition
