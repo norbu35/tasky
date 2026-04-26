@@ -33,6 +33,9 @@ SOURCE_ROOTS = [
     REPO_ROOT / "apps/web/src",
     REPO_ROOT / "apps/mobile/src",
 ]
+SHARED_SOURCE_ROOTS = [
+    REPO_ROOT / "packages/core/src",
+]
 
 SOURCE_EXTENSIONS = {".js", ".jsx", ".ts", ".tsx"}
 SKIP_SOURCE_MARKERS = (".test.", ".spec.")
@@ -47,6 +50,11 @@ STATIC_T_KEY_RE = re.compile(
     r"\b(?:[A-Za-z_$][\w$]*\.)?t\(\s*([\"'])([^\"'`{}]+)\1",
     re.DOTALL,
 )
+T_CALL_START_RE = re.compile(r"\b(?:[A-Za-z_$][\w$]*\.)?t\(\s*", re.DOTALL)
+
+
+def format_key_list(keys: list[str]) -> str:
+    return ", ".join(keys)
 
 
 def flatten_json(value: Any, prefix: str = "") -> dict[str, str]:
@@ -119,16 +127,16 @@ def compare_key_sets(label: str, localized: dict[str, dict[str, str]], failures:
         missing = sorted(baseline_keys - keys)
         extra = sorted(keys - baseline_keys)
         if missing:
-            failures.append(f"{label} {locale}: missing keys: {', '.join(missing[:20])}")
+            failures.append(f"{label} {locale}: missing keys: {format_key_list(missing)}")
         if extra:
-            failures.append(f"{label} {locale}: extra keys: {', '.join(extra[:20])}")
+            failures.append(f"{label} {locale}: extra keys: {format_key_list(extra)}")
 
 
 def check_empty_values(label: str, localized: dict[str, dict[str, str]], failures: list[str]) -> None:
     for locale, values in localized.items():
         empty_keys = sorted(key for key, value in values.items() if value == "")
         if empty_keys:
-            failures.append(f"{label} {locale}: empty values: {', '.join(empty_keys[:20])}")
+            failures.append(f"{label} {locale}: empty values: {format_key_list(empty_keys)}")
 
 
 def compare_placeholders(
@@ -162,32 +170,59 @@ def source_files_for_root(root: Path) -> list[Path]:
     return files
 
 
-def source_files() -> list[Path]:
+def source_roots_for_label(label: str) -> list[Path]:
+    app_roots = [REPO_ROOT / f"apps/{label}/src"]
+    return [root for root in [*app_roots, *SHARED_SOURCE_ROOTS] if root.exists()]
+
+
+def source_files_for_roots(roots: list[Path]) -> list[Path]:
     files: list[Path] = []
-    for root in SOURCE_ROOTS:
+    for root in roots:
         files.extend(source_files_for_root(root))
     return files
 
 
-def used_translation_keys(source_root: Path) -> set[str]:
+def source_files() -> list[Path]:
+    return source_files_for_roots([*SOURCE_ROOTS, *SHARED_SOURCE_ROOTS])
+
+
+def used_translation_keys(source_roots: list[Path]) -> set[str]:
     keys: set[str] = set()
-    for path in source_files_for_root(source_root):
+    for path in source_files_for_roots(source_roots):
         text = path.read_text(encoding="utf-8")
         for match in STATIC_T_KEY_RE.finditer(text):
             keys.add(match.group(2))
     return keys
 
 
+def dynamic_t_call_count(text: str) -> int:
+    count = 0
+    for match in T_CALL_START_RE.finditer(text):
+        index = match.end()
+        while index < len(text) and text[index].isspace():
+            index += 1
+        if index >= len(text):
+            continue
+        if text[index] in {"'", '"'}:
+            continue
+        count += 1
+    return count
+
+
+def dynamic_t_callsite_count(files: list[Path]) -> int:
+    return sum(dynamic_t_call_count(path.read_text(encoding="utf-8")) for path in files)
+
+
 def check_used_keys(
     label: str,
-    source_root: Path,
+    source_roots: list[Path],
     localized: dict[str, dict[str, str]],
     failures: list[str],
 ) -> None:
     known_keys = set.intersection(*(set(values) for values in localized.values()))
-    missing = sorted(used_translation_keys(source_root) - known_keys)
+    missing = sorted(used_translation_keys(source_roots) - known_keys)
     if missing:
-        failures.append(f"{label}: source references missing locale keys: {', '.join(missing[:20])}")
+        failures.append(f"{label}: source references missing locale keys: {format_key_list(missing)}")
 
 
 def check_t_fallbacks(failures: list[str]) -> None:
@@ -203,6 +238,7 @@ def check_t_fallbacks(failures: list[str]) -> None:
 
 def main() -> int:
     failures: list[str] = []
+    dynamic_callsite_count = dynamic_t_callsite_count(source_files())
 
     for label, locale_paths in CLIENT_LOCALE_SETS.items():
         try:
@@ -213,7 +249,7 @@ def main() -> int:
         compare_key_sets(label, localized, failures)
         check_empty_values(label, localized, failures)
         compare_placeholders(label, localized, INTERPOLATION_RE, failures)
-        check_used_keys(label, REPO_ROOT / f"apps/{label}/src", localized, failures)
+        check_used_keys(label, source_roots_for_label(label), localized, failures)
 
     for label, message_paths in BACKEND_MESSAGE_SETS.items():
         try:
@@ -235,10 +271,14 @@ def main() -> int:
         print(" - add missing locale keys to every supported locale", file=sys.stderr)
         print(" - keep interpolation placeholders identical across locales", file=sys.stderr)
         print(" - remove literal t(...) fallback strings from source callsites", file=sys.stderr)
+        print(" - prefer static string-literal t('namespace.key') calls so locale coverage can be checked", file=sys.stderr)
         print(" - rerun: pnpm verify:i18n", file=sys.stderr)
         return 1
 
-    print("i18n validation: PASS")
+    if dynamic_callsite_count:
+        print(f"i18n validation: PASS ({dynamic_callsite_count} dynamic t(...) callsite(s) skipped)")
+    else:
+        print("i18n validation: PASS")
     return 0
 
 

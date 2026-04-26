@@ -31,6 +31,7 @@ MIGRATION_DIR = (
 EXPECTED_SCHEMA_FILE = REPO_ROOT / "tooling" / "config" / "expected-schema.json"
 
 VERSION_RE = re.compile(r"^V(\d+)__")
+REPEATABLE_RE = re.compile(r"^R__[A-Za-z0-9_]+\.sql$")
 
 CREATE_TABLE_RE = re.compile(
     r"CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(\w+)\s*\((.*)\)",
@@ -41,8 +42,12 @@ DROP_TABLE_RE = re.compile(
     re.IGNORECASE,
 )
 ALTER_TABLE_RE = re.compile(
-    r"ALTER\s+TABLE\s+(\w+)\s+(.*)",
+    r"ALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?(\w+)\s+(.*)",
     re.IGNORECASE | re.DOTALL,
+)
+RENAME_TABLE_RE = re.compile(
+    r"RENAME\s+TO\s+(\w+)",
+    re.IGNORECASE,
 )
 ADD_COLUMN_RE = re.compile(
     r"ADD\s+COLUMN\s+(?:IF\s+NOT\s+EXISTS\s+)?(\w+)\s",
@@ -87,10 +92,16 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Validate Flyway migration schema parity against expected inventory.",
     )
-    parser.add_argument(
+    mode_group = parser.add_mutually_exclusive_group()
+    mode_group.add_argument(
         "--update-expected",
         action="store_true",
         help="Regenerate expected-schema.json from current migrations.",
+    )
+    mode_group.add_argument(
+        "--diff",
+        action="store_true",
+        help="Print the expected-schema.json changes implied by current migrations without writing.",
     )
     return parser.parse_args()
 
@@ -98,6 +109,34 @@ def parse_args() -> argparse.Namespace:
 def migration_version(path: Path) -> int:
     m = VERSION_RE.match(path.name)
     return int(m.group(1)) if m else 0
+
+
+def collect_migration_files(migration_dir: Path) -> list[Path]:
+    versioned = sorted(
+        [p for p in migration_dir.glob("V*.sql") if VERSION_RE.match(p.name)],
+        key=migration_version,
+    )
+    repeatable = sorted(
+        [p for p in migration_dir.glob("R__*.sql") if REPEATABLE_RE.match(p.name)],
+        key=lambda path: path.name,
+    )
+    return versioned + repeatable
+
+
+def migration_range_label(migration_files: list[Path]) -> str:
+    versioned = [path for path in migration_files if VERSION_RE.match(path.name)]
+    repeatable_count = sum(1 for path in migration_files if REPEATABLE_RE.match(path.name))
+
+    if versioned:
+        v_first = VERSION_RE.match(versioned[0].name).group(1)
+        v_last = VERSION_RE.match(versioned[-1].name).group(1)
+        label = f"V{v_first} through V{v_last}"
+    else:
+        label = "repeatable migrations only"
+
+    if repeatable_count:
+        label = f"{label} plus {repeatable_count} repeatable"
+    return label
 
 
 def strip_comments(sql: str) -> str:
@@ -213,6 +252,13 @@ def parse_schema(migrations: list[Path]) -> dict[str, dict]:
             if alter_m:
                 tname = alter_m.group(1).lower()
                 action_text = alter_m.group(2).strip()
+
+                rename_table_m = RENAME_TABLE_RE.fullmatch(action_text)
+                if rename_table_m:
+                    if tname in tables:
+                        new_name = rename_table_m.group(1).lower()
+                        tables[new_name] = tables.pop(tname)
+                    continue
 
                 if tname not in tables:
                     # ALTER before CREATE (shouldn't happen in well-ordered
@@ -337,6 +383,51 @@ def compare_schemas(
     return errors, warnings
 
 
+def schema_diff(actual: dict, expected: dict) -> dict:
+    actual_tables = actual.get("tables", {})
+    expected_tables = expected.get("tables", {})
+    actual_names = set(actual_tables)
+    expected_names = set(expected_tables)
+    changed: dict[str, dict] = {}
+
+    for table in sorted(actual_names & expected_names):
+        actual_columns = set(actual_tables[table].get("columns", []))
+        expected_columns = set(expected_tables[table].get("columns", []))
+        actual_checks = actual_tables[table].get("check_constraints", {})
+        expected_checks = expected_tables[table].get("check_constraints", {})
+        table_diff: dict[str, object] = {}
+
+        added_columns = sorted(actual_columns - expected_columns)
+        removed_columns = sorted(expected_columns - actual_columns)
+        if added_columns:
+            table_diff["columns_added"] = added_columns
+        if removed_columns:
+            table_diff["columns_removed"] = removed_columns
+
+        checks_changed = {}
+        for column in sorted(set(actual_checks) | set(expected_checks)):
+            actual_values = actual_checks.get(column, [])
+            expected_values = expected_checks.get(column, [])
+            if actual_values != expected_values:
+                checks_changed[column] = {
+                    "actual": actual_values,
+                    "expected": expected_values,
+                }
+        if checks_changed:
+            table_diff["check_constraints_changed"] = checks_changed
+
+        if table_diff:
+            changed[table] = table_diff
+
+    diff = {
+        "status": "changes" if actual_tables != expected_tables else "up_to_date",
+        "tables_added": sorted(actual_names - expected_names),
+        "tables_removed": sorted(expected_names - actual_names),
+        "tables_changed": changed,
+    }
+    return diff
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -350,19 +441,14 @@ def main() -> int:
         print(" - restore the Flyway migration directory before running schema parity", file=sys.stderr)
         return 2
 
-    migration_files = sorted(
-        [p for p in MIGRATION_DIR.glob("V*.sql") if VERSION_RE.match(p.name)],
-        key=migration_version,
-    )
+    migration_files = collect_migration_files(MIGRATION_DIR)
     if not migration_files:
         print("No migration files found.", file=sys.stderr)
         print("autonomous remediation:", file=sys.stderr)
-        print(" - schema parity expects versioned Flyway migrations under services/api/src/main/resources/db/migration", file=sys.stderr)
+        print(" - schema parity expects Flyway migrations under services/api/src/main/resources/db/migration", file=sys.stderr)
         return 2
 
-    v_first = VERSION_RE.match(migration_files[0].name).group(1)
-    v_last = VERSION_RE.match(migration_files[-1].name).group(1)
-    version_range = f"V{v_first} through V{v_last}"
+    version_range = migration_range_label(migration_files)
 
     print(f"Parsing {len(migration_files)} migrations ({version_range})...")
 
@@ -408,6 +494,26 @@ def main() -> int:
                     print(f"  Table '{t}' changed")
             print(f"Wrote {EXPECTED_SCHEMA_FILE}")
 
+        return 0
+
+    if args.diff:
+        if not EXPECTED_SCHEMA_FILE.exists():
+            print(
+                f"Expected schema file not found: {EXPECTED_SCHEMA_FILE}",
+                file=sys.stderr,
+            )
+            print("Run with --update-expected to generate it.", file=sys.stderr)
+            return 2
+        try:
+            expected_json = json.loads(
+                EXPECTED_SCHEMA_FILE.read_text(encoding="utf-8")
+            )
+        except json.JSONDecodeError as exc:
+            print(f"Invalid JSON in {EXPECTED_SCHEMA_FILE}: {exc}", file=sys.stderr)
+            print("autonomous remediation:", file=sys.stderr)
+            print(" - regenerate the expected inventory from current migrations with --update-expected", file=sys.stderr)
+            return 2
+        print(json.dumps(schema_diff(actual_json, expected_json), indent=2))
         return 0
 
     # Normal mode: compare against expected.

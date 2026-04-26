@@ -31,13 +31,13 @@ run_step() {
   fi
 }
 
-run_step "repo docs lane" pnpm repo:docs:check
-run_step "workspace typecheck" turbo run typecheck
-run_step "workspace boundary validation" pnpm repo:workspace:boundaries
-run_step "mobile structure check" pnpm --filter @tasky/mobile structure:check
 run_step "migration safety validation" python3 tooling/scripts/governance/validate-migrations.py
 run_step "schema parity validation" python3 tooling/scripts/governance/validate-schema-parity.py
 run_step "trivy ignore expiry check" bash tooling/scripts/governance/check-trivyignore-expiry.sh
 run_step "gitleaks secret scan" bash tooling/scripts/governance/check-gitleaks-secret-scan.sh
+run_step "workspace boundary validation" pnpm repo:workspace:boundaries
+run_step "mobile structure check" pnpm --filter @tasky/mobile structure:check
+run_step "workspace typecheck" turbo run typecheck
+run_step "repo docs lane" pnpm repo:docs:check
 
 echo "cleanup-gate: PASS"

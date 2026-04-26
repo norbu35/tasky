@@ -40,6 +40,23 @@ function commandList(values) {
     return values.map((value) => `\`${value}\``).join("<br>");
 }
 
+export function sameStringSet(left, right) {
+    return JSON.stringify([...new Set(left)].sort()) === JSON.stringify([...new Set(right)].sort());
+}
+
+export function describeArrayDelta(previous, next) {
+    const previousSet = new Set(previous);
+    const nextSet = new Set(next);
+    return {
+        added: [...nextSet].filter((item) => !previousSet.has(item)).sort(),
+        removed: [...previousSet].filter((item) => !nextSet.has(item)).sort(),
+    };
+}
+
+function formatArrayDelta(delta) {
+    return `removed: [${delta.removed.join(", ") || "<none>"}]; added: [${delta.added.join(", ") || "<none>"}]`;
+}
+
 export function renderOpsInventory(registry) {
     const packageRows = sortedEntries(registry.packageScripts).map(([name, entry]) => [
         `\`${name}\``,
@@ -152,7 +169,7 @@ function applyClassifications(registry, classifications) {
 }
 
 function refreshWorkflowJobs(registry) {
-    let changed = false;
+    const changes = [];
     const workflowFiles = listWorkflowFiles();
     for (const workflowPath of workflowFiles) {
         if (!registry.workflows?.[workflowPath]) {
@@ -160,12 +177,17 @@ function refreshWorkflowJobs(registry) {
         }
         const jobs = discoverWorkflowJobs(workflowPath);
         const current = registry.workflows[workflowPath].jobs ?? [];
-        if (JSON.stringify(jobs) !== JSON.stringify(current)) {
+        if (!sameStringSet(jobs, current)) {
             registry.workflows[workflowPath].jobs = jobs;
-            changed = true;
+            changes.push({
+                workflowPath,
+                previous: current,
+                next: jobs,
+                delta: describeArrayDelta(current, jobs),
+            });
         }
     }
-    return changed;
+    return changes;
 }
 
 function writeRegistry(registry) {
@@ -200,8 +222,8 @@ function checkWorkflowJobDrift(registry) {
         }
         const actual = discoverWorkflowJobs(workflowPath);
         const expected = registry.workflows[workflowPath].jobs ?? [];
-        if (JSON.stringify(actual) !== JSON.stringify(expected)) {
-            failures.push(`${workflowPath} job list is stale`);
+        if (!sameStringSet(actual, expected)) {
+            failures.push(`${workflowPath} job list is stale (${formatArrayDelta(describeArrayDelta(expected, actual))})`);
         }
     }
     return failures;
@@ -221,7 +243,9 @@ export function runSync(args) {
     const registry = fix ? cloneRegistry(loadOpsRegistry()) : loadOpsRegistry();
 
     if (fix) {
-        const registryChanged = applyClassifications(registry, classifications) || refreshWorkflowJobs(registry);
+        const classificationsChanged = applyClassifications(registry, classifications);
+        const workflowChanges = refreshWorkflowJobs(registry);
+        const registryChanged = classificationsChanged || workflowChanges.length > 0;
         if (registryChanged) {
             writeRegistry(registry);
         }
@@ -229,6 +253,11 @@ export function runSync(args) {
         console.log("ops-registry-sync: wrote generated ops inventory");
         if (registryChanged) {
             console.log("ops-registry-sync: updated tooling/config/ops-registry.yaml");
+            for (const change of workflowChanges) {
+                console.log(
+                    `ops-registry-sync: refreshed ${change.workflowPath} jobs (${formatArrayDelta(change.delta)})`,
+                );
+            }
         }
         return 0;
     }

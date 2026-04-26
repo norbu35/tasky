@@ -59,6 +59,10 @@ function escapePointerToken(value) {
     return value.replace(/~/g, "~0").replace(/\//g, "~1");
 }
 
+function relative(filePath) {
+    return path.relative(repoRoot, filePath).replaceAll(path.sep, "/");
+}
+
 function buildInternalRefMap(rootDocument, rootFile) {
     const internalRefs = new Map();
 
@@ -84,9 +88,9 @@ function buildInternalRefMap(rootDocument, rootFile) {
     return internalRefs;
 }
 
-function rewriteRefs(value, currentFile, internalRefs) {
+function rewriteRefs(value, currentFile, internalRefs, refStack = []) {
     if (Array.isArray(value)) {
-        return value.map((item) => rewriteRefs(item, currentFile, internalRefs));
+        return value.map((item) => rewriteRefs(item, currentFile, internalRefs, refStack));
     }
 
     if (!value || typeof value !== "object") {
@@ -96,21 +100,32 @@ function rewriteRefs(value, currentFile, internalRefs) {
     const next = {};
     for (const [key, child] of Object.entries(value)) {
         if (key === "$ref" && typeof child === "string" && !child.startsWith("#/")) {
-            next[key] = internalRefs.get(normalizeRef(currentFile, child)) ?? child;
+            const normalized = normalizeRef(currentFile, child);
+            const mapped = internalRefs.get(normalized);
+            if (!mapped) {
+                throw new Error(
+                    `Unmapped external OpenAPI $ref '${child}' from ${relative(currentFile)}; register it from docs/openapi/openapi.yaml before bundling.`,
+                );
+            }
+            next[key] = mapped;
             continue;
         }
-        next[key] = rewriteRefs(child, currentFile, internalRefs);
+        next[key] = rewriteRefs(child, currentFile, internalRefs, refStack);
     }
     return next;
 }
 
-function materializeRefEntry(rootFile, entry, internalRefs) {
+function materializeRefEntry(rootFile, entry, internalRefs, refStack = []) {
     if (!entry?.$ref) {
         return entry;
     }
 
+    const normalized = normalizeRef(rootFile, entry.$ref);
+    if (refStack.includes(normalized)) {
+        throw new Error(`Circular OpenAPI $ref detected: ${[...refStack, normalized].join(" -> ")}`);
+    }
     const { targetFile, resolved } = resolveRef(rootFile, entry.$ref);
-    return rewriteRefs(resolved, targetFile, internalRefs);
+    return rewriteRefs(resolved, targetFile, internalRefs, [...refStack, normalized]);
 }
 
 function checkUniqueOperationIds(bundled) {
