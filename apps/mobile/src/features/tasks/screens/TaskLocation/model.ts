@@ -6,3 +6,32 @@ export const ANIMATE_DURATION = 600;
 export function makeRegion(latitude: number, longitude: number, delta: number = DEFAULT_DELTA) {
   return { latitude, longitude, latitudeDelta: delta, longitudeDelta: delta };
 }
+
+type GoogleMapsSdkConfig = {
+  androidEnabled?: boolean;
+  iosEnabled?: boolean;
+};
+
+export type TaskLocationAppExtra = {
+  googleMapsSdk?: GoogleMapsSdkConfig;
+};
+
+export function shouldUseGoogleMapsProvider(
+  platform: string,
+  appExtra: TaskLocationAppExtra | undefined,
+): boolean {
+  if (platform === 'android') {
+    return appExtra?.googleMapsSdk?.androidEnabled === true;
+  }
+  if (platform === 'ios') {
+    return appExtra?.googleMapsSdk?.iosEnabled === true;
+  }
+  return false;
+}
+
+export function getGoogleMapsRenderer(
+  platform: string,
+  useGoogleMapsProvider: boolean,
+): 'LEGACY' | undefined {
+  return platform === 'android' && useGoogleMapsProvider ? 'LEGACY' : undefined;
+}

@@ -25,6 +25,9 @@ It is intentionally a Phase 1 validation surface, not a later-phase rehearsal su
 | `TASKY_OTP_ENABLED`                  | `false`              | OTP is not part of the active launch baseline           |
 | `TASKY_PUSH_PROVIDER`                | `logging` by default | Safe sandbox default                                    |
 
+`VITE_DEV_AUTH_ENABLED` belongs to the private staging deployment env because the web image is built there.
+`EXPO_PUBLIC_DEV_AUTH_ENABLED` belongs to `apps/mobile/.env` for simulator or device work against the sandbox.
+
 Additional rules:
 
 - `TASKY_OTP_TEST_CODE` remains unset

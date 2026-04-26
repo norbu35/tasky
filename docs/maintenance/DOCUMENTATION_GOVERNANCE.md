@@ -52,7 +52,7 @@ The validator cross-checks named repo surfaces against live inventories, includi
 - PRD requirement IDs from `docs/PRD.md`
 - Java classes and FQNs under `services/api/src/{main,test}/java`
 - DB tables and columns from `tooling/config/expected-schema.json`
-- env vars from `.env*.example`
+- env vars from root `.env*.example` files and app-level `apps/*/.env*.example` files
 - config keys from `application*.yml` plus code-backed property declarations
 - OpenAPI operationIds and method/path pairs from the bundled API contract
 - Flyway migration versions/files

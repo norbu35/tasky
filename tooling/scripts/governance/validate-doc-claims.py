@@ -365,7 +365,11 @@ def build_schema_inventory() -> SchemaInventory:
 
 def build_env_inventory() -> set[str]:
     env_vars: set[str] = set()
-    for path in sorted(REPO_ROOT.glob(".env*.example")):
+    env_example_paths = [
+        *REPO_ROOT.glob(".env*.example"),
+        *(REPO_ROOT / "apps").glob("*/.env*.example"),
+    ]
+    for path in sorted(env_example_paths):
         for line in path.read_text(encoding="utf-8").splitlines():
             stripped = line.strip()
             if not stripped or stripped.startswith("#") or "=" not in stripped:
@@ -898,7 +902,7 @@ def validate_env_var(ref: Reference, inventory: set[str]) -> list[Failure]:
         Failure(
             ref.source_file,
             ref.line,
-            f"Env var `{ref.value}` not found in .env*.example.",
+            f"Env var `{ref.value}` not found in root or app-level .env*.example files.",
             f"Did you mean: {suggestion}?" if suggestion else None,
         )
     ]
