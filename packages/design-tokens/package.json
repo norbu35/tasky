@@ -30,7 +30,7 @@
   "devDependencies": {
     "@tasky/tooling-config": "workspace:*",
     "eslint": "9.39.2",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.3",
     "typescript": "~5.9.2"
   }
 }

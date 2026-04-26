@@ -63,8 +63,8 @@
     "eslint": "9.39.2",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "prettier": "^3.8.1",
-    "repomix": "^1.13.1",
+    "prettier": "^3.8.3",
+    "repomix": "^1.14.0",
     "turbo": "^2.9.6",
     "yaml": "^2.8.3"
   }
