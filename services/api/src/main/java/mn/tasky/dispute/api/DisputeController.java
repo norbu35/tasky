@@ -6,10 +6,12 @@ import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 import mn.tasky.api.generated.DisputesApi;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.dispute.dto.DisputeRequest;
+import mn.tasky.runtime.publicapi.composition.DisputeEvidenceOutcome;
 import mn.tasky.runtime.publicapi.composition.DisputePublicCompositionService;
 import mn.tasky.runtime.publicapi.composition.DisputeRaiseOutcome;
 import mn.tasky.runtime.publicapi.composition.DisputeRaiseService;
@@ -66,12 +68,8 @@ public class DisputeController implements DisputesApi {
             @Valid @RequestBody mn.tasky.api.generated.model.RaiseDisputeRequest raiseDisputeRequest) {
         JwtPrincipal principal = getPrincipal();
         HttpServletRequest request = getRequest();
-        DisputeRequest domainBody = new DisputeRequest(
-                raiseDisputeRequest.getReason(),
-                raiseDisputeRequest.getEvidence().stream()
-                        .map(e -> new DisputeRequest.EvidenceItem(
-                                e.getType().getValue(), e.getStorageKey(), e.getTextPayload()))
-                        .toList());
+        DisputeRequest domainBody =
+                new DisputeRequest(raiseDisputeRequest.getReason(), toEvidenceItems(raiseDisputeRequest.getEvidence()));
         DisputeRaiseOutcome outcome = disputeRaiseService.raiseDispute(
                 principal.userId(), id.toString(), domainBody, idempotencyKey.toString());
         return switch (outcome.status()) {
@@ -85,7 +83,7 @@ public class DisputeController implements DisputesApi {
                     ResponseEntity.status(404).body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
             case FORBIDDEN -> (ResponseEntity<mn.tasky.api.generated.model.Dispute>) (ResponseEntity<?>)
                     ResponseEntity.status(403).body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
-            case INVALID_REASON, INVALID_STATUS, DISPUTE_WINDOW_EXPIRED -> (ResponseEntity<
+            case INVALID_REASON, INVALID_EVIDENCE, INVALID_STATUS, DISPUTE_WINDOW_EXPIRED -> (ResponseEntity<
                             mn.tasky.api.generated.model.Dispute>)
                     (ResponseEntity<?>) ResponseEntity.badRequest()
                             .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
@@ -95,6 +93,44 @@ public class DisputeController implements DisputesApi {
                     (ResponseEntity<?>) ResponseEntity.status(500)
                             .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
         };
+    }
+
+    @Override
+    @PostMapping(
+            value = "/disputes/{id}/evidence",
+            consumes = {"application/json"})
+    public ResponseEntity<mn.tasky.api.generated.model.Dispute> addDisputeEvidence(
+            @PathVariable("id") UUID id,
+            @Valid @RequestBody mn.tasky.api.generated.model.AddDisputeEvidenceRequest addDisputeEvidenceRequest) {
+        JwtPrincipal principal = getPrincipal();
+        HttpServletRequest request = getRequest();
+        DisputeRequest domainBody = new DisputeRequest(null, toEvidenceItems(addDisputeEvidenceRequest.getEvidence()));
+        DisputeEvidenceOutcome outcome = disputeRaiseService.addEvidence(principal.userId(), id.toString(), domainBody);
+        return switch (outcome.status()) {
+            case SUCCESS -> (ResponseEntity<mn.tasky.api.generated.model.Dispute>)
+                    (ResponseEntity<?>) ResponseEntity.ok(outcome.body());
+            case NOT_FOUND -> (ResponseEntity<mn.tasky.api.generated.model.Dispute>) (ResponseEntity<?>)
+                    ResponseEntity.status(404).body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
+            case FORBIDDEN -> (ResponseEntity<mn.tasky.api.generated.model.Dispute>) (ResponseEntity<?>)
+                    ResponseEntity.status(403).body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
+            case INVALID_STATUS, INVALID_EVIDENCE -> (ResponseEntity<mn.tasky.api.generated.model.Dispute>)
+                    (ResponseEntity<?>) ResponseEntity.badRequest()
+                            .body(errorBody(outcome.errorCode(), outcome.errorMessage(), request));
+            case INTERNAL_ERROR -> (ResponseEntity<mn.tasky.api.generated.model.Dispute>)
+                    (ResponseEntity<?>) ResponseEntity.status(500)
+                            .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
+        };
+    }
+
+    private List<DisputeRequest.EvidenceItem> toEvidenceItems(
+            List<mn.tasky.api.generated.model.DisputeEvidence> evidence) {
+        if (evidence == null) {
+            return List.of();
+        }
+        return evidence.stream()
+                .map(e -> new DisputeRequest.EvidenceItem(
+                        e.getType() == null ? null : e.getType().getValue(), e.getStorageKey(), e.getTextPayload()))
+                .toList();
     }
 
     private JwtPrincipal getPrincipal() {

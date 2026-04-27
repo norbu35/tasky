@@ -16,6 +16,7 @@ import mn.tasky.auth.application.ModerationService;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import mn.tasky.common.outbox.DomainEventOutboxService;
+import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.TaskLifecycleService;
 import mn.tasky.task.application.TaskQueryService;
@@ -54,6 +55,9 @@ class BookingLifecycleServiceTest {
     @Mock
     private ReviewEnforcementService reviewEnforcementService;
 
+    @Mock
+    private NotificationService notificationService;
+
     private BookingLifecycleService service;
     private final Instant now = Instant.now();
 
@@ -67,7 +71,8 @@ class BookingLifecycleServiceTest {
                 moderationService,
                 domainEventOutboxService,
                 trustQueryPort,
-                reviewEnforcementService);
+                reviewEnforcementService,
+                notificationService);
     }
 
     private BookingState assignedBooking(String bookingId, String taskId, String customerId, String taskerId) {
@@ -218,6 +223,30 @@ class BookingLifecycleServiceTest {
         verify(reviewEnforcementService).createCasesForBooking(eq("b1"), eq("c1"), eq("tk1"), eq("BOOKING_CANCELLED"));
         verify(timelineService)
                 .recordEvent(eq("b1"), eq(BookingTimelineService.BOOKING_CANCELLED), eq("tk1"), eq(null));
+    }
+
+    @Test
+    void cancelBooking_taskerCancel_notifiesCustomerThatTaskIsOpenAgain() {
+        BookingState booking = assignedBooking("b1", "t1", "c1", "tk1");
+        BookingState cancelled = cancelledBooking("b1", "t1", "c1", "tk1");
+
+        when(bookingService.getBooking("b1")).thenReturn(Optional.of(booking), Optional.of(cancelled));
+        when(trustQueryPort.hasOpenDispute("b1")).thenReturn(false);
+        when(taskQueryService.getTask("t1")).thenReturn(Optional.of(assignedTask("t1")));
+        when(bookingService.cancelBooking(eq("tk1"), eq("b1"), any()))
+                .thenReturn(BookingTransitionResult.success(cancelled));
+        when(taskLifecycleService.reopenTask("t1")).thenReturn(Optional.of(openTask("t1")));
+
+        BookingTransitionResult result = service.cancelBooking("tk1", "b1", "schedule conflict");
+
+        assertThat(result.isSuccess()).isTrue();
+        verify(notificationService)
+                .sendPushWithEventKey(
+                        eq("c1"),
+                        eq("Tasker cancelled"),
+                        eq("Your task is open again. Review the original task and choose another tasker."),
+                        eq("TASKER_CANCELLED_BOOKING"),
+                        eq("TASKER_CANCELLED_BOOKING_b1"));
     }
 
     @Test

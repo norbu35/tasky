@@ -28,6 +28,7 @@ import mn.tasky.notification.provider.NotificationResult;
 import mn.tasky.notification.provider.PushNotificationProvider;
 import mn.tasky.notification.provider.SmsNotificationProvider;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -211,6 +212,31 @@ class NotificationServiceTest {
                         anyString(),
                         any(),
                         any(Instant.class));
+    }
+
+    @Test
+    @DisplayName("SCN-NOTIF-009: Completion silence reminder uses push notification when a device token exists")
+    void completionReminderWithDeviceTokenUsesPushOnly() {
+        when(notificationLogDao.existsByEventKey("completion-1")).thenReturn(false);
+        when(deviceTokenDao.findByUserId("customer-1")).thenReturn(List.of(makeToken("tok-ios", "IOS")));
+        when(pushProvider.sendPush(eq("tok-ios"), anyString(), anyString(), anyString(), any()))
+                .thenReturn(new NotificationResult(true, "msg-ios", null));
+
+        service.sendPushWithEventKey(
+                "customer-1",
+                "Task completion reminder",
+                "Please confirm completion.",
+                "COMPLETION_REMINDER",
+                "completion-1");
+
+        verify(pushProvider)
+                .sendPush(
+                        eq("tok-ios"),
+                        eq("IOS"),
+                        eq("Task completion reminder"),
+                        eq("Please confirm completion."),
+                        any());
+        verify(smsProvider, never()).sendSms(anyString(), anyString());
     }
 
     @Test

@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { useConversations } from '../../../../src/features/chat/hooks/useConversations';
 import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 import BookingDetailScreen from '../../../../src/app/(customer)/bookings/[bookingId]/index';
@@ -34,13 +35,14 @@ jest.mock('@gorhom/bottom-sheet', () => {
   const React = require('react');
   const { View } = require('react-native');
   const MockBottomSheet = React.forwardRef(function MockBottomSheet(
-    { children, ...props }: any,
+    { children, index, ...props }: any,
     ref: any,
   ) {
     React.useImperativeHandle(ref, () => ({
       snapToIndex: jest.fn(),
       close: jest.fn(),
     }));
+    if (index === -1) return null;
     return <View {...props}>{children}</View>;
   });
   MockBottomSheet.displayName = 'MockBottomSheet';
@@ -55,6 +57,10 @@ jest.mock('@gorhom/bottom-sheet', () => {
 const mockUseBookingDetail = jest.fn();
 jest.mock('../../../../src/features/bookings/hooks/useBookingDetail', () => ({
   useBookingDetail: (id: string) => mockUseBookingDetail(id),
+}));
+
+jest.mock('../../../../src/features/chat/hooks/useConversations', () => ({
+  useConversations: jest.fn(),
 }));
 
 jest.mock('../../../../src/features/bookings/hooks/useCompleteBooking', () => ({
@@ -81,10 +87,47 @@ jest.mock('../../../../src/features/bookings/hooks/useFlagNoShow', () => ({
   }),
 }));
 
+const mockUseConversations = useConversations as jest.MockedFunction<typeof useConversations>;
+
+const hasAncestorTestID = (node: any, testID: string): boolean => {
+  let parent = node.parent;
+  while (parent) {
+    if (parent.props?.testID === testID) {
+      return true;
+    }
+    parent = parent.parent;
+  }
+  return false;
+};
+
 beforeEach(() => {
   jest.clearAllMocks();
   resetTestI18n();
   setTestLanguage('en');
+  mockUseConversations.mockReturnValue({
+    data: {
+      data: [
+        {
+          id: 'conversation-1',
+          task_id: 'task-1',
+          task_title: 'Fix my sink',
+          counterparty_id: 'tasker-1',
+          counterparty_name: 'Bold',
+          counterparty_avatar_url: null,
+          counterparty_last_active_at: null,
+          last_message_content: 'See you soon',
+          last_message_at: '2026-04-01T10:00:00Z',
+          unread_count: 0,
+          created_at: '2026-04-01T10:00:00Z',
+        },
+      ],
+      cursor: { next: null, prev: null },
+    },
+    isLoading: false,
+    isError: false,
+    isRefetching: false,
+    refetch: jest.fn(),
+  } as unknown as ReturnType<typeof useConversations>);
 });
 
 const makeBooking = (overrides = {}) => ({
@@ -137,8 +180,12 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
       refetch: jest.fn(),
     });
     render(<BookingDetailScreen />);
+    expect(screen.getByTestId('booking-lifecycle-preview')).toBeTruthy();
     expect(screen.getByText('Fix my sink')).toBeTruthy();
     expect(screen.getByText('Bold')).toBeTruthy();
+    expect(screen.getByTestId('booking-detail-address-section')).toBeTruthy();
+    expect(screen.getByTestId('booking-detail-payment-note')).toBeTruthy();
+    expect(screen.getByText('Exact address is visible for this confirmed booking.')).toBeTruthy();
   });
 
   it('shows tasker info when assigned', () => {
@@ -173,7 +220,7 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
     render(<BookingDetailScreen />);
 
     fireEvent.press(screen.getByTestId('SCR-CUST-017-cta'));
-    expect(mockPush).toHaveBeenCalledWith('/inbox/b-1');
+    expect(mockPush).toHaveBeenCalledWith('/inbox/conversation-1');
   });
 
   it('shows report issue instead of reschedule and cancel when tasker_marked_done', () => {
@@ -200,6 +247,13 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
     render(<BookingDetailScreen />);
 
     fireEvent.press(screen.getByTestId('booking-detail-screen-report-issue-link'));
+    expect(screen.getByTestId('booking-support-sheet')).toBeTruthy();
+    expect(screen.getByText("What's happening?")).toBeTruthy();
+    expect(
+      screen.getByText('Shared only with Tasky support when review is required.'),
+    ).toBeTruthy();
+    expect(screen.getByTestId('booking-support-reason-reasonSafety')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('booking-support-sheet-primary'));
     expect(mockPush).toHaveBeenCalledWith('/(customer)/bookings/b-1/dispute');
   });
 
@@ -240,6 +294,59 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
     });
     render(<BookingDetailScreen />);
     expect(screen.getByText('Cancelled')).toBeTruthy();
+  });
+
+  it('shows recovery path when a cancelled booking has reopened the task', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: makeBooking({
+        status: 'CANCELLED',
+        task: {
+          id: 'task-1',
+          status: 'OPEN',
+          description: 'Fix my sink',
+          budget: 50000,
+          scheduled_at: '2026-04-01T10:00:00Z',
+          location_text: 'Ulaanbaatar',
+          category: { name: 'Handyman' },
+        },
+      }),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingDetailScreen />);
+
+    expect(screen.getByText('Your task is open again.')).toBeTruthy();
+    expect(screen.getByText('Find another tasker')).toBeTruthy();
+    expect(screen.getByText('Report Issue')).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId('SCR-CUST-017-cta'));
+    expect(mockPush).toHaveBeenCalledWith('/(customer)/tasks/task-1');
+  });
+
+  it('does not offer tasker recovery when the linked task is not open', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: makeBooking({
+        status: 'CANCELLED',
+        task: {
+          id: 'task-1',
+          status: 'CANCELLED',
+          description: 'Fix my sink',
+          budget: 50000,
+          scheduled_at: '2026-04-01T10:00:00Z',
+          location_text: 'Ulaanbaatar',
+          category: { name: 'Handyman' },
+        },
+      }),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingDetailScreen />);
+
+    expect(screen.queryByText('Find another tasker')).toBeNull();
+    expect(screen.queryByText('Your task is open again.')).toBeNull();
+    expect(screen.getByText('Report Issue')).toBeTruthy();
   });
 
   it('shows no-show status when no_show', () => {
@@ -286,7 +393,10 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
     render(<BookingDetailScreen />);
 
     fireEvent.press(screen.getByTestId('booking-detail-screen-cancel-btn'));
-    expect(screen.getByTestId('customer-cancel-sheet')).toBeTruthy();
+    const cancelSheet = screen.getByTestId('customer-cancel-sheet');
+    expect(cancelSheet).toBeTruthy();
+    expect(screen.getByText('Select a reason for cancellation')).toBeTruthy();
+    expect(hasAncestorTestID(cancelSheet, 'SCR-CUST-017')).toBe(false);
   });
 
   it('navigates to tasker profile when the tasker card is pressed', () => {
@@ -299,7 +409,16 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
     render(<BookingDetailScreen />);
 
     fireEvent.press(screen.getByTestId('booking-detail-screen-tasker-card'));
-    expect(mockPush).toHaveBeenCalledWith('/(customer)/taskers/tasker-1');
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pathname: '/(customer)/taskers/[taskerId]',
+        params: expect.objectContaining({
+          taskerId: 'tasker-1',
+          taskerName: 'Bold',
+          taskerAvatar: 'https://example.com/avatar.jpg',
+        }),
+      }),
+    );
   });
 
   it('navigates to reschedule screen when reschedule is pressed', () => {

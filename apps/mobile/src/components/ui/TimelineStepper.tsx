@@ -4,7 +4,7 @@ import { Text, View } from 'react-native';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 
 interface TimelineEvent {
   label: string;
@@ -35,7 +35,7 @@ export function TimelineStepper({ events, testID, className }: TimelineStepperPr
         const lineColor = isPast ? colors.verified : colors.chipInactive;
 
         return (
-          <View key={index} className="flex-row min-h-[48px]">
+          <View key={index} className="flex-row min-h-12">
             <View className="w-6 items-center">
               <View
                 style={{
@@ -59,17 +59,16 @@ export function TimelineStepper({ events, testID, className }: TimelineStepperPr
             </View>
             <View style={{ flex: 1, paddingLeft: spacing.md, paddingBottom: spacing.lg }}>
               <Text
+                className={cn('text-body', event.isActive ? 'font-sans-bold' : 'font-sans')}
                 style={{
-                  fontSize: typography.body,
                   color: isFuture ? colors.textTertiary : colors.foreground,
-                  fontWeight: event.isActive ? '700' : undefined,
                 }}
               >
                 {event.label}
               </Text>
               <Text
+                className="text-caption"
                 style={{
-                  fontSize: typography.caption,
                   color: colors.textSecondary,
                   marginTop: spacing.xs / 2,
                 }}

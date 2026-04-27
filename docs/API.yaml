@@ -494,6 +494,61 @@ components:
             - type: array
               items:
                 $ref: "#/IntakeFieldSchema"
+    TaskFeedItem:
+      type: object
+      required:
+        - id
+        - category
+        - description
+        - pricing_mode
+        - budget
+        - approximate_location
+        - approximate_lat
+        - approximate_lng
+        - status
+        - scheduled_at
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        category:
+          $ref: "#/TaskFeedCategory"
+        description:
+          type: string
+        pricing_mode:
+          type: string
+          enum:
+            - BUDGET
+            - QUOTE
+          description: BUDGET = customer sets a fixed budget that taskers accept to apply. QUOTE = taskers submit price quotes.
+        budget:
+          type: integer
+          nullable: true
+          description: Budget in MNT when pricing_mode is BUDGET. Null for QUOTE mode tasks.
+          example: 50000
+        approximate_location:
+          type: string
+          description: District-level approximate location for feed scanning. Exact address is detail-only after authorization.
+          example: Sukhbaatar, Ulaanbaatar
+        approximate_lat:
+          type: number
+          format: double
+          description: District centroid latitude, not the exact task latitude.
+        approximate_lng:
+          type: number
+          format: double
+          description: District centroid longitude, not the exact task longitude.
+        status:
+          type: string
+          enum:
+            - OPEN
+        scheduled_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
     PublicTask:
       type: object
       required:
@@ -534,7 +589,7 @@ components:
             rating_avg:
               type: number
               format: double
-              description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
+              description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until at least three customer-to-tasker reviews are submitted.
         description:
           type: string
         budget:
@@ -863,7 +918,7 @@ components:
             rating_avg:
               type: number
               format: double
-              description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
+              description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until at least three customer-to-tasker reviews are submitted.
             completed_tasks:
               type: integer
             is_pro:
@@ -1188,6 +1243,7 @@ components:
         status:
           type: string
           enum:
+            - EVIDENCE_NEEDED
             - OPEN
             - RESOLVED_TASKER
             - RESOLVED_CUSTOMER
@@ -1223,6 +1279,16 @@ components:
           type: string
           format: date-time
           nullable: true
+        evidence_reminder_sent_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Set when the dispute entered the evidence-needed grace path.
+        evidence_due_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Deadline after which a zero-evidence grace dispute can close for insufficient evidence.
     DisputeEvidence:
       type: object
       required:
@@ -1240,6 +1306,16 @@ components:
         text_payload:
           type: string
           nullable: true
+    AddDisputeEvidenceRequest:
+      type: object
+      required:
+        - evidence
+      properties:
+        evidence:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/DisputeEvidence"
     Conversation:
       type: object
       required:
@@ -1294,7 +1370,7 @@ components:
         - conversation_id
         - sender_id
         - content
-        - created_at
+        - sent_at
       properties:
         id:
           type: string
@@ -1313,7 +1389,7 @@ components:
         content_hash:
           type: string
           nullable: true
-        created_at:
+        sent_at:
           type: string
           format: date-time
     CreditBalance:
@@ -2635,7 +2711,9 @@ paths:
       summary: List open tasks
       description: |
         Returns a paginated list of OPEN tasks. Supports filtering by category and
-        geospatial radius search. Location data is fuzzed for privacy.
+        geospatial radius search. The feed is a summary projection: location data
+        is district-level/approximate, and customer identity, photos, application
+        counts, exact location, and intake details are detail-only.
       operationId: listTasks
       security:
         - BearerAuth: []
@@ -2682,7 +2760,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/PublicTask"
+                      $ref: "#/components/schemas/TaskFeedItem"
                   cursor:
                     $ref: "#/components/schemas/CursorPagination"
         "400":
@@ -3131,59 +3209,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /tasks/{id}/applications/{applicationId}/confirm:
-    post:
-      tags:
-        - Tasks
-      summary: Confirm acceptance (tasker action)
-      description: |
-        Tasker confirms their selection within the 4-hour window.
-        Creates a booking and rejects other pending applications.
-      operationId: confirmAcceptance
-      security:
-        - BearerAuth: []
-      parameters:
-        - $ref: "#/components/parameters/PathId"
-        - name: applicationId
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - $ref: "#/components/parameters/IdempotencyKeyHeader"
-      responses:
-        "200":
-          description: Booking created successfully.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  booking_id:
-                    type: string
-                    format: uuid
-                  status:
-                    type: string
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
-          description: Selection expired or already processed.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
   /tasks/{id}/applications/{applicationId}/withdraw:
     post:
       tags:
         - Tasks
       summary: Withdraw an application (tasker action)
       description: |
-        Tasker withdraws their application. If the application was SELECTED,
-        the task is reopened for new applications.
+        Tasker withdraws an application before customer selection. Selected applications must be
+        accepted or declined through the booking-intent response endpoints.
       operationId: withdrawApplication
       security:
         - BearerAuth: []
@@ -3724,20 +3757,6 @@ paths:
       parameters:
         - $ref: "#/components/parameters/PathId"
         - $ref: "#/components/parameters/IdempotencyKeyHeader"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - liability_disclaimer_accepted
-              properties:
-                liability_disclaimer_accepted:
-                  type: boolean
-                  enum:
-                    - true
-                  description: Customer liability disclaimer acceptance required before booking confirmation.
       responses:
         "200":
           description: Booking created from intent.
@@ -3760,9 +3779,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   /booking-intents/{id}/decline:
-    x-tasky-status: deferred
-    x-tasky-phase: phase_2
-    x-tasky-target-phase: phase_2
     post:
       tags:
         - Bookings
@@ -3770,6 +3786,7 @@ paths:
       description: |
         The selected tasker declines a pending booking intent.
         The customer can then return to the applicant list and choose another tasker.
+        Requires Idempotency-Key header.
       operationId: declineBookingIntent
       security:
         - BearerAuth: []
@@ -3940,6 +3957,8 @@ paths:
         Allowed states:
         - ASSIGNED booking (in-progress)
         - COMPLETED booking within 24 hours of completion
+        Evidence may be supplied at creation. Without evidence, the dispute enters an evidence-needed grace path with
+        a 24-hour deadline measured from the recorded reminder.
         Raising a dispute blocks booking closure actions until admin resolution.
         Requires Idempotency-Key header.
       operationId: raiseDispute
@@ -3956,7 +3975,6 @@ paths:
               type: object
               required:
                 - reason
-                - evidence
               properties:
                 reason:
                   type: string
@@ -3964,7 +3982,6 @@ paths:
                   maxLength: 2000
                 evidence:
                   type: array
-                  minItems: 1
                   items:
                     $ref: "#/components/schemas/DisputeEvidence"
       responses:
@@ -4012,6 +4029,40 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+  /disputes/{id}/evidence:
+    post:
+      tags:
+        - Disputes
+      summary: Add dispute evidence
+      description: |
+        Adds evidence to an open dispute. Evidence added during the evidence-needed grace window moves the dispute back
+        to ordinary open review and prevents insufficient-evidence auto-close.
+      operationId: addDisputeEvidence
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddDisputeEvidenceRequest"
+      responses:
+        "200":
+          description: Evidence accepted and dispute returned.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dispute"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /conversations:
     get:
       tags:
@@ -4049,7 +4100,8 @@ paths:
         - Conversations
       summary: Get messages in a conversation
       description: |
-        Returns paginated messages in a conversation, ordered by most recent first.
+        Returns paginated messages in a conversation, ordered by most recent first
+        using sent_at DESC, id DESC for deterministic keyset pagination.
         Only accessible by conversation participants and admins (for dispute resolution).
       operationId: listMessages
       security:

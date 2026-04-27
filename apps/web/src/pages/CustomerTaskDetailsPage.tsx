@@ -180,7 +180,7 @@ export function CustomerTaskDetailsPage() {
                   </div>
                 </div>
                 <div className="space-y-3 sm:text-right">
-                  <div className="text-sm text-muted-foreground uppercase tracking-[0.075em] font-semibold">
+                  <div className="text-sm text-muted-foreground uppercase tracking-caps font-semibold">
                     {t('customerTaskDetails.budgetLabel')}
                   </div>
                   <div className="text-2xl font-bold font-display text-foreground">
@@ -266,11 +266,9 @@ function ApplicationCard({
             <div>
               <div className="font-semibold font-display text-lg flex items-center gap-2">
                 {application.tasker.full_name}
-                {application.tasker.is_pro && (
-                  <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
-                    PRO
-                  </Badge>
-                )}
+                <Badge variant="secondary" className="px-1.5 py-0 text-badge-text">
+                  {t('customerTaskDetails.idVerifiedTasker')}
+                </Badge>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground mt-0.5">
                 <span className="flex items-center gap-1 font-medium text-foreground">

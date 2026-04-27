@@ -18,6 +18,7 @@ import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.marketplace.publicapi.MarketplaceCommandPort;
 import mn.tasky.marketplace.publicapi.MarketplaceQueryPort;
 import mn.tasky.runtime.publicapi.composition.PublicTaskCompositionService;
+import mn.tasky.runtime.publicapi.composition.PublicTaskFeedCompositionService;
 import mn.tasky.runtime.publicapi.composition.TaskApplicationAcceptanceOutcome;
 import mn.tasky.runtime.publicapi.composition.TaskApplicationAcceptanceService;
 import mn.tasky.task.dto.AcceptApplicationRequest;
@@ -25,7 +26,6 @@ import mn.tasky.task.dto.ApplyTaskRequest;
 import mn.tasky.task.dto.CreateDraftRequest;
 import mn.tasky.task.dto.CreateTask;
 import mn.tasky.task.dto.CreateTaskRequest;
-import mn.tasky.task.dto.TaskAcceptResult;
 import mn.tasky.task.dto.TaskApplicationState;
 import mn.tasky.task.dto.TaskApplicationsListResult;
 import mn.tasky.task.dto.TaskApplyResult;
@@ -63,16 +63,19 @@ public class TaskController {
     private final MarketplaceCommandPort marketplaceCommandPort;
     private final MarketplaceQueryPort marketplaceQueryPort;
     private final PublicTaskCompositionService taskCompositionService;
+    private final PublicTaskFeedCompositionService taskFeedCompositionService;
     private final TaskApplicationAcceptanceService taskApplicationAcceptanceService;
 
     public TaskController(
             MarketplaceCommandPort marketplaceCommandPort,
             MarketplaceQueryPort marketplaceQueryPort,
             PublicTaskCompositionService taskCompositionService,
+            PublicTaskFeedCompositionService taskFeedCompositionService,
             TaskApplicationAcceptanceService taskApplicationAcceptanceService) {
         this.marketplaceCommandPort = marketplaceCommandPort;
         this.marketplaceQueryPort = marketplaceQueryPort;
         this.taskCompositionService = taskCompositionService;
+        this.taskFeedCompositionService = taskFeedCompositionService;
         this.taskApplicationAcceptanceService = taskApplicationAcceptanceService;
     }
 
@@ -86,11 +89,9 @@ public class TaskController {
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
             HttpServletRequest request) {
         try {
-            TaskPage page = marketplaceQueryPort.listTasks(category, lat, lng, radiusKm, cursor, limit);
-            List<Map<String, Object>> data = taskCompositionService.toPublicTaskResponses(page.data());
-
+            var page = taskFeedCompositionService.listTaskFeed(category, lat, lng, radiusKm, cursor, limit);
             return ResponseEntity.ok(
-                    new PagedResponse<>(data, new CursorPagination(page.nextCursor(), page.hasMore())));
+                    new PagedResponse<>(page.data(), new CursorPagination(page.nextCursor(), page.hasMore())));
         } catch (IllegalArgumentException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of(
@@ -490,37 +491,6 @@ public class TaskController {
                             "message", outcome.errorMessage(),
                             "trace_id", resolveTraceId(request)));
             case INTERNAL_ERROR -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
-        };
-    }
-
-    @PostMapping("/{id}/applications/{applicationId}/confirm")
-    public ResponseEntity<?> confirmAcceptance(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @PathVariable String id,
-            @PathVariable String applicationId,
-            @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
-            HttpServletRequest request) {
-        TaskAcceptResult result = marketplaceCommandPort.confirmAcceptance(principal.userId(), id, applicationId);
-        if (result.isSuccess()) {
-            return ResponseEntity.ok(Map.of(
-                    "booking_id",
-                    result.booking().id(),
-                    "status",
-                    result.booking().status()));
-        }
-        return switch (result.errorCode()) {
-            case TaskAcceptResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(errorBody("NOT_FOUND", "Application not found.", request));
-            case TaskAcceptResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(errorBody("FORBIDDEN", "You do not have permission to confirm this application.", request));
-            case TaskAcceptResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(errorBody("TASK_NOT_OPEN", "Task is no longer open.", request));
-            case TaskAcceptResult.DISCLAIMER_REQUIRED -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(errorBody("DISCLAIMER_REQUIRED", "Liability disclaimer must be accepted.", request));
-            case TaskAcceptResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(errorBody("CONFLICT", "Selection expired or application already processed.", request));
-            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(errorBody("INTERNAL_ERROR", "An unexpected error occurred.", request));
         };
     }

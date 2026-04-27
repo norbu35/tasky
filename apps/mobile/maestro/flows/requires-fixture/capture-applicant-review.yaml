@@ -1,0 +1,45 @@
+appId: mn.tasky.mobile
+---
+# Capture SCR-CUST-011 applicant review state for visual QA.
+# Precondition: app is already logged in as a customer on SCR-CUST-001 and the
+# selected task fixture has at least one applicant.
+
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-001'
+    timeout: 10000
+
+- tapOn:
+    id: 'my-tasks-feed'
+
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-009'
+    timeout: 10000
+
+- tapOn:
+    id: 'SCR-CUST-009-cta'
+
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-011'
+    timeout: 10000
+
+- assertVisible:
+    id: 'applicant-card-0'
+- assertVisible:
+    id: 'applicant-signal-response-0'
+- assertVisible:
+    id: 'applicant-signal-pricing-0'
+- takeScreenshot: screenshots/SCR-CUST-011-applicant-review
+
+- tapOn:
+    id: 'applicant-accept-0'
+- extendedWaitUntil:
+    visible:
+      id: 'applicant-accept-sheet'
+    timeout: 5000
+- takeScreenshot: screenshots/SCR-CUST-011-applicant-confirm-sheet
+
+- tapOn:
+    id: 'applicant-accept-sheet-close'

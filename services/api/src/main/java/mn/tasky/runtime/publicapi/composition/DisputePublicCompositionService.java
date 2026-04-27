@@ -25,6 +25,14 @@ public class DisputePublicCompositionService {
         response.put("status", dispute.status());
         response.put("reason", dispute.reason());
         response.put("created_at", dispute.createdAt().toString());
+        response.put(
+                "evidence_reminder_sent_at",
+                dispute.evidenceReminderSentAt() != null
+                        ? dispute.evidenceReminderSentAt().toString()
+                        : null);
+        response.put(
+                "evidence_due_at",
+                dispute.evidenceDueAt() != null ? dispute.evidenceDueAt().toString() : null);
         return response;
     }
 

@@ -5,7 +5,7 @@ import { ResponsiveDetailShell } from '../../layout/parity';
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-2 text-[13px] font-bold font-display text-primary-deep uppercase tracking-[0.075em]">
+    <p className="mb-2 text-overline font-bold font-display text-primary-deep uppercase">
       {children}
     </p>
   );

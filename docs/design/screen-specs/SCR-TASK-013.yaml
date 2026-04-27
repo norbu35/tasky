@@ -16,17 +16,22 @@ traceability:
     - REQ-P1-BOOK-12
     - REQ-P1-BOOK-13
     - REQ-P1-BOOK-25
+    - REQ-P1-BOOK-26
+    - REQ-P1-BOOK-29
     - REQ-P1-MSG-02
   journey_refs:
     - JRN-TASK-04:step-2
     - JRN-TASK-04:step-3
     - JRN-TASK-04:step-4
+    - JRN-CUST-04-A6
     - JRN-TASK-04-A4
     - JRN-TASK-04-A5
   scenario_refs:
     - SCN-BOOK-005
     - SCN-BOOK-009
     - SCN-BOOK-026
+    - SCN-BOOK-027
+    - SCN-BOOK-032
     - SCN-SEC-007
     - SCN-MSG-003
 template: detail
@@ -36,7 +41,27 @@ feature: 'tasker-bookings'
 layout:
   template: detail
   density: default
-  structure: 'safe_area -> nav_header(back + title) -> scrollview(status_section + customer_info + task_description + exact_address + schedule + payment_note + action_section) -> sticky_bottom_cta(primary_action + secondary_actions)'
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(status_section + customer_info + task_description + exact_address + schedule + payment_note + scope_change_notice + action_section) -> sticky_bottom_cta(primary_action + secondary_actions)'
+
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: balanced
+  trust_cues:
+    - lifecycle_timeline
+    - exact_address_reveal_rule
+    - platform_mediated_contact
+    - cancellation_no_show_warning
+    - dispute_entry
+  non_goals:
+    - no_escrow_claim
+    - no_wallet_claim
+    - no_payment_protection_claim
+  airbnb_scaffold:
+    - timeline_first_detail
+    - address_visibility_rule
+    - direct_settlement_payment_note
+    - cancellation_completion_actions
+    - support_reason_sheet
 
 components:
   - id: COMP-BUTTON
@@ -160,7 +185,7 @@ states:
     components_hidden: [cancel_link, review_button]
 
   - id: marked_done_awaiting
-    description: 'Tasker has marked work done — awaiting customer confirmation'
+    description: 'Tasker has marked work done — awaiting customer confirmation or timeout auto-complete after reminder attempts'
     components_visible:
       [
         nav_header,
@@ -180,6 +205,21 @@ states:
       [
         nav_header,
         status_badge_completed,
+        customer_info,
+        task_description,
+        schedule,
+        payment_note,
+        review_button,
+      ]
+    components_hidden: [mark_done_button, cancel_link, exact_address, message_button]
+
+  - id: auto_completed
+    description: 'Booking auto-completed after customer silence and reminder attempts — review CTA shown and completion is read-only'
+    components_visible:
+      [
+        nav_header,
+        status_badge_completed,
+        auto_complete_note,
         customer_info,
         task_description,
         schedule,
@@ -230,6 +270,11 @@ copy:
     en: 'Completed'
     max_chars: 12
 
+  - key: status_auto_completed
+    mn: 'Автоматаар дууссан'
+    en: 'Auto-completed'
+    max_chars: 25
+
   - key: status_cancelled
     mn: 'Цуцлагдсан'
     en: 'Cancelled'
@@ -275,6 +320,11 @@ copy:
     en: 'Payment is arranged directly with the customer. Tasky is a connector, not a payment processor.'
     max_chars: 100
 
+  - key: scope_change_note
+    mn: 'Үндсэн үнэ ба ажлын хүрээ захиалга баталгаажих үед түгжигдсэн. Өөрчлөлтийг Tasky чат эсвэл тусламжийн нотолгоонд тохиролцоорой.'
+    en: 'The baseline price and scope were locked at confirmation. Agree any material, supply, or scope changes in Tasky chat or support evidence.'
+    max_chars: 150
+
   - key: mark_done_button
     mn: 'Ажил дууссан'
     en: 'Mark Done'
@@ -309,6 +359,11 @@ copy:
     mn: 'Захиалагч баталгаажуулахыг хүлээж байна'
     en: 'Waiting for customer to confirm completion'
     max_chars: 50
+
+  - key: auto_complete_note
+    mn: 'Захиалагч хариу өгөөгүй тул сануулгын дараа автоматаар дууссан'
+    en: 'Auto-completed after reminders because the customer did not respond'
+    max_chars: 90
 
   - key: approaching_reminder
     mn: 'Хуваарьт цаг ойрхон байна!'
@@ -365,8 +420,11 @@ acceptance_criteria:
   - 'Exact address section includes note that it is visible only to the tasker'
   - 'Payment note clearly states direct settlement between parties'
   - 'Locked price display adapts to the task pricing mode and agreed booking price'
+  - 'Detail states that the locked price and intake scope are the baseline agreement and that material, supply, or scope changes must stay in Tasky chat or support evidence'
+  - 'Scope and price guidance does not promise automatic price adjustment, payment hold, or payment protection'
   - 'Mark Done button triggers PUT /bookings/:id/mark-done'
   - 'After marking done, awaiting confirmation banner replaces Mark Done button'
+  - 'If the customer stays silent through reminder attempts, the booking auto-completes, shows an auto-completed note, and creates review debt'
   - 'Cancel link opens Booking Cancel modal (SCR-TASK-015)'
   - 'Reschedule action opens the in-app reschedule flow for requesting or responding to schedule changes'
   - 'Reschedule actions are in-app only; external phone or SMS flows are not used'

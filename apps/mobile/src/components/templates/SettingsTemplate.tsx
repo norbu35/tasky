@@ -1,9 +1,10 @@
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
-import { mobileTheme } from '@/design/tokenAdapter';
 import { elevations } from '@/design/elevations';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
+
 import { ActionRow } from '../ui/ActionRow';
 
 const { spacing } = mobileTheme;
@@ -43,7 +44,7 @@ export function SettingsTemplate({ sections, testID, className }: SettingsTempla
       {sections.map((section, sectionIndex) => (
         <View key={section.title ?? `section-${sectionIndex}`} className="mb-xl">
           {section.title ? (
-            <Text className="text-[13px] font-display-bold text-primary-deep mb-sm">
+            <Text className="text-label font-display-bold text-primary-deep mb-sm">
               {section.title}
             </Text>
           ) : null}

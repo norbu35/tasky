@@ -32,7 +32,7 @@ export function ChatDetailPage() {
                 <div className="rounded-2xl rounded-bl-sm bg-card px-3 py-2 text-sm text-foreground">
                   {t('sharedPages.chatDetail.sampleMessage')}
                 </div>
-                <span className="block text-right text-[11px] text-text-tertiary">10:15</span>
+                <span className="block text-right text-caption text-text-tertiary">10:15</span>
               </div>
             </div>
             <div className="flex items-end justify-end gap-2">
@@ -40,7 +40,7 @@ export function ChatDetailPage() {
                 <div className="rounded-2xl rounded-br-sm bg-foreground px-3 py-2 text-sm text-card">
                   {t('sharedPages.chatDetail.sampleReply')}
                 </div>
-                <span className="block text-right text-[11px] text-text-tertiary">10:16</span>
+                <span className="block text-right text-caption text-text-tertiary">10:16</span>
               </div>
             </div>
           </CardContent>

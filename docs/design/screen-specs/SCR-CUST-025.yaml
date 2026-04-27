@@ -76,7 +76,7 @@ states:
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
   - id: closed_insufficient
-    description: 'Dispute closed as insufficient evidence after the reminder window elapsed without enough evidence'
+    description: 'Dispute closed as insufficient evidence after the 24-hour deadline after the evidence reminder elapsed without enough evidence'
     components_visible: [COMP-STATUSBADGE]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
@@ -158,8 +158,8 @@ copy:
 
   - key: closed_insufficient_description
     mn: 'Нотлох баримт 24 цагийн дотор ирүүлээгүй тул маргаан хаагдлаа.'
-    en: 'Dispute closed because enough evidence was not provided after the reminder window.'
-    max_chars: 80
+    en: 'Dispute closed because enough evidence was not provided within 24 hours after the evidence reminder.'
+    max_chars: 120
 
   - key: phase1_note
     mn: 'Маргаан нь зөвхөн зуучлалын шинжтэй. Мөнгөн нөхөн төлбөр олгогдохгүй.'
@@ -187,7 +187,7 @@ acceptance_criteria:
   - "Open state shows dispute summary, submitted evidence, and 'under review' messaging"
   - "Escalated state shows escalation note with 'further investigation' messaging"
   - 'Resolved states show resolution details: resolved for customer shows misconduct note acknowledgment; resolved for tasker shows outcome'
-  - 'Closed insufficient state explains the 24-hour evidence deadline'
+  - 'Closed insufficient state explains the 24-hour-after-reminder evidence deadline'
   - 'Phase 1 mediation note is always visible: disputes are evidence-only, with no monetary compensation promise'
   - 'Submitted evidence (photos, chat excerpts, text) is displayed read-only'
   - 'Back button navigates via pop to Booking Detail (SCR-CUST-017)'

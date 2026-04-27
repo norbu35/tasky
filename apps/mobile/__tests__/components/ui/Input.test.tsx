@@ -28,4 +28,13 @@ describe('Input', () => {
     render(<Input testID="input" className="px-4" />);
     expect(screen.getByTestId('input').props.className).toContain('px-4');
   });
+
+  it('TID-TASK-071-MOBILE-INPUT-MULTILINE-LAYOUT does not force multiline inputs to single-line height', () => {
+    render(<Input testID="input" multiline />);
+
+    const className = screen.getByTestId('input').props.className;
+
+    expect(className).toContain('min-h-[48px]');
+    expect(className).not.toContain('h-12');
+  });
 });

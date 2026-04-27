@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { listApplications } from '../api';
-import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
+import { useAuthStore } from '@/store/authStore';
+
+import { listApplications } from '../api';
 
 export function useApplications(taskId: string) {
   const session = useAuthStore((s) => s.session);

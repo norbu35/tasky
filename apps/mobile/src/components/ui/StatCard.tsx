@@ -13,11 +13,11 @@ interface StatCardProps {
 export function StatCard({ value, label, className }: StatCardProps) {
   return (
     <View
-      className={cn('flex-1 bg-card rounded-md p-4 items-center justify-center', className)}
+      className={cn('flex-1 bg-card rounded-md p-lg items-center justify-center', className)}
       style={elevations.card}
     >
-      <Text className="text-[20px] font-display-bold text-primary-deep text-center">{value}</Text>
-      <Text className="text-[11px] font-sans-medium text-text-tertiary uppercase tracking-[0.075em] mt-xs text-center">
+      <Text className="text-title font-display-bold text-primary-deep text-center">{value}</Text>
+      <Text className="text-nav-label font-sans-medium text-text-tertiary uppercase mt-xs text-center">
         {label}
       </Text>
     </View>

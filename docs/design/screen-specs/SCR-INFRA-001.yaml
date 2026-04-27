@@ -1,7 +1,10 @@
 # Screen Spec: Network Error / Offline
 screen_id: SCR-INFRA-001
 name: 'Network Error / Offline'
-route: null
+route: '/(shared)/network-error'
+presentation:
+  type: route_backed_full_screen
+  invocation: 'Shown when connectivity loss or repeated network timeout blocks the current task'
 role: [customer, tasker]
 phase: '0-1'
 traceability:

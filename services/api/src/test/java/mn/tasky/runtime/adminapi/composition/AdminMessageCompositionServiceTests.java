@@ -61,7 +61,7 @@ class AdminMessageCompositionServiceTests {
 
             assertThat(page.data()).hasSize(2);
             assertThat(page.hasMore()).isTrue();
-            assertThat(page.nextCursor()).isEqualTo("m2");
+            assertThat(page.nextCursor()).isEqualTo(msg2.sentAt() + "|m2");
         }
 
         @Test

@@ -2,12 +2,12 @@ import { ChevronRight } from 'lucide-react-native';
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
+
 import { Touchable } from './Touchable';
 
 const { colors } = mobileTheme;
-const pressedBackground = withAlpha(colors.foreground, 0.05);
 
 export interface ActionRowProps {
   /** Left icon — rendered inside a 40×40 tinted circle. */
@@ -48,7 +48,6 @@ export function ActionRow({
         showDivider && 'border-b border-border/50',
         className,
       )}
-      style={({ pressed }) => [isInteractive && pressed && { backgroundColor: pressedBackground }]}
     >
       <View
         className={cn(

@@ -116,6 +116,8 @@ components:
       $ref: ./components/schemas/categories.yaml#/IntakeFieldSchema
     Category:
       $ref: ./components/schemas/categories.yaml#/Category
+    TaskFeedItem:
+      $ref: ./components/schemas/tasks.yaml#/TaskFeedItem
     PublicTask:
       $ref: ./components/schemas/tasks.yaml#/PublicTask
     Task:
@@ -144,6 +146,8 @@ components:
       $ref: ./components/schemas/disputes.yaml#/Dispute
     DisputeEvidence:
       $ref: ./components/schemas/disputes.yaml#/DisputeEvidence
+    AddDisputeEvidenceRequest:
+      $ref: ./components/schemas/disputes.yaml#/AddDisputeEvidenceRequest
     Conversation:
       $ref: ./components/schemas/messaging.yaml#/Conversation
     Message:
@@ -252,8 +256,6 @@ paths:
     $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications
   /tasks/{id}/applications/{applicationId}/accept:
     $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications~1{applicationId}~1accept
-  /tasks/{id}/applications/{applicationId}/confirm:
-    $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications~1{applicationId}~1confirm
   /tasks/{id}/applications/{applicationId}/withdraw:
     $ref: ./paths/tasks.yaml#/~1tasks~1{id}~1applications~1{applicationId}~1withdraw
   /bookings:
@@ -294,6 +296,8 @@ paths:
     $ref: ./paths/disputes.yaml#/~1bookings~1{id}~1disputes
   /disputes/{id}:
     $ref: ./paths/disputes.yaml#/~1disputes~1{id}
+  /disputes/{id}/evidence:
+    $ref: ./paths/disputes.yaml#/~1disputes~1{id}~1evidence
   /conversations:
     $ref: ./paths/conversations.yaml#/~1conversations
   /conversations/{id}/messages:

@@ -148,4 +148,18 @@ public interface BookingIntentDao {
             @Bind("confirmedBookingId") UUID confirmedBookingId,
             @Bind("confirmedAt") Instant confirmedAt,
             @Bind("updatedAt") Instant updatedAt);
+
+    default void markDeclined(String id, Instant updatedAt) {
+        markDeclined(required(id, "id"), updatedAt);
+    }
+
+    @SqlUpdate("UPDATE booking_intents SET status = 'DECLINED', updated_at = :updatedAt WHERE id = :id")
+    void markDeclined(@Bind("id") UUID id, @Bind("updatedAt") Instant updatedAt);
+
+    default void markExpired(String id, Instant updatedAt) {
+        markExpired(required(id, "id"), updatedAt);
+    }
+
+    @SqlUpdate("UPDATE booking_intents SET status = 'EXPIRED', updated_at = :updatedAt WHERE id = :id")
+    void markExpired(@Bind("id") UUID id, @Bind("updatedAt") Instant updatedAt);
 }

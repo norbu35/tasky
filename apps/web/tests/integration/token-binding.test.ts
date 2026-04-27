@@ -38,10 +38,16 @@ describe('Token Binding', () => {
 
   it('TID-TASK-115-WEB-TOKEN-PLATFORM-OUTPUTS derive web bindings from the canonical semantic graph', () => {
     expect(webTokens.colors.primary.hsl).toBe(semanticTokens.colors.primary.hsl);
-    expect(webTokens.cssVariables['--color-primary']).toBe(semanticTokens.colors.primary.hsl);
-    expect(webTokens.cssVariables['--font-family-sans']).toBe(
-      semanticTokens.typography.families.sans.web,
+    expect(webTokens.cssVariableSections.primitives['--tenger-ink']).toBe(
+      semanticTokens.colors.primary.hsl,
     );
+    expect(webTokens.cssVariableSections.semanticAliases['--color-primary']).toBe(
+      'var(--tenger-ink)',
+    );
+    expect(webTokens.cssVariableSections.typography['--font-family-sans']).toBe(
+      'var(--tenger-font-sans)',
+    );
+    expect('cssVariables' in webTokens).toBe(false);
     expect(webTokens.spacing.lg).toBe('16px');
     expect(webTokens.typography.fontSize.body).toBe('16px');
   });
@@ -85,7 +91,7 @@ describe('Token Binding', () => {
     expect(tailwindConfigSource).toContain("modal: 'var(--z-modal)'");
     expect(tailwindConfigSource).toContain("fab: 'var(--shadow-fab)'");
     expect(tailwindConfigSource).toContain("'icon-sm': webTokens.iconSizes.sm");
-    expect(tailwindConfigSource).toMatch(/\bbadge:\s*\[/);
+    expect(tailwindConfigSource).toMatch(/'badge-text':\s*\[/);
   });
 
   it('TID-TASK-115-WEB-RUNTIME-TOKEN-COMPONENTS bind promoted tokens in runtime UI', () => {
@@ -106,7 +112,7 @@ describe('Token Binding', () => {
     expect(buttonSource).toContain('shadow-fab');
     expect(buttonSource).not.toContain('active:opacity-85');
 
-    expect(badgeSource).toContain('text-badge');
+    expect(badgeSource).toContain('text-badge-text');
     expect(badgeSource).toContain('tracking-caps');
     expect(inputSource).toContain('text-body');
 
@@ -130,6 +136,70 @@ describe('Token Binding', () => {
       expect(layoutSource).not.toContain('backdrop-blur');
       expect(layoutSource).not.toContain('tracking-tight');
     });
+  });
+
+  it('TID-TASK-115-WEB-TOKEN-HYGIENE removes dead typography utilities and raw shadow vars', () => {
+    const stylesSource = readFileSync(resolve(process.cwd(), 'src/styles.css'), 'utf8');
+    const sharedTokenSource = readFileSync(
+      packageRequire.resolve('@tasky/design-tokens/tokens.css'),
+      'utf8',
+    );
+    const appSources = [
+      'src/components/ui/card.tsx',
+      'src/components/feature/FeedCard.tsx',
+      'src/components/feature/FilterChip.tsx',
+      'src/components/feature/task-creation/PhotoUploadManager.tsx',
+      'src/pages/AuthPage.tsx',
+      'src/pages/LandingPage.tsx',
+    ]
+      .map((path) => readFileSync(resolve(process.cwd(), path), 'utf8'))
+      .join('\n');
+
+    expect(stylesSource).not.toMatch(/\.t-(hero|heading|body|label|ui|caption|overline)\b/);
+    expect(sharedTokenSource).not.toMatch(/^\.dark\s*\{/m);
+    expect(appSources).not.toContain('shadow-[var(--shadow-');
+  });
+
+  it('TID-TASK-115-WEB-RUNTIME-TYPOGRAPHY uses promoted typography utilities on cleaned surfaces', () => {
+    const sourceFiles = [
+      'src/components/feature/FeedCard.tsx',
+      'src/components/feature/task-creation/PhotoUploadManager.tsx',
+      'src/components/ui/label.tsx',
+      'src/pages/AuthPage.tsx',
+      'src/pages/CustomerTaskDetailsPage.tsx',
+      'src/pages/LandingPage.tsx',
+      'src/pages/MessagingNotificationsPage.tsx',
+      'src/pages/shared/ChatDetailPage.tsx',
+      'src/pages/shared/HelpPage.tsx',
+      'src/pages/shared/InboxPage.tsx',
+      'src/pages/shared/SettingsPage.tsx',
+    ];
+    const appSources = sourceFiles
+      .map((path) => readFileSync(resolve(process.cwd(), path), 'utf8'))
+      .join('\n');
+
+    expect(appSources).not.toMatch(/\btext-\[(?:10|11|13)px\]/);
+    expect(appSources).not.toContain('tracking-[0.075em]');
+    expect(appSources).not.toMatch(/\bblur-\[(?:100|120|130|150)px\]/);
+  });
+
+  it('TID-TASK-115-WEB-COLOR-HYGIENE keeps common status/accent colors on Tasky tokens', () => {
+    const sourceFiles = [
+      'src/pages/BookingConfirmationPage.tsx',
+      'src/pages/BookingSafetyPage.tsx',
+      'src/pages/TaskerFeedPage.tsx',
+      'src/pages/TaskerTasksPage.tsx',
+      'src/pages/customer/CustomerDisputeStatusPage.tsx',
+      'src/pages/tasker/TaskerCancelDialog.tsx',
+      'src/pages/tasker/TaskerJobsPage.tsx',
+      'src/pages/tasker/TaskerNoShowDialog.tsx',
+    ];
+    const appSources = sourceFiles
+      .map((path) => readFileSync(resolve(process.cwd(), path), 'utf8'))
+      .join('\n');
+
+    expect(appSources).not.toMatch(/\b(?:bg|border|text)-(?:amber|emerald|green|red)-/);
+    expect(appSources).not.toMatch(/\btext-white\b/);
   });
 
   it('TID-TASK-115-WEB-TOKEN-PACKAGE-BOUNDARY imports shared token CSS through the package boundary', () => {

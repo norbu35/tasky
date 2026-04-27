@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react';
-import { act, render, waitFor } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, render, waitFor } from '@testing-library/react-native';
+import React, { useEffect } from 'react';
+
 import { useAppStore } from '../../src/store/appStore';
 import { useAuthStore } from '../../src/store/authStore';
 import { createTestQueryClient } from '../test-utils/queryClient';
 
 const mockRequestJson = jest.fn();
 const mockGetMyProfile = jest.fn();
+const mockListMyTasks = jest.fn();
 
 const mockRouter = {
   replace: jest.fn(),
@@ -45,6 +47,10 @@ jest.mock('../../src/features/profile/api', () => ({
   getMyProfile: (...args: unknown[]) => mockGetMyProfile(...args),
 }));
 
+jest.mock('../../src/features/tasks/api', () => ({
+  listMyTasks: (...args: unknown[]) => mockListMyTasks(...args),
+}));
+
 type DevLoginMutation = {
   mutateAsync: (variables: { phone: string; role: 'CUSTOMER' | 'TASKER' }) => Promise<unknown>;
 };
@@ -52,6 +58,7 @@ type DevLoginMutation = {
 let latestMutation: DevLoginMutation | null = null;
 
 function DevLoginHarness() {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { useDevLogin } = require('../../src/features/auth/hooks/useAuth') as {
     useDevLogin: () => DevLoginMutation;
   };
@@ -98,6 +105,17 @@ describe('useDevLogin', () => {
       is_pro: false,
       created_at: '2026-02-14T00:00:00Z',
     });
+    mockListMyTasks.mockResolvedValue({
+      data: [
+        {
+          id: 'task-1',
+          description: 'Seed customer task',
+          status: 'OPEN',
+          scheduled_at: '2026-04-01T10:00:00Z',
+        },
+      ],
+      cursor: { next: null, prev: null },
+    });
     useAuthStore.setState({ session: null });
     useAppStore.setState({ hasSeenOnboarding: false, currentRole: 'customer' });
   });
@@ -129,6 +147,35 @@ describe('useDevLogin', () => {
     );
     expect(useAppStore.getState().currentRole).toBe('customer');
     expect(mockRouter.replace).toHaveBeenCalledWith('/onboarding');
+
+    queryClient.clear();
+  });
+
+  it('TID-AUTH-POST-AUTH-PREFETCH warms the customer task list cache after customer dev login', async () => {
+    const queryClient = createTestQueryClient();
+    useAppStore.setState({ hasSeenOnboarding: true, currentRole: 'customer' });
+
+    render(<DevLoginHarness />, { wrapper: createWrapper(queryClient) });
+
+    await waitFor(() => {
+      expect(latestMutation).not.toBeNull();
+    });
+
+    await act(async () => {
+      await latestMutation?.mutateAsync({
+        phone: '+97692000001',
+        role: 'CUSTOMER',
+      });
+    });
+
+    await waitFor(() => {
+      expect(mockListMyTasks).toHaveBeenCalledWith('dev-access-token');
+    });
+    expect(queryClient.getQueryData(['myTasks', 'dev-access-token'])).toEqual(
+      expect.objectContaining({
+        data: [expect.objectContaining({ id: 'task-1' })],
+      }),
+    );
 
     queryClient.clear();
   });

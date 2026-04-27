@@ -14,6 +14,7 @@ import {
   makeMessage,
   makeConversation,
   makeTask,
+  makeTaskFeedItem,
   makeCursorPage,
 } from './factories';
 
@@ -42,7 +43,8 @@ export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClie
     }),
     listCategories: vi.fn().mockResolvedValue(makeCursorPage([makeCategory()])),
     createTask: vi.fn().mockResolvedValue(makeTask()),
-    listTasks: vi.fn().mockResolvedValue(makeCursorPage([makeTask()])),
+    listTasks: vi.fn().mockResolvedValue(makeCursorPage([makeTaskFeedItem()])),
+    getTask: vi.fn().mockResolvedValue(makeTask()),
     listMyTasks: vi.fn().mockResolvedValue(makeCursorPage([])),
     applyToTask: vi.fn().mockResolvedValue({
       id: 'app-1',
@@ -117,6 +119,7 @@ export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClie
     submitReview: vi.fn().mockResolvedValue(makeReview()),
     getUserReviews: vi.fn().mockResolvedValue(makeCursorPage([makeReview()])),
     raiseDispute: vi.fn().mockResolvedValue(makeDispute()),
+    addDisputeEvidence: vi.fn().mockResolvedValue(makeDispute()),
     getDispute: vi.fn().mockResolvedValue(makeDispute()),
     listConversations: vi.fn().mockResolvedValue(makeCursorPage([makeConversation()])),
     listMessages: vi.fn().mockResolvedValue(makeCursorPage([makeMessage()])),
@@ -164,8 +167,21 @@ export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClie
       created_at: '2026-02-14T00:00:00Z',
       updated_at: '2026-02-14T00:00:00Z',
     }),
-    confirmAcceptance: vi.fn().mockResolvedValue({
-      booking_id: 'booking-new',
+    declineBookingIntent: vi.fn().mockResolvedValue({
+      id: 'intent-application-1',
+      task_id: 'task-1',
+      tasker_id: 'tasker-1',
+      customer_id: 'customer-1',
+      source: 'APPLICATION_SELECTION',
+      status: 'DECLINED',
+      selected_application_id: 'app-1',
+      original_booking_id: null,
+      offer_id: null,
+      expires_at: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
+      confirmed_booking_id: null,
+      confirmed_at: null,
+      created_at: '2026-02-14T00:00:00Z',
+      updated_at: '2026-02-14T00:00:00Z',
     }),
     markBookingDone: vi.fn().mockResolvedValue({
       ...makeBooking(),

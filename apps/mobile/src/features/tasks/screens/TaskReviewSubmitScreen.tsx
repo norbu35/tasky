@@ -6,6 +6,10 @@ import { Text, View } from 'react-native';
 import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 import { Toast } from '@/components/ui/Toast';
 import { mobileTheme } from '@/design/tokenAdapter';
+import {
+  PostingGuidanceCard,
+  PostingProofChecklist,
+} from '@/features/tasks/components/PostingGuidance';
 
 import { formatBudget, formatSchedule } from './TaskReviewSubmit.model';
 import {
@@ -50,13 +54,21 @@ export default function TaskReviewSubmitScreen() {
       nextButtonTestID="SCR-CUST-007-cta"
     >
       <View className="gap-xs mb-sm">
-        <Text className="text-caption font-bold text-text-secondary uppercase tracking-[0.075em]">
+        <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-normal">
           {t('ReviewSubmitScreen.finalStep')}
         </Text>
         <Text className="text-heading font-display-bold text-primary-deep">
           {t('ReviewSubmitScreen.reviewTitle')}
         </Text>
       </View>
+
+      <PostingGuidanceCard
+        titleKey="PostingGuidance.summaryTitle"
+        bodyKey="PostingGuidance.summaryBody"
+        testID="posting-guidance-review-summary"
+      />
+
+      <PostingProofChecklist testID="posting-proof-checklist" />
 
       <SectionCard
         label={t('ReviewSubmitScreen.sectionCategory')}

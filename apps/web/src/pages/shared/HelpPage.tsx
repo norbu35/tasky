@@ -12,7 +12,7 @@ export function HelpPage() {
     >
       <div className="space-y-6">
         <section>
-          <p className="mb-2 text-[13px] font-bold font-display text-primary-deep uppercase tracking-[0.075em]">
+          <p className="mb-2 text-overline font-bold font-display text-primary-deep uppercase">
             {t('sharedPages.help.sectionGeneral')}
           </p>
           <div className="rounded-md bg-card p-4 shadow-sm space-y-2">

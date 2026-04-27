@@ -70,7 +70,7 @@ export default function AuthHomeScreen() {
           accessibilityRole="button"
           accessibilityLabel={t('auth.login.languageSwitcher')}
         >
-          <Text className="text-caption font-sans-bold text-primary-deep tracking-[0.35px]">
+          <Text className="text-caption font-sans-bold text-primary-deep tracking-normal">
             {t('LoginScreen.copy2')}
           </Text>
         </Touchable>
@@ -105,7 +105,7 @@ export default function AuthHomeScreen() {
 
           {devAuthEnabled ? (
             <View className="gap-sm border-t border-border pt-lg">
-              <Text className="text-caption text-center uppercase text-text-secondary tracking-[1px]">
+              <Text className="text-caption text-center uppercase text-text-secondary tracking-normal">
                 {t('auth.devBypass')}
               </Text>
               <Button
@@ -154,7 +154,7 @@ export default function AuthHomeScreen() {
       {/* Brand icon — replaces Figma asset */}
       <View className="items-center mb-lg">
         <View
-          className="w-[80px] h-[80px] rounded-sm items-center justify-center bg-primary-deep"
+          className="w-20 h-20 rounded-sm items-center justify-center bg-primary-deep"
           style={{ ...elevations.card }}
         >
           <Zap size={24} color={colors.primaryForeground} />

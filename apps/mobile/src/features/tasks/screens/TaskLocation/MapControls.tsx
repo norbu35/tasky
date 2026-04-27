@@ -3,8 +3,8 @@ import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 import { Touchable } from '@/components/ui/Touchable';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 const { colors } = mobileTheme;
 

@@ -13,6 +13,7 @@ import {
 import { screenLayout } from '@/design/screenLayout';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
+
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 import { Button } from '../ui/Button';
 import { ScreenHeader } from '../ui/ScreenHeader';
@@ -127,11 +128,7 @@ export function FormWizardTemplate({
         {!hideNext && (
           <StickyActionBar testID="wizard-bottom-bar">
             <View onLayout={handleActionBarLayout}>
-              <View
-                style={{
-                  paddingTop: screenLayout.actions.barPadding,
-                }}
-              >
+              <View>
                 {showBackButton ? (
                   <View className="flex-row gap-md">
                     <Button

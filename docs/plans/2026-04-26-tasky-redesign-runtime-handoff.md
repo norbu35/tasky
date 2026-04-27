@@ -1,11 +1,15 @@
 # Tasky Redesign Runtime Handoff
 
 **Date:** 2026-04-26
-**Status:** Draft handoff for first runtime implementation slice
+**Status:** Ready handoff for first runtime implementation slice
 
 ## Runtime Plan Handoff
 
 First slice: Customer task posting
+
+Detailed implementation plan:
+
+- `docs/plans/2026-04-26-tasky-redesign-customer-posting-runtime-plan.md`
 
 Design inputs:
 

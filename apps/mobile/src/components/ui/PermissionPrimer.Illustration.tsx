@@ -2,8 +2,8 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 import { elevations } from '@/design/elevations';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 const { colors } = mobileTheme;
 const { permissionPrimer } = mobileSurfaces;
@@ -63,9 +63,7 @@ export function IconPreview({ icon, badgeLabel }: IconPreviewProps) {
           },
         ]}
       >
-        <Text style={{ color: colors.primaryDeep, fontSize: 14, fontWeight: '700' }}>
-          {badgeLabel}
-        </Text>
+        <Text className="text-label font-sans-bold text-primary-deep">{badgeLabel}</Text>
       </View>
     </View>
   );

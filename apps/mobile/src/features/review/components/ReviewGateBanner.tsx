@@ -18,27 +18,20 @@ export function ReviewGateBanner({ pendingReview }: ReviewGateBannerProps) {
     router.push(`/(shared)/review/${pendingReview.booking_id}`);
   };
 
-  const isHardBlocked =
-    Date.now() - new Date(pendingReview.triggered_at).getTime() > 72 * 60 * 60 * 1000;
-
   return (
     <View
       className="bg-card rounded-md p-xl gap-md mx-xl mb-lg border border-border"
       style={elevations.card}
     >
       <View className="gap-xs">
-        <Text className="text-subtitle font-bold text-foreground">
-          {isHardBlocked ? t('reviewGate.hardLockedTitle') : t('reviewGate.softLockedTitle')}
+        <Text className="text-subtitle font-sans-bold text-foreground">
+          {t('reviewGate.hardLockedTitle')}
         </Text>
         <Text className="text-body text-text-secondary leading-normal">
-          {isHardBlocked ? t('reviewGate.hardLockedBody') : t('reviewGate.softLockedBody')}
+          {t('reviewGate.hardLockedBody')}
         </Text>
       </View>
-      <Button
-        label={t('reviewGate.cta')}
-        variant={isHardBlocked ? 'default' : 'outline'}
-        onPress={handlePress}
-      />
+      <Button label={t('reviewGate.cta')} variant="default" onPress={handlePress} />
     </View>
   );
 }

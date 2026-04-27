@@ -18,7 +18,7 @@ export function CommentField({
 
   return (
     <FormField label={t('shared.review.label_comment')}>
-      <View className="relative rounded-md bg-muted p-xl pb-[32px] min-h-[168px]">
+      <View className="relative rounded-md bg-muted p-xl pb-2xl min-h-[168px]">
         <Input
           testID="review-comment-input"
           multiline

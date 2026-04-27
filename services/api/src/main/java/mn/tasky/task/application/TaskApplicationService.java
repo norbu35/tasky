@@ -261,27 +261,16 @@ public class TaskApplicationService {
             return TaskWithdrawResult.NOT_FOUND_RESULT;
         }
         TaskApplicationState application = appOpt.get();
-        if (!"APPLIED".equals(application.status()) && !"SELECTED".equals(application.status())) {
+        if (!"APPLIED".equals(application.status())) {
             return TaskWithdrawResult.INVALID_STATUS_RESULT;
         }
         taskApplicationDao.updateStatus(application.id(), "WITHDRAWN");
-        boolean wasSelected = "SELECTED".equals(application.status());
-        if (wasSelected) {
-            taskDao.updateStatus(application.taskId(), "OPEN", Instant.now());
-            Optional<TaskState> taskOpt = taskDao.findById(application.taskId());
-            taskOpt.ifPresent(task -> notificationService.sendPush(
-                    task.customerId(),
-                    "Applicant withdrew",
-                    "A selected tasker has withdrawn from your task. You can select another applicant.",
-                    "APPLICANT_WITHDREW"));
-        } else {
-            Optional<TaskState> taskOpt = taskDao.findById(application.taskId());
-            taskOpt.ifPresent(task -> notificationService.sendPush(
-                    task.customerId(),
-                    "Applicant withdrew",
-                    "A tasker has withdrawn their application from your task.",
-                    "APPLICANT_WITHDREW"));
-        }
+        Optional<TaskState> taskOpt = taskDao.findById(application.taskId());
+        taskOpt.ifPresent(task -> notificationService.sendPush(
+                task.customerId(),
+                "Applicant withdrew",
+                "A tasker has withdrawn their application from your task.",
+                "APPLICANT_WITHDREW"));
         analyticsService.track(
                 "APPLICATION_WITHDRAWN",
                 taskerId,
@@ -291,7 +280,7 @@ public class TaskApplicationService {
                         "application_id",
                         applicationId,
                         "was_selected",
-                        wasSelected));
+                        false));
         TaskApplicationState updated =
                 taskApplicationDao.findById(applicationId).orElse(application);
         return TaskWithdrawResult.success(updated);

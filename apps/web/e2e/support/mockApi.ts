@@ -75,28 +75,53 @@ function makePublicTasks() {
           name: 'Cleaning',
           name_mn: 'Цэвэрлэгээ',
           icon_url: 'https://example.test/icon-cleaning.svg',
-          is_active: true,
-          sort_order: 1,
-        },
-        customer: {
-          id: 'customer-1',
-          full_name: 'Customer User',
-          avatar_url: null,
-          rating_avg: 4.7,
         },
         description: 'Window cleaning for a two-bedroom apartment',
+        pricing_mode: 'BUDGET',
         budget: 65000,
         approximate_location: 'Сүхбаатар дүүрэг',
         approximate_lat: 47.92,
         approximate_lng: 106.92,
         status: 'OPEN',
         scheduled_at: '2026-04-25T09:00:00Z',
-        photo_urls: [],
-        application_count: 0,
         created_at: NOW,
       },
     ],
     cursor: { next: null, has_more: false },
+  };
+}
+
+function makePublicTaskDetail() {
+  return {
+    id: 'public-task-1',
+    category: {
+      id: 'cat-cleaning',
+      name: 'Cleaning',
+      name_mn: 'Цэвэрлэгээ',
+      icon_url: 'https://example.test/icon-cleaning.svg',
+      is_active: true,
+      sort_order: 1,
+      intake_enabled: true,
+      assisted_distribution_enabled: true,
+      intake_schema_version: 1,
+    },
+    customer: {
+      id: 'customer-1',
+      full_name: 'Customer User',
+      avatar_url: null,
+      rating_avg: 4.7,
+    },
+    description: 'Window cleaning for a two-bedroom apartment',
+    pricing_mode: 'BUDGET',
+    budget: 65000,
+    approximate_location: 'Сүхбаатар дүүрэг',
+    approximate_lat: 47.92,
+    approximate_lng: 106.92,
+    status: 'OPEN',
+    scheduled_at: '2026-04-25T09:00:00Z',
+    photo_urls: [],
+    application_count: 0,
+    created_at: NOW,
   };
 }
 
@@ -157,6 +182,10 @@ export async function installMockApi(page: Page, role: Role) {
 
     if (path === '/api/v1/tasks' && method === 'GET') {
       return json(route, 200, makePublicTasks());
+    }
+
+    if (path === '/api/v1/tasks/public-task-1' && method === 'GET') {
+      return json(route, 200, makePublicTaskDetail());
     }
 
     if (path === '/api/v1/tasks/mine' && method === 'GET') {

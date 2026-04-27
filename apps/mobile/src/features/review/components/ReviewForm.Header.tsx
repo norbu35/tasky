@@ -50,7 +50,7 @@ export function CounterpartyCard({
       <View className="flex-1 gap-xs">
         <Text className="text-subtitle font-sans-bold text-primary-deep">{name}</Text>
         <Text
-          className="self-start rounded-full px-md py-[2px] text-caption font-sans-bold text-text-secondary"
+          className="self-start rounded-full px-md py-xs text-caption font-sans-bold text-text-secondary"
           style={{ backgroundColor: colors.statusOpen }}
         >
           {role}

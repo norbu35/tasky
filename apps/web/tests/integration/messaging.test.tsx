@@ -1,9 +1,11 @@
 import '../../src/lib/i18n';
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+
 import { App } from '../../src/App';
-import { createMockApiClient } from '../../src/test/mocks';
 import { makeProfile, makeSession } from '../../src/test/factories';
+import { createMockApiClient } from '../../src/test/mocks';
 
 // JSDOM does not implement scrollIntoView
 window.HTMLElement.prototype.scrollIntoView = vi.fn();
@@ -17,11 +19,11 @@ describe('Messaging & Notifications Integration', () => {
       booking_id: 'book-1',
     };
     const mockMsg = {
-      id: 'msg-1',
+      id: 'msg-oldest',
       conversation_id: 'conv-1',
       sender_id: makeProfile().id,
-      content: 'On my way',
-      created_at: new Date().toISOString(),
+      content: 'First update',
+      sent_at: '2026-03-23T09:00:00Z',
     };
 
     const apiClient = createMockApiClient({
@@ -29,15 +31,31 @@ describe('Messaging & Notifications Integration', () => {
       listConversations: vi
         .fn()
         .mockResolvedValue({ data: [mockConv], cursor: { next: null, has_more: false } }),
-      listMessages: vi
-        .fn()
-        .mockResolvedValue({ data: [{ ...mockMsg }], cursor: { next: null, has_more: false } }),
+      listMessages: vi.fn().mockResolvedValue({
+        data: [
+          {
+            ...mockMsg,
+            id: 'msg-latest',
+            content: 'Latest update',
+            sent_at: '2026-03-23T09:02:00Z',
+          },
+          { ...mockMsg },
+          {
+            ...mockMsg,
+            id: 'msg-middle',
+            sender_id: 'counterparty-1',
+            content: 'Middle update',
+            sent_at: '2026-03-23T09:01:00Z',
+          },
+        ],
+        cursor: { next: null, has_more: false },
+      }),
       sendMessage: vi.fn().mockResolvedValue({
         ...mockMsg,
         id: 'msg-2',
         sender_id: makeProfile().id,
         content: 'Great',
-        created_at: new Date().toISOString(),
+        sent_at: '2026-03-23T09:03:00Z',
       }),
       registerDevice: vi.fn().mockResolvedValue('Success'),
       unregisterDevice: vi.fn().mockResolvedValue(undefined),
@@ -64,8 +82,15 @@ describe('Messaging & Notifications Integration', () => {
       expect(apiClient.listMessages).toHaveBeenCalledWith(makeSession().accessToken, 'conv-1');
     });
 
-    // Current messages
-    await screen.findByText('On my way');
+    // Current messages are rendered chronologically even though transport data is newest-first.
+    await screen.findByText('First update');
+    const renderedMessages = document.body.textContent ?? '';
+    expect(renderedMessages.indexOf('First update')).toBeLessThan(
+      renderedMessages.indexOf('Middle update'),
+    );
+    expect(renderedMessages.indexOf('Middle update')).toBeLessThan(
+      renderedMessages.indexOf('Latest update'),
+    );
 
     // Send a message
     const messageInput = screen.getByPlaceholderText('Type your message...');

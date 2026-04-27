@@ -38,7 +38,8 @@ Tasky acts as a trusted intermediary between **Customers** (Demand) and **Tasker
 
 - **External Systems**:
   - **Facebook OAuth**: the only launch login provider for new sessions.
-  - **SMS Gateway**: critical fallback notifications such as reminders and completion nudges. OTP is not part of the Phase 1 launch baseline.
+  - **Push Notification Service**: default channel for launch lifecycle nudges when a device token exists.
+  - **SMS Gateway**: policy-controlled fallback notifications only; OTP is not part of the Phase 1 launch baseline.
   - **Google Maps / Mapbox**: geocoding and static maps.
   - **Push Provider (Firebase Cloud Messaging)**: mobile notifications via FCM for Android and the FCM → APNs bridge for iOS. Expo Push relay is explicitly not used.
   - **Object Storage (MinIO / S3)**: private storage for uploads such as verification artifacts and images.

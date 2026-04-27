@@ -61,6 +61,12 @@ export const resolveGoogleMapsApiKeys = (
 
 const appLocalEnv = readEnvFile(path.resolve(__dirname, '.env'));
 const googleMapsApiKeys = resolveGoogleMapsApiKeys(process.env, appLocalEnv);
+const nativeFirebaseEnabled = Boolean(
+  optionalEnvFromSources('GOOGLE_SERVICES_JSON', process.env, appLocalEnv) ||
+  optionalEnvFromSources('GOOGLE_SERVICE_INFO_PLIST', process.env, appLocalEnv) ||
+  fs.existsSync(path.resolve(__dirname, 'android/app/google-services.json')) ||
+  fs.existsSync(path.resolve(__dirname, 'ios/GoogleService-Info.plist')),
+);
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -83,6 +89,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     googleMapsSdk: {
       androidEnabled: Boolean(googleMapsApiKeys.androidApiKey),
       iosEnabled: Boolean(googleMapsApiKeys.iosApiKey),
+    },
+    nativeFirebase: {
+      enabled: nativeFirebaseEnabled,
     },
   },
   userInterfaceStyle: 'light',

@@ -5,9 +5,9 @@ import { Text, View } from 'react-native';
 import { ListItemCard, PriceTag, StatusBadge } from '@/components/ui';
 import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
+import { getTaskVisual } from '@/features/tasks/components/CustomerTasksView';
 
 import { type TaskLike, mapStatus } from './model';
-import { getTaskVisual } from '@/features/tasks/components/CustomerTasksView';
 
 const { colors } = mobileTheme;
 

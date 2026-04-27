@@ -1,12 +1,11 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalendarDays } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { Button } from '@/components/ui/Button';
 import { FormField } from '@/components/ui/FormField';
 import { Input } from '@/components/ui/Input';
+import { SchedulePickerSheet } from '@/components/ui/SchedulePickerSheet';
 import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
 import { mobileSurfaces } from '@/design/surfaces';
@@ -15,10 +14,11 @@ import { cn } from '@/lib/cn';
 
 import {
   type ActivePickerState,
-  createDefaultScheduleDate,
+  createScheduleDateOptions,
+  createScheduleTimeOptions,
   formatDateValue,
   formatTimeValue,
-  toValidDate,
+  type PickerMode,
 } from './TaskSchedule.model';
 
 const { colors } = mobileTheme;
@@ -39,10 +39,10 @@ export function DateCard({
   const { t } = useTranslation();
 
   return (
-    <View className="rounded-lg bg-muted gap-lg p-[20px]" style={elevations.soft}>
+    <View className="rounded-lg bg-muted gap-lg p-xl" style={elevations.soft}>
       <View className="flex-row items-center gap-sm">
         <CalendarDays size={20} color={colors.primary} />
-        <Text className="text-body font-extrabold text-primary-deep">
+        <Text className="text-body font-display-bold text-primary-deep">
           {t('ScheduleBudgetScreen.scheduleLabel')}
         </Text>
       </View>
@@ -139,10 +139,10 @@ export function BudgetField({
           </View>
         </View>
       </FormField>
-      <Text className="text-caption font-semibold text-accent leading-relaxed">
+      <Text className="text-caption font-sans-semibold text-accent leading-relaxed">
         {t('ScheduleBudgetScreen.budgetTypicalRange')}
       </Text>
-      <Text className="text-caption font-semibold text-muted-foreground leading-relaxed">
+      <Text className="text-caption font-sans-semibold text-muted-foreground leading-relaxed">
         {t('ScheduleBudgetScreen.budgetGoldHint')}
       </Text>
     </View>
@@ -151,73 +151,38 @@ export function BudgetField({
 
 interface PickerSectionProps {
   activePicker: ActivePickerState;
-  onPickerChange: (event: { type?: string }, pickedValue?: Date) => void;
+  onPickerModeChange: (mode: PickerMode) => void;
+  onPickerDateChange: (pickedValue: Date) => void;
+  onPickerTimeChange: (pickedValue: Date) => void;
+  onPickerReset: () => void;
   onPickerCancel: () => void;
   onPickerConfirm: () => void;
 }
 
 export function PickerSection({
   activePicker,
-  onPickerChange,
+  onPickerModeChange,
+  onPickerDateChange,
+  onPickerTimeChange,
+  onPickerReset,
   onPickerCancel,
   onPickerConfirm,
 }: PickerSectionProps) {
-  const { t } = useTranslation();
-
   if (!activePicker) return null;
 
-  if (Platform.OS === 'ios') {
-    return (
-      <View
-        className="rounded-lg border border-border bg-card p-md gap-sm"
-        testID="schedule-ios-picker-card"
-      >
-        <View className="gap-xs">
-          <Text className="text-label font-bold text-primary-deep uppercase tracking-[0.6px]">
-            {activePicker.mode === 'date'
-              ? t('ScheduleBudgetScreen.scheduleDate')
-              : t('ScheduleBudgetScreen.scheduleTime')}
-          </Text>
-          <Text className="text-caption text-text-secondary">
-            {t('ScheduleBudgetScreen.schedulePickerHint')}
-          </Text>
-        </View>
-        <View className="flex-row gap-sm mt-xs">
-          <Button
-            testID="schedule-picker-cancel"
-            label={t('common.cancel')}
-            variant="outline"
-            onPress={onPickerCancel}
-            className="flex-1"
-          />
-          <Button
-            testID="schedule-picker-confirm"
-            label={t('common.confirm')}
-            onPress={onPickerConfirm}
-            className="flex-1"
-          />
-        </View>
-        <DateTimePicker
-          testID={activePicker.mode === 'date' ? 'schedule-date-picker' : 'schedule-time-picker'}
-          value={toValidDate(activePicker.draftValue, createDefaultScheduleDate())}
-          mode={activePicker.mode}
-          display="spinner"
-          is24Hour
-          onChange={onPickerChange}
-          minimumDate={activePicker.mode === 'date' ? new Date() : undefined}
-        />
-      </View>
-    );
-  }
-
   return (
-    <DateTimePicker
-      testID={activePicker.mode === 'date' ? 'schedule-date-picker' : 'schedule-time-picker'}
-      value={toValidDate(activePicker.draftValue, createDefaultScheduleDate())}
+    <SchedulePickerSheet
       mode={activePicker.mode}
-      is24Hour
-      onChange={onPickerChange}
-      minimumDate={activePicker.mode === 'date' ? new Date() : undefined}
+      draftDate={activePicker.draftDate}
+      draftTime={activePicker.draftTime}
+      dateOptions={createScheduleDateOptions()}
+      timeOptions={createScheduleTimeOptions(activePicker.draftDate)}
+      onModeChange={onPickerModeChange}
+      onDateChange={onPickerDateChange}
+      onTimeChange={onPickerTimeChange}
+      onReset={onPickerReset}
+      onClose={onPickerCancel}
+      onSave={onPickerConfirm}
     />
   );
 }

@@ -69,6 +69,10 @@ public class DisputeRaiseService {
                             DisputeRaiseOutcome.Status.INVALID_REASON,
                             "INVALID_REASON",
                             "Dispute reason cannot be empty");
+                    case "INVALID_EVIDENCE" -> DisputeRaiseOutcome.failure(
+                            DisputeRaiseOutcome.Status.INVALID_EVIDENCE,
+                            "INVALID_EVIDENCE",
+                            "Evidence artifacts must include a photo storage key or written text payload");
                     case "INVALID_STATUS" -> DisputeRaiseOutcome.failure(
                             DisputeRaiseOutcome.Status.INVALID_STATUS,
                             "INVALID_STATUS",
@@ -103,5 +107,31 @@ public class DisputeRaiseService {
             idempotencyService.abandon(userId, IdempotencyOperations.RAISE_DISPUTE, idempotencyKey);
             throw exception;
         }
+    }
+
+    public DisputeEvidenceOutcome addEvidence(String userId, String disputeId, DisputeRequest body) {
+        var result = trustCommandPort.addDisputeEvidence(userId, disputeId, body.evidence());
+        if (!result.isSuccess()) {
+            return switch (result.error()) {
+                case "NOT_FOUND" -> DisputeEvidenceOutcome.failure(
+                        DisputeEvidenceOutcome.Status.NOT_FOUND, "NOT_FOUND", "Dispute not found");
+                case "FORBIDDEN" -> DisputeEvidenceOutcome.failure(
+                        DisputeEvidenceOutcome.Status.FORBIDDEN,
+                        "FORBIDDEN",
+                        "Only booking participants can add dispute evidence");
+                case "INVALID_STATUS" -> DisputeEvidenceOutcome.failure(
+                        DisputeEvidenceOutcome.Status.INVALID_STATUS,
+                        "INVALID_STATUS",
+                        "Evidence can only be added to open disputes");
+                case "INVALID_EVIDENCE" -> DisputeEvidenceOutcome.failure(
+                        DisputeEvidenceOutcome.Status.INVALID_EVIDENCE,
+                        "INVALID_EVIDENCE",
+                        "At least one valid evidence artifact is required");
+                default -> DisputeEvidenceOutcome.internalError();
+            };
+        }
+        return DisputeEvidenceOutcome.success(disputePublicCompositionService.disputeSummaryWithEvidence(
+                result.dispute(),
+                trustQueryPort.getDisputeEvidence(result.dispute().id())));
     }
 }

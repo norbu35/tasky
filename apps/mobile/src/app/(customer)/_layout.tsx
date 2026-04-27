@@ -16,7 +16,7 @@ export default function CustomerLayout() {
       />
       <Stack.Screen
         name="tasks/[taskId]/applicants"
-        options={{ title: t('TaskDetailCustomerScreen.applicants') }}
+        options={{ headerShown: false, title: t('TaskDetailCustomerScreen.applicants') }}
       />
       {/* Booking flows */}
       <Stack.Screen name="bookings/index" options={{ headerShown: false }} />

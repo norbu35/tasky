@@ -13,17 +13,24 @@ traceability:
     - REQ-P1-BOOK-09
     - REQ-P1-BOOK-13
     - REQ-P1-BOOK-25
+    - REQ-P1-BOOK-26
+    - REQ-P1-BOOK-29
     - REQ-P1-MSG-02
   journey_refs:
+    - JRN-CUST-02-A5
     - JRN-CUST-04:step-2
     - JRN-CUST-04:step-3
     - JRN-CUST-04-A5
+    - JRN-CUST-04-A6
     - JRN-CUST-06:step-1
   scenario_refs:
     - SCN-SEC-007
     - SCN-MSG-003
     - SCN-BOOK-009
     - SCN-BOOK-026
+    - SCN-BOOK-027
+    - SCN-BOOK-032
+    - SCN-NOTIF-009
 template: detail
 figma_page: 'Customer/Booking Detail Customer'
 feature: 'booking'
@@ -31,7 +38,27 @@ feature: 'booking'
 layout:
   template: detail
   density: default
-  structure: 'safe_area -> nav_header(back + title) -> scrollview(tasker_section + task_summary + schedule + actions) -> sticky_bottom_cta'
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(tasker_section + task_summary + scope_change_notice + schedule + actions) -> sticky_bottom_cta'
+
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: balanced
+  trust_cues:
+    - lifecycle_timeline
+    - exact_address_reveal_rule
+    - platform_mediated_contact
+    - cancellation_no_show_warning
+    - dispute_entry
+  non_goals:
+    - no_escrow_claim
+    - no_wallet_claim
+    - no_payment_protection_claim
+  airbnb_scaffold:
+    - timeline_first_detail
+    - address_visibility_rule
+    - direct_settlement_payment_note
+    - cancellation_completion_actions
+    - support_reason_sheet
 
 components:
   - id: COMP-PROFILEAVATAR
@@ -103,6 +130,11 @@ states:
 
   - id: completed
     description: 'Booking is COMPLETED; review prompt shown if not yet reviewed. Actions: Leave Review, View Timeline'
+    components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: auto_completed
+    description: 'Booking auto-completed after customer silence and reminder attempts; completion is read-only with review prompt and timeline available'
     components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT]
     components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
 
@@ -213,6 +245,11 @@ copy:
     en: 'Completed'
     max_chars: 15
 
+  - key: status_auto_completed
+    mn: 'Автоматаар дууссан'
+    en: 'Auto-completed'
+    max_chars: 25
+
   - key: status_cancelled
     mn: 'Цуцалсан'
     en: 'Cancelled'
@@ -228,6 +265,16 @@ copy:
     en: 'Payment is settled directly with the Tasker'
     max_chars: 60
 
+  - key: scope_change_note
+    mn: 'Үндсэн үнэ ба ажлын хүрээ захиалга баталгаажих үед түгжигдсэн. Өөрчлөлтийг Tasky чат эсвэл тусламжийн нотолгоонд тохиролцоорой.'
+    en: 'The baseline price and scope were locked at confirmation. Agree any material, supply, or scope changes in Tasky chat or support evidence.'
+    max_chars: 150
+
+  - key: completion_push_reminder_note
+    mn: 'Хариу өгөөгүй бол мэдэгдлээр баталгаажуулах эсвэл маргахыг сануулна'
+    en: 'If you do not respond, a push reminder asks you to confirm or dispute completion'
+    max_chars: 110
+
   - key: approaching_warning
     mn: 'Товлосон цаг хүртэл 4 цагаас бага хугацаа үлдлээ'
     en: 'Less than 4 hours until scheduled time'
@@ -237,6 +284,11 @@ copy:
     mn: 'Үнэлгээ өгнө үү'
     en: 'Please leave a review'
     max_chars: 30
+
+  - key: auto_complete_note
+    mn: 'Хариу өгөөгүй тул сануулгын дараа захиалга автоматаар дууссан'
+    en: 'This booking auto-completed after reminders because no response was received'
+    max_chars: 90
 
   - key: error_toast
     mn: 'Захиалгын мэдээлэл ачааллахад алдаа гарлаа'
@@ -268,11 +320,14 @@ analytics_events:
 acceptance_criteria:
   - 'Initial load shows detail skeleton matching content layout'
   - 'Assigned state shows tasker avatar with verification badge, task title, schedule, location, and pricing summary'
+  - 'Assigned state shows the locked price and intake scope as the baseline agreement, with guidance to keep material, supply, or scope changes in Tasky chat or support evidence'
   - 'Assigned state CTA bar contains Message (primary) and secondary actions: Reschedule, Cancel, Timeline'
   - 'Assigned_approaching state shows a warning banner when scheduled time is within 4 hours'
   - "Tasker_marked_done state changes primary CTA to 'Confirm Complete' and shows 'Report Issue' as secondary"
   - "Tapping 'Confirm Complete' opens Confirm Completion modal (SCR-CUST-018)"
   - "Completed state shows review prompt if not yet reviewed, with 'Leave Review' CTA navigating to SCR-SHARED-017"
+  - 'Customer silence path uses a push notification completion reminder where the customer has a registered device token before timeout auto-complete'
+  - 'Auto-completed state records that timeout, not direct customer confirmation, completed the booking and still creates review debt'
   - 'Completed state remains focused on review completion, timeline, and dispute-safe record keeping'
   - 'Cancelled state shows cancelled status badge with no modify actions; only Timeline and Report Issue available'
   - 'No-show state shows no-show status badge with Timeline and Report Issue available'

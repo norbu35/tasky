@@ -8,8 +8,8 @@ import { ScreenContainer } from '@/components/shells/ScreenContainer';
 import { EmptyStateTemplate } from '@/components/templates/EmptyStateTemplate';
 import { Button } from '@/components/ui/Button';
 import { Touchable } from '@/components/ui/Touchable';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { useNotifications } from '@/features/notifications/hooks/useNotifications';
 
 import { buildRows, formatRelativeTimestamp, type Row } from './NotificationList.model';
@@ -58,7 +58,7 @@ export default function NotificationListScreen() {
   const renderRow: ListRenderItem<Row> = ({ item }) => {
     if (item.type === 'section') {
       return (
-        <Text className="text-caption font-bold text-text-tertiary uppercase mt-lg mb-sm tracking-[1.2px]">
+        <Text className="text-caption font-sans-bold text-text-tertiary uppercase mt-lg mb-sm tracking-normal">
           {item.label}
         </Text>
       );
@@ -83,7 +83,7 @@ export default function NotificationListScreen() {
         </View>
         <View className="flex-1">
           <View className="flex-row items-center justify-between gap-sm">
-            <Text className="flex-1 text-body font-bold text-foreground" numberOfLines={1}>
+            <Text className="flex-1 text-body font-sans-bold text-foreground" numberOfLines={1}>
               {notification.title}
             </Text>
             <View className="flex-row items-center gap-xs">
@@ -98,7 +98,7 @@ export default function NotificationListScreen() {
               ) : null}
             </View>
           </View>
-          <Text className="mt-xs text-body text-text-secondary leading-[22px]" numberOfLines={2}>
+          <Text className="mt-xs text-body text-text-secondary leading-relaxed" numberOfLines={2}>
             {notification.body}
           </Text>
         </View>
@@ -125,10 +125,10 @@ export default function NotificationListScreen() {
           >
             <Bell size={24} color={colors.danger} />
           </View>
-          <Text className="text-title font-bold text-foreground text-center">
+          <Text className="text-title font-sans-bold text-foreground text-center">
             {t('shared.notifications.errorTitle')}
           </Text>
-          <Text className="mt-sm text-body text-text-secondary text-center leading-[24px]">
+          <Text className="mt-sm text-body text-text-secondary text-center leading-relaxed">
             {t('shared.notifications.errorBody')}
           </Text>
           <Button
@@ -155,7 +155,7 @@ export default function NotificationListScreen() {
           contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl }}
           ListFooterComponent={
             <View className="mt-xl bg-primary-deep rounded-lg p-lg justify-end h-[128px]">
-              <Text className="text-subtitle font-extrabold text-primary-foreground">
+              <Text className="text-subtitle font-display-bold text-primary-foreground">
                 {t('shared.notifications.promoBannerTitle')}
               </Text>
               <Text

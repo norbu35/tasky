@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -488,6 +489,42 @@ class TaskApplicationScenarioTests {
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.application().status()).isEqualTo("WITHDRAWN");
         verify(taskApplicationDao).updateStatus(APPLICATION_ID, "WITHDRAWN");
+    }
+
+    // ── SCN-TASK-025 selected-state guard ───────────────────────────────────
+
+    @Test
+    @DisplayName("SCN-TASK-025: Selected tasker cannot withdraw after customer selection")
+    void selectedTaskerCannotWithdrawAfterCustomerSelection() {
+        Instant now = Instant.now();
+        TaskApplicationState selectedApp = new TaskApplicationState(
+                APPLICATION_ID,
+                TASK_ID,
+                TASKER_ID,
+                "Tasker Name",
+                null,
+                4.5,
+                10,
+                false,
+                "I can do this",
+                null,
+                "SELECTED",
+                null,
+                null,
+                now,
+                now.plusSeconds(3600),
+                now);
+        when(taskApplicationDao.findByTaskerAndId(TASKER_ID, APPLICATION_ID)).thenReturn(Optional.of(selectedApp));
+
+        TaskWithdrawResult result = applicationService.withdrawApplication(TASKER_ID, APPLICATION_ID);
+
+        assertThat(result.isSuccess()).isFalse();
+        assertThat(result.errorCode()).isEqualTo(TaskWithdrawResult.INVALID_STATUS);
+        verify(taskApplicationDao, never()).updateStatus(APPLICATION_ID, "WITHDRAWN");
+        verify(taskDao, never()).updateStatus(eq(TASK_ID), eq("OPEN"), any());
+        verify(bookingCommandPort, never())
+                .createBooking(anyString(), anyString(), anyString(), anyInt(), eq(true), any());
+        verifyNoInteractions(notificationService);
     }
 
     // ── SCN-TASK-026 ─────────────────────────────────────────────────────────

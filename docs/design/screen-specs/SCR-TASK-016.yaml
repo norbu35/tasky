@@ -1,6 +1,6 @@
-# Screen Spec: Tasker Stats Dashboard
+# Screen Spec: Tasker Reputation & Reliability
 screen_id: SCR-TASK-016
-name: 'Tasker Stats Dashboard'
+name: 'Tasker Reputation & Reliability'
 route: '/(tasker)/stats'
 role: [tasker]
 phase: '0-1'
@@ -8,23 +8,15 @@ traceability:
   status: validated
   screen_graph_node: SCR-TASK-016
   prd_refs:
-    - REQ-P1-KPI-01
-    - REQ-P1-KPI-02
-    - REQ-P1-KPI-03
-    - REQ-P1-KPI-04
-    - REQ-P1-KPI-05
-    - REQ-P1-KPI-06
     - REQ-P1-SAFE-13
+    - REQ-P1-SAFE-10
+    - REQ-P1-BOOK-17
+    - REQ-P1-BOOK-24
   journey_refs:
     - JRN-SHARED-05-A2
-  scenario_refs:
-    - SCN-ANALYTICS-001
-    - SCN-ANALYTICS-002
-    - SCN-ANALYTICS-003
-    - SCN-ANALYTICS-004
-    - SCN-ANALYTICS-005
+  scenario_refs: []
 template: detail
-figma_page: 'Tasker/Tasker Stats'
+figma_page: 'Tasker/Tasker Reputation'
 feature: 'tasker-profile'
 
 layout:
@@ -127,7 +119,7 @@ states:
 copy:
   - key: page_title
     mn: 'Миний статистик'
-    en: 'My Stats'
+    en: 'My Reputation'
     max_chars: 20
 
   - key: stats_section_heading
@@ -217,7 +209,7 @@ api_endpoints:
 
 analytics_events:
   - event: 'tasker_stats_viewed'
-    trigger: 'Tasker Stats Dashboard becomes visible'
+    trigger: 'Tasker Reputation & Reliability screen becomes visible'
   - event: 'tasker_stats_rating_breakdown_viewed'
     trigger: 'User scrolls to rating breakdown section'
   - event: 'tasker_stats_reliability_viewed'
@@ -229,7 +221,7 @@ acceptance_criteria:
   - 'Overall rating displayed with customer-to-tasker breakdown (quality, punctuality, communication)'
   - 'Tasker Reliability Score is surfaced with a short explanation of its inputs'
   - 'Reliability description explains score inputs (completion rate, punctuality, ratings, cancellations)'
-  - 'Application success rate is shown in the activity section'
+  - 'Activity section is tasker-facing reputation context only and must not be labeled as the launch KPI dashboard'
   - 'Cancellation count shows rolling 30-day count for strike awareness'
   - 'Header shows verification status and review-backed activity summary without future monetization badges'
   - 'Back button returns to My Profile (SCR-SHARED-012)'

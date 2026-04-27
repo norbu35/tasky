@@ -8,7 +8,7 @@ import { Label } from '../../components/ui/label';
 import { Skeleton } from '../../components/ui/skeleton';
 import { useAppContext } from '../../context/AppContext';
 import { useAdminApiClient } from '../../lib/adminApiClient';
-import type { PublicTask, User, Booking } from '../../lib/apiClient';
+import type { TaskFeedItem, User, Booking } from '../../lib/apiClient';
 
 type PageState = 'idle' | 'loading' | 'error' | 'ready' | 'assigning' | 'success' | 'assign-error';
 
@@ -17,7 +17,7 @@ export function AdminConciergePage() {
   const { apiClient, session } = useAppContext();
   const adminApiClient = useAdminApiClient();
 
-  const [tasks, setTasks] = useState<PublicTask[]>([]);
+  const [tasks, setTasks] = useState<TaskFeedItem[]>([]);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [pageState, setPageState] = useState<PageState>('idle');
 

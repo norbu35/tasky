@@ -14,14 +14,16 @@ const STATUS_CONFIG: Record<
   string,
   { icon: typeof Clock; color: string; tone: 'default' | 'secondary' | 'destructive' | 'outline' }
 > = {
-  OPEN: { icon: Clock, color: 'text-amber-500', tone: 'outline' },
+  EVIDENCE_NEEDED: { icon: Clock, color: 'text-secondary', tone: 'outline' },
+  OPEN: { icon: Clock, color: 'text-secondary', tone: 'outline' },
   ESCALATED: { icon: ShieldAlert, color: 'text-orange-500', tone: 'destructive' },
-  RESOLVED_CUSTOMER: { icon: CheckCircle, color: 'text-emerald-500', tone: 'default' },
-  RESOLVED_TASKER: { icon: XCircle, color: 'text-red-500', tone: 'secondary' },
+  RESOLVED_CUSTOMER: { icon: CheckCircle, color: 'text-verified', tone: 'default' },
+  RESOLVED_TASKER: { icon: XCircle, color: 'text-destructive', tone: 'secondary' },
   CLOSED_INSUFFICIENT_EVIDENCE: { icon: XCircle, color: 'text-gray-500', tone: 'secondary' },
 };
 
 const DISPUTE_STATUS_LABEL_KEYS = {
+  EVIDENCE_NEEDED: 'customerPages.disputeStatus.statusLabel.EVIDENCE_NEEDED',
   OPEN: 'customerPages.disputeStatus.statusLabel.OPEN',
   ESCALATED: 'customerPages.disputeStatus.statusLabel.ESCALATED',
   RESOLVED_CUSTOMER: 'customerPages.disputeStatus.statusLabel.RESOLVED_CUSTOMER',
@@ -171,10 +173,10 @@ export function CustomerDisputeStatusPage() {
 
             {/* Open Status Notice */}
             {!isResolved && (
-              <Card className="border-amber-500/30 bg-amber-500/5">
+              <Card className="border-secondary/30 bg-secondary/5">
                 <CardContent className="pt-6">
                   <div className="flex gap-3">
-                    <Clock className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                    <Clock className="w-5 h-5 text-secondary shrink-0 mt-0.5" />
                     <div>
                       <p className="font-medium text-sm">
                         {t('customerPages.disputeStatus.underReviewTitle')}

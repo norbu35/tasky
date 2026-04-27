@@ -3,7 +3,6 @@ import type { Config } from 'tailwindcss';
 import { webTokens } from '@tasky/design-tokens';
 
 const config: Config = {
-  darkMode: ['class'],
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
@@ -77,10 +76,11 @@ const config: Config = {
         'danger-10': 'var(--color-danger-10)',
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
-        xl: webTokens.radius.md,
+        xs: webTokens.radius.xs,
+        sm: webTokens.radius.sm,
+        md: webTokens.radius.md,
+        lg: webTokens.radius.lg,
+        xl: webTokens.radius.lg,
         '2xl': webTokens.radius.lg,
         full: webTokens.radius.full,
       },
@@ -89,10 +89,35 @@ const config: Config = {
         display: [webTokens.typography.fontFamily.display],
       },
       fontSize: {
+        'display-xl': ['var(--font-size-display-xl)', { lineHeight: 'var(--line-height-tight)' }],
+        'display-lg': ['var(--font-size-display-lg)', { lineHeight: 'var(--line-height-tight)' }],
+        'heading-1': ['var(--font-size-heading-1)', { lineHeight: 'var(--line-height-tight)' }],
+        'heading-2': ['var(--font-size-heading-2)', { lineHeight: 'var(--line-height-tight)' }],
+        'heading-3': ['var(--font-size-heading-3)', { lineHeight: 'var(--line-height-tight)' }],
+        'body-lg': ['var(--font-size-body-lg)', { lineHeight: 'var(--line-height-normal)' }],
         body: ['var(--font-size-body)', { lineHeight: 'var(--line-height-normal)' }],
+        'body-sm': ['var(--font-size-body-sm)', { lineHeight: 'var(--line-height-normal)' }],
         label: ['var(--font-size-label)', { lineHeight: 'var(--line-height-tight)' }],
         ui: ['var(--font-size-label-ui)', { lineHeight: '1' }],
         nav: ['var(--font-size-nav)', { lineHeight: '1' }],
+        overline: [
+          'var(--font-size-overline)',
+          { lineHeight: 'var(--line-height-tight)', letterSpacing: 'var(--letter-spacing-caps)' },
+        ],
+        'hero-title': [
+          'var(--typography-hero-title-font-size)',
+          {
+            lineHeight: 'var(--typography-hero-title-line-height)',
+            letterSpacing: 'var(--typography-hero-title-letter-spacing)',
+          },
+        ],
+        'page-heading': [
+          'var(--typography-page-heading-font-size)',
+          {
+            lineHeight: 'var(--typography-page-heading-line-height)',
+            letterSpacing: 'var(--typography-page-heading-letter-spacing)',
+          },
+        ],
         'card-title': [
           'var(--typography-card-title-font-size)',
           {
@@ -107,21 +132,42 @@ const config: Config = {
             letterSpacing: 'var(--typography-section-heading-letter-spacing)',
           },
         ],
-        button: [
+        'body-default': [
+          'var(--typography-body-default-font-size)',
+          {
+            lineHeight: 'var(--typography-body-default-line-height)',
+            letterSpacing: 'var(--typography-body-default-letter-spacing)',
+          },
+        ],
+        'body-emphasis': [
+          'var(--typography-body-emphasis-font-size)',
+          {
+            lineHeight: 'var(--typography-body-emphasis-line-height)',
+            letterSpacing: 'var(--typography-body-emphasis-letter-spacing)',
+          },
+        ],
+        'button-label': [
           'var(--typography-button-label-font-size)',
           {
             lineHeight: 'var(--typography-button-label-line-height)',
             letterSpacing: 'var(--typography-button-label-letter-spacing)',
           },
         ],
-        badge: [
+        'nav-label': [
+          'var(--typography-nav-label-font-size)',
+          {
+            lineHeight: 'var(--typography-nav-label-line-height)',
+            letterSpacing: 'var(--typography-nav-label-letter-spacing)',
+          },
+        ],
+        'badge-text': [
           'var(--typography-badge-text-font-size)',
           {
             lineHeight: 'var(--typography-badge-text-line-height)',
             letterSpacing: 'var(--typography-badge-text-letter-spacing)',
           },
         ],
-        price: [
+        'price-display': [
           'var(--typography-price-display-font-size)',
           {
             lineHeight: 'var(--typography-price-display-line-height)',

@@ -22,7 +22,6 @@
     "copy2": "A new version of the app is available. Update for a better experience"
   },
   "Applicants": {
-    "recommended": "Recommended",
     "accept": "Accept",
     "viewProfile": "View Profile",
     "taskTitleFallback": "Task",
@@ -65,7 +64,7 @@
     "body": "Manage your subscription plan and billing history."
   },
   "BookingConfirmScreen": {
-    "copy1": "Tasky is a platform connecting Customers and Taskers. Payment is arranged directly between parties. The platform is not a payment intermediary and bears no liability for arrangements made off-platform",
+    "copy1": "The locked price and intake scope are the baseline agreement. Materials, supplies, or scope changes must be agreed in Tasky chat or support evidence; Tasky does not provide automatic price changes, payment holds, or payment protection in Phase 1.",
     "copy2": "Add the scheduled time to your calendar for a reminder"
   },
   "BookingConfirmedScreen": {
@@ -77,7 +76,7 @@
     "copy2": "Report that the tasker did not arrive. Only use after waiting 15+ minutes past the scheduled time."
   },
   "BookingDetailTaskerScreen": {
-    "copy1": "Payment is arranged directly with the customer. Tasky is not an intermediary.",
+    "copy1": "Payment is arranged directly with the customer. Tasky is not a payment processor.",
     "copy2": "Report that the customer was not present. Only use after waiting 15+ minutes."
   },
   "BookingTimelineScreen": {
@@ -320,7 +319,7 @@
     "heroSearching": "Finding your tasker",
     "heroFallbackBody": "Your task is now open for applications.",
     "previewName": "Tasky instant match",
-    "verifiedTasker": "Verified Tasker",
+    "verifiedTasker": "ID-verified Tasker",
     "previewMeta": "Matching in progress",
     "taskLabel": "Task",
     "matchedStatus": "Tasker found",
@@ -463,7 +462,7 @@
   },
   "NotificationCenterScreen": {
     "copy1": "Just now",
-    "copy2": "Connect quickly with verified taskers"
+    "copy2": "Connect quickly with ID-verified Taskers"
   },
   "Onboarding": {
     "badge": "VERIFIED",
@@ -585,6 +584,22 @@
     "sourceLabel": "Current description",
     "toneLabel": "Tone",
     "polishedLabel": "Suggested version"
+  },
+  "PostingGuidance": {
+    "structuredTitle": "Structured tasks get clearer applications",
+    "structuredBody": "The details you add here become the task record taskers use to apply.",
+    "addressPrivacyTitle": "Approximate location first",
+    "addressPrivacyBody": "The exact address is shared only after booking is confirmed.",
+    "pricingTitle": "Budget or quote is clear",
+    "pricingBody": "Choose a posted budget or ask ID-verified Taskers to send structured quotes.",
+    "summaryTitle": "Review before posting",
+    "summaryBody": "Check scope, photos, location, schedule, and pricing before the task goes live.",
+    "nextStepsTitle": "What happens next",
+    "nextStepsBody": "Verified taskers can apply. You choose from structured applications when they arrive.",
+    "checkStructuredScope": "Structured scope",
+    "checkAddressPrivacy": "Approximate location first",
+    "checkPricingClarity": "Budget or quote is clear",
+    "checkStructuredApplications": "Taskers apply with structured responses"
   },
   "PrivacyPolicyScreen": {
     "copy1": "We collect information you provide directly, such as your name, phone number, and profile photo, as well as data generated during your use of Tasky.",
@@ -726,6 +741,8 @@
     "budgetPlaceholder": "₮50,000",
     "budgetGoldHint": "Set a fair budget to attract skilled Taskers",
     "budgetTypicalRange": "💡 Most tasks in this category range from ₮30,000 – ₮80,000",
+    "schedulePickerTitle": "Choose schedule",
+    "schedulePickerReset": "Reset",
     "schedulePickerHint": "Confirm your selection",
     "scheduleTime": "Time"
   },
@@ -854,7 +871,7 @@
     "subtitle": "New tasks nearby",
     "all": "All",
     "searchPlaceholder": "Search tasks...",
-    "trustTitle": "Verified Task Provider",
+    "trustTitle": "ID-verified Task Provider",
     "trustDescription": "Taskers with reliable ratings get verified faster.",
     "emptyTitle": "No tasks available right now",
     "emptyDescription": "Try changing your filters, or check back later",
@@ -1007,7 +1024,6 @@
   },
   "applicants": {
     "title": "Applicants",
-    "recommended": "Recommended",
     "otherApplicants": "Other Applicants",
     "reviews": "reviews",
     "jobs": "jobs",
@@ -1089,7 +1105,7 @@
       "title": "Who are you?",
       "subtitle": "Choose your role. You can change it later.",
       "customerTitle": "I need help",
-      "customerDescription": "Find verified Taskers for your jobs",
+      "customerDescription": "Find ID-verified Taskers for your jobs",
       "taskerTitle": "I want to work",
       "taskerDescription": "Get matched with jobs near you",
       "confirm": "Continue",
@@ -1245,7 +1261,6 @@
       "errorBody": "Please check your connection and try again.",
       "accept": "Accept",
       "viewProfile": "View Profile",
-      "recommended": "Recommended",
       "confirmCancel": "Go Back",
       "confirmBody": "After selecting, you will proceed to booking confirmation",
       "confirmCta": "Confirm",
@@ -1253,7 +1268,29 @@
       "count": "{{count}} applications",
       "errorNetwork": "Failed to load applications",
       "pageTitle": "Applications",
-      "taskTitleFallback": "Task"
+      "taskTitleFallback": "Task",
+      "structuredSignalsLabel": "Comparison signals",
+      "applicationMessageLabel": "Application note",
+      "profilePreviewVerified": "ID-verified Tasker profile",
+      "profilePreviewUnverified": "Verification not shown yet",
+      "signalVerified": "ID-verified Tasker",
+      "signalVerifiedBody": "Identity check completed before applying",
+      "signalUnverifiedBody": "Verification evidence is not available yet",
+      "signalDetailedResponse": "Detailed response",
+      "signalDetailedResponseBody": "Shared enough detail to compare fit",
+      "signalBriefResponse": "Brief response",
+      "signalBriefResponseBody": "Short application message",
+      "signalCompletedJobs": "{{count}} completed jobs",
+      "signalCompletedJobsBody": "{{count}} completed Tasky jobs",
+      "signalPublicReviews": "{{count}} reviews",
+      "signalPublicReviewsBody": "Public rating is backed by {{count}} completed reviews.",
+      "signalLowReviewBody": "Public rating appears after {{count}} completed reviews.",
+      "signalAcceptsBudget": "Accepts your budget",
+      "signalAcceptsBudgetBody": "No separate quote submitted",
+      "signalQuote": "Quote: {{amount}}",
+      "signalQuoteBody": "Tasker proposed a different price",
+      "confirmEvidenceVisible": "Review and completion evidence is visible",
+      "confirmEvidencePending": "Public rating remains hidden until the review threshold is met"
     },
     "bookings": {
       "title": "My Bookings",
@@ -1309,6 +1346,7 @@
       "ctaDismiss": "Dismiss",
       "ctaDone": "Done",
       "ctaFlagNoShow": "Flag No-Show",
+      "ctaFindAnotherTasker": "Find another tasker",
       "ctaGoBack": "Go Back",
       "ctaLeaveReview": "Leave Review",
       "ctaMessage": "Message",
@@ -1330,6 +1368,8 @@
       "helpDescription": "If anything changes or feels off, contact support and include your booking details.",
       "helpTitle": "Need help?",
       "helperReason": "Optional",
+      "directSettlementNote": "Tasky does not hold or protect funds in Phase 1.",
+      "exactAddressVisible": "Exact address is visible for this confirmed booking.",
       "labelBudget": "Budget",
       "labelNewSchedule": "New Schedule",
       "labelReason": "Reason (optional)",
@@ -1339,12 +1379,16 @@
       "noShowFlaggedSuccess": "No-show flagged successfully",
       "noShowReminderTitle": "Has the Tasker arrived?",
       "pageTitle": "Bookings",
-      "paymentNote": "Payment is settled directly with the Tasker",
+      "paymentNote": "Payment is settled directly with the Tasker. The locked price and intake scope are the baseline.",
+      "paymentNoteHeading": "Payment Information",
       "prefilledNote": "Prefilled from previous booking. You can edit.",
       "providerLabel": "Tasker",
       "providerName": "B. Temuulen",
       "rebookBudgetLow": "Budget must be above ₮1,001",
+      "recoveryTitle": "Your task is open again.",
+      "recoveryBody": "Review the original task and continue with open applications. The cancelled booking remains in your history.",
       "scheduleUnavailable": "Schedule unavailable",
+      "locationUnavailable": "Location unavailable",
       "sectionAvailableTimes": "Available Times",
       "sectionCurrentSchedule": "Current Schedule",
       "sectionDisclaimer": "Liability Disclaimer",
@@ -1353,6 +1397,11 @@
       "sectionTaskDetails": "Task Details",
       "sectionTaskSummary": "Task Summary",
       "sectionTasker": "Tasker",
+      "sectionSchedule": "Schedule",
+      "sectionLocation": "Location",
+      "sectionPricing": "Pricing",
+      "taskDescriptionUnavailable": "Task details unavailable",
+      "taskerVerified": "Verified Tasky profile",
       "statusAccepted": "Accepted",
       "statusAssigned": "Assigned",
       "statusAwaiting": "Awaiting",
@@ -1370,6 +1419,7 @@
       "acceptedMessage": "New schedule confirmed. No-show timers have been reset.",
       "declinedMessage": "Request declined. Original schedule remains active.",
       "expiredMessage": "Request expired. Original schedule remains active.",
+      "rescheduleSubmitError": "Could not send reschedule request. Please try again.",
       "weekdays": {
         "mon": "Mon",
         "tue": "Tue",
@@ -1408,6 +1458,7 @@
       "evidenceDescription": "Upload photos to support your claim",
       "submit": "Submit Dispute",
       "statusTitle": "Dispute Status",
+      "statusEvidenceNeeded": "Evidence needed",
       "statusOpen": "Open",
       "statusEscalated": "Escalated",
       "statusResolved": "Resolved",
@@ -1427,12 +1478,14 @@
       "placeholderDescription": "Describe the issue in detail...",
       "noEvidence": "No evidence provided",
       "pageTitle": "Dispute Status",
+      "evidenceNeededDescription": "Add evidence within 24 hours of the reminder so support can review the dispute.",
       "openDescription": "Your dispute is under admin review. You will be notified when a decision is made.",
       "escalatedDescription": "Dispute has been escalated for further investigation. A response will follow.",
       "resolvedCustomerDescription": "Dispute resolved in your favor. A misconduct note has been added to the other party.",
       "resolvedTaskerDescription": "Dispute resolved in favor of the Tasker.",
       "closedInsufficientDescription": "Dispute closed because evidence was not provided within 24 hours.",
       "resolutionEscalated": "The dispute has been escalated for further review.",
+      "resolutionEvidenceNeeded": "Evidence is needed before the dispute can move to review.",
       "resolutionOpen": "The dispute is currently under review.",
       "resolutionResolvedCustomer": "The dispute was resolved in your favor.",
       "resolutionResolvedTasker": "Dispute resolved in favor of the Tasker.",
@@ -1492,12 +1545,23 @@
       "verified": "Identity Verified",
       "about": "About",
       "categories": "Categories",
-      "ctaMessage": "Message",
       "errorNetwork": "Failed to load profile",
       "memberSince": "Member since: {date}",
       "noBio": "No bio yet",
       "noCategories": "No categories listed",
       "noReviews": "No reviews yet",
+      "noReviewsBody": "Reviews from completed bookings will appear here after the public reputation threshold is met.",
+      "noReviewResults": "No search results",
+      "noReviewResultsBody": "Try another customer name or review keyword.",
+      "publicReputation": "Public reputation",
+      "reviewCount": "{{count}} reviews",
+      "reviewSearchPlaceholder": "Search reviews",
+      "reviewSummaryBody": "Structured reviews from completed Tasky work.",
+      "reviewSystemNote": "Ratings are shown only after enough completed reviews.",
+      "mostRelevant": "Most relevant",
+      "noDirectContactNote": "Contact is available after booking confirmation through Tasky.",
+      "filterAll": "All",
+      "filterFiveStar": "5-star",
       "title": "Tasker Profile"
     },
     "cancelSheet": {
@@ -1513,6 +1577,28 @@
     },
     "rebook": {
       "title": "Rebook"
+    }
+  },
+  "booking": {
+    "lifecycle": {
+      "title": "Booking timeline",
+      "requested": "Task posted",
+      "confirmed": "Booking confirmed",
+      "scheduled": "Scheduled work",
+      "pending": "Pending",
+      "confirmedTimestamp": "Confirmed with both parties",
+      "addressNote": "Exact address is shown only after the booking is confirmed."
+    },
+    "support": {
+      "title": "Report or get help",
+      "prompt": "What's happening?",
+      "privacyNote": "Shared only with Tasky support when review is required.",
+      "description": "Pick the closest reason so Tasky can route the next step without changing the booking contract.",
+      "cta": "Get help",
+      "primary": "Continue",
+      "reasonArrival": "Arrival or no-show",
+      "reasonSchedule": "Schedule change",
+      "reasonSafety": "Safety or conduct concern"
     }
   },
   "detail": {
@@ -1583,7 +1669,7 @@
       "qWhatIsTasky": "What is Tasky?",
       "aWhatIsTasky": "Tasky is a trusted service marketplace connecting customers with service providers in Mongolia.",
       "qHowItWorks": "How does Tasky work?",
-      "aHowItWorks": "Post a task, receive applications, choose the best match, and track the booking through completion.",
+      "aHowItWorks": "Post a task, receive applications, choose the applicant you want, and track the booking through completion.",
       "qPostTask": "How do I post a task?",
       "aPostTask": "Open Post Task, add your details, choose a budget, and submit once everything looks correct.",
       "qCancelBooking": "Can I cancel a booking?",
@@ -1646,7 +1732,7 @@
       "previewName": "Tasky instant match",
       "sampleTaskerName": "Tasker",
       "taskLabel": "Task",
-      "verifiedTasker": "Verified Tasker",
+      "verifiedTasker": "ID-verified Tasker",
       "viewApplicants": "View applicants",
       "declineCount": "{{count}}/3 declined"
     }
@@ -1764,8 +1850,13 @@
       "phone": "Phone",
       "roleCustomer": "Customer",
       "roleTasker": "Tasker",
-      "trustTitle": "Verified Tasker",
+      "trustTitle": "ID-verified Tasker",
       "noBio": "No bio yet",
+      "lowReviewTitle": "Not enough reviews yet",
+      "lowReviewBody": "Public ratings appear after {{count}} completed reviews. {{remaining}} more needed.",
+      "reviewSummaryTitle": "Public reputation",
+      "reviewSummaryBody": "Ratings are shown once the review threshold is met.",
+      "reviews": "Reviews",
       "understood": "Understood",
       "viewStats": "View Stats",
       "uploadError": "Failed to upload photo. Please try again."
@@ -1796,6 +1887,7 @@
       "privacy": "Privacy Policy",
       "switchRoleBody": "Are you sure you want to switch to Tasker?",
       "switchRoleTitle": "Switch role?",
+      "switchRoleSuccess": "Switched to {{role}} mode.",
       "tasker": "Tasker",
       "terms": "Terms of Service"
     },
@@ -1895,7 +1987,7 @@
     "searchPlaceholder": "Search for jobs...",
     "unknownLocation": "Unknown location",
     "flexible": "Flexible",
-    "verifiedTasker": "Verified Tasker",
+    "verifiedTasker": "ID-verified Tasker",
     "trustBannerDesc": "Get premium badges for high quality work.",
     "availableTasks": "Available Tasks",
     "seeMap": "See map"
@@ -1957,13 +2049,28 @@
       "emptyCta": "Clear Filters",
       "searchPlaceholder": "Search tasks...",
       "subtitle": "New tasks nearby",
-      "trustTitle": "Verified Task Provider"
+      "trustTitle": "ID-verified Task Provider",
+      "openFilters": "Open filters",
+      "activeFilters": "Active filters",
+      "searchFilterLabel": "Search: {{query}}",
+      "resultSummary": "{{count}} tasks match your filters",
+      "resultCount": "{{count}} tasks available",
+      "showResults": "Show {{count}} results",
+      "clearFilters": "Clear filters",
+      "quoteRequested": "Quote requested",
+      "noResultsRemediation": "Clear filters or widen your search to see more open tasks.",
+      "filterSheetTitle": "Filter tasks",
+      "filterSheetDescription": "Choose categories and search terms before returning to the feed.",
+      "postedAt": "Posted {{date}}"
     },
     "taskDetail": {
       "applyButton": "Apply for Task",
       "applying": "Applying...",
+      "applyError": "We couldn’t submit your application. Please try again.",
       "getVerified": "Get Verified to Apply",
       "alreadyApplied": "Application Sent",
+      "ownTaskCta": "Your Task",
+      "ownTaskNotice": "This is your posted task. Switch back to Customer mode to manage applicants.",
       "applicationSentTitle": "Application Sent!",
       "applicationSentBody": "The customer will review your profile",
       "applicationSentCta": "Browse More Tasks",
@@ -1989,7 +2096,7 @@
     },
     "verification": {
       "gateTitle": "Get Verified",
-      "gateBody": "Verified Taskers get 3x more bookings",
+      "gateBody": "ID-verified Taskers get 3x more bookings",
       "gateCta": "Start Verification",
       "consentTitle": "Verification Consent",
       "consentBody": "We'll verify your identity using your national ID",
@@ -2071,6 +2178,7 @@
       "emptyCta": "Browse Tasks",
       "exactAddress": "Exact Address",
       "exactAddressNote": "This address is only visible to you",
+      "platformContactNote": "Message and booking history stay inside Tasky.",
       "leaveReview": "Leave Review",
       "messageButton": "Send Message",
       "noShow": {
@@ -2086,6 +2194,7 @@
         "waitButton": "Wait"
       },
       "paymentNoteHeading": "Payment Information",
+      "directSettlementNote": "Do not collect deposits or fees through Tasky.",
       "schedule": "Schedule",
       "taskDescription": "Task Description"
     },
@@ -2204,9 +2313,7 @@
   },
   "reviewGate": {
     "hardLockedTitle": "Review Required",
-    "softLockedTitle": "Pending Review",
     "hardLockedBody": "You must submit a review for your past booking before you can apply to new tasks or confirm new bookings.",
-    "softLockedBody": "You have a pending review. Please submit it soon to keep the community safe.",
     "cta": "Submit Review"
   },
   "verification": {

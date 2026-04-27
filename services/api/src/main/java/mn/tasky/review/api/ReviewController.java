@@ -4,8 +4,6 @@ import static mn.tasky.common.api.ApiResponseSupport.errorBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import java.util.Map;
 import java.util.UUID;
 import mn.tasky.api.generated.ReviewsApi;
@@ -17,7 +15,6 @@ import mn.tasky.runtime.publicapi.composition.ReviewPublicCompositionService;
 import mn.tasky.runtime.publicapi.composition.ReviewSubmissionOutcome;
 import mn.tasky.runtime.publicapi.composition.ReviewSubmissionService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -87,8 +84,8 @@ public class ReviewController implements ReviewsApi {
     @GetMapping("/users/{id}/reviews")
     public ResponseEntity<mn.tasky.api.generated.model.GetUserReviews200Response> getUserReviews(
             @PathVariable("id") UUID id,
-            @RequestParam(value = "cursor", required = false) @Nullable String cursor,
-            @RequestParam(value = "limit", required = false, defaultValue = "20") @Min(1) @Max(100) Integer limit) {
+            @RequestParam(value = "cursor", required = false) String cursor,
+            @RequestParam(value = "limit", required = false, defaultValue = "20") Integer limit) {
         var page = reviewPublicCompositionService.listReviews(id.toString(), cursor, limit);
         var result = ResponseEntity.ok(
                 new PagedResponse<>(page.data(), new CursorPagination(page.nextCursor(), page.hasMore())));

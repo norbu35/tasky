@@ -8,73 +8,75 @@ appId: mn.tasky.mobile
 # Precondition: Logged in as customer; posted task has at least 1 applicant
 
 - launchApp:
+    appId: 'mn.tasky.mobile'
     clearState: true
+
+- launchApp:
+    appId: 'mn.tasky.mobile'
 
 - runFlow: ../_support/login-customer.yaml
 
 # Customer home → open a task with applicants
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-001"
+      id: 'SCR-CUST-001'
     timeout: 5000
 - tapOn:
-    id: "my-tasks-feed"
+    id: 'my-tasks-feed'
 
 # Task detail
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-009"
+      id: 'SCR-CUST-009'
     timeout: 5000
 
 # Tap 'View Applicants'
 - tapOn:
-    id: "task-detail-view-applicants"
+    id: 'SCR-CUST-009-cta'
 
 # Applicants list
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-011"
+      id: 'SCR-CUST-011'
     timeout: 5000
 
-# Tap first applicant card to see public profile
+# Tap first applicant's profile action to see public profile
 - tapOn:
-    id: "applicant-card-0"
+    id: 'applicant-view-profile-0'
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-013"
+      id: 'SCR-CUST-013'
     timeout: 5000
 
 # Go back to applicants list
 - tapOn:
-    id: "applicants-list-back"
+    id: 'applicants-list-back'
 
 - assertVisible:
-    id: "SCR-CUST-011"
+    id: 'SCR-CUST-011'
 
 # Accept the applicant
 - tapOn:
-    id: "applicant-card-0"
+    id: 'applicant-accept-0'
 - tapOn:
-    id: "applicant-accept-sheet"
-- tapOn:
-    id: "applicant-accept-sheet-confirm"
+    id: 'applicant-accept-sheet-confirm'
 
 # Booking confirmation screen
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-014"
+      id: 'SCR-CUST-014'
     timeout: 5000
 
 # Confirm
 - tapOn:
-    id: "booking-confirm-cta"
+    id: 'booking-confirm-cta'
 
 # Booking confirmed screen
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-015"
+      id: 'SCR-CUST-015'
     timeout: 5000
 
 - assertVisible:
-    id: "booking-confirmed-screen-cta"
+    id: 'booking-confirmed-screen-cta'

@@ -1,0 +1,74 @@
+appId: mn.tasky.mobile
+---
+# Capture SCR-TASK-013 booking detail and support sheet states for visual QA.
+# Precondition: app is already logged in as a tasker on SCR-TASK-001 and an
+# assigned booking fixture exists.
+
+- runFlow:
+    when:
+      visible:
+        id: 'SCR-TASK-001'
+    commands:
+      - tapOn:
+          id: 'tab-bookings'
+
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-TASK-012'
+    timeout: 10000
+
+- tapOn:
+    id: 'job-card-active'
+
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-TASK-013'
+    timeout: 10000
+
+- takeScreenshot: screenshots/SCR-TASK-013-booking-detail
+
+- scrollUntilVisible:
+    element:
+      id: 'booking-detail-tasker-address-section'
+    direction: DOWN
+
+- assertVisible:
+    id: 'booking-detail-tasker-address-section'
+
+- scrollUntilVisible:
+    element:
+      id: 'booking-detail-tasker-payment-note'
+    direction: DOWN
+
+- assertVisible:
+    id: 'booking-detail-tasker-payment-note'
+- swipe:
+    direction: UP
+    duration: 500
+- waitForAnimationToEnd
+- takeScreenshot: screenshots/SCR-TASK-013-booking-detail-summary
+
+- scrollUntilVisible:
+    element:
+      id: 'booking-detail-tasker-support'
+    direction: DOWN
+
+- swipe:
+    direction: UP
+    duration: 500
+- waitForAnimationToEnd
+
+- tapOn:
+    id: 'booking-detail-tasker-support'
+
+- extendedWaitUntil:
+    visible:
+      id: 'booking-support-sheet'
+    timeout: 5000
+
+- assertVisible:
+    id: 'booking-support-reason-reasonSafety'
+- takeScreenshot: screenshots/SCR-TASK-013-support-sheet
+
+- tapOn:
+    id: 'booking-support-sheet-close'

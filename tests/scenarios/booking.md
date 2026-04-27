@@ -365,3 +365,30 @@ Given a task receives applications and one applicant is selected
 When application pricing, selection, acceptance, and booking lock events are recorded
 Then each price-relevant state change has an immutable audit event
 And the final locked booking price can be traced back to the accepted budget or quote response
+
+## SCN-BOOK-031
+
+**Risk:** Critical
+**PRD:** REQ-P1-BOOK-03
+**Title:** Selected tasker explicitly declines and task returns to selectable applicants
+
+Given a customer has selected an applicant for a task
+And the pending selection is still within the active acceptance window
+When the selected tasker declines the booking request
+Then no booking is confirmed
+And the pending selection closes as declined
+And the task returns to selectable-applicant state
+And the customer may select a different applicant
+
+## SCN-BOOK-032
+
+**Risk:** High
+**PRD:** REQ-P1-BOOK-29, REQ-P1-PRICE-07, NFR-LEGAL-03
+**Title:** Booking confirmation explains locked price baseline and post-confirmation scope changes
+
+Given a customer is confirming a selected tasker
+When the booking confirmation surface is shown
+Then the locked booking price and intake scope are presented as the baseline agreement
+And the copy explains that material, supply, or scope changes after confirmation must be agreed between the parties
+And the copy instructs participants to keep those agreements in platform-mediated chat or support evidence
+And the copy does not promise automatic price adjustment, payment hold, or payment protection

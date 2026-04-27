@@ -63,14 +63,14 @@ const MOCK_FLAGGED_MESSAGES: Message[] = [
     conversation_id: 'conv-1',
     sender_id: 'user-1',
     content: 'Call me at +97699005566 for details',
-    created_at: '2026-03-10T09:00:00Z',
+    sent_at: '2026-03-10T09:00:00Z',
   } as unknown as Message,
   {
     id: 'msg-flag-2',
     conversation_id: 'conv-2',
     sender_id: 'user-3',
     content: 'My number is +97688112233',
-    created_at: '2026-03-11T12:00:00Z',
+    sent_at: '2026-03-11T12:00:00Z',
   } as unknown as Message,
 ];
 

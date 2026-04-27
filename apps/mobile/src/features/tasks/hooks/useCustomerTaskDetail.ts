@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { listMyTasks } from '../api';
 import type { Task } from '@/lib/api/types';
-import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
+import { useAuthStore } from '@/store/authStore';
+
+import { listMyTasks } from '../api';
 
 export interface CustomerTaskDetailState {
   task: Task | null;

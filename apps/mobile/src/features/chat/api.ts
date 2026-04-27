@@ -1,5 +1,5 @@
-import { createMobileApiClient, buildBaseUrl } from '@/lib/mobileApiClient';
 import type { Conversation, CursorPage, Message } from '@/lib/api/types';
+import { createMobileApiClient, buildBaseUrl } from '@/lib/mobileApiClient';
 
 const getClient = () => createMobileApiClient();
 

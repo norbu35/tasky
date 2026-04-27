@@ -49,7 +49,7 @@ export const CustomerAdvantageVisual = () => {
             x="150"
             y="-15"
             textAnchor="middle"
-            className="text-sm font-bold uppercase tracking-[0.075em] fill-red-800/60"
+            className="text-sm font-bold uppercase tracking-caps fill-red-800/60"
           >
             {t('landing.vizChaos')}
           </text>
@@ -335,7 +335,7 @@ export const CustomerAdvantageVisual = () => {
             x="150"
             y="-15"
             textAnchor="middle"
-            className="text-sm font-bold fill-primary uppercase tracking-[0.075em]"
+            className="text-sm font-bold fill-primary uppercase tracking-caps"
           >
             {t('landing.vizTasky')}
           </text>
@@ -527,7 +527,7 @@ export const TaskerAdvantageVisual = () => {
             x="150"
             y="-15"
             textAnchor="middle"
-            className="text-sm font-bold uppercase tracking-[0.075em] fill-red-800/60"
+            className="text-sm font-bold uppercase tracking-caps fill-red-800/60"
           >
             {t('landing.vizLeadless')}
           </text>
@@ -830,7 +830,7 @@ export const TaskerAdvantageVisual = () => {
             x="150"
             y="-15"
             textAnchor="middle"
-            className="text-sm font-bold fill-accent uppercase tracking-[0.075em]"
+            className="text-sm font-bold fill-accent uppercase tracking-caps"
           >
             {t('landing.vizMatching')}
           </text>

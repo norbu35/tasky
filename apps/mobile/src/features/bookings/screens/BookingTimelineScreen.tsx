@@ -6,9 +6,9 @@ import { ScrollView, Text, View } from 'react-native';
 
 import { ScreenContainer } from '@/components/shells';
 import { Touchable } from '@/components/ui/Touchable';
-import { mobileTheme } from '@/design/tokenAdapter';
-import { mobileSurfaces } from '@/design/surfaces';
 import { screenLayout } from '@/design/screenLayout';
+import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 import { TimelineEventRow } from './BookingTimeline.TimelineRow';
 import { useBookingTimelineScreen } from './useBookingTimelineScreen';

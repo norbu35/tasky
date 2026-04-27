@@ -14,6 +14,8 @@ import { screenLayout } from '@/design/screenLayout';
 
 import { useSubmitReview } from '../hooks/useSubmitReview';
 
+import { CommentField } from './ReviewForm.CommentField';
+import { CounterpartyCard, ReviewFormHeader } from './ReviewForm.Header';
 import {
   type CategoryRating,
   type ReviewParams,
@@ -22,8 +24,6 @@ import {
   getMutationErrorMessage,
   spacing,
 } from './ReviewForm.model';
-import { CommentField } from './ReviewForm.CommentField';
-import { CounterpartyCard, ReviewFormHeader } from './ReviewForm.Header';
 import { RatingSection } from './ReviewForm.RatingInput';
 import { SubmitFooter, SuccessOverlay } from './ReviewForm.SubmitSection';
 

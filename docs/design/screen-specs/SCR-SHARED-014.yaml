@@ -10,16 +10,20 @@ traceability:
   prd_refs:
     - REQ-P1-AUTH-06
     - REQ-P1-SAFE-01
+    - REQ-P1-SAFE-04
+    - REQ-P1-COVER-05
     - NFR-SEC-04
     - NFR-LEGAL-03
   journey_refs:
     - JRN-SHARED-06:step-1
     - JRN-SHARED-06-A1
     - JRN-SHARED-06-A2
+    - JRN-SHARED-06-A6
   scenario_refs:
     - SCN-AUTH-002
     - SCN-AUTH-003
     - SCN-VERIF-001
+    - SCN-TASK-032
     - SCN-SEC-013
 template: settings
 figma_page: 'Shared/Profile — Settings'
@@ -38,6 +42,15 @@ components:
       value: 'Монгол'
       showDisclosure: true
       icon: 'globe'
+    variant: default
+
+  - id: COMP-LISTROW
+    usage: 'Tasker-only row for service-area notification preferences; preferences do not gate browsing or applications'
+    props:
+      label: 'Үйлчлэх дүүргүүд'
+      value: '{selected_district_count}'
+      showDisclosure: true
+      icon: 'map-pin'
     variant: default
 
   - id: COMP-LISTROW
@@ -85,6 +98,11 @@ states:
     description: 'Settings screen loaded with current preferences; all list rows visible'
     components_visible: [COMP-LISTROW, COMP-TOGGLE, COMP-LANGUAGESWITCHER]
     components_hidden: [COMP-MODALSHEET]
+
+  - id: tasker_service_area_preferences
+    description: 'Verified Tasker edits district preferences used for notification targeting only; citywide browsing and application eligibility are unchanged'
+    components_visible: [COMP-LISTROW, COMP-MODALSHEET, COMP-BUTTON]
+    components_hidden: []
 
   - id: language_mn
     description: 'Language is set to Mongolian (default); toggle reflects mn state'
@@ -136,6 +154,16 @@ copy:
     mn: 'Мэдэгдэл'
     en: 'Notifications'
     max_chars: 20
+
+  - key: label_service_areas
+    mn: 'Үйлчлэх дүүргүүд'
+    en: 'Service areas'
+    max_chars: 25
+
+  - key: service_areas_note
+    mn: 'Эдгээр сонголт нь зөвхөн мэдэгдлийн чиглүүлэлтэд ашиглагдана'
+    en: 'These preferences only affect notification targeting'
+    max_chars: 80
 
   - key: section_account
     mn: 'Бүртгэл'
@@ -229,6 +257,12 @@ api_endpoints:
   - method: PUT
     path: '/users/me/role'
     purpose: 'Switch user role between customer and tasker'
+  - method: GET
+    path: '/taskers/me/service-areas'
+    purpose: 'Fetch the authenticated Tasker service-area notification preferences'
+  - method: PUT
+    path: '/taskers/me/service-areas'
+    purpose: 'Replace the authenticated Tasker service-area notification preferences'
 
 analytics_events:
   - event: 'settings_viewed'
@@ -237,6 +271,10 @@ analytics_events:
     trigger: 'User toggles language between mn and en'
   - event: 'settings_notifications_toggled'
     trigger: 'User toggles notification preference on or off'
+  - event: 'settings_service_areas_tapped'
+    trigger: 'Verified Tasker opens service-area notification preferences'
+  - event: 'settings_service_areas_saved'
+    trigger: 'Tasker saves service-area notification preferences'
   - event: 'settings_role_switch_initiated'
     trigger: 'User taps Switch Role row'
   - event: 'settings_role_switch_confirmed'
@@ -254,6 +292,8 @@ acceptance_criteria:
   - 'Settings screen displays grouped list rows: Preferences, Account, Legal, and Danger Zone sections'
   - 'Language toggle switches between Mongolian and English and persists immediately'
   - 'Notification toggle enables/disables push notifications'
+  - 'Verified Taskers can edit service-area notification preferences from Settings'
+  - 'Service-area preferences affect notification targeting only and never block citywide browsing or application eligibility'
   - 'Switch Role row shows current role and opens confirmation modal sheet on tap'
   - 'Role switch confirmation calls PUT /users/me/role on confirm'
   - 'If user switches to Tasker and is not verified, navigates (push) to SCR-TASK-003 after confirmation'

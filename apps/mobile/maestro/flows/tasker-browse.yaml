@@ -2,12 +2,15 @@ appId: mn.tasky.mobile
 ---
 # Tasker Browse Smoke
 # Verifies a tasker can log in and land on the browse surface.
-# Under the current deterministic dev-auth personas, the task feed is empty by
-# design, so this flow asserts the browse shell and empty state instead of
-# relying on seeded task cards.
+# The dev backend may return empty data, seeded task cards, or a loading state
+# depending on the local stack. Keep this smoke focused on the Tasker browse
+# shell and the filter behaviors owned by SCR-TASK-001.
 
 - launchApp:
+    appId: 'mn.tasky.mobile'
     clearState: true
+- launchApp:
+    appId: 'mn.tasky.mobile'
 
 - runFlow: _support/login-tasker.yaml
 
@@ -23,8 +26,29 @@ appId: mn.tasky.mobile
 - assertVisible:
     id: 'task-feed-filter-bar'
 
+- tapOn:
+    id: 'task-feed-open-filters'
+- extendedWaitUntil:
+    visible:
+      id: 'task-feed-filter-sheet'
+    timeout: 5000
 - assertVisible:
-    id: 'task-feed-empty'
+    id: 'task-feed-filter-sheet-options'
+- assertVisible:
+    id: 'task-feed-filter-sheet-show-results'
+- tapOn:
+    id: 'task-feed-filter-sheet-close'
 
+- tapOn:
+    id: 'task-feed-search'
+- inputText: 'plumbing'
+- extendedWaitUntil:
+    visible:
+      id: 'task-feed-active-filters'
+    timeout: 5000
 - assertVisible:
-    id: 'task-feed-empty-cta'
+    id: 'task-feed-filter-count'
+- assertVisible:
+    id: 'task-feed-active-filter-search'
+- assertVisible:
+    id: 'task-feed-active-filter-clear'

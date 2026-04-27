@@ -10,6 +10,7 @@ traceability:
   prd_refs:
     - REQ-P1-MSG-02
     - REQ-P1-MSG-03
+    - REQ-P1-MSG-04
     - REQ-P1-MSG-05
     - REQ-P1-BOOK-08
   journey_refs:
@@ -153,10 +154,10 @@ copy:
 api_endpoints:
   - method: GET
     path: '/conversations/:id/messages'
-    purpose: 'Fetch message history for a post-confirmation booking conversation'
+    purpose: 'Fetch message history for a post-confirmation, price-locked booking conversation'
   - method: POST
     path: '/conversations/:id/messages'
-    purpose: 'Send a new message in a post-confirmation booking conversation'
+    purpose: 'Send a new message in a post-confirmation, price-locked booking conversation'
 
 analytics_events:
   - event: 'chat_detail_viewed'
@@ -185,7 +186,8 @@ acceptance_criteria:
   - 'Warning banner does not block sending; it is advisory only'
   - 'Tapping counterparty avatar in nav header pushes to Tasker Public Profile (SCR-CUST-013) for customers'
   - 'Tapping task reference in a message pushes to Task Detail (SCR-CUST-009)'
-  - 'Chat Detail is available only for confirmed-booking conversations'
+  - 'Chat Detail is available only for confirmed and price-locked booking conversations'
+  - 'Chat header and message composer never reveal stored raw phone, email, or external contact details; contact remains platform-mediated'
   - 'Back button pops to Conversation List (SCR-SHARED-010)'
   - 'Loading state shows skeleton matching message bubble layout'
   - 'Network error shows error message with retry button'

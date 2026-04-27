@@ -87,6 +87,8 @@ class AudienceCompositionBoundaryTest {
         assertDoesNotThrow(() -> Class.forName("mn.tasky.runtime.adminapi.composition.PackageMarker"));
         assertDoesNotThrow(() -> Class.forName("mn.tasky.runtime.publicapi.composition.PublicTaskCompositionService"));
         assertDoesNotThrow(
+                () -> Class.forName("mn.tasky.runtime.publicapi.composition.PublicTaskFeedCompositionService"));
+        assertDoesNotThrow(
                 () -> Class.forName("mn.tasky.runtime.publicapi.composition.TaskApplicationAcceptanceService"));
         assertDoesNotThrow(() -> Class.forName("mn.tasky.runtime.publicapi.composition.PaymentInitiationService"));
         assertDoesNotThrow(() -> Class.forName("mn.tasky.runtime.publicapi.composition.WalletPayoutRequestService"));
@@ -130,6 +132,8 @@ class AudienceCompositionBoundaryTest {
     void representativeControllersDelegateAudienceCompositionToRuntimeServices() {
         assertControllerDependsOn(
                 TaskController.class, "mn.tasky.runtime.publicapi.composition.PublicTaskCompositionService");
+        assertControllerDependsOn(
+                TaskController.class, "mn.tasky.runtime.publicapi.composition.PublicTaskFeedCompositionService");
         assertControllerDependsOn(
                 TaskController.class, "mn.tasky.runtime.publicapi.composition.TaskApplicationAcceptanceService");
         assertControllerDoesNotDependOn(TaskController.class, "mn.tasky.booking.publicapi.BookingQueryPort");

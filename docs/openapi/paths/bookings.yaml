@@ -403,20 +403,6 @@
     parameters:
       - $ref: ../components/parameters.yaml#/PathId
       - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - liability_disclaimer_accepted
-            properties:
-              liability_disclaimer_accepted:
-                type: boolean
-                enum:
-                  - true
-                description: Customer liability disclaimer acceptance required before booking confirmation.
     responses:
       '200':
         description: Booking created from intent.
@@ -439,9 +425,6 @@
             schema:
               $ref: ../components/schemas/common.yaml#/Error
 /booking-intents/{id}/decline:
-  x-tasky-status: deferred
-  x-tasky-phase: phase_2
-  x-tasky-target-phase: phase_2
   post:
     tags:
       - Bookings
@@ -449,6 +432,7 @@
     description: |
       The selected tasker declines a pending booking intent.
       The customer can then return to the applicant list and choose another tasker.
+      Requires Idempotency-Key header.
     operationId: declineBookingIntent
     security:
       - BearerAuth: []

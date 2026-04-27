@@ -52,7 +52,6 @@ export default function BookingConfirmScreen() {
     }
     const booking = await confirmBookingIntent({
       bookingIntentId: params.bookingIntentId!,
-      liabilityDisclaimerAccepted: true,
       idempotencyKey,
     });
     router.replace({
@@ -72,7 +71,7 @@ export default function BookingConfirmScreen() {
           <Text className="text-heading font-sans-bold text-primary-deep mb-sm">
             {t('customer.bookings.selectionPendingTitle')}
           </Text>
-          <Text className="text-body text-text-secondary leading-[22px]">
+          <Text className="text-body text-text-secondary leading-relaxed">
             {t('customer.bookings.selectionPendingBody')}
           </Text>
         </View>
@@ -89,7 +88,9 @@ export default function BookingConfirmScreen() {
               showVerified
             />
             <View className="flex-1">
-              <Text className="text-body font-semibold text-primary-deep">{params.taskerName}</Text>
+              <Text className="text-body font-sans-semibold text-primary-deep">
+                {params.taskerName}
+              </Text>
               {params.taskerRating && (
                 <Text className="text-caption text-text-secondary mt-xs">
                   {params.taskerRating}
@@ -140,7 +141,9 @@ export default function BookingConfirmScreen() {
             showVerified
           />
           <View className="flex-1">
-            <Text className="text-body font-semibold text-primary-deep">{params.taskerName}</Text>
+            <Text className="text-body font-sans-semibold text-primary-deep">
+              {params.taskerName}
+            </Text>
             {params.taskerRating && (
               <Text className="text-caption text-text-secondary mt-xs">{params.taskerRating}</Text>
             )}
@@ -174,7 +177,7 @@ export default function BookingConfirmScreen() {
         <Text className="text-heading font-sans-bold text-primary-deep mb-md">
           {t('customer.bookings.sectionDisclaimer')}
         </Text>
-        <Text className="text-caption text-text-secondary leading-[20px] mb-md">
+        <Text className="text-caption text-text-secondary leading-relaxed mb-md">
           {t('BookingConfirmScreen.copy1')}
         </Text>
         <Touchable
@@ -192,7 +195,7 @@ export default function BookingConfirmScreen() {
             }
           >
             {disclaimerChecked && (
-              <Text className="text-primary-foreground text-[14px] font-bold">{'✓'}</Text>
+              <Text className="text-primary-foreground text-label font-sans-bold">{'✓'}</Text>
             )}
           </View>
           <Text className="text-body text-primary-deep flex-1">
@@ -203,7 +206,7 @@ export default function BookingConfirmScreen() {
 
       {/* Calendar Prompt */}
       <View className="mb-xl">
-        <Text className="text-subtitle font-semibold text-primary mb-sm">
+        <Text className="text-subtitle font-sans-semibold text-primary mb-sm">
           {t('customer.bookings.calendarPromptTitle')}
         </Text>
         <Text className="text-caption text-text-secondary">{t('BookingConfirmScreen.copy2')}</Text>

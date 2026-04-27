@@ -1,7 +1,8 @@
 import { useState, useCallback } from 'react';
 
-import { getVerificationUploadUrl } from '../api';
 import { useAuthStore } from '@/store/authStore';
+
+import { getVerificationUploadUrl } from '../api';
 
 export function useVerificationUpload() {
   const session = useAuthStore((s) => s.session);

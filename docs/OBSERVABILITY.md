@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-Tasky uses Prometheus, Grafana, and Alertmanager for operational telemetry, plus backend-exported business metrics for launch KPIs. KPI dashboards are part of the launch requirement, not a later convenience.
+Tasky uses Prometheus, Grafana, and Alertmanager for operational telemetry, plus backend-exported business metrics for launch KPIs. KPI dashboards are part of the launch requirement, not a later convenience. `docs/METRICS.md` owns KPI formulas, thresholds, denominator rules, data-quality policy, and dashboard/alert semantics.
 
 ## 2. Stack
 
@@ -75,10 +75,11 @@ Required supporting views:
 
 - category as the primary slice
 - district as drilldown
-- median time to first qualified application
+- median time to first `qualified_application`
 - median posting-to-confirmed-booking time
 - booking failure reasons
 - intervention type and stage breakdowns
+- denominator status for each metric and category slice
 
 ## 6. Alert policy
 
@@ -118,4 +119,4 @@ tooling/observability/
 
 - KPI dashboards must exist before launch.
 - Hard-gate alerts are mandatory; monitored metrics do not require paging alerts.
-- The dashboard, alert rules, and metric vocabulary must remain aligned with `docs/METRICS.md`.
+- The dashboard, alert rules, metric vocabulary, denominator thresholds, and data-quality handling must remain aligned with `docs/METRICS.md`.

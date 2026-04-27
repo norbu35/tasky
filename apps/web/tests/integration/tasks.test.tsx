@@ -98,22 +98,27 @@ describe('Tasks Integration', () => {
     const privacySafeTask = {
       id: 'public-task-privacy-1',
       category: makeCategory(),
+      description: 'Move furniture',
+      budget: 90000,
+      pricing_mode: 'BUDGET',
+      approximate_location: 'Баянзүрх дүүрэг',
+      approximate_lat: 47.92,
+      approximate_lng: 106.95,
+      status: 'OPEN' as const,
+      scheduled_at: '2026-02-16T00:00:00Z',
+      created_at: '2026-02-14T00:00:00Z',
+    };
+
+    const privacySafeTaskDetail = {
+      ...privacySafeTask,
       customer: {
         id: 'customer-99',
         full_name: 'Customer',
         avatar_url: null,
         rating_avg: 4.7,
       },
-      description: 'Move furniture',
-      budget: 90000,
-      approximate_location: 'Баянзүрх дүүрэг',
-      approximate_lat: 47.92,
-      approximate_lng: 106.95,
-      status: 'OPEN' as const,
-      scheduled_at: '2026-02-16T00:00:00Z',
       photo_urls: [],
       application_count: 1,
-      created_at: '2026-02-14T00:00:00Z',
       location_text: 'SHOULD NOT RENDER',
     };
 
@@ -123,6 +128,7 @@ describe('Tasks Integration', () => {
         data: [privacySafeTask],
         cursor: { next: null, has_more: false },
       }),
+      getTask: vi.fn().mockResolvedValue(privacySafeTaskDetail),
     });
 
     render(
@@ -134,6 +140,9 @@ describe('Tasks Integration', () => {
     expect(screen.queryByText('SHOULD NOT RENDER')).not.toBeInTheDocument();
 
     fireEvent.click(await screen.findByRole('button', { name: 'View Details & Apply' }));
+    await waitFor(() => {
+      expect(taskerApi.getTask).toHaveBeenCalledWith('access-token', 'public-task-privacy-1');
+    });
     fireEvent.change(await screen.findByLabelText('Application message'), {
       target: { value: 'I can complete this task quickly and safely.' },
     });

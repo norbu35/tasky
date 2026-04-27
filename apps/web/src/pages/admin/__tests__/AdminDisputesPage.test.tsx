@@ -75,14 +75,14 @@ const EVIDENCE_MESSAGES: Message[] = [
     conversation_id: 'conv-1',
     sender_id: 'u-customer-1',
     content: 'When will you arrive? You were supposed to be here at 9.',
-    created_at: '2026-03-18T09:30:00Z',
+    sent_at: '2026-03-18T09:30:00Z',
   },
   {
     id: 'msg-2',
     conversation_id: 'conv-1',
     sender_id: 'u-tasker-1',
     content: 'Sorry, I cannot make it today.',
-    created_at: '2026-03-18T10:00:00Z',
+    sent_at: '2026-03-18T10:00:00Z',
   },
 ];
 

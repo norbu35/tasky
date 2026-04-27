@@ -7,7 +7,7 @@ import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 import { setStoredLanguage } from '@/utils/i18n';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, interaction, spacing } = mobileTheme;
 
 interface LanguageSwitcherProps {
   className?: string;
@@ -37,15 +37,14 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
         style={({ pressed }) => [
           { paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
           currentLang === 'en' && { backgroundColor: colors.primary },
-          pressed && { opacity: 0.9 },
+          pressed && { opacity: interaction.pressed.opacity },
         ]}
         className="items-center justify-center"
         onPress={() => changeLanguage('en')}
       >
         <Text
+          className="text-caption font-sans-bold"
           style={{
-            fontSize: typography.caption,
-            fontWeight: '700',
             color: currentLang === 'en' ? colors.primaryForeground : colors.foreground,
           }}
         >
@@ -59,15 +58,14 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
         style={({ pressed }) => [
           { paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
           currentLang === 'mn' && { backgroundColor: colors.primary },
-          pressed && { opacity: 0.9 },
+          pressed && { opacity: interaction.pressed.opacity },
         ]}
         className="items-center justify-center"
         onPress={() => changeLanguage('mn')}
       >
         <Text
+          className="text-caption font-sans-bold"
           style={{
-            fontSize: typography.caption,
-            fontWeight: '700',
             color: currentLang === 'mn' ? colors.primaryForeground : colors.foreground,
           }}
         >

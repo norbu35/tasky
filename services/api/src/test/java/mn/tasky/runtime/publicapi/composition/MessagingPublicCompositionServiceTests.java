@@ -139,8 +139,9 @@ class MessagingPublicCompositionServiceTests {
         @DisplayName("sets hasMore and cursor when results exceed limit")
         void setsHasMoreWhenExceedsLimit() {
             Instant now = Instant.now();
+            Instant previous = now.minusSeconds(60);
             Message m1 = message("m-1", "c-1", "user-1", "Hello", now);
-            Message m2 = message("m-2", "c-1", "user-2", "Hi", now);
+            Message m2 = message("m-2", "c-1", "user-2", "Hi", previous);
             Message m3 = message("m-3", "c-1", "user-1", "Extra", now);
             when(messagingQueryPort.listMessages("user-1", "c-1", null, 3)).thenReturn(List.of(m1, m2, m3));
 
@@ -148,7 +149,7 @@ class MessagingPublicCompositionServiceTests {
 
             assertThat(page.data()).hasSize(2);
             assertThat(page.hasMore()).isTrue();
-            assertThat(page.nextCursor()).isEqualTo("m-2");
+            assertThat(page.nextCursor()).isEqualTo(previous + "|m-2");
         }
 
         @Test

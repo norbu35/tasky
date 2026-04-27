@@ -49,7 +49,11 @@ export function SectionCard({
           {label}
         </Text>
         {onEdit ? (
-          <Touchable onPress={onEdit} accessibilityRole="button">
+          <Touchable
+            onPress={onEdit}
+            accessibilityRole="button"
+            testID={testID ? `${testID}-edit` : 'review-section-edit'}
+          >
             <Text
               className={`text-caption font-bold${featured ? ' text-accent' : ' text-primary-deep'}`}
             >
@@ -71,7 +75,7 @@ export function SectionCard({
           </View>
         ) : null}
         <Text
-          className={`flex-1 text-body font-bold leading-snug${featured ? ' text-primary-foreground text-[36px] font-display-bold leading-[40px]' : ' text-foreground'}`}
+          className={`flex-1 text-body font-bold leading-snug${featured ? ' text-primary-foreground text-display-lg font-display-bold leading-[40px]' : ' text-foreground'}`}
         >
           {value}
         </Text>
@@ -96,7 +100,7 @@ export function PhotosCard({ photos, onEdit }: PhotosCardProps) {
         <Text className="text-caption font-bold text-text-secondary">
           {t('ReviewSubmitScreen.sectionPhotos')} {photos.length > 0 ? `(${photos.length})` : ''}
         </Text>
-        <Touchable onPress={onEdit} accessibilityRole="button">
+        <Touchable onPress={onEdit} accessibilityRole="button" testID="review-section-photos-edit">
           <Text className="text-caption font-bold text-primary-deep">
             {t('ReviewSubmitScreen.edit')}
           </Text>
@@ -197,7 +201,11 @@ export function DescriptionCard({
         <Text className="text-caption font-bold text-text-secondary">
           {t('ReviewSubmitScreen.sectionDetails')}
         </Text>
-        <Touchable onPress={onEdit} accessibilityRole="button">
+        <Touchable
+          onPress={onEdit}
+          accessibilityRole="button"
+          testID="review-section-description-edit"
+        >
           <Text className="text-caption font-bold text-primary-deep">
             {t('ReviewSubmitScreen.edit')}
           </Text>
@@ -207,7 +215,11 @@ export function DescriptionCard({
         {showFull ? description : shortDescription}
       </Text>
       {description.length > 140 ? (
-        <Touchable onPress={onToggle} accessibilityRole="button">
+        <Touchable
+          onPress={onToggle}
+          accessibilityRole="button"
+          testID="review-section-description-toggle"
+        >
           <Text className="text-caption font-bold text-accent">
             {showFull ? t('ReviewSubmitScreen.viewLess') : t('ReviewSubmitScreen.viewMore')}
           </Text>

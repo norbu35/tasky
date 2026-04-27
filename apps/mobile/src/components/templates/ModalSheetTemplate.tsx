@@ -4,7 +4,7 @@ import BottomSheet, {
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
 import React, { useCallback, useEffect, useRef } from 'react';
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { elevations, overlays } from '@/design/elevations';
@@ -15,6 +15,13 @@ const { colors, spacing, radius } = mobileTheme;
 
 const HANDLE_HEIGHT = spacing.xs;
 const HANDLE_WIDTH = spacing['3xl'];
+const SHEET_CONTAINER_STYLE = [
+  StyleSheet.absoluteFillObject,
+  {
+    zIndex: 1000,
+    elevation: 1000,
+  },
+];
 
 export interface ModalSheetTemplateProps {
   isOpen: boolean;
@@ -69,7 +76,12 @@ export function ModalSheetTemplate({
   );
 
   return (
-    <View testID={testID} className={cn(className)}>
+    <View
+      testID={testID}
+      pointerEvents={isOpen ? 'auto' : 'none'}
+      className={cn(className)}
+      style={SHEET_CONTAINER_STYLE}
+    >
       <BottomSheet
         ref={bottomSheetRef}
         index={isOpen ? 0 : -1}

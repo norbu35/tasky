@@ -8,6 +8,7 @@ import { Alert, Image, Text, View } from 'react-native';
 import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 import { Touchable } from '@/components/ui/Touchable';
 import { mobileTheme } from '@/design/tokenAdapter';
+import { PostingGuidanceCard } from '@/features/tasks/components/PostingGuidance';
 import { useTaskDraftStore } from '@/features/tasks/draft';
 import { useTaskPhotoUpload } from '@/features/tasks/hooks/useTaskPhotoUpload';
 
@@ -94,6 +95,12 @@ export default function TaskPhotosScreen() {
       <Text className="text-body text-text-secondary leading-[24px]">
         {t('Photos.photosInstruction')}
       </Text>
+
+      <PostingGuidanceCard
+        titleKey="PostingGuidance.summaryTitle"
+        bodyKey="PostingGuidance.summaryBody"
+        testID="posting-guidance-photos-summary"
+      />
 
       <View className="flex-row flex-wrap gap-sm" testID="photo-upload-grid">
         {slots.map((photoUri, index) =>

@@ -62,6 +62,14 @@ Frontend code consumes i18n via `react-i18next` with locale keys; web and mobile
 
 `apps/web/AGENTS.md` and `apps/mobile/AGENTS.md` reference these rules; they do not restate them.
 
+## Testing Discipline (canonical)
+
+- Tests are durable checks for product behavior, contracts, scenarios, and reusable technical invariants. They are not a changelog of incidental bugs found during implementation.
+- Before adding or changing behavioral tests, trace the behavior through the governing `REQ-P1`/`NFR`, `JRN`, `SCR`, and existing `SCN` IDs. Prefer strengthening an existing scenario-backed test over adding a new narrowly tailored case.
+- Do not add one-off regression tests for isolated findings, transient environment issues, or local implementation mistakes. If a finding exposes a durable product rule, encode the rule at the scenario/spec level and test that broader behavior.
+- If no scenario/spec owns the behavior and you are not explicitly asked to curate scenarios, report the coverage gap instead of freezing the one-off observation into the test suite.
+- Narrow technical guardrail tests are allowed when they protect a shared invariant, tooling contract, or cross-cutting boundary; name and place them as technical checks rather than product-scenario regressions.
+
 ## Workflow Rules (triggers)
 
 - Contract-first: if the API changes, update `docs/openapi/**` first, regenerate `docs/API.yaml`, regenerate `@tasky/sdk`, then implement.

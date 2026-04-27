@@ -68,33 +68,25 @@ export function DisputeSummary({
     <View className="bg-muted rounded-lg p-lg gap-item">
       <Text className="text-heading font-sans-bold text-primary-deep">{sectionTitle}</Text>
       <View className="gap-xs">
-        <Text className="text-caption text-text-secondary uppercase tracking-[0.075em]">
-          {detailTypeLabel}
-        </Text>
+        <Text className="text-overline text-text-secondary uppercase">{detailTypeLabel}</Text>
         <Text className="text-body font-sans-bold text-primary-deep leading-snug">
           {bookingCategory}
         </Text>
       </View>
       <View className="gap-xs">
-        <Text className="text-caption text-text-secondary uppercase tracking-[0.075em]">
-          {detailBookingLabel}
-        </Text>
+        <Text className="text-overline text-text-secondary uppercase">{detailBookingLabel}</Text>
         <Text className="text-body font-sans-bold text-primary-deep leading-snug">
           {bookingReference}
         </Text>
       </View>
       <View className="gap-xs">
-        <Text className="text-caption text-text-secondary uppercase tracking-[0.075em]">
-          {detailSubmittedLabel}
-        </Text>
+        <Text className="text-overline text-text-secondary uppercase">{detailSubmittedLabel}</Text>
         <Text className="text-body font-sans-bold text-primary-deep leading-snug">
           {submittedAtLabel}
         </Text>
       </View>
       <View className="gap-xs">
-        <Text className="text-caption text-text-secondary uppercase tracking-[0.075em]">
-          {detailReasonLabel}
-        </Text>
+        <Text className="text-overline text-text-secondary uppercase">{detailReasonLabel}</Text>
         <Text className="text-body font-sans-bold text-primary-deep leading-snug">{reason}</Text>
       </View>
     </View>

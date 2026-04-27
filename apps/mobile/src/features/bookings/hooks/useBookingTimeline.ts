@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { getBookingTimeline } from '../api';
-import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
+import { useAuthStore } from '@/store/authStore';
+
+import { getBookingTimeline } from '../api';
 
 export function useBookingTimeline(bookingId: string | undefined) {
   const session = useAuthStore((s) => s.session);

@@ -62,7 +62,7 @@ The following controls must remain intact:
 
 ## 7. Launch KPI and dashboard gate
 
-Production launch must not proceed without a real dashboard for all seven approved Phase 1 metrics:
+Production launch must not proceed without a real dashboard for all seven approved Phase 1 metrics. Metric formulas, thresholds, denominator rules, and data-quality policy are defined in `docs/METRICS.md`:
 
 1. Self-Serve Fulfillment Rate
 2. Qualified Match Rate within 24h

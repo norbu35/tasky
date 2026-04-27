@@ -8,7 +8,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { AppContext, type AppContextValue } from '../../src/context/AppContext';
 import { createMockApiClient } from '../../src/test/mocks';
-import { makeProfile, makeSession, makeUser } from '../../src/test/factories';
+import { makeCategory, makeProfile, makeSession, makeUser } from '../../src/test/factories';
 import { TaskerApplicationSentPage } from '../../src/pages/tasker/TaskerApplicationSentPage';
 import { TaskerBookingDetailPage } from '../../src/pages/tasker/TaskerBookingDetailPage';
 import { TaskerCancelDialog } from '../../src/pages/tasker/TaskerCancelDialog';
@@ -88,31 +88,40 @@ describe('Tasker phase 1 parity', () => {
         data: [
           {
             id: 'public-task-1',
-            category: {
-              ...makeProfile(),
-              id: 'cat-cleaning',
-              name: 'Cleaning',
-              name_mn: 'Цэвэрлэгээ',
-            } as never,
-            customer: {
-              id: 'customer-1',
-              full_name: 'Customer',
-              avatar_url: null,
-              rating_avg: 4.5,
-            },
+            category: makeCategory({ id: 'cat-cleaning', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' }),
             description: 'Window cleaning',
             budget: 65000,
+            pricing_mode: 'BUDGET',
             approximate_location: 'Сүхбаатар дүүрэг',
             approximate_lat: 47.92,
             approximate_lng: 106.92,
             status: 'OPEN',
             scheduled_at: '2026-02-15T00:00:00Z',
-            photo_urls: [],
-            application_count: 0,
             created_at: '2026-02-14T00:00:00Z',
           },
         ],
         cursor: { next: null, has_more: false },
+      }),
+      getTask: vi.fn().mockResolvedValue({
+        id: 'public-task-1',
+        category: makeCategory({ id: 'cat-cleaning', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' }),
+        customer: {
+          id: 'customer-1',
+          full_name: 'Customer',
+          avatar_url: null,
+          rating_avg: 4.5,
+        },
+        description: 'Window cleaning',
+        budget: 65000,
+        pricing_mode: 'BUDGET',
+        approximate_location: 'Сүхбаатар дүүрэг',
+        approximate_lat: 47.92,
+        approximate_lng: 106.92,
+        status: 'OPEN',
+        scheduled_at: '2026-02-15T00:00:00Z',
+        photo_urls: [],
+        application_count: 7,
+        created_at: '2026-02-14T00:00:00Z',
       }),
       listCategories: vi.fn().mockResolvedValue({
         data: [
@@ -148,8 +157,20 @@ describe('Tasker phase 1 parity', () => {
 
     expect(await screen.findByRole('heading', { name: 'Open task feed' })).toBeInTheDocument();
     expect(await screen.findByText('Сүхбаатар дүүрэг')).toBeInTheDocument();
+    expect(apiClient.getTask).not.toHaveBeenCalled();
+    expect(
+      screen.queryByText((_content, element) => element?.textContent?.trim() === '7 applied'),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Applicants')).not.toBeInTheDocument();
 
     fireEvent.click(await screen.findByRole('button', { name: 'View Details & Apply' }));
+    await waitFor(() => {
+      expect(apiClient.getTask).toHaveBeenCalledWith('access-token', 'public-task-1');
+    });
+    expect(
+      screen.queryByText((_content, element) => element?.textContent?.trim() === '7 applied'),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Applicants')).not.toBeInTheDocument();
     fireEvent.change(await screen.findByLabelText('Application message'), {
       target: { value: 'I can complete this task quickly and safely.' },
     });

@@ -8,37 +8,54 @@ import { LocationPin } from '@/components/ui/LocationPin';
 import { PriceTag } from '@/components/ui/PriceTag';
 import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
 import { mobileTheme } from '@/design/tokenAdapter';
-import type { PublicTask } from '@/lib/api/types';
+import type { PublicTask, TaskDetail } from '@/lib/api/types';
 import { formatFullDate } from '@/utils/formatDate';
 
 const { colors } = mobileTheme;
 
 interface TaskDetailSummaryProps {
-  task: PublicTask;
+  task: TaskDetail;
   isQuoteMode: boolean;
+}
+
+function getPublicCustomer(task: TaskDetail): PublicTask['customer'] | null {
+  return 'customer' in task ? (task.customer ?? null) : null;
+}
+
+function getLocationText(task: TaskDetail): string | null {
+  if ('location_text' in task) return task.location_text;
+  return task.approximate_location;
 }
 
 export function TaskDetailSummary({ task, isQuoteMode }: TaskDetailSummaryProps) {
   const { t } = useTranslation();
+  const customer = getPublicCustomer(task);
+  const locationText = getLocationText(task);
 
   return (
     <>
-      <View className="flex-row items-center gap-md bg-muted rounded-md p-lg">
-        <ProfileAvatar uri={undefined} name={task.customer.full_name} size="lg" />
-        <View className="flex-1 gap-xs">
-          <Text className="text-subtitle font-sans-bold text-foreground">
-            {task.customer.full_name}
-          </Text>
-          {task.customer.rating_avg > 0 && (
-            <View className="flex-row items-center gap-xs">
-              <Star size={16} color={colors.accent} fill={colors.accent} />
-              <Text className="text-label font-sans-bold text-foreground">
-                {task.customer.rating_avg.toFixed(1)}
-              </Text>
-            </View>
-          )}
+      {customer ? (
+        <View className="flex-row items-center gap-md bg-muted rounded-md p-lg">
+          <ProfileAvatar
+            uri={customer.avatar_url ?? undefined}
+            name={customer.full_name}
+            size="lg"
+          />
+          <View className="flex-1 gap-xs">
+            <Text className="text-subtitle font-sans-bold text-foreground">
+              {customer.full_name}
+            </Text>
+            {customer.rating_avg > 0 && (
+              <View className="flex-row items-center gap-xs">
+                <Star size={16} color={colors.accent} fill={colors.accent} />
+                <Text className="text-label font-sans-bold text-foreground">
+                  {customer.rating_avg.toFixed(1)}
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
-      </View>
+      ) : null}
 
       <Text className="text-heading font-sans-bold text-primary-deep leading-tight">
         {task.description}
@@ -67,12 +84,12 @@ export function TaskDetailSummary({ task, isQuoteMode }: TaskDetailSummaryProps)
           )}
         </View>
 
-        {task.approximate_location && (
+        {locationText && (
           <View className="flex-row items-center justify-between">
             <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
               {t('taskDetails.location')}
             </Text>
-            <LocationPin text={task.approximate_location} compact />
+            <LocationPin text={locationText} compact />
           </View>
         )}
 
@@ -88,11 +105,11 @@ export function TaskDetailSummary({ task, isQuoteMode }: TaskDetailSummaryProps)
         )}
       </View>
 
-      {task.approximate_location && (
+      {'approximate_location' in task && task.approximate_location ? (
         <Text className="text-caption text-text-secondary leading-[20px]">
           {t('TaskDetailScreen.copy1')}
         </Text>
-      )}
+      ) : null}
     </>
   );
 }

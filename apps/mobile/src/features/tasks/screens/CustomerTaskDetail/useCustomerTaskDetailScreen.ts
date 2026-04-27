@@ -2,7 +2,11 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useConversationRouteForBooking } from '@/features/chat';
+import { buildTaskerProfileRoute } from '@/features/profile/profileRouteParams';
+import { useApplications } from '@/features/tasks/hooks/useApplications';
 import { useCustomerTaskDetail } from '@/features/tasks/hooks/useCustomerTaskDetail';
+
 import type { CustomerTask } from './model';
 
 export interface CustomerTaskDetailState {
@@ -36,6 +40,7 @@ export function useCustomerTaskDetailScreen(): CustomerTaskDetailState {
   const router = useRouter();
   const { taskId } = useLocalSearchParams<{ taskId: string }>();
   const { task, isLoading, isError, refetch } = useCustomerTaskDetail(taskId);
+  const applicationsQuery = useApplications(taskId);
   const [showCancelSheet, setShowCancelSheet] = useState(false);
 
   const status = (task?.status ?? '') as string;
@@ -46,10 +51,16 @@ export function useCustomerTaskDetailScreen(): CustomerTaskDetailState {
   const isCancelled = status === 'CANCELLED';
 
   const tasker = (task as CustomerTask)?.tasker;
-  const applicantCount = Number((task as CustomerTask)?.applicant_count ?? 0);
+  const taskApplicantCount = Number((task as CustomerTask)?.applicant_count ?? 0);
+  const listedApplicantCount = applicationsQuery.data?.data?.length ?? 0;
+  const applicantCount = Math.max(taskApplicantCount, listedApplicantCount);
   const hasApplicants = applicantCount > 0;
   const photos = useMemo(() => ((task as CustomerTask)?.photo_keys ?? []) as string[], [task]);
   const bookingId = (task as CustomerTask)?.booking?.id;
+  const { route: conversationRoute } = useConversationRouteForBooking({
+    taskId: task?.id,
+    counterpartyId: tasker?.id,
+  });
 
   const ctaLabel = useMemo(() => {
     if (isOpen && hasApplicants) {
@@ -77,13 +88,23 @@ export function useCustomerTaskDetailScreen(): CustomerTaskDetailState {
       };
     }
     if (isAssigned && tasker) {
-      return () => router.push(bookingId ? `/inbox/${bookingId}` : '/inbox');
+      return () => router.push(conversationRoute);
     }
     if (isOpen) {
       return () => setShowCancelSheet(true);
     }
     return undefined;
-  }, [hasApplicants, isAssigned, isOpen, isTaskerMarkedDone, router, bookingId, taskId, tasker]);
+  }, [
+    hasApplicants,
+    isAssigned,
+    isOpen,
+    isTaskerMarkedDone,
+    router,
+    bookingId,
+    conversationRoute,
+    taskId,
+    tasker,
+  ]);
 
   const secondaryCtaLabel = useMemo(() => {
     if ((isOpen && hasApplicants) || isAssigned) {
@@ -101,9 +122,13 @@ export function useCustomerTaskDetailScreen(): CustomerTaskDetailState {
 
   const navigateToTasker = React.useCallback(
     (taskerId: string) => {
+      if (tasker?.id === taskerId) {
+        router.push(buildTaskerProfileRoute(tasker));
+        return;
+      }
       router.push(`/(customer)/taskers/${taskerId}`);
     },
-    [router],
+    [router, tasker],
   );
 
   return {

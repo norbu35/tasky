@@ -112,6 +112,7 @@
     "failedToLoadApplications": "Хүсэлтүүдийг ачааллахад алдаа гарлаа",
     "waitingForTaskers": "Ажил горилогчдыг хүлээж байна...",
     "tasksDone": "{{count}} ажил хийсэн",
+    "idVerifiedTasker": "Иргэний үнэмлэхээр баталгаажсан Tasker",
     "reviewAndAccept": "Шалгах & Батлах",
     "appliedAgo": "{{timeAgo}} хүсэлт илгээсэн",
     "cancelling": "Цуцлаж байна...",
@@ -170,8 +171,6 @@
     "taskMediaAlt": "Ажлын зураг {{count}}",
     "withdrawAction": "Хүсэлтээ буцаах",
     "withdrawSuccess": "Хүсэлт амжилттай буцаагдлаа.",
-    "applicantsLabel": "Горилогчид",
-    "applicantsSuffix": "хүсэлт илгээсэн",
     "applyDescription": "Хүсэлт илгээхээсээ өмнө дэлгэрэнгүй мэдээлэлтэй танилцана уу.",
     "applySubmit": "Ажилд хүсэлт илгээх",
     "applyToTask": "Ажлын дэлгэрэнгүй ба Хүсэлт",
@@ -207,8 +206,8 @@
     "selectedTaskerTitle": "Сонгогдсон ажилтан",
     "completedTasks": "{{count}} ажил хийсэн",
     "applicantLoadError": "Ажилтны мэдээлэл ачааллахад алдаа гарлаа.",
-    "trustSafetyGuarantee": "Аюулгүй байдлын баталгаа",
-    "trustSafetyDesc": "Бүх ажилтнууд иргэний үнэмлэхээр баталгаажсан. Та ажил эхлэхээс өмөх ажилтантайгаа шууд тогтмол үнийг тохиролцоно.",
+    "trustSafetyGuarantee": "Түгжигдсэн үнэ ба хамрах хүрээ",
+    "trustSafetyDesc": "Захиалгын түгжигдсэн үнэ болон анхны хамрах хүрээ нь үндсэн тохиролцоо. Материал, хэрэгсэл эсвэл хамрах хүрээ өөрчлөгдвөл Tasky чат эсвэл тусламжийн нотолгоонд үлдээж тохиролцоно; Tasky 1-р үе шатанд үнийг автоматаар өөрчлөх, төлбөр барих эсвэл төлбөр хамгаалах үйлчилгээ үзүүлэхгүй.",
     "errorTitle": "Алдаа",
     "summaryTitle": "Хураангуй",
     "taskBudget": "Тохиролцсон төсөв",
@@ -217,7 +216,7 @@
     "termsDesc": "Би платформын үйлчилгээний нөхцөл болон хариуцлагын гэрээг зөвшөөрч байна.",
     "confirming": "Баталж байна...",
     "confirmBookingBtn": "Захиалгыг батлах",
-    "chargeNotice": "Ажил дууссаны дараа та ажилтантай шууд тооцоо хийнэ.",
+    "chargeNotice": "Түгжигдсэн үнэ болон анхны хамрах хүрээ нь үндсэн тохиролцоо. Материал, хэрэгсэл эсвэл хамрах хүрээний өөрчлөлтийг Tasky чат эсвэл тусламжийн нотолгоонд хадгалаарай.",
     "rebookTaskerPending": "Баталгаажсаны дараа ажилтны мэдээлэл ачааллагдана."
   },
   "messaging": {
@@ -480,6 +479,7 @@
       "noApplicantsDesc": "Хүн хүсэлт илгээхийг хүлээх, эсвэл ажлаа засварлаж илүү олон хүнд таалагдуулаарай.",
       "backToTask": "Ажил руу буцах",
       "completedTasks": "{{count}} ажил хийсэн",
+      "idVerifiedTasker": "Иргэний үнэмлэхээр баталгаажсан Tasker",
       "emptyDesc": "Энэ ажилд одоогоор хүн хүсэлт илгээгээгүй байна.",
       "emptyTitle": "Горилогч алга",
       "errorDesc": "Одоогоор хүсэлтийн жагсаалтыг ачааллах боломжгүй байна.",
@@ -568,6 +568,7 @@
       "underReviewTitle": "Хянагдаж байна",
       "viewBooking": "Захиалга үзэх",
       "statusLabel": {
+        "EVIDENCE_NEEDED": "EVIDENCE_NEEDED",
         "OPEN": "OPEN",
         "RESOLVED_CUSTOMER": "RESOLVED_CUSTOMER",
         "RESOLVED_TASKER": "RESOLVED_TASKER",
@@ -692,7 +693,7 @@
       "primaryActions": "Үндсэн үйлдлүүд",
       "messageTasker": "Ажилтан руу бичих",
       "openChat": "Чат нээх",
-      "verifiedTasker": "Баталгаажсан Ажилтан",
+      "verifiedTasker": "ID баталгаажсан ажилтан",
       "trustedLabel": "1-р үе шатны шууд төлбөр тооцоонд итгэмжлэгдсэн ажилтан.",
       "ratingStats": "{{count}} ажлаас {{rating}} үнэлгээтэй",
       "responseDetail": "Ажлын цагаар хурдан хариу өгдөг",
@@ -1008,8 +1009,8 @@
     "approved": {
       "title": "Баталгаажсан",
       "description": "Таны хэн болох нь батлагдлаа.",
-      "cardDesc": "Та одоо баталгаажсан ажилтны хувиар ажил хүлээн авах боломжтой.",
-      "content": "You can now accept jobs with a verified tasker profile."
+      "cardDesc": "Та одоо иргэний үнэмлэхээр баталгаажсан Tasker профайлаар ажил хүлээн авах боломжтой.",
+      "content": "Та одоо иргэний үнэмлэхээр баталгаажсан Tasker профайлаар ажил хүлээн авах боломжтой."
     },
     "consent": {
       "title": "Баталгаажуулах зөвшөөрөл",
@@ -1157,6 +1158,7 @@
       "reason": "Шалтгаан",
       "status": "Статус",
       "statusLabel": {
+        "EVIDENCE_NEEDED": "EVIDENCE_NEEDED",
         "OPEN": "OPEN",
         "RESOLVED_CUSTOMER": "RESOLVED_CUSTOMER",
         "RESOLVED_TASKER": "RESOLVED_TASKER",

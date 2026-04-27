@@ -8,6 +8,10 @@ appId: mn.tasky.mobile
 
 - launchApp:
     clearState: true
+- setLocation:
+    latitude: 47.9184
+    longitude: 106.9177
+- launchApp
 
 - runFlow: _support/login-customer.yaml
 
@@ -27,10 +31,10 @@ appId: mn.tasky.mobile
 - runFlow:
     when:
       visible:
-        id: 'my-tasks-feed-fab'
+        id: 'global-fab'
     commands:
       - tapOn:
-          id: 'my-tasks-feed-fab'
+          id: 'global-fab'
 
 # Step 1: Category selection (SCR-CUST-002)
 - extendedWaitUntil:
@@ -45,10 +49,7 @@ appId: mn.tasky.mobile
     timeout: 10000
 
 # Tap first category card — tapping a card navigates directly to intake (no Continue step).
-# "Cleaning" text is inside an accessibility button so Maestro can't match standalone text;
-# tap by position within the grid area.
-- tapOn:
-    point: '30%,38%'
+- tapOn: 'Cleaning'
 
 # Step 2: Intake / Task details (SCR-CUST-003)
 - extendedWaitUntil:
@@ -107,9 +108,22 @@ appId: mn.tasky.mobile
       id: 'SCR-CUST-005'
     timeout: 5000
 
-# Tap map to drop a pin (enables Next button)
-- tapOn:
-    id: 'location-map'
+# Prefer a backend-seeded recent UB location when available. Map coordinate taps
+# can drift on Android emulators and trip the API service-area guard.
+- runFlow:
+    when:
+      visible:
+        id: 'location-recent-0'
+    commands:
+      - tapOn:
+          id: 'location-recent-0'
+- runFlow:
+    when:
+      notVisible:
+        id: 'location-recent-0'
+    commands:
+      - tapOn:
+          id: 'location-map'
 
 # Fill location description explicitly so the review screen has deterministic text
 - tapOn:
@@ -118,8 +132,6 @@ appId: mn.tasky.mobile
 - inputText: 'Sukhbaatar district, 1st khoroo'
 
 - hideKeyboard
-- tapOn:
-    id: 'location-map'
 - waitForAnimationToEnd
 
 - tapOn:
@@ -146,10 +158,10 @@ appId: mn.tasky.mobile
     id: 'schedule-date-input'
 - extendedWaitUntil:
     visible:
-      id: 'schedule-ios-picker-card'
+      id: 'schedule-picker-sheet'
     timeout: 5000
 - tapOn:
-    id: 'schedule-picker-confirm'
+    id: 'schedule-picker-save'
 - waitForAnimationToEnd
 
 # Open time picker and confirm default (10:00)
@@ -157,10 +169,10 @@ appId: mn.tasky.mobile
     id: 'schedule-time-input'
 - extendedWaitUntil:
     visible:
-      id: 'schedule-ios-picker-card'
+      id: 'schedule-picker-sheet'
     timeout: 5000
 - tapOn:
-    id: 'schedule-picker-confirm'
+    id: 'schedule-picker-save'
 - waitForAnimationToEnd
 
 - tapOn:

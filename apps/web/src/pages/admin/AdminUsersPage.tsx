@@ -276,7 +276,7 @@ export function AdminUsersPage() {
                     <p className="text-sm">{msg.content}</p>
                     <p className="text-xs text-muted-foreground">
                       {t('admin.users.sender')}: {msg.sender_id} &middot;{' '}
-                      {formatTimestamp(msg.created_at, locale)}
+                      {formatTimestamp(msg.sent_at, locale)}
                     </p>
                   </CardContent>
                 </Card>

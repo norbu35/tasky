@@ -169,7 +169,9 @@ export function CustomerApplicantsPage() {
                             count: application.tasker.completed_tasks,
                           })}
                         </span>
-                        {application.tasker.is_pro ? <Badge variant="secondary">PRO</Badge> : null}
+                        <Badge variant="secondary">
+                          {t('customerPages.applicants.idVerifiedTasker')}
+                        </Badge>
                         <Badge variant="outline">
                           {task.pricing_mode === 'QUOTE'
                             ? application.quote_price != null

@@ -7,8 +7,8 @@ import { Text, View } from 'react-native';
 import { InsetScrollView, ScreenContainer } from '@/components/shells';
 import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 import { useBookingConfirmedScreen } from './useBookingConfirmedScreen';
 

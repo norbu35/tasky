@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import YAML from 'yaml';
@@ -183,6 +183,42 @@ test('scenario smoke package script refreshes backend test results before regist
     script,
     /sync-registry\.sh\s*&&\s*bash\s+tooling\/scripts\/gates\/check-gates\.sh\s+smoke/,
     'verify:scenario:smoke must not evaluate stale pre-existing test XML directly',
+  );
+});
+
+test('registered Husky hooks are executable in Git and the worktree', () => {
+  const registry = readRegistry();
+  const hooks = Object.keys(registry.hooks ?? {}).sort();
+
+  assert.notEqual(hooks.length, 0, 'ops registry must classify Husky hooks');
+
+  const lsFiles = spawnSync('git', ['ls-files', '-s', '--', ...hooks], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+
+  assert.equal(lsFiles.status, 0, lsFiles.stderr || lsFiles.stdout);
+
+  const trackedModes = new Map(
+    lsFiles.stdout
+      .trim()
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => {
+        const [mode, , , filePath] = line.split(/\s+/);
+        return [filePath, mode];
+      }),
+  );
+
+  assert.deepEqual(
+    hooks.filter((hook) => trackedModes.get(hook) !== '100755'),
+    [],
+    'Git only runs hooks tracked with executable mode 100755',
+  );
+  assert.deepEqual(
+    hooks.filter((hook) => (statSync(path.join(repoRoot, hook)).mode & 0o111) === 0),
+    [],
+    'checked-out Husky hooks must have an executable bit set',
   );
 });
 

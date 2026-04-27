@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { elevations, overlays } from '@/design/elevations';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
 import { Button } from './Button';
 import { IllustrationArea, IconPreview } from './PermissionPrimer.Illustration';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 const { permissionPrimer } = mobileSurfaces;
 
 interface PermissionPrimerProps {
@@ -73,11 +73,8 @@ export function PermissionPrimer({
         />
         <IconPreview icon={icon} badgeLabel={badgeLabel} />
         <Text
-          className="text-center mb-sm"
+          className="text-heading font-display-bold text-primary-deep text-center mb-sm"
           style={{
-            fontSize: permissionPrimer.titleSize,
-            fontWeight: '800',
-            color: colors.primaryDeep,
             letterSpacing: permissionPrimer.titleTracking,
           }}
         >
@@ -91,10 +88,8 @@ export function PermissionPrimer({
         </Text>
         {isDenied && settingsHint ? (
           <Text
-            className="text-center mb-xl"
+            className="text-label text-text-secondary text-center mb-xl"
             style={{
-              fontSize: typography.label,
-              color: colors.textSecondary,
               lineHeight: permissionPrimer.hintLineHeight,
             }}
           >
@@ -133,11 +128,9 @@ export function PermissionPrimer({
         </View>
         {footerNote ? (
           <Text
-            className="text-center"
+            className="text-caption text-text-secondary text-center"
             style={{
               marginTop: spacing.lg,
-              fontSize: typography.caption,
-              color: colors.textSecondary,
               lineHeight: permissionPrimer.footerLineHeight,
             }}
           >

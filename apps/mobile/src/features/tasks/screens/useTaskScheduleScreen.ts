@@ -1,7 +1,6 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform } from 'react-native';
 
 import { useTaskDraftStore } from '@/features/tasks/draft';
 
@@ -53,37 +52,40 @@ export function useTaskScheduleScreen() {
       ? t('ScheduleBudgetScreen.schedulePastError')
       : '';
 
-  const openPicker = (mode: Exclude<PickerMode, null>) => {
+  const openPicker = (mode: PickerMode) => {
     const fallback = createDefaultScheduleDate();
-    const currentValue =
-      mode === 'date' ? toValidDate(selectedDate, fallback) : toValidDate(selectedTime, fallback);
     setTouchedSchedule(true);
-    setActivePicker({ mode, draftValue: currentValue });
+    setActivePicker({
+      mode,
+      draftDate: toValidDate(selectedDate, fallback),
+      draftTime: toValidDate(selectedTime, fallback),
+    });
   };
 
-  const handlePickerChange = (event: { type?: string }, pickedValue?: Date) => {
-    const pickerMode = activePicker?.mode;
+  const handlePickerModeChange = (mode: PickerMode) => {
+    setActivePicker((prev) => (prev ? { ...prev, mode } : prev));
+  };
 
-    if (event.type === 'dismissed' || !pickedValue || !pickerMode) {
-      if (Platform.OS === 'android') {
-        setActivePicker(null);
-      }
-      return;
-    }
+  const handlePickerDateChange = (pickedValue: Date) => {
+    setActivePicker((prev) => (prev ? { ...prev, draftDate: pickedValue } : prev));
+  };
 
-    if (Platform.OS === 'ios') {
-      setActivePicker((prev) =>
-        prev ? { ...prev, draftValue: toValidDate(pickedValue, prev.draftValue) } : prev,
-      );
-      return;
-    }
+  const handlePickerTimeChange = (pickedValue: Date) => {
+    setActivePicker((prev) => (prev ? { ...prev, draftTime: pickedValue } : prev));
+  };
 
-    if (pickerMode === 'date') {
-      setSelectedDate(pickedValue);
-    } else {
-      setSelectedTime(pickedValue);
-    }
-    setActivePicker(null);
+  const handlePickerReset = () => {
+    const fallback = createDefaultScheduleDate();
+    setActivePicker((prev) =>
+      prev
+        ? {
+            ...prev,
+            mode: 'date',
+            draftDate: fallback,
+            draftTime: fallback,
+          }
+        : prev,
+    );
   };
 
   const handlePickerCancel = () => {
@@ -92,11 +94,8 @@ export function useTaskScheduleScreen() {
 
   const handlePickerConfirm = () => {
     if (!activePicker) return;
-    if (activePicker.mode === 'date') {
-      setSelectedDate(activePicker.draftValue);
-    } else {
-      setSelectedTime(activePicker.draftValue);
-    }
+    setSelectedDate(activePicker.draftDate);
+    setSelectedTime(activePicker.draftTime);
     setActivePicker(null);
   };
 
@@ -133,7 +132,10 @@ export function useTaskScheduleScreen() {
     scheduleError,
     canContinue,
     openPicker,
-    handlePickerChange,
+    handlePickerModeChange,
+    handlePickerDateChange,
+    handlePickerTimeChange,
+    handlePickerReset,
     handlePickerCancel,
     handlePickerConfirm,
     setPricingMode,

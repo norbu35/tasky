@@ -15,10 +15,12 @@ import { View } from 'react-native';
 import { SettingsTemplate } from '@/components/templates/SettingsTemplate';
 import { ConfirmSheet } from '@/components/ui/ConfirmSheet';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { Toast } from '@/components/ui/Toast';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { useRole } from '@/providers/RoleProvider';
 
 const { colors } = mobileTheme;
+type Role = 'customer' | 'tasker';
 
 export default function ProfileSettingsScreen() {
   const { t } = useTranslation();
@@ -26,6 +28,11 @@ export default function ProfileSettingsScreen() {
   const { currentRole, switchRole } = useRole();
   const [showRoleConfirm, setShowRoleConfirm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [roleSwitchSuccessRole, setRoleSwitchSuccessRole] = useState<Role | null>(null);
+  const nextRole: Role = currentRole === 'customer' ? 'tasker' : 'customer';
+
+  const getRoleLabel = (role: Role) =>
+    role === 'customer' ? t('shared.settings.customer') : t('shared.settings.tasker');
 
   const sections = [
     {
@@ -93,6 +100,16 @@ export default function ProfileSettingsScreen() {
   return (
     <View testID="SCR-SHARED-014" className="flex-1">
       <SettingsTemplate sections={sections} testID="settings-screen" />
+      {roleSwitchSuccessRole ? (
+        <View className="px-lg pb-lg">
+          <Toast
+            message={t('shared.settings.switchRoleSuccess', {
+              role: getRoleLabel(roleSwitchSuccessRole),
+            })}
+            variant="success"
+          />
+        </View>
+      ) : null}
       <ConfirmSheet
         isOpen={showRoleConfirm}
         onClose={() => setShowRoleConfirm(false)}
@@ -101,6 +118,7 @@ export default function ProfileSettingsScreen() {
         confirmLabel={t('shared.settings.confirm')}
         onConfirm={() => {
           switchRole();
+          setRoleSwitchSuccessRole(nextRole);
           setShowRoleConfirm(false);
         }}
       />

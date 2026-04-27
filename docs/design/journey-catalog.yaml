@@ -63,7 +63,7 @@ journeys:
       - customer
       - tasker
     phase: 0-1
-    goal: Exchange messages about a confirmed booking
+    goal: Exchange messages about a confirmed, price-locked booking
     entry: SCR-SHARED-010
     exit:
       - SCR-SHARED-011
@@ -124,7 +124,7 @@ journeys:
         condition: Tasker taps stats from profile
         screens:
           - SCR-TASK-016
-        outcome: Tasker sees launch KPI and reputation summary
+        outcome: Tasker sees personal reputation, completion, and reliability summary
   - id: JRN-SHARED-06
     name: Settings & Account
     actor:
@@ -185,6 +185,13 @@ journeys:
         screens:
           - SCR-TASK-018
         outcome: User reviews privacy policy
+      - id: JRN-SHARED-06-A6
+        name: Tasker service-area preferences
+        branch_at: 1
+        condition: Verified Tasker edits service-area notification preferences
+        screens:
+          - SCR-SHARED-014
+        outcome: Service-area preferences update notification targeting only; browsing and application eligibility remain citywide
   - id: JRN-SHARED-07
     name: Review Submission
     actor:
@@ -232,6 +239,7 @@ journeys:
       - SCR-CUST-017
       - SCR-TASK-002
       - SCR-TASK-013
+      - SCR-TASK-017
       - SCR-CUST-025
     happy_path:
       - step: 1
@@ -246,6 +254,15 @@ journeys:
         screens:
           - SCR-SHARED-016
         outcome: Empty state with notification permission guidance
+      - id: JRN-SHARED-08-A2
+        name: Selected-tasker response notification
+        branch_at: 1
+        condition: Tasker taps a selected-tasker booking request notification during the active response window
+        screens:
+          - SCR-SHARED-016
+          - SCR-TASK-017
+        outcome: Accept or decline sheet opens for the pending booking request
+        lifecycle: APP-T03 or APP-T04
   - id: JRN-CUST-01
     name: Post a Task
     actor:
@@ -266,7 +283,7 @@ journeys:
         next: SCR-CUST-003
       - step: 3
         screen: SCR-CUST-003
-        action: Complete intake form
+        action: Complete intake form, including material, supply, item, or vehicle ownership fields where the category requires them
         next: SCR-CUST-004
         lifecycle: TASK-T01 (prepare)
       - step: 4
@@ -351,7 +368,7 @@ journeys:
         lifecycle: APP-T02 (customer_selects_applicant)
       - step: 5
         screen: SCR-CUST-014
-        action: Accept liability disclaimer, send booking request
+        action: Review locked price and intake-scope baseline, accept liability disclaimer, send booking request
         next: SCR-CUST-015
         lifecycle: APP-T02 (customer_selects_applicant)
       - step: 6
@@ -391,7 +408,7 @@ journeys:
         screens:
           - SCR-CUST-015
           - SCR-CUST-017
-        outcome: Booking confirmed; locked price, exact address, and platform-mediated contact become available
+        outcome: Booking confirmed; locked price, intake-scope baseline, exact address, scope-change guidance, and platform-mediated contact become available
         lifecycle: APP-T03 (tasker_confirms_selection)
   - id: JRN-CUST-04
     name: Manage Active Booking
@@ -462,6 +479,15 @@ journeys:
           - SCR-CUST-017
         outcome: Customer accepts or declines reschedule
         lifecycle: BOOK-T08 (reschedule_accepted) or BOOK-T09 (reschedule_declined)
+      - id: JRN-CUST-04-A6
+        name: Customer silence after tasker marks done
+        branch_at: 3
+        condition: Customer does not confirm or dispute completion after push notification reminder attempts where a device token exists
+        screens:
+          - SCR-CUST-017
+          - SCR-TASK-013
+        outcome: Booking auto-completes via timeout, both parties are notified, and review debt is created
+        lifecycle: BOOK-T11 (completion_timeout_auto_completes) and TASK-T12 (completion_timeout_auto_completes)
   - id: JRN-CUST-06
     name: Raise & Track Dispute
     actor:
@@ -492,11 +518,11 @@ journeys:
         condition: No evidence uploaded
         screens:
           - SCR-CUST-024
-        outcome: Dispute opens in evidence-needed grace state with reminder to add artifacts
+        outcome: Dispute opens in evidence-needed grace state with a reminder and 24-hour deadline to add artifacts
       - id: JRN-CUST-06-A2
         name: Auto-close
         branch_at: 3
-        condition: Evidence not provided within 24h
+        condition: Evidence not provided within 24h after the evidence reminder
         screens:
           - SCR-CUST-025
         outcome: Dispute auto-closed
@@ -636,6 +662,14 @@ journeys:
         screens:
           - SCR-TASK-001
         outcome: Empty activation state
+      - id: JRN-TASK-02-A5
+        name: Withdraw application before selection
+        branch_at: 3
+        condition: Tasker already applied and customer has not selected the application
+        screens:
+          - SCR-TASK-002
+        outcome: Application becomes withdrawn and is no longer selectable by the customer
+        lifecycle: APP-T08 (tasker_withdraws_application)
   - id: JRN-TASK-03
     name: Booking Request Accept/Decline
     actor:
@@ -663,7 +697,7 @@ journeys:
         condition: Tasker taps Decline
         screens:
           - SCR-TASK-017
-        outcome: Customer can choose another applicant
+        outcome: Pending selection closes without booking confirmation and the customer can choose another applicant
         lifecycle: APP-T04 (tasker_declines_selection)
       - id: JRN-TASK-03-A2
         name: Timeout
@@ -797,6 +831,7 @@ journeys:
         lifecycle: USER-T09 (admin_bans)
         note: Suspended/pending-user bans use USER-T10 or USER-T11
 summary:
+  scope_note: Customer, tasker, shared, and infrastructure journeys describe app-facing Phase 1 screens. Admin and KPI operations are governed by the PRD, metrics, architecture, and observability docs until a first-party admin UX is introduced.
   total_journeys: 17
   by_actor:
     shared: 6

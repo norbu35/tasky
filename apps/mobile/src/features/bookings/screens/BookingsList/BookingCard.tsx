@@ -6,8 +6,8 @@ import { PriceTag } from '@/components/ui/PriceTag';
 import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
 import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 import { formatSchedule, getBookingStatusLabel, getBookingStatusColors } from './model';
 
@@ -18,6 +18,8 @@ export function BookingCard({
   booking,
   t,
   onPress,
+  testID,
+  statusTestID,
 }: {
   booking: {
     id: string;
@@ -27,6 +29,8 @@ export function BookingCard({
   };
   t: (key: string) => string;
   onPress: () => void;
+  testID?: string;
+  statusTestID?: string;
 }) {
   const schedule = formatSchedule(booking.task?.scheduled_at);
   const statusColors = getBookingStatusColors(booking.status);
@@ -36,7 +40,7 @@ export function BookingCard({
       onPress={onPress}
       className="bg-card rounded-lg p-card gap-item"
       style={elevations.soft}
-      testID={`booking-card-${booking.id}`}
+      testID={testID ?? `booking-card-${booking.id}`}
     >
       <View className="flex-row items-start justify-between gap-item">
         <View className="flex-row items-center flex-1 gap-item">
@@ -57,6 +61,7 @@ export function BookingCard({
         </View>
 
         <View
+          testID={statusTestID}
           className="self-start rounded-full px-md py-xs"
           style={{ backgroundColor: statusColors.bg }}
         >

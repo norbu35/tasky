@@ -30,6 +30,8 @@ class BookingResponseCompositionServiceTests {
         @DisplayName("maps all BookingState fields to response map")
         void mapsAllFields() {
             Instant now = Instant.now();
+            Instant confirmedSchedule = now.plusSeconds(3600);
+            Instant completionReminderLastAt = now.plusSeconds(7200);
             BookingState booking = new BookingState(
                     "b-1",
                     "t-1",
@@ -39,12 +41,12 @@ class BookingResponseCompositionServiceTests {
                     "CONFIRMED",
                     null,
                     true,
+                    confirmedSchedule,
+                    "DIRECT",
+                    true,
                     now,
-                    "CONCIERGE",
-                    false,
-                    now,
-                    0,
-                    null,
+                    2,
+                    completionReminderLastAt,
                     now,
                     now);
 
@@ -56,6 +58,13 @@ class BookingResponseCompositionServiceTests {
             assertThat(response).containsEntry("customer_id", "cust-1");
             assertThat(response).containsEntry("price", 5000);
             assertThat(response).containsEntry("status", "CONFIRMED");
+            assertThat(response).containsEntry("confirmed_scheduled_at", confirmedSchedule.toString());
+            assertThat(response).containsEntry("liability_disclaimer_accepted", true);
+            assertThat(response).containsEntry("liability_disclaimer_accepted_at", now.toString());
+            assertThat(response).containsEntry("settlement_mode", "DIRECT");
+            assertThat(response).containsEntry("late_cancel_incident", true);
+            assertThat(response).containsEntry("completion_reminder_count", 2);
+            assertThat(response).containsEntry("completion_reminder_last_at", completionReminderLastAt.toString());
             assertThat(response).containsEntry("created_at", now.toString());
             assertThat(response).containsEntry("updated_at", now.toString());
         }

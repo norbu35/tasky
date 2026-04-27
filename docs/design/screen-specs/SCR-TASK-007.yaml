@@ -97,12 +97,12 @@ copy:
   - key: queue_attention_message
     mn: 'Хянах дараалал шинэчлэгдэж байна. Үр дүнг мэдэгдлээр авна.'
     en: "The review queue is updating. You'll receive a notification with the result."
-    max_chars: 55
+    max_chars: 80
 
   - key: queue_delayed_message
     mn: 'Хянах хугацаа уртассан байна. Тусламж авахын тулд бидэнтэй холбогдоно уу.'
     en: 'Review is taking longer than expected. Please contact us for help.'
-    max_chars: 60
+    max_chars: 80
 
   - key: browse_cta
     mn: 'Даалгавар үзэх'

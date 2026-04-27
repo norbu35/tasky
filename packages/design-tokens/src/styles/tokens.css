@@ -1,29 +1,29 @@
 :root {
   /* ===== Primitives (--tenger-*) ===== */
-  --tenger-canvas: 40 22% 96%;
-  --tenger-ink: 212 43% 23%;
-  --tenger-ink-deep: 210 55% 14%;
+  --tenger-canvas: 40 25% 97%;
+  --tenger-ink: 211.5 48% 23.3%;
+  --tenger-ink-deep: 212 55% 14%;
   --tenger-surface: 0 0% 100%;
-  --tenger-sun: 40 72% 31%;
+  --tenger-sun: 42.9 74.8% 31.2%;
   --tenger-sun-light: 38 52% 50%;
   --tenger-sun-wash: 42 97% 71%;
-  --tenger-sky: 200 34% 58%;
+  --tenger-sky: 199.6 38.9% 58.2%;
   --tenger-sky-soft: 205 51% 80%;
-  --tenger-line: 210 16% 80%;
-  --tenger-field: 210 13% 88%;
-  --tenger-subtle: 36 20% 94%;
-  --tenger-muted-text: 210 13% 39%;
-  --tenger-text-secondary: 208 13% 40%;
-  --tenger-text-tertiary: 208 12% 55%;
-  --tenger-verified: 160 34% 42%;
-  --tenger-trust: 212 49% 42%;
-  --tenger-trust-muted: 212 27% 77%;
+  --tenger-line: 210 18% 82%;
+  --tenger-field: 210 15% 88%;
+  --tenger-subtle: 40 20% 94%;
+  --tenger-muted-text: 211 15% 40%;
+  --tenger-text-secondary: 211 12% 42%;
+  --tenger-text-tertiary: 210 10% 55%;
+  --tenger-verified: 160 35% 42%;
+  --tenger-trust: 211 50% 42%;
+  --tenger-trust-muted: 211 30% 78%;
   --tenger-danger: 0 84% 60%;
-  --tenger-nav-inactive: 207 12% 48%;
-  --tenger-chip-inactive: 210 12% 86%;
-  --tenger-status-open: 35 15% 90%;
-  --tenger-status-open-fg: 210 12% 45%;
-  --tenger-status-assigned: 212 43% 23%;
+  --tenger-nav-inactive: 210 12% 48%;
+  --tenger-chip-inactive: 210 14% 87%;
+  --tenger-status-open: 40 18% 91%;
+  --tenger-status-open-fg: 211 12% 45%;
+  --tenger-status-assigned: 211.5 48% 23.3%;
   --tenger-status-assigned-fg: 0 0% 100%;
   --tenger-status-completed: 160 34% 42%;
   --tenger-status-completed-fg: 0 0% 100%;
@@ -111,7 +111,7 @@
   --line-height-loose: 1.8;
   --letter-spacing-tight: 0em;
   --letter-spacing-normal: 0em;
-  --letter-spacing-caps: 0.075em;
+  --letter-spacing-caps: var(--tenger-letter-spacing-caps);
 
   /* ===== Composed Typography Variants ===== */
   --typography-hero-title-font-size: 30px;
@@ -224,31 +224,31 @@
 
   /* ===== Animation Presets ===== */
   --animation-card-expand-duration: 250ms;
-  --animation-card-expand-easing: var(--tenger-easing-standard);
+  --animation-card-expand-easing: cubic-bezier(0.4, 0, 0.2, 1);
   --animation-sheet-open-duration: 400ms;
-  --animation-sheet-open-easing: var(--tenger-easing-decelerate);
+  --animation-sheet-open-easing: cubic-bezier(0, 0, 0.2, 1);
   --animation-sheet-close-duration: 250ms;
-  --animation-sheet-close-easing: var(--tenger-easing-accelerate);
+  --animation-sheet-close-easing: cubic-bezier(0.4, 0, 1, 1);
   --animation-page-enter-duration: 250ms;
-  --animation-page-enter-easing: var(--tenger-easing-decelerate);
+  --animation-page-enter-easing: cubic-bezier(0, 0, 0.2, 1);
   --animation-page-exit-duration: 250ms;
-  --animation-page-exit-easing: var(--tenger-easing-accelerate);
+  --animation-page-exit-easing: cubic-bezier(0.4, 0, 1, 1);
   --animation-fab-appear-duration: 150ms;
-  --animation-fab-appear-easing: var(--tenger-easing-spring);
+  --animation-fab-appear-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
   --animation-fab-disappear-duration: 150ms;
-  --animation-fab-disappear-easing: var(--tenger-easing-accelerate);
+  --animation-fab-disappear-easing: cubic-bezier(0.4, 0, 1, 1);
   --animation-success-checkmark-duration: 400ms;
-  --animation-success-checkmark-easing: var(--tenger-easing-spring);
+  --animation-success-checkmark-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
   --animation-skeleton-pulse-duration: 1500ms;
-  --animation-skeleton-pulse-easing: var(--tenger-easing-standard);
+  --animation-skeleton-pulse-easing: cubic-bezier(0.4, 0, 0.2, 1);
   --animation-badge-pop-duration: 150ms;
-  --animation-badge-pop-easing: var(--tenger-easing-spring);
+  --animation-badge-pop-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
   --animation-toast-slide-in-duration: 250ms;
-  --animation-toast-slide-in-easing: var(--tenger-easing-decelerate);
+  --animation-toast-slide-in-easing: cubic-bezier(0, 0, 0.2, 1);
   --animation-toast-slide-out-duration: 150ms;
-  --animation-toast-slide-out-easing: var(--tenger-easing-accelerate);
+  --animation-toast-slide-out-easing: cubic-bezier(0.4, 0, 1, 1);
   --animation-pull-to-refresh-duration: 250ms;
-  --animation-pull-to-refresh-easing: var(--tenger-easing-decelerate);
+  --animation-pull-to-refresh-easing: cubic-bezier(0, 0, 0.2, 1);
 
   /* ===== Opacity Color Steps ===== */
   --color-primary-5: rgba(27, 58, 92, 0.05);
@@ -304,48 +304,4 @@
   --content-card-title-max-length: 40;
   --content-button-label-max-length: 20;
   --content-card-description-lines: 2;
-}
-
-.dark {
-  --color-background: 212 35% 6%;
-  --color-foreground: 40 30% 88%;
-  --color-card: 212 28% 10%;
-  --color-card-fg: 40 30% 88%;
-  --color-popover: 212 28% 10%;
-  --color-popover-fg: 40 30% 88%;
-  --color-primary: 200 35% 58%;
-  --color-primary-fg: 212 35% 6%;
-  --color-primary-deep: 211 35% 40%;
-  --color-secondary: 42 48% 55%;
-  --color-secondary-fg: 0 0% 100%;
-  --color-muted: 212 15% 13%;
-  --color-muted-fg: 210 12% 55%;
-  --color-accent: 200 32% 55%;
-  --color-accent-fg: 0 0% 100%;
-  --color-border: 212 12% 18%;
-  --color-input: 212 12% 18%;
-  --color-ring: 200 35% 58%;
-  --color-destructive: 0 72% 55%;
-  --color-destructive-fg: 0 0% 100%;
-  --color-trust: 211 45% 58%;
-  --color-trust-fg: 0 0% 100%;
-  --color-trust-muted: 211 18% 25%;
-  --color-verified: 160 32% 55%;
-  --color-verified-fg: 0 0% 100%;
-  --color-status-open: 212 12% 18%;
-  --color-status-open-fg: 210 15% 65%;
-  --color-status-assigned: 200 35% 58%;
-  --color-status-assigned-fg: 212 35% 6%;
-  --color-status-completed: 160 32% 55%;
-  --color-status-completed-fg: 0 0% 100%;
-  --color-status-cancelled: 212 15% 13%;
-  --color-status-cancelled-fg: 210 12% 55%;
-  --color-chip-inactive: 211 10% 20%;
-  --color-text-secondary: 210 12% 62%;
-  --color-text-tertiary: 210 10% 50%;
-  --color-nav-inactive: 210 10% 50%;
-  --color-subtle-violet: 212 15% 13%;
-  --color-sun-light: 42 48% 55%;
-  --color-sun-wash: 42 60% 65%;
-  --color-sky-soft: 205 30% 35%;
 }

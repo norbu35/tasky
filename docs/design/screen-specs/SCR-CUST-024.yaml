@@ -132,8 +132,8 @@ copy:
 
   - key: evidence_helper
     mn: 'Зураг, чатын хэсэг, эсвэл бичгэн тайлбар нэмнэ үү. Одоо нэмээгүй бол сануулах хугацаанд нэмж болно'
-    en: 'Add a photo, chat excerpt, or written timeline. If you cannot add evidence now, you may add it during the reminder window'
-    max_chars: 100
+    en: 'Add a photo, chat excerpt, or written timeline. If you cannot add evidence now, you may add it within 24 hours after the evidence reminder'
+    max_chars: 130
 
   - key: label_description
     mn: 'Дэлгэрэнгүй тайлбар'
@@ -172,8 +172,8 @@ copy:
 
   - key: evidence_grace_notice
     mn: 'Нотлох баримтгүй илгээвэл сануулах хугацаанд баримт нэмэх шаардлагатай'
-    en: 'If you submit without evidence, you must add evidence during the reminder window'
-    max_chars: 80
+    en: 'If you submit without evidence, you must add evidence within 24 hours after the evidence reminder'
+    max_chars: 110
 
   - key: toast_success
     mn: 'Маргаан амжилттай илгээлээ'
@@ -187,12 +187,12 @@ copy:
 
   - key: evidence_deadline_note
     mn: 'Сануулах хугацааны дараа нотлох баримт ирүүлээгүй бол маргаан хангалтгүй баримттайгаар хаагдаж болно'
-    en: 'A dispute may close as insufficient evidence if evidence is not provided after the reminder window'
-    max_chars: 100
+    en: 'A dispute may close as insufficient evidence if evidence is not provided 24 hours after the evidence reminder'
+    max_chars: 120
 
   - key: eligibility_note
     mn: 'Маргаан нээх боломжтой: ASSIGNED төлөвт эсвэл дууссаны дараах зөвшөөрөгдсөн хугацаанд'
-    en: 'Disputes can be opened during ASSIGNED status or within the allowed post-completion window'
+    en: 'Disputes can be opened during ASSIGNED status or within 24 hours after completion'
     max_chars: 100
 
 api_endpoints:
@@ -217,15 +217,15 @@ analytics_events:
     trigger: 'Network error during dispute submission'
 
 acceptance_criteria:
-  - 'Disputes can only be raised when booking is ASSIGNED or within the allowed post-completion window'
+  - 'Disputes can only be raised when booking is ASSIGNED or within 24 hours after completion'
   - 'Submitting with evidence attaches at least one artifact: photo, chat excerpt, or written timeline'
-  - 'Submitting without evidence is allowed only as the evidence-needed grace path and shows the deadline notice'
+  - 'Submitting without evidence is allowed only as the evidence-needed grace path and shows the 24-hour-after-reminder deadline notice'
   - 'Photo evidence uses presigned URL upload with per-photo progress'
   - 'Chat excerpt selection allows highlighting relevant message range'
   - 'Written timeline has 500 character limit'
   - 'Submit button sends POST /disputes with evidence artifacts when present, or a grace-path marker when evidence is absent, and enters loading state'
   - 'On success, navigates via replace to Dispute Status (SCR-CUST-025)'
-  - 'Evidence note warns that a dispute may close as insufficient evidence if follow-up evidence is not provided'
+  - 'Evidence note warns that a dispute may close as insufficient evidence if follow-up evidence is not provided within 24 hours after the evidence reminder'
   - 'Back button navigates via pop to Booking Detail (SCR-CUST-017)'
   - 'Network error shows error toast with retry'
   - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

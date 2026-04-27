@@ -9,7 +9,7 @@ const { colors } = mobileTheme;
 
 export function MessageBubble({ item, myId }: { item: MessageItem; myId?: string }) {
   const isMine = item.sender_id === myId;
-  const timestamp = formatMessageTimestamp(item.created_at);
+  const timestamp = formatMessageTimestamp(item.sent_at);
 
   return (
     <View

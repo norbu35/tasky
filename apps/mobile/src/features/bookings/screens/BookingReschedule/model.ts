@@ -1,11 +1,6 @@
 export const RESCHEDULE_SURFACE = {
-  navIconBox: 32,
   currentScheduleIconBox: 34,
   stepBadge: 32,
-  calendarCellWidth: '14.2857%',
-  calendarNavIcon: 20,
-  timeChipMinWidth: 72,
-  timeChipMinHeight: 40,
   reasonMinHeight: 120,
   reasonInputMinHeight: 96,
   stateIconBox: 40,
@@ -19,6 +14,45 @@ export type RescheduleState =
   | 'declined'
   | 'expired';
 
+export type PickerMode = 'date' | 'time';
+
+export type ActivePickerState = {
+  mode: PickerMode;
+  draftDate: Date;
+  draftTime: Date;
+} | null;
+
+export function createDefaultRescheduleDate(): Date {
+  const date = new Date();
+  date.setDate(date.getDate() + 1);
+  date.setHours(10, 0, 0, 0);
+  return date;
+}
+
+export function createRescheduleDateOptions(referenceDate = new Date(), days = 30): Date[] {
+  const firstDate = new Date(referenceDate);
+  firstDate.setDate(firstDate.getDate() + 1);
+  firstDate.setHours(10, 0, 0, 0);
+
+  return Array.from({ length: days }, (_, index) => {
+    const option = new Date(firstDate);
+    option.setDate(firstDate.getDate() + index);
+    return option;
+  });
+}
+
+export function createRescheduleTimeOptions(referenceDate = createDefaultRescheduleDate()): Date[] {
+  const options: Date[] = [];
+  for (let hour = 8; hour <= 21; hour += 1) {
+    for (const minute of [0, 30]) {
+      const option = new Date(referenceDate);
+      option.setHours(hour, minute, 0, 0);
+      options.push(option);
+    }
+  }
+  return options;
+}
+
 export function formatDateTime(value: string | Date): string {
   const date = typeof value === 'string' ? new Date(value) : value;
   if (Number.isNaN(date.getTime())) return '';
@@ -30,48 +64,28 @@ export function formatDateTime(value: string | Date): string {
   return `${y}.${m}.${d} ${h}:${min}`;
 }
 
-export function formatMonthTitle(date: Date): string {
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-  return `${year} оны ${month}-р сар`;
+export function formatDateValue(value: Date): string {
+  const year = value.getFullYear();
+  const month = String(value.getMonth() + 1).padStart(2, '0');
+  const day = String(value.getDate()).padStart(2, '0');
+  return `${year}.${month}.${day}`;
 }
 
-export function buildCalendarCells(date: Date): (Date | null)[] {
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  const firstDay = new Date(year, month, 1);
-  const offset = (firstDay.getDay() + 6) % 7;
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const totalCells = Math.ceil((offset + daysInMonth) / 7) * 7;
-  return Array.from({ length: totalCells }, (_, index) => {
-    if (index < offset || index >= offset + daysInMonth) return null;
-    return new Date(year, month, index - offset + 1);
-  });
+export function formatTimeValue(value: Date): string {
+  const hours = String(value.getHours()).padStart(2, '0');
+  const minutes = String(value.getMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`;
 }
 
-export function sameDay(a: Date, b: Date): boolean {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
+export function combineDateAndTime(dateValue: Date, timeValue: Date): Date {
+  const combined = new Date(dateValue);
+  combined.setHours(timeValue.getHours(), timeValue.getMinutes(), 0, 0);
+  return combined;
 }
 
-export function getWeekdayLabels(t: (key: string) => string) {
-  return [
-    t('customer.bookings.weekdays.mon'),
-    t('customer.bookings.weekdays.tue'),
-    t('customer.bookings.weekdays.wed'),
-    t('customer.bookings.weekdays.thu'),
-    t('customer.bookings.weekdays.fri'),
-    t('customer.bookings.weekdays.sat'),
-    t('customer.bookings.weekdays.sun'),
-  ];
-}
-
-export const AVAILABLE_TIMES = ['09:00', '10:00', '11:00', '14:00', '15:00'] as const;
-
-export function isTimeSelected(selectedDateTime: Date, time: string): boolean {
-  const formatted = formatDateTime(selectedDateTime);
-  return formatted.endsWith(` ${time}`);
+export function toValidDate(value: Date | null | undefined, fallback: Date): Date {
+  if (value instanceof Date && Number.isFinite(value.getTime())) {
+    return value;
+  }
+  return fallback;
 }

@@ -6,7 +6,11 @@ import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE, UrlTile } from 'rea
 
 import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 import { elevations } from '@/design/elevations';
+import { PostingGuidanceCard } from '@/features/tasks/components/PostingGuidance';
 
+import { LocationStatusCard } from './LocationCard';
+import { MapControls } from './MapControls';
+import { MapOverlay } from './MapOverlay';
 import {
   DEFAULT_DELTA,
   getGoogleMapsRenderer,
@@ -14,9 +18,6 @@ import {
   TaskLocationAppExtra,
   UB_CENTER,
 } from './model';
-import { MapControls } from './MapControls';
-import { MapOverlay } from './MapOverlay';
-import { LocationStatusCard } from './LocationCard';
 import { useTaskLocationScreen } from './useTaskLocationScreen';
 
 export default function TaskLocationScreen() {
@@ -54,13 +55,19 @@ export default function TaskLocationScreen() {
       nextDisabled={!pin}
     >
       <View className="gap-sm">
-        <Text className="text-heading font-extrabold text-primary-deep">
+        <Text className="text-heading font-display-bold text-primary-deep">
           {t('LocationScreen.locationPageTitle')}
         </Text>
         <Text className="text-body text-text-secondary leading-relaxed">
           {t('LocationScreen.locationInstruction')}
         </Text>
       </View>
+
+      <PostingGuidanceCard
+        titleKey="PostingGuidance.addressPrivacyTitle"
+        bodyKey="PostingGuidance.addressPrivacyBody"
+        testID="posting-guidance-address-privacy"
+      />
 
       <View className="rounded-lg overflow-hidden bg-muted min-h-[280px]" style={elevations.soft}>
         <MapView

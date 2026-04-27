@@ -150,7 +150,11 @@ describe('BookingConfirmScreen (SCR-CUST-014)', () => {
 
   it('renders payment note', () => {
     render(<BookingConfirmScreen />);
-    expect(screen.getByText('Payment is settled directly with the Tasker')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Payment is settled directly with the Tasker. The locked price and intake scope are the baseline.',
+      ),
+    ).toBeTruthy();
   });
 
   it('confirm uses booking intent flow when source is rebook', async () => {
@@ -175,7 +179,6 @@ describe('BookingConfirmScreen (SCR-CUST-014)', () => {
       expect(mockConfirmBookingIntent).toHaveBeenCalledWith(
         expect.objectContaining({
           bookingIntentId: 'intent-1',
-          liabilityDisclaimerAccepted: true,
           idempotencyKey: expect.any(String),
         }),
       );

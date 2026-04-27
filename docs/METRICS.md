@@ -2,7 +2,9 @@
 
 ## 1. Purpose
 
-This document defines the KPI stack for the Phase 1 Ulaanbaatar launch. `docs/PRD.md`, `docs/OBSERVABILITY.md`, and `docs/maintenance/PRODUCTION_READINESS.md` should remain aligned with it.
+This document is the dedicated KPI source for the Phase 1 Ulaanbaatar launch. `docs/PRD.md` delegates metric names, formulas, thresholds, denominator policy, dashboard rules, alert policy, and KPI event vocabulary to this file. `docs/OBSERVABILITY.md` and `docs/maintenance/PRODUCTION_READINESS.md` must remain aligned with it.
+
+Changes that alter metric semantics are product behavior changes. Update `docs/PRD.md` in the same workflow when metric formulas, launch thresholds, denominator policy, or decision semantics change.
 
 ## 2. KPI stack
 
@@ -21,6 +23,8 @@ This document defines the KPI stack for the Phase 1 Ulaanbaatar launch. `docs/PR
 
 Category is the primary decision slice. District is drilldown only.
 
+`qualified_application` is a metric event name. It means an application from an ID-verified, globally eligible tasker in Phase 1; it does not imply category-specific vetting, time-slot availability, or service-area gating.
+
 ## 3. Locked definitions
 
 ### 3.1 Self-Serve Fulfillment Rate
@@ -37,6 +41,7 @@ Category is the primary decision slice. District is drilldown only.
 
 - Excludes spam, fraud, admin-invalid tasks, and user-mistake cancels within 30 minutes
 - Paired diagnostic: median time to first qualified application
+- Decision-valid only when denominator >= 30 eligible task posts per category
 
 ### 3.3 Post -> Confirmed Booking Rate within 48h
 
@@ -46,6 +51,7 @@ Category is the primary decision slice. District is drilldown only.
 - Customer abandonment counts as failure
 - Tasks that require intervention remain in the denominator but do not count as native confirmation success
 - Paired diagnostic: median time from posting to confirmed booking
+- Decision-valid only when denominator >= 30 eligible task posts per category
 
 ### 3.4 Booking Completion Rate
 
@@ -54,6 +60,7 @@ Category is the primary decision slice. District is drilldown only.
 - Denominator: all confirmed bookings
 - Post-confirmation cancellation counts as failure
 - Failure reason split required
+- Decision-valid only when denominator >= 20 confirmed bookings per category
 
 ### 3.5 Intervention Rate
 
@@ -61,17 +68,21 @@ Category is the primary decision slice. District is drilldown only.
 
 - Track `intervention_type = manual_rescue | external_distribution | ops_override`
 - Track `intervention_stage = pre_match | post_match | post_booking | completion_rescue`
+- Decision-valid only when denominator >= 30 eligible task posts per category
 
 ### 3.6 Trust Failure Rate
 
 `% of confirmed_booking records ending in objective trust-damaging failure`
 
-- Includes post-confirmation cancellation, no-show, dispute, and serious complaint after completion
+- Includes fault-attributed post-confirmation cancellation, validated no-show, evidence-backed dispute, and serious complaint after completion
 - Excludes vague dissatisfaction as a core KPI
+- Decision-valid only when denominator >= 20 confirmed bookings per category
 
 ### 3.7 Verification Queue Turnaround
 
 Median and p95 from complete identity verification document submission to final decision.
+
+- Decision-valid only when denominator >= 10 completed verification decisions in the measurement window
 
 ## 4. Thresholds
 
@@ -115,5 +126,7 @@ KPI computation should come from backend-exported business metrics derived from 
 ## 7. Data quality rules
 
 1. KPI decisions are valid only when the denominator threshold for that KPI is met.
-2. If core event exports are degraded, pause KPI-based go / no-go decisions until tracking is repaired.
-3. Native self-serve reporting and native confirmation success must exclude successes that occur after system-assisted or manual-assisted intervention.
+2. Denominator thresholds are evaluated per primary decision slice unless a launch review explicitly records an aggregate-only reading.
+3. If core event exports are degraded, pause KPI-based go / no-go decisions until tracking is repaired and backfilled.
+4. Native self-serve reporting and native confirmation success must exclude successes that occur after system-assisted or manual-assisted intervention.
+5. Assisted outcomes remain in denominator populations unless a specific formula says otherwise; they do not count as native/self-serve success.

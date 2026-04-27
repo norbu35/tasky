@@ -88,9 +88,9 @@ export function PhotoUploadManager({
         {photoKeys.map((key, index) => (
           <div
             key={index}
-            className="relative h-24 w-24 rounded-sm border border-border bg-muted flex flex-col items-center justify-center p-2 text-center overflow-hidden shadow-[var(--shadow-card)]"
+            className="relative h-24 w-24 rounded-sm border border-border bg-muted flex flex-col items-center justify-center p-2 text-center overflow-hidden shadow-card"
           >
-            <span className="text-[10px] text-muted-foreground w-full truncate break-all">
+            <span className="text-caption text-muted-foreground w-full truncate break-all">
               {key.split('/').pop()}
             </span>
             <Button

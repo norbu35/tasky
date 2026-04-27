@@ -5,20 +5,19 @@ import { Text, View } from 'react-native';
 import { DetailTemplate } from '@/components/templates/DetailTemplate';
 import { mobileSurfaces } from '@/design/surfaces';
 import { TaskCancelSheet } from '@/features/tasks/components/TaskCancelSheet';
-import { CompletedBanner, CancelledBanner } from './Banners';
-import { PhotosSection } from './Photos';
 
-import { formatSchedule } from './model';
-import type { CustomerTask } from './model';
+import { ApplicantsSection } from './ApplicantsSection';
+import { BudgetCard } from './BudgetCard';
 import { TaskHeader } from './Header';
 import { IntakeAnswersSection } from './IntakeAnswers';
-import { BudgetCard } from './BudgetCard';
-import { ApplicantsSection } from './ApplicantsSection';
 import { LocationCard } from './LocationCard';
+import { formatSchedule } from './model';
+import type { CustomerTask } from './model';
+import { PhotosSection } from './Photos';
 import { TaskerCard } from './TaskerCard';
 import { useCustomerTaskDetailScreen } from './useCustomerTaskDetailScreen';
 
-const { taskDetail } = mobileSurfaces;
+const { taskDetail, tint } = mobileSurfaces;
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
@@ -30,6 +29,15 @@ function DetailRow({ label, value }: { label: string; value: string }) {
         {label}
       </Text>
       <Text className="flex-1 text-label font-bold text-foreground text-right">{value}</Text>
+    </View>
+  );
+}
+
+function StatusBanner({ title, body }: { title: string; body: string }) {
+  return (
+    <View className="p-lg rounded-lg gap-xs" style={{ backgroundColor: tint.borderSoft }}>
+      <Text className="text-body font-extrabold text-primary-deep">{title}</Text>
+      <Text className="text-caption text-text-secondary">{body}</Text>
     </View>
   );
 }
@@ -113,8 +121,18 @@ export default function CustomerTaskDetailScreen() {
               <TaskerCard tasker={tasker} onPress={() => navigateToTasker(tasker.id)} t={t} />
             ) : null}
 
-            {isCompleted ? <CompletedBanner t={t} /> : null}
-            {isCancelled ? <CancelledBanner t={t} /> : null}
+            {isCompleted ? (
+              <StatusBanner
+                title={t('TaskDetailCustomerScreen.completedTitle')}
+                body={t('TaskDetailCustomerScreen.completedBody')}
+              />
+            ) : null}
+            {isCancelled ? (
+              <StatusBanner
+                title={t('TaskDetailCustomerScreen.cancelledTitle')}
+                body={t('TaskDetailCustomerScreen.cancelledBody')}
+              />
+            ) : null}
           </View>
         ) : null}
       </DetailTemplate>

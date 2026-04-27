@@ -7,8 +7,8 @@ import { Text, View } from 'react-native';
 import { ScreenContainer } from '@/components/shells/ScreenContainer';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { useDeleteAccount } from '@/features/profile/hooks/useDeleteAccount';
 
 const { colors } = mobileTheme;

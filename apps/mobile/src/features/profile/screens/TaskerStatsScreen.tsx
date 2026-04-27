@@ -53,7 +53,7 @@ export default function TaskerStatsScreen() {
                 <Text className="text-label text-primary-foreground opacity-90">
                   {t('tasker.stats.heroLabel')}
                 </Text>
-                <Text className="text-heroTitle font-bold text-secondary">
+                <Text className="text-hero-title font-bold text-secondary">
                   {isNewTasker ? '🆕' : formatRating(averageRating)}
                 </Text>
                 <Text className="text-caption text-primary-foreground">

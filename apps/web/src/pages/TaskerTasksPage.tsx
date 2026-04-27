@@ -49,8 +49,8 @@ function TaskerBookingCard({ task }: { task: Task }) {
         <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
           {task.status === 'COMPLETED' ? (
             <>
-              <CheckCircle className="w-4 h-4 text-green-600" />
-              <span className="text-green-600 font-medium">{t('taskerTasks.completed')}</span>
+              <CheckCircle className="w-4 h-4 text-verified" />
+              <span className="text-verified font-medium">{t('taskerTasks.completed')}</span>
             </>
           ) : (
             <span className="font-medium">{t('taskerTasks.assigned')}</span>

@@ -9,12 +9,15 @@ import { DetailTemplate } from '@/components/templates/DetailTemplate';
 import { ActionRow } from '@/components/ui/ActionRow';
 import { LoginRequiredCTA } from '@/components/ui/LoginRequiredCTA';
 import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
-import { RatingStars } from '@/components/ui/RatingStars';
 import { StatCard } from '@/components/ui/StatCard';
 import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
 import { screenLayout } from '@/design/screenLayout';
 import { mobileTheme } from '@/design/tokenAdapter';
+import { ProfileReputationSummary } from '@/features/profile/components/ProfileReputationSummary';
+import { ReviewThresholdSummary } from '@/features/profile/components/ReviewThresholdSummary';
 import { useMyProfile } from '@/features/profile/hooks/useProfile';
+import { useTaskerProfile } from '@/features/profile/hooks/useTaskerProfile';
+import { canShowPublicRating, formatPublicRating } from '@/features/profile/model';
 import { useRole } from '@/providers/RoleProvider';
 import { useAuthStore } from '@/store/authStore';
 
@@ -36,7 +39,12 @@ function AuthenticatedProfile() {
   const router = useRouter();
   const { data: profile, isLoading, isError, refetch } = useMyProfile();
   const { isTasker } = useRole();
+  const { reviews: taskerReviewsQuery } = useTaskerProfile(isTasker ? profile?.id : undefined);
   const insets = useSafeAreaInsets();
+  const publicReviewCount = taskerReviewsQuery.data?.data.length ?? 0;
+  const canShowRating = isTasker
+    ? canShowPublicRating(publicReviewCount, profile?.rating_avg)
+    : false;
   return (
     <DetailTemplate
       testID="SCR-SHARED-012"
@@ -51,8 +59,10 @@ function AuthenticatedProfile() {
           className="gap-xl"
           style={{ paddingBottom: screenLayout.chrome.contentBottomClearance + insets.bottom }}
         >
-          {/* Hero Section */}
-          <View className="items-center gap-md">
+          <View
+            testID="my-profile-hero-card"
+            className="items-center gap-md rounded-md border border-border bg-card p-lg"
+          >
             <ProfileAvatar
               uri={profile.avatar_url}
               name={profile.full_name}
@@ -70,19 +80,43 @@ function AuthenticatedProfile() {
             {isTasker && profile.status === 'VERIFIED' && (
               <VerifiedBadge status="verified" size="md" testID="verified-badge" />
             )}
-            {isTasker && <RatingStars value={Math.round(profile.rating_avg)} readonly size={20} />}
           </View>
 
-          {/* Stats Section */}
-          <View className="flex-row gap-md">
-            <StatCard
-              value={String(profile.completed_tasks)}
-              label={t('shared.profile.completedJobs')}
+          {isTasker && canShowRating ? null : (
+            <View className="flex-row gap-md">
+              <StatCard
+                value={String(profile.completed_tasks)}
+                label={t('shared.profile.completedJobs')}
+              />
+            </View>
+          )}
+
+          {isTasker && canShowRating ? (
+            <ProfileReputationSummary
+              testID="my-profile-reputation-summary"
+              title={t('shared.profile.reviewSummaryTitle')}
+              body={t('shared.profile.reviewSummaryBody')}
+              rating={formatPublicRating(profile.rating_avg)}
+              metrics={[
+                {
+                  value: String(profile.completed_tasks),
+                  label: t('shared.profile.completedJobs'),
+                },
+                {
+                  value: String(publicReviewCount),
+                  label: t('shared.profile.reviews'),
+                },
+                {
+                  value: formatPublicRating(profile.rating_avg),
+                  label: t('shared.profile.avgRating'),
+                },
+              ]}
             />
-            {isTasker && (
-              <StatCard value={String(profile.rating_avg)} label={t('shared.profile.avgRating')} />
-            )}
-          </View>
+          ) : null}
+
+          {isTasker && !canShowRating ? (
+            <ReviewThresholdSummary reviewCount={publicReviewCount} />
+          ) : null}
 
           {/* Info Section */}
           <View className="bg-muted rounded-md p-lg gap-md">

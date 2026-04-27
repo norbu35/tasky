@@ -13,6 +13,22 @@ import { ScreenFrame } from '../layout/ScreenFrame';
 import { buildSocketBaseUrl, type Conversation, type Message } from '../lib/apiClient';
 import { parseError } from '../lib/errorHandling';
 
+function orderMessagesChronologically(messages: Message[]): Message[] {
+  return [...messages].sort((a, b) => {
+    const timeDelta = new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime();
+    if (timeDelta !== 0) {
+      return timeDelta;
+    }
+    return a.id.localeCompare(b.id);
+  });
+}
+
+function upsertMessage(messages: Message[], message: Message): Message[] {
+  const byId = new Map(messages.map((item) => [item.id, item]));
+  byId.set(message.id, message);
+  return Array.from(byId.values());
+}
+
 export function MessagingNotificationsPage() {
   const { apiClient, session, profile } = useAppContext();
   const { t } = useTranslation();
@@ -84,7 +100,7 @@ export function MessagingNotificationsPage() {
           client.subscribe(`/topic/conversations/${selectedConvId}`, (msg) => {
             try {
               const newMsg = JSON.parse(msg.body) as Message;
-              setMessages((prev) => [newMsg, ...prev]);
+              setMessages((prev) => upsertMessage(prev, newMsg));
               scrollToBottom();
             } catch {
               /* no-op */
@@ -119,7 +135,7 @@ export function MessagingNotificationsPage() {
         selectedConvId,
         messageDraft.trim(),
       );
-      setMessages((prev) => [sent, ...prev]);
+      setMessages((prev) => upsertMessage(prev, sent));
       setMessageDraft('');
       scrollToBottom();
     } catch (error) {
@@ -235,7 +251,7 @@ export function MessagingNotificationsPage() {
                   )}
                 </div>
                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                  {[...messages].reverse().map((msg, i) => {
+                  {orderMessagesChronologically(messages).map((msg, i) => {
                     const isMe = msg.sender_id === profile?.id;
                     return (
                       <div
@@ -251,10 +267,10 @@ export function MessagingNotificationsPage() {
                         >
                           {msg?.content || ''}
                           <div
-                            className={`text-[10px] mt-1 ${isMe ? 'text-primary-foreground/70' : 'text-muted-foreground'} text-right`}
+                            className={`text-caption mt-1 ${isMe ? 'text-primary-foreground/70' : 'text-muted-foreground'} text-right`}
                           >
-                            {msg?.created_at
-                              ? new Date(msg.created_at).toLocaleTimeString([], {
+                            {msg?.sent_at
+                              ? new Date(msg.sent_at).toLocaleTimeString([], {
                                   hour: '2-digit',
                                   minute: '2-digit',
                                 })

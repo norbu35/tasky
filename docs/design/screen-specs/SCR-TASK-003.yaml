@@ -59,8 +59,8 @@ copy:
     max_chars: 40
 
   - key: description
-    mn: 'Баталгаажсан гүйцэтгэгчид илүү олон захиалга авах боломжтой. Баталгаажуулалт нь 5 минут л авна.'
-    en: 'Verified taskers receive more bookings. Verification takes only 5 minutes.'
+    mn: 'Гараар баталгаажсаны дараа хүсэлт илгээж, захиалагчид баталгаажсан тэмдэг харагдана.'
+    en: 'Manual verification unlocks applications and shows customers your verified badge.'
     max_chars: 100
 
   - key: benefit_trust
@@ -69,13 +69,13 @@ copy:
     max_chars: 40
 
   - key: benefit_apply
-    mn: 'Даалгавруудад шууд анкет илгээх боломжтой'
-    en: 'Apply to tasks instantly'
+    mn: 'Баталгаажсаны дараа хүсэлт илгээх боломжтой'
+    en: 'Apply after approval'
     max_chars: 45
 
   - key: benefit_priority
-    mn: 'Хайлтад илүү дээгүүр гарна'
-    en: 'Rank higher in search results'
+    mn: 'Баталгаажсан тэмдэг харагдана'
+    en: 'Show a verified trust badge'
     max_chars: 40
 
   - key: get_verified_cta
@@ -104,5 +104,6 @@ acceptance_criteria:
   - "Tapping 'Дараа хийе' navigates back to Task Detail (SCR-TASK-002)"
   - 'Comfortable density with ample spacing for trust-building messaging'
   - 'Benefits list uses checkmark icons next to each benefit'
+  - 'Copy does not promise higher search placement, guaranteed booking volume, or instant-match access'
   - "This is the tasker's first trust-building experience in the verification flow"
   - 'Screen is accessible from Task Detail (unverified apply) and Settings (role switch)'

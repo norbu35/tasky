@@ -52,12 +52,13 @@ And the response explains that disputes are allowed only from ASSIGNED or recent
 
 **Risk:** High
 **PRD:** REQ-P1-SAFE-15
-**Title:** Dispute submission requires at least one evidence artifact
+**Title:** Dispute without evidence enters the evidence-needed grace path
 
 Given a booking is eligible for dispute intake
 When a participant submits a dispute without any evidence artifact
-Then the dispute intake does not satisfy evidence minimum requirements
-And the response identifies evidence as required
+Then the dispute is created in the evidence-needed grace state
+And an evidence reminder is queued or recorded
+And the 24-hour insufficient-evidence deadline is measured from that reminder
 
 ## SCN-DISPUTE-006
 

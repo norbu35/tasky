@@ -1,11 +1,14 @@
 # Tasky Design System
 
-This document is derived from `docs/PRD.md`, `docs/STRATEGY.md`, and `docs/BRAND.md`.
+This document is derived from `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, relevant
+`docs/maintenance/*.md` policy, frontend architecture docs, and `docs/BRAND.md`.
 
 ## 1. Scope
 
 This design system supports the active Phase 1 Ulaanbaatar launch.
-Product behavior is defined in the PRD.
+Product behavior is defined in the PRD. Strategy, rollout, maintenance policy, and frontend architecture constrain
+what the active design surface may describe. Brand informs tone and visual identity, but it does not override product
+or rollout authority.
 
 ### Active design boundary
 

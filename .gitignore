@@ -16,8 +16,14 @@
 .serena/cache/
 .serena/memories/
 
+# Graphify plugin generated output
+graphify-out/
+
 # Claude Code local state
 .claude/
+
+# Codex local state
+.codex
 
 # Misc local files
 .ignore

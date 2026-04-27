@@ -190,11 +190,11 @@ export function ProfilePage() {
               <CardDescription>{t('profile.addPhoto')}</CardDescription>
             </div>
             <div className="flex flex-col items-start gap-1 sm:items-end">
-              <span className="text-xs font-semibold uppercase tracking-[0.075em] text-muted-foreground">
+              <span className="text-xs font-semibold uppercase tracking-caps text-muted-foreground">
                 {t('profile.networkRole')}
               </span>
               <div
-                className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-[0.075em] ${isCustomer ? 'border-primary/20 bg-secondary text-secondary-foreground' : 'border-accent/30 bg-accent/10 text-accent-foreground'}`}
+                className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-caps ${isCustomer ? 'border-primary/20 bg-secondary text-secondary-foreground' : 'border-accent/30 bg-accent/10 text-accent-foreground'}`}
               >
                 {profile?.role ?? 'UNKNOWN'}
               </div>
@@ -221,8 +221,8 @@ export function ProfilePage() {
               ) : (
                 <User className="h-6 w-6 text-primary/40" />
               )}
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                <Camera className="h-6 w-6 text-white" />
+              <div className="absolute inset-0 flex items-center justify-center bg-primary-deep/40 opacity-0 transition-opacity group-hover:opacity-100">
+                <Camera className="h-6 w-6 text-primary-foreground" />
               </div>
               {working ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
@@ -251,7 +251,7 @@ export function ProfilePage() {
             <div className="space-y-2">
               <Label
                 htmlFor="full-name"
-                className="text-xs font-semibold uppercase tracking-[0.075em] text-muted-foreground"
+                className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
               >
                 {t('profile.displayName')}
               </Label>

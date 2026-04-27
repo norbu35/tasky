@@ -113,8 +113,8 @@ copy:
 
   - key: empty_description
     mn: 'Баталгаажсан захиалгын дараа энд мессежүүд харагдана'
-    en: 'Messages will appear here after a booking is confirmed'
-    max_chars: 60
+    en: 'Messages appear here after a booking is confirmed and the price is locked'
+    max_chars: 80
 
   - key: error_message
     mn: 'Мессежүүдийг ачаалж чадсангүй'
@@ -166,7 +166,7 @@ acceptance_criteria:
   - 'Search bar filters conversations by counterparty name'
   - 'Pull-to-refresh reloads the conversation list'
   - 'Tapping a conversation row pushes to Chat Detail (SCR-SHARED-011)'
-  - 'Empty state displays when no confirmed-booking conversations exist'
+  - 'Empty state displays when no confirmed and price-locked booking conversations exist'
   - 'Loading state shows skeleton matching conversation row layout'
   - 'Network error shows error message with retry button'
   - 'Offline state shows cached conversations with offline banner'

@@ -37,6 +37,7 @@ import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import mn.tasky.common.IntegrationTestBase;
 import mn.tasky.common.audit.AuditEventDao;
+import mn.tasky.notification.application.NotificationService;
 import mn.tasky.task.application.TaskQueryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -318,7 +319,8 @@ class BookingScenarioTests {
                         realModerationService,
                         mock(mn.tasky.common.outbox.DomainEventOutboxService.class),
                         mock(mn.tasky.trust.publicapi.TrustQueryPort.class),
-                        mock(mn.tasky.review.application.ReviewEnforcementService.class));
+                        mock(mn.tasky.review.application.ReviewEnforcementService.class),
+                        mock(NotificationService.class));
 
         Instant beforeCancel = Instant.now();
         BookingTransitionResult result = lifecycleService.cancelBooking("tasker-1", booking.id(), "Schedule conflict");
@@ -375,7 +377,8 @@ class BookingScenarioTests {
                         moderationService,
                         mock(mn.tasky.common.outbox.DomainEventOutboxService.class),
                         mock(mn.tasky.trust.publicapi.TrustQueryPort.class),
-                        mock(mn.tasky.review.application.ReviewEnforcementService.class));
+                        mock(mn.tasky.review.application.ReviewEnforcementService.class),
+                        mock(NotificationService.class));
 
         // Use standard cancellation reason
         lifecycleService.cancelBooking("tasker-1", booking.id(), "Car broke down");

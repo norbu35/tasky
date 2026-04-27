@@ -1,5 +1,5 @@
-import { type Booking } from '@/lib/api/types';
 import { type CancelType } from '@/features/bookings/components/CustomerCancelSheet';
+import { type Booking } from '@/lib/api/types';
 import { mapStatus as sharedMapStatus } from '@/utils/statusMapping';
 
 export interface CustomerBooking extends Omit<Booking, 'status' | 'customer'> {
@@ -51,9 +51,17 @@ export function getCtaConfig(
       return hasSubmittedReview(booking)
         ? { label: t('customer.bookings.ctaRebook'), action: 'rebook' }
         : { label: t('customer.bookings.ctaLeaveReview'), action: 'leave_review' };
+    case 'CANCELLED':
+      return isReopenedAfterCancellation(booking)
+        ? { label: t('customer.bookings.ctaFindAnotherTasker'), action: 'find_another_tasker' }
+        : null;
     default:
       return null;
   }
+}
+
+export function isReopenedAfterCancellation(booking: CustomerBooking | undefined): boolean {
+  return booking?.status === 'CANCELLED' && booking.task?.status === 'OPEN';
 }
 
 export function hasSubmittedReview(booking: CustomerBooking | undefined): boolean {

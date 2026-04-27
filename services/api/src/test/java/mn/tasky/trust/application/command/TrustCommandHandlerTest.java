@@ -8,7 +8,9 @@ import java.time.Instant;
 import java.util.List;
 import mn.tasky.dispute.application.DisputeService;
 import mn.tasky.dispute.dto.Dispute;
+import mn.tasky.dispute.dto.DisputeEvidenceResult;
 import mn.tasky.dispute.dto.DisputeRaiseResult;
+import mn.tasky.dispute.dto.DisputeRequest;
 import mn.tasky.dispute.dto.DisputeResolutionResult;
 import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.review.application.ReviewService;
@@ -58,6 +60,18 @@ class TrustCommandHandlerTest {
         when(disputeService.raiseDispute("u1", "b1", "reason", List.of())).thenReturn(expected);
 
         DisputeRaiseResult result = handler.raiseDispute("u1", "b1", "reason", List.of());
+
+        assertThat(result).isSameAs(expected);
+    }
+
+    @Test
+    void addDisputeEvidence_delegatesToDisputeService() {
+        Dispute dispute = new Dispute("d1", "b1", "u1", "reason", "OPEN", null, null, null, Instant.now(), null);
+        DisputeRequest.EvidenceItem evidence = new DisputeRequest.EvidenceItem("WRITTEN_TIMELINE", null, "timeline");
+        DisputeEvidenceResult expected = DisputeEvidenceResult.success(dispute);
+        when(disputeService.addEvidence("u1", "d1", List.of(evidence))).thenReturn(expected);
+
+        DisputeEvidenceResult result = handler.addDisputeEvidence("u1", "d1", List.of(evidence));
 
         assertThat(result).isSameAs(expected);
     }

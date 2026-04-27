@@ -4,23 +4,37 @@ Use this file when the change touches `docs/design/**`.
 
 ## Read Next
 
+Follow the repo discovery path first. For design work, read in this order until the smallest sufficient surface is covered:
+
 1. `AGENTS.md`
 2. `docs/PRD.md`
 3. `docs/STRATEGY.md`
 4. `docs/ROLLOUT_PHASES.md`
-5. `docs/design/DESIGN_SYSTEM.md`
+5. relevant `docs/maintenance/*.md`; at minimum `docs/maintenance/DOCUMENTATION_GOVERNANCE.md`, and `docs/maintenance/FEATURE_ACTIVATION_POLICY.md` when a screen touches deferred or toggle-gated behavior
 6. `docs/architecture/shared-frontend.md` when component parity, tokens, accessibility, or test naming matters
 7. `docs/architecture/mobile.md` or `docs/architecture/web.md` when the design change drives implementation
+8. `docs/openapi/AGENTS.md` and `docs/openapi/openapi.yaml` only when request or response contracts affect the screen
+9. `docs/BRAND.md` when tone, naming, trust language, or visual identity matters
+10. `docs/design/DESIGN_SYSTEM.md`
 
 ## Authority
 
 Design docs are derived product and UX contracts. They do not redefine launch behavior.
+The authority hierarchy for design work follows `docs/maintenance/DOCUMENTATION_GOVERNANCE.md`:
 
-The working chain is:
+```text
+docs/PRD.md -> docs/STRATEGY.md -> docs/ROLLOUT_PHASES.md -> relevant docs/maintenance/*.md -> docs/architecture/*.md -> docs/openapi/openapi.yaml and other active contracts -> docs/BRAND.md and docs/design/**
+```
+
+If an active design artifact conflicts with a higher document, correct the design artifact or stop and raise the conflict before screen implementation continues.
+
+The traceability chain for active screen specs is narrower:
 
 ```text
 docs/PRD.md -> REQ-P1/NFR ids -> docs/design/journey-catalog.yaml JRN ids -> docs/design/screen-graph.yaml SCR ids -> docs/design/screen-specs/SCR-*.yaml -> app implementation and tests
 ```
+
+This traceability chain proves ID alignment, not full product authority. Major screen work must still check the governing hierarchy above for phase, policy, trust, and activation posture.
 
 `tests/registry.yaml` supplies optional `SCN-*` coverage references when a scenario-backed test already exists.
 

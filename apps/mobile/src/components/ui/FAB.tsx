@@ -26,10 +26,16 @@ const FAB_Z_INDEX = 999;
 type FABProps = {
   testID?: string;
   authGuard?: boolean;
+  hidden?: boolean;
   className?: string;
 };
 
-export function FAB({ testID = 'global-fab', authGuard = true, className }: FABProps) {
+export function FAB({
+  testID = 'global-fab',
+  authGuard = true,
+  hidden = false,
+  className,
+}: FABProps) {
   const router = useRouter();
   const session = useAuthStore((state) => state.session);
   const insets = useSafeAreaInsets();
@@ -99,6 +105,10 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
       { scale: scale.value },
     ],
   }));
+
+  if (hidden) {
+    return null;
+  }
 
   return (
     <GestureDetector gesture={composed}>

@@ -10,7 +10,7 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { useBookings } from '@/features/bookings/hooks/useBookings';
 import type { Booking } from '@/lib/api/types';
 
-function BookingCardHeader({ booking }: { booking: Booking }) {
+function BookingCardHeader({ booking, statusTestID }: { booking: Booking; statusTestID?: string }) {
   const customerName = booking.customer?.full_name ?? '';
   const status = booking.status.toLowerCase() as 'assigned' | 'completed' | 'cancelled' | 'no_show';
 
@@ -22,7 +22,9 @@ function BookingCardHeader({ booking }: { booking: Booking }) {
       >
         {customerName}
       </Text>
-      <StatusBadge status={status} />
+      <View testID={statusTestID}>
+        <StatusBadge status={status} />
+      </View>
     </View>
   );
 }
@@ -41,6 +43,22 @@ function BookingCardBody({ booking }: { booking: Booking }) {
       <Text className="text-micro text-muted-foreground">{scheduledDate}</Text>
     </View>
   );
+}
+
+function getJobCardTestID(status?: string): string | undefined {
+  switch ((status ?? '').toUpperCase()) {
+    case 'ASSIGNED':
+    case 'TASKER_MARKED_DONE':
+      return 'job-card-active';
+    case 'COMPLETED':
+      return 'job-card-completed';
+    case 'CANCELLED':
+      return 'job-card-cancelled';
+    case 'NO_SHOW':
+      return 'job-card-no-show';
+    default:
+      return undefined;
+  }
 }
 
 export default function TaskerJobsScreen() {
@@ -80,7 +98,9 @@ export default function TaskerJobsScreen() {
   const renderItem = useCallback(
     (booking: Booking) => (
       <SplitCard
-        headerContent={<BookingCardHeader booking={booking} />}
+        headerContent={
+          <BookingCardHeader booking={booking} statusTestID={getJobCardTestID(booking.status)} />
+        }
         bodyContent={<BookingCardBody booking={booking} />}
         onPress={() => router.push(`/(tasker)/jobs/${booking.id}`)}
         testID={`booking-card-${booking.id}`}

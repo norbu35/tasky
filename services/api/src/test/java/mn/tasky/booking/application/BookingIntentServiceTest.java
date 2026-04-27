@@ -12,11 +12,17 @@ import java.util.Optional;
 import mn.tasky.booking.application.BookingIntentService.CreateResult;
 import mn.tasky.booking.dao.BookingIntentDao;
 import mn.tasky.booking.dto.BookingIntentConfirmResult;
+import mn.tasky.booking.dto.BookingIntentDeclineResult;
 import mn.tasky.booking.dto.BookingIntentState;
 import mn.tasky.booking.dto.BookingState;
+import mn.tasky.common.outbox.DomainEventOutboxService;
+import mn.tasky.notification.application.NotificationService;
+import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
+import mn.tasky.task.dto.TaskApplicationState;
 import mn.tasky.task.dto.TaskState;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -34,12 +40,27 @@ class BookingIntentServiceTest {
     @Mock
     private TaskDao taskDao;
 
+    @Mock
+    private TaskApplicationDao taskApplicationDao;
+
+    @Mock
+    private NotificationService notificationService;
+
+    @Mock
+    private DomainEventOutboxService domainEventOutboxService;
+
     private BookingIntentService service;
     private final Instant now = Instant.now();
 
     @BeforeEach
     void setUp() {
-        service = new BookingIntentService(bookingIntentDao, bookingService, taskDao);
+        service = new BookingIntentService(
+                bookingIntentDao,
+                bookingService,
+                taskDao,
+                taskApplicationDao,
+                notificationService,
+                domainEventOutboxService);
     }
 
     private TaskState openTask(String taskId, String customerId) {
@@ -104,6 +125,44 @@ class BookingIntentServiceTest {
                 null,
                 null,
                 now,
+                now);
+    }
+
+    private BookingIntentState pendingApplicationSelectionIntent(String intentId) {
+        return new BookingIntentState(
+                intentId,
+                "t1",
+                "tk1",
+                "c1",
+                BookingIntentService.SOURCE_APPLICATION_SELECTION,
+                "PENDING",
+                "app1",
+                null,
+                null,
+                now.plusSeconds(3600),
+                null,
+                null,
+                now,
+                now);
+    }
+
+    private TaskApplicationState selectedApplication() {
+        return new TaskApplicationState(
+                "app1",
+                "t1",
+                "tk1",
+                "Tasker",
+                null,
+                4.8,
+                12,
+                false,
+                "Ready",
+                null,
+                "SELECTED",
+                null,
+                null,
+                now,
+                now.plusSeconds(3600),
                 now);
     }
 
@@ -311,7 +370,7 @@ class BookingIntentServiceTest {
     @Test
     void confirmIntent_notFound() {
         when(bookingIntentDao.findById("i1")).thenReturn(Optional.empty());
-        BookingIntentConfirmResult result = service.confirmIntent("c1", "i1", true);
+        BookingIntentConfirmResult result = service.confirmIntent("c1", "i1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(BookingIntentConfirmResult.NOT_FOUND);
     }
@@ -320,25 +379,16 @@ class BookingIntentServiceTest {
     void confirmIntent_wrongCustomer_returnsForbidden() {
         BookingIntentState intent = pendingIntent("i1", "t1", "tk1", "other", "REBOOK", "b1");
         when(bookingIntentDao.findById("i1")).thenReturn(Optional.of(intent));
-        BookingIntentConfirmResult result = service.confirmIntent("c1", "i1", true);
+        BookingIntentConfirmResult result = service.confirmIntent("c1", "i1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(BookingIntentConfirmResult.FORBIDDEN);
-    }
-
-    @Test
-    void confirmIntent_disclaimerNotAccepted_returnsDisclaimerRequired() {
-        BookingIntentState intent = pendingIntent("i1", "t1", "tk1", "c1", "REBOOK", "b1");
-        when(bookingIntentDao.findById("i1")).thenReturn(Optional.of(intent));
-        BookingIntentConfirmResult result = service.confirmIntent("c1", "i1", false);
-        assertThat(result.isSuccess()).isFalse();
-        assertThat(result.errorCode()).isEqualTo(BookingIntentConfirmResult.DISCLAIMER_REQUIRED);
     }
 
     @Test
     void confirmIntent_instantMatch_returnsDeferred() {
         BookingIntentState intent = pendingIntent("i1", "t1", "tk1", "c1", "INSTANT_MATCH", "b1");
         when(bookingIntentDao.findById("i1")).thenReturn(Optional.of(intent));
-        BookingIntentConfirmResult result = service.confirmIntent("c1", "i1", true);
+        BookingIntentConfirmResult result = service.confirmIntent("tk1", "i1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(BookingIntentConfirmResult.DEFERRED);
     }
@@ -350,7 +400,7 @@ class BookingIntentServiceTest {
         when(bookingIntentDao.findById("i1")).thenReturn(Optional.of(intent));
         when(bookingService.getBooking("existingB")).thenReturn(Optional.of(existingBooking));
 
-        BookingIntentConfirmResult result = service.confirmIntent("c1", "i1", true);
+        BookingIntentConfirmResult result = service.confirmIntent("tk1", "i1");
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.booking().id()).isEqualTo("existingB");
     }
@@ -361,7 +411,7 @@ class BookingIntentServiceTest {
         when(bookingIntentDao.findById("i1")).thenReturn(Optional.of(intent));
         when(bookingService.getBooking("goneBooking")).thenReturn(Optional.empty());
 
-        BookingIntentConfirmResult result = service.confirmIntent("c1", "i1", true);
+        BookingIntentConfirmResult result = service.confirmIntent("tk1", "i1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(BookingIntentConfirmResult.CONFLICT);
     }
@@ -371,7 +421,7 @@ class BookingIntentServiceTest {
         BookingIntentState intent = new BookingIntentState(
                 "i1", "t1", "tk1", "c1", "REBOOK", "EXPIRED", null, "b1", null, null, null, null, now, now);
         when(bookingIntentDao.findById("i1")).thenReturn(Optional.of(intent));
-        BookingIntentConfirmResult result = service.confirmIntent("c1", "i1", true);
+        BookingIntentConfirmResult result = service.confirmIntent("tk1", "i1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(BookingIntentConfirmResult.CONFLICT);
     }
@@ -382,7 +432,7 @@ class BookingIntentServiceTest {
         when(bookingIntentDao.findById("i1")).thenReturn(Optional.of(intent));
         when(taskDao.findById("t1")).thenReturn(Optional.empty());
 
-        BookingIntentConfirmResult result = service.confirmIntent("c1", "i1", true);
+        BookingIntentConfirmResult result = service.confirmIntent("tk1", "i1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(BookingIntentConfirmResult.NOT_FOUND);
     }
@@ -411,7 +461,7 @@ class BookingIntentServiceTest {
                 now);
         when(taskDao.findById("t1")).thenReturn(Optional.of(assigned));
 
-        BookingIntentConfirmResult result = service.confirmIntent("c1", "i1", true);
+        BookingIntentConfirmResult result = service.confirmIntent("tk1", "i1");
         assertThat(result.isSuccess()).isFalse();
         assertThat(result.errorCode()).isEqualTo(BookingIntentConfirmResult.TASK_NOT_OPEN);
     }
@@ -428,7 +478,7 @@ class BookingIntentServiceTest {
         when(bookingService.createBooking(eq("t1"), eq("tk1"), eq("c1"), eq(5000), eq(true), any()))
                 .thenReturn(newBooking);
 
-        BookingIntentConfirmResult result = service.confirmIntent("c1", "i1", true);
+        BookingIntentConfirmResult result = service.confirmIntent("tk1", "i1");
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.booking().id()).isEqualTo("newB");
         verify(bookingIntentDao).markConfirmed(eq("i1"), eq("newB"), any(Instant.class), any(Instant.class));
@@ -450,8 +500,58 @@ class BookingIntentServiceTest {
         when(bookingService.createBooking(eq("t1"), eq("tk1"), eq("c1"), eq(0), eq(true), any()))
                 .thenReturn(newBooking);
 
-        BookingIntentConfirmResult result = service.confirmIntent("c1", "i1", true);
+        BookingIntentConfirmResult result = service.confirmIntent("tk1", "i1");
         assertThat(result.isSuccess()).isTrue();
         verify(bookingService).createBooking(eq("t1"), eq("tk1"), eq("c1"), eq(0), eq(true), any());
+    }
+
+    @Test
+    void confirmIntent_applicationSelectionByTasker_confirmsBookingAndClosesOtherApplications() {
+        BookingIntentState intent = pendingApplicationSelectionIntent("i1");
+        when(bookingIntentDao.findById("i1")).thenReturn(Optional.of(intent));
+        when(taskDao.findById("t1")).thenReturn(Optional.of(openTask("t1", "c1")));
+        when(taskApplicationDao.findByTaskerAndId("tk1", "app1")).thenReturn(Optional.of(selectedApplication()));
+        BookingState newBooking = completedBooking("newB", "c1", "tk1", "t1");
+        when(bookingService.createBooking(eq("t1"), eq("tk1"), eq("c1"), eq(5000), eq(true), any()))
+                .thenReturn(newBooking);
+
+        BookingIntentConfirmResult result = service.confirmIntent("tk1", "i1");
+
+        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.booking().id()).isEqualTo("newB");
+        verify(taskApplicationDao).updateStatus("app1", "ACCEPTED");
+        verify(taskApplicationDao).rejectOthers("t1", "app1");
+        verify(bookingIntentDao).markConfirmed(eq("i1"), eq("newB"), any(Instant.class), any(Instant.class));
+    }
+
+    @Test
+    @DisplayName("SCN-BOOK-031: Selected tasker declines and task remains open for other applicants")
+    void declineIntent_applicationSelectionByTasker_marksIntentAndApplicationDeclined() {
+        BookingIntentState intent = pendingApplicationSelectionIntent("i1");
+        BookingIntentState declinedIntent = new BookingIntentState(
+                "i1",
+                "t1",
+                "tk1",
+                "c1",
+                BookingIntentService.SOURCE_APPLICATION_SELECTION,
+                "DECLINED",
+                "app1",
+                null,
+                null,
+                now.plusSeconds(3600),
+                null,
+                null,
+                now,
+                now);
+        when(bookingIntentDao.findById("i1")).thenReturn(Optional.of(intent), Optional.of(declinedIntent));
+        when(taskApplicationDao.findByTaskerAndId("tk1", "app1")).thenReturn(Optional.of(selectedApplication()));
+
+        BookingIntentDeclineResult result = service.declineIntent("tk1", "i1");
+
+        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.intent().status()).isEqualTo("DECLINED");
+        verify(taskApplicationDao).updateStatus("app1", "DECLINED");
+        verify(taskDao).updateStatus(eq("t1"), eq("OPEN"), any(Instant.class));
+        verify(bookingIntentDao).markDeclined(eq("i1"), any(Instant.class));
     }
 }

@@ -44,6 +44,11 @@ jest.mock('../../../../src/features/profile/hooks/useProfile', () => ({
   useSignOut: () => jest.fn(),
 }));
 
+const mockUseTaskerProfile = jest.fn();
+jest.mock('../../../../src/features/profile/hooks/useTaskerProfile', () => ({
+  useTaskerProfile: () => mockUseTaskerProfile(),
+}));
+
 const mockUseRole = jest.fn();
 jest.mock('../../../../src/providers/RoleProvider', () => ({
   useRole: () => mockUseRole(),
@@ -81,6 +86,9 @@ beforeEach(() => {
   jest.clearAllMocks();
   resetTestI18n();
   setTestLanguage('mn');
+  mockUseTaskerProfile.mockReturnValue({
+    reviews: { data: { data: [] }, isLoading: false, isError: false },
+  });
   mockUseRole.mockReturnValue({
     currentRole: 'customer',
     isCustomer: true,
@@ -113,6 +121,7 @@ describe('MyProfileScreen (SCR-SHARED-012)', () => {
     const MyProfileScreen = require('../../../../src/app/(tabs)/profile').default;
     render(<MyProfileScreen />);
     expect(screen.getByText('Батбаяр')).toBeTruthy();
+    expect(screen.getByTestId('my-profile-hero-card')).toBeTruthy();
   });
 
   it('shows edit profile button', () => {
@@ -166,10 +175,41 @@ describe('MyProfileScreen (SCR-SHARED-012)', () => {
       isError: false,
       refetch: jest.fn(),
     });
+    mockUseTaskerProfile.mockReturnValue({
+      reviews: {
+        data: {
+          data: [{ id: 'review-1' }, { id: 'review-2' }, { id: 'review-3' }],
+        },
+        isLoading: false,
+        isError: false,
+      },
+    });
     const MyProfileScreen = require('../../../../src/app/(tabs)/profile').default;
     render(<MyProfileScreen />);
     expect(screen.getByText('47')).toBeTruthy();
-    expect(screen.getByText('4.7')).toBeTruthy();
+    expect(screen.getAllByText('4.7').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByTestId('my-profile-reputation-summary')).toBeTruthy();
+  });
+
+  it('tasker view hides aggregate rating below the public review threshold', () => {
+    mockUseRole.mockReturnValue({
+      currentRole: 'tasker',
+      isCustomer: false,
+      isTasker: true,
+      switchRole: jest.fn(),
+      setRole: jest.fn(),
+    });
+    mockUseMyProfile.mockReturnValue({
+      data: { ...MOCK_TASKER_PROFILE, completed_tasks: 47, rating_avg: 4.7 },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    const MyProfileScreen = require('../../../../src/app/(tabs)/profile').default;
+    render(<MyProfileScreen />);
+
+    expect(screen.queryByText('4.7')).toBeNull();
+    expect(screen.getByText('Одоогоор хангалттай шүүмж алга')).toBeTruthy();
   });
 
   it('shows error state with retry', () => {

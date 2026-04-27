@@ -11,6 +11,7 @@ traceability:
     - REQ-P1-MATCH-01
     - REQ-P1-TASK-09
     - REQ-P1-COVER-02
+    - REQ-P1-SAFE-03
     - REQ-P1-SAFE-04
     - NFR-API-01
   journey_refs:
@@ -21,6 +22,7 @@ traceability:
     - SCN-TASK-008
     - SCN-TASK-012
     - SCN-TASK-013
+    - SCN-TASK-032
     - SCN-NOTIF-001
 template: feed_list
 figma_page: 'Tasker/Browse Task Feed'
@@ -30,6 +32,24 @@ layout:
   template: feed_list
   density: default
   structure: 'safe_area -> sticky_header(search_bar + filter_bar) -> scrollview(split_cards + trust_banner) -> pagination_footer'
+
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: operational
+  trust_cues:
+    - verified_required_apply_state
+    - approximate_location
+    - structured_application_not_chat
+    - task_freshness_status
+  non_goals:
+    - no_instant_match_claim
+    - no_tasker_ranking_tiers
+  airbnb_scaffold:
+    - filter_sheet
+    - active_filter_summary
+    - result_count_cta
+    - no_results_remediation
+    - dense_task_cards
 
 components:
   - id: COMP-SEARCHBAR
@@ -207,7 +227,7 @@ copy:
   - key: distance_km
     mn: '{distance} км'
     en: '{distance} km'
-    max_chars: 10
+    max_chars: 16
 
   - key: time_ago
     mn: '{time} өмнө'
@@ -245,6 +265,7 @@ acceptance_criteria:
   - 'Search bar is sticky at top and supports keyword filtering of task titles'
   - 'Category chips in FilterBar are horizontally scrollable'
   - "Distance filter adjusts the visible list based on tasker's current location but does not change whether a verified tasker may apply"
+  - 'Category and distance filters change the visible list only; Phase 1 does not use category-specific vetting or service-area preferences as application gates'
   - 'Pull-to-refresh reloads the task list from the API'
   - 'Infinite scroll loads additional pages with footer spinner'
   - 'Empty activation state shows CTA to enable push notifications'

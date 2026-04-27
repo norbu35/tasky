@@ -23,6 +23,17 @@ describe('cn() utility', () => {
     it('should merge gap tokens and last wins', () => {
       expect(cn('gap-section', 'gap-block')).toBe('gap-block');
     });
+
+    it('should merge kebab-case typography tokens and last wins', () => {
+      expect(cn('text-hero-title', 'text-heading')).toBe('text-heading');
+      expect(cn('text-body', 'text-nav-label')).toBe('text-nav-label');
+    });
+
+    it('should merge interaction state tokens and last wins', () => {
+      expect(cn('active:opacity-pressed', 'active:opacity-80')).toBe('active:opacity-80');
+      expect(cn('disabled:opacity-disabled', 'disabled:opacity-50')).toBe('disabled:opacity-50');
+      expect(cn('active:scale-pressed', 'active:scale-95')).toBe('active:scale-95');
+    });
   });
 
   describe('falsy value filtering', () => {

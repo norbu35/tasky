@@ -4,29 +4,36 @@ import { useTranslation } from 'react-i18next';
 
 import { useBookingDetail } from '@/features/bookings/hooks/useBookingDetail';
 import { useReschedule } from '@/features/bookings/hooks/useReschedule';
+
 import {
-  formatDateTime,
-  buildCalendarCells,
-  getWeekdayLabels,
+  type ActivePickerState,
+  type PickerMode,
   type RescheduleState,
+  combineDateAndTime,
+  createDefaultRescheduleDate,
+  formatDateTime,
+  toValidDate,
 } from './model';
 
 export interface BookingRescheduleState {
   bookingId: string;
+  selectedDate: Date;
+  selectedTime: Date;
   selectedDateTime: Date;
+  activePicker: ActivePickerState;
   reason: string;
   requestState: RescheduleState;
-  tomorrow: Date;
-  visibleMonth: Date;
-  calendarCells: (Date | null)[];
-  weekdayLabels: string[];
   scheduledAtLabel: string;
+  submitError: string;
   isPending: boolean;
-  setSelectedDateTime: React.Dispatch<React.SetStateAction<Date>>;
   setReason: React.Dispatch<React.SetStateAction<string>>;
-  setRequestState: React.Dispatch<React.SetStateAction<RescheduleState>>;
-  updateSelectedTime: (time: string) => void;
-  updateSelectedDay: (date: Date) => void;
+  openPicker: (mode: PickerMode) => void;
+  handlePickerModeChange: (mode: PickerMode) => void;
+  handlePickerDateChange: (pickedValue: Date) => void;
+  handlePickerTimeChange: (pickedValue: Date) => void;
+  handlePickerReset: () => void;
+  handlePickerCancel: () => void;
+  handlePickerConfirm: () => void;
   handleSubmit: () => Promise<void>;
 }
 
@@ -36,68 +43,109 @@ export function useBookingRescheduleScreen(): BookingRescheduleState {
   const { mutateAsync: reschedule, isPending } = useReschedule();
   const { data: booking } = useBookingDetail(bookingId);
 
-  const tomorrow = React.useMemo(() => {
-    const next = new Date();
-    next.setDate(next.getDate() + 1);
-    next.setHours(10, 0, 0, 0);
-    return next;
-  }, []);
-
-  const [selectedDateTime, setSelectedDateTime] = React.useState<Date>(tomorrow);
+  const defaultDate = React.useMemo(() => createDefaultRescheduleDate(), []);
+  const [selectedDate, setSelectedDate] = React.useState<Date>(defaultDate);
+  const [selectedTime, setSelectedTime] = React.useState<Date>(defaultDate);
+  const [activePicker, setActivePicker] = React.useState<ActivePickerState>(null);
   const [reason, setReason] = React.useState('');
   const [requestState, setRequestState] = React.useState<RescheduleState>('request_form');
+  const [submitError, setSubmitError] = React.useState('');
 
-  const visibleMonth = selectedDateTime;
-  const calendarCells = React.useMemo(() => buildCalendarCells(visibleMonth), [visibleMonth]);
-  const weekdayLabels = React.useMemo(() => getWeekdayLabels(t), [t]);
-  const scheduledAtLabel = booking?.task?.scheduled_at
-    ? formatDateTime(booking.task.scheduled_at)
+  const selectedDateTime = React.useMemo(
+    () => combineDateAndTime(selectedDate, selectedTime),
+    [selectedDate, selectedTime],
+  );
+
+  const currentScheduledAt = booking?.confirmed_scheduled_at ?? booking?.task?.scheduled_at;
+  const scheduledAtLabel = currentScheduledAt
+    ? formatDateTime(currentScheduledAt)
     : t('customer.bookings.scheduleUnavailable');
 
-  const updateSelectedTime = React.useCallback((time: string) => {
-    const [hours, minutes] = time.split(':').map(Number);
-    setSelectedDateTime((current) => {
-      const next = new Date(current);
-      next.setHours(hours, minutes, 0, 0);
-      return next;
-    });
+  const openPicker = React.useCallback(
+    (mode: PickerMode) => {
+      const fallback = createDefaultRescheduleDate();
+      setSubmitError('');
+      setActivePicker({
+        mode,
+        draftDate: toValidDate(selectedDate, fallback),
+        draftTime: toValidDate(selectedTime, fallback),
+      });
+    },
+    [selectedDate, selectedTime],
+  );
+
+  const handlePickerModeChange = React.useCallback((mode: PickerMode) => {
+    setActivePicker((prev) => (prev ? { ...prev, mode } : prev));
   }, []);
 
-  const updateSelectedDay = React.useCallback((date: Date) => {
-    setSelectedDateTime((current) => {
-      const next = new Date(date);
-      next.setHours(current.getHours(), current.getMinutes(), 0, 0);
-      return next;
-    });
+  const handlePickerDateChange = React.useCallback((pickedValue: Date) => {
+    setActivePicker((prev) => (prev ? { ...prev, draftDate: pickedValue } : prev));
   }, []);
+
+  const handlePickerTimeChange = React.useCallback((pickedValue: Date) => {
+    setActivePicker((prev) => (prev ? { ...prev, draftTime: pickedValue } : prev));
+  }, []);
+
+  const handlePickerReset = React.useCallback(() => {
+    const fallback = createDefaultRescheduleDate();
+    setActivePicker((prev) =>
+      prev
+        ? {
+            ...prev,
+            mode: 'date',
+            draftDate: fallback,
+            draftTime: fallback,
+          }
+        : prev,
+    );
+  }, []);
+
+  const handlePickerCancel = React.useCallback(() => {
+    setActivePicker(null);
+  }, []);
+
+  const handlePickerConfirm = React.useCallback(() => {
+    if (!activePicker) return;
+    setSelectedDate(activePicker.draftDate);
+    setSelectedTime(activePicker.draftTime);
+    setActivePicker(null);
+  }, [activePicker]);
 
   const handleSubmit = React.useCallback(async () => {
     const idempotencyKey = `reschedule-${bookingId}-${Date.now()}`;
-    await reschedule({
-      bookingId,
-      proposed_scheduled_at: selectedDateTime.toISOString(),
-      reason: reason || undefined,
-      idempotencyKey,
-    });
-    setRequestState('awaiting_response');
-  }, [bookingId, reason, reschedule, selectedDateTime]);
+    setSubmitError('');
+    try {
+      await reschedule({
+        bookingId,
+        proposed_scheduled_at: selectedDateTime.toISOString(),
+        reason: reason || undefined,
+        idempotencyKey,
+      });
+      setRequestState('awaiting_response');
+    } catch {
+      setSubmitError(t('customer.bookings.rescheduleSubmitError'));
+    }
+  }, [bookingId, reason, reschedule, selectedDateTime, t]);
 
   return {
     bookingId,
+    selectedDate,
+    selectedTime,
     selectedDateTime,
+    activePicker,
     reason,
     requestState,
-    tomorrow,
-    visibleMonth,
-    calendarCells,
-    weekdayLabels,
     scheduledAtLabel,
+    submitError,
     isPending,
-    setSelectedDateTime,
     setReason,
-    setRequestState,
-    updateSelectedTime,
-    updateSelectedDay,
+    openPicker,
+    handlePickerModeChange,
+    handlePickerDateChange,
+    handlePickerTimeChange,
+    handlePickerReset,
+    handlePickerCancel,
+    handlePickerConfirm,
     handleSubmit,
   };
 }
