@@ -9,6 +9,7 @@ import { Toast } from '@/components/ui/Toast';
 import { applyToTask } from '@/features/tasks/api';
 import { ApplicationSentSuccess } from '@/features/tasks/components/ApplicationSentSuccess';
 import { useTaskDetail } from '@/features/tasks/hooks/useTasks';
+import type { PublicTask, TaskDetail } from '@/lib/api/types';
 import { useAuthStore } from '@/store/authStore';
 
 import { ApplicationForm } from './TaskDetail.ApplicationForm';
@@ -16,6 +17,22 @@ import { TaskDetailSummary } from './TaskDetail.Summary';
 
 interface TaskDetailScreenProps {
   id: string;
+}
+
+function getTaskCustomerId(task: TaskDetail | null): string | null {
+  if (!task) return null;
+  if ('customer' in task) return task.customer?.id ?? null;
+  if ('customer_id' in task) return task.customer_id ?? null;
+  return null;
+}
+
+function getTaskPhotoUrls(task: TaskDetail): string[] {
+  if ('photo_urls' in task) return task.photo_urls;
+  return task.photos.flatMap((photo) => (photo.url ? [photo.url] : []));
+}
+
+function hasPublicCustomer(task: TaskDetail | null): task is PublicTask {
+  return !!task && 'customer' in task && !!task.customer;
 }
 
 export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
@@ -42,10 +59,14 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
     !isQuoteMode ||
     (quotePrice !== '' && Number.isFinite(quotePriceNumber) && quotePriceNumber >= 20000);
   const canSubmitApplication = isApplicationNoteValid && isQuoteValid;
-  const isOwnTask = !!task && task.customer.id === session?.user.id;
+  const isOwnTask = getTaskCustomerId(task) === session?.user.id;
+  const hasCustomerProfile = hasPublicCustomer(task);
+  const canStartApplication =
+    isVerified && hasCustomerProfile && !isOwnTask && !appliedState && !capReached;
+  const photoUrls = task ? getTaskPhotoUrls(task) : [];
 
   const handleApply = useCallback(async () => {
-    if (!session?.accessToken || !taskId || !canSubmitApplication || isOwnTask) return;
+    if (!session?.accessToken || !taskId || !canSubmitApplication || !canStartApplication) return;
     setIsApplying(true);
     setApplicationError(null);
     try {
@@ -64,8 +85,8 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
     }
   }, [
     applicationNote,
+    canStartApplication,
     canSubmitApplication,
-    isOwnTask,
     isQuoteMode,
     quotePriceNumber,
     session,
@@ -97,7 +118,9 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
 
   const noop = () => {};
 
-  if (isOwnTask) {
+  if (!task) {
+    ctaLabel = undefined;
+  } else if (isOwnTask) {
     ctaLabel = t('tasker.taskDetail.ownTaskCta');
     ctaDisabled = true;
     ctaOnPress = noop;
@@ -109,11 +132,11 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
     ctaLabel = t('tasker.browse.capReached');
     ctaDisabled = true;
     ctaOnPress = noop;
-  } else if (isVerified) {
+  } else if (isVerified && hasCustomerProfile) {
     ctaLabel = t('tasker.taskDetail.applyButton');
     ctaOnPress = handleApply;
     ctaDisabled = !canSubmitApplication;
-  } else {
+  } else if (hasCustomerProfile) {
     ctaLabel = t('tasker.taskDetail.getVerified');
     ctaOnPress = handleGetVerified;
   }
@@ -139,7 +162,7 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
 
           {applicationError ? <Toast message={applicationError} variant="error" /> : null}
 
-          {isVerified && !isOwnTask && !appliedState && !capReached ? (
+          {canStartApplication ? (
             <ApplicationForm
               isQuoteMode={isQuoteMode}
               isQuoteValid={isQuoteValid}
@@ -151,12 +174,12 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
           ) : null}
 
           {/* Photos */}
-          {task.photo_urls.length > 0 && (
+          {photoUrls.length > 0 && (
             <View className="gap-xs bg-muted rounded-md p-md">
               <Text className="text-caption font-sans-semibold text-text-secondary uppercase tracking-normal">
                 {t('tasker.taskDetail.photosLabel')}
               </Text>
-              <PhotoGrid photos={task.photo_urls} testID="task-detail-photos" />
+              <PhotoGrid photos={photoUrls} testID="task-detail-photos" />
             </View>
           )}
         </View>

@@ -168,7 +168,9 @@
     summary: List open tasks
     description: |
       Returns a paginated list of OPEN tasks. Supports filtering by category and
-      geospatial radius search. Location data is fuzzed for privacy.
+      geospatial radius search. The feed is a summary projection: location data
+      is district-level/approximate, and customer identity, photos, application
+      counts, exact location, and intake details are detail-only.
     operationId: listTasks
     security:
       - BearerAuth: []
@@ -215,7 +217,7 @@
                 data:
                   type: array
                   items:
-                    $ref: ../components/schemas/tasks.yaml#/PublicTask
+                    $ref: ../components/schemas/tasks.yaml#/TaskFeedItem
                 cursor:
                   $ref: ../components/schemas/common.yaml#/CursorPagination
       '400':

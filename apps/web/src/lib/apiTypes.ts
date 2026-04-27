@@ -3,6 +3,7 @@ import type { components } from '@tasky/sdk';
 export type User = components['schemas']['User'];
 export type Profile = components['schemas']['Profile'];
 export type Category = components['schemas']['Category'];
+export type TaskFeedItem = components['schemas']['TaskFeedItem'];
 export type PublicTask = components['schemas']['PublicTask'];
 export type Task = components['schemas']['Task'];
 export type CreateTaskRequest = components['schemas']['CreateTaskRequest'];
@@ -68,6 +69,8 @@ export interface TaskFilters {
   lat?: number;
   lng?: number;
   radiusKm?: number;
+  cursor?: string;
+  limit?: number;
 }
 
 export interface BookingFilters {

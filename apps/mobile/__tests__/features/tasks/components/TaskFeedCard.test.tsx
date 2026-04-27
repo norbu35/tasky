@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import { TaskFeedCard } from '@/features/tasks/components/TaskFeedCard';
-import type { PublicTask } from '@/lib/api/types';
+import type { TaskFeedItem } from '@/lib/api/types';
 
 import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
@@ -27,7 +27,7 @@ beforeEach(() => {
   setTestLanguage('en');
 });
 
-function makeTask(overrides: Partial<PublicTask> = {}): PublicTask {
+function makeTask(overrides: Partial<TaskFeedItem> = {}): TaskFeedItem {
   return {
     id: 'task-1',
     category: {
@@ -35,17 +35,6 @@ function makeTask(overrides: Partial<PublicTask> = {}): PublicTask {
       name: 'Cleaning',
       name_mn: 'Цэвэрлэгээ',
       icon_url: null,
-      is_active: true,
-      sort_order: 1,
-      intake_enabled: true,
-      assisted_distribution_enabled: false,
-      intake_schema_version: 1,
-    },
-    customer: {
-      id: 'customer-1',
-      full_name: 'Ari Customer',
-      avatar_url: null,
-      rating_avg: 4.5,
     },
     description: 'Deep clean a two-bedroom apartment',
     budget: 75000,
@@ -55,11 +44,9 @@ function makeTask(overrides: Partial<PublicTask> = {}): PublicTask {
     approximate_lng: 106.91,
     status: 'OPEN',
     scheduled_at: '2026-03-25T10:00:00Z',
-    photo_urls: [],
-    application_count: 2,
     created_at: '2026-03-23T00:00:00Z',
     ...overrides,
-  } as PublicTask;
+  } as TaskFeedItem;
 }
 
 describe('TaskFeedCard', () => {
@@ -71,7 +58,7 @@ describe('TaskFeedCard', () => {
     expect(screen.getByLabelText('75,000 tugrik')).toBeTruthy();
     expect(screen.getByText('Deep clean a two-bedroom apartment')).toBeTruthy();
     expect(screen.getByText('Bayangol district')).toBeTruthy();
-    expect(screen.getByText('Ari Customer')).toBeTruthy();
+    expect(screen.queryByText('Ari Customer')).toBeNull();
     expect(screen.queryByText(/2 applications/i)).toBeNull();
   });
 

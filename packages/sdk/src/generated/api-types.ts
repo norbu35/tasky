@@ -413,7 +413,9 @@ export interface paths {
         /**
          * List open tasks
          * @description Returns a paginated list of OPEN tasks. Supports filtering by category and
-         *     geospatial radius search. Location data is fuzzed for privacy.
+         *     geospatial radius search. The feed is a summary projection: location data
+         *     is district-level/approximate, and customer identity, photos, application
+         *     counts, exact location, and intake details are detail-only.
          */
         get: operations["listTasks"];
         put?: never;
@@ -2235,6 +2237,43 @@ export interface components {
                 [key: string]: unknown;
             } | components["schemas"]["IntakeFieldSchema"][]) | null;
         };
+        TaskFeedItem: {
+            /** Format: uuid */
+            id: string;
+            category: components["schemas"]["TaskFeedCategory"];
+            description: string;
+            /**
+             * @description BUDGET = customer sets a fixed budget that taskers accept to apply. QUOTE = taskers submit price quotes.
+             * @enum {string}
+             */
+            pricing_mode: "BUDGET" | "QUOTE";
+            /**
+             * @description Budget in MNT when pricing_mode is BUDGET. Null for QUOTE mode tasks.
+             * @example 50000
+             */
+            budget: number | null;
+            /**
+             * @description District-level approximate location for feed scanning. Exact address is detail-only after authorization.
+             * @example Sukhbaatar, Ulaanbaatar
+             */
+            approximate_location: string;
+            /**
+             * Format: double
+             * @description District centroid latitude, not the exact task latitude.
+             */
+            approximate_lat: number;
+            /**
+             * Format: double
+             * @description District centroid longitude, not the exact task longitude.
+             */
+            approximate_lng: number;
+            /** @enum {string} */
+            status: "OPEN";
+            /** Format: date-time */
+            scheduled_at: string;
+            /** Format: date-time */
+            created_at: string;
+        };
         PublicTask: {
             /** Format: uuid */
             id: string;
@@ -2841,6 +2880,14 @@ export interface components {
             intake_enabled: boolean;
             assisted_distribution_enabled: boolean;
             is_active?: boolean;
+        };
+        TaskFeedCategory: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            name_mn: string;
+            /** Format: uri */
+            icon_url?: string | null;
         };
     };
     responses: {
@@ -3698,7 +3745,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data: components["schemas"]["PublicTask"][];
+                        data: components["schemas"]["TaskFeedItem"][];
                         cursor: components["schemas"]["CursorPagination"];
                     };
                 };

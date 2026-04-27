@@ -6,6 +6,7 @@ import type {
   AuthTokens,
   Task,
   TaskFilters,
+  TaskFeedItem,
   CursorPage,
   PublicTask,
   TaskApplication,
@@ -59,7 +60,9 @@ export interface ApiClient {
 
   createTask(accessToken: string, payload: CreateTaskRequest): Promise<Task>;
 
-  listTasks(accessToken: string, filters?: TaskFilters): Promise<CursorPage<PublicTask>>;
+  listTasks(accessToken: string, filters?: TaskFilters): Promise<CursorPage<TaskFeedItem>>;
+
+  getTask(accessToken: string, taskId: string): Promise<PublicTask>;
 
   listMyTasks(accessToken: string): Promise<CursorPage<Task>>;
 
@@ -374,14 +377,19 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
     );
   }
 
-  listTasks(accessToken: string, filters?: TaskFilters): Promise<CursorPage<PublicTask>> {
-    return this.requestJson<CursorPage<PublicTask>>('/tasks', { method: 'GET' }, accessToken, {
+  listTasks(accessToken: string, filters?: TaskFilters): Promise<CursorPage<TaskFeedItem>> {
+    return this.requestJson<CursorPage<TaskFeedItem>>('/tasks', { method: 'GET' }, accessToken, {
       category: filters?.categoryId,
       lat: filters?.lat,
       lng: filters?.lng,
       radius_km: filters?.radiusKm,
-      limit: 100,
+      cursor: filters?.cursor,
+      limit: filters?.limit ?? 100,
     });
+  }
+
+  getTask(accessToken: string, taskId: string): Promise<PublicTask> {
+    return this.requestJson<PublicTask>(`/tasks/${taskId}`, { method: 'GET' }, accessToken);
   }
 
   listMyTasks(accessToken: string): Promise<CursorPage<Task>> {

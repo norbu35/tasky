@@ -215,7 +215,10 @@ class TaskScenarioTests extends IntegrationTestBase {
         for (Map task : tasks) {
             assertThat(task.get("status").toString()).isEqualTo("OPEN");
             Map category = (Map) task.get("category");
-            assertThat(category).containsKeys("intake_enabled", "intake_schema_version");
+            assertThat(category).containsKeys("id", "name", "name_mn");
+            assertThat(category)
+                    .doesNotContainKeys(
+                            "is_active", "sort_order", "intake_enabled", "intake_schema_version", "intake_schema_json");
         }
     }
 
@@ -237,6 +240,14 @@ class TaskScenarioTests extends IntegrationTestBase {
         assertThat(task).doesNotContainKey("location_lat");
         assertThat(task).doesNotContainKey("location_lng");
         assertThat(task).doesNotContainKey("location_text");
+        assertThat(task)
+                .doesNotContainKeys(
+                        "customer",
+                        "photo_urls",
+                        "application_count",
+                        "intake_answers",
+                        "intake_schema_version",
+                        "intake_schema_json");
     }
 
     // ── SCN-TASK-009 ─────────────────────────────────────────────────────────

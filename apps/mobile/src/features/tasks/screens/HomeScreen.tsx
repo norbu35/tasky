@@ -11,20 +11,23 @@ import { TaskFeedFilterSheet } from '@/features/tasks/components/TaskFeedFilterS
 import { TaskFeedHeader } from '@/features/tasks/components/TaskFeedHeader';
 import { useCategories } from '@/features/tasks/hooks/useCategories';
 import { useTasks } from '@/features/tasks/hooks/useTasks';
-import type { PublicTask } from '@/lib/api/types';
+import type { TaskFeedItem } from '@/lib/api/types';
 import { useRole } from '@/providers/RoleProvider';
 
 function TaskerBrowseScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { hasPending, isLocked, oldestPending } = useReviewGate();
-  const { data, isLoading, isError, isRefetching, refetch } = useTasks() as {
-    data: { data: PublicTask[]; cursor: { next: string | null; has_more: boolean } } | undefined;
-    isLoading: boolean;
-    isError: boolean;
-    isRefetching: boolean;
-    refetch: () => void;
-  };
+  const {
+    data,
+    isLoading,
+    isError,
+    isRefetching,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useTasks();
 
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -61,7 +64,8 @@ function TaskerBrowseScreen() {
       const matchesSearch =
         normalizedSearch.length === 0 ||
         task.description.toLowerCase().includes(normalizedSearch) ||
-        task.customer.full_name.toLowerCase().includes(normalizedSearch);
+        task.category.name.toLowerCase().includes(normalizedSearch) ||
+        task.approximate_location.toLowerCase().includes(normalizedSearch);
       return matchesCategory && matchesSearch;
     });
   }, [data, activeFilters, searchQuery]);
@@ -91,7 +95,7 @@ function TaskerBrowseScreen() {
   }, []);
 
   const handleTaskPress = useCallback(
-    (task: PublicTask) => {
+    (task: TaskFeedItem) => {
       if (isLocked) return;
       router.push(`/task/${task.id}` as `${string}`);
     },
@@ -99,7 +103,7 @@ function TaskerBrowseScreen() {
   );
 
   const renderItem = useCallback(
-    (task: PublicTask, index: number) => (
+    (task: TaskFeedItem, index: number) => (
       <View testID={`task-card-index-${index}`} style={{ opacity: isLocked ? 0.5 : 1 }}>
         <TaskFeedCard
           task={task}
@@ -111,7 +115,11 @@ function TaskerBrowseScreen() {
     [handleTaskPress, isLocked],
   );
 
-  const keyExtractor = useCallback((task: PublicTask) => task.id, []);
+  const keyExtractor = useCallback((task: TaskFeedItem) => task.id, []);
+  const handleEndReached = useCallback(() => {
+    if (!hasNextPage || isFetchingNextPage) return;
+    void fetchNextPage();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   return (
     <View testID="SCR-TASK-001" className="flex-1">
@@ -125,6 +133,8 @@ function TaskerBrowseScreen() {
         onRefresh={refetch}
         isRefreshing={isRefetching}
         onRetry={refetch}
+        onEndReached={handleEndReached}
+        isLoadingMore={isFetchingNextPage}
         ListHeaderComponent={
           <TaskFeedHeader
             activeFilterCount={activeFilterCount}

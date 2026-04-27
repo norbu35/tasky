@@ -116,6 +116,8 @@ components:
       $ref: ./components/schemas/categories.yaml#/IntakeFieldSchema
     Category:
       $ref: ./components/schemas/categories.yaml#/Category
+    TaskFeedItem:
+      $ref: ./components/schemas/tasks.yaml#/TaskFeedItem
     PublicTask:
       $ref: ./components/schemas/tasks.yaml#/PublicTask
     Task:

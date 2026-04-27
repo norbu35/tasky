@@ -193,11 +193,12 @@ Deferred adapters for payment, escrow, payout, alternate auth, or LLM-assisted c
 
 ### 1.1.5 Projection (Read-Model Optimization)
 
-**Intent.** Admin list and queue queries go through dedicated projection read models rather than
-directly querying domain tables.
+**Intent.** High-read list and queue queries go through dedicated projection read models rather than
+composing rich domain tables on every row.
 
-Projections live under `mn.tasky.projection.admin` and are consumed only by `runtime.adminapi.composition`
-services. They are derived read models — they must not depend on inbound adapters (`api`, `scheduling`).
+Projections live under `mn.tasky.projection.*` packages and are consumed only by runtime composition
+services. Admin queues use `projection.admin`; the public task feed uses `projection.publicfeed`. They are
+derived read models — they must not depend on inbound adapters (`api`, `scheduling`).
 
 **Enforcement.** `ProjectionBoundaryTest`.
 
@@ -419,9 +420,12 @@ For exact column definitions, use the Flyway migrations in `services/api/src/mai
 
 ### 4.3 Read models and projections
 
-Admin read models live in the `projection.admin` package.
+Admin read models live in the `projection.admin` package. The public open-task feed read model lives in
+`projection.publicfeed` and is backed by the `public_task_feed_projection` SQL view.
 
-No SQL views or materialized projections are currently part of the architecture contract. Admin read models are composed in Java through composition services backed by query ports.
+View-backed projections are the current Phase 1 pattern for read-heavy queues and feeds. Runtime composition
+services own the HTTP response shape and may swap a view for a materialized table later without changing the
+controller contract.
 
 ### 4.4 Launch-aligned data flow patterns
 

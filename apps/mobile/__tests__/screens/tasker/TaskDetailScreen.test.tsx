@@ -4,7 +4,7 @@ import type { TextProps } from 'react-native';
 
 import TaskDetailRoute from '../../../src/app/task/[id]';
 import { useTaskDetail } from '../../../src/features/tasks/hooks/useTasks';
-import type { PublicTask } from '../../../src/lib/api/types';
+import type { PublicTask, Task } from '../../../src/lib/api/types';
 import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockPush = jest.fn();
@@ -148,6 +148,32 @@ const baseTask: PublicTask = {
   created_at: '2026-03-23T00:00:00Z',
 };
 
+const ownerTaskDetail: Task = {
+  id: 'task-123',
+  category_id: 'cat-cleaning',
+  category: baseTask.category,
+  customer_id: 'u1',
+  description: 'Deep clean a 3-bedroom apartment',
+  budget: 75000,
+  pricing_mode: 'BUDGET',
+  location_lat: 47.91,
+  location_lng: 106.91,
+  location_text: 'Bayangol district, apartment 12',
+  status: 'OPEN',
+  scheduled_at: '2026-03-25T10:00:00Z',
+  intake_answers: {},
+  intake_schema_version: 1,
+  photos: [
+    {
+      storage_key: 'task-photo-1.jpg',
+      url: 'https://example.com/task-photo-1.jpg',
+      sort_order: 0,
+    },
+  ],
+  created_at: '2026-03-23T00:00:00Z',
+  updated_at: '2026-03-23T00:00:00Z',
+};
+
 beforeEach(() => {
   jest.clearAllMocks();
   mockRequestJson.mockResolvedValue({
@@ -251,6 +277,25 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
       ),
     ).toBeTruthy();
     expect(screen.queryByTestId('application-form')).toBeNull();
+    expect(screen.getByText('Таны даалгавар')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-002-cta')).toBeDisabled();
+  });
+
+  it('SCN-TASK-010: renders owner task detail returned as the full Task shape', () => {
+    mockUseTaskDetail.mockReturnValue({
+      task: ownerTaskDetail,
+      isLoading: false,
+      isError: false,
+      isVerified: true,
+      hasApplied: false,
+      capReached: false,
+    });
+
+    render(<TaskDetailRoute />);
+
+    expect(screen.getByText('Deep clean a 3-bedroom apartment')).toBeTruthy();
+    expect(screen.getByText('Bayangol district, apartment 12')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-photos')).toBeTruthy();
     expect(screen.getByText('Таны даалгавар')).toBeTruthy();
     expect(screen.getByTestId('SCR-TASK-002-cta')).toBeDisabled();
   });

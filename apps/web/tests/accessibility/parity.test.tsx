@@ -63,6 +63,7 @@ function createMockApiClient(): ApiClient {
     listCategories: vi.fn(),
     createTask: vi.fn(),
     listTasks: vi.fn(),
+    getTask: vi.fn(),
     listMyTasks: vi.fn(),
     applyToTask: vi.fn(),
     withdrawApplication: vi.fn(),

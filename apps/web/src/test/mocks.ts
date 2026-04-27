@@ -14,6 +14,7 @@ import {
   makeMessage,
   makeConversation,
   makeTask,
+  makeTaskFeedItem,
   makeCursorPage,
 } from './factories';
 
@@ -42,7 +43,8 @@ export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClie
     }),
     listCategories: vi.fn().mockResolvedValue(makeCursorPage([makeCategory()])),
     createTask: vi.fn().mockResolvedValue(makeTask()),
-    listTasks: vi.fn().mockResolvedValue(makeCursorPage([makeTask()])),
+    listTasks: vi.fn().mockResolvedValue(makeCursorPage([makeTaskFeedItem()])),
+    getTask: vi.fn().mockResolvedValue(makeTask()),
     listMyTasks: vi.fn().mockResolvedValue(makeCursorPage([])),
     applyToTask: vi.fn().mockResolvedValue({
       id: 'app-1',

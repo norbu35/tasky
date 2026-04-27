@@ -1,6 +1,7 @@
 import type {
   User,
   PublicTask,
+  TaskFeedItem,
   Booking,
   Dispute,
   VerificationDetail,
@@ -74,11 +75,36 @@ export function makeTask(overrides: Partial<PublicTask> = {}): PublicTask {
     customer: { id: 'cust-1', full_name: 'Customer One', avatar_url: null, rating_avg: 4.5 },
     description: 'Clean my apartment',
     budget: 50000,
+    pricing_mode: 'BUDGET',
     approximate_location: 'Ulaanbaatar',
+    approximate_lat: 47.9184,
+    approximate_lng: 106.9177,
     status: 'OPEN',
     scheduled_at: new Date().toISOString(),
     photo_urls: [],
     application_count: 0,
+    created_at: new Date().toISOString(),
+    ...overrides,
+  };
+}
+
+export function makeTaskFeedItem(overrides: Partial<TaskFeedItem> = {}): TaskFeedItem {
+  return {
+    id: 'task-1',
+    category: {
+      id: 'cat-1',
+      name: 'Cleaning',
+      name_mn: 'Цэвэрлэгээ',
+      icon_url: '',
+    },
+    description: 'Clean my apartment',
+    pricing_mode: 'BUDGET',
+    budget: 50000,
+    approximate_location: 'Ulaanbaatar',
+    approximate_lat: 47.9184,
+    approximate_lng: 106.9177,
+    status: 'OPEN',
+    scheduled_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
     ...overrides,
   };

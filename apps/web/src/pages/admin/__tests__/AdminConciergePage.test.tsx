@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import type { AdminApiClient } from '../../../lib/adminApiClient';
-import type { ApiClient, PublicTask, User, Booking, CursorPage } from '../../../lib/apiClient';
+import type { ApiClient, TaskFeedItem, User, Booking, CursorPage } from '../../../lib/apiClient';
 import { AdminConciergePage } from '../AdminConciergePage';
 
 // ── Mock AppContext ──────────────────────────────────────────────────
@@ -42,7 +42,7 @@ vi.stubGlobal('crypto', {
 });
 
 // ── Test Data ────────────────────────────────────────────────────────
-const MOCK_TASKS: CursorPage<PublicTask> = {
+const MOCK_TASKS: CursorPage<TaskFeedItem> = {
   data: [
     {
       id: 'task-1',
@@ -51,20 +51,15 @@ const MOCK_TASKS: CursorPage<PublicTask> = {
         name: 'Cleaning',
         name_mn: 'Цэвэрлэгээ',
         icon_url: '',
-        is_active: true,
-        sort_order: 1,
-        intake_enabled: false,
-        assisted_distribution_enabled: false,
-        intake_schema_version: 0,
       },
-      customer: { id: 'cust-1', full_name: 'Customer One', avatar_url: null, rating_avg: 4.5 },
       description: 'Clean my apartment',
+      pricing_mode: 'BUDGET',
       budget: 50000,
       approximate_location: 'Khan-Uul, 15th khoroo',
+      approximate_lat: 47.9184,
+      approximate_lng: 106.9177,
       status: 'OPEN',
       scheduled_at: '2026-03-25T10:00:00Z',
-      photo_urls: [],
-      application_count: 0,
       created_at: '2026-03-23T08:00:00Z',
     },
     {
@@ -74,20 +69,15 @@ const MOCK_TASKS: CursorPage<PublicTask> = {
         name: 'Moving',
         name_mn: 'Нүүлгэлт',
         icon_url: '',
-        is_active: true,
-        sort_order: 2,
-        intake_enabled: false,
-        assisted_distribution_enabled: false,
-        intake_schema_version: 0,
       },
-      customer: { id: 'cust-2', full_name: 'Customer Two', avatar_url: null, rating_avg: 3.8 },
       description: 'Help me move furniture',
+      pricing_mode: 'BUDGET',
       budget: 80000,
       approximate_location: 'Bayangol, 3rd khoroo',
+      approximate_lat: 47.916,
+      approximate_lng: 106.88,
       status: 'OPEN',
       scheduled_at: '2026-03-26T14:00:00Z',
-      photo_urls: [],
-      application_count: 2,
       created_at: '2026-03-22T10:00:00Z',
     },
   ],

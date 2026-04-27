@@ -43,6 +43,22 @@ class ApiContractTraceabilityTests {
     }
 
     @Test
+    @DisplayName("TID-TASK-116-CONTRACT-FEED-ITEM task feed list uses TaskFeedItem summary schema")
+    void taskFeedListUsesSummarySchema() throws Exception {
+        String api = OpenApiContractTestSupport.readOpenApi();
+        String tasksBlock = endpointBlock(api, "/tasks");
+        String generatedTypes = Files.readString(
+                OpenApiContractTestSupport.resolveFromRepoRoot("packages/sdk/src/generated/api-types.ts"));
+
+        assertThat(api).contains("TaskFeedItem:");
+        assertThat(tasksBlock)
+                .contains("operationId: listTasks")
+                .contains("#/components/schemas/TaskFeedItem")
+                .doesNotContain("#/components/schemas/PublicTask");
+        assertThat(generatedTypes).contains("TaskFeedItem:");
+    }
+
+    @Test
     @DisplayName("TID-TASK-002-CI-CONTRACT-DRIFT CI drift gate script enforces generated SDK " + "parity")
     void contractDriftGateScriptExists() throws Exception {
         Path driftScript = OpenApiContractTestSupport.resolveFromRepoRoot(

@@ -18,6 +18,7 @@ import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.marketplace.publicapi.MarketplaceCommandPort;
 import mn.tasky.marketplace.publicapi.MarketplaceQueryPort;
 import mn.tasky.runtime.publicapi.composition.PublicTaskCompositionService;
+import mn.tasky.runtime.publicapi.composition.PublicTaskFeedCompositionService;
 import mn.tasky.runtime.publicapi.composition.TaskApplicationAcceptanceOutcome;
 import mn.tasky.runtime.publicapi.composition.TaskApplicationAcceptanceService;
 import mn.tasky.task.dto.AcceptApplicationRequest;
@@ -62,16 +63,19 @@ public class TaskController {
     private final MarketplaceCommandPort marketplaceCommandPort;
     private final MarketplaceQueryPort marketplaceQueryPort;
     private final PublicTaskCompositionService taskCompositionService;
+    private final PublicTaskFeedCompositionService taskFeedCompositionService;
     private final TaskApplicationAcceptanceService taskApplicationAcceptanceService;
 
     public TaskController(
             MarketplaceCommandPort marketplaceCommandPort,
             MarketplaceQueryPort marketplaceQueryPort,
             PublicTaskCompositionService taskCompositionService,
+            PublicTaskFeedCompositionService taskFeedCompositionService,
             TaskApplicationAcceptanceService taskApplicationAcceptanceService) {
         this.marketplaceCommandPort = marketplaceCommandPort;
         this.marketplaceQueryPort = marketplaceQueryPort;
         this.taskCompositionService = taskCompositionService;
+        this.taskFeedCompositionService = taskFeedCompositionService;
         this.taskApplicationAcceptanceService = taskApplicationAcceptanceService;
     }
 
@@ -85,11 +89,9 @@ public class TaskController {
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
             HttpServletRequest request) {
         try {
-            TaskPage page = marketplaceQueryPort.listTasks(category, lat, lng, radiusKm, cursor, limit);
-            List<Map<String, Object>> data = taskCompositionService.toPublicTaskResponses(page.data());
-
+            var page = taskFeedCompositionService.listTaskFeed(category, lat, lng, radiusKm, cursor, limit);
             return ResponseEntity.ok(
-                    new PagedResponse<>(data, new CursorPagination(page.nextCursor(), page.hasMore())));
+                    new PagedResponse<>(page.data(), new CursorPagination(page.nextCursor(), page.hasMore())));
         } catch (IllegalArgumentException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of(

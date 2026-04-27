@@ -15,10 +15,37 @@ import {
   makeDispute,
   makeProfile,
   makeSession,
+  makeTask,
+  makeTaskFeedItem,
   makeUser,
 } from '../../src/test/factories';
 
 // ── Helpers ──────────────────────────────────────────────────────────
+
+function makeDetailTaskFromFeed(
+  task: ReturnType<typeof makeTaskFeedItem>,
+  overrides: Partial<ReturnType<typeof makeTask>> = {},
+) {
+  return makeTask({
+    id: task.id,
+    category: makeCategory({
+      id: task.category.id,
+      name: task.category.name,
+      name_mn: task.category.name_mn,
+      icon_url: task.category.icon_url ?? '',
+    }),
+    description: task.description,
+    budget: task.budget,
+    pricing_mode: task.pricing_mode,
+    approximate_location: task.approximate_location,
+    approximate_lat: task.approximate_lat,
+    approximate_lng: task.approximate_lng,
+    status: task.status,
+    scheduled_at: task.scheduled_at,
+    created_at: task.created_at,
+    ...overrides,
+  });
+}
 
 function createCustomerContext(overrides: Partial<AppContextValue> = {}): AppContextValue {
   const apiClient = overrides.apiClient ?? createMockApiClient();
@@ -133,28 +160,24 @@ vi.mock('../../src/components/ui/dropdown-menu', () => ({
 
 describe('W1: Pricing mode', () => {
   it('TID-WEB-001 tasker applies with quote_price on QUOTE mode task', async () => {
+    const quoteTask = makeTaskFeedItem({
+      id: 'quote-task-1',
+      category: { id: 'cat-1', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
+      description: 'Quote-mode task',
+      budget: null,
+      pricing_mode: 'QUOTE',
+      approximate_location: 'Sukhbaatar',
+      approximate_lat: 47.92,
+      approximate_lng: 106.92,
+      scheduled_at: '2026-02-15T00:00:00Z',
+      created_at: '2026-02-14T00:00:00Z',
+    });
     const apiClient = createMockApiClient({
       listTasks: vi.fn().mockResolvedValue({
-        data: [
-          {
-            id: 'quote-task-1',
-            category: { id: 'cat-1', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
-            customer: { id: 'cust-1', full_name: 'Customer', avatar_url: null, rating_avg: 4.5 },
-            description: 'Quote-mode task',
-            budget: null,
-            pricing_mode: 'QUOTE',
-            approximate_location: 'Sukhbaatar',
-            approximate_lat: 47.92,
-            approximate_lng: 106.92,
-            status: 'OPEN',
-            scheduled_at: '2026-02-15T00:00:00Z',
-            photo_urls: [],
-            application_count: 0,
-            created_at: '2026-02-14T00:00:00Z',
-          },
-        ],
+        data: [quoteTask],
         cursor: { next: null, has_more: false },
       }),
+      getTask: vi.fn().mockResolvedValue(makeDetailTaskFromFeed(quoteTask)),
       listCategories: vi.fn().mockResolvedValue({
         data: [makeCategory()],
         cursor: { next: null, has_more: false },
@@ -208,28 +231,24 @@ describe('W1: Pricing mode', () => {
   });
 
   it('TID-WEB-001B budget apply modal hides quote input and submits null quote_price', async () => {
+    const budgetTask = makeTaskFeedItem({
+      id: 'budget-task-1',
+      category: { id: 'cat-1', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
+      description: 'Budget-mode task',
+      budget: 75000,
+      pricing_mode: 'BUDGET',
+      approximate_location: 'Sukhbaatar',
+      approximate_lat: 47.92,
+      approximate_lng: 106.92,
+      scheduled_at: '2026-02-15T00:00:00Z',
+      created_at: '2026-02-14T00:00:00Z',
+    });
     const apiClient = createMockApiClient({
       listTasks: vi.fn().mockResolvedValue({
-        data: [
-          {
-            id: 'budget-task-1',
-            category: { id: 'cat-1', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
-            customer: { id: 'cust-1', full_name: 'Customer', avatar_url: null, rating_avg: 4.5 },
-            description: 'Budget-mode task',
-            budget: 75000,
-            pricing_mode: 'BUDGET',
-            approximate_location: 'Sukhbaatar',
-            approximate_lat: 47.92,
-            approximate_lng: 106.92,
-            status: 'OPEN',
-            scheduled_at: '2026-02-15T00:00:00Z',
-            photo_urls: [],
-            application_count: 0,
-            created_at: '2026-02-14T00:00:00Z',
-          },
-        ],
+        data: [budgetTask],
         cursor: { next: null, has_more: false },
       }),
+      getTask: vi.fn().mockResolvedValue(makeDetailTaskFromFeed(budgetTask)),
       listCategories: vi.fn().mockResolvedValue({
         data: [makeCategory()],
         cursor: { next: null, has_more: false },
@@ -275,28 +294,24 @@ describe('W1: Pricing mode', () => {
   });
 
   it('TID-WEB-001C quote apply modal requires quote input', async () => {
+    const quoteRequiredTask = makeTaskFeedItem({
+      id: 'quote-task-required',
+      category: { id: 'cat-1', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
+      description: 'Quote required task',
+      budget: null,
+      pricing_mode: 'QUOTE',
+      approximate_location: 'Sukhbaatar',
+      approximate_lat: 47.92,
+      approximate_lng: 106.92,
+      scheduled_at: '2026-02-15T00:00:00Z',
+      created_at: '2026-02-14T00:00:00Z',
+    });
     const apiClient = createMockApiClient({
       listTasks: vi.fn().mockResolvedValue({
-        data: [
-          {
-            id: 'quote-task-required',
-            category: { id: 'cat-1', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
-            customer: { id: 'cust-1', full_name: 'Customer', avatar_url: null, rating_avg: 4.5 },
-            description: 'Quote required task',
-            budget: null,
-            pricing_mode: 'QUOTE',
-            approximate_location: 'Sukhbaatar',
-            approximate_lat: 47.92,
-            approximate_lng: 106.92,
-            status: 'OPEN',
-            scheduled_at: '2026-02-15T00:00:00Z',
-            photo_urls: [],
-            application_count: 0,
-            created_at: '2026-02-14T00:00:00Z',
-          },
-        ],
+        data: [quoteRequiredTask],
         cursor: { next: null, has_more: false },
       }),
+      getTask: vi.fn().mockResolvedValue(makeDetailTaskFromFeed(quoteRequiredTask)),
       listCategories: vi.fn().mockResolvedValue({
         data: [makeCategory()],
         cursor: { next: null, has_more: false },
@@ -320,26 +335,21 @@ describe('W1: Pricing mode', () => {
   });
 
   it('TID-WEB-002 shows "Accepting quotes" for QUOTE mode tasks in the feed', async () => {
+    const quoteFeedTask = makeTaskFeedItem({
+      id: 'quote-task-2',
+      category: { id: 'cat-1', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
+      description: 'Another quote task',
+      budget: null,
+      pricing_mode: 'QUOTE',
+      approximate_location: 'Khan-Uul',
+      approximate_lat: 47.92,
+      approximate_lng: 106.92,
+      scheduled_at: '2026-02-15T00:00:00Z',
+      created_at: '2026-02-14T00:00:00Z',
+    });
     const apiClient = createMockApiClient({
       listTasks: vi.fn().mockResolvedValue({
-        data: [
-          {
-            id: 'quote-task-2',
-            category: { id: 'cat-1', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
-            customer: { id: 'cust-1', full_name: 'Customer', avatar_url: null, rating_avg: 4.5 },
-            description: 'Another quote task',
-            budget: null,
-            pricing_mode: 'QUOTE',
-            approximate_location: 'Khan-Uul',
-            approximate_lat: 47.92,
-            approximate_lng: 106.92,
-            status: 'OPEN',
-            scheduled_at: '2026-02-15T00:00:00Z',
-            photo_urls: [],
-            application_count: 2,
-            created_at: '2026-02-14T00:00:00Z',
-          },
-        ],
+        data: [quoteFeedTask],
         cursor: { next: null, has_more: false },
       }),
       listCategories: vi.fn().mockResolvedValue({
@@ -622,28 +632,24 @@ describe('W4: Reschedule, no-show, cancel', () => {
 
 describe('W5: Application withdraw', () => {
   it('TID-WEB-010 tasker withdraws application after applying', async () => {
+    const withdrawTask = makeTaskFeedItem({
+      id: 'withdraw-task-1',
+      category: { id: 'cat-1', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
+      description: 'Task to withdraw from',
+      budget: 50000,
+      pricing_mode: 'BUDGET',
+      approximate_location: 'Sukhbaatar',
+      approximate_lat: 47.92,
+      approximate_lng: 106.92,
+      scheduled_at: '2026-02-15T00:00:00Z',
+      created_at: '2026-02-14T00:00:00Z',
+    });
     const apiClient = createMockApiClient({
       listTasks: vi.fn().mockResolvedValue({
-        data: [
-          {
-            id: 'withdraw-task-1',
-            category: { id: 'cat-1', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
-            customer: { id: 'cust-1', full_name: 'Customer', avatar_url: null, rating_avg: 4.5 },
-            description: 'Task to withdraw from',
-            budget: 50000,
-            pricing_mode: 'BUDGET',
-            approximate_location: 'Sukhbaatar',
-            approximate_lat: 47.92,
-            approximate_lng: 106.92,
-            status: 'OPEN',
-            scheduled_at: '2026-02-15T00:00:00Z',
-            photo_urls: [],
-            application_count: 0,
-            created_at: '2026-02-14T00:00:00Z',
-          },
-        ],
+        data: [withdrawTask],
         cursor: { next: null, has_more: false },
       }),
+      getTask: vi.fn().mockResolvedValue(makeDetailTaskFromFeed(withdrawTask)),
       listCategories: vi.fn().mockResolvedValue({
         data: [makeCategory()],
         cursor: { next: null, has_more: false },

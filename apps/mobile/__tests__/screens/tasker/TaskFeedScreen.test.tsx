@@ -5,7 +5,7 @@ import type { TextProps } from 'react-native';
 
 import TaskFeedScreen from '../../../src/app/(tabs)/index';
 import { useTasks } from '../../../src/features/tasks/hooks/useTasks';
-import type { PublicTask } from '../../../src/lib/api/types';
+import type { TaskFeedItem } from '../../../src/lib/api/types';
 import { RoleProvider } from '../../../src/providers/RoleProvider';
 import { useAppStore } from '../../../src/store/appStore';
 import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
@@ -51,38 +51,26 @@ jest.mock('../../../src/features/tasks/hooks/useTasks', () => ({
 
 const mockUseTasks = useTasks as jest.MockedFunction<typeof useTasks>;
 
-const baseTask: PublicTask = {
+const baseTask: TaskFeedItem = {
   id: 'task-1',
   category: {
     id: 'cat-cleaning',
     name: 'Cleaning',
     name_mn: 'Цэвэрлэгээ',
     icon_url: 'https://example/icon.png',
-    is_active: true,
-    sort_order: 1,
-    intake_enabled: false,
-    assisted_distribution_enabled: false,
-    intake_schema_version: 0,
-  },
-  customer: {
-    id: 'customer-1',
-    full_name: 'John Customer',
-    avatar_url: null,
-    rating_avg: 4.5,
   },
   description: 'Deep clean apartment',
+  pricing_mode: 'BUDGET',
   budget: 50000,
   approximate_location: 'Bayangol district',
   approximate_lat: 47.91,
   approximate_lng: 106.91,
   status: 'OPEN',
   scheduled_at: '2026-03-25T10:00:00Z',
-  photo_urls: [],
-  application_count: 3,
   created_at: '2026-03-23T00:00:00Z',
 };
 
-const secondTask: PublicTask = {
+const secondTask: TaskFeedItem = {
   ...baseTask,
   id: 'task-2',
   description: 'Fix kitchen sink',
@@ -92,10 +80,6 @@ const secondTask: PublicTask = {
     id: 'cat-repair',
     name: 'Repair',
     name_mn: 'Засвар',
-  },
-  customer: {
-    ...baseTask.customer,
-    full_name: 'Jane Poster',
   },
 };
 
@@ -183,7 +167,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
 
     expect(screen.getByText('Deep clean apartment')).toBeTruthy();
     expect(screen.getByText('Fix kitchen sink')).toBeTruthy();
-    expect(screen.getByText('John Customer')).toBeTruthy();
+    expect(screen.queryByText('John Customer')).toBeNull();
     expect(screen.getAllByText('Bayangol district').length).toBeGreaterThan(0);
   });
 

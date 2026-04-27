@@ -8,12 +8,12 @@ import { LocationPin } from '@/components/ui/LocationPin';
 import { PriceTag } from '@/components/ui/PriceTag';
 import { SplitCard } from '@/components/ui/SplitCard';
 import { mobileTheme } from '@/design/tokenAdapter';
-import type { PublicTask } from '@/lib/api/types';
+import type { TaskFeedItem } from '@/lib/api/types';
 import { formatShortDate } from '@/utils/formatDate';
 
 const { colors } = mobileTheme;
 
-function TaskCardHeader({ task }: { task: PublicTask }) {
+function TaskCardHeader({ task }: { task: TaskFeedItem }) {
   const { t } = useTranslation();
   const isQuoteMode = task.pricing_mode === 'QUOTE' || task.budget == null;
   return (
@@ -34,7 +34,7 @@ function TaskCardHeader({ task }: { task: PublicTask }) {
   );
 }
 
-function TaskCardBody({ task }: { task: PublicTask }) {
+function TaskCardBody({ task }: { task: TaskFeedItem }) {
   const { t } = useTranslation();
   return (
     <View className="gap-sm">
@@ -59,16 +59,13 @@ function TaskCardBody({ task }: { task: PublicTask }) {
             </Text>
           </View>
         ) : null}
-        <Text className="text-caption text-text-secondary" numberOfLines={1}>
-          {task.customer.full_name}
-        </Text>
       </View>
     </View>
   );
 }
 
 interface TaskFeedCardProps {
-  task: PublicTask;
+  task: TaskFeedItem;
   onPress: () => void;
   testID: string;
 }
