@@ -1,6 +1,7 @@
 package mn.tasky.booking.application.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.Instant;
@@ -89,6 +90,33 @@ class BookingIntentCommandHandlerTest {
     }
 
     @Test
+    void createApplicationSelectionIntent_success() {
+        BookingIntentState intent = intentState();
+        CreateResult cr = new CreateResult(intent, null, null);
+        Instant expiresAt = now.plusSeconds(900);
+        when(bookingIntentService.createApplicationSelectionIntent("c1", "t1", "a1", "tk1", expiresAt))
+                .thenReturn(cr);
+
+        BookingIntentCreateResult result = handler.createApplicationSelectionIntent("c1", "t1", "a1", "tk1", expiresAt);
+
+        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.intent()).containsSame(intent);
+    }
+
+    @Test
+    void createApplicationSelectionIntent_error() {
+        Instant expiresAt = now.plusSeconds(900);
+        CreateResult cr = new CreateResult(null, "APPLICATION_NOT_AVAILABLE", "Application is not available");
+        when(bookingIntentService.createApplicationSelectionIntent("c1", "t1", "a1", "tk1", expiresAt))
+                .thenReturn(cr);
+
+        BookingIntentCreateResult result = handler.createApplicationSelectionIntent("c1", "t1", "a1", "tk1", expiresAt);
+
+        assertThat(result.isSuccess()).isFalse();
+        assertThat(result.errorCode()).isEqualTo("APPLICATION_NOT_AVAILABLE");
+    }
+
+    @Test
     void getIntent_found() {
         BookingIntentState intent = intentState();
         when(bookingIntentService.getIntent("i1")).thenReturn(Optional.of(intent));
@@ -105,5 +133,33 @@ class BookingIntentCommandHandlerTest {
         Optional<BookingIntentState> result = handler.getIntent("i1");
 
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    void findPendingApplicationSelectionIntent_delegates() {
+        BookingIntentState intent = intentState();
+        when(bookingIntentService.findPendingApplicationSelectionIntent("t1", "a1", now))
+                .thenReturn(Optional.of(intent));
+
+        Optional<BookingIntentState> result = handler.findPendingApplicationSelectionIntent("t1", "a1", now);
+
+        assertThat(result).containsSame(intent);
+    }
+
+    @Test
+    void expirePendingApplicationSelectionForTask_delegates() {
+        when(bookingIntentService.expirePendingApplicationSelectionForTask("t1", now))
+                .thenReturn(2);
+
+        int expired = handler.expirePendingApplicationSelectionForTask("t1", now);
+
+        assertThat(expired).isEqualTo(2);
+    }
+
+    @Test
+    void markIntentConfirmed_delegates() {
+        handler.markIntentConfirmed("i1", "b1", now);
+
+        verify(bookingIntentService).markIntentConfirmed("i1", "b1", now);
     }
 }

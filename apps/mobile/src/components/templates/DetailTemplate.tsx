@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, View, type LayoutChangeEvent } from 'react-native';
 
 import { screenLayout } from '@/design/screenLayout';
+
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 import { Button } from '../ui/Button';
 
@@ -154,10 +155,7 @@ export function DetailTemplate({
           testID={testID ? `${testID}-bottom-bar` : undefined}
           insideTabNavigator={insideTabNavigator}
         >
-          <View
-            onLayout={handleActionBarLayout}
-            style={{ padding: screenLayout.actions.barPadding }}
-          >
+          <View onLayout={handleActionBarLayout}>
             {secondaryCtaLabel && secondaryCtaOnPress && (
               <Button
                 label={secondaryCtaLabel}
