@@ -14,7 +14,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { elevations } from '@/design/elevations';
 import { screenLayout } from '@/design/screenLayout';
 import { mobileTheme, springs } from '@/design/tokenAdapter';
-import { useReviewGate } from '@/features/review/components/ReviewGateProvider';
 import { cn } from '@/lib/cn';
 import { useAuthStore } from '@/store/authStore';
 
@@ -27,13 +26,18 @@ const FAB_Z_INDEX = 999;
 type FABProps = {
   testID?: string;
   authGuard?: boolean;
+  hidden?: boolean;
   className?: string;
 };
 
-export function FAB({ testID = 'global-fab', authGuard = true, className }: FABProps) {
+export function FAB({
+  testID = 'global-fab',
+  authGuard = true,
+  hidden = false,
+  className,
+}: FABProps) {
   const router = useRouter();
   const session = useAuthStore((state) => state.session);
-  const { isLocked } = useReviewGate();
   const insets = useSafeAreaInsets();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
@@ -102,7 +106,7 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
     ],
   }));
 
-  if (isLocked) {
+  if (hidden) {
     return null;
   }
 

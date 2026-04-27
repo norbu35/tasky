@@ -20,6 +20,7 @@ import { elevations } from '@/design/elevations';
 import { screenLayout } from '@/design/screenLayout';
 import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
 import { useUnreadCount } from '@/features/chat/hooks/useUnreadCount';
+import { useReviewGate } from '@/features/review/components/ReviewGateProvider';
 import { useRole } from '@/providers/RoleProvider';
 
 const { colors, typography } = mobileTheme;
@@ -37,6 +38,7 @@ const TAB_BAR_TOP_RADIUS = nativeTokens.radius.md;
 export default function TabsLayout() {
   const { t } = useTranslation();
   const { isCustomer } = useRole();
+  const { isLocked } = useReviewGate();
   const unreadCount = useUnreadCount();
   const insets = useSafeAreaInsets();
   const segments = useSegments();
@@ -131,7 +133,7 @@ export default function TabsLayout() {
           }}
         />
       </Tabs>
-      {isCustomer && <FAB />}
+      {isCustomer && <FAB hidden={isLocked} />}
     </View>
   );
 }
