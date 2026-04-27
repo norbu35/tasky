@@ -107,9 +107,8 @@ export const renderTokensCss = (webTokens) => {
   const rootSections = Object.entries(webTokens.cssVariableSections)
     .map(([sectionName, variables]) => renderSection(sectionName, variables))
     .join('\n\n');
-  const darkVariables = renderVariables(webTokens.darkCssVariables);
 
-  return `:root {\n${rootSections}\n}\n\n.dark {\n${darkVariables}\n}\n`;
+  return `:root {\n${rootSections}\n}\n`;
 };
 
 export const generateTokensCss = async () => {

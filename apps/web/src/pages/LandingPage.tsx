@@ -117,14 +117,14 @@ function AnimatedTaskFeed() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="flex items-center gap-4 rounded-xl border border-white/20 bg-white/10 shadow-[var(--shadow-elevated)] backdrop-blur-md px-5 py-4 hover:bg-white/20 transition-colors cursor-pointer"
+            className="flex items-center gap-4 rounded-xl border border-primary-foreground/20 bg-primary-foreground/10 shadow-elevated backdrop-blur-md px-5 py-4 hover:bg-primary-foreground/20 transition-colors cursor-pointer"
           >
             <div
               className={`w-3 h-3 rounded-full flex-shrink-0 ${CATEGORY_COLORS[task.category]}`}
             />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-white truncate">{task.title}</p>
-              <p className="text-xs text-white/80 mt-0.5">
+              <p className="text-sm font-bold text-primary-foreground truncate">{task.title}</p>
+              <p className="text-xs text-primary-foreground/80 mt-0.5">
                 {task.price} · {task.district}
               </p>
             </div>
@@ -146,7 +146,7 @@ export function LandingPage() {
   return (
     <div className="min-h-screen font-sans selection:bg-accent/20">
       {/* Header — floating glassmorphic nav */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/5 backdrop-blur-xl border-b border-white/[0.02] shadow-sm px-6 py-4 transition-all duration-300">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-primary-foreground/5 backdrop-blur-xl border-b border-primary-foreground/5 shadow-sm px-6 py-4 transition-all duration-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Shield className="w-6 h-6 text-accent" />
@@ -155,7 +155,7 @@ export function LandingPage() {
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <LanguageSwitcher className="bg-black/20 text-white hover:bg-black/40 border border-white/10 backdrop-blur-md shadow-sm" />
+            <LanguageSwitcher className="bg-primary-deep/20 text-primary-foreground hover:bg-primary-deep/40 border border-primary-foreground/10 backdrop-blur-md shadow-sm" />
             <Button
               className="font-semibold bg-accent text-accent-foreground hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/20 transition-all hover:-translate-y-0.5 flex items-center gap-2"
               onClick={() => navigate('/auth')}
@@ -187,13 +187,13 @@ export function LandingPage() {
               transition={{ duration: 0.8, ease: 'easeOut' }}
               className="space-y-8 text-center lg:text-left"
             >
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tighter leading-[1.05] text-white drop-shadow-sm">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tighter leading-[1.05] text-primary-foreground drop-shadow-sm">
                 {t('landing.heroTitle1')}
                 <br />
                 {t('landing.heroTitle2')}
               </h1>
 
-              <p className="text-lg sm:text-xl text-white/80 font-medium leading-relaxed max-w-lg mx-auto lg:mx-0">
+              <p className="text-lg sm:text-xl text-primary-foreground/80 font-medium leading-relaxed max-w-lg mx-auto lg:mx-0">
                 {t('landing.heroSubtitle')}
               </p>
 
@@ -209,7 +209,7 @@ export function LandingPage() {
                 <Button
                   size="lg"
                   variant="ghost"
-                  className="w-full sm:w-auto h-14 px-8 text-lg font-semibold text-primary-foreground/90 border border-white/20 hover:bg-white/10 backdrop-blur-sm transition-all hover:scale-105 active:scale-95 hover:border-white/40 hover:text-white"
+                  className="w-full sm:w-auto h-14 px-8 text-lg font-semibold text-primary-foreground/90 border border-primary-foreground/20 hover:bg-primary-foreground/10 backdrop-blur-sm transition-all hover:scale-105 active:scale-95 hover:border-primary-foreground/40 hover:text-primary-foreground"
                   onClick={() => navigate('/auth')}
                 >
                   {t('landing.becomeTaskerBtn')}
@@ -250,7 +250,7 @@ export function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Deep Cleaning */}
               <div
-                className="md:col-span-2 group relative overflow-hidden rounded-xl aspect-[16/9] md:aspect-auto md:h-[500px] bg-card transition-all hover:shadow-[var(--shadow-deep)] hover:-translate-y-1 cursor-pointer"
+                className="md:col-span-2 group relative overflow-hidden rounded-xl aspect-[16/9] md:aspect-auto md:h-[500px] bg-card transition-all hover:shadow-deep hover:-translate-y-1 cursor-pointer"
                 onClick={() => navigate('/auth')}
               >
                 <img
@@ -275,7 +275,7 @@ export function LandingPage() {
 
               {/* Minor Handyman */}
               <div
-                className="group relative overflow-hidden rounded-xl bg-card hover:shadow-[var(--shadow-elevated)] transition-all hover:-translate-y-1 cursor-pointer border border-border/50"
+                className="group relative overflow-hidden rounded-xl bg-card hover:shadow-elevated transition-all hover:-translate-y-1 cursor-pointer border border-border/50"
                 onClick={() => navigate('/auth')}
               >
                 <div className="p-8 sm:p-10 h-full flex flex-col justify-between">
@@ -300,7 +300,7 @@ export function LandingPage() {
 
               {/* Furniture Assembly */}
               <div
-                className="group relative overflow-hidden rounded-xl bg-card border border-border/50 text-foreground hover:shadow-[var(--shadow-elevated)] transition-all hover:-translate-y-1 cursor-pointer"
+                className="group relative overflow-hidden rounded-xl bg-card border border-border/50 text-foreground hover:shadow-elevated transition-all hover:-translate-y-1 cursor-pointer"
                 onClick={() => navigate('/auth')}
               >
                 <div className="p-8 sm:p-10">
@@ -324,7 +324,7 @@ export function LandingPage() {
 
               {/* Movers & Help */}
               <div
-                className="md:col-span-2 group relative overflow-hidden rounded-xl bg-primary text-primary-foreground hover:shadow-[var(--shadow-deep)] transition-all hover:-translate-y-1 cursor-pointer"
+                className="md:col-span-2 group relative overflow-hidden rounded-xl bg-primary text-primary-foreground hover:shadow-deep transition-all hover:-translate-y-1 cursor-pointer"
                 onClick={() => navigate('/auth')}
               >
                 <div className="p-8 sm:p-10 grid md:grid-cols-2 gap-8 items-center h-full">
@@ -376,7 +376,7 @@ export function LandingPage() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
-                className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-[var(--shadow-deep)] ring-1 ring-inset ring-primary/10 relative overflow-hidden transition-shadow hover:shadow-[var(--shadow-deep)]"
+                className="bg-card rounded-[2rem] p-8 sm:p-10 shadow-deep ring-1 ring-inset ring-primary/10 relative overflow-hidden transition-shadow hover:shadow-deep"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[100px] -z-0" />
                 <div className="relative z-10 space-y-3 mb-8">
@@ -426,7 +426,7 @@ export function LandingPage() {
                       className="flex gap-5 group"
                     >
                       <div
-                        className={`flex-shrink-0 w-14 h-14 rounded-2xl ${step.bg} flex items-center justify-center ${step.text} font-bold text-xl transition-all duration-300 group-hover:scale-[1.15] ${step.hoverBg} group-hover:text-white shadow-sm ring-4 ring-white relative z-10 group-hover:shadow-lg`}
+                        className={`flex-shrink-0 w-14 h-14 rounded-2xl ${step.bg} flex items-center justify-center ${step.text} font-bold text-xl transition-all duration-300 group-hover:scale-[1.15] ${step.hoverBg} group-hover:text-primary-foreground shadow-sm ring-4 ring-background relative z-10 group-hover:shadow-lg`}
                       >
                         {step.num}
                       </div>
@@ -444,7 +444,7 @@ export function LandingPage() {
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
-                className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-[var(--shadow-deep)] ring-1 ring-inset ring-secondary/20 relative overflow-hidden lg:mt-12 transition-shadow hover:shadow-[var(--shadow-deep)]"
+                className="bg-card rounded-[2rem] p-8 sm:p-10 shadow-deep ring-1 ring-inset ring-secondary/20 relative overflow-hidden lg:mt-12 transition-shadow hover:shadow-deep"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-bl-[100px] -z-0" />
                 <div className="relative z-10 space-y-3 mb-8">
@@ -494,7 +494,7 @@ export function LandingPage() {
                       className="flex gap-5 group"
                     >
                       <div
-                        className={`flex-shrink-0 w-14 h-14 rounded-2xl ${step.bg} flex items-center justify-center ${step.text} font-bold text-xl transition-all duration-300 group-hover:scale-[1.15] ${step.hoverBg} group-hover:text-white shadow-sm ring-4 ring-white relative z-10 group-hover:shadow-lg`}
+                        className={`flex-shrink-0 w-14 h-14 rounded-2xl ${step.bg} flex items-center justify-center ${step.text} font-bold text-xl transition-all duration-300 group-hover:scale-[1.15] ${step.hoverBg} group-hover:text-primary-foreground shadow-sm ring-4 ring-background relative z-10 group-hover:shadow-lg`}
                       >
                         {step.num}
                       </div>
@@ -526,7 +526,7 @@ export function LandingPage() {
                 <p className="text-sm font-bold uppercase tracking-[0.075em] text-accent mb-8">
                   {t('landing.trustReality')}
                 </p>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-6 text-white">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-6 text-primary-foreground">
                   {t('landing.trustPainLine')}
                 </h2>
                 <p className="text-lg text-primary-foreground/50 max-w-md">
@@ -541,7 +541,7 @@ export function LandingPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
-              className="bg-background text-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28 relative z-10 lg:-ml-6 shadow-[var(--shadow-elevated)] rounded-l-3xl lg:rounded-l-[3rem]"
+              className="bg-background text-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28 relative z-10 lg:-ml-6 shadow-elevated rounded-l-3xl lg:rounded-l-[3rem]"
             >
               <h3 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-10">
                 {t('landing.trustRelief')}
@@ -585,7 +585,7 @@ export function LandingPage() {
 
               <Button
                 size="lg"
-                className="w-fit h-14 px-10 text-lg font-bold shadow-[var(--shadow-fab)] bg-gradient-to-r from-primary-deep to-primary"
+                className="w-fit h-14 px-10 text-lg font-bold shadow-fab bg-gradient-to-r from-primary-deep to-primary"
                 onClick={() => navigate('/auth')}
               >
                 {t('landing.joinTrust')}
@@ -709,7 +709,7 @@ export function LandingPage() {
 
             {/* Content Side */}
             <div className="w-full md:w-1/2 px-8 py-20 lg:px-24 xl:px-32 relative z-10 space-y-8 text-center md:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-accent font-semibold text-sm">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-foreground/5 border border-primary-foreground/10 text-accent font-semibold text-sm">
                 <Smartphone className="w-4 h-4" />
                 <span>{t('landing.mobileApp')}</span>
               </div>
@@ -723,22 +723,22 @@ export function LandingPage() {
                 <Button
                   variant="secondary"
                   size="lg"
-                  className="h-14 px-6 border border-white/20 text-white hover:bg-white/10 hover:text-white bg-black/40 backdrop-blur-sm gap-3"
+                  className="h-14 px-6 border border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground bg-primary-deep/40 backdrop-blur-sm gap-3"
                 >
                   <Smartphone className="w-6 h-6" />
                   <div className="text-left leading-tight">
-                    <div className="text-[10px] text-white/70">Download on the</div>
+                    <div className="text-[10px] text-primary-foreground/70">Download on the</div>
                     <div className="font-bold">App Store</div>
                   </div>
                 </Button>
                 <Button
                   variant="secondary"
                   size="lg"
-                  className="h-14 px-6 border border-white/20 text-white hover:bg-white/10 hover:text-white bg-black/40 backdrop-blur-sm gap-3"
+                  className="h-14 px-6 border border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground bg-primary-deep/40 backdrop-blur-sm gap-3"
                 >
                   <Download className="w-6 h-6" />
                   <div className="text-left leading-tight">
-                    <div className="text-[10px] text-white/70">GET IT ON</div>
+                    <div className="text-[10px] text-primary-foreground/70">GET IT ON</div>
                     <div className="font-bold">Google Play</div>
                   </div>
                 </Button>

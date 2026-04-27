@@ -77,7 +77,7 @@ Compatibility exports remain available from the root package export:
 ```ts
 import { webTokens } from '@tasky/design-tokens';
 
-webTokens.cssVariables['--color-primary'];
+webTokens.cssVariableSections.semanticAliases['--color-primary'];
 webTokens.typography.fontFamily.sans;
 webTokens.interaction.pressed.opacity;
 webTokens.elevation.modal.zIndex;

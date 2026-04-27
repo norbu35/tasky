@@ -114,8 +114,8 @@ export function TaskerCancelDialog() {
             </div>
 
             {selectedReason === 'SAFETY_FRAUD' && (
-              <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3">
-                <p className="text-xs text-amber-600 font-medium">
+              <div className="bg-secondary/10 border border-secondary/30 rounded-lg p-3">
+                <p className="text-xs text-secondary font-medium">
                   {t('taskerPages.cancelDialog.safetyNotice')}
                 </p>
               </div>

@@ -17,7 +17,15 @@ export function Touchable({ className, style, children, testID, ...props }: Touc
     console.warn('Touchable: testID is required for all interactive elements');
   }
   return (
-    <Pressable className={cn(className)} style={style} testID={testID} {...props}>
+    <Pressable
+      className={cn(
+        'active:opacity-pressed active:scale-pressed disabled:opacity-disabled',
+        className,
+      )}
+      style={style}
+      testID={testID}
+      {...props}
+    >
       {children}
     </Pressable>
   );

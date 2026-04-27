@@ -89,7 +89,7 @@ existing_components:
         style,
       ]
     states: [default, pressed, disabled, loading]
-    animation: 'spring scale 0.96 (Reanimated useAnimatedStyle)'
+    animation: 'NativeWind active:opacity-pressed active:scale-pressed'
     shadow: 'elevations.card applied via style={} for default variant only'
     tokens:
       colors: [primary, secondary, danger, background]
@@ -177,8 +177,9 @@ existing_components:
       - 'Auth check before action'
 
   - id: COMP-MODALSHEET
-    name: ModalSheet
+    name: Dialog
     path: 'apps/mobile/src/components/ui/ModalSheet.tsx'
+    runtime_name: ModalSheet
     nativewind: true
     variants: [default]
     props: [visible, onClose, title, children, primaryAction, secondaryAction]
@@ -190,7 +191,7 @@ existing_components:
       radius: [lg]
       spacing: [lg, xl]
     rules:
-      - 'All destructive confirmations use ModalSheet'
+      - 'All destructive confirmations use Dialog'
       - 'Max 2 action buttons (primary + secondary)'
       - 'Handle bar always visible for drag-to-dismiss'
 
@@ -212,7 +213,7 @@ existing_components:
     rules:
       - 'Host-owned lifecycle controls auto-dismiss timing'
       - 'Error retry actions belong in the host surface, not inside Toast'
-      - 'Never overlap with ModalSheet'
+      - 'Never overlap with Dialog'
 
   - id: COMP-STATUSBADGE
     name: StatusBadge
@@ -297,8 +298,9 @@ existing_components:
       - 'Featured variant has highlighted border'
 
   - id: COMP-PROFILEAVATAR
-    name: ProfileAvatar
+    name: Avatar
     path: 'apps/mobile/src/components/ui/ProfileAvatar.tsx'
+    runtime_name: ProfileAvatar
     nativewind: true
     variants: [xs, sm, md, lg]
     props: [uri, name, size, showVerified, className]
@@ -359,7 +361,7 @@ new_components:
       - 'Body: light background, task details, status badge'
       - 'Urgent tasks get accent highlight + label'
     composition:
-      header: [ProfileAvatar, price_display, StatusBadge]
+      header: [Avatar, price_display, StatusBadge]
       body: [card_title, body_default, CategoryChip, TrustBanner.compact]
 
   - id: COMP-STEPINDICATOR
@@ -415,7 +417,7 @@ new_components:
       - 'Clear all button when filters active'
     composition:
       chips: [CategoryChip]
-      sheet: [ModalSheet]
+      sheet: [Dialog]
 
   - id: COMP-TOUCHABLE
     name: Touchable
@@ -497,7 +499,7 @@ new_components:
       - 'Illustration centered above text'
 
   - id: COMP-LOADINGSKELETON
-    name: LoadingSkeleton
+    name: Skeleton
     path: 'apps/mobile/src/components/ui/SkeletonLoader.tsx'
     runtime_name: SkeletonLoader
     description: 'Content-matching skeleton loading placeholder'
@@ -603,7 +605,7 @@ new_components:
       colors: [verified, secondary]
       icon_sizes: [avatar_badge, status]
     rules:
-      - 'Anchored to ProfileAvatar bottom-right'
+      - 'Anchored to Avatar bottom-right'
       - 'Never shown for unverified users'
 
   - id: COMP-TIMELINEEVENT
@@ -694,7 +696,7 @@ templates:
       - fab
       - pull_to_refresh
       - pagination_footer
-    components: [SearchBar, FilterBar, SplitCard, Card, FAB, EmptyState, LoadingSkeleton]
+    components: [SearchBar, FilterBar, SplitCard, Card, FAB, EmptyState, Skeleton]
     required_states: [loading, empty, populated, error, offline]
     rules:
       - 'Pull-to-refresh on all list screens'
@@ -713,7 +715,7 @@ templates:
       - hero_section
       - content_sections
       - bottom_cta_bar
-    components: [Button, StatusBadge, ProfileAvatar, TrustBanner, StarRating, TimelineEvent]
+    components: [Button, StatusBadge, Avatar, TrustBanner, StarRating, TimelineEvent]
     rules:
       - 'Back button in nav header'
       - 'Sticky CTA bar at bottom for primary action'
@@ -765,7 +767,7 @@ templates:
       - content
       - primary_action
       - secondary_action
-    components: [Button, ModalSheet]
+    components: [Button, Dialog]
     rules:
       - 'Drag-to-dismiss via handle bar'
       - 'Max 2 action buttons'
@@ -827,14 +829,14 @@ templates:
 
 composition_rules:
   - rule: 'All forms use FormField wrapper with inline error below field'
-  - rule: 'Destructive actions always use ModalSheet confirmation with explicit copy'
+  - rule: 'Destructive actions always use Dialog confirmation with explicit copy'
   - rule: 'List → Detail flows always use push navigation (page_enter/page_exit)'
-  - rule: 'Search/Filter/Sort follows: SearchBar → FilterBar → ModalSheet pattern'
+  - rule: 'Search/Filter/Sort follows: SearchBar → FilterBar → Dialog pattern'
   - rule: 'Pull-to-refresh on all feed_list and detail screens with async data'
-  - rule: 'Pagination via infinite scroll with LoadingSkeleton footer'
+  - rule: 'Pagination via infinite scroll with Skeleton footer'
   - rule: "Empty states include activation CTAs (not just 'nothing here')"
   - rule: "All success moments include 'what happens next' guidance"
-  - rule: 'Loading states use LoadingSkeleton matching content layout (never spinner)'
+  - rule: 'Loading states use Skeleton matching content layout (never spinner)'
   - rule: 'Error states use shared error component with retry CTA'
   - rule: 'Offline states show banner + cached content or full-screen EmptyState'
 
@@ -843,14 +845,14 @@ composition_rules:
 # ═══════════════════════════════════════════════════
 
 forbidden_combinations:
-  - combination: 'Toast + ModalSheet simultaneously'
-    reason: 'Visual conflict — Toast is z:50, ModalSheet z:30, but they compete for attention'
+  - combination: 'Toast + Dialog simultaneously'
+    reason: 'Visual conflict — Toast is z:50, Dialog z:30, but they compete for attention'
   - combination: 'FAB on non-Customer-My-Tasks screens'
     reason: "FAB is exclusively for 'Post Task' action"
-  - combination: 'danger Button without ModalSheet confirmation'
+  - combination: 'danger Button without Dialog confirmation'
     reason: 'Destructive actions require explicit confirmation'
   - combination: 'Generic spinner as loading state'
-    reason: 'Always use LoadingSkeleton matching content layout'
+    reason: 'Always use Skeleton matching content layout'
   - combination: 'price_display typography outside price/budget contexts'
     reason: 'Reserve Manrope bold 20px for monetary values only'
   - combination: 'caption typography for primary content'

@@ -4,7 +4,13 @@ import { useTranslation } from 'react-i18next';
 
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
 import { useAppContext } from '../../context/AppContext';
 import { ResponsiveDetailShell } from '../../layout/parity/ResponsiveDetailShell';
 
@@ -96,7 +102,7 @@ function StatusBadge({ status }: { status: string }) {
       );
     case 'COMPLETED':
       return (
-        <Badge variant="outline" className="gap-1 text-green-600">
+        <Badge variant="outline" className="gap-1 text-verified">
           <CheckCircle className="h-3 w-3" />
           {t('taskerPages.jobs.statusCompleted')}
         </Badge>

@@ -16,9 +16,9 @@ export function FeedCard({ category, description, budget, location, onApply }: F
   return (
     <div
       className={cn(
-        'bg-card rounded-xl border border-border/60 shadow-[var(--shadow-elevated)]',
+        'bg-card rounded-xl border border-border/60 shadow-elevated',
         'flex flex-col overflow-hidden transition-all duration-300',
-        'hover:shadow-[var(--shadow-deep)] hover:-translate-y-0.5',
+        'hover:shadow-deep hover:-translate-y-0.5',
       )}
     >
       <div className="border-b border-border/30 bg-muted/40 px-4 pb-3 pt-4">
@@ -59,7 +59,7 @@ export function FeedCard({ category, description, budget, location, onApply }: F
       </div>
 
       <div className="border-t border-border/40 bg-muted/30 px-4 py-3">
-        <Button onClick={onApply} className="w-full shadow-[var(--shadow-fab)]">
+        <Button onClick={onApply} className="w-full shadow-fab">
           View Details &amp; Apply
         </Button>
       </div>

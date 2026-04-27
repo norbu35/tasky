@@ -29,6 +29,12 @@ describe('NativeWind configuration', () => {
     expect(rootLayoutSource).toMatch(/import\s+['"]\.\.\/\.\.\/global\.css['"]/);
     expect(tailwindConfigSource).toContain('nativewind/preset');
     expect(tailwindConfigSource).toContain('nativeTokens');
+    expect(tailwindConfigSource).toContain('typographyScaleWithKebab');
+    expect(tailwindConfigSource).toContain("'active:opacity-pressed'");
+    expect(tailwindConfigSource).toContain(
+      'pressed: `${nativeTokens.interaction.pressed.opacity}`',
+    );
+    expect(tailwindConfigSource).not.toContain('fontSize: nativeTokens.typography.scale');
     expect(metroConfigSource).toContain('withNativeWind');
     expect(globalCssSource).toContain('@tailwind base;');
     expect(globalCssSource).toContain('@tailwind utilities;');

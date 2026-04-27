@@ -400,7 +400,7 @@ export function BookingSafetyPage() {
               {t('bookingSafety.closeBtn')}
             </Button>
             <Button
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
               onClick={() => cancelMutation.mutate(selectedBooking!.id)}
               disabled={cancelMutation.isPending}
             >
@@ -644,7 +644,7 @@ export function BookingSafetyPage() {
               {t('bookingSafety.cancelActionBtn')}
             </Button>
             <Button
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
               onClick={() => disputeMutation.mutate(selectedBooking!.id)}
               disabled={disputeMutation.isPending || disputeReason.length < 10 || !disputeCategory}
             >

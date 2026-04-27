@@ -50,7 +50,7 @@ export function TaskerNoShowDialog() {
         <Card className="border-border/60 shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-amber-500" />
+              <Clock className="w-5 h-5 text-secondary" />
               {t('taskerPages.noShow.timingTitle')}
             </CardTitle>
           </CardHeader>
@@ -66,10 +66,10 @@ export function TaskerNoShowDialog() {
           </CardContent>
         </Card>
 
-        <Card className="border-amber-500/30 bg-amber-500/5">
+        <Card className="border-secondary/30 bg-secondary/5">
           <CardContent className="pt-6">
             <div className="flex gap-3">
-              <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+              <AlertTriangle className="w-5 h-5 text-secondary shrink-0 mt-0.5" />
               <div className="text-sm">
                 <p className="font-medium">{t('taskerPages.noShow.warningTitle')}</p>
                 <ul className="mt-2 space-y-1 text-muted-foreground list-disc list-inside">

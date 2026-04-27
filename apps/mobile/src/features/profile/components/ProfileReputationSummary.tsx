@@ -31,7 +31,7 @@ export function ProfileReputationSummary({
       <View className="items-center gap-xs">
         <View className="flex-row items-center gap-sm">
           <Star size={22} color={colors.accent} fill={colors.accent} />
-          <Text className="text-heroTitle font-sans-bold text-foreground">{rating}</Text>
+          <Text className="text-hero-title font-sans-bold text-foreground">{rating}</Text>
         </View>
         <Text className="text-subtitle font-sans-bold text-primary-deep text-center">{title}</Text>
         <Text className="text-caption text-text-secondary text-center leading-[20px]">{body}</Text>

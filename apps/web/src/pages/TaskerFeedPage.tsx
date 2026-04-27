@@ -259,7 +259,7 @@ export function TaskerFeedPage() {
                       </Badge>
                       <Badge
                         variant="outline"
-                        className="text-emerald-500 border-emerald-500/30 bg-emerald-500/5 px-2.5 py-0.5 font-semibold"
+                        className="text-verified border-verified/30 bg-verified/5 px-2.5 py-0.5 font-semibold"
                       >
                         {t('taskerFeed.statusOpen')}
                       </Badge>
@@ -338,7 +338,7 @@ export function TaskerFeedPage() {
                                 <h3 className="font-semibold text-base leading-tight">
                                   {task.customer?.full_name || t('common.customer')}
                                 </h3>
-                                <div className="flex items-center text-sm text-amber-500 font-medium mt-0.5">
+                                <div className="flex items-center text-sm text-secondary font-medium mt-0.5">
                                   <Star className="w-4 h-4 fill-current mr-1" />
                                   <span>
                                     {task.customer?.rating_avg?.toFixed(1) ||

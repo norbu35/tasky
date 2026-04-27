@@ -221,8 +221,8 @@ export function ProfilePage() {
               ) : (
                 <User className="h-6 w-6 text-primary/40" />
               )}
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                <Camera className="h-6 w-6 text-white" />
+              <div className="absolute inset-0 flex items-center justify-center bg-primary-deep/40 opacity-0 transition-opacity group-hover:opacity-100">
+                <Camera className="h-6 w-6 text-primary-foreground" />
               </div>
               {working ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">

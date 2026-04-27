@@ -345,7 +345,7 @@ export function AdminVerificationsPage() {
                     <div className="flex gap-3">
                       <Button
                         size="sm"
-                        className="bg-verified hover:bg-verified/90 text-white"
+                        className="bg-verified hover:bg-verified/90 text-verified-foreground"
                         disabled={approvingId === v.id}
                         onClick={(e) => {
                           e.stopPropagation();

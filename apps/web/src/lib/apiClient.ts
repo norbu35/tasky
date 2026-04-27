@@ -209,7 +209,6 @@ export interface ApiClient {
   ): Promise<VerificationStatus>;
 
   getVerificationStatus(accessToken: string): Promise<VerificationStatus>;
-
   markBookingDone(
     accessToken: string,
     bookingId: string,
@@ -825,7 +824,6 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
       accessToken,
     );
   }
-
 
   markBookingDone(
     accessToken: string,

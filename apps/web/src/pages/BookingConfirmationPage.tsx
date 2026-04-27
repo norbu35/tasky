@@ -178,8 +178,8 @@ export function BookingConfirmationPage() {
     return (
       <ScreenFrame maxWidth="narrow">
         <div className="flex flex-col items-center justify-center text-center py-12">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-            <CheckCircle2 className="w-6 h-6 text-green-600" />
+          <div className="w-20 h-20 bg-verified/10 rounded-full flex items-center justify-center mb-6">
+            <CheckCircle2 className="w-6 h-6 text-verified" />
           </div>
           <h1 className="text-3xl font-bold font-display tracking-tight mb-2">
             {t('bookingConfirmation.bookingConfirmedTitle')}

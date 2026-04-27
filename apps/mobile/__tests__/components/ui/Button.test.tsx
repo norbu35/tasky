@@ -106,13 +106,21 @@ describe('Button', () => {
   it('applies opacity-50 class when disabled', () => {
     render(<Button label="Go" disabled testID="button" />);
     const el = screen.getByTestId('button');
-    expect(el.props.className).toContain('opacity-40');
+    expect(el.props.className).toContain('disabled:opacity-disabled');
   });
 
   it('applies opacity-40 class when loading', () => {
     render(<Button label="Go" isLoading testID="button" />);
     const el = screen.getByTestId('button');
-    expect(el.props.className).toContain('opacity-40');
+    expect(el.props.className).toContain('disabled:opacity-disabled');
+  });
+
+  it('uses shared active press-state utilities', () => {
+    render(<Button label="Go" testID="button" />);
+    const el = screen.getByTestId('button');
+
+    expect(el.props.className).toContain('active:opacity-pressed');
+    expect(el.props.className).toContain('active:scale-pressed');
   });
 
   it('does not have textStyle prop (removed in cva migration)', () => {

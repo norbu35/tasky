@@ -2,7 +2,7 @@ import { nativeTokens } from '@tasky/design-tokens';
 
 import { mobileTheme, withAlpha } from './theme';
 
-const { colors, radius } = mobileTheme;
+const { colors } = mobileTheme;
 const colorOpacity = nativeTokens.colorOpacity;
 const iconSizes = nativeTokens.iconSizes;
 const contentRules = nativeTokens.contentRules;
@@ -41,32 +41,6 @@ export const mobileSurfaces = {
       height: 24,
     },
   },
-  otp: {
-    contentTopInset: 72,
-    contentBottomInset: 32,
-    contentGap: 24,
-    stickyInset: 96,
-    codeCellSize: 48,
-    securityIconBox: 36,
-    verifyButtonHeight: 56,
-    wrongCodeOpacity: 0.96,
-    resendDisabledOpacity: 0.8,
-    resendPressedOpacity: 0.75,
-    descriptionLineHeight: 26,
-    errorLineHeight: 20,
-    securityLineHeight: 21,
-  },
-  otpMigration: {
-    heroTopInset: 72,
-    iconButton: iconSizes.touchTargetMin,
-    heroCard: 96,
-    halo: 144,
-    headingTracking: contentRules.mongolianCyrillic.letterSpacing,
-    bodyMaxWidth: 320,
-    phonePrefixInset: 64,
-    submitHeight: 56,
-    skipHeight: 44,
-  },
   splash: {
     brandSize: 56,
     markBox: 64,
@@ -91,14 +65,6 @@ export const mobileSurfaces = {
     pillInsetY: 4,
     photoTileHeight: 163,
     photoTileWidth: '48%',
-  },
-  instantMatch: {
-    minHeight: 480,
-    ringStackHeight: 220,
-    ringOuter: 180,
-    ringMiddle: 132,
-    ringInner: 88,
-    ringDot: 14,
   },
   bookingList: {
     railHeight: 1,
@@ -148,21 +114,10 @@ export const mobileSurfaces = {
     bottomGlowHeight: 80,
     bottomGlowRadius: 40,
   },
-  referrals: {
-    heroSize: 24,
-    heroLineHeight: 34,
-    bodyOpacity: 0.85,
-    codeSurface: withAlpha(colors.primaryForeground, 0.08),
-    codeTracking: 0.4,
-    bonusSurface: withAlpha(colors.secondary, 0.22),
-  },
   iconButton: {
     sm: 40,
     md: iconSizes.touchTargetMin,
     lg: 44,
-  },
-  artwork: {
-    mutedHeroRadius: radius.lg,
   },
   statusHero: {
     iconBox: 72,
