@@ -88,6 +88,7 @@ function YesNo({
     <View className="flex-row flex-wrap gap-sm">
       {([true, false] as const).map((opt) => {
         const label = opt ? t('Intake.yes') : t('Intake.no');
+        const automationValue = opt ? 'yes' : 'no';
         const active = value === opt;
         return (
           <Touchable
@@ -96,7 +97,7 @@ function YesNo({
             className={`px-md py-sm rounded-sm justify-center items-center min-h-[40px] ${active ? 'bg-primary-deep' : 'bg-muted'}`}
             style={active ? elevations.soft : undefined}
             accessibilityRole="button"
-            testID={`intake-${testIDPrefix}-${label.toLowerCase()}`}
+            testID={`intake-${testIDPrefix}-${automationValue}`}
           >
             <Text
               className={

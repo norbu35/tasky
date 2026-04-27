@@ -5,6 +5,8 @@ import { Alert } from 'react-native';
 
 import { useBookingDetail } from '@/features/bookings/hooks/useBookingDetail';
 import { useFlagNoShow } from '@/features/bookings/hooks/useFlagNoShow';
+import { useConversationRouteForBooking } from '@/features/chat';
+import { buildTaskerProfileRoute } from '@/features/profile/profileRouteParams';
 
 import { getCtaConfig, type CustomerBooking } from './model';
 
@@ -48,13 +50,17 @@ export function useBookingDetailScreen(): BookingDetailScreenState {
 
   const status: string = booking?.status ?? 'ASSIGNED';
   const ctaConfig = getCtaConfig(booking, t);
+  const { route: conversationRoute } = useConversationRouteForBooking({
+    taskId: booking?.task_id ?? booking?.task?.id,
+    counterpartyId: booking?.tasker_id ?? booking?.tasker?.id,
+  });
 
   const handleCtaPress = useCallback(() => {
     if (!booking) return;
     const action = getCtaConfig(booking, t)?.action;
     switch (action) {
       case 'message':
-        router.push(`/inbox/${booking.id}`);
+        router.push(conversationRoute);
         break;
       case 'leave_review':
         router.push({
@@ -85,7 +91,7 @@ export function useBookingDetailScreen(): BookingDetailScreenState {
         });
         break;
     }
-  }, [booking, bookingId, t, router]);
+  }, [booking, bookingId, conversationRoute, t, router]);
 
   const handleTimeline = useCallback(() => {
     router.push(`/(customer)/bookings/${bookingId}/timeline`);
@@ -128,10 +134,11 @@ export function useBookingDetailScreen(): BookingDetailScreenState {
   }, [bookingId, flagNoShow, refetch, t]);
 
   const handleTaskerPress = useCallback(() => {
-    if (booking?.tasker?.id) {
-      router.push(`/(customer)/taskers/${booking.tasker.id}`);
+    const tasker = booking?.tasker;
+    if (tasker?.id) {
+      router.push(buildTaskerProfileRoute(tasker));
     }
-  }, [booking?.tasker?.id, router]);
+  }, [booking?.tasker, router]);
 
   const handleCancelConfirmed = useCallback(() => {
     setShowCancelSheet(false);

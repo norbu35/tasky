@@ -53,13 +53,13 @@ export function BookingLifecyclePreview({
   ];
 
   return (
-    <View className="mb-xl rounded-lg bg-muted p-md">
-      <Text className="text-heading font-sans-bold text-primary-deep">
+    <View className="mb-lg border-b border-border pb-lg">
+      <Text className="text-title font-display-bold text-primary-deep">
         {t('booking.lifecycle.title')}
       </Text>
-      <TimelineStepper events={events} testID="booking-lifecycle-preview" className="mt-xs" />
+      <TimelineStepper events={events} testID="booking-lifecycle-preview" className="mt-sm" />
       <Text
-        className="text-caption leading-[20px]"
+        className="text-caption leading-[20px] mt-xs"
         style={{ color: mobileTheme.colors.textSecondary }}
       >
         {t('booking.lifecycle.addressNote')}

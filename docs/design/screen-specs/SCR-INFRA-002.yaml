@@ -1,7 +1,10 @@
 # Screen Spec: App Update
 screen_id: SCR-INFRA-002
 name: 'App Update'
-route: null
+route: '/(shared)/app-update'
+presentation:
+  type: route_backed_full_screen
+  invocation: 'Shown after launch version check when a soft or force update is required'
 role: [customer, tasker]
 phase: '0-1'
 traceability:

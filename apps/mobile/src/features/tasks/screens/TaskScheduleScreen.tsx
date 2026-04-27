@@ -21,7 +21,10 @@ export default function TaskScheduleScreen() {
     scheduleError,
     canContinue,
     openPicker,
-    handlePickerDraftChange,
+    handlePickerModeChange,
+    handlePickerDateChange,
+    handlePickerTimeChange,
+    handlePickerReset,
     handlePickerCancel,
     handlePickerConfirm,
     setPricingMode,
@@ -78,7 +81,10 @@ export default function TaskScheduleScreen() {
 
       <PickerSection
         activePicker={activePicker}
-        onPickerDraftChange={handlePickerDraftChange}
+        onPickerModeChange={handlePickerModeChange}
+        onPickerDateChange={handlePickerDateChange}
+        onPickerTimeChange={handlePickerTimeChange}
+        onPickerReset={handlePickerReset}
         onPickerCancel={handlePickerCancel}
         onPickerConfirm={handlePickerConfirm}
       />

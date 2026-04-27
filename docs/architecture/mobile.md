@@ -15,7 +15,11 @@ Read this after:
 
 This document owns mobile-specific architecture, structural boundaries, and enforcement expectations. Shared system rules remain in `common.md`. Cross-platform frontend contracts (tokens, parity, test naming) remain in `shared-frontend.md`. Backend API contracts remain in `api.md`.
 
-Use `docs/PRD.md` as the authority for active Phase 1 mobile behavior. Use `docs/ROLLOUT_PHASES.md` only to understand deferred mobile surfaces that may already have dormant navigation, components, or state scaffolding. Future-phase references here must not be read as launch commitments.
+Use `docs/PRD.md` as the authority for active Phase 1 mobile behavior. `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`,
+and relevant `docs/maintenance/*.md` constrain launch posture, deferred behavior, and activation policy before mobile
+architecture or screen specs. Use `docs/ROLLOUT_PHASES.md` only to understand deferred mobile surfaces that may already
+have dormant navigation, components, or state scaffolding. Future-phase references here must not be read as launch
+commitments.
 
 ## Platform Contract
 

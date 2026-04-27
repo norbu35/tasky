@@ -1,7 +1,7 @@
 # Tasky Redesign Proof-Screen Contract
 
 **Date:** 2026-04-26
-**Status:** Draft proof-screen contract for review
+**Status:** Active proof-screen contract
 **Parent thesis:** `docs/plans/2026-04-26-tasky-redesign-thesis.md`
 **Reference matrix:** `docs/plans/2026-04-26-tasky-redesign-reference-matrix.md`
 
@@ -20,8 +20,12 @@ This contract translates the approved redesign thesis into five proof-screen bri
 - Keep review-threshold behavior governed by `docs/PRD.md`; proof screens may show neutral low-review states but must not invent reputation ranking.
 - Keep runtime copy implementation i18n-backed when runtime work begins.
 - Keep final per-screen copy and traceability owned by active `docs/design/screen-specs/SCR-*.yaml` files before implementation.
-- Treat Airbnb as mobile interaction scaffolding only; do not copy Airbnb visual styling, travel-specific copy, guarantee
-  framing, instant booking, map-first browsing, provider ranking, or payment protection patterns.
+- Treat Refero Airbnb references as UX absorption inputs for mobile interaction anatomy, spacing rhythm, layout hierarchy,
+  density, sheet behavior, card composition, selection states, and QA comparison.
+- Keep Tasky-owned values native: colors, typography, copy, icons where brand-specific, data fields, locale strings,
+  product constraints, trust claims, and Phase 1 rules.
+- Do not copy Airbnb visual branding, travel-specific copy, guarantee framing, instant booking, map-first browsing,
+  provider ranking, or payment protection patterns.
 
 ## Proof screens
 
@@ -86,6 +90,8 @@ This contract translates the approved redesign thesis into five proof-screen bri
 
 - Each proof surface names target density, trust cues, web pattern, and mobile pattern.
 - Each proof surface rejects at least one unsuitable Refero pattern.
+- Runtime slices record inspected Refero screenshot references before UI implementation; description-only fallback requires
+  explicit approval.
 - Active screen-spec edits stay aligned with live PRD and journey refs.
 - No proof screen adds Phase 2, Phase 3, or Phase 4 product behavior.
 - Runtime implementation slices receive a Maestro QA pass after each slice when the Maestro CLI and device target are available; blocked local runs must report the missing dependency.

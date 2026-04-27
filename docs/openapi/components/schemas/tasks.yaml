@@ -38,7 +38,7 @@ PublicTask:
         rating_avg:
           type: number
           format: double
-          description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
+          description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until at least three customer-to-tasker reviews are submitted.
     description:
       type: string
     budget:
@@ -367,7 +367,7 @@ TaskApplication:
         rating_avg:
           type: number
           format: double
-          description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
+          description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until at least three customer-to-tasker reviews are submitted.
         completed_tasks:
           type: integer
         is_pro:

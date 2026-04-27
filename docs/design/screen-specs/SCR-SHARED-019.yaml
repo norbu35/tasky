@@ -1,7 +1,10 @@
 # Screen Spec: Review Hard Lock
 screen_id: SCR-SHARED-019
 name: 'Review Hard Lock'
-route: null
+route: '/(shared)/review/hard-lock'
+presentation:
+  type: route_backed_full_screen
+  invocation: 'Shown when unresolved review debt blocks a post or apply action'
 role: [customer, tasker]
 phase: '0-1'
 traceability:
@@ -94,5 +97,5 @@ acceptance_criteria:
   - 'Lock screen cannot bypass the protected post/apply action except via the review CTA'
   - 'Uses comfortable density for emotional weight and breathing room'
   - 'Lock icon illustration is centered above the text content'
-  - 'This is a full-screen blocker, not a standalone route — it intercepts navigation to protected screens'
+  - 'This is a route-backed full-screen blocker that intercepts navigation to protected screens'
   - 'After review is successfully submitted, the lock is released and user returns to their intended destination'

@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { FeedListTemplate } from '@/components/templates/FeedListTemplate';
-import { FilterBar } from '@/components/ui/FilterBar';
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { Touchable } from '@/components/ui/Touchable';
@@ -55,6 +54,10 @@ function TaskerBrowseScreen() {
     setIsFilterSheetOpen(false);
   }, []);
 
+  const handleClearSearch = useCallback(() => {
+    setSearchQuery('');
+  }, []);
+
   const filteredTasks = useMemo(() => {
     const tasks = data?.data ?? [];
     return tasks.filter((task) => {
@@ -72,6 +75,18 @@ function TaskerBrowseScreen() {
   }, [data, activeFilters, searchQuery]);
 
   const hasActiveBrowseFilters = activeFilters.length > 0 || searchQuery.trim().length > 0;
+  const selectedFilterItems = useMemo(
+    () =>
+      activeFilters
+        .map((id) => {
+          const label = categories.find((category) => category.id === id)?.label;
+          return label ? { id, label } : null;
+        })
+        .filter((item): item is { id: string; label: string } => Boolean(item)),
+    [activeFilters, categories],
+  );
+  const trimmedSearchQuery = searchQuery.trim();
+  const activeFilterCount = selectedFilterItems.length + (trimmedSearchQuery ? 1 : 0);
 
   const handleToggleFilter = useCallback((id: string) => {
     setActiveFilters((prev) => {
@@ -128,22 +143,78 @@ function TaskerBrowseScreen() {
                   value={searchQuery}
                   onChangeText={setSearchQuery}
                   placeholder={t('tasker.browse.searchPlaceholder')}
+                  testID="task-feed-search"
                 />
               </View>
               <Touchable
                 accessibilityRole="button"
                 accessibilityLabel={t('tasker.browse.openFilters')}
-                className="items-center justify-center rounded-md border border-border bg-card"
+                className="items-center justify-center rounded-full border border-border bg-card"
                 style={{ width: 48, height: 48 }}
                 onPress={() => setIsFilterSheetOpen(true)}
                 testID="task-feed-open-filters"
               >
                 <SlidersHorizontal size={20} color={colors.primaryDeep} />
+                {activeFilterCount > 0 ? (
+                  <View
+                    className="absolute -right-1 -top-1 min-w-[22px] h-[22px] rounded-full bg-primary-deep items-center justify-center px-xs"
+                    testID="task-feed-filter-count"
+                  >
+                    <Text className="text-caption font-sans-bold text-primary-foreground">
+                      {activeFilterCount}
+                    </Text>
+                  </View>
+                ) : null}
               </Touchable>
             </View>
             <Text className="text-caption font-sans-semibold text-text-secondary">
               {t('tasker.browse.resultSummary', { count: filteredTasks.length })}
             </Text>
+            {hasActiveBrowseFilters ? (
+              <View className="gap-sm" testID="task-feed-active-filters">
+                <View className="flex-row items-center justify-between gap-md">
+                  <Text className="text-caption font-sans-bold text-foreground">
+                    {t('tasker.browse.activeFilters')}
+                  </Text>
+                  <Touchable
+                    accessibilityRole="button"
+                    onPress={handleClearFilters}
+                    testID="task-feed-active-filter-clear"
+                  >
+                    <Text className="text-caption font-sans-bold underline text-foreground">
+                      {t('tasker.browse.clearFilters')}
+                    </Text>
+                  </Touchable>
+                </View>
+                <View className="flex-row flex-wrap gap-sm">
+                  {trimmedSearchQuery ? (
+                    <Touchable
+                      accessibilityRole="button"
+                      onPress={handleClearSearch}
+                      className="rounded-full border border-border bg-card px-md py-sm"
+                      testID="task-feed-active-filter-search"
+                    >
+                      <Text className="text-caption font-sans-semibold text-foreground">
+                        {t('tasker.browse.searchFilterLabel', { query: trimmedSearchQuery })}
+                      </Text>
+                    </Touchable>
+                  ) : null}
+                  {selectedFilterItems.map((filter) => (
+                    <Touchable
+                      key={`${filter.id}-${filter.label}`}
+                      accessibilityRole="button"
+                      onPress={() => handleToggleFilter(filter.id)}
+                      className="rounded-full border border-border bg-card px-md py-sm"
+                      testID={`task-feed-active-filter-${filter.id}`}
+                    >
+                      <Text className="text-caption font-sans-semibold text-foreground">
+                        {filter.label}
+                      </Text>
+                    </Touchable>
+                  ))}
+                </View>
+              </View>
+            ) : null}
             <TrustBanner title={t('tasker.browse.trustTitle')} description={t('HomeTab.copy1')} />
           </View>
         }
@@ -154,14 +225,6 @@ function TaskerBrowseScreen() {
         emptyCtaLabel={t('tasker.browse.emptyCta')}
         emptyCtaOnPress={handleClearFilters}
         errorMessage={t('common.error')}
-        filterBar={
-          <FilterBar
-            filters={categories}
-            activeFilters={activeFilters}
-            onToggle={handleToggleFilter}
-            testID="task-feed-filter-bar"
-          />
-        }
         testID="task-feed"
       />
       <TaskFeedFilterSheet

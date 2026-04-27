@@ -6,13 +6,13 @@ import { RefreshControl, Text, View } from 'react-native';
 import { InsetScrollView, ScreenContainer } from '@/components/shells';
 import { Touchable } from '@/components/ui/Touchable';
 import { screenLayout } from '@/design/screenLayout';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 
-import { TAB_IDS } from './model';
-import { FilterTab } from './FilterBar';
 import { BookingCard, LoadingSkeletonCard } from './BookingCard';
 import { EmptyState } from './EmptyState';
+import { FilterTab } from './FilterBar';
+import { TAB_IDS } from './model';
 import { useBookingsListScreen } from './useBookingsListScreen';
 
 const { colors, spacing } = mobileTheme;
@@ -21,6 +21,21 @@ const TAB_LABEL_KEYS: Readonly<Record<(typeof TAB_IDS)[number], string>> = {
   active: 'BookingsListScreen.tab.active',
   completed: 'BookingsListScreen.tab.completed',
 };
+
+function getBookingCardTestID(status?: string): string | undefined {
+  switch ((status ?? '').toUpperCase()) {
+    case 'ASSIGNED':
+      return 'booking-card-active';
+    case 'COMPLETED':
+      return 'booking-card-completed';
+    case 'CANCELLED':
+      return 'booking-card-cancelled';
+    case 'NO_SHOW':
+      return 'booking-card-no-show';
+    default:
+      return undefined;
+  }
+}
 
 export default function BookingsListScreen() {
   const { t } = useTranslation();
@@ -109,6 +124,8 @@ export default function BookingsListScreen() {
                   booking={booking}
                   t={t}
                   onPress={() => handleBookingPress(booking.id)}
+                  testID={`booking-card-${booking.id}`}
+                  statusTestID={getBookingCardTestID(booking.status)}
                 />
               ))}
               {filteredBookings.length === 0 ? (

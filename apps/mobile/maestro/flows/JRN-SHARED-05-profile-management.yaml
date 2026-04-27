@@ -6,7 +6,7 @@ appId: mn.tasky.mobile
 # Actor: tasker (only taskers have the (tabs) navigator with profile tab)
 # Flow type: happy path
 # Note: profile/edit.tsx has TODO markers; test navigation only, not deep form validation
-# Note: SCR-SHARED-012-cta = "Edit Profile" CTA from DetailTemplate convention
+# Note: Edit profile is exposed as an action row on SCR-SHARED-012.
 
 - launchApp:
     clearState: true
@@ -22,9 +22,9 @@ appId: mn.tasky.mobile
       id: 'SCR-SHARED-012'
     timeout: 10000
 
-# Tap Edit Profile CTA (DetailTemplate derives testID as SCR-SHARED-012-cta)
+# Tap Edit Profile action row.
 - tapOn:
-    id: 'SCR-SHARED-012-cta'
+    id: 'action-row-edit-profile'
 - waitForAnimationToEnd
 
 - extendedWaitUntil:

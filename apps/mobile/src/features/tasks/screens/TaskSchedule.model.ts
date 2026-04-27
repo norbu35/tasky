@@ -1,7 +1,11 @@
 export const MIN_BUDGET = 20000;
 
-export type PickerMode = 'date' | 'time' | null;
-export type ActivePickerState = { mode: Exclude<PickerMode, null>; draftValue: Date } | null;
+export type PickerMode = 'date' | 'time';
+export type ActivePickerState = {
+  mode: PickerMode;
+  draftDate: Date;
+  draftTime: Date;
+} | null;
 
 export function createDefaultScheduleDate(): Date {
   const date = new Date();

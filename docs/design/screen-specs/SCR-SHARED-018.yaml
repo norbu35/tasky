@@ -2,6 +2,10 @@
 screen_id: SCR-SHARED-018
 name: 'Review Reminder'
 route: null
+presentation:
+  type: app_level_modal_sheet
+  host_screen: current_authenticated_screen
+  invocation: 'Shown by the review gate when review debt reaches the 24h or 72h reminder point'
 role: [customer, tasker]
 phase: '0-1'
 traceability:

@@ -2,6 +2,10 @@
 screen_id: SCR-CUST-010
 name: 'Task Cancel Confirmation'
 route: null
+presentation:
+  type: inline_modal_sheet
+  host_screen: SCR-CUST-009
+  invocation: "Customer taps 'Cancel Task' on an OPEN task detail"
 role: [customer]
 phase: '0-1'
 traceability:

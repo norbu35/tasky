@@ -21,7 +21,7 @@ Later phases stay conditional. A draft screen, dormant toggle, or placeholder co
 
 ### 2.2 What Phase 1 is trying to prove
 
-1. Qualified applications arrive quickly enough across the launch categories.
+1. Applications from ID-verified taskers arrive quickly enough across the launch categories.
 2. Structured tasks turn into confirmed bookings at a usable rate.
 3. Jobs complete without heavy manual intervention.
 4. Trust outcomes are strong enough to support expansion.
@@ -57,7 +57,7 @@ Rules:
 
 - External distribution is not self-serve.
 - External distribution is used only after native matching fails, not by default.
-- The trigger is no qualified application within 8 hours.
+- The trigger is no `qualified_application` event within 8 hours, meaning no application from a Phase 1 globally ID-verified tasker.
 - Assisted distribution is an operator or backend decision, not a customer-facing option.
 - Assisted distribution is initially limited to cleaning, furniture assembly, moving help, and minor handyman.
 

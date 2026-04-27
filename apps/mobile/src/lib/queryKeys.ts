@@ -47,7 +47,6 @@ export const queryKeys = {
 
   // ── Profile ─────────────────────────────────────────────────────
   profile: {
-    public: (token: string, userId: string) => ['publicProfile', token, userId] as const,
     stats: (token: string) => ['myStats', token] as const,
   },
 

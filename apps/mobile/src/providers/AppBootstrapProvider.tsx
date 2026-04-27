@@ -1,13 +1,11 @@
 import type { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import { focusManager } from '@tanstack/react-query';
-import Constants from 'expo-constants';
 import { useEffect } from 'react';
 import { AppState, Platform } from 'react-native';
 
 import { getSharedApiClient } from '../lib/mobileApiClient';
+import { isNativeFirebaseAvailable } from '../lib/nativeFirebase';
 import { useAuthStore } from '../store/authStore';
-
-const isExpoGo = Constants.executionEnvironment === 'storeClient';
 
 export function AppBootstrapProvider({ children }: { children: React.ReactNode }) {
   // Wire token refresh delegate so 401s trigger silent refresh
@@ -46,7 +44,7 @@ export function AppBootstrapProvider({ children }: { children: React.ReactNode }
 
   // Foreground FCM message handler
   useEffect(() => {
-    if (isExpoGo) return;
+    if (!isNativeFirebaseAvailable()) return;
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const messaging = require('@react-native-firebase/messaging').default;

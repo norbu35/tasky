@@ -9,6 +9,7 @@ traceability:
   screen_graph_node: SCR-CUST-003
   prd_refs:
     - REQ-P1-CAT-01
+    - REQ-P1-CAT-03
     - REQ-P1-TASK-01
     - REQ-P1-TASK-04
     - REQ-P1-TASK-11
@@ -24,6 +25,7 @@ traceability:
     - SCN-TASK-016
     - SCN-TASK-017
     - SCN-TASK-018
+    - SCN-CATEGORY-015
 template: form_wizard
 figma_page: 'Customer/Post Task Intake Form'
 feature: 'task_posting'
@@ -180,6 +182,8 @@ acceptance_criteria:
   - 'All form fields are wrapped in FormField with label and inline error'
   - 'Validation errors appear inline below each field when Next is tapped with incomplete required fields'
   - 'Draft binds to the intake_schema_version loaded at start'
+  - 'Category schemas that depend on supplies, materials, items, or vehicles require a field that captures whether the customer has them or expects the tasker to bring them'
+  - 'Minor handyman renders subtype-based fields and excludes regulated, dangerous, or diagnosis-heavy options from the selectable schema'
   - 'Next button navigates (push) to Photo Upload SCR-CUST-004'
   - 'Back button pops to Category Selection SCR-CUST-002'
   - 'Keyboard-aware scrolling ensures active field is visible above keyboard'

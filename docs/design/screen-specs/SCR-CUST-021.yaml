@@ -2,6 +2,10 @@
 screen_id: SCR-CUST-021
 name: 'No-Show Flag + Reminder'
 route: null
+presentation:
+  type: inline_modal_sheet
+  host_screen: SCR-CUST-017
+  invocation: 'Customer opens the no-show reminder or flag action from booking detail after policy timers allow it'
 role: [customer]
 phase: '0-1'
 traceability:
@@ -13,6 +17,7 @@ traceability:
     - REQ-P1-BOOK-21
     - REQ-P1-BOOK-22
     - REQ-P1-BOOK-23
+    - REQ-P1-BOOK-24
   journey_refs:
     - JRN-CUST-04-A3
   scenario_refs:

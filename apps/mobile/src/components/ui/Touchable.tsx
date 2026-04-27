@@ -13,7 +13,7 @@ export interface TouchableProps extends PressableProps {
  * `no-raw-pressable-in-screens`.
  */
 export function Touchable({ className, style, children, testID, ...props }: TouchableProps) {
-  if (__DEV__ && !testID) {
+  if (__DEV__ && process.env.NODE_ENV === 'test' && !testID) {
     console.warn('Touchable: testID is required for all interactive elements');
   }
   return (

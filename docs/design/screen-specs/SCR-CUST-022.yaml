@@ -1,7 +1,11 @@
 # Screen Spec: Booking Cancel (Customer)
 screen_id: SCR-CUST-022
 name: 'Booking Cancel (Customer)'
-route: null
+route: '/(customer)/bookings/:bookingId/cancel'
+presentation:
+  type: route_backed_modal_sheet
+  host_screen: SCR-CUST-017
+  invocation: "Customer taps 'Cancel' on a confirmed booking"
 role: [customer]
 phase: '0-1'
 traceability:
@@ -57,7 +61,7 @@ states:
     components_hidden: []
 
   - id: late_cancel_incident_count
-    description: 'Late cancellation and customer already has 1 incident in trailing 28 days; stronger warning about ranking penalty and potential strike review'
+    description: 'Late cancellation and customer already has 1 incident in trailing 28 days; stronger warning about reliability review or warning escalation'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: []
 
@@ -88,8 +92,8 @@ copy:
     max_chars: 100
 
   - key: late_cancel_repeat_warning
-    mn: 'Та сүүлийн 28 хоногт аль хэдийн 1 зөрчилтэй байна. 2 дахь зөрчил нь зэрэглэлийн бууралт болон торгуулийн шалгалтыг идэвхжүүлж болно.'
-    en: 'You already have 1 incident in the last 28 days. A 2nd incident may trigger ranking penalty and strike review.'
+    mn: 'Та сүүлийн 28 хоногт аль хэдийн 1 зөрчилтэй байна. 2 дахь зөрчил нь найдвартай байдлын хяналт эсвэл анхааруулгын шатлал үүсгэж болно.'
+    en: 'You already have 1 incident in the last 28 days. A 2nd incident may trigger reliability review or warning escalation.'
     max_chars: 180
 
   - key: cta_cancel_confirm

@@ -14,40 +14,40 @@ appId: mn.tasky.mobile
 
 # Navigate to profile tab → profile view (SCR-SHARED-012)
 - tapOn:
-    point: "88%,93%"
+    point: '88%,93%'
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-SHARED-012"
+      id: 'SCR-SHARED-012'
     timeout: 5000
 
 # Tap edit → profile edit screen (SCR-SHARED-013)
 - tapOn:
-    id: "SCR-SHARED-012-cta"
+    id: 'action-row-edit-profile'
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-SHARED-013"
+      id: 'SCR-SHARED-013'
     timeout: 5000
 
 # Step 1: Tap 'AI polish' → AI polish screen (SCR-TASK-019)
 - tapOn:
-    id: "ai-polish-button"
+    id: 'ai-polish-button'
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-TASK-019"
+      id: 'SCR-TASK-019'
     timeout: 5000
 
 # Step 2: Generate polished suggestion
 - assertVisible:
-    id: "SCR-TASK-019"
+    id: 'SCR-TASK-019'
 
 # Step 3: Apply suggested text → back to profile edit (SCR-SHARED-013)
 - tapOn:
-    id: "ai-polish-apply-button"
+    id: 'ai-polish-apply-button'
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-SHARED-013"
+      id: 'SCR-SHARED-013'
     timeout: 5000

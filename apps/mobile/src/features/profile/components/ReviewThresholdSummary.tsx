@@ -8,20 +8,26 @@ import { mobileTheme } from '@/design/tokenAdapter';
 import { getReviewThresholdRemaining, MIN_PUBLIC_REVIEW_COUNT } from '../model';
 
 interface ReviewThresholdSummaryProps {
-  completedTasks?: number | null;
+  reviewCount?: number | null;
   className?: string;
+  testID?: string;
 }
 
-export function ReviewThresholdSummary({ completedTasks, className }: ReviewThresholdSummaryProps) {
+export function ReviewThresholdSummary({
+  reviewCount,
+  className,
+  testID,
+}: ReviewThresholdSummaryProps) {
   const { t } = useTranslation();
-  const remaining = getReviewThresholdRemaining(completedTasks);
+  const remaining = getReviewThresholdRemaining(reviewCount);
 
   return (
     <View
+      testID={testID}
       className={className ?? 'rounded-md p-md gap-xs'}
       style={{ backgroundColor: mobileSurfaces.tint.trustSoft }}
     >
-      <Text className="text-label font-sans-bold text-trust-muted">
+      <Text className="text-label font-sans-bold text-primary-deep">
         {t('shared.profile.lowReviewTitle')}
       </Text>
       <Text className="text-caption text-text-secondary leading-[20px]">

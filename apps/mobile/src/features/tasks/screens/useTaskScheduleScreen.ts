@@ -52,17 +52,39 @@ export function useTaskScheduleScreen() {
       ? t('ScheduleBudgetScreen.schedulePastError')
       : '';
 
-  const openPicker = (mode: Exclude<PickerMode, null>) => {
+  const openPicker = (mode: PickerMode) => {
     const fallback = createDefaultScheduleDate();
-    const currentValue =
-      mode === 'date' ? toValidDate(selectedDate, fallback) : toValidDate(selectedTime, fallback);
     setTouchedSchedule(true);
-    setActivePicker({ mode, draftValue: currentValue });
+    setActivePicker({
+      mode,
+      draftDate: toValidDate(selectedDate, fallback),
+      draftTime: toValidDate(selectedTime, fallback),
+    });
   };
 
-  const handlePickerDraftChange = (pickedValue: Date) => {
+  const handlePickerModeChange = (mode: PickerMode) => {
+    setActivePicker((prev) => (prev ? { ...prev, mode } : prev));
+  };
+
+  const handlePickerDateChange = (pickedValue: Date) => {
+    setActivePicker((prev) => (prev ? { ...prev, draftDate: pickedValue } : prev));
+  };
+
+  const handlePickerTimeChange = (pickedValue: Date) => {
+    setActivePicker((prev) => (prev ? { ...prev, draftTime: pickedValue } : prev));
+  };
+
+  const handlePickerReset = () => {
+    const fallback = createDefaultScheduleDate();
     setActivePicker((prev) =>
-      prev ? { ...prev, draftValue: toValidDate(pickedValue, prev.draftValue) } : prev,
+      prev
+        ? {
+            ...prev,
+            mode: 'date',
+            draftDate: fallback,
+            draftTime: fallback,
+          }
+        : prev,
     );
   };
 
@@ -72,11 +94,8 @@ export function useTaskScheduleScreen() {
 
   const handlePickerConfirm = () => {
     if (!activePicker) return;
-    if (activePicker.mode === 'date') {
-      setSelectedDate(activePicker.draftValue);
-    } else {
-      setSelectedTime(activePicker.draftValue);
-    }
+    setSelectedDate(activePicker.draftDate);
+    setSelectedTime(activePicker.draftTime);
     setActivePicker(null);
   };
 
@@ -113,7 +132,10 @@ export function useTaskScheduleScreen() {
     scheduleError,
     canContinue,
     openPicker,
-    handlePickerDraftChange,
+    handlePickerModeChange,
+    handlePickerDateChange,
+    handlePickerTimeChange,
+    handlePickerReset,
     handlePickerCancel,
     handlePickerConfirm,
     setPricingMode,

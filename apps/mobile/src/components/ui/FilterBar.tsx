@@ -57,6 +57,7 @@ export function FilterBar({ filters, activeFilters, onToggle, testID, className 
             accessibilityRole="button"
             accessibilityState={{ selected: isActive }}
             accessibilityLabel={filter.label}
+            testID={testID ? `${testID}-option-${filter.id}` : undefined}
           >
             <Text className={textVariants({ active: isActive })}>{filter.label}</Text>
           </Pressable>

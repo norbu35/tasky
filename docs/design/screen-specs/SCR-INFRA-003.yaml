@@ -1,7 +1,10 @@
 # Screen Spec: Session Expired
 screen_id: SCR-INFRA-003
 name: 'Session Expired'
-route: null
+route: '/(shared)/session-expired'
+presentation:
+  type: route_backed_full_screen
+  invocation: 'Shown after token expiry, token revocation, or a non-recoverable authenticated 401'
 role: [customer, tasker]
 phase: '0-1'
 traceability:
@@ -15,25 +18,24 @@ traceability:
   scenario_refs:
     - SCN-SEC-001
     - SCN-AUTH-007
-template: modal_sheet
+template: error_state
 figma_page: 'Infrastructure/Session Expired'
 feature: 'infrastructure'
 
 layout:
-  template: modal_sheet
-  density: default
-  structure: 'scrim -> sheet(handle + icon + message + cta)'
+  template: error_state
+  density: comfortable
+  structure: 'safe_area -> centered(icon + message + cta)'
 
 components:
-  - id: COMP-MODALSHEET
-    usage: 'Bottom sheet container for session expired prompt'
+  - id: COMP-EMPTYSTATE
+    usage: 'Full-screen blocker explaining that the current session expired'
     props:
-      visible: true
-      title: 'Хугацаа дууссан'
-      primaryAction:
-        label: 'Дахин нэвтрэх'
-        onPress: 'navigate_to_login'
-    variant: default
+      illustration: 'session_expired'
+      headline: 'Хугацаа дууссан'
+      description: 'Таны нэвтрэх хугацаа дууссан байна. Дахин нэвтэрнэ үү'
+      ctaLabel: 'Дахин нэвтрэх'
+    variant: error
 
   - id: COMP-BUTTON
     usage: 'Primary CTA to navigate to login screen for re-authentication'
@@ -46,7 +48,7 @@ components:
 states:
   - id: default
     description: 'JWT expired or invalidated server-side; user must re-login'
-    components_visible: [COMP-MODALSHEET, COMP-BUTTON]
+    components_visible: [COMP-EMPTYSTATE, COMP-BUTTON]
     components_hidden: []
 
 copy:
@@ -69,14 +71,14 @@ api_endpoints: []
 
 analytics_events:
   - event: 'session_expired_shown'
-    trigger: 'Bottom sheet displayed after 401 response or JWT expiry detected'
+    trigger: 'Full-screen session-expired route displayed after 401 response or JWT expiry detected'
   - event: 'session_relogin_tapped'
     trigger: "User taps 'Log in again' to navigate to login"
 
 acceptance_criteria:
-  - 'Bottom sheet appears with branded scrim overlay (primaryDeep at 35%)'
-  - "Sheet is not dismissible by drag-to-close; user must tap 'Log in again'"
+  - 'Full-screen blocker appears above the app after token expiry or revocation'
+  - "Screen is not dismissible as a normal modal; user must tap 'Log in again'"
   - "Tapping 'Log in again' replaces entire navigation stack with login screen (SCR-SHARED-002)"
   - 'All local user state is preserved; only auth token is cleared'
-  - 'Sheet renders at z-index 30 (sheet elevation)'
+  - 'Route renders without tab chrome or protected-app actions'
   - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

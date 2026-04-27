@@ -2,10 +2,30 @@ appId: mn.tasky.mobile
 ---
 # Capture tasker browse screen for visual audit
 - launchApp:
+    appId: 'mn.tasky.mobile'
     clearState: true
+- launchApp:
+    appId: 'mn.tasky.mobile'
 - runFlow: _support/login-tasker.yaml
 - extendedWaitUntil:
     visible:
       id: 'SCR-TASK-001'
     timeout: 15000
 - takeScreenshot: screenshots/SCR-TASK-001-tasker-browse
+- tapOn:
+    id: 'task-feed-open-filters'
+- extendedWaitUntil:
+    visible:
+      id: 'task-feed-filter-sheet'
+    timeout: 5000
+- takeScreenshot: screenshots/SCR-TASK-001-tasker-filter-sheet
+- tapOn:
+    id: 'task-feed-filter-sheet-close'
+- tapOn:
+    id: 'task-feed-search'
+- inputText: 'plumbing'
+- extendedWaitUntil:
+    visible:
+      id: 'task-feed-active-filters'
+    timeout: 5000
+- takeScreenshot: screenshots/SCR-TASK-001-tasker-active-filters

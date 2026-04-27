@@ -26,38 +26,35 @@ export function TrustBanner({
 }: TrustBannerProps) {
   const isCompact = variant === 'compact';
   return (
-    <Reveal
-      delay={90}
-      style={
-        isCompact
-          ? { backgroundColor: colors.trust }
-          : { backgroundColor: tint.trustSoft, borderColor: colors.trust }
-      }
-      className={cn(
-        'flex-row items-center gap-[16px] p-[17px] rounded-md',
-        !isCompact && 'border',
-        className,
-      )}
-    >
+    <Reveal delay={90}>
       <View
         style={
-          isCompact ? { backgroundColor: tint.primarySubtle } : { backgroundColor: colors.trust }
+          isCompact
+            ? { backgroundColor: colors.trust }
+            : { backgroundColor: tint.trustSoft, borderColor: colors.trust, borderWidth: 1 }
         }
-        className={cn(
-          'items-center justify-center',
-          isCompact ? 'w-[40px] h-[40px] rounded-full' : 'w-[37px] h-[40px] rounded-sm',
-        )}
+        className={cn('flex-row items-center gap-[16px] p-[17px] rounded-md', className)}
       >
-        <ShieldCheck size={isCompact ? iconSizes.xs : iconSizes.sm} color={colors.trustMuted} />
-      </View>
-      <View className="flex-1">
-        <Text
-          className="text-caption font-sans-bold text-trust-muted uppercase"
-          style={{ letterSpacing: typographyVariants.badgeText.letterSpacing }}
+        <View
+          style={
+            isCompact ? { backgroundColor: tint.primarySubtle } : { backgroundColor: colors.trust }
+          }
+          className={cn(
+            'items-center justify-center',
+            isCompact ? 'w-[40px] h-[40px] rounded-full' : 'w-[37px] h-[40px] rounded-sm',
+          )}
         >
-          {title}
-        </Text>
-        <Text className="text-label text-foreground leading-[20px]">{description}</Text>
+          <ShieldCheck size={isCompact ? iconSizes.xs : iconSizes.sm} color={colors.trustMuted} />
+        </View>
+        <View className="flex-1">
+          <Text
+            className="text-caption font-sans-bold text-trust-muted uppercase"
+            style={{ letterSpacing: typographyVariants.badgeText.letterSpacing }}
+          >
+            {title}
+          </Text>
+          <Text className="text-label text-foreground leading-[20px]">{description}</Text>
+        </View>
       </View>
     </Reveal>
   );

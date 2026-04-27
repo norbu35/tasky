@@ -83,3 +83,15 @@ Given a selected tasker accepts within the active acceptance window
 When the booking becomes confirmed
 Then the customer receives a booking-confirmed notification
 And the tasker receives a booking-confirmed notification
+
+## SCN-NOTIF-009
+
+**Risk:** High
+**PRD:** REQ-P1-NOTIF-05, REQ-P1-BOOK-25
+**Title:** Completion silence reminder uses push notification when a device token exists
+
+Given a booking is waiting on customer confirmation after the tasker marked it complete
+And the customer has a registered device token
+When the completion silence reminder is due
+Then the customer receives a push notification asking them to confirm or dispute completion
+And the reminder is recorded as a completion reminder attempt

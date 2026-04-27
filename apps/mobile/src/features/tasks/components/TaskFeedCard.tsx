@@ -14,11 +14,21 @@ import { formatShortDate } from '@/utils/formatDate';
 const { colors } = mobileTheme;
 
 function TaskCardHeader({ task }: { task: PublicTask }) {
+  const { t } = useTranslation();
+  const isQuoteMode = task.pricing_mode === 'QUOTE' || task.budget == null;
   return (
     <View className="flex-row items-center justify-between">
       <View className="flex-row items-center flex-1 mr-sm gap-sm">
         {task.category && <CategoryChip label={task.category.name} isActive />}
-        <PriceTag amount={task.budget} size="sm" />
+        {isQuoteMode ? (
+          <View className="rounded-full bg-sun-light/15 px-sm py-xs">
+            <Text className="text-caption font-sans-bold text-sun-light">
+              {t('tasker.browse.quoteRequested')}
+            </Text>
+          </View>
+        ) : (
+          <PriceTag amount={task.budget} size="sm" />
+        )}
       </View>
     </View>
   );

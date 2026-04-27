@@ -1,13 +1,12 @@
-import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
 import { mobileTheme } from '../design/theme';
+import { isNativeFirebaseAvailable } from './nativeFirebase';
 
-const isExpoGo = Constants.executionEnvironment === 'storeClient';
 const { colors } = mobileTheme;
 
 async function ensureAndroidChannel(): Promise<void> {
-  if (Platform.OS !== 'android' || isExpoGo) return;
+  if (Platform.OS !== 'android' || !isNativeFirebaseAvailable()) return;
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const notifee = require('@notifee/react-native').default;
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -24,7 +23,7 @@ async function ensureAndroidChannel(): Promise<void> {
 }
 
 async function requestPermission(): Promise<boolean> {
-  if (isExpoGo) return false;
+  if (!isNativeFirebaseAvailable()) return false;
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const messaging = require('@react-native-firebase/messaging').default;
   const authStatus = await messaging().requestPermission();
@@ -40,8 +39,8 @@ interface PushRegistrationResult {
 }
 
 export async function registerForPushNotificationsAsync(): Promise<PushRegistrationResult> {
-  if (isExpoGo) {
-    return { error: 'Push notifications not available in Expo Go' };
+  if (!isNativeFirebaseAvailable()) {
+    return {};
   }
   try {
     await ensureAndroidChannel();

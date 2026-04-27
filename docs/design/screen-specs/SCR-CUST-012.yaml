@@ -2,6 +2,10 @@
 screen_id: SCR-CUST-012
 name: 'Selected Tasker Declined / Expired'
 route: null
+presentation:
+  type: inline_modal_sheet
+  host_screen: SCR-CUST-011
+  invocation: 'Selected-tasker decline or four-hour response-window expiry is surfaced from applicant review'
 role: [customer]
 phase: '0-1'
 traceability:
@@ -16,6 +20,7 @@ traceability:
     - JRN-CUST-02-A4
   scenario_refs:
     - SCN-BOOK-023
+    - SCN-BOOK-031
 template: modal_sheet
 figma_page: 'Customer/Selected Tasker Declined Expired'
 feature: 'matching'
@@ -73,7 +78,7 @@ copy:
   - key: title_decline
     mn: 'Гүйцэтгэгч татгалзлаа'
     en: 'Tasker Declined'
-    max_chars: 20
+    max_chars: 25
 
   - key: body_decline
     mn: 'Сонгосон гүйцэтгэгч энэ удаа ажиллах боломжгүй байна. Дараагийн гүйцэтгэгчийг сонгоно уу'
@@ -99,6 +104,6 @@ acceptance_criteria:
   - 'Bottom sheet uses ModalSheet with handle bar for drag-to-dismiss'
   - 'Timeout state makes clear that the default four-hour response window expired'
   - 'Decline state makes clear that the selected Tasker actively declined the booking request'
-  - 'Select Next CTA dismisses sheet and returns to Applicants List SCR-CUST-011'
+  - 'Select Next CTA dismisses sheet, returns to Applicants List SCR-CUST-011, and the task is selectable from remaining applicants'
   - 'Scrim uses branded primaryDeep at 35% opacity'
   - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

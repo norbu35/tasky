@@ -174,7 +174,24 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
     expect(screen.getAllByText('Bayangol district').length).toBeGreaterThan(0);
   });
 
-  it('filter bar toggles work', () => {
+  it('renders quote-mode task cards with a clear pricing state', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [{ ...baseTask, budget: null, pricing_mode: 'QUOTE' }],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    renderTaskFeed();
+
+    expect(screen.getByText('Үнийн санал шаардлагатай')).toBeTruthy();
+  });
+
+  it('keeps category filters inside the filter sheet', () => {
     mockUseTasks.mockReturnValue({
       data: {
         data: [baseTask, secondTask],
@@ -188,8 +205,11 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
 
     renderTaskFeed();
 
-    const filterBar = screen.getByTestId('task-feed-filter-bar');
-    expect(filterBar).toBeTruthy();
+    expect(screen.queryByTestId('task-feed-filter-bar')).toBeNull();
+
+    fireEvent.press(screen.getByTestId('task-feed-open-filters'));
+
+    expect(screen.getByTestId('task-feed-filter-sheet-options')).toBeTruthy();
   });
 
   it('opens the filter sheet with a result-count CTA', () => {
@@ -210,7 +230,30 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
 
     expect(screen.getByTestId('task-feed-filter-sheet')).toBeTruthy();
     expect(screen.getByText('2 даалгавар боломжтой')).toBeTruthy();
+    expect(screen.getByText('Ангилал')).toBeTruthy();
+    expect(screen.getByTestId('task-feed-filter-sheet-close')).toBeTruthy();
     expect(screen.getByTestId('task-feed-filter-sheet-show-results')).toBeTruthy();
+  });
+
+  it('summarizes active search filters near the filter control', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask, secondTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    renderTaskFeed();
+
+    fireEvent.changeText(screen.getByPlaceholderText('Асуулт хайх...'), 'sink');
+
+    expect(screen.getByTestId('task-feed-filter-count')).toBeTruthy();
+    expect(screen.getByTestId('task-feed-active-filter-search')).toBeTruthy();
+    expect(screen.getByTestId('task-feed-active-filter-clear')).toBeTruthy();
   });
 
   it('filters tasks by search text', () => {

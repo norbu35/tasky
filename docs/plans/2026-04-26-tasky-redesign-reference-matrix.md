@@ -1,14 +1,18 @@
 # Tasky Redesign Refero Reference Matrix
 
 **Date:** 2026-04-26
-**Status:** Draft research matrix for proof-screen design
+**Status:** Active research matrix for proof-screen design
 **Parent thesis:** `docs/plans/2026-04-26-tasky-redesign-thesis.md`
 
 ## Research rules
 
 - Use Refero as an evidence source, not as a source of product truth.
+- For the mobile proof subset, absorb Airbnb interaction anatomy, spacing rhythm, layout hierarchy, density, sheet behavior,
+  card composition, selection states, and QA comparison where those patterns fit Tasky screen specs.
 - Record both adopted and rejected patterns.
 - Compare web and iOS separately before extracting a shared Tasky pattern.
+- Retrieve and inspect actual screenshot content before runtime UI work; search-result metadata and thumbnail URLs are only
+  shortlist inputs.
 - Do not adopt references that depend on escrow, payment protection, wallet safety, provider tiers, instant match, or
   paid lead unlock.
 - Keep Tasky's Phase 1 model explicit: verified taskers may apply, customers choose from open applications, settlement
@@ -30,8 +34,9 @@
 
 ## Airbnb-specific mobile adoption matrix
 
-Airbnb references are structural only. Tasky keeps native primitives, Tasky tokens, i18n-backed copy, PRD-owned trust
-rules, open applications, direct settlement, and exact-address visibility only after confirmation.
+Airbnb references are UX absorption inputs for interaction anatomy, spacing, hierarchy, density, sheet behavior, card
+composition, selection states, and QA comparison. Tasky keeps native primitives, Tasky tokens, i18n-backed copy,
+PRD-owned trust rules, open applications, direct settlement, and exact-address visibility only after confirmation.
 
 | Tasky mobile surface | Airbnb structure to adopt                                                                                                                                         | Tasky implementation boundary                                                                                                              | Explicit rejection                                                                                          |
 | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |

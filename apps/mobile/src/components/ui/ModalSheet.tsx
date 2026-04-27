@@ -24,8 +24,14 @@ type Props = {
     onPress: () => void;
     testID?: string;
   };
+  headerLeading?: ReactNode;
+  headerTrailing?: ReactNode;
+  footer?: ReactNode;
+  hideDefaultAction?: boolean;
+  titleAlign?: 'left' | 'center';
   dismissible?: boolean;
   className?: string;
+  contentClassName?: string;
   testID?: string;
 };
 
@@ -36,8 +42,14 @@ export function ModalSheet({
   children,
   primaryAction,
   secondaryAction,
+  headerLeading,
+  headerTrailing,
+  footer,
+  hideDefaultAction = false,
+  titleAlign = 'left',
   dismissible = true,
   className,
+  contentClassName,
   testID,
 }: Props) {
   const { t } = useTranslation();
@@ -62,9 +74,30 @@ export function ModalSheet({
           testID={testID}
         >
           <View className="self-center w-11 h-[5px] rounded-full bg-muted" />
-          <Text className="text-body font-sans-bold text-foreground">{title}</Text>
-          <View className="gap-sm">{children}</View>
-          {primaryAction || secondaryAction ? (
+          <View className="flex-row items-center">
+            {headerLeading ? (
+              <View className="w-9 items-start">{headerLeading}</View>
+            ) : titleAlign === 'center' && headerTrailing ? (
+              <View className="w-9" />
+            ) : null}
+            <Text
+              className={cn(
+                'text-body font-sans-bold text-foreground',
+                titleAlign === 'center' && 'flex-1 text-center',
+              )}
+            >
+              {title}
+            </Text>
+            {headerTrailing ? (
+              <View className="w-9 items-end">{headerTrailing}</View>
+            ) : headerLeading && titleAlign === 'center' ? (
+              <View className="w-9" />
+            ) : null}
+          </View>
+          <View className={cn('gap-sm', contentClassName)}>{children}</View>
+          {footer ? (
+            footer
+          ) : primaryAction || secondaryAction ? (
             <View className="gap-sm">
               {primaryAction ? (
                 <Button
@@ -82,7 +115,7 @@ export function ModalSheet({
                 />
               ) : null}
             </View>
-          ) : (
+          ) : hideDefaultAction ? null : (
             <Button label={t('common.close')} variant="secondary" onPress={onClose} />
           )}
         </View>

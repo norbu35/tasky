@@ -18,7 +18,7 @@ appId: mn.tasky.mobile
 
 # Open settings via secondary CTA
 - tapOn:
-    id: 'SCR-SHARED-012-secondary-cta'
+    id: 'action-row-settings'
 - extendedWaitUntil:
     visible:
       id: 'SCR-SHARED-014'
@@ -98,7 +98,7 @@ appId: mn.tasky.mobile
 
 # SCR-SHARED-013: Profile Edit
 - tapOn:
-    id: 'SCR-SHARED-012-cta'
+    id: 'action-row-edit-profile'
 - waitForAnimationToEnd
 - extendedWaitUntil:
     visible:

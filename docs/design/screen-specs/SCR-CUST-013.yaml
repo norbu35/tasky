@@ -10,9 +10,11 @@ traceability:
   prd_refs:
     - REQ-P1-SAFE-13
     - REQ-P1-SAFE-18
+    - REQ-P1-MSG-04
   journey_refs:
     - JRN-CUST-02:step-3
-  scenario_refs: []
+  scenario_refs:
+    - SCN-REVIEW-007
 template: detail
 figma_page: 'Customer/Tasker Public Profile'
 feature: 'profiles'
@@ -69,14 +71,14 @@ components:
     variant: lg
 
   - id: COMP-VERIFICATIONBADGE
-    usage: 'Verified identity badge anchored to avatar bottom-right'
+    usage: 'ID verification badge anchored to avatar bottom-right'
     props:
       isVerified: true
       size: 'avatar_badge'
     variant: default
 
   - id: COMP-STARRATING
-    usage: 'Public Tasker rating shown only when the minimum review-count threshold has been met'
+    usage: 'Public Tasker rating shown only when at least three customer-to-tasker reviews are submitted'
     props:
       value: 4.7
       readonly: true
@@ -84,7 +86,7 @@ components:
     variant: display
 
   - id: COMP-TRUSTBANNER
-    usage: 'Trust metrics showing verified status and completion count; public rating is additive only after the minimum review threshold is met'
+    usage: 'Trust metrics showing ID-verified status and completion count; public rating is additive only after at least three customer-to-tasker reviews are submitted'
     props:
       verifiedCount: 1
       completedCount: 24
@@ -126,13 +128,13 @@ states:
       ]
 
   - id: loaded_trust_first
-    description: 'Profile data loaded below the public-rating threshold; verification, completion history, and categories are shown first'
+    description: 'Profile data loaded below three customer-to-tasker reviews; ID verification, completion history, and categories are shown first'
     components_visible:
       [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-TRUSTBANNER, COMP-CATEGORYCHIP]
     components_hidden: [COMP-STARRATING, COMP-REVIEWCARD, COMP-LOADINGSKELETON]
 
   - id: loaded_with_public_reputation
-    description: 'Profile data loaded and public reputation is visible because the minimum review threshold has been met'
+    description: 'Profile data loaded and public reputation is visible because at least three customer-to-tasker reviews are submitted'
     components_visible:
       [
         COMP-PROFILEAVATAR,
@@ -201,13 +203,13 @@ copy:
 
   - key: public_reputation_pending
     mn: 'Нийтийн үнэлгээ удахгүй харагдана'
-    en: 'Public rating will appear once enough reviews are collected'
+    en: 'Public rating appears after three customer reviews'
     max_chars: 60
 
   - key: verified_since
     mn: 'Баталгаажсан: {date}'
-    en: 'Verified since: {date}'
-    max_chars: 30
+    en: 'ID-verified since: {date}'
+    max_chars: 35
 
   - key: member_since
     mn: 'Бүртгүүлсэн: {date}'
@@ -236,12 +238,12 @@ analytics_events:
     trigger: 'User expands a review card to read full text'
 
 acceptance_criteria:
-  - 'Profile hero shows large Tasker avatar with VerificationBadge anchored bottom-right'
+  - 'Profile hero shows large Tasker avatar with ID verification badge anchored bottom-right'
   - 'Name and member-since date are always shown below avatar'
-  - 'TrustBanner shows verified status and completed-job count even when public rating is still hidden'
-  - 'Overall rating and public review list appear only after the minimum review-count threshold is met'
+  - 'TrustBanner shows ID-verified status and completed-job count even when public rating is still hidden'
+  - 'Overall rating and public review list appear only after at least three customer-to-tasker reviews are submitted'
   - 'Categories section shows CategoryChip for each category the Tasker works in'
-  - 'Below the threshold, the profile avoids public rating/review-count claims and may show a neutral pending-reputation message instead'
+  - 'Below three customer-to-tasker reviews, the profile avoids public rating/review-count claims and may show a neutral pending-reputation message instead'
   - 'When the threshold is met, the reviews section lists recent ReviewCards from past customers'
   - 'Tasker phone number is never shown on the public profile'
   - 'No direct-contact CTA appears on the public profile before booking confirmation'

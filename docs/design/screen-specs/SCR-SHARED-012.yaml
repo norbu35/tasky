@@ -12,7 +12,8 @@ traceability:
     - REQ-P1-SAFE-18
   journey_refs:
     - JRN-SHARED-05:step-1
-  scenario_refs: []
+  scenario_refs:
+    - SCN-REVIEW-007
 template: detail
 figma_page: 'Shared/Profile — My Profile'
 feature: 'profile'
@@ -148,7 +149,7 @@ states:
       ]
 
   - id: tasker_view
-    description: 'User is logged in as tasker; shows avatar with verification badge, stats, rating, reviews, and trust banner'
+    description: 'User is logged in as tasker; shows avatar with ID verification badge, private stats, rating, reviews, and trust banner'
     components_visible:
       [
         COMP-PROFILEAVATAR,
@@ -232,7 +233,7 @@ copy:
 
   - key: cta_view_stats
     mn: 'Статистик харах'
-    en: 'View Stats'
+    en: 'View Reputation'
     max_chars: 20
 
   - key: error_network_title
@@ -268,15 +269,15 @@ analytics_events:
   - event: 'profile_settings_tapped'
     trigger: 'User taps the settings icon in nav header'
   - event: 'profile_stats_tapped'
-    trigger: 'Tasker taps View Stats to navigate to stats dashboard'
+    trigger: 'Tasker taps View Reputation to navigate to reputation and reliability screen'
 
 acceptance_criteria:
   - 'Profile displays loading skeleton while GET /users/me is in flight'
   - 'Customer view shows avatar, display name, email, member-since date, and Edit Profile CTA'
-  - 'Tasker view shows avatar with verification badge, average star rating, completed jobs stat card, recent reviews, and trust banner'
+  - 'Tasker self-view may show private rating and review context, while public profile surfaces still hide aggregate ratings until at least three customer-to-tasker reviews are submitted'
   - 'Tapping Edit Profile navigates (push) to SCR-SHARED-013'
   - 'Tapping Settings icon navigates (push) to SCR-SHARED-014'
-  - 'Tapping View Stats navigates (push) to SCR-TASK-016 (tasker only)'
+  - 'Tapping View Reputation navigates (push) to SCR-TASK-016 (tasker only)'
   - 'Network error state shows centered error message with retry button'
   - 'Retry button re-triggers GET /users/me'
   - 'All text renders correctly in Mongolian Cyrillic at 16px minimum body size'

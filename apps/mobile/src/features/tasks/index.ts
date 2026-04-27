@@ -8,4 +8,5 @@ export { useTaskPhotoUpload } from './hooks/useTaskPhotoUpload';
 export { useRecentLocations } from './hooks/useRecentLocations';
 export { useCustomerTaskDetail } from './hooks/useCustomerTaskDetail';
 export type { CustomerTaskDetailState } from './hooks/useCustomerTaskDetail';
+export { listMyTasks } from './api';
 export { default as CustomerTasksScreen } from './screens/CustomerTasks';

@@ -1,7 +1,11 @@
 # Screen Spec: Booking Cancel (Tasker)
 screen_id: SCR-TASK-015
 name: 'Booking Cancel (Tasker)'
-route: null
+route: '/(tasker)/jobs/:bookingId/cancel'
+presentation:
+  type: route_backed_modal_sheet
+  host_screen: SCR-TASK-013
+  invocation: "Tasker taps 'Cancel' on a confirmed booking"
 role: [tasker]
 phase: '0-1'
 traceability:
@@ -115,12 +119,12 @@ copy:
   - key: cancel_description
     mn: 'Захиалга цуцлагдвал даалгавар дахин нээлттэй болно. Цуцлалт таны найдвартай байдлын үзүүлэлтэд нөлөөлнө.'
     en: 'Cancelling will reopen the task. Cancellations affect your reliability score.'
-    max_chars: 100
+    max_chars: 120
 
   - key: impact_notice
-    mn: 'Цуцлалт нь таны хайлтын эрэмбэлэлт болон найдвартай байдлын үнэлгээнд нөлөөлнө.'
-    en: 'Ordinary cancellations affect your search ranking and reliability score.'
-    max_chars: 70
+    mn: 'Энгийн цуцлалт нь таны найдвартай байдлын бүртгэлд нөлөөлж, хяналт үүсгэж болно.'
+    en: 'Ordinary cancellations affect your reliability record and may trigger enforcement review.'
+    max_chars: 100
 
   - key: strike_warning
     mn: 'Анхааруулга: Та сүүлийн 30 хоногт {count} удаа цуцалсан байна.'

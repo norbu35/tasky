@@ -14,6 +14,7 @@ traceability:
     - REQ-P1-NOTIF-02
   journey_refs:
     - JRN-CUST-02:step-6
+    - JRN-CUST-02-A5
   scenario_refs:
     - SCN-BOOK-022
     - SCN-BOOK-023

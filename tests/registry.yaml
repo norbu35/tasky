@@ -720,6 +720,29 @@ scenarios:
     status: untested
     test_type: domain-unit
     title: Pricing state changes are auditable from application through booking lock
+  SCN-BOOK-031:
+    domain: booking
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-BOOK-03
+    risk: critical
+    status: covered
+    test_type: domain-unit
+    title: Selected tasker explicitly declines and task returns to selectable applicants
+  SCN-BOOK-032:
+    domain: booking
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-BOOK-29, REQ-P1-PRICE-07, NFR-LEGAL-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Booking confirmation explains locked price baseline and post-confirmation
+      scope changes
   SCN-CATEGORY-001:
     domain: category
     mutation_kill_rate: 0
@@ -996,7 +1019,7 @@ scenarios:
     risk: high
     status: covered
     test_type: domain-unit
-    title: Dispute submission requires at least one evidence artifact
+    title: Dispute without evidence enters the evidence-needed grace path
   SCN-DISPUTE-006:
     domain: dispute
     mutation_kill_rate: 58
@@ -1042,7 +1065,7 @@ scenarios:
     risk: high
     status: covered
     test_type: domain-unit
-    title: Conversation is created only after booking confirmation
+    title: Conversation is created only after booking confirmation and price lock
   SCN-MSG-002:
     domain: messaging
     mutation_kill_rate: 18
@@ -1176,6 +1199,18 @@ scenarios:
     status: untested
     test_type: domain-unit
     title: Booking confirmation notification is sent to both participants
+  SCN-NOTIF-009:
+    domain: notification
+    mutation_kill_rate: null
+    mutation_kill_rate_updated_at: null
+    notes: null
+    override_status: null
+    prd_ref: REQ-P1-NOTIF-05, REQ-P1-BOOK-25
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Completion silence reminder uses push notification when a device token
+      exists
   SCN-REVIEW-001:
     domain: review
     mutation_kill_rate: 43
@@ -1253,7 +1288,7 @@ scenarios:
     risk: high
     status: untested
     test_type: domain-unit
-    title: Public reputation hides ratings until minimum review threshold
+    title: Public reputation hides ratings until three customer-to-tasker reviews
   SCN-SEC-001:
     domain: security
     mutation_kill_rate: 0
@@ -1778,7 +1813,7 @@ scenarios:
     mutation_kill_rate_updated_at: null
     notes: null
     override_status: null
-    prd_ref: REQ-P1-TASK-11, REQ-P1-TASK-12, REQ-P1-TASK-13, REQ-P1-TASK-14
+    prd_ref: REQ-P1-TASK-11, REQ-P1-TASK-12, REQ-P1-TASK-13, REQ-P1-TASK-14, REQ-P1-TASK-15
     risk: high
     status: untested
     test_type: domain-unit

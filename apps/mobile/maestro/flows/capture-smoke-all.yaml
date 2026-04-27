@@ -6,6 +6,10 @@ appId: mn.tasky.mobile
 # === CUSTOMER JOURNEY: Post a Task ===
 - launchApp:
     clearState: true
+- setLocation:
+    latitude: 47.9184
+    longitude: 106.9177
+- launchApp
 - runFlow: _support/login-customer.yaml
 - extendedWaitUntil:
     visible:
@@ -13,9 +17,21 @@ appId: mn.tasky.mobile
     timeout: 5000
 - takeScreenshot: screenshots/SCR-CUST-001-my-tasks-empty
 
-# Tap empty-state CTA to post new task
-- tapOn:
-    id: 'my-tasks-feed-empty-cta'
+# Create new task — use empty-state CTA if feed is empty, otherwise the shared customer FAB
+- runFlow:
+    when:
+      visible:
+        id: 'my-tasks-feed-empty-cta'
+    commands:
+      - tapOn:
+          id: 'my-tasks-feed-empty-cta'
+- runFlow:
+    when:
+      visible:
+        id: 'global-fab'
+    commands:
+      - tapOn:
+          id: 'global-fab'
 
 # SCR-CUST-002 - Category selection
 - extendedWaitUntil:
@@ -28,10 +44,7 @@ appId: mn.tasky.mobile
     timeout: 10000
 - takeScreenshot: screenshots/SCR-CUST-002-category-selection
 
-- tapOn:
-    point: '30%,38%'
-- tapOn:
-    id: 'SCR-CUST-002-next'
+- tapOn: 'Cleaning'
 
 # SCR-CUST-003 - Intake form
 - extendedWaitUntil:
@@ -42,10 +55,23 @@ appId: mn.tasky.mobile
 
 - tapOn:
     id: 'intake-description-input'
-- inputText: 'Гэрийн цэвэрлэгээ хэрэгтэй байна. 3 өрөө байшин.'
+- inputText: 'Need home cleaning service. 3 room apartment.'
 - tapOn:
     id: 'intake-header'
 - waitForAnimationToEnd
+- tapOn:
+    id: 'intake-property_type-apartment'
+- tapOn:
+    id: 'intake-size_or_rooms-input'
+- eraseText: 3
+- inputText: '3'
+- tapOn:
+    id: 'intake-header'
+- waitForAnimationToEnd
+- tapOn:
+    id: 'intake-cleaning_type-standard'
+- tapOn:
+    id: 'intake-supplies_provided-yes'
 - tapOn:
     id: 'SCR-CUST-003-next'
 
@@ -66,14 +92,24 @@ appId: mn.tasky.mobile
     timeout: 5000
 - takeScreenshot: screenshots/SCR-CUST-005-location
 
-- tapOn:
-    id: 'location-map'
+- runFlow:
+    when:
+      visible:
+        id: 'location-recent-0'
+    commands:
+      - tapOn:
+          id: 'location-recent-0'
+- runFlow:
+    when:
+      notVisible:
+        id: 'location-recent-0'
+    commands:
+      - tapOn:
+          id: 'location-map'
 - tapOn:
     id: 'location-text-input'
-- inputText: 'Сүхбаатар дүүрэг, 1-р хороо'
+- inputText: 'Sukhbaatar district, 1st khoroo'
 - hideKeyboard
-- tapOn:
-    id: 'location-map'
 - waitForAnimationToEnd
 - tapOn:
     id: 'SCR-CUST-005-next'
@@ -98,8 +134,9 @@ appId: mn.tasky.mobile
     visible:
       id: 'schedule-picker-sheet'
     timeout: 5000
+- takeScreenshot: screenshots/SCR-CUST-006-schedule-picker-date
 - tapOn:
-    id: 'schedule-picker-confirm'
+    id: 'schedule-picker-save'
 - waitForAnimationToEnd
 - tapOn:
     id: 'schedule-time-input'
@@ -108,7 +145,7 @@ appId: mn.tasky.mobile
       id: 'schedule-picker-sheet'
     timeout: 5000
 - tapOn:
-    id: 'schedule-picker-confirm'
+    id: 'schedule-picker-save'
 - waitForAnimationToEnd
 - tapOn:
     id: 'SCR-CUST-006-next'

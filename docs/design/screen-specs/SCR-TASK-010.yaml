@@ -54,7 +54,7 @@ copy:
   - key: description
     mn: 'Таны баталгаажуулалтын мэдээлэл амжилттай илгээгдлээ. Манай баг баталгаажуулалтын дараалалд хянана.'
     en: 'Your verification documents have been submitted. Our team will review them in the verification queue.'
-    max_chars: 100
+    max_chars: 110
 
   - key: next_steps_heading
     mn: 'Дараа нь юу болох вэ?'
@@ -64,7 +64,7 @@ copy:
   - key: next_step_review
     mn: 'Манай баг таны мэдээллийг баталгаажуулалтын дараалалд хянана'
     en: 'Our team will review your information in the verification queue'
-    max_chars: 60
+    max_chars: 70
 
   - key: next_step_notification
     mn: 'Үр дүнг мэдэгдэл хэлбэрээр авна'

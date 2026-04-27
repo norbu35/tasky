@@ -12,8 +12,10 @@ traceability:
     - REQ-P1-BOOK-01
     - REQ-P1-BOOK-05
     - REQ-P1-BOOK-06
+    - REQ-P1-BOOK-29
     - REQ-P1-PRICE-07
     - NFR-LEGAL-01
+    - NFR-LEGAL-03
   journey_refs:
     - JRN-CUST-02:step-5
   scenario_refs:
@@ -21,6 +23,7 @@ traceability:
     - SCN-BOOK-008
     - SCN-BOOK-022
     - SCN-BOOK-025
+    - SCN-BOOK-032
 template: detail
 figma_page: 'Customer/Booking Request Confirmation'
 feature: 'booking'
@@ -28,7 +31,7 @@ feature: 'booking'
 layout:
   template: detail
   density: default
-  structure: 'safe_area -> nav_header(back + title) -> scrollview(tasker_summary + task_summary + pricing + disclaimer + response_window_note) -> sticky_bottom_cta(confirm)'
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(tasker_summary + task_summary + pricing + scope_baseline_notice + disclaimer + response_window_note) -> sticky_bottom_cta(confirm)'
 
 components:
   - id: COMP-PROFILEAVATAR
@@ -40,14 +43,14 @@ components:
     variant: lg
 
   - id: COMP-VERIFICATIONBADGE
-    usage: 'Verified identity badge on selected Tasker avatar'
+    usage: 'ID verification badge on selected Tasker avatar'
     props:
       isVerified: true
       size: 'avatar_badge'
     variant: default
 
   - id: COMP-STARRATING
-    usage: 'Selected Tasker public rating displayed only when public reputation is above the minimum review threshold'
+    usage: 'Selected Tasker public rating displayed only after at least three customer-to-tasker reviews are submitted'
     props:
       value: 4.7
       readonly: true
@@ -55,7 +58,7 @@ components:
     variant: display
 
   - id: COMP-CARD
-    usage: 'Summary sections for selected Tasker info, task details, pricing, liability disclaimer, and response-window note'
+    usage: 'Summary sections for selected Tasker info, task details, pricing, scope baseline notice, liability disclaimer, and response-window note'
     props:
       onPress: null
     variant: outlined
@@ -79,7 +82,7 @@ components:
 
 states:
   - id: default
-    description: 'Booking request summary displayed with Tasker info, task details, and disclaimer requiring review'
+    description: 'Booking request summary displayed with Tasker info, task details, locked-price and intake-scope baseline notice, and disclaimer requiring review'
     components_visible:
       [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-CARD, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
@@ -135,6 +138,11 @@ copy:
     en: 'Pricing'
     max_chars: 15
 
+  - key: section_scope_baseline
+    mn: 'Хүрээ ба өөрчлөлт'
+    en: 'Scope and Changes'
+    max_chars: 25
+
   - key: section_disclaimer
     mn: 'Хариуцлагын мэдэгдэл'
     en: 'Liability Disclaimer'
@@ -153,7 +161,22 @@ copy:
   - key: payment_note
     mn: 'Захиалга баталгаажсаны дараа үнэ түгжигдэж, төлбөрийг шууд тохиролцоно'
     en: 'After confirmation, the agreed price is locked and paid directly between the parties'
-    max_chars: 80
+    max_chars: 90
+
+  - key: scope_baseline_note
+    mn: 'Гүйцэтгэгч зөвшөөрсний дараа үнэ болон маягтын ажлын хүрээ нь үндсэн тохиролцоо болно'
+    en: 'After the tasker accepts, the locked price and intake scope become the baseline agreement'
+    max_chars: 110
+
+  - key: scope_change_note
+    mn: 'Материал, хэрэгсэл эсвэл ажлын хүрээ өөрчлөгдвөл Tasky чат эсвэл тусламжийн нотолгоонд харилцан зөвшөөрсөн байх ёстой'
+    en: 'Material, supply, or scope changes must be mutually agreed and kept in Tasky chat or support evidence'
+    max_chars: 130
+
+  - key: no_auto_adjustment_note
+    mn: 'Tasky нь автоматаар үнэ өөрчлөх, төлбөр барих, төлбөр хамгаалахгүй'
+    en: 'Tasky does not provide automatic price adjustment, payment hold, or payment protection'
+    max_chars: 110
 
   - key: response_window_note
     mn: 'Сонгосон гүйцэтгэгч 4 цагийн дотор зөвшөөрөх ёстой'
@@ -191,9 +214,12 @@ analytics_events:
     trigger: 'Selection request submission fails; includes error type'
 
 acceptance_criteria:
-  - 'Summary shows selected Tasker with avatar, name, and VerificationBadge; public rating appears only when thresholded reputation is available'
+  - 'Summary shows selected Tasker with avatar, name, and ID verification badge; public rating appears only after at least three customer-to-tasker reviews are submitted'
   - 'Task summary shows category, title or description, approximate location, schedule (YYYY.MM.DD), and pricing'
   - 'Pricing summary preserves the posted budget for budget-mode tasks, or shows the submitted quote when the task was posted in quote mode'
+  - 'Screen states that the locked booking price and intake scope become the baseline agreement after the selected tasker accepts'
+  - 'Screen explains that material, supply, or scope changes after confirmation must be mutually agreed and kept in Tasky chat or support evidence'
+  - 'Screen does not promise automatic price adjustment, payment hold, or payment protection'
   - 'Liability disclaimer section is prominently displayed and must be explicitly acknowledged before continuing'
   - 'Confirm button is disabled until disclaimer is acknowledged'
   - 'Payment note states that price locks only after booking confirmation and settlement remains direct between the parties'

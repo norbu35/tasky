@@ -10,6 +10,10 @@ traceability:
   prd_refs:
     - REQ-P1-MATCH-01
     - REQ-P1-MATCH-02
+    - REQ-P1-MATCH-05
+    - REQ-P1-MATCH-06
+    - REQ-P1-MATCH-07
+    - REQ-P1-SAFE-03
     - REQ-P1-TASK-09
     - REQ-P1-TASK-10
     - REQ-P1-PRICE-02
@@ -23,14 +27,17 @@ traceability:
     - JRN-TASK-02-A1
     - JRN-TASK-02-A2
     - JRN-TASK-02-A3
+    - JRN-TASK-02-A5
   scenario_refs:
     - SCN-TASK-009
     - SCN-TASK-010
     - SCN-TASK-022
     - SCN-TASK-023
+    - SCN-TASK-025
     - SCN-TASK-026
     - SCN-TASK-027
     - SCN-TASK-028
+    - SCN-TASK-032
     - SCN-SEC-006
     - SCN-SEC-007
 template: detail
@@ -51,6 +58,15 @@ components:
       size: xl
       disabled: false
     variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Secondary CTA in already-applied state — 'Withdraw application' before customer selection"
+    props:
+      label: 'Анкетаа буцаах'
+      variant: outline
+      size: lg
+      disabled: false
+    variant: outline
 
   - id: COMP-STATUSBADGE
     usage: "Task status badge showing 'Нээлттэй' (Open)"
@@ -125,7 +141,7 @@ states:
     components_hidden: [verify_cta, already_applied_badge, application_closed_notice]
 
   - id: already_applied
-    description: 'Tasker has already applied to this task — apply button replaced with status indicator'
+    description: 'Tasker has already applied to this task before customer selection — apply button replaced with status indicator and withdraw action'
     components_visible:
       [
         nav_header,
@@ -136,6 +152,7 @@ states:
         schedule_pricing,
         trust_banner,
         already_applied_badge,
+        withdraw_application_button,
       ]
     components_hidden: [apply_button, verify_cta, application_closed_notice]
 
@@ -225,6 +242,16 @@ copy:
     en: 'Task is no longer accepting applications'
     max_chars: 45
 
+  - key: withdraw_application_button
+    mn: 'Анкетаа буцаах'
+    en: 'Withdraw application'
+    max_chars: 25
+
+  - key: withdraw_application_note
+    mn: 'Сонгогдохоос өмнө анкетаа буцааж болно'
+    en: 'You can withdraw before the customer selects you'
+    max_chars: 70
+
   - key: posted_time
     mn: '{time} өмнө нийтлэгдсэн'
     en: 'Posted {time} ago'
@@ -247,6 +274,9 @@ api_endpoints:
   - method: POST
     path: '/tasks/:id/applications'
     purpose: 'Submit application to the task (verified taskers only)'
+  - method: POST
+    path: '/tasks/:id/applications/:applicationId/withdraw'
+    purpose: 'Withdraw the current tasker application before customer selection'
 
 analytics_events:
   - event: 'task_detail_viewed'
@@ -257,6 +287,10 @@ analytics_events:
     trigger: 'Unverified tasker taps Get Verified CTA'
   - event: 'task_apply_blocked_closed'
     trigger: 'Apply action blocked because the task is no longer accepting applications'
+  - event: 'task_application_withdraw_tapped'
+    trigger: 'Tasker taps Withdraw application in already-applied state'
+  - event: 'task_application_withdrawn'
+    trigger: 'Withdraw application request succeeds'
   - event: 'task_detail_photos_viewed'
     trigger: 'User scrolls through task photos'
 
@@ -265,9 +299,12 @@ acceptance_criteria:
   - 'Location is shown as approximate area (fuzzed 500m) per PRD — exact address only after booking'
   - "Verified taskers see enabled 'Анкет илгээх' primary CTA at bottom"
   - 'Task detail does not expose open-ended pre-booking chat; any messaging channel remains post-confirmation only'
+  - 'Application choice is supported by structured task, pricing, and scope fields, not pre-booking chat'
+  - 'Phase 1 application eligibility uses global verified status only; category-specific vetting and service-area preferences do not block applying'
   - "Unverified taskers see 'Баталгаажуулалт хийх' CTA that navigates to Verification Gate (SCR-TASK-003)"
   - 'Tapping Apply for a verified tasker triggers application POST and navigates to Application Sent (SCR-TASK-011)'
-  - "Already applied state replaces apply button with 'Анкет илгээсэн' badge"
+  - "Already applied state replaces apply button with 'Анкет илгээсэн' badge and shows a Withdraw application CTA while the application is not selected"
+  - 'Withdrawing calls POST /tasks/:id/applications/:applicationId/withdraw and removes the tasker application from the customer selectable list'
   - 'Application-closed state disables apply with explanatory notice when the task is no longer accepting applications'
   - 'Customer avatar and name are displayed in customer info section'
   - 'Pricing summary displays either posted budget or quote-request state using the correct price or label treatment'

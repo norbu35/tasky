@@ -2,8 +2,8 @@
 
 This document defines the shared frontend contract for `apps/web` and `apps/mobile`.
 
-Read after: `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, the surface-specific doc (`web.md` or `mobile.md`), then `common.md`
-when needed.
+Read after: `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, relevant `docs/maintenance/*.md`, the
+surface-specific doc (`web.md` or `mobile.md`), then `common.md` when needed.
 
 ## 1. Scope
 

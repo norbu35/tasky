@@ -1,7 +1,11 @@
 # Screen Spec: Application Sent
 screen_id: SCR-TASK-011
 name: 'Application Sent'
-route: null
+route: '/(tasker)/tasks/applied'
+presentation:
+  type: route_backed_success
+  host_screen: SCR-TASK-002
+  invocation: 'Shown after a verified tasker submits a structured application from task detail'
 role: [tasker]
 phase: '0-1'
 traceability:
@@ -114,7 +118,7 @@ analytics_events:
     trigger: 'User taps View Task to see the applied task detail'
 
 acceptance_criteria:
-  - 'This is an inline success overlay, not a standalone route'
+  - 'This is a route-backed success screen using the success_celebration contract; the same content may be reused inline after application submit'
   - 'Animated checkmark plays spring animation on display'
   - 'Next steps explain customer review process and notification promise'
   - "Tapping 'Бусад даалгавар үзэх' navigates to Task Feed (SCR-TASK-001) via replace"

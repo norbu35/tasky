@@ -140,6 +140,7 @@ nodes:
         guard: tap privacy
     data_deps:
       - user_settings
+      - service_area_preferences
   SCR-SHARED-015:
     label: Account Deletion
     edges:
@@ -167,11 +168,15 @@ nodes:
       - to: SCR-TASK-013
         type: push
         guard: tap booking notification, role == tasker
+      - to: SCR-TASK-017
+        type: modal
+        guard: tap selected-tasker booking request notification, role == tasker, booking intent active
       - to: SCR-CUST-025
         type: push
         guard: tap dispute notification
     data_deps:
       - notifications
+      - booking_intent_id
   SCR-SHARED-017:
     label: Review Form
     edges:
@@ -730,7 +735,7 @@ nodes:
       - booking_id
       - tasker_cancel_count_30d
   SCR-TASK-016:
-    label: Tasker Stats
+    label: Tasker Reputation & Reliability
     edges:
       - to: SCR-SHARED-012
         type: pop

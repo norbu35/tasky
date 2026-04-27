@@ -33,11 +33,11 @@ Phase 1 does not promise payment hold, payment protection, or escrow.
 
 ### Microcopy examples
 
-| Moment                | English                                                         | Notes                             |
-| --------------------- | --------------------------------------------------------------- | --------------------------------- |
-| Verification complete | "Identity confirmed. You're good to go."                        | Positive and immediate            |
-| Booking confirmed     | "Booked. We'll keep the details and updates in one place."      | Confident without implying escrow |
-| No immediate match    | "No qualified tasker yet. We’ll keep trying in the background." | Honest assisted posture           |
+| Moment                | English                                                           | Notes                             |
+| --------------------- | ----------------------------------------------------------------- | --------------------------------- |
+| Verification complete | "Identity confirmed. You're good to go."                          | Positive and immediate            |
+| Booking confirmed     | "Booked. We'll keep the details and updates in one place."        | Confident without implying escrow |
+| No immediate match    | "No ID-verified tasker yet. We’ll keep trying in the background." | Honest assisted posture           |
 
 ## Trust promise
 

@@ -13,9 +13,18 @@ interface StatusSectionProps {
 export function StatusSection({ status }: StatusSectionProps) {
   const { t } = useTranslation();
   return (
-    <View className="flex-row justify-between items-center mb-xl">
-      <Text className="text-subtitle font-semibold text-primary">{getStatusLabel(status, t)}</Text>
-      <StatusBadge status={mapStatus(status)} />
+    <View className="mb-lg border-b border-border pb-lg" testID="booking-detail-status-section">
+      <View className="flex-row justify-between items-center">
+        <View className="flex-1 pr-md">
+          <Text className="text-caption text-text-secondary mb-xs">
+            {t('customer.bookings.detailTitle')}
+          </Text>
+          <Text className="text-heading font-display-bold text-primary-deep">
+            {getStatusLabel(status, t)}
+          </Text>
+        </View>
+        <StatusBadge status={mapStatus(status)} />
+      </View>
     </View>
   );
 }

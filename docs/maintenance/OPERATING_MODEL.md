@@ -8,6 +8,7 @@ Tasky is operated as a maintenance-and-extension monorepo, not as a greenfield t
 
 - Product requirements: `docs/PRD.md`
 - Market and launch strategy: `docs/STRATEGY.md`
+- Phase 1 KPI formulas and launch decision thresholds: `docs/METRICS.md`
 - Operating policy: relevant `docs/maintenance/*.md`
 - Architecture routing: `docs/architecture/AGENTS.md`, then the smallest relevant architecture doc
 - Active API contract: `docs/openapi/openapi.yaml`
@@ -23,11 +24,12 @@ When a task spans multiple document families, read them in this order:
 
 1. Product requirements and launch constraints from `docs/PRD.md`
 2. Market and launch strategy from `docs/STRATEGY.md`
-3. Relevant maintenance policies for governance, readiness, or operational posture
-4. The smallest relevant architecture document routed by `docs/architecture/AGENTS.md`
-5. `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml` when request or response contracts change
-6. Design docs for UX detail only
-7. Archive material for history only
+3. KPI formulas, thresholds, and denominator rules from `docs/METRICS.md` when launch metrics or dashboards are implicated
+4. Relevant maintenance policies for governance, readiness, or operational posture
+5. The smallest relevant architecture document routed by `docs/architecture/AGENTS.md`
+6. `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml` when request or response contracts change
+7. Design docs for UX detail only
+8. Archive material for history only
 
 ## Planning workflow
 

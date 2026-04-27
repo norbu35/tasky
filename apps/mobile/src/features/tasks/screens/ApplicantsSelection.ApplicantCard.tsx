@@ -7,13 +7,15 @@ import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
 import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
+import { MIN_PUBLIC_REVIEW_COUNT } from '@/features/profile/model';
 
 import { type ApplicantItem } from './ApplicantsSelection.model';
 
 const { colors, spacing } = mobileTheme;
 const APPLICANT_SURFACE = {
-  signalGap: spacing.xs,
+  metricGap: spacing.xs,
   rowGap: spacing.md,
+  sectionGap: spacing.sm,
   titleClusterGap: spacing.xs / 2,
 } as const;
 
@@ -24,16 +26,72 @@ function formatTugrik(amount?: number | null): string {
 
 interface ApplicantCardProps {
   applicant: ApplicantItem;
+  index: number;
   onAccept: (application: ApplicantItem) => void;
-  onViewProfile: (taskerId: string) => void;
+  onViewProfile: (application: ApplicantItem) => void;
 }
 
-export function ApplicantCard({ applicant, onAccept, onViewProfile }: ApplicantCardProps) {
+interface EvidenceRowProps {
+  icon: React.ReactNode;
+  title: string;
+  body?: string;
+  testID?: string;
+}
+
+function EvidenceRow({ icon, title, body, testID }: EvidenceRowProps) {
+  return (
+    <View
+      testID={testID}
+      className="flex-row border-b border-border py-sm"
+      style={{ gap: APPLICANT_SURFACE.sectionGap }}
+    >
+      <View className="pt-xs">{icon}</View>
+      <View className="flex-1" style={{ gap: APPLICANT_SURFACE.titleClusterGap }}>
+        <Text className="text-label font-sans-semibold text-foreground">{title}</Text>
+        {body ? (
+          <Text className="text-caption text-text-secondary leading-snug">{body}</Text>
+        ) : null}
+      </View>
+    </View>
+  );
+}
+
+export function ApplicantCard({ applicant, index, onAccept, onViewProfile }: ApplicantCardProps) {
   const { t } = useTranslation();
+  const reviewTitle = applicant.publicRatingVisible
+    ? `${applicant.rating.toFixed(1)} · ${t('customer.applicants.signalPublicReviews', {
+        count: applicant.reviewCount,
+      })}`
+    : t('customer.applicants.signalCompletedJobs', {
+        count: applicant.completedJobs,
+      });
+  const reviewBody = applicant.publicRatingVisible
+    ? t('customer.applicants.signalPublicReviewsBody', { count: applicant.reviewCount })
+    : t('customer.applicants.signalLowReviewBody', { count: MIN_PUBLIC_REVIEW_COUNT });
+  const responseTitle = t(
+    applicant.responseSignal === 'detailed'
+      ? 'customer.applicants.signalDetailedResponse'
+      : 'customer.applicants.signalBriefResponse',
+  );
+  const responseBody = t(
+    applicant.responseSignal === 'detailed'
+      ? 'customer.applicants.signalDetailedResponseBody'
+      : 'customer.applicants.signalBriefResponseBody',
+  );
+  const pricingTitle =
+    applicant.quotePrice != null
+      ? t('customer.applicants.signalQuote', {
+          amount: formatTugrik(applicant.quotePrice),
+        })
+      : t('customer.applicants.signalAcceptsBudget');
+  const pricingBody =
+    applicant.quotePrice != null
+      ? t('customer.applicants.signalQuoteBody')
+      : t('customer.applicants.signalAcceptsBudgetBody');
 
   return (
     <View
-      testID="SCR-CUST-011"
+      testID={`applicant-card-${index}`}
       className="rounded-lg bg-card p-lg"
       style={{ gap: APPLICANT_SURFACE.rowGap, ...elevations.soft }}
     >
@@ -41,71 +99,90 @@ export function ApplicantCard({ applicant, onAccept, onViewProfile }: ApplicantC
         <ProfileAvatar
           uri={applicant.avatarUrl}
           name={applicant.name}
-          size="md"
+          size="lg"
           showVerified={applicant.isVerified}
         />
         <View className="flex-1" style={{ gap: APPLICANT_SURFACE.titleClusterGap }}>
           <Text className="text-subtitle font-sans-bold text-foreground">{applicant.name}</Text>
-        </View>
-      </View>
-
-      <View className="flex-row flex-wrap" style={{ gap: APPLICANT_SURFACE.signalGap }}>
-        {applicant.isVerified ? (
-          <View className="flex-row items-center rounded-full bg-muted px-sm py-xs gap-xs">
-            <ShieldCheck size={14} color={colors.trustMuted} />
-            <Text className="text-caption font-sans-bold text-trust-muted">
-              {t('customer.applicants.signalVerified')}
-            </Text>
-          </View>
-        ) : null}
-        <View className="flex-row items-center rounded-full bg-muted px-sm py-xs gap-xs">
-          <MessageSquare size={14} color={colors.textSecondary} />
           <Text className="text-caption text-text-secondary">
             {t(
-              applicant.responseSignal === 'detailed'
-                ? 'customer.applicants.signalDetailedResponse'
-                : 'customer.applicants.signalBriefResponse',
+              applicant.isVerified
+                ? 'customer.applicants.profilePreviewVerified'
+                : 'customer.applicants.profilePreviewUnverified',
             )}
           </Text>
         </View>
-        <View className="flex-row items-center rounded-full bg-muted px-sm py-xs gap-xs">
-          {applicant.publicRatingVisible ? (
-            <>
-              <Star size={14} color={colors.accent} fill={colors.accent} />
-              <Text className="text-caption font-sans-bold text-foreground">
+        {applicant.publicRatingVisible ? (
+          <View className="items-end" style={{ gap: APPLICANT_SURFACE.metricGap }}>
+            <View className="flex-row items-center" style={{ gap: spacing.xs / 2 }}>
+              <Star size={14} color={colors.foreground} fill={colors.foreground} />
+              <Text className="text-label font-sans-bold text-foreground">
                 {applicant.rating.toFixed(1)}
               </Text>
-              <Text className="text-caption text-text-secondary">
-                {t('customer.applicants.signalCompletedJobs', { count: applicant.reviewCount })}
-              </Text>
-            </>
-          ) : (
+            </View>
             <Text className="text-caption text-text-secondary">
-              {t('shared.profile.lowReviewTitle')}
-            </Text>
-          )}
-        </View>
-        {applicant.quotePrice != null ? (
-          <View className="flex-row items-center rounded-full bg-muted px-sm py-xs gap-xs">
-            <CircleDollarSign size={14} color={colors.secondary} />
-            <Text className="text-caption font-sans-bold text-foreground">
-              {t('customer.applicants.signalQuote', {
-                amount: formatTugrik(applicant.quotePrice),
-              })}
+              {t('customer.applicants.signalPublicReviews', { count: applicant.reviewCount })}
             </Text>
           </View>
         ) : null}
       </View>
 
+      <View style={{ gap: APPLICANT_SURFACE.sectionGap }}>
+        <Text className="text-caption font-sans-bold uppercase text-text-secondary">
+          {t('customer.applicants.structuredSignalsLabel')}
+        </Text>
+        <View>
+          <EvidenceRow
+            icon={<ShieldCheck size={18} color={colors.trustMuted} />}
+            title={t('customer.applicants.signalVerified')}
+            body={t(
+              applicant.isVerified
+                ? 'customer.applicants.signalVerifiedBody'
+                : 'customer.applicants.signalUnverifiedBody',
+            )}
+            testID={`applicant-signal-verified-${index}`}
+          />
+          <EvidenceRow
+            icon={<MessageSquare size={18} color={colors.textSecondary} />}
+            title={responseTitle}
+            body={responseBody}
+            testID={`applicant-signal-response-${index}`}
+          />
+          <EvidenceRow
+            icon={
+              applicant.publicRatingVisible ? (
+                <Star size={18} color={colors.foreground} fill={colors.foreground} />
+              ) : (
+                <Star size={18} color={colors.textSecondary} />
+              )
+            }
+            title={reviewTitle}
+            body={reviewBody}
+            testID={`applicant-signal-reviews-${index}`}
+          />
+          <EvidenceRow
+            icon={<CircleDollarSign size={18} color={colors.secondary} />}
+            title={pricingTitle}
+            body={pricingBody}
+            testID={`applicant-signal-pricing-${index}`}
+          />
+        </View>
+      </View>
+
       {applicant.message ? (
-        <Text className="text-label text-muted-foreground leading-snug">{applicant.message}</Text>
+        <View style={{ gap: APPLICANT_SURFACE.titleClusterGap }}>
+          <Text className="text-caption font-sans-bold uppercase text-text-secondary">
+            {t('customer.applicants.applicationMessageLabel')}
+          </Text>
+          <Text className="text-label text-muted-foreground leading-snug">{applicant.message}</Text>
+        </View>
       ) : null}
 
       <View className="flex-row items-center pt-xs" style={{ gap: APPLICANT_SURFACE.rowGap }}>
         <Touchable
           className="flex-1 min-h-[44px] bg-primary rounded-md items-center justify-center"
           onPress={() => onAccept(applicant)}
-          testID={`applicant-accept-${applicant.taskerId}`}
+          testID={`applicant-accept-${index}`}
           accessibilityRole="button"
         >
           <Text className="text-label font-sans-bold text-primary-foreground">
@@ -114,8 +191,8 @@ export function ApplicantCard({ applicant, onAccept, onViewProfile }: ApplicantC
         </Touchable>
         <Touchable
           className="py-sm px-xs items-center"
-          onPress={() => onViewProfile(applicant.taskerId)}
-          testID={`applicant-view-profile-${applicant.taskerId}`}
+          onPress={() => onViewProfile(applicant)}
+          testID={`applicant-view-profile-${index}`}
           accessibilityRole="button"
         >
           <Text className="text-label font-sans-bold text-primary-deep">

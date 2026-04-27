@@ -435,14 +435,14 @@ No SQL views or materialized projections are currently part of the architecture 
    - Customers can review the full application set, with ranking allowed but no hard comparison cap.
    - Customer selection creates a pending booking intent.
    - Booking becomes confirmed only when the selected tasker accepts within the four-hour acceptance window.
-   - Expiry or decline returns the task to selectable-applicant state without confirming a booking.
+   - Expiry or explicit decline returns the task to selectable-applicant state without confirming a booking.
 3. **Reschedule, cancellation, and no-show authority**
    - Only accepted in-app reschedule events change the canonical schedule.
    - Late-cancel and no-show timers always read the latest accepted in-app schedule.
    - No-show reminder triggers at scheduled start +30 minutes; no-show flag is allowed no earlier than +1 hour.
-   - Recent in-app activity and accepted future reschedules block premature no-show adjudication.
+   - In-app activity in the trailing 30 minutes and accepted future reschedules block premature no-show adjudication.
 4. **Completion, review gate, and disputes**
-   - Completion sequence is: tasker marks complete → customer confirms or disputes → reminder on silence → timeout auto-complete → ops fallback for edge cases.
+   - Completion sequence is: tasker marks complete → customer confirms or disputes → push notification reminder on silence where a device token exists → timeout auto-complete → ops fallback for edge cases.
    - Every reviewable terminal booking outcome creates bilateral review debt.
    - Customer posting and tasker application actions remain blocked until the owed review is submitted.
    - Disputes remain evidence-backed moderation flows, not escrow or payout flows.
@@ -452,7 +452,7 @@ No SQL views or materialized projections are currently part of the architecture 
    - Any such intervention remains measurable and must not be counted as self-serve.
 6. **Messaging and contact control**
    - Open-ended pre-booking chat is not part of the Phase 1 launch contract.
-   - If messaging is enabled, it is a post-confirmation, platform-mediated channel between booking participants and remains available for admin review.
+   - Post-confirmation in-app chat is the launch contact channel after the booking price is locked; it remains platform-mediated and available for admin review.
    - Exact address and any direct contact surface remain policy-controlled and unavailable before booking confirmation.
 7. **Identity, verification, and outage posture**
    - Facebook OAuth is the only launch login path for new sessions.
@@ -590,18 +590,20 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 - **Booking contract**:
   - Customer selection creates a pending booking intent first.
   - Booking is confirmed only after the selected tasker accepts within the active four-hour response window.
-  - Expired or declined selections do not create bookings and return the task to applicant-review state.
+  - Expired or explicitly declined selections do not create bookings and return the task to applicant-review state.
   - Applicant ranking is allowed, but the customer remains free to inspect and choose across the full application set.
-  - No-show policy is deterministic: reminder at `+30m`, no-show flag eligibility at `+1h`, activity lookback protection, and accepted-reschedule precedence over earlier schedules.
+  - No-show policy is deterministic: reminder at `+30m`, no-show flag eligibility at `+1h`, trailing 30-minute activity lookback protection, and accepted-reschedule precedence over earlier schedules.
+  - Booking confirmation copy and payloads must communicate that the locked price and intake scope are the baseline agreement. Materials, supplies, vehicles, or post-confirmation scope changes are participant agreements recorded through platform-mediated chat or support evidence, not platform payment protection.
   - Launch lifecycle transitions align with the PRD: tasks move through open/assigned/completed-or-terminal states, and bookings move through confirmed/completed-or-terminal states without requiring payment-gated intermediates.
 - **Pricing contract**:
   - Every Phase 1 task uses exactly one of the two launch pricing modes: `I have a budget` or `I want quotes`.
   - Structured application pricing must support budget acceptance for budget-mode tasks and one quote submission for quote-mode tasks. Counter-offers are not part of the Phase 1 budget flow.
 - **Trust contract**:
-  - Disputes may be opened during active bookings and for the limited post-completion window defined by product policy.
+  - Disputes may be opened during active bookings and for 24 hours after completion.
   - Evidence-backed moderation remains the dispute model for Phase 1.
-  - Review reminders follow the required cadence, and the next post/apply action remains gated on owed review completion.
-  - Public trust presentation prioritizes verification and trust badges, while ratings remain threshold-gated.
+  - Dispute evidence grace auto-closes for insufficient evidence 24 hours after the evidence reminder when no evidence is added.
+  - Review reminders follow the immediate, 24-hour, and 72-hour cadence, and the next post/apply action remains gated on owed review completion.
+  - Public trust presentation prioritizes verification and trust badges, while ratings remain hidden until at least three customer-to-tasker reviews exist.
 - **Admin contract**:
   - Admin can manage verification queues, disputes, moderation actions, rescue actions, category schemas, and feature toggles with audit trails.
   - Category management supports lint, preview, activate, deactivate, canary, and rollback operations.

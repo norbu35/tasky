@@ -18,6 +18,7 @@ traceability:
   journey_refs:
     - JRN-SHARED-08:step-1
     - JRN-SHARED-08-A1
+    - JRN-SHARED-08-A2
   scenario_refs:
     - SCN-NOTIF-001
     - SCN-NOTIF-002
@@ -26,6 +27,7 @@ traceability:
     - SCN-NOTIF-005
     - SCN-NOTIF-006
     - SCN-NOTIF-007
+    - SCN-NOTIF-009
 template: feed_list
 figma_page: 'Shared/Notification Center'
 feature: 'notifications'
@@ -119,10 +121,20 @@ copy:
     en: 'Booking confirmed'
     max_chars: 25
 
+  - key: notif_booking_request
+    mn: 'Захиалгын хүсэлт ирлээ'
+    en: 'Booking request'
+    max_chars: 25
+
   - key: notif_tasker_done
     mn: 'Гүйцэтгэгч ажлаа дууслаа'
     en: 'Tasker marked done'
     max_chars: 30
+
+  - key: notif_completion_reminder
+    mn: 'Ажил дууссан эсэхийг баталгаажуулна уу'
+    en: 'Confirm or dispute completion'
+    max_chars: 40
 
   - key: notif_new_message
     mn: 'Шинэ зурвас ирлээ'
@@ -194,6 +206,8 @@ acceptance_criteria:
   - 'Unread notifications display an accent-colored indicator dot'
   - 'Tapping a task notification navigates (push) to SCR-CUST-009 (customer) or SCR-TASK-002 (tasker)'
   - 'Tapping a booking notification navigates (push) to SCR-CUST-017 (customer) or SCR-TASK-013 (tasker)'
+  - 'Tapping a selected-tasker booking request notification opens SCR-TASK-017 for accept or decline when the booking intent is active'
+  - 'Completion silence reminder notifications route the customer to SCR-CUST-017 with confirm or dispute actions available'
   - 'Tapping a dispute notification navigates (push) to SCR-CUST-025'
   - 'Pull-to-refresh re-fetches GET /notifications'
   - 'Network error state shows error illustration with retry button'

@@ -440,8 +440,8 @@
               $ref: ../components/schemas/common.yaml#/Error
 /booking-intents/{id}/decline:
   x-tasky-status: deferred
-  x-tasky-phase: phase_2
-  x-tasky-target-phase: phase_2
+  x-tasky-phase: phase_1
+  x-tasky-target-phase: phase_1
   post:
     tags:
       - Bookings
@@ -449,6 +449,7 @@
     description: |
       The selected tasker declines a pending booking intent.
       The customer can then return to the applicant list and choose another tasker.
+      Requires Idempotency-Key header.
     operationId: declineBookingIntent
     security:
       - BearerAuth: []

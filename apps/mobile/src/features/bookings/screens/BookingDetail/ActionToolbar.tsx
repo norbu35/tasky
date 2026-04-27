@@ -1,8 +1,10 @@
+import { AlertTriangle, CalendarClock, Clock, Flag, RotateCcw, Star } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
-import { Touchable } from '@/components/ui/Touchable';
+import { ActionRow } from '@/components/ui/ActionRow';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 import { hasSubmittedReview, type CustomerBooking } from './model';
 
@@ -28,77 +30,72 @@ export function ActionButtons({
   onLeaveReview,
 }: ActionButtonsProps) {
   const { t } = useTranslation();
+  const { colors } = mobileTheme;
   return (
-    <View className="gap-md mb-xl">
-      <Touchable
-        className="py-sm"
+    <View className="mb-xl rounded-md border border-border overflow-hidden">
+      <ActionRow
+        icon={<Clock size={20} color={colors.primary} />}
+        label={t('customer.bookings.ctaTimeline')}
         onPress={onTimeline}
         testID="booking-detail-screen-timeline-link"
-      >
-        <Text className="text-body text-primary font-medium">
-          {t('customer.bookings.ctaTimeline')}
-        </Text>
-      </Touchable>
+      />
 
       {status === 'ASSIGNED' && (
         <>
-          <Touchable
-            className="py-sm"
+          <ActionRow
+            icon={<CalendarClock size={20} color={colors.primary} />}
+            label={t('customer.bookings.ctaReschedule')}
             onPress={onReschedule}
             testID="booking-detail-screen-reschedule-link"
-          >
-            <Text className="text-body text-primary font-medium">
-              {t('customer.bookings.ctaReschedule')}
-            </Text>
-          </Touchable>
-          <Touchable className="py-sm" onPress={onCancel} testID="booking-detail-screen-cancel-btn">
-            <Text className="text-body text-danger font-medium">
-              {t('customer.bookings.ctaCancel')}
-            </Text>
-          </Touchable>
+          />
+          <ActionRow
+            icon={<AlertTriangle size={20} color={colors.danger} />}
+            label={t('customer.bookings.ctaCancel')}
+            onPress={onCancel}
+            testID="booking-detail-screen-cancel-btn"
+            destructive
+          />
         </>
       )}
 
       {status === 'ASSIGNED' && (
-        <Touchable className="py-sm" onPress={onNoShow} testID="booking-detail-screen-no-show-btn">
-          <Text className="text-body text-danger font-medium">
-            {t('customer.bookings.noShowTitle')}
-          </Text>
-        </Touchable>
+        <ActionRow
+          icon={<Flag size={20} color={colors.danger} />}
+          label={t('customer.bookings.noShowTitle')}
+          onPress={onNoShow}
+          testID="booking-detail-screen-no-show-btn"
+          destructive
+        />
       )}
 
       {status === 'TASKER_MARKED_DONE' && (
-        <Touchable
-          className="py-sm"
+        <ActionRow
+          icon={<Flag size={20} color={colors.danger} />}
+          label={t('customer.bookings.ctaReportIssue')}
           onPress={onReportIssue}
           testID="booking-detail-screen-report-issue-link"
-        >
-          <Text className="text-body text-danger font-medium">
-            {t('customer.bookings.ctaReportIssue')}
-          </Text>
-        </Touchable>
+          destructive
+        />
       )}
 
       {status === 'COMPLETED' && !hasSubmittedReview(booking) && (
-        <Touchable
-          className="py-sm"
+        <ActionRow
+          icon={<Star size={20} color={colors.primary} />}
+          label={t('shared.review.title')}
           onPress={onLeaveReview}
           testID="booking-detail-screen-review-link"
-        >
-          <Text className="text-body text-primary font-medium">{t('shared.review.title')}</Text>
-        </Touchable>
+        />
       )}
 
       {(status === 'CANCELLED' || status === 'NO_SHOW') && (
-        <Touchable
-          className="py-sm"
+        <ActionRow
+          icon={<RotateCcw size={20} color={colors.danger} />}
+          label={t('customer.bookings.ctaReportIssue')}
           onPress={onReportIssue}
           testID="booking-detail-screen-report-issue-link"
-        >
-          <Text className="text-body text-danger font-medium">
-            {t('customer.bookings.ctaReportIssue')}
-          </Text>
-        </Touchable>
+          showDivider={false}
+          destructive
+        />
       )}
     </View>
   );

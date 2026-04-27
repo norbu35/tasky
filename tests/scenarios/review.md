@@ -70,9 +70,9 @@ Then no hard lock is applied
 
 **Risk:** High
 **PRD:** REQ-P1-SAFE-13
-**Title:** Public reputation hides ratings until minimum review threshold
+**Title:** Public reputation hides ratings until three customer-to-tasker reviews
 
-Given a tasker has verification and trust badge state but fewer reviews than the public rating threshold
+Given a tasker has verification and trust badge state but fewer than three submitted customer-to-tasker reviews
 When the public profile or reputation summary is rendered
 Then verification and trust badges are shown according to current state
-And aggregate rating display remains hidden until the minimum review-count threshold is met
+And aggregate rating display remains hidden until at least three customer-to-tasker reviews are submitted

@@ -1,7 +1,9 @@
+import { Lock, X } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
+import { Button } from '@/components/ui/Button';
 import { ModalSheet } from '@/components/ui/ModalSheet';
 import { Touchable } from '@/components/ui/Touchable';
 import { mobileTheme } from '@/design/tokenAdapter';
@@ -32,17 +34,39 @@ export function BookingSupportSheet({ isOpen, onClose, onPrimary }: BookingSuppo
       title={t('booking.support.title')}
       onClose={onClose}
       testID="booking-support-sheet"
-      primaryAction={{
-        label: t('booking.support.primary'),
-        onPress: onPrimary,
-        testID: 'booking-support-sheet-primary',
-      }}
-      secondaryAction={{ label: t('common.cancel'), onPress: onClose }}
+      titleAlign="center"
+      headerTrailing={
+        <Touchable
+          accessibilityRole="button"
+          onPress={onClose}
+          className="w-9 h-9 rounded-full bg-muted items-center justify-center"
+          testID="booking-support-sheet-close"
+        >
+          <X size={20} color={mobileTheme.colors.foreground} />
+        </Touchable>
+      }
+      footer={
+        <Button
+          label={t('booking.support.primary')}
+          onPress={onPrimary}
+          testID="booking-support-sheet-primary"
+          className="self-stretch"
+        />
+      }
+      contentClassName="gap-lg"
     >
-      <Text className="text-caption text-text-secondary leading-[20px]">
-        {t('booking.support.description')}
-      </Text>
-      <View className="gap-sm">
+      <View style={{ gap: mobileTheme.spacing.sm }}>
+        <Text className="text-title font-display-bold text-foreground">
+          {t('booking.support.prompt')}
+        </Text>
+        <View className="flex-row items-center" style={{ gap: mobileTheme.spacing.xs }}>
+          <Lock size={16} color={mobileTheme.colors.foreground} />
+          <Text className="flex-1 text-body text-foreground">
+            {t('booking.support.privacyNote')}
+          </Text>
+        </View>
+      </View>
+      <View className="border-t border-border">
         {SUPPORT_REASON_KEYS.map((reasonKey) => {
           const isSelected = selectedReason === reasonKey;
           return (
@@ -50,15 +74,26 @@ export function BookingSupportSheet({ isOpen, onClose, onPrimary }: BookingSuppo
               key={reasonKey}
               accessibilityRole="button"
               accessibilityState={{ selected: isSelected }}
-              className="rounded-md border px-md py-sm"
-              style={{
-                borderColor: isSelected ? mobileTheme.colors.primary : mobileTheme.colors.border,
-                backgroundColor: isSelected ? mobileTheme.colors.muted : mobileTheme.colors.card,
-              }}
+              className="flex-row items-center justify-between border-b border-border py-md"
               onPress={() => setSelectedReason(reasonKey)}
               testID={`booking-support-reason-${reasonKey.split('.').pop()}`}
             >
-              <Text className="text-label font-sans-semibold text-foreground">{t(reasonKey)}</Text>
+              <Text className="flex-1 text-body text-foreground">{t(reasonKey)}</Text>
+              <View
+                className="w-6 h-6 rounded-full border items-center justify-center"
+                style={{
+                  borderColor: isSelected
+                    ? mobileTheme.colors.foreground
+                    : mobileTheme.colors.textTertiary,
+                  backgroundColor: isSelected
+                    ? mobileTheme.colors.foreground
+                    : mobileTheme.colors.card,
+                }}
+              >
+                {isSelected ? (
+                  <View className="w-2 h-2 rounded-full bg-primary-foreground" />
+                ) : null}
+              </View>
             </Touchable>
           );
         })}

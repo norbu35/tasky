@@ -534,7 +534,7 @@ components:
             rating_avg:
               type: number
               format: double
-              description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
+              description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until at least three customer-to-tasker reviews are submitted.
         description:
           type: string
         budget:
@@ -863,7 +863,7 @@ components:
             rating_avg:
               type: number
               format: double
-              description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
+              description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until at least three customer-to-tasker reviews are submitted.
             completed_tasks:
               type: integer
             is_pro:
@@ -3761,8 +3761,8 @@ paths:
                 $ref: "#/components/schemas/Error"
   /booking-intents/{id}/decline:
     x-tasky-status: deferred
-    x-tasky-phase: phase_2
-    x-tasky-target-phase: phase_2
+    x-tasky-phase: phase_1
+    x-tasky-target-phase: phase_1
     post:
       tags:
         - Bookings
@@ -3770,6 +3770,7 @@ paths:
       description: |
         The selected tasker declines a pending booking intent.
         The customer can then return to the applicant list and choose another tasker.
+        Requires Idempotency-Key header.
       operationId: declineBookingIntent
       security:
         - BearerAuth: []

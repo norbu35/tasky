@@ -1,8 +1,10 @@
+import { AlertTriangle, Flag, LifeBuoy, Star } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { Button } from '@/components/ui/Button';
+import { ActionRow } from '@/components/ui/ActionRow';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 interface TaskerJobDetailActionsProps {
   isAssigned: boolean;
@@ -22,29 +24,31 @@ export function TaskerJobDetailActions({
   onLeaveReview,
 }: TaskerJobDetailActionsProps) {
   const { t } = useTranslation();
+  const { colors } = mobileTheme;
 
   if (isAssigned) {
     return (
-      <View className="items-center pt-md gap-sm">
-        <Button
+      <View className="rounded-md border border-border overflow-hidden">
+        <ActionRow
+          icon={<LifeBuoy size={20} color={colors.primary} />}
           label={t('booking.support.cta')}
-          variant="outline"
           onPress={onOpenSupport}
           testID="booking-detail-tasker-support"
         />
-        <Button
+        <ActionRow
+          icon={<Flag size={20} color={colors.danger} />}
           label={t('tasker.jobs.noShowFlag')}
-          variant="ghost"
           onPress={onOpenNoShow}
-          labelClassName="text-danger"
           testID="booking-detail-tasker-no-show"
+          destructive
         />
-        <Button
+        <ActionRow
+          icon={<AlertTriangle size={20} color={colors.danger} />}
           label={t('tasker.jobs.cancelBooking')}
-          variant="ghost"
           onPress={onOpenCancel}
-          labelClassName="text-danger"
           testID="booking-detail-tasker-cancel"
+          showDivider={false}
+          destructive
         />
       </View>
     );
@@ -52,12 +56,13 @@ export function TaskerJobDetailActions({
 
   if (isCompleted) {
     return (
-      <View className="gap-xs">
-        <Button
+      <View className="rounded-md border border-border overflow-hidden">
+        <ActionRow
+          icon={<Star size={20} color={colors.primary} />}
           label={t('tasker.jobs.leaveReview')}
-          variant="outline"
           onPress={onLeaveReview}
           testID="booking-detail-tasker-review"
+          showDivider={false}
         />
       </View>
     );

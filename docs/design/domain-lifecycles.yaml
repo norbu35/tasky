@@ -50,6 +50,8 @@ entities:
           - lock agreed booking price on the booking record
           - persist liability-disclaimer acceptance on the booking record
           - reveal exact address to Tasker
+          - create or enable platform-mediated conversation for the confirmed, price-locked booking
+          - surface locked-price and intake-scope baseline guidance to both parties
           - cancel no-qualified-application evaluation window
         phase: 0-1
       - id: TASK-T04
@@ -123,6 +125,16 @@ entities:
           - sanitize task payload for off-platform distribution
           - mark intervention_type=external_distribution
           - persist assisted-distribution event for KPI exclusion from self-serve reporting
+        phase: 0-1
+      - id: TASK-T12
+        source: ASSIGNED
+        target: COMPLETED
+        trigger: completion_timeout_auto_completes
+        guard: tasker_marked_done == true, configured completion timeout elapsed, reminder attempts sent
+        side_effects:
+          - booking → COMPLETED
+          - trigger review debt and prompts for both parties
+          - record completion metrics with auto_completed marker
         phase: 0-1
     business_rules:
       - Pricing mode must be either budget or quote
@@ -249,6 +261,17 @@ entities:
         side_effects:
           - push both parties to update status
         phase: 0-1
+      - id: BOOK-T11
+        source: ASSIGNED
+        target: COMPLETED
+        trigger: completion_timeout_auto_completes
+        guard: tasker_marked_done == true, configured timeout elapsed, reminder attempts sent
+        side_effects:
+          - task → COMPLETED
+          - notify both parties that the booking auto-completed
+          - trigger bilateral review debt and prompts
+          - record completion as auto-completed rather than customer-confirmed
+        phase: 0-1
     business_rules:
       - Booking is separate from Task and begins only after the selected Tasker accepts
         within the default four-hour response window
@@ -260,6 +283,8 @@ entities:
       - Reschedule requires counterparty acceptance
       - Timeline events are immutable audit records
       - Direct settlement is the launch default
+      - Completion silence reminders use push notifications where the customer has a device token; SMS is not required for the launch completion nudge
+      - The locked booking price and intake scope are the baseline agreement; material, supply, or scope changes should be kept in platform-mediated chat or support evidence
   application:
     description: Tasker's expression of interest in a task
     states:
@@ -268,11 +293,13 @@ entities:
       - ACCEPTED
       - DECLINED
       - EXPIRED
+      - WITHDRAWN
     initial: APPLIED
     terminal:
       - ACCEPTED
       - DECLINED
       - EXPIRED
+      - WITHDRAWN
     transitions:
       - id: APP-T01
         source: null
@@ -312,6 +339,7 @@ entities:
         guard: within 4-hour response window
         side_effects:
           - close booking intent
+          - task remains OPEN and selectable from remaining applicants
           - prompt customer to select next applicant
         phase: 0-1
       - id: APP-T05
@@ -321,6 +349,7 @@ entities:
         guard: 4-hour window elapsed without response
         side_effects:
           - expire booking intent
+          - task remains OPEN and selectable from remaining applicants
           - prompt customer to select next applicant
         phase: 0-1
       - id: APP-T06
@@ -339,6 +368,16 @@ entities:
         side_effects:
           - notify Tasker
         phase: 0-1
+      - id: APP-T08
+        source: APPLIED
+        target: WITHDRAWN
+        trigger: tasker_withdraws_application
+        guard: task.status == OPEN, application not yet selected
+        side_effects:
+          - mark application as withdrawn
+          - remove withdrawn application from customer selectable list
+          - notify customer that an application was withdrawn
+        phase: 0-1
     business_rules:
       - Tasker must be verified to apply
       - 'Application pricing response follows the task pricing mode: budget acceptance or one quote'
@@ -347,6 +386,7 @@ entities:
         subset
       - Selected Tasker has the default 4-hour window to accept or decline
       - Non-selected applications close automatically once a booking is confirmed
+      - Taskers may withdraw an application before customer selection
   verification:
     description: Tasker identity verification process
     states:
@@ -423,7 +463,7 @@ entities:
         source: null
         target: OPEN
         trigger: party_raises_dispute
-        guard: booking ASSIGNED or within the allowed post-completion window, with evidence
+        guard: booking ASSIGNED or within 24 hours after completion, with evidence
           attached or grace path opened
         side_effects:
           - create dispute record
@@ -479,16 +519,16 @@ entities:
         source: OPEN
         target: CLOSED_INSUFFICIENT_EVIDENCE
         trigger: evidence_timeout
-        guard: no evidence provided after the grace reminder window
+        guard: no evidence provided within 24 hours after the evidence reminder
         side_effects:
           - auto-close dispute
           - notify raising party
         phase: 0-1
     business_rules:
-      - Can raise during ASSIGNED or within the allowed post-completion window
+      - Can raise during ASSIGNED or within 24 hours after completion
       - Disputes can be submitted with evidence, or without evidence only into the
         evidence-needed grace path
-      - Grace-path disputes may close as insufficient evidence if evidence is not provided
+      - Grace-path disputes may close as insufficient evidence if evidence is not provided within 24 hours after the evidence reminder
       - Open disputes do not create review debt; review gates follow reviewable terminal
         outcomes only
       - Dispute resolution affects trust metrics

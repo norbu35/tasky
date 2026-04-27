@@ -67,12 +67,10 @@ function getPickedDateAndTime(): { date: Date; time: Date } {
 
 function pickDateAndTime() {
   fireEvent.press(screen.getByTestId('schedule-date-input'));
-  fireEvent.press(screen.getByTestId('schedule-date-option-0'));
-  fireEvent.press(screen.getByTestId('schedule-picker-confirm'));
-
-  fireEvent.press(screen.getByTestId('schedule-time-input'));
+  fireEvent.press(screen.getByTestId('schedule-day-option-0'));
+  fireEvent.press(screen.getByTestId('schedule-picker-time-tab'));
   fireEvent.press(screen.getByTestId('schedule-time-option-7'));
-  fireEvent.press(screen.getByTestId('schedule-picker-confirm'));
+  fireEvent.press(screen.getByTestId('schedule-picker-save'));
 }
 
 describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
@@ -210,18 +208,24 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
     );
   });
 
-  it('selects a schedule through the Tasky bottom sheet picker', () => {
+  it('selects a schedule through the Tasky calendar sheet picker', () => {
     render(<ScheduleBudgetScreen />);
 
     fireEvent.press(screen.getByTestId('schedule-date-input'));
 
     expect(screen.getByTestId('schedule-picker-sheet')).toBeTruthy();
-    expect(screen.getByText('Confirm your selection')).toBeTruthy();
-    expect(screen.getByTestId('schedule-date-option-0')).toBeTruthy();
-    expect(screen.getByTestId('schedule-picker-confirm')).toBeTruthy();
+    expect(screen.getByTestId('schedule-calendar-grid')).toBeTruthy();
+    expect(screen.getByTestId('schedule-picker-date-tab')).toBeTruthy();
+    expect(screen.getByTestId('schedule-picker-time-tab')).toBeTruthy();
+    expect(screen.getByTestId('schedule-picker-reset')).toBeTruthy();
+    expect(screen.getByTestId('schedule-picker-save')).toBeTruthy();
+    expect(screen.queryByTestId('schedule-picker-confirm')).toBeNull();
+    expect(screen.queryByTestId('schedule-picker-cancel')).toBeNull();
 
-    fireEvent.press(screen.getByTestId('schedule-date-option-0'));
-    fireEvent.press(screen.getByTestId('schedule-picker-confirm'));
+    fireEvent.press(screen.getByTestId('schedule-day-option-0'));
+    fireEvent.press(screen.getByTestId('schedule-picker-time-tab'));
+    fireEvent.press(screen.getByTestId('schedule-time-option-7'));
+    fireEvent.press(screen.getByTestId('schedule-picker-save'));
 
     expect(screen.queryByTestId('schedule-picker-sheet')).toBeNull();
   });

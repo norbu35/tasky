@@ -19,6 +19,25 @@ public class BookingResponseCompositionService {
         response.put("customer_id", booking.customerId());
         response.put("price", booking.price());
         response.put("status", booking.status());
+        response.put(
+                "confirmed_scheduled_at",
+                booking.confirmedScheduledAt() != null
+                        ? booking.confirmedScheduledAt().toString()
+                        : null);
+        response.put("liability_disclaimer_accepted", booking.liabilityDisclaimerAccepted());
+        response.put(
+                "liability_disclaimer_accepted_at",
+                booking.liabilityDisclaimerAcceptedAt() != null
+                        ? booking.liabilityDisclaimerAcceptedAt().toString()
+                        : null);
+        response.put("settlement_mode", booking.settlementMode());
+        response.put("late_cancel_incident", booking.lateCancelIncident());
+        response.put("completion_reminder_count", booking.completionReminderCount());
+        response.put(
+                "completion_reminder_last_at",
+                booking.completionReminderLastAt() != null
+                        ? booking.completionReminderLastAt().toString()
+                        : null);
         response.put("created_at", booking.createdAt().toString());
         response.put("updated_at", booking.updatedAt().toString());
         return response;

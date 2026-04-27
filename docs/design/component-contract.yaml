@@ -279,7 +279,7 @@ existing_components:
       colors: [primary, verified, danger]
       shadows: [card]
     rules:
-      - 'Used in Tasker Stats Dashboard'
+      - 'Used in Tasker reputation and reliability summaries'
       - 'Loading state shows skeleton'
 
   - id: COMP-REVIEWCARD
@@ -433,11 +433,25 @@ new_components:
 
   - id: COMP-DATEPICKER
     name: DatePicker
-    path: 'apps/mobile/src/features/bookings/screens/BookingReschedule/DatePicker.tsx'
-    implementation_status: screen_local
-    description: 'Date and time selector for scheduling'
-    variants: [date_only, date_time]
-    props: [visibleMonth, calendarCells, weekdayLabels, selectedDateTime, tomorrow, onSelectDay]
+    path: 'apps/mobile/src/components/ui/SchedulePickerSheet.tsx'
+    runtime_name: SchedulePickerSheet
+    implementation_status: active
+    description: 'Shared date and time selector sheet for task scheduling and booking reschedules'
+    variants: [date, time]
+    props:
+      [
+        mode,
+        draftDate,
+        draftTime,
+        dateOptions,
+        timeOptions,
+        onModeChange,
+        onDateChange,
+        onTimeChange,
+        onReset,
+        onClose,
+        onSave,
+      ]
     states: [default, open, selected]
     tokens:
       colors: [primary, muted]

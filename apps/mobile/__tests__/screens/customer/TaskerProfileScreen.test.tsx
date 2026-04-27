@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react-native';
 import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 import TaskerProfileScreen from '../../../src/app/(customer)/taskers/[taskerId]';
@@ -108,7 +108,7 @@ describe('TaskerProfileScreen (SCR-CUST-013)', () => {
     expect(screen.getByText('Identity Verified')).toBeTruthy();
   });
 
-  it('shows stats: jobs completed and rating', () => {
+  it('shows completion stats without aggregate rating before the review threshold', () => {
     mockUseTaskerProfile.mockReturnValue({
       profile: { data: makeProfile(), isLoading: false, isError: false },
       reviews: { data: { data: [] }, isLoading: false, isError: false },
@@ -116,18 +116,22 @@ describe('TaskerProfileScreen (SCR-CUST-013)', () => {
     render(<TaskerProfileScreen />);
     expect(screen.getByText('Jobs Completed')).toBeTruthy();
     expect(screen.getByText('24')).toBeTruthy();
-    expect(screen.getByText('Rating')).toBeTruthy();
-    expect(screen.getAllByText('4.7').length).toBeGreaterThanOrEqual(1);
+    expect(screen.queryByText('Rating')).toBeNull();
+    expect(screen.queryByText('4.7')).toBeNull();
   });
 
   it('shows a neutral low-review state below the public rating threshold', () => {
     mockUseTaskerProfile.mockReturnValue({
       profile: {
-        data: makeProfile({ completed_tasks: 2, rating_avg: 4.7 }),
+        data: makeProfile({ completed_tasks: 24, rating_avg: 4.7 }),
         isLoading: false,
         isError: false,
       },
-      reviews: { data: { data: [makeReview()] }, isLoading: false, isError: false },
+      reviews: {
+        data: { data: [makeReview(), makeReview({ id: 'review-2' })] },
+        isLoading: false,
+        isError: false,
+      },
     });
     render(<TaskerProfileScreen />);
 
@@ -148,6 +152,12 @@ describe('TaskerProfileScreen (SCR-CUST-013)', () => {
               comment: 'Very reliable',
               reviewer: { full_name: 'Customer B' },
             }),
+            makeReview({
+              id: 'review-3',
+              quality_rating: 5,
+              comment: 'Would book again',
+              reviewer: { full_name: 'Customer C' },
+            }),
           ],
         },
         isLoading: false,
@@ -157,8 +167,42 @@ describe('TaskerProfileScreen (SCR-CUST-013)', () => {
     render(<TaskerProfileScreen />);
 
     expect(screen.getByPlaceholderText('Search reviews')).toBeTruthy();
+    expect(screen.getByTestId('tasker-profile-review-summary')).toBeTruthy();
     expect(screen.getByTestId('tasker-profile-review-filter-all')).toBeTruthy();
     expect(screen.getByTestId('tasker-profile-review-filter-five-star')).toBeTruthy();
+  });
+
+  it('filters public reviews by search query and shows a no-results state', () => {
+    mockUseTaskerProfile.mockReturnValue({
+      profile: { data: makeProfile(), isLoading: false, isError: false },
+      reviews: {
+        data: {
+          data: [
+            makeReview(),
+            makeReview({
+              id: 'review-2',
+              quality_rating: 4,
+              comment: 'Very reliable',
+              reviewer: { full_name: 'Customer B' },
+            }),
+            makeReview({
+              id: 'review-3',
+              quality_rating: 5,
+              comment: 'Would book again',
+              reviewer: { full_name: 'Customer C' },
+            }),
+          ],
+        },
+        isLoading: false,
+        isError: false,
+      },
+    });
+    render(<TaskerProfileScreen />);
+
+    fireEvent.changeText(screen.getByTestId('tasker-profile-review-search'), 'does-not-match');
+
+    expect(screen.getByText('No search results')).toBeTruthy();
+    expect(screen.getByText('Try another customer name or review keyword.')).toBeTruthy();
   });
 
   it('shows reviews list', () => {
@@ -173,6 +217,11 @@ describe('TaskerProfileScreen (SCR-CUST-013)', () => {
               comment: 'Very reliable',
               reviewer: { full_name: 'Customer B' },
             }),
+            makeReview({
+              id: 'review-3',
+              comment: 'Would book again',
+              reviewer: { full_name: 'Customer C' },
+            }),
           ],
         },
         isLoading: false,
@@ -184,13 +233,13 @@ describe('TaskerProfileScreen (SCR-CUST-013)', () => {
     expect(screen.getByText('Very reliable')).toBeTruthy();
   });
 
-  it('shows "No reviews yet" when reviews are empty', () => {
+  it('shows the low-review state when reviews are empty', () => {
     mockUseTaskerProfile.mockReturnValue({
       profile: { data: makeProfile(), isLoading: false, isError: false },
       reviews: { data: { data: [] }, isLoading: false, isError: false },
     });
     render(<TaskerProfileScreen />);
-    expect(screen.getByText('No reviews yet')).toBeTruthy();
+    expect(screen.getByText('Not enough reviews yet')).toBeTruthy();
   });
 
   it('shows Reviews section title', () => {
@@ -202,7 +251,7 @@ describe('TaskerProfileScreen (SCR-CUST-013)', () => {
     expect(screen.getByText('Reviews')).toBeTruthy();
   });
 
-  it('shows categories and message CTA copy', () => {
+  it('shows categories without a direct-contact CTA before booking', () => {
     mockUseTaskerProfile.mockReturnValue({
       profile: { data: makeProfile(), isLoading: false, isError: false },
       reviews: { data: { data: [] }, isLoading: false, isError: false },
@@ -211,6 +260,9 @@ describe('TaskerProfileScreen (SCR-CUST-013)', () => {
     expect(screen.getByText('Categories')).toBeTruthy();
     expect(screen.getByText('Handyman')).toBeTruthy();
     expect(screen.getByText('Moving')).toBeTruthy();
-    expect(screen.getByText('Message')).toBeTruthy();
+    expect(screen.queryByText('Message')).toBeNull();
+    expect(
+      screen.getByText('Contact is available after booking confirmation through Tasky.'),
+    ).toBeTruthy();
   });
 });

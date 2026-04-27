@@ -2,6 +2,10 @@
 screen_id: SCR-TASK-014
 name: 'No-Show Flag (Tasker)'
 route: null
+presentation:
+  type: inline_modal_sheet
+  host_screen: SCR-TASK-013
+  invocation: 'Tasker opens the no-show reminder or flag action from booking detail after policy timers allow it'
 role: [tasker]
 phase: '0-1'
 traceability:
@@ -13,6 +17,7 @@ traceability:
     - REQ-P1-BOOK-21
     - REQ-P1-BOOK-22
     - REQ-P1-BOOK-23
+    - REQ-P1-BOOK-24
   journey_refs:
     - JRN-TASK-04-A2
   scenario_refs:
@@ -144,7 +149,7 @@ copy:
   - key: flagged_description
     mn: 'Захиалга хянагдахаар илгээгдлээ. Дараагийн алхмын талаар мэдэгдэл авна.'
     en: "Booking sent for review. You'll be notified about next steps."
-    max_chars: 70
+    max_chars: 80
 
   - key: done_button
     mn: 'Ойлголоо'

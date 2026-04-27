@@ -14,9 +14,9 @@ appId: mn.tasky.mobile
     visible:
       id: 'SCR-SHARED-012'
     timeout: 10000
-# Secondary CTA "View Stats" = SCR-SHARED-012-secondary-cta (DetailTemplate convention)
+# Tasker stats are reached from the profile action row.
 - tapOn:
-    id: 'SCR-SHARED-012-secondary-cta'
+    id: 'action-row-view-stats'
 
 - extendedWaitUntil:
     visible:

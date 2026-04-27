@@ -12,8 +12,10 @@ import { TaskerCancelSheet } from '@/features/bookings/components/TaskerCancelSh
 import { useBookingDetail } from '@/features/bookings/hooks/useBookingDetail';
 import { useFlagNoShow } from '@/features/bookings/hooks/useFlagNoShow';
 import { useMarkBookingDone } from '@/features/bookings/hooks/useMarkBookingDone';
+import { useConversationRouteForBooking } from '@/features/chat';
 
 import { TaskerJobDetailActions } from './TaskerJobDetail.Actions';
+import { TaskerJobDetailSections } from './TaskerJobDetail.Sections';
 
 export default function TaskerJobDetailScreen() {
   const { t } = useTranslation();
@@ -26,6 +28,10 @@ export default function TaskerJobDetailScreen() {
   const [showNoShowSheet, setShowNoShowSheet] = useState(false);
   const [supportSheetOpen, setSupportSheetOpen] = useState(false);
   const bookingStatus = booking?.status as string | undefined;
+  const { route: conversationRoute } = useConversationRouteForBooking({
+    taskId: booking?.task_id ?? booking?.task?.id,
+    counterpartyId: booking?.customer_id ?? booking?.customer?.id,
+  });
 
   const isAssigned = bookingStatus === 'ASSIGNED';
   const isMarkedDone = bookingStatus === 'TASKER_MARKED_DONE';
@@ -53,14 +59,16 @@ export default function TaskerJobDetailScreen() {
       ctaLoading={markDone.isPending}
       secondaryCtaLabel={isAssigned || isMarkedDone ? t('tasker.jobs.messageButton') : undefined}
       secondaryCtaOnPress={
-        isAssigned || isMarkedDone ? () => router.push(`/inbox/${bookingId}`) : undefined
+        isAssigned || isMarkedDone ? () => router.push(conversationRoute) : undefined
       }
     >
       {booking && (
         <View className="gap-lg">
-          {/* Status */}
           {status && (
-            <View className="gap-xs">
+            <View className="border-b border-border pb-lg">
+              <Text className="text-caption text-text-secondary mb-xs">
+                {t('tasker.jobs.bookingDetail')}
+              </Text>
               <StatusBadge status={status} />
             </View>
           )}
@@ -71,74 +79,10 @@ export default function TaskerJobDetailScreen() {
             scheduledAt={booking.confirmed_scheduled_at ?? booking.task?.scheduled_at}
           />
 
-          {/* Customer Info */}
-          <View className="gap-xs">
-            <Text className="text-micro font-sans-bold text-muted-foreground uppercase tracking-[0.5px]">
-              {t('tasker.jobs.customerLabel')}
-            </Text>
-            <Text className="text-subtitle font-semibold text-foreground">
-              {booking.customer?.full_name ?? ''}
-            </Text>
-          </View>
-
-          {/* Task Description */}
-          <View className="gap-xs">
-            <Text className="text-micro font-sans-bold text-muted-foreground uppercase tracking-[0.5px]">
-              {t('tasker.jobs.taskDescription')}
-            </Text>
-            <Text className="text-body text-foreground leading-[22px]">
-              {booking.task?.description ?? ''}
-            </Text>
-          </View>
-
-          {(isAssigned || isMarkedDone) && (
-            <View className="gap-xs">
-              <Text className="text-micro font-sans-bold text-muted-foreground uppercase tracking-[0.5px]">
-                {t('tasker.jobs.exactAddress')}
-              </Text>
-              <Text className="text-body text-foreground leading-[22px]">
-                {booking.task?.location_text ?? ''}
-              </Text>
-              <Text className="text-caption text-text-secondary leading-[20px]">
-                {t('tasker.jobs.exactAddressNote')}
-              </Text>
-            </View>
-          )}
-
-          {/* Schedule */}
-          <View className="gap-xs">
-            <Text className="text-micro font-sans-bold text-muted-foreground uppercase tracking-[0.5px]">
-              {t('tasker.jobs.schedule')}
-            </Text>
-            <Text className="text-body text-foreground">
-              {booking.confirmed_scheduled_at
-                ? new Date(booking.confirmed_scheduled_at).toLocaleString()
-                : ''}
-            </Text>
-          </View>
-
-          {/* Budget */}
-          <View className="gap-xs">
-            <Text className="text-micro font-sans-bold text-muted-foreground uppercase tracking-[0.5px]">
-              {t('tasker.jobs.budget')}
-            </Text>
-            <Text className="text-heading font-sans-bold text-secondary">
-              {'\u20AE'}
-              {booking.price?.toLocaleString() ?? ''}
-            </Text>
-          </View>
-
-          {/* Payment Note */}
-          {isAssigned && (
-            <View className="bg-muted rounded-md p-md">
-              <Text className="text-micro font-sans-bold text-muted-foreground uppercase tracking-[0.5px] mb-xs">
-                {t('tasker.jobs.paymentNoteHeading')}
-              </Text>
-              <Text className="text-micro text-muted-foreground leading-[20px]">
-                {t('BookingDetailTaskerScreen.copy1')}
-              </Text>
-            </View>
-          )}
+          <TaskerJobDetailSections
+            booking={booking}
+            showExactAddress={isAssigned || isMarkedDone}
+          />
 
           {isMarkedDone && (
             <View className="bg-muted rounded-md p-md">
@@ -203,7 +147,7 @@ export default function TaskerJobDetailScreen() {
             onClose={() => setSupportSheetOpen(false)}
             onPrimary={() => {
               setSupportSheetOpen(false);
-              router.push(`/inbox/${bookingId}`);
+              router.push(conversationRoute);
             }}
           />
         </View>

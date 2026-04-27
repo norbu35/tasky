@@ -6,9 +6,10 @@
 
 **Risk:** High
 **PRD:** REQ-P1-MSG-02
-**Title:** Conversation is created only after booking confirmation
+**Title:** Conversation is created only after booking confirmation and price lock
 
 Given a selected tasker accepts within the active acceptance window
+And the booking price is locked
 When the booking becomes confirmed
 Then a platform-mediated conversation exists between the confirmed booking participants
 And the conversation remains available for authorized admin review

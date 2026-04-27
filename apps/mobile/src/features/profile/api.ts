@@ -7,10 +7,6 @@ export async function getMyProfile(accessToken: string): Promise<Profile> {
   return getClient().requestJson<Profile>('/users/me', { method: 'GET' }, accessToken);
 }
 
-export async function getPublicProfile(accessToken: string, userId: string): Promise<Profile> {
-  return getClient().requestJson<Profile>(`/users/${userId}`, { method: 'GET' }, accessToken);
-}
-
 export async function updateMyProfile(
   accessToken: string,
   payload: { full_name?: string; avatar_url?: string | null; bio?: string },

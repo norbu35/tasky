@@ -337,7 +337,7 @@ And the application does not include a separate counter-offer amount
 ## SCN-TASK-030
 
 **Risk:** High
-**PRD:** REQ-P1-TASK-11, REQ-P1-TASK-12, REQ-P1-TASK-13, REQ-P1-TASK-14
+**PRD:** REQ-P1-TASK-11, REQ-P1-TASK-12, REQ-P1-TASK-13, REQ-P1-TASK-14, REQ-P1-TASK-15
 **Title:** Launch category templates capture required category-specific fields
 
 Given active launch templates exist for home cleaning, furniture assembly, moving help, and minor handyman
@@ -346,6 +346,7 @@ Then home cleaning requires property type, room count or size bracket, cleaning 
 And furniture assembly requires furniture type, item count, brand or model when known, delivered status, instructions availability, preferred date, time window, and pricing mode
 And moving help requires move type, load size, pickup and dropoff stairs or elevator, vehicle need, helper count, preferred date, time window, and pricing mode
 And minor handyman requires subtype, material availability, wall or surface type when relevant, item count, preferred date, time window, and pricing mode
+And templates where supplies, materials, items, or vehicles materially affect scope capture whether the customer has them or expects the tasker to bring them
 
 ## SCN-TASK-031
 

@@ -1,19 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { getPublicProfile } from '../api';
 import { getUserReviews } from '@/features/review';
-import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
+import { useAuthStore } from '@/store/authStore';
 
 export function useTaskerProfile(userId: string | undefined) {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
 
-  const profileQuery = useQuery({
-    queryKey: queryKeys.profile.public(token!, userId!),
-    queryFn: () => getPublicProfile(token!, userId!),
-    enabled: !!token && !!userId,
-  });
+  const profileQuery = {
+    data: undefined,
+    isLoading: false,
+    isError: false,
+    refetch: async () => undefined,
+  };
 
   const reviewsQuery = useQuery({
     queryKey: queryKeys.reviews.user(token!, userId!),

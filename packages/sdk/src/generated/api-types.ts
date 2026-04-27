@@ -934,6 +934,7 @@ export interface paths {
          * Tasker declines booking intent
          * @description The selected tasker declines a pending booking intent.
          *     The customer can then return to the applicant list and choose another tasker.
+         *     Requires Idempotency-Key header.
          */
         post: operations["declineBookingIntent"];
         delete?: never;
@@ -2243,7 +2244,7 @@ export interface components {
                 avatar_url: string | null;
                 /**
                  * Format: double
-                 * @description Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
+                 * @description Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until at least three customer-to-tasker reviews are submitted.
                  */
                 rating_avg: number;
             };
@@ -2428,7 +2429,7 @@ export interface components {
                 avatar_url: string | null;
                 /**
                  * Format: double
-                 * @description Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
+                 * @description Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until at least three customer-to-tasker reviews are submitted.
                  */
                 rating_avg: number;
                 completed_tasks: number;
