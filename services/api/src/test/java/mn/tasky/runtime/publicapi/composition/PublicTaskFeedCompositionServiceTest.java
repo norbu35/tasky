@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class PublicTaskFeedCompositionServiceTests {
+class PublicTaskFeedCompositionServiceTest {
 
     @Mock
     private PublicTaskFeedProjectionService projectionService;

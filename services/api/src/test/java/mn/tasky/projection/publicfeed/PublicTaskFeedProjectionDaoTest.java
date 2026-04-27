@@ -11,13 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-class PublicTaskFeedProjectionIntegrationTests extends IntegrationTestBase {
+class PublicTaskFeedProjectionDaoTest extends IntegrationTestBase {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private PublicTaskFeedProjectionService service;
+    private PublicTaskFeedProjectionDao projectionDao;
 
     @Test
     @DisplayName("TID-TASK-116-PROJECTION-FEED public feed projection filters and approximates by district")
@@ -59,18 +59,18 @@ class PublicTaskFeedProjectionIntegrationTests extends IntegrationTestBase {
                 "Assigned address",
                 Instant.parse("2026-04-03T08:00:00Z"));
 
-        PublicTaskFeedPage categoryPage = service.listOpenFeed(categoryId, null, null, null, null, 10);
-        PublicTaskFeedPage geoPage = service.listOpenFeed(null, 47.9213, 106.9197, 1.0, null, 10);
+        var categoryRows = projectionDao.findOpenFeed(categoryId, null, null, null, null, null, 10);
+        var geoRows = projectionDao.findOpenFeed((String) null, 47.9213, 106.9197, 1_000.0, null, null, 10);
 
-        assertThat(categoryPage.data()).hasSize(1);
-        PublicTaskFeedRow row = categoryPage.data().getFirst();
+        assertThat(categoryRows).hasSize(1);
+        PublicTaskFeedRow row = categoryRows.getFirst();
         assertThat(row.status()).isEqualTo("OPEN");
         assertThat(row.categoryId()).isEqualTo(categoryId);
         assertThat(row.approximateLocation()).isEqualTo("Sukhbaatar, Ulaanbaatar");
         assertThat(row.approximateLat()).isEqualTo(47.9213);
         assertThat(row.approximateLng()).isEqualTo(106.9197);
         assertThat(row.description()).isEqualTo("Clean apartment");
-        assertThat(geoPage.data()).extracting(PublicTaskFeedRow::categoryId).contains(categoryId);
+        assertThat(geoRows).extracting(PublicTaskFeedRow::categoryId).contains(categoryId);
     }
 
     private void insertCustomer(UUID customerId) {

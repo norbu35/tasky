@@ -19,7 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class PublicTaskFeedProjectionServiceTests {
+class PublicTaskFeedProjectionServiceTest {
 
     @Mock
     private PublicTaskFeedProjectionDao projectionDao;
