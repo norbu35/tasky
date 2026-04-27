@@ -19,6 +19,9 @@
 # Claude Code local state
 .claude/
 
+# Codex local state
+.codex
+
 # Misc local files
 .ignore
 postflight.json
