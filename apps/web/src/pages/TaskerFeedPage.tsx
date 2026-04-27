@@ -1,4 +1,4 @@
-import { Coins, Loader2, MapPin, Search, Calendar, Users, ImageIcon, Star } from 'lucide-react';
+import { Coins, Loader2, MapPin, Search, Calendar, ImageIcon, Star } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -371,7 +371,7 @@ export function TaskerFeedPage() {
                           </div>
 
                           {/* Metrics Header */}
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div className="flex flex-col gap-1.5 p-3 bg-muted/10 rounded-xl border border-border/30">
                               <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
                                 <MapPin className="w-4 h-4 mr-1.5 text-primary/70" />
@@ -396,15 +396,6 @@ export function TaskerFeedPage() {
                                   hour: '2-digit',
                                   minute: '2-digit',
                                 })}
-                              </span>
-                            </div>
-                            <div className="flex flex-col gap-1.5 p-3 bg-muted/10 rounded-xl border border-border/30 col-span-2 md:col-span-1">
-                              <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
-                                <Users className="w-4 h-4 mr-1.5 text-primary/70" />
-                                {t('taskerFeed.applicantsLabel')}
-                              </div>
-                              <span className="font-medium text-sm line-clamp-1">
-                                {task.application_count} {t('taskerFeed.applicantsSuffix')}
                               </span>
                             </div>
                           </div>

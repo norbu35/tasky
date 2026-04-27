@@ -2061,7 +2061,6 @@
       "noResultsRemediation": "Clear filters or widen your search to see more open tasks.",
       "filterSheetTitle": "Filter tasks",
       "filterSheetDescription": "Choose categories and search terms before returning to the feed.",
-      "applicationCount": "{{count}} applicants",
       "postedAt": "Posted {{date}}"
     },
     "taskDetail": {

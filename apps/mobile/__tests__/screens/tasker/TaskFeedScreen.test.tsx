@@ -1,34 +1,46 @@
-import React from 'react';
-import { render as rtlRender, screen, fireEvent } from '@testing-library/react-native';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-const render = (ui: React.ReactElement, options?: any) =>
-  rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
+import { render as rtlRender, screen, fireEvent } from '@testing-library/react-native';
+import React from 'react';
+import type { TextProps } from 'react-native';
 
+import TaskFeedScreen from '../../../src/app/(tabs)/index';
 import { useTasks } from '../../../src/features/tasks/hooks/useTasks';
 import type { PublicTask } from '../../../src/lib/api/types';
 import { RoleProvider } from '../../../src/providers/RoleProvider';
 import { useAppStore } from '../../../src/store/appStore';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
+
+const render = (ui: React.ReactElement, options?: Parameters<typeof rtlRender>[1]) => {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
+};
+
+const mockRouter = {
+  push: jest.fn(),
+  replace: jest.fn(),
+  back: jest.fn(),
+};
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
+  useRouter: () => mockRouter,
   useLocalSearchParams: () => ({}),
 }));
 
 jest.mock('react-i18next', () => {
-  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  const { createReactI18nextMock } = jest.requireActual<typeof import('../../test-utils/mockI18n')>(
+    '../../test-utils/mockI18n',
+  );
   return createReactI18nextMock('mn');
 });
 
-jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
+jest.mock('react-native-reanimated', () => jest.requireActual('react-native-reanimated/mock'));
 
 jest.mock('lucide-react-native', () => {
-  const { Text } = require('react-native');
+  const { Text } = jest.requireActual<typeof import('react-native')>('react-native');
   return new Proxy(
     {},
     {
-      get: (_, name) => (props: any) => <Text testID={`icon-${String(name)}`} {...props} />,
+      get: (_, name) => (props: TextProps) => <Text testID={`icon-${String(name)}`} {...props} />,
     },
   );
 });
@@ -88,8 +100,10 @@ const secondTask: PublicTask = {
 };
 
 beforeEach(() => {
-  const { resetTestI18n, setTestLanguage } = require('../../test-utils/mockI18n');
   jest.clearAllMocks();
+  mockRouter.push.mockClear();
+  mockRouter.replace.mockClear();
+  mockRouter.back.mockClear();
   resetTestI18n();
   setTestLanguage('mn');
   useAppStore.setState({
@@ -99,7 +113,6 @@ beforeEach(() => {
 });
 
 function renderTaskFeed() {
-  const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
   return render(
     <RoleProvider>
       <TaskFeedScreen />
@@ -172,6 +185,23 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
     expect(screen.getByText('Fix kitchen sink')).toBeTruthy();
     expect(screen.getByText('John Customer')).toBeTruthy();
     expect(screen.getAllByText('Bayangol district').length).toBeGreaterThan(0);
+  });
+
+  it('does not expose applicant counts on tasker feed cards', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    renderTaskFeed();
+
+    expect(screen.queryByText('3 өргөдөл')).toBeNull();
   });
 
   it('renders quote-mode task cards with a clear pricing state', () => {
@@ -353,13 +383,6 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
   });
 
   it('navigates to task detail on card press', () => {
-    const mockPush = jest.fn();
-    jest.spyOn(require('expo-router'), 'useRouter').mockReturnValue({
-      push: mockPush,
-      replace: jest.fn(),
-      back: jest.fn(),
-    });
-
     mockUseTasks.mockReturnValue({
       data: {
         data: [baseTask],
@@ -374,6 +397,6 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
     renderTaskFeed();
 
     fireEvent.press(screen.getByTestId('task-card-task-1'));
-    expect(mockPush).toHaveBeenCalledWith('/task/task-1');
+    expect(mockRouter.push).toHaveBeenCalledWith('/task/task-1');
   });
 });

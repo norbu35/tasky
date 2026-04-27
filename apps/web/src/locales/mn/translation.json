@@ -171,8 +171,6 @@
     "taskMediaAlt": "Ажлын зураг {{count}}",
     "withdrawAction": "Хүсэлтээ буцаах",
     "withdrawSuccess": "Хүсэлт амжилттай буцаагдлаа.",
-    "applicantsLabel": "Горилогчид",
-    "applicantsSuffix": "хүсэлт илгээсэн",
     "applyDescription": "Хүсэлт илгээхээсээ өмнө дэлгэрэнгүй мэдээлэлтэй танилцана уу.",
     "applySubmit": "Ажилд хүсэлт илгээх",
     "applyToTask": "Ажлын дэлгэрэнгүй ба Хүсэлт",

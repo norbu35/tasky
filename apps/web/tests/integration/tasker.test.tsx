@@ -108,7 +108,7 @@ describe('Tasker phase 1 parity', () => {
             status: 'OPEN',
             scheduled_at: '2026-02-15T00:00:00Z',
             photo_urls: [],
-            application_count: 0,
+            application_count: 7,
             created_at: '2026-02-14T00:00:00Z',
           },
         ],
@@ -148,8 +148,16 @@ describe('Tasker phase 1 parity', () => {
 
     expect(await screen.findByRole('heading', { name: 'Open task feed' })).toBeInTheDocument();
     expect(await screen.findByText('Сүхбаатар дүүрэг')).toBeInTheDocument();
+    expect(
+      screen.queryByText((_content, element) => element?.textContent?.trim() === '7 applied'),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Applicants')).not.toBeInTheDocument();
 
     fireEvent.click(await screen.findByRole('button', { name: 'View Details & Apply' }));
+    expect(
+      screen.queryByText((_content, element) => element?.textContent?.trim() === '7 applied'),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Applicants')).not.toBeInTheDocument();
     fireEvent.change(await screen.findByLabelText('Application message'), {
       target: { value: 'I can complete this task quickly and safely.' },
     });

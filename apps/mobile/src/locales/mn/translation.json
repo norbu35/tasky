@@ -2061,7 +2061,6 @@
       "noResultsRemediation": "Шүүлтүүрээ арилгах эсвэл хайлтаа өргөтгөж илүү олон нээлттэй даалгавар харна уу.",
       "filterSheetTitle": "Даалгавар шүүх",
       "filterSheetDescription": "Жагсаалт руу буцахын өмнө ангилал болон хайлтын үгээ сонгоно уу.",
-      "applicationCount": "{{count}} өргөдөл",
       "postedAt": "{{date}} нийтэлсэн"
     },
     "taskDetail": {

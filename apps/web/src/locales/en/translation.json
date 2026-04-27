@@ -171,8 +171,6 @@
     "taskMediaAlt": "Task media {{count}}",
     "withdrawAction": "Withdraw application",
     "withdrawSuccess": "Application withdrawn.",
-    "applicantsLabel": "Applicants",
-    "applicantsSuffix": "applied",
     "applyDescription": "Review the details before submitting your application.",
     "applySubmit": "Apply to task",
     "applyToTask": "Task Details & Application",

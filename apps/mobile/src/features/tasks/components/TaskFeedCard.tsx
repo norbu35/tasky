@@ -1,4 +1,4 @@
-import { Clock, FileText, Users } from 'lucide-react-native';
+import { Clock, FileText } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
@@ -51,12 +51,6 @@ function TaskCardBody({ task }: { task: PublicTask }) {
             </Text>
           </View>
         )}
-        <View className="flex-row items-center gap-xs">
-          <Users size={16} color={colors.textSecondary} />
-          <Text className="text-caption text-text-secondary">
-            {t('tasker.browse.applicationCount', { count: task.application_count ?? 0 })}
-          </Text>
-        </View>
         {task.created_at ? (
           <View className="flex-row items-center gap-xs">
             <FileText size={16} color={colors.textSecondary} />

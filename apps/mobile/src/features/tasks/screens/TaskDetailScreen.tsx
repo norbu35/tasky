@@ -159,13 +159,6 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
               <PhotoGrid photos={task.photo_urls} testID="task-detail-photos" />
             </View>
           )}
-
-          {/* Application count */}
-          {task.application_count > 0 && (
-            <Text className="text-label text-text-secondary mt-sm">
-              {task.application_count} {t('TaskDetailCustomerScreen.applicants')}
-            </Text>
-          )}
         </View>
       )}
     </DetailTemplate>

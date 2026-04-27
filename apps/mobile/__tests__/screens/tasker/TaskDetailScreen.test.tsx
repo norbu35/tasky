@@ -197,6 +197,21 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     expect(screen.getByText('Bayangol district')).toBeTruthy();
   });
 
+  it('does not expose applicant counts on tasker task detail', () => {
+    mockUseTaskDetail.mockReturnValue({
+      task: baseTask,
+      isLoading: false,
+      isError: false,
+      isVerified: true,
+      hasApplied: false,
+      capReached: false,
+    });
+
+    render(<TaskDetailRoute />);
+
+    expect(screen.queryByText(/3\s+Өргөдөл гаргагчид/)).toBeNull();
+  });
+
   it('shows the apply button when verified', () => {
     mockUseTaskDetail.mockReturnValue({
       task: baseTask,

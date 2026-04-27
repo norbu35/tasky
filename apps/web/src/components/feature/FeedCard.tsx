@@ -9,18 +9,10 @@ export interface FeedCardProps {
   description: string;
   budget: string;
   location: string;
-  applicantCount: number;
   onApply?: () => void;
 }
 
-export function FeedCard({
-  category,
-  description,
-  budget,
-  location,
-  applicantCount,
-  onApply,
-}: FeedCardProps) {
+export function FeedCard({ category, description, budget, location, onApply }: FeedCardProps) {
   return (
     <div
       className={cn(
@@ -63,7 +55,6 @@ export function FeedCard({
         >
           <Clock className="h-3.5 w-3.5 shrink-0 opacity-70" />
           <span>Fixed price</span>
-          <span className="ml-auto text-xs text-text-secondary">{applicantCount} applied</span>
         </div>
       </div>
 
