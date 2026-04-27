@@ -54,7 +54,7 @@ export default function TaskReviewSubmitScreen() {
       nextButtonTestID="SCR-CUST-007-cta"
     >
       <View className="gap-xs mb-sm">
-        <Text className="text-caption font-bold text-text-secondary uppercase tracking-[0.075em]">
+        <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-normal">
           {t('ReviewSubmitScreen.finalStep')}
         </Text>
         <Text className="text-heading font-display-bold text-primary-deep">

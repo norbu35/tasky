@@ -100,7 +100,7 @@ export function SchedulePickerSheet({
       onClose={onClose}
       titleAlign="center"
       testID="schedule-picker-sheet"
-      className="rounded-tl-[32px] rounded-tr-[32px] gap-lg px-lg pt-lg"
+      className="rounded-tl-lg rounded-tr-lg gap-lg px-lg pt-lg"
       contentClassName="gap-lg"
       hideDefaultAction
       headerLeading={

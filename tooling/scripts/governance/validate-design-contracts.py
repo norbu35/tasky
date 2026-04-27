@@ -28,6 +28,28 @@ except ImportError:
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CONTRACT = REPO_ROOT / "docs" / "design" / "component-contract.yaml"
 
+INHERITED_PROPS_BY_TYPE = {
+    "PressableProps": {
+        "accessibilityLabel",
+        "accessibilityRole",
+        "android_ripple",
+        "delayLongPress",
+        "disabled",
+        "hitSlop",
+        "onBlur",
+        "onFocus",
+        "onHoverIn",
+        "onHoverOut",
+        "onLongPress",
+        "onPress",
+        "onPressIn",
+        "onPressMove",
+        "onPressOut",
+        "pressRetentionOffset",
+        "testID",
+    }
+}
+
 
 @dataclass(frozen=True)
 class Finding:
@@ -62,6 +84,37 @@ def exports_component(source: str, name: str) -> bool:
         rf"\b{name}\s*=\s*React\.forwardRef\b",
     ]
     return any(re.search(pattern, source) for pattern in patterns)
+
+
+def documented_prop_is_inherited(source: str, runtime_name: str, prop: str) -> bool:
+    """Return true when a component props type inherits a documented prop.
+
+    Component contracts document the public API, including props inherited from
+    React Native primitives. A source text substring check alone falsely reports
+    those inherited props as missing.
+    """
+
+    interface_match = re.search(
+        rf"\binterface\s+{re.escape(runtime_name)}Props\s+extends\s+([^\{{]+)\{{",
+        source,
+        re.MULTILINE,
+    )
+    type_match = re.search(
+        rf"\btype\s+{re.escape(runtime_name)}Props\s*=\s*([^=;]+)",
+        source,
+        re.MULTILINE,
+    )
+
+    inherited_clause = ""
+    if interface_match:
+        inherited_clause += interface_match.group(1)
+    if type_match:
+        inherited_clause += f" {type_match.group(1)}"
+
+    return any(
+        inherited_type in inherited_clause and prop in props
+        for inherited_type, props in INHERITED_PROPS_BY_TYPE.items()
+    )
 
 
 def validate_component(entry: dict[str, Any], group: str) -> list[Finding]:
@@ -101,7 +154,7 @@ def validate_component(entry: dict[str, Any], group: str) -> list[Finding]:
     for prop in prop_names(entry.get("props")):
         if prop.startswith("..."):
             continue
-        if prop not in source:
+        if prop not in source and not documented_prop_is_inherited(source, str(runtime_name), prop):
             missing_props.append(prop)
     if missing_props:
         findings.append(

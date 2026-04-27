@@ -99,7 +99,7 @@ export default function OnboardingScreen() {
         style={{ width, paddingTop: spacing['3xl'] }}
       >
         <View
-          className="mb-[32px] items-center justify-center"
+          className="mb-2xl items-center justify-center"
           style={{
             width: illustrationCard.width,
             height: illustrationCard.height,
@@ -131,8 +131,8 @@ export default function OnboardingScreen() {
                 style={{ backgroundColor: colors.primaryDeep }}
               >
                 <Text
-                  className="text-caption font-sans-bold"
-                  style={{ color: colors.primaryForeground, letterSpacing: 0.3 }}
+                  className="text-caption font-sans-bold tracking-normal"
+                  style={{ color: colors.primaryForeground }}
                 >
                   {t('auth.onboarding.badge')}
                 </Text>
@@ -142,7 +142,7 @@ export default function OnboardingScreen() {
         </View>
         <View className="items-center">
           <Text
-            className="text-heading font-sans-extrabold text-center"
+            className="text-heading font-display-bold text-center"
             style={{ color: colors.primaryDeep }}
           >
             {titleText}

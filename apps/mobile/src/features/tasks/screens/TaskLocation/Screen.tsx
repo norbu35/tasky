@@ -55,7 +55,7 @@ export default function TaskLocationScreen() {
       nextDisabled={!pin}
     >
       <View className="gap-sm">
-        <Text className="text-heading font-extrabold text-primary-deep">
+        <Text className="text-heading font-display-bold text-primary-deep">
           {t('LocationScreen.locationPageTitle')}
         </Text>
         <Text className="text-body text-text-secondary leading-relaxed">

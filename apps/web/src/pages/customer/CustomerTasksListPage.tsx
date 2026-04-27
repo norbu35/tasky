@@ -146,7 +146,7 @@ function TaskCard({ task, onOpen }: { task: Task; onOpen: () => void }) {
             <Badge variant={task.status === 'OPEN' ? 'default' : 'secondary'}>
               {t(getTaskStatusLabelKey(task.status))}
             </Badge>
-            <span className="text-xs uppercase tracking-[0.075em] text-muted-foreground">
+            <span className="text-xs uppercase tracking-caps text-muted-foreground">
               {t('customerPages.tasksList.cardType')}
             </span>
           </div>

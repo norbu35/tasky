@@ -267,7 +267,7 @@ export function MessagingNotificationsPage() {
                         >
                           {msg?.content || ''}
                           <div
-                            className={`text-[10px] mt-1 ${isMe ? 'text-primary-foreground/70' : 'text-muted-foreground'} text-right`}
+                            className={`text-caption mt-1 ${isMe ? 'text-primary-foreground/70' : 'text-muted-foreground'} text-right`}
                           >
                             {msg?.sent_at
                               ? new Date(msg.sent_at).toLocaleTimeString([], {

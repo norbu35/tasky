@@ -38,8 +38,7 @@ export function VerifiedBadge({ status, size = 'sm', testID, className }: Verifi
       className={cn(
         'flex-row items-center rounded-full self-start',
         isVerified ? 'bg-verified' : 'bg-accent',
-        size === 'md' ? 'px-md py-xs gap-xs' : 'px-sm gap-xs',
-        size === 'sm' ? 'py-[2px]' : '',
+        size === 'md' ? 'px-md py-xs gap-xs' : 'px-sm py-xs gap-xs',
         className,
       )}
       testID={testID}

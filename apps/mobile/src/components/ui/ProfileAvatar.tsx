@@ -6,7 +6,7 @@ import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
-const { colors, iconSizes, radius } = mobileTheme;
+const { colors, iconSizes, radius, spacing } = mobileTheme;
 
 type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -84,10 +84,16 @@ export function ProfileAvatar({
       {showVerified && (
         <View
           style={[
-            { width: badgeSize + 8, height: badgeSize + 8, borderRadius: radius.full },
+            {
+              width: badgeSize + spacing.sm,
+              height: badgeSize + spacing.sm,
+              borderRadius: radius.full,
+              bottom: -spacing.xs / 2,
+              right: -spacing.xs / 2,
+            },
             elevations.card,
           ]}
-          className="absolute -bottom-[2px] -right-[2px] bg-card items-center justify-center"
+          className="absolute bg-card items-center justify-center"
         >
           <View
             style={{ width: badgeSize, height: badgeSize, borderRadius: radius.full }}

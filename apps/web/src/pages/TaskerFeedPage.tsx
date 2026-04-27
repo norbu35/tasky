@@ -168,7 +168,7 @@ export function TaskerFeedPage() {
           {/* Distance Filter */}
           <div className="flex items-center gap-2 shrink-0 bg-card border border-border/60 px-4 py-1.5 rounded-full shadow-sm">
             <MapPin className="w-4 h-4 text-primary/70" />
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-caps">
               {t('taskerFeed.distance')}:
             </span>
             <select
@@ -353,7 +353,7 @@ export function TaskerFeedPage() {
                                   <div className="text-base font-semibold text-primary font-display">
                                     {t('taskerFeed.acceptingQuotes')}
                                   </div>
-                                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
+                                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-caps">
                                     {t('taskerFeed.quoteOnly')}
                                   </div>
                                 </div>
@@ -362,7 +362,7 @@ export function TaskerFeedPage() {
                                   <div className="text-2xl font-bold text-primary font-display">
                                     {(task.budget ?? 0).toLocaleString(locale)}
                                   </div>
-                                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
+                                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-caps">
                                     MNT
                                   </div>
                                 </div>
@@ -373,7 +373,7 @@ export function TaskerFeedPage() {
                           {/* Metrics Header */}
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div className="flex flex-col gap-1.5 p-3 bg-muted/10 rounded-xl border border-border/30">
-                              <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
+                              <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-caps">
                                 <MapPin className="w-4 h-4 mr-1.5 text-primary/70" />
                                 {t('taskerFeed.locationLabel')}
                               </div>
@@ -385,7 +385,7 @@ export function TaskerFeedPage() {
                               </span>
                             </div>
                             <div className="flex flex-col gap-1.5 p-3 bg-muted/10 rounded-xl border border-border/30">
-                              <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-[0.075em]">
+                              <div className="flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-caps">
                                 <Calendar className="w-4 h-4 mr-1.5 text-primary/70" />
                                 {t('taskerFeed.dateLabel')}
                               </div>
@@ -402,7 +402,7 @@ export function TaskerFeedPage() {
 
                           {/* Task Description */}
                           <div className="space-y-3">
-                            <h4 className="text-xs uppercase tracking-[0.075em] font-semibold text-muted-foreground">
+                            <h4 className="text-xs uppercase tracking-caps font-semibold text-muted-foreground">
                               {t('taskerFeed.descriptionLabel')}
                             </h4>
                             <div className="text-sm font-medium leading-relaxed text-foreground bg-background p-4 rounded-xl border border-border/40 shadow-sm whitespace-pre-wrap">
@@ -413,7 +413,7 @@ export function TaskerFeedPage() {
                           {/* Photo Gallery */}
                           {task.photo_urls && task.photo_urls.length > 0 && (
                             <div className="space-y-3">
-                              <h4 className="text-xs uppercase tracking-[0.075em] font-semibold text-muted-foreground flex items-center gap-1.5">
+                              <h4 className="text-xs uppercase tracking-caps font-semibold text-muted-foreground flex items-center gap-1.5">
                                 <ImageIcon className="w-4 h-4" />
                                 {t('taskerFeed.photosLabel')}
                               </h4>
@@ -441,7 +441,7 @@ export function TaskerFeedPage() {
                         <div className="flex flex-col gap-3">
                           <Label
                             htmlFor={`apply-${task.id}`}
-                            className="text-xs uppercase font-bold text-primary tracking-[0.075em]"
+                            className="text-xs uppercase font-bold text-primary tracking-caps"
                           >
                             {t('taskerFeed.appMessageLabel')}
                           </Label>

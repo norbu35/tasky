@@ -73,7 +73,9 @@ export function CategorySection({
 }) {
   return (
     <View className="mb-xl">
-      <Text className="text-[13px] font-display-bold text-primary-deep mb-md">{section.title}</Text>
+      <Text className="text-label-ui font-display-bold text-primary-deep mb-md">
+        {section.title}
+      </Text>
       {section.items.map((item) => (
         <FaqItemRow
           key={item.id}

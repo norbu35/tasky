@@ -39,10 +39,10 @@ export function DateCard({
   const { t } = useTranslation();
 
   return (
-    <View className="rounded-lg bg-muted gap-lg p-[20px]" style={elevations.soft}>
+    <View className="rounded-lg bg-muted gap-lg p-xl" style={elevations.soft}>
       <View className="flex-row items-center gap-sm">
         <CalendarDays size={20} color={colors.primary} />
-        <Text className="text-body font-extrabold text-primary-deep">
+        <Text className="text-body font-display-bold text-primary-deep">
           {t('ScheduleBudgetScreen.scheduleLabel')}
         </Text>
       </View>
@@ -139,10 +139,10 @@ export function BudgetField({
           </View>
         </View>
       </FormField>
-      <Text className="text-caption font-semibold text-accent leading-relaxed">
+      <Text className="text-caption font-sans-semibold text-accent leading-relaxed">
         {t('ScheduleBudgetScreen.budgetTypicalRange')}
       </Text>
-      <Text className="text-caption font-semibold text-muted-foreground leading-relaxed">
+      <Text className="text-caption font-sans-semibold text-muted-foreground leading-relaxed">
         {t('ScheduleBudgetScreen.budgetGoldHint')}
       </Text>
     </View>

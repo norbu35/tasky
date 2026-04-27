@@ -50,10 +50,10 @@ export function ScheduleFields({
 
   return (
     <>
-      <View className="rounded-lg bg-muted gap-lg p-[20px]" style={elevations.soft}>
+      <View className="rounded-lg bg-muted gap-lg p-xl" style={elevations.soft}>
         <View className="flex-row items-center gap-sm">
           <CalendarDays size={20} color={colors.primary} />
-          <Text className="text-body font-extrabold text-primary-deep">
+          <Text className="text-body font-display-bold text-primary-deep">
             {t('customer.bookings.labelNewSchedule')}
           </Text>
         </View>

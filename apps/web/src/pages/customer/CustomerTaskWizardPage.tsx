@@ -217,7 +217,7 @@ export function CustomerTaskWizardPage() {
             {intakeSchema ? (
               <div className="grid gap-4 rounded-lg border border-border/60 p-4">
                 <div className="space-y-1">
-                  <h3 className="text-sm font-semibold uppercase tracking-[0.075em] text-muted-foreground">
+                  <h3 className="text-sm font-semibold uppercase tracking-caps text-muted-foreground">
                     {t('customerPages.taskWizard.intakeTitle')}
                   </h3>
                   <p className="text-sm text-muted-foreground">

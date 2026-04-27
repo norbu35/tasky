@@ -24,7 +24,7 @@ export function ReviewGateBanner({ pendingReview }: ReviewGateBannerProps) {
       style={elevations.card}
     >
       <View className="gap-xs">
-        <Text className="text-subtitle font-bold text-foreground">
+        <Text className="text-subtitle font-sans-bold text-foreground">
           {t('reviewGate.hardLockedTitle')}
         </Text>
         <Text className="text-body text-text-secondary leading-normal">

@@ -61,7 +61,7 @@ export function PhotoGrid({
           testID={testID ? `${testID}-add-${index}` : undefined}
         >
           <View
-            className="w-[36px] h-[36px] rounded-full items-center justify-center"
+            className="w-9 h-9 rounded-full items-center justify-center"
             style={{ backgroundColor: withAlpha(colors.primary, 0.07) }}
           >
             <Plus size={20} color={colors.primary} />

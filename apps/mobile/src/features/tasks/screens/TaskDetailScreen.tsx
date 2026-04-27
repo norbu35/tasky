@@ -153,7 +153,7 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
           {/* Photos */}
           {task.photo_urls.length > 0 && (
             <View className="gap-xs bg-muted rounded-md p-md">
-              <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
+              <Text className="text-caption font-sans-semibold text-text-secondary uppercase tracking-normal">
                 {t('tasker.taskDetail.photosLabel')}
               </Text>
               <PhotoGrid photos={task.photo_urls} testID="task-detail-photos" />

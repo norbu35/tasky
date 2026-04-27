@@ -35,13 +35,13 @@ export function InboxPage() {
                 <span className="font-semibold text-foreground">
                   {t('sharedPages.inbox.sampleThreadTitle')}
                 </span>
-                <span className="shrink-0 text-[11px] text-text-tertiary">10:30</span>
+                <span className="shrink-0 text-caption text-text-tertiary">10:30</span>
               </div>
               <div className="text-sm text-muted-foreground">
                 {t('sharedPages.inbox.sampleThreadPreview')}
               </div>
             </div>
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-foreground text-[11px] font-semibold text-card">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-foreground text-caption font-semibold text-card">
               2
             </span>
           </CardContent>

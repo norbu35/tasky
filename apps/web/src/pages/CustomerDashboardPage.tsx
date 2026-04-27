@@ -97,7 +97,7 @@ export function CustomerDashboardPage() {
         {/* Greeting header */}
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.075em] text-muted-foreground">
+            <p className="text-xs font-semibold uppercase tracking-caps text-muted-foreground">
               {new Date().toLocaleDateString(locale, {
                 weekday: 'long',
                 month: 'long',

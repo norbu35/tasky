@@ -128,7 +128,7 @@ function AnimatedTaskFeed() {
                 {task.price} · {task.district}
               </p>
             </div>
-            <span className="text-[10px] font-bold bg-verified/10 text-verified border border-verified/20 px-2.5 py-1 rounded-full flex items-center gap-1 flex-shrink-0 backdrop-blur-md">
+            <span className="text-badge-text font-bold bg-verified/10 text-verified border border-verified/20 px-2.5 py-1 rounded-full flex items-center gap-1 flex-shrink-0 backdrop-blur-md">
               <BadgeCheck className="w-4 h-4" />
               {t('landing.verified')}
             </span>
@@ -168,17 +168,8 @@ export function LandingPage() {
       </header>
 
       <main className="pb-20">
-        {/* Hero Section — Dynamic Premium Gradient Mesh */}
+        {/* Hero Section */}
         <section className="relative min-h-screen flex items-center bg-primary-deep overflow-hidden">
-          {/* Animated Background Mesh */}
-          <div className="absolute inset-0 z-0">
-            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary rounded-full blur-[120px] mix-blend-screen opacity-40 animate-pulse" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-accent rounded-full blur-[150px] mix-blend-screen opacity-20" />
-            <div className="absolute top-[20%] right-[15%] w-[30%] h-[30%] bg-secondary rounded-full blur-[100px] mix-blend-screen opacity-20" />
-          </div>
-          {/* Metallic Gradient Streak Overlay */}
-          <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(105deg,transparent_20%,rgba(255,255,255,0.15)_35%,rgba(255,255,255,0.15)_40%,transparent_55%)] mix-blend-overlay opacity-50"></div>
-
           <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 lg:py-0 w-full grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left — Copy */}
             <motion.div
@@ -266,7 +257,7 @@ export function LandingPage() {
                   <p className="text-primary-foreground/80 max-w-sm mb-6">
                     {t('landing.featCleaningDesc')}
                   </p>
-                  <span className="text-accent font-bold tracking-[0.075em] uppercase text-sm flex items-center gap-2">
+                  <span className="text-accent font-bold tracking-caps uppercase text-sm flex items-center gap-2">
                     {t('landing.postTask')}{' '}
                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
                   </span>
@@ -312,10 +303,10 @@ export function LandingPage() {
                     {t('landing.featFurnitureDesc')}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-[0.075em]">
+                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-badge-text font-bold uppercase">
                       {t('landing.tagVerified')}
                     </span>
-                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-[0.075em]">
+                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-badge-text font-bold uppercase">
                       {t('landing.tagQuote')}
                     </span>
                   </div>
@@ -329,7 +320,7 @@ export function LandingPage() {
               >
                 <div className="p-8 sm:p-10 grid md:grid-cols-2 gap-8 items-center h-full">
                   <div>
-                    <h3 className="text-3xl font-black tracking-[0.075em] uppercase mb-4">
+                    <h3 className="text-3xl font-black tracking-caps uppercase mb-4">
                       {t('landing.featMoving')}
                     </h3>
                     <p className="text-primary-foreground/80 mb-6 leading-relaxed">
@@ -376,7 +367,7 @@ export function LandingPage() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
-                className="bg-card rounded-[2rem] p-8 sm:p-10 shadow-deep ring-1 ring-inset ring-primary/10 relative overflow-hidden transition-shadow hover:shadow-deep"
+                className="bg-card rounded-2xl p-8 sm:p-10 shadow-deep ring-1 ring-inset ring-primary/10 relative overflow-hidden transition-shadow hover:shadow-deep"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[100px] -z-0" />
                 <div className="relative z-10 space-y-3 mb-8">
@@ -444,7 +435,7 @@ export function LandingPage() {
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
-                className="bg-card rounded-[2rem] p-8 sm:p-10 shadow-deep ring-1 ring-inset ring-secondary/20 relative overflow-hidden lg:mt-12 transition-shadow hover:shadow-deep"
+                className="bg-card rounded-2xl p-8 sm:p-10 shadow-deep ring-1 ring-inset ring-secondary/20 relative overflow-hidden lg:mt-12 transition-shadow hover:shadow-deep"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-bl-[100px] -z-0" />
                 <div className="relative z-10 space-y-3 mb-8">
@@ -512,7 +503,6 @@ export function LandingPage() {
 
         {/* Trust & Safety Section — Split Screen */}
         <section className="w-full border-t border-border/30 bg-gradient-to-br from-primary-deep via-primary-deep to-primary-deep relative overflow-hidden">
-          <div className="absolute inset-0 bg-[linear-gradient(105deg,transparent_20%,rgba(255,255,255,0.05)_35%,rgba(255,255,255,0.05)_40%,transparent_55%)] pointer-events-none" />
           <div className="grid md:grid-cols-2 min-h-[500px] relative z-10">
             {/* Left — The Pain */}
             <motion.div
@@ -523,7 +513,7 @@ export function LandingPage() {
               className="text-primary-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28"
             >
               <div className="relative z-10">
-                <p className="text-sm font-bold uppercase tracking-[0.075em] text-accent mb-8">
+                <p className="text-overline font-bold uppercase text-accent mb-8">
                   {t('landing.trustReality')}
                 </p>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-6 text-primary-foreground">
@@ -604,7 +594,7 @@ export function LandingPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.6 }}
-              className="relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl border border-border/50 order-2"
+              className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-border/50 order-2"
             >
               <img
                 src="/images/promise-handshake.png"
@@ -694,8 +684,6 @@ export function LandingPage() {
 
         {/* App Download Banner */}
         <section className="relative w-full bg-gradient-to-br from-primary-deep via-primary to-primary-deep text-primary-foreground overflow-hidden">
-          <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-primary rounded-full blur-[120px] opacity-50 z-0 pointer-events-none" />
-
           <div className="w-full flex flex-col md:flex-row items-center">
             {/* Image Side */}
             <div className="w-full md:w-1/2 relative h-[400px] sm:h-[500px] md:h-[600px]">
@@ -727,7 +715,7 @@ export function LandingPage() {
                 >
                   <Smartphone className="w-6 h-6" />
                   <div className="text-left leading-tight">
-                    <div className="text-[10px] text-primary-foreground/70">Download on the</div>
+                    <div className="text-caption text-primary-foreground/70">Download on the</div>
                     <div className="font-bold">App Store</div>
                   </div>
                 </Button>
@@ -738,7 +726,7 @@ export function LandingPage() {
                 >
                   <Download className="w-6 h-6" />
                   <div className="text-left leading-tight">
-                    <div className="text-[10px] text-primary-foreground/70">GET IT ON</div>
+                    <div className="text-caption text-primary-foreground/70">GET IT ON</div>
                     <div className="font-bold">Google Play</div>
                   </div>
                 </Button>
@@ -781,7 +769,7 @@ export function LandingPage() {
 
           {/* Services Column */}
           <div className="space-y-4">
-            <h4 className="text-foreground font-bold font-display tracking-[0.075em] uppercase text-sm">
+            <h4 className="text-foreground font-bold font-display tracking-caps uppercase text-sm">
               {t('landing.footerServices')}
             </h4>
             <ul className="space-y-3 text-sm">
@@ -810,7 +798,7 @@ export function LandingPage() {
 
           {/* Company Column */}
           <div className="space-y-4">
-            <h4 className="text-foreground font-bold font-display tracking-[0.075em] uppercase text-sm">
+            <h4 className="text-foreground font-bold font-display tracking-caps uppercase text-sm">
               {t('landing.footerCompany')}
             </h4>
             <ul className="space-y-3 text-sm">
@@ -839,7 +827,7 @@ export function LandingPage() {
 
           {/* Legal Column */}
           <div className="space-y-4">
-            <h4 className="text-foreground font-bold font-display tracking-[0.075em] uppercase text-sm">
+            <h4 className="text-foreground font-bold font-display tracking-caps uppercase text-sm">
               {t('landing.footerLegal')}
             </h4>
             <ul className="space-y-3 text-sm">

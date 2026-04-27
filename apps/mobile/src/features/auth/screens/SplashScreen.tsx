@@ -11,7 +11,7 @@ import { useAppStore } from '@/store/appStore';
 import { useAuthStore } from '@/store/authStore';
 import { resolvePostAuthHref } from '@/utils/authRouting';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, typographyVariants } = mobileTheme;
 const { splash } = mobileSurfaces;
 
 export default function SplashScreen() {
@@ -46,11 +46,11 @@ export default function SplashScreen() {
         <Text
           style={{
             fontSize: splash.brandSize,
-            fontWeight: '700',
+            fontWeight: typographyVariants.heroTitle.fontWeight,
             color: colors.primaryForeground,
             fontFamily: 'Manrope_700Bold',
             marginBottom: spacing.sm,
-            letterSpacing: -1.8,
+            letterSpacing: typographyVariants.heroTitle.letterSpacing,
           }}
         >
           Tasky
@@ -61,7 +61,7 @@ export default function SplashScreen() {
               fontSize: typography.label,
               color: colors.primaryForeground,
               textAlign: 'center',
-              letterSpacing: 2.1,
+              letterSpacing: typographyVariants.badgeText.letterSpacing,
               textTransform: 'uppercase',
               lineHeight: mobileSurfaces.paragraphLineHeight,
             }}
@@ -98,7 +98,7 @@ export default function SplashScreen() {
           style={{
             fontSize: typography.micro,
             color: splash.footerText,
-            letterSpacing: 1.2,
+            letterSpacing: typographyVariants.badgeText.letterSpacing,
             textTransform: 'uppercase',
           }}
         >

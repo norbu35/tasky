@@ -2,8 +2,8 @@ import { ShieldCheck } from 'lucide-react-native';
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
 import { Reveal } from './Reveal';
@@ -33,7 +33,7 @@ export function TrustBanner({
             ? { backgroundColor: colors.trust }
             : { backgroundColor: tint.trustSoft, borderColor: colors.trust, borderWidth: 1 }
         }
-        className={cn('flex-row items-center gap-[16px] p-[17px] rounded-md', className)}
+        className={cn('flex-row items-center gap-md p-lg rounded-md', className)}
       >
         <View
           style={
@@ -41,7 +41,7 @@ export function TrustBanner({
           }
           className={cn(
             'items-center justify-center',
-            isCompact ? 'w-[40px] h-[40px] rounded-full' : 'w-[37px] h-[40px] rounded-sm',
+            isCompact ? 'w-10 h-10 rounded-full' : 'w-9 h-10 rounded-sm',
           )}
         >
           <ShieldCheck size={isCompact ? iconSizes.xs : iconSizes.sm} color={colors.trustMuted} />
@@ -53,7 +53,7 @@ export function TrustBanner({
           >
             {title}
           </Text>
-          <Text className="text-label text-foreground leading-[20px]">{description}</Text>
+          <Text className="text-label text-foreground">{description}</Text>
         </View>
       </View>
     </Reveal>

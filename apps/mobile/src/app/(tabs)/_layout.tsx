@@ -77,7 +77,7 @@ export default function TabsLayout() {
           tabBarLabelStyle: {
             fontSize: typography.micro,
             lineHeight: typography.micro + 2,
-            fontWeight: '600' as const,
+            fontWeight: nativeTokens.typographyVariants.navLabel.fontWeight,
             fontFamily: nativeTokens.typography.families.display,
           },
         }}

@@ -75,7 +75,7 @@ export function SectionCard({
           </View>
         ) : null}
         <Text
-          className={`flex-1 text-body font-bold leading-snug${featured ? ' text-primary-foreground text-[36px] font-display-bold leading-[40px]' : ' text-foreground'}`}
+          className={`flex-1 text-body font-bold leading-snug${featured ? ' text-primary-foreground text-display-lg font-display-bold leading-[40px]' : ' text-foreground'}`}
         >
           {value}
         </Text>

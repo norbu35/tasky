@@ -160,6 +160,29 @@ describe('Token Binding', () => {
     expect(appSources).not.toContain('shadow-[var(--shadow-');
   });
 
+  it('TID-TASK-115-WEB-RUNTIME-TYPOGRAPHY uses promoted typography utilities on cleaned surfaces', () => {
+    const sourceFiles = [
+      'src/components/feature/FeedCard.tsx',
+      'src/components/feature/task-creation/PhotoUploadManager.tsx',
+      'src/components/ui/label.tsx',
+      'src/pages/AuthPage.tsx',
+      'src/pages/CustomerTaskDetailsPage.tsx',
+      'src/pages/LandingPage.tsx',
+      'src/pages/MessagingNotificationsPage.tsx',
+      'src/pages/shared/ChatDetailPage.tsx',
+      'src/pages/shared/HelpPage.tsx',
+      'src/pages/shared/InboxPage.tsx',
+      'src/pages/shared/SettingsPage.tsx',
+    ];
+    const appSources = sourceFiles
+      .map((path) => readFileSync(resolve(process.cwd(), path), 'utf8'))
+      .join('\n');
+
+    expect(appSources).not.toMatch(/\btext-\[(?:10|11|13)px\]/);
+    expect(appSources).not.toContain('tracking-[0.075em]');
+    expect(appSources).not.toMatch(/\bblur-\[(?:100|120|130|150)px\]/);
+  });
+
   it('TID-TASK-115-WEB-COLOR-HYGIENE keeps common status/accent colors on Tasky tokens', () => {
     const sourceFiles = [
       'src/pages/BookingConfirmationPage.tsx',

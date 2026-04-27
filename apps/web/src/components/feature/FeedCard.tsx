@@ -32,7 +32,7 @@ export function FeedCard({ category, description, budget, location, onApply }: F
         </p>
 
         <p className="text-2xl font-bold font-display text-foreground">
-          {budget} <span className="text-[13px] font-normal text-text-secondary">MNT</span>
+          {budget} <span className="text-label font-normal text-text-secondary">MNT</span>
         </p>
       </div>
 
@@ -40,7 +40,7 @@ export function FeedCard({ category, description, budget, location, onApply }: F
         <div
           className={cn(
             'flex items-center gap-2 rounded-lg border border-border/30 bg-muted/50',
-            'px-2.5 py-2 text-[13px] font-medium font-sans text-foreground',
+            'px-2.5 py-2 text-label font-medium font-sans text-foreground',
           )}
         >
           <MapPin className="h-3.5 w-3.5 shrink-0 opacity-70" />
@@ -50,7 +50,7 @@ export function FeedCard({ category, description, budget, location, onApply }: F
         <div
           className={cn(
             'flex items-center gap-2 rounded-lg border border-border/30 bg-muted/50',
-            'px-2.5 py-2 text-[13px] font-medium font-sans text-foreground',
+            'px-2.5 py-2 text-label font-medium font-sans text-foreground',
           )}
         >
           <Clock className="h-3.5 w-3.5 shrink-0 opacity-70" />
