@@ -20,12 +20,14 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "pnpm run clean && tsc -p tsconfig.json",
+    "tokens:css": "node scripts/generate-tokens-css.mjs --write",
+    "tokens:css:check": "node scripts/generate-tokens-css.mjs --check",
+    "build": "pnpm run tokens:css:check && pnpm run clean && tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint \"src/**/*.ts\"",
-    "format": "prettier --write \"src/**/*.{ts,css}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,css}\"",
-    "test": "node scripts/check-package-structure.mjs && node --test __tests__/*.test.mjs && tsc --noEmit"
+    "format": "prettier --write \"src/**/*.{ts,css}\" \"scripts/**/*.mjs\" \"__tests__/**/*.mjs\"",
+    "format:check": "prettier --check \"src/**/*.{ts,css}\" \"scripts/**/*.mjs\" \"__tests__/**/*.mjs\"",
+    "test": "node scripts/check-package-structure.mjs && pnpm run tokens:css:check && node --test __tests__/*.test.mjs && tsc --noEmit"
   },
   "devDependencies": {
     "@tasky/tooling-config": "workspace:*",
