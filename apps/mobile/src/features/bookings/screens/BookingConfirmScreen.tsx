@@ -52,7 +52,6 @@ export default function BookingConfirmScreen() {
     }
     const booking = await confirmBookingIntent({
       bookingIntentId: params.bookingIntentId!,
-      liabilityDisclaimerAccepted: true,
       idempotencyKey,
     });
     router.replace({

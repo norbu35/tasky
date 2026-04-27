@@ -36,7 +36,7 @@ export function useApplicantsSelectionScreen() {
           completedJobs,
           reviewCount,
           publicRatingVisible: canShowPublicRating(reviewCount, rating),
-          isVerified: a.tasker?.is_pro ?? false,
+          isVerified: true,
           message,
           quotePrice: a.quote_price ?? null,
           responseSignal: message.trim().length >= 24 ? 'detailed' : 'brief',

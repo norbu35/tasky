@@ -207,7 +207,7 @@ describe('Customer phase 1 parity', () => {
     renderWithProviders(<CustomerTaskerProfilePage />);
 
     expect(screen.getByRole('heading', { name: 'Tasker profile' })).toBeInTheDocument();
-    expect(screen.getByText('Verified Tasker')).toBeInTheDocument();
+    expect(screen.getByText('ID-verified Tasker')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Message tasker' })).toBeInTheDocument();
   });
 

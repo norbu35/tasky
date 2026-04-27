@@ -43,14 +43,16 @@ export function CustomerDisputeRaisePage() {
     mutationFn: async () => {
       if (!session || !bookingId) throw new Error('Missing session or booking ID');
 
-      const evidence = [
-        {
-          type: evidenceType,
-          ...(evidenceType !== 'PHOTO'
-            ? { text_payload: evidenceText.trim() || reason.trim() }
-            : {}),
-        },
-      ];
+      const evidenceTextPayload = evidenceText.trim();
+      const evidence =
+        evidenceType === 'PHOTO' || evidenceTextPayload.length === 0
+          ? []
+          : [
+              {
+                type: evidenceType,
+                text_payload: evidenceTextPayload,
+              },
+            ];
 
       return apiClient.raiseDispute(
         session.accessToken,

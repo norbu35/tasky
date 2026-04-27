@@ -1207,7 +1207,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-P1-NOTIF-05, REQ-P1-BOOK-25
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Completion silence reminder uses push notification when a device token
       exists

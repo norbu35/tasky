@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { elevations } from '@/design/elevations';
 import { screenLayout } from '@/design/screenLayout';
 import { mobileTheme, springs } from '@/design/tokenAdapter';
+import { useReviewGate } from '@/features/review/components/ReviewGateProvider';
 import { cn } from '@/lib/cn';
 import { useAuthStore } from '@/store/authStore';
 
@@ -32,6 +33,7 @@ type FABProps = {
 export function FAB({ testID = 'global-fab', authGuard = true, className }: FABProps) {
   const router = useRouter();
   const session = useAuthStore((state) => state.session);
+  const { isLocked } = useReviewGate();
   const insets = useSafeAreaInsets();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
@@ -99,6 +101,10 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
       { scale: scale.value },
     ],
   }));
+
+  if (isLocked) {
+    return null;
+  }
 
   return (
     <GestureDetector gesture={composed}>

@@ -1,9 +1,15 @@
 {
-  "_generated_from_migrations": "V1 through V35",
+  "_generated_from_migrations": "V1 through V36",
   "_description": "Canonical schema inventory. Regenerate with: python3 tooling/scripts/governance/validate-schema-parity.py --update-expected",
   "tables": {
     "analytics_events": {
-      "columns": ["id", "name", "properties", "timestamp", "user_id"]
+      "columns": [
+        "id",
+        "name",
+        "properties",
+        "timestamp",
+        "user_id"
+      ]
     },
     "audit_events": {
       "columns": [
@@ -17,7 +23,13 @@
       ]
     },
     "booking_completion_signals": {
-      "columns": ["booking_id", "marked_done_at", "proof_note", "proof_photo_key", "tasker_id"]
+      "columns": [
+        "booking_id",
+        "marked_done_at",
+        "proof_note",
+        "proof_photo_key",
+        "tasker_id"
+      ]
     },
     "booking_intents": {
       "columns": [
@@ -37,12 +49,29 @@
         "updated_at"
       ],
       "check_constraints": {
-        "source": ["APPLICATION_SELECTION", "INSTANT_MATCH", "REBOOK"],
-        "status": ["CANCELLED", "CONFIRMED", "DECLINED", "EXPIRED", "PENDING"]
+        "source": [
+          "APPLICATION_SELECTION",
+          "INSTANT_MATCH",
+          "REBOOK"
+        ],
+        "status": [
+          "CANCELLED",
+          "CONFIRMED",
+          "DECLINED",
+          "EXPIRED",
+          "PENDING"
+        ]
       }
     },
     "booking_reliability_incidents": {
-      "columns": ["booking_id", "details", "id", "incident_type", "recorded_at", "user_id"]
+      "columns": [
+        "booking_id",
+        "details",
+        "id",
+        "incident_type",
+        "recorded_at",
+        "user_id"
+      ]
     },
     "booking_reviews": {
       "columns": [
@@ -71,11 +100,23 @@
         "reason"
       ],
       "check_constraints": {
-        "event_type": ["ACCEPTED", "DECLINED", "EXPIRED", "REQUESTED"]
+        "event_type": [
+          "ACCEPTED",
+          "DECLINED",
+          "EXPIRED",
+          "REQUESTED"
+        ]
       }
     },
     "booking_timeline_events": {
-      "columns": ["actor_user_id", "booking_id", "created_at", "event_type", "id", "metadata_json"]
+      "columns": [
+        "actor_user_id",
+        "booking_id",
+        "created_at",
+        "event_type",
+        "id",
+        "metadata_json"
+      ]
     },
     "bookings": {
       "columns": [
@@ -97,8 +138,19 @@
         "updated_at"
       ],
       "check_constraints": {
-        "settlement_mode": ["DIRECT", "ESCROW", "LEAD_UNLOCK"],
-        "status": ["ASSIGNED", "CANCELLED", "COMPLETED", "DISPUTED", "NO_SHOW", "PAID"]
+        "settlement_mode": [
+          "DIRECT",
+          "ESCROW",
+          "LEAD_UNLOCK"
+        ],
+        "status": [
+          "ASSIGNED",
+          "CANCELLED",
+          "COMPLETED",
+          "DISPUTED",
+          "NO_SHOW",
+          "PAID"
+        ]
       }
     },
     "categories": {
@@ -127,31 +179,66 @@
         "version"
       ],
       "check_constraints": {
-        "status": ["ACTIVE", "CANARY", "DRAFT", "ROLLED_BACK"]
+        "status": [
+          "ACTIVE",
+          "CANARY",
+          "DRAFT",
+          "ROLLED_BACK"
+        ]
       }
     },
     "conversations": {
-      "columns": ["created_at", "customer_id", "id", "task_id", "tasker_id"]
+      "columns": [
+        "created_at",
+        "customer_id",
+        "id",
+        "task_id",
+        "tasker_id"
+      ]
     },
     "credited_bookings": {
-      "columns": ["booking_id"]
+      "columns": [
+        "booking_id"
+      ]
     },
     "device_tokens": {
-      "columns": ["created_at", "platform", "token", "user_id"],
+      "columns": [
+        "created_at",
+        "platform",
+        "token",
+        "user_id"
+      ],
       "check_constraints": {
-        "platform": ["ANDROID", "IOS", "WEB"]
+        "platform": [
+          "ANDROID",
+          "IOS",
+          "WEB"
+        ]
       }
     },
     "dispute_evidence": {
-      "columns": ["created_at", "dispute_id", "id", "storage_key", "text_payload", "type"],
+      "columns": [
+        "created_at",
+        "dispute_id",
+        "id",
+        "storage_key",
+        "text_payload",
+        "type"
+      ],
       "check_constraints": {
-        "type": ["CHAT_EXCERPT", "PHOTO", "WRITTEN_TIMELINE"]
+        "type": [
+          "CHAT_EXCERPT",
+          "PHOTO",
+          "WRITTEN_TIMELINE"
+        ]
       }
     },
     "disputes": {
       "columns": [
         "booking_id",
         "created_at",
+        "evidence_due_at",
+        "evidence_reminder_sent_at",
         "id",
         "raised_by",
         "reason",
@@ -172,6 +259,7 @@
         "status": [
           "CLOSED_INSUFFICIENT_EVIDENCE",
           "ESCALATED",
+          "EVIDENCE_NEEDED",
           "OPEN",
           "RESOLVED_CUSTOMER",
           "RESOLVED_TASKER"
@@ -179,7 +267,15 @@
       }
     },
     "districts": {
-      "columns": ["centroid_lat", "centroid_lng", "id", "is_active", "name", "name_mn", "slug"]
+      "columns": [
+        "centroid_lat",
+        "centroid_lng",
+        "id",
+        "is_active",
+        "name",
+        "name_mn",
+        "slug"
+      ]
     },
     "domain_outbox_events": {
       "columns": [
@@ -204,13 +300,27 @@
         "workflow_id"
       ],
       "check_constraints": {
-        "status": ["FAILED", "PENDING", "PROCESSED", "PROCESSING"]
+        "status": [
+          "FAILED",
+          "PENDING",
+          "PROCESSED",
+          "PROCESSING"
+        ]
       }
     },
     "event_idempotency": {
-      "columns": ["event_id", "event_status", "event_type", "handler", "processed_at"],
+      "columns": [
+        "event_id",
+        "event_status",
+        "event_type",
+        "handler",
+        "processed_at"
+      ],
       "check_constraints": {
-        "event_status": ["COMPLETED", "IN_PROGRESS"]
+        "event_status": [
+          "COMPLETED",
+          "IN_PROGRESS"
+        ]
       }
     },
     "feature_toggles": {
@@ -237,13 +347,32 @@
         "user_id"
       ],
       "check_constraints": {
-        "status": ["COMPLETED", "IN_PROGRESS"]
+        "status": [
+          "COMPLETED",
+          "IN_PROGRESS"
+        ]
       }
     },
     "ledger_entries": {
-      "columns": ["amount", "created_at", "description", "id", "reference_id", "type", "user_id"],
+      "columns": [
+        "amount",
+        "created_at",
+        "description",
+        "id",
+        "reference_id",
+        "type",
+        "user_id"
+      ],
       "check_constraints": {
-        "type": ["CONFISCATE", "DEPOSIT", "FEE", "HOLD", "PAYOUT", "REFUND", "RELEASE"]
+        "type": [
+          "CONFISCATE",
+          "DEPOSIT",
+          "FEE",
+          "HOLD",
+          "PAYOUT",
+          "REFUND",
+          "RELEASE"
+        ]
       }
     },
     "messages": {
@@ -283,15 +412,35 @@
       ]
     },
     "otp_challenges": {
-      "columns": ["attempts", "code", "expires_at", "phone_blind_idx"]
+      "columns": [
+        "attempts",
+        "code",
+        "expires_at",
+        "phone_blind_idx"
+      ]
     },
     "payment_intents": {
-      "columns": ["booking_id", "payment_id", "processed"]
+      "columns": [
+        "booking_id",
+        "payment_id",
+        "processed"
+      ]
     },
     "payout_requests": {
-      "columns": ["amount", "created_at", "id", "processed_at", "status", "user_id"],
+      "columns": [
+        "amount",
+        "created_at",
+        "id",
+        "processed_at",
+        "status",
+        "user_id"
+      ],
       "check_constraints": {
-        "status": ["PENDING", "PROCESSED", "REJECTED"]
+        "status": [
+          "PENDING",
+          "PROCESSED",
+          "REJECTED"
+        ]
       }
     },
     "profiles": {
@@ -307,10 +456,20 @@
       ]
     },
     "rate_limit_counters": {
-      "columns": ["attempt_count", "expires_at", "rate_key", "updated_at", "window_start"]
+      "columns": [
+        "attempt_count",
+        "expires_at",
+        "rate_key",
+        "updated_at",
+        "window_start"
+      ]
     },
     "refresh_sessions": {
-      "columns": ["expires_at", "token_id", "user_id"]
+      "columns": [
+        "expires_at",
+        "token_id",
+        "user_id"
+      ]
     },
     "review_enforcement_cases": {
       "columns": [
@@ -324,11 +483,22 @@
         "user_id"
       ],
       "check_constraints": {
-        "status": ["COMPLETED", "EXPIRED", "PENDING", "REMINDED_24H", "REMINDED_72H"]
+        "status": [
+          "COMPLETED",
+          "EXPIRED",
+          "PENDING",
+          "REMINDED_24H",
+          "REMINDED_72H"
+        ]
       }
     },
     "shedlock": {
-      "columns": ["lock_until", "locked_at", "locked_by", "name"]
+      "columns": [
+        "lock_until",
+        "locked_at",
+        "locked_by",
+        "name"
+      ]
     },
     "suspension_events": {
       "columns": [
@@ -355,7 +525,14 @@
         "tasker_id"
       ],
       "check_constraints": {
-        "status": ["ACCEPTED", "APPLIED", "DECLINED", "EXPIRED", "SELECTED", "WITHDRAWN"]
+        "status": [
+          "ACCEPTED",
+          "APPLIED",
+          "DECLINED",
+          "EXPIRED",
+          "SELECTED",
+          "WITHDRAWN"
+        ]
       }
     },
     "task_drafts": {
@@ -374,7 +551,12 @@
       ]
     },
     "task_photos": {
-      "columns": ["id", "sort_order", "storage_key", "task_id"]
+      "columns": [
+        "id",
+        "sort_order",
+        "storage_key",
+        "task_id"
+      ]
     },
     "task_rescue_events": {
       "columns": [
@@ -388,15 +570,34 @@
         "triggered_at"
       ],
       "check_constraints": {
-        "intervention_stage": ["completion_rescue", "post_booking", "post_match", "pre_match"],
-        "intervention_type": ["external_distribution", "manual_rescue", "ops_override"],
-        "trigger_window": ["DAYTIME", "OFF_HOURS"]
+        "intervention_stage": [
+          "completion_rescue",
+          "post_booking",
+          "post_match",
+          "pre_match"
+        ],
+        "intervention_type": [
+          "external_distribution",
+          "manual_rescue",
+          "ops_override"
+        ],
+        "trigger_window": [
+          "DAYTIME",
+          "OFF_HOURS"
+        ]
       }
     },
     "tasker_badges": {
-      "columns": ["assigned_at", "badge_type", "revoked_at", "tasker_id"],
+      "columns": [
+        "assigned_at",
+        "badge_type",
+        "revoked_at",
+        "tasker_id"
+      ],
       "check_constraints": {
-        "badge_type": ["PRO"]
+        "badge_type": [
+          "PRO"
+        ]
       }
     },
     "tasker_reliability_scores": {
@@ -412,10 +613,20 @@
       ]
     },
     "tasker_service_districts": {
-      "columns": ["created_at", "district_id", "user_id"]
+      "columns": [
+        "created_at",
+        "district_id",
+        "user_id"
+      ]
     },
     "tasker_strikes": {
-      "columns": ["booking_id", "created_at", "id", "reason", "user_id"]
+      "columns": [
+        "booking_id",
+        "created_at",
+        "id",
+        "reason",
+        "user_id"
+      ]
     },
     "tasks": {
       "columns": [
@@ -438,9 +649,22 @@
         "updated_at"
       ],
       "check_constraints": {
-        "pricing_mode": ["BUDGET", "QUOTE"],
-        "scope_summary_source": ["LLM", "TEMPLATE", "USER_EDITED"],
-        "status": ["ASSIGNED", "CANCELLED", "COMPLETED", "NO_SHOW", "OPEN"]
+        "pricing_mode": [
+          "BUDGET",
+          "QUOTE"
+        ],
+        "scope_summary_source": [
+          "LLM",
+          "TEMPLATE",
+          "USER_EDITED"
+        ],
+        "status": [
+          "ASSIGNED",
+          "CANCELLED",
+          "COMPLETED",
+          "NO_SHOW",
+          "OPEN"
+        ]
       }
     },
     "users": {
@@ -457,8 +681,19 @@
         "updated_at"
       ],
       "check_constraints": {
-        "role": ["ADMIN", "CUSTOMER", "TASKER"],
-        "status": ["ACTIVE", "BANNED", "DELETED", "PENDING", "SUSPENDED", "VERIFIED"]
+        "role": [
+          "ADMIN",
+          "CUSTOMER",
+          "TASKER"
+        ],
+        "status": [
+          "ACTIVE",
+          "BANNED",
+          "DELETED",
+          "PENDING",
+          "SUSPENDED",
+          "VERIFIED"
+        ]
       }
     },
     "verifications": {
@@ -476,11 +711,20 @@
         "user_id"
       ],
       "check_constraints": {
-        "status": ["APPROVED", "PENDING", "REJECTED"]
+        "status": [
+          "APPROVED",
+          "PENDING",
+          "REJECTED"
+        ]
       }
     },
     "wallets": {
-      "columns": ["balance_mnt", "held_balance_mnt", "updated_at", "user_id"]
+      "columns": [
+        "balance_mnt",
+        "held_balance_mnt",
+        "updated_at",
+        "user_id"
+      ]
     }
   }
 }

@@ -1,6 +1,7 @@
 package mn.tasky.trust.publicapi;
 
 import java.util.List;
+import mn.tasky.dispute.dto.DisputeEvidenceResult;
 import mn.tasky.dispute.dto.DisputeRaiseResult;
 import mn.tasky.dispute.dto.DisputeRequest;
 import mn.tasky.dispute.dto.DisputeResolutionResult;
@@ -20,6 +21,9 @@ public interface TrustCommandPort {
 
     DisputeRaiseResult raiseDispute(
             String userId, String bookingId, String reason, List<DisputeRequest.EvidenceItem> evidenceItems);
+
+    DisputeEvidenceResult addDisputeEvidence(
+            String userId, String disputeId, List<DisputeRequest.EvidenceItem> evidenceItems);
 
     DisputeResolutionResult resolveDispute(String adminId, String disputeId, String outcome, String resolutionNotes);
 

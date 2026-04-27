@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -490,11 +491,11 @@ class TaskApplicationScenarioTests {
         verify(taskApplicationDao).updateStatus(APPLICATION_ID, "WITHDRAWN");
     }
 
-    // ── SCN-BOOK-031 ────────────────────────────────────────────────────────
+    // ── SCN-TASK-025 selected-state guard ───────────────────────────────────
 
     @Test
-    @DisplayName("SCN-BOOK-031: Selected tasker explicitly declines and task returns to selectable applicants")
-    void selectedTaskerDeclineReturnsTaskToSelectableApplicants() {
+    @DisplayName("SCN-TASK-025: Selected tasker cannot withdraw after customer selection")
+    void selectedTaskerCannotWithdrawAfterCustomerSelection() {
         Instant now = Instant.now();
         TaskApplicationState selectedApp = new TaskApplicationState(
                 APPLICATION_ID,
@@ -513,41 +514,17 @@ class TaskApplicationScenarioTests {
                 now,
                 now.plusSeconds(3600),
                 now);
-        TaskApplicationState withdrawnApp = new TaskApplicationState(
-                APPLICATION_ID,
-                TASK_ID,
-                TASKER_ID,
-                "Tasker Name",
-                null,
-                4.5,
-                10,
-                false,
-                "I can do this",
-                null,
-                "WITHDRAWN",
-                null,
-                null,
-                selectedApp.selectedAt(),
-                selectedApp.respondByAt(),
-                now);
         when(taskApplicationDao.findByTaskerAndId(TASKER_ID, APPLICATION_ID)).thenReturn(Optional.of(selectedApp));
-        when(taskApplicationDao.findById(APPLICATION_ID)).thenReturn(Optional.of(withdrawnApp));
-        when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(openBudgetTask()));
 
         TaskWithdrawResult result = applicationService.withdrawApplication(TASKER_ID, APPLICATION_ID);
 
-        assertThat(result.isSuccess()).isTrue();
-        assertThat(result.application().status()).isEqualTo("WITHDRAWN");
-        verify(taskApplicationDao).updateStatus(APPLICATION_ID, "WITHDRAWN");
-        verify(taskDao).updateStatus(eq(TASK_ID), eq("OPEN"), any());
+        assertThat(result.isSuccess()).isFalse();
+        assertThat(result.errorCode()).isEqualTo(TaskWithdrawResult.INVALID_STATUS);
+        verify(taskApplicationDao, never()).updateStatus(APPLICATION_ID, "WITHDRAWN");
+        verify(taskDao, never()).updateStatus(eq(TASK_ID), eq("OPEN"), any());
         verify(bookingCommandPort, never())
                 .createBooking(anyString(), anyString(), anyString(), anyInt(), eq(true), any());
-        verify(notificationService)
-                .sendPush(
-                        eq(CUSTOMER_ID),
-                        eq("Applicant withdrew"),
-                        eq("A selected tasker has withdrawn from your task. You can select another applicant."),
-                        eq("APPLICANT_WITHDREW"));
+        verifyNoInteractions(notificationService);
     }
 
     // ── SCN-TASK-026 ─────────────────────────────────────────────────────────

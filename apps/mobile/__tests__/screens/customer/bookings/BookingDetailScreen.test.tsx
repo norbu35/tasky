@@ -35,13 +35,14 @@ jest.mock('@gorhom/bottom-sheet', () => {
   const React = require('react');
   const { View } = require('react-native');
   const MockBottomSheet = React.forwardRef(function MockBottomSheet(
-    { children, ...props }: any,
+    { children, index, ...props }: any,
     ref: any,
   ) {
     React.useImperativeHandle(ref, () => ({
       snapToIndex: jest.fn(),
       close: jest.fn(),
     }));
+    if (index === -1) return null;
     return <View {...props}>{children}</View>;
   });
   MockBottomSheet.displayName = 'MockBottomSheet';
@@ -87,6 +88,17 @@ jest.mock('../../../../src/features/bookings/hooks/useFlagNoShow', () => ({
 }));
 
 const mockUseConversations = useConversations as jest.MockedFunction<typeof useConversations>;
+
+const hasAncestorTestID = (node: any, testID: string): boolean => {
+  let parent = node.parent;
+  while (parent) {
+    if (parent.props?.testID === testID) {
+      return true;
+    }
+    parent = parent.parent;
+  }
+  return false;
+};
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -284,6 +296,59 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
     expect(screen.getByText('Cancelled')).toBeTruthy();
   });
 
+  it('shows recovery path when a cancelled booking has reopened the task', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: makeBooking({
+        status: 'CANCELLED',
+        task: {
+          id: 'task-1',
+          status: 'OPEN',
+          description: 'Fix my sink',
+          budget: 50000,
+          scheduled_at: '2026-04-01T10:00:00Z',
+          location_text: 'Ulaanbaatar',
+          category: { name: 'Handyman' },
+        },
+      }),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingDetailScreen />);
+
+    expect(screen.getByText('Your task is open again.')).toBeTruthy();
+    expect(screen.getByText('Find another tasker')).toBeTruthy();
+    expect(screen.getByText('Report Issue')).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId('SCR-CUST-017-cta'));
+    expect(mockPush).toHaveBeenCalledWith('/(customer)/tasks/task-1');
+  });
+
+  it('does not offer tasker recovery when the linked task is not open', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: makeBooking({
+        status: 'CANCELLED',
+        task: {
+          id: 'task-1',
+          status: 'CANCELLED',
+          description: 'Fix my sink',
+          budget: 50000,
+          scheduled_at: '2026-04-01T10:00:00Z',
+          location_text: 'Ulaanbaatar',
+          category: { name: 'Handyman' },
+        },
+      }),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingDetailScreen />);
+
+    expect(screen.queryByText('Find another tasker')).toBeNull();
+    expect(screen.queryByText('Your task is open again.')).toBeNull();
+    expect(screen.getByText('Report Issue')).toBeTruthy();
+  });
+
   it('shows no-show status when no_show', () => {
     mockUseBookingDetail.mockReturnValue({
       data: makeBooking({ status: 'NO_SHOW' }),
@@ -328,7 +393,10 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
     render(<BookingDetailScreen />);
 
     fireEvent.press(screen.getByTestId('booking-detail-screen-cancel-btn'));
-    expect(screen.getByTestId('customer-cancel-sheet')).toBeTruthy();
+    const cancelSheet = screen.getByTestId('customer-cancel-sheet');
+    expect(cancelSheet).toBeTruthy();
+    expect(screen.getByText('Select a reason for cancellation')).toBeTruthy();
+    expect(hasAncestorTestID(cancelSheet, 'SCR-CUST-017')).toBe(false);
   });
 
   it('navigates to tasker profile when the tasker card is pressed', () => {

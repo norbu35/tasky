@@ -11,6 +11,7 @@ public record DisputeRaiseOutcome(Status status, Map<String, Object> body, Strin
         NOT_FOUND,
         FORBIDDEN,
         INVALID_REASON,
+        INVALID_EVIDENCE,
         INVALID_STATUS,
         DISPUTE_WINDOW_EXPIRED,
         DISPUTE_EXISTS,

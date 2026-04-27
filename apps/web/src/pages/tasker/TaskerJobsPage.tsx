@@ -1,39 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Briefcase, CheckCircle, Clock, XCircle } from 'lucide-react';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../../components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '../../components/ui/dialog';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { useAppContext } from '../../context/AppContext';
 import { ResponsiveDetailShell } from '../../layout/parity/ResponsiveDetailShell';
-import type { Booking } from '../../lib/apiClient';
-import { parseError } from '../../lib/errorHandling';
-import { createIdempotencyKey } from '../../lib/idempotency';
 
 export function TaskerJobsPage() {
   const { t } = useTranslation();
-  const { apiClient, session, trackClientEvent } = useAppContext();
-  const queryClient = useQueryClient();
-  const [confirmBookingId, setConfirmBookingId] = useState<string | null>(null);
-  const [confirmTaskId, setConfirmTaskId] = useState<string | null>(null);
-  const [confirmApplicationId, setConfirmApplicationId] = useState<string | null>(null);
+  const { apiClient, session } = useAppContext();
 
   const { data: bookingsPage, isLoading } = useQuery({
     queryKey: ['taskerBookings', session, apiClient],
@@ -44,35 +21,6 @@ export function TaskerJobsPage() {
   });
 
   const bookings = bookingsPage?.data ?? [];
-
-  const confirmMutation = useMutation({
-    mutationFn: async () => {
-      if (!confirmTaskId || !confirmApplicationId) throw new Error('Missing IDs');
-      return apiClient.confirmAcceptance(
-        session!.accessToken,
-        confirmTaskId,
-        confirmApplicationId,
-        createIdempotencyKey('confirm-acceptance'),
-      );
-    },
-    onSuccess: () => {
-      trackClientEvent('BOOKING_CONFIRMED', { bookingId: confirmBookingId ?? undefined });
-      queryClient.invalidateQueries({ queryKey: ['taskerBookings'] });
-      setConfirmBookingId(null);
-      setConfirmTaskId(null);
-      setConfirmApplicationId(null);
-      toast.success(t('taskerPages.jobs.confirmSuccess'));
-    },
-    onError: (err) => toast.error(parseError(err)),
-  });
-
-  const openConfirm = (booking: Booking) => {
-    setConfirmBookingId(booking.id);
-    setConfirmTaskId(booking.task_id);
-    // In the real flow, the tasker would have been selected from an application
-    // For now, we derive the application ID from the booking context
-    setConfirmApplicationId(null); // Would come from route params or API
-  };
 
   return (
     <ResponsiveDetailShell
@@ -111,10 +59,6 @@ export function TaskerJobsPage() {
               <CardContent>
                 {booking.status === 'ASSIGNED' && (
                   <div className="flex gap-2">
-                    <Button size="sm" onClick={() => openConfirm(booking)}>
-                      <CheckCircle className="mr-1 h-3 w-3" />
-                      {t('taskerPages.jobs.confirmBtn')}
-                    </Button>
                     <Button
                       size="sm"
                       variant="ghost"
@@ -136,46 +80,6 @@ export function TaskerJobsPage() {
           ))}
         </div>
       )}
-
-      {/* Confirm Acceptance Dialog */}
-      <Dialog
-        open={confirmBookingId !== null}
-        onOpenChange={(open) => {
-          if (!open) {
-            setConfirmBookingId(null);
-            setConfirmTaskId(null);
-            setConfirmApplicationId(null);
-          }
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('taskerPages.jobs.confirmTitle')}</DialogTitle>
-            <DialogDescription>{t('taskerPages.jobs.confirmDesc')}</DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="mt-4">
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setConfirmBookingId(null);
-                setConfirmTaskId(null);
-                setConfirmApplicationId(null);
-              }}
-              disabled={confirmMutation.isPending}
-            >
-              {t('taskerPages.jobs.cancelBtn')}
-            </Button>
-            <Button
-              onClick={() => confirmMutation.mutate()}
-              disabled={confirmMutation.isPending || !confirmApplicationId}
-            >
-              {confirmMutation.isPending
-                ? t('taskerPages.jobs.confirmingBtn')
-                : t('taskerPages.jobs.confirmBtn')}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </ResponsiveDetailShell>
   );
 }

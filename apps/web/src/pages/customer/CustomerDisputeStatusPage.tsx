@@ -14,6 +14,7 @@ const STATUS_CONFIG: Record<
   string,
   { icon: typeof Clock; color: string; tone: 'default' | 'secondary' | 'destructive' | 'outline' }
 > = {
+  EVIDENCE_NEEDED: { icon: Clock, color: 'text-amber-500', tone: 'outline' },
   OPEN: { icon: Clock, color: 'text-amber-500', tone: 'outline' },
   ESCALATED: { icon: ShieldAlert, color: 'text-orange-500', tone: 'destructive' },
   RESOLVED_CUSTOMER: { icon: CheckCircle, color: 'text-emerald-500', tone: 'default' },
@@ -22,6 +23,7 @@ const STATUS_CONFIG: Record<
 };
 
 const DISPUTE_STATUS_LABEL_KEYS = {
+  EVIDENCE_NEEDED: 'customerPages.disputeStatus.statusLabel.EVIDENCE_NEEDED',
   OPEN: 'customerPages.disputeStatus.statusLabel.OPEN',
   ESCALATED: 'customerPages.disputeStatus.statusLabel.ESCALATED',
   RESOLVED_CUSTOMER: 'customerPages.disputeStatus.statusLabel.RESOLVED_CUSTOMER',

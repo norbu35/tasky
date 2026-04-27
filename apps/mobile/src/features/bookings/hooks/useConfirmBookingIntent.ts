@@ -5,7 +5,6 @@ import { useAuthStore } from '@/store/authStore';
 
 interface ConfirmBookingIntentParams {
   bookingIntentId: string;
-  liabilityDisclaimerAccepted: boolean;
   idempotencyKey: string;
 }
 
@@ -16,12 +15,7 @@ export function useConfirmBookingIntent() {
 
   return useMutation({
     mutationFn: (params: ConfirmBookingIntentParams) =>
-      confirmBookingIntent(
-        token!,
-        params.bookingIntentId,
-        params.liabilityDisclaimerAccepted,
-        params.idempotencyKey,
-      ),
+      confirmBookingIntent(token!, params.bookingIntentId, params.idempotencyKey),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['bookings'] });
       void queryClient.invalidateQueries({ queryKey: ['tasks'] });

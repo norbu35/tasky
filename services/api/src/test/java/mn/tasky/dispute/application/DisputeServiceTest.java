@@ -26,6 +26,7 @@ import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.dispute.dao.DisputeEvidenceDao;
 import mn.tasky.dispute.dto.Dispute;
 import mn.tasky.dispute.dto.DisputeEvidence;
+import mn.tasky.dispute.dto.DisputeEvidenceResult;
 import mn.tasky.dispute.dto.DisputeRaiseResult;
 import mn.tasky.dispute.dto.DisputeRequest;
 import mn.tasky.dispute.dto.DisputeResolutionResult;
@@ -240,7 +241,9 @@ class DisputeServiceTest {
             assertEquals(BOOKING_ID, result.dispute().bookingId());
             assertEquals(CUSTOMER_ID, result.dispute().raisedBy());
             assertEquals("Valid reason", result.dispute().reason());
-            assertEquals("OPEN", result.dispute().status());
+            assertEquals("EVIDENCE_NEEDED", result.dispute().status());
+            assertNotNull(result.dispute().evidenceReminderSentAt());
+            assertNotNull(result.dispute().evidenceDueAt());
 
             verify(disputeDao)
                     .insert(
@@ -248,12 +251,14 @@ class DisputeServiceTest {
                             eq(BOOKING_ID),
                             eq(CUSTOMER_ID),
                             eq("Valid reason"),
-                            eq("OPEN"),
+                            eq("EVIDENCE_NEEDED"),
                             isNull(),
                             isNull(),
                             isNull(),
                             any(Instant.class),
-                            isNull());
+                            isNull(),
+                            any(Instant.class),
+                            any(Instant.class));
             verify(bookingCommandPort).transitionToDisputed(BOOKING_ID);
             verifyNoInteractions(disputeEvidenceDao);
         }
@@ -325,6 +330,8 @@ class DisputeServiceTest {
                             isNull(),
                             isNull(),
                             any(Instant.class),
+                            isNull(),
+                            isNull(),
                             isNull());
             verify(disputeEvidenceDao, times(3)).insert(anyString(), anyString(), anyString(), any(), any());
             verify(bookingCommandPort).transitionToDisputed(BOOKING_ID);
@@ -340,6 +347,102 @@ class DisputeServiceTest {
                     CUSTOMER_ID, BOOKING_ID, "<script>alert('xss')</script> Malicious reason");
             assertTrue(result.isSuccess());
             assertFalse(result.dispute().reason().contains("<script>"));
+        }
+
+        @Test
+        @DisplayName("INVALID_EVIDENCE when evidence artifact is malformed")
+        void raiseDispute_invalidEvidence_returnsError() {
+            when(bookingQueryPort.getBooking(BOOKING_ID)).thenReturn(Optional.of(assignedBooking));
+            when(disputeDao.findOpenByBookingId(BOOKING_ID)).thenReturn(Optional.empty());
+
+            DisputeRaiseResult result = disputeService.raiseDispute(
+                    CUSTOMER_ID,
+                    BOOKING_ID,
+                    "Valid reason",
+                    List.of(new DisputeRequest.EvidenceItem("PHOTO", "", null)));
+
+            assertFalse(result.isSuccess());
+            assertEquals("INVALID_EVIDENCE", result.error());
+        }
+    }
+
+    @Nested
+    @DisplayName("addEvidence")
+    class AddEvidence {
+
+        @Test
+        @DisplayName("Adds evidence during grace path and marks dispute open")
+        void addEvidence_duringGrace_marksOpen() {
+            Instant now = Instant.now();
+            Dispute dispute = new Dispute(
+                    "d-1",
+                    BOOKING_ID,
+                    CUSTOMER_ID,
+                    "reason",
+                    "EVIDENCE_NEEDED",
+                    null,
+                    null,
+                    null,
+                    now.minusSeconds(3600),
+                    null,
+                    now.minusSeconds(3600),
+                    now.plusSeconds(23 * 3600));
+            when(disputeDao.findById("d-1")).thenReturn(Optional.of(dispute));
+            when(bookingQueryPort.getBooking(BOOKING_ID)).thenReturn(Optional.of(assignedBooking));
+
+            DisputeEvidenceResult result = disputeService.addEvidence(
+                    CUSTOMER_ID,
+                    "d-1",
+                    List.of(new DisputeRequest.EvidenceItem("WRITTEN_TIMELINE", null, "timeline text")));
+
+            assertTrue(result.isSuccess());
+            assertEquals("OPEN", result.dispute().status());
+            verify(disputeEvidenceDao)
+                    .insert(anyString(), eq("d-1"), eq("WRITTEN_TIMELINE"), isNull(), eq("timeline text"));
+            verify(disputeDao).markEvidenceSubmitted("d-1");
+        }
+
+        @Test
+        @DisplayName("FORBIDDEN when non-participant adds evidence")
+        void addEvidence_nonParticipant_forbidden() {
+            Dispute dispute = new Dispute(
+                    "d-1", BOOKING_ID, CUSTOMER_ID, "reason", "EVIDENCE_NEEDED", null, null, null, Instant.now(), null);
+            when(disputeDao.findById("d-1")).thenReturn(Optional.of(dispute));
+            when(bookingQueryPort.getBooking(BOOKING_ID)).thenReturn(Optional.of(assignedBooking));
+
+            DisputeEvidenceResult result = disputeService.addEvidence(
+                    "stranger",
+                    "d-1",
+                    List.of(new DisputeRequest.EvidenceItem("WRITTEN_TIMELINE", null, "timeline text")));
+
+            assertFalse(result.isSuccess());
+            assertEquals("FORBIDDEN", result.error());
+        }
+
+        @Test
+        @DisplayName("INVALID_STATUS when dispute is closed")
+        void addEvidence_closedDispute_invalidStatus() {
+            Dispute dispute = new Dispute(
+                    "d-1",
+                    BOOKING_ID,
+                    CUSTOMER_ID,
+                    "reason",
+                    "CLOSED_INSUFFICIENT_EVIDENCE",
+                    null,
+                    null,
+                    null,
+                    Instant.now(),
+                    Instant.now());
+            when(disputeDao.findById("d-1")).thenReturn(Optional.of(dispute));
+            when(bookingQueryPort.getBooking(BOOKING_ID)).thenReturn(Optional.of(assignedBooking));
+
+            DisputeEvidenceResult result = disputeService.addEvidence(
+                    CUSTOMER_ID,
+                    "d-1",
+                    List.of(new DisputeRequest.EvidenceItem("WRITTEN_TIMELINE", null, "timeline text")));
+
+            assertFalse(result.isSuccess());
+            assertEquals("INVALID_STATUS", result.error());
         }
     }
 

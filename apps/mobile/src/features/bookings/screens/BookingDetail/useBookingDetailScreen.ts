@@ -71,6 +71,13 @@ export function useBookingDetailScreen(): BookingDetailScreenState {
       case 'confirm_complete':
         setShowCompletionSheet(true);
         break;
+      case 'find_another_tasker': {
+        const taskId = booking.task_id ?? booking.task?.id;
+        if (taskId) {
+          router.push(`/(customer)/tasks/${taskId}`);
+        }
+        break;
+      }
       case 'rebook':
         router.push({
           pathname: '/(customer)/rebook',

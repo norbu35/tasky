@@ -77,7 +77,7 @@ public class CompletionTimeoutService {
                     continue;
                 }
                 bookingDao.updateCompletionReminder(booking.id(), 2, now);
-                notificationService.sendPushWithSmsFallback(
+                notificationService.sendPushWithEventKey(
                         booking.customerId(),
                         "Task completion reminder",
                         "Your tasker marked the task done 48 hours ago. Please confirm completion.",

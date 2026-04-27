@@ -1,4 +1,5 @@
 export type DisputeStatus =
+  | 'EVIDENCE_NEEDED'
   | 'OPEN'
   | 'ESCALATED'
   | 'RESOLVED_CUSTOMER'
@@ -32,6 +33,8 @@ export type DisputeLike = {
 
 export function getStatus(status?: string): DisputeStatus {
   switch (status) {
+    case 'EVIDENCE_NEEDED':
+      return 'EVIDENCE_NEEDED';
     case 'ESCALATED':
       return 'ESCALATED';
     case 'RESOLVED_CUSTOMER':
@@ -57,6 +60,12 @@ export function buildStatusMeta(t: (key: string) => string): Record<
   }
 > {
   return {
+    EVIDENCE_NEEDED: {
+      label: t('customer.disputes.statusEvidenceNeeded'),
+      description: t('customer.disputes.evidenceNeededDescription'),
+      resolutionText: t('customer.disputes.resolutionEvidenceNeeded'),
+      badgeStyle: 'warning',
+    },
     OPEN: {
       label: t('customer.disputes.statusOpen'),
       description: t('customer.disputes.openDescription'),

@@ -1,5 +1,9 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import React from 'react';
+import type { TextProps } from 'react-native';
+
+import SettingsScreen from '../../../../src/app/(shared)/profile/settings';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 const mockPush = jest.fn();
 const mockBack = jest.fn();
@@ -10,29 +14,37 @@ jest.mock('expo-router', () => ({
 }));
 
 jest.mock('react-i18next', () => {
-  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  const { createReactI18nextMock } = jest.requireActual(
+    '../../../test-utils/mockI18n',
+  ) as typeof import('../../../test-utils/mockI18n');
   return createReactI18nextMock('mn');
 });
 
-jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
+jest.mock('react-native-reanimated', () => jest.requireActual('react-native-reanimated/mock'));
 
 jest.mock('@gorhom/bottom-sheet', () => {
-  const { View } = require('react-native');
+  const { View: MockView } = jest.requireActual('react-native') as typeof import('react-native');
   return {
     __esModule: true,
-    default: View,
-    BottomSheetModal: View,
-    BottomSheetModalProvider: View,
-    BottomSheetBackdrop: View,
-    BottomSheetView: View,
+    default: MockView,
+    BottomSheetModal: MockView,
+    BottomSheetModalProvider: MockView,
+    BottomSheetBackdrop: MockView,
+    BottomSheetView: MockView,
   };
 });
 
 jest.mock('lucide-react-native', () => {
-  const { Text } = require('react-native');
+  const { Text: MockText } = jest.requireActual('react-native') as typeof import('react-native');
+
   return new Proxy(
     {},
-    { get: (_, name) => (props: any) => <Text testID={`icon-${String(name)}`} {...props} /> },
+    {
+      get: (_target: unknown, name: string) =>
+        function MockIcon(props: TextProps) {
+          return <MockText testID={`icon-${String(name)}`} {...props} />;
+        },
+    },
   );
 });
 
@@ -41,8 +53,15 @@ jest.mock('../../../../src/providers/RoleProvider', () => ({
   useRole: () => mockUseRole(),
 }));
 
+type AuthStoreState = {
+  session: {
+    accessToken: string;
+  };
+};
+
 jest.mock('../../../../src/store/authStore', () => ({
-  useAuthStore: (sel: any) => sel({ session: { accessToken: 'test-token' } }),
+  useAuthStore: (selector: (state: AuthStoreState) => unknown) =>
+    selector({ session: { accessToken: 'test-token' } }),
 }));
 
 jest.mock('@react-native-async-storage/async-storage', () => ({
@@ -53,7 +72,6 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 const mockSwitchRole = jest.fn();
 
 beforeEach(() => {
-  const { resetTestI18n, setTestLanguage } = require('../../../test-utils/mockI18n');
   jest.clearAllMocks();
   resetTestI18n();
   setTestLanguage('mn');
@@ -68,31 +86,26 @@ beforeEach(() => {
 
 describe('SettingsScreen (SCR-SHARED-014)', () => {
   it('renders settings screen with language row', () => {
-    const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
     expect(screen.getByText('Хэл')).toBeTruthy();
   });
 
   it('renders notifications row', () => {
-    const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
     expect(screen.getByText('Мэдэгдэл')).toBeTruthy();
   });
 
   it('renders role switch row', () => {
-    const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
     expect(screen.getByText('Үүрэг солих')).toBeTruthy();
   });
 
   it('renders terms of service row', () => {
-    const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
     expect(screen.getByText('Үйлчилгээний нөхцөл')).toBeTruthy();
   });
 
   it('renders privacy policy row', () => {
-    const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
     expect(screen.getByText('Нууцлалын бодлого')).toBeTruthy();
   });
@@ -100,7 +113,6 @@ describe('SettingsScreen (SCR-SHARED-014)', () => {
   it('renders help and danger zone sections in section data', () => {
     // SectionList virtualizes, so bottom items may not render in tests.
     // Verify the screen mounts and earlier legal items render.
-    const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
     // Legal section header is rendered
     expect(screen.getByText('Хуулийн мэдээлэл')).toBeTruthy();
@@ -110,14 +122,22 @@ describe('SettingsScreen (SCR-SHARED-014)', () => {
   });
 
   it('tapping role switch shows confirmation', () => {
-    const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
     fireEvent.press(screen.getByText('Үүрэг солих'));
     expect(screen.getByText('Дүр солих уу?')).toBeTruthy();
   });
 
+  it('shows a success notification after confirming a role switch', () => {
+    render(<SettingsScreen />);
+
+    fireEvent.press(screen.getByText('Үүрэг солих'));
+    fireEvent.press(screen.getByText('Батлах'));
+
+    expect(mockSwitchRole).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('Гүйцэтгэгч горимд шилжлээ.')).toBeTruthy();
+  });
+
   it('renders all four section headers (Preferences, Account, Legal visible; Danger Zone in data)', () => {
-    const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
     // SectionList virtualizes, so first 3 section headers render; Danger Zone
     // is in the data but may be beyond the initial render window.
@@ -127,7 +147,6 @@ describe('SettingsScreen (SCR-SHARED-014)', () => {
   });
 
   it('navigates to terms, privacy, and help screens from legal rows', () => {
-    const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
 
     fireEvent.press(screen.getByText('Үйлчилгээний нөхцөл'));
@@ -140,7 +159,6 @@ describe('SettingsScreen (SCR-SHARED-014)', () => {
   });
 
   it('opens a delete-account confirmation sheet before navigating to delete flow', () => {
-    const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
 
     fireEvent.press(screen.getByText('Бүртгэл устгах'));

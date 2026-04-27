@@ -26,7 +26,9 @@ public interface DisputeDao {
             String wrongfulPartyUserId,
             String resolutionNotes,
             Instant createdAt,
-            Instant resolvedAt) {
+            Instant resolvedAt,
+            Instant evidenceReminderSentAt,
+            Instant evidenceDueAt) {
         insert(
                 required(id, "id"),
                 required(bookingId, "bookingId"),
@@ -37,13 +39,43 @@ public interface DisputeDao {
                 optional(wrongfulPartyUserId),
                 resolutionNotes,
                 createdAt,
-                resolvedAt);
+                resolvedAt,
+                evidenceReminderSentAt,
+                evidenceDueAt);
+    }
+
+    default void insert(
+            String id,
+            String bookingId,
+            String raisedBy,
+            String reason,
+            String status,
+            String resolutionAction,
+            String wrongfulPartyUserId,
+            String resolutionNotes,
+            Instant createdAt,
+            Instant resolvedAt) {
+        insert(
+                id,
+                bookingId,
+                raisedBy,
+                reason,
+                status,
+                resolutionAction,
+                wrongfulPartyUserId,
+                resolutionNotes,
+                createdAt,
+                resolvedAt,
+                null,
+                null);
     }
 
     @SqlUpdate("INSERT INTO disputes (id, booking_id, raised_by, reason, status, resolution_action, "
-            + "wrongful_party_user_id, resolution_notes, created_at, resolved_at) "
+            + "wrongful_party_user_id, resolution_notes, created_at, resolved_at, "
+            + "evidence_reminder_sent_at, evidence_due_at) "
             + "VALUES (:id, :bookingId, :raisedBy, :reason, :status, "
-            + ":resolutionAction, :wrongfulPartyUserId, :resolutionNotes, :createdAt, :resolvedAt)")
+            + ":resolutionAction, :wrongfulPartyUserId, :resolutionNotes, :createdAt, :resolvedAt, "
+            + ":evidenceReminderSentAt, :evidenceDueAt)")
     void insert(
             @Bind("id") UUID id,
             @Bind("bookingId") UUID bookingId,
@@ -54,14 +86,17 @@ public interface DisputeDao {
             @Bind("wrongfulPartyUserId") UUID wrongfulPartyUserId,
             @Bind("resolutionNotes") String resolutionNotes,
             @Bind("createdAt") Instant createdAt,
-            @Bind("resolvedAt") Instant resolvedAt);
+            @Bind("resolvedAt") Instant resolvedAt,
+            @Bind("evidenceReminderSentAt") Instant evidenceReminderSentAt,
+            @Bind("evidenceDueAt") Instant evidenceDueAt);
 
     default Optional<Dispute> findById(String id) {
         return findById(required(id, "id"));
     }
 
     @SqlQuery("SELECT id, booking_id, raised_by, reason, status, resolution_action, "
-            + "wrongful_party_user_id, resolution_notes, created_at, resolved_at "
+            + "wrongful_party_user_id, resolution_notes, created_at, resolved_at, "
+            + "evidence_reminder_sent_at, evidence_due_at "
             + "FROM disputes WHERE id = :id")
     Optional<Dispute> findById(@Bind("id") UUID id);
 
@@ -70,8 +105,9 @@ public interface DisputeDao {
     }
 
     @SqlQuery("SELECT id, booking_id, raised_by, reason, status, resolution_action, "
-            + "wrongful_party_user_id, resolution_notes, created_at, resolved_at "
-            + "FROM disputes WHERE booking_id = :bookingId AND status = 'OPEN'")
+            + "wrongful_party_user_id, resolution_notes, created_at, resolved_at, "
+            + "evidence_reminder_sent_at, evidence_due_at "
+            + "FROM disputes WHERE booking_id = :bookingId AND status IN ('OPEN', 'EVIDENCE_NEEDED')")
     Optional<Dispute> findOpenByBookingId(@Bind("bookingId") UUID bookingId);
 
     default List<Dispute> findPending(String cursor, int limit) {
@@ -86,13 +122,15 @@ public interface DisputeDao {
     }
 
     @SqlQuery("SELECT id, booking_id, raised_by, reason, status, resolution_action, "
-            + "wrongful_party_user_id, resolution_notes, created_at, resolved_at "
-            + "FROM disputes WHERE status = 'OPEN' ORDER BY id LIMIT :limit")
+            + "wrongful_party_user_id, resolution_notes, created_at, resolved_at, "
+            + "evidence_reminder_sent_at, evidence_due_at "
+            + "FROM disputes WHERE status IN ('OPEN', 'EVIDENCE_NEEDED') ORDER BY id LIMIT :limit")
     List<Dispute> findPendingFirstPage(@Bind("limit") int limit);
 
     @SqlQuery("SELECT id, booking_id, raised_by, reason, status, resolution_action, "
-            + "wrongful_party_user_id, resolution_notes, created_at, resolved_at "
-            + "FROM disputes WHERE status = 'OPEN' AND id > :cursor ORDER BY id LIMIT :limit")
+            + "wrongful_party_user_id, resolution_notes, created_at, resolved_at, "
+            + "evidence_reminder_sent_at, evidence_due_at "
+            + "FROM disputes WHERE status IN ('OPEN', 'EVIDENCE_NEEDED') AND id > :cursor ORDER BY id LIMIT :limit")
     List<Dispute> findPendingAfterCursor(@Bind("cursor") UUID cursor, @Bind("limit") int limit);
 
     default List<Dispute> findPending() {
@@ -100,9 +138,10 @@ public interface DisputeDao {
     }
 
     @SqlQuery("SELECT id, booking_id, raised_by, reason, status, resolution_action, "
-            + "wrongful_party_user_id, resolution_notes, created_at, resolved_at "
-            + "FROM disputes WHERE status = 'OPEN' AND created_at < :cutoff")
-    List<Dispute> findOpenOlderThan(@Bind("cutoff") Instant cutoff);
+            + "wrongful_party_user_id, resolution_notes, created_at, resolved_at, "
+            + "evidence_reminder_sent_at, evidence_due_at "
+            + "FROM disputes WHERE status = 'EVIDENCE_NEEDED' AND evidence_due_at <= :now")
+    List<Dispute> findEvidenceGraceDue(@Bind("now") Instant now);
 
     default boolean existsOpenForUser(String userId) {
         return existsOpenForUser(required(userId, "userId"));
@@ -111,7 +150,8 @@ public interface DisputeDao {
     @SqlQuery("SELECT EXISTS("
             + "SELECT 1 FROM disputes d "
             + "JOIN bookings b ON b.id = d.booking_id "
-            + "WHERE d.status = 'OPEN' AND (b.customer_id = :userId OR b.tasker_id = :userId))")
+            + "WHERE d.status IN ('OPEN', 'EVIDENCE_NEEDED') "
+            + "AND (b.customer_id = :userId OR b.tasker_id = :userId))")
     boolean existsOpenForUser(@Bind("userId") UUID userId);
 
     default void update(
@@ -140,4 +180,11 @@ public interface DisputeDao {
             @Bind("wrongfulPartyUserId") UUID wrongfulPartyUserId,
             @Bind("resolutionNotes") String resolutionNotes,
             @Bind("resolvedAt") Instant resolvedAt);
+
+    default void markEvidenceSubmitted(String id) {
+        markEvidenceSubmitted(required(id, "id"));
+    }
+
+    @SqlUpdate("UPDATE disputes SET status = 'OPEN' WHERE id = :id AND status = 'EVIDENCE_NEEDED'")
+    void markEvidenceSubmitted(@Bind("id") UUID id);
 }

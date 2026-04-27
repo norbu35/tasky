@@ -266,11 +266,9 @@ function ApplicationCard({
             <div>
               <div className="font-semibold font-display text-lg flex items-center gap-2">
                 {application.tasker.full_name}
-                {application.tasker.is_pro && (
-                  <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
-                    PRO
-                  </Badge>
-                )}
+                <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                  {t('customerTaskDetails.idVerifiedTasker')}
+                </Badge>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground mt-0.5">
                 <span className="flex items-center gap-1 font-medium text-foreground">

@@ -7,7 +7,6 @@ import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import mn.tasky.booking.dto.BookingIntentCreateResult;
-import mn.tasky.booking.dto.ConfirmBookingIntentRequest;
 import mn.tasky.booking.dto.CreateBookingIntentRequest;
 import mn.tasky.booking.publicapi.BookingIntentCommandPort;
 import mn.tasky.common.security.JwtPrincipal;
@@ -83,7 +82,8 @@ public class BookingIntentController {
             @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id, HttpServletRequest request) {
         return bookingIntentCommandPort
                 .getIntent(id)
-                .filter(intent -> principal.userId().equals(intent.customerId()))
+                .filter(intent -> principal.userId().equals(intent.customerId())
+                        || principal.userId().equals(intent.taskerId()))
                 .<ResponseEntity<?>>map(
                         intent -> ResponseEntity.ok(bookingIntentCompositionService.bookingIntentResponse(intent)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -94,11 +94,26 @@ public class BookingIntentController {
     public ResponseEntity<?> confirmBookingIntent(
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
-            @Valid @RequestBody ConfirmBookingIntentRequest body,
             @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
             HttpServletRequest request) {
-        BookingIntentConfirmationOutcome outcome = bookingIntentConfirmationService.confirmIntent(
-                principal.userId(), id, Boolean.TRUE.equals(body.liabilityDisclaimerAccepted()), idempotencyKey);
+        BookingIntentConfirmationOutcome outcome =
+                bookingIntentConfirmationService.confirmIntent(principal.userId(), id, idempotencyKey);
+        return bookingIntentResponse(outcome, request);
+    }
+
+    @PostMapping("/booking-intents/{id}/decline")
+    public ResponseEntity<?> declineBookingIntent(
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @PathVariable String id,
+            @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
+            HttpServletRequest request) {
+        BookingIntentConfirmationOutcome outcome =
+                bookingIntentConfirmationService.declineIntent(principal.userId(), id, idempotencyKey);
+        return bookingIntentResponse(outcome, request);
+    }
+
+    private ResponseEntity<?> bookingIntentResponse(
+            BookingIntentConfirmationOutcome outcome, HttpServletRequest request) {
         return switch (outcome.status()) {
             case IN_PROGRESS -> idempotencyInProgress(request);
             case REPLAY_MISSING -> idempotencyReplayMissing(request);

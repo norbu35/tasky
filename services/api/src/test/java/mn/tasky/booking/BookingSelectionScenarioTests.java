@@ -141,7 +141,8 @@ class BookingSelectionScenarioTests {
                 moderationService,
                 lifecycleOutbox,
                 trustQueryPort,
-                reviewEnforcementService);
+                reviewEnforcementService,
+                notificationService);
 
         completionTimeoutService =
                 new CompletionTimeoutService(bookingDao, bookingLifecycleService, notificationService);
@@ -533,7 +534,7 @@ class BookingSelectionScenarioTests {
 
         verify(bookingDao).updateCompletionReminder("booking-2", 2, now);
         verify(notificationService)
-                .sendPushWithSmsFallback(
+                .sendPushWithEventKey(
                         eq(CUSTOMER_ID), anyString(), anyString(), eq("COMPLETION_REMINDER"), anyString());
 
         BookingState booking2 = new BookingState(

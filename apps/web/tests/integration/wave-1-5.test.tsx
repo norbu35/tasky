@@ -411,8 +411,12 @@ describe('W2: Structured reviews', () => {
 // ── W3: Disputes ─────────────────────────────────────────────────────
 
 describe('W3: Dispute raise and status', () => {
-  it('TID-WEB-005 customer submits dispute with reason and evidence', async () => {
-    const dispute = makeDispute({ id: 'dispute-new', booking_id: 'booking-1', status: 'OPEN' });
+  it('TID-WEB-005 customer submits dispute with reason and enters evidence grace', async () => {
+    const dispute = makeDispute({
+      id: 'dispute-new',
+      booking_id: 'booking-1',
+      status: 'EVIDENCE_NEEDED',
+    });
 
     const apiClient = createMockApiClient({
       raiseDispute: vi.fn().mockResolvedValue(dispute),
@@ -448,7 +452,7 @@ describe('W3: Dispute raise and status', () => {
         'booking-1',
         'The tasker did not show up and did not notify me.',
         expect.any(String),
-        expect.arrayContaining([expect.objectContaining({ type: 'WRITTEN_TIMELINE' })]),
+        [],
       );
     });
   });

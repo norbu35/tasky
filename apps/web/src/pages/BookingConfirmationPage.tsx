@@ -54,7 +54,6 @@ export function BookingConfirmationPage() {
         return apiClient.confirmBookingIntent(
           session.accessToken,
           bookingIntentId,
-          disclaimerAccepted,
           createIdempotencyKey('confirm-intent'),
         );
       }

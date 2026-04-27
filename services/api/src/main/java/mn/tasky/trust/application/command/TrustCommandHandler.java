@@ -2,6 +2,7 @@ package mn.tasky.trust.application.command;
 
 import java.util.List;
 import mn.tasky.dispute.application.DisputeService;
+import mn.tasky.dispute.dto.DisputeEvidenceResult;
 import mn.tasky.dispute.dto.DisputeRaiseResult;
 import mn.tasky.dispute.dto.DisputeRequest;
 import mn.tasky.dispute.dto.DisputeResolutionResult;
@@ -53,6 +54,12 @@ public class TrustCommandHandler implements TrustCommandPort {
     public DisputeRaiseResult raiseDispute(
             String userId, String bookingId, String reason, List<DisputeRequest.EvidenceItem> evidenceItems) {
         return disputeService.raiseDispute(userId, bookingId, reason, evidenceItems);
+    }
+
+    @Override
+    public DisputeEvidenceResult addDisputeEvidence(
+            String userId, String disputeId, List<DisputeRequest.EvidenceItem> evidenceItems) {
+        return disputeService.addEvidence(userId, disputeId, evidenceItems);
     }
 
     @Override

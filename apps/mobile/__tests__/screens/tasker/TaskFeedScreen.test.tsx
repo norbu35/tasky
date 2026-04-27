@@ -314,7 +314,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
 
     renderTaskFeed();
 
-    expect(screen.getByText('Баталгаажсан даалгавар гүйцэтгэгч')).toBeTruthy();
+    expect(screen.getByText('ID баталгаажсан даалгавар гүйцэтгэгч')).toBeTruthy();
   });
 
   it('calls refresh on pull-down', () => {

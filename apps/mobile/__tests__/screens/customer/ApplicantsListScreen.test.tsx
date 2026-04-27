@@ -158,7 +158,7 @@ describe('ApplicantsListScreen (SCR-CUST-011)', () => {
     expect(screen.getByText('Bold Bat')).toBeTruthy();
     expect(screen.getByText('Sarnai D')).toBeTruthy();
     expect(screen.getAllByText('Comparison signals')).toHaveLength(2);
-    expect(screen.getAllByText('Verified identity').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('ID-verified Tasker').length).toBeGreaterThan(0);
     expect(screen.getByText('Detailed response')).toBeTruthy();
     expect(screen.getByText('20 completed jobs')).toBeTruthy();
     expect(screen.getByText('Accepts your budget')).toBeTruthy();

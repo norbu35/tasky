@@ -145,7 +145,6 @@ export async function createBookingIntent(
 export async function confirmBookingIntent(
   accessToken: string,
   bookingIntentId: string,
-  liabilityDisclaimerAccepted: boolean,
   idempotencyKey: string,
 ): Promise<Booking> {
   return getClient().requestJson<Booking>(
@@ -153,7 +152,21 @@ export async function confirmBookingIntent(
     {
       method: 'POST',
       headers: { 'Idempotency-Key': idempotencyKey },
-      body: JSON.stringify({ liability_disclaimer_accepted: liabilityDisclaimerAccepted }),
+    },
+    accessToken,
+  );
+}
+
+export async function declineBookingIntent(
+  accessToken: string,
+  bookingIntentId: string,
+  idempotencyKey: string,
+): Promise<BookingIntent> {
+  return getClient().requestJson<BookingIntent>(
+    `/booking-intents/${bookingIntentId}/decline`,
+    {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey },
     },
     accessToken,
   );

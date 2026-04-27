@@ -69,6 +69,7 @@ function createMockApiClient(): ApiClient {
     listTaskApplications: vi.fn(),
     createBookingIntent: vi.fn(),
     confirmBookingIntent: vi.fn(),
+    declineBookingIntent: vi.fn(),
     initiatePayment: vi.fn(),
     listBookings: vi.fn(),
     getBooking: vi.fn(),
@@ -80,6 +81,7 @@ function createMockApiClient(): ApiClient {
     submitReview: vi.fn(),
     getUserReviews: vi.fn(),
     raiseDispute: vi.fn(),
+    addDisputeEvidence: vi.fn(),
     getDispute: vi.fn(),
     listConversations: vi.fn(),
     listMessages: vi.fn(),
@@ -92,7 +94,6 @@ function createMockApiClient(): ApiClient {
     getVerificationStatus: vi.fn(),
     // Wave 6: Contract hygiene
     acceptApplication: vi.fn(),
-    confirmAcceptance: vi.fn(),
     markBookingDone: vi.fn(),
     rebookBooking: vi.fn(),
     cancelTask: vi.fn(),

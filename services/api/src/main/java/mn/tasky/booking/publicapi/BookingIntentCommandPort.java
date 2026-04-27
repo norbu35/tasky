@@ -4,10 +4,13 @@ import java.time.Instant;
 import java.util.Optional;
 import mn.tasky.booking.dto.BookingIntentConfirmResult;
 import mn.tasky.booking.dto.BookingIntentCreateResult;
+import mn.tasky.booking.dto.BookingIntentDeclineResult;
 import mn.tasky.booking.dto.BookingIntentState;
 
 public interface BookingIntentCommandPort {
-    BookingIntentConfirmResult confirmIntent(String customerId, String intentId, boolean liabilityDisclaimerAccepted);
+    BookingIntentConfirmResult confirmIntent(String taskerId, String intentId);
+
+    BookingIntentDeclineResult declineIntent(String taskerId, String intentId);
 
     BookingIntentCreateResult createIntent(
             String customerId, String taskId, String source, String taskerId, String originalBookingId, String offerId);
@@ -23,4 +26,6 @@ public interface BookingIntentCommandPort {
     int expirePendingApplicationSelectionForTask(String taskId, Instant now);
 
     void markIntentConfirmed(String intentId, String bookingId, Instant confirmedAt);
+
+    void markIntentDeclined(String intentId, Instant declinedAt);
 }

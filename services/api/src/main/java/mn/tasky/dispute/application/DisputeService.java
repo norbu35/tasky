@@ -3,9 +3,11 @@ package mn.tasky.dispute.application;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import mn.tasky.booking.publicapi.BookingCommandPort;
 import mn.tasky.booking.publicapi.BookingQueryPort;
@@ -15,11 +17,10 @@ import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.dispute.dao.DisputeEvidenceDao;
 import mn.tasky.dispute.dto.Dispute;
 import mn.tasky.dispute.dto.DisputeEvidence;
+import mn.tasky.dispute.dto.DisputeEvidenceResult;
 import mn.tasky.dispute.dto.DisputeRaiseResult;
 import mn.tasky.dispute.dto.DisputeRequest;
 import mn.tasky.dispute.dto.DisputeResolutionResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +32,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class DisputeService {
 
-    private static final Logger log = LoggerFactory.getLogger(DisputeService.class);
     private static final long COMPLETED_DISPUTE_WINDOW_HOURS = 24L;
+    private static final long EVIDENCE_GRACE_HOURS = 24L;
+    private static final String STATUS_OPEN = "OPEN";
+    private static final String STATUS_EVIDENCE_NEEDED = "EVIDENCE_NEEDED";
+    private static final Set<String> EVIDENCE_TYPES = Set.of("PHOTO", "CHAT_EXCERPT", "WRITTEN_TIMELINE");
 
     private final BookingQueryPort bookingQueryPort;
     private final BookingCommandPort bookingCommandPort;
@@ -123,25 +127,97 @@ public class DisputeService {
             return DisputeRaiseResult.error("DISPUTE_EXISTS");
         }
 
+        List<SanitizedEvidenceItem> evidence = sanitizeEvidenceItems(evidenceItems);
+        if (evidenceItems != null && evidence.size() != evidenceItems.size()) {
+            return DisputeRaiseResult.error("INVALID_EVIDENCE");
+        }
+
         String id = UUID.randomUUID().toString();
         Instant now = Instant.now();
-        Dispute dispute = new Dispute(id, bookingId, userId, sanitizedReason, "OPEN", null, null, null, now, null);
-        disputeDao.insert(id, bookingId, userId, sanitizedReason, "OPEN", null, null, null, now, null);
+        boolean evidenceNeeded = evidence.isEmpty();
+        String status = evidenceNeeded ? STATUS_EVIDENCE_NEEDED : STATUS_OPEN;
+        Instant evidenceReminderSentAt = evidenceNeeded ? now : null;
+        Instant evidenceDueAt = evidenceNeeded ? now.plus(EVIDENCE_GRACE_HOURS, ChronoUnit.HOURS) : null;
+        Dispute dispute = new Dispute(
+                id,
+                bookingId,
+                userId,
+                sanitizedReason,
+                status,
+                null,
+                null,
+                null,
+                now,
+                null,
+                evidenceReminderSentAt,
+                evidenceDueAt);
+        disputeDao.insert(
+                id,
+                bookingId,
+                userId,
+                sanitizedReason,
+                status,
+                null,
+                null,
+                null,
+                now,
+                null,
+                evidenceReminderSentAt,
+                evidenceDueAt);
 
-        if (evidenceItems != null) {
-            for (DisputeRequest.EvidenceItem item : evidenceItems) {
-                String evidenceId = UUID.randomUUID().toString();
-                String storageKey = "PHOTO".equals(item.type()) ? item.storageKey() : null;
-                String textPayload = "CHAT_EXCERPT".equals(item.type()) || "WRITTEN_TIMELINE".equals(item.type())
-                        ? TextSanitizer.plainText(item.textPayload())
-                        : null;
-                disputeEvidenceDao.insert(evidenceId, id, item.type(), storageKey, textPayload);
-            }
-        }
+        insertEvidence(id, evidence);
 
         bookingCommandPort.transitionToDisputed(bookingId);
 
         return DisputeRaiseResult.success(dispute);
+    }
+
+    @Transactional
+    public DisputeEvidenceResult addEvidence(
+            String userId, String disputeId, List<DisputeRequest.EvidenceItem> evidenceItems) {
+        List<SanitizedEvidenceItem> evidence = sanitizeEvidenceItems(evidenceItems);
+        if (evidenceItems == null || evidenceItems.isEmpty() || evidence.size() != evidenceItems.size()) {
+            return DisputeEvidenceResult.error("INVALID_EVIDENCE");
+        }
+
+        Optional<Dispute> disputeOpt = disputeDao.findById(disputeId);
+        if (disputeOpt.isEmpty()) {
+            return DisputeEvidenceResult.error("NOT_FOUND");
+        }
+
+        Dispute dispute = disputeOpt.get();
+        var bookingOpt = bookingQueryPort.getBooking(dispute.bookingId());
+        if (bookingOpt.isEmpty()) {
+            return DisputeEvidenceResult.error("NOT_FOUND");
+        }
+        var booking = bookingOpt.get();
+        boolean participant =
+                booking.customerId().equals(userId) || booking.taskerId().equals(userId);
+        if (!participant) {
+            return DisputeEvidenceResult.error("FORBIDDEN");
+        }
+        if (!STATUS_OPEN.equals(dispute.status()) && !STATUS_EVIDENCE_NEEDED.equals(dispute.status())) {
+            return DisputeEvidenceResult.error("INVALID_STATUS");
+        }
+
+        insertEvidence(dispute.id(), evidence);
+        if (STATUS_EVIDENCE_NEEDED.equals(dispute.status())) {
+            disputeDao.markEvidenceSubmitted(dispute.id());
+            return DisputeEvidenceResult.success(new Dispute(
+                    dispute.id(),
+                    dispute.bookingId(),
+                    dispute.raisedBy(),
+                    dispute.reason(),
+                    STATUS_OPEN,
+                    dispute.resolutionAction(),
+                    dispute.wrongfulPartyUserId(),
+                    dispute.resolutionNotes(),
+                    dispute.createdAt(),
+                    dispute.resolvedAt(),
+                    dispute.evidenceReminderSentAt(),
+                    dispute.evidenceDueAt()));
+        }
+        return DisputeEvidenceResult.success(dispute);
     }
 
     /**
@@ -230,7 +306,7 @@ public class DisputeService {
             return DisputeResolutionResult.error("NOT_FOUND");
         }
         Dispute dispute = disputeOpt.get();
-        if (!"OPEN".equals(dispute.status())) {
+        if (!STATUS_OPEN.equals(dispute.status())) {
             return DisputeResolutionResult.error("NOT_OPEN");
         }
 
@@ -279,10 +355,49 @@ public class DisputeService {
                 null,
                 sanitizedNotes,
                 dispute.createdAt(),
-                now);
+                now,
+                dispute.evidenceReminderSentAt(),
+                dispute.evidenceDueAt());
 
         return DisputeResolutionResult.success(resolved);
     }
+
+    private void insertEvidence(String disputeId, List<SanitizedEvidenceItem> evidence) {
+        for (SanitizedEvidenceItem item : evidence) {
+            disputeEvidenceDao.insert(
+                    UUID.randomUUID().toString(), disputeId, item.type(), item.storageKey(), item.textPayload());
+        }
+    }
+
+    private List<SanitizedEvidenceItem> sanitizeEvidenceItems(List<DisputeRequest.EvidenceItem> evidenceItems) {
+        if (evidenceItems == null || evidenceItems.isEmpty()) {
+            return List.of();
+        }
+        return evidenceItems.stream()
+                .map(this::sanitizeEvidenceItem)
+                .flatMap(Optional::stream)
+                .toList();
+    }
+
+    private Optional<SanitizedEvidenceItem> sanitizeEvidenceItem(DisputeRequest.EvidenceItem item) {
+        if (item == null || item.type() == null || !EVIDENCE_TYPES.contains(item.type())) {
+            return Optional.empty();
+        }
+        if ("PHOTO".equals(item.type())) {
+            String storageKey = TextSanitizer.plainText(item.storageKey());
+            if (storageKey == null || storageKey.isBlank()) {
+                return Optional.empty();
+            }
+            return Optional.of(new SanitizedEvidenceItem(item.type(), storageKey, null));
+        }
+        String textPayload = TextSanitizer.plainText(item.textPayload());
+        if (textPayload == null || textPayload.isBlank()) {
+            return Optional.empty();
+        }
+        return Optional.of(new SanitizedEvidenceItem(item.type(), null, textPayload));
+    }
+
+    private record SanitizedEvidenceItem(String type, String storageKey, String textPayload) {}
 
     private String toJson(Map<String, Object> payload) {
         try {

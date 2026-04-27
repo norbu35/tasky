@@ -35,7 +35,8 @@
       - Conversations
     summary: Get messages in a conversation
     description: |
-      Returns paginated messages in a conversation, ordered by most recent first.
+      Returns paginated messages in a conversation, ordered by most recent first
+      using sent_at DESC, id DESC for deterministic keyset pagination.
       Only accessible by conversation participants and admins (for dispute resolution).
     operationId: listMessages
     security:

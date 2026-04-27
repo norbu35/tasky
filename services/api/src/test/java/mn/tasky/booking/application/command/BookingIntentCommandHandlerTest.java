@@ -9,6 +9,7 @@ import mn.tasky.booking.application.BookingIntentService;
 import mn.tasky.booking.application.BookingIntentService.CreateResult;
 import mn.tasky.booking.dto.BookingIntentConfirmResult;
 import mn.tasky.booking.dto.BookingIntentCreateResult;
+import mn.tasky.booking.dto.BookingIntentDeclineResult;
 import mn.tasky.booking.dto.BookingIntentState;
 import mn.tasky.booking.dto.BookingState;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,9 +43,21 @@ class BookingIntentCommandHandlerTest {
         BookingState booking = new BookingState(
                 "b1", "t1", "tk1", "c1", 1000, "ASSIGNED", null, false, now, "DIRECT", false, null, 0, null, now, now);
         BookingIntentConfirmResult result = BookingIntentConfirmResult.success(booking);
-        when(bookingIntentService.confirmIntent("c1", "i1", true)).thenReturn(result);
+        when(bookingIntentService.confirmIntent("tk1", "i1")).thenReturn(result);
 
-        BookingIntentConfirmResult actual = handler.confirmIntent("c1", "i1", true);
+        BookingIntentConfirmResult actual = handler.confirmIntent("tk1", "i1");
+
+        assertThat(actual).isSameAs(result);
+        assertThat(actual.isSuccess()).isTrue();
+    }
+
+    @Test
+    void declineIntent_delegates() {
+        BookingIntentState intent = intentState();
+        BookingIntentDeclineResult result = BookingIntentDeclineResult.success(intent);
+        when(bookingIntentService.declineIntent("tk1", "i1")).thenReturn(result);
+
+        BookingIntentDeclineResult actual = handler.declineIntent("tk1", "i1");
 
         assertThat(actual).isSameAs(result);
         assertThat(actual.isSuccess()).isTrue();

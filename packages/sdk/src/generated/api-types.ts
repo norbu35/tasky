@@ -597,27 +597,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/tasks/{id}/applications/{applicationId}/confirm": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Confirm acceptance (tasker action)
-         * @description Tasker confirms their selection within the 4-hour window.
-         *     Creates a booking and rejects other pending applications.
-         */
-        post: operations["confirmAcceptance"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/tasks/{id}/applications/{applicationId}/withdraw": {
         parameters: {
             query?: never;
@@ -629,8 +608,8 @@ export interface paths {
         put?: never;
         /**
          * Withdraw an application (tasker action)
-         * @description Tasker withdraws their application. If the application was SELECTED,
-         *     the task is reopened for new applications.
+         * @description Tasker withdraws an application before customer selection. Selected applications must be
+         *     accepted or declined through the booking-intent response endpoints.
          */
         post: operations["withdrawApplication"];
         delete?: never;
@@ -1021,6 +1000,8 @@ export interface paths {
          *     Allowed states:
          *     - ASSIGNED booking (in-progress)
          *     - COMPLETED booking within 24 hours of completion
+         *     Evidence may be supplied at creation. Without evidence, the dispute enters an evidence-needed grace path with
+         *     a 24-hour deadline measured from the recorded reminder.
          *     Raising a dispute blocks booking closure actions until admin resolution.
          *     Requires Idempotency-Key header.
          */
@@ -1045,6 +1026,27 @@ export interface paths {
         get: operations["getDispute"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/disputes/{id}/evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add dispute evidence
+         * @description Adds evidence to an open dispute. Evidence added during the evidence-needed grace window moves the dispute back
+         *     to ordinary open review and prevents insufficient-evidence auto-close.
+         */
+        post: operations["addDisputeEvidence"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1080,7 +1082,8 @@ export interface paths {
         };
         /**
          * Get messages in a conversation
-         * @description Returns paginated messages in a conversation, ordered by most recent first.
+         * @description Returns paginated messages in a conversation, ordered by most recent first
+         *     using sent_at DESC, id DESC for deterministic keyset pagination.
          *     Only accessible by conversation participants and admins (for dispute resolution).
          */
         get: operations["listMessages"];
@@ -2580,7 +2583,7 @@ export interface components {
             raised_by: string;
             reason: string;
             /** @enum {string} */
-            status: "OPEN" | "RESOLVED_TASKER" | "RESOLVED_CUSTOMER" | "ESCALATED" | "CLOSED_INSUFFICIENT_EVIDENCE";
+            status: "EVIDENCE_NEEDED" | "OPEN" | "RESOLVED_TASKER" | "RESOLVED_CUSTOMER" | "ESCALATED" | "CLOSED_INSUFFICIENT_EVIDENCE";
             /** @enum {string|null} */
             resolution_action?: "RESOLVE_CUSTOMER" | "RESOLVE_TASKER" | "ESCALATE" | "REFUND" | "RELEASE" | null;
             /** Format: uuid */
@@ -2592,12 +2595,25 @@ export interface components {
             created_at: string;
             /** Format: date-time */
             resolved_at?: string | null;
+            /**
+             * Format: date-time
+             * @description Set when the dispute entered the evidence-needed grace path.
+             */
+            evidence_reminder_sent_at?: string | null;
+            /**
+             * Format: date-time
+             * @description Deadline after which a zero-evidence grace dispute can close for insufficient evidence.
+             */
+            evidence_due_at?: string | null;
         };
         DisputeEvidence: {
             /** @enum {string} */
             type: "CHAT_EXCERPT" | "PHOTO" | "WRITTEN_TIMELINE";
             storage_key?: string | null;
             text_payload?: string | null;
+        };
+        AddDisputeEvidenceRequest: {
+            evidence: components["schemas"]["DisputeEvidence"][];
         };
         Conversation: {
             /** Format: uuid */
@@ -2633,7 +2649,7 @@ export interface components {
             phone_number_flagged?: boolean | null;
             content_hash?: string | null;
             /** Format: date-time */
-            created_at: string;
+            sent_at: string;
         };
         CreditBalance: {
             balance: number;
@@ -4055,48 +4071,6 @@ export interface operations {
             };
         };
     };
-    confirmAcceptance: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
-                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
-            };
-            path: {
-                id: components["parameters"]["PathId"];
-                applicationId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Booking created successfully. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** Format: uuid */
-                        booking_id?: string;
-                        status?: string;
-                    };
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            /** @description Selection expired or already processed. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
     withdrawApplication: {
         parameters: {
             query?: never;
@@ -4607,17 +4581,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description Customer liability disclaimer acceptance required before booking confirmation.
-                     * @enum {boolean}
-                     */
-                    liability_disclaimer_accepted: true;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Booking created from intent. */
             200: {
@@ -4799,7 +4763,7 @@ export interface operations {
             content: {
                 "application/json": {
                     reason: string;
-                    evidence: components["schemas"]["DisputeEvidence"][];
+                    evidence?: components["schemas"]["DisputeEvidence"][];
                 };
             };
         };
@@ -4848,6 +4812,36 @@ export interface operations {
                     "application/json": components["schemas"]["Dispute"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    addDisputeEvidence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["PathId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddDisputeEvidenceRequest"];
+            };
+        };
+        responses: {
+            /** @description Evidence accepted and dispute returned. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Dispute"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];

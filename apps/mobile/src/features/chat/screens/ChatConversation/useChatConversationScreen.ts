@@ -9,7 +9,7 @@ import { useSendMessage } from '@/features/chat/hooks/useSendMessage';
 import { useMyUserId } from '@/features/profile';
 import { formatLastActive } from '@/lib/formatLastActive';
 
-import { type MessageItem, PHONE_REGEX } from './model';
+import { type MessageItem, orderMessagesChronologically, PHONE_REGEX } from './model';
 
 export function useChatConversationScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -29,7 +29,10 @@ export function useChatConversationScreen() {
   const [draft, setDraft] = useState('');
   const flatListRef = useRef<FlatList>(null);
 
-  const messages: MessageItem[] = useMemo(() => [...(data?.data ?? [])].reverse(), [data?.data]);
+  const messages: MessageItem[] = useMemo(
+    () => orderMessagesChronologically(data?.data ?? []),
+    [data?.data],
+  );
   const showPhoneWarning = PHONE_REGEX.test(draft);
 
   const handleSend = useCallback(() => {

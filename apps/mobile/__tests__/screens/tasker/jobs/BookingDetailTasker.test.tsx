@@ -109,6 +109,17 @@ jest.mock('../../../../src/store/authStore', () => ({
 const mockUseBookingDetail = useBookingDetail as jest.MockedFunction<typeof useBookingDetail>;
 const mockUseConversations = useConversations as jest.MockedFunction<typeof useConversations>;
 
+const hasAncestorTestID = (node: any, testID: string): boolean => {
+  let parent = node.parent;
+  while (parent) {
+    if (parent.props?.testID === testID) {
+      return true;
+    }
+    parent = parent.parent;
+  }
+  return false;
+};
+
 const assignedBooking: Booking = {
   id: 'booking-123',
   task_id: 'task-1',
@@ -350,7 +361,10 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
     render(<BookingDetailScreen />);
 
     fireEvent.press(screen.getByTestId('booking-detail-tasker-cancel'));
-    expect(screen.getByTestId('tasker-cancel-sheet')).toBeTruthy();
+    const cancelSheet = screen.getByTestId('tasker-cancel-sheet');
+    expect(cancelSheet).toBeTruthy();
+    expect(screen.getByText('Захиалга цуцлах уу?')).toBeTruthy();
+    expect(hasAncestorTestID(cancelSheet, 'SCR-TASK-013')).toBe(false);
   });
 
   it('opens a support reason sheet from booking detail', () => {

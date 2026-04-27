@@ -6,6 +6,7 @@ import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.outbox.OutboxEventTypes;
+import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.TaskLifecycleService;
 import mn.tasky.task.application.TaskQueryService;
@@ -27,6 +28,7 @@ public class BookingLifecycleService {
     private final DomainEventOutboxService domainEventOutboxService;
     private final TrustQueryPort trustQueryPort;
     private final ReviewEnforcementService reviewEnforcementService;
+    private final NotificationService notificationService;
 
     public BookingLifecycleService(
             BookingService bookingService,
@@ -36,7 +38,8 @@ public class BookingLifecycleService {
             ModerationService moderationService,
             DomainEventOutboxService domainEventOutboxService,
             TrustQueryPort trustQueryPort,
-            ReviewEnforcementService reviewEnforcementService) {
+            ReviewEnforcementService reviewEnforcementService,
+            NotificationService notificationService) {
         this.bookingService = bookingService;
         this.timelineService = timelineService;
         this.taskQueryService = taskQueryService;
@@ -45,6 +48,7 @@ public class BookingLifecycleService {
         this.domainEventOutboxService = domainEventOutboxService;
         this.trustQueryPort = trustQueryPort;
         this.reviewEnforcementService = reviewEnforcementService;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -75,6 +79,12 @@ public class BookingLifecycleService {
         if (updated.taskerId().equals(actorUserId)) {
             requireTaskUpdate(
                     taskLifecycleService.reopenTask(updated.taskId()), "reopening", bookingId, updated.taskId());
+            notificationService.sendPushWithEventKey(
+                    updated.customerId(),
+                    "Tasker cancelled",
+                    "Your task is open again. Review the original task and choose another tasker.",
+                    "TASKER_CANCELLED_BOOKING",
+                    "TASKER_CANCELLED_BOOKING_" + updated.id());
             if (!isSafetyFraudCancellation(reason)) {
                 moderationService.addStrike(actorUserId, TASKER_CANCELLATION_STRIKE_REASON, bookingId);
                 reviewEnforcementService.createCasesForBooking(

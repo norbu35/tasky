@@ -12,6 +12,7 @@ import type { Dispute } from '../../lib/apiClient';
 
 function disputeStatusVariant(status: string): 'default' | 'secondary' | 'outline' | 'destructive' {
   switch (status) {
+    case 'EVIDENCE_NEEDED':
     case 'OPEN':
       return 'default';
     case 'RESOLVED_CUSTOMER':
@@ -26,6 +27,7 @@ function disputeStatusVariant(status: string): 'default' | 'secondary' | 'outlin
 }
 
 const DISPUTE_STATUS_LABEL_KEYS = {
+  EVIDENCE_NEEDED: 'admin.disputes.statusLabel.EVIDENCE_NEEDED',
   OPEN: 'admin.disputes.statusLabel.OPEN',
   RESOLVED_CUSTOMER: 'admin.disputes.statusLabel.RESOLVED_CUSTOMER',
   RESOLVED_TASKER: 'admin.disputes.statusLabel.RESOLVED_TASKER',

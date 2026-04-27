@@ -90,9 +90,14 @@ export interface ApiClient {
   confirmBookingIntent(
     accessToken: string,
     bookingIntentId: string,
-    liabilityDisclaimerAccepted: boolean,
     idempotencyKey: string,
   ): Promise<Booking>;
+
+  declineBookingIntent(
+    accessToken: string,
+    bookingIntentId: string,
+    idempotencyKey: string,
+  ): Promise<BookingIntent>;
 
   acceptApplication(
     accessToken: string,
@@ -160,7 +165,13 @@ export interface ApiClient {
     bookingId: string,
     reason: string,
     idempotencyKey: string,
-    evidence?: Array<{ type: string; text_payload?: string }>,
+    evidence?: Array<{ type: string; storage_key?: string; text_payload?: string }>,
+  ): Promise<Dispute>;
+
+  addDisputeEvidence(
+    accessToken: string,
+    disputeId: string,
+    evidence: Array<{ type: string; storage_key?: string; text_payload?: string }>,
   ): Promise<Dispute>;
 
   getDispute(accessToken: string, disputeId: string): Promise<Dispute>;
@@ -198,15 +209,6 @@ export interface ApiClient {
   ): Promise<VerificationStatus>;
 
   getVerificationStatus(accessToken: string): Promise<VerificationStatus>;
-
-  // ─── Wave 6: Contract Hygiene ───────────────────────────────────
-
-  confirmAcceptance(
-    accessToken: string,
-    taskId: string,
-    applicationId: string,
-    idempotencyKey: string,
-  ): Promise<{ booking_id: string }>;
 
   markBookingDone(
     accessToken: string,
@@ -456,7 +458,6 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
   confirmBookingIntent(
     accessToken: string,
     bookingIntentId: string,
-    liabilityDisclaimerAccepted: boolean,
     idempotencyKey: string,
   ): Promise<Booking> {
     return this.requestJson<Booking>(
@@ -466,9 +467,23 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
         headers: {
           'Idempotency-Key': idempotencyKey,
         },
-        body: JSON.stringify({
-          liability_disclaimer_accepted: liabilityDisclaimerAccepted,
-        }),
+      },
+      accessToken,
+    );
+  }
+
+  declineBookingIntent(
+    accessToken: string,
+    bookingIntentId: string,
+    idempotencyKey: string,
+  ): Promise<BookingIntent> {
+    return this.requestJson<BookingIntent>(
+      `/booking-intents/${bookingIntentId}/decline`,
+      {
+        method: 'POST',
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
       },
       accessToken,
     );
@@ -639,7 +654,7 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
     bookingId: string,
     reason: string,
     idempotencyKey: string,
-    evidence?: Array<{ type: string; text_payload?: string }>,
+    evidence?: Array<{ type: string; storage_key?: string; text_payload?: string }>,
   ): Promise<Dispute> {
     return this.requestJson<Dispute>(
       `/bookings/${bookingId}/disputes`,
@@ -650,8 +665,23 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
         },
         body: JSON.stringify({
           reason,
-          evidence: evidence ?? [{ type: 'WRITTEN_TIMELINE', text_payload: reason }],
+          ...(evidence && evidence.length > 0 ? { evidence } : {}),
         }),
+      },
+      accessToken,
+    );
+  }
+
+  addDisputeEvidence(
+    accessToken: string,
+    disputeId: string,
+    evidence: Array<{ type: string; storage_key?: string; text_payload?: string }>,
+  ): Promise<Dispute> {
+    return this.requestJson<Dispute>(
+      `/disputes/${disputeId}/evidence`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ evidence }),
       },
       accessToken,
     );
@@ -796,23 +826,6 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
     );
   }
 
-  confirmAcceptance(
-    accessToken: string,
-    taskId: string,
-    applicationId: string,
-    idempotencyKey: string,
-  ): Promise<{ booking_id: string }> {
-    return this.requestJson<{ booking_id: string }>(
-      `/tasks/${taskId}/applications/${applicationId}/confirm`,
-      {
-        method: 'POST',
-        headers: {
-          'Idempotency-Key': idempotencyKey,
-        },
-      },
-      accessToken,
-    );
-  }
 
   markBookingDone(
     accessToken: string,

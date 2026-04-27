@@ -11,7 +11,7 @@
     "loginAsTasker": "Tasker",
     "loginUnavailable": "Facebook login is unavailable right now.",
     "trustedNetwork": "Your trusted network for everyday tasks.",
-    "connectSecurely": "Connect with ID-verified professionals. Structured booking, transparent reviews, and local dispute support.",
+    "connectSecurely": "Connect with ID-verified Taskers. Structured booking, transparent reviews, and local dispute support.",
     "copyright": "© 2026 Tasky Network",
     "welcomeBack": "Welcome back",
     "continueDesc": "Continue with Facebook to log in or create your Tasky account.",
@@ -112,6 +112,7 @@
     "failedToLoadApplications": "Failed to load applications",
     "waitingForTaskers": "Waiting for Taskers to apply...",
     "tasksDone": "{{count}} tasks done",
+    "idVerifiedTasker": "ID-verified Tasker",
     "reviewAndAccept": "Review & Accept",
     "appliedAgo": "Applied {{timeAgo}}",
     "cancelling": "Cancelling...",
@@ -207,8 +208,8 @@
     "selectedTaskerTitle": "Selected Tasker",
     "completedTasks": "{{count}} completed tasks",
     "applicantLoadError": "Applicant details could not be loaded.",
-    "trustSafetyGuarantee": "Trust & Safety Guarantee",
-    "trustSafetyDesc": "All Taskers are ID-verified. You agree on a fixed price directly with your Tasker before the job begins.",
+    "trustSafetyGuarantee": "Locked price and scope baseline",
+    "trustSafetyDesc": "The locked booking price and intake scope are the baseline agreement. Materials, supplies, or scope changes must be agreed in Tasky chat or support evidence; Tasky does not provide automatic price changes, payment holds, or payment protection in Phase 1.",
     "errorTitle": "Error",
     "summaryTitle": "Summary",
     "taskBudget": "Agreed Budget",
@@ -217,7 +218,7 @@
     "termsDesc": "I agree to the platform's terms of service and hold harmless policies for this booking.",
     "confirming": "Confirming...",
     "confirmBookingBtn": "Confirm Booking",
-    "chargeNotice": "You and the Tasker settle payment directly after the task is completed.",
+    "chargeNotice": "The locked price and intake scope are the baseline. Keep material, supply, or scope changes in Tasky chat or support evidence.",
     "rebookTaskerPending": "Tasker details will load after confirmation."
   },
   "messaging": {
@@ -349,7 +350,7 @@
     "tagQuote": "Budget or Quote",
     "featMoving": "Movers & Help",
     "featMovingAlt": "Moving service",
-    "featMovingDesc": "Studio to apartment, office relocations, heavy lifting. Post your move, set the budget, and pick from verified Taskers.",
+    "featMovingDesc": "Studio to apartment, office relocations, heavy lifting. Post your move, set the budget, and pick from ID-verified Taskers.",
     "howItWorksTitle": "How Tasky Works",
     "howItWorksSub": "A simple, secure, and transparent ecosystem designed to bridge trust between customers and vetted professionals.",
     "forCustomers": "For Customers",
@@ -480,6 +481,7 @@
       "noApplicantsDesc": "Wait for taskers to apply, or edit your task to attract more interest.",
       "backToTask": "Back to task",
       "completedTasks": "{{count}} completed tasks",
+      "idVerifiedTasker": "ID-verified Tasker",
       "emptyDesc": "Taskers have not applied to this task yet.",
       "emptyTitle": "No applicants yet",
       "errorDesc": "The applicant queue could not be loaded right now.",
@@ -568,6 +570,7 @@
       "underReviewTitle": "Under review",
       "viewBooking": "View booking",
       "statusLabel": {
+        "EVIDENCE_NEEDED": "EVIDENCE_NEEDED",
         "OPEN": "OPEN",
         "RESOLVED_CUSTOMER": "RESOLVED_CUSTOMER",
         "RESOLVED_TASKER": "RESOLVED_TASKER",
@@ -692,7 +695,7 @@
       "primaryActions": "Primary actions",
       "messageTasker": "Message tasker",
       "openChat": "Open chat",
-      "verifiedTasker": "Verified Tasker",
+      "verifiedTasker": "ID-verified Tasker",
       "trustedLabel": "Trusted for Phase 1 customer bookings and direct settlement flows.",
       "ratingStats": "{{rating}} rating from {{count}} jobs",
       "responseDetail": "Responds quickly during business hours",
@@ -1008,8 +1011,8 @@
     "approved": {
       "title": "Verification approved",
       "description": "Your identity has been approved.",
-      "cardDesc": "You can now accept jobs with a verified tasker profile.",
-      "content": "You can now accept jobs with a verified tasker profile."
+      "cardDesc": "You can now accept jobs with an ID-verified Tasker profile.",
+      "content": "You can now accept jobs with an ID-verified Tasker profile."
     },
     "consent": {
       "title": "Verification consent",
@@ -1157,6 +1160,7 @@
       "reason": "Reason",
       "status": "Status",
       "statusLabel": {
+        "EVIDENCE_NEEDED": "EVIDENCE_NEEDED",
         "OPEN": "OPEN",
         "RESOLVED_CUSTOMER": "RESOLVED_CUSTOMER",
         "RESOLVED_TASKER": "RESOLVED_TASKER",

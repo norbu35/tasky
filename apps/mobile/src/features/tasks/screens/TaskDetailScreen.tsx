@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 
 import { DetailTemplate } from '@/components/templates/DetailTemplate';
 import { PhotoGrid } from '@/components/ui/PhotoGrid';
+import { Toast } from '@/components/ui/Toast';
 import { applyToTask } from '@/features/tasks/api';
 import { ApplicationSentSuccess } from '@/features/tasks/components/ApplicationSentSuccess';
 import { useTaskDetail } from '@/features/tasks/hooks/useTasks';
@@ -29,6 +30,7 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
   const [isApplying, setIsApplying] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [localApplied, setLocalApplied] = useState(false);
+  const [applicationError, setApplicationError] = useState<string | null>(null);
   const [applicationNote, setApplicationNote] = useState('');
   const [quotePrice, setQuotePrice] = useState('');
   const appliedState = hasApplied || localApplied;
@@ -40,10 +42,12 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
     !isQuoteMode ||
     (quotePrice !== '' && Number.isFinite(quotePriceNumber) && quotePriceNumber >= 20000);
   const canSubmitApplication = isApplicationNoteValid && isQuoteValid;
+  const isOwnTask = !!task && task.customer.id === session?.user.id;
 
   const handleApply = useCallback(async () => {
-    if (!session?.accessToken || !taskId || !canSubmitApplication) return;
+    if (!session?.accessToken || !taskId || !canSubmitApplication || isOwnTask) return;
     setIsApplying(true);
+    setApplicationError(null);
     try {
       await applyToTask(
         session.accessToken,
@@ -54,11 +58,20 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
       setLocalApplied(true);
       setShowSuccess(true);
     } catch {
-      // Error handling would go here
+      setApplicationError(t('tasker.taskDetail.applyError'));
     } finally {
       setIsApplying(false);
     }
-  }, [applicationNote, canSubmitApplication, isQuoteMode, quotePriceNumber, session, taskId]);
+  }, [
+    applicationNote,
+    canSubmitApplication,
+    isOwnTask,
+    isQuoteMode,
+    quotePriceNumber,
+    session,
+    taskId,
+    t,
+  ]);
 
   const handleGetVerified = useCallback(() => {
     router.push('/(tasker)/verification' as `${string}`);
@@ -84,7 +97,11 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
 
   const noop = () => {};
 
-  if (appliedState) {
+  if (isOwnTask) {
+    ctaLabel = t('tasker.taskDetail.ownTaskCta');
+    ctaDisabled = true;
+    ctaOnPress = noop;
+  } else if (appliedState) {
     ctaLabel = t('tasker.taskDetail.alreadyApplied');
     ctaDisabled = true;
     ctaOnPress = noop;
@@ -116,7 +133,13 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
         <View className="gap-lg">
           <TaskDetailSummary task={task} isQuoteMode={isQuoteMode} />
 
-          {isVerified && !appliedState && !capReached ? (
+          {isOwnTask ? (
+            <Toast message={t('tasker.taskDetail.ownTaskNotice')} variant="info" />
+          ) : null}
+
+          {applicationError ? <Toast message={applicationError} variant="error" /> : null}
+
+          {isVerified && !isOwnTask && !appliedState && !capReached ? (
             <ApplicationForm
               isQuoteMode={isQuoteMode}
               isQuoteValid={isQuoteValid}

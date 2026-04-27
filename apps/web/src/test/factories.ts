@@ -134,7 +134,7 @@ export function makeMessage(overrides: Partial<Message> = {}): Message {
     conversation_id: 'conv-1',
     sender_id: 'customer-1',
     content: 'Hello tasker',
-    created_at: new Date().toISOString(),
+    sent_at: new Date().toISOString(),
     ...overrides,
   };
 }

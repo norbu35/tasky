@@ -49,63 +49,69 @@ export default function TaskerJobDetailScreen() {
   ) as 'assigned' | 'completed' | 'cancelled' | 'no_show' | undefined;
 
   return (
-    <DetailTemplate
-      testID="SCR-TASK-013"
-      isLoading={isLoading}
-      isError={isError}
-      onRetry={refetch}
-      ctaLabel={isAssigned ? t('tasker.jobs.markDone') : undefined}
-      ctaOnPress={isAssigned ? handleMarkDone : undefined}
-      ctaLoading={markDone.isPending}
-      secondaryCtaLabel={isAssigned || isMarkedDone ? t('tasker.jobs.messageButton') : undefined}
-      secondaryCtaOnPress={
-        isAssigned || isMarkedDone ? () => router.push(conversationRoute) : undefined
-      }
-    >
-      {booking && (
-        <View className="gap-lg">
-          {status && (
-            <View className="border-b border-border pb-lg">
-              <Text className="text-caption text-text-secondary mb-xs">
-                {t('tasker.jobs.bookingDetail')}
-              </Text>
-              <StatusBadge status={status} />
-            </View>
-          )}
+    <>
+      <DetailTemplate
+        testID="SCR-TASK-013"
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={refetch}
+        ctaLabel={isAssigned ? t('tasker.jobs.markDone') : undefined}
+        ctaOnPress={isAssigned ? handleMarkDone : undefined}
+        ctaLoading={markDone.isPending}
+        secondaryCtaLabel={isAssigned || isMarkedDone ? t('tasker.jobs.messageButton') : undefined}
+        secondaryCtaOnPress={
+          isAssigned || isMarkedDone ? () => router.push(conversationRoute) : undefined
+        }
+      >
+        {booking && (
+          <View className="gap-lg">
+            {status && (
+              <View className="border-b border-border pb-lg">
+                <Text className="text-caption text-text-secondary mb-xs">
+                  {t('tasker.jobs.bookingDetail')}
+                </Text>
+                <StatusBadge status={status} />
+              </View>
+            )}
 
-          <BookingLifecyclePreview
-            status={bookingStatus}
-            createdAt={booking.created_at}
-            scheduledAt={booking.confirmed_scheduled_at ?? booking.task?.scheduled_at}
-          />
+            <BookingLifecyclePreview
+              status={bookingStatus}
+              createdAt={booking.created_at}
+              scheduledAt={booking.confirmed_scheduled_at ?? booking.task?.scheduled_at}
+            />
 
-          <TaskerJobDetailSections
-            booking={booking}
-            showExactAddress={isAssigned || isMarkedDone}
-          />
+            <TaskerJobDetailSections
+              booking={booking}
+              showExactAddress={isAssigned || isMarkedDone}
+            />
 
-          {isMarkedDone && (
-            <View className="bg-muted rounded-md p-md">
-              <Text className="text-body text-foreground font-semibold">
-                {t('tasker.jobs.awaitingConfirmation')}
-              </Text>
-            </View>
-          )}
+            {isMarkedDone && (
+              <View className="bg-muted rounded-md p-md">
+                <Text className="text-body text-foreground font-semibold">
+                  {t('tasker.jobs.awaitingConfirmation')}
+                </Text>
+              </View>
+            )}
 
-          <TaskerJobDetailActions
-            isAssigned={isAssigned}
-            isCompleted={isCompleted}
-            onOpenSupport={() => setSupportSheetOpen(true)}
-            onOpenNoShow={() => setShowNoShowSheet(true)}
-            onOpenCancel={() => setCancelSheetOpen(true)}
-            onLeaveReview={() =>
-              router.push({
-                pathname: '/(shared)/review/[bookingId]',
-                params: { bookingId: booking.id, role: 'tasker' },
-              })
-            }
-          />
+            <TaskerJobDetailActions
+              isAssigned={isAssigned}
+              isCompleted={isCompleted}
+              onOpenSupport={() => setSupportSheetOpen(true)}
+              onOpenNoShow={() => setShowNoShowSheet(true)}
+              onOpenCancel={() => setCancelSheetOpen(true)}
+              onLeaveReview={() =>
+                router.push({
+                  pathname: '/(shared)/review/[bookingId]',
+                  params: { bookingId: booking.id, role: 'tasker' },
+                })
+              }
+            />
+          </View>
+        )}
+      </DetailTemplate>
 
+      {booking ? (
+        <>
           {cancelSheetOpen ? (
             <TaskerCancelSheet
               isOpen={cancelSheetOpen}
@@ -150,8 +156,8 @@ export default function TaskerJobDetailScreen() {
               router.push(conversationRoute);
             }}
           />
-        </View>
-      )}
-    </DetailTemplate>
+        </>
+      ) : null}
+    </>
   );
 }
