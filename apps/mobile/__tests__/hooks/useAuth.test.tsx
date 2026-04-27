@@ -56,6 +56,7 @@ type DevLoginMutation = {
 };
 
 let latestMutation: DevLoginMutation | null = null;
+const POST_AUTH_MUTATION_TIMEOUT_MS = 10_000;
 
 function DevLoginHarness() {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -120,63 +121,73 @@ describe('useDevLogin', () => {
     useAppStore.setState({ hasSeenOnboarding: false, currentRole: 'customer' });
   });
 
-  it('routes first-time dev logins to onboarding instead of tabs and fetches the real profile', async () => {
-    const queryClient = createTestQueryClient();
+  it(
+    'routes first-time dev logins to onboarding instead of tabs and fetches the real profile',
+    async () => {
+      const queryClient = createTestQueryClient();
 
-    render(<DevLoginHarness />, { wrapper: createWrapper(queryClient) });
+      render(<DevLoginHarness />, { wrapper: createWrapper(queryClient) });
 
-    await waitFor(() => {
-      expect(latestMutation).not.toBeNull();
-    });
-
-    await act(async () => {
-      await latestMutation?.mutateAsync({
-        phone: '+97692000001',
-        role: 'CUSTOMER',
+      await waitFor(() => {
+        expect(latestMutation).not.toBeNull();
       });
-    });
 
-    expect(mockRequestJson).toHaveBeenCalledWith('/auth/dev/login', {
-      method: 'POST',
-      body: JSON.stringify({ phone: '+97692000001', role: 'CUSTOMER' }),
-    });
-    expect(mockGetMyProfile).toHaveBeenCalledWith('dev-access-token');
-    expect(useAuthStore.getState().session?.user.role).toBe('CUSTOMER');
-    expect(queryClient.getQueryData(['me', 'dev-access-token'])).toEqual(
-      expect.objectContaining({ full_name: 'Test Customer' }),
-    );
-    expect(useAppStore.getState().currentRole).toBe('customer');
-    expect(mockRouter.replace).toHaveBeenCalledWith('/onboarding');
-
-    queryClient.clear();
-  });
-
-  it('TID-AUTH-POST-AUTH-PREFETCH warms the customer task list cache after customer dev login', async () => {
-    const queryClient = createTestQueryClient();
-    useAppStore.setState({ hasSeenOnboarding: true, currentRole: 'customer' });
-
-    render(<DevLoginHarness />, { wrapper: createWrapper(queryClient) });
-
-    await waitFor(() => {
-      expect(latestMutation).not.toBeNull();
-    });
-
-    await act(async () => {
-      await latestMutation?.mutateAsync({
-        phone: '+97692000001',
-        role: 'CUSTOMER',
+      await act(async () => {
+        await latestMutation?.mutateAsync({
+          phone: '+97692000001',
+          role: 'CUSTOMER',
+        });
       });
-    });
 
-    await waitFor(() => {
-      expect(mockListMyTasks).toHaveBeenCalledWith('dev-access-token');
-    });
-    expect(queryClient.getQueryData(['myTasks', 'dev-access-token'])).toEqual(
-      expect.objectContaining({
-        data: [expect.objectContaining({ id: 'task-1' })],
-      }),
-    );
+      expect(mockRequestJson).toHaveBeenCalledWith('/auth/dev/login', {
+        method: 'POST',
+        body: JSON.stringify({ phone: '+97692000001', role: 'CUSTOMER' }),
+      });
+      expect(mockGetMyProfile).toHaveBeenCalledWith('dev-access-token');
+      expect(useAuthStore.getState().session?.user.role).toBe('CUSTOMER');
+      expect(queryClient.getQueryData(['me', 'dev-access-token'])).toEqual(
+        expect.objectContaining({ full_name: 'Test Customer' }),
+      );
+      expect(useAppStore.getState().currentRole).toBe('customer');
+      await waitFor(() => {
+        expect(mockRouter.replace).toHaveBeenCalledWith('/onboarding');
+      });
 
-    queryClient.clear();
-  });
+      queryClient.clear();
+    },
+    POST_AUTH_MUTATION_TIMEOUT_MS,
+  );
+
+  it(
+    'TID-AUTH-POST-AUTH-PREFETCH warms the customer task list cache after customer dev login',
+    async () => {
+      const queryClient = createTestQueryClient();
+      useAppStore.setState({ hasSeenOnboarding: true, currentRole: 'customer' });
+
+      render(<DevLoginHarness />, { wrapper: createWrapper(queryClient) });
+
+      await waitFor(() => {
+        expect(latestMutation).not.toBeNull();
+      });
+
+      await act(async () => {
+        await latestMutation?.mutateAsync({
+          phone: '+97692000001',
+          role: 'CUSTOMER',
+        });
+      });
+
+      await waitFor(() => {
+        expect(mockListMyTasks).toHaveBeenCalledWith('dev-access-token');
+      });
+      expect(queryClient.getQueryData(['myTasks', 'dev-access-token'])).toEqual(
+        expect.objectContaining({
+          data: [expect.objectContaining({ id: 'task-1' })],
+        }),
+      );
+
+      queryClient.clear();
+    },
+    POST_AUTH_MUTATION_TIMEOUT_MS,
+  );
 });
