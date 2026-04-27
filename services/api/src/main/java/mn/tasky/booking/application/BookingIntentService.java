@@ -262,11 +262,12 @@ public class BookingIntentService {
                 return BookingIntentConfirmResult.error(
                         BookingIntentConfirmResult.CONFLICT, "Booking intent acceptance window has expired.");
             }
-            if (PricingMode.QUOTE.name().equals(task.pricingMode())) {
-                if (selectedApplication.quotePrice() == null) {
-                    return BookingIntentConfirmResult.error(
-                            BookingIntentConfirmResult.CONFLICT, "Selected application is missing quote price.");
-                }
+            boolean quoteMode = PricingMode.QUOTE.name().equals(task.pricingMode());
+            if (quoteMode && selectedApplication.quotePrice() == null) {
+                return BookingIntentConfirmResult.error(
+                        BookingIntentConfirmResult.CONFLICT, "Selected application is missing quote price.");
+            }
+            if (quoteMode) {
                 bookingPrice = selectedApplication.quotePrice();
             }
         }
