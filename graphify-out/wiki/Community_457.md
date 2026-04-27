@@ -1,0 +1,25 @@
+# Community 457
+
+> 1 nodes
+
+## Key Concepts
+
+- **TaskDetail.Summary.test.tsx** (0 connections) — `apps/mobile/__tests__/features/tasks/screens/TaskDetail.Summary.test.tsx`
+
+## Relationships
+
+- No strong cross-community connections detected
+
+## Source Files
+
+- `apps/mobile/__tests__/features/tasks/screens/TaskDetail.Summary.test.tsx`
+
+## Audit Trail
+
+- EXTRACTED: 0 (0%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+_Part of the graphify knowledge wiki. See [[index]] to navigate._

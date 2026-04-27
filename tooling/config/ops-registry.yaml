@@ -111,6 +111,18 @@ packageScripts:
     lifecycle: blocking
     lane: repo
     command: 'node tooling/scripts/governance/validate-workspace-boundaries.mjs'
+  repo:graph:setup:
+    lifecycle: manual
+    lane: graph
+    command: 'bash tooling/scripts/manual/graphify-setup.sh'
+  repo:graph:update:
+    lifecycle: manual
+    lane: graph
+    command: 'bash tooling/scripts/manual/graphify-update.sh'
+  repo:graph:query:
+    lifecycle: manual
+    lane: graph
+    command: 'bash tooling/scripts/manual/graphify-query.sh'
   build:
     lifecycle: manual
     lane: workspace
@@ -341,5 +353,11 @@ toolingScripts:
     lifecycle: blocking
   governance/validate-workspace-boundaries.mjs:
     lifecycle: blocking
+  manual/graphify-query.sh:
+    lifecycle: manual
+  manual/graphify-setup.sh:
+    lifecycle: manual
+  manual/graphify-update.sh:
+    lifecycle: manual
   observability/start-alertmanager.sh:
     lifecycle: manual

@@ -126,3 +126,22 @@ Pick the smallest gate that matches the claim. Areas declare their own defaults 
 | Nightly regression           | `./gradlew gateRegression`, `./gradlew gateFull` |
 
 `./gradlew gateSmoke` is fast local critical-scenario confidence, not the singular pre-merge source of truth.
+
+## Graphify
+
+This project tracks a Graphify knowledge graph in `graphify-out/` as advisory navigation context. Governing docs in
+the discovery path still win; Graphify never overrides `docs/PRD.md`, maintenance policy, area `AGENTS.md`, OpenAPI, or
+design contracts.
+
+Rules:
+
+- Run `pnpm repo:graph:setup` after installing or upgrading Graphify. The wrapper uses uv, runs
+  `graphify codex install`, enables Codex `multi_agent` for parallel extraction, and normalizes the generated
+  PreToolUse hook to the Codex-supported top-level `systemMessage` payload.
+- For architecture or codebase orientation, start with `graphify-out/GRAPH_REPORT.md`. If `graphify-out/wiki/index.md`
+  exists, use the wiki for graph navigation before broad raw-file reads.
+- Use `pnpm repo:graph:query -- "<question>" [--budget N]` for focused graph lookups.
+- After modifying code or tooling source in this session, run `pnpm repo:graph:update` to refresh
+  `graphify-out/GRAPH_REPORT.md`, `graphify-out/graph.json`, and `graphify-out/wiki/**`.
+- Do not install Graphify git hooks by default. This repo uses explicit `repo:graph:*` commands to avoid
+  post-commit/post-checkout dirty-tree churn.

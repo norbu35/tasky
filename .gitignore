@@ -16,8 +16,12 @@
 .serena/cache/
 .serena/memories/
 
-# Graphify plugin generated output
-graphify-out/
+# Graphify knowledge graph
+graphify-out/*
+!graphify-out/GRAPH_REPORT.md
+!graphify-out/graph.json
+!graphify-out/wiki/
+!graphify-out/wiki/**
 
 # Claude Code local state
 .claude/
