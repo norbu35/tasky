@@ -43,7 +43,7 @@ export function SettingsTemplate({ sections, testID, className }: SettingsTempla
       {sections.map((section, sectionIndex) => (
         <View key={section.title ?? `section-${sectionIndex}`} className="mb-xl">
           {section.title ? (
-            <Text className="text-[13px] font-display-bold text-primary-deep mb-sm">
+            <Text className="text-label font-display-bold text-primary-deep mb-sm">
               {section.title}
             </Text>
           ) : null}

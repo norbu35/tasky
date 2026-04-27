@@ -154,10 +154,7 @@ export function DetailTemplate({
           testID={testID ? `${testID}-bottom-bar` : undefined}
           insideTabNavigator={insideTabNavigator}
         >
-          <View
-            onLayout={handleActionBarLayout}
-            style={{ padding: screenLayout.actions.barPadding }}
-          >
+          <View onLayout={handleActionBarLayout}>
             {secondaryCtaLabel && secondaryCtaOnPress && (
               <Button
                 label={secondaryCtaLabel}

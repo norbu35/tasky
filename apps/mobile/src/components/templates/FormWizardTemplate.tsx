@@ -127,11 +127,7 @@ export function FormWizardTemplate({
         {!hideNext && (
           <StickyActionBar testID="wizard-bottom-bar">
             <View onLayout={handleActionBarLayout}>
-              <View
-                style={{
-                  paddingTop: screenLayout.actions.barPadding,
-                }}
-              >
+              <View>
                 {showBackButton ? (
                   <View className="flex-row gap-md">
                     <Button

@@ -25,25 +25,25 @@ export function LoginRequiredCTA({ message, testID, className }: LoginRequiredCT
 
   return (
     <View
-      className={cn('flex-1 justify-center items-center p-6 bg-background', className)}
+      className={cn('flex-1 justify-center items-center p-xl bg-background', className)}
       testID={testID}
     >
       <Reveal delay={20}>
         <View
-          className="w-[100px] h-[100px] rounded-full justify-center items-center mb-6"
+          className="w-[100px] h-[100px] rounded-full justify-center items-center mb-xl"
           style={{ backgroundColor: tint.primaryStrong }}
         >
           <Lock color={mobileTheme.colors.primary} size={24} />
         </View>
       </Reveal>
       <Reveal delay={60}>
-        <Text className="text-[24px] font-display-bold text-foreground mb-3 text-center">
+        <Text className="text-heading font-display-bold text-foreground mb-md text-center">
           {t('auth.loginRequired') || t('LoginRequiredCTA.copy1')}
         </Text>
       </Reveal>
       <Reveal delay={100}>
         <Text
-          className="text-body text-muted-foreground text-center mb-8"
+          className="text-body text-muted-foreground text-center mb-2xl"
           style={{ lineHeight: mobileSurfaces.paragraphLineHeight }}
         >
           {message || t('auth.loginReason') || t('LoginRequiredCTA.copy2')}

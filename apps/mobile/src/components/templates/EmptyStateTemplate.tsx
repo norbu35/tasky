@@ -48,7 +48,7 @@ export function EmptyStateTemplate({
           <Button
             label={ctaLabel}
             onPress={ctaOnPress}
-            style={{ alignSelf: 'stretch', marginTop: 24 }}
+            className="mt-xl self-stretch"
             testID={testID ? `${testID}-cta` : undefined}
           />
         </Reveal>
