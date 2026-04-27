@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { getVerificationUploadUrl, submitVerification } from '../api';
 import { useAuthStore } from '@/store/authStore';
+
+import { getVerificationUploadUrl, submitVerification } from '../api';
 
 interface VerificationSubmitPayload {
   frontUri: string;

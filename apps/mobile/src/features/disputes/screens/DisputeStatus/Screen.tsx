@@ -7,9 +7,9 @@ import { Touchable } from '@/components/ui/Touchable';
 import { screenLayout } from '@/design/screenLayout';
 import { mobileTheme } from '@/design/tokenAdapter';
 
-import { StatusBadge, DisputeSummary, ResolutionSection, PhaseNote } from './SummarySections';
 import { EvidenceList } from './EvidenceList';
 import { DecorativeScale, LoadingState, ErrorState } from './States';
+import { StatusBadge, DisputeSummary, ResolutionSection, PhaseNote } from './SummarySections';
 import { TimelineSection } from './Timeline';
 import { useDisputeStatusScreen } from './useDisputeStatusScreen';
 

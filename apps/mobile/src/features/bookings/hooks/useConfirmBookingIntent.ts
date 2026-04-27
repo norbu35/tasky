@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { confirmBookingIntent } from '../api';
 import { useAuthStore } from '@/store/authStore';
+
+import { confirmBookingIntent } from '../api';
 
 interface ConfirmBookingIntentParams {
   bookingIntentId: string;

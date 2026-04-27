@@ -35,21 +35,24 @@ beforeEach(() => {
 
 describe('RejectedScreen (SCR-TASK-009)', () => {
   it('renders rejection heading', () => {
-    const RejectedScreen = require('../../../../src/app/(tasker)/verification/rejected').default;
+    const RejectedScreen =
+      require('../../../../src/features/verification/screens/RejectedScreen').default;
     render(<RejectedScreen />);
 
     expect(screen.getByText('tasker.verification.rejectedTitle')).toBeTruthy();
   });
 
   it('shows rejection reason from search params', () => {
-    const RejectedScreen = require('../../../../src/app/(tasker)/verification/rejected').default;
+    const RejectedScreen =
+      require('../../../../src/features/verification/screens/RejectedScreen').default;
     render(<RejectedScreen />);
 
     expect(screen.getByText('Photos are blurry')).toBeTruthy();
   });
 
   it('resubmit CTA navigates to upload screen', () => {
-    const RejectedScreen = require('../../../../src/app/(tasker)/verification/rejected').default;
+    const RejectedScreen =
+      require('../../../../src/features/verification/screens/RejectedScreen').default;
     render(<RejectedScreen />);
 
     fireEvent.press(screen.getByTestId('rejected-screen-resubmit'));
@@ -57,14 +60,16 @@ describe('RejectedScreen (SCR-TASK-009)', () => {
   });
 
   it('renders rejection description', () => {
-    const RejectedScreen = require('../../../../src/app/(tasker)/verification/rejected').default;
+    const RejectedScreen =
+      require('../../../../src/features/verification/screens/RejectedScreen').default;
     render(<RejectedScreen />);
 
     expect(screen.getByText('tasker.verification.rejectedBody')).toBeTruthy();
   });
 
   it('browse tasks CTA returns to the task feed', () => {
-    const RejectedScreen = require('../../../../src/app/(tasker)/verification/rejected').default;
+    const RejectedScreen =
+      require('../../../../src/features/verification/screens/RejectedScreen').default;
     render(<RejectedScreen />);
 
     fireEvent.press(screen.getByTestId('rejected-screen-browse'));

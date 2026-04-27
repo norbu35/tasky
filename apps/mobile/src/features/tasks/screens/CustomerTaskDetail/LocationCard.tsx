@@ -2,8 +2,8 @@ import { MapPin } from 'lucide-react-native';
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 const { colors } = mobileTheme;
 const { tint } = mobileSurfaces;

@@ -1,11 +1,12 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import MapView, { Region } from 'react-native-maps';
+
+import { reverseGeocode } from '@/features/tasks/api';
 import { useTaskDraftStore } from '@/features/tasks/draft';
 import { useRecentLocations } from '@/features/tasks/hooks/useRecentLocations';
-import { reverseGeocode } from '@/features/tasks/api';
 import { useAuthStore } from '@/store/authStore';
 import { getCurrentLocation } from '@/utils/permissions';
-import MapView, { Region } from 'react-native-maps';
 
 import { UB_CENTER, DEFAULT_DELTA, ZOOM_DELTA, ANIMATE_DURATION, makeRegion } from './model';
 
@@ -15,6 +16,7 @@ export function useTaskLocationScreen() {
   const { draftId } = useLocalSearchParams<{ draftId: string }>();
   const draft = useTaskDraftStore((s) => s.drafts[draftId]);
   const updateDraft = useTaskDraftStore((s) => s.updateDraft);
+  const accessToken = session?.accessToken ?? undefined;
 
   const initialLat = draft?.location?.lat ?? null;
   const initialLng = draft?.location?.lng ?? null;
@@ -57,7 +59,7 @@ export function useTaskLocationScreen() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [initialLat, initialLng]);
 
   useEffect(() => {
     if (!pin) return;
@@ -65,8 +67,6 @@ export function useTaskLocationScreen() {
 
     let cancelled = false;
     setReverseGeocoding(true);
-
-    const accessToken = session?.accessToken ?? undefined;
 
     reverseGeocode(accessToken, pin.latitude, pin.longitude)
       .then((data) => {
@@ -83,7 +83,7 @@ export function useTaskLocationScreen() {
     return () => {
       cancelled = true;
     };
-  }, [pin?.latitude, pin?.longitude, session]);
+  }, [accessToken, pin]);
 
   const handleLocate = useCallback(async () => {
     setLocating(true);

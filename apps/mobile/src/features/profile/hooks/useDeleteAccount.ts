@@ -1,7 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { deleteMyAccount } from '../api';
 import { useAuthStore } from '@/store/authStore';
+
+import { deleteMyAccount } from '../api';
 
 export function useDeleteAccount() {
   const session = useAuthStore((s) => s.session);

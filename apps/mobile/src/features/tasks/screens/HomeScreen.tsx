@@ -1,26 +1,18 @@
 import { useRouter } from 'expo-router';
-import { SlidersHorizontal } from 'lucide-react-native';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { FeedListTemplate } from '@/components/templates/FeedListTemplate';
-import { ScreenHeader } from '@/components/ui/ScreenHeader';
-import { SearchBar } from '@/components/ui/SearchBar';
-import { Touchable } from '@/components/ui/Touchable';
-import { TrustBanner } from '@/components/ui/TrustBanner';
-import { mobileTheme } from '@/design/tokenAdapter';
-import { ReviewGateBanner } from '@/features/review/components/ReviewGateBanner';
 import { useReviewGate } from '@/features/review/components/ReviewGateProvider';
 import { CustomerTasksScreen } from '@/features/tasks';
 import { TaskFeedCard } from '@/features/tasks/components/TaskFeedCard';
 import { TaskFeedFilterSheet } from '@/features/tasks/components/TaskFeedFilterSheet';
+import { TaskFeedHeader } from '@/features/tasks/components/TaskFeedHeader';
 import { useCategories } from '@/features/tasks/hooks/useCategories';
 import { useTasks } from '@/features/tasks/hooks/useTasks';
 import type { PublicTask } from '@/lib/api/types';
 import { useRole } from '@/providers/RoleProvider';
-
-const { colors } = mobileTheme;
 
 function TaskerBrowseScreen() {
   const { t } = useTranslation();
@@ -134,89 +126,21 @@ function TaskerBrowseScreen() {
         isRefreshing={isRefetching}
         onRetry={refetch}
         ListHeaderComponent={
-          <View className="gap-md mb-md">
-            <ScreenHeader title={t('tasker.browse.title')} subtitle={t('tasker.browse.subtitle')} />
-            {hasPending && oldestPending && <ReviewGateBanner pendingReview={oldestPending} />}
-            <View className="flex-row items-center gap-sm">
-              <View className="flex-1">
-                <SearchBar
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  placeholder={t('tasker.browse.searchPlaceholder')}
-                  testID="task-feed-search"
-                />
-              </View>
-              <Touchable
-                accessibilityRole="button"
-                accessibilityLabel={t('tasker.browse.openFilters')}
-                className="items-center justify-center rounded-full border border-border bg-card"
-                style={{ width: 48, height: 48 }}
-                onPress={() => setIsFilterSheetOpen(true)}
-                testID="task-feed-open-filters"
-              >
-                <SlidersHorizontal size={20} color={colors.primaryDeep} />
-                {activeFilterCount > 0 ? (
-                  <View
-                    className="absolute -right-1 -top-1 min-w-[22px] h-[22px] rounded-full bg-primary-deep items-center justify-center px-xs"
-                    testID="task-feed-filter-count"
-                  >
-                    <Text className="text-caption font-sans-bold text-primary-foreground">
-                      {activeFilterCount}
-                    </Text>
-                  </View>
-                ) : null}
-              </Touchable>
-            </View>
-            <Text className="text-caption font-sans-semibold text-text-secondary">
-              {t('tasker.browse.resultSummary', { count: filteredTasks.length })}
-            </Text>
-            {hasActiveBrowseFilters ? (
-              <View className="gap-sm" testID="task-feed-active-filters">
-                <View className="flex-row items-center justify-between gap-md">
-                  <Text className="text-caption font-sans-bold text-foreground">
-                    {t('tasker.browse.activeFilters')}
-                  </Text>
-                  <Touchable
-                    accessibilityRole="button"
-                    onPress={handleClearFilters}
-                    testID="task-feed-active-filter-clear"
-                  >
-                    <Text className="text-caption font-sans-bold underline text-foreground">
-                      {t('tasker.browse.clearFilters')}
-                    </Text>
-                  </Touchable>
-                </View>
-                <View className="flex-row flex-wrap gap-sm">
-                  {trimmedSearchQuery ? (
-                    <Touchable
-                      accessibilityRole="button"
-                      onPress={handleClearSearch}
-                      className="rounded-full border border-border bg-card px-md py-sm"
-                      testID="task-feed-active-filter-search"
-                    >
-                      <Text className="text-caption font-sans-semibold text-foreground">
-                        {t('tasker.browse.searchFilterLabel', { query: trimmedSearchQuery })}
-                      </Text>
-                    </Touchable>
-                  ) : null}
-                  {selectedFilterItems.map((filter) => (
-                    <Touchable
-                      key={`${filter.id}-${filter.label}`}
-                      accessibilityRole="button"
-                      onPress={() => handleToggleFilter(filter.id)}
-                      className="rounded-full border border-border bg-card px-md py-sm"
-                      testID={`task-feed-active-filter-${filter.id}`}
-                    >
-                      <Text className="text-caption font-sans-semibold text-foreground">
-                        {filter.label}
-                      </Text>
-                    </Touchable>
-                  ))}
-                </View>
-              </View>
-            ) : null}
-            <TrustBanner title={t('tasker.browse.trustTitle')} description={t('HomeTab.copy1')} />
-          </View>
+          <TaskFeedHeader
+            activeFilterCount={activeFilterCount}
+            hasActiveBrowseFilters={hasActiveBrowseFilters}
+            hasPending={hasPending}
+            oldestPending={oldestPending}
+            resultCount={filteredTasks.length}
+            searchQuery={searchQuery}
+            selectedFilterItems={selectedFilterItems}
+            trimmedSearchQuery={trimmedSearchQuery}
+            onClearFilters={handleClearFilters}
+            onClearSearch={handleClearSearch}
+            onOpenFilters={() => setIsFilterSheetOpen(true)}
+            onSearchChange={setSearchQuery}
+            onToggleFilter={handleToggleFilter}
+          />
         }
         emptyTitle={t('tasker.browse.emptyTitle')}
         emptyDescription={

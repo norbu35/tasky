@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { InsetScrollView } from '@/components/shells';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 import { TermsErrorVisual } from './TermsOfService.ErrorVisual';
 

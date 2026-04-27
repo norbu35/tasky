@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { listTasks } from '../api';
-import type { PublicTask } from '@/lib/api/types';
 import { useMyProfile } from '@/features/profile';
+import type { PublicTask } from '@/lib/api/types';
+import { queryKeys } from '@/lib/queryKeys';
 import { useAuthStore } from '@/store/authStore';
 import { getCurrentLocation } from '@/utils/permissions';
-import { queryKeys } from '@/lib/queryKeys';
+
+import { listTasks } from '../api';
 
 export function useTasks() {
   const session = useAuthStore((s) => s.session);

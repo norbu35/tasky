@@ -1,8 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { getProfilePolishPreview } from '../api';
 import type { ProfilePolishPreviewPayload } from '@/lib/api/types';
 import { useAuthStore } from '@/store/authStore';
+
+import { getProfilePolishPreview } from '../api';
 
 export function useProfilePolishPreview() {
   const session = useAuthStore((s) => s.session);

@@ -1,8 +1,9 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { getVerificationStatus, submitVerification } from '../api';
-import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
+import { useAuthStore } from '@/store/authStore';
+
+import { getVerificationStatus, submitVerification } from '../api';
 
 export function useVerificationStatus() {
   const session = useAuthStore((s) => s.session);

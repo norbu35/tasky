@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { getMyPendingReviews } from '../api';
-import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
+import { useAuthStore } from '@/store/authStore';
+
+import { getMyPendingReviews } from '../api';
 
 export function usePendingReviews() {
   const session = useAuthStore((state) => state.session);

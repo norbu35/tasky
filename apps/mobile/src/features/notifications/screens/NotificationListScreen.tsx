@@ -8,8 +8,8 @@ import { ScreenContainer } from '@/components/shells/ScreenContainer';
 import { EmptyStateTemplate } from '@/components/templates/EmptyStateTemplate';
 import { Button } from '@/components/ui/Button';
 import { Touchable } from '@/components/ui/Touchable';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { useNotifications } from '@/features/notifications/hooks/useNotifications';
 
 import { buildRows, formatRelativeTimestamp, type Row } from './NotificationList.model';

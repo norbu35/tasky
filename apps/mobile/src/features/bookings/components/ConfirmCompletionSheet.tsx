@@ -7,8 +7,9 @@ import { Pressable, Text, View } from 'react-native';
 
 import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
 import { elevations } from '@/design/elevations';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
+
 import { useCompleteBooking } from '../hooks/useCompleteBooking';
 
 const { colors, typography } = mobileTheme;

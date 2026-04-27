@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { completeBooking } from '../api';
 import { useAuthStore } from '@/store/authStore';
+
+import { completeBooking } from '../api';
 
 interface CompleteBookingParams {
   bookingId: string;

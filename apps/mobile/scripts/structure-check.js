@@ -507,8 +507,7 @@ const modelBannedImports = [
 
 for (const { file, feature } of featureScreenFiles) {
   const filename = path.basename(file);
-  const isModel =
-    filename.endsWith('.model.ts') || filename === 'model.ts';
+  const isModel = filename.endsWith('.model.ts') || filename === 'model.ts';
   if (!isModel) continue;
 
   const lines = readLines(file);
@@ -516,11 +515,7 @@ for (const { file, feature } of featureScreenFiles) {
   for (let i = 0; i < lines.length; i++) {
     for (const { pattern, label } of modelBannedImports) {
       if (pattern.test(lines[i])) {
-        report(
-          'warn',
-          'model-purity',
-          `${p}:${i + 1} model file imports ${label} (§7.7.5.9)`,
-        );
+        report('warn', 'model-purity', `${p}:${i + 1} model file imports ${label} (§7.7.5.9)`);
       }
     }
   }
@@ -684,9 +679,7 @@ for (const { file, feature } of featureScreenFiles) {
   for (let i = 0; i < lines.length; i++) {
     if (info.form === 'flat') {
       // Flat form: ./<DifferentScreenRoot>.* imports are cross-screen
-      const importMatch = lines[i].match(
-        /from\s+['"]\.\/([A-Z][A-Za-z0-9]*)/,
-      );
+      const importMatch = lines[i].match(/from\s+['"]\.\/([A-Z][A-Za-z0-9]*)/);
       if (importMatch) {
         const importedRoot = importMatch[1];
         if (importedRoot !== ownScreenRoot) {
@@ -700,9 +693,7 @@ for (const { file, feature } of featureScreenFiles) {
     }
     if (info.form === 'folder') {
       // Folder form: ../<DifferentScreen> or imports outside own folder
-      const relativeOutMatch = lines[i].match(
-        /from\s+['"]\.\.\/([A-Z][A-Za-z0-9]*)/,
-      );
+      const relativeOutMatch = lines[i].match(/from\s+['"]\.\.\/([A-Z][A-Za-z0-9]*)/);
       if (relativeOutMatch) {
         const importedName = relativeOutMatch[1];
         // ../<Name> could be another screen folder or a flat-form sibling
@@ -717,9 +708,7 @@ for (const { file, feature } of featureScreenFiles) {
     }
     // Both forms: check @/features/<domain>/screens/<OtherScreen> patterns
     const absImportMatch = lines[i].match(
-      new RegExp(
-        `from\\s+['"]@/features/${feature}/screens/([A-Z][A-Za-z0-9]*)`,
-      ),
+      new RegExp(`from\\s+['"]@/features/${feature}/screens/([A-Z][A-Za-z0-9]*)`),
     );
     if (absImportMatch) {
       const importedRoot = absImportMatch[1];
@@ -753,8 +742,9 @@ if (fs.existsSync(featuresDir)) {
 const testRoot = path.resolve(__dirname, '..', '__tests__');
 if (fs.existsSync(testRoot)) {
   const testFiles = walk(testRoot, ['.ts', '.tsx']).filter(
-    (f) => !f.includes(path.join('__tests__', 'integration') + path.sep) &&
-           !f.includes(path.join('__tests__', 'test-utils') + path.sep),
+    (f) =>
+      !f.includes(path.join('__tests__', 'integration') + path.sep) &&
+      !f.includes(path.join('__tests__', 'test-utils') + path.sep),
   );
 
   const importScanCache = new Map();
@@ -784,10 +774,13 @@ if (fs.existsSync(testRoot)) {
       // require('path') / require("path")
       const requireRe = /require\(\s*['"]([^'"]+)['"]\s*\)/g;
       // readFileSync(resolve(process.cwd(), 'path')) / readFileSync(resolve(__dirname, 'path'))
-      const readFileSyncRe = /readFileSync\(\s*resolve\(\s*(?:process\.cwd\(\)|__dirname)\s*,\s*['"]([^'"]+)['"]\s*\)/g;
+      const readFileSyncRe =
+        /readFileSync\(\s*resolve\(\s*(?:process\.cwd\(\)|__dirname)\s*,\s*['"]([^'"]+)['"]\s*\)/g;
+      const mobileRootReadRe = /readFileSync\(\s*path\.join\(\s*mobileRoot\s*,\s*['"]([^'"]+)['"]/g;
 
       const relativeImports = new Set();
       const cwdPaths = new Set();
+      const mobileRootPaths = new Set();
       let m;
       while ((m = importRe.exec(content)) !== null) {
         relativeImports.add(m[1]);
@@ -798,16 +791,28 @@ if (fs.existsSync(testRoot)) {
       while ((m = readFileSyncRe.exec(content)) !== null) {
         cwdPaths.add(m[1]);
       }
+      while ((m = mobileRootReadRe.exec(content)) !== null) {
+        mobileRootPaths.add(m[1]);
+      }
 
       const mobileAppRoot = path.resolve(__dirname, '..');
 
       for (const p of relativeImports) {
-        // Only consider relative paths that point into src/
         if (!p.startsWith('.')) continue;
         const resolved = path.resolve(testDir, p);
-        // Check if it's under ROOT (src/)
-        if (!resolved.startsWith(ROOT + path.sep) && resolved !== ROOT) continue;
-        const found = fileExistsWithExt(resolved) || fileExistsWithExt(resolved + '.ts') || fileExistsWithExt(resolved + '.tsx');
+        // Check source files under src/ plus root-level mobile config files.
+        if (
+          !resolved.startsWith(ROOT + path.sep) &&
+          resolved !== ROOT &&
+          (!resolved.startsWith(mobileAppRoot + path.sep) ||
+            resolved.startsWith(testRoot + path.sep))
+        ) {
+          continue;
+        }
+        const found =
+          fileExistsWithExt(resolved) ||
+          fileExistsWithExt(resolved + '.ts') ||
+          fileExistsWithExt(resolved + '.tsx');
         if (found) {
           results.push(found);
         } else {
@@ -818,13 +823,16 @@ if (fs.existsSync(testRoot)) {
         }
       }
 
-      for (const p of cwdPaths) {
-        // readFileSync(resolve(process.cwd(), ...)) paths resolve from mobile app root
+      for (const p of [...cwdPaths, ...mobileRootPaths]) {
+        // readFileSync(resolve(process.cwd(), ...)) and path.join(mobileRoot, ...)
+        // paths resolve from the mobile app root.
         const resolved = path.resolve(mobileAppRoot, p);
         const found = fileExistsWithExt(resolved);
         if (found) results.push(found);
       }
-    } catch (_) { /* ignore read errors */ }
+    } catch (_) {
+      /* ignore read errors */
+    }
     importScanCache.set(testFile, results);
     return results;
   }
@@ -845,7 +853,7 @@ if (fs.existsSync(testRoot)) {
     const parts = sourceRelPath.split(path.sep);
     if (parts.length >= 2) {
       const category = parts[0]; // e.g. "screens", "hooks", "components"
-      const module = parts[1];   // e.g. "auth", "bookings", "tasks"
+      const module = parts[1]; // e.g. "auth", "bookings", "tasks"
       const rest = parts.slice(2).join(path.sep);
       const featurePath = fileExistsWithExt(path.join(ROOT, 'features', module, category, rest));
       if (featurePath) return featurePath;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
-import AppUpdateScreen from '../../../src/app/(shared)/app-update';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
+import AppUpdateScreen from '../../../../src/features/infra/screens/AppUpdateScreen';
 
 import { openURL as mockOpenURL } from 'expo-linking';
 const mockBack = jest.fn();
@@ -28,7 +28,7 @@ jest.mock('expo-router', () => ({
 }));
 
 jest.mock('react-i18next', () => {
-  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
   return createReactI18nextMock('mn');
 });
 

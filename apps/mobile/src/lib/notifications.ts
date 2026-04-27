@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 
 import { mobileTheme } from '../design/theme';
+
 import { isNativeFirebaseAvailable } from './nativeFirebase';
 
 const { colors } = mobileTheme;

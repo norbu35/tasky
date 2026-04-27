@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { listRecentLocations } from '../api';
-import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
+import { useAuthStore } from '@/store/authStore';
+
+import { listRecentLocations } from '../api';
 
 export function useRecentLocations() {
   const session = useAuthStore((s) => s.session);

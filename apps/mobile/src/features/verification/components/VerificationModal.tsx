@@ -5,6 +5,7 @@ import { Alert, Image, Modal, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui';
 import { mobileTheme } from '@/design/tokenAdapter';
+
 import { useVerificationSubmit } from '../hooks/useVerificationSubmit';
 
 interface Props {

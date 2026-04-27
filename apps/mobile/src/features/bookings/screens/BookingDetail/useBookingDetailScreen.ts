@@ -1,5 +1,5 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 
@@ -8,36 +8,9 @@ import { useFlagNoShow } from '@/features/bookings/hooks/useFlagNoShow';
 import { useConversationRouteForBooking } from '@/features/chat';
 import { buildTaskerProfileRoute } from '@/features/profile/profileRouteParams';
 
-import { getCtaConfig, type CustomerBooking } from './model';
+import { getCtaConfig } from './model';
 
-export interface BookingDetailScreenState {
-  booking: CustomerBooking | undefined;
-  isLoading: boolean;
-  isError: boolean;
-  refetch: () => void;
-  status: string;
-  ctaConfig: { label: string; action: string } | null;
-  showCompletionSheet: boolean;
-  showCancelSheet: boolean;
-  showNoShowSheet: boolean;
-  showSupportSheet: boolean;
-  setShowCompletionSheet: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowCancelSheet: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowNoShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowSupportSheet: React.Dispatch<React.SetStateAction<boolean>>;
-  handleCtaPress: () => void;
-  handleTimeline: () => void;
-  handleReschedule: () => void;
-  handleLeaveReview: () => void;
-  handleReportIssue: () => void;
-  handleSupportPrimary: () => void;
-  handleFlagNoShow: () => void;
-  handleTaskerPress: () => void;
-  handleCancelConfirmed: () => void;
-  t: (key: string) => string;
-}
-
-export function useBookingDetailScreen(): BookingDetailScreenState {
+export function useBookingDetailScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
@@ -100,13 +73,15 @@ export function useBookingDetailScreen(): BookingDetailScreenState {
     }
   }, [booking, bookingId, conversationRoute, t, router]);
 
-  const handleTimeline = useCallback(() => {
-    router.push(`/(customer)/bookings/${bookingId}/timeline`);
-  }, [router, bookingId]);
+  const handleTimeline = useCallback(
+    () => router.push(`/(customer)/bookings/${bookingId}/timeline`),
+    [router, bookingId],
+  );
 
-  const handleReschedule = useCallback(() => {
-    router.push(`/(customer)/bookings/${bookingId}/reschedule`);
-  }, [router, bookingId]);
+  const handleReschedule = useCallback(
+    () => router.push(`/(customer)/bookings/${bookingId}/reschedule`),
+    [router, bookingId],
+  );
 
   const handleLeaveReview = useCallback(() => {
     router.push({

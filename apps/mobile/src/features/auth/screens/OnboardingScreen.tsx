@@ -15,8 +15,8 @@ import {
 import { ScreenContainer } from '@/components/shells';
 import { Button } from '@/components/ui/Button';
 import { Touchable } from '@/components/ui/Touchable';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 const { width } = Dimensions.get('window');
 const { colors, spacing } = mobileTheme;

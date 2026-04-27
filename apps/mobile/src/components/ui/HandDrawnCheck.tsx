@@ -1,7 +1,7 @@
 import { CheckCircle } from 'lucide-react-native';
 import React, { useEffect } from 'react';
-import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 import { springs } from '@/design/animations';

@@ -1,7 +1,8 @@
-import { getIntakeOptionLabel, type IntakeField, type IntakeFieldOption } from '@tasky/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
+
+import { getIntakeOptionLabel, type IntakeField, type IntakeFieldOption } from '@tasky/core';
 
 import { FormField } from '@/components/ui/FormField';
 import { Input } from '@/components/ui/Input';

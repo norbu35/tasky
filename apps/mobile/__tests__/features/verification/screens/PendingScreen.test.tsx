@@ -35,14 +35,16 @@ beforeEach(() => {
 
 describe('PendingScreen (SCR-TASK-007)', () => {
   it('renders the under review heading', () => {
-    const PendingScreen = require('../../../../src/app/(tasker)/verification/pending').default;
+    const PendingScreen =
+      require('../../../../src/features/verification/screens/PendingScreen').default;
     render(<PendingScreen />);
 
     expect(screen.getByText('tasker.verification.pendingTitle')).toBeTruthy();
   });
 
   it('renders pending description with SLA info', () => {
-    const PendingScreen = require('../../../../src/app/(tasker)/verification/pending').default;
+    const PendingScreen =
+      require('../../../../src/features/verification/screens/PendingScreen').default;
     render(<PendingScreen />);
 
     expect(screen.getByText('tasker.verification.pendingBody')).toBeTruthy();
@@ -50,7 +52,8 @@ describe('PendingScreen (SCR-TASK-007)', () => {
   });
 
   it('CTA navigates to browse tasks', () => {
-    const PendingScreen = require('../../../../src/app/(tasker)/verification/pending').default;
+    const PendingScreen =
+      require('../../../../src/features/verification/screens/PendingScreen').default;
     render(<PendingScreen />);
 
     fireEvent.press(screen.getByTestId('pending-screen-cta'));
@@ -58,14 +61,16 @@ describe('PendingScreen (SCR-TASK-007)', () => {
   });
 
   it('shows the verification progress indicator', () => {
-    const PendingScreen = require('../../../../src/app/(tasker)/verification/pending').default;
+    const PendingScreen =
+      require('../../../../src/features/verification/screens/PendingScreen').default;
     render(<PendingScreen />);
 
     expect(screen.getByTestId('pending-progress')).toBeTruthy();
   });
 
   it('renders with correct testID', () => {
-    const PendingScreen = require('../../../../src/app/(tasker)/verification/pending').default;
+    const PendingScreen =
+      require('../../../../src/features/verification/screens/PendingScreen').default;
     render(<PendingScreen />);
 
     expect(screen.getByTestId('SCR-TASK-007')).toBeTruthy();
