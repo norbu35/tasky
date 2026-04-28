@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **AuthTemplate.tsx** (1 connections) — `apps/mobile/src/components/templates/AuthTemplate.tsx`
-- **handleActionBarLayout()** (1 connections) — `apps/mobile/src/components/templates/AuthTemplate.tsx`
+- **StatusBadge.tsx** (1 connections) — `apps/mobile/src/components/ui/StatusBadge.tsx`
+- **StatusBadge()** (1 connections) — `apps/mobile/src/components/ui/StatusBadge.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/templates/AuthTemplate.tsx`
+- `apps/mobile/src/components/ui/StatusBadge.tsx`
 
 ## Audit Trail
 

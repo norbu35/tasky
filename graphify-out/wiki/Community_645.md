@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AppUpdateScreen.tsx** (0 connections) — `apps/mobile/src/features/infra/screens/AppUpdateScreen.tsx`
+- **eslint.config.mjs** (0 connections) — `apps/web/eslint.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/infra/screens/AppUpdateScreen.tsx`
+- `apps/web/eslint.config.mjs`
 
 ## Audit Trail
 

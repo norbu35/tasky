@@ -133,7 +133,7 @@ export default function TabsLayout() {
           }}
         />
       </Tabs>
-      {isCustomer && <FAB hidden={isLocked} />}
+      {isCustomer && <FAB hidden={isLocked || isChatDetail} />}
     </View>
   );
 }

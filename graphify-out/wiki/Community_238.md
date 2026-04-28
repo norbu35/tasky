@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ActionRow.tsx** (1 connections) — `apps/mobile/src/components/ui/ActionRow.tsx`
-- **ActionRow()** (1 connections) — `apps/mobile/src/components/ui/ActionRow.tsx`
+- **VerifiedBadge.tsx** (1 connections) — `apps/mobile/src/components/ui/VerifiedBadge.tsx`
+- **VerifiedBadge()** (1 connections) — `apps/mobile/src/components/ui/VerifiedBadge.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/ActionRow.tsx`
+- `apps/mobile/src/components/ui/VerifiedBadge.tsx`
 
 ## Audit Trail
 

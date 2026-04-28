@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CreateTaskRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/task/dto/CreateTaskRequest.java`
+- **ProfileResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/user/dto/ProfileResponse.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/dto/CreateTaskRequest.java`
+- `services/api/src/main/java/mn/tasky/user/dto/ProfileResponse.java`
 
 ## Audit Trail
 

@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **AccountRestrictedException** (2 connections) — `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
-- **AccountRestrictedException.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
-- **.AccountRestrictedException()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
+- **TaskAcceptResult.java** (2 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskAcceptResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskAcceptResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskAcceptResult.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
+- `services/api/src/main/java/mn/tasky/task/dto/TaskAcceptResult.java`
 
 ## Audit Trail
 

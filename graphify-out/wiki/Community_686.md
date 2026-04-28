@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **select.tsx** (0 connections) — `apps/web/src/components/ui/select.tsx`
+- **index.ts** (0 connections) — `apps/web/src/layout/parity/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/select.tsx`
+- `apps/web/src/layout/parity/index.ts`
 
 ## Audit Trail
 

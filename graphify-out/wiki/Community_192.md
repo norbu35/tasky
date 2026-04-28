@@ -1,12 +1,11 @@
 # Community 192
 
-> 3 nodes
+> 2 nodes
 
 ## Key Concepts
 
-- **TaskOutcomeClassificationTest** (2 connections) — `services/api/src/test/java/mn/tasky/task/dto/TaskOutcomeClassificationTest.java`
-- **TaskOutcomeClassificationTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/TaskOutcomeClassificationTest.java`
-- **.storesOutcomeBucketAndReportingEligibilityFlags()** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/TaskOutcomeClassificationTest.java`
+- **customer-journey.test.tsx** (1 connections) — `apps/mobile/__tests__/integration/customer-journey.test.tsx`
+- **render()** (1 connections) — `apps/mobile/__tests__/integration/customer-journey.test.tsx`
 
 ## Relationships
 
@@ -14,11 +13,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/task/dto/TaskOutcomeClassificationTest.java`
+- `apps/mobile/__tests__/integration/customer-journey.test.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 2 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

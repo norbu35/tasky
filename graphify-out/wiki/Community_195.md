@@ -1,12 +1,11 @@
 # Community 195
 
-> 3 nodes
+> 2 nodes
 
 ## Key Concepts
 
-- **tooling-audit-batch2.test.mjs** (2 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
-- **readRepo()** (1 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
-- **runPython()** (1 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
+- **nativeFirebase.test.ts** (1 connections) — `apps/mobile/__tests__/lib/nativeFirebase.test.ts`
+- **loadNativeFirebase()** (1 connections) — `apps/mobile/__tests__/lib/nativeFirebase.test.ts`
 
 ## Relationships
 
@@ -14,11 +13,11 @@
 
 ## Source Files
 
-- `tooling/tests/tooling-audit-batch2.test.mjs`
+- `apps/mobile/__tests__/lib/nativeFirebase.test.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 2 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.mjs** (0 connections) — `tooling/config/prettier/index.mjs`
+- **index.tsx** (0 connections) — `archive/mobile-future/tasker/credits/index.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/config/prettier/index.mjs`
+- `archive/mobile-future/tasker/credits/index.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ResponsiveWizardShell.tsx** (0 connections) — `apps/web/src/layout/parity/ResponsiveWizardShell.tsx`
+- **BookingConfirmationPage.tsx** (0 connections) — `apps/web/src/pages/BookingConfirmationPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/parity/ResponsiveWizardShell.tsx`
+- `apps/web/src/pages/BookingConfirmationPage.tsx`
 
 ## Audit Trail
 

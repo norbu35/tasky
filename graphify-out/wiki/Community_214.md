@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **permission-notifications.tsx** (1 connections) — `apps/mobile/src/app/(auth)/permission-notifications.tsx`
-- **PermissionNotificationsRoute()** (1 connections) — `apps/mobile/src/app/(auth)/permission-notifications.tsx`
+- **[taskId].tsx** (1 connections) — `apps/mobile/src/app/(tasker)/tasks/[taskId].tsx`
+- **TaskerTaskDetailRouteAlias()** (1 connections) — `apps/mobile/src/app/(tasker)/tasks/[taskId].tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(auth)/permission-notifications.tsx`
+- `apps/mobile/src/app/(tasker)/tasks/[taskId].tsx`
 
 ## Audit Trail
 

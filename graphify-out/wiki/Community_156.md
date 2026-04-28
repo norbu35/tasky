@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **BookingDetailScreen.test.tsx** (2 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
-- **hasAncestorTestID()** (1 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
-- **makeBooking()** (1 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
+- **profileRouteParams.ts** (2 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
+- **buildTaskerProfileRoute()** (1 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
+- **numberFromRouteParam()** (1 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
+- `apps/mobile/src/features/profile/profileRouteParams.ts`
 
 ## Audit Trail
 

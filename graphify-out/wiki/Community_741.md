@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **authz-guards.test.tsx** (0 connections) — `apps/web/tests/integration/authz-guards.test.tsx`
+- **vitest.config.ts** (0 connections) — `packages/core/vitest.config.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/tests/integration/authz-guards.test.tsx`
+- `packages/core/vitest.config.ts`
 
 ## Audit Trail
 

@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **StorageProvider** (6 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **StorageProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.generateUploadUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.generateDownloadUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.deleteObject()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **LlmProvider** (6 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **LlmProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.generate()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.classify()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.summarize()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
 
 ## Relationships
 
@@ -18,7 +18,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
 
 ## Audit Trail
 

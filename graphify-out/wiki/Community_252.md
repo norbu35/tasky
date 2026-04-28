@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **BookingSupportSheet.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/BookingSupportSheet.tsx`
-- **BookingSupportSheet()** (1 connections) — `apps/mobile/src/features/bookings/components/BookingSupportSheet.tsx`
+- **RebookScreen.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/RebookScreen.tsx`
+- **formatDateTime()** (1 connections) — `apps/mobile/src/features/bookings/screens/RebookScreen.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/components/BookingSupportSheet.tsx`
+- `apps/mobile/src/features/bookings/screens/RebookScreen.tsx`
 
 ## Audit Trail
 

@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **TaskApplicationAcceptanceOutcome.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
-- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
-- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
+- **RuntimeBoundaryTest** (4 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
+- **.canonicalPlaneMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
+- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
+- **RuntimeBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
+- **.runtimeConfigurationShellsExist()** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
 
 ## Relationships
 
@@ -16,11 +16,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
+- `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **vitest.config.ts** (0 connections) — `apps/web/vitest.config.ts`
+- **fixtures.ts** (0 connections) — `apps/web/e2e/support/fixtures.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/vitest.config.ts`
+- `apps/web/e2e/support/fixtures.ts`
 
 ## Audit Trail
 

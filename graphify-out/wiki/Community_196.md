@@ -1,12 +1,11 @@
 # Community 196
 
-> 3 nodes
+> 2 nodes
 
 ## Key Concepts
 
-- **otp.tsx** (2 connections) — `archive/mobile-future/auth/otp.tsx`
-- **resolveOtpState()** (1 connections) — `archive/mobile-future/auth/otp.tsx`
-- **cn()** (1 connections) — `archive/mobile-future/auth/otp.tsx`
+- **RoleProvider.test.tsx** (1 connections) — `apps/mobile/__tests__/providers/RoleProvider.test.tsx`
+- **RoleConsumer()** (1 connections) — `apps/mobile/__tests__/providers/RoleProvider.test.tsx`
 
 ## Relationships
 
@@ -14,11 +13,11 @@
 
 ## Source Files
 
-- `archive/mobile-future/auth/otp.tsx`
+- `apps/mobile/__tests__/providers/RoleProvider.test.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 2 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

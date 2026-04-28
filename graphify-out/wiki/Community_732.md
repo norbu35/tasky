@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **VerificationRejectedPage.tsx** (0 connections) — `apps/web/src/pages/tasker/VerificationRejectedPage.tsx`
+- **env-config.test.ts** (0 connections) — `apps/web/tests/env-config.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/tasker/VerificationRejectedPage.tsx`
+- `apps/web/tests/env-config.test.ts`
 
 ## Audit Trail
 

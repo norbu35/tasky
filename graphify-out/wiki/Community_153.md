@@ -1,13 +1,12 @@
 # Community 153
 
-> 4 nodes
+> 3 nodes
 
 ## Key Concepts
 
-- **pre-push-hook.test.mjs** (3 connections) — `tooling/tests/pre-push-hook.test.mjs`
-- **setupFakeBinaries()** (3 connections) — `tooling/tests/pre-push-hook.test.mjs`
-- **writeExecutable()** (2 connections) — `tooling/tests/pre-push-hook.test.mjs`
-- **runHook()** (2 connections) — `tooling/tests/pre-push-hook.test.mjs`
+- **TaskerJobDetail.Sections.tsx** (2 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
+- **DetailSection()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
+- **DetailRow()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
 
 ## Relationships
 
@@ -15,11 +14,11 @@
 
 ## Source Files
 
-- `tooling/tests/pre-push-hook.test.mjs`
+- `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

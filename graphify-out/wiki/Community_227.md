@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **\_layout.tsx** (1 connections) — `apps/mobile/src/app/task/_layout.tsx`
-- **TaskLayout()** (1 connections) — `apps/mobile/src/app/task/_layout.tsx`
+- **TabBarButton.tsx** (1 connections) — `apps/mobile/src/components/ui/TabBarButton.tsx`
+- **TabBarButton()** (1 connections) — `apps/mobile/src/components/ui/TabBarButton.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/task/_layout.tsx`
+- `apps/mobile/src/components/ui/TabBarButton.tsx`
 
 ## Audit Trail
 

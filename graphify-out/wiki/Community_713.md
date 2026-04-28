@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CustomerBookingConfirmedPage.tsx** (0 connections) — `apps/web/src/pages/customer/CustomerBookingConfirmedPage.tsx`
+- **NotificationsPage.tsx** (0 connections) — `apps/web/src/pages/shared/NotificationsPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/customer/CustomerBookingConfirmedPage.tsx`
+- `apps/web/src/pages/shared/NotificationsPage.tsx`
 
 ## Audit Trail
 

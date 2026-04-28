@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ModalSheetTemplate.test.tsx** (0 connections) — `apps/mobile/__tests__/components/templates/ModalSheetTemplate.test.tsx`
+- **VerifiedBadge.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/VerifiedBadge.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/templates/ModalSheetTemplate.test.tsx`
+- `apps/mobile/__tests__/components/ui/VerifiedBadge.test.tsx`
 
 ## Audit Trail
 

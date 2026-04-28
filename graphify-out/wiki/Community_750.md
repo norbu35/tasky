@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `packages/core/src/index.ts`
+- **semantic.ts** (0 connections) — `packages/design-tokens/src/core/semantic.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/core/src/index.ts`
+- `packages/design-tokens/src/core/semantic.ts`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerProfile.ReviewsSection.test.tsx** (0 connections) — `apps/mobile/__tests__/features/profile/screens/TaskerProfile.ReviewsSection.test.tsx`
+- **\_layout.tsx** (0 connections) — `apps/mobile/src/app/_layout.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/profile/screens/TaskerProfile.ReviewsSection.test.tsx`
+- `apps/mobile/src/app/_layout.tsx`
 
 ## Audit Trail
 

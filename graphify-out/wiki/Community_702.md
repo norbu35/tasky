@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **apiTypes.ts** (0 connections) — `apps/web/src/lib/apiTypes.ts`
+- **AdminModerationPage.test.tsx** (0 connections) — `apps/web/src/pages/admin/__tests__/AdminModerationPage.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/apiTypes.ts`
+- `apps/web/src/pages/admin/__tests__/AdminModerationPage.test.tsx`
 
 ## Audit Trail
 

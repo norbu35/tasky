@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **FAB.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/FAB.test.tsx`
+- **auth-flow.test.tsx** (0 connections) — `apps/mobile/__tests__/integration/auth-flow.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/FAB.test.tsx`
+- `apps/mobile/__tests__/integration/auth-flow.test.tsx`
 
 ## Audit Trail
 

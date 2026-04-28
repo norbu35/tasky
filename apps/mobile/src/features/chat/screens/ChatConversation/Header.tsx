@@ -6,45 +6,65 @@ import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
 import { Touchable } from '@/components/ui/Touchable';
 import { mobileTheme } from '@/design/tokenAdapter';
 
-const { colors } = mobileTheme;
+const { colors, radius, spacing } = mobileTheme;
 
 export function ChatHeader({
   counterpartyName,
   counterpartyAvatarUrl,
-  activityLabel,
-  isActive,
   onBack,
   t,
 }: {
   counterpartyName?: string;
   counterpartyAvatarUrl?: string;
-  activityLabel: string | null;
-  isActive: boolean;
   onBack: () => void;
   t: (key: string) => string;
 }) {
+  const title = counterpartyName ?? t('shared.inbox.chatTitle');
+
   return (
-    <View className="flex-row items-center justify-between pb-md px-lg bg-card">
+    <View
+      className="bg-card"
+      style={{
+        borderBottomWidth: 1,
+        borderBottomColor: colors.border,
+        paddingHorizontal: spacing.lg,
+        paddingTop: spacing.md,
+        paddingBottom: spacing.lg,
+      }}
+    >
       <Touchable
         onPress={onBack}
-        className="w-10 h-10 justify-center items-center"
+        className="absolute left-lg top-md w-11 h-11 justify-center items-center"
         testID="chat-back"
       >
-        <ChevronLeft size={24} color={colors.primary} />
+        <ChevronLeft size={28} color={colors.foreground} />
       </Touchable>
-      <View className="flex-1 items-center">
-        <Text className="text-subtitle font-bold text-foreground" numberOfLines={1}>
-          {counterpartyName ?? t('shared.inbox.chatTitle')}
+
+      <Touchable
+        testID="chat-details-button"
+        accessibilityLabel={t('shared.inbox.detailsAction')}
+        className="absolute right-lg top-md h-11 justify-center items-center"
+        style={{
+          minWidth: 96,
+          borderRadius: radius.full,
+          backgroundColor: colors.muted,
+          paddingHorizontal: spacing.lg,
+        }}
+      >
+        <Text className="text-body font-sans-semibold" style={{ color: colors.foreground }}>
+          {t('shared.inbox.detailsAction')}
         </Text>
-        {activityLabel && (
-          <View className="flex-row items-center gap-xs" style={{ marginTop: 2 }}>
-            {isActive && <View className="w-2 h-2 rounded-full bg-verified" />}
-            <Text className="text-micro text-muted-foreground">{activityLabel}</Text>
-          </View>
-        )}
-      </View>
-      <View className="w-10 items-end">
-        <ProfileAvatar uri={counterpartyAvatarUrl} name={counterpartyName ?? 'T'} size="sm" />
+      </Touchable>
+
+      <View className="items-center" style={{ paddingTop: spacing.xs }}>
+        <ProfileAvatar uri={counterpartyAvatarUrl} name={title} size="lg" />
+        <Text
+          className="mt-sm text-subtitle font-sans-semibold text-center"
+          numberOfLines={1}
+          style={{ color: colors.foreground, maxWidth: 240 }}
+        >
+          {title}
+        </Text>
       </View>
     </View>
   );

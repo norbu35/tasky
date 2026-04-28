@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ProfileResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/user/dto/ProfileResponse.java`
+- **react.d.ts** (0 connections) — `tooling/config/eslint/react.d.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/user/dto/ProfileResponse.java`
+- `tooling/config/eslint/react.d.ts`
 
 ## Audit Trail
 

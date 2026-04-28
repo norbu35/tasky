@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TaskDetailScreen.test.tsx** (1 connections) — `apps/mobile/__tests__/screens/tasker/TaskDetailScreen.test.tsx`
-- **constructor()** (1 connections) — `apps/mobile/__tests__/screens/tasker/TaskDetailScreen.test.tsx`
+- **permission-camera.tsx** (1 connections) — `apps/mobile/src/app/(auth)/permission-camera.tsx`
+- **PermissionCameraRoute()** (1 connections) — `apps/mobile/src/app/(auth)/permission-camera.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/tasker/TaskDetailScreen.test.tsx`
+- `apps/mobile/src/app/(auth)/permission-camera.tsx`
 
 ## Audit Trail
 

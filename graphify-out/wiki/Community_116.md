@@ -4,18 +4,18 @@
 
 ## Key Concepts
 
-- **NotificationList.model.ts** (3 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
-- **formatRelativeTimestamp()** (2 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
-- **isSameDay()** (1 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
-- **buildRows()** (1 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
+- **model.ts** (3 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
+- **buildFaqSections()** (2 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
+- **resolveState()** (1 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
+- **filterSections()** (1 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
 
 ## Relationships
 
-- [[Community 1]] (1 shared connections)
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
+- `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
 
 ## Audit Trail
 

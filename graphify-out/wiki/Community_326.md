@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useCategories.ts** (1 connections) — `packages/core/src/tasks/useCategories.ts`
-- **useCategoriesQuery()** (1 connections) — `packages/core/src/tasks/useCategories.ts`
+- **ConfirmBookingIntentRequest.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/ConfirmBookingIntentRequest.java`
+- **isLiabilityDisclaimerAccepted()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/ConfirmBookingIntentRequest.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `packages/core/src/tasks/useCategories.ts`
+- `services/api/src/main/java/mn/tasky/booking/dto/ConfirmBookingIntentRequest.java`
 
 ## Audit Trail
 

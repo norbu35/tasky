@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TermsOfServiceScreen.tsx** (0 connections) — `apps/mobile/src/features/legal/screens/TermsOfServiceScreen.tsx`
+- **appStore.ts** (0 connections) — `apps/mobile/src/store/appStore.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/legal/screens/TermsOfServiceScreen.tsx`
+- `apps/mobile/src/store/appStore.ts`
 
 ## Audit Trail
 

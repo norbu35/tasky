@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **BookingTimelineScreen.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingTimelineScreen.tsx`
+- **ScheduleFields.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingReschedule/ScheduleFields.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingTimelineScreen.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingReschedule/ScheduleFields.tsx`
 
 ## Audit Trail
 

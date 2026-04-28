@@ -4,33 +4,30 @@
 
 ## Key Concepts
 
-- **TaskCard()** (4 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
-- **BookingsTabScreen.tsx** (3 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
-- **getTaskVisual()** (3 connections) — `apps/mobile/src/features/tasks/components/CustomerTasksView.ts`
-- **mapStatus()** (3 connections) — `apps/mobile/src/utils/statusMapping.ts`
-- **mapBookingStatus()** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
-- **TaskCard.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
-- **formatMoney()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
-- **getBookingCardTestID()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
-- **CustomerTasksView.ts** (1 connections) — `apps/mobile/src/features/tasks/components/CustomerTasksView.ts`
-- **SkeletonCard()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
-- **statusMapping.ts** (1 connections) — `apps/mobile/src/utils/statusMapping.ts`
+- **audit_unclaimed_refs.py** (6 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
+- **scan_file()** (6 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
+- **collect_scan_files()** (3 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
+- **has_nearby_claim_block()** (3 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
+- **extract_candidates_from_line()** (3 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
+- **main()** (3 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
+- **Candidate** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
+- **Same file set as validate-doc-claims.py.** (1 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
+- **Check if there's a fenced claim block within window lines of the given line.** (1 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
+- **Extract candidate references and their kind guesses from a prose line. Retu** (1 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
+- **Scan a file for load-bearing references that lack a nearby claim block.** (1 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
 
 ## Relationships
 
-- [[Community 1]] (2 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
-- `apps/mobile/src/features/tasks/components/CustomerTasksView.ts`
-- `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
-- `apps/mobile/src/utils/statusMapping.ts`
+- `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (64%)
-- INFERRED: 8 (36%)
+- EXTRACTED: 30 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskReviewSubmit.SummarySections.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
-- **SectionCard()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
-- **icon()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
+- **TaskyApplication** (2 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
+- **TaskyApplication.java** (1 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
+- **.main()** (1 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
+- `services/api/src/main/java/mn/tasky/TaskyApplication.java`
 
 ## Audit Trail
 

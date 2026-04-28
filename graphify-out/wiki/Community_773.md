@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **UpdateFeatureToggleRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/admin/dto/UpdateFeatureToggleRequest.java`
+- **FacebookLoginRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/FacebookLoginRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/dto/UpdateFeatureToggleRequest.java`
+- `services/api/src/main/java/mn/tasky/auth/dto/FacebookLoginRequest.java`
 
 ## Audit Trail
 

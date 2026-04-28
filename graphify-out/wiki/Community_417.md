@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CustomerNoShowSheet.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/disputes/CustomerNoShowSheet.test.tsx`
+- **BannedAccount.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/BannedAccount.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/disputes/CustomerNoShowSheet.test.tsx`
+- `apps/mobile/__tests__/screens/shared/BannedAccount.test.tsx`
 
 ## Audit Trail
 

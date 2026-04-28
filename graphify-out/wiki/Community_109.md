@@ -4,23 +4,24 @@
 
 ## Key Concepts
 
-- **Card.tsx** (3 connections) — `apps/mobile/src/components/ui/Card.tsx`
-- **CardDescription()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
-- **CardContent()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
-- **CardFooter()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
+- **DisputeCreateScreen()** (3 connections) — `apps/mobile/src/features/disputes/screens/DisputeCreateScreen.tsx`
+- **useDisputeCreate()** (2 connections) — `apps/mobile/src/features/disputes/hooks/useDisputeCreate.ts`
+- **useDisputeCreate.ts** (1 connections) — `apps/mobile/src/features/disputes/hooks/useDisputeCreate.ts`
+- **DisputeCreateScreen.tsx** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeCreateScreen.tsx`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/Card.tsx`
+- `apps/mobile/src/features/disputes/hooks/useDisputeCreate.ts`
+- `apps/mobile/src/features/disputes/screens/DisputeCreateScreen.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 4 (57%)
+- INFERRED: 3 (43%)
 - AMBIGUOUS: 0 (0%)
 
 ---

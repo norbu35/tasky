@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskSchedule.PricingMode.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.PricingMode.tsx`
+- **ApplicantsSection.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/ApplicantsSection.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskSchedule.PricingMode.tsx`
+- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/ApplicantsSection.tsx`
 
 ## Audit Trail
 

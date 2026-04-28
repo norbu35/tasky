@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ResponsiveFeedShell.tsx** (0 connections) — `apps/web/src/layout/parity/ResponsiveFeedShell.tsx`
+- **index.ts** (0 connections) — `apps/web/src/pages/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/parity/ResponsiveFeedShell.tsx`
+- `apps/web/src/pages/index.ts`
 
 ## Audit Trail
 

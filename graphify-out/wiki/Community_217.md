@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **suspended.tsx** (1 connections) — `apps/mobile/src/app/(shared)/account/suspended.tsx`
-- **SuspendedAccountRoute()** (1 connections) — `apps/mobile/src/app/(shared)/account/suspended.tsx`
+- **index.tsx** (1 connections) — `apps/mobile/src/app/(tasker)/verification/index.tsx`
+- **VerificationIndexScreen()** (1 connections) — `apps/mobile/src/app/(tasker)/verification/index.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(shared)/account/suspended.tsx`
+- `apps/mobile/src/app/(tasker)/verification/index.tsx`
 
 ## Audit Trail
 

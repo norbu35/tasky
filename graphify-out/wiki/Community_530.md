@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/components/shells/index.ts`
+- **index.ts** (0 connections) — `apps/mobile/src/components/ui/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/shells/index.ts`
+- `apps/mobile/src/components/ui/index.ts`
 
 ## Audit Trail
 

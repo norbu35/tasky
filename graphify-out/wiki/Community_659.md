@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **tailwind.config.ts** (0 connections) — `apps/web/tailwind.config.ts`
+- **EmptyState.tsx** (0 connections) — `apps/web/src/components/feature/EmptyState.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/tailwind.config.ts`
+- `apps/web/src/components/feature/EmptyState.tsx`
 
 ## Audit Trail
 

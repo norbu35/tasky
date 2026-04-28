@@ -4,28 +4,27 @@
 
 ## Key Concepts
 
-- **BookingCommandPort** (12 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
-- **BookingCommandPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
-- **.cancelBooking()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
-- **.completeBooking()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
-- **.markBookingDone()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
-- **.requestReschedule()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
-- **.respondToReschedule()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
-- **.flagNoShow()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
-- **.rebook()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
+- **TrustQueryHandler** (8 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **TrustQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **.TrustQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **.listReviews()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **.listPendingDisputes()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **.getDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **.getDisputeForUser()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **.getDisputeEvidence()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **.hasOpenDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
 
 ## Relationships
 
-- [[Community 1]] (3 shared connections)
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
+- `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 20 (100%)
+- EXTRACTED: 16 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

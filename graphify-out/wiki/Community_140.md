@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **JsonSecurityResponseWriter** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
-- **JsonSecurityResponseWriter.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
-- **.JsonSecurityResponseWriter()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
-- **.write()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- **WorkflowBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
+- **.workflowAndAutomationPlaneMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
+- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
+- **WorkflowBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

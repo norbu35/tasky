@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **DesktopSidebar.tsx** (0 connections) — `apps/web/src/layout/DesktopSidebar.tsx`
+- **errorHandling.test.ts** (0 connections) — `apps/web/src/lib/errorHandling.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/DesktopSidebar.tsx`
+- `apps/web/src/lib/errorHandling.test.ts`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **EmptyState.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/EmptyState.tsx`
+- **index.ts** (0 connections) — `apps/mobile/src/features/credits/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingsList/EmptyState.tsx`
+- `apps/mobile/src/features/credits/index.ts`
 
 ## Audit Trail
 

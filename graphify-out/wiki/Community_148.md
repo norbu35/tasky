@@ -1,13 +1,12 @@
 # Community 148
 
-> 4 nodes
+> 3 nodes
 
 ## Key Concepts
 
-- **WorkflowBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
-- **.workflowAndAutomationPlaneMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
-- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
-- **WorkflowBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
+- **BookingDetailScreen.test.tsx** (2 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
+- **hasAncestorTestID()** (1 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
+- **makeBooking()** (1 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
 
 ## Relationships
 
@@ -15,11 +14,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
+- `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

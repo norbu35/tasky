@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskDetail.Summary.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
-- **getPublicCustomer()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
-- **getLocationText()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
+- **SettingsPage.tsx** (2 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
+- **SectionTitle()** (1 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
+- **ActionRow()** (1 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
+- `apps/web/src/pages/shared/SettingsPage.tsx`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TaskCategoryScreen.tsx** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
-- **getCategoryVisual()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
+- **formatLastActive.ts** (1 connections) — `apps/mobile/src/lib/formatLastActive.ts`
+- **formatLastActive()** (1 connections) — `apps/mobile/src/lib/formatLastActive.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
+- `apps/mobile/src/lib/formatLastActive.ts`
 
 ## Audit Trail
 

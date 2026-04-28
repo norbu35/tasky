@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **fixtures.ts** (0 connections) — `apps/web/e2e/support/fixtures.ts`
+- **dropdown-menu.tsx** (0 connections) — `apps/web/src/components/ui/dropdown-menu.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/e2e/support/fixtures.ts`
+- `apps/web/src/components/ui/dropdown-menu.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **nativewind-config.test.ts** (0 connections) — `apps/mobile/__tests__/design/nativewind-config.test.ts`
+- **PermissionScreens.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/auth/PermissionScreens.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/design/nativewind-config.test.ts`
+- `apps/mobile/__tests__/screens/auth/PermissionScreens.test.tsx`
 
 ## Audit Trail
 

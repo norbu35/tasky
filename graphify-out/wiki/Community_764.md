@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **eslint.config.mjs** (0 connections) — `packages/test-utils/eslint.config.mjs`
+- **StrikePolicyResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/admin/dto/StrikePolicyResponse.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/test-utils/eslint.config.mjs`
+- `services/api/src/main/java/mn/tasky/admin/dto/StrikePolicyResponse.java`
 
 ## Audit Trail
 

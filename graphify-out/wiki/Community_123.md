@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **MainApplication** (3 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
-- **MainApplication.kt** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
-- **.onCreate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
-- **.onConfigurationChanged()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- **ModerationPolicyDao** (3 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
+- **ModerationPolicyDao.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
+- **.findActive()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
+- **.update()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
 
 ## Audit Trail
 

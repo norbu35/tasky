@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **surfaces.ts** (0 connections) — `apps/mobile/src/design/surfaces.ts`
+- **CustomerNoShowSheet.tsx** (0 connections) — `apps/mobile/src/features/bookings/components/CustomerNoShowSheet.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/design/surfaces.ts`
+- `apps/mobile/src/features/bookings/components/CustomerNoShowSheet.tsx`
 
 ## Audit Trail
 

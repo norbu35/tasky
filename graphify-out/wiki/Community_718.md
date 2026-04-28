@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CustomerDisputeRaisePage.tsx** (0 connections) — `apps/web/src/pages/customer/CustomerDisputeRaisePage.tsx`
+- **TaskerStatsPage.tsx** (0 connections) — `apps/web/src/pages/tasker/TaskerStatsPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/customer/CustomerDisputeRaisePage.tsx`
+- `apps/web/src/pages/tasker/TaskerStatsPage.tsx`
 
 ## Audit Trail
 

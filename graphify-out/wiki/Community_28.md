@@ -1,6 +1,6 @@
 # Community 28
 
-> 43 nodes
+> 45 nodes
 
 ## Key Concepts
 
@@ -8,11 +8,11 @@
 - **useSharedValue()** (7 connections) — `packages/test-utils/src/mocks/reanimated.ts`
 - **useAnimatedStyle()** (7 connections) — `packages/test-utils/src/mocks/reanimated.ts`
 - **animations.ts** (5 connections) — `apps/mobile/src/design/animations.ts`
+- **useSafeAreaInsets()** (5 connections) — `packages/test-utils/src/mocks/safe-area-context.ts`
 - **FAB()** (4 connections) — `apps/mobile/src/components/ui/FAB.tsx`
 - **withInteractiveSpring()** (4 connections) — `apps/mobile/src/design/animations.ts`
 - **withSpring()** (4 connections) — `packages/test-utils/src/mocks/reanimated.ts`
 - **safe-area-context.ts** (4 connections) — `packages/test-utils/src/mocks/safe-area-context.ts`
-- **useSafeAreaInsets()** (4 connections) — `packages/test-utils/src/mocks/safe-area-context.ts`
 - **SkeletonCard()** (3 connections) — `apps/mobile/src/components/templates/FeedListTemplate.tsx`
 - **AnimatedCheckmark()** (3 connections) — `apps/mobile/src/components/templates/SuccessCelebrationTemplate.tsx`
 - **PressableCard()** (3 connections) — `apps/mobile/src/components/ui/PressableCard.tsx`
@@ -28,8 +28,8 @@
 - **toAnimationPreset()** (2 connections) — `apps/mobile/src/design/animations.ts`
 - **withFloatingSpring()** (2 connections) — `apps/mobile/src/design/animations.ts`
 - **withEmphasisSpring()** (2 connections) — `apps/mobile/src/design/animations.ts`
-- **InsetScrollView.tsx** (1 connections) — `apps/mobile/src/components/shells/InsetScrollView.tsx`
-- _... and 18 more nodes in this community_
+- **InputBar()** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/InputBar.tsx`
+- _... and 20 more nodes in this community_
 
 ## Relationships
 
@@ -47,13 +47,14 @@
 - `apps/mobile/src/components/ui/SkeletonLoader.tsx`
 - `apps/mobile/src/components/ui/SplitCard.tsx`
 - `apps/mobile/src/design/animations.ts`
+- `apps/mobile/src/features/chat/screens/ChatConversation/InputBar.tsx`
 - `packages/test-utils/src/mocks/reanimated.ts`
 - `packages/test-utils/src/mocks/safe-area-context.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 64 (62%)
-- INFERRED: 40 (38%)
+- EXTRACTED: 66 (61%)
+- INFERRED: 42 (39%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,25 +4,26 @@
 
 ## Key Concepts
 
-- **BookingOperationOutcome.java** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
-- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
-- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
-- **internalError()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
+- **DisputePublicCompositionService** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- **.disputeSummary()** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- **.disputeSummaryWithEvidence()** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- **DisputePublicCompositionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- **.DisputePublicCompositionService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- **.evidenceResponse()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
 
 ## Relationships
 
+- [[Community 0]] (2 shared connections)
 - [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
 
 ## Audit Trail
 
-- EXTRACTED: 11 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 14 (93%)
+- INFERRED: 1 (7%)
 - AMBIGUOUS: 0 (0%)
 
 ---

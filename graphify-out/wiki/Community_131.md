@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **DataRetentionScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
-- **DataRetentionScheduler.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
-- **.DataRetentionScheduler()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
-- **.processRetention()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
+- **LocaleConfig** (3 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
+- **LocaleConfig.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
+- **.localeResolver()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
+- **.messageSource()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
+- `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
 
 ## Audit Trail
 

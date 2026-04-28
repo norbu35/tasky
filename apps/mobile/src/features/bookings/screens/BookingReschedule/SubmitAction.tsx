@@ -66,7 +66,7 @@ export function SubmitButton({ isPending, submitError, onSubmit }: SubmitButtonP
   const { t } = useTranslation();
   return (
     <StickyActionBar>
-      <View className="pt-md pb-lg px-lg gap-sm">
+      <View className="pt-md pb-lg gap-sm">
         {submitError ? (
           <Text
             className="text-caption font-sans-semibold text-danger"

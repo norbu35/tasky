@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **dropdown-menu.tsx** (0 connections) — `apps/web/src/components/ui/dropdown-menu.tsx`
+- **dialog.tsx** (0 connections) — `apps/web/src/components/ui/dialog.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/dropdown-menu.tsx`
+- `apps/web/src/components/ui/dialog.tsx`
 
 ## Audit Trail
 

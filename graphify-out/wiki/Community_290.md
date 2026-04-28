@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **SearchBar.tsx** (1 connections) — `apps/mobile/src/features/help/screens/HelpCenter/SearchBar.tsx`
-- **HelpSearchBar()** (1 connections) — `apps/mobile/src/features/help/screens/HelpCenter/SearchBar.tsx`
+- **AppShell.tsx** (1 connections) — `apps/web/src/AppShell.tsx`
+- **AppShell()** (1 connections) — `apps/web/src/AppShell.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/help/screens/HelpCenter/SearchBar.tsx`
+- `apps/web/src/AppShell.tsx`
 
 ## Audit Trail
 

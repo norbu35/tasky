@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **States.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/States.tsx`
+- **index.ts** (0 connections) — `apps/mobile/src/features/help/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/CustomerTasks/States.tsx`
+- `apps/mobile/src/features/help/index.ts`
 
 ## Audit Trail
 

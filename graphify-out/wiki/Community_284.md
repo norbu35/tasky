@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useTaskIntakeScreen.ts** (1 connections) — `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
-- **useTaskIntakeScreen()** (1 connections) — `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
+- **TermsOfService.Content.tsx** (1 connections) — `apps/mobile/src/features/legal/screens/TermsOfService.Content.tsx`
+- **resolveState()** (1 connections) — `apps/mobile/src/features/legal/screens/TermsOfService.Content.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
+- `apps/mobile/src/features/legal/screens/TermsOfService.Content.tsx`
 
 ## Audit Trail
 

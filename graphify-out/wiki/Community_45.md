@@ -1,36 +1,33 @@
 # Community 45
 
-> 12 nodes
+> 11 nodes
 
 ## Key Concepts
 
-- **.taskDetail()** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
-- **AdminTaskCompositionService** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
-- **TaskDetailTests** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
-- **.taskDetail_returnsMappedResponse()** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
-- **.taskDetail_returnsEmptyWhenNotFound()** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
-- **.taskDetail_mapsAllFields()** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
-- **.toTaskDetailResponse()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
-- **AdminTaskCompositionServiceTests.java** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
-- **AdminTaskCompositionServiceTests** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
-- **AdminTaskCompositionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
-- **.AdminTaskCompositionService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
-- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
+- **MarketplaceQueryPort** (10 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **MarketplaceQueryPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.listTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.getTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.listMyTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.recentLocations()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.listTaskApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.countApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.buildPhotoAccessUrls()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.buildOwnedPhotoAccessUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.getDraft()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
 
 ## Relationships
 
-- [[Community 1]] (5 shared connections)
-- [[Community 0]] (3 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
-- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
+- `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
 
 ## Audit Trail
 
-- EXTRACTED: 20 (59%)
-- INFERRED: 14 (41%)
+- EXTRACTED: 20 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

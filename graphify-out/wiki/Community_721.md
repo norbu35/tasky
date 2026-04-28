@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **NotificationsPage.tsx** (0 connections) — `apps/web/src/pages/shared/NotificationsPage.tsx`
+- **VerificationConsentPage.tsx** (0 connections) — `apps/web/src/pages/tasker/VerificationConsentPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/NotificationsPage.tsx`
+- `apps/web/src/pages/tasker/VerificationConsentPage.tsx`
 
 ## Audit Trail
 

@@ -84,6 +84,15 @@ export default function OnboardingScreen() {
     handleFinish();
   };
 
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    router.replace('/(auth)');
+  };
+
   const handleFinish = () => {
     router.replace('/(auth)/role-select');
   };
@@ -159,7 +168,12 @@ export default function OnboardingScreen() {
         className="absolute z-10 flex-row items-center justify-between"
         style={{ top: spacing.lg, left: spacing.lg, right: spacing.lg }}
       >
-        <Touchable onPress={() => router.back()} hitSlop={12} accessibilityLabel={t('common.back')}>
+        <Touchable
+          testID="onboarding-back"
+          onPress={handleBack}
+          hitSlop={12}
+          accessibilityLabel={t('common.back')}
+        >
           <ArrowLeft size={24} color={colors.primaryDeep} />
         </Touchable>
         {isLastSlide ? (

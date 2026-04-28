@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **queryKeys.ts** (0 connections) — `apps/mobile/src/lib/queryKeys.ts`
+- **vitest.config.ts** (0 connections) — `apps/web/vitest.config.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/queryKeys.ts`
+- `apps/web/vitest.config.ts`
 
 ## Audit Trail
 

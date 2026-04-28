@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useTaskPhotoUpload.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useTaskPhotoUpload.ts`
-- **useTaskPhotoUpload()** (1 connections) — `apps/mobile/src/features/tasks/hooks/useTaskPhotoUpload.ts`
+- **SearchBar.tsx** (1 connections) — `apps/mobile/src/features/help/screens/HelpCenter/SearchBar.tsx`
+- **HelpSearchBar()** (1 connections) — `apps/mobile/src/features/help/screens/HelpCenter/SearchBar.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/hooks/useTaskPhotoUpload.ts`
+- `apps/mobile/src/features/help/screens/HelpCenter/SearchBar.tsx`
 
 ## Audit Trail
 

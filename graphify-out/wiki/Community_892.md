@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **base.d.ts** (0 connections) — `tooling/config/eslint/base.d.ts`
+- **subscription.tsx** (0 connections) — `archive/mobile-future/tasker/subscription.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/config/eslint/base.d.ts`
+- `archive/mobile-future/tasker/subscription.tsx`
 
 ## Audit Trail
 

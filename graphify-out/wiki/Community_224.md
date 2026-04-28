@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **index.tsx** (1 connections) — `apps/mobile/src/app/(tasker)/verification/index.tsx`
-- **VerificationIndexScreen()** (1 connections) — `apps/mobile/src/app/(tasker)/verification/index.tsx`
+- **AuthTemplate.tsx** (1 connections) — `apps/mobile/src/components/templates/AuthTemplate.tsx`
+- **handleActionBarLayout()** (1 connections) — `apps/mobile/src/components/templates/AuthTemplate.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tasker)/verification/index.tsx`
+- `apps/mobile/src/components/templates/AuthTemplate.tsx`
 
 ## Audit Trail
 

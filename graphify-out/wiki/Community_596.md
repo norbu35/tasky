@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerProfileScreen.tsx** (0 connections) — `apps/mobile/src/features/profile/screens/TaskerProfileScreen.tsx`
+- **TaskSchedule.PricingMode.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.PricingMode.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/screens/TaskerProfileScreen.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskSchedule.PricingMode.tsx`
 
 ## Audit Trail
 

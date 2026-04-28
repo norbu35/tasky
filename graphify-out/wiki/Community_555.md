@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **screenLayout.ts** (0 connections) — `apps/mobile/src/design/screenLayout.ts`
+- **ConfirmCompletionSheet.tsx** (0 connections) — `apps/mobile/src/features/bookings/components/ConfirmCompletionSheet.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/design/screenLayout.ts`
+- `apps/mobile/src/features/bookings/components/ConfirmCompletionSheet.tsx`
 
 ## Audit Trail
 

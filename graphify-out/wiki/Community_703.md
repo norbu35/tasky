@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **RestrictedAccountPage.tsx** (0 connections) — `apps/web/src/pages/RestrictedAccountPage.tsx`
+- **AdminConciergePage.test.tsx** (0 connections) — `apps/web/src/pages/admin/__tests__/AdminConciergePage.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/RestrictedAccountPage.tsx`
+- `apps/web/src/pages/admin/__tests__/AdminConciergePage.test.tsx`
 
 ## Audit Trail
 

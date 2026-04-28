@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **ReviewSubmissionOutcome.java** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
-- **internalError()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
+- **AutomationEventTypesTest** (3 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- **AutomationEventTypesTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- **.constantsHaveExpectedValues()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- **.privateConstructor()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
+- `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
 
 ## Audit Trail
 

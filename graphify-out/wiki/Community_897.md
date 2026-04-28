@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **design-contract-validator.test.mjs** (0 connections) — `tooling/tests/design-contract-validator.test.mjs`
+- **Split _text_ by commas at parenthesis depth 0.** (0 connections) — `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/tests/design-contract-validator.test.mjs`
+- `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Audit Trail
 

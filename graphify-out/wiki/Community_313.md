@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **CustomerTaskSuccessPage.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerTaskSuccessPage.tsx`
-- **CustomerTaskSuccessPage()** (1 connections) — `apps/web/src/pages/customer/CustomerTaskSuccessPage.tsx`
+- **ReviewHardLockPage.tsx** (1 connections) — `apps/web/src/pages/shared/ReviewHardLockPage.tsx`
+- **ReviewHardLockPage()** (1 connections) — `apps/web/src/pages/shared/ReviewHardLockPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/customer/CustomerTaskSuccessPage.tsx`
+- `apps/web/src/pages/shared/ReviewHardLockPage.tsx`
 
 ## Audit Trail
 

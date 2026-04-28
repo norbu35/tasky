@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PhotoGrid.tsx** (0 connections) — `apps/mobile/src/components/ui/PhotoGrid.tsx`
+- **screenLayout.ts** (0 connections) — `apps/mobile/src/design/screenLayout.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/PhotoGrid.tsx`
+- `apps/mobile/src/design/screenLayout.ts`
 
 ## Audit Trail
 

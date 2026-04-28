@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerNoShowSheet.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerNoShowSheet.test.tsx`
+- **UploadScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/verification/UploadScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/tasker/jobs/TaskerNoShowSheet.test.tsx`
+- `apps/mobile/__tests__/screens/tasker/verification/UploadScreen.test.tsx`
 
 ## Audit Trail
 

@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
 
@@ -39,15 +38,11 @@ export function Header() {
       <div className="flex items-center justify-between px-4 md:px-6 h-14 md:h-16">
         {/* Logo */}
         <div
-          className="flex items-center gap-2.5 cursor-pointer group"
+          className="flex cursor-pointer items-center"
           onClick={() => navigate('/')}
+          aria-label={t('nav.home')}
         >
-          <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-card group-hover:shadow-elevated transition-all">
-            <Shield className="w-icon-xs h-icon-xs" strokeWidth={3} />
-          </div>
-          <span className="text-xl font-extrabold font-display tracking-normal text-foreground">
-            Tasky
-          </span>
+          <img src="/logo.png" alt="" className="h-10 w-10 rounded-xl shadow-card" />
         </div>
 
         {/* Desktop nav links */}

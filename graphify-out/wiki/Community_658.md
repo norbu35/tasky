@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **vite.config.ts** (0 connections) — `apps/web/vite.config.ts`
+- **GlobalErrorFallback.tsx** (0 connections) — `apps/web/src/components/feature/GlobalErrorFallback.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/vite.config.ts`
+- `apps/web/src/components/feature/GlobalErrorFallback.tsx`
 
 ## Audit Trail
 

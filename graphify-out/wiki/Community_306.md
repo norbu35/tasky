@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **idempotency.ts** (1 connections) — `apps/web/src/lib/idempotency.ts`
-- **createIdempotencyKey()** (1 connections) — `apps/web/src/lib/idempotency.ts`
+- **CustomerTaskCancelDialog.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerTaskCancelDialog.tsx`
+- **CustomerTaskCancelDialog()** (1 connections) — `apps/web/src/pages/customer/CustomerTaskCancelDialog.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/idempotency.ts`
+- `apps/web/src/pages/customer/CustomerTaskCancelDialog.tsx`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useApplyToTask.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
-- **useApplyToTask()** (1 connections) — `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
+- **VerificationGate.tsx** (1 connections) — `apps/mobile/src/features/verification/components/VerificationGate.tsx`
+- **VerificationGate()** (1 connections) — `apps/mobile/src/features/verification/components/VerificationGate.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
+- `apps/mobile/src/features/verification/components/VerificationGate.tsx`
 
 ## Audit Trail
 

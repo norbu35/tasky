@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **NoApplicantRescue.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/NoApplicantRescue.test.tsx`
+- **ReviewSubmitScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/ReviewSubmitScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/NoApplicantRescue.test.tsx`
+- `apps/mobile/__tests__/screens/customer/ReviewSubmitScreen.test.tsx`
 
 ## Audit Trail
 

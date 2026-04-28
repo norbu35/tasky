@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **env-config.test.ts** (0 connections) — `apps/web/tests/env-config.test.ts`
+- **eslint.config.mjs** (0 connections) — `packages/core/eslint.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/tests/env-config.test.ts`
+- `packages/core/eslint.config.mjs`
 
 ## Audit Trail
 

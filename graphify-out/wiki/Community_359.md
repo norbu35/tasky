@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **nativewind-env.d.ts** (0 connections) — `apps/mobile/nativewind-env.d.ts`
+- **DetailTemplate.test.tsx** (0 connections) — `apps/mobile/__tests__/components/templates/DetailTemplate.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/nativewind-env.d.ts`
+- `apps/mobile/__tests__/components/templates/DetailTemplate.test.tsx`
 
 ## Audit Trail
 

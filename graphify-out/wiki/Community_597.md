@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/review/index.ts`
+- **TaskDetail.ApplicationForm.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.ApplicationForm.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/review/index.ts`
+- `apps/mobile/src/features/tasks/screens/TaskDetail.ApplicationForm.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CategoryState.java** (0 connections) — `services/api/src/main/java/mn/tasky/category/dto/CategoryState.java`
+- **ErrorResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/api/ErrorResponse.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/category/dto/CategoryState.java`
+- `services/api/src/main/java/mn/tasky/common/api/ErrorResponse.java`
 
 ## Audit Trail
 

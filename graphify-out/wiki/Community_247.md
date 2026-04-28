@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **tailwind-screen-typography.ts** (1 connections) — `apps/mobile/src/design/tailwind-screen-typography.ts`
-- **px()** (1 connections) — `apps/mobile/src/design/tailwind-screen-typography.ts`
+- **useAcceptApplication.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useAcceptApplication.ts`
+- **useAcceptApplication()** (1 connections) — `apps/mobile/src/features/bookings/hooks/useAcceptApplication.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/design/tailwind-screen-typography.ts`
+- `apps/mobile/src/features/bookings/hooks/useAcceptApplication.ts`
 
 ## Audit Trail
 

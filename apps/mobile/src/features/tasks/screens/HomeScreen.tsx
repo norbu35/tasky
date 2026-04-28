@@ -104,10 +104,10 @@ function TaskerBrowseScreen() {
 
   const renderItem = useCallback(
     (task: TaskFeedItem, index: number) => (
-      <View testID={`task-card-index-${index}`} style={{ opacity: isLocked ? 0.5 : 1 }}>
+      <View testID={`task-card-index-${index}`}>
         <TaskFeedCard
           task={task}
-          onPress={() => handleTaskPress(task)}
+          onPress={isLocked ? undefined : () => handleTaskPress(task)}
           testID={`task-card-${task.id}`}
         />
       </View>
@@ -135,6 +135,7 @@ function TaskerBrowseScreen() {
         onRetry={refetch}
         onEndReached={handleEndReached}
         isLoadingMore={isFetchingNextPage}
+        animateItems={false}
         ListHeaderComponent={
           <TaskFeedHeader
             activeFilterCount={activeFilterCount}

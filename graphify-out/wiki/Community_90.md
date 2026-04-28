@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **TaskDetailScreen.tsx** (4 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
-- **getTaskCustomerId()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
-- **getTaskPhotoUrls()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
-- **hasPublicCustomer()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
-- **noop()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
+- **VerificationConsentScreen.tsx** (4 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
+- **checkIfContentFits()** (3 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
+- **handleContentSizeChange()** (2 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
+- **handleLayout()** (2 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
+- **handleScroll()** (1 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
 
 ## Relationships
 
@@ -16,11 +16,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
+- `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 12 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -20,7 +20,7 @@ public class UserProfileCompositionService {
                 profile.fullName(),
                 profile.avatarUrl(),
                 profile.bio(),
-                profile.ratingAvg(),
+                profile.ratingAvg() != null ? profile.ratingAvg() : 0.0d,
                 profile.completedTasks(),
                 profile.isPro(),
                 profile.createdAt());

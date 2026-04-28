@@ -1,8 +1,8 @@
 # t()
 
-> God node · 52 connections · `apps/mobile/src/features/tasks/screens/ApplicantsSelection.ApplicantCard.tsx`
+> God node · 50 connections · `apps/mobile/src/features/tasks/screens/ApplicantsSelection.ApplicantCard.tsx`
 
-**Community:** [[Community 1]]
+**Community:** [[Community 0]]
 
 ## Connections by Relation
 

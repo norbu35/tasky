@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ChatDetailPage.tsx** (1 connections) — `apps/web/src/pages/shared/ChatDetailPage.tsx`
-- **ChatDetailPage()** (1 connections) — `apps/web/src/pages/shared/ChatDetailPage.tsx`
+- **check-package-structure.mjs** (1 connections) — `packages/design-tokens/scripts/check-package-structure.mjs`
+- **findFiles()** (1 connections) — `packages/design-tokens/scripts/check-package-structure.mjs`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/ChatDetailPage.tsx`
+- `packages/design-tokens/scripts/check-package-structure.mjs`
 
 ## Audit Trail
 

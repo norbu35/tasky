@@ -1,82 +1,109 @@
-import { Clock, FileText } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { CategoryChip } from '@/components/ui/CategoryChip';
-import { LocationPin } from '@/components/ui/LocationPin';
+import { ListItemCard } from '@/components/ui/ListItemCard';
 import { PriceTag } from '@/components/ui/PriceTag';
-import { SplitCard } from '@/components/ui/SplitCard';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { mobileTheme } from '@/design/tokenAdapter';
+import { getTaskVisual } from '@/features/tasks/components/CustomerTasksView';
 import type { TaskFeedItem } from '@/lib/api/types';
 import { formatShortDate } from '@/utils/formatDate';
 
 const { colors } = mobileTheme;
 
-function TaskCardHeader({ task }: { task: TaskFeedItem }) {
-  const { t } = useTranslation();
-  const isQuoteMode = task.pricing_mode === 'QUOTE' || task.budget == null;
+type FeedCategory = NonNullable<TaskFeedItem['category']>;
+
+function decodeDisplayLabel(value: string) {
+  return value
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
+function getCategoryLabel(category: FeedCategory, language?: string) {
+  const localizedName =
+    language?.startsWith('mn') && 'name_mn' in category ? category.name_mn : undefined;
+  return decodeDisplayLabel(localizedName || category.name);
+}
+
+function TaskFeedPill({ label }: { label: string }) {
   return (
-    <View className="flex-row items-center justify-between">
-      <View className="flex-row items-center flex-1 mr-sm gap-sm">
-        {task.category && <CategoryChip label={task.category.name} isActive />}
-        {isQuoteMode ? (
-          <View className="rounded-full bg-sun-light/15 px-sm py-xs">
-            <Text className="text-caption font-sans-bold text-sun-light">
-              {t('tasker.browse.quoteRequested')}
-            </Text>
-          </View>
-        ) : (
-          <PriceTag amount={task.budget} size="sm" />
-        )}
-      </View>
+    <View
+      className="self-start px-sm py-xs rounded-full shrink"
+      style={{ backgroundColor: `${colors.primary}14`, maxWidth: 148 }}
+    >
+      <Text className="text-caption font-sans-bold text-primary-deep" numberOfLines={1}>
+        {label}
+      </Text>
     </View>
   );
 }
 
-function TaskCardBody({ task }: { task: TaskFeedItem }) {
-  const { t } = useTranslation();
+function TaskCardBadge({ task }: { task: TaskFeedItem }) {
+  const { i18n, t } = useTranslation();
+  const isQuoteMode = task.pricing_mode === 'QUOTE' || task.budget == null;
   return (
-    <View className="gap-sm">
-      <Text className="text-body font-sans-medium text-foreground" numberOfLines={2}>
-        {task.description}
-      </Text>
-      <View className="flex-row flex-wrap items-center gap-sm mt-xs">
-        {task.approximate_location && <LocationPin text={task.approximate_location} compact />}
-        {task.scheduled_at && (
-          <View className="flex-row items-center gap-xs">
-            <Clock size={16} color={colors.textSecondary} />
-            <Text className="text-caption text-text-secondary">
-              {formatShortDate(task.scheduled_at)}
-            </Text>
-          </View>
-        )}
-        {task.created_at ? (
-          <View className="flex-row items-center gap-xs">
-            <FileText size={16} color={colors.textSecondary} />
-            <Text className="text-caption text-text-secondary">
-              {t('tasker.browse.postedAt', { date: formatShortDate(task.created_at) })}
-            </Text>
-          </View>
-        ) : null}
-      </View>
+    <View className="flex-row flex-wrap items-start gap-xs">
+      {task.category && <TaskFeedPill label={getCategoryLabel(task.category, i18n.language)} />}
+      {isQuoteMode ? (
+        <View
+          className="self-start px-sm py-xs rounded-full shrink"
+          style={{ backgroundColor: `${colors.accent}18`, maxWidth: 172 }}
+        >
+          <Text className="text-caption font-sans-bold text-accent" numberOfLines={1}>
+            {t('tasker.browse.quoteRequested')}
+          </Text>
+        </View>
+      ) : (
+        <StatusBadge status="open" />
+      )}
     </View>
   );
+}
+
+function getTaskSubtitle(task: TaskFeedItem, postedAtLabel?: string | null) {
+  const parts = [
+    task.approximate_location,
+    task.scheduled_at ? formatShortDate(task.scheduled_at) : null,
+    postedAtLabel,
+  ].filter((part): part is string => Boolean(part));
+  return parts.join(' · ');
 }
 
 interface TaskFeedCardProps {
   task: TaskFeedItem;
-  onPress: () => void;
+  onPress?: () => void;
   testID: string;
 }
 
 export function TaskFeedCard({ task, onPress, testID }: TaskFeedCardProps) {
+  const { t } = useTranslation();
+  const visual = getTaskVisual(task.category?.name, t);
+  const Icon = visual.Icon;
+  const isQuoteMode = task.pricing_mode === 'QUOTE' || task.budget == null;
+  const postedAtLabel = task.created_at
+    ? t('tasker.browse.postedAt', { date: formatShortDate(task.created_at) })
+    : null;
+
   return (
-    <SplitCard
-      headerContent={<TaskCardHeader task={task} />}
-      bodyContent={<TaskCardBody task={task} />}
-      onPress={onPress}
+    <ListItemCard
       testID={testID}
+      onPress={onPress}
+      icon={
+        <View
+          className="w-12 h-12 rounded-md items-center justify-center"
+          style={{ backgroundColor: visual.tone }}
+        >
+          <Icon color={visual.tint} size={24} />
+        </View>
+      }
+      badge={<TaskCardBadge task={task} />}
+      title={decodeDisplayLabel(task.description)}
+      subtitle={getTaskSubtitle(task, postedAtLabel)}
+      trailing={isQuoteMode ? null : <PriceTag amount={task.budget} size="sm" />}
     />
   );
 }

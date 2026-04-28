@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **RoleProvider.test.tsx** (1 connections) — `apps/mobile/__tests__/providers/RoleProvider.test.tsx`
-- **RoleConsumer()** (1 connections) — `apps/mobile/__tests__/providers/RoleProvider.test.tsx`
+- **create.tsx** (1 connections) — `apps/mobile/src/app/create.tsx`
+- **CreateTaskScreen()** (1 connections) — `apps/mobile/src/app/create.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/providers/RoleProvider.test.tsx`
+- `apps/mobile/src/app/create.tsx`
 
 ## Audit Trail
 

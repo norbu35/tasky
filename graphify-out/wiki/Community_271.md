@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TaskerProfile.ReviewsSection.tsx** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
-- **cn()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
+- **useSubmitReview.ts** (1 connections) — `apps/mobile/src/features/review/hooks/useSubmitReview.ts`
+- **useSubmitReview()** (1 connections) — `apps/mobile/src/features/review/hooks/useSubmitReview.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
+- `apps/mobile/src/features/review/hooks/useSubmitReview.ts`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **nativeGoogleMapsConfig.test.ts** (0 connections) — `apps/mobile/__tests__/nativeGoogleMapsConfig.test.ts`
+- **RatingStars.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/RatingStars.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/nativeGoogleMapsConfig.test.ts`
+- `apps/mobile/__tests__/components/ui/RatingStars.test.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **VerificationRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/VerificationRequest.java`
+- **RescheduleRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RescheduleRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/dto/VerificationRequest.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/RescheduleRequest.java`
 
 ## Audit Trail
 

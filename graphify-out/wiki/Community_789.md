@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerBadge.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/TaskerBadge.java`
+- **BookingScheduleEvent.java** (0 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingScheduleEvent.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/dto/TaskerBadge.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/BookingScheduleEvent.java`
 
 ## Audit Trail
 

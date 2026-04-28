@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskerCancelSheet.test.tsx** (2 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
-- **t()** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
-- **isPending()** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
+- **PostingGuidance.tsx** (2 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
+- **PostingGuidanceCard()** (1 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
+- **PostingProofChecklist()** (1 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
+- `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
 
 ## Audit Trail
 

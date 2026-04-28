@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **BackendArchitectureTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
-- **BackendArchitectureTest** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
+- **doc-references-validator.test.mjs** (1 connections) — `tooling/tests/doc-references-validator.test.mjs`
+- **runPython()** (1 connections) — `tooling/tests/doc-references-validator.test.mjs`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
+- `tooling/tests/doc-references-validator.test.mjs`
 
 ## Audit Trail
 

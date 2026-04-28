@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ScreenContainer.tsx** (0 connections) — `apps/mobile/src/components/shells/ScreenContainer.tsx`
+- **ScreenHeader.tsx** (0 connections) — `apps/mobile/src/components/ui/ScreenHeader.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/shells/ScreenContainer.tsx`
+- `apps/mobile/src/components/ui/ScreenHeader.tsx`
 
 ## Audit Trail
 

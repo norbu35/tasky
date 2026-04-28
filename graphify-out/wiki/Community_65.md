@@ -4,26 +4,26 @@
 
 ## Key Concepts
 
-- **PaymentProvider** (6 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **PaymentProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.createIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.isValidSignature()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.resolvePaymentIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **AdminPayoutProcessingOutcome.java** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **invalidWeekday()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **featureDeferred()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **badRequest()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 12 (92%)
+- INFERRED: 1 (8%)
 - AMBIGUOUS: 0 (0%)
 
 ---

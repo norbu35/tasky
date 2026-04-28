@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **appStore.ts** (0 connections) — `apps/mobile/src/store/appStore.ts`
+- **tailwind.config.ts** (0 connections) — `apps/web/tailwind.config.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/store/appStore.ts`
+- `apps/web/tailwind.config.ts`
 
 ## Audit Trail
 

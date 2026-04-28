@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **OutboxEventTypes** (2 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
-- **OutboxEventTypes.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
-- **.OutboxEventTypes()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
+- **TaskSelectResult.java** (2 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskSelectResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskSelectResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskSelectResult.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
+- `services/api/src/main/java/mn/tasky/task/dto/TaskSelectResult.java`
 
 ## Audit Trail
 

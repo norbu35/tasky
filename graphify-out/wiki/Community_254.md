@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useAcceptApplication.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useAcceptApplication.ts`
-- **useAcceptApplication()** (1 connections) — `apps/mobile/src/features/bookings/hooks/useAcceptApplication.ts`
+- **TaskerJobDetail.Actions.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Actions.tsx`
+- **TaskerJobDetailActions()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Actions.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/hooks/useAcceptApplication.ts`
+- `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Actions.tsx`
 
 ## Audit Trail
 

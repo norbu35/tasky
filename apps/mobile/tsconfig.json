@@ -3,6 +3,7 @@
   "compilerOptions": {
     "paths": {
       "@tasky/core": ["../../packages/core/src/index.ts"],
+      "@assets/*": ["./assets/*"],
       "@/*": ["./src/*"]
     },
     "types": ["jest", "node"],

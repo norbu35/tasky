@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReviewForm.SubmitSection.tsx** (1 connections) — `apps/mobile/src/features/review/components/ReviewForm.SubmitSection.tsx`
-- **SuccessOverlay()** (1 connections) — `apps/mobile/src/features/review/components/ReviewForm.SubmitSection.tsx`
+- **useApplyToTask.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
+- **useApplyToTask()** (1 connections) — `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/review/components/ReviewForm.SubmitSection.tsx`
+- `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
 
 ## Audit Trail
 

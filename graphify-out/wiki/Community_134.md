@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **RebookResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
-- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
+- **DisputeResolutionResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
+- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
 
 ## Audit Trail
 

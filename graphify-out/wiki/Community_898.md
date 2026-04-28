@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **escrow.tsx** (0 connections) — `archive/mobile-future/customer/bookings/[bookingId]/escrow.tsx`
+- **Return the column name from a column definition, or _None_ for standalone ta** (0 connections) — `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `archive/mobile-future/customer/bookings/[bookingId]/escrow.tsx`
+- `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Audit Trail
 

@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **adminApiClient.test.ts** (4 connections) — `apps/web/src/lib/adminApiClient.test.ts`
-- **mockOkResponse()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
-- **mockErrorResponse()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
-- **lastFetchCall()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
-- **setupClient()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
+- **BookingSafetyPage.tsx** (4 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
+- **closeDialog()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
+- **invalidateBookings()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
+- **handleRebook()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
+- **openDialog()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/adminApiClient.test.ts`
+- `apps/web/src/pages/BookingSafetyPage.tsx`
 
 ## Audit Trail
 

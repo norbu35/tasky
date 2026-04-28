@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **IntakeFormRenderer.test.tsx** (0 connections) — `apps/web/src/components/feature/task-creation/__tests__/IntakeFormRenderer.test.tsx`
+- **tabs.tsx** (0 connections) — `apps/web/src/components/ui/tabs.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/feature/task-creation/__tests__/IntakeFormRenderer.test.tsx`
+- `apps/web/src/components/ui/tabs.tsx`
 
 ## Audit Trail
 

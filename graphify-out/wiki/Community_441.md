@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerStatsScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerStatsScreen.test.tsx`
+- **VerificationIndex.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/verification/VerificationIndex.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/tasker/jobs/TaskerStatsScreen.test.tsx`
+- `apps/mobile/__tests__/screens/tasker/verification/VerificationIndex.test.tsx`
 
 ## Audit Trail
 

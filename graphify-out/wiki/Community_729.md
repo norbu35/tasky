@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **VerificationConsentPage.tsx** (0 connections) — `apps/web/src/pages/tasker/VerificationConsentPage.tsx`
+- **TaskerJobsPage.tsx** (0 connections) — `apps/web/src/pages/tasker/TaskerJobsPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/tasker/VerificationConsentPage.tsx`
+- `apps/web/src/pages/tasker/TaskerJobsPage.tsx`
 
 ## Audit Trail
 

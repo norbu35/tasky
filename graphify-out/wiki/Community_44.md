@@ -1,34 +1,36 @@
 # Community 44
 
-> 12 nodes
+> 11 nodes
 
 ## Key Concepts
 
-- **MarketplaceQueryHandler** (11 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
-- **MarketplaceQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
-- **.MarketplaceQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
-- **.listTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
-- **.getTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
-- **.listMyTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
-- **.recentLocations()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
-- **.listTaskApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
-- **.countApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
-- **.buildPhotoAccessUrls()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
-- **.buildOwnedPhotoAccessUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
-- **.getDraft()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **TaskCard()** (4 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
+- **BookingsTabScreen.tsx** (3 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
+- **getTaskVisual()** (3 connections) — `apps/mobile/src/features/tasks/components/CustomerTasksView.ts`
+- **mapStatus()** (3 connections) — `apps/mobile/src/utils/statusMapping.ts`
+- **mapBookingStatus()** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
+- **TaskCard.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
+- **formatMoney()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
+- **getBookingCardTestID()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
+- **CustomerTasksView.ts** (1 connections) — `apps/mobile/src/features/tasks/components/CustomerTasksView.ts`
+- **SkeletonCard()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
+- **statusMapping.ts** (1 connections) — `apps/mobile/src/utils/statusMapping.ts`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 0]] (2 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
+- `apps/mobile/src/features/tasks/components/CustomerTasksView.ts`
+- `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
+- `apps/mobile/src/utils/statusMapping.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 22 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 14 (64%)
+- INFERRED: 8 (36%)
 - AMBIGUOUS: 0 (0%)
 
 ---

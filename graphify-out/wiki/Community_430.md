@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ChatDetail.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/ChatDetail.test.tsx`
+- **ApplicationSent.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/ApplicationSent.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/shared/ChatDetail.test.tsx`
+- `apps/mobile/__tests__/screens/tasker/ApplicationSent.test.tsx`
 
 ## Audit Trail
 

@@ -4,22 +4,22 @@
 
 ## Key Concepts
 
-- **PostingGuidance.tsx** (2 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
-- **PostingGuidanceCard()** (1 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
-- **PostingProofChecklist()** (1 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
+- **disputeStatusVariant()** (3 connections) — `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
+- **AdminDisputeDetailPage.tsx** (2 connections) — `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
+- **getDisputeStatusLabelKey()** (2 connections) — `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
+- `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 6 (86%)
+- INFERRED: 1 (14%)
 - AMBIGUOUS: 0 (0%)
 
 ---

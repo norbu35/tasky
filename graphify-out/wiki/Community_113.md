@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **useBookings()** (2 connections) — `apps/mobile/src/features/bookings/hooks/useBookings.ts`
-- **useBookingsListScreen()** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
-- **useBookings.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useBookings.ts`
-- **useBookingsListScreen.ts** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
+- **TaskerStatsScreen.tsx** (3 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- **readNumber()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- **formatPercent()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- **formatRating()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
 
 ## Relationships
 
@@ -15,13 +15,12 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/hooks/useBookings.ts`
-- `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
+- `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (67%)
-- INFERRED: 2 (33%)
+- EXTRACTED: 6 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

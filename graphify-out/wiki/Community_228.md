@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **applicants.tsx** (1 connections) — `apps/mobile/src/app/task/[id]/applicants.tsx`
-- **ApplicantsRoute()** (1 connections) — `apps/mobile/src/app/task/[id]/applicants.tsx`
+- **RatingStars.tsx** (1 connections) — `apps/mobile/src/components/ui/RatingStars.tsx`
+- **RatingStars()** (1 connections) — `apps/mobile/src/components/ui/RatingStars.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/task/[id]/applicants.tsx`
+- `apps/mobile/src/components/ui/RatingStars.tsx`
 
 ## Audit Trail
 

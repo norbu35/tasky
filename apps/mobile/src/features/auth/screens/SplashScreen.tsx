@@ -1,15 +1,15 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { Redirect } from 'expo-router';
-import { CircleCheckBig } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Text, View } from 'react-native';
 
 import { mobileSurfaces } from '@/design/surfaces';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { useAppStore } from '@/store/appStore';
 import { useAuthStore } from '@/store/authStore';
 import { resolvePostAuthHref } from '@/utils/authRouting';
+import taskyLogo from '@assets/logo.png';
 
 const { colors, spacing, typography, typographyVariants } = mobileTheme;
 const { splash } = mobileSurfaces;
@@ -28,33 +28,18 @@ export default function SplashScreen() {
     >
       <Redirect href={nextHref} />
       <View style={{ alignItems: 'center', paddingHorizontal: spacing['2xl'] }}>
-        <View
+        <Image
+          source={taskyLogo}
+          testID="tasky-logo"
+          resizeMode="contain"
+          accessibilityIgnoresInvertColors
           style={{
-            width: splash.markBox,
-            height: splash.markBox,
-            borderRadius: splash.markRadius,
-            borderWidth: 1,
-            borderColor: splash.markBorder,
-            backgroundColor: splash.markSurface,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: spacing.lg,
+            width: 168,
+            height: 168,
+            borderRadius: 36,
+            marginBottom: spacing['2xl'],
           }}
-        >
-          <CircleCheckBig size={splash.markIcon} color={colors.primaryForeground} />
-        </View>
-        <Text
-          style={{
-            fontSize: splash.brandSize,
-            fontWeight: typographyVariants.heroTitle.fontWeight,
-            color: colors.primaryForeground,
-            fontFamily: 'Manrope_700Bold',
-            marginBottom: spacing.sm,
-            letterSpacing: typographyVariants.heroTitle.letterSpacing,
-          }}
-        >
-          Tasky
-        </Text>
+        />
         <View style={{ alignItems: 'center' }}>
           <Text
             style={{

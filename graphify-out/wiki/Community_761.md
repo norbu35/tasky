@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **eslint.config.mjs** (0 connections) — `packages/sdk/eslint.config.mjs`
+- **ConciergeAssignRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/admin/dto/ConciergeAssignRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/sdk/eslint.config.mjs`
+- `services/api/src/main/java/mn/tasky/admin/dto/ConciergeAssignRequest.java`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AdminUsersPage.test.tsx** (0 connections) — `apps/web/src/pages/admin/__tests__/AdminUsersPage.test.tsx`
+- **DeleteAccountPage.tsx** (0 connections) — `apps/web/src/pages/shared/DeleteAccountPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/admin/__tests__/AdminUsersPage.test.tsx`
+- `apps/web/src/pages/shared/DeleteAccountPage.tsx`
 
 ## Audit Trail
 

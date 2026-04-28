@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ReviewForm.tsx** (0 connections) — `apps/mobile/src/features/review/components/ReviewForm.tsx`
+- **ApplicantsSelectionScreen.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/ApplicantsSelectionScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/review/components/ReviewForm.tsx`
+- `apps/mobile/src/features/tasks/screens/ApplicantsSelectionScreen.tsx`
 
 ## Audit Trail
 

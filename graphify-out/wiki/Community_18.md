@@ -1,67 +1,64 @@
 # Community 18
 
-> 72 nodes
+> 84 nodes
 
 ## Key Concepts
 
-- **useBookingRescheduleScreen()** (6 connections) — `apps/mobile/src/features/bookings/screens/BookingReschedule/useBookingRescheduleScreen.ts`
-- **model.ts** (6 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/model.ts`
-- **useChatConversationScreen()** (6 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/useChatConversationScreen.ts`
-- **useBookingDetail()** (5 connections) — `apps/mobile/src/features/bookings/hooks/useBookingDetail.ts`
-- **getCtaConfig()** (5 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/model.ts`
-- **useBookingDetailScreen()** (5 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/useBookingDetailScreen.ts`
-- **useConversationRouteForBooking()** (5 connections) — `apps/mobile/src/features/chat/hooks/useConversationRouteForBooking.ts`
-- **useProfile.ts** (5 connections) — `apps/mobile/src/features/profile/hooks/useProfile.ts`
-- **useMyProfile()** (5 connections) — `apps/mobile/src/features/profile/hooks/useProfile.ts`
-- **useTasks.test.tsx** (4 connections) — `apps/mobile/__tests__/hooks/useTasks.test.tsx`
-- **useConversations()** (4 connections) — `apps/mobile/src/features/chat/hooks/useConversations.ts`
-- **useCustomerTaskDetail()** (4 connections) — `apps/mobile/src/features/tasks/hooks/useCustomerTaskDetail.ts`
-- **useCustomerTaskDetailScreen()** (4 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/useCustomerTaskDetailScreen.ts`
-- **useRouteGuard()** (4 connections) — `apps/mobile/src/hooks/useRouteGuard.ts`
-- **formatDate.ts** (4 connections) — `apps/mobile/src/utils/formatDate.ts`
-- **formatDate()** (4 connections) — `apps/mobile/src/utils/formatDate.ts`
-- **useBookingTimelineScreen()** (3 connections) — `apps/mobile/src/features/bookings/screens/useBookingTimelineScreen.ts`
-- **useBookingConfirmedScreen()** (3 connections) — `apps/mobile/src/features/bookings/screens/useBookingConfirmedScreen.ts`
-- **useMyUserId()** (3 connections) — `apps/mobile/src/features/profile/hooks/useProfile.ts`
-- **useApplications()** (3 connections) — `apps/mobile/src/features/tasks/hooks/useApplications.ts`
-- **useTaskDetail()** (3 connections) — `apps/mobile/src/features/tasks/hooks/useTasks.ts`
-- **useApplicantsSelectionScreen()** (3 connections) — `apps/mobile/src/features/tasks/screens/useApplicantsSelectionScreen.ts`
-- **formatDateTime()** (3 connections) — `apps/mobile/src/utils/formatDate.ts`
-- **GuardConsumer()** (2 connections) — `apps/mobile/__tests__/hooks/useRouteGuard.test.tsx`
-- **UseTasksHarness()** (2 connections) — `apps/mobile/__tests__/hooks/useTasks.test.tsx`
-- _... and 47 more nodes in this community_
+- **.disputeDetail_fullResponse()** (12 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- **DisputeDetail** (11 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionServiceTests.java`
+- **.disputeDetail_noConversation()** (10 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- **.findFlaggedMessages()** (9 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
+- **.listFlagged()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
+- **MessagingPublicCompositionService** (8 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/MessagingPublicCompositionService.java`
+- **MessagingQueryHandlerTest** (8 connections) — `services/api/src/test/java/mn/tasky/messaging/application/query/MessagingQueryHandlerTest.java`
+- **.listEnrichedConversations()** (7 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
+- **AdminDisputeCompositionServiceTests** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- **ListFlaggedTests** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.message()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/MessagingPublicCompositionServiceTests.java`
+- **ListConversations** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/MessagingPublicCompositionServiceTests.java`
+- **ListMessages** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/MessagingPublicCompositionServiceTests.java`
+- **MessagingQueryPort** (6 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
+- **.findConversationByTaskAndParticipants()** (6 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
+- **AdminMessageCompositionService** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
+- **.toTaskApplicationResponse()** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionService.java`
+- **KernelErrorTest** (5 connections) — `services/api/src/test/java/mn/tasky/kernel/error/KernelErrorTest.java`
+- **DisputeDetailTests** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- **.buildDispute()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- **.listFlagged_returnsPage()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.listFlagged_hasMore()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.listFlagged_withCursor()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.listMessagesForConversation()** (4 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
+- **.recordAccessorsReturnConstructorValues()** (4 connections) — `services/api/src/test/java/mn/tasky/kernel/error/KernelErrorTest.java`
+- _... and 59 more nodes in this community_
 
 ## Relationships
 
-- [[Community 1]] (4 shared connections)
+- [[Community 0]] (35 shared connections)
+- [[Community 1]] (9 shared connections)
+- [[Community 5]] (5 shared connections)
+- [[Community 4]] (3 shared connections)
+- [[Community 10]] (2 shared connections)
+- [[Community 6]] (2 shared connections)
+- [[Community 11]] (1 shared connections)
+- [[Community 20]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/__tests__/hooks/useRouteGuard.test.tsx`
-- `apps/mobile/__tests__/hooks/useTasks.test.tsx`
-- `apps/mobile/src/features/bookings/hooks/useBookingDetail.ts`
-- `apps/mobile/src/features/bookings/hooks/useBookingTimeline.ts`
-- `apps/mobile/src/features/bookings/hooks/useFlagNoShow.ts`
-- `apps/mobile/src/features/bookings/hooks/useReschedule.ts`
-- `apps/mobile/src/features/bookings/screens/BookingDetail/model.ts`
-- `apps/mobile/src/features/bookings/screens/BookingDetail/useBookingDetailScreen.ts`
-- `apps/mobile/src/features/bookings/screens/BookingReschedule/Screen.tsx`
-- `apps/mobile/src/features/bookings/screens/BookingReschedule/useBookingRescheduleScreen.ts`
-- `apps/mobile/src/features/bookings/screens/useBookingConfirmedScreen.ts`
-- `apps/mobile/src/features/bookings/screens/useBookingTimelineScreen.ts`
-- `apps/mobile/src/features/chat/hooks/useConversationRouteForBooking.ts`
-- `apps/mobile/src/features/chat/hooks/useConversations.ts`
-- `apps/mobile/src/features/chat/hooks/useMessages.ts`
-- `apps/mobile/src/features/chat/hooks/useSendMessage.ts`
-- `apps/mobile/src/features/chat/hooks/useUnreadCount.ts`
-- `apps/mobile/src/features/chat/screens/ChatConversation/useChatConversationScreen.ts`
-- `apps/mobile/src/features/profile/hooks/useProfile.ts`
-- `apps/mobile/src/features/tasks/hooks/useApplications.ts`
+- `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/MessagingPublicCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionService.java`
+- `services/api/src/test/java/mn/tasky/kernel/error/KernelErrorTest.java`
+- `services/api/src/test/java/mn/tasky/messaging/application/query/MessagingQueryHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionServiceTests.java`
+- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/MessagingPublicCompositionServiceTests.java`
 
 ## Audit Trail
 
-- EXTRACTED: 102 (61%)
-- INFERRED: 64 (39%)
+- EXTRACTED: 196 (64%)
+- INFERRED: 112 (36%)
 - AMBIGUOUS: 0 (0%)
 
 ---

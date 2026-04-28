@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **skeleton.tsx** (0 connections) — `apps/web/src/components/ui/skeleton.tsx`
+- **badge.tsx** (0 connections) — `apps/web/src/components/ui/badge.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/skeleton.tsx`
+- `apps/web/src/components/ui/badge.tsx`
 
 ## Audit Trail
 

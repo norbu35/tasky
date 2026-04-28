@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **[id].tsx** (1 connections) — `apps/mobile/src/app/profile/[id].tsx`
-- **TaskerProfileRoute()** (1 connections) — `apps/mobile/src/app/profile/[id].tsx`
+- **CategoryChip.tsx** (1 connections) — `apps/mobile/src/components/ui/CategoryChip.tsx`
+- **CategoryChip()** (1 connections) — `apps/mobile/src/components/ui/CategoryChip.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/profile/[id].tsx`
+- `apps/mobile/src/components/ui/CategoryChip.tsx`
 
 ## Audit Trail
 

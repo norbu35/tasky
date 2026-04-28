@@ -2,7 +2,7 @@
 
 > God node · 43 connections · `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
 
-**Community:** [[Community 26]]
+**Community:** [[Community 29]]
 
 ## Connections by Relation
 

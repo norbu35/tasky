@@ -1,64 +1,64 @@
 # Community 17
 
-> 74 nodes
+> 86 nodes
 
 ## Key Concepts
 
-- **.code()** (19 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyException.java`
-- **ApiExceptionHandler** (12 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
-- **.error()** (12 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
-- **healthy()** (8 connections) — `services/api/src/main/java/mn/tasky/automation/provider/ProviderHealth.java`
-- **LoggingPushProvider** (7 connections) — `services/api/src/main/java/mn/tasky/notification/provider/LoggingPushProvider.java`
-- **RequireKey** (7 connections) — `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
-- **.assertAllowed()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookRateLimitService.java`
-- **FacebookOAuthProvider** (6 connections) — `services/api/src/main/java/mn/tasky/auth/provider/FacebookOAuthProvider.java`
-- **LoggingLlmProvider** (6 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LoggingLlmProvider.java`
-- **FacebookRateLimitServiceTest** (6 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookRateLimitServiceTest.java`
-- **.health()** (5 connections) — `services/api/src/main/java/mn/tasky/auth/provider/FacebookOAuthProvider.java`
-- **.handleIdempotency()** (4 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
-- **IdempotencyException** (4 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyException.java`
-- **LoggingSmsNotificationProvider** (4 connections) — `services/api/src/main/java/mn/tasky/notification/provider/LoggingSmsNotificationProvider.java`
-- **AuthExceptionTest.java** (4 connections) — `services/api/src/test/java/mn/tasky/auth/AuthExceptionTest.java`
-- **FacebookAuth** (4 connections) — `services/api/src/test/java/mn/tasky/auth/AuthExceptionTest.java`
-- **.validateToken()** (3 connections) — `services/api/src/main/java/mn/tasky/auth/provider/FacebookOAuthProvider.java`
-- **.health()** (3 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LoggingLlmProvider.java`
-- **.handleRateLimit()** (3 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
-- **.handleFacebookAuth()** (3 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
-- **.health()** (3 connections) — `services/api/src/main/java/mn/tasky/notification/provider/LoggingSmsNotificationProvider.java`
-- **.maskToken()** (3 connections) — `services/api/src/main/java/mn/tasky/notification/provider/LoggingPushProvider.java`
-- **.health()** (3 connections) — `services/api/src/main/java/mn/tasky/notification/provider/LoggingPushProvider.java`
-- **AccountRestricted** (3 connections) — `services/api/src/test/java/mn/tasky/auth/AuthExceptionTest.java`
-- **RateLimitExceeded** (3 connections) — `services/api/src/test/java/mn/tasky/auth/AuthExceptionTest.java`
-- _... and 49 more nodes in this community_
+- **.customerSelectsApplicantAndSelectedTaskerAcceptanceConfirmsBooking()** (20 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
+- **.confirmAcceptance()** (18 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskApplicationService.java`
+- **TaskApplicationDao** (18 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- **BookingSelectionScenarioTests** (17 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
+- **.confirmIntent()** (15 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
+- **.acceptApplication()** (14 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskApplicationService.java`
+- **.bookingPriceIsLockedAtConfirmedBooking()** (14 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
+- **BookingIntentCommandHandlerTest** (14 connections) — `services/api/src/test/java/mn/tasky/booking/application/command/BookingIntentCommandHandlerTest.java`
+- **.findByTaskerAndId()** (13 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- **.customerCannotSelectSecondApplicantWhileFirstSelectionIsPending()** (12 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
+- **.nonSelectedApplicationsCloseAutomatically()** (12 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
+- **BookingIntentService** (11 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
+- **.declineIntent()** (10 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
+- **BookingIntentCommandPort** (10 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingIntentCommandPort.java`
+- **TaskApplicationService** (9 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskApplicationService.java`
+- **.expireStaleSelections()** (9 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskApplicationService.java`
+- **.findByTaskId()** (9 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- **.bookingConfirmationWithoutDisclaimerIsRejected()** (9 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
+- **.selectedTaskerDoesNotAcceptWithin4HoursSelectionExpires()** (8 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
+- **.createApplicationSelectionIntent()** (7 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
+- **.openBudgetTask()** (7 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
+- **.createIntent()** (6 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
+- **.createApplicationSelectionIntent()** (6 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingIntentCommandPort.java`
+- **.findPendingApplicationSelectionIntent()** (6 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingIntentCommandPort.java`
+- **.rejectOthers()** (6 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- _... and 61 more nodes in this community_
 
 ## Relationships
 
-- [[Community 1]] (7 shared connections)
-- [[Community 5]] (4 shared connections)
-- [[Community 2]] (3 shared connections)
-- [[Community 14]] (2 shared connections)
-- [[Community 23]] (1 shared connections)
-- [[Community 0]] (1 shared connections)
-- [[Community 16]] (1 shared connections)
+- [[Community 0]] (80 shared connections)
+- [[Community 1]] (20 shared connections)
+- [[Community 3]] (17 shared connections)
+- [[Community 6]] (9 shared connections)
+- [[Community 12]] (6 shared connections)
+- [[Community 4]] (3 shared connections)
+- [[Community 23]] (2 shared connections)
+- [[Community 14]] (1 shared connections)
+- [[Community 11]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/application/FacebookRateLimitService.java`
-- `services/api/src/main/java/mn/tasky/auth/provider/FacebookOAuthProvider.java`
-- `services/api/src/main/java/mn/tasky/automation/provider/ProviderHealth.java`
-- `services/api/src/main/java/mn/tasky/automation/provider/llm/LoggingLlmProvider.java`
-- `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
-- `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyException.java`
-- `services/api/src/main/java/mn/tasky/notification/provider/LoggingPushProvider.java`
-- `services/api/src/main/java/mn/tasky/notification/provider/LoggingSmsNotificationProvider.java`
-- `services/api/src/test/java/mn/tasky/auth/AuthExceptionTest.java`
-- `services/api/src/test/java/mn/tasky/auth/application/FacebookRateLimitServiceTest.java`
-- `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
+- `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingIntentDao.java`
+- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingIntentCommandPort.java`
+- `services/api/src/main/java/mn/tasky/task/application/TaskApplicationService.java`
+- `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- `services/api/src/main/java/mn/tasky/task/scheduling/SelectionExpiryScheduler.java`
+- `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
+- `services/api/src/test/java/mn/tasky/booking/application/command/BookingIntentCommandHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/task/scheduling/SelectionExpirySchedulerTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 161 (74%)
-- INFERRED: 58 (26%)
+- EXTRACTED: 229 (52%)
+- INFERRED: 208 (48%)
 - AMBIGUOUS: 0 (0%)
 
 ---

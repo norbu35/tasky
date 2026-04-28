@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **appConfig.test.ts** (0 connections) — `apps/mobile/__tests__/appConfig.test.ts`
+- **PressableCard.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/PressableCard.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/appConfig.test.ts`
+- `apps/mobile/__tests__/components/ui/PressableCard.test.tsx`
 
 ## Audit Trail
 

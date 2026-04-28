@@ -23,9 +23,6 @@ appId: mn.tasky.mobile
 - assertVisible:
     id: 'task-feed'
 
-- assertVisible:
-    id: 'task-feed-filter-bar'
-
 - tapOn:
     id: 'task-feed-open-filters'
 - extendedWaitUntil:

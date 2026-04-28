@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useVerificationUpload.ts** (1 connections) — `apps/mobile/src/features/verification/hooks/useVerificationUpload.ts`
-- **useVerificationUpload()** (1 connections) — `apps/mobile/src/features/verification/hooks/useVerificationUpload.ts`
+- **authRouting.ts** (1 connections) — `apps/mobile/src/utils/authRouting.ts`
+- **resolvePostAuthHref()** (1 connections) — `apps/mobile/src/utils/authRouting.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/verification/hooks/useVerificationUpload.ts`
+- `apps/mobile/src/utils/authRouting.ts`
 
 ## Audit Trail
 

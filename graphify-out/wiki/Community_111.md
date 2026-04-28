@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **CancelBookingScreen()** (2 connections) — `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
-- **useCancelBooking()** (2 connections) — `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
-- **CancelBookingScreen.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
-- **useCancelBooking.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
+- **useNotifications()** (2 connections) — `apps/mobile/src/features/notifications/hooks/useNotifications.ts`
+- **NotificationListScreen()** (2 connections) — `apps/mobile/src/features/notifications/screens/NotificationListScreen.tsx`
+- **useNotifications.ts** (1 connections) — `apps/mobile/src/features/notifications/hooks/useNotifications.ts`
+- **NotificationListScreen.tsx** (1 connections) — `apps/mobile/src/features/notifications/screens/NotificationListScreen.tsx`
 
 ## Relationships
 
@@ -15,8 +15,8 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
-- `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
+- `apps/mobile/src/features/notifications/hooks/useNotifications.ts`
+- `apps/mobile/src/features/notifications/screens/NotificationListScreen.tsx`
 
 ## Audit Trail
 

@@ -1,11 +1,10 @@
 # Community 348
 
-> 2 nodes
+> 1 nodes
 
 ## Key Concepts
 
-- **doc-claims-validator.test.mjs** (1 connections) — `tooling/tests/doc-claims-validator.test.mjs`
-- **runPython()** (1 connections) — `tooling/tests/doc-claims-validator.test.mjs`
+- **eslint.config.mjs** (0 connections) — `eslint.config.mjs`
 
 ## Relationships
 
@@ -13,11 +12,11 @@
 
 ## Source Files
 
-- `tooling/tests/doc-claims-validator.test.mjs`
+- `eslint.config.mjs`
 
 ## Audit Trail
 
-- EXTRACTED: 2 (100%)
+- EXTRACTED: 0 (0%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

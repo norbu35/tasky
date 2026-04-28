@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import React from 'react';
-import type { TextProps } from 'react-native';
+import { Text, type TextProps } from 'react-native';
 
 import ChatDetailScreen from '../../../src/app/(tabs)/inbox/[id]';
 import { useMessages } from '../../../src/features/chat/hooks/useMessages';
@@ -142,12 +142,14 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useMessages>);
     const view = render(<ChatDetailScreen />);
-    const serialized = JSON.stringify(view.toJSON());
+    const renderedText = view.UNSAFE_getAllByType(Text).map((node) => node.props.children);
 
-    expect(serialized.indexOf('Earliest message')).toBeLessThan(
-      serialized.indexOf('Middle message'),
+    expect(renderedText.indexOf('Earliest message')).toBeLessThan(
+      renderedText.indexOf('Middle message'),
     );
-    expect(serialized.indexOf('Middle message')).toBeLessThan(serialized.indexOf('Latest message'));
+    expect(renderedText.indexOf('Middle message')).toBeLessThan(
+      renderedText.indexOf('Latest message'),
+    );
   });
 
   it('renders messages in the conversation', () => {
@@ -177,6 +179,9 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
 
     expect(screen.getByText('Hello there')).toBeTruthy();
     expect(screen.getByText('Hi! How can I help?')).toBeTruthy();
+    expect(screen.getByText('Өнөөдөр')).toBeTruthy();
+    expect(screen.getByTestId('chat-details-button')).toBeTruthy();
+    expect(screen.getByTestId('chat-attach-image-button')).toBeTruthy();
   });
 
   it('applies sent bubble styling for own messages', () => {

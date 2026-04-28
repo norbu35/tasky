@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskWithdrawResult.java** (2 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskWithdrawResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskWithdrawResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskWithdrawResult.java`
+- **tooling-audit-batch2.test.mjs** (2 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
+- **readRepo()** (1 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
+- **runPython()** (1 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/dto/TaskWithdrawResult.java`
+- `tooling/tests/tooling-audit-batch2.test.mjs`
 
 ## Audit Trail
 

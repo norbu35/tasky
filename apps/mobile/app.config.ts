@@ -74,15 +74,27 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   slug: 'tasky',
   version: '0.1.0',
   orientation: 'portrait',
+  icon: './assets/app-icon.png',
   scheme: 'tasky',
   ios: {
     bundleIdentifier: 'mn.tasky.mobile',
+    icon: './assets/app-icon.png',
   },
   android: {
     package: 'mn.tasky.mobile',
+    icon: './assets/app-icon.png',
+    adaptiveIcon: {
+      foregroundImage: './assets/adaptive-icon.png',
+      backgroundColor: '#004AAD',
+    },
   },
   web: {
     bundler: 'metro',
+  },
+  splash: {
+    image: './assets/splash-logo.png',
+    resizeMode: 'contain',
+    backgroundColor: '#FFFFFF',
   },
   extra: {
     ...config.extra,
@@ -97,6 +109,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   userInterfaceStyle: 'light',
   assetBundlePatterns: ['**/*'],
   plugins: [
+    'expo-asset',
+    'expo-router',
     [
       'expo-font',
       {

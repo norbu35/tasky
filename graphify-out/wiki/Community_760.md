@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **additions.test.mjs** (0 connections) — `packages/design-tokens/__tests__/additions.test.mjs`
+- **AdminActionRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/admin/dto/AdminActionRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/design-tokens/__tests__/additions.test.mjs`
+- `services/api/src/main/java/mn/tasky/admin/dto/AdminActionRequest.java`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **react-native.d.ts** (0 connections) — `tooling/config/eslint/react-native.d.ts`
+- **referrals.tsx** (0 connections) — `archive/mobile-future/tasker/referrals.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/config/eslint/react-native.d.ts`
+- `archive/mobile-future/tasker/referrals.tsx`
 
 ## Audit Trail
 

@@ -1,13 +1,12 @@
 # Community 151
 
-> 4 nodes
+> 3 nodes
 
 ## Key Concepts
 
-- **CancelBookingRequestTest** (3 connections) — `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
-- **CancelBookingRequestTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
-- **.storesProvidedReason()** (1 connections) — `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
-- **.allowsNullReason()** (1 connections) — `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
+- **Reveal.tsx** (2 connections) — `apps/mobile/src/components/ui/Reveal.tsx`
+- **createRevealAnimation()** (2 connections) — `apps/mobile/src/components/ui/Reveal.tsx`
+- **Reveal()** (2 connections) — `apps/mobile/src/components/ui/Reveal.tsx`
 
 ## Relationships
 
@@ -15,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
+- `apps/mobile/src/components/ui/Reveal.tsx`
 
 ## Audit Trail
 

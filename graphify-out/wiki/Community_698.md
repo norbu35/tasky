@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **errorHandling.test.ts** (0 connections) — `apps/web/src/lib/errorHandling.test.ts`
+- **LandingPage.tsx** (0 connections) — `apps/web/src/pages/LandingPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/errorHandling.test.ts`
+- `apps/web/src/pages/LandingPage.tsx`
 
 ## Audit Trail
 

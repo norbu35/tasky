@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **VerificationStatusApiResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/verification/dto/VerificationStatusApiResponse.java`
+- **react-native.d.ts** (0 connections) — `tooling/config/eslint/react-native.d.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/verification/dto/VerificationStatusApiResponse.java`
+- `tooling/config/eslint/react-native.d.ts`
 
 ## Audit Trail
 

@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **LlmProvider** (6 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **LlmProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.generate()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.classify()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.summarize()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **PushNotificationProvider** (6 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
+- **PushNotificationProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
+- **.sendPush()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
+- **.subscribeToTopics()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
+- **.sendToTopic()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
+- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
+- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
 
 ## Relationships
 
@@ -18,7 +18,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
 
 ## Audit Trail
 

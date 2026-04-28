@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **\_layout.tsx** (1 connections) — `apps/mobile/src/app/(tabs)/inbox/_layout.tsx`
-- **InboxLayout()** (1 connections) — `apps/mobile/src/app/(tabs)/inbox/_layout.tsx`
+- **[id].tsx** (1 connections) — `apps/mobile/src/app/profile/[id].tsx`
+- **TaskerProfileRoute()** (1 connections) — `apps/mobile/src/app/profile/[id].tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tabs)/inbox/_layout.tsx`
+- `apps/mobile/src/app/profile/[id].tsx`
 
 ## Audit Trail
 

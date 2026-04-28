@@ -4,23 +4,23 @@
 
 ## Key Concepts
 
-- **model.ts** (3 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
-- **buildFaqSections()** (2 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
-- **resolveState()** (1 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
-- **filterSections()** (1 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
+- **RateLimitExceededException** (3 connections) — `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
+- **RateLimitExceededException.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
+- **.RateLimitExceededException()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
+- **.code()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
 
 ## Relationships
 
-- [[Community 1]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
+- `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (86%)
-- INFERRED: 1 (14%)
+- EXTRACTED: 6 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

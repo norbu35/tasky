@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/disputes/index.ts`
+- **ProfileTabScreen.tsx** (0 connections) — `apps/mobile/src/features/profile/screens/ProfileTabScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/disputes/index.ts`
+- `apps/mobile/src/features/profile/screens/ProfileTabScreen.tsx`
 
 ## Audit Trail
 

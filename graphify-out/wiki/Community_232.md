@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **StepIndicator.tsx** (1 connections) — `apps/mobile/src/components/ui/StepIndicator.tsx`
-- **StepIndicator()** (1 connections) — `apps/mobile/src/components/ui/StepIndicator.tsx`
+- **Button.tsx** (1 connections) — `apps/mobile/src/components/ui/Button.tsx`
+- **getTextColor()** (1 connections) — `apps/mobile/src/components/ui/Button.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/StepIndicator.tsx`
+- `apps/mobile/src/components/ui/Button.tsx`
 
 ## Audit Trail
 

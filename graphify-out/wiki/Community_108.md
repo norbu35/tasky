@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **NewTaskLayout.test.tsx** (3 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
-- **MockStack()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
-- **MockStackScreen()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
-- **MockRedirect()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
+- **CancelBookingScreen()** (2 connections) — `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
+- **useCancelBooking()** (2 connections) — `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
+- **CancelBookingScreen.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
+- **useCancelBooking.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
 
 ## Relationships
 
@@ -15,12 +15,13 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
+- `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
+- `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 4 (67%)
+- INFERRED: 2 (33%)
 - AMBIGUOUS: 0 (0%)
 
 ---

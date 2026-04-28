@@ -2,7 +2,7 @@
 
 > God node · 49 connections · `apps/web/src/lib/apiClient.ts`
 
-**Community:** [[Community 8]]
+**Community:** [[Community 9]]
 
 ## Connections by Relation
 

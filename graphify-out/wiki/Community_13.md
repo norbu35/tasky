@@ -1,60 +1,67 @@
 # Community 13
 
-> 105 nodes
+> 133 nodes
 
 ## Key Concepts
 
-- **validate-doc-claims.py** (55 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **Failure** (39 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **main()** (34 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **IdentityCommandHandler** (20 connections) — `services/api/src/main/java/mn/tasky/identity/application/command/IdentityCommandHandler.java`
-- **IdentityCommandPort** (19 connections) — `services/api/src/main/java/mn/tasky/identity/publicapi/IdentityCommandPort.java`
-- **closest()** (15 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **.evaluate()** (10 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **extract_line_references()** (9 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **scan_doc()** (6 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **validate_claim_symbol_exists()** (6 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **DisputeEvidenceOutcomeTest** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputeEvidenceOutcomeTest.java`
-- **load_allowlist()** (5 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **build_config_inventory()** (5 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **parse_claim_block()** (5 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **validate_java_class()** (5 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **.failureCarriesStatusAndErrorOnly()** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputeEvidenceOutcomeTest.java`
-- **Reference** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **JavaInventory** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **collect_scan_files()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **build_java_inventory()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **normalize_flyway_version()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **build_flyway_inventory()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **build_workflow_inventory()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **build_prd_requirement_inventory()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **relative()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- _... and 80 more nodes in this community_
+- **.exchange()** (35 connections) — `services/api/src/test/java/mn/tasky/security/AuthorizationMatrixTests.java`
+- **TaskScenarioTests** (33 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **AuthorizationMatrixTests** (26 connections) — `services/api/src/test/java/mn/tasky/security/AuthorizationMatrixTests.java`
+- **.postWithAuth()** (20 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **ContractEnvelopeTests** (15 connections) — `services/api/src/test/java/mn/tasky/contract/ContractEnvelopeTests.java`
+- **.tokenFor()** (13 connections) — `services/api/src/test/java/mn/tasky/security/AuthorizationMatrixTests.java`
+- **Generate** (13 connections) — `services/api/src/test/java/mn/tasky/task/application/ScopeSummaryGeneratorTest.java`
+- **.url()** (12 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **IntegrationTestBase** (11 connections)
+- **.taskBody()** (10 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **AuthHttpScenarioTests** (9 connections) — `services/api/src/test/java/mn/tasky/auth/AuthHttpScenarioTests.java`
+- **.assertEnvelope()** (9 connections) — `services/api/src/test/java/mn/tasky/contract/ContractEnvelopeTests.java`
+- **.url()** (9 connections) — `services/api/src/test/java/mn/tasky/contract/ContractEnvelopeTests.java`
+- **LocationApiTests** (9 connections) — `services/api/src/test/java/mn/tasky/location/LocationApiTests.java`
+- **SecurityInformationControlScenarioTests** (9 connections) — `services/api/src/test/java/mn/tasky/security/SecurityInformationControlScenarioTests.java`
+- **.future()** (9 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **.getWithAuth()** (9 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **.getWithToken()** (9 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **.deactivatedCategoryBlocksNewTasksNotExistingOnes()** (8 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **.authHeaders()** (7 connections) — `services/api/src/test/java/mn/tasky/contract/ContractEnvelopeTests.java`
+- **.createTask()** (7 connections) — `services/api/src/test/java/mn/tasky/security/SecurityInformationControlScenarioTests.java`
+- **.budgetBelowMinimumReturns400WithEnvelope()** (6 connections) — `services/api/src/test/java/mn/tasky/contract/ContractEnvelopeTests.java`
+- **.getWithToken()** (6 connections) — `services/api/src/test/java/mn/tasky/location/LocationApiTests.java`
+- **.devLogin()** (6 connections) — `services/api/src/test/java/mn/tasky/security/SecurityInformationControlScenarioTests.java`
+- **.getWithAuth()** (6 connections) — `services/api/src/test/java/mn/tasky/security/SecurityInformationControlScenarioTests.java`
+- _... and 108 more nodes in this community_
 
 ## Relationships
 
-- [[Community 1]] (18 shared connections)
-- [[Community 2]] (7 shared connections)
-- [[Community 3]] (3 shared connections)
-- [[Community 0]] (3 shared connections)
-- [[Community 10]] (3 shared connections)
-- [[Community 5]] (2 shared connections)
-- [[Community 9]] (2 shared connections)
-- [[Community 21]] (1 shared connections)
-- [[Community 11]] (1 shared connections)
+- [[Community 0]] (33 shared connections)
+- [[Community 5]] (10 shared connections)
+- [[Community 1]] (8 shared connections)
+- [[Community 4]] (5 shared connections)
+- [[Community 11]] (4 shared connections)
+- [[Community 2]] (3 shared connections)
+- [[Community 7]] (3 shared connections)
+- [[Community 3]] (2 shared connections)
+- [[Community 22]] (1 shared connections)
+- [[Community 14]] (1 shared connections)
+- [[Community 10]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/identity/application/command/IdentityCommandHandler.java`
-- `services/api/src/main/java/mn/tasky/identity/publicapi/IdentityCommandPort.java`
-- `services/api/src/test/java/mn/tasky/identity/application/command/IdentityCommandHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputeEvidenceOutcomeTest.java`
-- `tooling/scripts/governance/validate-doc-claims.py`
+- `apps/mobile/ios/Tasky/AppDelegate.swift`
+- `services/api/src/test/java/mn/tasky/auth/AuthHttpScenarioTests.java`
+- `services/api/src/test/java/mn/tasky/contract/ContractEnvelopeTests.java`
+- `services/api/src/test/java/mn/tasky/location/LocationApiTests.java`
+- `services/api/src/test/java/mn/tasky/projection/publicfeed/PublicTaskFeedProjectionDaoTest.java`
+- `services/api/src/test/java/mn/tasky/security/AuthorizationMatrixTests.java`
+- `services/api/src/test/java/mn/tasky/security/SecurityInformationControlScenarioTests.java`
+- `services/api/src/test/java/mn/tasky/task/RecentLocationsTests.java`
+- `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- `services/api/src/test/java/mn/tasky/task/application/ScopeSummaryGeneratorTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 395 (90%)
-- INFERRED: 43 (10%)
+- EXTRACTED: 525 (83%)
+- INFERRED: 104 (17%)
 - AMBIGUOUS: 0 (0%)
 
 ---

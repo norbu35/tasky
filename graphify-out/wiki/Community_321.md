@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **SessionExpiredPage.tsx** (1 connections) — `apps/web/src/pages/shared/SessionExpiredPage.tsx`
-- **SessionExpiredPage()** (1 connections) — `apps/web/src/pages/shared/SessionExpiredPage.tsx`
+- **useTasks.ts** (1 connections) — `packages/core/src/tasks/useTasks.ts`
+- **useTasksQuery()** (1 connections) — `packages/core/src/tasks/useTasks.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/SessionExpiredPage.tsx`
+- `packages/core/src/tasks/useTasks.ts`
 
 ## Audit Trail
 

@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **VerificationSubmissionOutcome.java** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationSubmissionOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationSubmissionOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationSubmissionOutcome.java`
+- **ActivateSchemaVersionRequestTest** (2 connections) — `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
+- **ActivateSchemaVersionRequestTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
+- **.storesRequestedActivationMode()** (1 connections) — `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationSubmissionOutcome.java`
+- `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
 
 ## Audit Trail
 

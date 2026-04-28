@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/index.ts`
+- **PendingScreen.tsx** (0 connections) — `apps/mobile/src/features/verification/screens/PendingScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/CustomerTasks/index.ts`
+- `apps/mobile/src/features/verification/screens/PendingScreen.tsx`
 
 ## Audit Trail
 

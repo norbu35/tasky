@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ConciergeAssignRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/admin/dto/ConciergeAssignRequest.java`
+- **Event.java** (0 connections) — `services/api/src/main/java/mn/tasky/analytics/dto/Event.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/dto/ConciergeAssignRequest.java`
+- `services/api/src/main/java/mn/tasky/analytics/dto/Event.java`
 
 ## Audit Trail
 

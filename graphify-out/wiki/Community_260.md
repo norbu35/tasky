@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **BookingTimeline.TimelineRow.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingTimeline.TimelineRow.tsx`
-- **TimelineEventRow()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingTimeline.TimelineRow.tsx`
+- **useMyStats.ts** (1 connections) — `apps/mobile/src/features/profile/hooks/useMyStats.ts`
+- **useMyStats()** (1 connections) — `apps/mobile/src/features/profile/hooks/useMyStats.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingTimeline.TimelineRow.tsx`
+- `apps/mobile/src/features/profile/hooks/useMyStats.ts`
 
 ## Audit Trail
 

@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **profileRouteParams.ts** (2 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
-- **buildTaskerProfileRoute()** (1 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
-- **numberFromRouteParam()** (1 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
+- **accessibility.spec.ts** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
+- **summarizeViolations()** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
+- **scan()** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
 
 ## Relationships
 
@@ -14,11 +14,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/profileRouteParams.ts`
+- `apps/web/e2e/accessibility.spec.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **Screen.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/Screen.tsx`
-- **getBookingCardTestID()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/Screen.tsx`
+- **TaskerProfile.ReviewsSection.tsx** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
+- **cn()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingsList/Screen.tsx`
+- `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
 
 ## Audit Trail
 

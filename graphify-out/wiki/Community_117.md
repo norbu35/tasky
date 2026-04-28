@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **useNotifications()** (2 connections) — `apps/mobile/src/features/notifications/hooks/useNotifications.ts`
-- **NotificationListScreen()** (2 connections) — `apps/mobile/src/features/notifications/screens/NotificationListScreen.tsx`
-- **useNotifications.ts** (1 connections) — `apps/mobile/src/features/notifications/hooks/useNotifications.ts`
-- **NotificationListScreen.tsx** (1 connections) — `apps/mobile/src/features/notifications/screens/NotificationListScreen.tsx`
+- **MainApplication** (3 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- **MainApplication.kt** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- **.onCreate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- **.onConfigurationChanged()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
 
 ## Relationships
 
@@ -15,13 +15,12 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/notifications/hooks/useNotifications.ts`
-- `apps/mobile/src/features/notifications/screens/NotificationListScreen.tsx`
+- `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (67%)
-- INFERRED: 2 (33%)
+- EXTRACTED: 6 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

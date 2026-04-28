@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **cn.ts** (1 connections) — `apps/mobile/src/lib/cn.ts`
-- **cn()** (1 connections) — `apps/mobile/src/lib/cn.ts`
+- **FilterChip.tsx** (1 connections) — `apps/web/src/components/feature/FilterChip.tsx`
+- **FilterChip()** (1 connections) — `apps/web/src/components/feature/FilterChip.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/cn.ts`
+- `apps/web/src/components/feature/FilterChip.tsx`
 
 ## Audit Trail
 

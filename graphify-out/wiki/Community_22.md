@@ -1,66 +1,63 @@
 # Community 22
 
-> 65 nodes
+> 72 nodes
 
 ## Key Concepts
 
-- **factories.ts** (15 connections) — `apps/web/src/test/factories.ts`
-- **makeSession()** (14 connections) — `apps/web/src/test/factories.ts`
-- **render()** (13 connections) — `apps/mobile/__tests__/integration/tasker-journey.test.tsx`
-- **makeProfile()** (13 connections) — `apps/web/src/test/factories.ts`
-- **createMockApiClient()** (13 connections) — `apps/web/src/test/mocks.ts`
-- **createMockApiClient()** (11 connections) — `apps/web/tests/accessibility/parity.test.tsx`
-- **createMockAdminApiClient()** (6 connections) — `apps/web/src/test/mocks.ts`
-- **renderWithAppContext()** (6 connections) — `apps/web/tests/integration/shared-parity.test.tsx`
-- **renderProfilePage()** (5 connections) — `apps/web/src/pages/__tests__/ProfilePage.test.tsx`
-- **renderWithAppContext()** (5 connections) — `apps/web/src/test/render-helpers.tsx`
-- **makeCategory()** (5 connections) — `apps/web/src/test/factories.ts`
-- **createContext()** (5 connections) — `apps/web/tests/integration/tasker.test.tsx`
-- **wave-1-5.test.tsx** (5 connections) — `apps/web/tests/integration/wave-1-5.test.tsx`
-- **createCustomerContext()** (5 connections) — `apps/web/tests/integration/wave-1-5.test.tsx`
-- **createTaskerContext()** (5 connections) — `apps/web/tests/integration/wave-1-5.test.tsx`
-- **createContext()** (4 connections) — `apps/web/src/pages/__tests__/CustomerTaskDetailsPage.test.tsx`
-- **AdminDisputesPage.test.tsx** (4 connections) — `apps/web/src/pages/admin/__tests__/AdminDisputesPage.test.tsx`
-- **createContext()** (4 connections) — `apps/web/src/pages/customer/__tests__/CustomerBookingDetailPage.test.tsx`
-- **createContext()** (4 connections) — `apps/web/src/pages/customer/__tests__/CustomerApplicantsPage.test.tsx`
-- **makeTask()** (4 connections) — `apps/web/src/test/factories.ts`
-- **parity.test.tsx** (4 connections) — `apps/web/tests/accessibility/parity.test.tsx`
-- **renderWithContext()** (4 connections) — `apps/web/tests/integration/customer-bookings.test.tsx`
-- **renderWithRoute()** (4 connections) — `apps/web/tests/integration/customer-bookings.test.tsx`
-- **createContext()** (4 connections) — `apps/web/tests/integration/customer.test.tsx`
-- **createAppContext()** (3 connections) — `apps/web/src/pages/admin/__tests__/AdminDisputesPage.test.tsx`
-- _... and 40 more nodes in this community_
+- **.getState()** (19 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
+- **.isOpen()** (17 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
+- **.recordFailure()** (16 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
+- **FacebookCircuitBreakerTests** (13 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
+- **.recordSuccess()** (10 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
+- **QPayPaymentProvider** (10 connections) — `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
+- **FacebookCircuitBreakerTest** (8 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookCircuitBreakerTest.java`
+- **useDisputeStatusScreen()** (7 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/useDisputeStatusScreen.ts`
+- **model.ts** (7 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
+- **FacebookCircuitBreaker** (7 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
+- **.health()** (7 connections) — `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
+- **getStatus()** (6 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
+- **.fetchProfile()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
+- **.doProbe()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/FacebookCircuitBreakerProbe.java`
+- **.tryHalfOpen()** (5 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
+- **FacebookGraphClient** (5 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
+- **.successAfterOpenClosesCircuit()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
+- **.failuresAfterWindowExpiryDoNotOpenCircuit()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
+- **.tryHalfOpenTransitionsFromOpen()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
+- **.successFromHalfOpenClosesCircuit()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
+- **FacebookHealthIndicatorTest** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
+- **.reportsUpWhenClosed()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
+- **.reportsDownWhenOpen()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
+- **.reportsDownWhenHalfOpen()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
+- **.health()** (4 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookHealthIndicator.java`
+- _... and 47 more nodes in this community_
 
 ## Relationships
 
-- [[Community 3]] (5 shared connections)
-- [[Community 7]] (1 shared connections)
+- [[Community 4]] (10 shared connections)
+- [[Community 0]] (5 shared connections)
+- [[Community 2]] (5 shared connections)
+- [[Community 20]] (2 shared connections)
+- [[Community 25]] (1 shared connections)
+- [[Community 13]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/__tests__/integration/tasker-journey.test.tsx`
-- `apps/web/src/pages/__tests__/CustomerTaskDetailsPage.test.tsx`
-- `apps/web/src/pages/__tests__/ProfilePage.test.tsx`
-- `apps/web/src/pages/admin/__tests__/AdminDisputesPage.test.tsx`
-- `apps/web/src/pages/admin/__tests__/AdminFeaturesPage.test.tsx`
-- `apps/web/src/pages/customer/__tests__/CustomerApplicantsPage.test.tsx`
-- `apps/web/src/pages/customer/__tests__/CustomerBookingDetailPage.test.tsx`
-- `apps/web/src/test/factories.ts`
-- `apps/web/src/test/mocks.ts`
-- `apps/web/src/test/render-helpers.tsx`
-- `apps/web/tests/accessibility/parity.test.tsx`
-- `apps/web/tests/integration/customer-bookings.test.tsx`
-- `apps/web/tests/integration/customer.test.tsx`
-- `apps/web/tests/integration/shared-parity.test.tsx`
-- `apps/web/tests/integration/tasker.test.tsx`
-- `apps/web/tests/integration/wave-1-5.test.tsx`
-- `packages/test-utils/src/query-client.ts`
-- `packages/test-utils/src/render-helpers.tsx`
+- `apps/mobile/src/features/disputes/hooks/useDisputeDetail.ts`
+- `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
+- `apps/mobile/src/features/disputes/screens/DisputeStatus/useDisputeStatusScreen.ts`
+- `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
+- `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
+- `services/api/src/main/java/mn/tasky/auth/application/FacebookHealthIndicator.java`
+- `services/api/src/main/java/mn/tasky/auth/scheduling/FacebookCircuitBreakerProbe.java`
+- `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
+- `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
+- `services/api/src/test/java/mn/tasky/auth/application/FacebookCircuitBreakerTest.java`
+- `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 106 (45%)
-- INFERRED: 132 (55%)
+- EXTRACTED: 143 (48%)
+- INFERRED: 155 (52%)
 - AMBIGUOUS: 0 (0%)
 
 ---

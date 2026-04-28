@@ -1,13 +1,12 @@
 # Community 150
 
-> 4 nodes
+> 3 nodes
 
 ## Key Concepts
 
-- **ProjectionBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
-- **.projectionPlaneMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
-- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
-- **ProjectionBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
+- **DetailTemplate.tsx** (2 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
+- **DetailSkeleton()** (1 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
+- **handleActionBarLayout()** (1 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
 
 ## Relationships
 
@@ -15,11 +14,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
+- `apps/mobile/src/components/templates/DetailTemplate.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

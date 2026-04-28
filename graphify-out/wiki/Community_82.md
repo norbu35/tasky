@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **PaymentInitiationOutcome.java** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
-- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
-- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
-- **featureDeferred()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **ScopeSummaryGenerator** (5 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
+- **.generate()** (3 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
+- **.formatValue()** (2 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
+- **.fallback()** (2 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
+- **ScopeSummaryGenerator.java** (1 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
+- **.ScopeSummaryGenerator()** (1 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
 
 ## Relationships
 
@@ -17,11 +17,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 14 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

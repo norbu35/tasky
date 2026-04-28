@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskReviewSubmitScreen.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmitScreen.tsx`
+- **BudgetCard.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/BudgetCard.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskReviewSubmitScreen.tsx`
+- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/BudgetCard.tsx`
 
 ## Audit Trail
 

@@ -1,78 +1,78 @@
 # Community 1
 
-> 612 nodes
+> 426 nodes
 
 ## Key Concepts
 
 - **.status()** (367 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyException.java`
 - **Claim** (161 connections) — `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
-- **.getBooking()** (131 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingQueryPort.java`
-- **error()** (129 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskCreateResult.java`
-- **.success()** (105 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskMutationServiceTest.java`
-- **t()** (52 connections) — `apps/mobile/src/features/tasks/screens/ApplicantsSelection.ApplicantCard.tsx`
 - **Abandon** (51 connections) — `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
 - **.isEnabled()** (36 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **RaiseDispute** (36 connections) — `services/api/src/test/java/mn/tasky/dispute/application/DisputeServiceTest.java`
 - **CompleteWithResource** (34 connections) — `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
 - **CancelBooking** (34 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationServiceTests.java`
-- **.findByIdForUpdate()** (30 connections) — `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
 - **.overrideBookingStatus()** (29 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingCompositionService.java`
-- **FlagNoShow** (27 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationServiceTests.java`
+- **.createBooking()** (28 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
 - **ConfirmIntent** (26 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationServiceTests.java`
 - **.booking()** (25 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingPublicCompositionServiceTests.java`
-- **GetTask** (25 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskQueryServiceTest.java`
-- **BookingLifecycleServiceTest** (23 connections) — `services/api/src/test/java/mn/tasky/booking/application/BookingLifecycleServiceTest.java`
-- **.recordEvent()** (22 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingTimelineService.java`
 - **.conciergeAssign()** (21 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentService.java`
-- **NoShowServiceTest** (20 connections) — `services/api/src/test/java/mn/tasky/booking/application/NoShowServiceTest.java`
-- **ResolveDispute** (20 connections) — `services/api/src/test/java/mn/tasky/dispute/application/DisputeServiceTest.java`
-- **CompleteBooking** (20 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationServiceTests.java`
 - **.raiseDispute()** (19 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputeRaiseService.java`
-- **.flagNoShow_success_customerFlags_taskerNoShow()** (19 connections) — `services/api/src/test/java/mn/tasky/booking/application/NoShowServiceTest.java`
-- _... and 587 more nodes in this community_
+- **GetDispute** (19 connections) — `services/api/src/test/java/mn/tasky/dispute/application/DisputeServiceTest.java`
+- **.inProgress()** (18 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationServiceTests.java`
+- **.buildDisputeRequest()** (17 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputeRaiseServiceTests.java`
+- **BookingResponse** (17 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingResponseCompositionServiceTests.java`
+- **.initiatePayment()** (16 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationService.java`
+- **.markBookingDone()** (16 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationService.java`
+- **.processPayout()** (15 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingService.java`
+- **.cancelBooking()** (15 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationService.java`
+- **.completeBooking()** (15 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationService.java`
+- **.confirmIntent()** (15 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationService.java`
+- **.find()** (14 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyDao.java`
+- **.requestPayout()** (14 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletPayoutRequestService.java`
+- **.flagNoShow()** (14 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationService.java`
+- _... and 401 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (533 shared connections)
-- [[Community 6]] (81 shared connections)
-- [[Community 3]] (57 shared connections)
-- [[Community 4]] (56 shared connections)
-- [[Community 5]] (25 shared connections)
-- [[Community 7]] (24 shared connections)
-- [[Community 9]] (23 shared connections)
-- [[Community 16]] (18 shared connections)
-- [[Community 13]] (18 shared connections)
-- [[Community 21]] (17 shared connections)
-- [[Community 19]] (14 shared connections)
-- [[Community 8]] (13 shared connections)
+- [[Community 0]] (354 shared connections)
+- [[Community 5]] (79 shared connections)
+- [[Community 2]] (23 shared connections)
+- [[Community 10]] (22 shared connections)
+- [[Community 19]] (21 shared connections)
+- [[Community 17]] (20 shared connections)
+- [[Community 6]] (18 shared connections)
+- [[Community 4]] (17 shared connections)
+- [[Community 15]] (15 shared connections)
+- [[Community 3]] (14 shared connections)
+- [[Community 11]] (13 shared connections)
+- [[Community 12]] (10 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/auth/screens/RoleSelectScreen.tsx`
-- `apps/mobile/src/features/bookings/screens/BookingReschedule/SubmitAction.tsx`
-- `apps/mobile/src/features/bookings/screens/BookingTimeline.model.ts`
-- `apps/mobile/src/features/help/screens/HelpCenter/useHelpCenterScreen.ts`
-- `apps/mobile/src/features/profile/screens/ProfileEditScreen.tsx`
-- `apps/mobile/src/features/profile/screens/ProfileSettingsScreen.tsx`
-- `apps/mobile/src/features/tasks/components/ApplicationSentSuccess.tsx`
-- `apps/mobile/src/features/tasks/screens/ApplicantsSelection.ApplicantCard.tsx`
-- `apps/mobile/src/features/tasks/screens/HomeScreen.tsx`
-- `apps/mobile/src/features/verification/components/VerificationModal.tsx`
 - `apps/mobile/src/features/verification/hooks/useVerification.ts`
-- `apps/mobile/src/utils/errorHandling.ts`
-- `apps/web/src/components/feature/task-creation/PhotoUploadManager.tsx`
-- `apps/web/src/lib/adminApiClient.ts`
-- `apps/web/src/lib/errorHandling.ts`
-- `apps/web/src/pages/AuthPage.tsx`
-- `apps/web/src/pages/CustomerDashboardPage.tsx`
-- `apps/web/src/pages/CustomerTaskDetailsPage.tsx`
-- `apps/web/src/pages/MessagingNotificationsPage.tsx`
-- `apps/web/src/pages/TaskerFeedPage.tsx`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminPayoutController.java`
+- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
+- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingIntentCommandPort.java`
+- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingQueryPort.java`
+- `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyDao.java`
+- `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyException.java`
+- `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- `services/api/src/main/java/mn/tasky/messaging/application/PhoneLeakDetector.java`
+- `services/api/src/main/java/mn/tasky/payment/api/PaymentController.java`
+- `services/api/src/main/java/mn/tasky/payment/publicapi/PaymentCommandPort.java`
+- `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeResolutionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentService.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationService.java`
 
 ## Audit Trail
 
-- EXTRACTED: 1377 (31%)
-- INFERRED: 3057 (69%)
+- EXTRACTED: 925 (34%)
+- INFERRED: 1807 (66%)
 - AMBIGUOUS: 0 (0%)
 
 ---

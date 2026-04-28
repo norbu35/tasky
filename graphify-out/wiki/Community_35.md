@@ -26,8 +26,8 @@
 
 - [[Community 0]] (3 shared connections)
 - [[Community 1]] (2 shared connections)
-- [[Community 5]] (2 shared connections)
-- [[Community 6]] (1 shared connections)
+- [[Community 4]] (2 shared connections)
+- [[Community 5]] (1 shared connections)
 
 ## Source Files
 

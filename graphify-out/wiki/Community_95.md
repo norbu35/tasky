@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **AdminDisputesPage.tsx** (4 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
-- **disputeStatusVariant()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
-- **getDisputeStatusLabelKey()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
-- **truncate()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
-- **formatDate()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
+- **additions.ts** (4 connections) — `packages/design-tokens/src/core/additions.ts`
+- **toRgba()** (4 connections) — `packages/design-tokens/src/core/additions.ts`
+- **primaryOpacityScale()** (2 connections) — `packages/design-tokens/src/core/additions.ts`
+- **softOpacityScale()** (2 connections) — `packages/design-tokens/src/core/additions.ts`
+- **dangerOpacityScale()** (2 connections) — `packages/design-tokens/src/core/additions.ts`
 
 ## Relationships
 
@@ -16,11 +16,11 @@
 
 ## Source Files
 
-- `apps/web/src/pages/admin/AdminDisputesPage.tsx`
+- `packages/design-tokens/src/core/additions.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 14 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

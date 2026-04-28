@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **intakeSchema.test.ts** (0 connections) — `apps/web/src/lib/intakeSchema.test.ts`
+- **index.ts** (0 connections) — `apps/web/src/pages/admin/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/intakeSchema.test.ts`
+- `apps/web/src/pages/admin/index.ts`
 
 ## Audit Trail
 

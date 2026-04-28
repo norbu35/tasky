@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **LoadingCard.tsx** (0 connections) — `apps/web/src/layout/LoadingCard.tsx`
+- **ResponsiveFeedShell.tsx** (0 connections) — `apps/web/src/layout/parity/ResponsiveFeedShell.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/LoadingCard.tsx`
+- `apps/web/src/layout/parity/ResponsiveFeedShell.tsx`
 
 ## Audit Trail
 

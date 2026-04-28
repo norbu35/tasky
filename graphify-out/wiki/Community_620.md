@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **MapOverlay.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskLocation/MapOverlay.tsx`
+- **taskDraft.store.ts** (0 connections) — `apps/mobile/src/features/tasks/draft/taskDraft.store.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskLocation/MapOverlay.tsx`
+- `apps/mobile/src/features/tasks/draft/taskDraft.store.ts`
 
 ## Audit Trail
 

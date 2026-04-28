@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **applied.tsx** (1 connections) — `apps/mobile/src/app/(tasker)/tasks/applied.tsx`
-- **ApplicationSubmittedScreen()** (1 connections) — `apps/mobile/src/app/(tasker)/tasks/applied.tsx`
+- **FormWizardTemplate.tsx** (1 connections) — `apps/mobile/src/components/templates/FormWizardTemplate.tsx`
+- **handleActionBarLayout()** (1 connections) — `apps/mobile/src/components/templates/FormWizardTemplate.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tasker)/tasks/applied.tsx`
+- `apps/mobile/src/components/templates/FormWizardTemplate.tsx`
 
 ## Audit Trail
 

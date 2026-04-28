@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **sonner.tsx** (1 connections) — `apps/web/src/components/ui/sonner.tsx`
-- **useSystemTheme()** (1 connections) — `apps/web/src/components/ui/sonner.tsx`
+- **TimelineList.tsx** (1 connections) — `apps/web/src/layout/parity/TimelineList.tsx`
+- **TimelineList()** (1 connections) — `apps/web/src/layout/parity/TimelineList.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/sonner.tsx`
+- `apps/web/src/layout/parity/TimelineList.tsx`
 
 ## Audit Trail
 

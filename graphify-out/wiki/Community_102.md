@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **AdminTaskConciergeAssignmentOutcome.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentOutcome.java`
-- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentOutcome.java`
-- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentOutcome.java`
+- **TaskApplicationAcceptanceOutcome.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
+- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
+- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
+- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentOutcome.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
 
 ## Audit Trail
 

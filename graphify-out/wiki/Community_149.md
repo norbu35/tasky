@@ -1,13 +1,12 @@
 # Community 149
 
-> 4 nodes
+> 3 nodes
 
 ## Key Concepts
 
-- **PublicPortBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
-- **.modulePublicApiMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
-- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
-- **PublicPortBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
+- **TaskerCancelSheet.test.tsx** (2 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
+- **t()** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
+- **isPending()** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
 
 ## Relationships
 
@@ -15,11 +14,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
+- `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

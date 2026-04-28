@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `packages/design-tokens/src/index.ts`
+- **api-types.ts** (0 connections) — `packages/sdk/src/generated/api-types.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/design-tokens/src/index.ts`
+- `packages/sdk/src/generated/api-types.ts`
 
 ## Audit Trail
 

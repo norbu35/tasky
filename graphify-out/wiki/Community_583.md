@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **InputBar.tsx** (0 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/InputBar.tsx`
+- **index.ts** (0 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/chat/screens/ChatConversation/InputBar.tsx`
+- `apps/mobile/src/features/disputes/screens/DisputeStatus/index.ts`
 
 ## Audit Trail
 

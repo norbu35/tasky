@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **TaskerStatsScreen.tsx** (3 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
-- **readNumber()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
-- **formatPercent()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
-- **formatRating()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- **native.ts** (3 connections) — `packages/design-tokens/src/platform/native.ts`
+- **toNativeLetterSpacing()** (3 connections) — `packages/design-tokens/src/platform/native.ts`
+- **toNativeTextStyle()** (2 connections) — `packages/design-tokens/src/platform/native.ts`
+- **toNativeTypographyVariant()** (2 connections) — `packages/design-tokens/src/platform/native.ts`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- `packages/design-tokens/src/platform/native.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

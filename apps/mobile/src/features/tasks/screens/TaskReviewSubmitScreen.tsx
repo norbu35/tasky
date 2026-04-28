@@ -52,16 +52,9 @@ export default function TaskReviewSubmitScreen() {
       nextDisabled={isSubmitting || !isValid}
       testID="SCR-CUST-007"
       nextButtonTestID="SCR-CUST-007-cta"
+      greeting={t('ReviewSubmitScreen.finalStep')}
+      title={t('ReviewSubmitScreen.reviewTitle')}
     >
-      <View className="gap-xs mb-sm">
-        <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-normal">
-          {t('ReviewSubmitScreen.finalStep')}
-        </Text>
-        <Text className="text-heading font-display-bold text-primary-deep">
-          {t('ReviewSubmitScreen.reviewTitle')}
-        </Text>
-      </View>
-
       <PostingGuidanceCard
         titleKey="PostingGuidance.summaryTitle"
         bodyKey="PostingGuidance.summaryBody"

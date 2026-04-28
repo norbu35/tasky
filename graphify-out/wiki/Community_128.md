@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **FacebookAuthException** (3 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
-- **FacebookAuthException.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
-- **.FacebookAuthException()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
-- **.code()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
+- **BookingTransitionResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingTransitionResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingTransitionResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingTransitionResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingTransitionResult.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/BookingTransitionResult.java`
 
 ## Audit Trail
 

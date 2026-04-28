@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, Text, View } from 'react-native';
+import { Platform, View } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE, UrlTile } from 'react-native-maps';
 
 import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
@@ -53,16 +53,9 @@ export default function TaskLocationScreen() {
       onBack={goBack}
       nextLabel={t('common.continue')}
       nextDisabled={!pin}
+      title={t('LocationScreen.locationPageTitle')}
+      subtitle={t('LocationScreen.locationInstruction')}
     >
-      <View className="gap-sm">
-        <Text className="text-heading font-display-bold text-primary-deep">
-          {t('LocationScreen.locationPageTitle')}
-        </Text>
-        <Text className="text-body text-text-secondary leading-relaxed">
-          {t('LocationScreen.locationInstruction')}
-        </Text>
-      </View>
-
       <PostingGuidanceCard
         titleKey="PostingGuidance.addressPrivacyTitle"
         bodyKey="PostingGuidance.addressPrivacyBody"

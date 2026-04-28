@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **stryker.config.mjs** (0 connections) — `apps/web/stryker.config.mjs`
+- **customer-happy-path.spec.ts** (0 connections) — `apps/web/e2e/customer-happy-path.spec.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/stryker.config.mjs`
+- `apps/web/e2e/customer-happy-path.spec.ts`
 
 ## Audit Trail
 

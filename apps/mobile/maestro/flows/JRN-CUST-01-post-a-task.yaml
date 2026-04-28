@@ -49,7 +49,8 @@ appId: mn.tasky.mobile
     timeout: 10000
 
 # Tap first category card — tapping a card navigates directly to intake (no Continue step).
-- tapOn: 'Cleaning'
+- tapOn:
+    id: 'category-item-00000000-0000-0000-0000-000000000101'
 
 # Step 2: Intake / Task details (SCR-CUST-003)
 - extendedWaitUntil:

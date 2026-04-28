@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **SummarySections.tsx** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
-- **DividerSection()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
-- **DetailRow()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
+- **useVerificationSubmit.ts** (2 connections) — `apps/mobile/src/features/verification/hooks/useVerificationSubmit.ts`
+- **uploadToS3()** (1 connections) — `apps/mobile/src/features/verification/hooks/useVerificationSubmit.ts`
+- **useVerificationSubmit()** (1 connections) — `apps/mobile/src/features/verification/hooks/useVerificationSubmit.ts`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
+- `apps/mobile/src/features/verification/hooks/useVerificationSubmit.ts`
 
 ## Audit Trail
 

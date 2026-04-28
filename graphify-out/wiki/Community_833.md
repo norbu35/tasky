@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **LocationSearchResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/location/dto/LocationSearchResponse.java`
+- **NotificationLog.java** (0 connections) — `services/api/src/main/java/mn/tasky/notification/dto/NotificationLog.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/location/dto/LocationSearchResponse.java`
+- `services/api/src/main/java/mn/tasky/notification/dto/NotificationLog.java`
 
 ## Audit Trail
 

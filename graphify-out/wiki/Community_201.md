@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **role-based-ui.test.tsx** (1 connections) — `apps/mobile/__tests__/integration/role-based-ui.test.tsx`
-- **render()** (1 connections) — `apps/mobile/__tests__/integration/role-based-ui.test.tsx`
+- **reactNativeMock.js** (1 connections) — `apps/mobile/__tests__/test-utils/reactNativeMock.js`
+- **proxyComponent()** (1 connections) — `apps/mobile/__tests__/test-utils/reactNativeMock.js`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/integration/role-based-ui.test.tsx`
+- `apps/mobile/__tests__/test-utils/reactNativeMock.js`
 
 ## Audit Trail
 

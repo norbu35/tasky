@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **referrals.tsx** (0 connections) — `archive/mobile-future/tasker/referrals.tsx`
+- **Find all `CHECK (col IN ('A','B',...))` patterns in _text_. Returns a lis** (0 connections) — `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `archive/mobile-future/tasker/referrals.tsx`
+- `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Audit Trail
 

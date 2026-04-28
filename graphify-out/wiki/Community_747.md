@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **tasks.test.tsx** (0 connections) — `apps/web/tests/integration/tasks.test.tsx`
+- **index.ts** (0 connections) — `packages/design-tokens/src/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/tests/integration/tasks.test.tsx`
+- `packages/design-tokens/src/index.ts`
 
 ## Audit Trail
 

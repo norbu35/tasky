@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **base.mjs** (0 connections) — `tooling/config/vitest/base.mjs`
+- **index.tsx** (0 connections) — `archive/mobile-future/tasker/wallet/index.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/config/vitest/base.mjs`
+- `archive/mobile-future/tasker/wallet/index.tsx`
 
 ## Audit Trail
 

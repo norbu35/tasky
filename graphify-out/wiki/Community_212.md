@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **permission-camera.tsx** (1 connections) — `apps/mobile/src/app/(auth)/permission-camera.tsx`
-- **PermissionCameraRoute()** (1 connections) — `apps/mobile/src/app/(auth)/permission-camera.tsx`
+- **\_layout.tsx** (1 connections) — `apps/mobile/src/app/(tabs)/inbox/_layout.tsx`
+- **InboxLayout()** (1 connections) — `apps/mobile/src/app/(tabs)/inbox/_layout.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(auth)/permission-camera.tsx`
+- `apps/mobile/src/app/(tabs)/inbox/_layout.tsx`
 
 ## Audit Trail
 

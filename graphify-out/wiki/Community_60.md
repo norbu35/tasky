@@ -4,14 +4,14 @@
 
 ## Key Concepts
 
-- **TraceErrorAttributesTest** (4 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **.getErrorAttributes()** (3 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- **TraceErrorAttributes** (2 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- **.setsTraceIdFromRequestAttribute()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **.fallsBackToUuidWhenTraceIdAttributeIsNull()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **TraceErrorAttributes.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- **TraceErrorAttributesTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- **triage_doc_claims.py** (7 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **main()** (5 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **grouped_summary()** (4 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **parse_args()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **classify()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **recommended_action()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **run_validator()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **print_text()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
 
 ## Relationships
 
@@ -19,13 +19,12 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (75%)
-- INFERRED: 4 (25%)
+- EXTRACTED: 26 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

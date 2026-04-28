@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **PublicApiRuntimeConfiguration.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/PublicApiRuntimeConfiguration.java`
-- **PublicApiRuntimeConfiguration** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/PublicApiRuntimeConfiguration.java`
+- **check-doc-governance.py** (1 connections) — `tooling/scripts/governance/check-doc-governance.py`
+- **print_remediation()** (1 connections) — `tooling/scripts/governance/check-doc-governance.py`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/PublicApiRuntimeConfiguration.java`
+- `tooling/scripts/governance/check-doc-governance.py`
 
 ## Audit Trail
 

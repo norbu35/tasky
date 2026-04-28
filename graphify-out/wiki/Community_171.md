@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **primitives.ts** (2 connections) — `apps/mobile/src/utils/primitives.ts`
-- **toFutureIso()** (1 connections) — `apps/mobile/src/utils/primitives.ts`
-- **createIdempotencyKey()** (1 connections) — `apps/mobile/src/utils/primitives.ts`
+- **IdempotencyOperations** (2 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyOperations.java`
+- **IdempotencyOperations.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyOperations.java`
+- **.IdempotencyOperations()** (1 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyOperations.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/utils/primitives.ts`
+- `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyOperations.java`
 
 ## Audit Trail
 

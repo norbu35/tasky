@@ -4,23 +4,23 @@
 
 ## Key Concepts
 
-- **TaskerJobsScreen.tsx** (3 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
-- **BookingCardHeader()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
-- **BookingCardBody()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
-- **getJobCardTestID()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **NotificationList.model.ts** (3 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
+- **formatRelativeTimestamp()** (2 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
+- **isSameDay()** (1 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
+- **buildRows()** (1 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 6 (86%)
+- INFERRED: 1 (14%)
 - AMBIGUOUS: 0 (0%)
 
 ---

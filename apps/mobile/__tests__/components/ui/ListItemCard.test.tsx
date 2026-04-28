@@ -18,4 +18,13 @@ describe('ListItemCard', () => {
     fireEvent.press(item);
     expect(onPress).toHaveBeenCalledTimes(1);
   });
+
+  it('renders the same card frame without button semantics when onPress is absent', () => {
+    render(<ListItemCard title="Task" subtitle="Today" testID="list-item" />);
+
+    const item = screen.getByTestId('list-item');
+    expect(item.props.accessibilityRole).toBeUndefined();
+    expect(item.props.className).toContain('rounded-md');
+    expect(item.props.className).toContain('bg-card');
+  });
 });

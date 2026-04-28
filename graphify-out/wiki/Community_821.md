@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **FeatureToggle.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggle.java`
+- **RequestContext.java** (0 connections) — `services/api/src/main/java/mn/tasky/kernel/context/RequestContext.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/feature/FeatureToggle.java`
+- `services/api/src/main/java/mn/tasky/kernel/context/RequestContext.java`
 
 ## Audit Trail
 

@@ -1802,6 +1802,9 @@
       "contextStatus": "Баталгаажсан",
       "contextSubtitle": "Захиалгын дэлгэрэнгүй",
       "contextTitle": "Үйлчилгээ",
+      "detailsAction": "Дэлгэрэнгүй",
+      "attachImageAction": "Зураг хавсаргах",
+      "todayLabel": "Өнөөдөр",
       "errorMessage": "Мессежүүдийг ачаалж чадсангүй",
       "online": "Онлайн",
       "retry": "Дахин оролдох",
@@ -1924,7 +1927,7 @@
       "logout": "Гарах"
     },
     "help": {
-      "title": "Захиалга цуцлах уу?"
+      "title": "Тусламж & Дэмжлэг"
     },
     "legal": {
       "contact": "Холбоо барих",

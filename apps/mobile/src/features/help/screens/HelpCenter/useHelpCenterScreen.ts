@@ -1,4 +1,4 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -10,7 +10,6 @@ const { spacing } = mobileTheme;
 
 export function useHelpCenterScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
   const params = useLocalSearchParams();
   const paramsState = params['state'];
   const [state, setState] = useState<ScreenState>(() => resolveState(paramsState));
@@ -36,7 +35,6 @@ export function useHelpCenterScreen() {
 
   return {
     t,
-    router,
     state,
     query,
     setQuery,

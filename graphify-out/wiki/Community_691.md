@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AuthShell.test.tsx** (0 connections) — `apps/web/src/layout/__tests__/AuthShell.test.tsx`
+- **idempotency.test.ts** (0 connections) — `apps/web/src/lib/idempotency.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/__tests__/AuthShell.test.tsx`
+- `apps/web/src/lib/idempotency.test.ts`
 
 ## Audit Trail
 

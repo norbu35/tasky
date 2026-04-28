@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **FilterBar.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/FilterBar.tsx`
-- **FilterTab()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/FilterBar.tsx`
+- **useTaskerProfile.ts** (1 connections) — `apps/mobile/src/features/profile/hooks/useTaskerProfile.ts`
+- **useTaskerProfile()** (1 connections) — `apps/mobile/src/features/profile/hooks/useTaskerProfile.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingsList/FilterBar.tsx`
+- `apps/mobile/src/features/profile/hooks/useTaskerProfile.ts`
 
 ## Audit Trail
 

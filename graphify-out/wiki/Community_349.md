@@ -1,11 +1,10 @@
 # Community 349
 
-> 2 nodes
+> 1 nodes
 
 ## Key Concepts
 
-- **tdd-gate.test.mjs** (1 connections) — `tooling/tests/tdd-gate.test.mjs`
-- **extractSingleQuotedAssignment()** (1 connections) — `tooling/tests/tdd-gate.test.mjs`
+- **settings.gradle.kts** (0 connections) — `settings.gradle.kts`
 
 ## Relationships
 
@@ -13,11 +12,11 @@
 
 ## Source Files
 
-- `tooling/tests/tdd-gate.test.mjs`
+- `settings.gradle.kts`
 
 ## Audit Trail
 
-- EXTRACTED: 2 (100%)
+- EXTRACTED: 0 (0%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

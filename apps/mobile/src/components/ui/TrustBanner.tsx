@@ -8,7 +8,7 @@ import { cn } from '@/lib/cn';
 
 import { Reveal } from './Reveal';
 
-const { colors, iconSizes, typographyVariants } = mobileTheme;
+const { colors, iconSizes } = mobileTheme;
 const { tint } = mobileSurfaces;
 
 interface TrustBannerProps {
@@ -47,10 +47,7 @@ export function TrustBanner({
           <ShieldCheck size={isCompact ? iconSizes.xs : iconSizes.sm} color={colors.trustMuted} />
         </View>
         <View className="flex-1">
-          <Text
-            className="text-caption font-sans-bold text-trust-muted uppercase"
-            style={{ letterSpacing: typographyVariants.badgeText.letterSpacing }}
-          >
+          <Text className="text-label font-sans-bold text-foreground" numberOfLines={2}>
             {title}
           </Text>
           <Text className="text-label text-foreground">{description}</Text>

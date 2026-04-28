@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **LedgerEntry.java** (0 connections) — `services/api/src/main/java/mn/tasky/wallet/dto/LedgerEntry.java`
+- **base.mjs** (0 connections) — `tooling/config/vitest/base.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/wallet/dto/LedgerEntry.java`
+- `tooling/config/vitest/base.mjs`
 
 ## Audit Trail
 

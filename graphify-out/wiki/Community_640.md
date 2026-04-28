@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **FaqList.tsx** (0 connections) — `apps/mobile/src/features/help/screens/HelpCenter/FaqList.tsx`
+- **queryKeys.ts** (0 connections) — `apps/mobile/src/lib/queryKeys.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/help/screens/HelpCenter/FaqList.tsx`
+- `apps/mobile/src/lib/queryKeys.ts`
 
 ## Audit Trail
 

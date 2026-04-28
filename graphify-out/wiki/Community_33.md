@@ -1,53 +1,44 @@
 # Community 33
 
-> 28 nodes
+> 21 nodes
 
 ## Key Concepts
 
-- **OpenApiContractTestSupport** (9 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
-- **.resolveFromRepoRoot()** (9 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
-- **ApiContractTraceabilityTests** (8 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
-- **.readOpenApi()** (6 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
-- **.liveApiPaths()** (5 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
-- **.specOnlyEndpointsDeclareExplicitDeferralMetadata()** (5 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
-- **MessageDaoTest** (5 connections) — `services/api/src/test/java/mn/tasky/messaging/dao/MessageDaoTest.java`
-- **.documentedPaths()** (4 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
-- **.requestMappingPaths()** (4 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
-- **.liveSpringMvcApiPathsAreDocumented()** (4 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiSpringParityTests.java`
-- **.taskFeedListUsesSummarySchema()** (4 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
-- **.listEndpointsExposeCursorAndLimitContract()** (4 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
-- **.endpointBlock()** (4 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
-- **.normalizePath()** (3 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
-- **.ordersMessagePagesBySentAtAndId()** (3 connections) — `services/api/src/test/java/mn/tasky/messaging/dao/MessageDaoTest.java`
-- **.normalize()** (3 connections) — `services/api/src/test/java/mn/tasky/messaging/dao/MessageDaoTest.java`
-- **OpenApiSpringParityTests** (2 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiSpringParityTests.java`
-- **.openApiContractBaselineIsPresent()** (2 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
-- **.sdkGeneratedOutputsAreWired()** (2 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
-- **.contractDriftGateScriptExists()** (2 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
-- **.queryFor()** (2 connections) — `services/api/src/test/java/mn/tasky/messaging/dao/MessageDaoTest.java`
-- **OpenApiContractTestSupport.java** (1 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
-- **.OpenApiContractTestSupport()** (1 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
-- **.endpointBlock()** (1 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
-- **OpenApiSpringParityTests.java** (1 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiSpringParityTests.java`
-- _... and 3 more nodes in this community_
+- **validate-schema-parity.py** (15 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **parse_schema()** (8 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **main()** (8 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **extract_check_in_values()** (4 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **strip_comments()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **split_top_level_commas()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **column_name_from_def()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **check_values()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **compare_schemas()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **parse_args()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **collect_migration_files()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **migration_range_label()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **normalize_identifier()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **schema_to_json()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **schema_diff()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **migration_version()** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **Split _text_ by commas at parenthesis depth 0.** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **Return the column name from a column definition, or _None_ for standalone ta** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **Find enum-like `CHECK` patterns in _text_. Returns a list of ``(column_na** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **Walk _migrations_ in order and return the final schema state. Returns ``{ta** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **Return `(errors, warnings)`.** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Relationships
 
-- [[Community 0]] (3 shared connections)
-- [[Community 2]] (1 shared connections)
 - [[Community 1]] (1 shared connections)
+- [[Community 8]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
-- `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
-- `services/api/src/test/java/mn/tasky/contract/OpenApiSpringParityTests.java`
-- `services/api/src/test/java/mn/tasky/messaging/dao/MessageDaoTest.java`
+- `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Audit Trail
 
-- EXTRACTED: 66 (68%)
-- INFERRED: 31 (32%)
+- EXTRACTED: 66 (97%)
+- INFERRED: 2 (3%)
 - AMBIGUOUS: 0 (0%)
 
 ---

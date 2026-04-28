@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **NetworkErrorScreen.tsx** (0 connections) — `apps/mobile/src/features/infra/screens/NetworkErrorScreen.tsx`
+- **postcss.config.mjs** (0 connections) — `apps/web/postcss.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/infra/screens/NetworkErrorScreen.tsx`
+- `apps/web/postcss.config.mjs`
 
 ## Audit Trail
 

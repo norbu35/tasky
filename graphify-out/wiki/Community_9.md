@@ -1,76 +1,68 @@
 # Community 9
 
-> 164 nodes
+> 187 nodes
 
 ## Key Concepts
 
-- **.listPending()** (17 connections) — `services/api/src/main/java/mn/tasky/projection/admin/AdminVerificationQueueProjectionService.java`
-- **.recordAdminAction()** (16 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditCommandPort.java`
-- **UpdateModerationPolicy** (13 connections) — `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
-- **IdentityQueryHandlerTest** (13 connections) — `services/api/src/test/java/mn/tasky/identity/application/query/IdentityQueryHandlerTest.java`
-- **.updatePolicy()** (12 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationPolicyUpdateService.java`
-- **IdentityQueryPort** (11 connections) — `services/api/src/main/java/mn/tasky/identity/publicapi/IdentityQueryPort.java`
-- **.pendingVerifications()** (11 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
-- **GetVerificationDetail** (11 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **ApproveVerification** (11 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **.verificationDecisionNotificationIsSentToAffectedTasker()** (10 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
-- **AdminVerificationCompositionService** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
-- **.verificationDetail()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
-- **.detailResponse()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
-- **.approve()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionService.java`
-- **VerificationServiceTest.java** (9 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **.approve_success()** (9 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
-- **PendingVerificationsTests** (9 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
-- **.pendingDisputes()** (8 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionService.java`
-- **GetVerificationStatus** (8 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **.reject_success()** (8 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
-- **.strikePolicyResponse()** (7 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationCompositionService.java`
-- **.reject()** (7 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionService.java`
-- **VerificationExists** (7 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **.approve_notPending()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
-- **.approve_notFound()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
-- _... and 139 more nodes in this community_
+- **.requestJson()** (116 connections) — `packages/core/src/http/transport.ts`
+- **HttpApiClient** (49 connections) — `apps/web/src/lib/apiClient.ts`
+- **getClient()** (44 connections) — `apps/mobile/src/features/verification/api.ts`
+- **HttpAdminApiClient** (26 connections) — `apps/web/src/lib/adminApiClient.ts`
+- **api.ts** (14 connections) — `apps/mobile/src/features/bookings/api.ts`
+- **getClient()** (12 connections) — `apps/mobile/src/features/tasks/api.ts`
+- **mockApi.ts** (12 connections) — `apps/web/e2e/support/mockApi.ts`
+- **api.ts** (11 connections) — `apps/mobile/src/features/tasks/api.ts`
+- **.requestVoid()** (10 connections) — `packages/core/src/http/transport.ts`
+- **api.ts** (8 connections) — `apps/mobile/src/features/profile/api.ts`
+- **HttpTransport** (7 connections) — `packages/core/src/http/transport.ts`
+- **mobileApiClient.ts** (5 connections) — `apps/mobile/src/lib/mobileApiClient.ts`
+- **apiClient.ts** (5 connections) — `apps/web/src/lib/apiClient.ts`
+- **buildBaseUrl()** (5 connections) — `apps/web/src/lib/apiClient.ts`
+- **transport.ts** (5 connections) — `packages/core/src/http/transport.ts`
+- **normalizeBaseUrl()** (5 connections) — `packages/core/src/http/transport.ts`
+- **api.ts** (4 connections) — `apps/mobile/src/features/auth/api.ts`
+- **api.ts** (4 connections) — `apps/mobile/src/features/chat/api.ts`
+- **api.ts** (4 connections) — `apps/mobile/src/features/review/api.ts`
+- **api.ts** (4 connections) — `apps/mobile/src/features/verification/api.ts`
+- **buildBaseUrl()** (4 connections) — `apps/mobile/src/lib/mobileApiClient.ts`
+- **json()** (4 connections) — `apps/web/e2e/support/mockApi.ts`
+- **installMockApi()** (4 connections) — `apps/web/e2e/support/mockApi.ts`
+- **App()** (4 connections) — `apps/web/src/App.tsx`
+- **AuthPage.tsx** (4 connections) — `apps/web/src/pages/AuthPage.tsx`
+- _... and 162 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (63 shared connections)
-- [[Community 1]] (23 shared connections)
-- [[Community 6]] (14 shared connections)
-- [[Community 2]] (10 shared connections)
-- [[Community 3]] (7 shared connections)
-- [[Community 19]] (3 shared connections)
-- [[Community 7]] (3 shared connections)
-- [[Community 13]] (2 shared connections)
-- [[Community 16]] (2 shared connections)
-- [[Community 4]] (2 shared connections)
+- [[Community 0]] (14 shared connections)
+- [[Community 7]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/api/AdminModerationController.java`
-- `services/api/src/main/java/mn/tasky/admin/api/AdminVerificationController.java`
-- `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditCommandPort.java`
-- `services/api/src/main/java/mn/tasky/identity/publicapi/IdentityQueryPort.java`
-- `services/api/src/main/java/mn/tasky/projection/admin/AdminVerificationQueueProjectionService.java`
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionService.java`
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationCompositionService.java`
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationPolicyUpdateOutcome.java`
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationPolicyUpdateService.java`
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionService.java`
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationPublicCompositionService.java`
-- `services/api/src/main/java/mn/tasky/runtime/user/composition/UserAccountDeletionService.java`
-- `services/api/src/main/java/mn/tasky/user/api/UserProfileController.java`
-- `services/api/src/test/java/mn/tasky/admin/application/command/AdminAuditCommandHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
-- `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- `services/api/src/test/java/mn/tasky/identity/application/command/IdentityCommandHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/identity/application/query/IdentityQueryHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- `apps/mobile/src/app/task/[id].tsx`
+- `apps/mobile/src/features/auth/api.ts`
+- `apps/mobile/src/features/bookings/api.ts`
+- `apps/mobile/src/features/chat/api.ts`
+- `apps/mobile/src/features/disputes/api.ts`
+- `apps/mobile/src/features/notifications/api.ts`
+- `apps/mobile/src/features/profile/api.ts`
+- `apps/mobile/src/features/review/api.ts`
+- `apps/mobile/src/features/tasks/api.ts`
+- `apps/mobile/src/features/verification/api.ts`
+- `apps/mobile/src/lib/clientAnalytics.ts`
+- `apps/mobile/src/lib/mobileApiClient.ts`
+- `apps/web/e2e/support/mockApi.ts`
+- `apps/web/src/App.tsx`
+- `apps/web/src/lib/adminApiClient.ts`
+- `apps/web/src/lib/apiClient.ts`
+- `apps/web/src/lib/clientAnalytics.ts`
+- `apps/web/src/pages/AuthPage.tsx`
+- `apps/web/src/pages/admin/AdminConciergePage.tsx`
+- `packages/core/src/http/transport.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 362 (56%)
-- INFERRED: 289 (44%)
+- EXTRACTED: 481 (64%)
+- INFERRED: 274 (36%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **label.tsx** (0 connections) — `apps/web/src/components/ui/label.tsx`
+- **ParityShells.test.tsx** (0 connections) — `apps/web/src/layout/__tests__/ParityShells.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/label.tsx`
+- `apps/web/src/layout/__tests__/ParityShells.test.tsx`
 
 ## Audit Trail
 

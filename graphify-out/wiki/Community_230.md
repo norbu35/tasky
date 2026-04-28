@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **FormWizardTemplate.tsx** (1 connections) — `apps/mobile/src/components/templates/FormWizardTemplate.tsx`
-- **handleActionBarLayout()** (1 connections) — `apps/mobile/src/components/templates/FormWizardTemplate.tsx`
+- **Toast.tsx** (1 connections) — `apps/mobile/src/components/ui/Toast.tsx`
+- **Toast()** (1 connections) — `apps/mobile/src/components/ui/Toast.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/templates/FormWizardTemplate.tsx`
+- `apps/mobile/src/components/ui/Toast.tsx`
 
 ## Audit Trail
 

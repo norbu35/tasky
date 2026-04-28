@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **ActivateSchemaVersionRequestTest** (2 connections) — `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
-- **ActivateSchemaVersionRequestTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
-- **.storesRequestedActivationMode()** (1 connections) — `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
+- **otp.tsx** (2 connections) — `archive/mobile-future/auth/otp.tsx`
+- **resolveOtpState()** (1 connections) — `archive/mobile-future/auth/otp.tsx`
+- **cn()** (1 connections) — `archive/mobile-future/auth/otp.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
+- `archive/mobile-future/auth/otp.tsx`
 
 ## Audit Trail
 

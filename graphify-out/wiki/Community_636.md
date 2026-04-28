@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Screen.tsx** (0 connections) — `apps/mobile/src/features/help/screens/HelpCenter/Screen.tsx`
+- **TermsOfService.ErrorVisual.tsx** (0 connections) — `apps/mobile/src/features/legal/screens/TermsOfService.ErrorVisual.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/help/screens/HelpCenter/Screen.tsx`
+- `apps/mobile/src/features/legal/screens/TermsOfService.ErrorVisual.tsx`
 
 ## Audit Trail
 

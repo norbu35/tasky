@@ -60,7 +60,7 @@ export default function VerificationConsentScreen() {
   return (
     <ScreenContainer testID="SCR-TASK-004">
       <View
-        className="flex-row items-center justify-between px-md"
+        className="flex-row items-center justify-between"
         style={{ minHeight: screenLayout.header.minHeight }}
       >
         <Touchable
@@ -83,7 +83,6 @@ export default function VerificationConsentScreen() {
       <InsetScrollView
         className="flex-1"
         contentContainerStyle={{
-          paddingHorizontal: spacing.lg,
           paddingTop: spacing.xl,
           paddingBottom: spacing.xl,
           gap: spacing.lg,
@@ -134,7 +133,7 @@ export default function VerificationConsentScreen() {
       </InsetScrollView>
 
       <StickyActionBar>
-        <View className="py-md px-md">
+        <View className="py-md">
           <Button
             label={t('tasker.verification.consentContinue')}
             onPress={() => router.push('/(tasker)/verification/upload')}

@@ -4,25 +4,25 @@
 
 ## Key Concepts
 
-- **AdminBookingOverrideOutcome.java** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
-- **invalidTransition()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
-- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
-- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
-- **notFound()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
+- **PaymentInitiationOutcome.java** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **featureDeferred()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
 
 ## Relationships
 
-- [[Community 1]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (91%)
-- INFERRED: 1 (9%)
+- EXTRACTED: 10 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

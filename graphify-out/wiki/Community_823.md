@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **IdempotencyRecord.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyRecord.java`
+- **KernelError.java** (0 connections) — `services/api/src/main/java/mn/tasky/kernel/error/KernelError.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyRecord.java`
+- `services/api/src/main/java/mn/tasky/kernel/error/KernelError.java`
 
 ## Audit Trail
 

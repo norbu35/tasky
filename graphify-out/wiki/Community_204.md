@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TaskDetailCustomerScreen.test.tsx** (1 connections) — `apps/mobile/__tests__/screens/customer/TaskDetailCustomerScreen.test.tsx`
-- **makeTask()** (1 connections) — `apps/mobile/__tests__/screens/customer/TaskDetailCustomerScreen.test.tsx`
+- **\_layout.tsx** (1 connections) — `apps/mobile/src/app/(auth)/_layout.tsx`
+- **AuthLayout()** (1 connections) — `apps/mobile/src/app/(auth)/_layout.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/TaskDetailCustomerScreen.test.tsx`
+- `apps/mobile/src/app/(auth)/_layout.tsx`
 
 ## Audit Trail
 

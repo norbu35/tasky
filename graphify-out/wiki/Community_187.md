@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskSelectResult.java** (2 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskSelectResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskSelectResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskSelectResult.java`
+- **schema-parity.test.mjs** (2 connections) — `tooling/tests/schema-parity.test.mjs`
+- **writeMigration()** (1 connections) — `tooling/tests/schema-parity.test.mjs`
+- **runPython()** (1 connections) — `tooling/tests/schema-parity.test.mjs`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/dto/TaskSelectResult.java`
+- `tooling/tests/schema-parity.test.mjs`
 
 ## Audit Trail
 

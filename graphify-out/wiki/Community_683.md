@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **button.tsx** (0 connections) — `apps/web/src/components/ui/button.tsx`
+- **AuthShell.test.tsx** (0 connections) — `apps/web/src/layout/__tests__/AuthShell.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/button.tsx`
+- `apps/web/src/layout/__tests__/AuthShell.test.tsx`
 
 ## Audit Trail
 

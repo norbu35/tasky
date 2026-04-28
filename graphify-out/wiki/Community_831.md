@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **KernelError.java** (0 connections) — `services/api/src/main/java/mn/tasky/kernel/error/KernelError.java`
+- **MessageRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/messaging/dto/MessageRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/kernel/error/KernelError.java`
+- `services/api/src/main/java/mn/tasky/messaging/dto/MessageRequest.java`
 
 ## Audit Trail
 

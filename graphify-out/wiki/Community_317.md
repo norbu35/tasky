@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **EditProfilePage.tsx** (1 connections) — `apps/web/src/pages/shared/EditProfilePage.tsx`
-- **EditProfilePage()** (1 connections) — `apps/web/src/pages/shared/EditProfilePage.tsx`
+- **ChatDetailPage.tsx** (1 connections) — `apps/web/src/pages/shared/ChatDetailPage.tsx`
+- **ChatDetailPage()** (1 connections) — `apps/web/src/pages/shared/ChatDetailPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/EditProfilePage.tsx`
+- `apps/web/src/pages/shared/ChatDetailPage.tsx`
 
 ## Audit Trail
 

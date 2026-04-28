@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **AutomationContractBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
-- **.automationContractMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
-- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
-- **AutomationContractBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
+- **otp-migration.tsx** (3 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **resolveState()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **handleSubmit()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **handleSkip()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
+- `archive/mobile-future/auth/otp-migration.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -1,12 +1,11 @@
 # Community 193
 
-> 3 nodes
+> 2 nodes
 
 ## Key Concepts
 
-- **base.mjs** (2 connections) — `tooling/config/eslint/base.mjs`
-- **react-native.mjs** (1 connections) — `tooling/config/eslint/react-native.mjs`
-- **react.mjs** (1 connections) — `tooling/config/eslint/react.mjs`
+- **navigation-wiring.test.tsx** (1 connections) — `apps/mobile/__tests__/integration/navigation-wiring.test.tsx`
+- **TabsMock()** (1 connections) — `apps/mobile/__tests__/integration/navigation-wiring.test.tsx`
 
 ## Relationships
 
@@ -14,13 +13,11 @@
 
 ## Source Files
 
-- `tooling/config/eslint/base.mjs`
-- `tooling/config/eslint/react-native.mjs`
-- `tooling/config/eslint/react.mjs`
+- `apps/mobile/__tests__/integration/navigation-wiring.test.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 2 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

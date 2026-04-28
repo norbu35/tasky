@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ScreenFrame.tsx** (1 connections) — `apps/web/src/layout/ScreenFrame.tsx`
-- **ScreenFrame()** (1 connections) — `apps/web/src/layout/ScreenFrame.tsx`
+- **utils.ts** (1 connections) — `apps/web/src/lib/utils.ts`
+- **cn()** (1 connections) — `apps/web/src/lib/utils.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/ScreenFrame.tsx`
+- `apps/web/src/lib/utils.ts`
 
 ## Audit Trail
 

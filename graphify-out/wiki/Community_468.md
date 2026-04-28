@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **profileRouteParams.test.ts** (0 connections) — `apps/mobile/__tests__/features/profile/profileRouteParams.test.ts`
+- **Tasky-Bridging-Header.h** (0 connections) — `apps/mobile/ios/Tasky/Tasky-Bridging-Header.h`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/profile/profileRouteParams.test.ts`
+- `apps/mobile/ios/Tasky/Tasky-Bridging-Header.h`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `packages/sdk/src/index.ts`
+- **RejectVerificationRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/admin/dto/RejectVerificationRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/sdk/src/index.ts`
+- `services/api/src/main/java/mn/tasky/admin/dto/RejectVerificationRequest.java`
 
 ## Audit Trail
 

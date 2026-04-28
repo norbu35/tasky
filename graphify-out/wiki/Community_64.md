@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **PushNotificationProvider** (6 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **PushNotificationProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.sendPush()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.subscribeToTopics()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.sendToTopic()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
+- **PaymentProvider** (6 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **PaymentProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.createIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.isValidSignature()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.resolvePaymentIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
 
 ## Relationships
 
@@ -18,7 +18,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
+- `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
 
 ## Audit Trail
 

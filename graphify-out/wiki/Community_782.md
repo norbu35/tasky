@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **OtpChallenge.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/OtpChallenge.java`
+- **UserProfilePage.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/UserProfilePage.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/dto/OtpChallenge.java`
+- `services/api/src/main/java/mn/tasky/auth/dto/UserProfilePage.java`
 
 ## Audit Trail
 

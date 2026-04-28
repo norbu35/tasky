@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **InboxPage.tsx** (1 connections) — `apps/web/src/pages/shared/InboxPage.tsx`
-- **InboxPage()** (1 connections) — `apps/web/src/pages/shared/InboxPage.tsx`
+- **build.gradle.kts** (1 connections) — `services/api/build.gradle.kts`
+- **normalizeCoveragePackage()** (1 connections) — `services/api/build.gradle.kts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/InboxPage.tsx`
+- `services/api/build.gradle.kts`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReviewHardLock.tsx** (1 connections) — `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
-- **handleSubmitReview()** (1 connections) — `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
+- **useTaskPhotoUpload.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useTaskPhotoUpload.ts`
+- **useTaskPhotoUpload()** (1 connections) — `apps/mobile/src/features/tasks/hooks/useTaskPhotoUpload.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
+- `apps/mobile/src/features/tasks/hooks/useTaskPhotoUpload.ts`
 
 ## Audit Trail
 

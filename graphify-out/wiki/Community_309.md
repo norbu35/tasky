@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **AdminVerificationsPage.test.tsx** (1 connections) — `apps/web/src/pages/admin/__tests__/AdminVerificationsPage.test.tsx`
-- **makeVerification()** (1 connections) — `apps/web/src/pages/admin/__tests__/AdminVerificationsPage.test.tsx`
+- **CustomerDisputeStatusPage.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerDisputeStatusPage.tsx`
+- **getDisputeStatusLabelKey()** (1 connections) — `apps/web/src/pages/customer/CustomerDisputeStatusPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/admin/__tests__/AdminVerificationsPage.test.tsx`
+- `apps/web/src/pages/customer/CustomerDisputeStatusPage.tsx`
 
 ## Audit Trail
 

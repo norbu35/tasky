@@ -1,9 +1,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render as rtlRender, screen, fireEvent } from '@testing-library/react-native';
 import React from 'react';
-import type { TextProps } from 'react-native';
+import { StyleSheet, type TextProps } from 'react-native';
 
 import TaskFeedScreen from '../../../src/app/(tabs)/index';
+import { useReviewGate } from '../../../src/features/review/components/ReviewGateProvider';
 import { useTasks } from '../../../src/features/tasks/hooks/useTasks';
 import type { TaskFeedItem } from '../../../src/lib/api/types';
 import { RoleProvider } from '../../../src/providers/RoleProvider';
@@ -49,7 +50,12 @@ jest.mock('../../../src/features/tasks/hooks/useTasks', () => ({
   useTasks: jest.fn(),
 }));
 
+jest.mock('../../../src/features/review/components/ReviewGateProvider', () => ({
+  useReviewGate: jest.fn(),
+}));
+
 const mockUseTasks = useTasks as jest.MockedFunction<typeof useTasks>;
+const mockUseReviewGate = useReviewGate as jest.MockedFunction<typeof useReviewGate>;
 
 const baseTask: TaskFeedItem = {
   id: 'task-1',
@@ -93,6 +99,11 @@ beforeEach(() => {
   useAppStore.setState({
     hasSeenOnboarding: true,
     currentRole: 'tasker',
+  });
+  mockUseReviewGate.mockReturnValue({
+    isLocked: false,
+    hasPending: false,
+    oldestPending: null,
   });
 });
 
@@ -168,7 +179,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
     expect(screen.getByText('Deep clean apartment')).toBeTruthy();
     expect(screen.getByText('Fix kitchen sink')).toBeTruthy();
     expect(screen.queryByText('John Customer')).toBeNull();
-    expect(screen.getAllByText('Bayangol district').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Bayangol district/).length).toBeGreaterThan(0);
   });
 
   it('does not expose applicant counts on tasker feed cards', () => {
@@ -382,5 +393,41 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
 
     fireEvent.press(screen.getByTestId('task-card-task-1'));
     expect(mockRouter.push).toHaveBeenCalledWith('/task/task-1');
+  });
+
+  it('keeps review-locked task cards visually stable and non-interactive', () => {
+    mockUseReviewGate.mockReturnValue({
+      isLocked: true,
+      hasPending: true,
+      oldestPending: {
+        id: 'review-case-1',
+        booking_id: 'booking-1',
+        user_id: 'tasker-1',
+        status: 'PENDING',
+        triggered_at: '2026-03-24T10:00:00Z',
+        resolved_at: null,
+        investigation_active: false,
+      },
+    });
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    renderTaskFeed();
+
+    const cardWrapperStyle = StyleSheet.flatten(
+      screen.getByTestId('task-card-index-0').props.style,
+    );
+    expect(cardWrapperStyle?.opacity).toBeUndefined();
+
+    fireEvent.press(screen.getByTestId('task-card-task-1'));
+    expect(mockRouter.push).not.toHaveBeenCalled();
   });
 });

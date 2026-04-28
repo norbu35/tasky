@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **DisputeResolutionResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
-- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- **ProjectionBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
+- **.projectionPlaneMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
+- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
+- **ProjectionBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

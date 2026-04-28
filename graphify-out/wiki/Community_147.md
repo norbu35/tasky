@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **ProviderBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
-- **.providerPlaneMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
-- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
-- **ProviderBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
+- **polish.tsx** (3 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **handlePrimaryAction()** (3 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **handleGenerate()** (2 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **handleApply()** (2 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
+- `archive/mobile-future/tasker/profile/polish.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

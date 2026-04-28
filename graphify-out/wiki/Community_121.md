@@ -4,24 +4,23 @@
 
 ## Key Concepts
 
-- **TaskPhotosScreen.tsx** (3 connections) — `apps/mobile/src/features/tasks/screens/TaskPhotosScreen.tsx`
-- **handleAddPhoto()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskPhotosScreen.tsx`
-- **handleNext()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskPhotosScreen.tsx`
-- **handleRemovePhoto()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskPhotosScreen.tsx`
+- **FacebookAuthException** (3 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
+- **FacebookAuthException.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
+- **.FacebookAuthException()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
+- **.code()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
 
 ## Relationships
 
-- [[Community 1]] (1 shared connections)
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskPhotosScreen.tsx`
+- `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (75%)
-- INFERRED: 2 (25%)
+- EXTRACTED: 6 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

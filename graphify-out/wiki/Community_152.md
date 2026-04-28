@@ -1,13 +1,12 @@
 # Community 152
 
-> 4 nodes
+> 3 nodes
 
 ## Key Concepts
 
-- **AutomationEventTypesTest** (3 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
-- **AutomationEventTypesTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
-- **.constantsHaveExpectedValues()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
-- **.privateConstructor()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- **PriceTag.tsx** (2 connections) — `apps/mobile/src/components/ui/PriceTag.tsx`
+- **formatAmount()** (2 connections) — `apps/mobile/src/components/ui/PriceTag.tsx`
+- **PriceTag()** (2 connections) — `apps/mobile/src/components/ui/PriceTag.tsx`
 
 ## Relationships
 
@@ -15,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- `apps/mobile/src/components/ui/PriceTag.tsx`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useCategories.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useCategories.ts`
-- **useCategories()** (1 connections) — `apps/mobile/src/features/tasks/hooks/useCategories.ts`
+- **useVerificationUpload.ts** (1 connections) — `apps/mobile/src/features/verification/hooks/useVerificationUpload.ts`
+- **useVerificationUpload()** (1 connections) — `apps/mobile/src/features/verification/hooks/useVerificationUpload.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/hooks/useCategories.ts`
+- `apps/mobile/src/features/verification/hooks/useVerificationUpload.ts`
 
 ## Audit Trail
 

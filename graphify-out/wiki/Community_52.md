@@ -4,28 +4,28 @@
 
 ## Key Concepts
 
-- **TrustQueryHandler** (8 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **TrustQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.TrustQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.listReviews()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.listPendingDisputes()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.getDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.getDisputeForUser()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.getDisputeEvidence()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.hasOpenDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **AudienceCompositionBoundaryTest** (8 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **.representativeControllersDelegateAudienceCompositionToRuntimeServices()** (5 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **.allControllersAreAccountedFor()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **.assertControllerDependsOn()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **.assertControllerDoesNotDependOn()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **.assertControllerOmitsMethods()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **AudienceCompositionBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **.exceptionControllerClasses()** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **.runtimeAudienceCompositionPackagesAndServicesExist()** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 0]] (2 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 16 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 22 (92%)
+- INFERRED: 2 (8%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **react-query.ts** (0 connections) — `apps/mobile/src/lib/react-query.ts`
+- **stryker.config.mjs** (0 connections) — `apps/web/stryker.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/react-query.ts`
+- `apps/web/stryker.config.mjs`
 
 ## Audit Trail
 

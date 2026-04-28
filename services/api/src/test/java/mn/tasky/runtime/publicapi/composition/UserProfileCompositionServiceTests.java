@@ -69,7 +69,7 @@ class UserProfileCompositionServiceTests {
                     "Jane",
                     null,
                     null,
-                    0.0,
+                    null,
                     0,
                     false,
                     "2025-06-01T00:00:00Z");

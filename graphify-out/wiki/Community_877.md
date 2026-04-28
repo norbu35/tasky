@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AssistanceOutcomeType.java** (0 connections) — `services/api/src/main/java/mn/tasky/task/dto/AssistanceOutcomeType.java`
+- **VerificationUploadUrlRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/verification/dto/VerificationUploadUrlRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/dto/AssistanceOutcomeType.java`
+- `services/api/src/main/java/mn/tasky/verification/dto/VerificationUploadUrlRequest.java`
 
 ## Audit Trail
 

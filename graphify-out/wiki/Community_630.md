@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **taskDraft.types.ts** (0 connections) — `apps/mobile/src/features/tasks/draft/taskDraft.types.ts`
+- **ErrorVisual.tsx** (0 connections) — `apps/mobile/src/features/help/screens/HelpCenter/ErrorVisual.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/draft/taskDraft.types.ts`
+- `apps/mobile/src/features/help/screens/HelpCenter/ErrorVisual.tsx`
 
 ## Audit Trail
 

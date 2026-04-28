@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **taskSchema.ts** (0 connections) — `packages/core/src/tasks/taskSchema.ts`
+- **additions.test.mjs** (0 connections) — `packages/design-tokens/__tests__/additions.test.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/core/src/tasks/taskSchema.ts`
+- `packages/design-tokens/__tests__/additions.test.mjs`
 
 ## Audit Trail
 

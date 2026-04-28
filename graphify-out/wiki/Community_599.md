@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ReviewForm.RatingInput.tsx** (0 connections) — `apps/mobile/src/features/review/components/ReviewForm.RatingInput.tsx`
+- **ApplicantsSelection.model.ts** (0 connections) — `apps/mobile/src/features/tasks/screens/ApplicantsSelection.model.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/review/components/ReviewForm.RatingInput.tsx`
+- `apps/mobile/src/features/tasks/screens/ApplicantsSelection.model.ts`
 
 ## Audit Trail
 

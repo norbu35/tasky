@@ -77,7 +77,7 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
   it('renders the Tasky logo', () => {
     useAuthStore.setState({ session: null });
     render(<SplashScreen />);
-    expect(screen.getByText('Tasky')).toBeTruthy();
+    expect(screen.getByTestId('tasky-logo')).toBeTruthy();
   });
 
   it('renders the Figma splash tagline', () => {

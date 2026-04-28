@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **handleConfirmCancel()** (2 connections) — `apps/mobile/src/features/tasks/components/TaskCancelSheet.tsx`
-- **generateIdempotencyKey()** (2 connections) — `apps/mobile/src/utils/uuid.ts`
-- **TaskCancelSheet.tsx** (1 connections) — `apps/mobile/src/features/tasks/components/TaskCancelSheet.tsx`
-- **uuid.ts** (1 connections) — `apps/mobile/src/utils/uuid.ts`
+- **AnalyticsCommandHandler** (3 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- **AnalyticsCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- **.AnalyticsCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- **.track()** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
 
 ## Relationships
 
@@ -15,13 +15,12 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/components/TaskCancelSheet.tsx`
-- `apps/mobile/src/utils/uuid.ts`
+- `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (67%)
-- INFERRED: 2 (33%)
+- EXTRACTED: 6 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

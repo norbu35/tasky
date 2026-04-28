@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ListItemCard.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/ListItemCard.test.tsx`
+- **formatLastActive.test.ts** (0 connections) — `apps/mobile/__tests__/lib/formatLastActive.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/ListItemCard.test.tsx`
+- `apps/mobile/__tests__/lib/formatLastActive.test.ts`
 
 ## Audit Trail
 

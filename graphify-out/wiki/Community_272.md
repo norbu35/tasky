@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ProfileReputationSummary.tsx** (1 connections) — `apps/mobile/src/features/profile/components/ProfileReputationSummary.tsx`
-- **ProfileReputationSummary()** (1 connections) — `apps/mobile/src/features/profile/components/ProfileReputationSummary.tsx`
+- **NoApplicantRescue.tsx** (1 connections) — `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
+- **RescueButton()** (1 connections) — `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/components/ProfileReputationSummary.tsx`
+- `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
 
 ## Audit Trail
 

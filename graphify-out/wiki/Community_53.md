@@ -1,31 +1,31 @@
 # Community 53
 
-> 9 nodes
+> 8 nodes
 
 ## Key Concepts
 
-- **AudienceCompositionBoundaryTest** (8 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **.representativeControllersDelegateAudienceCompositionToRuntimeServices()** (5 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **.allControllersAreAccountedFor()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **.assertControllerDependsOn()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **.assertControllerDoesNotDependOn()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **.assertControllerOmitsMethods()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **AudienceCompositionBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **.exceptionControllerClasses()** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **.runtimeAudienceCompositionPackagesAndServicesExist()** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **useAuth.ts** (4 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **useAuth.test.tsx** (2 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- **DevLoginHarness()** (2 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- **useDevLogin()** (2 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **createWrapper()** (1 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- **prefetchPostAuthHome()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **useRequestOtp()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **useVerifyOtp()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
 
 ## Relationships
 
-- [[Community 0]] (2 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- `apps/mobile/src/features/auth/hooks/useAuth.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 22 (92%)
-- INFERRED: 2 (8%)
+- EXTRACTED: 12 (86%)
+- INFERRED: 2 (14%)
 - AMBIGUOUS: 0 (0%)
 
 ---

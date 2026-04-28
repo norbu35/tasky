@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **StatCard.tsx** (1 connections) — `apps/mobile/src/components/ui/StatCard.tsx`
-- **StatCard()** (1 connections) — `apps/mobile/src/components/ui/StatCard.tsx`
+- **AccountStatusScreen.tsx** (1 connections) — `apps/mobile/src/features/auth/components/AccountStatusScreen.tsx`
+- **formatDate()** (1 connections) — `apps/mobile/src/features/auth/components/AccountStatusScreen.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/StatCard.tsx`
+- `apps/mobile/src/features/auth/components/AccountStatusScreen.tsx`
 
 ## Audit Trail
 

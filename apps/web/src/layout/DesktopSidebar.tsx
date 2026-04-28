@@ -5,7 +5,6 @@ import {
   Briefcase,
   MessageSquare,
   User,
-  Shield,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -41,15 +40,11 @@ export function DesktopSidebar() {
     <aside className="hidden md:flex md:flex-col md:w-56 md:shrink-0 border-r border-border bg-card min-h-screen sticky top-0 h-screen">
       {/* Logo */}
       <div
-        className="flex items-center gap-2.5 px-4 h-16 cursor-pointer group border-b border-border"
+        className="flex h-16 cursor-pointer items-center border-b border-border px-4"
         onClick={() => navigate('/')}
+        aria-label={t('nav.home')}
       >
-        <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-card group-hover:shadow-elevated transition-all">
-          <Shield className="w-icon-xs h-icon-xs" strokeWidth={3} />
-        </div>
-        <span className="text-xl font-extrabold font-display tracking-normal text-foreground">
-          Tasky
-        </span>
+        <img src="/logo.png" alt="" className="h-10 w-10 rounded-xl shadow-card" />
       </div>
 
       {/* Nav links */}

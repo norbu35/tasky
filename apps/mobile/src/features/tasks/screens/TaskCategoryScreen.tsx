@@ -88,13 +88,21 @@ function getCategoryVisual(name: string): CategoryVisual {
 }
 
 export default function TaskCategoryScreen() {
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
   const router = useRouter();
   const { data, isLoading, isError, refetch } = useCategories();
   const createDraft = useTaskDraftStore((s) => s.createDraft);
   const updateDraft = useTaskDraftStore((s) => s.updateDraft);
 
-  const categories = useMemo(() => data?.data ?? [], [data?.data]);
+  const categories = useMemo(() => {
+    const seen = new Set<string>();
+    return (data?.data ?? []).filter((category) => {
+      const key = category.name.trim().toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [data?.data]);
 
   const handleCategorySelect = useCallback(
     (category: Category) => {
@@ -169,6 +177,10 @@ export default function TaskCategoryScreen() {
         <View style={{ gap: spacing.md }} testID="category-selection-grid">
           {categories.map((category) => {
             const visual = getCategoryVisual(category.name);
+            const categoryLabel =
+              i18n.language?.startsWith('mn') && category.name_mn
+                ? category.name_mn
+                : category.name;
             const Icon = visual.icon;
             return (
               <Touchable
@@ -190,7 +202,7 @@ export default function TaskCategoryScreen() {
                 </View>
                 <View className="flex-1 gap-xs min-w-0">
                   <Text className="font-screen-card-title text-primary-deep" numberOfLines={1}>
-                    {category.name}
+                    {categoryLabel}
                   </Text>
                   <Text className="text-caption text-text-secondary" numberOfLines={2}>
                     {t(visual.descriptionKey)}

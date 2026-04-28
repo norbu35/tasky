@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
   Text,
@@ -10,7 +11,12 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { mobileTheme } from '@/design/tokenAdapter';
+import taskyLogo from '@assets/logo.png';
+
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
+
+const { spacing } = mobileTheme;
 
 export interface AuthTemplateProps {
   children: React.ReactNode;
@@ -68,7 +74,7 @@ export function AuthTemplate({
       >
         <InsetScrollView
           contentContainerStyle={[
-            { flexGrow: 1, justifyContent: 'center', paddingVertical: 40 },
+            { flexGrow: 1, justifyContent: 'center', paddingVertical: spacing['3xl'] },
             contentStyle,
           ]}
           showsVerticalScrollIndicator={false}
@@ -77,9 +83,19 @@ export function AuthTemplate({
         >
           {/* Logo / Branding */}
           {showLogo && (
-            <Text className="text-hero-title font-display-bold text-primary-deep text-center mb-2xl">
-              Tasky
-            </Text>
+            <Image
+              source={taskyLogo}
+              testID="tasky-logo"
+              resizeMode="contain"
+              accessibilityIgnoresInvertColors
+              style={{
+                width: 144,
+                height: 144,
+                borderRadius: 32,
+                alignSelf: 'center',
+                marginBottom: spacing['2xl'],
+              }}
+            />
           )}
 
           {/* Headline */}

@@ -35,8 +35,16 @@ jest.mock('expo-router', () => {
   function StackMock({ children }: { children?: React.ReactNode }) {
     return <View testID="stack-layout">{children}</View>;
   }
-  function StackScreenMock({ name }: { name: string }) {
-    return <Text testID={`stack-${name}`}>{name}</Text>;
+  function StackScreenMock({
+    name,
+    options,
+  }: {
+    name: string;
+    options?: { headerShown?: boolean };
+  }) {
+    return (
+      <Text testID={`stack-${name}`}>{`${name} headerShown:${String(options?.headerShown)}`}</Text>
+    );
   }
   StackMock.Screen = StackScreenMock;
   return {
@@ -161,5 +169,11 @@ describe('navigation-wiring', () => {
     render(<SharedLayout />);
 
     expect(screen.getByTestId('stack-layout')).toBeTruthy();
+  });
+
+  it('shared review screen owns its header inside the screen body', () => {
+    render(<SharedLayout />);
+
+    expect(screen.getByTestId('stack-review/[bookingId]')).toHaveTextContent(/headerShown:false/);
   });
 });

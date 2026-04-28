@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ReverseGeocodeResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/location/dto/ReverseGeocodeResponse.java`
+- **NotificationResult.java** (0 connections) — `services/api/src/main/java/mn/tasky/notification/provider/NotificationResult.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/location/dto/ReverseGeocodeResponse.java`
+- `services/api/src/main/java/mn/tasky/notification/provider/NotificationResult.java`
 
 ## Audit Trail
 

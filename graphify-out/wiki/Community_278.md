@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useSubmitReview.ts** (1 connections) — `apps/mobile/src/features/review/hooks/useSubmitReview.ts`
-- **useSubmitReview()** (1 connections) — `apps/mobile/src/features/review/hooks/useSubmitReview.ts`
+- **TaskCategoryScreen.tsx** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
+- **getCategoryVisual()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/review/hooks/useSubmitReview.ts`
+- `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
 
 ## Audit Trail
 

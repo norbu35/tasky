@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **IntegrationTestBase** (6 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.cleanTestState()** (4 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.seedLaunchCatalogFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.seedDistrictFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.seedConfigFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **IntegrationTestBase.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.registerDataSourceProperties()** (1 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **validate-doc-references.py** (6 connections) — `tooling/scripts/governance/validate-doc-references.py`
+- **main()** (6 connections) — `tooling/scripts/governance/validate-doc-references.py`
+- **collect_scan_files()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
+- **load_pnpm_scripts()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
+- **find_pnpm_refs()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
+- **find_path_refs()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
+- **is_allowed_missing_path_ref()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
 
 ## Relationships
 
@@ -18,11 +18,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- `tooling/scripts/governance/validate-doc-references.py`
 
 ## Audit Trail
 
-- EXTRACTED: 18 (100%)
+- EXTRACTED: 22 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

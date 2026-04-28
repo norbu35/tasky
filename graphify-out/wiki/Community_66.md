@@ -4,26 +4,26 @@
 
 ## Key Concepts
 
-- **AdminPayoutProcessingOutcome.java** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
-- **invalidWeekday()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
-- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
-- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
-- **featureDeferred()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
-- **badRequest()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **WalletQueryHandler** (6 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
+- **WalletQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
+- **.WalletQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
+- **.getBalance()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
+- **.listTransactions()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
+- **.getPayout()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
+- **.listPendingPayouts()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
 
 ## Relationships
 
-- [[Community 1]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (92%)
-- INFERRED: 1 (8%)
+- EXTRACTED: 12 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

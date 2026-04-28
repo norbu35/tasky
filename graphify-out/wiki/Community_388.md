@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **formatLastActive.test.ts** (0 connections) — `apps/mobile/__tests__/lib/formatLastActive.test.ts`
+- **SplashScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/auth/SplashScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/lib/formatLastActive.test.ts`
+- `apps/mobile/__tests__/screens/auth/SplashScreen.test.tsx`
 
 ## Audit Trail
 

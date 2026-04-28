@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerJobsPage.tsx** (0 connections) — `apps/web/src/pages/tasker/TaskerJobsPage.tsx`
+- **booking-payment.test.tsx** (0 connections) — `apps/web/tests/integration/booking-payment.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/tasker/TaskerJobsPage.tsx`
+- `apps/web/tests/integration/booking-payment.test.tsx`
 
 ## Audit Trail
 

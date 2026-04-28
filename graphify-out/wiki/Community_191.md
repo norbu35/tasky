@@ -1,12 +1,11 @@
 # Community 191
 
-> 3 nodes
+> 2 nodes
 
 ## Key Concepts
 
-- **AssistanceOutcomeTypeTest** (2 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
-- **AssistanceOutcomeTypeTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
-- **.definesLaunchAssistanceOutcomeBuckets()** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
+- **tailwind.config.ts** (1 connections) — `apps/mobile/tailwind.config.ts`
+- **camelToKebab()** (1 connections) — `apps/mobile/tailwind.config.ts`
 
 ## Relationships
 
@@ -14,11 +13,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
+- `apps/mobile/tailwind.config.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 2 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -1,32 +1,33 @@
 # Community 49
 
-> 10 nodes
+> 9 nodes
 
 ## Key Concepts
 
-- **BookingIntentCommandHandler** (11 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **BookingIntentCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.BookingIntentCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.confirmIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.declineIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.getIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.findPendingApplicationSelectionIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.expirePendingApplicationSelectionForTask()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.markIntentConfirmed()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.markIntentDeclined()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **TaskerJobsScreen.tsx** (4 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **useBookings()** (3 connections) — `apps/mobile/src/features/bookings/hooks/useBookings.ts`
+- **TaskerJobsScreen()** (2 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **useBookingsListScreen()** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
+- **useBookings.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useBookings.ts`
+- **BookingCardHeader()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **BookingCardBody()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **getJobCardTestID()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **useBookingsListScreen.ts** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
 
 ## Relationships
 
-- [[Community 1]] (2 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- `apps/mobile/src/features/bookings/hooks/useBookings.ts`
+- `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
+- `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 20 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 12 (75%)
+- INFERRED: 4 (25%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **VerificationIndex.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/verification/VerificationIndex.test.tsx`
+- **TaskReviewSubmitScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/features/tasks/screens/TaskReviewSubmitScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/tasker/verification/VerificationIndex.test.tsx`
+- `apps/mobile/__tests__/features/tasks/screens/TaskReviewSubmitScreen.test.tsx`
 
 ## Audit Trail
 

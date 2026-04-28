@@ -74,7 +74,9 @@ export default function DisputeCreateScreen() {
       nextLabel={isLastStep ? t('customer.disputes.ctaSubmit') : t('wizard.next')}
       nextDisabled={isNextDisabled}
       nextLoading={isPending}
-      showBack={currentStep > 0}
+      showBack
+      title={t('customer.bookings.dispute')}
+      subtitle={t('customer.disputes.phase1Note')}
     >
       <View className="mb-xl">
         <Text className="text-heading font-sans-bold text-primary-deep mb-md">

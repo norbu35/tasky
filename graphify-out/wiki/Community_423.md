@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **BannedAccount.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/BannedAccount.test.tsx`
+- **SuspendedAccount.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/SuspendedAccount.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/shared/BannedAccount.test.tsx`
+- `apps/mobile/__tests__/screens/shared/SuspendedAccount.test.tsx`
 
 ## Audit Trail
 

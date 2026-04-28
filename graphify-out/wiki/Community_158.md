@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **DetailTemplate.tsx** (2 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
-- **DetailSkeleton()** (1 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
-- **handleActionBarLayout()** (1 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
+- **TaskDetail.Summary.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
+- **getPublicCustomer()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
+- **getLocationText()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/templates/DetailTemplate.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
 
 ## Audit Trail
 

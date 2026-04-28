@@ -34,17 +34,10 @@ export default function TaskIntakeScreen() {
       onNext={handleNext}
       onBack={goBack}
       nextLabel={t('common.continue')}
+      title={t('Intake.intakePageTitle')}
+      subtitle={t('Intake.intakeInstruction')}
       testID="SCR-CUST-003"
     >
-      <View className="gap-sm pt-sm" testID="intake-header">
-        <Text className="text-heading font-extrabold text-primary-deep">
-          {t('Intake.intakePageTitle')}
-        </Text>
-        <Text className="text-body text-text-secondary leading-relaxed">
-          {t('Intake.intakeInstruction')}
-        </Text>
-      </View>
-
       <PostingGuidanceCard
         titleKey="PostingGuidance.structuredTitle"
         bodyKey="PostingGuidance.structuredBody"

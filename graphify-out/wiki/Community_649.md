@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **cn.test.ts** (0 connections) — `apps/mobile/src/lib/__tests__/cn.test.ts`
+- **playwright.config.ts** (0 connections) — `apps/web/playwright.config.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/__tests__/cn.test.ts`
+- `apps/web/playwright.config.ts`
 
 ## Audit Trail
 

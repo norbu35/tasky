@@ -1,5 +1,12 @@
 import React, { useCallback } from 'react';
-import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  View,
+} from 'react-native';
 
 import { ScreenContainer } from '@/components/shells/ScreenContainer';
 import { ErrorStateTemplate } from '@/components/templates/ErrorStateTemplate';
@@ -19,7 +26,6 @@ export default function ChatConversationScreen() {
     t,
     myId,
     conversation,
-    activity,
     draft,
     setDraft,
     flatListRef,
@@ -30,13 +36,19 @@ export default function ChatConversationScreen() {
     isPending,
     refetch,
     handleSend,
+    handleAttachImage,
   } = useChatConversationScreen();
 
   const renderMessage = useCallback(
     ({ item }: { item: import('./model').MessageItem }) => (
-      <MessageBubble item={item} myId={myId} />
+      <MessageBubble
+        item={item}
+        myId={myId}
+        counterpartyName={conversation?.counterparty_name}
+        counterpartyAvatarUrl={conversation?.counterparty_avatar_url ?? undefined}
+      />
     ),
-    [myId],
+    [conversation?.counterparty_avatar_url, conversation?.counterparty_name, myId],
   );
 
   if (isLoading) {
@@ -52,8 +64,6 @@ export default function ChatConversationScreen() {
   const headerProps = {
     counterpartyName: conversation?.counterparty_name,
     counterpartyAvatarUrl: conversation?.counterparty_avatar_url ?? undefined,
-    activityLabel: activity.label,
-    isActive: activity.isActive,
     onBack: () => router.back(),
     t,
   };
@@ -97,8 +107,18 @@ export default function ChatConversationScreen() {
           contentContainerStyle={{
             paddingHorizontal: spacing.lg,
             paddingTop: spacing.lg,
-            paddingBottom: spacing.xl,
+            paddingBottom: spacing['3xl'],
           }}
+          ListHeaderComponent={
+            messages.length > 0 ? (
+              <Text
+                className="mb-xl text-center text-subtitle font-sans-semibold"
+                style={{ color: colors.foreground }}
+              >
+                {t('shared.inbox.todayLabel')}
+              </Text>
+            ) : null
+          }
           onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
         />
         {showPhoneWarning && <PhoneWarning text={t('ChatDetailScreen.copy2')} />}
@@ -106,8 +126,10 @@ export default function ChatConversationScreen() {
           draft={draft}
           onChangeText={setDraft}
           onSend={handleSend}
+          onAttachImage={handleAttachImage}
           isPending={isPending}
           placeholder={t('shared.inbox.sendPlaceholder')}
+          attachImageLabel={t('shared.inbox.attachImageAction')}
         />
       </KeyboardAvoidingView>
     </ScreenContainer>

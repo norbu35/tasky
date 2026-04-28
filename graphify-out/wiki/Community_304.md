@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **StatePanel.tsx** (1 connections) — `apps/web/src/layout/parity/StatePanel.tsx`
-- **StatePanel()** (1 connections) — `apps/web/src/layout/parity/StatePanel.tsx`
+- **CustomerRebookPage.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerRebookPage.tsx`
+- **CustomerRebookPage()** (1 connections) — `apps/web/src/pages/customer/CustomerRebookPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/parity/StatePanel.tsx`
+- `apps/web/src/pages/customer/CustomerRebookPage.tsx`
 
 ## Audit Trail
 

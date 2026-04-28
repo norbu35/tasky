@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **EventHandler** (3 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
-- **EventHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
-- **.eventType()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
-- **.handle()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
+- **JsonSecurityResponseWriter** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- **JsonSecurityResponseWriter.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- **.JsonSecurityResponseWriter()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- **.write()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
+- `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
 
 ## Audit Trail
 

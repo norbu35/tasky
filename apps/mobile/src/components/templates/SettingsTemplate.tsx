@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
+import { ScreenContainer } from '@/components/shells';
 import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
@@ -31,40 +32,42 @@ export interface SettingsTemplateProps {
 
 export function SettingsTemplate({ sections, testID, className }: SettingsTemplateProps) {
   return (
-    <ScrollView
-      className={cn('flex-1 bg-background', className)}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{
-        paddingHorizontal: spacing.lg,
-        paddingTop: spacing.lg,
-        paddingBottom: spacing['2xl'] + spacing.xl,
-      }}
-      testID={testID}
-    >
-      {sections.map((section, sectionIndex) => (
-        <View key={section.title ?? `section-${sectionIndex}`} className="mb-xl">
-          {section.title ? (
-            <Text className="text-label font-display-bold text-primary-deep mb-sm">
-              {section.title}
-            </Text>
-          ) : null}
-          <View className="bg-card rounded-md overflow-hidden" style={elevations.card}>
-            {section.rows.map((row, rowIndex) => (
-              <ActionRow
-                key={`${row.label}-${rowIndex}`}
-                icon={row.icon ?? <View />}
-                label={row.label}
-                onPress={row.onPress}
-                value={row.value}
-                trailing={row.rightElement}
-                destructive={row.destructive}
-                showDivider={rowIndex < section.rows.length - 1}
-                testID={testID ? `${testID}-row-${rowIndex}` : undefined}
-              />
-            ))}
+    <ScreenContainer edges={['left', 'right']} padded={false}>
+      <ScrollView
+        className={cn('flex-1 bg-background', className)}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: spacing.lg,
+          paddingTop: spacing.lg,
+          paddingBottom: spacing['2xl'] + spacing.xl,
+        }}
+        testID={testID}
+      >
+        {sections.map((section, sectionIndex) => (
+          <View key={section.title ?? `section-${sectionIndex}`} className="mb-xl">
+            {section.title ? (
+              <Text className="text-label font-display-bold text-primary-deep mb-sm">
+                {section.title}
+              </Text>
+            ) : null}
+            <View className="bg-card rounded-md overflow-hidden" style={elevations.card}>
+              {section.rows.map((row, rowIndex) => (
+                <ActionRow
+                  key={`${row.label}-${rowIndex}`}
+                  icon={row.icon ?? <View />}
+                  label={row.label}
+                  onPress={row.onPress}
+                  value={row.value}
+                  trailing={row.rightElement}
+                  destructive={row.destructive}
+                  showDivider={rowIndex < section.rows.length - 1}
+                  testID={testID ? `${testID}-row-${rowIndex}` : undefined}
+                />
+              ))}
+            </View>
           </View>
-        </View>
-      ))}
-    </ScrollView>
+        ))}
+      </ScrollView>
+    </ScreenContainer>
   );
 }

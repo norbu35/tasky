@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **AdminVerificationDecisionOutcome.java** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionOutcome.java`
+- **TaskWithdrawResult.java** (2 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskWithdrawResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskWithdrawResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskWithdrawResult.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionOutcome.java`
+- `services/api/src/main/java/mn/tasky/task/dto/TaskWithdrawResult.java`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **colors.ts** (0 connections) — `packages/design-tokens/src/compat/colors.ts`
+- **eslint.config.mjs** (0 connections) — `packages/test-utils/eslint.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/design-tokens/src/compat/colors.ts`
+- `packages/test-utils/eslint.config.mjs`
 
 ## Audit Trail
 

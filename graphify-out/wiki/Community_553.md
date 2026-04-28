@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **nativewind-interop.ts** (0 connections) — `apps/mobile/src/design/nativewind-interop.ts`
+- **SplashScreen.tsx** (0 connections) — `apps/mobile/src/features/auth/screens/SplashScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/design/nativewind-interop.ts`
+- `apps/mobile/src/features/auth/screens/SplashScreen.tsx`
 
 ## Audit Trail
 

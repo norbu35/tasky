@@ -1,12 +1,11 @@
 # Community 197
 
-> 3 nodes
+> 2 nodes
 
 ## Key Concepts
 
-- **pay.tsx** (2 connections) — `archive/mobile-future/tasker/credits/pay.tsx`
-- **resolveState()** (2 connections) — `archive/mobile-future/tasker/credits/pay.tsx`
-- **TaskerCreditsPayScreen()** (2 connections) — `archive/mobile-future/tasker/credits/pay.tsx`
+- **TaskDetailCustomerScreen.test.tsx** (1 connections) — `apps/mobile/__tests__/screens/customer/TaskDetailCustomerScreen.test.tsx`
+- **makeTask()** (1 connections) — `apps/mobile/__tests__/screens/customer/TaskDetailCustomerScreen.test.tsx`
 
 ## Relationships
 
@@ -14,11 +13,11 @@
 
 ## Source Files
 
-- `archive/mobile-future/tasker/credits/pay.tsx`
+- `apps/mobile/__tests__/screens/customer/TaskDetailCustomerScreen.test.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 2 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

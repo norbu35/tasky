@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **VerificationGatePage.tsx** (0 connections) — `apps/web/src/pages/tasker/VerificationGatePage.tsx`
+- **TaskerNoShowDialog.tsx** (0 connections) — `apps/web/src/pages/tasker/TaskerNoShowDialog.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/tasker/VerificationGatePage.tsx`
+- `apps/web/src/pages/tasker/TaskerNoShowDialog.tsx`
 
 ## Audit Trail
 

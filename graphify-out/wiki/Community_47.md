@@ -1,28 +1,27 @@
 # Community 47
 
-> 11 nodes
+> 10 nodes
 
 ## Key Concepts
 
-- **MarketplaceQueryPort** (10 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **MarketplaceQueryPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.listTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.getTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.listMyTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.recentLocations()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.listTaskApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.countApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.buildPhotoAccessUrls()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.buildOwnedPhotoAccessUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.getDraft()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **BookingIntentCommandHandler** (11 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **BookingIntentCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.BookingIntentCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.confirmIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.declineIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.getIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.findPendingApplicationSelectionIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.expirePendingApplicationSelectionForTask()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.markIntentConfirmed()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.markIntentDeclined()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 0]] (2 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
 
 ## Audit Trail
 

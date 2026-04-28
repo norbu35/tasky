@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/help/screens/HelpCenter/index.ts`
+- **react-query.ts** (0 connections) — `apps/mobile/src/lib/react-query.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/help/screens/HelpCenter/index.ts`
+- `apps/mobile/src/lib/react-query.ts`
 
 ## Audit Trail
 

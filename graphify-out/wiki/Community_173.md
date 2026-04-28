@@ -4,22 +4,22 @@
 
 ## Key Concepts
 
-- **disputeStatusVariant()** (3 connections) — `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
-- **AdminDisputeDetailPage.tsx** (2 connections) — `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
-- **getDisputeStatusLabelKey()** (2 connections) — `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
+- **TextSanitizer** (3 connections) — `services/api/src/main/java/mn/tasky/common/validation/TextSanitizer.java`
+- **TextSanitizer.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/validation/TextSanitizer.java`
+- **.TextSanitizer()** (1 connections) — `services/api/src/main/java/mn/tasky/common/validation/TextSanitizer.java`
 
 ## Relationships
 
-- [[Community 1]] (1 shared connections)
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
+- `services/api/src/main/java/mn/tasky/common/validation/TextSanitizer.java`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (86%)
-- INFERRED: 1 (14%)
+- EXTRACTED: 5 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

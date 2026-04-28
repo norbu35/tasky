@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **permission-location.tsx** (1 connections) — `apps/mobile/src/app/(auth)/permission-location.tsx`
-- **PermissionLocationRoute()** (1 connections) — `apps/mobile/src/app/(auth)/permission-location.tsx`
+- **cancel.tsx** (1 connections) — `apps/mobile/src/app/(tasker)/jobs/[bookingId]/cancel.tsx`
+- **TaskerCancelBookingRoute()** (1 connections) — `apps/mobile/src/app/(tasker)/jobs/[bookingId]/cancel.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(auth)/permission-location.tsx`
+- `apps/mobile/src/app/(tasker)/jobs/[bookingId]/cancel.tsx`
 
 ## Audit Trail
 

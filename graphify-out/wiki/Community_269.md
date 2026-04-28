@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useTaskerProfile.ts** (1 connections) — `apps/mobile/src/features/profile/hooks/useTaskerProfile.ts`
-- **useTaskerProfile()** (1 connections) — `apps/mobile/src/features/profile/hooks/useTaskerProfile.ts`
+- **ReviewHardLock.tsx** (1 connections) — `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
+- **handleSubmitReview()** (1 connections) — `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/hooks/useTaskerProfile.ts`
+- `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
 
 ## Audit Trail
 

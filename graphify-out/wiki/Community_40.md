@@ -20,7 +20,7 @@
 
 ## Relationships
 
-- [[Community 1]] (3 shared connections)
+- [[Community 0]] (3 shared connections)
 
 ## Source Files
 

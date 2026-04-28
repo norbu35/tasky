@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **Screen.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
-- **DetailRow()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
-- **StatusBanner()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
+- **AutomationEventTypes** (2 connections) — `services/api/src/main/java/mn/tasky/automation/event/AutomationEventTypes.java`
+- **AutomationEventTypes.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/event/AutomationEventTypes.java`
+- **.AutomationEventTypes()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/event/AutomationEventTypes.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
+- `services/api/src/main/java/mn/tasky/automation/event/AutomationEventTypes.java`
 
 ## Audit Trail
 

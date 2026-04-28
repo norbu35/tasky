@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PermissionScreen.tsx** (0 connections) — `apps/mobile/src/features/auth/screens/PermissionScreen.tsx`
+- **TaskerNoShowSheet.tsx** (0 connections) — `apps/mobile/src/features/bookings/components/TaskerNoShowSheet.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/auth/screens/PermissionScreen.tsx`
+- `apps/mobile/src/features/bookings/components/TaskerNoShowSheet.tsx`
 
 ## Audit Trail
 

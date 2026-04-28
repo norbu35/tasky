@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **authStore.ts** (0 connections) — `apps/mobile/src/store/authStore.ts`
+- **admin-happy-path.spec.ts** (0 connections) — `apps/web/e2e/admin-happy-path.spec.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/store/authStore.ts`
+- `apps/web/e2e/admin-happy-path.spec.ts`
 
 ## Audit Trail
 

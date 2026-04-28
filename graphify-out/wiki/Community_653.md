@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **eslint.config.mjs** (0 connections) — `apps/web/eslint.config.mjs`
+- **inspection.spec.ts** (0 connections) — `apps/web/e2e/inspection.spec.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/eslint.config.mjs`
+- `apps/web/e2e/inspection.spec.ts`
 
 ## Audit Trail
 

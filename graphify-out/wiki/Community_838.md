@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Message.java** (0 connections) — `services/api/src/main/java/mn/tasky/messaging/dto/Message.java`
+- **QpayCallbackRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/payment/dto/QpayCallbackRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/messaging/dto/Message.java`
+- `services/api/src/main/java/mn/tasky/payment/dto/QpayCallbackRequest.java`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ReviewRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/review/dto/ReviewRequest.java`
+- **PublicTaskFeedPage.java** (0 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PublicTaskFeedPage.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/review/dto/ReviewRequest.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PublicTaskFeedPage.java`
 
 ## Audit Trail
 

@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **AnalyticsCommandHandler** (3 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
-- **AnalyticsCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
-- **.AnalyticsCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
-- **.track()** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- **RebookResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
 
 ## Audit Trail
 

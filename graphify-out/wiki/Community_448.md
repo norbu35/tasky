@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **permissions.test.ts** (0 connections) — `apps/mobile/__tests__/utils/permissions.test.ts`
+- **model.test.ts** (0 connections) — `apps/mobile/__tests__/features/tasks/screens/TaskLocation/model.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/utils/permissions.test.ts`
+- `apps/mobile/__tests__/features/tasks/screens/TaskLocation/model.test.ts`
 
 ## Audit Trail
 

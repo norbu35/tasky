@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **\_layout.tsx** (1 connections) — `apps/mobile/src/app/(auth)/_layout.tsx`
-- **AuthLayout()** (1 connections) — `apps/mobile/src/app/(auth)/_layout.tsx`
+- **hard-lock.tsx** (1 connections) — `apps/mobile/src/app/(shared)/review/hard-lock.tsx`
+- **ReviewHardLockScreen()** (1 connections) — `apps/mobile/src/app/(shared)/review/hard-lock.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(auth)/_layout.tsx`
+- `apps/mobile/src/app/(shared)/review/hard-lock.tsx`
 
 ## Audit Trail
 

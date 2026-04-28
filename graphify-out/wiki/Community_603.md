@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskFeedHeader.tsx** (0 connections) — `apps/mobile/src/features/tasks/components/TaskFeedHeader.tsx`
+- **TaskSchedule.ScheduleForm.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.ScheduleForm.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/components/TaskFeedHeader.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskSchedule.ScheduleForm.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TimelineStepper.tsx** (0 connections) — `apps/mobile/src/components/ui/TimelineStepper.tsx`
+- **PermissionScreen.tsx** (0 connections) — `apps/mobile/src/features/auth/screens/PermissionScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/TimelineStepper.tsx`
+- `apps/mobile/src/features/auth/screens/PermissionScreen.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CancelBookingRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/booking/dto/CancelBookingRequest.java`
+- **CreateSchemaVersionRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/category/dto/CreateSchemaVersionRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/dto/CancelBookingRequest.java`
+- `services/api/src/main/java/mn/tasky/category/dto/CreateSchemaVersionRequest.java`
 
 ## Audit Trail
 

@@ -404,7 +404,7 @@ describe('mobile app structure', () => {
     );
 
     expect(screen.getByText('Window cleaning')).toBeTruthy();
-    expect(screen.getByText('Сүхбаатар дүүрэг')).toBeTruthy();
+    expect(screen.getByText(/Сүхбаатар дүүрэг/)).toBeTruthy();
   });
 
   it('TID-TASK-082-MOBILE-AUTHORIZATION-GUARDS enforces restricted-account checks via isRestricted utility', () => {

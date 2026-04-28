@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **WalletBalance.java** (0 connections) — `services/api/src/main/java/mn/tasky/wallet/dto/WalletBalance.java`
+- **design-contract-validator.test.mjs** (0 connections) — `tooling/tests/design-contract-validator.test.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/wallet/dto/WalletBalance.java`
+- `tooling/tests/design-contract-validator.test.mjs`
 
 ## Audit Trail
 

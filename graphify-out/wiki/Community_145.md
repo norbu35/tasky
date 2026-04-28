@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **UserProfileUpdateOutcome.java** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
-- **invalidAvatarKey()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
-- **userNotFound()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
+- **pre-push-hook.test.mjs** (3 connections) — `tooling/tests/pre-push-hook.test.mjs`
+- **setupFakeBinaries()** (3 connections) — `tooling/tests/pre-push-hook.test.mjs`
+- **writeExecutable()** (2 connections) — `tooling/tests/pre-push-hook.test.mjs`
+- **runHook()** (2 connections) — `tooling/tests/pre-push-hook.test.mjs`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
+- `tooling/tests/pre-push-hook.test.mjs`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

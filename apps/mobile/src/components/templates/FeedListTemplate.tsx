@@ -41,6 +41,7 @@ export interface FeedListTemplateProps<T> {
   retryLabel?: string;
   filterBar?: React.ReactNode;
   ListHeaderComponent?: React.ReactElement;
+  animateItems?: boolean;
   testID?: string;
   className?: string;
 }
@@ -101,6 +102,7 @@ export function FeedListTemplate<T>({
   retryLabel,
   filterBar,
   ListHeaderComponent,
+  animateItems = true,
   testID,
   className,
 }: FeedListTemplateProps<T>) {
@@ -108,10 +110,12 @@ export function FeedListTemplate<T>({
   const insets = useSafeAreaInsets();
 
   const renderListItem = useCallback(
-    ({ item, index }: { item: T; index: number }) => (
-      <Reveal delay={Math.min(index * 35, 180)}>{renderItem(item, index)}</Reveal>
-    ),
-    [renderItem],
+    ({ item, index }: { item: T; index: number }) => {
+      const renderedItem = renderItem(item, index);
+      if (!animateItems) return renderedItem;
+      return <Reveal delay={Math.min(index * 35, 180)}>{renderedItem}</Reveal>;
+    },
+    [animateItems, renderItem],
   );
 
   const renderFooter = useCallback(() => {
@@ -125,7 +129,7 @@ export function FeedListTemplate<T>({
 
   const combinedHeader =
     ListHeaderComponent || filterBar ? (
-      <View className="pb-md gap-sm">
+      <View className="pt-header-top pb-md gap-sm">
         {ListHeaderComponent ? <Reveal delay={20}>{ListHeaderComponent}</Reveal> : null}
         {filterBar ? <Reveal delay={60}>{filterBar}</Reveal> : null}
       </View>

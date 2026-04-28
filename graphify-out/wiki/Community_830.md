@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **WorkflowContext.java** (0 connections) — `services/api/src/main/java/mn/tasky/kernel/context/WorkflowContext.java`
+- **Message.java** (0 connections) — `services/api/src/main/java/mn/tasky/messaging/dto/Message.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/kernel/context/WorkflowContext.java`
+- `services/api/src/main/java/mn/tasky/messaging/dto/Message.java`
 
 ## Audit Trail
 

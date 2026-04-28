@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **RequestContext.java** (0 connections) — `services/api/src/main/java/mn/tasky/kernel/context/RequestContext.java`
+- **EnrichedConversation.java** (0 connections) — `services/api/src/main/java/mn/tasky/messaging/dto/EnrichedConversation.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/kernel/context/RequestContext.java`
+- `services/api/src/main/java/mn/tasky/messaging/dto/EnrichedConversation.java`
 
 ## Audit Trail
 

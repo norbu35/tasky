@@ -1,61 +1,65 @@
 # Community 23
 
-> 53 nodes
+> 68 nodes
 
 ## Key Concepts
 
-- **.incrementAndGet()** (14 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
-- **.verifyOtp()** (8 connections) — `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
-- **.requestOtp()** (7 connections) — `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
-- **OtpRateLimitService** (7 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- **.enforce()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- **AssertRefreshAllowed** (6 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.deleteExpired()** (5 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
-- **AssertRequestAllowed** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **OtpController** (4 connections) — `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
-- **RefreshSessionDao** (4 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
-- **OtpRateLimitServiceTest.java** (4 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **AssertVerifyAllowed** (4 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **OtpSentResponse** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
-- **.assertRefreshAllowed()** (3 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- **RateLimitCounterDao** (3 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
-- **RateLimitCleanupScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/RateLimitCleanupScheduler.java`
-- **SessionCleanupScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/SessionCleanupScheduler.java`
-- **.allowsWhenUnderLimit()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.allowsWhenUnderLimit()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.usesTokenIdAsKey()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.fallsBackToHashedTokenWhenParsingFails()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.throwsWhenRefreshLimitExceeded()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.throwsWhenRefreshIpLimitExceeded()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **OtpPublicCompositionServiceTests.java** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
-- **AuthSessionResponse** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
-- _... and 28 more nodes in this community_
+- **TaskAssistanceScenarioTests** (15 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **MarketplaceCommandHandler** (14 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/command/MarketplaceCommandHandler.java`
+- **.evaluateExternalDistribution()** (12 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.recordExternalDistribution()** (10 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.processRescue()** (10 connections) — `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
+- **TaskAssistanceService** (9 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.countByTaskId()** (9 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- **.processRescue_createsEventForOldOpenTaskWithZeroApplications()** (8 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.findOpenOlderThan()** (7 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
+- **.externalDistributionTriggersOnlyAfterEightHoursWithoutQualifiedApplication()** (7 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **.externalDistributionLimitedToAdminEligibleCategories()** (7 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **.adminLaunchControlMarksInitialSeedCategoriesEligible()** (7 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **RescueSchedulerTest** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.processRescue_skipsTaskWithExistingApplications()** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.processRescue_skipsTaskWithExistingRescueEvent()** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.processRescue_continuesAfterException()** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.recordManualRescue()** (6 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.classifyOutcome()** (6 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.existsByTaskId()** (6 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskRescueEventDao.java`
+- **.findLatestByTaskId()** (6 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskRescueEventDao.java`
+- **.processTask()** (6 connections) — `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
+- **.openTaskCreatedHoursAgo()** (6 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **.trackIntervention()** (5 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **RescueScheduler** (5 connections) — `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
+- **.systemAssistedOutcomeWhenExternalDistributionWasUsed()** (5 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- _... and 43 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (8 shared connections)
-- [[Community 6]] (3 shared connections)
-- [[Community 2]] (3 shared connections)
+- [[Community 0]] (16 shared connections)
+- [[Community 11]] (6 shared connections)
+- [[Community 6]] (5 shared connections)
+- [[Community 3]] (4 shared connections)
+- [[Community 4]] (3 shared connections)
 - [[Community 1]] (2 shared connections)
-- [[Community 17]] (1 shared connections)
+- [[Community 17]] (2 shared connections)
+- [[Community 16]] (1 shared connections)
 - [[Community 14]] (1 shared connections)
-- [[Community 4]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
-- `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
-- `services/api/src/main/java/mn/tasky/auth/scheduling/RateLimitCleanupScheduler.java`
-- `services/api/src/main/java/mn/tasky/auth/scheduling/SessionCleanupScheduler.java`
-- `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
+- `services/api/src/main/java/mn/tasky/marketplace/application/command/MarketplaceCommandHandler.java`
+- `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
+- `services/api/src/main/java/mn/tasky/task/dao/TaskRescueEventDao.java`
+- `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
+- `services/api/src/test/java/mn/tasky/marketplace/application/command/MarketplaceCommandHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- `services/api/src/test/java/mn/tasky/task/application/TaskAssistanceServiceTest.java`
+- `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 99 (64%)
-- INFERRED: 56 (36%)
+- EXTRACTED: 153 (53%)
+- INFERRED: 133 (47%)
 - AMBIGUOUS: 0 (0%)
 
 ---

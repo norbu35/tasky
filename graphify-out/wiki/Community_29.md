@@ -1,57 +1,67 @@
 # Community 29
 
-> 43 nodes
+> 44 nodes
 
 ## Key Concepts
 
-- **SubmitReview** (9 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionServiceTests.java`
-- **.getOpenCases()** (7 connections) — `services/api/src/main/java/mn/tasky/review/publicapi/ReviewQueryPort.java`
-- **.defaultRequest()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionServiceTests.java`
-- **TrustCommandHandlerTest** (7 connections) — `services/api/src/test/java/mn/tasky/trust/application/command/TrustCommandHandlerTest.java`
-- **TrustCommandPort** (6 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustCommandPort.java`
-- **.success()** (6 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionServiceTests.java`
-- **ReviewPublicCompositionService** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
-- **GetPendingReviewCases** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionServiceTests.java`
-- **.getPendingReviewCases()** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
-- **ReviewPublicCompositionServiceTests.java** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionServiceTests.java`
-- **ReviewResponse** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionServiceTests.java`
-- **ReviewSubmissionServiceTests** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionServiceTests.java`
-- **.addDisputeEvidence()** (3 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustCommandPort.java`
-- **.createReviewEnforcementCases()** (3 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustCommandPort.java`
-- **ReviewPublicCompositionServiceTests** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionServiceTests.java`
-- **.returnsMappedCases()** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionServiceTests.java`
-- **.returnsEmptyList()** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionServiceTests.java`
-- **.includesResolvedAt()** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionServiceTests.java`
-- **.invalidRating()** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionServiceTests.java`
-- **.bookingNotFound()** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionServiceTests.java`
-- **.bookingNotCompleted()** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionServiceTests.java`
-- **.notParticipant()** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionServiceTests.java`
-- **.alreadyReviewed()** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionServiceTests.java`
-- **.unknownError()** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionServiceTests.java`
-- **.createReviewEnforcementCases_delegatesToReviewEnforcementService()** (3 connections) — `services/api/src/test/java/mn/tasky/trust/application/command/TrustCommandHandlerTest.java`
-- _... and 18 more nodes in this community_
+- **PackageMarker** (43 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/PackageMarker.java`
+- **.PackageMarker()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/provider/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/broker/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/event/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/job/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/category/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/outbox/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/workflow/PackageMarker.java`
+- _... and 19 more nodes in this community_
 
 ## Relationships
 
-- [[Community 1]] (12 shared connections)
-- [[Community 0]] (9 shared connections)
-- [[Community 3]] (3 shared connections)
-- [[Community 6]] (2 shared connections)
-- [[Community 5]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/review/publicapi/ReviewQueryPort.java`
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
-- `services/api/src/main/java/mn/tasky/trust/publicapi/TrustCommandPort.java`
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionServiceTests.java`
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionServiceTests.java`
-- `services/api/src/test/java/mn/tasky/trust/application/command/TrustCommandHandlerTest.java`
+- `services/api/src/main/java/mn/tasky/admin/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/analytics/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/auth/provider/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/auth/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/broker/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/event/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/job/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/llm/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/worker/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/workflow/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/booking/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/category/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/dispute/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/kernel/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/kernel/outbox/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/location/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/messaging/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/messaging/workflow/PackageMarker.java`
 
 ## Audit Trail
 
-- EXTRACTED: 93 (72%)
-- INFERRED: 36 (28%)
+- EXTRACTED: 86 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

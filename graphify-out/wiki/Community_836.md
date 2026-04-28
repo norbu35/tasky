@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Conversation.java** (0 connections) — `services/api/src/main/java/mn/tasky/messaging/dto/Conversation.java`
+- **InitiatePaymentRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/payment/dto/InitiatePaymentRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/messaging/dto/Conversation.java`
+- `services/api/src/main/java/mn/tasky/payment/dto/InitiatePaymentRequest.java`
 
 ## Audit Trail
 

@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskerJobDetail.Sections.tsx** (2 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
-- **DetailSection()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
-- **DetailRow()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
+- **Screen.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
+- **DetailRow()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
+- **StatusBanner()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
+- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
 
 ## Audit Trail
 

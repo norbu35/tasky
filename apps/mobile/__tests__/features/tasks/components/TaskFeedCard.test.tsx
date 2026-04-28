@@ -57,7 +57,7 @@ describe('TaskFeedCard', () => {
     expect(screen.getByText('Cleaning')).toBeTruthy();
     expect(screen.getByLabelText('75,000 tugrik')).toBeTruthy();
     expect(screen.getByText('Deep clean a two-bedroom apartment')).toBeTruthy();
-    expect(screen.getByText('Bayangol district')).toBeTruthy();
+    expect(screen.getByText(/Bayangol district/)).toBeTruthy();
     expect(screen.queryByText('Ari Customer')).toBeNull();
     expect(screen.queryByText(/2 applications/i)).toBeNull();
   });
@@ -65,14 +65,33 @@ describe('TaskFeedCard', () => {
   it('renders quote-mode pricing when budget is missing', () => {
     render(
       <TaskFeedCard
-        task={makeTask({ budget: null, pricing_mode: 'QUOTE' })}
+        task={makeTask({
+          budget: null,
+          pricing_mode: 'QUOTE',
+          category: {
+            id: 'cat-moving',
+            name: 'Moving &amp; Hauling',
+            name_mn: 'Нүүлгэлт',
+            icon_url: null,
+          },
+        })}
         onPress={jest.fn()}
         testID="task-feed-card"
       />,
     );
 
+    expect(screen.getByText('Moving & Hauling')).toBeTruthy();
     expect(screen.getByText('Quote requested')).toBeTruthy();
     expect(screen.queryByLabelText(/tugrik/i)).toBeNull();
+  });
+
+  it('uses the localized category name when Mongolian is active', () => {
+    setTestLanguage('mn');
+
+    render(<TaskFeedCard task={makeTask()} onPress={jest.fn()} testID="task-feed-card" />);
+
+    expect(screen.getByText('Цэвэрлэгээ')).toBeTruthy();
+    expect(screen.queryByText('Cleaning')).toBeNull();
   });
 
   it('calls onPress when the card is pressed', () => {

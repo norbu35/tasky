@@ -2,7 +2,7 @@
 
 > God node · 129 connections · `services/api/src/main/java/mn/tasky/task/dto/TaskCreateResult.java`
 
-**Community:** [[Community 1]]
+**Community:** [[Community 0]]
 
 ## Connections by Relation
 

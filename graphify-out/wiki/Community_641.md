@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/legal/index.ts`
+- **cn.test.ts** (0 connections) — `apps/mobile/src/lib/__tests__/cn.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/legal/index.ts`
+- `apps/mobile/src/lib/__tests__/cn.test.ts`
 
 ## Audit Trail
 

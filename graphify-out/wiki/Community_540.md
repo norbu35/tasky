@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **InfoRow.tsx** (0 connections) — `apps/mobile/src/components/ui/InfoRow.tsx`
+- **ModalSheet.tsx** (0 connections) — `apps/mobile/src/components/ui/ModalSheet.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/InfoRow.tsx`
+- `apps/mobile/src/components/ui/ModalSheet.tsx`
 
 ## Audit Trail
 

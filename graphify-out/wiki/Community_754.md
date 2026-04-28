@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **eslint.config.mjs** (0 connections) — `packages/design-tokens/eslint.config.mjs`
+- **index.ts** (0 connections) — `packages/sdk/src/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/design-tokens/eslint.config.mjs`
+- `packages/sdk/src/index.ts`
 
 ## Audit Trail
 

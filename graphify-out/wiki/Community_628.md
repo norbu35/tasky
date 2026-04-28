@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **taskDraft.store.ts** (0 connections) — `apps/mobile/src/features/tasks/draft/taskDraft.store.ts`
+- **Screen.tsx** (0 connections) — `apps/mobile/src/features/help/screens/HelpCenter/Screen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/draft/taskDraft.store.ts`
+- `apps/mobile/src/features/help/screens/HelpCenter/Screen.tsx`
 
 ## Audit Trail
 

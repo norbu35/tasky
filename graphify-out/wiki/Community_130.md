@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **ModerationPolicyDao** (3 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
-- **ModerationPolicyDao.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
-- **.findActive()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
-- **.update()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
+- **CategoryQueryHandler** (3 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
+- **CategoryQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
+- **.CategoryQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
+- **.getCategory()** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
+- `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
 
 ## Audit Trail
 

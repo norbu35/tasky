@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PayoutRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/wallet/dto/PayoutRequest.java`
+- **base.d.ts** (0 connections) — `tooling/config/vitest/base.d.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/wallet/dto/PayoutRequest.java`
+- `tooling/config/vitest/base.d.ts`
 
 ## Audit Trail
 

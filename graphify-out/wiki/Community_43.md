@@ -4,30 +4,30 @@
 
 ## Key Concepts
 
-- **IdentityQueryHandler** (12 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
-- **IdentityQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
-- **.IdentityQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
-- **.getProfile()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
-- **.getVerificationStatus()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
-- **.getVerificationDetail()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
-- **.listPendingVerifications()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
-- **.verificationExists()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
-- **.searchUsersByPhone()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
-- **.searchUsersByName()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
-- **.searchUsersByFacebookId()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
-- **.getModerationPolicy()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **MarketplaceQueryHandler** (11 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **MarketplaceQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.MarketplaceQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.listTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.getTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.listMyTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.recentLocations()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.listTaskApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.countApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.buildPhotoAccessUrls()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.buildOwnedPhotoAccessUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.getDraft()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 23 (100%)
+- EXTRACTED: 22 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

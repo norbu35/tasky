@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ReviewHardLock.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/ReviewHardLock.test.tsx`
+- **PrivacyPolicyScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/profile/PrivacyPolicyScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/shared/ReviewHardLock.test.tsx`
+- `apps/mobile/__tests__/screens/shared/profile/PrivacyPolicyScreen.test.tsx`
 
 ## Audit Trail
 

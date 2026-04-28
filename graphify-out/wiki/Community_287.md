@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useTaskDraft.ts** (1 connections) — `apps/mobile/src/features/tasks/draft/useTaskDraft.ts`
-- **useTaskDraft()** (1 connections) — `apps/mobile/src/features/tasks/draft/useTaskDraft.ts`
+- **RoleProvider.tsx** (1 connections) — `apps/mobile/src/providers/RoleProvider.tsx`
+- **RoleProvider()** (1 connections) — `apps/mobile/src/providers/RoleProvider.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/draft/useTaskDraft.ts`
+- `apps/mobile/src/providers/RoleProvider.tsx`
 
 ## Audit Trail
 

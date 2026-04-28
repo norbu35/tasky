@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **AcceptApplicationRequest.java** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/AcceptApplicationRequest.java`
-- **isLiabilityDisclaimerAccepted()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/AcceptApplicationRequest.java`
+- **tdd-gate.test.mjs** (1 connections) — `tooling/tests/tdd-gate.test.mjs`
+- **extractSingleQuotedAssignment()** (1 connections) — `tooling/tests/tdd-gate.test.mjs`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/dto/AcceptApplicationRequest.java`
+- `tooling/tests/tdd-gate.test.mjs`
 
 ## Audit Trail
 

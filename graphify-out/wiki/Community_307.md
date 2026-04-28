@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **utils.ts** (1 connections) — `apps/web/src/lib/utils.ts`
-- **cn()** (1 connections) — `apps/web/src/lib/utils.ts`
+- **CustomerTaskSuccessPage.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerTaskSuccessPage.tsx`
+- **CustomerTaskSuccessPage()** (1 connections) — `apps/web/src/pages/customer/CustomerTaskSuccessPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/utils.ts`
+- `apps/web/src/pages/customer/CustomerTaskSuccessPage.tsx`
 
 ## Audit Trail
 

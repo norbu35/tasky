@@ -1,61 +1,60 @@
 # Community 15
 
-> 83 nodes
+> 105 nodes
 
 ## Key Concepts
 
-- **TaskDao** (23 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
-- **TaskQueryService** (11 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskQueryService.java`
-- **.findOpen()** (11 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
-- **.findByCustomer()** (9 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
-- **.findOpenWithinRadius()** (8 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
-- **.findByTasker()** (8 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
-- **.listMyTasks()** (7 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskQueryService.java`
-- **.findRecentLocationCandidates()** (7 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
-- **ListMyTasks** (7 connections) — `services/api/src/test/java/mn/tasky/task/TaskQueryServiceTests.java`
-- **ListMyTasks** (7 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskQueryServiceTest.java`
-- **TaskQueryServiceTests.java** (6 connections) — `services/api/src/test/java/mn/tasky/task/TaskQueryServiceTests.java`
-- **ListTasks** (6 connections) — `services/api/src/test/java/mn/tasky/task/TaskQueryServiceTests.java`
-- **RecentLocations** (6 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskQueryServiceTest.java`
-- **.listTasks()** (5 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskQueryService.java`
-- **TaskQueryServiceTest.java** (5 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskQueryServiceTest.java`
-- **ListTasks** (5 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskQueryServiceTest.java`
-- **TaskLocationScreen()** (4 connections) — `apps/mobile/src/features/tasks/screens/TaskLocation/Screen.tsx`
-- **.decodeCursor()** (4 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskQueryService.java`
-- **.openTask()** (4 connections) — `services/api/src/test/java/mn/tasky/task/TaskQueryServiceTests.java`
-- **.paginatesWithCursor()** (4 connections) — `services/api/src/test/java/mn/tasky/task/TaskQueryServiceTests.java`
-- **.withResults()** (4 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskQueryServiceTest.java`
-- **.customerRole()** (4 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskQueryServiceTest.java`
-- **.taskerRole()** (4 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskQueryServiceTest.java`
-- **.validStatus()** (4 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskQueryServiceTest.java`
-- **useRecentLocations()** (3 connections) — `apps/mobile/src/features/tasks/hooks/useRecentLocations.ts`
-- _... and 58 more nodes in this community_
+- **validate-doc-claims.py** (55 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **Failure** (39 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **main()** (34 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **IdentityCommandHandler** (20 connections) — `services/api/src/main/java/mn/tasky/identity/application/command/IdentityCommandHandler.java`
+- **IdentityCommandPort** (19 connections) — `services/api/src/main/java/mn/tasky/identity/publicapi/IdentityCommandPort.java`
+- **closest()** (15 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **.evaluate()** (10 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **extract_line_references()** (9 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **scan_doc()** (6 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **validate_claim_symbol_exists()** (6 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **DisputeEvidenceOutcomeTest** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputeEvidenceOutcomeTest.java`
+- **load_allowlist()** (5 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **build_config_inventory()** (5 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **parse_claim_block()** (5 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **validate_java_class()** (5 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **.failureCarriesStatusAndErrorOnly()** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputeEvidenceOutcomeTest.java`
+- **Reference** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **JavaInventory** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **collect_scan_files()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **build_java_inventory()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **normalize_flyway_version()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **build_flyway_inventory()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **build_workflow_inventory()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **build_prd_requirement_inventory()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- **relative()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
+- _... and 80 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (30 shared connections)
-- [[Community 4]] (7 shared connections)
-- [[Community 7]] (3 shared connections)
-- [[Community 10]] (3 shared connections)
-- [[Community 20]] (1 shared connections)
-- [[Community 1]] (1 shared connections)
+- [[Community 1]] (15 shared connections)
+- [[Community 2]] (7 shared connections)
+- [[Community 0]] (6 shared connections)
+- [[Community 8]] (4 shared connections)
+- [[Community 6]] (2 shared connections)
+- [[Community 4]] (2 shared connections)
+- [[Community 10]] (2 shared connections)
+- [[Community 14]] (1 shared connections)
+- [[Community 3]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/hooks/useRecentLocations.ts`
-- `apps/mobile/src/features/tasks/screens/TaskLocation/Screen.tsx`
-- `apps/mobile/src/features/tasks/screens/TaskLocation/model.ts`
-- `apps/mobile/src/features/tasks/screens/TaskLocation/useTaskLocationScreen.ts`
-- `services/api/src/main/java/mn/tasky/task/application/TaskQueryService.java`
-- `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
-- `services/api/src/test/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/task/TaskQueryServiceTests.java`
-- `services/api/src/test/java/mn/tasky/task/application/TaskQueryServiceTest.java`
+- `services/api/src/main/java/mn/tasky/identity/application/command/IdentityCommandHandler.java`
+- `services/api/src/main/java/mn/tasky/identity/publicapi/IdentityCommandPort.java`
+- `services/api/src/test/java/mn/tasky/identity/application/command/IdentityCommandHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputeEvidenceOutcomeTest.java`
+- `tooling/scripts/governance/validate-doc-claims.py`
 
 ## Audit Trail
 
-- EXTRACTED: 197 (68%)
-- INFERRED: 94 (32%)
+- EXTRACTED: 395 (90%)
+- INFERRED: 43 (10%)
 - AMBIGUOUS: 0 (0%)
 
 ---

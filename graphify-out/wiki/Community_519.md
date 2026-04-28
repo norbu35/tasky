@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.tsx** (0 connections) — `apps/mobile/src/app/(tabs)/inbox/index.tsx`
+- **consent.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/verification/consent.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tabs)/inbox/index.tsx`
+- `apps/mobile/src/app/(tasker)/verification/consent.tsx`
 
 ## Audit Trail
 

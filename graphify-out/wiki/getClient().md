@@ -2,7 +2,7 @@
 
 > God node · 44 connections · `apps/mobile/src/features/verification/api.ts`
 
-**Community:** [[Community 8]]
+**Community:** [[Community 9]]
 
 ## Connections by Relation
 

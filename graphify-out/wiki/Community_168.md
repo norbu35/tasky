@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskSuccessScreen.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
-- **handleViewTask()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
-- **handleDone()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
+- **AccountRestrictedException** (2 connections) — `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
+- **AccountRestrictedException.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
+- **.AccountRestrictedException()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
+- `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
 
 ## Audit Trail
 

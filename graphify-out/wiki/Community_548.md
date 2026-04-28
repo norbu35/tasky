@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PermissionPrimer.tsx** (0 connections) — `apps/mobile/src/components/ui/PermissionPrimer.tsx`
+- **navigationOptions.ts** (0 connections) — `apps/mobile/src/design/navigationOptions.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/PermissionPrimer.tsx`
+- `apps/mobile/src/design/navigationOptions.ts`
 
 ## Audit Trail
 

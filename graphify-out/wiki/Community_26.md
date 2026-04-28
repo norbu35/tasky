@@ -1,35 +1,35 @@
 # Community 26
 
-> 44 nodes
+> 52 nodes
 
 ## Key Concepts
 
-- **PackageMarker** (43 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/PackageMarker.java`
-- **.PackageMarker()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/provider/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/broker/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/event/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/job/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/workflow/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/category/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/outbox/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/workflow/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/workflow/PackageMarker.java`
-- _... and 19 more nodes in this community_
+- **JdbiConfig** (51 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **JdbiConfig.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.jdbi()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.userDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.profileDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.otpChallengeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.refreshSessionDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.rateLimitCounterDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.verificationDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.auditEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.strikeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.moderationPolicyDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.suspensionEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.reliabilityScoreDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.badgeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.categoryDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.categorySchemaVersionDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskDraftDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskPhotoDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskApplicationDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskRescueEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.bookingDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.bookingIntentDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.bookingCompletionSignalDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- _... and 27 more nodes in this community_
 
 ## Relationships
 
@@ -37,30 +37,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/analytics/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/auth/provider/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/auth/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/broker/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/event/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/job/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/provider/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/provider/llm/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/worker/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/workflow/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/booking/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/category/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/dispute/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/kernel/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/kernel/outbox/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/location/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/messaging/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/messaging/workflow/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
 
 ## Audit Trail
 
-- EXTRACTED: 86 (100%)
+- EXTRACTED: 102 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

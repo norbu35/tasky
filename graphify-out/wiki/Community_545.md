@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **LoginRequiredCTA.tsx** (0 connections) — `apps/mobile/src/components/ui/LoginRequiredCTA.tsx`
+- **ReviewCard.tsx** (0 connections) — `apps/mobile/src/components/ui/ReviewCard.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/LoginRequiredCTA.tsx`
+- `apps/mobile/src/components/ui/ReviewCard.tsx`
 
 ## Audit Trail
 

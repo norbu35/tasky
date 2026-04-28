@@ -87,7 +87,7 @@ describe('useDevLogin', () => {
       refresh_token: 'dev-refresh-token',
       user: {
         id: 'customer-1',
-        phone: '+97692000001',
+        phone: '+97692000002',
         primary_auth: 'PHONE_OTP',
         role: 'CUSTOMER',
         status: 'ACTIVE',
@@ -134,14 +134,14 @@ describe('useDevLogin', () => {
 
       await act(async () => {
         await latestMutation?.mutateAsync({
-          phone: '+97692000001',
+          phone: '+97692000002',
           role: 'CUSTOMER',
         });
       });
 
       expect(mockRequestJson).toHaveBeenCalledWith('/auth/dev/login', {
         method: 'POST',
-        body: JSON.stringify({ phone: '+97692000001', role: 'CUSTOMER' }),
+        body: JSON.stringify({ phone: '+97692000002', role: 'CUSTOMER' }),
       });
       expect(mockGetMyProfile).toHaveBeenCalledWith('dev-access-token');
       expect(useAuthStore.getState().session?.user.role).toBe('CUSTOMER');
@@ -172,7 +172,7 @@ describe('useDevLogin', () => {
 
       await act(async () => {
         await latestMutation?.mutateAsync({
-          phone: '+97692000001',
+          phone: '+97692000002',
           role: 'CUSTOMER',
         });
       });

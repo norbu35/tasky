@@ -1,14 +1,13 @@
 # Community 106
 
-> 5 nodes
+> 4 nodes
 
 ## Key Concepts
 
-- **RuntimeBoundaryTest** (4 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
-- **.canonicalPlaneMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
-- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
-- **RuntimeBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
-- **.runtimeConfigurationShellsExist()** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
+- **NewTaskLayout.test.tsx** (3 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
+- **MockStack()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
+- **MockStackScreen()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
+- **MockRedirect()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
 
 ## Relationships
 
@@ -16,11 +15,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
+- `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **customer-journey.test.tsx** (1 connections) — `apps/mobile/__tests__/integration/customer-journey.test.tsx`
-- **render()** (1 connections) — `apps/mobile/__tests__/integration/customer-journey.test.tsx`
+- **BookingDetailTasker.test.tsx** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/BookingDetailTasker.test.tsx`
+- **hasAncestorTestID()** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/BookingDetailTasker.test.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/integration/customer-journey.test.tsx`
+- `apps/mobile/__tests__/screens/tasker/jobs/BookingDetailTasker.test.tsx`
 
 ## Audit Trail
 

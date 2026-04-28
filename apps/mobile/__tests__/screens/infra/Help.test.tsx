@@ -48,10 +48,10 @@ describe('HelpScreen', () => {
     mockParams = {};
   });
 
-  it('renders Help & Support title', () => {
+  it('renders help content', () => {
     render(<HelpScreen />);
 
-    expect(screen.getByText('Тусламж')).toBeTruthy();
+    expect(screen.getByPlaceholderText('Асуулт хайх...')).toBeTruthy();
   });
 
   it('shows FAQ section headers', () => {
@@ -111,13 +111,6 @@ describe('HelpScreen', () => {
 
     expect(screen.getByText('Tasky гэж юу вэ?')).toBeTruthy();
     expect(screen.queryByText('Ачааллах боломжгүй')).toBeNull();
-  });
-
-  it('back button navigates back', () => {
-    render(<HelpScreen />);
-
-    fireEvent.press(screen.getByTestId('help-screen-back'));
-    expect(mockBack).toHaveBeenCalledTimes(1);
   });
 
   it('has correct testID on root container', () => {

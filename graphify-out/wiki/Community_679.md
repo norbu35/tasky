@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **textarea.tsx** (0 connections) — `apps/web/src/components/ui/textarea.tsx`
+- **select.test.tsx** (0 connections) — `apps/web/src/components/ui/__tests__/select.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/textarea.tsx`
+- `apps/web/src/components/ui/__tests__/select.test.tsx`
 
 ## Audit Trail
 

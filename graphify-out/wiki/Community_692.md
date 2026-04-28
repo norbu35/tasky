@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **BottomNavBar.test.tsx** (0 connections) — `apps/web/src/layout/__tests__/BottomNavBar.test.tsx`
+- **intakeSchema.test.ts** (0 connections) — `apps/web/src/lib/intakeSchema.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/__tests__/BottomNavBar.test.tsx`
+- `apps/web/src/lib/intakeSchema.test.ts`
 
 ## Audit Trail
 

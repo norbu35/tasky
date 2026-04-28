@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **Toast.tsx** (1 connections) — `apps/mobile/src/components/ui/Toast.tsx`
-- **Toast()** (1 connections) — `apps/mobile/src/components/ui/Toast.tsx`
+- **TrustBanner.tsx** (1 connections) — `apps/mobile/src/components/ui/TrustBanner.tsx`
+- **TrustBanner()** (1 connections) — `apps/mobile/src/components/ui/TrustBanner.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/Toast.tsx`
+- `apps/mobile/src/components/ui/TrustBanner.tsx`
 
 ## Audit Trail
 

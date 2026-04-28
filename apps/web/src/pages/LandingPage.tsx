@@ -148,11 +148,8 @@ export function LandingPage() {
       {/* Header — floating glassmorphic nav */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-primary-foreground/5 backdrop-blur-xl border-b border-primary-foreground/5 shadow-sm px-6 py-4 transition-all duration-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Shield className="w-6 h-6 text-accent" />
-            <span className="text-2xl font-display font-bold tracking-tight text-primary-foreground">
-              Tasky
-            </span>
+          <div className="flex items-center">
+            <img src="/logo.png" alt="" className="h-12 w-12 rounded-xl shadow-card" />
           </div>
           <div className="flex items-center gap-4">
             <LanguageSwitcher className="bg-primary-deep/20 text-primary-foreground hover:bg-primary-deep/40 border border-primary-foreground/10 backdrop-blur-md shadow-sm" />
@@ -740,9 +737,8 @@ export function LandingPage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8">
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center gap-2 text-foreground">
-              <Shield className="w-6 h-6 text-primary" />
-              <span className="font-display font-bold text-2xl tracking-tight">Tasky</span>
+            <div className="flex items-center text-foreground">
+              <img src="/logo.png" alt="" className="h-16 w-16 rounded-2xl shadow-card" />
             </div>
             <p className="text-sm leading-relaxed max-w-sm">{t('landing.footerDesc')}</p>
             <div className="flex gap-3 pt-4">

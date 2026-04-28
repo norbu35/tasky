@@ -230,11 +230,8 @@ export function AuthPage() {
           className="pointer-events-none absolute inset-0 z-0 w-full h-full object-cover mix-blend-overlay opacity-50"
         />
 
-        <div className="relative z-10 flex items-center gap-4">
-          <div className="p-3.5 bg-primary-foreground/10 backdrop-blur-xl rounded-2xl border border-primary-foreground/20 shadow-elevated">
-            <Shield className="w-6 h-6 text-accent" strokeWidth={2.5} />
-          </div>
-          <span className="text-3xl font-display font-extrabold tracking-tight">Tasky</span>
+        <div className="relative z-10 flex items-center">
+          <img src="/logo.png" alt="" className="h-20 w-20 rounded-2xl shadow-elevated" />
         </div>
 
         <div className="relative z-10 max-w-lg mt-auto mb-20 space-y-6">
@@ -270,11 +267,8 @@ export function AuthPage() {
 
       <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 relative z-10">
         <div className="w-full max-w-md space-y-8">
-          <div className="lg:hidden flex items-center gap-3 mb-8">
-            <div className="p-2 bg-primary/10 rounded-xl">
-              <Shield className="w-6 h-6 text-primary" />
-            </div>
-            <span className="text-2xl font-display font-bold text-foreground">Tasky</span>
+          <div className="lg:hidden mb-8 flex items-center">
+            <img src="/logo.png" alt="" className="h-14 w-14 rounded-xl shadow-card" />
           </div>
 
           <motion.div

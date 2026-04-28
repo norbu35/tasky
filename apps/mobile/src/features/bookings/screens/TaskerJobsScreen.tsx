@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 
 import { FeedListTemplate } from '@/components/templates/FeedListTemplate';
 import { FilterBar } from '@/components/ui/FilterBar';
+import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { SplitCard } from '@/components/ui/SplitCard';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { useBookings } from '@/features/bookings/hooks/useBookings';
@@ -114,6 +115,8 @@ export default function TaskerJobsScreen() {
     setActiveFilters([id]);
   }, []);
 
+  const listHeader = <ScreenHeader title={t('tasker.jobs.title')} />;
+
   return (
     <FeedListTemplate
       data={filteredBookings}
@@ -129,6 +132,7 @@ export default function TaskerJobsScreen() {
       emptyDescription={t('MyJobsScreen.copy1')}
       emptyCtaLabel={t('tasker.jobs.emptyCta')}
       emptyCtaOnPress={() => router.push('/(tabs)')}
+      ListHeaderComponent={listHeader}
       filterBar={
         <FilterBar
           filters={jobFilters}

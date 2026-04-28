@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ProfileAvatar.tsx** (0 connections) — `apps/mobile/src/components/ui/ProfileAvatar.tsx`
+- **surfaces.ts** (0 connections) — `apps/mobile/src/design/surfaces.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/ProfileAvatar.tsx`
+- `apps/mobile/src/design/surfaces.ts`
 
 ## Audit Trail
 

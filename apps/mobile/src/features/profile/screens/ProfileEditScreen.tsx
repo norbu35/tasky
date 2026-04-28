@@ -98,6 +98,7 @@ export default function ProfileEditScreen() {
   return (
     <FormWizardTemplate
       testID="SCR-SHARED-013"
+      title={t('shared.profile.editTitle')}
       currentStep={0}
       totalSteps={1}
       onNext={handleSave}

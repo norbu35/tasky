@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **main.tsx** (0 connections) — `apps/web/src/main.tsx`
+- **separator.tsx** (0 connections) — `apps/web/src/components/ui/separator.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/main.tsx`
+- `apps/web/src/components/ui/separator.tsx`
 
 ## Audit Trail
 

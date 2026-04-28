@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ScheduleFields.test.tsx** (0 connections) — `apps/mobile/__tests__/features/bookings/screens/BookingReschedule/ScheduleFields.test.tsx`
+- **ProfileReputationSummary.test.tsx** (0 connections) — `apps/mobile/__tests__/features/profile/components/ProfileReputationSummary.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/bookings/screens/BookingReschedule/ScheduleFields.test.tsx`
+- `apps/mobile/__tests__/features/profile/components/ProfileReputationSummary.test.tsx`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **Dispute.java** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/Dispute.java`
-- **Dispute()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/Dispute.java`
+- **SchedulerRuntimeConfiguration.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/scheduler/SchedulerRuntimeConfiguration.java`
+- **SchedulerRuntimeConfiguration** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/scheduler/SchedulerRuntimeConfiguration.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/dispute/dto/Dispute.java`
+- `services/api/src/main/java/mn/tasky/runtime/scheduler/SchedulerRuntimeConfiguration.java`
 
 ## Audit Trail
 

@@ -12,7 +12,7 @@ export default function SharedLayout() {
         name="profile/edit"
         options={{
           ...modalStackScreenOptions,
-          title: t('shared.profile.editTitle'),
+          headerShown: false,
         }}
       />
       <Stack.Screen name="profile/settings" options={{ title: t('shared.profile.settings') }} />
@@ -30,7 +30,7 @@ export default function SharedLayout() {
         name="review/[bookingId]"
         options={{
           ...modalStackScreenOptions,
-          title: t('shared.review.title'),
+          headerShown: false,
         }}
       />
       {/* Legal */}

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **CategoryChip.tsx** (1 connections) — `apps/mobile/src/components/ui/CategoryChip.tsx`
-- **CategoryChip()** (1 connections) — `apps/mobile/src/components/ui/CategoryChip.tsx`
+- **PermissionPrimer.Illustration.tsx** (1 connections) — `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
+- **IllustrationArea()** (1 connections) — `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/CategoryChip.tsx`
+- `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
 
 ## Audit Trail
 

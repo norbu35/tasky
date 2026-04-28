@@ -85,16 +85,12 @@ export default function TaskPhotosScreen() {
       onBack={() => router.back()}
       nextLabel={photos.length > 0 ? t('common.continue') : t('Photos.photosSkip')}
       nextDisabled={uploadingIndex !== null}
+      title={t('Photos.photosHeroTitle')}
+      subtitle={t('Photos.photosInstruction')}
     >
       <View className="flex-row items-center justify-between gap-sm">
         <Text className="text-caption text-text-secondary">{t('Photos.photosProgressHint')}</Text>
       </View>
-      <Text className="text-heading font-sans-bold text-primary-deep leading-[26px]">
-        {t('Photos.photosHeroTitle')}
-      </Text>
-      <Text className="text-body text-text-secondary leading-[24px]">
-        {t('Photos.photosInstruction')}
-      </Text>
 
       <PostingGuidanceCard
         titleKey="PostingGuidance.summaryTitle"
