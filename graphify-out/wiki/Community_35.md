@@ -1,43 +1,40 @@
 # Community 35
 
-> 17 nodes
+> 15 nodes
 
 ## Key Concepts
 
-- **OutboxEventDao** (10 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **OutboxReplayController** (7 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **.getEvent()** (4 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **.replayEvent()** (4 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **.replayAllFailed()** (4 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **.listEvents()** (3 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **.findByStatus()** (3 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.countByStatus()** (3 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.resetForReplay()** (3 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.getSummary()** (2 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **OutboxReplayController.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **.OutboxReplayController()** (1 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **OutboxEventDao.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.insert()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.markProcessed()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.findById()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.findByStatuses()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
+- **NotificationCommandHandler** (8 connections) — `services/api/src/main/java/mn/tasky/notification/application/command/NotificationCommandHandler.java`
+- **.setServiceAreas_delegatesToServiceAreaDao()** (5 connections) — `services/api/src/test/java/mn/tasky/notification/application/command/NotificationCommandHandlerTest.java`
+- **TaskerServiceAreaDao** (4 connections) — `services/api/src/main/java/mn/tasky/notification/dao/TaskerServiceAreaDao.java`
+- **.setServiceAreas()** (3 connections) — `services/api/src/main/java/mn/tasky/notification/application/command/NotificationCommandHandler.java`
+- **.deleteByUserId()** (3 connections) — `services/api/src/main/java/mn/tasky/notification/dao/TaskerServiceAreaDao.java`
+- **.insertBySlug()** (3 connections) — `services/api/src/main/java/mn/tasky/notification/dao/TaskerServiceAreaDao.java`
+- **.getServiceAreas()** (2 connections) — `services/api/src/main/java/mn/tasky/notification/application/command/NotificationCommandHandler.java`
+- **NotificationCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/application/command/NotificationCommandHandler.java`
+- **.NotificationCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/application/command/NotificationCommandHandler.java`
+- **.registerDevice()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/application/command/NotificationCommandHandler.java`
+- **.unregisterDevice()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/application/command/NotificationCommandHandler.java`
+- **.sendPush()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/application/command/NotificationCommandHandler.java`
+- **.sendPushWithEventKey()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/application/command/NotificationCommandHandler.java`
+- **TaskerServiceAreaDao.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/dao/TaskerServiceAreaDao.java`
+- **.findByUserId()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/dao/TaskerServiceAreaDao.java`
 
 ## Relationships
 
-- [[Community 0]] (3 shared connections)
-- [[Community 1]] (2 shared connections)
-- [[Community 4]] (2 shared connections)
-- [[Community 5]] (1 shared connections)
+- [[Community 1]] (3 shared connections)
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
+- `services/api/src/main/java/mn/tasky/notification/application/command/NotificationCommandHandler.java`
+- `services/api/src/main/java/mn/tasky/notification/dao/TaskerServiceAreaDao.java`
+- `services/api/src/test/java/mn/tasky/notification/application/command/NotificationCommandHandlerTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 32 (64%)
-- INFERRED: 18 (36%)
+- EXTRACTED: 25 (69%)
+- INFERRED: 11 (31%)
 - AMBIGUOUS: 0 (0%)
 
 ---

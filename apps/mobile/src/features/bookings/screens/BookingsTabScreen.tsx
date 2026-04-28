@@ -8,6 +8,7 @@ import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { SplitCard } from '@/components/ui/SplitCard';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { useBookings } from '@/features/bookings/hooks/useBookings';
+import { NotificationBellButton } from '@/features/notifications/components/NotificationBellButton';
 import { useRole } from '@/providers/RoleProvider';
 import { formatDateTime } from '@/utils/formatDate';
 import { mapStatus } from '@/utils/statusMapping';
@@ -120,6 +121,7 @@ export default function BookingsTabScreen() {
     <View className="pb-item">
       <ScreenHeader
         title={isCustomer ? t('customer.bookings.pageTitle') : t('tasker.jobs.title')}
+        rightSlot={<NotificationBellButton testID="bookings-notifications" />}
       />
     </View>
   );

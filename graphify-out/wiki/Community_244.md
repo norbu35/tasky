@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **BookingLifecyclePreview.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/BookingLifecyclePreview.tsx`
-- **getActiveIndex()** (1 connections) — `apps/mobile/src/features/bookings/components/BookingLifecyclePreview.tsx`
+- **useConfirmBookingIntent.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useConfirmBookingIntent.ts`
+- **useConfirmBookingIntent()** (1 connections) — `apps/mobile/src/features/bookings/hooks/useConfirmBookingIntent.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/components/BookingLifecyclePreview.tsx`
+- `apps/mobile/src/features/bookings/hooks/useConfirmBookingIntent.ts`
 
 ## Audit Trail
 

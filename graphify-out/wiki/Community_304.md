@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **CustomerRebookPage.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerRebookPage.tsx`
-- **CustomerRebookPage()** (1 connections) — `apps/web/src/pages/customer/CustomerRebookPage.tsx`
+- **CustomerTaskSuccessPage.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerTaskSuccessPage.tsx`
+- **CustomerTaskSuccessPage()** (1 connections) — `apps/web/src/pages/customer/CustomerTaskSuccessPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/customer/CustomerRebookPage.tsx`
+- `apps/web/src/pages/customer/CustomerTaskSuccessPage.tsx`
 
 ## Audit Trail
 

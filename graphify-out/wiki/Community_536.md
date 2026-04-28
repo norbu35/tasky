@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **FilterBar.tsx** (0 connections) — `apps/mobile/src/components/ui/FilterBar.tsx`
+- **ModalSheet.tsx** (0 connections) — `apps/mobile/src/components/ui/ModalSheet.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/FilterBar.tsx`
+- `apps/mobile/src/components/ui/ModalSheet.tsx`
 
 ## Audit Trail
 

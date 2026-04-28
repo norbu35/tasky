@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskUpdateResult.java** (2 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskUpdateResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskUpdateResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskUpdateResult.java`
+- **AssistanceEvaluationTest** (2 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
+- **AssistanceEvaluationTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
+- **.storesExternalDistributionDecisionAndReason()** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/dto/TaskUpdateResult.java`
+- `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
 
 ## Audit Trail
 

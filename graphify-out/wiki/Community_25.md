@@ -1,61 +1,67 @@
 # Community 25
 
-> 53 nodes
+> 44 nodes
 
 ## Key Concepts
 
-- **.incrementAndGet()** (14 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
-- **.verifyOtp()** (8 connections) — `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
-- **.requestOtp()** (7 connections) — `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
-- **OtpRateLimitService** (7 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- **.enforce()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- **AssertRefreshAllowed** (6 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.deleteExpired()** (5 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
-- **AssertRequestAllowed** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **OtpController** (4 connections) — `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
-- **RefreshSessionDao** (4 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
-- **OtpRateLimitServiceTest.java** (4 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **AssertVerifyAllowed** (4 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **OtpSentResponse** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
-- **.assertRefreshAllowed()** (3 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- **RateLimitCounterDao** (3 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
-- **RateLimitCleanupScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/RateLimitCleanupScheduler.java`
-- **SessionCleanupScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/SessionCleanupScheduler.java`
-- **.allowsWhenUnderLimit()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.allowsWhenUnderLimit()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.usesTokenIdAsKey()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.fallsBackToHashedTokenWhenParsingFails()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.throwsWhenRefreshLimitExceeded()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.throwsWhenRefreshIpLimitExceeded()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **OtpPublicCompositionServiceTests.java** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
-- **AuthSessionResponse** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
-- _... and 28 more nodes in this community_
+- **PackageMarker** (43 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/PackageMarker.java`
+- **.PackageMarker()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/provider/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/broker/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/event/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/job/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/category/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/outbox/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/workflow/PackageMarker.java`
+- _... and 19 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (8 shared connections)
-- [[Community 5]] (3 shared connections)
-- [[Community 2]] (3 shared connections)
-- [[Community 1]] (2 shared connections)
-- [[Community 20]] (1 shared connections)
-- [[Community 22]] (1 shared connections)
-- [[Community 3]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
-- `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
-- `services/api/src/main/java/mn/tasky/auth/scheduling/RateLimitCleanupScheduler.java`
-- `services/api/src/main/java/mn/tasky/auth/scheduling/SessionCleanupScheduler.java`
-- `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
+- `services/api/src/main/java/mn/tasky/admin/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/analytics/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/auth/provider/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/auth/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/broker/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/event/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/job/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/llm/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/worker/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/workflow/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/booking/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/category/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/dispute/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/kernel/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/kernel/outbox/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/location/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/messaging/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/messaging/workflow/PackageMarker.java`
 
 ## Audit Trail
 
-- EXTRACTED: 99 (64%)
-- INFERRED: 56 (36%)
+- EXTRACTED: 86 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

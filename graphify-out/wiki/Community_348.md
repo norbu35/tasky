@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **eslint.config.mjs** (0 connections) — `eslint.config.mjs`
+- **eslint.config.mjs** (0 connections) — `apps/mobile/eslint.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `eslint.config.mjs`
+- `apps/mobile/eslint.config.mjs`
 
 ## Audit Trail
 

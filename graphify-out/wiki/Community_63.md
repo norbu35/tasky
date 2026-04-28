@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **PushNotificationProvider** (6 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **PushNotificationProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.sendPush()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.subscribeToTopics()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.sendToTopic()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
+- **StorageProvider** (6 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **StorageProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **.generateUploadUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **.generateDownloadUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **.deleteObject()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
 
 ## Relationships
 
@@ -18,7 +18,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
 
 ## Audit Trail
 

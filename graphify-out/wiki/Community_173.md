@@ -4,21 +4,21 @@
 
 ## Key Concepts
 
-- **TextSanitizer** (3 connections) — `services/api/src/main/java/mn/tasky/common/validation/TextSanitizer.java`
-- **TextSanitizer.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/validation/TextSanitizer.java`
-- **.TextSanitizer()** (1 connections) — `services/api/src/main/java/mn/tasky/common/validation/TextSanitizer.java`
+- **TaskApplicationsListResult.java** (2 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskApplicationsListResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskApplicationsListResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskApplicationsListResult.java`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/validation/TextSanitizer.java`
+- `services/api/src/main/java/mn/tasky/task/dto/TaskApplicationsListResult.java`
 
 ## Audit Trail
 
-- EXTRACTED: 5 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

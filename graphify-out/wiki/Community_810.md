@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PagedResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/api/PagedResponse.java`
+- **PresignedUpload.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/dto/PresignedUpload.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/api/PagedResponse.java`
+- `services/api/src/main/java/mn/tasky/common/dto/PresignedUpload.java`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ResponsiveWizardShell.tsx** (0 connections) — `apps/web/src/layout/parity/ResponsiveWizardShell.tsx`
+- **intakeSchema.test.ts** (0 connections) — `apps/web/src/lib/intakeSchema.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/parity/ResponsiveWizardShell.tsx`
+- `apps/web/src/lib/intakeSchema.test.ts`
 
 ## Audit Trail
 

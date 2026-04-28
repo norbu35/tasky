@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **UserProfileUpdateOutcome.java** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
-- **invalidAvatarKey()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
-- **userNotFound()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
+- **ProviderBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
+- **.providerPlaneMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
+- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
+- **ProviderBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
+- `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

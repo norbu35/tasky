@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerNoShowSheet.tsx** (0 connections) — `apps/mobile/src/features/bookings/components/TaskerNoShowSheet.tsx`
+- **BookingTimelineScreen.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingTimelineScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/components/TaskerNoShowSheet.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingTimelineScreen.tsx`
 
 ## Audit Trail
 

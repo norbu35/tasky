@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **SettingsScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/profile/SettingsScreen.test.tsx`
+- **VerificationGate.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/VerificationGate.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/shared/profile/SettingsScreen.test.tsx`
+- `apps/mobile/__tests__/screens/tasker/VerificationGate.test.tsx`
 
 ## Audit Trail
 

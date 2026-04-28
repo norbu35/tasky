@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TimelineList.tsx** (1 connections) — `apps/web/src/layout/parity/TimelineList.tsx`
-- **TimelineList()** (1 connections) — `apps/web/src/layout/parity/TimelineList.tsx`
+- **apiClient.test.ts** (1 connections) — `apps/web/src/lib/apiClient.test.ts`
+- **mockOkResponse()** (1 connections) — `apps/web/src/lib/apiClient.test.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/parity/TimelineList.tsx`
+- `apps/web/src/lib/apiClient.test.ts`
 
 ## Audit Trail
 

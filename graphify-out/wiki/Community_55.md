@@ -4,14 +4,14 @@
 
 ## Key Concepts
 
-- **i18n.ts** (4 connections) — `apps/mobile/src/utils/i18n.ts`
-- **normalizeLanguage()** (4 connections) — `apps/web/src/lib/i18n.ts`
-- **changeLanguage()** (3 connections) — `apps/mobile/src/components/ui/LanguageSwitcher.tsx`
-- **getStoredLanguage()** (3 connections) — `apps/mobile/src/utils/i18n.ts`
-- **setStoredLanguage()** (3 connections) — `apps/mobile/src/utils/i18n.ts`
-- **initializeI18n()** (3 connections) — `apps/mobile/src/utils/i18n.ts`
-- **LanguageSwitcher.tsx** (1 connections) — `apps/mobile/src/components/ui/LanguageSwitcher.tsx`
-- **i18n.ts** (1 connections) — `apps/web/src/lib/i18n.ts`
+- **mockI18n.ts** (7 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **resolveLanguage()** (3 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **translate()** (3 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **lookupTranslation()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **interpolate()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **createReactI18nextMock()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **setTestLanguage()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **resetTestI18n()** (1 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
 
 ## Relationships
 
@@ -19,14 +19,12 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/LanguageSwitcher.tsx`
-- `apps/mobile/src/utils/i18n.ts`
-- `apps/web/src/lib/i18n.ts`
+- `apps/mobile/__tests__/test-utils/mockI18n.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 18 (82%)
-- INFERRED: 4 (18%)
+- EXTRACTED: 22 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

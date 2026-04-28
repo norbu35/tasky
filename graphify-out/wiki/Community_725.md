@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **VerificationSubmittedPage.tsx** (0 connections) — `apps/web/src/pages/tasker/VerificationSubmittedPage.tsx`
+- **VerificationPendingPage.tsx** (0 connections) — `apps/web/src/pages/tasker/VerificationPendingPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/tasker/VerificationSubmittedPage.tsx`
+- `apps/web/src/pages/tasker/VerificationPendingPage.tsx`
 
 ## Audit Trail
 

@@ -1,13 +1,12 @@
 # Community 147
 
-> 4 nodes
+> 3 nodes
 
 ## Key Concepts
 
-- **polish.tsx** (3 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
-- **handlePrimaryAction()** (3 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
-- **handleGenerate()** (2 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
-- **handleApply()** (2 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **TaskerCancelSheet.test.tsx** (2 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
+- **t()** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
+- **isPending()** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
 
 ## Relationships
 
@@ -15,11 +14,11 @@
 
 ## Source Files
 
-- `archive/mobile-future/tasker/profile/polish.tsx`
+- `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

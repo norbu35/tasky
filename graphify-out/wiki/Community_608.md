@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Photos.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Photos.tsx`
+- **BudgetCard.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/BudgetCard.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Photos.tsx`
+- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/BudgetCard.tsx`
 
 ## Audit Trail
 

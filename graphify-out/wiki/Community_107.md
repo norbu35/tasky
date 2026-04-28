@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **Card.tsx** (3 connections) — `apps/mobile/src/components/ui/Card.tsx`
-- **CardDescription()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
-- **CardContent()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
-- **CardFooter()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
+- **NewTaskLayout.test.tsx** (3 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
+- **MockStack()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
+- **MockStackScreen()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
+- **MockRedirect()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/Card.tsx`
+- `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
 
 ## Audit Trail
 

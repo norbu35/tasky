@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Header.tsx** (0 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/Header.tsx`
+- **index.ts** (0 connections) — `apps/mobile/src/features/credits/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/chat/screens/ChatConversation/Header.tsx`
+- `apps/mobile/src/features/credits/index.ts`
 
 ## Audit Trail
 

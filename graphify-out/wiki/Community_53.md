@@ -1,31 +1,32 @@
 # Community 53
 
-> 8 nodes
+> 9 nodes
 
 ## Key Concepts
 
-- **useAuth.ts** (4 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
-- **useAuth.test.tsx** (2 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
-- **DevLoginHarness()** (2 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
-- **useDevLogin()** (2 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
-- **createWrapper()** (1 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
-- **prefetchPostAuthHome()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
-- **useRequestOtp()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
-- **useVerifyOtp()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **BookingCommandPort** (12 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
+- **BookingCommandPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
+- **.cancelBooking()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
+- **.completeBooking()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
+- **.markBookingDone()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
+- **.requestReschedule()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
+- **.respondToReschedule()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
+- **.flagNoShow()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
+- **.rebook()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 0]] (2 shared connections)
+- [[Community 2]] (2 shared connections)
 
 ## Source Files
 
-- `apps/mobile/__tests__/hooks/useAuth.test.tsx`
-- `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (86%)
-- INFERRED: 2 (14%)
+- EXTRACTED: 20 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

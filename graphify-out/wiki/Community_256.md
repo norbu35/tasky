@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **Screen.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/Screen.tsx`
-- **getBookingCardTestID()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/Screen.tsx`
+- **useDeleteAccount.ts** (1 connections) — `apps/mobile/src/features/profile/hooks/useDeleteAccount.ts`
+- **useDeleteAccount()** (1 connections) — `apps/mobile/src/features/profile/hooks/useDeleteAccount.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingsList/Screen.tsx`
+- `apps/mobile/src/features/profile/hooks/useDeleteAccount.ts`
 
 ## Audit Trail
 

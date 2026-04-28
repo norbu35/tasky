@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **CustomerDisputeStatusPage.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerDisputeStatusPage.tsx`
-- **getDisputeStatusLabelKey()** (1 connections) — `apps/web/src/pages/customer/CustomerDisputeStatusPage.tsx`
+- **EditProfilePage.tsx** (1 connections) — `apps/web/src/pages/shared/EditProfilePage.tsx`
+- **EditProfilePage()** (1 connections) — `apps/web/src/pages/shared/EditProfilePage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/customer/CustomerDisputeStatusPage.tsx`
+- `apps/web/src/pages/shared/EditProfilePage.tsx`
 
 ## Audit Trail
 

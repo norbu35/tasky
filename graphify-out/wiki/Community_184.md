@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **AssistanceOutcomeTypeTest** (2 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
-- **AssistanceOutcomeTypeTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
-- **.definesLaunchAssistanceOutcomeBuckets()** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
+- **tooling-audit-batch2.test.mjs** (2 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
+- **readRepo()** (1 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
+- **runPython()** (1 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
+- `tooling/tests/tooling-audit-batch2.test.mjs`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **permission-notifications.tsx** (1 connections) — `apps/mobile/src/app/(auth)/permission-notifications.tsx`
-- **PermissionNotificationsRoute()** (1 connections) — `apps/mobile/src/app/(auth)/permission-notifications.tsx`
+- **\_layout.tsx** (1 connections) — `apps/mobile/src/app/(tabs)/inbox/_layout.tsx`
+- **InboxLayout()** (1 connections) — `apps/mobile/src/app/(tabs)/inbox/_layout.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(auth)/permission-notifications.tsx`
+- `apps/mobile/src/app/(tabs)/inbox/_layout.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ApplicantsSelection.model.ts** (0 connections) — `apps/mobile/src/features/tasks/screens/ApplicantsSelection.model.ts`
+- **TaskSchedule.ScheduleForm.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.ScheduleForm.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/ApplicantsSelection.model.ts`
+- `apps/mobile/src/features/tasks/screens/TaskSchedule.ScheduleForm.tsx`
 
 ## Audit Trail
 

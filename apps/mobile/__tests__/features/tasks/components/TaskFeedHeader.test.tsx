@@ -5,6 +5,12 @@ import { TaskFeedHeader } from '@/features/tasks/components/TaskFeedHeader';
 
 import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
+const mockPush = jest.fn();
+
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ push: mockPush }),
+}));
+
 jest.mock('react-i18next', () => {
   const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
   return createReactI18nextMock('en');

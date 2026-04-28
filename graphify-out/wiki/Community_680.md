@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **LoadingCard.tsx** (0 connections) — `apps/web/src/layout/LoadingCard.tsx`
+- **DesktopSidebar.tsx** (0 connections) — `apps/web/src/layout/DesktopSidebar.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/LoadingCard.tsx`
+- `apps/web/src/layout/DesktopSidebar.tsx`
 
 ## Audit Trail
 

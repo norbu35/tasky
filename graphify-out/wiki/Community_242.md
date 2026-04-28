@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **AccountStatusScreen.tsx** (1 connections) — `apps/mobile/src/features/auth/components/AccountStatusScreen.tsx`
-- **formatDate()** (1 connections) — `apps/mobile/src/features/auth/components/AccountStatusScreen.tsx`
+- **useAcceptApplication.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useAcceptApplication.ts`
+- **useAcceptApplication()** (1 connections) — `apps/mobile/src/features/bookings/hooks/useAcceptApplication.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/auth/components/AccountStatusScreen.tsx`
+- `apps/mobile/src/features/bookings/hooks/useAcceptApplication.ts`
 
 ## Audit Trail
 

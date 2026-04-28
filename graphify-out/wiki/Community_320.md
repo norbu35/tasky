@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useCategories.ts** (1 connections) — `packages/core/src/tasks/useCategories.ts`
-- **useCategoriesQuery()** (1 connections) — `packages/core/src/tasks/useCategories.ts`
+- **check-package-structure.mjs** (1 connections) — `packages/design-tokens/scripts/check-package-structure.mjs`
+- **findFiles()** (1 connections) — `packages/design-tokens/scripts/check-package-structure.mjs`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `packages/core/src/tasks/useCategories.ts`
+- `packages/design-tokens/scripts/check-package-structure.mjs`
 
 ## Audit Trail
 

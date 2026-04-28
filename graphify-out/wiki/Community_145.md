@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **pre-push-hook.test.mjs** (3 connections) — `tooling/tests/pre-push-hook.test.mjs`
-- **setupFakeBinaries()** (3 connections) — `tooling/tests/pre-push-hook.test.mjs`
-- **writeExecutable()** (2 connections) — `tooling/tests/pre-push-hook.test.mjs`
-- **runHook()** (2 connections) — `tooling/tests/pre-push-hook.test.mjs`
+- **polish.tsx** (3 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **handlePrimaryAction()** (3 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **handleGenerate()** (2 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **handleApply()** (2 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `tooling/tests/pre-push-hook.test.mjs`
+- `archive/mobile-future/tasker/profile/polish.tsx`
 
 ## Audit Trail
 

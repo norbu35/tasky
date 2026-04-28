@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **EmptyStateTemplate.tsx** (0 connections) — `apps/mobile/src/components/templates/EmptyStateTemplate.tsx`
+- **ScreenHeader.tsx** (0 connections) — `apps/mobile/src/components/ui/ScreenHeader.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/templates/EmptyStateTemplate.tsx`
+- `apps/mobile/src/components/ui/ScreenHeader.tsx`
 
 ## Audit Trail
 

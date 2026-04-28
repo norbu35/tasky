@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useTaskerProfile.ts** (1 connections) — `apps/mobile/src/features/profile/hooks/useTaskerProfile.ts`
-- **useTaskerProfile()** (1 connections) — `apps/mobile/src/features/profile/hooks/useTaskerProfile.ts`
+- **ProfileReputationSummary.tsx** (1 connections) — `apps/mobile/src/features/profile/components/ProfileReputationSummary.tsx`
+- **ProfileReputationSummary()** (1 connections) — `apps/mobile/src/features/profile/components/ProfileReputationSummary.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/hooks/useTaskerProfile.ts`
+- `apps/mobile/src/features/profile/components/ProfileReputationSummary.tsx`
 
 ## Audit Trail
 

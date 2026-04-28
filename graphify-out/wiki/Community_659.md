@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **EmptyState.tsx** (0 connections) — `apps/web/src/components/feature/EmptyState.tsx`
+- **LocationPicker.tsx** (0 connections) — `apps/web/src/components/feature/task-creation/LocationPicker.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/feature/EmptyState.tsx`
+- `apps/web/src/components/feature/task-creation/LocationPicker.tsx`
 
 ## Audit Trail
 

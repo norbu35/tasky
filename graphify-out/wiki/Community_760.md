@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AdminActionRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/admin/dto/AdminActionRequest.java`
+- **RejectVerificationRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/admin/dto/RejectVerificationRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/dto/AdminActionRequest.java`
+- `services/api/src/main/java/mn/tasky/admin/dto/RejectVerificationRequest.java`
 
 ## Audit Trail
 

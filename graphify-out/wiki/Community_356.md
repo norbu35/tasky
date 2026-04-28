@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **metro.config.js** (0 connections) — `apps/mobile/metro.config.js`
+- **DetailTemplate.test.tsx** (0 connections) — `apps/mobile/__tests__/components/templates/DetailTemplate.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/metro.config.js`
+- `apps/mobile/__tests__/components/templates/DetailTemplate.test.tsx`
 
 ## Audit Trail
 

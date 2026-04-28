@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/jobs/index.tsx`
+- **upload.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/verification/upload.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tasker)/jobs/index.tsx`
+- `apps/mobile/src/app/(tasker)/verification/upload.tsx`
 
 ## Audit Trail
 

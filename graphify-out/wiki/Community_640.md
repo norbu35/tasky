@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **queryKeys.ts** (0 connections) — `apps/mobile/src/lib/queryKeys.ts`
+- **types.ts** (0 connections) — `apps/mobile/src/lib/api/types.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/queryKeys.ts`
+- `apps/mobile/src/lib/api/types.ts`
 
 ## Audit Trail
 

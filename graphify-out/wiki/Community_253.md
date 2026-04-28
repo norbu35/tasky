@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **BookingTimeline.TimelineRow.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingTimeline.TimelineRow.tsx`
-- **TimelineEventRow()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingTimeline.TimelineRow.tsx`
+- **PhoneWarning.tsx** (1 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/PhoneWarning.tsx`
+- **PhoneWarning()** (1 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/PhoneWarning.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingTimeline.TimelineRow.tsx`
+- `apps/mobile/src/features/chat/screens/ChatConversation/PhoneWarning.tsx`
 
 ## Audit Trail
 

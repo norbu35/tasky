@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **CategoryChip.tsx** (1 connections) — `apps/mobile/src/components/ui/CategoryChip.tsx`
-- **CategoryChip()** (1 connections) — `apps/mobile/src/components/ui/CategoryChip.tsx`
+- **RatingStars.tsx** (1 connections) — `apps/mobile/src/components/ui/RatingStars.tsx`
+- **RatingStars()** (1 connections) — `apps/mobile/src/components/ui/RatingStars.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/CategoryChip.tsx`
+- `apps/mobile/src/components/ui/RatingStars.tsx`
 
 ## Audit Trail
 

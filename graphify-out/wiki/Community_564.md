@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ReasonInput.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingReschedule/ReasonInput.tsx`
+- **ScheduleFields.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingReschedule/ScheduleFields.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingReschedule/ReasonInput.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingReschedule/ScheduleFields.tsx`
 
 ## Audit Trail
 

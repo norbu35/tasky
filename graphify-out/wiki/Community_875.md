@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **VerificationStatusApiResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/verification/dto/VerificationStatusApiResponse.java`
+- **VerificationUploadUrlRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/verification/dto/VerificationUploadUrlRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/verification/dto/VerificationStatusApiResponse.java`
+- `services/api/src/main/java/mn/tasky/verification/dto/VerificationUploadUrlRequest.java`
 
 ## Audit Trail
 

@@ -8,6 +8,7 @@ import { SearchBar } from '@/components/ui/SearchBar';
 import { Touchable } from '@/components/ui/Touchable';
 import { TrustBanner } from '@/components/ui/TrustBanner';
 import { mobileTheme } from '@/design/tokenAdapter';
+import { NotificationBellButton } from '@/features/notifications/components/NotificationBellButton';
 import { ReviewGateBanner } from '@/features/review/components/ReviewGateBanner';
 import type { PendingReview } from '@/lib/api/types';
 
@@ -48,7 +49,11 @@ export function TaskFeedHeader({
 
   return (
     <View className="gap-md mb-md">
-      <ScreenHeader title={t('tasker.browse.title')} subtitle={t('tasker.browse.subtitle')} />
+      <ScreenHeader
+        title={t('tasker.browse.title')}
+        subtitle={t('tasker.browse.subtitle')}
+        rightSlot={<NotificationBellButton testID="task-feed-notifications" />}
+      />
       {hasPending && oldestPending ? <ReviewGateBanner pendingReview={oldestPending} /> : null}
       <View className="flex-row items-center gap-sm">
         <View className="flex-1">

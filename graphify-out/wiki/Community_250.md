@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useCreateBookingIntent.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useCreateBookingIntent.ts`
-- **useCreateBookingIntent()** (1 connections) — `apps/mobile/src/features/bookings/hooks/useCreateBookingIntent.ts`
+- **FilterBar.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/FilterBar.tsx`
+- **FilterTab()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/FilterBar.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/hooks/useCreateBookingIntent.ts`
+- `apps/mobile/src/features/bookings/screens/BookingsList/FilterBar.tsx`
 
 ## Audit Trail
 

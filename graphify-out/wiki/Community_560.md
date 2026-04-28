@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **BookingConfirmedScreen.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingConfirmedScreen.tsx`
+- **CurrentSchedule.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingReschedule/CurrentSchedule.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingConfirmedScreen.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingReschedule/CurrentSchedule.tsx`
 
 ## Audit Trail
 

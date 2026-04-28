@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **FacebookLoginRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/FacebookLoginRequest.java`
+- **OtpRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/OtpRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/dto/FacebookLoginRequest.java`
+- `services/api/src/main/java/mn/tasky/auth/dto/OtpRequest.java`
 
 ## Audit Trail
 

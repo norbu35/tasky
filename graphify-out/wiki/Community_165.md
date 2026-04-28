@@ -4,22 +4,22 @@
 
 ## Key Concepts
 
-- **disputeStatusVariant()** (3 connections) — `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
-- **AdminDisputeDetailPage.tsx** (2 connections) — `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
-- **getDisputeStatusLabelKey()** (2 connections) — `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
+- **AccountRestrictedException** (2 connections) — `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
+- **AccountRestrictedException.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
+- **.AccountRestrictedException()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
+- `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (86%)
-- INFERRED: 1 (14%)
+- EXTRACTED: 4 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

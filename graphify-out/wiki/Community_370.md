@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CategoryChip.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/CategoryChip.test.tsx`
+- **FAB.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/FAB.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/CategoryChip.test.tsx`
+- `apps/mobile/__tests__/components/ui/FAB.test.tsx`
 
 ## Audit Trail
 

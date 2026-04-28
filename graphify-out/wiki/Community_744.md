@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **taskSchema.ts** (0 connections) — `packages/core/src/tasks/taskSchema.ts`
+- **eslint.config.mjs** (0 connections) — `packages/design-tokens/eslint.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/core/src/tasks/taskSchema.ts`
+- `packages/design-tokens/eslint.config.mjs`
 
 ## Audit Trail
 

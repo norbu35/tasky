@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **input.tsx** (0 connections) — `apps/web/src/components/ui/input.tsx`
+- **card.tsx** (0 connections) — `apps/web/src/components/ui/card.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/input.tsx`
+- `apps/web/src/components/ui/card.tsx`
 
 ## Audit Trail
 

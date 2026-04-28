@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **accessibility.spec.ts** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
-- **summarizeViolations()** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
-- **scan()** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
+- **TaskyApplication** (2 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
+- **TaskyApplication.java** (1 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
+- **.main()** (1 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
 
 ## Relationships
 
@@ -14,11 +14,11 @@
 
 ## Source Files
 
-- `apps/web/e2e/accessibility.spec.ts`
+- `services/api/src/main/java/mn/tasky/TaskyApplication.java`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

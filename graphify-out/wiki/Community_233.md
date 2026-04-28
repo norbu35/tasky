@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **PermissionPrimer.Illustration.tsx** (1 connections) — `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
-- **IllustrationArea()** (1 connections) — `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
+- **TrustBanner.tsx** (1 connections) — `apps/mobile/src/components/ui/TrustBanner.tsx`
+- **TrustBanner()** (1 connections) — `apps/mobile/src/components/ui/TrustBanner.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
+- `apps/mobile/src/components/ui/TrustBanner.tsx`
 
 ## Audit Trail
 

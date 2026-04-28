@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **AppBootstrapProvider.tsx** (1 connections) — `apps/mobile/src/providers/AppBootstrapProvider.tsx`
-- **AppBootstrapProvider()** (1 connections) — `apps/mobile/src/providers/AppBootstrapProvider.tsx`
+- **FeedCard.tsx** (1 connections) — `apps/web/src/components/feature/FeedCard.tsx`
+- **FeedCard()** (1 connections) — `apps/web/src/components/feature/FeedCard.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/providers/AppBootstrapProvider.tsx`
+- `apps/web/src/components/feature/FeedCard.tsx`
 
 ## Audit Trail
 

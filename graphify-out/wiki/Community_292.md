@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **FilterChip.tsx** (1 connections) — `apps/web/src/components/feature/FilterChip.tsx`
-- **FilterChip()** (1 connections) — `apps/web/src/components/feature/FilterChip.tsx`
+- **ScreenFrame.tsx** (1 connections) — `apps/web/src/layout/ScreenFrame.tsx`
+- **ScreenFrame()** (1 connections) — `apps/web/src/layout/ScreenFrame.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/feature/FilterChip.tsx`
+- `apps/web/src/layout/ScreenFrame.tsx`
 
 ## Audit Trail
 

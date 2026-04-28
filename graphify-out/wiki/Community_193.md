@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **navigation-wiring.test.tsx** (1 connections) — `apps/mobile/__tests__/integration/navigation-wiring.test.tsx`
-- **TabsMock()** (1 connections) — `apps/mobile/__tests__/integration/navigation-wiring.test.tsx`
+- **TaskDetailScreen.test.tsx** (1 connections) — `apps/mobile/__tests__/screens/tasker/TaskDetailScreen.test.tsx`
+- **constructor()** (1 connections) — `apps/mobile/__tests__/screens/tasker/TaskDetailScreen.test.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/integration/navigation-wiring.test.tsx`
+- `apps/mobile/__tests__/screens/tasker/TaskDetailScreen.test.tsx`
 
 ## Audit Trail
 

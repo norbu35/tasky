@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **banned.tsx** (1 connections) — `apps/mobile/src/app/(shared)/account/banned.tsx`
-- **BannedAccountRoute()** (1 connections) — `apps/mobile/src/app/(shared)/account/banned.tsx`
+- **[taskId].tsx** (1 connections) — `apps/mobile/src/app/(tasker)/tasks/[taskId].tsx`
+- **TaskerTaskDetailRouteAlias()** (1 connections) — `apps/mobile/src/app/(tasker)/tasks/[taskId].tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(shared)/account/banned.tsx`
+- `apps/mobile/src/app/(tasker)/tasks/[taskId].tsx`
 
 ## Audit Trail
 

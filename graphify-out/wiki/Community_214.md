@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **[taskId].tsx** (1 connections) — `apps/mobile/src/app/(tasker)/tasks/[taskId].tsx`
-- **TaskerTaskDetailRouteAlias()** (1 connections) — `apps/mobile/src/app/(tasker)/tasks/[taskId].tsx`
+- **[id].tsx** (1 connections) — `apps/mobile/src/app/profile/[id].tsx`
+- **TaskerProfileRoute()** (1 connections) — `apps/mobile/src/app/profile/[id].tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tasker)/tasks/[taskId].tsx`
+- `apps/mobile/src/app/profile/[id].tsx`
 
 ## Audit Trail
 

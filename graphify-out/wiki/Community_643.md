@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **appStore.ts** (0 connections) — `apps/mobile/src/store/appStore.ts`
+- **eslint.config.mjs** (0 connections) — `apps/web/eslint.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/store/appStore.ts`
+- `apps/web/eslint.config.mjs`
 
 ## Audit Trail
 

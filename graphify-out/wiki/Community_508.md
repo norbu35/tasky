@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **[bookingId].tsx** (0 connections) — `apps/mobile/src/app/(shared)/review/[bookingId].tsx`
+- **index.tsx** (0 connections) — `apps/mobile/src/app/(tabs)/index.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(shared)/review/[bookingId].tsx`
+- `apps/mobile/src/app/(tabs)/index.tsx`
 
 ## Audit Trail
 

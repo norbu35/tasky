@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **FaqList.tsx** (0 connections) — `apps/mobile/src/features/help/screens/HelpCenter/FaqList.tsx`
+- **PrivacyPolicyScreen.tsx** (0 connections) — `apps/mobile/src/features/legal/screens/PrivacyPolicyScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/help/screens/HelpCenter/FaqList.tsx`
+- `apps/mobile/src/features/legal/screens/PrivacyPolicyScreen.tsx`
 
 ## Audit Trail
 

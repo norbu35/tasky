@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **jest.setup.ts** (0 connections) — `apps/mobile/jest.setup.ts`
+- **jest.config.js** (0 connections) — `apps/mobile/jest.config.js`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/jest.setup.ts`
+- `apps/mobile/jest.config.js`
 
 ## Audit Trail
 

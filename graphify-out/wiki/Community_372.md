@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **FAB.worklet.test.ts** (0 connections) — `apps/mobile/__tests__/components/ui/FAB.worklet.test.ts`
+- **Input.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/Input.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/FAB.worklet.test.ts`
+- `apps/mobile/__tests__/components/ui/Input.test.tsx`
 
 ## Audit Trail
 

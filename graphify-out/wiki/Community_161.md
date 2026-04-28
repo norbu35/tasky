@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **Screen.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
-- **DetailRow()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
-- **StatusBanner()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
+- **primitives.ts** (2 connections) — `apps/mobile/src/utils/primitives.ts`
+- **toFutureIso()** (1 connections) — `apps/mobile/src/utils/primitives.ts`
+- **createIdempotencyKey()** (1 connections) — `apps/mobile/src/utils/primitives.ts`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
+- `apps/mobile/src/utils/primitives.ts`
 
 ## Audit Trail
 

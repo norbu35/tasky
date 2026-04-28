@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **motion.ts** (0 connections) — `packages/design-tokens/src/core/motion.ts`
+- **semantic.ts** (0 connections) — `packages/design-tokens/src/core/semantic.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/design-tokens/src/core/motion.ts`
+- `packages/design-tokens/src/core/semantic.ts`
 
 ## Audit Trail
 

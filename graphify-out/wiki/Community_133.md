@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **DisputeRaiseResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeRaiseResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeRaiseResult.java`
-- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeRaiseResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeRaiseResult.java`
+- **DisputeEvidenceResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeRaiseResult.java`
+- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useApplyToTask.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
-- **useApplyToTask()** (1 connections) — `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
+- **useTaskIntakeScreen.ts** (1 connections) — `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
+- **useTaskIntakeScreen()** (1 connections) — `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
+- `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
 
 ## Audit Trail
 

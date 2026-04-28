@@ -1,30 +1,32 @@
 # Community 54
 
-> 8 nodes
+> 9 nodes
 
 ## Key Concepts
 
-- **mockI18n.ts** (7 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
-- **resolveLanguage()** (3 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
-- **translate()** (3 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
-- **lookupTranslation()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
-- **interpolate()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
-- **createReactI18nextMock()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
-- **setTestLanguage()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
-- **resetTestI18n()** (1 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **BalanceResponse** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
+- **LedgerResponses** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
+- **WalletQueryCompositionServiceTests.java** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
+- **WalletQueryCompositionServiceTests** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
+- **.mapsListOfEntries()** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
+- **.returnsEmptyList()** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
+- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
+- **.mapsAllFields()** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
+- **.handlesZeroBalances()** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 2]] (2 shared connections)
+- [[Community 0]] (2 shared connections)
 
 ## Source Files
 
-- `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
 
 ## Audit Trail
 
-- EXTRACTED: 22 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 16 (80%)
+- INFERRED: 4 (20%)
 - AMBIGUOUS: 0 (0%)
 
 ---

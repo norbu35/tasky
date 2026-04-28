@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **CursorPagination.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/api/CursorPagination.java`
-- **from()** (1 connections) — `services/api/src/main/java/mn/tasky/common/api/CursorPagination.java`
+- **ReviewSubmitResult.java** (1 connections) — `services/api/src/main/java/mn/tasky/review/dto/ReviewSubmitResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/review/dto/ReviewSubmitResult.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/api/CursorPagination.java`
+- `services/api/src/main/java/mn/tasky/review/dto/ReviewSubmitResult.java`
 
 ## Audit Trail
 

@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **DisputeResolutionResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
-- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- **ReviewSubmissionOutcome.java** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
+- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
+- **internalError()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **suspended.tsx** (1 connections) — `apps/mobile/src/app/(shared)/account/suspended.tsx`
-- **SuspendedAccountRoute()** (1 connections) — `apps/mobile/src/app/(shared)/account/suspended.tsx`
+- **applied.tsx** (1 connections) — `apps/mobile/src/app/(tasker)/tasks/applied.tsx`
+- **ApplicationSubmittedScreen()** (1 connections) — `apps/mobile/src/app/(tasker)/tasks/applied.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(shared)/account/suspended.tsx`
+- `apps/mobile/src/app/(tasker)/tasks/applied.tsx`
 
 ## Audit Trail
 

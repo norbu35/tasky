@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **WorkflowBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
-- **.workflowAndAutomationPlaneMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
-- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
-- **WorkflowBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
+- **ProjectionBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
+- **.projectionPlaneMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
+- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
+- **ProjectionBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
+- `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
 
 ## Audit Trail
 

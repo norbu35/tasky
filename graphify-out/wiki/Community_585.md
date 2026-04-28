@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/matching/index.ts`
+- **index.ts** (0 connections) — `apps/mobile/src/features/profile/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/matching/index.ts`
+- `apps/mobile/src/features/profile/index.ts`
 
 ## Audit Trail
 

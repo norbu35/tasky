@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **postcss.config.mjs** (0 connections) — `apps/web/postcss.config.mjs`
+- **vitest.config.ts** (0 connections) — `apps/web/vitest.config.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/postcss.config.mjs`
+- `apps/web/vitest.config.ts`
 
 ## Audit Trail
 

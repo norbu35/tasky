@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **SettingsTemplate.tsx** (1 connections) — `apps/mobile/src/components/templates/SettingsTemplate.tsx`
-- **SettingsTemplate()** (1 connections) — `apps/mobile/src/components/templates/SettingsTemplate.tsx`
+- **ActionRow.tsx** (1 connections) — `apps/mobile/src/components/ui/ActionRow.tsx`
+- **ActionRow()** (1 connections) — `apps/mobile/src/components/ui/ActionRow.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/templates/SettingsTemplate.tsx`
+- `apps/mobile/src/components/ui/ActionRow.tsx`
 
 ## Audit Trail
 

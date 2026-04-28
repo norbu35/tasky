@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/index.ts`
+- **StatusHeader.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/StatusHeader.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingDetail/index.ts`
+- `apps/mobile/src/features/bookings/screens/BookingDetail/StatusHeader.tsx`
 
 ## Audit Trail
 

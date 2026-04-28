@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useDeleteAccount.ts** (1 connections) — `apps/mobile/src/features/profile/hooks/useDeleteAccount.ts`
-- **useDeleteAccount()** (1 connections) — `apps/mobile/src/features/profile/hooks/useDeleteAccount.ts`
+- **useTaskerProfile.ts** (1 connections) — `apps/mobile/src/features/profile/hooks/useTaskerProfile.ts`
+- **useTaskerProfile()** (1 connections) — `apps/mobile/src/features/profile/hooks/useTaskerProfile.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/hooks/useDeleteAccount.ts`
+- `apps/mobile/src/features/profile/hooks/useTaskerProfile.ts`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TermsPage.tsx** (0 connections) — `apps/web/src/pages/shared/TermsPage.tsx`
+- **TaskerBookingDetailPage.tsx** (0 connections) — `apps/web/src/pages/tasker/TaskerBookingDetailPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/TermsPage.tsx`
+- `apps/web/src/pages/tasker/TaskerBookingDetailPage.tsx`
 
 ## Audit Trail
 

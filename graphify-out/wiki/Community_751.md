@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **primitives.ts** (0 connections) — `packages/design-tokens/src/core/primitives.ts`
+- **eslint.config.mjs** (0 connections) — `packages/sdk/eslint.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/design-tokens/src/core/primitives.ts`
+- `packages/sdk/eslint.config.mjs`
 
 ## Audit Trail
 

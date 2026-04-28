@@ -1,22 +1,21 @@
 # Community 42
 
-> 13 nodes
+> 12 nodes
 
 ## Key Concepts
 
-- **RuntimeSurfaceProperties** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **RuntimeSurfaceProperties.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **HttpSurface** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **Surface** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.getPublicApi()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.getAdminApi()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.getWorker()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.getScheduler()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.setEnabled()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.HttpSurface()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.getBasePath()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.setBasePath()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **BackgroundSurface** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **IdentityQueryHandler** (12 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **IdentityQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.IdentityQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.getProfile()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.getVerificationStatus()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.getVerificationDetail()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.listPendingVerifications()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.verificationExists()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.searchUsersByPhone()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.searchUsersByName()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.searchUsersByFacebookId()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.getModerationPolicy()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
 
 ## Relationships
 
@@ -24,11 +23,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 25 (100%)
+- EXTRACTED: 23 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

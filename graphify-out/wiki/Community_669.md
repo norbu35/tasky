@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **switch.tsx** (0 connections) — `apps/web/src/components/ui/switch.tsx`
+- **checkbox.tsx** (0 connections) — `apps/web/src/components/ui/checkbox.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/switch.tsx`
+- `apps/web/src/components/ui/checkbox.tsx`
 
 ## Audit Trail
 

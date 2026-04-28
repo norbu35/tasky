@@ -46,10 +46,6 @@ export function useCustomerTasksScreen() {
     router.push('/(customer)/tasks/new');
   }, [router, isLocked, oldestPending?.booking_id]);
 
-  const handleNotificationsPress = useCallback(() => {
-    router.push('/(shared)/notifications');
-  }, [router]);
-
   const handleTaskPress = useCallback(
     (taskId: string) => {
       router.push(`/(customer)/tasks/${taskId}`);
@@ -65,7 +61,6 @@ export function useCustomerTasksScreen() {
     isFetching,
     refetch,
     handleFabPress,
-    handleNotificationsPress,
     handleTaskPress,
   };
 }

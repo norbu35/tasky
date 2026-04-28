@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **BannedPage.tsx** (1 connections) — `apps/web/src/pages/shared/BannedPage.tsx`
-- **BannedPage()** (1 connections) — `apps/web/src/pages/shared/BannedPage.tsx`
+- **InboxPage.tsx** (1 connections) — `apps/web/src/pages/shared/InboxPage.tsx`
+- **InboxPage()** (1 connections) — `apps/web/src/pages/shared/InboxPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/BannedPage.tsx`
+- `apps/web/src/pages/shared/InboxPage.tsx`
 
 ## Audit Trail
 

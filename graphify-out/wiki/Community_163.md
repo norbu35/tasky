@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **primitives.ts** (2 connections) — `apps/mobile/src/utils/primitives.ts`
-- **toFutureIso()** (1 connections) — `apps/mobile/src/utils/primitives.ts`
-- **createIdempotencyKey()** (1 connections) — `apps/mobile/src/utils/primitives.ts`
+- **SettingsPage.tsx** (2 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
+- **SectionTitle()** (1 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
+- **ActionRow()** (1 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/utils/primitives.ts`
+- `apps/web/src/pages/shared/SettingsPage.tsx`
 
 ## Audit Trail
 

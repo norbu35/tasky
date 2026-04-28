@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **upload.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/verification/upload.tsx`
+- **ScreenContainer.tsx** (0 connections) — `apps/mobile/src/components/shells/ScreenContainer.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tasker)/verification/upload.tsx`
+- `apps/mobile/src/components/shells/ScreenContainer.tsx`
 
 ## Audit Trail
 

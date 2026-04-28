@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **AdminDisputesPage.tsx** (4 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
-- **disputeStatusVariant()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
-- **getDisputeStatusLabelKey()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
-- **truncate()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
-- **formatDate()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
+- **BookingSafetyPage.tsx** (4 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
+- **closeDialog()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
+- **invalidateBookings()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
+- **handleRebook()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
+- **openDialog()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/admin/AdminDisputesPage.tsx`
+- `apps/web/src/pages/BookingSafetyPage.tsx`
 
 ## Audit Trail
 

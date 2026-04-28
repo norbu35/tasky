@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ActionToolbar.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/ActionToolbar.tsx`
+- **index.ts** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingDetail/ActionToolbar.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingsList/index.ts`
 
 ## Audit Trail
 

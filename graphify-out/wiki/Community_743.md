@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `packages/core/src/tasks/index.ts`
+- **index.ts** (0 connections) — `packages/core/src/http/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/core/src/tasks/index.ts`
+- `packages/core/src/http/index.ts`
 
 ## Audit Trail
 

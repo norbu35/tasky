@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **BookingConfirmationPage.tsx** (0 connections) — `apps/web/src/pages/BookingConfirmationPage.tsx`
+- **LandingPage.tsx** (0 connections) — `apps/web/src/pages/LandingPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/BookingConfirmationPage.tsx`
+- `apps/web/src/pages/LandingPage.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **stats.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/stats.tsx`
+- **consent.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/verification/consent.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tasker)/stats.tsx`
+- `apps/mobile/src/app/(tasker)/verification/consent.tsx`
 
 ## Audit Trail
 

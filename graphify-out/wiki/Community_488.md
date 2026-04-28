@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **rescue.tsx** (0 connections) — `apps/mobile/src/app/(customer)/tasks/[taskId]/rescue.tsx`
+- **photos.tsx** (0 connections) — `apps/mobile/src/app/(customer)/tasks/new/photos.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/tasks/[taskId]/rescue.tsx`
+- `apps/mobile/src/app/(customer)/tasks/new/photos.tsx`
 
 ## Audit Trail
 

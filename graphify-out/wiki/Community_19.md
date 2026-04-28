@@ -1,62 +1,63 @@
 # Community 19
 
-> 74 nodes
+> 69 nodes
 
 ## Key Concepts
 
-- **.findLatestByUserId()** (19 connections) — `services/api/src/main/java/mn/tasky/auth/dao/VerificationDao.java`
-- **.consentDecisionAndStateChangesAuditable()** (16 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- **VerificationService** (15 connections) — `services/api/src/main/java/mn/tasky/auth/application/VerificationService.java`
-- **.pendingUntilAdminResolution()** (15 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- **.taskerUser()** (13 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- **.adminApprovesOrRejectsPendingVerification()** (11 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- **.resolveVerification()** (10 connections) — `services/api/src/main/java/mn/tasky/auth/application/VerificationService.java`
-- **VerificationServiceTests.java** (10 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- **SubmitVerification** (9 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- **.successfulSubmission()** (9 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- **.approvalMarksVerified()** (9 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- **.rejectionDoesNotVerifyUser()** (9 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- **.toVerificationDetail()** (8 connections) — `services/api/src/main/java/mn/tasky/auth/application/VerificationService.java`
-- **.returnsMappedDetails()** (8 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- **.returnsSuccessWhenNoExisting()** (8 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **GetVerificationStatus** (8 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **StatusResponse** (8 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/VerificationPublicCompositionServiceTests.java`
-- **ApproveVerification** (7 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- **SubmitVerification** (7 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **.submitVerification()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/VerificationService.java`
-- **VerificationPublicCompositionService** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationPublicCompositionService.java`
-- **.conflictWithPending()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- **.conflictWithApproved()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- **.resubmissionAfterRejection()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- **GetVerificationStatus** (5 connections) — `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- _... and 49 more nodes in this community_
+- **TaskAssistanceScenarioTests** (15 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **MarketplaceCommandHandler** (14 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/command/MarketplaceCommandHandler.java`
+- **.evaluateExternalDistribution()** (12 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.recordExternalDistribution()** (10 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.processRescue()** (10 connections) — `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
+- **TaskAssistanceService** (9 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.countByTaskId()** (9 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- **.processRescue_createsEventForOldOpenTaskWithZeroApplications()** (8 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.findOpenOlderThan()** (7 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
+- **.externalDistributionTriggersOnlyAfterEightHoursWithoutQualifiedApplication()** (7 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **.externalDistributionLimitedToAdminEligibleCategories()** (7 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **.adminLaunchControlMarksInitialSeedCategoriesEligible()** (7 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **RescueSchedulerTest** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.processRescue_skipsTaskWithExistingApplications()** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.processRescue_skipsTaskWithExistingRescueEvent()** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.processRescue_continuesAfterException()** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.recordManualRescue()** (6 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.classifyOutcome()** (6 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.existsByTaskId()** (6 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskRescueEventDao.java`
+- **.findLatestByTaskId()** (6 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskRescueEventDao.java`
+- **.processTask()** (6 connections) — `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
+- **.openTaskCreatedHoursAgo()** (6 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **.trackIntervention()** (5 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **RescueScheduler** (5 connections) — `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
+- **.systemAssistedOutcomeWhenExternalDistributionWasUsed()** (5 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- _... and 44 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (61 shared connections)
-- [[Community 1]] (21 shared connections)
-- [[Community 2]] (12 shared connections)
-- [[Community 6]] (11 shared connections)
-- [[Community 10]] (7 shared connections)
-- [[Community 12]] (6 shared connections)
-- [[Community 14]] (4 shared connections)
-- [[Community 5]] (4 shared connections)
-- [[Community 3]] (2 shared connections)
-- [[Community 7]] (1 shared connections)
+- [[Community 0]] (24 shared connections)
+- [[Community 1]] (6 shared connections)
+- [[Community 3]] (4 shared connections)
+- [[Community 4]] (3 shared connections)
+- [[Community 2]] (2 shared connections)
+- [[Community 15]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/application/VerificationService.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/VerificationDao.java`
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationPublicCompositionService.java`
-- `services/api/src/test/java/mn/tasky/auth/VerificationServiceTests.java`
-- `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/VerificationPublicCompositionServiceTests.java`
+- `services/api/src/main/java/mn/tasky/marketplace/application/command/MarketplaceCommandHandler.java`
+- `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
+- `services/api/src/main/java/mn/tasky/task/dao/TaskRescueEventDao.java`
+- `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
+- `services/api/src/test/java/mn/tasky/marketplace/application/command/MarketplaceCommandHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/task/TaskApplicationServiceTests.java`
+- `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- `services/api/src/test/java/mn/tasky/task/application/TaskAssistanceServiceTest.java`
+- `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 197 (54%)
-- INFERRED: 170 (46%)
+- EXTRACTED: 154 (53%)
+- INFERRED: 134 (47%)
 - AMBIGUOUS: 0 (0%)
 
 ---

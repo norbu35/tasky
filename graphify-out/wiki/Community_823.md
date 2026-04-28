@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **KernelError.java** (0 connections) — `services/api/src/main/java/mn/tasky/kernel/error/KernelError.java`
+- **LocationSearchResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/location/dto/LocationSearchResponse.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/kernel/error/KernelError.java`
+- `services/api/src/main/java/mn/tasky/location/dto/LocationSearchResponse.java`
 
 ## Audit Trail
 

@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **FacebookAuthException** (3 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
-- **FacebookAuthException.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
-- **.FacebookAuthException()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
-- **.code()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
+- **ModerationPolicyDao** (3 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
+- **ModerationPolicyDao.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
+- **.findActive()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
+- **.update()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
+- `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
 
 ## Audit Trail
 

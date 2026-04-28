@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **doc-claims-validator.test.mjs** (1 connections) — `tooling/tests/doc-claims-validator.test.mjs`
-- **runPython()** (1 connections) — `tooling/tests/doc-claims-validator.test.mjs`
+- **history.tsx** (1 connections) — `archive/mobile-future/tasker/credits/history.tsx`
+- **resolveState()** (1 connections) — `archive/mobile-future/tasker/credits/history.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `tooling/tests/doc-claims-validator.test.mjs`
+- `archive/mobile-future/tasker/credits/history.tsx`
 
 ## Audit Trail
 

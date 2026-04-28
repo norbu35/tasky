@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useTaskIntakeScreen.ts** (1 connections) — `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
-- **useTaskIntakeScreen()** (1 connections) — `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
+- **useTaskDraft.ts** (1 connections) — `apps/mobile/src/features/tasks/draft/useTaskDraft.ts`
+- **useTaskDraft()** (1 connections) — `apps/mobile/src/features/tasks/draft/useTaskDraft.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
+- `apps/mobile/src/features/tasks/draft/useTaskDraft.ts`
 
 ## Audit Trail
 

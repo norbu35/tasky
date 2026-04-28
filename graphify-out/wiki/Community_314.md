@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReviewReminderDialog.tsx** (1 connections) — `apps/web/src/pages/shared/ReviewReminderDialog.tsx`
-- **ReviewReminderDialog()** (1 connections) — `apps/web/src/pages/shared/ReviewReminderDialog.tsx`
+- **SessionExpiredPage.tsx** (1 connections) — `apps/web/src/pages/shared/SessionExpiredPage.tsx`
+- **SessionExpiredPage()** (1 connections) — `apps/web/src/pages/shared/SessionExpiredPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/ReviewReminderDialog.tsx`
+- `apps/web/src/pages/shared/SessionExpiredPage.tsx`
 
 ## Audit Trail
 

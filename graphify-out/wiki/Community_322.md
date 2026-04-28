@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **layout.ts** (1 connections) — `packages/design-tokens/src/compat/layout.ts`
-- **px()** (1 connections) — `packages/design-tokens/src/compat/layout.ts`
+- **BookingMarkDoneResult.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingMarkDoneResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingMarkDoneResult.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `packages/design-tokens/src/compat/layout.ts`
+- `services/api/src/main/java/mn/tasky/booking/dto/BookingMarkDoneResult.java`
 
 ## Audit Trail
 

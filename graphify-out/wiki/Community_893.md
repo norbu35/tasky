@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.tsx** (0 connections) — `archive/mobile-future/tasker/credits/index.tsx`
+- **index.tsx** (0 connections) — `archive/mobile-future/tasker/wallet/index.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `archive/mobile-future/tasker/credits/index.tsx`
+- `archive/mobile-future/tasker/wallet/index.tsx`
 
 ## Audit Trail
 

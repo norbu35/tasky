@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **AutomationEventTypes** (2 connections) — `services/api/src/main/java/mn/tasky/automation/event/AutomationEventTypes.java`
-- **AutomationEventTypes.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/event/AutomationEventTypes.java`
-- **.AutomationEventTypes()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/event/AutomationEventTypes.java`
+- **OutboxEventTypes** (2 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
+- **OutboxEventTypes.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
+- **.OutboxEventTypes()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/automation/event/AutomationEventTypes.java`
+- `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
 
 ## Audit Trail
 

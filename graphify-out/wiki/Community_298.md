@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **StatePanel.tsx** (1 connections) — `apps/web/src/layout/parity/StatePanel.tsx`
-- **StatePanel()** (1 connections) — `apps/web/src/layout/parity/StatePanel.tsx`
+- **utils.ts** (1 connections) — `apps/web/src/lib/utils.ts`
+- **cn()** (1 connections) — `apps/web/src/lib/utils.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/parity/StatePanel.tsx`
+- `apps/web/src/lib/utils.ts`
 
 ## Audit Trail
 

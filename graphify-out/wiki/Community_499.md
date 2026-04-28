@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **app-update.tsx** (0 connections) — `apps/mobile/src/app/(shared)/app-update.tsx`
+- **\_layout.tsx** (0 connections) — `apps/mobile/src/app/(shared)/_layout.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(shared)/app-update.tsx`
+- `apps/mobile/src/app/(shared)/_layout.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **types.ts** (0 connections) — `apps/mobile/src/lib/api/types.ts`
+- **authStore.ts** (0 connections) — `apps/mobile/src/store/authStore.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/api/types.ts`
+- `apps/mobile/src/store/authStore.ts`
 
 ## Audit Trail
 

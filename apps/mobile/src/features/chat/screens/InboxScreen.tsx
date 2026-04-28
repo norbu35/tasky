@@ -1,55 +1,50 @@
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
 
 import { FeedListTemplate } from '@/components/templates/FeedListTemplate';
-import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
-import { ScreenHeader } from '@/components/ui/ScreenHeader';
-import { SearchBar } from '@/components/ui/SearchBar';
-import { Touchable } from '@/components/ui/Touchable';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { useConversations } from '@/features/chat/hooks/useConversations';
-import { formatLastActive } from '@/lib/formatLastActive';
 
-const { colors } = mobileTheme;
-
-interface ConversationItem {
-  id: string;
-  task_id: string;
-  task_title?: string | null;
-  counterparty_id: string;
-  counterparty_name: string;
-  counterparty_avatar_url?: string | null;
-  counterparty_last_active_at?: string | null;
-  last_message_content?: string | null;
-  last_message_at?: string | null;
-  unread_count: number;
-  created_at: string;
-}
+import { ConversationRow } from './Inbox.ConversationRow';
+import { InboxHeader, type InboxFilter } from './Inbox.Header';
+import type { ConversationItem } from './Inbox.model';
 
 export default function InboxScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { data, isLoading, isError, isRefetching, refetch } = useConversations();
   const [search, setSearch] = useState('');
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<InboxFilter>('all');
 
   const conversations = useMemo<ConversationItem[]>(() => data?.data ?? [], [data?.data]);
   const filteredConversations = useMemo(() => {
     const normalizedQuery = search.trim().toLowerCase();
     const sorted = [...conversations].sort((a, b) => {
-      const aTime = a.last_message_at ? new Date(a.last_message_at).getTime() : 0;
-      const bTime = b.last_message_at ? new Date(b.last_message_at).getTime() : 0;
+      const aTime = new Date(a.last_message_at ?? a.created_at).getTime();
+      const bTime = new Date(b.last_message_at ?? b.created_at).getTime();
       return bTime - aTime;
     });
 
-    if (!normalizedQuery) return sorted;
+    const filteredByChip = sorted.filter((item) => {
+      if (activeFilter === 'unread') return (item.unread_count ?? 0) > 0;
+      if (activeFilter === 'bookings') return Boolean(item.task_id);
+      return true;
+    });
 
-    return sorted.filter((item) => {
-      const haystack = `${item.counterparty_name ?? ''}`.toLowerCase();
+    if (!normalizedQuery) return filteredByChip;
+
+    return filteredByChip.filter((item) => {
+      const haystack = [
+        item.counterparty_name ?? '',
+        item.last_message_content ?? '',
+        item.task_title ?? '',
+      ]
+        .join(' ')
+        .toLowerCase();
       return haystack.includes(normalizedQuery);
     });
-  }, [conversations, search]);
+  }, [activeFilter, conversations, search]);
 
   const formatTimestamp = useCallback((value?: string) => {
     if (!value) return '';
@@ -64,74 +59,37 @@ export default function InboxScreen() {
     return timestamp.toLocaleDateString();
   }, []);
 
-  const listHeader = (
-    <View className="pb-item gap-item">
-      <ScreenHeader title={t('shared.inbox.title')} />
-    </View>
-  );
+  const handleToggleSearch = useCallback(() => {
+    setIsSearchVisible((visible) => !visible);
+  }, []);
 
-  const filterBar =
-    !isLoading && !isError ? (
-      <SearchBar
-        value={search}
-        onChangeText={setSearch}
-        placeholder={t('shared.inbox.searchPlaceholder')}
-        testID="conversation-search-input"
-      />
-    ) : null;
+  const handleOpenSettings = useCallback(() => {
+    router.push('/(shared)/profile/settings');
+  }, [router]);
+
+  const listHeader = (
+    <InboxHeader
+      activeFilter={activeFilter}
+      isSearchVisible={isSearchVisible}
+      search={search}
+      onOpenSettings={handleOpenSettings}
+      onSearchChange={setSearch}
+      onSelectFilter={setActiveFilter}
+      onToggleSearch={handleToggleSearch}
+    />
+  );
 
   const renderItem = useCallback(
     (item: ConversationItem) => {
-      const title = item.counterparty_name ?? item.task_title ?? t('messaging.taskDiscussion');
-      const isUnread = (item.unread_count ?? 0) > 0;
-      const activity = formatLastActive(item.counterparty_last_active_at);
       return (
-        <Touchable
-          testID={`conversation-row-${item.id}`}
-          className={`flex-row items-center rounded-lg p-item ${isUnread ? 'bg-muted' : 'bg-background'}`}
+        <ConversationRow
+          item={item}
           onPress={() => router.push(`/inbox/${item.id}`)}
-          accessibilityRole="button"
-        >
-          <View className="mr-md relative">
-            <ProfileAvatar uri={item.counterparty_avatar_url ?? undefined} name={title} size="md" />
-            {activity.isActive && (
-              <View
-                className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-verified"
-                style={{ borderWidth: 2, borderColor: colors.card }}
-              />
-            )}
-          </View>
-          <View className="flex-1">
-            <View className="flex-row justify-between items-center">
-              <Text
-                className={`text-body font-semibold flex-1 mr-sm ${isUnread ? 'text-primary-deep font-bold' : 'text-foreground'}`}
-                numberOfLines={1}
-              >
-                {title}
-              </Text>
-              {item.last_message_at && (
-                <Text
-                  className={`text-micro ${isUnread ? 'text-primary-deep font-bold' : 'text-muted-foreground'}`}
-                >
-                  {formatTimestamp(item.last_message_at)}
-                </Text>
-              )}
-            </View>
-            {item.last_message_content && (
-              <Text className="text-label text-muted-foreground mt-[2px]" numberOfLines={1}>
-                {item.last_message_content}
-              </Text>
-            )}
-          </View>
-          {isUnread && (
-            <View className="w-[10px] h-[10px] rounded-full items-center justify-center ml-sm">
-              <View className="w-[10px] h-[10px] rounded-full bg-secondary" />
-            </View>
-          )}
-        </Touchable>
+          timestamp={formatTimestamp(item.last_message_at ?? item.created_at)}
+        />
       );
     },
-    [formatTimestamp, router, t],
+    [formatTimestamp, router],
   );
 
   return (
@@ -150,7 +108,6 @@ export default function InboxScreen() {
       emptyDescription={t('shared.inbox.emptyDescription')}
       errorMessage={t('shared.inbox.errorMessage')}
       retryLabel={t('shared.inbox.retry')}
-      filterBar={filterBar}
       ListHeaderComponent={listHeader}
     />
   );

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AdminLayout.tsx** (0 connections) — `apps/web/src/layout/AdminLayout.tsx`
+- **AuthShell.test.tsx** (0 connections) — `apps/web/src/layout/__tests__/AuthShell.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/AdminLayout.tsx`
+- `apps/web/src/layout/__tests__/AuthShell.test.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PublicTaskFeedRow.java** (0 connections) — `services/api/src/main/java/mn/tasky/projection/publicfeed/PublicTaskFeedRow.java`
+- **Review.java** (0 connections) — `services/api/src/main/java/mn/tasky/review/dto/Review.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/projection/publicfeed/PublicTaskFeedRow.java`
+- `services/api/src/main/java/mn/tasky/review/dto/Review.java`
 
 ## Audit Trail
 

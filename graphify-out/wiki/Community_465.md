@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerProfile.ReviewsSection.test.tsx** (0 connections) — `apps/mobile/__tests__/features/profile/screens/TaskerProfile.ReviewsSection.test.tsx`
+- **Tasky-Bridging-Header.h** (0 connections) — `apps/mobile/ios/Tasky/Tasky-Bridging-Header.h`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/profile/screens/TaskerProfile.ReviewsSection.test.tsx`
+- `apps/mobile/ios/Tasky/Tasky-Bridging-Header.h`
 
 ## Audit Trail
 

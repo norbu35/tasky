@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **react-query.ts** (0 connections) — `apps/mobile/src/lib/react-query.ts`
+- **cn.test.ts** (0 connections) — `apps/mobile/src/lib/__tests__/cn.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/react-query.ts`
+- `apps/mobile/src/lib/__tests__/cn.test.ts`
 
 ## Audit Trail
 

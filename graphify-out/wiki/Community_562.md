@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerJobDetailScreen.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetailScreen.tsx`
+- **index.ts** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingReschedule/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/TaskerJobDetailScreen.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingReschedule/index.ts`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PresignedUpload.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/dto/PresignedUpload.java`
+- **IdempotencyClaim.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyClaim.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/dto/PresignedUpload.java`
+- `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyClaim.java`
 
 ## Audit Trail
 

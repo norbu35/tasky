@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **create.tsx** (1 connections) — `apps/mobile/src/app/create.tsx`
-- **CreateTaskScreen()** (1 connections) — `apps/mobile/src/app/create.tsx`
+- **cancel.tsx** (1 connections) — `apps/mobile/src/app/(customer)/bookings/[bookingId]/cancel.tsx`
+- **CustomerCancelBookingRoute()** (1 connections) — `apps/mobile/src/app/(customer)/bookings/[bookingId]/cancel.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/create.tsx`
+- `apps/mobile/src/app/(customer)/bookings/[bookingId]/cancel.tsx`
 
 ## Audit Trail
 

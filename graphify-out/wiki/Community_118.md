@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **native.ts** (3 connections) — `packages/design-tokens/src/platform/native.ts`
-- **toNativeLetterSpacing()** (3 connections) — `packages/design-tokens/src/platform/native.ts`
-- **toNativeTextStyle()** (2 connections) — `packages/design-tokens/src/platform/native.ts`
-- **toNativeTypographyVariant()** (2 connections) — `packages/design-tokens/src/platform/native.ts`
+- **AnalyticsCommandHandler** (3 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- **AnalyticsCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- **.AnalyticsCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- **.track()** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `packages/design-tokens/src/platform/native.ts`
+- `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

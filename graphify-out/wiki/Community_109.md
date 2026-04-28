@@ -4,24 +4,24 @@
 
 ## Key Concepts
 
-- **DisputeCreateScreen()** (3 connections) — `apps/mobile/src/features/disputes/screens/DisputeCreateScreen.tsx`
-- **useDisputeCreate()** (2 connections) — `apps/mobile/src/features/disputes/hooks/useDisputeCreate.ts`
-- **useDisputeCreate.ts** (1 connections) — `apps/mobile/src/features/disputes/hooks/useDisputeCreate.ts`
-- **DisputeCreateScreen.tsx** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeCreateScreen.tsx`
+- **CancelBookingScreen()** (2 connections) — `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
+- **useCancelBooking()** (2 connections) — `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
+- **CancelBookingScreen.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
+- **useCancelBooking.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `apps/mobile/src/features/disputes/hooks/useDisputeCreate.ts`
-- `apps/mobile/src/features/disputes/screens/DisputeCreateScreen.tsx`
+- `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
+- `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (57%)
-- INFERRED: 3 (43%)
+- EXTRACTED: 4 (67%)
+- INFERRED: 2 (33%)
 - AMBIGUOUS: 0 (0%)
 
 ---

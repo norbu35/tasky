@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **referrals.tsx** (0 connections) — `archive/mobile-future/tasker/referrals.tsx`
+- **index.tsx** (0 connections) — `archive/mobile-future/tasker/credits/index.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `archive/mobile-future/tasker/referrals.tsx`
+- `archive/mobile-future/tasker/credits/index.tsx`
 
 ## Audit Trail
 

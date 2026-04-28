@@ -4,23 +4,23 @@
 
 ## Key Concepts
 
-- **model.ts** (3 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
-- **buildFaqSections()** (2 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
-- **resolveState()** (1 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
-- **filterSections()** (1 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
+- **native.ts** (3 connections) — `packages/design-tokens/src/platform/native.ts`
+- **toNativeLetterSpacing()** (3 connections) — `packages/design-tokens/src/platform/native.ts`
+- **toNativeTextStyle()** (2 connections) — `packages/design-tokens/src/platform/native.ts`
+- **toNativeTypographyVariant()** (2 connections) — `packages/design-tokens/src/platform/native.ts`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
+- `packages/design-tokens/src/platform/native.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (86%)
-- INFERRED: 1 (14%)
+- EXTRACTED: 10 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

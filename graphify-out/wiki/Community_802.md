@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CreateCategory.java** (0 connections) — `services/api/src/main/java/mn/tasky/category/dto/CreateCategory.java`
+- **CategoryState.java** (0 connections) — `services/api/src/main/java/mn/tasky/category/dto/CategoryState.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/category/dto/CreateCategory.java`
+- `services/api/src/main/java/mn/tasky/category/dto/CategoryState.java`
 
 ## Audit Trail
 

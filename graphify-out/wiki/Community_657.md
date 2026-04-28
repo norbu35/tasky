@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **main.tsx** (0 connections) — `apps/web/src/main.tsx`
+- **GlobalErrorFallback.tsx** (0 connections) — `apps/web/src/components/feature/GlobalErrorFallback.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/main.tsx`
+- `apps/web/src/components/feature/GlobalErrorFallback.tsx`
 
 ## Audit Trail
 

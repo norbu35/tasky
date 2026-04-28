@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskPhotoUploadUrlRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskPhotoUploadUrlRequest.java`
+- **PricingMode.java** (0 connections) — `services/api/src/main/java/mn/tasky/task/dto/PricingMode.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/dto/TaskPhotoUploadUrlRequest.java`
+- `services/api/src/main/java/mn/tasky/task/dto/PricingMode.java`
 
 ## Audit Trail
 

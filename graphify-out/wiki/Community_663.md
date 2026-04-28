@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **avatar.tsx** (0 connections) — `apps/web/src/components/ui/avatar.tsx`
+- **separator.tsx** (0 connections) — `apps/web/src/components/ui/separator.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/avatar.tsx`
+- `apps/web/src/components/ui/separator.tsx`
 
 ## Audit Trail
 

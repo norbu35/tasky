@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **CategoryQueryHandler** (3 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
-- **CategoryQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
-- **.CategoryQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
-- **.getCategory()** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
+- **JsonSecurityResponseWriter** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- **JsonSecurityResponseWriter.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- **.JsonSecurityResponseWriter()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- **.write()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
+- `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
 
 ## Audit Trail
 

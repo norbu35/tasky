@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **ModerationPolicyDao** (3 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
-- **ModerationPolicyDao.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
-- **.findActive()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
-- **.update()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
+- **EventHandler** (3 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
+- **EventHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
+- **.eventType()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
+- **.handle()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
+- `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
 
 ## Audit Trail
 

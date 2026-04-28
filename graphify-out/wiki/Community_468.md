@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Tasky-Bridging-Header.h** (0 connections) — `apps/mobile/ios/Tasky/Tasky-Bridging-Header.h`
+- **\_layout.tsx** (0 connections) — `apps/mobile/src/app/_layout.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/ios/Tasky/Tasky-Bridging-Header.h`
+- `apps/mobile/src/app/_layout.tsx`
 
 ## Audit Trail
 

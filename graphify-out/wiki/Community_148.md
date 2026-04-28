@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **BookingDetailScreen.test.tsx** (2 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
-- **hasAncestorTestID()** (1 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
-- **makeBooking()** (1 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
+- **DetailTemplate.tsx** (2 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
+- **DetailSkeleton()** (1 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
+- **handleActionBarLayout()** (1 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
+- `apps/mobile/src/components/templates/DetailTemplate.tsx`
 
 ## Audit Trail
 

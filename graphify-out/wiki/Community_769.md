@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Event.java** (0 connections) — `services/api/src/main/java/mn/tasky/analytics/dto/Event.java`
+- **AuthUser.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/AuthUser.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/analytics/dto/Event.java`
+- `services/api/src/main/java/mn/tasky/auth/dto/AuthUser.java`
 
 ## Audit Trail
 

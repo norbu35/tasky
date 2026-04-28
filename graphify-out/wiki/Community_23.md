@@ -1,65 +1,48 @@
 # Community 23
 
-> 68 nodes
+> 52 nodes
 
 ## Key Concepts
 
-- **TaskAssistanceScenarioTests** (15 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
-- **MarketplaceCommandHandler** (14 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/command/MarketplaceCommandHandler.java`
-- **.evaluateExternalDistribution()** (12 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
-- **.recordExternalDistribution()** (10 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
-- **.processRescue()** (10 connections) — `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
-- **TaskAssistanceService** (9 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
-- **.countByTaskId()** (9 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
-- **.processRescue_createsEventForOldOpenTaskWithZeroApplications()** (8 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
-- **.findOpenOlderThan()** (7 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
-- **.externalDistributionTriggersOnlyAfterEightHoursWithoutQualifiedApplication()** (7 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
-- **.externalDistributionLimitedToAdminEligibleCategories()** (7 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
-- **.adminLaunchControlMarksInitialSeedCategoriesEligible()** (7 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
-- **RescueSchedulerTest** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
-- **.processRescue_skipsTaskWithExistingApplications()** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
-- **.processRescue_skipsTaskWithExistingRescueEvent()** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
-- **.processRescue_continuesAfterException()** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
-- **.recordManualRescue()** (6 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
-- **.classifyOutcome()** (6 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
-- **.existsByTaskId()** (6 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskRescueEventDao.java`
-- **.findLatestByTaskId()** (6 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskRescueEventDao.java`
-- **.processTask()** (6 connections) — `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
-- **.openTaskCreatedHoursAgo()** (6 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
-- **.trackIntervention()** (5 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
-- **RescueScheduler** (5 connections) — `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
-- **.systemAssistedOutcomeWhenExternalDistributionWasUsed()** (5 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
-- _... and 43 more nodes in this community_
+- **JdbiConfig** (51 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **JdbiConfig.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.jdbi()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.userDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.profileDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.otpChallengeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.refreshSessionDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.rateLimitCounterDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.verificationDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.auditEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.strikeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.moderationPolicyDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.suspensionEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.reliabilityScoreDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.badgeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.categoryDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.categorySchemaVersionDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskDraftDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskPhotoDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskApplicationDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskRescueEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.bookingDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.bookingIntentDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.bookingCompletionSignalDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- _... and 27 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (16 shared connections)
-- [[Community 11]] (6 shared connections)
-- [[Community 6]] (5 shared connections)
-- [[Community 3]] (4 shared connections)
-- [[Community 4]] (3 shared connections)
-- [[Community 1]] (2 shared connections)
-- [[Community 17]] (2 shared connections)
-- [[Community 16]] (1 shared connections)
-- [[Community 14]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/marketplace/application/command/MarketplaceCommandHandler.java`
-- `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
-- `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
-- `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
-- `services/api/src/main/java/mn/tasky/task/dao/TaskRescueEventDao.java`
-- `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
-- `services/api/src/test/java/mn/tasky/marketplace/application/command/MarketplaceCommandHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
-- `services/api/src/test/java/mn/tasky/task/application/TaskAssistanceServiceTest.java`
-- `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
 
 ## Audit Trail
 
-- EXTRACTED: 153 (53%)
-- INFERRED: 133 (47%)
+- EXTRACTED: 102 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

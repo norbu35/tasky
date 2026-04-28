@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskSelectResult.java** (2 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskSelectResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskSelectResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskSelectResult.java`
+- **AssistanceOutcomeTypeTest** (2 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
+- **AssistanceOutcomeTypeTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
+- **.definesLaunchAssistanceOutcomeBuckets()** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/dto/TaskSelectResult.java`
+- `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
 
 ## Audit Trail
 

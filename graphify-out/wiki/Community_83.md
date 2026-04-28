@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **WalletCommandHandler** (5 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
-- **WalletCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
-- **.WalletCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
-- **.requestPayout()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
-- **.processPayout()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
-- **.creditTaskCompletion()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
+- **PaymentInitiationOutcome.java** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **featureDeferred()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
 
 ## Audit Trail
 

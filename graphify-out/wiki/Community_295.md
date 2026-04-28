@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ScreenFrame.tsx** (1 connections) — `apps/web/src/layout/ScreenFrame.tsx`
-- **ScreenFrame()** (1 connections) — `apps/web/src/layout/ScreenFrame.tsx`
+- **StatePanel.tsx** (1 connections) — `apps/web/src/layout/parity/StatePanel.tsx`
+- **StatePanel()** (1 connections) — `apps/web/src/layout/parity/StatePanel.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/ScreenFrame.tsx`
+- `apps/web/src/layout/parity/StatePanel.tsx`
 
 ## Audit Trail
 

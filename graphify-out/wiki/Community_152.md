@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **PriceTag.tsx** (2 connections) — `apps/mobile/src/components/ui/PriceTag.tsx`
-- **formatAmount()** (2 connections) — `apps/mobile/src/components/ui/PriceTag.tsx`
-- **PriceTag()** (2 connections) — `apps/mobile/src/components/ui/PriceTag.tsx`
+- **SummarySections.tsx** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
+- **DividerSection()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
+- **DetailRow()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
 
 ## Relationships
 
@@ -14,11 +14,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/PriceTag.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

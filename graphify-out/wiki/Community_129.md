@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **BookingIntentDeclineResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
-- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
+- **LocaleConfig** (3 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
+- **LocaleConfig.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
+- **.localeResolver()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
+- **.messageSource()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
+- `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
 
 ## Audit Trail
 

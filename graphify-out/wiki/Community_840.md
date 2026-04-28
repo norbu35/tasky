@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AdminVerificationQueueRow.java** (0 connections) — `services/api/src/main/java/mn/tasky/projection/admin/AdminVerificationQueueRow.java`
+- **PublicTaskFeedRow.java** (0 connections) — `services/api/src/main/java/mn/tasky/projection/publicfeed/PublicTaskFeedRow.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/projection/admin/AdminVerificationQueueRow.java`
+- `services/api/src/main/java/mn/tasky/projection/publicfeed/PublicTaskFeedRow.java`
 
 ## Audit Trail
 

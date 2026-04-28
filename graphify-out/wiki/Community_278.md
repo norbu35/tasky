@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TaskCategoryScreen.tsx** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
-- **getCategoryVisual()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
+- **VerificationGate.tsx** (1 connections) — `apps/mobile/src/features/verification/components/VerificationGate.tsx`
+- **VerificationGate()** (1 connections) — `apps/mobile/src/features/verification/components/VerificationGate.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
+- `apps/mobile/src/features/verification/components/VerificationGate.tsx`
 
 ## Audit Trail
 

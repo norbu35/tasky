@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TrustBanner.tsx** (1 connections) — `apps/mobile/src/components/ui/TrustBanner.tsx`
-- **TrustBanner()** (1 connections) — `apps/mobile/src/components/ui/TrustBanner.tsx`
+- **AccountStatusScreen.tsx** (1 connections) — `apps/mobile/src/features/auth/components/AccountStatusScreen.tsx`
+- **formatDate()** (1 connections) — `apps/mobile/src/features/auth/components/AccountStatusScreen.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/TrustBanner.tsx`
+- `apps/mobile/src/features/auth/components/AccountStatusScreen.tsx`
 
 ## Audit Trail
 

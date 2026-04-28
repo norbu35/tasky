@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **LocationQueryHandler** (4 connections) — `services/api/src/main/java/mn/tasky/location/application/query/LocationQueryHandler.java`
-- **LocationQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/query/LocationQueryHandler.java`
-- **.LocationQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/query/LocationQueryHandler.java`
-- **.reverseGeocode()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/query/LocationQueryHandler.java`
-- **.isWithinServiceArea()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/query/LocationQueryHandler.java`
+- **ClientIpResolver** (4 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
+- **.resolve()** (2 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
+- **.fallback()** (2 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
+- **ClientIpResolver.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
+- **.ClientIpResolver()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
 
 ## Relationships
 
@@ -16,11 +16,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/location/application/query/LocationQueryHandler.java`
+- `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

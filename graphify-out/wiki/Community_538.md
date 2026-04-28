@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ListItemCard.tsx** (0 connections) — `apps/mobile/src/components/ui/ListItemCard.tsx`
+- **PermissionPrimer.tsx** (0 connections) — `apps/mobile/src/components/ui/PermissionPrimer.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/ListItemCard.tsx`
+- `apps/mobile/src/components/ui/PermissionPrimer.tsx`
 
 ## Audit Trail
 

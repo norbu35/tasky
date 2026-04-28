@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerCancelDialog.tsx** (0 connections) — `apps/web/src/pages/tasker/TaskerCancelDialog.tsx`
+- **VerificationUploadPage.tsx** (0 connections) — `apps/web/src/pages/tasker/VerificationUploadPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/tasker/TaskerCancelDialog.tsx`
+- `apps/web/src/pages/tasker/VerificationUploadPage.tsx`
 
 ## Audit Trail
 

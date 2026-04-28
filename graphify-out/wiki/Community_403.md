@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **BookingTimelineScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingTimelineScreen.test.tsx`
+- **RebookScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/bookings/RebookScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/bookings/BookingTimelineScreen.test.tsx`
+- `apps/mobile/__tests__/screens/customer/bookings/RebookScreen.test.tsx`
 
 ## Audit Trail
 

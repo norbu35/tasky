@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AdminVerificationPage.java** (0 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationPage.java`
+- **MessagingConversationPage.java** (0 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/MessagingConversationPage.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationPage.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/MessagingConversationPage.java`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **RuntimeConfiguration.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeConfiguration.java`
-- **RuntimeConfiguration** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeConfiguration.java`
+- **SchedulerRuntimeConfiguration.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/scheduler/SchedulerRuntimeConfiguration.java`
+- **SchedulerRuntimeConfiguration** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/scheduler/SchedulerRuntimeConfiguration.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/RuntimeConfiguration.java`
+- `services/api/src/main/java/mn/tasky/runtime/scheduler/SchedulerRuntimeConfiguration.java`
 
 ## Audit Trail
 

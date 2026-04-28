@@ -4,23 +4,23 @@
 
 ## Key Concepts
 
-- **NotificationList.model.ts** (3 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
-- **formatRelativeTimestamp()** (2 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
-- **isSameDay()** (1 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
-- **buildRows()** (1 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
+- **TaskerStatsScreen.tsx** (3 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- **readNumber()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- **formatPercent()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- **formatRating()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
+- `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (86%)
-- INFERRED: 1 (14%)
+- EXTRACTED: 6 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

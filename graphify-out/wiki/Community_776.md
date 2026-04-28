@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **OtpVerifyRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/OtpVerifyRequest.java`
+- **RefreshSession.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/RefreshSession.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/dto/OtpVerifyRequest.java`
+- `services/api/src/main/java/mn/tasky/auth/dto/RefreshSession.java`
 
 ## Audit Trail
 

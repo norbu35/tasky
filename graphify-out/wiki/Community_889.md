@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **design-contract-validator.test.mjs** (0 connections) — `tooling/tests/design-contract-validator.test.mjs`
+- **referrals.tsx** (0 connections) — `archive/mobile-future/tasker/referrals.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/tests/design-contract-validator.test.mjs`
+- `archive/mobile-future/tasker/referrals.tsx`
 
 ## Audit Trail
 

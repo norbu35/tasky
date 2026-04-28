@@ -1,12 +1,11 @@
 # Community 190
 
-> 3 nodes
+> 2 nodes
 
 ## Key Concepts
 
-- **pay.tsx** (2 connections) — `archive/mobile-future/tasker/credits/pay.tsx`
-- **resolveState()** (2 connections) — `archive/mobile-future/tasker/credits/pay.tsx`
-- **TaskerCreditsPayScreen()** (2 connections) — `archive/mobile-future/tasker/credits/pay.tsx`
+- **nativeFirebase.test.ts** (1 connections) — `apps/mobile/__tests__/lib/nativeFirebase.test.ts`
+- **loadNativeFirebase()** (1 connections) — `apps/mobile/__tests__/lib/nativeFirebase.test.ts`
 
 ## Relationships
 
@@ -14,11 +13,11 @@
 
 ## Source Files
 
-- `archive/mobile-future/tasker/credits/pay.tsx`
+- `apps/mobile/__tests__/lib/nativeFirebase.test.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 2 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

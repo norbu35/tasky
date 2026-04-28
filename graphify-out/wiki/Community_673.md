@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **alert.tsx** (0 connections) — `apps/web/src/components/ui/alert.tsx`
+- **select.tsx** (0 connections) — `apps/web/src/components/ui/select.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/alert.tsx`
+- `apps/web/src/components/ui/select.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **EmptyState.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/EmptyState.tsx`
+- **Inbox.model.ts** (0 connections) — `apps/mobile/src/features/chat/screens/Inbox.model.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingsList/EmptyState.tsx`
+- `apps/mobile/src/features/chat/screens/Inbox.model.ts`
 
 ## Audit Trail
 

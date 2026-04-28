@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **AppShell.tsx** (1 connections) — `apps/web/src/AppShell.tsx`
-- **AppShell()** (1 connections) — `apps/web/src/AppShell.tsx`
+- **sonner.tsx** (1 connections) — `apps/web/src/components/ui/sonner.tsx`
+- **useSystemTheme()** (1 connections) — `apps/web/src/components/ui/sonner.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/AppShell.tsx`
+- `apps/web/src/components/ui/sonner.tsx`
 
 ## Audit Trail
 

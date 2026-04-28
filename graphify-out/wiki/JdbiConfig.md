@@ -2,7 +2,7 @@
 
 > God node · 51 connections · `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
 
-**Community:** [[Community 26]]
+**Community:** [[Community 23]]
 
 ## Connections by Relation
 

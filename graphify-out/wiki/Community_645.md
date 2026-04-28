@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **eslint.config.mjs** (0 connections) — `apps/web/eslint.config.mjs`
+- **stryker.config.mjs** (0 connections) — `apps/web/stryker.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/eslint.config.mjs`
+- `apps/web/stryker.config.mjs`
 
 ## Audit Trail
 

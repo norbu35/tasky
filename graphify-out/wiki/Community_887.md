@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **base.mjs** (0 connections) — `tooling/config/vitest/base.mjs`
+- **design-contract-validator.test.mjs** (0 connections) — `tooling/tests/design-contract-validator.test.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/config/vitest/base.mjs`
+- `tooling/tests/design-contract-validator.test.mjs`
 
 ## Audit Trail
 

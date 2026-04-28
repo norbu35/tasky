@@ -4,14 +4,14 @@
 
 ## Key Concepts
 
-- **BookingQueryHandler** (7 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
-- **BookingQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
-- **.BookingQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
-- **.getBooking()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
-- **.listBookings()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
-- **.getTaskerMarkedDoneAt()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
-- **.listScheduleEvents()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
-- **.getScheduleEvent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **i18n.ts** (4 connections) — `apps/mobile/src/utils/i18n.ts`
+- **normalizeLanguage()** (4 connections) — `apps/web/src/lib/i18n.ts`
+- **changeLanguage()** (3 connections) — `apps/mobile/src/components/ui/LanguageSwitcher.tsx`
+- **getStoredLanguage()** (3 connections) — `apps/mobile/src/utils/i18n.ts`
+- **setStoredLanguage()** (3 connections) — `apps/mobile/src/utils/i18n.ts`
+- **initializeI18n()** (3 connections) — `apps/mobile/src/utils/i18n.ts`
+- **LanguageSwitcher.tsx** (1 connections) — `apps/mobile/src/components/ui/LanguageSwitcher.tsx`
+- **i18n.ts** (1 connections) — `apps/web/src/lib/i18n.ts`
 
 ## Relationships
 
@@ -19,12 +19,14 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- `apps/mobile/src/components/ui/LanguageSwitcher.tsx`
+- `apps/mobile/src/utils/i18n.ts`
+- `apps/web/src/lib/i18n.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 18 (82%)
+- INFERRED: 4 (18%)
 - AMBIGUOUS: 0 (0%)
 
 ---

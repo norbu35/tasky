@@ -1,78 +1,68 @@
 # Community 11
 
-> 134 nodes
+> 158 nodes
 
 ## Key Concepts
 
-- **.isUserLocked()** (37 connections) — `services/api/src/main/java/mn/tasky/review/application/ReviewEnforcementService.java`
-- **.getCategory()** (30 connections) — `services/api/src/main/java/mn/tasky/category/publicapi/CategoryQueryPort.java`
-- **.createTask()** (22 connections) — `services/api/src/test/java/mn/tasky/task/RecentLocationsTests.java`
-- **AreOwnedTaskPhotoKeys** (18 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskPhotoKeyHelperTest.java`
-- **.createTask()** (17 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskCreationService.java`
-- **PublicTaskCompositionService** (16 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionService.java`
-- **ListBookings** (14 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingPublicCompositionServiceTests.java`
+- **.exchange()** (35 connections) — `services/api/src/test/java/mn/tasky/security/AuthorizationMatrixTests.java`
+- **TaskScenarioTests** (33 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **AuthorizationMatrixTests** (26 connections) — `services/api/src/test/java/mn/tasky/security/AuthorizationMatrixTests.java`
+- **.postWithAuth()** (20 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **ContractEnvelopeTests** (15 connections) — `services/api/src/test/java/mn/tasky/contract/ContractEnvelopeTests.java`
+- **from()** (14 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskDraftResponse.java`
+- **.tokenFor()** (13 connections) — `services/api/src/test/java/mn/tasky/security/AuthorizationMatrixTests.java`
+- **Generate** (13 connections) — `services/api/src/test/java/mn/tasky/task/application/ScopeSummaryGeneratorTest.java`
 - **RecentLocationsTests** (12 connections) — `services/api/src/test/java/mn/tasky/task/RecentLocationsTests.java`
-- **.success()** (12 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskCreationServiceTest.java`
-- **.mapsTaskListToPublicResponses()** (11 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionServiceTests.java`
-- **.returnsPublicForOtherViewer()** (11 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionServiceTests.java`
-- **BuildPhotoAccessUrls** (11 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskPhotoServiceTest.java`
-- **.toPublicTaskResponse()** (10 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionService.java`
-- **.omitsCategoryAndCustomerWhenEmpty()** (10 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionServiceTests.java`
-- **.taskCreationUsesAdminActiveCategoryCatalog()** (10 connections) — `services/api/src/test/java/mn/tasky/task/TaskApplicationScenarioTests.java`
-- **ValidationErrors** (10 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskCreationServiceTest.java`
-- **.withPhotos()** (10 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskCreationServiceTest.java`
-- **.notifiesNearbyTaskers()** (10 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskCreationServiceTest.java`
-- **.isWithinServiceArea()** (9 connections) — `services/api/src/main/java/mn/tasky/location/publicapi/LocationQueryPort.java`
-- **BookingQueryHandlerTest** (9 connections) — `services/api/src/test/java/mn/tasky/booking/application/query/BookingQueryHandlerTest.java`
-- **.handlesNullPhotoKeys()** (9 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionServiceTests.java`
+- **.url()** (12 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **IntegrationTestBase** (11 connections)
+- **.taskBody()** (10 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **AuthHttpScenarioTests** (9 connections) — `services/api/src/test/java/mn/tasky/auth/AuthHttpScenarioTests.java`
+- **.assertEnvelope()** (9 connections) — `services/api/src/test/java/mn/tasky/contract/ContractEnvelopeTests.java`
+- **.url()** (9 connections) — `services/api/src/test/java/mn/tasky/contract/ContractEnvelopeTests.java`
+- **LocationApiTests** (9 connections) — `services/api/src/test/java/mn/tasky/location/LocationApiTests.java`
+- **SecurityInformationControlScenarioTests** (9 connections) — `services/api/src/test/java/mn/tasky/security/SecurityInformationControlScenarioTests.java`
 - **.getWithToken()** (9 connections) — `services/api/src/test/java/mn/tasky/task/RecentLocationsTests.java`
-- **.rejectsTaskCreationOutsideUlaanbaatarServiceArea()** (9 connections) — `services/api/src/test/java/mn/tasky/task/TaskApplicationScenarioTests.java`
-- **.buildTask()** (8 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionServiceTests.java`
-- **CountApplications** (8 connections) — `services/api/src/test/java/mn/tasky/task/TaskApplicationServiceTests.java`
-- _... and 109 more nodes in this community_
+- **.future()** (9 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **.getWithAuth()** (9 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **.getWithToken()** (9 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **model.ts** (8 connections) — `apps/mobile/src/features/bookings/screens/BookingReschedule/model.ts`
+- **.deactivatedCategoryBlocksNewTasksNotExistingOnes()** (8 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **.authHeaders()** (7 connections) — `services/api/src/test/java/mn/tasky/contract/ContractEnvelopeTests.java`
+- **.createTask()** (7 connections) — `services/api/src/test/java/mn/tasky/security/SecurityInformationControlScenarioTests.java`
+- _... and 133 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (118 shared connections)
-- [[Community 1]] (13 shared connections)
-- [[Community 5]] (11 shared connections)
-- [[Community 12]] (8 shared connections)
-- [[Community 8]] (8 shared connections)
-- [[Community 23]] (6 shared connections)
-- [[Community 6]] (6 shared connections)
-- [[Community 7]] (5 shared connections)
-- [[Community 16]] (4 shared connections)
-- [[Community 13]] (4 shared connections)
-- [[Community 14]] (4 shared connections)
-- [[Community 4]] (2 shared connections)
+- [[Community 0]] (46 shared connections)
+- [[Community 2]] (9 shared connections)
+- [[Community 4]] (5 shared connections)
+- [[Community 6]] (3 shared connections)
+- [[Community 8]] (3 shared connections)
+- [[Community 5]] (3 shared connections)
+- [[Community 12]] (1 shared connections)
+- [[Community 13]] (1 shared connections)
+- [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/api/BookingController.java`
-- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingQueryPort.java`
-- `services/api/src/main/java/mn/tasky/category/publicapi/CategoryQueryPort.java`
-- `services/api/src/main/java/mn/tasky/location/publicapi/LocationQueryPort.java`
-- `services/api/src/main/java/mn/tasky/review/application/ReviewEnforcementService.java`
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingPublicCompositionService.java`
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionService.java`
-- `services/api/src/main/java/mn/tasky/task/application/TaskCreationService.java`
-- `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
-- `services/api/src/test/java/mn/tasky/booking/application/BookingScheduleServiceTest.java`
-- `services/api/src/test/java/mn/tasky/booking/application/query/BookingQueryHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingPublicCompositionServiceTests.java`
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionServiceTests.java`
+- `apps/mobile/ios/Tasky/AppDelegate.swift`
+- `apps/mobile/src/components/ui/SchedulePickerSheet.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingReschedule/model.ts`
+- `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- `services/api/src/main/java/mn/tasky/task/dto/TaskDraftResponse.java`
+- `services/api/src/test/java/mn/tasky/auth/AuthHttpScenarioTests.java`
+- `services/api/src/test/java/mn/tasky/contract/ContractEnvelopeTests.java`
+- `services/api/src/test/java/mn/tasky/location/LocationApiTests.java`
+- `services/api/src/test/java/mn/tasky/security/AuthorizationMatrixTests.java`
+- `services/api/src/test/java/mn/tasky/security/SecurityInformationControlScenarioTests.java`
 - `services/api/src/test/java/mn/tasky/task/RecentLocationsTests.java`
-- `services/api/src/test/java/mn/tasky/task/TaskApplicationScenarioTests.java`
-- `services/api/src/test/java/mn/tasky/task/TaskApplicationServiceTests.java`
-- `services/api/src/test/java/mn/tasky/task/application/TaskCreationServiceTest.java`
-- `services/api/src/test/java/mn/tasky/task/application/TaskPhotoKeyHelperTest.java`
-- `services/api/src/test/java/mn/tasky/task/application/TaskPhotoServiceTest.java`
+- `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- `services/api/src/test/java/mn/tasky/task/application/ScopeSummaryGeneratorTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 330 (47%)
-- INFERRED: 368 (53%)
+- EXTRACTED: 591 (83%)
+- INFERRED: 117 (17%)
 - AMBIGUOUS: 0 (0%)
 
 ---

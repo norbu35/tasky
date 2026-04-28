@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **InstantMatchTaskerSheet.tsx** (2 connections) — `apps/mobile/src/features/matching/components/InstantMatchTaskerSheet.tsx`
-- **handleAccept()** (1 connections) — `apps/mobile/src/features/matching/components/InstantMatchTaskerSheet.tsx`
-- **handleDecline()** (1 connections) — `apps/mobile/src/features/matching/components/InstantMatchTaskerSheet.tsx`
+- **PostingGuidance.tsx** (2 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
+- **PostingGuidanceCard()** (1 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
+- **PostingProofChecklist()** (1 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/matching/components/InstantMatchTaskerSheet.tsx`
+- `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
 
 ## Audit Trail
 

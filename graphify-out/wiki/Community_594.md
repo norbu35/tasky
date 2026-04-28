@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/tasks/index.ts`
+- **ApplicantsSelection.ConfirmationSheet.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/ApplicantsSelection.ConfirmationSheet.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/index.ts`
+- `apps/mobile/src/features/tasks/screens/ApplicantsSelection.ConfirmationSheet.tsx`
 
 ## Audit Trail
 

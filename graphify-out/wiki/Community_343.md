@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **tdd-gate.test.mjs** (1 connections) — `tooling/tests/tdd-gate.test.mjs`
-- **extractSingleQuotedAssignment()** (1 connections) — `tooling/tests/tdd-gate.test.mjs`
+- **TaskerProfilePolishPage.tsx** (1 connections) — `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
+- **TaskerProfilePolishPage()** (1 connections) — `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `tooling/tests/tdd-gate.test.mjs`
+- `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
 
 ## Audit Trail
 

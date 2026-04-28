@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **Touchable.tsx** (1 connections) — `apps/mobile/src/components/ui/Touchable.tsx`
-- **Touchable()** (1 connections) — `apps/mobile/src/components/ui/Touchable.tsx`
+- **theme.ts** (1 connections) — `apps/mobile/src/design/theme.ts`
+- **withAlpha()** (1 connections) — `apps/mobile/src/design/theme.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/Touchable.tsx`
+- `apps/mobile/src/design/theme.ts`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **VerificationUploadScreen.tsx** (0 connections) — `apps/mobile/src/features/verification/screens/VerificationUploadScreen.tsx`
+- **RejectedScreen.tsx** (0 connections) — `apps/mobile/src/features/verification/screens/RejectedScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/verification/screens/VerificationUploadScreen.tsx`
+- `apps/mobile/src/features/verification/screens/RejectedScreen.tsx`
 
 ## Audit Trail
 

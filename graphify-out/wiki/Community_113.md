@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **TaskerStatsScreen.tsx** (3 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
-- **readNumber()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
-- **formatPercent()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
-- **formatRating()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- **TaskFeedCard.tsx** (3 connections) — `apps/mobile/src/features/tasks/components/TaskFeedCard.tsx`
+- **decodeDisplayLabel()** (2 connections) — `apps/mobile/src/features/tasks/components/TaskFeedCard.tsx`
+- **getCategoryLabel()** (2 connections) — `apps/mobile/src/features/tasks/components/TaskFeedCard.tsx`
+- **TaskFeedPill()** (1 connections) — `apps/mobile/src/features/tasks/components/TaskFeedCard.tsx`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- `apps/mobile/src/features/tasks/components/TaskFeedCard.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

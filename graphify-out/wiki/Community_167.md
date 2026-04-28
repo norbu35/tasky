@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskyApplication** (2 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
-- **TaskyApplication.java** (1 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
-- **.main()** (1 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
+- **NoShowFlagResult.java** (2 connections) — `services/api/src/main/java/mn/tasky/booking/dto/NoShowFlagResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/NoShowFlagResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/NoShowFlagResult.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/TaskyApplication.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/NoShowFlagResult.java`
 
 ## Audit Trail
 

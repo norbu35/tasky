@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/web/src/pages/index.ts`
+- **TaskerTasksPage.tsx** (0 connections) — `apps/web/src/pages/TaskerTasksPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/index.ts`
+- `apps/web/src/pages/TaskerTasksPage.tsx`
 
 ## Audit Trail
 

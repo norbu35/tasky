@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **StatCard.tsx** (1 connections) — `apps/mobile/src/components/ui/StatCard.tsx`
-- **StatCard()** (1 connections) — `apps/mobile/src/components/ui/StatCard.tsx`
+- **tailwind-screen-typography.ts** (1 connections) — `apps/mobile/src/design/tailwind-screen-typography.ts`
+- **px()** (1 connections) — `apps/mobile/src/design/tailwind-screen-typography.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/StatCard.tsx`
+- `apps/mobile/src/design/tailwind-screen-typography.ts`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **formatLastActive.ts** (1 connections) — `apps/mobile/src/lib/formatLastActive.ts`
-- **formatLastActive()** (1 connections) — `apps/mobile/src/lib/formatLastActive.ts`
+- **AppBootstrapProvider.tsx** (1 connections) — `apps/mobile/src/providers/AppBootstrapProvider.tsx`
+- **AppBootstrapProvider()** (1 connections) — `apps/mobile/src/providers/AppBootstrapProvider.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/formatLastActive.ts`
+- `apps/mobile/src/providers/AppBootstrapProvider.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskState.java** (0 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskState.java`
+- **ApplyTaskRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/task/dto/ApplyTaskRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/dto/TaskState.java`
+- `services/api/src/main/java/mn/tasky/task/dto/ApplyTaskRequest.java`
 
 ## Audit Trail
 

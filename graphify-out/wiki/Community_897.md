@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Split _text_ by commas at parenthesis depth 0.** (0 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **Find all `CHECK (col IN ('A','B',...))` patterns in _text_. Returns a lis** (0 connections) — `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Relationships
 

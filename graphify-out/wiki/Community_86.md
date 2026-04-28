@@ -1,27 +1,28 @@
 # Community 86
 
-> 5 nodes
+> 6 nodes
 
 ## Key Concepts
 
-- **LoginForm.tsx** (4 connections) — `apps/mobile/src/features/auth/components/LoginForm.tsx`
-- **handleFacebookLogin()** (2 connections) — `apps/mobile/src/features/auth/components/LoginForm.tsx`
-- **handleRequest()** (1 connections) — `apps/mobile/src/features/auth/components/LoginForm.tsx`
-- **handleVerify()** (1 connections) — `apps/mobile/src/features/auth/components/LoginForm.tsx`
-- **handleDevLoginAs()** (1 connections) — `apps/mobile/src/features/auth/components/LoginForm.tsx`
+- **OtpSentResponse** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
+- **OtpPublicCompositionServiceTests.java** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
+- **OtpPublicCompositionServiceTests** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
+- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
+- **.returnsMessageWithMaskedPhone()** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
+- **.returnsDifferentMaskPatterns()** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- [[Community 0]] (2 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/auth/components/LoginForm.tsx`
+- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (89%)
-- INFERRED: 1 (11%)
+- EXTRACTED: 11 (92%)
+- INFERRED: 1 (8%)
 - AMBIGUOUS: 0 (0%)
 
 ---

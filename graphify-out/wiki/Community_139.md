@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **ProviderBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
-- **.providerPlaneMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
-- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
-- **ProviderBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
+- **PublicPortBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
+- **.modulePublicApiMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
+- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
+- **PublicPortBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
+- `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
 
 ## Audit Trail
 

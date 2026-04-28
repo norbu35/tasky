@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerBookingDetailPage.tsx** (0 connections) — `apps/web/src/pages/tasker/TaskerBookingDetailPage.tsx`
+- **VerificationSubmittedPage.tsx** (0 connections) — `apps/web/src/pages/tasker/VerificationSubmittedPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/tasker/TaskerBookingDetailPage.tsx`
+- `apps/web/src/pages/tasker/VerificationSubmittedPage.tsx`
 
 ## Audit Trail
 

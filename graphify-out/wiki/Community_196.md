@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **RoleProvider.test.tsx** (1 connections) — `apps/mobile/__tests__/providers/RoleProvider.test.tsx`
-- **RoleConsumer()** (1 connections) — `apps/mobile/__tests__/providers/RoleProvider.test.tsx`
+- **reactNativeMock.js** (1 connections) — `apps/mobile/__tests__/test-utils/reactNativeMock.js`
+- **proxyComponent()** (1 connections) — `apps/mobile/__tests__/test-utils/reactNativeMock.js`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/providers/RoleProvider.test.tsx`
+- `apps/mobile/__tests__/test-utils/reactNativeMock.js`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **LocationPin.tsx** (0 connections) — `apps/mobile/src/components/ui/LocationPin.tsx`
+- **LoginRequiredCTA.tsx** (0 connections) — `apps/mobile/src/components/ui/LoginRequiredCTA.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/LocationPin.tsx`
+- `apps/mobile/src/components/ui/LoginRequiredCTA.tsx`
 
 ## Audit Trail
 

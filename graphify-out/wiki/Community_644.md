@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **authStore.ts** (0 connections) — `apps/mobile/src/store/authStore.ts`
+- **postcss.config.mjs** (0 connections) — `apps/web/postcss.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/store/authStore.ts`
+- `apps/web/postcss.config.mjs`
 
 ## Audit Trail
 

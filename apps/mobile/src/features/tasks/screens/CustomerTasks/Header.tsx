@@ -1,12 +1,11 @@
-import { Bell } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
-import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
+import { NotificationBellButton } from '@/features/notifications/components/NotificationBellButton';
 import { ReviewGateBanner } from '@/features/review/components/ReviewGateBanner';
 import { useReviewGate } from '@/features/review/components/ReviewGateProvider';
 
@@ -14,13 +13,7 @@ import { type TaskState } from './model';
 
 const { colors } = mobileTheme;
 
-export function Header({
-  counts,
-  onNotificationsPress,
-}: {
-  counts: Record<TaskState, number>;
-  onNotificationsPress: () => void;
-}) {
+export function Header({ counts }: { counts: Record<TaskState, number> }) {
   const { t } = useTranslation();
   const { hasPending, oldestPending } = useReviewGate();
 
@@ -29,18 +22,7 @@ export function Header({
       <ScreenHeader
         greeting={t('customer.taskList.greeting')}
         title={t('customer.taskList.title')}
-        rightSlot={
-          <Touchable
-            className="w-11 h-11 rounded-full items-center justify-center bg-muted"
-            style={elevations.soft}
-            onPress={onNotificationsPress}
-            testID="my-tasks-notifications"
-            accessibilityRole="button"
-            accessibilityLabel={t('shared.notifications.title')}
-          >
-            <Bell size={20} color={colors.primary} />
-          </Touchable>
-        }
+        rightSlot={<NotificationBellButton testID="my-tasks-notifications" />}
       />
 
       {hasPending && oldestPending && <ReviewGateBanner pendingReview={oldestPending} />}

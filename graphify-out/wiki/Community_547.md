@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **nativewind-interop.ts** (0 connections) — `apps/mobile/src/design/nativewind-interop.ts`
+- **surfaces.ts** (0 connections) — `apps/mobile/src/design/surfaces.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/design/nativewind-interop.ts`
+- `apps/mobile/src/design/surfaces.ts`
 
 ## Audit Trail
 

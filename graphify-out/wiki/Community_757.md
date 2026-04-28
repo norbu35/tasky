@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `packages/test-utils/src/index.ts`
+- **index.ts** (0 connections) — `packages/test-utils/src/mocks/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/test-utils/src/index.ts`
+- `packages/test-utils/src/mocks/index.ts`
 
 ## Audit Trail
 

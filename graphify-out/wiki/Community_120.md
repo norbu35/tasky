@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **AnalyticsCommandHandler** (3 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
-- **AnalyticsCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
-- **.AnalyticsCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
-- **.track()** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- **RateLimitExceededException** (3 connections) — `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
+- **RateLimitExceededException.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
+- **.RateLimitExceededException()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
+- **.code()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
 
 ## Audit Trail
 

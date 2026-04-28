@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ReliabilityScore.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/ReliabilityScore.java`
+- **TaskerBadge.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/TaskerBadge.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/dto/ReliabilityScore.java`
+- `services/api/src/main/java/mn/tasky/auth/dto/TaskerBadge.java`
 
 ## Audit Trail
 

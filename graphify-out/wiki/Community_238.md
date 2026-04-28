@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **VerifiedBadge.tsx** (1 connections) — `apps/mobile/src/components/ui/VerifiedBadge.tsx`
-- **VerifiedBadge()** (1 connections) — `apps/mobile/src/components/ui/VerifiedBadge.tsx`
+- **LeadUnlockSheet.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/LeadUnlockSheet.tsx`
+- **formatTimer()** (1 connections) — `apps/mobile/src/features/bookings/components/LeadUnlockSheet.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/VerifiedBadge.tsx`
+- `apps/mobile/src/features/bookings/components/LeadUnlockSheet.tsx`
 
 ## Audit Trail
 

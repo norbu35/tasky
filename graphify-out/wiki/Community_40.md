@@ -4,34 +4,32 @@
 
 ## Key Concepts
 
-- **model.ts** (5 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
-- **BookingCard()** (4 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/BookingCard.tsx`
-- **model.ts** (4 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/model.ts`
-- **formatSchedule()** (3 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/model.ts`
-- **formatAnswerValue()** (3 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/model.ts`
-- **getBookingStatusLabel()** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
-- **getBookingStatusColors()** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
-- **BookingCard.tsx** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/BookingCard.tsx`
-- **prettifyKey()** (2 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/model.ts`
-- **isActiveStatus()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
-- **isCompletedStatus()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
-- **LoadingSkeletonCard()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/BookingCard.tsx`
-- **formatBudget()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/model.ts`
+- **MarketplaceCommandPort** (13 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- **MarketplaceCommandPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- **.createTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- **.updateTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- **.cancelTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- **.applyToTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- **.acceptApplication()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- **.confirmAcceptance()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- **.withdrawApplication()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- **.createPhotoUploadUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- **.updateTaskStatus()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- **.createDraft()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- **.updateDraft()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
 
 ## Relationships
 
-- [[Community 0]] (3 shared connections)
+- [[Community 2]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingsList/BookingCard.tsx`
-- `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
-- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/model.ts`
+- `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
 
 ## Audit Trail
 
-- EXTRACTED: 24 (77%)
-- INFERRED: 7 (23%)
+- EXTRACTED: 25 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

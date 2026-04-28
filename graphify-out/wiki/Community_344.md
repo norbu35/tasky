@@ -1,11 +1,10 @@
 # Community 344
 
-> 2 nodes
+> 1 nodes
 
 ## Key Concepts
 
-- **doc-references-validator.test.mjs** (1 connections) — `tooling/tests/doc-references-validator.test.mjs`
-- **runPython()** (1 connections) — `tooling/tests/doc-references-validator.test.mjs`
+- **build.gradle.kts** (0 connections) — `build.gradle.kts`
 
 ## Relationships
 
@@ -13,11 +12,11 @@
 
 ## Source Files
 
-- `tooling/tests/doc-references-validator.test.mjs`
+- `build.gradle.kts`
 
 ## Audit Trail
 
-- EXTRACTED: 2 (100%)
+- EXTRACTED: 0 (0%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

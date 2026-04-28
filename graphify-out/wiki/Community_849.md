@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **BookingPublicPage.java** (0 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingPublicPage.java`
+- **MessagingMessagePage.java** (0 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/MessagingMessagePage.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingPublicPage.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/MessagingMessagePage.java`
 
 ## Audit Trail
 

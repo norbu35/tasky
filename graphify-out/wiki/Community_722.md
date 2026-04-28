@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **VerificationGatePage.tsx** (0 connections) — `apps/web/src/pages/tasker/VerificationGatePage.tsx`
+- **VerificationApprovedPage.tsx** (0 connections) — `apps/web/src/pages/tasker/VerificationApprovedPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/tasker/VerificationGatePage.tsx`
+- `apps/web/src/pages/tasker/VerificationApprovedPage.tsx`
 
 ## Audit Trail
 

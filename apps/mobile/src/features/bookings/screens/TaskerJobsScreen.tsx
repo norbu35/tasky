@@ -9,6 +9,7 @@ import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { SplitCard } from '@/components/ui/SplitCard';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { useBookings } from '@/features/bookings/hooks/useBookings';
+import { NotificationBellButton } from '@/features/notifications/components/NotificationBellButton';
 import type { Booking } from '@/lib/api/types';
 
 function BookingCardHeader({ booking, statusTestID }: { booking: Booking; statusTestID?: string }) {
@@ -115,7 +116,12 @@ export default function TaskerJobsScreen() {
     setActiveFilters([id]);
   }, []);
 
-  const listHeader = <ScreenHeader title={t('tasker.jobs.title')} />;
+  const listHeader = (
+    <ScreenHeader
+      title={t('tasker.jobs.title')}
+      rightSlot={<NotificationBellButton testID="tasker-jobs-notifications" />}
+    />
+  );
 
   return (
     <FeedListTemplate

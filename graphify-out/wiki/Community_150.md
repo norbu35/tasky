@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **DetailTemplate.tsx** (2 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
-- **DetailSkeleton()** (1 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
-- **handleActionBarLayout()** (1 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
+- **PriceTag.tsx** (2 connections) — `apps/mobile/src/components/ui/PriceTag.tsx`
+- **formatAmount()** (2 connections) — `apps/mobile/src/components/ui/PriceTag.tsx`
+- **PriceTag()** (2 connections) — `apps/mobile/src/components/ui/PriceTag.tsx`
 
 ## Relationships
 
@@ -14,11 +14,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/templates/DetailTemplate.tsx`
+- `apps/mobile/src/components/ui/PriceTag.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

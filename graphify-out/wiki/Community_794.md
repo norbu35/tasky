@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **BookingCompletionSignal.java** (0 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingCompletionSignal.java`
+- **BookingIntentState.java** (0 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentState.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/dto/BookingCompletionSignal.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentState.java`
 
 ## Audit Trail
 

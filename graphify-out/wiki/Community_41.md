@@ -4,27 +4,27 @@
 
 ## Key Concepts
 
-- **MarketplaceCommandPort** (13 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
-- **MarketplaceCommandPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
-- **.createTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
-- **.updateTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
-- **.cancelTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
-- **.applyToTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
-- **.acceptApplication()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
-- **.confirmAcceptance()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
-- **.withdrawApplication()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
-- **.createPhotoUploadUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
-- **.updateTaskStatus()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
-- **.createDraft()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
-- **.updateDraft()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- **RuntimeSurfaceProperties** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **RuntimeSurfaceProperties.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **HttpSurface** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **Surface** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getPublicApi()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getAdminApi()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getWorker()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getScheduler()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.setEnabled()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.HttpSurface()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getBasePath()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.setBasePath()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **BackgroundSurface** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
 
 ## Relationships
 
-- [[Community 1]] (1 shared connections)
+- [[Community 2]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceCommandPort.java`
+- `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
 
 ## Audit Trail
 

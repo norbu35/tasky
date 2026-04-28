@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **tailwind.config.ts** (1 connections) — `apps/mobile/tailwind.config.ts`
-- **camelToKebab()** (1 connections) — `apps/mobile/tailwind.config.ts`
+- **RoleProvider.test.tsx** (1 connections) — `apps/mobile/__tests__/providers/RoleProvider.test.tsx`
+- **RoleConsumer()** (1 connections) — `apps/mobile/__tests__/providers/RoleProvider.test.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/tailwind.config.ts`
+- `apps/mobile/__tests__/providers/RoleProvider.test.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.tsx** (0 connections) — `apps/mobile/src/app/(customer)/tasks/new/index.tsx`
+- **review.tsx** (0 connections) — `apps/mobile/src/app/(customer)/tasks/new/review.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/tasks/new/index.tsx`
+- `apps/mobile/src/app/(customer)/tasks/new/review.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **tasker-happy-path.spec.ts** (0 connections) — `apps/web/e2e/tasker-happy-path.spec.ts`
+- **fixtures.ts** (0 connections) — `apps/web/e2e/support/fixtures.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/e2e/tasker-happy-path.spec.ts`
+- `apps/web/e2e/support/fixtures.ts`
 
 ## Audit Trail
 

@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **CancelBookingScreen()** (2 connections) — `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
-- **useCancelBooking()** (2 connections) — `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
-- **CancelBookingScreen.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
-- **useCancelBooking.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
+- **Card.tsx** (3 connections) — `apps/mobile/src/components/ui/Card.tsx`
+- **CardDescription()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
+- **CardContent()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
+- **CardFooter()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
 
 ## Relationships
 
@@ -15,13 +15,12 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
-- `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
+- `apps/mobile/src/components/ui/Card.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (67%)
-- INFERRED: 2 (33%)
+- EXTRACTED: 6 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

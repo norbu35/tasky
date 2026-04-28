@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **SessionExpired.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/infra/SessionExpired.test.tsx`
+- **NotificationCenter.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/NotificationCenter.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/infra/SessionExpired.test.tsx`
+- `apps/mobile/__tests__/screens/shared/NotificationCenter.test.tsx`
 
 ## Audit Trail
 

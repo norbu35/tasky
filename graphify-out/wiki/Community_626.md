@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **RejectedScreen.tsx** (0 connections) — `apps/mobile/src/features/verification/screens/RejectedScreen.tsx`
+- **States.tsx** (0 connections) — `apps/mobile/src/features/help/screens/HelpCenter/States.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/verification/screens/RejectedScreen.tsx`
+- `apps/mobile/src/features/help/screens/HelpCenter/States.tsx`
 
 ## Audit Trail
 

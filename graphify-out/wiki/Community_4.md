@@ -1,6 +1,6 @@
 # Community 4
 
-> 270 nodes
+> 273 nodes
 
 ## Key Concepts
 
@@ -28,32 +28,32 @@
 - **.propagate()** (12 connections) — `services/api/src/main/java/mn/tasky/kernel/context/ContextPropagator.java`
 - **.createHandler()** (12 connections) — `services/api/src/test/java/mn/tasky/automation/worker/AbstractEventHandlerTest.java`
 - **.handle()** (11 connections) — `services/api/src/main/java/mn/tasky/messaging/workflow/TaskApplicationAcceptedHandler.java`
-- **.processCallback()** (11 connections) — `services/api/src/main/java/mn/tasky/payment/application/PaymentService.java`
-- _... and 245 more nodes in this community_
+- **.onMessage()** (10 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventWorkerConsumer.java`
+- _... and 248 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (60 shared connections)
-- [[Community 6]] (26 shared connections)
-- [[Community 1]] (17 shared connections)
-- [[Community 22]] (10 shared connections)
-- [[Community 5]] (7 shared connections)
-- [[Community 13]] (5 shared connections)
-- [[Community 12]] (5 shared connections)
-- [[Community 20]] (4 shared connections)
-- [[Community 3]] (4 shared connections)
-- [[Community 23]] (3 shared connections)
-- [[Community 17]] (3 shared connections)
+- [[Community 0]] (52 shared connections)
+- [[Community 1]] (32 shared connections)
+- [[Community 2]] (24 shared connections)
+- [[Community 12]] (14 shared connections)
+- [[Community 11]] (5 shared connections)
+- [[Community 13]] (4 shared connections)
+- [[Community 19]] (3 shared connections)
+- [[Community 18]] (3 shared connections)
+- [[Community 10]] (3 shared connections)
 - [[Community 14]] (3 shared connections)
+- [[Community 5]] (2 shared connections)
+- [[Community 33]] (2 shared connections)
 
 ## Source Files
 
 - `services/api/src/main/java/mn/tasky/analytics/publicapi/AnalyticsCommandPort.java`
+- `services/api/src/main/java/mn/tasky/auth/api/AuthController.java`
 - `services/api/src/main/java/mn/tasky/automation/broker/BrokerConfig.java`
 - `services/api/src/main/java/mn/tasky/automation/broker/EventRelayPublisher.java`
 - `services/api/src/main/java/mn/tasky/automation/broker/JsonMessageConverter.java`
 - `services/api/src/main/java/mn/tasky/automation/event/AutomationEventEnvelope.java`
-- `services/api/src/main/java/mn/tasky/automation/provider/ProviderHealth.java`
 - `services/api/src/main/java/mn/tasky/automation/provider/S3StorageProvider.java`
 - `services/api/src/main/java/mn/tasky/automation/worker/AbstractEventHandler.java`
 - `services/api/src/main/java/mn/tasky/automation/worker/EventWorkerConsumer.java`
@@ -71,8 +71,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 588 (43%)
-- INFERRED: 775 (57%)
+- EXTRACTED: 597 (44%)
+- INFERRED: 753 (56%)
 - AMBIGUOUS: 0 (0%)
 
 ---

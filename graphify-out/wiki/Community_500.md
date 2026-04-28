@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **network-error.tsx** (0 connections) — `apps/mobile/src/app/(shared)/network-error.tsx`
+- **privacy.tsx** (0 connections) — `apps/mobile/src/app/(shared)/legal/privacy.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(shared)/network-error.tsx`
+- `apps/mobile/src/app/(shared)/legal/privacy.tsx`
 
 ## Audit Trail
 

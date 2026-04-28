@@ -4,14 +4,14 @@
 
 ## Key Concepts
 
-- **MessagingQueryHandler** (7 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
-- **MessagingQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
-- **.MessagingQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
-- **.listEnrichedConversations()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
-- **.listMessages()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
-- **.findConversationByTaskAndParticipants()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
-- **.listMessagesForConversation()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
-- **.findFlaggedMessages()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
+- **BookingQueryHandler** (7 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **BookingQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **.BookingQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **.getBooking()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **.listBookings()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **.getTaskerMarkedDoneAt()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **.listScheduleEvents()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **.getScheduleEvent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
 
 ## Relationships
 
@@ -19,7 +19,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
+- `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
 
 ## Audit Trail
 

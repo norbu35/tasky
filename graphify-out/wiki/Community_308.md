@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **CustomerTaskerProfilePage.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerTaskerProfilePage.tsx`
-- **CustomerTaskerProfilePage()** (1 connections) — `apps/web/src/pages/customer/CustomerTaskerProfilePage.tsx`
+- **ChatDetailPage.tsx** (1 connections) — `apps/web/src/pages/shared/ChatDetailPage.tsx`
+- **ChatDetailPage()** (1 connections) — `apps/web/src/pages/shared/ChatDetailPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/customer/CustomerTaskerProfilePage.tsx`
+- `apps/web/src/pages/shared/ChatDetailPage.tsx`
 
 ## Audit Trail
 

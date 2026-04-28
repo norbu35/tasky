@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **eslint.config.mjs** (0 connections) — `packages/sdk/eslint.config.mjs`
+- **api-types.ts** (0 connections) — `packages/sdk/src/generated/api-types.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/sdk/eslint.config.mjs`
+- `packages/sdk/src/generated/api-types.ts`
 
 ## Audit Trail
 

@@ -1,63 +1,69 @@
 # Community 22
 
-> 72 nodes
+> 60 nodes
 
 ## Key Concepts
 
-- **.getState()** (19 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **.isOpen()** (17 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **.recordFailure()** (16 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **FacebookCircuitBreakerTests** (13 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
-- **.recordSuccess()** (10 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **QPayPaymentProvider** (10 connections) — `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
-- **FacebookCircuitBreakerTest** (8 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookCircuitBreakerTest.java`
-- **useDisputeStatusScreen()** (7 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/useDisputeStatusScreen.ts`
-- **model.ts** (7 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
-- **FacebookCircuitBreaker** (7 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **.health()** (7 connections) — `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
-- **getStatus()** (6 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
-- **.fetchProfile()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
-- **.doProbe()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/FacebookCircuitBreakerProbe.java`
-- **.tryHalfOpen()** (5 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **FacebookGraphClient** (5 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
-- **.successAfterOpenClosesCircuit()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
-- **.failuresAfterWindowExpiryDoNotOpenCircuit()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
-- **.tryHalfOpenTransitionsFromOpen()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
-- **.successFromHalfOpenClosesCircuit()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
-- **FacebookHealthIndicatorTest** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
-- **.reportsUpWhenClosed()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
-- **.reportsDownWhenOpen()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
-- **.reportsDownWhenHalfOpen()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
-- **.health()** (4 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookHealthIndicator.java`
-- _... and 47 more nodes in this community_
+- **.listPending()** (17 connections) — `services/api/src/main/java/mn/tasky/projection/admin/AdminVerificationQueueProjectionService.java`
+- **.findPending()** (12 connections) — `services/api/src/main/java/mn/tasky/wallet/dao/PayoutRequestDao.java`
+- **.pendingVerifications()** (11 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- **GetVerificationDetail** (11 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- **AdminVerificationCompositionService** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- **.verificationDetail()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- **PendingVerificationsTests** (9 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- **.pendingDisputes()** (8 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionService.java`
+- **AdminVerificationController** (6 connections) — `services/api/src/main/java/mn/tasky/admin/api/AdminVerificationController.java`
+- **.queueDetailResponse()** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- **PendingDisputesTests** (6 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- **.pendingVerifications_decryptionFailure()** (6 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- **.verificationQueueExposesQueueAgeAndSlaPosture()** (6 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- **.verificationDetail_withIdCards_recordsAudit()** (6 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- **.verificationDetail_noIdCards_noAudit()** (6 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- **.verificationDetail_onlyFront_recordsOneAudit()** (6 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- **.slaDeadlineAt()** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- **ListPendingVerifications** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- **.pendingDisputes_returnsPage()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- **.pendingDisputes_hasMore()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- **.pendingVerifications_hasMore()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- **VerificationDetailTests** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- **.buildQueueRow()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- **.buildDetail()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- **ListPendingDisputes** (4 connections) — `services/api/src/test/java/mn/tasky/dispute/application/DisputeServiceTest.java`
+- _... and 35 more nodes in this community_
 
 ## Relationships
 
-- [[Community 4]] (10 shared connections)
-- [[Community 0]] (5 shared connections)
-- [[Community 2]] (5 shared connections)
-- [[Community 20]] (2 shared connections)
-- [[Community 25]] (1 shared connections)
-- [[Community 13]] (1 shared connections)
+- [[Community 1]] (25 shared connections)
+- [[Community 0]] (19 shared connections)
+- [[Community 2]] (12 shared connections)
+- [[Community 8]] (2 shared connections)
+- [[Community 3]] (2 shared connections)
+- [[Community 5]] (2 shared connections)
+- [[Community 18]] (2 shared connections)
+- [[Community 10]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/disputes/hooks/useDisputeDetail.ts`
-- `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
-- `apps/mobile/src/features/disputes/screens/DisputeStatus/useDisputeStatusScreen.ts`
-- `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
-- `services/api/src/main/java/mn/tasky/auth/application/FacebookHealthIndicator.java`
-- `services/api/src/main/java/mn/tasky/auth/scheduling/FacebookCircuitBreakerProbe.java`
-- `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
-- `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
-- `services/api/src/test/java/mn/tasky/auth/application/FacebookCircuitBreakerTest.java`
-- `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminVerificationController.java`
+- `services/api/src/main/java/mn/tasky/auth/application/VerificationService.java`
+- `services/api/src/main/java/mn/tasky/dispute/application/DisputeService.java`
+- `services/api/src/main/java/mn/tasky/projection/admin/AdminDisputeQueueProjectionService.java`
+- `services/api/src/main/java/mn/tasky/projection/admin/AdminVerificationQueueProjectionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- `services/api/src/main/java/mn/tasky/wallet/application/WalletService.java`
+- `services/api/src/main/java/mn/tasky/wallet/dao/PayoutRequestDao.java`
+- `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- `services/api/src/test/java/mn/tasky/dispute/application/DisputeServiceTest.java`
+- `services/api/src/test/java/mn/tasky/identity/application/query/IdentityQueryHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- `services/api/src/test/java/mn/tasky/trust/application/query/TrustQueryHandlerTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 143 (48%)
-- INFERRED: 155 (52%)
+- EXTRACTED: 135 (51%)
+- INFERRED: 128 (49%)
 - AMBIGUOUS: 0 (0%)
 
 ---

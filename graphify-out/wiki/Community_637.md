@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AppUpdateScreen.tsx** (0 connections) — `apps/mobile/src/features/infra/screens/AppUpdateScreen.tsx`
+- **react-query.ts** (0 connections) — `apps/mobile/src/lib/react-query.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/infra/screens/AppUpdateScreen.tsx`
+- `apps/mobile/src/lib/react-query.ts`
 
 ## Audit Trail
 

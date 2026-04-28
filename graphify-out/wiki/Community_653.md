@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **inspection.spec.ts** (0 connections) — `apps/web/e2e/inspection.spec.ts`
+- **tasker-happy-path.spec.ts** (0 connections) — `apps/web/e2e/tasker-happy-path.spec.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/e2e/inspection.spec.ts`
+- `apps/web/e2e/tasker-happy-path.spec.ts`
 
 ## Audit Trail
 

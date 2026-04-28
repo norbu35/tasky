@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReviewHardLock.tsx** (1 connections) — `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
-- **handleSubmitReview()** (1 connections) — `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
+- **NoApplicantRescue.tsx** (1 connections) — `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
+- **RescueButton()** (1 connections) — `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
+- `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
 
 ## Audit Trail
 

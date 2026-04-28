@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerTasksPage.tsx** (0 connections) — `apps/web/src/pages/TaskerTasksPage.tsx`
+- **AdminModerationPage.test.tsx** (0 connections) — `apps/web/src/pages/admin/__tests__/AdminModerationPage.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/TaskerTasksPage.tsx`
+- `apps/web/src/pages/admin/__tests__/AdminModerationPage.test.tsx`
 
 ## Audit Trail
 

@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **MessagingCommandHandler** (4 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
-- **MessagingCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
-- **.MessagingCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
-- **.sendMessage()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
-- **.startConversation()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
+- **GeocodingProvider** (4 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
+- **GeocodingProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
+- **.reverseGeocode()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
+- **.isWithinServiceArea()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
+- **.search()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
+- `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
 
 ## Audit Trail
 

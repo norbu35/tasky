@@ -1,15 +1,16 @@
 # Community 71
 
-> 6 nodes
+> 7 nodes
 
 ## Key Concepts
 
-- **App.test.tsx** (5 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **render()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **RedirectMock()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **TabsMock()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **resetStores()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **installDefaultHookMocks()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **instant-match.tsx** (6 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **coerceState()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **coerceDeclineCount()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **coerceString()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **onBack()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **onConfirmBooking()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **onViewApplicants()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
 
 ## Relationships
 
@@ -17,11 +18,11 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/App.test.tsx`
+- `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 12 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **select.test.tsx** (0 connections) — `apps/web/src/components/ui/__tests__/select.test.tsx`
+- **LoadingCard.tsx** (0 connections) — `apps/web/src/layout/LoadingCard.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/__tests__/select.test.tsx`
+- `apps/web/src/layout/LoadingCard.tsx`
 
 ## Audit Trail
 

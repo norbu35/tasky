@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **BookingSupportSheet.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/BookingSupportSheet.tsx`
-- **BookingSupportSheet()** (1 connections) — `apps/mobile/src/features/bookings/components/BookingSupportSheet.tsx`
+- **useCreateBookingIntent.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useCreateBookingIntent.ts`
+- **useCreateBookingIntent()** (1 connections) — `apps/mobile/src/features/bookings/hooks/useCreateBookingIntent.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/components/BookingSupportSheet.tsx`
+- `apps/mobile/src/features/bookings/hooks/useCreateBookingIntent.ts`
 
 ## Audit Trail
 

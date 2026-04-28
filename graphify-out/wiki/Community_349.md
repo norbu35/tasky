@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **settings.gradle.kts** (0 connections) — `settings.gradle.kts`
+- **jest.setup.ts** (0 connections) — `apps/mobile/jest.setup.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `settings.gradle.kts`
+- `apps/mobile/jest.setup.ts`
 
 ## Audit Trail
 

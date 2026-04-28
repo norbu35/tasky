@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **nativeFirebase.test.ts** (1 connections) — `apps/mobile/__tests__/lib/nativeFirebase.test.ts`
-- **loadNativeFirebase()** (1 connections) — `apps/mobile/__tests__/lib/nativeFirebase.test.ts`
+- **queryClient.ts** (1 connections) — `apps/mobile/__tests__/test-utils/queryClient.ts`
+- **createTestQueryClient()** (1 connections) — `apps/mobile/__tests__/test-utils/queryClient.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/lib/nativeFirebase.test.ts`
+- `apps/mobile/__tests__/test-utils/queryClient.ts`
 
 ## Audit Trail
 

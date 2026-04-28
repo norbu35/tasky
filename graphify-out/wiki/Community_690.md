@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **errorHandling.test.ts** (0 connections) — `apps/web/src/lib/errorHandling.test.ts`
+- **userAccess.test.ts** (0 connections) — `apps/web/src/lib/userAccess.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/errorHandling.test.ts`
+- `apps/web/src/lib/userAccess.test.ts`
 
 ## Audit Trail
 

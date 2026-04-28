@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **PostingGuidance.tsx** (2 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
-- **PostingGuidanceCard()** (1 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
-- **PostingProofChecklist()** (1 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
+- **TaskReviewSubmit.SummarySections.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
+- **SectionCard()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
+- **icon()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReviewHardLockPage.tsx** (1 connections) — `apps/web/src/pages/shared/ReviewHardLockPage.tsx`
-- **ReviewHardLockPage()** (1 connections) — `apps/web/src/pages/shared/ReviewHardLockPage.tsx`
+- **ReviewReminderDialog.tsx** (1 connections) — `apps/web/src/pages/shared/ReviewReminderDialog.tsx`
+- **ReviewReminderDialog()** (1 connections) — `apps/web/src/pages/shared/ReviewReminderDialog.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/ReviewHardLockPage.tsx`
+- `apps/web/src/pages/shared/ReviewReminderDialog.tsx`
 
 ## Audit Trail
 

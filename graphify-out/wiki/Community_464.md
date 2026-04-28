@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ReviewThresholdSummary.test.tsx** (0 connections) — `apps/mobile/__tests__/features/profile/components/ReviewThresholdSummary.test.tsx`
+- **RejectedScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/features/verification/screens/RejectedScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/profile/components/ReviewThresholdSummary.test.tsx`
+- `apps/mobile/__tests__/features/verification/screens/RejectedScreen.test.tsx`
 
 ## Audit Trail
 

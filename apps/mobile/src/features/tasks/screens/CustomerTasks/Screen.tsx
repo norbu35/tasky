@@ -22,15 +22,11 @@ export default function CustomerTasksScreen() {
     isFetching,
     refetch,
     handleFabPress,
-    handleNotificationsPress,
     handleTaskPress,
   } = useCustomerTasksScreen();
   const insets = useSafeAreaInsets();
 
-  const header = useMemo(
-    () => <Header counts={counts} onNotificationsPress={handleNotificationsPress} />,
-    [counts, handleNotificationsPress],
-  );
+  const header = useMemo(() => <Header counts={counts} />, [counts]);
 
   return (
     <ScreenContainer testID="SCR-CUST-001" padded={false}>

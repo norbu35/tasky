@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskDetail.Summary.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
-- **getPublicCustomer()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
-- **getLocationText()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
+- **TaskSuccessScreen.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
+- **handleViewTask()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
+- **handleDone()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
 
 ## Audit Trail
 

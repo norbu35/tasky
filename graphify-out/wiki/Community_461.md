@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **model.test.ts** (0 connections) — `apps/mobile/__tests__/features/profile/model.test.ts`
+- **TaskSchedule.PricingMode.test.tsx** (0 connections) — `apps/mobile/__tests__/features/tasks/screens/TaskSchedule.PricingMode.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/profile/model.test.ts`
+- `apps/mobile/__tests__/features/tasks/screens/TaskSchedule.PricingMode.test.tsx`
 
 ## Audit Trail
 

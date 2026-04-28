@@ -1,78 +1,78 @@
 # Community 2
 
-> 370 nodes
+> 532 nodes
 
 ## Key Concepts
 
-- **.resolve()** (88 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **.decrypt()** (54 connections) — `services/api/src/main/java/mn/tasky/common/security/CryptoService.java`
-- **BlindIndex** (33 connections) — `services/api/src/test/java/mn/tasky/common/security/CryptoServiceTest.java`
-- **.debugToken()** (25 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
-- **.findActiveByTaskerId()** (24 connections) — `services/api/src/main/java/mn/tasky/auth/dao/BadgeDao.java`
-- **.findByFacebookId()** (22 connections) — `services/api/src/main/java/mn/tasky/auth/dao/UserDao.java`
-- **defaultState()** (22 connections) — `services/api/src/main/java/mn/tasky/auth/dto/UserProfileState.java`
-- **.findByPhoneBlindIndex()** (21 connections) — `services/api/src/main/java/mn/tasky/auth/dao/UserDao.java`
-- **AuthService** (20 connections) — `services/api/src/main/java/mn/tasky/auth/application/AuthService.java`
-- **IdentityCommandHandlerTest** (20 connections) — `services/api/src/test/java/mn/tasky/identity/application/command/IdentityCommandHandlerTest.java`
-- **.refreshToken()** (19 connections) — `services/api/src/main/java/mn/tasky/identity/publicapi/IdentityCommandPort.java`
-- **.fetchProfile()** (17 connections) — `services/api/src/main/java/mn/tasky/auth/provider/OAuthProvider.java`
-- **.findActive()** (16 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
-- **SearchUsersByName** (16 connections) — `services/api/src/test/java/mn/tasky/auth/application/UserSearchServiceTest.java`
-- **.findByPhoneBlindIdx()** (15 connections) — `services/api/src/main/java/mn/tasky/auth/dao/OtpChallengeDao.java`
-- **UserDao** (15 connections) — `services/api/src/main/java/mn/tasky/auth/dao/UserDao.java`
-- **.updateStatusAndSuspensionEnd()** (15 connections) — `services/api/src/main/java/mn/tasky/auth/dao/UserDao.java`
-- **AddStrike** (15 connections) — `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
-- **VerifyOtp** (15 connections) — `services/api/src/test/java/mn/tasky/auth/application/AuthServiceTest.java`
-- **.linksPhoneToFacebookUser()** (15 connections) — `services/api/src/test/java/mn/tasky/auth/application/AuthServiceTest.java`
-- **.verifyOtp()** (14 connections) — `services/api/src/main/java/mn/tasky/auth/application/AuthService.java`
-- **UserProfileService** (14 connections) — `services/api/src/main/java/mn/tasky/auth/application/UserProfileService.java`
-- **SearchUsersByPhone** (14 connections) — `services/api/src/test/java/mn/tasky/auth/application/UserSearchServiceTest.java`
-- **.fallsBackToPhoneUser()** (13 connections) — `services/api/src/test/java/mn/tasky/auth/application/AuthServiceTest.java`
-- **FacebookLogin** (13 connections) — `services/api/src/test/java/mn/tasky/auth/application/AuthServiceTest.java`
-- _... and 345 more nodes in this community_
+- **.status()** (367 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyException.java`
+- **Claim** (161 connections) — `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
+- **.userId()** (93 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **Abandon** (51 connections) — `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
+- **.errorBody()** (43 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiResponseSupport.java`
+- **.isEnabled()** (36 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **CompleteWithResource** (34 connections) — `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
+- **.overrideBookingStatus()** (31 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingCompositionService.java`
+- **ConfirmIntent** (26 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationServiceTests.java`
+- **.booking()** (25 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingPublicCompositionServiceTests.java`
+- **.conciergeAssign()** (22 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentService.java`
+- **.raiseDispute()** (21 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputeRaiseService.java`
+- **CompleteBooking** (20 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationServiceTests.java`
+- **GetDispute** (19 connections) — `services/api/src/test/java/mn/tasky/dispute/application/DisputeServiceTest.java`
+- **.markBookingDone()** (18 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationService.java`
+- **.inProgress()** (18 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationServiceTests.java`
+- **.inProgress()** (18 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletPayoutRequestServiceTests.java`
+- **.initiatePayment()** (17 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationService.java`
+- **.confirmIntent()** (17 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationService.java`
+- **.cancelBooking()** (17 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationService.java`
+- **.completeBooking()** (17 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationService.java`
+- **BookingResponse** (17 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingResponseCompositionServiceTests.java`
+- **.buildDisputeRequest()** (17 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputeRaiseServiceTests.java`
+- **.recordAdminAction()** (16 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditCommandPort.java`
+- **.processPayout()** (16 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingService.java`
+- _... and 507 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (194 shared connections)
-- [[Community 6]] (64 shared connections)
-- [[Community 10]] (26 shared connections)
-- [[Community 1]] (23 shared connections)
-- [[Community 3]] (23 shared connections)
-- [[Community 19]] (12 shared connections)
-- [[Community 5]] (9 shared connections)
-- [[Community 14]] (9 shared connections)
-- [[Community 15]] (7 shared connections)
-- [[Community 22]] (5 shared connections)
-- [[Community 20]] (3 shared connections)
-- [[Community 12]] (3 shared connections)
+- [[Community 0]] (352 shared connections)
+- [[Community 1]] (91 shared connections)
+- [[Community 10]] (76 shared connections)
+- [[Community 3]] (26 shared connections)
+- [[Community 4]] (24 shared connections)
+- [[Community 14]] (20 shared connections)
+- [[Community 16]] (15 shared connections)
+- [[Community 13]] (14 shared connections)
+- [[Community 5]] (13 shared connections)
+- [[Community 22]] (12 shared connections)
+- [[Community 21]] (12 shared connections)
+- [[Community 18]] (11 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/api/DevAuthController.java`
-- `services/api/src/main/java/mn/tasky/auth/api/FacebookAuthController.java`
-- `services/api/src/main/java/mn/tasky/auth/application/AuthService.java`
-- `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
-- `services/api/src/main/java/mn/tasky/auth/application/LoggingSmsService.java`
-- `services/api/src/main/java/mn/tasky/auth/application/ModerationService.java`
-- `services/api/src/main/java/mn/tasky/auth/application/SmsService.java`
-- `services/api/src/main/java/mn/tasky/auth/application/UserProfileService.java`
-- `services/api/src/main/java/mn/tasky/auth/application/UserSearchService.java`
-- `services/api/src/main/java/mn/tasky/auth/application/UserStatusResolver.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/BadgeDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/OtpChallengeDao.java`
+- `apps/mobile/src/features/verification/hooks/useVerification.ts`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminBookingController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminDisputeController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminFeatureToggleController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminModerationController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminPayoutController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminTaskController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminUserController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminVerificationController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
+- `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditCommandPort.java`
 - `services/api/src/main/java/mn/tasky/auth/dao/ProfileDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/SuspensionEventDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/UserDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dto/UserProfileState.java`
-- `services/api/src/main/java/mn/tasky/auth/provider/OAuthProvider.java`
-- `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
-- `services/api/src/main/java/mn/tasky/common/security/CryptoService.java`
+- `services/api/src/main/java/mn/tasky/booking/api/BookingController.java`
+- `services/api/src/main/java/mn/tasky/booking/api/BookingIntentController.java`
+- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
+- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingIntentCommandPort.java`
+- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingQueryPort.java`
+- `services/api/src/main/java/mn/tasky/category/api/CategoryController.java`
+- `services/api/src/main/java/mn/tasky/common/api/ApiResponseSupport.java`
+- `services/api/src/main/java/mn/tasky/common/config/ChannelInterceptorConfig.java`
 
 ## Audit Trail
 
-- EXTRACTED: 826 (41%)
-- INFERRED: 1193 (59%)
+- EXTRACTED: 1164 (35%)
+- INFERRED: 2204 (65%)
 - AMBIGUOUS: 0 (0%)
 
 ---

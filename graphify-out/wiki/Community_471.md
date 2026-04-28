@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **\_layout.tsx** (0 connections) — `apps/mobile/src/app/_layout.tsx`
+- **rebook.tsx** (0 connections) — `apps/mobile/src/app/(customer)/rebook.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/_layout.tsx`
+- `apps/mobile/src/app/(customer)/rebook.tsx`
 
 ## Audit Trail
 

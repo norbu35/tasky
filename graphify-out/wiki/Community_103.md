@@ -4,24 +4,24 @@
 
 ## Key Concepts
 
-- **WalletQueryCompositionService** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionService.java`
-- **.balanceResponse()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionService.java`
-- **WalletQueryCompositionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionService.java`
-- **.ledgerResponses()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionService.java`
-- **.ledgerResponse()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionService.java`
+- **BookingIntentConfirmationOutcome.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
+- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
+- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
+- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (89%)
-- INFERRED: 1 (11%)
+- EXTRACTED: 8 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

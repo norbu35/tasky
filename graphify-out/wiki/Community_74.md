@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **model.ts** (3 connections) — `apps/mobile/src/features/profile/model.ts`
-- **getReviewThresholdRemaining()** (2 connections) — `apps/mobile/src/features/profile/model.ts`
-- **ReviewThresholdSummary()** (2 connections) — `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
-- **canShowPublicRating()** (1 connections) — `apps/mobile/src/features/profile/model.ts`
-- **formatPublicRating()** (1 connections) — `apps/mobile/src/features/profile/model.ts`
-- **ReviewThresholdSummary.tsx** (1 connections) — `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
+- **fixtures.ts** (5 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **resetStores()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **setAuthenticated()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **setFirstTimeUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **setBannedUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **setSuspendedUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
 
 ## Relationships
 
@@ -17,13 +17,12 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
-- `apps/mobile/src/features/profile/model.ts`
+- `apps/mobile/__tests__/integration/fixtures.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (80%)
-- INFERRED: 2 (20%)
+- EXTRACTED: 10 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

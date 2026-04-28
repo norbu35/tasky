@@ -4,26 +4,26 @@
 
 ## Key Concepts
 
-- **IntegrationTestBase** (6 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.cleanTestState()** (4 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.seedLaunchCatalogFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.seedDistrictFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.seedConfigFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **IntegrationTestBase.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.registerDataSourceProperties()** (1 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **AdminPayoutProcessingOutcome.java** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **invalidWeekday()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **featureDeferred()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **badRequest()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 2]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
 
 ## Audit Trail
 
-- EXTRACTED: 18 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 12 (92%)
+- INFERRED: 1 (8%)
 - AMBIGUOUS: 0 (0%)
 
 ---

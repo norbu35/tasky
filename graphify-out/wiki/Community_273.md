@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TaskFeedFilterSheet.tsx** (1 connections) — `apps/mobile/src/features/tasks/components/TaskFeedFilterSheet.tsx`
-- **TaskFeedFilterSheet()** (1 connections) — `apps/mobile/src/features/tasks/components/TaskFeedFilterSheet.tsx`
+- **useTaskPhotoUpload.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useTaskPhotoUpload.ts`
+- **useTaskPhotoUpload()** (1 connections) — `apps/mobile/src/features/tasks/hooks/useTaskPhotoUpload.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/components/TaskFeedFilterSheet.tsx`
+- `apps/mobile/src/features/tasks/hooks/useTaskPhotoUpload.ts`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **intakeSchema.test.ts** (0 connections) — `apps/web/src/lib/intakeSchema.test.ts`
+- **errorHandling.test.ts** (0 connections) — `apps/web/src/lib/errorHandling.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/intakeSchema.test.ts`
+- `apps/web/src/lib/errorHandling.test.ts`
 
 ## Audit Trail
 

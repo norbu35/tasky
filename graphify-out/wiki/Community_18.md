@@ -1,6 +1,6 @@
 # Community 18
 
-> 84 nodes
+> 83 nodes
 
 ## Key Concepts
 
@@ -20,7 +20,6 @@
 - **MessagingQueryPort** (6 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
 - **.findConversationByTaskAndParticipants()** (6 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
 - **AdminMessageCompositionService** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
-- **.toTaskApplicationResponse()** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionService.java`
 - **KernelErrorTest** (5 connections) — `services/api/src/test/java/mn/tasky/kernel/error/KernelErrorTest.java`
 - **DisputeDetailTests** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
 - **.buildDispute()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
@@ -29,25 +28,23 @@
 - **.listFlagged_withCursor()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
 - **.listMessagesForConversation()** (4 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
 - **.recordAccessorsReturnConstructorValues()** (4 connections) — `services/api/src/test/java/mn/tasky/kernel/error/KernelErrorTest.java`
-- _... and 59 more nodes in this community_
+- **AdminDisputeCompositionServiceTests.java** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- _... and 58 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (35 shared connections)
-- [[Community 1]] (9 shared connections)
-- [[Community 5]] (5 shared connections)
+- [[Community 0]] (31 shared connections)
+- [[Community 2]] (11 shared connections)
+- [[Community 1]] (7 shared connections)
 - [[Community 4]] (3 shared connections)
-- [[Community 10]] (2 shared connections)
-- [[Community 6]] (2 shared connections)
-- [[Community 11]] (1 shared connections)
-- [[Community 20]] (1 shared connections)
+- [[Community 22]] (2 shared connections)
+- [[Community 12]] (1 shared connections)
 
 ## Source Files
 
 - `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
 - `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
 - `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/MessagingPublicCompositionService.java`
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionService.java`
 - `services/api/src/test/java/mn/tasky/kernel/error/KernelErrorTest.java`
 - `services/api/src/test/java/mn/tasky/messaging/application/query/MessagingQueryHandlerTest.java`
 - `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
@@ -57,8 +54,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 196 (64%)
-- INFERRED: 112 (36%)
+- EXTRACTED: 195 (64%)
+- INFERRED: 108 (36%)
 - AMBIGUOUS: 0 (0%)
 
 ---

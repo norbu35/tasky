@@ -2,7 +2,7 @@
 
 > God node · 51 connections · `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
 
-**Community:** [[Community 1]]
+**Community:** [[Community 2]]
 
 ## Connections by Relation
 
@@ -11,16 +11,16 @@
 - [[.overrideBookingStatus()]] `INFERRED`
 - [[.conciergeAssign()]] `INFERRED`
 - [[.raiseDispute()]] `INFERRED`
-- [[.initiatePayment()]] `INFERRED`
 - [[.markBookingDone()]] `INFERRED`
-- [[.processPayout()]] `INFERRED`
+- [[.initiatePayment()]] `INFERRED`
+- [[.confirmIntent()]] `INFERRED`
 - [[.cancelBooking()]] `INFERRED`
 - [[.completeBooking()]] `INFERRED`
-- [[.confirmIntent()]] `INFERRED`
+- [[.processPayout()]] `INFERRED`
+- [[.declineIntent()]] `INFERRED`
+- [[.acceptApplication()]] `INFERRED`
 - [[.requestPayout()]] `INFERRED`
 - [[.flagNoShow()]] `INFERRED`
-- [[.acceptApplication()]] `INFERRED`
-- [[.declineIntent()]] `INFERRED`
 - [[.resolveDispute()]] `INFERRED`
 - [[.requestReschedule()]] `INFERRED`
 - [[.respondToReschedule()]] `INFERRED`

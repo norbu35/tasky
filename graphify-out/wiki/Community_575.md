@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **InboxScreen.tsx** (0 connections) — `apps/mobile/src/features/chat/screens/InboxScreen.tsx`
+- **Header.tsx** (0 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/Header.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/chat/screens/InboxScreen.tsx`
+- `apps/mobile/src/features/chat/screens/ChatConversation/Header.tsx`
 
 ## Audit Trail
 

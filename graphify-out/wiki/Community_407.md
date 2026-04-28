@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **BookingConfirmScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingConfirmScreen.test.tsx`
+- **CustomerCancelSheet.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/disputes/CustomerCancelSheet.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/bookings/BookingConfirmScreen.test.tsx`
+- `apps/mobile/__tests__/screens/customer/disputes/CustomerCancelSheet.test.tsx`
 
 ## Audit Trail
 

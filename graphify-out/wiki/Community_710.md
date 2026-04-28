@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CustomerDisputeRaisePage.tsx** (0 connections) — `apps/web/src/pages/customer/CustomerDisputeRaisePage.tsx`
+- **DeleteAccountPage.tsx** (0 connections) — `apps/web/src/pages/shared/DeleteAccountPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/customer/CustomerDisputeRaisePage.tsx`
+- `apps/web/src/pages/shared/DeleteAccountPage.tsx`
 
 ## Audit Trail
 

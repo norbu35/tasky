@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **role-select.tsx** (0 connections) — `apps/mobile/src/app/(auth)/role-select.tsx`
+- **confirm.tsx** (0 connections) — `apps/mobile/src/app/(customer)/bookings/confirm.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(auth)/role-select.tsx`
+- `apps/mobile/src/app/(customer)/bookings/confirm.tsx`
 
 ## Audit Trail
 

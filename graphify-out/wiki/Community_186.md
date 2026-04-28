@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **base.mjs** (2 connections) — `tooling/config/eslint/base.mjs`
-- **react-native.mjs** (1 connections) — `tooling/config/eslint/react-native.mjs`
-- **react.mjs** (1 connections) — `tooling/config/eslint/react.mjs`
+- **pay.tsx** (2 connections) — `archive/mobile-future/tasker/credits/pay.tsx`
+- **resolveState()** (2 connections) — `archive/mobile-future/tasker/credits/pay.tsx`
+- **TaskerCreditsPayScreen()** (2 connections) — `archive/mobile-future/tasker/credits/pay.tsx`
 
 ## Relationships
 
@@ -14,13 +14,11 @@
 
 ## Source Files
 
-- `tooling/config/eslint/base.mjs`
-- `tooling/config/eslint/react-native.mjs`
-- `tooling/config/eslint/react.mjs`
+- `archive/mobile-future/tasker/credits/pay.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

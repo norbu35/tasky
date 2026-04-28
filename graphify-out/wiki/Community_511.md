@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.tsx** (0 connections) — `apps/mobile/src/app/(tabs)/index.tsx`
+- **[id].tsx** (0 connections) — `apps/mobile/src/app/(tabs)/inbox/[id].tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tabs)/index.tsx`
+- `apps/mobile/src/app/(tabs)/inbox/[id].tsx`
 
 ## Audit Trail
 

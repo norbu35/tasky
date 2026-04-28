@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **SearchBar.tsx** (1 connections) — `apps/mobile/src/components/ui/SearchBar.tsx`
-- **SearchBar()** (1 connections) — `apps/mobile/src/components/ui/SearchBar.tsx`
+- **elevations.ts** (1 connections) — `apps/mobile/src/design/elevations.ts`
+- **toShadowStyle()** (1 connections) — `apps/mobile/src/design/elevations.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/SearchBar.tsx`
+- `apps/mobile/src/design/elevations.ts`
 
 ## Audit Trail
 

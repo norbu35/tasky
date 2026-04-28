@@ -1,38 +1,37 @@
 # Community 36
 
-> 16 nodes
+> 14 nodes
 
 ## Key Concepts
 
-- **validate-migrations.py** (15 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **main()** (8 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **detect_versioned_mutations_from_diff()** (7 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **detect_versioned_mutations_in_worktree()** (6 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **run_git()** (5 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **is_versioned_path()** (4 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **baseline_reset_diff_is_exact()** (4 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **git_available()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **resolve_base_ref()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **migration_name()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **baseline_reset_layout_active()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **baseline_reset_status_is_exact()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **parse_name_status_line()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **print_remediation()** (2 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **parse_args()** (2 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **detect_naming_errors()** (2 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **mockApi.ts** (12 connections) — `apps/web/e2e/support/mockApi.ts`
+- **installMockApi()** (4 connections) — `apps/web/e2e/support/mockApi.ts`
+- **loginThroughDevAuth()** (3 connections) — `apps/web/e2e/support/mockApi.ts`
+- **Route()** (2 connections) — `apps/mobile/src/app/task/[id].tsx`
+- **makeUser()** (2 connections) — `apps/web/e2e/support/mockApi.ts`
+- **makeProfile()** (2 connections) — `apps/web/e2e/support/mockApi.ts`
+- **makeVerificationList()** (2 connections) — `apps/web/e2e/support/mockApi.ts`
+- **buttonLabelForRole()** (2 connections) — `apps/web/e2e/support/mockApi.ts`
+- **[id].tsx** (1 connections) — `apps/mobile/src/app/task/[id].tsx`
+- **makeCategories()** (1 connections) — `apps/web/e2e/support/mockApi.ts`
+- **makePublicTasks()** (1 connections) — `apps/web/e2e/support/mockApi.ts`
+- **makePublicTaskDetail()** (1 connections) — `apps/web/e2e/support/mockApi.ts`
+- **makeCustomerTasks()** (1 connections) — `apps/web/e2e/support/mockApi.ts`
+- **nextLocalDateTimeInput()** (1 connections) — `apps/web/e2e/support/mockApi.ts`
 
 ## Relationships
 
-- [[Community 2]] (1 shared connections)
+- [[Community 7]] (1 shared connections)
 
 ## Source Files
 
-- `tooling/scripts/governance/validate-migrations.py`
+- `apps/mobile/src/app/task/[id].tsx`
+- `apps/web/e2e/support/mockApi.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 72 (99%)
-- INFERRED: 1 (1%)
+- EXTRACTED: 33 (94%)
+- INFERRED: 2 (6%)
 - AMBIGUOUS: 0 (0%)
 
 ---

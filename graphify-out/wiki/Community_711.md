@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AppUpdatePage.tsx** (0 connections) — `apps/web/src/pages/shared/AppUpdatePage.tsx`
+- **HelpPage.tsx** (0 connections) — `apps/web/src/pages/shared/HelpPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/AppUpdatePage.tsx`
+- `apps/web/src/pages/shared/HelpPage.tsx`
 
 ## Audit Trail
 

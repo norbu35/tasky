@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **ReviewSubmissionOutcome.java** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
-- **internalError()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
+- **AutomationContractBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
+- **.automationContractMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
+- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
+- **AutomationContractBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
+- `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

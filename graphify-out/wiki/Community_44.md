@@ -1,36 +1,36 @@
 # Community 44
 
-> 11 nodes
+> 12 nodes
 
 ## Key Concepts
 
-- **TaskCard()** (4 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
-- **BookingsTabScreen.tsx** (3 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
-- **getTaskVisual()** (3 connections) — `apps/mobile/src/features/tasks/components/CustomerTasksView.ts`
-- **mapStatus()** (3 connections) — `apps/mobile/src/utils/statusMapping.ts`
-- **mapBookingStatus()** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
-- **TaskCard.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
-- **formatMoney()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
-- **getBookingCardTestID()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
-- **CustomerTasksView.ts** (1 connections) — `apps/mobile/src/features/tasks/components/CustomerTasksView.ts`
-- **SkeletonCard()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
-- **statusMapping.ts** (1 connections) — `apps/mobile/src/utils/statusMapping.ts`
+- **DisputePublicCompositionService** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- **ReviewPublicCompositionService** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
+- **.disputeDetail()** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- **.disputeSummary()** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- **.disputeSummaryWithEvidence()** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- **ReviewPublicCompositionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
+- **.ReviewPublicCompositionService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
+- **.listReviews()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
+- **.reviewResponse()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
+- **DisputePublicCompositionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- **.DisputePublicCompositionService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- **.evidenceResponse()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
 
 ## Relationships
 
+- [[Community 2]] (3 shared connections)
 - [[Community 0]] (2 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
-- `apps/mobile/src/features/tasks/components/CustomerTasksView.ts`
-- `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
-- `apps/mobile/src/utils/statusMapping.ts`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (64%)
-- INFERRED: 8 (36%)
+- EXTRACTED: 25 (86%)
+- INFERRED: 4 (14%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **navigationOptions.ts** (0 connections) — `apps/mobile/src/design/navigationOptions.ts`
+- **index.ts** (0 connections) — `apps/mobile/src/features/auth/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/design/navigationOptions.ts`
+- `apps/mobile/src/features/auth/index.ts`
 
 ## Audit Trail
 

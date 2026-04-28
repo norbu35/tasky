@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **postcss.config.mjs** (0 connections) — `apps/mobile/postcss.config.mjs`
+- **appConfig.test.ts** (0 connections) — `apps/mobile/__tests__/appConfig.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/postcss.config.mjs`
+- `apps/mobile/__tests__/appConfig.test.ts`
 
 ## Audit Trail
 

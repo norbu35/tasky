@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **RebookScreen.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/RebookScreen.tsx`
-- **formatDateTime()** (1 connections) — `apps/mobile/src/features/bookings/screens/RebookScreen.tsx`
+- **Inbox.ConversationRow.tsx** (1 connections) — `apps/mobile/src/features/chat/screens/Inbox.ConversationRow.tsx`
+- **cn()** (1 connections) — `apps/mobile/src/features/chat/screens/Inbox.ConversationRow.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/RebookScreen.tsx`
+- `apps/mobile/src/features/chat/screens/Inbox.ConversationRow.tsx`
 
 ## Audit Trail
 

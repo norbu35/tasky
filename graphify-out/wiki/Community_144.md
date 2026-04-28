@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **AutomationEventTypesTest** (3 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
-- **AutomationEventTypesTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
-- **.constantsHaveExpectedValues()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
-- **.privateConstructor()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- **otp-migration.tsx** (3 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **resolveState()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **handleSubmit()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **handleSkip()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- `archive/mobile-future/auth/otp-migration.tsx`
 
 ## Audit Trail
 

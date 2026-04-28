@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useAcceptApplication.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useAcceptApplication.ts`
-- **useAcceptApplication()** (1 connections) — `apps/mobile/src/features/bookings/hooks/useAcceptApplication.ts`
+- **BookingTimeline.TimelineRow.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingTimeline.TimelineRow.tsx`
+- **TimelineEventRow()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingTimeline.TimelineRow.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/hooks/useAcceptApplication.ts`
+- `apps/mobile/src/features/bookings/screens/BookingTimeline.TimelineRow.tsx`
 
 ## Audit Trail
 

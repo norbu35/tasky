@@ -4,14 +4,14 @@
 
 ## Key Concepts
 
-- **triage_doc_claims.py** (7 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
-- **main()** (5 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
-- **grouped_summary()** (4 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
-- **parse_args()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
-- **classify()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
-- **recommended_action()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
-- **run_validator()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
-- **print_text()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **TrustQueryPort** (7 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **TrustQueryPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.listReviews()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.listPendingDisputes()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.getDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.getDisputeForUser()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.getDisputeEvidence()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.hasOpenDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
 
 ## Relationships
 
@@ -19,11 +19,11 @@
 
 ## Source Files
 
-- `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
 
 ## Audit Trail
 
-- EXTRACTED: 26 (100%)
+- EXTRACTED: 14 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

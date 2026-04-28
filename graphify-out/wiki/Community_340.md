@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **check_lifecycles.py** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
-- **main()** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
+- **doc-references-validator.test.mjs** (1 connections) — `tooling/tests/doc-references-validator.test.mjs`
+- **runPython()** (1 connections) — `tooling/tests/doc-references-validator.test.mjs`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
+- `tooling/tests/doc-references-validator.test.mjs`
 
 ## Audit Trail
 

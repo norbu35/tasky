@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **escrow.tsx** (0 connections) — `archive/mobile-future/customer/bookings/[bookingId]/escrow.tsx`
+- **subscription.tsx** (0 connections) — `archive/mobile-future/tasker/subscription.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `archive/mobile-future/customer/bookings/[bookingId]/escrow.tsx`
+- `archive/mobile-future/tasker/subscription.tsx`
 
 ## Audit Trail
 

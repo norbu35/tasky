@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useCategories.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useCategories.ts`
-- **useCategories()** (1 connections) — `apps/mobile/src/features/tasks/hooks/useCategories.ts`
+- **TaskCategoryScreen.tsx** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
+- **getCategoryVisual()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/hooks/useCategories.ts`
+- `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
 
 ## Audit Trail
 

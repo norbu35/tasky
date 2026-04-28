@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **auth.test.tsx** (0 connections) — `apps/web/tests/integration/auth.test.tsx`
+- **messaging.test.tsx** (0 connections) — `apps/web/tests/integration/messaging.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/tests/integration/auth.test.tsx`
+- `apps/web/tests/integration/messaging.test.tsx`
 
 ## Audit Trail
 

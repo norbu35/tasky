@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useMarkBookingDone.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useMarkBookingDone.ts`
-- **useMarkBookingDone()** (1 connections) — `apps/mobile/src/features/bookings/hooks/useMarkBookingDone.ts`
+- **Screen.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/Screen.tsx`
+- **getBookingCardTestID()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/Screen.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/hooks/useMarkBookingDone.ts`
+- `apps/mobile/src/features/bookings/screens/BookingsList/Screen.tsx`
 
 ## Audit Trail
 

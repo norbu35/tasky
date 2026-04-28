@@ -4,24 +4,24 @@
 
 ## Key Concepts
 
-- **GeocodingProvider** (4 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
-- **GeocodingProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
-- **.reverseGeocode()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
-- **.isWithinServiceArea()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
-- **.search()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
+- **BookingResponseMapper** (4 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
+- **.basic()** (3 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
+- **.withCancellationFee()** (2 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
+- **BookingResponseMapper.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
+- **.BookingResponseMapper()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 2]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
+- `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 10 (91%)
+- INFERRED: 1 (9%)
 - AMBIGUOUS: 0 (0%)
 
 ---

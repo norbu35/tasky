@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PaymentIntent.java** (0 connections) — `services/api/src/main/java/mn/tasky/payment/dto/PaymentIntent.java`
+- **AdminDisputeQueueRow.java** (0 connections) — `services/api/src/main/java/mn/tasky/projection/admin/AdminDisputeQueueRow.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/payment/dto/PaymentIntent.java`
+- `services/api/src/main/java/mn/tasky/projection/admin/AdminDisputeQueueRow.java`
 
 ## Audit Trail
 

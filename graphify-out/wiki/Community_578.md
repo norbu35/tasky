@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/index.ts`
+- **LowBalanceAlert.tsx** (0 connections) — `apps/mobile/src/features/credits/components/LowBalanceAlert.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/chat/screens/ChatConversation/index.ts`
+- `apps/mobile/src/features/credits/components/LowBalanceAlert.tsx`
 
 ## Audit Trail
 

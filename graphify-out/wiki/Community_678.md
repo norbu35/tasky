@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **select.tsx** (0 connections) — `apps/web/src/components/ui/select.tsx`
+- **AdminLayout.tsx** (0 connections) — `apps/web/src/layout/AdminLayout.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/select.tsx`
+- `apps/web/src/layout/AdminLayout.tsx`
 
 ## Audit Trail
 

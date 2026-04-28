@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **screenLayout.ts** (0 connections) — `apps/mobile/src/design/screenLayout.ts`
+- **PermissionScreen.tsx** (0 connections) — `apps/mobile/src/features/auth/screens/PermissionScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/design/screenLayout.ts`
+- `apps/mobile/src/features/auth/screens/PermissionScreen.tsx`
 
 ## Audit Trail
 

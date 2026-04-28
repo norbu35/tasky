@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **AuthTemplate.tsx** (1 connections) — `apps/mobile/src/components/templates/AuthTemplate.tsx`
-- **handleActionBarLayout()** (1 connections) — `apps/mobile/src/components/templates/AuthTemplate.tsx`
+- **Button.tsx** (1 connections) — `apps/mobile/src/components/ui/Button.tsx`
+- **getTextColor()** (1 connections) — `apps/mobile/src/components/ui/Button.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/templates/AuthTemplate.tsx`
+- `apps/mobile/src/components/ui/Button.tsx`
 
 ## Audit Trail
 

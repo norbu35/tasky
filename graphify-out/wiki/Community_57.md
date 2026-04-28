@@ -4,14 +4,14 @@
 
 ## Key Concepts
 
-- **TraceErrorAttributesTest** (4 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **.getErrorAttributes()** (3 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- **TraceErrorAttributes** (2 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- **.setsTraceIdFromRequestAttribute()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **.fallsBackToUuidWhenTraceIdAttributeIsNull()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **TraceErrorAttributes.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- **TraceErrorAttributesTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- **useAuth.ts** (4 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **useAuth.test.tsx** (2 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- **DevLoginHarness()** (2 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- **useDevLogin()** (2 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **createWrapper()** (1 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- **prefetchPostAuthHome()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **useRequestOtp()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **useVerifyOtp()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
 
 ## Relationships
 
@@ -19,13 +19,13 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- `apps/mobile/src/features/auth/hooks/useAuth.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (75%)
-- INFERRED: 4 (25%)
+- EXTRACTED: 12 (86%)
+- INFERRED: 2 (14%)
 - AMBIGUOUS: 0 (0%)
 
 ---

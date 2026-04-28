@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **admin-happy-path.spec.ts** (0 connections) — `apps/web/e2e/admin-happy-path.spec.ts`
+- **inspection.spec.ts** (0 connections) — `apps/web/e2e/inspection.spec.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/e2e/admin-happy-path.spec.ts`
+- `apps/web/e2e/inspection.spec.ts`
 
 ## Audit Trail
 

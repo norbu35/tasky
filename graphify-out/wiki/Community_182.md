@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **ActivateSchemaVersionRequestTest** (2 connections) — `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
-- **ActivateSchemaVersionRequestTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
-- **.storesRequestedActivationMode()** (1 connections) — `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
+- **base.mjs** (2 connections) — `tooling/config/eslint/base.mjs`
+- **react-native.mjs** (1 connections) — `tooling/config/eslint/react-native.mjs`
+- **react.mjs** (1 connections) — `tooling/config/eslint/react.mjs`
 
 ## Relationships
 
@@ -14,7 +14,9 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
+- `tooling/config/eslint/base.mjs`
+- `tooling/config/eslint/react-native.mjs`
+- `tooling/config/eslint/react.mjs`
 
 ## Audit Trail
 

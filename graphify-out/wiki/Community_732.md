@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **env-config.test.ts** (0 connections) — `apps/web/tests/env-config.test.ts`
+- **auth.test.tsx** (0 connections) — `apps/web/tests/integration/auth.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/tests/env-config.test.ts`
+- `apps/web/tests/integration/auth.test.tsx`
 
 ## Audit Trail
 

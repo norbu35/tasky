@@ -15,19 +15,19 @@
 - [[.overrideBookingStatus()]] `INFERRED`
 - [[.updateTask()]] `INFERRED`
 - [[.doFilterInternal()]] `INFERRED`
+- [[.conciergeAssign()]] `INFERRED`
 - [[.handle()]] `INFERRED`
 - [[.createTask()]] `INFERRED`
-- [[.conciergeAssign()]] `INFERRED`
-- [[.shouldMarkProcessedWhenPublishSucceeds()]] `INFERRED`
 - [[.customerSelectsApplicantAndSelectedTaskerAcceptanceConfirmsBooking()]] `INFERRED`
+- [[.shouldMarkProcessedWhenPublishSucceeds()]] `INFERRED`
 - [[.flagNoShow_success_customerFlags_taskerNoShow()]] `INFERRED`
 - [[.confirmAcceptance()]] `INFERRED`
 - [[.createTask()]] `INFERRED`
-- [[.buildDisputeRequest()]] `INFERRED`
-- [[.consentDecisionAndStateChangesAuditable()]] `INFERRED`
-- [[.flagNoShow_success_taskerFlags_customerNoShow_noStrikeForCustomer()]] `INFERRED`
 - [[.cancelBooking_taskerCancel_reopensTask()]] `INFERRED`
-- [[.differentEventsExecuteIndependently()]] `INFERRED`
+- [[.buildDisputeRequest()]] `INFERRED`
+- [[.processPayout()]] `INFERRED`
+- [[.consentDecisionAndStateChangesAuditable()]] `INFERRED`
+- [[.confirmIntent_applicationSelectionByTasker_confirmsBookingAndClosesOtherApplications()]] `INFERRED`
 
 ### contains
 

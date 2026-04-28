@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **model.test.ts** (0 connections) — `apps/mobile/__tests__/features/tasks/screens/TaskLocation/model.test.ts`
+- **NetworkErrorScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/features/infra/screens/NetworkErrorScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/tasks/screens/TaskLocation/model.test.ts`
+- `apps/mobile/__tests__/features/infra/screens/NetworkErrorScreen.test.tsx`
 
 ## Audit Trail
 

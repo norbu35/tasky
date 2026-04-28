@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **apiClient.test.ts** (1 connections) — `apps/web/src/lib/apiClient.test.ts`
-- **mockOkResponse()** (1 connections) — `apps/web/src/lib/apiClient.test.ts`
+- **CustomerRebookPage.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerRebookPage.tsx`
+- **CustomerRebookPage()** (1 connections) — `apps/web/src/pages/customer/CustomerRebookPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/apiClient.test.ts`
+- `apps/web/src/pages/customer/CustomerRebookPage.tsx`
 
 ## Audit Trail
 

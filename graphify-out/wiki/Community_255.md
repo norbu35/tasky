@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **FilterBar.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/FilterBar.tsx`
-- **FilterTab()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/FilterBar.tsx`
+- **NotificationBellButton.tsx** (1 connections) — `apps/mobile/src/features/notifications/components/NotificationBellButton.tsx`
+- **NotificationBellButton()** (1 connections) — `apps/mobile/src/features/notifications/components/NotificationBellButton.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingsList/FilterBar.tsx`
+- `apps/mobile/src/features/notifications/components/NotificationBellButton.tsx`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **BackendArchitectureTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
-- **BackendArchitectureTest** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
+- **check_screen_graph.py** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
+- **main()** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
+- `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
 
 ## Audit Trail
 

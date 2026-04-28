@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **vitest.config.ts** (0 connections) — `apps/web/vitest.config.ts`
+- **tailwind.config.ts** (0 connections) — `apps/web/tailwind.config.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/vitest.config.ts`
+- `apps/web/tailwind.config.ts`
 
 ## Audit Trail
 

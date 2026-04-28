@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **userAccess.test.ts** (0 connections) — `apps/web/src/lib/userAccess.test.ts`
+- **index.ts** (0 connections) — `apps/web/src/pages/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/userAccess.test.ts`
+- `apps/web/src/pages/index.ts`
 
 ## Audit Trail
 

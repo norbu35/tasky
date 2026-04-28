@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **eslint.config.mjs** (0 connections) — `apps/mobile/eslint.config.mjs`
+- **metro.config.js** (0 connections) — `apps/mobile/metro.config.js`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/eslint.config.mjs`
+- `apps/mobile/metro.config.js`
 
 ## Audit Trail
 

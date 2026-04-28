@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TermsOfService.Content.tsx** (1 connections) — `apps/mobile/src/features/legal/screens/TermsOfService.Content.tsx`
-- **resolveState()** (1 connections) — `apps/mobile/src/features/legal/screens/TermsOfService.Content.tsx`
+- **RoleProvider.tsx** (1 connections) — `apps/mobile/src/providers/RoleProvider.tsx`
+- **RoleProvider()** (1 connections) — `apps/mobile/src/providers/RoleProvider.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/legal/screens/TermsOfService.Content.tsx`
+- `apps/mobile/src/providers/RoleProvider.tsx`
 
 ## Audit Trail
 

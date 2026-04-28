@@ -1,16 +1,17 @@
 # Community 61
 
-> 7 nodes
+> 8 nodes
 
 ## Key Concepts
 
-- **StorageProvider** (6 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **StorageProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.generateUploadUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.generateDownloadUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.deleteObject()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **TraceErrorAttributesTest** (4 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- **.getErrorAttributes()** (3 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
+- **TraceErrorAttributes** (2 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
+- **.setsTraceIdFromRequestAttribute()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- **.fallsBackToUuidWhenTraceIdAttributeIsNull()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- **TraceErrorAttributes.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
+- **TraceErrorAttributesTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
 
 ## Relationships
 
@@ -18,12 +19,13 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
+- `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 12 (75%)
+- INFERRED: 4 (25%)
 - AMBIGUOUS: 0 (0%)
 
 ---

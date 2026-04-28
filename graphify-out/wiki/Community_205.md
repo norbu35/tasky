@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **permission-camera.tsx** (1 connections) — `apps/mobile/src/app/(auth)/permission-camera.tsx`
-- **PermissionCameraRoute()** (1 connections) — `apps/mobile/src/app/(auth)/permission-camera.tsx`
+- **suspended.tsx** (1 connections) — `apps/mobile/src/app/(shared)/account/suspended.tsx`
+- **SuspendedAccountRoute()** (1 connections) — `apps/mobile/src/app/(shared)/account/suspended.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(auth)/permission-camera.tsx`
+- `apps/mobile/src/app/(shared)/account/suspended.tsx`
 
 ## Audit Trail
 

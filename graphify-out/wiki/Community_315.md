@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **SessionExpiredPage.tsx** (1 connections) — `apps/web/src/pages/shared/SessionExpiredPage.tsx`
-- **SessionExpiredPage()** (1 connections) — `apps/web/src/pages/shared/SessionExpiredPage.tsx`
+- **SuspendedPage.tsx** (1 connections) — `apps/web/src/pages/shared/SuspendedPage.tsx`
+- **SuspendedPage()** (1 connections) — `apps/web/src/pages/shared/SuspendedPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/SessionExpiredPage.tsx`
+- `apps/web/src/pages/shared/SuspendedPage.tsx`
 
 ## Audit Trail
 

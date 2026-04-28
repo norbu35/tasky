@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **instant-match.tsx** (6 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
-- **coerceState()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
-- **coerceDeclineCount()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
-- **coerceString()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
-- **onBack()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
-- **onConfirmBooking()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
-- **onViewApplicants()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **IntegrationTestBase** (6 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **.cleanTestState()** (4 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **.seedLaunchCatalogFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **.seedDistrictFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **.seedConfigFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **IntegrationTestBase.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **.registerDataSourceProperties()** (1 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
 
 ## Relationships
 
@@ -18,11 +18,11 @@
 
 ## Source Files
 
-- `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (100%)
+- EXTRACTED: 18 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

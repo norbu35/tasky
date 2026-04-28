@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **adminApiClient.test.ts** (4 connections) — `apps/web/src/lib/adminApiClient.test.ts`
-- **mockOkResponse()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
-- **mockErrorResponse()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
-- **lastFetchCall()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
-- **setupClient()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
+- **permissions.ts** (4 connections) — `apps/mobile/src/utils/permissions.ts`
+- **requestCameraPermission()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
+- **requestLocationPermission()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
+- **getCurrentLocation()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
+- **requestNotificationPermission()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/adminApiClient.test.ts`
+- `apps/mobile/src/utils/permissions.ts`
 
 ## Audit Trail
 

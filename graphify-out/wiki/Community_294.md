@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **LanguageSwitcher.tsx** (1 connections) — `apps/web/src/layout/LanguageSwitcher.tsx`
-- **LanguageSwitcher()** (1 connections) — `apps/web/src/layout/LanguageSwitcher.tsx`
+- **ResponsiveDetailShell.tsx** (1 connections) — `apps/web/src/layout/parity/ResponsiveDetailShell.tsx`
+- **backLabel()** (1 connections) — `apps/web/src/layout/parity/ResponsiveDetailShell.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/LanguageSwitcher.tsx`
+- `apps/web/src/layout/parity/ResponsiveDetailShell.tsx`
 
 ## Audit Trail
 

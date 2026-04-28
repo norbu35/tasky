@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **check-doc-governance.py** (1 connections) — `tooling/scripts/governance/check-doc-governance.py`
-- **print_remediation()** (1 connections) — `tooling/scripts/governance/check-doc-governance.py`
+- **doc-claims-validator.test.mjs** (1 connections) — `tooling/tests/doc-claims-validator.test.mjs`
+- **runPython()** (1 connections) — `tooling/tests/doc-claims-validator.test.mjs`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `tooling/scripts/governance/check-doc-governance.py`
+- `tooling/tests/doc-claims-validator.test.mjs`
 
 ## Audit Trail
 

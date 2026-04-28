@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **MapControls.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskLocation/MapControls.tsx`
+- **Header.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/Header.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskLocation/MapControls.tsx`
+- `apps/mobile/src/features/tasks/screens/CustomerTasks/Header.tsx`
 
 ## Audit Trail
 

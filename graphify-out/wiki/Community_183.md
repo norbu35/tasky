@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **AssistanceEvaluationTest** (2 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
-- **AssistanceEvaluationTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
-- **.storesExternalDistributionDecisionAndReason()** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
+- **schema-parity.test.mjs** (2 connections) — `tooling/tests/schema-parity.test.mjs`
+- **writeMigration()** (1 connections) — `tooling/tests/schema-parity.test.mjs`
+- **runPython()** (1 connections) — `tooling/tests/schema-parity.test.mjs`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
+- `tooling/tests/schema-parity.test.mjs`
 
 ## Audit Trail
 

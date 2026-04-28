@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **DisputeEvidenceResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
-- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
+- **UserProfileUpdateOutcome.java** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
+- **invalidAvatarKey()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
+- **userNotFound()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
 
 ## Audit Trail
 

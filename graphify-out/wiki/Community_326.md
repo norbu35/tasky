@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ConfirmBookingIntentRequest.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/ConfirmBookingIntentRequest.java`
-- **isLiabilityDisclaimerAccepted()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/ConfirmBookingIntentRequest.java`
+- **IdempotencyKey.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/idempotency/IdempotencyKey.java`
+- **of()** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/idempotency/IdempotencyKey.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/dto/ConfirmBookingIntentRequest.java`
+- `services/api/src/main/java/mn/tasky/kernel/idempotency/IdempotencyKey.java`
 
 ## Audit Trail
 

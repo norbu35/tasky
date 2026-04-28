@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **colors.ts** (0 connections) — `packages/design-tokens/src/compat/colors.ts`
+- **primitives.ts** (0 connections) — `packages/design-tokens/src/core/primitives.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/design-tokens/src/compat/colors.ts`
+- `packages/design-tokens/src/core/primitives.ts`
 
 ## Audit Trail
 

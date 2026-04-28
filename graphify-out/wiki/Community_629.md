@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **States.tsx** (0 connections) — `apps/mobile/src/features/help/screens/HelpCenter/States.tsx`
+- **FaqList.tsx** (0 connections) — `apps/mobile/src/features/help/screens/HelpCenter/FaqList.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/help/screens/HelpCenter/States.tsx`
+- `apps/mobile/src/features/help/screens/HelpCenter/FaqList.tsx`
 
 ## Audit Trail
 

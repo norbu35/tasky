@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **BookingIntentConfirmationOutcome.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
-- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
-- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
+- **MessagingCommandHandler** (4 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
+- **MessagingCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
+- **.MessagingCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
+- **.sendMessage()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
+- **.startConversation()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
+- `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
 
 ## Audit Trail
 

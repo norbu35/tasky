@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **FeedCard.tsx** (1 connections) — `apps/web/src/components/feature/FeedCard.tsx`
-- **FeedCard()** (1 connections) — `apps/web/src/components/feature/FeedCard.tsx`
+- **LanguageSwitcher.tsx** (1 connections) — `apps/web/src/layout/LanguageSwitcher.tsx`
+- **LanguageSwitcher()** (1 connections) — `apps/web/src/layout/LanguageSwitcher.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/feature/FeedCard.tsx`
+- `apps/web/src/layout/LanguageSwitcher.tsx`
 
 ## Audit Trail
 

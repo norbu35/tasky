@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskDetailRouteAlias.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/TaskDetailRouteAlias.test.tsx`
+- **TaskerNoShowSheet.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerNoShowSheet.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/tasker/TaskDetailRouteAlias.test.tsx`
+- `apps/mobile/__tests__/screens/tasker/jobs/TaskerNoShowSheet.test.tsx`
 
 ## Audit Trail
 

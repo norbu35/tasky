@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **AdminVerificationsPage.test.tsx** (1 connections) — `apps/web/src/pages/admin/__tests__/AdminVerificationsPage.test.tsx`
-- **makeVerification()** (1 connections) — `apps/web/src/pages/admin/__tests__/AdminVerificationsPage.test.tsx`
+- **CustomerTaskCancelDialog.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerTaskCancelDialog.tsx`
+- **CustomerTaskCancelDialog()** (1 connections) — `apps/web/src/pages/customer/CustomerTaskCancelDialog.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/admin/__tests__/AdminVerificationsPage.test.tsx`
+- `apps/web/src/pages/customer/CustomerTaskCancelDialog.tsx`
 
 ## Audit Trail
 

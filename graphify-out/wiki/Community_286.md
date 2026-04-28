@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **cn.ts** (1 connections) — `apps/mobile/src/lib/cn.ts`
-- **cn()** (1 connections) — `apps/mobile/src/lib/cn.ts`
+- **authRouting.ts** (1 connections) — `apps/mobile/src/utils/authRouting.ts`
+- **resolvePostAuthHref()** (1 connections) — `apps/mobile/src/utils/authRouting.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/cn.ts`
+- `apps/mobile/src/utils/authRouting.ts`
 
 ## Audit Trail
 

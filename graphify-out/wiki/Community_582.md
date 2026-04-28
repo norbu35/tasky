@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **EvidenceList.tsx** (0 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/EvidenceList.tsx`
+- **Screen.tsx** (0 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/Screen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/disputes/screens/DisputeStatus/EvidenceList.tsx`
+- `apps/mobile/src/features/disputes/screens/DisputeStatus/Screen.tsx`
 
 ## Audit Trail
 

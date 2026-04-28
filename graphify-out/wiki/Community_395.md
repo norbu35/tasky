@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskPostedSuccessScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/TaskPostedSuccessScreen.test.tsx`
+- **IntakeFormScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/IntakeFormScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/TaskPostedSuccessScreen.test.tsx`
+- `apps/mobile/__tests__/screens/customer/IntakeFormScreen.test.tsx`
 
 ## Audit Trail
 

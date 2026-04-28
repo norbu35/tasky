@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **ClientIpResolver** (4 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
-- **.resolve()** (2 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
-- **.fallback()** (2 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
-- **ClientIpResolver.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
-- **.ClientIpResolver()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
+- **additions.ts** (4 connections) — `packages/design-tokens/src/core/additions.ts`
+- **toRgba()** (4 connections) — `packages/design-tokens/src/core/additions.ts`
+- **primaryOpacityScale()** (2 connections) — `packages/design-tokens/src/core/additions.ts`
+- **softOpacityScale()** (2 connections) — `packages/design-tokens/src/core/additions.ts`
+- **dangerOpacityScale()** (2 connections) — `packages/design-tokens/src/core/additions.ts`
 
 ## Relationships
 
@@ -16,11 +16,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
+- `packages/design-tokens/src/core/additions.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 14 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

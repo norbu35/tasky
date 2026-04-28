@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Find all `CHECK (col IN ('A','B',...))` patterns in _text_. Returns a lis** (0 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **Return `(errors, warnings)`.** (0 connections) — `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Relationships
 

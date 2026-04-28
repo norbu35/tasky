@@ -23,19 +23,17 @@ export function ScreenHeader({
   className,
 }: ScreenHeaderProps) {
   return (
-    <Reveal
-      delay={20}
-      testID={testID}
-      className={cn('flex-row items-start justify-between', className)}
-    >
-      <View className="flex-1 gap-header-greeting">
-        {greeting && <Text className="font-screen-greeting text-primary">{greeting}</Text>}
-        <Text className="font-screen-title text-primary-deep">{title}</Text>
-        {subtitle && (
-          <Text className="text-body text-text-secondary mt-header-title">{subtitle}</Text>
-        )}
+    <Reveal delay={20} testID={testID}>
+      <View className={cn('flex-row items-start justify-between gap-md', className)}>
+        <View className="flex-1 gap-header-greeting">
+          {greeting && <Text className="font-screen-greeting text-primary">{greeting}</Text>}
+          <Text className="font-screen-title text-primary-deep">{title}</Text>
+          {subtitle && (
+            <Text className="text-body text-text-secondary mt-header-title">{subtitle}</Text>
+          )}
+        </View>
+        {rightSlot}
       </View>
-      {rightSlot}
     </Reveal>
   );
 }

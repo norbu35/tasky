@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ActionRow.tsx** (1 connections) — `apps/mobile/src/components/ui/ActionRow.tsx`
-- **ActionRow()** (1 connections) — `apps/mobile/src/components/ui/ActionRow.tsx`
+- **Touchable.tsx** (1 connections) — `apps/mobile/src/components/ui/Touchable.tsx`
+- **Touchable()** (1 connections) — `apps/mobile/src/components/ui/Touchable.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/ActionRow.tsx`
+- `apps/mobile/src/components/ui/Touchable.tsx`
 
 ## Audit Trail
 

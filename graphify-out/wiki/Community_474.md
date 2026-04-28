@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **rebook.tsx** (0 connections) — `apps/mobile/src/app/(customer)/rebook.tsx`
+- **confirmed.tsx** (0 connections) — `apps/mobile/src/app/(customer)/bookings/confirmed.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/rebook.tsx`
+- `apps/mobile/src/app/(customer)/bookings/confirmed.tsx`
 
 ## Audit Trail
 

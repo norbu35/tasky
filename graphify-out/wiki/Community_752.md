@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **additions.test.mjs** (0 connections) — `packages/design-tokens/__tests__/additions.test.mjs`
+- **index.ts** (0 connections) — `packages/sdk/src/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/design-tokens/__tests__/additions.test.mjs`
+- `packages/sdk/src/index.ts`
 
 ## Audit Trail
 

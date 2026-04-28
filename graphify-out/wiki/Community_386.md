@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **RoleSelectScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/auth/RoleSelectScreen.test.tsx`
+- **CreateTaskScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/create/CreateTaskScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/auth/RoleSelectScreen.test.tsx`
+- `apps/mobile/__tests__/screens/create/CreateTaskScreen.test.tsx`
 
 ## Audit Trail
 

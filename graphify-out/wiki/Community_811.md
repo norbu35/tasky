@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AuditEvent.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/audit/AuditEvent.java`
+- **FeatureToggle.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggle.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/audit/AuditEvent.java`
+- `services/api/src/main/java/mn/tasky/common/feature/FeatureToggle.java`
 
 ## Audit Trail
 

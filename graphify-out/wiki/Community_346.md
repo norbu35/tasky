@@ -1,11 +1,10 @@
 # Community 346
 
-> 2 nodes
+> 1 nodes
 
 ## Key Concepts
 
-- **TaskerProfilePolishPage.tsx** (1 connections) — `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
-- **TaskerProfilePolishPage()** (1 connections) — `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
+- **settings.gradle.kts** (0 connections) — `settings.gradle.kts`
 
 ## Relationships
 
@@ -13,11 +12,11 @@
 
 ## Source Files
 
-- `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
+- `settings.gradle.kts`
 
 ## Audit Trail
 
-- EXTRACTED: 2 (100%)
+- EXTRACTED: 0 (0%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

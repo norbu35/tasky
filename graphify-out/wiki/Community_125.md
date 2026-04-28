@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **EventHandler** (3 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
-- **EventHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
-- **.eventType()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
-- **.handle()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
+- **RebookResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
 
 ## Audit Trail
 

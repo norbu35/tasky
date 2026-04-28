@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TimelineStepper.tsx** (0 connections) — `apps/mobile/src/components/ui/TimelineStepper.tsx`
+- **screenLayout.ts** (0 connections) — `apps/mobile/src/design/screenLayout.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/TimelineStepper.tsx`
+- `apps/mobile/src/design/screenLayout.ts`
 
 ## Audit Trail
 

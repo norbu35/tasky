@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PrivacyPage.tsx** (0 connections) — `apps/web/src/pages/shared/PrivacyPage.tsx`
+- **TermsPage.tsx** (0 connections) — `apps/web/src/pages/shared/TermsPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/PrivacyPage.tsx`
+- `apps/web/src/pages/shared/TermsPage.tsx`
 
 ## Audit Trail
 

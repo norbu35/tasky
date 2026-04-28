@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **stryker.config.mjs** (0 connections) — `apps/web/stryker.config.mjs`
+- **playwright.config.ts** (0 connections) — `apps/web/playwright.config.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/stryker.config.mjs`
+- `apps/web/playwright.config.ts`
 
 ## Audit Trail
 

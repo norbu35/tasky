@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Return the column name from a column definition, or _None_ for standalone ta** (0 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **Walk _migrations_ in order and return the final schema state. Returns ``{ta** (0 connections) — `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Relationships
 

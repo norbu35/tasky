@@ -1,78 +1,75 @@
 # Community 6
 
-> 231 nodes
+> 199 nodes
 
 ## Key Concepts
 
-- **.insert()** (135 connections) — `services/api/src/main/java/mn/tasky/wallet/dao/PayoutRequestDao.java`
-- **.findByUserId()** (121 connections) — `services/api/src/main/java/mn/tasky/wallet/dao/LedgerEntryDao.java`
-- **.sendPush()** (43 connections) — `services/api/src/main/java/mn/tasky/notification/publicapi/NotificationCommandPort.java`
-- **.sendPushWithEventKey()** (31 connections) — `services/api/src/main/java/mn/tasky/notification/publicapi/NotificationCommandPort.java`
-- **NotificationServiceTest** (25 connections) — `services/api/src/test/java/mn/tasky/notification/application/NotificationServiceTest.java`
-- **.existsByEventKey()** (19 connections) — `services/api/src/main/java/mn/tasky/notification/dao/NotificationLogDao.java`
-- **.upsert()** (16 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ReliabilityScoreDao.java`
-- **.updateStats()** (15 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ProfileDao.java`
-- **.makeUser()** (15 connections) — `services/api/src/test/java/mn/tasky/notification/application/NotificationServiceTest.java`
-- **.recompute()** (14 connections) — `services/api/src/main/java/mn/tasky/auth/application/ReliabilityScoreService.java`
-- **.revoke()** (13 connections) — `services/api/src/main/java/mn/tasky/auth/dao/BadgeDao.java`
-- **UpdateUserStats** (13 connections) — `services/api/src/test/java/mn/tasky/auth/application/UserProfileServiceTest.java`
-- **.customerSilenceTriggersTimeoutAutoComplete()** (12 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
-- **NotificationService** (11 connections) — `services/api/src/main/java/mn/tasky/notification/application/NotificationService.java`
-- **.sendPushWithEventKey()** (11 connections) — `services/api/src/main/java/mn/tasky/notification/application/NotificationService.java`
-- **.sendPushWithSmsFallback_sendsPushAndSms()** (11 connections) — `services/api/src/test/java/mn/tasky/notification/application/NotificationServiceTest.java`
-- **RegisterDevice** (11 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/NotificationCompositionServiceTests.java`
-- **.countByTaskerAndStatusSince()** (10 connections) — `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
-- **.sendSmsFallback()** (10 connections) — `services/api/src/main/java/mn/tasky/notification/application/NotificationService.java`
-- **.setUp()** (10 connections) — `services/api/src/test/java/mn/tasky/notification/NotificationScenarioTests.java`
-- **.sendPushWithEventKey_noTokens_criticalType_triggersSmsFallback()** (10 connections) — `services/api/src/test/java/mn/tasky/notification/application/NotificationServiceTest.java`
-- **.sendPushWithEventKey_smsFallback_smsFails_logsFailedStatus()** (10 connections) — `services/api/src/test/java/mn/tasky/notification/application/NotificationServiceTest.java`
-- **.anonymize()** (9 connections) — `services/api/src/main/java/mn/tasky/auth/dao/VerificationDao.java`
-- **.sendSms()** (9 connections) — `services/api/src/main/java/mn/tasky/notification/provider/SmsNotificationProvider.java`
-- **ReliabilityScoreServiceTest** (9 connections) — `services/api/src/test/java/mn/tasky/auth/application/ReliabilityScoreServiceTest.java`
-- _... and 206 more nodes in this community_
+- **t()** (50 connections) — `apps/mobile/src/features/tasks/screens/ApplicantsSelection.ApplicantCard.tsx`
+- **intakeSchema.ts** (18 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **TaskSchedule.model.ts** (10 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **parseError()** (9 connections) — `apps/web/src/lib/errorHandling.ts`
+- **useDisputeStatusScreen()** (7 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/useDisputeStatusScreen.ts`
+- **model.ts** (7 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
+- **useBookingRescheduleScreen()** (6 connections) — `apps/mobile/src/features/bookings/screens/BookingReschedule/useBookingRescheduleScreen.ts`
+- **model.ts** (6 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/model.ts`
+- **normalizeField()** (6 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **useBookingDetail()** (5 connections) — `apps/mobile/src/features/bookings/hooks/useBookingDetail.ts`
+- **getCtaConfig()** (5 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/model.ts`
+- **useBookingDetailScreen()** (5 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/useBookingDetailScreen.ts`
+- **model.ts** (5 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
+- **useConversationRouteForBooking()** (5 connections) — `apps/mobile/src/features/chat/hooks/useConversationRouteForBooking.ts`
+- **MessagingNotificationsPage.tsx** (5 connections) — `apps/web/src/pages/MessagingNotificationsPage.tsx`
+- **handlePushToggle()** (5 connections) — `apps/web/src/pages/MessagingNotificationsPage.tsx`
+- **applyToTask()** (5 connections) — `apps/web/src/pages/TaskerFeedPage.tsx`
+- **withdrawApplication()** (5 connections) — `apps/web/src/pages/TaskerFeedPage.tsx`
+- **handleFacebookLogin()** (5 connections) — `apps/web/src/pages/AuthPage.tsx`
+- **getLocale()** (5 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **LoginForm.tsx** (4 connections) — `apps/mobile/src/features/auth/components/LoginForm.tsx`
+- **BookingCard()** (4 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/BookingCard.tsx`
+- **useCustomerTaskDetail()** (4 connections) — `apps/mobile/src/features/tasks/hooks/useCustomerTaskDetail.ts`
+- **useTaskScheduleScreen()** (4 connections) — `apps/mobile/src/features/tasks/screens/useTaskScheduleScreen.ts`
+- **model.ts** (4 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/model.ts`
+- _... and 174 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (153 shared connections)
-- [[Community 2]] (64 shared connections)
-- [[Community 3]] (42 shared connections)
-- [[Community 4]] (26 shared connections)
-- [[Community 12]] (23 shared connections)
-- [[Community 1]] (18 shared connections)
-- [[Community 10]] (13 shared connections)
-- [[Community 19]] (11 shared connections)
-- [[Community 17]] (9 shared connections)
-- [[Community 11]] (6 shared connections)
-- [[Community 23]] (5 shared connections)
-- [[Community 24]] (5 shared connections)
+- [[Community 7]] (13 shared connections)
+- [[Community 0]] (7 shared connections)
+- [[Community 2]] (3 shared connections)
+- [[Community 11]] (3 shared connections)
+- [[Community 12]] (2 shared connections)
+- [[Community 10]] (2 shared connections)
+- [[Community 26]] (1 shared connections)
+- [[Community 1]] (1 shared connections)
+- [[Community 8]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/application/command/AdminAuditCommandHandler.java`
-- `services/api/src/main/java/mn/tasky/analytics/application/AnalyticsService.java`
-- `services/api/src/main/java/mn/tasky/auth/application/AuthService.java`
-- `services/api/src/main/java/mn/tasky/auth/application/BadgeEvaluationService.java`
-- `services/api/src/main/java/mn/tasky/auth/application/DataRetentionService.java`
-- `services/api/src/main/java/mn/tasky/auth/application/ReliabilityScoreService.java`
-- `services/api/src/main/java/mn/tasky/auth/application/UserProfileService.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/BadgeDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/ProfileDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/ReliabilityScoreDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/UserDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/VerificationDao.java`
-- `services/api/src/main/java/mn/tasky/auth/scheduling/BadgeRevocationScheduler.java`
-- `services/api/src/main/java/mn/tasky/booking/application/CompletionTimeoutService.java`
-- `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
-- `services/api/src/main/java/mn/tasky/booking/scheduling/CompletionTimeoutScheduler.java`
-- `services/api/src/main/java/mn/tasky/notification/application/NotificationService.java`
-- `services/api/src/main/java/mn/tasky/notification/application/command/NotificationCommandHandler.java`
-- `services/api/src/main/java/mn/tasky/notification/dao/DistrictDao.java`
-- `services/api/src/main/java/mn/tasky/notification/dao/NotificationLogDao.java`
+- `apps/mobile/src/features/auth/components/LoginForm.tsx`
+- `apps/mobile/src/features/auth/screens/AuthHomeScreen.tsx`
+- `apps/mobile/src/features/auth/screens/RoleSelectScreen.tsx`
+- `apps/mobile/src/features/bookings/hooks/useBookingDetail.ts`
+- `apps/mobile/src/features/bookings/hooks/useBookingTimeline.ts`
+- `apps/mobile/src/features/bookings/hooks/useFlagNoShow.ts`
+- `apps/mobile/src/features/bookings/hooks/useReschedule.ts`
+- `apps/mobile/src/features/bookings/screens/BookingDetail/model.ts`
+- `apps/mobile/src/features/bookings/screens/BookingDetail/useBookingDetailScreen.ts`
+- `apps/mobile/src/features/bookings/screens/BookingReschedule/Screen.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingReschedule/SubmitAction.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingReschedule/useBookingRescheduleScreen.ts`
+- `apps/mobile/src/features/bookings/screens/BookingTimeline.model.ts`
+- `apps/mobile/src/features/bookings/screens/BookingsList/BookingCard.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
+- `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
+- `apps/mobile/src/features/bookings/screens/useBookingConfirmedScreen.ts`
+- `apps/mobile/src/features/bookings/screens/useBookingTimelineScreen.ts`
+- `apps/mobile/src/features/chat/hooks/useConversationRouteForBooking.ts`
+- `apps/mobile/src/features/disputes/hooks/useDisputeCreate.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 452 (33%)
-- INFERRED: 908 (67%)
+- EXTRACTED: 340 (64%)
+- INFERRED: 189 (36%)
 - AMBIGUOUS: 0 (0%)
 
 ---

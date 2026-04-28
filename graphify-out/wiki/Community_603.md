@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskSchedule.ScheduleForm.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.ScheduleForm.tsx`
+- **TaskerCard.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/TaskerCard.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskSchedule.ScheduleForm.tsx`
+- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/TaskerCard.tsx`
 
 ## Audit Trail
 

@@ -25,9 +25,30 @@ feature: 'messaging'
 layout:
   template: feed_list
   density: default
-  structure: 'safe_area -> sticky_header(nav_title + search_bar) -> scrollview(conversation_cards) -> tab_bar'
+  structure: 'safe_area -> sticky_header(action_buttons + nav_title + filter_chips + optional search_bar) -> scrollview(conversation_rows) -> tab_bar'
 
 components:
+  - id: COMP-ICONBUTTON
+    usage: 'Circular search action toggles the conversation search field'
+    props:
+      accessibilityLabel: 'Мессеж хайх'
+      onPress: 'toggleSearch'
+    variant: circular
+
+  - id: COMP-ICONBUTTON
+    usage: 'Circular settings action opens profile settings'
+    props:
+      accessibilityLabel: 'Тохиргоо нээх'
+      onPress: 'openSettings'
+    variant: circular
+
+  - id: COMP-FILTERCHIP
+    usage: 'Conversation scope filters for all, unread, and booking-linked conversations'
+    props:
+      options: ['Бүгд', 'Шинэ', 'Захиалга']
+      selected: 'Бүгд'
+    variant: segmented_pills
+
   - id: COMP-SEARCHBAR
     usage: 'Search conversations by counterparty name or message content'
     props:
@@ -66,39 +87,41 @@ components:
 states:
   - id: loading_initial
     description: 'Conversation list is loading for the first time'
-    components_visible: [nav_title, loading_skeleton]
+    components_visible: [action_buttons, nav_title, filter_chips, loading_skeleton]
     components_hidden: [search_bar, conversation_list, empty_state, error_message, offline_banner]
 
   - id: empty
     description: 'User has no conversations; activation empty state shown'
-    components_visible: [nav_title, search_bar, empty_state]
+    components_visible: [action_buttons, nav_title, filter_chips, empty_state]
     components_hidden: [conversation_list, loading_skeleton, error_message, offline_banner]
 
   - id: populated
     description: 'Conversations loaded and displayed in chronological order'
-    components_visible: [nav_title, search_bar, conversation_list]
+    components_visible: [action_buttons, nav_title, filter_chips, conversation_list]
     components_hidden: [empty_state, loading_skeleton, error_message, offline_banner]
 
   - id: loading_refresh
     description: 'Pull-to-refresh in progress; existing content remains visible'
-    components_visible: [nav_title, search_bar, conversation_list, pull_to_refresh_indicator]
+    components_visible:
+      [action_buttons, nav_title, filter_chips, conversation_list, pull_to_refresh_indicator]
     components_hidden: [empty_state, loading_skeleton, error_message, offline_banner]
 
   - id: error_network
     description: 'Network error loading conversations; retry available'
-    components_visible: [nav_title, error_message, retry_button]
+    components_visible: [action_buttons, nav_title, filter_chips, error_message, retry_button]
     components_hidden:
       [search_bar, conversation_list, empty_state, loading_skeleton, offline_banner]
 
   - id: offline
     description: 'Device is offline; cached conversations shown if available, offline banner at top'
-    components_visible: [nav_title, offline_banner, conversation_list_cached]
+    components_visible:
+      [action_buttons, nav_title, filter_chips, offline_banner, conversation_list_cached]
     components_hidden: [search_bar, empty_state, loading_skeleton, error_message]
 
 copy:
   - key: nav_title
-    mn: 'Чат'
-    en: 'Inbox'
+    mn: 'Мессеж'
+    en: 'Messages'
     max_chars: 10
 
   - key: search_placeholder
@@ -136,6 +159,31 @@ copy:
     en: 'new'
     max_chars: 5
 
+  - key: search_action
+    mn: 'Мессеж хайх'
+    en: 'Search messages'
+    max_chars: 20
+
+  - key: settings_action
+    mn: 'Тохиргоо нээх'
+    en: 'Open settings'
+    max_chars: 20
+
+  - key: filter_all
+    mn: 'Бүгд'
+    en: 'All'
+    max_chars: 10
+
+  - key: filter_unread
+    mn: 'Шинэ'
+    en: 'Unread'
+    max_chars: 10
+
+  - key: filter_bookings
+    mn: 'Захиалга'
+    en: 'Bookings'
+    max_chars: 12
+
   - key: last_message_you_prefix
     mn: 'Та: '
     en: 'You: '
@@ -163,7 +211,8 @@ acceptance_criteria:
   - 'Each row shows counterparty avatar, name, last message preview (50 chars max), and timestamp'
   - 'Unread conversations show an unread indicator badge'
   - 'Last message preview truncates at 1 line with ellipsis'
-  - 'Search bar filters conversations by counterparty name'
+  - 'Search action reveals the search bar; search filters conversations by counterparty name, message content, or task title'
+  - 'Filter chips switch between all, unread, and booking-linked conversations'
   - 'Pull-to-refresh reloads the conversation list'
   - 'Tapping a conversation row pushes to Chat Detail (SCR-SHARED-011)'
   - 'Empty state displays when no confirmed and price-locked booking conversations exist'

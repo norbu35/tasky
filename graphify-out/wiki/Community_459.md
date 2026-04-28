@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AppUpdateScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/features/infra/screens/AppUpdateScreen.test.tsx`
+- **TaskDetail.Summary.test.tsx** (0 connections) — `apps/mobile/__tests__/features/tasks/screens/TaskDetail.Summary.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/infra/screens/AppUpdateScreen.test.tsx`
+- `apps/mobile/__tests__/features/tasks/screens/TaskDetail.Summary.test.tsx`
 
 ## Audit Trail
 

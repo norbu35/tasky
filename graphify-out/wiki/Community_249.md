@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useConfirmBookingIntent.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useConfirmBookingIntent.ts`
-- **useConfirmBookingIntent()** (1 connections) — `apps/mobile/src/features/bookings/hooks/useConfirmBookingIntent.ts`
+- **RebookScreen.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/RebookScreen.tsx`
+- **formatDateTime()** (1 connections) — `apps/mobile/src/features/bookings/screens/RebookScreen.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/hooks/useConfirmBookingIntent.ts`
+- `apps/mobile/src/features/bookings/screens/RebookScreen.tsx`
 
 ## Audit Trail
 

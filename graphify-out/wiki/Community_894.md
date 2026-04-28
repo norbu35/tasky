@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **lead-unlock.tsx** (0 connections) — `archive/mobile-future/tasker/jobs/[bookingId]/lead-unlock.tsx`
+- **payout.tsx** (0 connections) — `archive/mobile-future/tasker/wallet/payout.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `archive/mobile-future/tasker/jobs/[bookingId]/lead-unlock.tsx`
+- `archive/mobile-future/tasker/wallet/payout.tsx`
 
 ## Audit Trail
 

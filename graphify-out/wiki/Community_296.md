@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **AdminLayout.test.tsx** (1 connections) — `apps/web/src/layout/__tests__/AdminLayout.test.tsx`
-- **mockContext()** (1 connections) — `apps/web/src/layout/__tests__/AdminLayout.test.tsx`
+- **TimelineList.tsx** (1 connections) — `apps/web/src/layout/parity/TimelineList.tsx`
+- **TimelineList()** (1 connections) — `apps/web/src/layout/parity/TimelineList.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/__tests__/AdminLayout.test.tsx`
+- `apps/web/src/layout/parity/TimelineList.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **FilterBar.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/FilterBar.test.tsx`
+- **FAB.worklet.test.ts** (0 connections) — `apps/mobile/__tests__/components/ui/FAB.worklet.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/FilterBar.test.tsx`
+- `apps/mobile/__tests__/components/ui/FAB.worklet.test.ts`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **base.d.ts** (0 connections) — `tooling/config/eslint/base.d.ts`
+- **index.mjs** (0 connections) — `tooling/config/prettier/index.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/config/eslint/base.d.ts`
+- `tooling/config/prettier/index.mjs`
 
 ## Audit Trail
 

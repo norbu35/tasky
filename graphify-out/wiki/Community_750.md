@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **semantic.ts** (0 connections) — `packages/design-tokens/src/core/semantic.ts`
+- **additions.test.mjs** (0 connections) — `packages/design-tokens/__tests__/additions.test.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/design-tokens/src/core/semantic.ts`
+- `packages/design-tokens/__tests__/additions.test.mjs`
 
 ## Audit Trail
 

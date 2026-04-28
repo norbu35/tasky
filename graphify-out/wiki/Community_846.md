@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AdminDisputePage.java** (0 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputePage.java`
+- **AdminVerificationPage.java** (0 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationPage.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputePage.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationPage.java`
 
 ## Audit Trail
 

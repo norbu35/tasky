@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ModalSheet.tsx** (0 connections) — `apps/mobile/src/components/ui/ModalSheet.tsx`
+- **ProfileAvatar.tsx** (0 connections) — `apps/mobile/src/components/ui/ProfileAvatar.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/ModalSheet.tsx`
+- `apps/mobile/src/components/ui/ProfileAvatar.tsx`
 
 ## Audit Trail
 

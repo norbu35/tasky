@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **tailwind.config.ts** (0 connections) — `apps/web/tailwind.config.ts`
+- **customer-happy-path.spec.ts** (0 connections) — `apps/web/e2e/customer-happy-path.spec.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/tailwind.config.ts`
+- `apps/web/e2e/customer-happy-path.spec.ts`
 
 ## Audit Trail
 

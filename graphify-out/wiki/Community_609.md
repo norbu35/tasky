@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/index.ts`
+- **LocationCard.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskLocation/LocationCard.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/index.ts`
+- `apps/mobile/src/features/tasks/screens/TaskLocation/LocationCard.tsx`
 
 ## Audit Trail
 

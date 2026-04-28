@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useTasks.ts** (1 connections) — `packages/core/src/tasks/useTasks.ts`
-- **useTasksQuery()** (1 connections) — `packages/core/src/tasks/useTasks.ts`
+- **build.gradle.kts** (1 connections) — `services/api/build.gradle.kts`
+- **normalizeCoveragePackage()** (1 connections) — `services/api/build.gradle.kts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `packages/core/src/tasks/useTasks.ts`
+- `services/api/build.gradle.kts`
 
 ## Audit Trail
 

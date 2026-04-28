@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **[id].tsx** (1 connections) — `apps/mobile/src/app/profile/[id].tsx`
-- **TaskerProfileRoute()** (1 connections) — `apps/mobile/src/app/profile/[id].tsx`
+- **SettingsTemplate.tsx** (1 connections) — `apps/mobile/src/components/templates/SettingsTemplate.tsx`
+- **SettingsTemplate()** (1 connections) — `apps/mobile/src/components/templates/SettingsTemplate.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/profile/[id].tsx`
+- `apps/mobile/src/components/templates/SettingsTemplate.tsx`
 
 ## Audit Trail
 

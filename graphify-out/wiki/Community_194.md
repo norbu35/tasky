@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **role-based-ui.test.tsx** (1 connections) — `apps/mobile/__tests__/integration/role-based-ui.test.tsx`
-- **render()** (1 connections) — `apps/mobile/__tests__/integration/role-based-ui.test.tsx`
+- **BookingDetailTasker.test.tsx** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/BookingDetailTasker.test.tsx`
+- **hasAncestorTestID()** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/BookingDetailTasker.test.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/integration/role-based-ui.test.tsx`
+- `apps/mobile/__tests__/screens/tasker/jobs/BookingDetailTasker.test.tsx`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **permission-location.tsx** (1 connections) — `apps/mobile/src/app/(auth)/permission-location.tsx`
-- **PermissionLocationRoute()** (1 connections) — `apps/mobile/src/app/(auth)/permission-location.tsx`
+- **hard-lock.tsx** (1 connections) — `apps/mobile/src/app/(shared)/review/hard-lock.tsx`
+- **ReviewHardLockScreen()** (1 connections) — `apps/mobile/src/app/(shared)/review/hard-lock.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(auth)/permission-location.tsx`
+- `apps/mobile/src/app/(shared)/review/hard-lock.tsx`
 
 ## Audit Trail
 

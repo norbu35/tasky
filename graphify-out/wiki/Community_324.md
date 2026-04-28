@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **build.gradle.kts** (1 connections) — `services/api/build.gradle.kts`
-- **normalizeCoveragePackage()** (1 connections) — `services/api/build.gradle.kts`
+- **CursorPagination.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/api/CursorPagination.java`
+- **from()** (1 connections) — `services/api/src/main/java/mn/tasky/common/api/CursorPagination.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/build.gradle.kts`
+- `services/api/src/main/java/mn/tasky/common/api/CursorPagination.java`
 
 ## Audit Trail
 

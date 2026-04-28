@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **LocationService** (5 connections) — `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
-- **LocationService.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
-- **.LocationService()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
-- **.reverseGeocode()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
-- **.isWithinServiceArea()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
-- **.search()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
+- **MainActivity** (5 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **MainActivity.kt** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **.onCreate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **.getMainComponentName()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **.createReactActivityDelegate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **.invokeDefaultOnBackPressed()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
+- `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
 
 ## Audit Trail
 

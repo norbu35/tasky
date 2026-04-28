@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useCompleteBooking.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useCompleteBooking.ts`
-- **useCompleteBooking()** (1 connections) — `apps/mobile/src/features/bookings/hooks/useCompleteBooking.ts`
+- **TaskerJobDetail.Actions.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Actions.tsx`
+- **TaskerJobDetailActions()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Actions.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/hooks/useCompleteBooking.ts`
+- `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Actions.tsx`
 
 ## Audit Trail
 

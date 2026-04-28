@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **onboarding.tsx** (0 connections) — `apps/mobile/src/app/onboarding.tsx`
+- **role-select.tsx** (0 connections) — `apps/mobile/src/app/(auth)/role-select.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/onboarding.tsx`
+- `apps/mobile/src/app/(auth)/role-select.tsx`
 
 ## Audit Trail
 

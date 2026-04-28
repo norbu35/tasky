@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **RatingStars.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/RatingStars.test.tsx`
+- **Touchable.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/Touchable.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/RatingStars.test.tsx`
+- `apps/mobile/__tests__/components/ui/Touchable.test.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **build.gradle.kts** (0 connections) — `build.gradle.kts`
+- **babel.config.js** (0 connections) — `apps/mobile/babel.config.js`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `build.gradle.kts`
+- `apps/mobile/babel.config.js`
 
 ## Audit Trail
 

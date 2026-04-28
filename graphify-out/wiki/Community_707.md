@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CustomerReschedulePage.tsx** (0 connections) — `apps/web/src/pages/customer/CustomerReschedulePage.tsx`
+- **CustomerNoShowReminderDialog.tsx** (0 connections) — `apps/web/src/pages/customer/CustomerNoShowReminderDialog.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/customer/CustomerReschedulePage.tsx`
+- `apps/web/src/pages/customer/CustomerNoShowReminderDialog.tsx`
 
 ## Audit Trail
 

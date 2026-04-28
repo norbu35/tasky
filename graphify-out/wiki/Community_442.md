@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **permissions.test.ts** (0 connections) — `apps/mobile/__tests__/utils/permissions.test.ts`
+- **BookingSupportSheet.test.tsx** (0 connections) — `apps/mobile/__tests__/features/bookings/components/BookingSupportSheet.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/utils/permissions.test.ts`
+- `apps/mobile/__tests__/features/bookings/components/BookingSupportSheet.test.tsx`
 
 ## Audit Trail
 

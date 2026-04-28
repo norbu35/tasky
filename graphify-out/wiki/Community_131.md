@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **LocaleConfig** (3 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
-- **LocaleConfig.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
-- **.localeResolver()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
-- **.messageSource()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
+- **DisputeRaiseResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeRaiseResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeRaiseResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeRaiseResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeRaiseResult.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
+- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeRaiseResult.java`
 
 ## Audit Trail
 

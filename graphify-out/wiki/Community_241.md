@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **theme.ts** (1 connections) — `apps/mobile/src/design/theme.ts`
-- **withAlpha()** (1 connections) — `apps/mobile/src/design/theme.ts`
+- **CustomerCancelSheet.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/CustomerCancelSheet.tsx`
+- **ReasonRow()** (1 connections) — `apps/mobile/src/features/bookings/components/CustomerCancelSheet.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/design/theme.ts`
+- `apps/mobile/src/features/bookings/components/CustomerCancelSheet.tsx`
 
 ## Audit Trail
 

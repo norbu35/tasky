@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskerCancelSheet.test.tsx** (2 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
-- **t()** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
-- **isPending()** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
+- **Reveal.tsx** (2 connections) — `apps/mobile/src/components/ui/Reveal.tsx`
+- **createRevealAnimation()** (2 connections) — `apps/mobile/src/components/ui/Reveal.tsx`
+- **Reveal()** (2 connections) — `apps/mobile/src/components/ui/Reveal.tsx`
 
 ## Relationships
 
@@ -14,11 +14,11 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
+- `apps/mobile/src/components/ui/Reveal.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

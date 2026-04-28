@@ -1791,7 +1791,7 @@
   },
   "shared": {
     "inbox": {
-      "title": "Inbox",
+      "title": "Messages",
       "emptyTitle": "No conversations",
       "emptyDescription": "Messages from bookings will appear here",
       "phoneWarning": "Sharing phone numbers outside the app is not recommended",
@@ -1805,6 +1805,14 @@
       "detailsAction": "Details",
       "attachImageAction": "Attach picture",
       "todayLabel": "Today",
+      "searchAction": "Search messages",
+      "settingsAction": "Open settings",
+      "unreadLabel": "New",
+      "filters": {
+        "all": "All",
+        "unread": "Unread",
+        "bookings": "Bookings"
+      },
       "errorMessage": "Failed to load messages",
       "online": "Online",
       "retry": "Try again",

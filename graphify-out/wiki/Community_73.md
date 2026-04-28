@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **OnboardingScreen.tsx** (5 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
-- **handleFinish()** (3 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
-- **handleNext()** (2 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
-- **handleSkip()** (2 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
-- **onScroll()** (1 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
-- **handleBack()** (1 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- **App.test.tsx** (5 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **render()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **RedirectMock()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **TabsMock()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **resetStores()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **installDefaultHookMocks()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
 
 ## Relationships
 
@@ -17,11 +17,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- `apps/mobile/__tests__/App.test.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

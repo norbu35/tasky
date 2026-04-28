@@ -1,40 +1,36 @@
 # Community 37
 
-> 15 nodes
+> 14 nodes
 
 ## Key Concepts
 
-- **TaskSchedule.model.ts** (10 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
-- **useTaskScheduleScreen()** (4 connections) — `apps/mobile/src/features/tasks/screens/useTaskScheduleScreen.ts`
-- **createScheduleDateOptions()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
-- **parseDateParam()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
-- **TaskScheduleScreen()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskScheduleScreen.tsx`
-- **createDefaultScheduleDate()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
-- **createScheduleTimeOptions()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
-- **formatDateValue()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
-- **formatTimeValue()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
-- **isSameScheduleDate()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
-- **isSameScheduleTime()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
-- **combineDateAndTime()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
-- **toValidDate()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
-- **TaskScheduleScreen.tsx** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskScheduleScreen.tsx`
-- **useTaskScheduleScreen.ts** (1 connections) — `apps/mobile/src/features/tasks/screens/useTaskScheduleScreen.ts`
+- **BookingCommandHandler** (13 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
+- **BookingCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
+- **.BookingCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
+- **.createBooking()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
+- **.recordDisclaimerAcceptance()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
+- **.cancelBooking()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
+- **.completeBooking()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
+- **.markBookingDone()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
+- **.requestReschedule()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
+- **.respondToReschedule()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
+- **.flagNoShow()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
+- **.rebook()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
+- **.forceTransition()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
+- **.transitionToDisputed()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
 
 ## Relationships
 
-- [[Community 5]] (1 shared connections)
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
-- `apps/mobile/src/features/tasks/screens/TaskScheduleScreen.tsx`
-- `apps/mobile/src/features/tasks/screens/useTaskScheduleScreen.ts`
+- `services/api/src/main/java/mn/tasky/booking/application/command/BookingCommandHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 24 (80%)
-- INFERRED: 6 (20%)
+- EXTRACTED: 26 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

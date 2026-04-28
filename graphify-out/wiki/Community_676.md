@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **card.tsx** (0 connections) — `apps/web/src/components/ui/card.tsx`
+- **textarea.tsx** (0 connections) — `apps/web/src/components/ui/textarea.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/card.tsx`
+- `apps/web/src/components/ui/textarea.tsx`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ResponsiveDetailShell.tsx** (1 connections) — `apps/web/src/layout/parity/ResponsiveDetailShell.tsx`
-- **backLabel()** (1 connections) — `apps/web/src/layout/parity/ResponsiveDetailShell.tsx`
+- **idempotency.ts** (1 connections) — `apps/web/src/lib/idempotency.ts`
+- **createIdempotencyKey()** (1 connections) — `apps/web/src/lib/idempotency.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/parity/ResponsiveDetailShell.tsx`
+- `apps/web/src/lib/idempotency.ts`
 
 ## Audit Trail
 

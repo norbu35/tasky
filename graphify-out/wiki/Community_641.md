@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **cn.test.ts** (0 connections) — `apps/mobile/src/lib/__tests__/cn.test.ts`
+- **appStore.ts** (0 connections) — `apps/mobile/src/store/appStore.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/__tests__/cn.test.ts`
+- `apps/mobile/src/store/appStore.ts`
 
 ## Audit Trail
 

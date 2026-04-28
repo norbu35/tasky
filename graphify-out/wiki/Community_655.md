@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **customer-happy-path.spec.ts** (0 connections) — `apps/web/e2e/customer-happy-path.spec.ts`
+- **main.tsx** (0 connections) — `apps/web/src/main.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/e2e/customer-happy-path.spec.ts`
+- `apps/web/src/main.tsx`
 
 ## Audit Trail
 

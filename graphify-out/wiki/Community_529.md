@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ScreenHeader.tsx** (0 connections) — `apps/mobile/src/components/ui/ScreenHeader.tsx`
+- **ConfirmSheet.tsx** (0 connections) — `apps/mobile/src/components/ui/ConfirmSheet.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/ScreenHeader.tsx`
+- `apps/mobile/src/components/ui/ConfirmSheet.tsx`
 
 ## Audit Trail
 

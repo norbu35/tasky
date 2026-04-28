@@ -4,24 +4,24 @@
 
 ## Key Concepts
 
-- **ScopeSummaryGenerator** (5 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
-- **.generate()** (3 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
-- **.formatValue()** (2 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
-- **.fallback()** (2 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
-- **ScopeSummaryGenerator.java** (1 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
-- **.ScopeSummaryGenerator()** (1 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
+- **BookingOperationOutcome.java** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
+- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
+- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
+- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
+- **internalError()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 2]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (100%)
+- EXTRACTED: 11 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

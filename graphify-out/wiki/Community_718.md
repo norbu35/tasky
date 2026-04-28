@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerStatsPage.tsx** (0 connections) — `apps/web/src/pages/tasker/TaskerStatsPage.tsx`
+- **TaskerNoShowDialog.tsx** (0 connections) — `apps/web/src/pages/tasker/TaskerNoShowDialog.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/tasker/TaskerStatsPage.tsx`
+- `apps/web/src/pages/tasker/TaskerNoShowDialog.tsx`
 
 ## Audit Trail
 

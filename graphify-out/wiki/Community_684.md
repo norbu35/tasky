@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **BottomNavBar.test.tsx** (0 connections) — `apps/web/src/layout/__tests__/BottomNavBar.test.tsx`
+- **index.ts** (0 connections) — `apps/web/src/layout/parity/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/__tests__/BottomNavBar.test.tsx`
+- `apps/web/src/layout/parity/index.ts`
 
 ## Audit Trail
 

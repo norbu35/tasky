@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerCancelSheet.tsx** (0 connections) — `apps/mobile/src/features/bookings/components/TaskerCancelSheet.tsx`
+- **BookingConfirmedScreen.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingConfirmedScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/components/TaskerCancelSheet.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingConfirmedScreen.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **react-native.d.ts** (0 connections) — `tooling/config/eslint/react-native.d.ts`
+- **index.d.ts** (0 connections) — `tooling/config/prettier/index.d.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/config/eslint/react-native.d.ts`
+- `tooling/config/prettier/index.d.ts`
 
 ## Audit Trail
 

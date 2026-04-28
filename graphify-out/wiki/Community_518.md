@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/jobs/[bookingId]/index.tsx`
+- **pending.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/verification/pending.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tasker)/jobs/[bookingId]/index.tsx`
+- `apps/mobile/src/app/(tasker)/verification/pending.tsx`
 
 ## Audit Trail
 

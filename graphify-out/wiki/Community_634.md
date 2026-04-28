@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PrivacyPolicyScreen.tsx** (0 connections) — `apps/mobile/src/features/legal/screens/PrivacyPolicyScreen.tsx`
+- **TermsOfService.ErrorVisual.tsx** (0 connections) — `apps/mobile/src/features/legal/screens/TermsOfService.ErrorVisual.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/legal/screens/PrivacyPolicyScreen.tsx`
+- `apps/mobile/src/features/legal/screens/TermsOfService.ErrorVisual.tsx`
 
 ## Audit Trail
 

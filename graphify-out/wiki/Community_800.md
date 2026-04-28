@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CategorySchemaVersion.java** (0 connections) — `services/api/src/main/java/mn/tasky/category/dto/CategorySchemaVersion.java`
+- **ActivateSchemaVersionRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/category/dto/ActivateSchemaVersionRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/category/dto/CategorySchemaVersion.java`
+- `services/api/src/main/java/mn/tasky/category/dto/ActivateSchemaVersionRequest.java`
 
 ## Audit Trail
 

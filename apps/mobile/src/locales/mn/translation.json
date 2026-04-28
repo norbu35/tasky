@@ -1805,10 +1805,18 @@
       "detailsAction": "Дэлгэрэнгүй",
       "attachImageAction": "Зураг хавсаргах",
       "todayLabel": "Өнөөдөр",
+      "searchAction": "Мессеж хайх",
+      "settingsAction": "Тохиргоо нээх",
+      "unreadLabel": "Шинэ",
+      "filters": {
+        "all": "Бүгд",
+        "unread": "Шинэ",
+        "bookings": "Захиалга"
+      },
       "errorMessage": "Мессежүүдийг ачаалж чадсангүй",
       "online": "Онлайн",
       "retry": "Дахин оролдох",
-      "searchPlaceholder": "Асуулт хайх..."
+      "searchPlaceholder": "Хайх..."
     },
     "notifications": {
       "title": "Мэдэгдлүүд",

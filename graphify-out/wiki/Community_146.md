@@ -1,13 +1,12 @@
 # Community 146
 
-> 4 nodes
+> 3 nodes
 
 ## Key Concepts
 
-- **otp-migration.tsx** (3 connections) — `archive/mobile-future/auth/otp-migration.tsx`
-- **resolveState()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
-- **handleSubmit()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
-- **handleSkip()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **BookingDetailScreen.test.tsx** (2 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
+- **hasAncestorTestID()** (1 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
+- **makeBooking()** (1 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
 
 ## Relationships
 
@@ -15,11 +14,11 @@
 
 ## Source Files
 
-- `archive/mobile-future/auth/otp-migration.tsx`
+- `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **UpdateDraftRequest.java** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/UpdateDraftRequest.java`
-- **isLocationPairValid()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/UpdateDraftRequest.java`
+- **check-doc-governance.py** (1 connections) — `tooling/scripts/governance/check-doc-governance.py`
+- **print_remediation()** (1 connections) — `tooling/scripts/governance/check-doc-governance.py`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/dto/UpdateDraftRequest.java`
+- `tooling/scripts/governance/check-doc-governance.py`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ReviewEnforcementCase.java** (0 connections) — `services/api/src/main/java/mn/tasky/review/dto/ReviewEnforcementCase.java`
+- **ReviewRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/review/dto/ReviewRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/review/dto/ReviewEnforcementCase.java`
+- `services/api/src/main/java/mn/tasky/review/dto/ReviewRequest.java`
 
 ## Audit Trail
 

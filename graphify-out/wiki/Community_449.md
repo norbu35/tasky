@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PostingGuidance.test.tsx** (0 connections) — `apps/mobile/__tests__/features/tasks/components/PostingGuidance.test.tsx`
+- **model.test.ts** (0 connections) — `apps/mobile/__tests__/features/profile/model.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/tasks/components/PostingGuidance.test.tsx`
+- `apps/mobile/__tests__/features/profile/model.test.ts`
 
 ## Audit Trail
 

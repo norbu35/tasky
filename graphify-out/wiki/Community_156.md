@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **profileRouteParams.ts** (2 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
-- **buildTaskerProfileRoute()** (1 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
-- **numberFromRouteParam()** (1 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
+- **TaskDetail.Summary.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
+- **getPublicCustomer()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
+- **getLocationText()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/profileRouteParams.ts`
+- `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
 
 ## Audit Trail
 

@@ -12,22 +12,22 @@
 - [[.createTask()]] `INFERRED`
 - [[.flagNoShow()]] `INFERRED`
 - [[.acceptApplication()]] `INFERRED`
+- [[.resolveDispute()]] `INFERRED`
 - [[runSync()]] `INFERRED`
-- [[.resolveDispute()]] `INFERRED`
-- [[.raiseDispute()]] `INFERRED`
-- [[.resolveDispute()]] `INFERRED`
 - [[.addEvidence()]] `INFERRED`
 - [[.raiseDispute_successAssigned_withoutEvidence()]] `INFERRED`
 - [[.submitReview_successCustomerReviewingTasker()]] `INFERRED`
 - [[.submitReview_successTaskerReviewingCustomer()]] `INFERRED`
-- [[.onMessage()]] `INFERRED`
-- [[.processRescue()]] `INFERRED`
+- [[.raiseDispute()]] `INFERRED`
+- [[.resolveDispute()]] `INFERRED`
 - [[.resolveDispute_resolveTasker()]] `INFERRED`
+- [[.onMessage()]] `INFERRED`
+- [[.submitReview()]] `INFERRED`
+- [[.processRescue()]] `INFERRED`
+- [[.phase1ResolutionAllowsOnlyEvidenceOutcomes()]] `INFERRED`
+- [[.raiseDispute_success_withEvidence()]] `INFERRED`
 - [[.publish()]] `INFERRED`
 - [[.addEvidence()]] `INFERRED`
-- [[.submitReview()]] `INFERRED`
-- [[.expireStaleSelections()]] `INFERRED`
-- [[.phase1ResolutionAllowsOnlyEvidenceOutcomes()]] `INFERRED`
 
 ### contains
 

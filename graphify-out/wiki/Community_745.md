@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `packages/core/src/http/index.ts`
+- **index.ts** (0 connections) — `packages/design-tokens/src/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/core/src/http/index.ts`
+- `packages/design-tokens/src/index.ts`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TaskerApplicationSentPage.tsx** (1 connections) — `apps/web/src/pages/tasker/TaskerApplicationSentPage.tsx`
-- **TaskerApplicationSentPage()** (1 connections) — `apps/web/src/pages/tasker/TaskerApplicationSentPage.tsx`
+- **layout.ts** (1 connections) — `packages/design-tokens/src/compat/layout.ts`
+- **px()** (1 connections) — `packages/design-tokens/src/compat/layout.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/tasker/TaskerApplicationSentPage.tsx`
+- `packages/design-tokens/src/compat/layout.ts`
 
 ## Audit Trail
 

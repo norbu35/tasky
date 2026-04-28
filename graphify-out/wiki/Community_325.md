@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **BookingMarkDoneResult.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingMarkDoneResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingMarkDoneResult.java`
+- **Dispute.java** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/Dispute.java`
+- **Dispute()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/Dispute.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/dto/BookingMarkDoneResult.java`
+- `services/api/src/main/java/mn/tasky/dispute/dto/Dispute.java`
 
 ## Audit Trail
 

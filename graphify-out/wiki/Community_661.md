@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **LocationPicker.tsx** (0 connections) — `apps/web/src/components/feature/task-creation/LocationPicker.tsx`
+- **avatar.tsx** (0 connections) — `apps/web/src/components/ui/avatar.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/feature/task-creation/LocationPicker.tsx`
+- `apps/web/src/components/ui/avatar.tsx`
 
 ## Audit Trail
 

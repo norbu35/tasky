@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useMyStats.ts** (1 connections) — `apps/mobile/src/features/profile/hooks/useMyStats.ts`
-- **useMyStats()** (1 connections) — `apps/mobile/src/features/profile/hooks/useMyStats.ts`
+- **TaskerProfile.ReviewsSection.tsx** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
+- **cn()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/hooks/useMyStats.ts`
+- `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
 
 ## Audit Trail
 

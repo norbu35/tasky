@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PayoutRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/wallet/dto/PayoutRequest.java`
+- **react.d.ts** (0 connections) — `tooling/config/eslint/react.d.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/wallet/dto/PayoutRequest.java`
+- `tooling/config/eslint/react.d.ts`
 
 ## Audit Trail
 

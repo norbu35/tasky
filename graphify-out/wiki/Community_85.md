@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **PackageMarkerTest** (5 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
-- **PackageMarkerTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/scheduler/PackageMarkerTest.java`
-- **.packageMarkerMethodCanBeInvokedWithoutError()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
-- **.constructorIsPrivate()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
-- **PackageMarkerTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/worker/PackageMarkerTest.java`
-- **PackageMarkerTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
+- **WalletCommandHandler** (5 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
+- **WalletCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
+- **.WalletCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
+- **.requestPayout()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
+- **.processPayout()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
+- **.creditTaskCompletion()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
 
 ## Relationships
 
@@ -17,9 +17,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/scheduler/PackageMarkerTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/worker/PackageMarkerTest.java`
+- `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
 
 ## Audit Trail
 

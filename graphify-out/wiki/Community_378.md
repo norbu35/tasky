@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **SchedulePickerSheet.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/SchedulePickerSheet.test.tsx`
+- **route-guard-integration.test.tsx** (0 connections) — `apps/mobile/__tests__/integration/route-guard-integration.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/SchedulePickerSheet.test.tsx`
+- `apps/mobile/__tests__/integration/route-guard-integration.test.tsx`
 
 ## Audit Trail
 

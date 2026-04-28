@@ -4,26 +4,25 @@
 
 ## Key Concepts
 
-- **DisputePublicCompositionService** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **.disputeSummary()** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **.disputeSummaryWithEvidence()** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **DisputePublicCompositionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **.DisputePublicCompositionService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **.evidenceResponse()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- **AdminBookingOverrideOutcome.java** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
+- **invalidTransition()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
+- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
+- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
+- **notFound()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
 
 ## Relationships
 
-- [[Community 0]] (2 shared connections)
-- [[Community 1]] (1 shared connections)
+- [[Community 2]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (93%)
-- INFERRED: 1 (7%)
+- EXTRACTED: 10 (91%)
+- INFERRED: 1 (9%)
 - AMBIGUOUS: 0 (0%)
 
 ---

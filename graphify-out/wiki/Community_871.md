@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AvatarUploadUrlRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/user/dto/AvatarUploadUrlRequest.java`
+- **UserStatsResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/user/dto/UserStatsResponse.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/user/dto/AvatarUploadUrlRequest.java`
+- `services/api/src/main/java/mn/tasky/user/dto/UserStatsResponse.java`
 
 ## Audit Trail
 

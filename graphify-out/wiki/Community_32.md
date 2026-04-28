@@ -1,47 +1,47 @@
 # Community 32
 
-> 21 nodes
+> 18 nodes
 
 ## Key Concepts
 
-- **isDraftComplete()** (7 connections) — `apps/mobile/src/features/tasks/draft/taskDraft.validation.ts`
-- **TaskReviewSubmit.model.ts** (6 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.model.ts`
-- **taskDraft.validation.ts** (6 connections) — `apps/mobile/src/features/tasks/draft/taskDraft.validation.ts`
-- **useTaskReviewSubmitScreen()** (4 connections) — `apps/mobile/src/features/tasks/screens/useTaskReviewSubmitScreen.ts`
-- **useCreateTask()** (3 connections) — `apps/mobile/src/features/tasks/hooks/useCreateTask.ts`
-- **useCreateTask.test.tsx** (2 connections) — `apps/mobile/__tests__/hooks/useCreateTask.test.tsx`
-- **CreateTaskHarness()** (2 connections) — `apps/mobile/__tests__/hooks/useCreateTask.test.tsx`
-- **truncateDescription()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.model.ts`
-- **buildFallbackAnswerSummary()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.model.ts`
-- **isStep0Valid()** (2 connections) — `apps/mobile/src/features/tasks/draft/taskDraft.validation.ts`
-- **isStep1Valid()** (2 connections) — `apps/mobile/src/features/tasks/draft/taskDraft.validation.ts`
-- **isStep2Valid()** (2 connections) — `apps/mobile/src/features/tasks/draft/taskDraft.validation.ts`
-- **isStep3Valid()** (2 connections) — `apps/mobile/src/features/tasks/draft/taskDraft.validation.ts`
-- **isStep4Valid()** (2 connections) — `apps/mobile/src/features/tasks/draft/taskDraft.validation.ts`
-- **createWrapper()** (1 connections) — `apps/mobile/__tests__/hooks/useCreateTask.test.tsx`
-- **useCreateTask.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useCreateTask.ts`
-- **formatBudget()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.model.ts`
-- **formatSchedule()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.model.ts`
-- **extractTaskId()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.model.ts`
-- **isImageUri()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.model.ts`
-- **useTaskReviewSubmitScreen.ts** (1 connections) — `apps/mobile/src/features/tasks/screens/useTaskReviewSubmitScreen.ts`
+- **.findByName()** (6 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleDao.java`
+- **FeatureToggleService** (6 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
+- **.update()** (5 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
+- **FeatureToggleServiceTest** (5 connections) — `services/api/src/test/java/mn/tasky/common/feature/FeatureToggleServiceTest.java`
+- **.persistedRowsOverrideDefaults()** (5 connections) — `services/api/src/test/java/mn/tasky/common/feature/FeatureToggleServiceTest.java`
+- **FeatureToggleDao** (4 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleDao.java`
+- **.dataRetentionDryRunDefaultsEnabledWhenMissing()** (4 connections) — `services/api/src/test/java/mn/tasky/common/feature/FeatureToggleServiceTest.java`
+- **.escrowDefaultsDisabledWhenMissing()** (4 connections) — `services/api/src/test/java/mn/tasky/common/feature/FeatureToggleServiceTest.java`
+- **.update()** (2 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleDao.java`
+- **.listAll()** (2 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
+- **.isEnabled()** (2 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
+- **.safeJson()** (2 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
+- **FeatureToggleDao.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleDao.java`
+- **.findAll()** (1 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleDao.java`
+- **FeatureToggleService.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
+- **.FeatureToggleService()** (1 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
+- **FeatureToggleServiceTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/feature/FeatureToggleServiceTest.java`
+- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/common/feature/FeatureToggleServiceTest.java`
 
 ## Relationships
 
-- [[Community 7]] (1 shared connections)
+- [[Community 1]] (3 shared connections)
+- [[Community 2]] (3 shared connections)
+- [[Community 0]] (2 shared connections)
+- [[Community 3]] (1 shared connections)
+- [[Community 9]] (1 shared connections)
+- [[Community 8]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/__tests__/hooks/useCreateTask.test.tsx`
-- `apps/mobile/src/features/tasks/draft/taskDraft.validation.ts`
-- `apps/mobile/src/features/tasks/hooks/useCreateTask.ts`
-- `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.model.ts`
-- `apps/mobile/src/features/tasks/screens/useTaskReviewSubmitScreen.ts`
+- `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleDao.java`
+- `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
+- `services/api/src/test/java/mn/tasky/common/feature/FeatureToggleServiceTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 42 (82%)
-- INFERRED: 9 (18%)
+- EXTRACTED: 32 (60%)
+- INFERRED: 21 (40%)
 - AMBIGUOUS: 0 (0%)
 
 ---

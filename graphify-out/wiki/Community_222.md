@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **FormWizardTemplate.tsx** (1 connections) — `apps/mobile/src/components/templates/FormWizardTemplate.tsx`
-- **handleActionBarLayout()** (1 connections) — `apps/mobile/src/components/templates/FormWizardTemplate.tsx`
+- **TabBarButton.tsx** (1 connections) — `apps/mobile/src/components/ui/TabBarButton.tsx`
+- **TabBarButton()** (1 connections) — `apps/mobile/src/components/ui/TabBarButton.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/templates/FormWizardTemplate.tsx`
+- `apps/mobile/src/components/ui/TabBarButton.tsx`
 
 ## Audit Trail
 

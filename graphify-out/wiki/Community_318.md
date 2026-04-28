@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **InboxPage.tsx** (1 connections) — `apps/web/src/pages/shared/InboxPage.tsx`
-- **InboxPage()** (1 connections) — `apps/web/src/pages/shared/InboxPage.tsx`
+- **useTasks.ts** (1 connections) — `packages/core/src/tasks/useTasks.ts`
+- **useTasksQuery()** (1 connections) — `packages/core/src/tasks/useTasks.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/InboxPage.tsx`
+- `packages/core/src/tasks/useTasks.ts`
 
 ## Audit Trail
 

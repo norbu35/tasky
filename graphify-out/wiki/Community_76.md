@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **MainActivity** (5 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **MainActivity.kt** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **.onCreate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **.getMainComponentName()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **.createReactActivityDelegate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **.invokeDefaultOnBackPressed()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **model.ts** (3 connections) — `apps/mobile/src/features/profile/model.ts`
+- **getReviewThresholdRemaining()** (2 connections) — `apps/mobile/src/features/profile/model.ts`
+- **ReviewThresholdSummary()** (2 connections) — `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
+- **canShowPublicRating()** (1 connections) — `apps/mobile/src/features/profile/model.ts`
+- **formatPublicRating()** (1 connections) — `apps/mobile/src/features/profile/model.ts`
+- **ReviewThresholdSummary.tsx** (1 connections) — `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
 
 ## Relationships
 
@@ -17,12 +17,13 @@
 
 ## Source Files
 
-- `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
+- `apps/mobile/src/features/profile/model.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 8 (80%)
+- INFERRED: 2 (20%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -1,48 +1,60 @@
 # Community 26
 
-> 52 nodes
+> 34 nodes
 
 ## Key Concepts
 
-- **JdbiConfig** (51 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **JdbiConfig.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.jdbi()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.userDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.profileDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.otpChallengeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.refreshSessionDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.rateLimitCounterDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.verificationDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.auditEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.strikeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.moderationPolicyDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.suspensionEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.reliabilityScoreDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.badgeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.categoryDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.categorySchemaVersionDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.taskDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.taskDraftDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.taskPhotoDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.taskApplicationDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.taskRescueEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.bookingDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.bookingIntentDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.bookingCompletionSignalDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- _... and 27 more nodes in this community_
+- **useMyProfile()** (6 connections) — `apps/mobile/src/features/profile/hooks/useProfile.ts`
+- **useConversations()** (5 connections) — `apps/mobile/src/features/chat/hooks/useConversations.ts`
+- **useChatConversationScreen()** (5 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/useChatConversationScreen.ts`
+- **useProfile.ts** (5 connections) — `apps/mobile/src/features/profile/hooks/useProfile.ts`
+- **useTasks.test.tsx** (4 connections) — `apps/mobile/__tests__/hooks/useTasks.test.tsx`
+- **useRouteGuard()** (4 connections) — `apps/mobile/src/hooks/useRouteGuard.ts`
+- **useMyUserId()** (3 connections) — `apps/mobile/src/features/profile/hooks/useProfile.ts`
+- **ProfileEditScreen()** (3 connections) — `apps/mobile/src/features/profile/screens/ProfileEditScreen.tsx`
+- **useTaskDetail()** (3 connections) — `apps/mobile/src/features/tasks/hooks/useTasks.ts`
+- **GuardConsumer()** (2 connections) — `apps/mobile/__tests__/hooks/useRouteGuard.test.tsx`
+- **UseTasksHarness()** (2 connections) — `apps/mobile/__tests__/hooks/useTasks.test.tsx`
+- **UseTaskDetailHarness()** (2 connections) — `apps/mobile/__tests__/hooks/useTasks.test.tsx`
+- **useUnreadCount()** (2 connections) — `apps/mobile/src/features/chat/hooks/useUnreadCount.ts`
+- **useMessages()** (2 connections) — `apps/mobile/src/features/chat/hooks/useMessages.ts`
+- **useSendMessage()** (2 connections) — `apps/mobile/src/features/chat/hooks/useSendMessage.ts`
+- **InboxScreen()** (2 connections) — `apps/mobile/src/features/chat/screens/InboxScreen.tsx`
+- **useUpdateProfile()** (2 connections) — `apps/mobile/src/features/profile/hooks/useProfile.ts`
+- **useCurrentUserStatus()** (2 connections) — `apps/mobile/src/features/profile/hooks/useProfile.ts`
+- **useTasks.ts** (2 connections) — `apps/mobile/src/features/tasks/hooks/useTasks.ts`
+- **useTasks()** (2 connections) — `apps/mobile/src/features/tasks/hooks/useTasks.ts`
+- **isRestricted()** (2 connections) — `apps/mobile/src/utils/routeGuard.ts`
+- **useRouteGuard.test.tsx** (1 connections) — `apps/mobile/__tests__/hooks/useRouteGuard.test.tsx`
+- **page()** (1 connections) — `apps/mobile/__tests__/hooks/useTasks.test.tsx`
+- **createWrapper()** (1 connections) — `apps/mobile/__tests__/hooks/useTasks.test.tsx`
+- **useUnreadCount.ts** (1 connections) — `apps/mobile/src/features/chat/hooks/useUnreadCount.ts`
+- _... and 9 more nodes in this community_
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 6]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- `apps/mobile/__tests__/hooks/useRouteGuard.test.tsx`
+- `apps/mobile/__tests__/hooks/useTasks.test.tsx`
+- `apps/mobile/src/features/chat/hooks/useConversations.ts`
+- `apps/mobile/src/features/chat/hooks/useMessages.ts`
+- `apps/mobile/src/features/chat/hooks/useSendMessage.ts`
+- `apps/mobile/src/features/chat/hooks/useUnreadCount.ts`
+- `apps/mobile/src/features/chat/screens/ChatConversation/useChatConversationScreen.ts`
+- `apps/mobile/src/features/chat/screens/InboxScreen.tsx`
+- `apps/mobile/src/features/profile/hooks/useProfile.ts`
+- `apps/mobile/src/features/profile/screens/ProfileEditScreen.tsx`
+- `apps/mobile/src/features/tasks/hooks/useTasks.ts`
+- `apps/mobile/src/hooks/useRouteGuard.ts`
+- `apps/mobile/src/utils/routeGuard.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 102 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 46 (61%)
+- INFERRED: 29 (39%)
 - AMBIGUOUS: 0 (0%)
 
 ---

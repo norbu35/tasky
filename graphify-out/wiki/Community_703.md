@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AdminConciergePage.test.tsx** (0 connections) — `apps/web/src/pages/admin/__tests__/AdminConciergePage.test.tsx`
+- **CustomerBookingConfirmedPage.tsx** (0 connections) — `apps/web/src/pages/customer/CustomerBookingConfirmedPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/admin/__tests__/AdminConciergePage.test.tsx`
+- `apps/web/src/pages/customer/CustomerBookingConfirmedPage.tsx`
 
 ## Audit Trail
 

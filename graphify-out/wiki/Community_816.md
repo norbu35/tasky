@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **OutboxEvent.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEvent.java`
+- **DisputeEvidence.java** (0 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidence.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/outbox/OutboxEvent.java`
+- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidence.java`
 
 ## Audit Trail
 

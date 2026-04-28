@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **SummarySections.tsx** (4 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
-- **StatusBadge()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
-- **DisputeSummary()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
-- **ResolutionSection()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
-- **PhaseNote()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
+- **model.ts** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
+- **formatMessageTimestamp()** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
+- **MessageBubble()** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/MessageBubble.tsx`
+- **orderMessagesChronologically()** (1 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
+- **MessageBubble.tsx** (1 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/MessageBubble.tsx`
 
 ## Relationships
 
@@ -16,12 +16,13 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
+- `apps/mobile/src/features/chat/screens/ChatConversation/MessageBubble.tsx`
+- `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 6 (75%)
+- INFERRED: 2 (25%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ActionRail.tsx** (0 connections) — `apps/web/src/layout/parity/ActionRail.tsx`
+- **ResponsiveWizardShell.tsx** (0 connections) — `apps/web/src/layout/parity/ResponsiveWizardShell.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/parity/ActionRail.tsx`
+- `apps/web/src/layout/parity/ResponsiveWizardShell.tsx`
 
 ## Audit Trail
 

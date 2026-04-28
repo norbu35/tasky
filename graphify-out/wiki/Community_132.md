@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **JsonSecurityResponseWriter** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
-- **JsonSecurityResponseWriter.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
-- **.JsonSecurityResponseWriter()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
-- **.write()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- **DisputeResolutionResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
 
 ## Audit Trail
 

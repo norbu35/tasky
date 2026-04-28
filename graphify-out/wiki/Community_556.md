@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CustomerNoShowSheet.tsx** (0 connections) — `apps/mobile/src/features/bookings/components/CustomerNoShowSheet.tsx`
+- **BookingConfirmScreen.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingConfirmScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/components/CustomerNoShowSheet.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingConfirmScreen.tsx`
 
 ## Audit Trail
 

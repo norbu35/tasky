@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **idempotency.ts** (1 connections) — `apps/web/src/lib/idempotency.ts`
-- **createIdempotencyKey()** (1 connections) — `apps/web/src/lib/idempotency.ts`
+- **AdminVerificationsPage.test.tsx** (1 connections) — `apps/web/src/pages/admin/__tests__/AdminVerificationsPage.test.tsx`
+- **makeVerification()** (1 connections) — `apps/web/src/pages/admin/__tests__/AdminVerificationsPage.test.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/idempotency.ts`
+- `apps/web/src/pages/admin/__tests__/AdminVerificationsPage.test.tsx`
 
 ## Audit Trail
 

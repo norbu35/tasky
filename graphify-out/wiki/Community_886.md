@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.d.ts** (0 connections) — `tooling/config/prettier/index.d.ts`
+- **base.d.ts** (0 connections) — `tooling/config/vitest/base.d.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/config/prettier/index.d.ts`
+- `tooling/config/vitest/base.d.ts`
 
 ## Audit Trail
 

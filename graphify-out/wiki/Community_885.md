@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.mjs** (0 connections) — `tooling/config/prettier/index.mjs`
+- **base.mjs** (0 connections) — `tooling/config/vitest/base.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/config/prettier/index.mjs`
+- `tooling/config/vitest/base.mjs`
 
 ## Audit Trail
 

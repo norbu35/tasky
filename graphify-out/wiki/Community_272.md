@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **NoApplicantRescue.tsx** (1 connections) — `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
-- **RescueButton()** (1 connections) — `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
+- **useCategories.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useCategories.ts`
+- **useCategories()** (1 connections) — `apps/mobile/src/features/tasks/hooks/useCategories.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
+- `apps/mobile/src/features/tasks/hooks/useCategories.ts`
 
 ## Audit Trail
 

@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **Reveal.tsx** (2 connections) — `apps/mobile/src/components/ui/Reveal.tsx`
-- **createRevealAnimation()** (2 connections) — `apps/mobile/src/components/ui/Reveal.tsx`
-- **Reveal()** (2 connections) — `apps/mobile/src/components/ui/Reveal.tsx`
+- **TaskerJobDetail.Sections.tsx** (2 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
+- **DetailSection()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
+- **DetailRow()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
 
 ## Relationships
 
@@ -14,11 +14,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/Reveal.tsx`
+- `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PermissionScreen.tsx** (0 connections) — `apps/mobile/src/features/auth/screens/PermissionScreen.tsx`
+- **ConfirmCompletionSheet.tsx** (0 connections) — `apps/mobile/src/features/bookings/components/ConfirmCompletionSheet.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/auth/screens/PermissionScreen.tsx`
+- `apps/mobile/src/features/bookings/components/ConfirmCompletionSheet.tsx`
 
 ## Audit Trail
 
