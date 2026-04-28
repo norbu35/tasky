@@ -91,7 +91,7 @@ analytics_events:
     trigger: 'User dismisses sheet or taps Go Back'
 
 acceptance_criteria:
-  - 'Bottom sheet uses ModalSheet with handle bar for drag-to-dismiss'
+  - 'Bottom sheet uses COMP-MODALSHEET / ModalSheetTemplate with handle bar for drag-to-dismiss'
   - 'OPEN task cancellation shows no-penalty confirmation'
   - 'Assigned booking cancellation is handled by SCR-CUST-022, not this open-task sheet'
   - 'Cancel button uses danger variant per composition rules'

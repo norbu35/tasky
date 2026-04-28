@@ -101,7 +101,7 @@ analytics_events:
     trigger: 'User taps Select Next to return to applicant list'
 
 acceptance_criteria:
-  - 'Bottom sheet uses ModalSheet with handle bar for drag-to-dismiss'
+  - 'Bottom sheet uses COMP-MODALSHEET / ModalSheetTemplate with handle bar for drag-to-dismiss'
   - 'Timeout state makes clear that the default four-hour response window expired'
   - 'Decline state makes clear that the selected Tasker actively declined the booking request'
   - 'Select Next CTA dismisses sheet, returns to Applicants List SCR-CUST-011, and the task is selectable from remaining applicants'

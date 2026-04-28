@@ -22,6 +22,8 @@ but they are not versioned migration seed data.
 Runtime-safe defaults when rows are absent:
 
 - `data_retention_dry_run` behaves as enabled
+- planned or implemented deferred commerce toggles such as `platform_fee_enabled` and `recurring_cleaning_enabled` behave
+  as disabled
 - `escrow_enabled` behaves as disabled
 - moderation policy reads use the built-in default policy, and policy updates create the singleton row if needed
 

@@ -2,7 +2,11 @@
 
 ## 1. Purpose
 
-Tasky uses Prometheus, Grafana, and Alertmanager for operational telemetry, plus backend-exported business metrics for launch KPIs. KPI dashboards are part of the launch requirement, not a later convenience. `docs/METRICS.md` owns KPI formulas, thresholds, denominator rules, data-quality policy, and dashboard/alert semantics.
+Tasky uses Prometheus, Grafana, and Alertmanager for operational telemetry, plus backend-exported business metrics for
+launch KPIs and post-launch commerce-pilot learning. KPI dashboards are part of the launch requirement, not a later
+convenience. Commerce-pilot dashboards are required before fee or recurring-cleaning activation, not before Phase 1
+launch. `docs/METRICS.md` owns KPI formulas, thresholds, denominator rules, data-quality policy, and dashboard/alert
+semantics.
 
 ## 2. Stack
 
@@ -46,6 +50,14 @@ Required conceptual exports align with `docs/METRICS.md`:
 - `completed_booking`
 - `intervention`
 
+Commerce-pilot exports are required before activating platform-fee or recurring-cleaning experiments:
+
+- `platform_fee_charged`
+- `platform_fee_collected`
+- `rebook_requested`
+- `recurring_request_created`
+- `manual_b2b_account_job_completed`
+
 ## 5. Dashboard requirements
 
 Grafana must include:
@@ -80,6 +92,20 @@ Required supporting views:
 - booking failure reasons
 - intervention type and stage breakdowns
 - denominator status for each metric and category slice
+
+### 5.3 Commerce-pilot dashboard
+
+Before any platform-fee or recurring-cleaning pilot is activated, Grafana or the approved business-metrics dashboard
+must show:
+
+- booked GMV and completed GMV as separate series
+- platform fee revenue, fee rate, and waived-fee count
+- payment penetration for eligible pilot bookings
+- rebook rate and repeat customer rate, with cleaning as the primary category read
+- leakage indicator trend
+- manual B2B account GMV and jobs per account when manual B2B accounts are active
+
+These views support rollout learning. They do not change the Phase 1 launch go / no-go dashboard requirement.
 
 ## 6. Alert policy
 
@@ -118,5 +144,6 @@ tooling/observability/
 ## 8. Policy notes
 
 - KPI dashboards must exist before launch.
+- Commerce-pilot dashboards must exist before activating platform fees, recurring cleaning, or manual B2B reporting.
 - Hard-gate alerts are mandatory; monitored metrics do not require paging alerts.
 - The dashboard, alert rules, metric vocabulary, denominator thresholds, and data-quality handling must remain aligned with `docs/METRICS.md`.

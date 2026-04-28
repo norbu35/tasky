@@ -2,7 +2,8 @@
 
 ## 1. Scope
 
-This document defines the go / no-go rules for the Phase 1 launch baseline.
+This document defines the go / no-go rules for the Phase 1 launch baseline. Later commerce pilots have their own
+activation evidence and must not be treated as launch readiness requirements.
 
 ## 2. Decision states
 
@@ -111,3 +112,16 @@ The recommendation may move to `ready for production` only when:
 3. Launch KPI dashboards and alert routing are live.
 4. Backup, restore, and rollback have been rehearsed.
 5. The Phase 1 baseline remains intact: citywide Ulaanbaatar launch, no payment-protection promise, and later-phase toggles still off.
+
+## 11. Commerce-pilot readiness
+
+Platform fees, recurring cleaning, manual B2B account reporting, paid memberships, escrow, wallet, and payout surfaces
+are outside the Phase 1 production-readiness gate. Before any post-launch commerce pilot is activated, the activation
+evidence in `docs/maintenance/FEATURE_ACTIVATION_POLICY.md` must exist, including:
+
+- updated governing docs and launch-facing copy
+- clear legal role for the money flow
+- dashboard coverage for the economic learning metrics in `docs/METRICS.md`
+- rollback criteria and staging rehearsal evidence
+- explicit confirmation that platform-fee collection does not imply payment protection, escrow, wallet balances, or
+  tasker payout operations

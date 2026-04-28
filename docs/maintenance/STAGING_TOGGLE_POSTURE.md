@@ -41,7 +41,7 @@ Current rule:
 - toggle presence must not be used as evidence that the feature is ready
 - fresh databases may have no feature-toggle rows until operator setup creates them
 - when rows are absent, runtime defaults keep `data_retention_dry_run=true` and deferred feature toggles such as
-  `escrow_enabled=false`
+  `platform_fee_enabled=false`, `recurring_cleaning_enabled=false`, and `escrow_enabled=false`
 
 ## Future release-grade staging
 

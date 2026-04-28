@@ -14,8 +14,10 @@ When active documents conflict:
 
 1. this PRD wins on intended product behavior
 2. `docs/STRATEGY.md` constrains market and launch posture
-3. maintenance policies constrain activation, readiness, and operating discipline
-4. architecture, OpenAPI, design, tests, and implementation are derived from this PRD
+3. `docs/METRICS.md` owns KPI formulas, commerce-pilot learning metrics, thresholds, denominator policy, and dashboard semantics delegated by this PRD
+4. `docs/ROLLOUT_PHASES.md` owns future-phase sequencing without overriding the Phase 1 launch baseline
+5. maintenance policies constrain activation, readiness, and operating discipline
+6. architecture, OpenAPI, design, tests, and implementation are derived from this PRD
 
 ### 1.1 Product intent and implementation
 
@@ -56,6 +58,13 @@ Tasky is a trust-first, liquidity-first domestic services marketplace for Ulaanb
 The Phase 1 product question is:
 
 **Can a customer in Ulaanbaatar post a structured task, receive applications from ID-verified taskers quickly, confirm a booking, and get the job completed without rescue?**
+
+Tasky is not intended to remain free forever. The post-launch direction is to keep Phase 1 free of payment dependencies,
+then introduce narrow, evidence-gated commerce pilots only after one or more launch categories prove reliable liquidity
+and repeat demand. The first commerce pilot should collect a small, transparent platform or booking fee in standardized
+categories while preserving direct settlement for the underlying job amount. Escrow, wallet balances, tasker payouts,
+lead credits, promoted listings, broad subscriptions, and self-serve B2B remain deferred until their rollout phase has
+updated product, legal, operational, contract, UX, monitoring, and rollback coverage.
 
 ## 3. Problem statement and value proposition
 
@@ -190,10 +199,12 @@ The following remain out of scope for Phase 1 launch and must not be treated as 
 - OTP-first auth
 - DAN verification integration
 - lead fees, credits, and paid lead-unlock flows
+- customer booking fees or platform-fee collection
 - escrow, wallet, and payout flows
 - subscriptions
 - referrals
-- B2B flows
+- recurring scheduling and paid household memberships
+- self-serve B2B flows
 - instant match
 - runtime LLM-led posting path
 - payment protection or hold claims
@@ -206,6 +217,8 @@ The following remain out of scope for Phase 1 launch and must not be treated as 
 4. **Category-first learning.** Category is the primary decision slice for launch KPIs; district is diagnostic.
 5. **No false availability.** The product must not imply that unsupported areas or deferred capabilities are already live.
 6. **Assistance must stay measurable.** System-assisted and manual-assisted outcomes must not be counted as self-serve.
+7. **Commerce follows proven liquidity.** Fees, payments, memberships, and B2B product scope must follow verified category
+   liquidity and repeat behavior; they must not become substitutes for solving matching, completion, and trust first.
 
 ## 8. Canonical domain concepts
 
@@ -643,10 +656,12 @@ For any non-trivial product work, the minimum reading order is:
 
 1. this PRD
 2. `docs/STRATEGY.md`
-3. relevant maintenance policies
-4. smallest relevant architecture doc
-5. contract docs if contract work is involved
-6. design docs only as derived UX detail
+3. `docs/METRICS.md` when metrics, dashboards, alerts, or commerce-pilot learning are implicated
+4. `docs/ROLLOUT_PHASES.md` when phase-gated or deferred capabilities are implicated
+5. relevant maintenance policies
+6. smallest relevant architecture doc
+7. contract docs if contract work is involved
+8. design docs only as derived UX detail
 
 ## 18. Deferred capabilities and phased rollout appendix (non-normative)
 
@@ -657,10 +672,12 @@ The following surfaces may remain documented elsewhere as future or deferred des
 - OTP migration
 - DAN verification
 - lead credits and paid lead unlock
+- customer booking fees / platform-fee collection
 - promoted listings
 - subscriptions
 - escrow and payout operations
 - referrals
+- recurring cleaning schedules and paid household memberships
 - B2B Lite / managed flows
 - instant match
 - runtime AI posting rewrite
@@ -671,16 +688,20 @@ They must not enter the launch baseline without an explicit PRD change.
 
 The current rollout shape is:
 
-| Phase       | Purpose                                      | Capabilities intended for that phase                                                                                                                                                                             | Still out of scope in that phase                                                                                                               |
-| ----------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Phase 1** | Launch baseline                              | Citywide Ulaanbaatar posting, initial launch category catalog, structured intake, budget-or-quote pricing, open application, direct settlement, verification, reviews, disputes, moderation, measured assistance | OTP-primary auth, DAN, lead fees, promoted listings, subscriptions, escrow, wallet, payouts, referrals, B2B, instant match, runtime AI posting |
-| **Phase 2** | Liquidity systems and soft monetization      | Algorithm-assisted application, OTP migration, DAN fast-path, lead credits if justified, promoted listings if justified, direct settlement still standard                                                        | Escrow, wallet, payouts, subscriptions, instant match by default, geographic expansion                                                         |
-| **Phase 3** | Stronger trust rails and supply monetization | Tasker subscription, opt-in escrow, wallet and payout operations, tighter anti-leakage enforcement, instant match only after liquidity proof                                                                     | Geographic expansion, managed B2B, broad revenue diversification                                                                               |
-| **Phase 4** | Expansion and broader revenue mix            | Additional payment rails, customer subscription products, geographic expansion, managed B2B only if earlier validation exists                                                                                    | None by default; every addition still requires explicit scope approval                                                                         |
+| Phase       | Purpose                                              | Capabilities intended for that phase                                                                                                                                                                                                                                                                                                                                                                    | Still out of scope in that phase                                                                                                                                 |
+| ----------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1** | Launch baseline                                      | Citywide Ulaanbaatar posting, initial launch category catalog, structured intake, budget-or-quote pricing, open application, direct settlement, verification, reviews, disputes, moderation, measured assistance                                                                                                                                                                                        | OTP-primary auth, DAN, lead fees, platform fees, promoted listings, subscriptions, escrow, wallet, payouts, referrals, B2B, instant match, runtime AI posting    |
+| **Phase 2** | Repeat liquidity and commerce pilots                 | Better ranking and application assistance, OTP migration, DAN fast-path, rebook/saved-preference improvements, recurring cleaning V1, manual B2B account support, transparent platform-fee pilot in proven standardized categories, direct settlement for job amount still standard                                                                                                                     | Escrow, wallet, payouts, full-job payment collection, paid household membership by default, tasker subscriptions, instant match by default, geographic expansion |
+| **Phase 3** | Payment-adjacent trust rails and supply monetization | Tasker subscription if supply value is proven, optional lead credits only in quote-heavy categories with strong lead quality, optional promoted listings in dense markets, opt-in escrow only after operations and legal posture are ready, wallet and payout operations if escrow is activated, tighter anti-leakage enforcement tied to real platform value, instant match only after liquidity proof | Geographic expansion, broad consumer subscription expansion, managed B2B as a default product line                                                               |
+| **Phase 4** | Expansion and broader revenue mix                    | Broader payment rails, paid household memberships after recurring behavior is proven, geographic expansion, partner/API or managed B2B only if earlier validation exists                                                                                                                                                                                                                                | None by default; every addition still needs explicit scope approval                                                                                              |
 
 ### 18.3 Rollout rules
 
 - A feature toggle does not advance the product to the next phase.
 - A future-phase endpoint or schema may exist in code, but it is not part of product scope until the PRD, strategy, maintenance policies, and launch-facing copy all say so.
 - Phase advancement is evidence-driven. The KPI model in `docs/METRICS.md` remains the launch decision frame until a later-phase change is explicitly approved.
-- Referrals and B2B are conditional tracks, not required ingredients of the core Phase 2 path.
+- Referrals are conditional and should follow working liquidity.
+- Founder-led B2B discovery may begin before self-serve B2B product scope. Committed B2B product surfaces require
+  evidence that repeat accounts strengthen the consumer marketplace rather than distracting from it.
+- A platform-fee pilot is separate from escrow, wallet, and payout activation. Enabling fee collection must not imply
+  payment protection, payment hold, full job payment processing, or tasker payout operations.

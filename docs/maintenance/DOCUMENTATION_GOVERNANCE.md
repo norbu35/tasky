@@ -4,14 +4,16 @@ This document defines the live documentation structure for the repository. It is
 
 ## Document classes
 
-| Class      | Purpose                                                           | Typical surfaces                                                                                                              |
-| ---------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| Governing  | Product, strategy, rollout, KPI, and operating policy             | `AGENTS.md`, `docs/PRD.md`, `docs/STRATEGY.md`, `docs/METRICS.md`, `docs/ROLLOUT_PHASES.md`, selected `docs/maintenance/*.md` |
-| Derived    | Active implementation design and UX detail for the current phase  | `docs/architecture/*.md`, `docs/BRAND.md`, active `docs/design/**`, active `docs/openapi/**`                                  |
-| Generated  | Bundled or machine-produced output from another maintained source | `docs/API.yaml`, `docs/maintenance/generated/OPS_INVENTORY.md`                                                                |
-| Router     | Entry points that send readers to the smallest relevant document  | `apps/*/AGENTS.md`, `services/api/AGENTS.md`, `docs/openapi/AGENTS.md`                                                        |
-| Ephemeral  | Human sketches that may aid discussion but do not define gates    | `docs/ops/diagrams/**`                                                                                                        |
-| Historical | Archived material kept for reference only                         | `archive/**`, `docs/audits/**`                                                                                                |
+| Class          | Purpose                                                                                            | Typical surfaces                                                                                                              |
+| -------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Governing      | Product, strategy, rollout, KPI, commerce-metric, and operating policy                             | `AGENTS.md`, `docs/PRD.md`, `docs/STRATEGY.md`, `docs/METRICS.md`, `docs/ROLLOUT_PHASES.md`, selected `docs/maintenance/*.md` |
+| Derived        | Active implementation design and UX detail for the current phase                                   | `docs/architecture/*.md`, `docs/BRAND.md`, active `docs/design/**`, active `docs/openapi/**`                                  |
+| Research       | Market, product, or technical inputs that may inform governing docs but do not override them       | `docs/research/**`                                                                                                            |
+| Decision Draft | ADR-style records kept for future process adoption or historical context, not active authority yet | `docs/adr/**`                                                                                                                 |
+| Generated      | Bundled or machine-produced output from another maintained source                                  | `docs/API.yaml`, `docs/maintenance/generated/OPS_INVENTORY.md`                                                                |
+| Router         | Entry points that send readers to the smallest relevant document                                   | `apps/*/AGENTS.md`, `services/api/AGENTS.md`, `docs/openapi/AGENTS.md`                                                        |
+| Ephemeral      | Human sketches that may aid discussion but do not define gates                                     | `docs/ops/diagrams/**`                                                                                                        |
+| Historical     | Archived material kept for reference only                                                          | `archive/**`, `docs/audits/**`                                                                                                |
 
 ## Precedence
 
@@ -19,7 +21,7 @@ When active documents conflict, read them in this order:
 
 1. `docs/PRD.md`
 2. `docs/STRATEGY.md`
-3. `docs/METRICS.md` for KPI formulas, thresholds, denominator policy, and dashboard/alert semantics delegated by the PRD
+3. `docs/METRICS.md` for KPI formulas, commerce-pilot learning metrics, thresholds, denominator policy, and dashboard/alert semantics delegated by the PRD
 4. `docs/ROLLOUT_PHASES.md`
 5. relevant `docs/maintenance/*.md`
 6. `docs/architecture/*.md`
@@ -33,16 +35,19 @@ Lower-order documents must be corrected when they drift.
 1. `AGENTS.md` is the repo-level entry point for working instructions.
 2. Product behavior belongs in `docs/PRD.md`.
 3. Market posture belongs in `docs/STRATEGY.md`.
-4. KPI formulas, thresholds, denominator policy, and dashboard/alert semantics belong in `docs/METRICS.md` under the PRD's delegation.
+4. KPI formulas, commerce-pilot learning metrics, thresholds, denominator policy, and dashboard/alert semantics belong in `docs/METRICS.md` under the PRD's delegation.
 5. Future rollout intent belongs in `docs/ROLLOUT_PHASES.md`.
-6. Active architecture, design, and API docs must describe the current phase only.
-7. Future technical detail must not stay in the active derivative path once that phase is deferred again.
-8. If future material is worth keeping, move it to `archive/**` instead of leaving it mixed into active docs.
-9. Active documents must not rely on `archive/**` for authority.
-10. `docs/openapi/**` is the maintained active API contract source; `docs/API.yaml` is the bundled output and must be refreshed in the same change.
-11. Do not use an ADR system in the live docs path until the team deliberately adopts one.
-12. `docs/ops/diagrams/**` are ephemeral sketches. Do not use them as validation inputs or source-of-truth surfaces.
-13. `docs/maintenance/generated/OPS_INVENTORY.md` is generated from `tooling/config/ops-registry.yaml`; refresh it with `pnpm repo:ops:sync --fix`.
+6. Active architecture and design docs must describe the current phase only.
+7. `docs/openapi/**` may contain live Phase 1 contract surfaces plus deliberately deferred path/schema surfaces only when
+   those surfaces carry the required `x-tasky-status` and phase metadata and remain absent from launch UX.
+8. Future technical detail must not stay in the active derivative path once that phase is deferred again unless it is an
+   explicitly metadata-marked OpenAPI deferred surface.
+9. If future material is worth keeping outside the OpenAPI exception, move it to `archive/**` instead of leaving it mixed into active docs.
+10. Active documents must not rely on `archive/**`, `docs/research/**`, or `docs/adr/**` for authority.
+11. `docs/openapi/**` is the maintained API contract source; `docs/API.yaml` is the bundled output and must be refreshed in the same change.
+12. ADRs in `docs/adr/**` are non-governing decision drafts/history until the team deliberately adopts an ADR process in this governance document.
+13. `docs/ops/diagrams/**` are ephemeral sketches. Do not use them as validation inputs or source-of-truth surfaces.
+14. `docs/maintenance/generated/OPS_INVENTORY.md` is generated from `tooling/config/ops-registry.yaml`; refresh it with `pnpm repo:ops:sync --fix`.
 
 ## Machine-Checked Claims
 

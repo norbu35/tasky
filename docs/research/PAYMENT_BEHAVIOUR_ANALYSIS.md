@@ -1,7 +1,11 @@
 # Payment Behaviour Analysis: On-Platform Settlement in Mongolia
 
-*Context: Will Mongolians pay a newly started platform before service completion? What prevents
-off-platform settlement? Can on-platform payment be enforced?*
+_Context: Will Mongolians pay a newly started platform before service completion? What prevents
+off-platform settlement? Can on-platform payment be enforced?_
+
+Status: historical research input. Use this as payment-behavior context, not as the current rollout plan. Current
+commerce sequencing lives in `docs/research/business-model-research.md`, `docs/STRATEGY.md`, and
+`docs/ROLLOUT_PHASES.md`.
 
 ---
 
@@ -11,16 +15,16 @@ Can a new gig platform in Mongolia require upfront payment before users trust it
 
 **Short answer: No — and attempting to force it will kill adoption.**
 
-Payment escrow is a *trust product*, not a payment product. You cannot build payment behaviour
+Payment escrow is a _trust product_, not a payment product. You cannot build payment behaviour
 before you have built platform trust. A brand-new platform asking a customer to park money
 before a stranger shows up faces three unanswerable objections:
 
-- *"What if the tasker doesn't come? Will I get it back?"*
-- *"What if the work is bad? Can I get a refund?"*
-- *"Why would I trust an app I've never heard of with my money?"*
+- _"What if the tasker doesn't come? Will I get it back?"_
+- _"What if the work is bad? Can I get a refund?"_
+- _"Why would I trust an app I've never heard of with my money?"_
 
-QPay itself is trusted — 3.2M users, near-universal adoption. The *platform holding QPay
-funds* is not trusted. These are different things.
+QPay itself is trusted — 3.2M users, near-universal adoption. The _platform holding QPay
+funds_ is not trusted. These are different things.
 
 ---
 
@@ -38,9 +42,9 @@ flow** so that bypassing the platform was harder than using it.
 This is how Airbnb, Fiverr, and Upwork prevent leakage:
 
 | What the platform controls                                                       | Why it prevents leakage                                                         |
-|----------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | Tasker's phone number is never shown — in-app messaging only                     | Customer cannot reach tasker off-platform without effort                        |
-| Exact task address revealed only after booking confirmed *and* payment committed | Tasker cannot show up without going through the platform flow                   |
+| Exact task address revealed only after booking confirmed _and_ payment committed | Tasker cannot show up without going through the platform flow                   |
 | Dispute resolution available only for on-platform bookings                       | Off-platform dispute = no recourse; both parties know this                      |
 | Reviews accumulate only for on-platform completions                              | A tasker with 50 reviews has a strong reputational stake in staying on-platform |
 
@@ -160,7 +164,7 @@ the shock of monetisation for the supply side that built the platform.
 ## Comparison: How Comparable Platforms Handled This
 
 | Platform             | Market                                                   | Payment approach                                                                                      | Leakage strategy                                                                                           |
-|----------------------|----------------------------------------------------------|-------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| -------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | **inDrive**          | Central Asia, LatAm (trust dynamics similar to Mongolia) | Cash between driver and rider — platform does NOT intermediate payment                                | Makes money through ads and premium features; explicitly chose not to force payment due to trust barriers  |
 | **Urban Company**    | India                                                    | Started with cash on completion; introduced digital payment after trust established; now escrow-style | No phone number exposure; location only after booking; dispute resolution platform-exclusive               |
 | **Airbnb**           | Global                                                   | Upfront payment from day one                                                                          | Host address not revealed until booking paid; communication through platform only; review system mandatory |
@@ -178,7 +182,7 @@ directly applicable playbook.
 ## Summary
 
 | Question                                       | Answer                                                                                 |
-|------------------------------------------------|----------------------------------------------------------------------------------------|
+| ---------------------------------------------- | -------------------------------------------------------------------------------------- |
 | Will Mongolians pay upfront to a new platform? | No — not at first; forcing it kills adoption                                           |
 | What prevents off-platform settlement?         | Information control (no contact details), reputation stakes, dispute access            |
 | Can on-platform payment be forced?             | Not on day one; must be earned through trust graduation                                |

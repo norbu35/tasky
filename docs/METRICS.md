@@ -2,7 +2,10 @@
 
 ## 1. Purpose
 
-This document is the dedicated KPI source for the Phase 1 Ulaanbaatar launch. `docs/PRD.md` delegates metric names, formulas, thresholds, denominator policy, dashboard rules, alert policy, and KPI event vocabulary to this file. `docs/OBSERVABILITY.md` and `docs/maintenance/PRODUCTION_READINESS.md` must remain aligned with it.
+This document is the dedicated KPI source for the Phase 1 Ulaanbaatar launch and the post-launch commerce-pilot
+learning metrics. `docs/PRD.md` delegates metric names, formulas, thresholds, denominator policy, dashboard rules, alert
+policy, and KPI event vocabulary to this file. `docs/OBSERVABILITY.md` and
+`docs/maintenance/PRODUCTION_READINESS.md` must remain aligned with it.
 
 Changes that alter metric semantics are product behavior changes. Update `docs/PRD.md` in the same workflow when metric formulas, launch thresholds, denominator policy, or decision semantics change.
 
@@ -24,6 +27,22 @@ Changes that alter metric semantics are product behavior changes. Update `docs/P
 Category is the primary decision slice. District is drilldown only.
 
 `qualified_application` is a metric event name. It means an application from an ID-verified, globally eligible tasker in Phase 1; it does not imply category-specific vetting, time-slot availability, or service-area gating.
+
+### 2.3 Economic learning metrics
+
+Economic learning metrics support Phase 2 commerce decisions. They do not replace the Phase 1 hard-gate liquidity and
+trust metrics, and they must not justify monetization in a category whose launch liquidity and trust metrics are still
+red.
+
+1. Booked GMV
+2. Completed GMV
+3. Platform Fee Revenue
+4. Payment Penetration
+5. Rebook Rate
+6. Repeat Customer Rate
+7. Leakage Indicator
+8. Manual B2B Account GMV
+9. CAC Payback Estimate
 
 ## 3. Locked definitions
 
@@ -84,6 +103,81 @@ Median and p95 from complete identity verification document submission to final 
 
 - Decision-valid only when denominator >= 10 completed verification decisions in the measurement window
 
+### 3.8 Booked GMV
+
+Sum of locked booking prices for bookings confirmed in the measurement window.
+
+- Track by category and customer maturity cohort
+- Do not treat booked GMV as revenue
+- Pair with cancellation and completion outcomes so confirmed-but-uncompleted volume does not overstate monetizable value
+
+### 3.9 Completed GMV
+
+Sum of locked booking prices for bookings that reach `completed_booking` in the measurement window.
+
+- Primary economic basis for platform-fee take-rate analysis
+- Track by category, district drilldown, and self-serve versus assisted outcome class
+- Exclude canceled, disputed-unresolved, and no-show outcomes unless a later policy explicitly defines a fee-bearing
+  terminal state
+
+### 3.10 Platform Fee Revenue
+
+Gross Tasky fee amount charged through an approved platform-fee pilot.
+
+- Track fee rate, fee amount, category, customer maturity cohort, and whether the fee was waived
+- Show separately from underlying job price and completed GMV
+- A platform fee does not imply Tasky collected, held, or paid out the underlying job amount
+
+### 3.11 Payment Penetration
+
+`% of confirmed bookings in an approved commerce-pilot category where the Tasky platform fee was successfully collected through the platform`
+
+- Applies only after a fee pilot is activated
+- Denominator: confirmed bookings eligible for the active fee pilot
+- Numerator: eligible bookings with successfully collected platform fee
+
+### 3.12 Rebook Rate
+
+`% of customers with a completed booking who create another task or booking request within 60-90 days`
+
+- Primary category focus: cleaning
+- Track rebook after same tasker versus new tasker
+- Paid household membership should not be evaluated until repeat cleaning behavior is visible without paid membership
+
+### 3.13 Repeat Customer Rate
+
+`% of customers with at least two completed bookings in the trailing 90 days`
+
+- Track by first completed category and most recent category
+- Use as a retention signal before customer subscription or membership work
+
+### 3.14 Leakage Indicator
+
+Share of confirmed-intent conversations or booking flows with evidence that the parties moved coordination or payment
+off platform before the tracked platform workflow completed.
+
+- This is a diagnostic, not a punitive metric by default
+- Track text-pattern flags, support notes, payment-step abandonment, and post-confirmation communication signals where
+  policy permits
+- Use only aggregated results for product decisions unless trust-and-safety policy requires case-level review
+
+### 3.15 Manual B2B Account GMV
+
+Completed GMV associated with founder-approved manual B2B accounts, invoice exports, or account-managed repeat buyers.
+
+- Track account count, jobs per account, completed GMV per account, and operator time per account
+- Manual B2B results are discovery evidence, not proof that a self-serve B2B portal is ready
+
+### 3.16 CAC Payback Estimate
+
+Estimated months for contribution margin from an acquired customer, tasker, or account to repay acquisition and
+activation cost.
+
+- Early values may be directional until attribution is reliable
+- Use contribution margin, not gross revenue
+- Track paid marketing, referral incentives, discounts, manual activation labor, and partner setup time separately where
+  available
+
 ## 4. Thresholds
 
 ### 4.1 Hard-gate thresholds
@@ -112,6 +206,11 @@ Use the following conceptual event/state vocabulary in reporting:
 - `confirmed_booking`
 - `completed_booking`
 - `intervention`
+- `platform_fee_charged`
+- `platform_fee_collected`
+- `rebook_requested`
+- `recurring_request_created`
+- `manual_b2b_account_job_completed`
 
 KPI computation should come from backend-exported business metrics derived from canonical events and state transitions, not ad hoc dashboard SQL.
 
@@ -123,6 +222,20 @@ KPI computation should come from backend-exported business metrics derived from 
 - District remains a drilldown and diagnostic slice.
 - Diagnostics such as median time to first qualified application or failure-reason splits should support the core KPIs instead of replacing them.
 
+### 6.1 Commerce-pilot dashboard
+
+Before a platform-fee or recurring-cleaning pilot is activated, dashboards should expose:
+
+- booked GMV and completed GMV, separated clearly
+- platform fee revenue and fee waiver counts
+- payment penetration for eligible pilot bookings
+- rebook rate and repeat customer rate, with cleaning as the primary read
+- leakage indicator trend
+- manual B2B account GMV and jobs per account if manual accounts are active
+
+These views are for learning and rollout control. They do not turn Phase 2 commerce experiments into Phase 1 launch
+requirements.
+
 ## 7. Data quality rules
 
 1. KPI decisions are valid only when the denominator threshold for that KPI is met.
@@ -130,3 +243,7 @@ KPI computation should come from backend-exported business metrics derived from 
 3. If core event exports are degraded, pause KPI-based go / no-go decisions until tracking is repaired and backfilled.
 4. Native self-serve reporting and native confirmation success must exclude successes that occur after system-assisted or manual-assisted intervention.
 5. Assisted outcomes remain in denominator populations unless a specific formula says otherwise; they do not count as native/self-serve success.
+6. Commerce-pilot decisions require both economic signals and healthy category liquidity/trust signals. Revenue lift alone
+   is not sufficient evidence to expand fees.
+7. Platform-fee metrics must distinguish Tasky fee revenue from underlying service GMV and must not imply escrow,
+   payment protection, wallet balances, or payout operations.

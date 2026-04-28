@@ -20,6 +20,9 @@ Phase-specific UI behavior must follow `docs/PRD.md` for the active launch basel
   owns runtime CSS.
 - Web consumes the token graph via Tailwind/theme variables (`@tasky/design-tokens/tokens.css` for CSS variables).
 - Mobile consumes the token graph via NativeWind theme bindings and shared shell/primitive adapters.
+- Mobile NativeWind extends the shared graph with touch-target and typography utilities, including `min-h-touch-lg`,
+  `min-h-touch-xl`, `size-touch`, `size-touch-sm`, and `tracking-badge`, so reusable primitives do not hardcode
+  repeated bracket values for standard touch targets or badge tracking.
 - Token contract: all parity components consume the canonical token graph from `packages/design-tokens` via platform outputs.
 - Active design docs describe the design-system contract in prose and machine-readable contracts. Static UI-kit
   prototypes and handoff CSS must not be imported at runtime and should not remain as duplicate active implementation
@@ -43,13 +46,16 @@ Phase-specific UI behavior must follow `docs/PRD.md` for the active launch basel
 
 ## 4. Parity Baseline Table
 
-| Primitive   | Web Source (`apps/web/src/components/ui`) | Mobile Source (`apps/mobile/src/components/ui`) | Required States                              | Notes                                     |
-| ----------- | ----------------------------------------- | ----------------------------------------------- | -------------------------------------------- | ----------------------------------------- |
-| Button      | `button.tsx`                              | `Button.tsx`                                    | default, secondary, ghost, disabled, loading | Loading disables press on both platforms. |
-| Input       | `input.tsx`                               | `Input.tsx`                                     | default, focus, invalid, disabled            | Invalid state uses danger border token.   |
-| Form Field  | composition (`label` + input + message)   | `FormField.tsx`                                 | default, helper, error                       | Error message replaces helper text.       |
-| Modal/Sheet | dialog/sheet pattern                      | `ModalSheet.tsx`                                | open, close, backdrop-dismiss                | Backdrop dismiss is enabled by default.   |
-| Toast       | toast/badge pattern                       | `Toast.tsx`                                     | info, success, error                         | Alert role for accessibility semantics.   |
+Most mobile parity sources are primitives under `apps/mobile/src/components/ui`. Template-backed entries use
+`apps/mobile/src/components/templates` and must be marked as templates in `docs/design/component-contract.yaml`.
+
+| Primitive   | Web Source (`apps/web/src/components/ui`) | Mobile Runtime Source              | Required States                              | Notes                                                                                                                                                      |
+| ----------- | ----------------------------------------- | ---------------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Button      | `button.tsx`                              | `ui/Button.tsx`                    | default, secondary, ghost, disabled, loading | Loading disables press on both platforms.                                                                                                                  |
+| Input       | `input.tsx`                               | `ui/Input.tsx`                     | default, focus, invalid, disabled            | Invalid state uses danger border token.                                                                                                                    |
+| Form Field  | composition (`label` + input + message)   | `ui/FormField.tsx`                 | default, helper, error                       | Error message replaces helper text.                                                                                                                        |
+| Modal/Sheet | dialog/sheet pattern                      | `templates/ModalSheetTemplate.tsx` | open, close, loading, backdrop-dismiss       | Template-backed design component; there is no separate mobile UI primitive. Backdrop dismiss is enabled by default and can be disabled for blocking flows. |
+| Toast       | toast/badge pattern                       | `ui/Toast.tsx`                     | info, success, error                         | Alert role for accessibility semantics.                                                                                                                    |
 
 **Validation:** `TID-TASK-070-WEB-*` validates web primitives and token usage. `TID-TASK-071-MOBILE-*` validates mobile NativeWind token bindings, shell ownership boundaries, component parity, and this table.
 
@@ -68,6 +74,7 @@ apps/web/src/components/
 
 apps/mobile/src/components/
   ui/       ← native atomic components matching web primitives
+  templates/ ← shared screen and overlay templates composed from primitives
   shells/   ← safe-area, header, CTA-bar, and route-shell ownership boundaries
   feature/  ← domain-specific mobile components composed from shells + primitives
 ```

@@ -1,6 +1,10 @@
 # Business & Monetization Model Analysis
 
-*Analysis date: April 15, 2026. Synthesized from PRD v1.4, STRATEGY.md, MONGOLIA_MARKET_RESEARCH.md, PAYMENT_BEHAVIOUR_ANALYSIS.md, unegui_market_report_2026-03-03.md, and LAUNCH_ROADMAP.md.*
+_Analysis date: April 15, 2026. Synthesized from PRD v1.4, STRATEGY.md, MONGOLIA_MARKET_RESEARCH.md, PAYMENT_BEHAVIOUR_ANALYSIS.md, unegui_market_report_2026-03-03.md, and LAUNCH_ROADMAP.md._
+
+Status: historical research input. Current business-model synthesis lives in
+`docs/research/business-model-research.md`; governing product direction lives in `docs/PRD.md`,
+`docs/STRATEGY.md`, `docs/METRICS.md`, and `docs/ROLLOUT_PHASES.md`.
 
 ---
 
@@ -35,13 +39,13 @@ The project documents contain a genuine strategic conflict:
 - **The market research says** QPay at 0% should be Phase 1 because without it, Tasky is "structurally identical to a Facebook group."
 - **The payment behaviour analysis says** forcing payment through a new platform kills adoption. Cash first, QPay incentivised later, escrow last.
 
-The PRD sided with the payment analysis (direct settlement in Phase 1), which is the *safer* call. But the market research has a valid point: if Phase 1 is posting + matching + cash settlement, the user experience is dangerously close to "a nicer Facebook group."
+The PRD sided with the payment analysis (direct settlement in Phase 1), which is the _safer_ call. But the market research has a valid point: if Phase 1 is posting + matching + cash settlement, the user experience is dangerously close to "a nicer Facebook group."
 
 **The question is: what is the minimum trust differential that makes users come back?** If it's just "verified taskers who show up," that might be enough for Phase 1 without payment. If it's not, QPay is needed earlier. This is the single most important product experiment to design a decision metric for.
 
 ### Proposed decision gate
 
-At **100 completed bookings**, measure: what % of customers say they'd use Tasky again over Facebook groups, and *why*?
+At **100 completed bookings**, measure: what % of customers say they'd use Tasky again over Facebook groups, and _why_?
 
 - If the answer is "verified taskers" and "structured process," the trust differential is working without payment rails. Proceed as planned.
 - If the answer is "it's about the same," QPay needs to come earlier than Phase 2. The 200-booking trigger may be too late.
@@ -52,12 +56,12 @@ At **100 completed bookings**, measure: what % of customers say they'd use Tasky
 
 ### Current plan
 
-| Phase | Revenue | Trigger |
-|---|---|---|
-| Phase 1 | Zero | Launch |
+| Phase   | Revenue             | Trigger                                  |
+| ------- | ------------------- | ---------------------------------------- |
+| Phase 1 | Zero                | Launch                                   |
 | Phase 2 | Lead fees (partial) | 200+ completed bookings, 40% repeat rate |
-| Phase 3 | 10-15% take rate | QPay habit established |
-| Phase 4 | Subscriptions, B2B | Market maturity |
+| Phase 3 | 10-15% take rate    | QPay habit established                   |
+| Phase 4 | Subscriptions, B2B  | Market maturity                          |
 
 ### Gaps
 
@@ -69,14 +73,14 @@ At **100 completed bookings**, measure: what % of customers say they'd use Tasky
 
 ## 5. Monetization Models Ranked For Mongolian Market Fit
 
-| Model | Market fit | Rationale |
-|---|---|---|
-| **Promoted/featured tasker profiles** | High | Proven on Unegui (supply pays for visibility). Doesn't require payment intermediation. Low consumer friction. |
-| **Tasker subscription tiers** (monthly fee for visibility + tools) | Medium-high | Recurring revenue. Taskers who make MNT 1M+/month from the platform will pay MNT 20-50K for premium placement. |
-| **Commission/take rate** (10-15%) | Medium | Standard model but highest leakage risk. Only works after habit formation. |
-| **Lead fees** (per-applicant) | Medium-low | Tension with anti-leakage strategy. Works better for high-value categories only. |
-| **B2B/recurring service contracts** | High (later) | Best revenue per account but requires operational maturity. Phase 4 is correct. |
-| **Insurance/guarantee premium** | Medium (later) | Culturally aligned (paying for safety), but requires scale for actuarial viability. |
+| Model                                                              | Market fit     | Rationale                                                                                                      |
+| ------------------------------------------------------------------ | -------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Promoted/featured tasker profiles**                              | High           | Proven on Unegui (supply pays for visibility). Doesn't require payment intermediation. Low consumer friction.  |
+| **Tasker subscription tiers** (monthly fee for visibility + tools) | Medium-high    | Recurring revenue. Taskers who make MNT 1M+/month from the platform will pay MNT 20-50K for premium placement. |
+| **Commission/take rate** (10-15%)                                  | Medium         | Standard model but highest leakage risk. Only works after habit formation.                                     |
+| **Lead fees** (per-applicant)                                      | Medium-low     | Tension with anti-leakage strategy. Works better for high-value categories only.                               |
+| **B2B/recurring service contracts**                                | High (later)   | Best revenue per account but requires operational maturity. Phase 4 is correct.                                |
+| **Insurance/guarantee premium**                                    | Medium (later) | Culturally aligned (paying for safety), but requires scale for actuarial viability.                            |
 
 ### Recommendation: promoted listings as first monetization experiment
 
@@ -95,14 +99,14 @@ This could pilot as early as Phase 2 alongside the QPay incentive rollout. It wo
 
 The Unegui pricing data makes clear that a blanket take rate doesn't work:
 
-| Category | Median price | Viable for 10% take rate? |
-|---|---|---|
-| Cleaning | MNT 4,000 | No -- MNT 400 fee is meaningless |
-| Painting | MNT 15,000 | Marginal |
-| Electrical | MNT 30,000 | Possible |
-| Construction | MNT 50,000 | Yes |
-| Moving | MNT 60,000 | Yes |
-| Plumbing | MNT 80,000 | Yes |
+| Category     | Median price | Viable for 10% take rate?        |
+| ------------ | ------------ | -------------------------------- |
+| Cleaning     | MNT 4,000    | No -- MNT 400 fee is meaningless |
+| Painting     | MNT 15,000   | Marginal                         |
+| Electrical   | MNT 30,000   | Possible                         |
+| Construction | MNT 50,000   | Yes                              |
+| Moving       | MNT 60,000   | Yes                              |
+| Plumbing     | MNT 80,000   | Yes                              |
 
 ### Proposed category roles
 
@@ -162,7 +166,7 @@ The Unegui data shows volume roughly doubled every month from October through Fe
 ### Needs more work
 
 - Revenue ceiling acknowledgment and explicit path to viable business size
-- Decision metrics for *when* to introduce QPay (not just "after 200 bookings" -- what if 200 bookings takes 8 months?)
+- Decision metrics for _when_ to introduce QPay (not just "after 200 bookings" -- what if 200 bookings takes 8 months?)
 - Category-level monetization strategy instead of blanket take rate
 - Promoted listings as first-revenue experiment (proven model, lower risk than lead fees)
 - Disintermediation measurement from day one

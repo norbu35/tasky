@@ -27,7 +27,9 @@ commitments.
 - Build native component equivalents. Never import `shadcn/ui` into the mobile app.
 - NativeWind backed by `@tasky/design-tokens` is the default styling pipeline.
 - `StyleSheet.create` and inline object styles are exceptions reserved for Reanimated styles, platform shadow/elevation helpers, safe-area/inset calculations, and third-party APIs that require object styles.
+- Mobile Tailwind exposes token-backed touch and badge utilities such as `min-h-touch-lg`, `min-h-touch-xl`, `size-touch`, `size-touch-sm`, and `tracking-badge`; prefer them over bracketed one-off values when they match the design-system token.
 - Expo Router layouts and shared shell components own tab bars, FAB placement, stack headers, modal presentation, and safe-area policy.
+- Bottom-sheet presentation is centralized in `src/components/templates/ModalSheetTemplate.tsx`. Shared sheet primitives such as `ActionSheet` and `ConfirmSheet` wrap that template rather than owning separate modal stacks.
 - Forbidden escape hatches: core `SafeAreaView`, raw `TextInput` outside approved wrappers, `TouchableOpacity` where shared primitives apply, and ad hoc token lookups outside the canonical token graph.
 - If a component exists in `apps/web/src/components/ui/`, a functionally and visually parallel component must exist in `apps/mobile/src/components/ui/` when that primitive is needed on mobile.
 - Mobile screen implementation starts from the traceable screen spec in `docs/design/screen-specs/SCR-*.yaml`: read the linked PRD refs, journey refs, screen graph node, and scenario refs before changing route, screen, state, copy, or tests.

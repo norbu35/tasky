@@ -28,7 +28,7 @@
 #   Variant logic uses class-variance-authority (cva).
 #   Exported variant types (for consumer TS):
 #     ButtonVariant  — 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive'
-#     ButtonSize     — 'default' | 'sm' | 'lg' | 'icon'
+#     ButtonSize     — 'default' | 'sm' | 'lg' | 'icon' | 'icon-sm'
 #     StatusType     — 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show'
 #     (CategoryChip, PressableCard, FilterBar also use cva internally)
 #
@@ -46,9 +46,11 @@
 #     - rgba overlay colors (from elevations.ts overlays map)
 #     - Any value computed at runtime from JS variables
 #
-# Export barrel
-#   All components export from: apps/mobile/src/components/ui/index.ts
-#   Screens import as:  import { Button, StatusBadge, … } from '../components/ui';
+# Export barrels
+#   UI primitives export from: apps/mobile/src/components/ui/index.ts
+#   Shared templates export from: apps/mobile/src/components/templates/index.ts
+#   Screens import via path aliases, for example `@/components/ui/Button` or
+#   `@/components/templates/ModalSheetTemplate`.
 #
 # Implementation metadata
 #   runtime_name: optional exported symbol when the design component name is stable but runtime uses a
@@ -60,7 +62,7 @@
 #     deferred     retained design intent without an active runtime path
 
 # ═══════════════════════════════════════════════════
-# EXISTING COMPONENTS (from apps/mobile/src/components/ui/)
+# EXISTING COMPONENTS AND TEMPLATES
 # ═══════════════════════════════════════════════════
 
 existing_components:
@@ -74,7 +76,7 @@ existing_components:
       - outline # border, no fill
       - ghost # text-only, no background
       - destructive # filled, danger color
-    sizes: [default, sm, lg, icon] # ButtonSize type
+    sizes: [default, sm, lg, icon, icon-sm] # ButtonSize type
     props:
       [
         label,
@@ -95,12 +97,14 @@ existing_components:
       colors: [primary, secondary, danger, background]
       typography: [label, caption, body]
       spacing: [sm, md, lg, xl]
+      touch_targets: [min-h-touch-lg, min-h-touch-xl, size-touch, size-touch-sm]
       radius: [md]
     rules:
       - 'Always full-width in forms and bottom CTAs'
       - 'Never stack more than 2 buttons side-by-side'
       - 'Destructive actions use destructive variant only'
       - 'Loading state replaces label with ActivityIndicator, keeps width'
+      - 'Use icon-sm only for compact icon-only affordances that remain inside a larger touch-safe surface'
       - 'className prop merged via cn() — caller classes win conflicts'
 
   - id: COMP-INPUT
@@ -177,13 +181,34 @@ existing_components:
       - 'Auth check before action'
 
   - id: COMP-MODALSHEET
-    name: Dialog
-    path: 'apps/mobile/src/components/ui/ModalSheet.tsx'
-    runtime_name: ModalSheet
+    name: Modal Sheet
+    implementation_status: template
+    path: 'apps/mobile/src/components/templates/ModalSheetTemplate.tsx'
+    runtime_name: ModalSheetTemplate
     nativewind: true
     variants: [default]
-    props: [visible, onClose, title, children, primaryAction, secondaryAction]
-    states: [default, open, closing]
+    props:
+      [
+        isOpen,
+        onClose,
+        title,
+        titleAlign,
+        children,
+        snapPoints,
+        testID,
+        className,
+        contentClassName,
+        dismissible,
+        isLoading,
+        loadingTestID,
+        primaryAction,
+        secondaryAction,
+        hideDefaultAction,
+        footer,
+        headerLeading,
+        headerTrailing,
+      ]
+    states: [default, open, loading, closing]
     animation: 'sheet_open / sheet_close'
     tokens:
       overlays: [scrim.sheet]
@@ -191,9 +216,12 @@ existing_components:
       radius: [lg]
       spacing: [lg, xl]
     rules:
-      - 'All destructive confirmations use Dialog'
+      - 'Stable design component id for the mobile dialog/sheet pattern; runtime implementation is the ModalSheetTemplate template'
+      - 'All destructive confirmations use Modal Sheet'
       - 'Max 2 action buttons (primary + secondary)'
-      - 'Handle bar always visible for drag-to-dismiss'
+      - 'Handle bar is always visible; drag/backdrop dismiss is enabled by default and may be disabled for blocking flows'
+      - 'Shared sheet wrappers such as ActionSheet and ConfirmSheet compose this template instead of owning a separate modal stack'
+      - 'Use isLoading for short action-pending sheet states; full content loading still uses Skeleton where layout is known'
 
   - id: COMP-TOAST
     name: Toast
@@ -213,7 +241,8 @@ existing_components:
     rules:
       - 'Host-owned lifecycle controls auto-dismiss timing'
       - 'Error retry actions belong in the host surface, not inside Toast'
-      - 'Never overlap with Dialog'
+      - 'Never overlap with Modal Sheet'
+      - 'Badge/meta letter spacing uses tracking-badge or a token-backed typography variant'
 
   - id: COMP-STATUSBADGE
     name: StatusBadge
@@ -230,7 +259,7 @@ existing_components:
     variant_api: 'cva badgeVariants({ status }) — color is non-overridable by design'
     tokens:
       colors: [statusOpen, statusAssigned, verified, muted, danger]
-      typography: [micro, font-sans-bold uppercase tracking-widest]
+      typography: [micro, font-sans-bold uppercase tracking-badge]
     rules:
       - "Status text always in Mongolian as primary (via i18n t('status.*'))"
       - 'Color mapping is semantic and non-overridable'
@@ -417,7 +446,7 @@ new_components:
       - 'Clear all button when filters active'
     composition:
       chips: [CategoryChip]
-      sheet: [Dialog]
+      sheet: [Modal Sheet]
 
   - id: COMP-TOUCHABLE
     name: Touchable
@@ -763,16 +792,21 @@ templates:
       density: default
     slots:
       - handle_bar
+      - header_leading
       - title
+      - header_trailing
       - content
+      - loading_indicator
       - primary_action
       - secondary_action
-    components: [Button, Dialog]
+      - custom_footer
+    components: [Button, Modal Sheet]
     rules:
-      - 'Drag-to-dismiss via handle bar'
+      - 'Drag/backdrop dismiss by default; set dismissible=false only for blocking system or confirmation flows'
       - 'Max 2 action buttons'
       - 'Scrim overlay behind sheet'
       - 'All destructive confirmations use this template'
+      - 'Short action-pending states may use the template loading slot; content-loading states still prefer Skeleton'
 
   - id: TPL-EMPTY-STATE
     name: empty_state
@@ -829,14 +863,14 @@ templates:
 
 composition_rules:
   - rule: 'All forms use FormField wrapper with inline error below field'
-  - rule: 'Destructive actions always use Dialog confirmation with explicit copy'
+  - rule: 'Destructive actions always use Modal Sheet confirmation with explicit copy'
   - rule: 'List → Detail flows always use push navigation (page_enter/page_exit)'
-  - rule: 'Search/Filter/Sort follows: SearchBar → FilterBar → Dialog pattern'
+  - rule: 'Search/Filter/Sort follows: SearchBar → FilterBar → ModalSheetTemplate pattern'
   - rule: 'Pull-to-refresh on all feed_list and detail screens with async data'
   - rule: 'Pagination via infinite scroll with Skeleton footer'
   - rule: "Empty states include activation CTAs (not just 'nothing here')"
   - rule: "All success moments include 'what happens next' guidance"
-  - rule: 'Loading states use Skeleton matching content layout (never spinner)'
+  - rule: 'Content-loading states use Skeleton matching content layout; compact spinners are allowed for action-pending or pagination states'
   - rule: 'Error states use shared error component with retry CTA'
   - rule: 'Offline states show banner + cached content or full-screen EmptyState'
 
@@ -845,14 +879,14 @@ composition_rules:
 # ═══════════════════════════════════════════════════
 
 forbidden_combinations:
-  - combination: 'Toast + Dialog simultaneously'
-    reason: 'Visual conflict — Toast is z:50, Dialog z:30, but they compete for attention'
+  - combination: 'Toast + Modal Sheet simultaneously'
+    reason: 'Visual conflict — Toast is z:50, Modal Sheet z:30, but they compete for attention'
   - combination: 'FAB on non-Customer-My-Tasks screens'
     reason: "FAB is exclusively for 'Post Task' action"
-  - combination: 'danger Button without Dialog confirmation'
+  - combination: 'danger Button without Modal Sheet confirmation'
     reason: 'Destructive actions require explicit confirmation'
   - combination: 'Generic spinner as loading state'
-    reason: 'Always use Skeleton matching content layout'
+    reason: 'Use Skeleton for full content loading; reserve spinners for compact action-pending or pagination states'
   - combination: 'price_display typography outside price/budget contexts'
     reason: 'Reserve Manrope bold 20px for monetary values only'
   - combination: 'caption typography for primary content'

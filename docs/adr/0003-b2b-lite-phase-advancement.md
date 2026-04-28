@@ -2,11 +2,17 @@
 
 ## Status
 
-proposed
+superseded
 
 ## Date
 
 2026-03-22
+
+## Supersession note
+
+This record is historical context only. It is superseded by the current PRD, Strategy, and Rollout Phases, which allow
+founder-led/manual B2B discovery during Phase 2 but defer self-serve B2B product surfaces, partner APIs, billing, and
+managed B2B until later evidence and governing-doc approval exist.
 
 ## Context
 
@@ -92,6 +98,7 @@ Negative:
 - PRD Section 12.4-12.6 (Phase Roadmap)
 
 Phase mapping (debate analysis → PRD):
+
 - Debate "Phase 0" (months 1-3) → PRD Phase 0-1
 - Debate "Phase 1" (months 4-6) → PRD Phase 2 (early: promoted listings, B2B outreach)
 - Debate "Phase 2" (months 7-10) → PRD Phase 2 (late: lead credits, B2B system)

@@ -7,9 +7,12 @@ Tasky is a launch-first marketplace for domestic services in Ulaanbaatar. Phase 
 - citywide customer posting across Ulaanbaatar
 - trust-first operations with verification, moderation, and dispute handling
 - zero dependency on monetization for launch viability
+- explicit preparation for narrow, evidence-gated commerce pilots after liquidity proof
 - a founder-operated backstop for the cases the product cannot yet resolve on its own
 
 Later phases stay conditional. A draft screen, dormant toggle, or placeholder contract does not move a feature into the launch scope.
+The strategy is not "free forever"; it is "liquidity first, then transparent value capture where the product has proven
+it improves matching, completion, and repeat convenience."
 
 ## 2. Phase 1 operating boundary
 
@@ -73,30 +76,58 @@ Rules:
 2. Acquire customer demand across Ulaanbaatar.
 3. Use fixed templates and structured pricing to reduce negotiation friction.
 4. Measure native liquidity before leaning on assisted distribution.
-5. Expand only when the hard-gate metrics support it.
+5. Invest first in repeat behavior: rebook, saved preferences, and recurring cleaning once completion is reliable.
+6. Pilot transparent platform-fee collection only in categories with proven liquidity, while keeping the underlying job
+   amount settled directly between customer and tasker.
+7. Start B2B as founder-led account discovery and manual invoicing support before building a self-serve B2B product.
+8. Expand only when the hard-gate and economic learning metrics support it.
 
-## 5. Strategic non-commitments
+## 5. Commerce posture
+
+The first monetization move should be narrow and visible:
+
+- a small customer-side platform or booking fee in standardized categories such as cleaning and furniture assembly
+- all-in price presentation before commitment, with no back-loaded fees
+- direct customer-tasker settlement for the underlying job amount
+- no escrow, wallet, payout, or payment-protection promise
+- no broad tasker commission or paid lead-unlock model while verified supply is still scarce
+
+Recurring cleaning is the first repeat-use priority. Paid household membership should wait until weekly or biweekly
+cleaning behavior is visible in real usage. Tasker Pro, promoted listings, and lead credits are later tools and must
+follow evidence that they improve marketplace quality without damaging supply trust.
+
+Founder-led B2B can start early as discovery and manual account handling for landlords, office admins, property
+managers, and similar repeat buyers. Self-serve B2B portals, partner APIs, and white-label products are not near-term
+scope.
+
+## 6. Strategic non-commitments
 
 - No launch dependency on credits, subscriptions, referrals, B2B, DAN, OTP-primary auth, instant match, or escrow.
-- No operating plan that assumes future monetization or future trust rails are already live.
+- No launch dependency on platform fees, payment processing, or B2B revenue.
+- No operating plan that assumes future monetization, future trust rails, or future B2B surfaces are already live.
 - No claim that external distribution counts as native marketplace health.
+- No claim that a platform-fee pilot provides payment protection, payment hold, wallet safety, or Tasky-managed payout.
 
-## 6. Phase progression
+## 7. Phase progression
 
 The rollout sequence beyond launch is recorded in `docs/ROLLOUT_PHASES.md`. The strategy view is:
 
-| Phase       | Strategic job                                                                                           | Notes                                                                                              |
-| ----------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| **Phase 1** | Prove the marketplace works across Ulaanbaatar with the initial launch categories and direct settlement | This is the current product.                                                                       |
-| **Phase 2** | Improve matching quality and test light monetization without changing the settlement model              | Lead credits and promoted listings are optional tools inside the phase, not automatic commitments. |
-| **Phase 3** | Add stronger trust rails and supply-side monetization                                                   | Escrow, wallet, payouts, and subscription belong here if earlier evidence supports them.           |
-| **Phase 4** | Expand geography and revenue mix                                                                        | This is where broader payment rails, customer plans, and any managed B2B layer belong.             |
+| Phase       | Strategic job                                                                                           | Notes                                                                                                                                |
+| ----------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **Phase 1** | Prove the marketplace works across Ulaanbaatar with the initial launch categories and direct settlement | This is the current product. Monetization must not be required for launch viability.                                                 |
+| **Phase 2** | Improve repeat liquidity and run narrow commerce pilots without changing job settlement                 | Rebook, saved preferences, recurring cleaning V1, manual B2B support, and platform-fee pilots belong here if evidence supports them. |
+| **Phase 3** | Add payment-adjacent trust rails and supply-side monetization                                           | Escrow, wallet, payouts, Tasker Pro, lead credits, and promoted listings remain conditional and evidence-gated.                      |
+| **Phase 4** | Expand geography and revenue mix                                                                        | Broader payment rails, paid household memberships, partner APIs, and managed B2B belong here after earlier validation.               |
 
-### 6.1 Conditional tracks
+### 7.1 Conditional tracks
 
 - Referrals are optional and should follow working liquidity rather than precede it.
-- B2B is a conditional track. Founder-led commercial discovery may happen early, but it is not part of the core Phase 1 or Phase 2 success case unless the governing docs explicitly change.
+- B2B is a conditional track. Founder-led commercial discovery and manual account handling may happen during Phase 2,
+  but self-serve B2B product scope requires explicit governing-doc approval and proof that repeat accounts strengthen
+  category liquidity.
+- Retail, furniture, relocation, or property partnerships may be explored after assembly, moving, or cleaning show
+  reliable supply. The first partner motion should be one anchor pilot, not API or white-label infrastructure.
 
-### 6.2 Advancement rule
+### 7.2 Advancement rule
 
 A later phase is real only when the governing docs, maintenance posture, contracts, and launch-facing UX all reflect it together. Dormant code does not advance the strategy.

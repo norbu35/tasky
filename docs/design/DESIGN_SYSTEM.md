@@ -74,14 +74,16 @@ The active runtime token graph includes:
 - branded overlays/scrims derived from the primary-deep color
 - icon size and touch-target tokens
 - elevation/z-index layers for sticky, dropdown, sheet, modal, toast, and system overlays
-- composed typography variants with zero letter spacing for Cyrillic readability
+- composed typography variants with zero default letter spacing for Cyrillic readability, plus explicit badge/meta
+  tracking utilities when the design contract calls for uppercase label treatment
 - density presets that change spacing without shrinking text
 - animation presets derived from the canonical motion duration/easing tokens
 - opacity color steps for tint, border, and state variations
 - content rules for Mongolian Cyrillic sizing, truncation, currency, and dates
 
 Web consumes those tokens through Tailwind/theme variables and `@tasky/design-tokens/tokens.css`. Mobile consumes the
-same graph through `nativeTokens`, NativeWind configuration, and native shell/primitive adapters.
+same graph through `nativeTokens`, NativeWind configuration, native shell/primitive adapters, token-backed touch target
+utilities, and the shared `ModalSheetTemplate` bottom-sheet foundation.
 
 `docs/design/component-contract.yaml` records the active mobile component contract. Entries may map a stable design
 component name to a differently named runtime export with `runtime_name`, and they must classify implementation posture

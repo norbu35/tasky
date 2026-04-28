@@ -25,8 +25,8 @@ info:
     Critical state-changing endpoints require an `Idempotency-Key` header.
 
     ## Contract Scope
-    This active contract describes the Phase 1 launch baseline only.
-    Deferred-phase API design is tracked in `docs/ROLLOUT_PHASES.md` and archived references, not in this live contract.
+    Live, ungated behavior in this contract describes the Phase 1 launch baseline only.
+    Deliberately deferred path and schema surfaces may remain in the split contract only when marked with `x-tasky-status: deferred` plus phase metadata. Those entries are contract discovery surfaces, not launch scope.
   version: 1.4.0
   contact:
     name: Tasky Engineering
@@ -1394,7 +1394,7 @@ components:
           format: date-time
     CreditBalance:
       x-tasky-status: deferred
-      x-tasky-phase: phase_2
+      x-tasky-phase: phase_3
       type: object
       required:
         - balance
@@ -1413,7 +1413,7 @@ components:
           type: integer
     CreditTransaction:
       x-tasky-status: deferred
-      x-tasky-phase: phase_2
+      x-tasky-phase: phase_3
       type: object
       required:
         - id
@@ -1441,7 +1441,7 @@ components:
           format: date-time
     CreditPack:
       x-tasky-status: deferred
-      x-tasky-phase: phase_2
+      x-tasky-phase: phase_3
       type: object
       required:
         - id
@@ -4457,7 +4457,7 @@ paths:
     post:
       tags:
         - Admin
-      summary: Concierge assign task to tasker (Phase 0-1)
+      summary: Concierge assign task to tasker (Phase 1)
       description: |
         Founder/admin manual dispatch fallback for low-liquidity periods.
         Creates booking assignment if target tasker is eligible and verified.
@@ -5449,7 +5449,6 @@ paths:
                   type: string
                   enum:
                     - ASSIGNED
-                    - PAID
                     - COMPLETED
                     - CANCELLED
                     - NO_SHOW
@@ -5512,7 +5511,7 @@ paths:
         "403":
           $ref: "#/components/responses/Forbidden"
         "503":
-          description: Payout operations are deferred during the liquidity-first MVP phase.
+          description: Payout operations are deferred during the Phase 1 launch baseline.
           content:
             application/json:
               schema:
@@ -5575,7 +5574,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         "503":
-          description: Payout operations are deferred during the liquidity-first MVP phase.
+          description: Payout operations are deferred during the Phase 1 launch baseline.
           content:
             application/json:
               schema:
@@ -6000,14 +5999,14 @@ paths:
                 $ref: "#/components/schemas/Error"
   /credits/balance:
     x-tasky-status: deferred
-    x-tasky-phase: phase_2
-    x-tasky-target-phase: phase_2
+    x-tasky-phase: phase_3
+    x-tasky-target-phase: phase_3
     get:
       tags:
         - Credits
       summary: Get lead-unlock credit balance
       description: |
-        **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
+        **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
         Tasker credit balance for lead-unlock purchases.
       operationId: getCreditBalance
       security:
@@ -6029,8 +6028,8 @@ paths:
                 $ref: "#/components/schemas/Error"
   /credits/transactions:
     x-tasky-status: deferred
-    x-tasky-phase: phase_2
-    x-tasky-target-phase: phase_2
+    x-tasky-phase: phase_3
+    x-tasky-target-phase: phase_3
     get:
       tags:
         - Credits
@@ -6068,8 +6067,8 @@ paths:
                 $ref: "#/components/schemas/Error"
   /credits/packs:
     x-tasky-status: deferred
-    x-tasky-phase: phase_2
-    x-tasky-target-phase: phase_2
+    x-tasky-phase: phase_3
+    x-tasky-target-phase: phase_3
     get:
       tags:
         - Credits
@@ -6101,8 +6100,8 @@ paths:
                 $ref: "#/components/schemas/Error"
   /credits/purchase:
     x-tasky-status: deferred
-    x-tasky-phase: phase_2
-    x-tasky-target-phase: phase_2
+    x-tasky-phase: phase_3
+    x-tasky-target-phase: phase_3
     post:
       tags:
         - Credits

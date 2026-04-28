@@ -57,10 +57,12 @@ This roadmap is intentionally narrow. It does not commit the launch to:
 
 - OTP-primary auth or DAN verification
 - lead credits or promoted listings
+- customer booking fees or platform-fee collection
 - subscriptions
 - escrow, wallet, or payout operations
 - referrals
-- B2B flows
+- recurring scheduling or paid household memberships
+- self-serve B2B flows
 - instant match
 
 Those surfaces belong to later-phase planning only and must follow the rollout rules in `docs/ROLLOUT_PHASES.md` and `docs/maintenance/FEATURE_ACTIVATION_POLICY.md`.

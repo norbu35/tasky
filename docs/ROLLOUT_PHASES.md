@@ -36,32 +36,36 @@ Rules for agents:
 
 ## 2. Phase map
 
-| Phase                                                 | Purpose                                                                                              | Planned product shape                                                                                                                                                                                                              | Explicit non-goals for that phase                                                                                                              |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Phase 1 — Launch baseline**                         | Prove citywide Ulaanbaatar demand and supply can complete real jobs through a mostly self-serve flow | Citywide Ulaanbaatar posting, initial launch category catalog, structured intake, budget-or-quote pricing, open application, direct settlement, identity verification, reviews, disputes, moderation, measured operator assistance | OTP-primary auth, DAN, lead fees, promoted listings, subscriptions, escrow, wallet, payouts, referrals, B2B, instant match, runtime AI posting |
-| **Phase 2 — Liquidity systems and soft monetization** | Reduce matching friction and test light monetization without changing settlement posture             | Better ranking and application assistance, OTP migration, optional DAN fast-path, optional lead credits, optional promoted listings, direct settlement still standard                                                              | Escrow, wallet, payouts, subscriptions, instant match by default, geographic expansion                                                         |
-| **Phase 3 — Trust rails and supply monetization**     | Add payment-adjacent trust rails only after Phase 2 evidence exists                                  | Tasker subscription, opt-in escrow, wallet and payout operations, stronger anti-leakage enforcement, instant match only after liquidity proof                                                                                      | Geographic expansion, managed B2B as a default product line, broad consumer subscription expansion                                             |
-| **Phase 4 — Expansion**                               | Broaden revenue mix and geographic reach after the core marketplace is stable                        | Additional payment rails, customer subscription products, geographic expansion, managed B2B only if earlier validation exists                                                                                                      | None by default; every addition still needs explicit approval                                                                                  |
+| Phase                                              | Purpose                                                                                              | Planned product shape                                                                                                                                                                                                                                                                                                                       | Explicit non-goals for that phase                                                                                                                                                         |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1 — Launch baseline**                      | Prove citywide Ulaanbaatar demand and supply can complete real jobs through a mostly self-serve flow | Citywide Ulaanbaatar posting, initial launch category catalog, structured intake, budget-or-quote pricing, open application, direct settlement, identity verification, reviews, disputes, moderation, measured operator assistance                                                                                                          | OTP-primary auth, DAN, lead fees, platform fees, promoted listings, subscriptions, escrow, wallet, payouts, referrals, B2B, instant match, runtime AI posting                             |
+| **Phase 2 — Repeat liquidity and commerce pilots** | Improve matching quality, repeat behavior, and economic learning without changing job settlement     | Better ranking and application assistance, OTP migration, optional DAN fast-path, repeat-booking improvements, recurring cleaning V1, saved household preferences, founder-led/manual B2B account support, transparent platform-fee pilot in proven standardized categories, direct settlement still standard for the underlying job amount | Escrow, wallet, payouts, full-job payment collection, paid household membership by default, tasker subscriptions, lead credits by default, instant match by default, geographic expansion |
+| **Phase 3 — Trust rails and supply monetization**  | Add payment-adjacent trust rails and supply-side monetization only after Phase 2 evidence exists     | Tasker subscription if paid supply value is proven, optional lead credits only in quote-heavy categories with strong lead quality, optional promoted listings in dense markets, opt-in escrow, wallet and payout operations, stronger anti-leakage enforcement, instant match only after liquidity proof                                    | Geographic expansion, managed B2B as a default product line, broad consumer subscription expansion                                                                                        |
+| **Phase 4 — Expansion and broader revenue mix**    | Broaden revenue mix and geographic reach after the core marketplace is stable                        | Additional payment rails, paid household memberships after recurring behavior is proven, geographic expansion, partner/API products, and managed B2B only if earlier validation exists                                                                                                                                                      | None by default; every addition still needs explicit approval                                                                                                                             |
 
 ## 2.1 Future-ready feature registry
 
 This table is the canonical AI routing map for known deferred feature families. It describes intended ownership and
 toggle posture; it does not activate any feature.
 
-| Feature family                        | Target phase      | Runtime switch / guard                                         | Current Phase 1 posture                                               |
-| ------------------------------------- | ----------------- | -------------------------------------------------------------- | --------------------------------------------------------------------- |
-| OTP-primary auth                      | Phase 2           | Provider/config gate; OTP launch UX hidden                     | Deferred; Facebook OAuth remains the only launch auth path            |
-| DAN verification fast-path            | Phase 2           | Future provider/config gate                                    | Deferred; manual verification remains active                          |
-| Lead credits / paid lead unlock       | Phase 2 optional  | `lead_fee_enabled`                                             | Dormant and off; direct application remains free                      |
-| Promoted listings / task boosts       | Phase 2 optional  | Future monetization or ranking toggle                          | Dormant; no launch paid visibility promise                            |
-| Runtime AI scope summary              | Phase 2 optional  | `ai_scope_summary_enabled`                                     | Dormant and off; posting summary remains deterministic                |
-| Referrals                             | Phase 2+ optional | Deferred contract/design surface                               | Dormant; not required for Phase 2 advancement                         |
-| Tasker subscription                   | Phase 3           | `subscription_enabled`                                         | Dormant and off; no paid Tasker Pro entitlement                       |
-| Opt-in escrow / payment protection    | Phase 3           | `escrow_enabled` plus payment provider readiness               | Dormant and off; direct settlement remains standard                   |
-| Wallet balances and payout operations | Phase 3           | `escrow_enabled` until wallet-specific activation is split out | Dormant and off; no wallet safety or payout promise                   |
-| Instant match                         | Phase 3           | Future matching/liquidity gate                                 | Dormant; customer selects from open applications                      |
-| Customer subscription products        | Phase 4           | Future subscription toggle                                     | Not launch scope                                                      |
-| Managed B2B                           | Phase 4 optional  | Future B2B toggle / commercial approval                        | Conditional side-track only; not core Phase 1 or Phase 2 success case |
+| Feature family                         | Target phase      | Runtime switch / guard                                           | Current Phase 1 posture                                                            |
+| -------------------------------------- | ----------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| OTP-primary auth                       | Phase 2           | Provider/config gate; OTP launch UX hidden                       | Deferred; Facebook OAuth remains the only launch auth path                         |
+| DAN verification fast-path             | Phase 2           | Future provider/config gate                                      | Deferred; manual verification remains active                                       |
+| Rebook and saved household preferences | Phase 2           | Existing rebook surface plus future repeat-booking guard         | Deferred outside current launch UX unless the PRD and design surfaces activate it  |
+| Recurring cleaning V1                  | Phase 2 optional  | Future recurring-cleaning guard                                  | Dormant; no launch recurring schedule or paid membership promise                   |
+| Platform or booking fee pilot          | Phase 2 optional  | Future `platform_fee_enabled` guard                              | Dormant and off; no launch customer fee, payment processing, or protection promise |
+| Manual B2B account support             | Phase 2 optional  | Admin/operator approval; no customer-facing B2B route by default | Discovery-only until product, ops, contract, and invoice posture are approved      |
+| Lead credits / paid lead unlock        | Phase 3 optional  | `lead_fee_enabled`                                               | Dormant and off; direct application remains free                                   |
+| Promoted listings / task boosts        | Phase 3 optional  | Future monetization or ranking toggle                            | Dormant; no launch paid visibility promise                                         |
+| Runtime AI scope summary               | Phase 2 optional  | `ai_scope_summary_enabled`                                       | Dormant and off; posting summary remains deterministic                             |
+| Referrals                              | Phase 2+ optional | Deferred contract/design surface                                 | Dormant; not required for Phase 2 advancement                                      |
+| Tasker subscription                    | Phase 3           | `subscription_enabled`                                           | Dormant and off; no paid Tasker Pro entitlement                                    |
+| Opt-in escrow / payment protection     | Phase 3           | `escrow_enabled` plus payment provider readiness                 | Dormant and off; direct settlement remains standard                                |
+| Wallet balances and payout operations  | Phase 3           | `escrow_enabled` until wallet-specific activation is split out   | Dormant and off; no wallet safety or payout promise                                |
+| Instant match                          | Phase 3           | Future matching/liquidity gate                                   | Dormant; customer selects from open applications                                   |
+| Paid household membership              | Phase 4 optional  | Future subscription toggle                                       | Not launch scope; must follow proven recurring cleaning behavior                   |
+| Partner/API or managed B2B             | Phase 4 optional  | Future B2B toggle / commercial approval                          | Conditional side-track only; no self-serve B2B product in Phase 1                  |
 
 If a code surface exists without a listed switch, agents should treat it as dormant design space and keep it hidden
 until the relevant phase adds an explicit activation guard.
@@ -83,13 +87,14 @@ It means:
 
 ## 4. Phase 2 planned scope
 
-Phase 2 exists to improve liquidity before adding payment-adjacent trust rails.
+Phase 2 exists to improve repeat liquidity and begin narrow economic learning before adding payment-adjacent trust rails.
 
 ### 4.1 Core intent
 
 - improve how good applicants are surfaced to customers
 - reduce matching friction without pretending the platform is already the merchant of record
-- test monetization only where the marketplace is already producing real intent
+- improve repeat behavior in cleaning and other standardized categories
+- test transparent platform-fee collection only where the marketplace is already producing real intent
 
 ### 4.2 Preserved feature intent
 
@@ -98,25 +103,33 @@ If Phase 2 is entered, the planned candidates are:
 - algorithm-assisted application ranking and better candidate ordering
 - phone-based auth migration from Facebook-first launch auth
 - optional DAN fast-path for identity verification if the provider is reliable enough
-- optional lead-credit model for tasker-side monetization where confirmed intent already exists
-- optional promoted listings / task boosts if they improve fill without damaging trust
-- optional repeat-booking shortcuts only after the base booking lifecycle stays clean
+- rebook, saved preferences, and recurring cleaning V1 after the base booking lifecycle stays clean
+- transparent customer-side platform or booking fee pilot in proven standardized categories, initially cleaning and
+  furniture assembly candidates
+- founder-led or admin-supported B2B account handling for repeat buyers such as landlords, office admins, and property
+  managers
+- one anchor retail, furniture, relocation, or property partnership pilot where service intent is already high
 
 ### 4.3 Constraints
 
 - direct settlement remains the standard path
+- the platform-fee pilot may collect Tasky's fee, but it must not collect, hold, or pay out the underlying job amount by
+  default
 - monetization remains optional inside the phase, not automatic day-one scope
+- lead credits, promoted listings, tasker subscriptions, escrow, wallet, and payouts remain out of default Phase 2 scope
 - referrals may exist later, but they are not required for the Phase 2 transition
 
 ## 5. Phase 3 planned scope
 
-Phase 3 is the first point where payment-adjacent trust rails become credible.
+Phase 3 is the first point where payment-adjacent trust rails and supply-side monetization become credible.
 
 ### 5.1 Preserved feature intent
 
 - opt-in escrow only after earlier evidence shows users need it and operations can support it
 - wallet and payout operations for tasker-side funds movement
 - tasker subscription if paid platform value is proven
+- optional lead credits only in quote-heavy categories with demonstrated lead quality and enough verified supply
+- optional promoted listings only in dense markets where paid visibility does not reduce total category conversion
 - stronger anti-leakage enforcement tied to real platform value
 - instant match only after verified liquidity is strong enough to avoid false availability and bad assignments
 
@@ -132,9 +145,10 @@ Phase 4 is expansion, not a rescue plan for an unproven core marketplace.
 Planned candidates:
 
 - broader payment rails
-- customer subscription products
+- paid household membership products after recurring cleaning behavior is proven
 - geographic expansion beyond the initial citywide Ulaanbaatar baseline
-- managed B2B only if the consumer marketplace is already stable and the B2B motion helps rather than distracts
+- partner/API products and managed B2B only if the consumer marketplace is already stable and the B2B motion helps
+  rather than distracts
 
 ## 7. Conditional tracks
 
@@ -146,7 +160,44 @@ Referrals may be introduced in Phase 2 or later, but they should follow proof of
 
 ### 7.2 B2B
 
-B2B remains a conditional side-track. Founder-led commercial discovery may happen early, but committed product scope should wait until there is evidence that B2B strengthens the marketplace instead of fragmenting it.
+B2B remains a conditional side-track. Founder-led commercial discovery and manual account handling may happen during
+Phase 2, but committed self-serve product scope should wait until there is evidence that B2B strengthens the marketplace
+instead of fragmenting it.
+
+### 7.3 Commerce pilots
+
+Platform or booking fee pilots are distinct from escrow, wallet, and payout operations. A Phase 2 fee pilot may collect a
+small Tasky fee for completed or confirmed jobs in proven standardized categories, but it must preserve direct settlement
+for the underlying job amount unless a later phase explicitly changes the payment role.
+
+The first paid household membership should not launch until recurring cleaning has enough repeat behavior to show that a
+membership improves retention and convenience rather than creating pricing confusion.
+
+### 7.4 Phase 2 pilot entry criteria
+
+Phase 2 pilot candidates are not automatic activation scope. Before recurring cleaning, platform-fee collection, manual
+B2B account reporting, or a partner pilot is implemented or exposed, the proposal must show:
+
+1. Category liquidity is green or explicitly approved for a narrow learning exception using the hard-gate metrics in
+   `docs/METRICS.md`.
+2. The relevant category has decision-valid denominators for the hard-gate metrics.
+3. Trust Failure Rate is not red in the target category.
+4. The commerce-pilot dashboard in `docs/METRICS.md` and `docs/OBSERVABILITY.md` is available for the pilot.
+5. Launch UX remains truthful: no payment hold, payment protection, wallet, payout, escrow, paid membership, or
+   self-serve B2B promise leaks into Phase 1 surfaces.
+6. The activation evidence in `docs/maintenance/FEATURE_ACTIVATION_POLICY.md` exists, including rollback criteria.
+
+Default pilot-specific evidence:
+
+- **Recurring cleaning V1:** cleaning has measured rebook and repeat-customer baselines, and support can explain whether
+  repeats are same-tasker convenience, category habit, or operator-assisted repeats.
+- **Platform-fee pilot:** legal role, provider contract, fee waiver, cancellation, refund, customer-copy, and support
+  handling are documented before collecting any fee.
+- **Manual B2B account support:** founder-approved accounts are tagged manually first; self-serve account portals,
+  partner APIs, priority dispatch, and B2B billing remain out of scope until manual-account results prove they improve
+  marketplace liquidity rather than distracting from it.
+- **Partner pilot:** one anchor partner is enough for Phase 2 learning; API, white-label, or multi-partner infrastructure
+  belongs later.
 
 ## 8. Re-derivation rule
 

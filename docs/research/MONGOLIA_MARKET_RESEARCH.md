@@ -1,8 +1,12 @@
 # Mongolia Market Research: Tasky Gig Marketplace
 
-*Research date: March 2026. Sources: DataReportal 2024/2025, World Bank, QPay IPO filings,
+_Research date: March 2026. Sources: DataReportal 2024/2025, World Bank, QPay IPO filings,
 ESCAP 2024, ILO, Mondaq, Pandectes, NapoleonCat, Macrotrends, Similarweb, and comparable
-market analysis.*
+market analysis._
+
+Status: historical research input. This report preserves earlier recommendations that may conflict with the current
+PRD and rollout direction. Use `docs/research/business-model-research.md` for the current business-model synthesis and
+governing docs for product scope.
 
 ---
 
@@ -11,7 +15,7 @@ market analysis.*
 ### Population
 
 | Metric                              | Value                                                 |
-|-------------------------------------|-------------------------------------------------------|
+| ----------------------------------- | ----------------------------------------------------- |
 | Mongolia total population (2024)    | 3,493,629                                             |
 | Ulaanbaatar metro population (2024) | ~1,699,000 (~49% of country)                          |
 | Urban/rural split (national)        | 70% urban, 30% rural                                  |
@@ -24,7 +28,7 @@ informal labour and price-sensitive consumers — the core Tasker supply.
 ### Internet and Smartphone
 
 | Metric                         | Value                                                |
-|--------------------------------|------------------------------------------------------|
+| ------------------------------ | ---------------------------------------------------- |
 | Internet penetration (2024)    | 83.9% — 2.91M users                                  |
 | Internet penetration (2025)    | 83.0% — 2.90M users (stable)                         |
 | Smartphone penetration         | 85% (2024)                                           |
@@ -35,7 +39,7 @@ informal labour and price-sensitive consumers — the core Tasker supply.
 ### Social Media
 
 | Metric                                     | Value                                |
-|--------------------------------------------|--------------------------------------|
+| ------------------------------------------ | ------------------------------------ |
 | Social media users (Jan 2025)              | 2.60M — 74.4% of population          |
 | Social media penetration of internet users | 89.6%                                |
 | **Facebook users (April 2024)**            | **~3.0M — ~88% of total population** |
@@ -51,7 +55,7 @@ Facebook-native behaviour.
 ### Income and Wages
 
 | Metric                                  | Value                         |
-|-----------------------------------------|-------------------------------|
+| --------------------------------------- | ----------------------------- |
 | Average monthly salary (2024)           | ~MNT 2,000,000 (~$436 USD)    |
 | Average monthly salary (2025 NSO)       | MNT 2,479,600 (~$720 USD)     |
 | Minimum wage (from Jan 1, 2025)         | MNT 792,000 (~$230 USD/month) |
@@ -64,7 +68,7 @@ Implied informal day rates for unskilled labour (cleaning, moving): MNT 20,000�
 ### Youth Unemployment
 
 | Metric                                | Value                                                                      |
-|---------------------------------------|----------------------------------------------------------------------------|
+| ------------------------------------- | -------------------------------------------------------------------------- |
 | Youth unemployment rate (15-24, 2024) | **13.8%** (up from 12.33% in 2023)                                         |
 | Overall unemployment rate             | 5.0%                                                                       |
 | Informal employment persistence       | ILO: avg. worker in informal employment for 11.8 years; 64.8% for ≥8 years |
@@ -79,7 +83,7 @@ labour pool. No formalized gig platform currently captures this supply.
 ### QPay
 
 | Metric                            | Value                                                                           |
-|-----------------------------------|---------------------------------------------------------------------------------|
+| --------------------------------- | ------------------------------------------------------------------------------- |
 | Registered users                  | **3.2M** (~91% of adults)                                                       |
 | Connected merchants               | **200,000+**                                                                    |
 | Transaction volume (Jan–Oct 2024) | 98.6M transactions — MNT 4.7 trillion (~$1.37B USD)                             |
@@ -92,7 +96,7 @@ marketplace, QPay integration is mandatory infrastructure, not optional.
 ### Other Payment Apps
 
 | App                     | Notes                                                                                           |
-|-------------------------|-------------------------------------------------------------------------------------------------|
+| ----------------------- | ----------------------------------------------------------------------------------------------- |
 | SocialPay (Golomt Bank) | Founded 2017; 93% of Golomt total transactions now digital; launched Junior (ages 7–18) in 2024 |
 | Monpay                  | Independent wallet; merchant QR acceptance                                                      |
 | Khan Bank mobile        | One of two largest bank-owned platforms; partnered with Alipay+ (June 2024)                     |
@@ -100,7 +104,7 @@ marketplace, QPay integration is mandatory infrastructure, not optional.
 ### Bank Account and Digital Penetration
 
 | Metric                            | Value                                     |
-|-----------------------------------|-------------------------------------------|
+| --------------------------------- | ----------------------------------------- |
 | Bank account penetration (14+)    | **99%**                                   |
 | Mobile banking accounts           | 58.8% of population                       |
 | E-commerce market size (2024)     | $412.8M projected                         |
@@ -121,7 +125,7 @@ marketplace, QPay integration is mandatory infrastructure, not optional.
 ### Unegui.mn
 
 | Metric            | Value                                                                                                                    |
-|-------------------|--------------------------------------------------------------------------------------------------------------------------|
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | Monthly visitors  | 1.5M (in a 3.5M population country)                                                                                      |
 | Traffic rank      | #5 in Mongolia; #803 globally in classifieds                                                                             |
 | Owner             | Cyprus-based Larixon Classifieds                                                                                         |
@@ -208,7 +212,7 @@ Development, Innovation, and Communications.
 ## 6. Competitor Landscape
 
 | Player                    | Type                         | Relevance                                                |
-|---------------------------|------------------------------|----------------------------------------------------------|
+| ------------------------- | ---------------------------- | -------------------------------------------------------- |
 | UBCab                     | Ride-hailing gig marketplace | Direct analog — proves app-based labour matching works   |
 | Unegui.mn                 | Classifieds                  | Dominant but structurally limited; no booking or payment |
 | Facebook groups           | Informal marketplace         | Primary incumbent; zero trust infrastructure             |
@@ -277,7 +281,7 @@ will wait for supply; supply will not wait for buyers.
 ## 8. Key Numbers Summary
 
 | Metric                                 | Value                      |
-|----------------------------------------|----------------------------|
+| -------------------------------------- | -------------------------- |
 | Ulaanbaatar population                 | 1.7M                       |
 | Mongolia total population              | 3.5M                       |
 | Smartphone penetration                 | 85%                        |
@@ -312,7 +316,7 @@ will wait for supply; supply will not wait for buyers.
 #### 1. QPay deferral is the single largest strategic error
 
 Off-platform cash settlement in Phase 1 makes Tasky structurally identical to a Facebook
-group — better UX, same trust level. The core value proposition is *trust*, and without
+group — better UX, same trust level. The core value proposition is _trust_, and without
 payment infrastructure, the trust differential is cosmetic.
 
 **Fix:** Integrate QPay in MVP Phase 1 at 0% platform fee. Escrow-held QPay payment creates
@@ -390,7 +394,7 @@ up-market to higher-value services (renovation, electrical).
 ### Risk Register
 
 | Risk                                                                | Likelihood | Impact   | In PRD  |
-|---------------------------------------------------------------------|------------|----------|---------|
+| ------------------------------------------------------------------- | ---------- | -------- | ------- |
 | QPay deferral makes platform indistinguishable from Facebook groups | High       | Critical | No      |
 | Admin verification bottleneck kills supply growth                   | High       | High     | No      |
 | Facebook API policy change breaks sole auth mechanism               | Medium     | Critical | No      |
@@ -405,7 +409,7 @@ up-market to higher-value services (renovation, electrical).
 ### Business Model Phase Assessment
 
 | Phase                                            | Assessment                             | Key Issue                                                                                              |
-|--------------------------------------------------|----------------------------------------|--------------------------------------------------------------------------------------------------------|
+| ------------------------------------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | Phase 1 — 0% commission, off-platform settlement | Partially correct                      | Off-platform settlement undermines trust proposition; QPay at 0% fee is superior                       |
 | Phase 2 — Pro Badge, Priority Matching           | Direction correct, mechanism undefined | Who does background check? What is the pricing? No implementation path specified                       |
 | Phase 3 — Take rate 10–15%                       | Standard model                         | Timing risk: take rate triggers leakage if habit not formed; don't introduce until repeat rate is high |
