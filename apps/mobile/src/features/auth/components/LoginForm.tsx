@@ -63,9 +63,7 @@ export function LoginForm() {
 
           <View className="flex-row items-center my-xl">
             <View className="flex-1 h-px bg-border" />
-            <Text className="mx-md text-text-tertiary font-medium" style={{ letterSpacing: 0.075 }}>
-              {t('auth.or')}
-            </Text>
+            <Text className="mx-md text-text-tertiary font-medium">{t('auth.or')}</Text>
             <View className="flex-1 h-px bg-border" />
           </View>
 

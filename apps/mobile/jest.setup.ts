@@ -1,4 +1,5 @@
 import { notifyManager } from '@tanstack/react-query';
+import type { ReactNode, Ref } from 'react';
 
 // TanStack Query's default scheduler uses setTimeout(cb, 0) for batch notifications,
 // which fires after act() closes and triggers "not wrapped in act" warnings.
@@ -6,6 +7,51 @@ import { notifyManager } from '@tanstack/react-query';
 notifyManager.setScheduler((cb) => cb());
 
 jest.mock('react-native-reanimated', () => require('./__tests__/test-utils/reanimated-mock.js'));
+
+jest.mock('@gorhom/bottom-sheet', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+
+  const BottomSheet = React.forwardRef(
+    (
+      {
+        children,
+        index = 0,
+        testID = 'mock-bottom-sheet',
+      }: {
+        children?: ReactNode;
+        index?: number;
+        testID?: string;
+      },
+      ref: Ref<{ close: () => void; snapToIndex: (index: number) => void }>,
+    ) => {
+      React.useImperativeHandle(ref, () => ({
+        close: jest.fn(),
+        snapToIndex: jest.fn(),
+      }));
+
+      if (index === -1) {
+        return null;
+      }
+
+      return React.createElement(View, { testID }, children);
+    },
+  );
+  BottomSheet.displayName = 'MockBottomSheet';
+
+  const BottomSheetView = ({ children, ...props }: { children?: ReactNode }) =>
+    React.createElement(View, props, children);
+
+  const BottomSheetBackdrop = (props: Record<string, unknown>) =>
+    React.createElement(View, { ...props, testID: 'mock-bottom-sheet-backdrop' });
+
+  return {
+    __esModule: true,
+    default: BottomSheet,
+    BottomSheetBackdrop,
+    BottomSheetView,
+  };
+});
 
 jest.mock('react-native-worklets', () => {
   const noopFn = jest.fn((val: unknown) => val);

@@ -100,7 +100,7 @@ describe('Button', () => {
   it('applies icon size classes', () => {
     render(<Button size="icon" testID="button" />);
     const el = screen.getByTestId('button');
-    expect(el.props.className).toContain('w-[36px]');
+    expect(el.props.className).toContain('size-touch');
   });
 
   it('applies opacity-50 class when disabled', () => {

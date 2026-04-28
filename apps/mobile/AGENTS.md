@@ -31,6 +31,8 @@ References:
 - No deep `../../` imports in `src/**`.
 - `screens/` is not a dumping ground for helpers or barrels.
 - Orchestration hooks under `screens/` use the `Screen` suffix; domain hooks outside `screens/` do not.
+- Use `ModalSheetTemplate` from `src/components/templates` for bottom-sheet composition; `ActionSheet` and `ConfirmSheet` are wrappers over that template. Do not reintroduce a separate UI `ModalSheet` primitive.
+- Prefer token-backed NativeWind utilities for touch and badge sizing (`min-h-touch-lg`, `min-h-touch-xl`, `size-touch`, `size-touch-sm`, `tracking-badge`) before adding bracketed one-off values.
 
 ## I18n
 

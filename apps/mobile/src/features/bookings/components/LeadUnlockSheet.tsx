@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { overlays } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
 
-const { colors, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 type LeadUnlockState =
   | 'notification_received'
@@ -72,10 +72,7 @@ export function LeadUnlockSheet({
               {t('LeadUnlockSheet.copy1')}
             </Text>
             <ActivityIndicator color={colors.primary} size="large" />
-            <Text
-              className="text-label text-text-secondary text-center"
-              style={{ lineHeight: typography.label * 1.5 }}
-            >
+            <Text className="text-label text-text-secondary text-center leading-6">
               {t('LeadUnlockSheet.copy2')}
             </Text>
           </View>
@@ -85,10 +82,7 @@ export function LeadUnlockSheet({
             <Text className="text-title font-bold text-primary-deep text-center">
               {t('LeadUnlockSheet.copy3')}
             </Text>
-            <Text
-              className="text-label text-text-secondary text-center"
-              style={{ lineHeight: typography.label * 1.5 }}
-            >
+            <Text className="text-label text-text-secondary text-center leading-6">
               {`Захиалагчийн холбоо барих мэдээлэл нээгдлээ. ${creditCost} кредит зарцуулагдлаа.`}
             </Text>
             <View className="rounded-md bg-muted p-lg gap-sm">
@@ -105,10 +99,7 @@ export function LeadUnlockSheet({
             <Text className="text-title font-bold text-primary-deep text-center">
               {t('LeadUnlockSheet.copy6')}
             </Text>
-            <Text
-              className="text-label text-text-secondary text-center"
-              style={{ lineHeight: typography.label * 1.5 }}
-            >
+            <Text className="text-label text-text-secondary text-center leading-6">
               {t('LeadUnlockSheet.copy7')}
             </Text>
             <Button label={t('LeadUnlockSheet.copy8')} onPress={onClose} />
@@ -118,10 +109,7 @@ export function LeadUnlockSheet({
             <Text className="text-title font-bold text-primary-deep text-center">
               {t('LeadUnlockSheet.copy9')}
             </Text>
-            <Text
-              className="text-label text-text-secondary text-center"
-              style={{ lineHeight: typography.label * 1.5 }}
-            >
+            <Text className="text-label text-text-secondary text-center leading-6">
               {t('LeadUnlockSheet.copy10')}
             </Text>
             <Button label={t('LeadUnlockSheet.copy11')} onPress={onClose} />
@@ -156,7 +144,7 @@ export function LeadUnlockSheet({
                   testID="lead-unlock-buy-credits"
                   label={t('LeadUnlockSheet.copy16')}
                   onPress={onBuyCredits}
-                  className="min-h-[52]"
+                  className="min-h-touch-xl"
                 />
                 <Button label={t('LeadUnlockSheet.copy17')} variant="ghost" onPress={onDecline} />
               </>
@@ -165,7 +153,7 @@ export function LeadUnlockSheet({
                 <Button
                   label={t('LeadUnlockSheet.copy18')}
                   onPress={onAccept}
-                  className="min-h-[52]"
+                  className="min-h-touch-xl"
                 />
                 <Button label={t('LeadUnlockSheet.copy19')} variant="ghost" onPress={onDecline} />
               </>

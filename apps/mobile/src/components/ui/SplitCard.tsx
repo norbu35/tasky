@@ -4,10 +4,8 @@ import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanima
 
 import { interactiveStates, withInteractiveSpring } from '@/design/animations';
 import { elevations } from '@/design/elevations';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
-const { spacing } = mobileTheme;
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 interface SplitCardProps {
@@ -62,15 +60,10 @@ export function SplitCard({
 
   return (
     <Wrapper {...(wrapperProps as Record<string, unknown>)}>
-      <View
-        style={{ minHeight: 56, paddingHorizontal: spacing.md, paddingVertical: spacing.sm }}
-        className="bg-primary rounded-tl-lg rounded-tr-lg justify-center"
-      >
+      <View className="min-h-touch-xl px-md py-sm bg-primary rounded-tl-lg rounded-tr-lg justify-center">
         {headerContent}
       </View>
-      <View style={{ padding: spacing.md }} className="bg-background rounded-bl-lg rounded-br-lg">
-        {bodyContent}
-      </View>
+      <View className="p-md bg-background rounded-bl-lg rounded-br-lg">{bodyContent}</View>
     </Wrapper>
   );
 }

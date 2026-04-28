@@ -17,6 +17,9 @@ export const screenTypographyPlugin = plugin(function ({ addUtilities }) {
       letterSpacing: px(typographyVariants.badgeText.letterSpacing),
       textTransform: 'uppercase',
     },
+    '.tracking-badge': {
+      letterSpacing: px(typographyVariants.badgeText.letterSpacing),
+    },
     '.font-screen-title': {
       fontSize: px(typographyVariants.pageHeading.fontSize),
       fontFamily: typographyVariants.pageHeading.fontFamily,

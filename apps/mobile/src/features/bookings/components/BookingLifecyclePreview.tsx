@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { TimelineStepper } from '@/components/ui/TimelineStepper';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { formatDateTime } from '@/utils/formatDate';
 
 interface BookingLifecyclePreviewProps {
@@ -58,10 +57,7 @@ export function BookingLifecyclePreview({
         {t('booking.lifecycle.title')}
       </Text>
       <TimelineStepper events={events} testID="booking-lifecycle-preview" className="mt-sm" />
-      <Text
-        className="text-caption leading-[20px] mt-xs"
-        style={{ color: mobileTheme.colors.textSecondary }}
-      >
+      <Text className="text-caption leading-5 mt-xs text-text-secondary">
         {t('booking.lifecycle.addressNote')}
       </Text>
     </View>

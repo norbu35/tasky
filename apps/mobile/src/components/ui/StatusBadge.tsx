@@ -3,7 +3,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
 type StatusType = 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show';
@@ -50,10 +49,7 @@ export function StatusBadge({ status, className, testID }: StatusBadgeProps) {
   const { t } = useTranslation();
   return (
     <View className={cn(badgeVariants({ status }), className)} testID={testID}>
-      <Text
-        className={textVariants({ status })}
-        style={{ letterSpacing: mobileTheme.typographyVariants.badgeText.letterSpacing }}
-      >
+      <Text className={cn(textVariants({ status }), 'tracking-badge')}>
         {t(STATUS_LABEL_KEYS[status])}
       </Text>
     </View>

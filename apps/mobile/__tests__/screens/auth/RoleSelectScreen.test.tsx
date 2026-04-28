@@ -1,5 +1,4 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import { useAppStore } from '../../../src/store/appStore';
@@ -119,17 +118,17 @@ describe('RoleSelectScreen (SCR-SHARED-006)', () => {
     expect(btn).toBeDisabled();
   });
 
-  it('keeps the selected card light with a navy border and a corner check', () => {
+  it('keeps the selected card token-backed with a navy border and a corner check', () => {
     render(<RoleSelectScreen />);
 
     fireEvent.press(screen.getByTestId('role-card-customer'));
 
-    const selectedCard = StyleSheet.flatten(screen.getByTestId('role-card-customer').props.style);
-    const unselectedCard = StyleSheet.flatten(screen.getByTestId('role-card-tasker').props.style);
+    const selectedCardClassName = screen.getByTestId('role-card-customer').props.className;
+    const unselectedCardClassName = screen.getByTestId('role-card-tasker').props.className;
 
-    expect(selectedCard.backgroundColor).toBe('#ffffff');
-    expect(String(selectedCard.borderColor).toLowerCase()).toBe('#102638');
-    expect(unselectedCard.backgroundColor).toBe('#F3F1EC');
+    expect(selectedCardClassName).toContain('bg-card');
+    expect(selectedCardClassName).toContain('border-primary-deep');
+    expect(unselectedCardClassName).toContain('bg-muted');
     expect(screen.getByTestId('role-card-customer-check')).toBeTruthy();
   });
 

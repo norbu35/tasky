@@ -3,11 +3,11 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, View } from 'react-native';
 
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
 import { Button } from './Button';
-import { ModalSheet } from './ModalSheet';
 import { Touchable } from './Touchable';
 
 type PickerMode = 'date' | 'time';
@@ -94,15 +94,15 @@ export function SchedulePickerSheet({
   const firstMonth = dateOptions[0] ?? draftDate;
 
   return (
-    <ModalSheet
-      visible
+    <ModalSheetTemplate
+      isOpen
       title={t('ScheduleBudgetScreen.schedulePickerTitle')}
       onClose={onClose}
       titleAlign="center"
       testID="schedule-picker-sheet"
-      className="rounded-tl-lg rounded-tr-lg gap-lg px-lg pt-lg"
       contentClassName="gap-lg"
       hideDefaultAction
+      snapPoints={['70%', '90%']}
       headerLeading={
         <Touchable
           accessibilityRole="button"
@@ -120,7 +120,7 @@ export function SchedulePickerSheet({
             <Touchable
               accessibilityRole="button"
               onPress={onReset}
-              className="min-h-[52px] justify-center"
+              className="min-h-touch-xl justify-center"
               testID="schedule-picker-reset"
             >
               <Text className="text-body font-sans-bold underline text-foreground">
@@ -146,13 +146,19 @@ export function SchedulePickerSheet({
               accessibilityRole="tab"
               accessibilityState={{ selected }}
               onPress={() => onModeChange(tab)}
-              className="flex-1 min-h-[48px] items-center justify-center rounded-full"
-              style={{ backgroundColor: selected ? colors.card : colors.muted }}
+              className={cn(
+                'flex-1 min-h-touch-lg items-center justify-center rounded-full',
+                selected ? 'bg-card' : 'bg-muted',
+              )}
               testID={tab === 'date' ? 'schedule-picker-date-tab' : 'schedule-picker-time-tab'}
             >
               <Text
-                className={cn('text-body', selected ? 'font-sans-bold' : 'font-sans-medium')}
-                style={{ color: selected ? colors.foreground : colors.mutedForeground }}
+                className={cn(
+                  'text-body',
+                  selected
+                    ? 'font-sans-bold text-foreground'
+                    : 'font-sans-medium text-muted-foreground',
+                )}
               >
                 {tab === 'date'
                   ? t('ScheduleBudgetScreen.scheduleDate')
@@ -169,7 +175,7 @@ export function SchedulePickerSheet({
             {weekdayLabels.map((label, index) => (
               <Text
                 key={`${label}-${index}`}
-                className="w-[13%] text-center text-body font-sans-medium text-muted-foreground"
+                className="flex-1 text-center text-body font-sans-medium text-muted-foreground"
               >
                 {label}
               </Text>
@@ -182,8 +188,7 @@ export function SchedulePickerSheet({
             {rows.map((row, rowIndex) => (
               <View
                 key={`week-${rowIndex}`}
-                className="min-h-[54px] flex-row items-center rounded-md"
-                style={{ backgroundColor: colors.muted }}
+                className="min-h-touch-xl flex-row items-center rounded-md bg-muted"
               >
                 {row.map((date, columnIndex) => {
                   const optionIndex = dateOptions.findIndex(
@@ -197,13 +202,17 @@ export function SchedulePickerSheet({
                           accessibilityRole="button"
                           accessibilityState={{ selected }}
                           onPress={() => onDateChange(date)}
-                          className="h-11 w-11 items-center justify-center rounded-full"
-                          style={{ backgroundColor: selected ? colors.foreground : 'transparent' }}
+                          className={cn(
+                            'h-11 w-11 items-center justify-center rounded-full',
+                            selected ? 'bg-foreground' : 'bg-transparent',
+                          )}
                           testID={`schedule-day-option-${optionIndex}`}
                         >
                           <Text
-                            className="text-body font-sans-bold"
-                            style={{ color: selected ? colors.background : colors.foreground }}
+                            className={cn(
+                              'text-body font-sans-bold',
+                              selected ? 'text-background' : 'text-foreground',
+                            )}
                           >
                             {date.getDate()}
                           </Text>
@@ -229,16 +238,17 @@ export function SchedulePickerSheet({
                   accessibilityRole="button"
                   accessibilityState={{ selected }}
                   onPress={() => onTimeChange(time)}
-                  className="min-h-[48px] min-w-[92px] items-center justify-center rounded-full border px-md"
-                  style={{
-                    borderColor: selected ? colors.foreground : colors.border,
-                    backgroundColor: selected ? colors.foreground : colors.card,
-                  }}
+                  className={cn(
+                    'min-h-touch-lg min-w-[92px] items-center justify-center rounded-full border px-md',
+                    selected ? 'border-foreground bg-foreground' : 'border-border bg-card',
+                  )}
                   testID={`schedule-time-option-${index}`}
                 >
                   <Text
-                    className="text-body font-sans-bold"
-                    style={{ color: selected ? colors.background : colors.foreground }}
+                    className={cn(
+                      'text-body font-sans-bold',
+                      selected ? 'text-background' : 'text-foreground',
+                    )}
                   >
                     {formatTime(time)}
                   </Text>
@@ -248,6 +258,6 @@ export function SchedulePickerSheet({
           </View>
         </ScrollView>
       )}
-    </ModalSheet>
+    </ModalSheetTemplate>
   );
 }

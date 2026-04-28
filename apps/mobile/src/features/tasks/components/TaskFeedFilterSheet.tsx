@@ -3,8 +3,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
 import { FilterBar } from '@/components/ui/FilterBar';
-import { ModalSheet } from '@/components/ui/ModalSheet';
 import { Touchable } from '@/components/ui/Touchable';
 import { mobileTheme } from '@/design/tokenAdapter';
 
@@ -37,13 +37,12 @@ export function TaskFeedFilterSheet({
   const { t } = useTranslation();
 
   return (
-    <ModalSheet
-      visible={visible}
+    <ModalSheetTemplate
+      isOpen={visible}
       title={t('tasker.browse.filterSheetTitle')}
       onClose={onClose}
       testID="task-feed-filter-sheet"
       titleAlign="center"
-      className="rounded-tl-[32px] rounded-tr-[32px] gap-lg"
       contentClassName="gap-lg"
       headerTrailing={
         <Touchable
@@ -70,7 +69,7 @@ export function TaskFeedFilterSheet({
         <Text className="text-body font-sans-bold text-foreground">
           {t('tasker.browse.resultCount', { count: resultCount })}
         </Text>
-        <Text className="text-caption text-text-secondary leading-[20px]">
+        <Text className="text-caption text-text-secondary leading-5">
           {t('tasker.browse.filterSheetDescription')}
         </Text>
       </View>
@@ -87,6 +86,6 @@ export function TaskFeedFilterSheet({
           testID="task-feed-filter-sheet-options"
         />
       </View>
-    </ModalSheet>
+    </ModalSheetTemplate>
   );
 }

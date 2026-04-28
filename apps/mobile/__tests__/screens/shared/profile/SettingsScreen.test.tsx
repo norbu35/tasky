@@ -23,14 +23,33 @@ jest.mock('react-i18next', () => {
 jest.mock('react-native-reanimated', () => jest.requireActual('react-native-reanimated/mock'));
 
 jest.mock('@gorhom/bottom-sheet', () => {
+  const React = jest.requireActual('react') as typeof import('react');
   const { View: MockView } = jest.requireActual('react-native') as typeof import('react-native');
+  const MockBottomSheet = React.forwardRef(function MockBottomSheet(
+    { children, index }: { children?: React.ReactNode; index?: number },
+    ref: React.Ref<{ close: () => void; snapToIndex: (index: number) => void }>,
+  ) {
+    React.useImperativeHandle(ref, () => ({
+      close: jest.fn(),
+      snapToIndex: jest.fn(),
+    }));
+    if (index === -1) return null;
+    return <MockView>{children}</MockView>;
+  });
+  const MockBottomSheetView = function MockBottomSheetView({
+    children,
+  }: {
+    children?: React.ReactNode;
+  }) {
+    return <MockView>{children}</MockView>;
+  };
   return {
     __esModule: true,
-    default: MockView,
+    default: MockBottomSheet,
     BottomSheetModal: MockView,
     BottomSheetModalProvider: MockView,
     BottomSheetBackdrop: MockView,
-    BottomSheetView: MockView,
+    BottomSheetView: MockBottomSheetView,
   };
 });
 

@@ -183,7 +183,7 @@ export function FeedListTemplate<T>({
   return (
     <ScreenContainer className={className} testID={testID}>
       <FlatList
-        style={{ flex: 1 }}
+        className="flex-1"
         data={data}
         renderItem={renderListItem}
         keyExtractor={keyExtractor}

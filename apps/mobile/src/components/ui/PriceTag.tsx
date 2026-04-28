@@ -1,10 +1,7 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
-
-const { typography } = mobileTheme;
 
 type PriceSize = 'sm' | 'md' | 'lg';
 
@@ -15,10 +12,10 @@ interface PriceTagProps {
   className?: string;
 }
 
-const fontSizeMap: Record<PriceSize, number> = {
-  sm: typography.label,
-  md: typography.subtitle,
-  lg: typography.heading,
+const fontSizeClassMap: Record<PriceSize, string> = {
+  sm: 'text-label',
+  md: 'text-subtitle',
+  lg: 'text-heading',
 };
 
 function formatAmount(amount: number): string {
@@ -31,12 +28,11 @@ export function PriceTag({ amount, size = 'md', testID, className }: PriceTagPro
   }
   return (
     <Text
-      style={{ fontSize: fontSizeMap[size] }}
-      className={cn('text-sun-light font-display-bold', className)}
+      className={cn('text-sun-light font-display-bold', fontSizeClassMap[size], className)}
       testID={testID}
       accessibilityLabel={`${formatAmount(amount)} tugrik`}
     >
-      {'\u20AE'}
+      {'₮'}
       {formatAmount(amount)}
     </Text>
   );

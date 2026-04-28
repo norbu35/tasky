@@ -17,6 +17,8 @@ const withSequence = jest.fn((...args) => args[args.length - 1]);
 const withDelay = jest.fn((_, value) => value);
 const runOnJS = jest.fn((fn) => fn);
 const cancelAnimation = jest.fn();
+const addWhitelistedUIProps = jest.fn();
+const addWhitelistedNativeProps = jest.fn();
 const interpolate = jest.fn((value) => value);
 const Extrapolation = { CLAMP: 'clamp', EXTEND: 'extend', IDENTITY: 'identity' };
 
@@ -79,6 +81,8 @@ const Reanimated = {
   withDelay,
   runOnJS,
   cancelAnimation,
+  addWhitelistedUIProps,
+  addWhitelistedNativeProps,
   interpolate,
   interpolateColor: jest.fn(() => '#000'),
   Extrapolation,
@@ -102,6 +106,8 @@ module.exports = {
   withDelay,
   runOnJS,
   cancelAnimation,
+  addWhitelistedUIProps,
+  addWhitelistedNativeProps,
   interpolate,
   interpolateColor: jest.fn(() => '#000'),
   Extrapolation,

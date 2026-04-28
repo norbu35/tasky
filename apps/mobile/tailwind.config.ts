@@ -70,6 +70,19 @@ const config: Config = {
         ...typographyScaleWithKebab,
         ...typographyVariantScaleWithKebab,
       },
+      minHeight: {
+        touch: `${nativeTokens.iconSizes.touchTargetMin}px`,
+        'touch-lg': '48px',
+        'touch-xl': '56px',
+      },
+      minWidth: {
+        touch: `${nativeTokens.iconSizes.touchTargetMin}px`,
+        'touch-lg': '48px',
+      },
+      size: {
+        touch: `${nativeTokens.iconSizes.touchTargetMin}px`,
+        'touch-sm': '36px',
+      },
       opacity: {
         pressed: `${nativeTokens.interaction.pressed.opacity}`,
         disabled: `${nativeTokens.interaction.disabled.opacity}`,

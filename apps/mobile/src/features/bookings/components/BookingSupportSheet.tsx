@@ -3,10 +3,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
 import { Button } from '@/components/ui/Button';
-import { ModalSheet } from '@/components/ui/ModalSheet';
 import { Touchable } from '@/components/ui/Touchable';
 import { mobileTheme } from '@/design/tokenAdapter';
+import { cn } from '@/lib/cn';
 
 const SUPPORT_REASON_KEYS = [
   'booking.support.reasonArrival',
@@ -29,8 +30,8 @@ export function BookingSupportSheet({ isOpen, onClose, onPrimary }: BookingSuppo
   if (!isOpen) return null;
 
   return (
-    <ModalSheet
-      visible={isOpen}
+    <ModalSheetTemplate
+      isOpen={isOpen}
       title={t('booking.support.title')}
       onClose={onClose}
       testID="booking-support-sheet"
@@ -55,11 +56,11 @@ export function BookingSupportSheet({ isOpen, onClose, onPrimary }: BookingSuppo
       }
       contentClassName="gap-lg"
     >
-      <View style={{ gap: mobileTheme.spacing.sm }}>
+      <View className="gap-sm">
         <Text className="text-title font-display-bold text-foreground">
           {t('booking.support.prompt')}
         </Text>
-        <View className="flex-row items-center" style={{ gap: mobileTheme.spacing.xs }}>
+        <View className="flex-row items-center gap-xs">
           <Lock size={16} color={mobileTheme.colors.foreground} />
           <Text className="flex-1 text-body text-foreground">
             {t('booking.support.privacyNote')}
@@ -80,15 +81,10 @@ export function BookingSupportSheet({ isOpen, onClose, onPrimary }: BookingSuppo
             >
               <Text className="flex-1 text-body text-foreground">{t(reasonKey)}</Text>
               <View
-                className="w-6 h-6 rounded-full border items-center justify-center"
-                style={{
-                  borderColor: isSelected
-                    ? mobileTheme.colors.foreground
-                    : mobileTheme.colors.textTertiary,
-                  backgroundColor: isSelected
-                    ? mobileTheme.colors.foreground
-                    : mobileTheme.colors.card,
-                }}
+                className={cn(
+                  'w-6 h-6 rounded-full border items-center justify-center',
+                  isSelected ? 'border-foreground bg-foreground' : 'border-text-tertiary bg-card',
+                )}
               >
                 {isSelected ? (
                   <View className="w-2 h-2 rounded-full bg-primary-foreground" />
@@ -98,6 +94,6 @@ export function BookingSupportSheet({ isOpen, onClose, onPrimary }: BookingSuppo
           );
         })}
       </View>
-    </ModalSheet>
+    </ModalSheetTemplate>
   );
 }

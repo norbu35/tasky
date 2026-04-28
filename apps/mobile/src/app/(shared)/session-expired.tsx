@@ -2,10 +2,9 @@ import { useRouter } from 'expo-router';
 import { LogIn } from 'lucide-react-native';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { ModalSheet } from '@/components/ui/ModalSheet';
-import { overlays } from '@/design/elevations';
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { useAuthStore } from '@/store/authStore';
 
@@ -27,9 +26,8 @@ export default function SessionExpiredScreen() {
       style={{ position: 'relative', zIndex: 30 }}
       testID="SCR-INFRA-003"
     >
-      <View style={[StyleSheet.absoluteFill, { backgroundColor: overlays.sheet }]} />
-      <ModalSheet
-        visible
+      <ModalSheetTemplate
+        isOpen
         title={t('infra.sessionExpired.title')}
         onClose={() => {}}
         dismissible={false}
@@ -47,7 +45,7 @@ export default function SessionExpiredScreen() {
             {t('SessionExpiredScreen.copy1')}
           </Text>
         </View>
-      </ModalSheet>
+      </ModalSheetTemplate>
     </View>
   );
 }

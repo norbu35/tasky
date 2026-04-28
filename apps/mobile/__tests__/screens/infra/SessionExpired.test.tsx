@@ -31,13 +31,29 @@ jest.mock('react-i18next', () => {
 });
 
 jest.mock('@gorhom/bottom-sheet', () => {
+  const React = require('react');
   const { View } = require('react-native');
+  const MockBottomSheet = React.forwardRef(function MockBottomSheet(
+    { children, index }: any,
+    ref: any,
+  ) {
+    React.useImperativeHandle(ref, () => ({
+      close: jest.fn(),
+      snapToIndex: jest.fn(),
+    }));
+    if (index === -1) return null;
+    return <View>{children}</View>;
+  });
+  const MockBottomSheetView = function MockBottomSheetView({ children }: any) {
+    return <View>{children}</View>;
+  };
   return {
     __esModule: true,
-    default: View,
+    default: MockBottomSheet,
     BottomSheetModal: View,
     BottomSheetModalProvider: View,
     BottomSheetBackdrop: View,
+    BottomSheetView: MockBottomSheetView,
   };
 });
 

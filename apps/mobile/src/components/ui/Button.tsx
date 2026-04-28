@@ -28,10 +28,11 @@ const buttonVariants = cva(
         destructive: 'bg-danger',
       },
       size: {
-        default: 'px-lg py-sm min-h-[48px]',
-        sm: 'px-md min-h-[40px]',
-        lg: 'px-xl min-h-[56px]',
-        icon: 'w-[36px] h-[36px] p-0',
+        default: 'px-lg py-sm min-h-touch-lg',
+        sm: 'px-md min-h-3xl',
+        lg: 'px-xl min-h-touch-xl',
+        icon: 'size-touch p-0',
+        'icon-sm': 'size-touch-sm p-0',
       },
     },
     defaultVariants: { variant: 'default', size: 'default' },
@@ -52,13 +53,14 @@ const textVariants = cva('text-center font-sans-bold', {
       sm: 'text-label',
       lg: 'text-body',
       icon: 'hidden',
+      'icon-sm': 'hidden',
     },
   },
   defaultVariants: { variant: 'default', size: 'default' },
 });
 
 export type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive';
-export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
+export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon' | 'icon-sm';
 
 export interface ButtonProps extends Omit<PressableProps, 'style'> {
   label?: string;

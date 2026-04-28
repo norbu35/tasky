@@ -4,43 +4,73 @@ import BottomSheet, {
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
 import React, { useCallback, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Button } from '@/components/ui/Button';
 import { elevations, overlays } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
 const { colors, spacing, radius } = mobileTheme;
 
-const HANDLE_HEIGHT = spacing.xs;
-const HANDLE_WIDTH = spacing['3xl'];
-const SHEET_CONTAINER_STYLE = [
-  StyleSheet.absoluteFillObject,
-  {
-    zIndex: 1000,
-    elevation: 1000,
-  },
-];
+const HANDLE_HEIGHT = 4;
+const HANDLE_WIDTH = 40;
+const SHEET_CONTAINER_STYLE = {
+  position: 'absolute' as const,
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  zIndex: 999,
+};
+
+interface SheetAction {
+  label: string;
+  onPress: () => void;
+  testID?: string;
+}
 
 export interface ModalSheetTemplateProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
-  children: React.ReactNode;
+  titleAlign?: 'left' | 'center';
+  children?: React.ReactNode;
   snapPoints?: (string | number)[];
   testID?: string;
   className?: string;
+  contentClassName?: string;
+  dismissible?: boolean;
+  isLoading?: boolean;
+  loadingTestID?: string;
+  primaryAction?: SheetAction;
+  secondaryAction?: SheetAction;
+  hideDefaultAction?: boolean;
+  footer?: React.ReactNode;
+  headerLeading?: React.ReactNode;
+  headerTrailing?: React.ReactNode;
 }
 
 export function ModalSheetTemplate({
   isOpen,
   onClose,
   title,
+  titleAlign = 'left',
   children,
   snapPoints = ['50%', '70%'],
   testID,
   className,
+  contentClassName,
+  dismissible = true,
+  isLoading = false,
+  loadingTestID,
+  primaryAction,
+  secondaryAction,
+  hideDefaultAction = false,
+  footer,
+  headerLeading,
+  headerTrailing,
 }: ModalSheetTemplateProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const insets = useSafeAreaInsets();
@@ -69,11 +99,40 @@ export function ModalSheetTemplate({
         disappearsOnIndex={-1}
         appearsOnIndex={0}
         style={[props.style, { backgroundColor: overlays.sheet }]}
-        pressBehavior="close"
+        pressBehavior={dismissible ? 'close' : 'none'}
       />
     ),
-    [],
+    [dismissible],
   );
+
+  const renderActions = () => {
+    if (footer) return footer;
+    if (primaryAction || secondaryAction) {
+      return (
+        <View className="gap-sm">
+          {primaryAction && (
+            <Button
+              label={primaryAction.label}
+              onPress={primaryAction.onPress}
+              testID={primaryAction.testID}
+            />
+          )}
+          {secondaryAction && (
+            <Button
+              label={secondaryAction.label}
+              variant="secondary"
+              onPress={secondaryAction.onPress}
+              testID={secondaryAction.testID}
+            />
+          )}
+        </View>
+      );
+    }
+    if (!hideDefaultAction) {
+      return null;
+    }
+    return null;
+  };
 
   return (
     <View
@@ -88,7 +147,7 @@ export function ModalSheetTemplate({
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         backdropComponent={renderBackdrop}
-        enablePanDownToClose
+        enablePanDownToClose={dismissible}
         backgroundStyle={{
           backgroundColor: colors.card,
           borderTopLeftRadius: radius.lg,
@@ -105,10 +164,36 @@ export function ModalSheetTemplate({
         <BottomSheetView
           style={{ paddingHorizontal: spacing.lg, paddingBottom: insets.bottom + spacing.lg }}
         >
-          {title && (
-            <Text className="text-title font-display-bold text-foreground mb-lg">{title}</Text>
+          {(title || headerLeading || headerTrailing) && (
+            <View className="flex-row items-center mb-md">
+              {headerLeading && <View className="w-9 items-start">{headerLeading}</View>}
+              {titleAlign === 'center' && !headerLeading && headerTrailing && (
+                <View className="w-9" />
+              )}
+              {title && (
+                <Text
+                  className={cn(
+                    'text-body font-sans-bold text-foreground',
+                    titleAlign === 'center' && 'flex-1 text-center',
+                  )}
+                >
+                  {title}
+                </Text>
+              )}
+              {headerTrailing && <View className="w-9 items-end">{headerTrailing}</View>}
+              {headerLeading && titleAlign === 'center' && !headerTrailing && (
+                <View className="w-9" />
+              )}
+            </View>
           )}
-          <View className="gap-md">{children}</View>
+          {isLoading ? (
+            <View className="py-xl items-center justify-center" testID={loadingTestID}>
+              <ActivityIndicator color={colors.primary} />
+            </View>
+          ) : (
+            <View className={cn('gap-md', contentClassName)}>{children}</View>
+          )}
+          {!isLoading && renderActions()}
         </BottomSheetView>
       </BottomSheet>
     </View>

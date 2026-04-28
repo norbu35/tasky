@@ -3,15 +3,15 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
 import { Button } from '@/components/ui/Button';
-import { ModalSheet } from '@/components/ui/ModalSheet';
 import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
 import { Touchable } from '@/components/ui/Touchable';
 import { mobileTheme } from '@/design/tokenAdapter';
 
 import { type ApplicantItem } from './ApplicantsSelection.model';
 
-const { colors, spacing } = mobileTheme;
+const { colors } = mobileTheme;
 
 interface ConfirmationSheetProps {
   selectedApplicant: ApplicantItem | null;
@@ -29,8 +29,8 @@ export function ConfirmationSheet({
   const { t } = useTranslation();
 
   return (
-    <ModalSheet
-      visible={isOpen}
+    <ModalSheetTemplate
+      isOpen={isOpen}
       onClose={onClose}
       title={t('customer.applicants.confirmTitle')}
       testID="applicant-accept-sheet"
@@ -61,15 +61,15 @@ export function ConfirmationSheet({
         {t('customer.applicants.confirmBody')}
       </Text>
       {selectedApplicant ? (
-        <View className="border-y border-border py-md" style={{ gap: spacing.sm }}>
-          <View className="flex-row items-center" style={{ gap: spacing.md }}>
+        <View className="border-y border-border py-md gap-sm">
+          <View className="flex-row items-center gap-md">
             <ProfileAvatar
               uri={selectedApplicant.avatarUrl}
               name={selectedApplicant.name}
               size="lg"
               showVerified={selectedApplicant.isVerified}
             />
-            <View className="flex-1" style={{ gap: spacing.xs / 2 }}>
+            <View className="flex-1 gap-xs">
               <Text className="text-subtitle font-sans-bold text-primary-deep">
                 {selectedApplicant.name}
               </Text>
@@ -84,6 +84,6 @@ export function ConfirmationSheet({
           </View>
         </View>
       ) : null}
-    </ModalSheet>
+    </ModalSheetTemplate>
   );
 }

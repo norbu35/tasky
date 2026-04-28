@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { Plus } from 'lucide-react-native';
 import React from 'react';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -127,21 +127,16 @@ export function FAB({
         testID={testID}
       >
         <View
-          className={cn('h-full w-full items-center justify-center', className)}
-          style={styles.surface}
+          className={cn(
+            'h-full w-full items-center justify-center bg-sun-light rounded-md',
+            className,
+          )}
+          style={elevations.elevated}
           pointerEvents="none"
         >
-          <Plus color="#FFFFFF" size={fabIconSize} />
+          <Plus color={colors.card} size={fabIconSize} />
         </View>
       </Animated.View>
     </GestureDetector>
   );
 }
-
-const styles = StyleSheet.create({
-  surface: {
-    borderRadius: 12,
-    backgroundColor: colors.sunLight,
-    ...elevations.elevated,
-  },
-});

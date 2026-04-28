@@ -29,10 +29,7 @@ export function CommentField({
           placeholder={t('ReviewFormScreen.copy1')}
           className="min-h-[100px] border-0 bg-transparent px-0 py-0 text-body font-sans text-primary-deep"
         />
-        <Text
-          className="absolute right-lg bottom-md text-micro font-sans-bold text-text-secondary"
-          style={{ letterSpacing: 1 }}
-        >{`${comment.length} / ${COMMENT_MAX_LENGTH}`}</Text>
+        <Text className="absolute right-lg bottom-md text-micro font-sans-bold text-text-secondary tracking-badge">{`${comment.length} / ${COMMENT_MAX_LENGTH}`}</Text>
       </View>
     </FormField>
   );

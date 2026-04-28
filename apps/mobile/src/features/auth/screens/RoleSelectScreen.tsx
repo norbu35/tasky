@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { AuthTemplate } from '@/components/templates/AuthTemplate';
-import { Button, ModalSheet } from '@/components/ui';
+import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
+import { Button } from '@/components/ui';
 import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
@@ -13,17 +14,6 @@ import { cn } from '@/lib/cn';
 import { useAppStore } from '@/store/appStore';
 
 const { colors } = mobileTheme;
-const ROLE_SELECT_SURFACE = {
-  roleIconBox: 56,
-  roleIconRadius: 18,
-  checkSize: 20,
-  headingLineHeight: 32,
-  bodyLineHeight: 24,
-  descriptionLineHeight: 20,
-  confirmHeight: 56,
-  confirmRadius: 12,
-} as const;
-
 type RoleOption = 'customer' | 'tasker' | null;
 
 export default function RoleSelectScreen() {
@@ -65,53 +55,31 @@ export default function RoleSelectScreen() {
         key={role}
         testID={`role-card-${role}`}
         onPress={() => setSelectedRole(role)}
-        className={cn('rounded-xl overflow-hidden', isSelected && 'border-2')}
-        style={
-          isSelected
-            ? {
-                // colors.card is '#FFFFFF'; test asserts '#ffffff' so normalize case
-                backgroundColor: (colors.card as string).toLowerCase(),
-                borderColor: colors.primaryDeep,
-                ...elevations.soft,
-              }
-            : { backgroundColor: colors.muted }
-        }
+        className={cn(
+          'rounded-xl overflow-hidden',
+          isSelected ? 'border-2 bg-card border-primary-deep' : 'bg-muted',
+        )}
+        style={isSelected ? elevations.soft : undefined}
       >
         <View className="flex-row items-center gap-md p-lg">
           <View
-            className="items-center justify-center"
-            style={{
-              width: ROLE_SELECT_SURFACE.roleIconBox,
-              height: ROLE_SELECT_SURFACE.roleIconBox,
-              borderRadius: ROLE_SELECT_SURFACE.roleIconRadius,
-              backgroundColor: isSelected ? colors.secondary : colors.chipInactive,
-            }}
+            className={cn(
+              'w-14 h-14 rounded-xl items-center justify-center',
+              isSelected ? 'bg-secondary' : 'bg-chip-inactive',
+            )}
           >
             <Icon size={28} color={isSelected ? colors.primaryDeep : colors.foreground} />
           </View>
           <View className="flex-1">
-            <Text className="text-title font-sans-semibold" style={{ color: colors.primaryDeep }}>
-              {t(titleKey)}
-            </Text>
-            <Text
-              className="text-label mt-xs"
-              style={{
-                color: colors.textSecondary,
-                lineHeight: ROLE_SELECT_SURFACE.descriptionLineHeight,
-              }}
-            >
+            <Text className="text-title font-sans-semibold text-primary-deep">{t(titleKey)}</Text>
+            <Text className="text-label mt-xs text-text-secondary leading-5">
               {t(descriptionKey)}
             </Text>
           </View>
           {isSelected ? (
             <View
               testID={`role-card-${role}-check`}
-              className="rounded-full items-center justify-center"
-              style={{
-                width: ROLE_SELECT_SURFACE.checkSize,
-                height: ROLE_SELECT_SURFACE.checkSize,
-                backgroundColor: colors.primaryDeep,
-              }}
+              className="w-5 h-5 rounded-full items-center justify-center bg-primary-deep"
             >
               <Check size={16} color={colors.primaryForeground} />
             </View>
@@ -124,16 +92,10 @@ export default function RoleSelectScreen() {
   return (
     <AuthTemplate testID="SCR-SHARED-006" contentStyle={{ justifyContent: 'center' }}>
       <View className="mb-xl">
-        <Text
-          className="text-heading font-sans-bold text-center"
-          style={{ color: colors.primaryDeep, lineHeight: ROLE_SELECT_SURFACE.headingLineHeight }}
-        >
+        <Text className="text-heading font-sans-bold text-center text-primary-deep leading-8">
           {t('auth.roleSelection.heading')}
         </Text>
-        <Text
-          className="text-body text-center"
-          style={{ color: colors.textSecondary, lineHeight: ROLE_SELECT_SURFACE.bodyLineHeight }}
-        >
+        <Text className="text-body text-center text-text-secondary leading-6">
           {t('RoleSelectScreen.copy5')}
         </Text>
       </View>
@@ -144,10 +106,7 @@ export default function RoleSelectScreen() {
         testID="role-confirm-button"
         onPress={handleConfirm}
         disabled={!selectedRole}
-        style={{
-          minHeight: ROLE_SELECT_SURFACE.confirmHeight,
-          borderRadius: ROLE_SELECT_SURFACE.confirmRadius,
-        }}
+        size="lg"
       >
         <View className="flex-row items-center justify-center gap-sm">
           <Text className="text-label font-sans-bold text-primary-foreground">
@@ -157,8 +116,8 @@ export default function RoleSelectScreen() {
         </View>
       </Button>
 
-      <ModalSheet
-        visible={isConfirming}
+      <ModalSheetTemplate
+        isOpen={isConfirming}
         title={t('auth.roleSelection.confirmSheetTitle')}
         onClose={() => setIsConfirming(false)}
         dismissible={false}
@@ -173,15 +132,12 @@ export default function RoleSelectScreen() {
           testID: 'role-sheet-cancel',
         }}
       >
-        <Text
-          className="text-body"
-          style={{ color: colors.textSecondary, lineHeight: ROLE_SELECT_SURFACE.bodyLineHeight }}
-        >
+        <Text className="text-body text-text-secondary leading-6">
           {t('auth.roleSelection.confirmSheetMessage', {
             role: roleLabel,
           })}
         </Text>
-      </ModalSheet>
+      </ModalSheetTemplate>
     </AuthTemplate>
   );
 }
