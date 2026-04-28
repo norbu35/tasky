@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **adminApiClient.test.ts** (4 connections) — `apps/web/src/lib/adminApiClient.test.ts`
-- **mockOkResponse()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
-- **mockErrorResponse()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
-- **lastFetchCall()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
-- **setupClient()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
+- **SummarySections.tsx** (4 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
+- **StatusBadge()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
+- **DisputeSummary()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
+- **ResolutionSection()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
+- **PhaseNote()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/adminApiClient.test.ts`
+- `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
 
 ## Audit Trail
 

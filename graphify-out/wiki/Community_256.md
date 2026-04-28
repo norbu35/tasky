@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **LeadUnlockSheet.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/LeadUnlockSheet.tsx`
-- **formatTimer()** (1 connections) — `apps/mobile/src/features/bookings/components/LeadUnlockSheet.tsx`
+- **useConfirmBookingIntent.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useConfirmBookingIntent.ts`
+- **useConfirmBookingIntent()** (1 connections) — `apps/mobile/src/features/bookings/hooks/useConfirmBookingIntent.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/components/LeadUnlockSheet.tsx`
+- `apps/mobile/src/features/bookings/hooks/useConfirmBookingIntent.ts`
 
 ## Audit Trail
 

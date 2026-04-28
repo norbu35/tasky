@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PricingMode.java** (0 connections) — `services/api/src/main/java/mn/tasky/task/dto/PricingMode.java`
+- **UpdateTaskRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/task/dto/UpdateTaskRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/dto/PricingMode.java`
+- `services/api/src/main/java/mn/tasky/task/dto/UpdateTaskRequest.java`
 
 ## Audit Trail
 

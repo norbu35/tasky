@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Input.tsx** (0 connections) — `apps/mobile/src/components/ui/Input.tsx`
+- **PhotoGrid.tsx** (0 connections) — `apps/mobile/src/components/ui/PhotoGrid.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/Input.tsx`
+- `apps/mobile/src/components/ui/PhotoGrid.tsx`
 
 ## Audit Trail
 

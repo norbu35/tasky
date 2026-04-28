@@ -3,7 +3,7 @@ spring:
     name: tasky-server
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:tasky}
-    # Runtime app user: least-privilege account created by docker/init-db.sql
+    # Runtime app user: least-privilege account created by docker/init-db.sh
     username: ${APP_DB_USER:tasky_app}
     password: ${APP_DB_PASSWORD:tasky_app}
     driver-class-name: org.postgresql.Driver

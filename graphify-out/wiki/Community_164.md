@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **SettingsPage.tsx** (2 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
-- **SectionTitle()** (1 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
-- **ActionRow()** (1 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
+- **profileRouteParams.ts** (2 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
+- **buildTaskerProfileRoute()** (1 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
+- **numberFromRouteParam()** (1 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/SettingsPage.tsx`
+- `apps/mobile/src/features/profile/profileRouteParams.ts`
 
 ## Audit Trail
 

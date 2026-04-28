@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **useConversationRouteForBooking.test.tsx** (0 connections) — `apps/mobile/__tests__/features/chat/hooks/useConversationRouteForBooking.test.tsx`
+- **ReviewThresholdSummary.test.tsx** (0 connections) — `apps/mobile/__tests__/features/profile/components/ReviewThresholdSummary.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/chat/hooks/useConversationRouteForBooking.test.tsx`
+- `apps/mobile/__tests__/features/profile/components/ReviewThresholdSummary.test.tsx`
 
 ## Audit Trail
 

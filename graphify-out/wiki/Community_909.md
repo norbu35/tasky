@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.tsx** (0 connections) — `archive/mobile-future/tasker/wallet/index.tsx`
+- **Return `(errors, warnings)`.** (0 connections) — `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `archive/mobile-future/tasker/wallet/index.tsx`
+- `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **tailwind.config.ts** (1 connections) — `apps/mobile/tailwind.config.ts`
-- **camelToKebab()** (1 connections) — `apps/mobile/tailwind.config.ts`
+- **TaskDetailCustomerScreen.test.tsx** (1 connections) — `apps/mobile/__tests__/screens/customer/TaskDetailCustomerScreen.test.tsx`
+- **makeTask()** (1 connections) — `apps/mobile/__tests__/screens/customer/TaskDetailCustomerScreen.test.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/tailwind.config.ts`
+- `apps/mobile/__tests__/screens/customer/TaskDetailCustomerScreen.test.tsx`
 
 ## Audit Trail
 

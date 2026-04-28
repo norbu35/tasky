@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **authz-guards.test.tsx** (0 connections) — `apps/web/tests/integration/authz-guards.test.tsx`
+- **tasks.test.tsx** (0 connections) — `apps/web/tests/integration/tasks.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/tests/integration/authz-guards.test.tsx`
+- `apps/web/tests/integration/tasks.test.tsx`
 
 ## Audit Trail
 

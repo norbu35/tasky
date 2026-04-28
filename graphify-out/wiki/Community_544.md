@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ConfirmSheet.tsx** (0 connections) — `apps/mobile/src/components/ui/ConfirmSheet.tsx`
+- **ListItemCard.tsx** (0 connections) — `apps/mobile/src/components/ui/ListItemCard.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/ConfirmSheet.tsx`
+- `apps/mobile/src/components/ui/ListItemCard.tsx`
 
 ## Audit Trail
 

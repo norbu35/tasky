@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **badge.tsx** (0 connections) — `apps/web/src/components/ui/badge.tsx`
+- **LoadingCard.tsx** (0 connections) — `apps/web/src/layout/LoadingCard.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/badge.tsx`
+- `apps/web/src/layout/LoadingCard.tsx`
 
 ## Audit Trail
 

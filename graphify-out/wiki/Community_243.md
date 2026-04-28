@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **Toast.tsx** (1 connections) — `apps/mobile/src/components/ui/Toast.tsx`
-- **Toast()** (1 connections) — `apps/mobile/src/components/ui/Toast.tsx`
+- **Touchable.tsx** (1 connections) — `apps/mobile/src/components/ui/Touchable.tsx`
+- **Touchable()** (1 connections) — `apps/mobile/src/components/ui/Touchable.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/Toast.tsx`
+- `apps/mobile/src/components/ui/Touchable.tsx`
 
 ## Audit Trail
 

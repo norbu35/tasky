@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **OfflineBanner.tsx** (0 connections) — `apps/mobile/src/components/ui/OfflineBanner.tsx`
+- **nativewind-interop.ts** (0 connections) — `apps/mobile/src/design/nativewind-interop.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/OfflineBanner.tsx`
+- `apps/mobile/src/design/nativewind-interop.ts`
 
 ## Audit Trail
 

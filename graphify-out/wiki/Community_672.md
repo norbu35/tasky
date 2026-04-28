@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **GlobalErrorFallback.tsx** (0 connections) — `apps/web/src/components/feature/GlobalErrorFallback.tsx`
+- **dropdown-menu.tsx** (0 connections) — `apps/web/src/components/ui/dropdown-menu.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/feature/GlobalErrorFallback.tsx`
+- `apps/web/src/components/ui/dropdown-menu.tsx`
 
 ## Audit Trail
 

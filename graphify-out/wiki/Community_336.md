@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **build.gradle.kts** (1 connections) — `services/api/build.gradle.kts`
-- **normalizeCoveragePackage()** (1 connections) — `services/api/build.gradle.kts`
+- **ReviewSubmitResult.java** (1 connections) — `services/api/src/main/java/mn/tasky/review/dto/ReviewSubmitResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/review/dto/ReviewSubmitResult.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/build.gradle.kts`
+- `services/api/src/main/java/mn/tasky/review/dto/ReviewSubmitResult.java`
 
 ## Audit Trail
 

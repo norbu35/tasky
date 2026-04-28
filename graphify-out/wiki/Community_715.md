@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AdminCategoriesPage.test.tsx** (0 connections) — `apps/web/src/pages/admin/__tests__/AdminCategoriesPage.test.tsx`
+- **CustomerReschedulePage.tsx** (0 connections) — `apps/web/src/pages/customer/CustomerReschedulePage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/admin/__tests__/AdminCategoriesPage.test.tsx`
+- `apps/web/src/pages/customer/CustomerReschedulePage.tsx`
 
 ## Audit Trail
 

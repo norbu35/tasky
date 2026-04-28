@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **MainActivity** (5 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **MainActivity.kt** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **.onCreate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **.getMainComponentName()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **.createReactActivityDelegate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **.invokeDefaultOnBackPressed()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **App.test.tsx** (5 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **render()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **RedirectMock()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **TabsMock()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **resetStores()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **installDefaultHookMocks()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- `apps/mobile/__tests__/App.test.tsx`
 
 ## Audit Trail
 

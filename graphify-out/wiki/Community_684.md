@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **tabs.tsx** (0 connections) — `apps/web/src/components/ui/tabs.tsx`
+- **card.tsx** (0 connections) — `apps/web/src/components/ui/card.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/tabs.tsx`
+- `apps/web/src/components/ui/card.tsx`
 
 ## Audit Trail
 

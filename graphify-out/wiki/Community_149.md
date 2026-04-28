@@ -1,12 +1,13 @@
 # Community 149
 
-> 3 nodes
+> 4 nodes
 
 ## Key Concepts
 
-- **DetailTemplate.tsx** (2 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
-- **DetailSkeleton()** (1 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
-- **handleActionBarLayout()** (1 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
+- **PublicPortBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
+- **.modulePublicApiMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
+- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
+- **PublicPortBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
 
 ## Relationships
 
@@ -14,11 +15,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/templates/DetailTemplate.tsx`
+- `services/api/src/test/java/mn/tasky/architecture/PublicPortBoundaryTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

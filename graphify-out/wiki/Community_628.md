@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **MapControls.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskLocation/MapControls.tsx`
+- **taskDraft.store.ts** (0 connections) — `apps/mobile/src/features/tasks/draft/taskDraft.store.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskLocation/MapControls.tsx`
+- `apps/mobile/src/features/tasks/draft/taskDraft.store.ts`
 
 ## Audit Trail
 

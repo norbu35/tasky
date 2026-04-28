@@ -1,18 +1,20 @@
 # Community 47
 
-> 9 nodes
+> 11 nodes
 
 ## Key Concepts
 
-- **provider-chain.test.tsx** (5 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
-- **NotificationConsumer()** (2 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
-- **NotificationProvider.tsx** (2 connections) — `apps/mobile/src/providers/NotificationProvider.tsx`
-- **useNotificationContext()** (2 connections) — `apps/mobile/src/providers/NotificationProvider.tsx`
-- **TabsMock()** (1 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
-- **StackMock()** (1 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
-- **RoleConsumer()** (1 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
-- **SessionConsumer()** (1 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
-- **NotificationProvider()** (1 connections) — `apps/mobile/src/providers/NotificationProvider.tsx`
+- **MarketplaceQueryPort** (10 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **MarketplaceQueryPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.listTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.getTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.listMyTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.recentLocations()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.listTaskApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.countApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.buildPhotoAccessUrls()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.buildOwnedPhotoAccessUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.getDraft()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
 
 ## Relationships
 
@@ -20,13 +22,12 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/integration/provider-chain.test.tsx`
-- `apps/mobile/src/providers/NotificationProvider.tsx`
+- `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (88%)
-- INFERRED: 2 (12%)
+- EXTRACTED: 20 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

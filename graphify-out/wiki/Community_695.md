@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AdminLayout.tsx** (0 connections) — `apps/web/src/layout/AdminLayout.tsx`
+- **ActionRail.tsx** (0 connections) — `apps/web/src/layout/parity/ActionRail.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/AdminLayout.tsx`
+- `apps/web/src/layout/parity/ActionRail.tsx`
 
 ## Audit Trail
 

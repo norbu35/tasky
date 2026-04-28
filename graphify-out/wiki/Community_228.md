@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **applied.tsx** (1 connections) — `apps/mobile/src/app/(tasker)/tasks/applied.tsx`
-- **ApplicationSubmittedScreen()** (1 connections) — `apps/mobile/src/app/(tasker)/tasks/applied.tsx`
+- **applicants.tsx** (1 connections) — `apps/mobile/src/app/task/[id]/applicants.tsx`
+- **ApplicantsRoute()** (1 connections) — `apps/mobile/src/app/task/[id]/applicants.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tasker)/tasks/applied.tsx`
+- `apps/mobile/src/app/task/[id]/applicants.tsx`
 
 ## Audit Trail
 

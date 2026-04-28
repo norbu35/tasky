@@ -1,14 +1,15 @@
 # Community 83
 
-> 5 nodes
+> 6 nodes
 
 ## Key Concepts
 
-- **OnboardingScreen.tsx** (4 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
-- **handleFinish()** (3 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
-- **handleNext()** (2 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
-- **handleSkip()** (2 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
-- **onScroll()** (1 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- **ScopeSummaryGenerator** (5 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
+- **.generate()** (3 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
+- **.formatValue()** (2 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
+- **.fallback()** (2 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
+- **ScopeSummaryGenerator.java** (1 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
+- **.ScopeSummaryGenerator()** (1 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
 
 ## Relationships
 
@@ -16,11 +17,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (100%)
+- EXTRACTED: 14 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

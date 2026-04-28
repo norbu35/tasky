@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **DisputeEvidence.java** (0 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidence.java`
+- **EventIdempotencyRecord.java** (0 connections) — `services/api/src/main/java/mn/tasky/kernel/idempotency/EventIdempotencyRecord.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidence.java`
+- `services/api/src/main/java/mn/tasky/kernel/idempotency/EventIdempotencyRecord.java`
 
 ## Audit Trail
 

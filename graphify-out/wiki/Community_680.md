@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **skeleton.tsx** (0 connections) — `apps/web/src/components/ui/skeleton.tsx`
+- **dialog.tsx** (0 connections) — `apps/web/src/components/ui/dialog.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/skeleton.tsx`
+- `apps/web/src/components/ui/dialog.tsx`
 
 ## Audit Trail
 

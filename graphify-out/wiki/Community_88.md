@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **permissions.ts** (4 connections) — `apps/mobile/src/utils/permissions.ts`
-- **requestCameraPermission()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
-- **requestLocationPermission()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
-- **getCurrentLocation()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
-- **requestNotificationPermission()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
+- **MessageBubble()** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/MessageBubble.tsx`
+- **model.ts** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
+- **formatMessageTimestamp()** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
+- **MessageBubble.tsx** (1 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/MessageBubble.tsx`
+- **orderMessagesChronologically()** (1 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
 
 ## Relationships
 
@@ -16,12 +16,13 @@
 
 ## Source Files
 
-- `apps/mobile/src/utils/permissions.ts`
+- `apps/mobile/src/features/chat/screens/ChatConversation/MessageBubble.tsx`
+- `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 6 (75%)
+- INFERRED: 2 (25%)
 - AMBIGUOUS: 0 (0%)
 
 ---

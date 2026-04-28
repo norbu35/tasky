@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PendingScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/features/verification/screens/PendingScreen.test.tsx`
+- **index.tsx** (0 connections) — `apps/mobile/src/app/(auth)/index.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/verification/screens/PendingScreen.test.tsx`
+- `apps/mobile/src/app/(auth)/index.tsx`
 
 ## Audit Trail
 

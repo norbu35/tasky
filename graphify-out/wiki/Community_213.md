@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **queryClient.ts** (1 connections) — `apps/mobile/__tests__/test-utils/queryClient.ts`
-- **createTestQueryClient()** (1 connections) — `apps/mobile/__tests__/test-utils/queryClient.ts`
+- **permission-location.tsx** (1 connections) — `apps/mobile/src/app/(auth)/permission-location.tsx`
+- **PermissionLocationRoute()** (1 connections) — `apps/mobile/src/app/(auth)/permission-location.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/test-utils/queryClient.ts`
+- `apps/mobile/src/app/(auth)/permission-location.tsx`
 
 ## Audit Trail
 

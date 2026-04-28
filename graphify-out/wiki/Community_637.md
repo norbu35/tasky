@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/verification/index.ts`
+- **States.tsx** (0 connections) — `apps/mobile/src/features/help/screens/HelpCenter/States.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/verification/index.ts`
+- `apps/mobile/src/features/help/screens/HelpCenter/States.tsx`
 
 ## Audit Trail
 

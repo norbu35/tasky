@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **LocationService** (5 connections) — `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
-- **LocationService.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
-- **.LocationService()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
-- **.reverseGeocode()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
-- **.isWithinServiceArea()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
-- **.search()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
+- **model.ts** (3 connections) — `apps/mobile/src/features/profile/model.ts`
+- **getReviewThresholdRemaining()** (2 connections) — `apps/mobile/src/features/profile/model.ts`
+- **ReviewThresholdSummary()** (2 connections) — `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
+- **canShowPublicRating()** (1 connections) — `apps/mobile/src/features/profile/model.ts`
+- **formatPublicRating()** (1 connections) — `apps/mobile/src/features/profile/model.ts`
+- **ReviewThresholdSummary.tsx** (1 connections) — `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
 
 ## Relationships
 
@@ -17,12 +17,13 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
+- `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
+- `apps/mobile/src/features/profile/model.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 8 (80%)
+- INFERRED: 2 (20%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **States.tsx** (0 connections) — `apps/mobile/src/features/help/screens/HelpCenter/States.tsx`
+- **TermsOfServiceScreen.tsx** (0 connections) — `apps/mobile/src/features/legal/screens/TermsOfServiceScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/help/screens/HelpCenter/States.tsx`
+- `apps/mobile/src/features/legal/screens/TermsOfServiceScreen.tsx`
 
 ## Audit Trail
 

@@ -4,64 +4,51 @@
 
 ## Key Concepts
 
-- **PackageMarker** (43 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/PackageMarker.java`
-- **.PackageMarker()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/provider/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/broker/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/event/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/job/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/workflow/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/category/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/outbox/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/workflow/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/workflow/PackageMarker.java`
+- **CategoryScenarioTests** (17 connections) — `services/api/src/test/java/mn/tasky/category/CategoryScenarioTests.java`
+- **CategorySchemaVersionService** (13 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- **.createVersion()** (13 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- **CategoryDao** (12 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
+- **CategoryService** (9 connections) — `services/api/src/main/java/mn/tasky/category/application/CategoryService.java`
+- **.listCategories()** (8 connections) — `services/api/src/main/java/mn/tasky/category/application/CategoryService.java`
+- **.validateField()** (5 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- **.validateSchemaJson()** (3 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- **.validateOptionsArray()** (3 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- **NoFallbackException** (3 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- **.resolveCursor()** (3 connections) — `services/api/src/main/java/mn/tasky/category/application/CategoryService.java`
+- **.createCategory()** (3 connections) — `services/api/src/main/java/mn/tasky/category/application/CategoryService.java`
+- **CategorySchemaVersionService.java** (2 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- **.requireOptionString()** (2 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- **.validateTextConstraints()** (2 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- **.requireString()** (2 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- **.listActiveCategories()** (2 connections) — `services/api/src/main/java/mn/tasky/category/application/CategoryService.java`
+- **.listAllCategories()** (2 connections) — `services/api/src/main/java/mn/tasky/category/application/CategoryService.java`
+- **.getCategory()** (2 connections) — `services/api/src/main/java/mn/tasky/category/application/CategoryService.java`
+- **.insert()** (2 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
+- **.findById()** (2 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
+- **.findActivePage()** (2 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
+- **.findActivePageAfter()** (2 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
+- **.findAllPage()** (2 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
+- **.findAllPageAfter()** (2 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
 - _... and 19 more nodes in this community_
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 0]] (17 shared connections)
+- [[Community 4]] (5 shared connections)
+- [[Community 3]] (2 shared connections)
+- [[Community 6]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/analytics/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/auth/provider/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/auth/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/broker/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/event/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/job/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/provider/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/provider/llm/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/worker/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/workflow/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/booking/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/category/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/dispute/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/kernel/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/kernel/outbox/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/location/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/messaging/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/messaging/workflow/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- `services/api/src/main/java/mn/tasky/category/application/CategoryService.java`
+- `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
+- `services/api/src/test/java/mn/tasky/category/CategoryScenarioTests.java`
 
 ## Audit Trail
 
-- EXTRACTED: 86 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 112 (77%)
+- INFERRED: 33 (23%)
 - AMBIGUOUS: 0 (0%)
 
 ---

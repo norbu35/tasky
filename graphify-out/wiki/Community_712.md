@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **LandingPage.tsx** (0 connections) — `apps/web/src/pages/LandingPage.tsx`
+- **AdminUsersPage.test.tsx** (0 connections) — `apps/web/src/pages/admin/__tests__/AdminUsersPage.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/LandingPage.tsx`
+- `apps/web/src/pages/admin/__tests__/AdminUsersPage.test.tsx`
 
 ## Audit Trail
 

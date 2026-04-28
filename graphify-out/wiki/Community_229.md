@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **approved.tsx** (1 connections) — `apps/mobile/src/app/(tasker)/verification/approved.tsx`
-- **ApprovedScreen()** (1 connections) — `apps/mobile/src/app/(tasker)/verification/approved.tsx`
+- **AuthTemplate.tsx** (1 connections) — `apps/mobile/src/components/templates/AuthTemplate.tsx`
+- **handleActionBarLayout()** (1 connections) — `apps/mobile/src/components/templates/AuthTemplate.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tasker)/verification/approved.tsx`
+- `apps/mobile/src/components/templates/AuthTemplate.tsx`
 
 ## Audit Trail
 

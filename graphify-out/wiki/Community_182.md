@@ -4,21 +4,21 @@
 
 ## Key Concepts
 
-- **DisputeEvidenceOutcome.java** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputeEvidenceOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputeEvidenceOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputeEvidenceOutcome.java`
+- **VerificationSubmissionOutcome.java** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationSubmissionOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationSubmissionOutcome.java`
+- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationSubmissionOutcome.java`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputeEvidenceOutcome.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationSubmissionOutcome.java`
 
 ## Audit Trail
 
-- EXTRACTED: 5 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

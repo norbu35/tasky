@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **AdminLayout.test.tsx** (1 connections) — `apps/web/src/layout/__tests__/AdminLayout.test.tsx`
-- **mockContext()** (1 connections) — `apps/web/src/layout/__tests__/AdminLayout.test.tsx`
+- **apiClient.test.ts** (1 connections) — `apps/web/src/lib/apiClient.test.ts`
+- **mockOkResponse()** (1 connections) — `apps/web/src/lib/apiClient.test.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/__tests__/AdminLayout.test.tsx`
+- `apps/web/src/lib/apiClient.test.ts`
 
 ## Audit Trail
 

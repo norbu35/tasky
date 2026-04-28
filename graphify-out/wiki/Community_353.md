@@ -1,11 +1,10 @@
 # Community 353
 
-> 2 nodes
+> 1 nodes
 
 ## Key Concepts
 
-- **check_screen_graph.py** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
-- **main()** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
+- **build.gradle.kts** (0 connections) — `build.gradle.kts`
 
 ## Relationships
 
@@ -13,11 +12,11 @@
 
 ## Source Files
 
-- `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
+- `build.gradle.kts`
 
 ## Audit Trail
 
-- EXTRACTED: 2 (100%)
+- EXTRACTED: 0 (0%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

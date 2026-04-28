@@ -1,11 +1,10 @@
 # Community 356
 
-> 2 nodes
+> 1 nodes
 
 ## Key Concepts
 
-- **doc-references-validator.test.mjs** (1 connections) — `tooling/tests/doc-references-validator.test.mjs`
-- **runPython()** (1 connections) — `tooling/tests/doc-references-validator.test.mjs`
+- **babel.config.js** (0 connections) — `apps/mobile/babel.config.js`
 
 ## Relationships
 
@@ -13,11 +12,11 @@
 
 ## Source Files
 
-- `tooling/tests/doc-references-validator.test.mjs`
+- `apps/mobile/babel.config.js`
 
 ## Audit Trail
 
-- EXTRACTED: 2 (100%)
+- EXTRACTED: 0 (0%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/components/ui/index.ts`
+- **FilterBar.tsx** (0 connections) — `apps/mobile/src/components/ui/FilterBar.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/index.ts`
+- `apps/mobile/src/components/ui/FilterBar.tsx`
 
 ## Audit Trail
 

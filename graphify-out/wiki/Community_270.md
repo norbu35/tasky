@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **PhoneWarning.tsx** (1 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/PhoneWarning.tsx`
-- **PhoneWarning()** (1 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/PhoneWarning.tsx`
+- **ProfileDeleteScreen.tsx** (1 connections) — `apps/mobile/src/features/profile/screens/ProfileDeleteScreen.tsx`
+- **handleDelete()** (1 connections) — `apps/mobile/src/features/profile/screens/ProfileDeleteScreen.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/chat/screens/ChatConversation/PhoneWarning.tsx`
+- `apps/mobile/src/features/profile/screens/ProfileDeleteScreen.tsx`
 
 ## Audit Trail
 

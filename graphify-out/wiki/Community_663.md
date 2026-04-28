@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **playwright.config.ts** (0 connections) — `apps/web/playwright.config.ts`
+- **customer-happy-path.spec.ts** (0 connections) — `apps/web/e2e/customer-happy-path.spec.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/playwright.config.ts`
+- `apps/web/e2e/customer-happy-path.spec.ts`
 
 ## Audit Trail
 

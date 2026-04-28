@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **BottomNavBar.test.tsx** (0 connections) — `apps/web/src/layout/__tests__/BottomNavBar.test.tsx`
+- **errorHandling.test.ts** (0 connections) — `apps/web/src/lib/errorHandling.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/__tests__/BottomNavBar.test.tsx`
+- `apps/web/src/lib/errorHandling.test.ts`
 
 ## Audit Trail
 

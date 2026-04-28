@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReviewSubmitResult.java** (1 connections) — `services/api/src/main/java/mn/tasky/review/dto/ReviewSubmitResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/review/dto/ReviewSubmitResult.java`
+- **UpdateDraftRequest.java** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/UpdateDraftRequest.java`
+- **isLocationPairValid()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/UpdateDraftRequest.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/review/dto/ReviewSubmitResult.java`
+- `services/api/src/main/java/mn/tasky/task/dto/UpdateDraftRequest.java`
 
 ## Audit Trail
 

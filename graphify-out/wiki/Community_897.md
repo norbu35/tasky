@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **react-native.d.ts** (0 connections) — `tooling/config/eslint/react-native.d.ts`
+- **design-contract-validator.test.mjs** (0 connections) — `tooling/tests/design-contract-validator.test.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/config/eslint/react-native.d.ts`
+- `tooling/tests/design-contract-validator.test.mjs`
 
 ## Audit Trail
 

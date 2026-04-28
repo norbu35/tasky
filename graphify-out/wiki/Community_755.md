@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **vitest.config.ts** (0 connections) — `packages/core/vitest.config.ts`
+- **index.ts** (0 connections) — `packages/design-tokens/src/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/core/vitest.config.ts`
+- `packages/design-tokens/src/index.ts`
 
 ## Audit Trail
 

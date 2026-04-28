@@ -4,24 +4,24 @@
 
 ## Key Concepts
 
-- **MessagingCommandHandler** (4 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
-- **MessagingCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
-- **.MessagingCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
-- **.sendMessage()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
-- **.startConversation()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
+- **BookingResponseMapper** (4 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
+- **.basic()** (3 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
+- **.withCancellationFee()** (2 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
+- **BookingResponseMapper.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
+- **.BookingResponseMapper()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/messaging/application/command/MessagingCommandHandler.java`
+- `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 10 (91%)
+- INFERRED: 1 (9%)
 - AMBIGUOUS: 0 (0%)
 
 ---

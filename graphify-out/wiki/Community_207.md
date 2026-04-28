@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **role-based-ui.test.tsx** (1 connections) — `apps/mobile/__tests__/integration/role-based-ui.test.tsx`
-- **render()** (1 connections) — `apps/mobile/__tests__/integration/role-based-ui.test.tsx`
+- **queryClient.ts** (1 connections) — `apps/mobile/__tests__/test-utils/queryClient.ts`
+- **createTestQueryClient()** (1 connections) — `apps/mobile/__tests__/test-utils/queryClient.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/integration/role-based-ui.test.tsx`
+- `apps/mobile/__tests__/test-utils/queryClient.ts`
 
 ## Audit Trail
 

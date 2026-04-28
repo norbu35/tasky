@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TabBarButton.tsx** (1 connections) — `apps/mobile/src/components/ui/TabBarButton.tsx`
-- **TabBarButton()** (1 connections) — `apps/mobile/src/components/ui/TabBarButton.tsx`
+- **PermissionPrimer.Illustration.tsx** (1 connections) — `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
+- **IllustrationArea()** (1 connections) — `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/TabBarButton.tsx`
+- `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
 
 ## Audit Trail
 

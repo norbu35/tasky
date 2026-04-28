@@ -1,13 +1,14 @@
 # Community 104
 
-> 4 nodes
+> 5 nodes
 
 ## Key Concepts
 
-- **NewTaskLayout.test.tsx** (3 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
-- **MockStack()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
-- **MockStackScreen()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
-- **MockRedirect()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
+- **TaskApplicationAcceptanceOutcome.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
+- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
+- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
+- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
 
 ## Relationships
 
@@ -15,11 +16,11 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

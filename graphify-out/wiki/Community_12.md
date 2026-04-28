@@ -1,6 +1,6 @@
 # Community 12
 
-> 124 nodes
+> 131 nodes
 
 ## Key Concepts
 
@@ -29,22 +29,22 @@
 - **.getWithToken()** (6 connections) — `services/api/src/test/java/mn/tasky/location/LocationApiTests.java`
 - **.devLogin()** (6 connections) — `services/api/src/test/java/mn/tasky/security/SecurityInformationControlScenarioTests.java`
 - **.getWithAuth()** (6 connections) — `services/api/src/test/java/mn/tasky/security/SecurityInformationControlScenarioTests.java`
-- _... and 99 more nodes in this community_
+- _... and 106 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (39 shared connections)
-- [[Community 4]] (9 shared connections)
-- [[Community 3]] (5 shared connections)
-- [[Community 6]] (5 shared connections)
-- [[Community 1]] (3 shared connections)
-- [[Community 8]] (2 shared connections)
-- [[Community 13]] (2 shared connections)
-- [[Community 9]] (1 shared connections)
-- [[Community 23]] (1 shared connections)
+- [[Community 0]] (35 shared connections)
+- [[Community 6]] (9 shared connections)
+- [[Community 1]] (9 shared connections)
+- [[Community 5]] (5 shared connections)
+- [[Community 10]] (4 shared connections)
+- [[Community 2]] (3 shared connections)
+- [[Community 7]] (2 shared connections)
+- [[Community 14]] (1 shared connections)
 
 ## Source Files
 
+- `apps/mobile/ios/Tasky/AppDelegate.swift`
 - `services/api/src/test/java/mn/tasky/auth/AuthHttpScenarioTests.java`
 - `services/api/src/test/java/mn/tasky/booking/BookingScenarioTests.java`
 - `services/api/src/test/java/mn/tasky/contract/ContractEnvelopeTests.java`
@@ -57,8 +57,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 503 (84%)
-- INFERRED: 96 (16%)
+- EXTRACTED: 519 (84%)
+- INFERRED: 97 (16%)
 - AMBIGUOUS: 0 (0%)
 
 ---

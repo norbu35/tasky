@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ScheduleFields.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingReschedule/ScheduleFields.tsx`
+- **EmptyState.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/EmptyState.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingReschedule/ScheduleFields.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingsList/EmptyState.tsx`
 
 ## Audit Trail
 

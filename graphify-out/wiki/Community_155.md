@@ -1,12 +1,13 @@
 # Community 155
 
-> 3 nodes
+> 4 nodes
 
 ## Key Concepts
 
-- **profileRouteParams.ts** (2 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
-- **buildTaskerProfileRoute()** (1 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
-- **numberFromRouteParam()** (1 connections) — `apps/mobile/src/features/profile/profileRouteParams.ts`
+- **polish.tsx** (3 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **handlePrimaryAction()** (3 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **handleGenerate()** (2 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **handleApply()** (2 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
 
 ## Relationships
 
@@ -14,11 +15,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/profileRouteParams.ts`
+- `archive/mobile-future/tasker/profile/polish.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

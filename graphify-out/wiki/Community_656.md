@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **types.ts** (0 connections) — `apps/mobile/src/lib/api/types.ts`
+- **vitest.config.ts** (0 connections) — `apps/web/vitest.config.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/api/types.ts`
+- `apps/web/vitest.config.ts`
 
 ## Audit Trail
 

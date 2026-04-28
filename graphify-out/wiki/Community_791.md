@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ProfileUpdate.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/ProfileUpdate.java`
+- **VerificationDetail.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/VerificationDetail.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/dto/ProfileUpdate.java`
+- `services/api/src/main/java/mn/tasky/auth/dto/VerificationDetail.java`
 
 ## Audit Trail
 

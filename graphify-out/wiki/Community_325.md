@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReviewHardLockPage.tsx** (1 connections) — `apps/web/src/pages/shared/ReviewHardLockPage.tsx`
-- **ReviewHardLockPage()** (1 connections) — `apps/web/src/pages/shared/ReviewHardLockPage.tsx`
+- **TaskerApplicationSentPage.tsx** (1 connections) — `apps/web/src/pages/tasker/TaskerApplicationSentPage.tsx`
+- **TaskerApplicationSentPage()** (1 connections) — `apps/web/src/pages/tasker/TaskerApplicationSentPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/ReviewHardLockPage.tsx`
+- `apps/web/src/pages/tasker/TaskerApplicationSentPage.tsx`
 
 ## Audit Trail
 

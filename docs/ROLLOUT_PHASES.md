@@ -73,7 +73,7 @@ Phase 1 is the current product.
 It means:
 
 - live posting across all of Ulaanbaatar
-- launch category catalog seeded with home cleaning, furniture assembly, moving help / lifting help, and minor handyman, with runtime activation governed by admin controls
+- initial launch category catalog covering home cleaning, furniture assembly, moving help / lifting help, and minor handyman, with runtime activation governed by admin controls
 - structured category templates rather than generic free-form posting as the main path
 - customer pricing choice between `I have a budget` and `I want quotes`
 - open application with customer selection rather than algorithmic assignment

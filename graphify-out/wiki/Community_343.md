@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **RuntimeConfiguration.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeConfiguration.java`
-- **RuntimeConfiguration** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeConfiguration.java`
+- **AcceptApplicationRequest.java** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/AcceptApplicationRequest.java`
+- **isLiabilityDisclaimerAccepted()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/AcceptApplicationRequest.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/RuntimeConfiguration.java`
+- `services/api/src/main/java/mn/tasky/task/dto/AcceptApplicationRequest.java`
 
 ## Audit Trail
 

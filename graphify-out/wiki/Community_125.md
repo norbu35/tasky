@@ -4,23 +4,23 @@
 
 ## Key Concepts
 
-- **BookingIntentCreateResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentCreateResult.java`
-- **success()** (2 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentCreateResult.java`
-- **error()** (2 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentCreateResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentCreateResult.java`
+- **native.ts** (3 connections) — `packages/design-tokens/src/platform/native.ts`
+- **toNativeLetterSpacing()** (3 connections) — `packages/design-tokens/src/platform/native.ts`
+- **toNativeTextStyle()** (2 connections) — `packages/design-tokens/src/platform/native.ts`
+- **toNativeTypographyVariant()** (2 connections) — `packages/design-tokens/src/platform/native.ts`
 
 ## Relationships
 
-- [[Community 0]] (2 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentCreateResult.java`
+- `packages/design-tokens/src/platform/native.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (75%)
-- INFERRED: 2 (25%)
+- EXTRACTED: 10 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

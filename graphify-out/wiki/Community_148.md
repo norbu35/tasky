@@ -1,12 +1,13 @@
 # Community 148
 
-> 3 nodes
+> 4 nodes
 
 ## Key Concepts
 
-- **TaskerCancelSheet.test.tsx** (2 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
-- **t()** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
-- **isPending()** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
+- **WorkflowBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
+- **.workflowAndAutomationPlaneMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
+- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
+- **WorkflowBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
 
 ## Relationships
 
@@ -14,11 +15,11 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
+- `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

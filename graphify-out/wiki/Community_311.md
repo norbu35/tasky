@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TimelineList.tsx** (1 connections) — `apps/web/src/layout/parity/TimelineList.tsx`
-- **TimelineList()** (1 connections) — `apps/web/src/layout/parity/TimelineList.tsx`
+- **CustomerTimelinePage.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerTimelinePage.tsx`
+- **CustomerTimelinePage()** (1 connections) — `apps/web/src/pages/customer/CustomerTimelinePage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/parity/TimelineList.tsx`
+- `apps/web/src/pages/customer/CustomerTimelinePage.tsx`
 
 ## Audit Trail
 

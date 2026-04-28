@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReviewReminderDialog.tsx** (1 connections) — `apps/web/src/pages/shared/ReviewReminderDialog.tsx`
-- **ReviewReminderDialog()** (1 connections) — `apps/web/src/pages/shared/ReviewReminderDialog.tsx`
+- **useCategories.ts** (1 connections) — `packages/core/src/tasks/useCategories.ts`
+- **useCategoriesQuery()** (1 connections) — `packages/core/src/tasks/useCategories.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/ReviewReminderDialog.tsx`
+- `packages/core/src/tasks/useCategories.ts`
 
 ## Audit Trail
 

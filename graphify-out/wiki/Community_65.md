@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **validate-doc-references.py** (6 connections) — `tooling/scripts/governance/validate-doc-references.py`
-- **main()** (6 connections) — `tooling/scripts/governance/validate-doc-references.py`
-- **collect_scan_files()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
-- **load_pnpm_scripts()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
-- **find_pnpm_refs()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
-- **find_path_refs()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
-- **is_allowed_missing_path_ref()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
+- **PaymentProvider** (6 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **PaymentProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.createIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.isValidSignature()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.resolvePaymentIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
 
 ## Relationships
 
@@ -18,11 +18,11 @@
 
 ## Source Files
 
-- `tooling/scripts/governance/validate-doc-references.py`
+- `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
 
 ## Audit Trail
 
-- EXTRACTED: 22 (100%)
+- EXTRACTED: 12 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

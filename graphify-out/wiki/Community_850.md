@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **InitiatePaymentRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/payment/dto/InitiatePaymentRequest.java`
+- **PublicTaskFeedRow.java** (0 connections) — `services/api/src/main/java/mn/tasky/projection/publicfeed/PublicTaskFeedRow.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/payment/dto/InitiatePaymentRequest.java`
+- `services/api/src/main/java/mn/tasky/projection/publicfeed/PublicTaskFeedRow.java`
 
 ## Audit Trail
 

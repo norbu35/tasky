@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **ActivateSchemaVersionRequestTest** (2 connections) — `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
-- **ActivateSchemaVersionRequestTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
-- **.storesRequestedActivationMode()** (1 connections) — `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
+- **AssistanceEvaluationTest** (2 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
+- **AssistanceEvaluationTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
+- **.storesExternalDistributionDecisionAndReason()** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/category/dto/ActivateSchemaVersionRequestTest.java`
+- `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
 
 ## Audit Trail
 

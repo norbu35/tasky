@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/web/src/pages/admin/index.ts`
+- **CustomerNoShowReminderDialog.tsx** (0 connections) — `apps/web/src/pages/customer/CustomerNoShowReminderDialog.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/admin/index.ts`
+- `apps/web/src/pages/customer/CustomerNoShowReminderDialog.tsx`
 
 ## Audit Trail
 

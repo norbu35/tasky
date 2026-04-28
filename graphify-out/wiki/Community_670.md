@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **fixtures.ts** (0 connections) — `apps/web/e2e/support/fixtures.ts`
+- **IntakeFormRenderer.test.tsx** (0 connections) — `apps/web/src/components/feature/task-creation/__tests__/IntakeFormRenderer.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/e2e/support/fixtures.ts`
+- `apps/web/src/components/feature/task-creation/__tests__/IntakeFormRenderer.test.tsx`
 
 ## Audit Trail
 

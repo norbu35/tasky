@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **UpdateCategoryRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/category/dto/UpdateCategoryRequest.java`
+- **FeatureToggle.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggle.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/category/dto/UpdateCategoryRequest.java`
+- `services/api/src/main/java/mn/tasky/common/feature/FeatureToggle.java`
 
 ## Audit Trail
 

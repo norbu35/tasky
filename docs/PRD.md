@@ -171,7 +171,7 @@ The launch depends on an operator-managed backstop. Admin is not a future abstra
 
 ### 6.2 Launch categories
 
-Phase 1 launch starts with the following seed service categories:
+Phase 1 launch starts with the following initial service categories:
 
 1. Home cleaning
 2. Furniture assembly

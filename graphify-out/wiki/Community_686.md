@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **dialog.tsx** (0 connections) — `apps/web/src/components/ui/dialog.tsx`
+- **select.tsx** (0 connections) — `apps/web/src/components/ui/select.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/dialog.tsx`
+- `apps/web/src/components/ui/select.tsx`
 
 ## Audit Trail
 

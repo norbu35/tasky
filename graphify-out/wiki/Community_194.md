@@ -4,22 +4,22 @@
 
 ## Key Concepts
 
-- **PublicTaskFeedPageTest** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/PublicTaskFeedPageTest.java`
-- **.preservesFeedItemMapsAndCursorMetadata()** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/PublicTaskFeedPageTest.java`
-- **PublicTaskFeedPageTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/PublicTaskFeedPageTest.java`
+- **schema-parity.test.mjs** (2 connections) — `tooling/tests/schema-parity.test.mjs`
+- **writeMigration()** (1 connections) — `tooling/tests/schema-parity.test.mjs`
+- **runPython()** (1 connections) — `tooling/tests/schema-parity.test.mjs`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/PublicTaskFeedPageTest.java`
+- `tooling/tests/schema-parity.test.mjs`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (80%)
-- INFERRED: 1 (20%)
+- EXTRACTED: 4 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

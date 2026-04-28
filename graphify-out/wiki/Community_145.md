@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **otp-migration.tsx** (3 connections) — `archive/mobile-future/auth/otp-migration.tsx`
-- **resolveState()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
-- **handleSubmit()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
-- **handleSkip()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **UserProfileUpdateOutcome.java** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
+- **invalidAvatarKey()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
+- **userNotFound()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `archive/mobile-future/auth/otp-migration.tsx`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateOutcome.java`
 
 ## Audit Trail
 

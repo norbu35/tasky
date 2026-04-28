@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/review/index.ts`
+- **TaskFeedHeader.tsx** (0 connections) — `apps/mobile/src/features/tasks/components/TaskFeedHeader.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/review/index.ts`
+- `apps/mobile/src/features/tasks/components/TaskFeedHeader.tsx`
 
 ## Audit Trail
 

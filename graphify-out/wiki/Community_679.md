@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **separator.tsx** (0 connections) — `apps/web/src/components/ui/separator.tsx`
+- **textarea.tsx** (0 connections) — `apps/web/src/components/ui/textarea.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/separator.tsx`
+- `apps/web/src/components/ui/textarea.tsx`
 
 ## Audit Trail
 

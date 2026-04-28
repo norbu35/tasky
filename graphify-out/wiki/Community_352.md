@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **check_lifecycles.py** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
-- **main()** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
+- **TaskerProfilePolishPage.tsx** (1 connections) — `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
+- **TaskerProfilePolishPage()** (1 connections) — `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
+- `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
 
 ## Audit Trail
 

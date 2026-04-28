@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **NetworkErrorScreen.tsx** (0 connections) — `apps/mobile/src/features/infra/screens/NetworkErrorScreen.tsx`
+- **authStore.ts** (0 connections) — `apps/mobile/src/store/authStore.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/infra/screens/NetworkErrorScreen.tsx`
+- `apps/mobile/src/store/authStore.ts`
 
 ## Audit Trail
 

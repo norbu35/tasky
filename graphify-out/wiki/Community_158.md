@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskReviewSubmit.SummarySections.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
-- **SectionCard()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
-- **icon()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
+- **DetailTemplate.tsx** (2 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
+- **DetailSkeleton()** (1 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
+- **handleActionBarLayout()** (1 connections) — `apps/mobile/src/components/templates/DetailTemplate.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
+- `apps/mobile/src/components/templates/DetailTemplate.tsx`
 
 ## Audit Trail
 

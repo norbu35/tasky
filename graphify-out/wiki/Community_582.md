@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Screen.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/Screen.tsx`
+- **Screen.tsx** (0 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/Screen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingDetail/Screen.tsx`
+- `apps/mobile/src/features/chat/screens/ChatConversation/Screen.tsx`
 
 ## Audit Trail
 

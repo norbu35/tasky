@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerCancelDialog.tsx** (0 connections) — `apps/web/src/pages/tasker/TaskerCancelDialog.tsx`
+- **analytics.test.tsx** (0 connections) — `apps/web/tests/integration/analytics.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/tasker/TaskerCancelDialog.tsx`
+- `apps/web/tests/integration/analytics.test.tsx`
 
 ## Audit Trail
 

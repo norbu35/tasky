@@ -4,21 +4,21 @@
 
 ## Key Concepts
 
-- **TaskApplicationAcceptanceService** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceService.java`
-- **TaskApplicationAcceptanceService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceService.java`
-- **.TaskApplicationAcceptanceService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceService.java`
+- **AdminVerificationDecisionOutcome.java** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionOutcome.java`
+- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionOutcome.java`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionOutcome.java`
 
 ## Audit Trail
 
-- EXTRACTED: 5 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

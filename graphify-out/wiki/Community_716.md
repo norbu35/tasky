@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AdminModerationPage.test.tsx** (0 connections) — `apps/web/src/pages/admin/__tests__/AdminModerationPage.test.tsx`
+- **CustomerBookingDetailPage.tsx** (0 connections) — `apps/web/src/pages/customer/CustomerBookingDetailPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/admin/__tests__/AdminModerationPage.test.tsx`
+- `apps/web/src/pages/customer/CustomerBookingDetailPage.tsx`
 
 ## Audit Trail
 

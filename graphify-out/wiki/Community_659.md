@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **eslint.config.mjs** (0 connections) — `apps/web/eslint.config.mjs`
+- **tailwind.config.ts** (0 connections) — `apps/web/tailwind.config.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/eslint.config.mjs`
+- `apps/web/tailwind.config.ts`
 
 ## Audit Trail
 

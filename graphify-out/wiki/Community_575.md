@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CurrentSchedule.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingReschedule/CurrentSchedule.tsx`
+- **ActionToolbar.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/ActionToolbar.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingReschedule/CurrentSchedule.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingDetail/ActionToolbar.tsx`
 
 ## Audit Trail
 

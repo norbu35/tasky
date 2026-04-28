@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **switch.tsx** (0 connections) — `apps/web/src/components/ui/switch.tsx`
+- **button.tsx** (0 connections) — `apps/web/src/components/ui/button.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/switch.tsx`
+- `apps/web/src/components/ui/button.tsx`
 
 ## Audit Trail
 

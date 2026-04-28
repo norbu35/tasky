@@ -119,14 +119,16 @@ public interface BookingDao {
 
     @SqlQuery("SELECT * FROM bookings WHERE customer_id = :userId "
             + "AND (:status IS NULL OR status = :status) "
-            + "ORDER BY id LIMIT :limit")
+            + "ORDER BY updated_at DESC, id DESC LIMIT :limit")
     List<BookingState> findByCustomerIdFirstPage(
             @Bind("userId") UUID userId, @Bind("status") String status, @Bind("limit") int limit);
 
-    @SqlQuery("SELECT * FROM bookings WHERE customer_id = :userId "
-            + "AND (:status IS NULL OR status = :status) "
-            + "AND id > :cursor "
-            + "ORDER BY id LIMIT :limit")
+    @SqlQuery("WITH cursor_row AS (SELECT updated_at, id FROM bookings WHERE id = :cursor) "
+            + "SELECT b.* FROM bookings b, cursor_row c "
+            + "WHERE b.customer_id = :userId "
+            + "AND (:status IS NULL OR b.status = :status) "
+            + "AND (b.updated_at < c.updated_at OR (b.updated_at = c.updated_at AND b.id < c.id)) "
+            + "ORDER BY b.updated_at DESC, b.id DESC LIMIT :limit")
     List<BookingState> findByCustomerIdAfterCursor(
             @Bind("userId") UUID userId,
             @Bind("status") String status,
@@ -150,14 +152,16 @@ public interface BookingDao {
 
     @SqlQuery("SELECT * FROM bookings WHERE tasker_id = :userId "
             + "AND (:status IS NULL OR status = :status) "
-            + "ORDER BY id LIMIT :limit")
+            + "ORDER BY updated_at DESC, id DESC LIMIT :limit")
     List<BookingState> findByTaskerIdFirstPage(
             @Bind("userId") UUID userId, @Bind("status") String status, @Bind("limit") int limit);
 
-    @SqlQuery("SELECT * FROM bookings WHERE tasker_id = :userId "
-            + "AND (:status IS NULL OR status = :status) "
-            + "AND id > :cursor "
-            + "ORDER BY id LIMIT :limit")
+    @SqlQuery("WITH cursor_row AS (SELECT updated_at, id FROM bookings WHERE id = :cursor) "
+            + "SELECT b.* FROM bookings b, cursor_row c "
+            + "WHERE b.tasker_id = :userId "
+            + "AND (:status IS NULL OR b.status = :status) "
+            + "AND (b.updated_at < c.updated_at OR (b.updated_at = c.updated_at AND b.id < c.id)) "
+            + "ORDER BY b.updated_at DESC, b.id DESC LIMIT :limit")
     List<BookingState> findByTaskerIdAfterCursor(
             @Bind("userId") UUID userId,
             @Bind("status") String status,
@@ -181,14 +185,16 @@ public interface BookingDao {
 
     @SqlQuery("SELECT * FROM bookings WHERE (customer_id = :userId OR tasker_id = :userId) "
             + "AND (:status IS NULL OR status = :status) "
-            + "ORDER BY id LIMIT :limit")
+            + "ORDER BY updated_at DESC, id DESC LIMIT :limit")
     List<BookingState> findByParticipantFirstPage(
             @Bind("userId") UUID userId, @Bind("status") String status, @Bind("limit") int limit);
 
-    @SqlQuery("SELECT * FROM bookings WHERE (customer_id = :userId OR tasker_id = :userId) "
-            + "AND (:status IS NULL OR status = :status) "
-            + "AND id > :cursor "
-            + "ORDER BY id LIMIT :limit")
+    @SqlQuery("WITH cursor_row AS (SELECT updated_at, id FROM bookings WHERE id = :cursor) "
+            + "SELECT b.* FROM bookings b, cursor_row c "
+            + "WHERE (b.customer_id = :userId OR b.tasker_id = :userId) "
+            + "AND (:status IS NULL OR b.status = :status) "
+            + "AND (b.updated_at < c.updated_at OR (b.updated_at = c.updated_at AND b.id < c.id)) "
+            + "ORDER BY b.updated_at DESC, b.id DESC LIMIT :limit")
     List<BookingState> findByParticipantAfterCursor(
             @Bind("userId") UUID userId,
             @Bind("status") String status,

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useApplyToTask.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
-- **useApplyToTask()** (1 connections) — `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
+- **useTaskDraft.ts** (1 connections) — `apps/mobile/src/features/tasks/draft/useTaskDraft.ts`
+- **useTaskDraft()** (1 connections) — `apps/mobile/src/features/tasks/draft/useTaskDraft.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
+- `apps/mobile/src/features/tasks/draft/useTaskDraft.ts`
 
 ## Audit Trail
 

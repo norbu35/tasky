@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PrivacyPolicyScreen.tsx** (0 connections) — `apps/mobile/src/features/legal/screens/PrivacyPolicyScreen.tsx`
+- **queryKeys.ts** (0 connections) — `apps/mobile/src/lib/queryKeys.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/legal/screens/PrivacyPolicyScreen.tsx`
+- `apps/mobile/src/lib/queryKeys.ts`
 
 ## Audit Trail
 

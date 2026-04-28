@@ -4,23 +4,24 @@
 
 ## Key Concepts
 
-- **native.ts** (3 connections) — `packages/design-tokens/src/platform/native.ts`
-- **toNativeLetterSpacing()** (3 connections) — `packages/design-tokens/src/platform/native.ts`
-- **toNativeTextStyle()** (2 connections) — `packages/design-tokens/src/platform/native.ts`
-- **toNativeTypographyVariant()** (2 connections) — `packages/design-tokens/src/platform/native.ts`
+- **DisputeCreateScreen()** (3 connections) — `apps/mobile/src/features/disputes/screens/DisputeCreateScreen.tsx`
+- **useDisputeCreate()** (2 connections) — `apps/mobile/src/features/disputes/hooks/useDisputeCreate.ts`
+- **useDisputeCreate.ts** (1 connections) — `apps/mobile/src/features/disputes/hooks/useDisputeCreate.ts`
+- **DisputeCreateScreen.tsx** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeCreateScreen.tsx`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `packages/design-tokens/src/platform/native.ts`
+- `apps/mobile/src/features/disputes/hooks/useDisputeCreate.ts`
+- `apps/mobile/src/features/disputes/screens/DisputeCreateScreen.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 4 (57%)
+- INFERRED: 3 (43%)
 - AMBIGUOUS: 0 (0%)
 
 ---

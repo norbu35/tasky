@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskyApplication** (2 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
-- **TaskyApplication.java** (1 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
-- **.main()** (1 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
+- **PostingGuidance.tsx** (2 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
+- **PostingGuidanceCard()** (1 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
+- **PostingProofChecklist()** (1 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/TaskyApplication.java`
+- `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
 
 ## Audit Trail
 

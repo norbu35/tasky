@@ -4,14 +4,14 @@
 
 ## Key Concepts
 
-- **MessagingQueryHandler** (7 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
-- **MessagingQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
-- **.MessagingQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
-- **.listEnrichedConversations()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
-- **.listMessages()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
-- **.findConversationByTaskAndParticipants()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
-- **.listMessagesForConversation()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
-- **.findFlaggedMessages()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
+- **mockI18n.ts** (7 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **resolveLanguage()** (3 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **translate()** (3 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **lookupTranslation()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **interpolate()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **createReactI18nextMock()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **setTestLanguage()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **resetTestI18n()** (1 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
 
 ## Relationships
 
@@ -19,11 +19,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
+- `apps/mobile/__tests__/test-utils/mockI18n.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (100%)
+- EXTRACTED: 22 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

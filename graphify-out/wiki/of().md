@@ -1,6 +1,6 @@
 # of()
 
-> God node · 843 connections · `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeResolutionOutcome.java`
+> God node · 844 connections · `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeResolutionOutcome.java`
 
 **Community:** [[Community 0]]
 

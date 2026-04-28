@@ -4,22 +4,22 @@
 
 ## Key Concepts
 
-- **SchedulerLockRunner** (2 connections) — `services/api/src/main/java/mn/tasky/common/scheduling/SchedulerLockRunner.java`
-- **.runWithLock()** (2 connections) — `services/api/src/main/java/mn/tasky/common/scheduling/SchedulerLockRunner.java`
-- **SchedulerLockRunner.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/scheduling/SchedulerLockRunner.java`
+- **disputeStatusVariant()** (3 connections) — `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
+- **AdminDisputeDetailPage.tsx** (2 connections) — `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
+- **getDisputeStatusLabelKey()** (2 connections) — `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/scheduling/SchedulerLockRunner.java`
+- `apps/web/src/pages/admin/AdminDisputeDetailPage.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (80%)
-- INFERRED: 1 (20%)
+- EXTRACTED: 6 (86%)
+- INFERRED: 1 (14%)
 - AMBIGUOUS: 0 (0%)
 
 ---

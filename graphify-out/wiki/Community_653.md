@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **react-query.ts** (0 connections) — `apps/mobile/src/lib/react-query.ts`
+- **eslint.config.mjs** (0 connections) — `apps/web/eslint.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/react-query.ts`
+- `apps/web/eslint.config.mjs`
 
 ## Audit Trail
 

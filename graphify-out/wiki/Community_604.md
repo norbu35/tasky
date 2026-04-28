@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ReviewForm.Header.tsx** (0 connections) — `apps/mobile/src/features/review/components/ReviewForm.Header.tsx`
+- **TaskSchedule.PricingMode.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.PricingMode.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/review/components/ReviewForm.Header.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskSchedule.PricingMode.tsx`
 
 ## Audit Trail
 

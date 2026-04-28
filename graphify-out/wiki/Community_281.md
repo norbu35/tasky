@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReviewGateBanner.tsx** (1 connections) — `apps/mobile/src/features/review/components/ReviewGateBanner.tsx`
-- **handlePress()** (1 connections) — `apps/mobile/src/features/review/components/ReviewGateBanner.tsx`
+- **useApplyToTask.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
+- **useApplyToTask()** (1 connections) — `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/review/components/ReviewGateBanner.tsx`
+- `apps/mobile/src/features/tasks/hooks/useApplyToTask.ts`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **userAccess.test.ts** (0 connections) — `apps/web/src/lib/userAccess.test.ts`
+- **TaskerTasksPage.tsx** (0 connections) — `apps/web/src/pages/TaskerTasksPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/userAccess.test.ts`
+- `apps/web/src/pages/TaskerTasksPage.tsx`
 
 ## Audit Trail
 

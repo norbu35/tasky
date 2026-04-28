@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **build.gradle.kts** (0 connections) — `build.gradle.kts`
+- **nativewind-env.d.ts** (0 connections) — `apps/mobile/nativewind-env.d.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `build.gradle.kts`
+- `apps/mobile/nativewind-env.d.ts`
 
 ## Audit Trail
 

@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **AdminDisputesPage.tsx** (4 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
-- **disputeStatusVariant()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
-- **getDisputeStatusLabelKey()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
-- **truncate()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
-- **formatDate()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
+- **VerificationConsentScreen.tsx** (4 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
+- **checkIfContentFits()** (3 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
+- **handleContentSizeChange()** (2 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
+- **handleLayout()** (2 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
+- **handleScroll()** (1 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
 
 ## Relationships
 
@@ -16,11 +16,11 @@
 
 ## Source Files
 
-- `apps/web/src/pages/admin/AdminDisputesPage.tsx`
+- `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 12 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

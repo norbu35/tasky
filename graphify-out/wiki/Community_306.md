@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **LanguageSwitcher.tsx** (1 connections) — `apps/web/src/layout/LanguageSwitcher.tsx`
-- **LanguageSwitcher()** (1 connections) — `apps/web/src/layout/LanguageSwitcher.tsx`
+- **idempotency.ts** (1 connections) — `apps/web/src/lib/idempotency.ts`
+- **createIdempotencyKey()** (1 connections) — `apps/web/src/lib/idempotency.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/LanguageSwitcher.tsx`
+- `apps/web/src/lib/idempotency.ts`
 
 ## Audit Trail
 

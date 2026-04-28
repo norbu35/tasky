@@ -1,57 +1,67 @@
 # Community 26
 
-> 48 nodes
+> 44 nodes
 
 ## Key Concepts
 
-- **.doFilterInternal()** (22 connections) — `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
-- **Write** (10 connections) — `services/api/src/test/java/mn/tasky/common/security/JsonSecurityResponseWriterTest.java`
-- **RequestObservabilityFilterTest.java** (6 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **JwtAuthenticationFilter** (5 connections) — `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
-- **PlatformResolution** (5 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **TraceAndCorrelationIdResolution** (4 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **RestAccessDeniedHandler** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAccessDeniedHandler.java`
-- **RestAuthenticationEntryPoint** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAuthenticationEntryPoint.java`
-- **.commence()** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAuthenticationEntryPoint.java`
-- **MdcPopulation** (3 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **LocaleResolution** (3 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **FilterChainProceeds** (3 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **RestAccessDeniedHandlerTest** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/RestAccessDeniedHandlerTest.java`
-- **.writesForbiddenResponse()** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/RestAccessDeniedHandlerTest.java`
-- **RestAuthenticationEntryPointTest** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/RestAuthenticationEntryPointTest.java`
-- **.writesUnauthorizedResponse()** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/RestAuthenticationEntryPointTest.java`
-- **.handle()** (2 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAccessDeniedHandler.java`
-- **.isAuthOrPublicPath()** (2 connections) — `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
-- **.usesHeaderValuesWhenValid()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **.generatesUuidsWhenHeadersMissing()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **.generatesUuidsWhenHeadersContainInvalidChars()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **.setsMdcKeysDuringFilterExecution()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **.clearsMdcAfterFilterChainCompletes()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **.defaultsToMnWhenNoAcceptLanguage()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **.extractsFirstLanguageFromAcceptLanguage()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- _... and 23 more nodes in this community_
+- **PackageMarker** (43 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/PackageMarker.java`
+- **.PackageMarker()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/provider/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/broker/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/event/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/job/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/category/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/outbox/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/workflow/PackageMarker.java`
+- _... and 19 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (3 shared connections)
-- [[Community 4]] (3 shared connections)
-- [[Community 3]] (2 shared connections)
-- [[Community 8]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
-- `services/api/src/main/java/mn/tasky/common/security/RestAccessDeniedHandler.java`
-- `services/api/src/main/java/mn/tasky/common/security/RestAuthenticationEntryPoint.java`
-- `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- `services/api/src/test/java/mn/tasky/common/security/JsonSecurityResponseWriterTest.java`
-- `services/api/src/test/java/mn/tasky/common/security/RestAccessDeniedHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/common/security/RestAuthenticationEntryPointTest.java`
+- `services/api/src/main/java/mn/tasky/admin/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/analytics/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/auth/provider/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/auth/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/broker/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/event/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/job/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/llm/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/worker/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/workflow/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/booking/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/category/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/dispute/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/kernel/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/kernel/outbox/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/location/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/messaging/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/messaging/workflow/PackageMarker.java`
 
 ## Audit Trail
 
-- EXTRACTED: 85 (65%)
-- INFERRED: 46 (35%)
+- EXTRACTED: 86 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

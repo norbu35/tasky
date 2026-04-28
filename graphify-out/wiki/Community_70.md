@@ -1,15 +1,16 @@
 # Community 70
 
-> 6 nodes
+> 7 nodes
 
 ## Key Concepts
 
-- **model.ts** (3 connections) — `apps/mobile/src/features/profile/model.ts`
-- **getReviewThresholdRemaining()** (2 connections) — `apps/mobile/src/features/profile/model.ts`
-- **ReviewThresholdSummary()** (2 connections) — `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
-- **canShowPublicRating()** (1 connections) — `apps/mobile/src/features/profile/model.ts`
-- **formatPublicRating()** (1 connections) — `apps/mobile/src/features/profile/model.ts`
-- **ReviewThresholdSummary.tsx** (1 connections) — `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
+- **instant-match.tsx** (6 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **coerceState()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **coerceDeclineCount()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **coerceString()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **onBack()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **onConfirmBooking()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **onViewApplicants()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
 
 ## Relationships
 
@@ -17,13 +18,12 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
-- `apps/mobile/src/features/profile/model.ts`
+- `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (80%)
-- INFERRED: 2 (20%)
+- EXTRACTED: 12 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

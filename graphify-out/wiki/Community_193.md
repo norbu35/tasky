@@ -4,21 +4,23 @@
 
 ## Key Concepts
 
-- **BookingIntentCompositionServiceTests.java** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingIntentCompositionServiceTests.java`
-- **BookingIntentCompositionServiceTests** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingIntentCompositionServiceTests.java`
-- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingIntentCompositionServiceTests.java`
+- **base.mjs** (2 connections) — `tooling/config/eslint/base.mjs`
+- **react-native.mjs** (1 connections) — `tooling/config/eslint/react-native.mjs`
+- **react.mjs** (1 connections) — `tooling/config/eslint/react.mjs`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingIntentCompositionServiceTests.java`
+- `tooling/config/eslint/base.mjs`
+- `tooling/config/eslint/react-native.mjs`
+- `tooling/config/eslint/react.mjs`
 
 ## Audit Trail
 
-- EXTRACTED: 5 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

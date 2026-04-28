@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TaskerProfile.ReviewsSection.tsx** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
-- **cn()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
+- **ReviewReminder.tsx** (1 connections) — `apps/mobile/src/features/review/components/ReviewReminder.tsx`
+- **handleReviewNow()** (1 connections) — `apps/mobile/src/features/review/components/ReviewReminder.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
+- `apps/mobile/src/features/review/components/ReviewReminder.tsx`
 
 ## Audit Trail
 

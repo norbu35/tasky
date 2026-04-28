@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **FacebookAuthException** (3 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
-- **FacebookAuthException.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
-- **.FacebookAuthException()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
-- **.code()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
+- **useNotifications()** (2 connections) — `apps/mobile/src/features/notifications/hooks/useNotifications.ts`
+- **NotificationListScreen()** (2 connections) — `apps/mobile/src/features/notifications/screens/NotificationListScreen.tsx`
+- **useNotifications.ts** (1 connections) — `apps/mobile/src/features/notifications/hooks/useNotifications.ts`
+- **NotificationListScreen.tsx** (1 connections) — `apps/mobile/src/features/notifications/screens/NotificationListScreen.tsx`
 
 ## Relationships
 
@@ -15,12 +15,13 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
+- `apps/mobile/src/features/notifications/hooks/useNotifications.ts`
+- `apps/mobile/src/features/notifications/screens/NotificationListScreen.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 4 (67%)
+- INFERRED: 2 (33%)
 - AMBIGUOUS: 0 (0%)
 
 ---

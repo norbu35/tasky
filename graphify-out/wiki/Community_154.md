@@ -1,12 +1,13 @@
 # Community 154
 
-> 3 nodes
+> 4 nodes
 
 ## Key Concepts
 
-- **InstantMatchTaskerSheet.tsx** (2 connections) — `apps/mobile/src/features/matching/components/InstantMatchTaskerSheet.tsx`
-- **handleAccept()** (1 connections) — `apps/mobile/src/features/matching/components/InstantMatchTaskerSheet.tsx`
-- **handleDecline()** (1 connections) — `apps/mobile/src/features/matching/components/InstantMatchTaskerSheet.tsx`
+- **otp-migration.tsx** (3 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **resolveState()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **handleSubmit()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **handleSkip()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
 
 ## Relationships
 
@@ -14,11 +15,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/matching/components/InstantMatchTaskerSheet.tsx`
+- `archive/mobile-future/auth/otp-migration.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

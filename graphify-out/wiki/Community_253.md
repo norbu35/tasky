@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **tailwind-screen-typography.ts** (1 connections) — `apps/mobile/src/design/tailwind-screen-typography.ts`
-- **px()** (1 connections) — `apps/mobile/src/design/tailwind-screen-typography.ts`
+- **CustomerCancelSheet.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/CustomerCancelSheet.tsx`
+- **ReasonRow()** (1 connections) — `apps/mobile/src/features/bookings/components/CustomerCancelSheet.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/design/tailwind-screen-typography.ts`
+- `apps/mobile/src/features/bookings/components/CustomerCancelSheet.tsx`
 
 ## Audit Trail
 

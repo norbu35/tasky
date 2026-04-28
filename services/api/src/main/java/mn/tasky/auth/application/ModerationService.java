@@ -150,7 +150,6 @@ public class ModerationService {
      * @param autoUnsuspendEnabled    Whether automatic unsuspend is enabled.
      * @return Updated moderation policy.
      * @throws IllegalArgumentException if provided values fail validation constraints.
-     * @throws IllegalStateException    if moderation policy row is missing at update time.
      */
     public ModerationPolicy updateModerationPolicy(
             int strikeWindowDays,
@@ -162,7 +161,7 @@ public class ModerationService {
         validatePolicy(
                 strikeWindowDays, strikeThreshold, firstSuspensionDays, repeatSuspensionDays, repeatOffenseWindowDays);
         Instant now = Instant.now();
-        int updated = moderationPolicyDao.update(
+        moderationPolicyDao.update(
                 strikeWindowDays,
                 strikeThreshold,
                 firstSuspensionDays,
@@ -170,9 +169,6 @@ public class ModerationService {
                 repeatOffenseWindowDays,
                 autoUnsuspendEnabled,
                 now);
-        if (updated == 0) {
-            throw new IllegalStateException("Moderation policy row is missing.");
-        }
         return moderationPolicyDao
                 .findActive()
                 .orElse(new ModerationPolicy(

@@ -4,24 +4,24 @@
 
 ## Key Concepts
 
-- **BookingResponseMapper** (4 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
-- **.basic()** (3 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
-- **.withCancellationFee()** (2 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
-- **BookingResponseMapper.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
-- **.BookingResponseMapper()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
+- **adminApiClient.test.ts** (4 connections) — `apps/web/src/lib/adminApiClient.test.ts`
+- **mockOkResponse()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
+- **mockErrorResponse()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
+- **lastFetchCall()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
+- **setupClient()** (1 connections) — `apps/web/src/lib/adminApiClient.test.ts`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
+- `apps/web/src/lib/adminApiClient.test.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (91%)
-- INFERRED: 1 (9%)
+- EXTRACTED: 8 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

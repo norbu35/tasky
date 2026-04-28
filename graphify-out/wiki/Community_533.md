@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **pending.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/verification/pending.tsx`
+- **ErrorStateTemplate.tsx** (0 connections) — `apps/mobile/src/components/templates/ErrorStateTemplate.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tasker)/verification/pending.tsx`
+- `apps/mobile/src/components/templates/ErrorStateTemplate.tsx`
 
 ## Audit Trail
 

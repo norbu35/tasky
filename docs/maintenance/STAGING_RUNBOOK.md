@@ -117,6 +117,31 @@ This command:
 - runs the private staging deploy script
 - runs the private staging smoke script
 
+## Database baseline reset
+
+The active Flyway history is a schema-only `V1__baseline.sql`. Existing local and private-staging Postgres volumes that
+ran the old `V1`-`V38` migration chain are intentionally incompatible with the reset. Do not run Flyway repair or
+preserve those database contents; recreate the volume.
+
+Local reset from the repo root:
+
+```bash
+docker compose down
+docker volume rm "$(basename "$PWD")_postgres_data"
+docker compose up -d postgres pgbouncer minio minio-bootstrap
+```
+
+Private-staging reset from the deployed repo directory on the VPS:
+
+```bash
+docker compose -f docker-compose.private-staging.yml down
+docker volume rm "$(basename "$PWD")_private_staging_postgres_data"
+docker compose -f docker-compose.private-staging.yml up -d postgres pgbouncer minio minio-bootstrap
+```
+
+After reset, the database has schema only. Create launch categories, intake schemas, district/reference rows, and any
+operator sample data through the admin/setup process before running posting or browsing smoke flows.
+
 ## Sandbox accounts
 
 Use the private sandbox with:

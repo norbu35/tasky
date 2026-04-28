@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **rebook.tsx** (0 connections) — `apps/mobile/src/app/(customer)/rebook.tsx`
+- **dispute.tsx** (0 connections) — `apps/mobile/src/app/(customer)/bookings/[bookingId]/dispute.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/rebook.tsx`
+- `apps/mobile/src/app/(customer)/bookings/[bookingId]/dispute.tsx`
 
 ## Audit Trail
 

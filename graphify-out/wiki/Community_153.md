@@ -1,12 +1,13 @@
 # Community 153
 
-> 3 nodes
+> 4 nodes
 
 ## Key Concepts
 
-- **SummarySections.tsx** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
-- **DividerSection()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
-- **DetailRow()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
+- **pre-push-hook.test.mjs** (3 connections) — `tooling/tests/pre-push-hook.test.mjs`
+- **setupFakeBinaries()** (3 connections) — `tooling/tests/pre-push-hook.test.mjs`
+- **writeExecutable()** (2 connections) — `tooling/tests/pre-push-hook.test.mjs`
+- **runHook()** (2 connections) — `tooling/tests/pre-push-hook.test.mjs`
 
 ## Relationships
 
@@ -14,11 +15,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
+- `tooling/tests/pre-push-hook.test.mjs`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

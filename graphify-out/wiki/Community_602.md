@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerProfileScreen.tsx** (0 connections) — `apps/mobile/src/features/profile/screens/TaskerProfileScreen.tsx`
+- **TaskFeedCard.tsx** (0 connections) — `apps/mobile/src/features/tasks/components/TaskFeedCard.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/screens/TaskerProfileScreen.tsx`
+- `apps/mobile/src/features/tasks/components/TaskFeedCard.tsx`
 
 ## Audit Trail
 

@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **ReviewSubmissionOutcome.java** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
-- **internalError()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
+- **BookingIntentConfirmResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentConfirmResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentConfirmResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentConfirmResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentConfirmResult.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentConfirmResult.java`
 
 ## Audit Trail
 

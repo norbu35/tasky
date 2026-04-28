@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TaskerJobDetail.Actions.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Actions.tsx`
-- **TaskerJobDetailActions()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Actions.tsx`
+- **useMyStats.ts** (1 connections) — `apps/mobile/src/features/profile/hooks/useMyStats.ts`
+- **useMyStats()** (1 connections) — `apps/mobile/src/features/profile/hooks/useMyStats.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Actions.tsx`
+- `apps/mobile/src/features/profile/hooks/useMyStats.ts`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **eslint.config.mjs** (0 connections) — `packages/design-tokens/eslint.config.mjs`
+- **additions.test.mjs** (0 connections) — `packages/design-tokens/__tests__/additions.test.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/design-tokens/eslint.config.mjs`
+- `packages/design-tokens/__tests__/additions.test.mjs`
 
 ## Audit Trail
 

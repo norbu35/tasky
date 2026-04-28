@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **applicants.tsx** (1 connections) — `apps/mobile/src/app/task/[id]/applicants.tsx`
-- **ApplicantsRoute()** (1 connections) — `apps/mobile/src/app/task/[id]/applicants.tsx`
+- **TabBarButton.tsx** (1 connections) — `apps/mobile/src/components/ui/TabBarButton.tsx`
+- **TabBarButton()** (1 connections) — `apps/mobile/src/components/ui/TabBarButton.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/task/[id]/applicants.tsx`
+- `apps/mobile/src/components/ui/TabBarButton.tsx`
 
 ## Audit Trail
 

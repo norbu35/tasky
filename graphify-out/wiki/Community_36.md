@@ -1,41 +1,38 @@
 # Community 36
 
-> 19 nodes
+> 16 nodes
 
 ## Key Concepts
 
-- **validate-schema-parity.py** (13 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **main()** (8 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **parse_schema()** (7 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **strip_comments()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **split_top_level_commas()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **column_name_from_def()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **extract_check_in_values()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **compare_schemas()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **parse_args()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **collect_migration_files()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **migration_range_label()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **schema_to_json()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **schema_diff()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **migration_version()** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **Split _text_ by commas at parenthesis depth 0.** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **Return the column name from a column definition, or _None_ for standalone ta** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **Find all `CHECK (col IN ('A','B',...))` patterns in _text_. Returns a lis** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **Walk _migrations_ in order and return the final schema state. Returns ``{ta** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **Return `(errors, warnings)`.** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **validate-migrations.py** (15 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **main()** (8 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **detect_versioned_mutations_from_diff()** (7 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **detect_versioned_mutations_in_worktree()** (6 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **run_git()** (5 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **is_versioned_path()** (4 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **baseline_reset_diff_is_exact()** (4 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **git_available()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **resolve_base_ref()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **migration_name()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **baseline_reset_layout_active()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **baseline_reset_status_is_exact()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **parse_name_status_line()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **print_remediation()** (2 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **parse_args()** (2 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **detect_naming_errors()** (2 connections) — `tooling/scripts/governance/validate-migrations.py`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- [[Community 2]] (1 shared connections)
 
 ## Source Files
 
-- `tooling/scripts/governance/validate-schema-parity.py`
+- `tooling/scripts/governance/validate-migrations.py`
 
 ## Audit Trail
 
-- EXTRACTED: 58 (98%)
-- INFERRED: 1 (2%)
+- EXTRACTED: 72 (99%)
+- INFERRED: 1 (1%)
 - AMBIGUOUS: 0 (0%)
 
 ---

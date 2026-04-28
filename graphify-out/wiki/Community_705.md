@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **idempotency.test.ts** (0 connections) — `apps/web/src/lib/idempotency.test.ts`
+- **BookingConfirmationPage.tsx** (0 connections) — `apps/web/src/pages/BookingConfirmationPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/lib/idempotency.test.ts`
+- `apps/web/src/pages/BookingConfirmationPage.tsx`
 
 ## Audit Trail
 

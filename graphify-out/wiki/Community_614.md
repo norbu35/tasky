@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ApplicantsSelectionScreen.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/ApplicantsSelectionScreen.tsx`
+- **IntakeAnswers.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/IntakeAnswers.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/ApplicantsSelectionScreen.tsx`
+- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/IntakeAnswers.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **lead-unlock.tsx** (0 connections) — `archive/mobile-future/tasker/jobs/[bookingId]/lead-unlock.tsx`
+- **Walk _migrations_ in order and return the final schema state. Returns ``{ta** (0 connections) — `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `archive/mobile-future/tasker/jobs/[bookingId]/lead-unlock.tsx`
+- `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Audit Trail
 

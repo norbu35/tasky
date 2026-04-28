@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `packages/core/src/index.ts`
+- **colors.ts** (0 connections) — `packages/design-tokens/src/compat/colors.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/core/src/index.ts`
+- `packages/design-tokens/src/compat/colors.ts`
 
 ## Audit Trail
 

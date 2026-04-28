@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **BookingIntentConfirmationOutcome.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
-- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
-- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
+- **GeocodingProvider** (4 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
+- **GeocodingProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
+- **.reverseGeocode()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
+- **.isWithinServiceArea()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
+- **.search()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
+- `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
 
 ## Audit Trail
 

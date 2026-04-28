@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **CustomerCancelSheet.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/CustomerCancelSheet.tsx`
-- **ReasonRow()** (1 connections) — `apps/mobile/src/features/bookings/components/CustomerCancelSheet.tsx`
+- **RebookScreen.tsx** (1 connections) — `apps/mobile/src/features/bookings/screens/RebookScreen.tsx`
+- **formatDateTime()** (1 connections) — `apps/mobile/src/features/bookings/screens/RebookScreen.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/components/CustomerCancelSheet.tsx`
+- `apps/mobile/src/features/bookings/screens/RebookScreen.tsx`
 
 ## Audit Trail
 

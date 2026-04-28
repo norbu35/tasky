@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **SplashScreen.tsx** (0 connections) — `apps/mobile/src/features/auth/screens/SplashScreen.tsx`
+- **BookingConfirmScreen.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingConfirmScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/auth/screens/SplashScreen.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingConfirmScreen.tsx`
 
 ## Audit Trail
 

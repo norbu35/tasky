@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **additions.test.mjs** (0 connections) — `packages/design-tokens/__tests__/additions.test.mjs`
+- **async-storage.ts** (0 connections) — `packages/test-utils/src/mocks/async-storage.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/design-tokens/__tests__/additions.test.mjs`
+- `packages/test-utils/src/mocks/async-storage.ts`
 
 ## Audit Trail
 

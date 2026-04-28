@@ -4,23 +4,23 @@
 
 ## Key Concepts
 
-- **ProviderBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
-- **.providerPlaneMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
-- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
-- **ProviderBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
+- **RescheduleExpiryScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/booking/scheduling/RescheduleExpiryScheduler.java`
+- **.checkExpiry()** (2 connections) — `services/api/src/main/java/mn/tasky/booking/scheduling/RescheduleExpiryScheduler.java`
+- **RescheduleExpiryScheduler.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/scheduling/RescheduleExpiryScheduler.java`
+- **.RescheduleExpiryScheduler()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/scheduling/RescheduleExpiryScheduler.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
+- `services/api/src/main/java/mn/tasky/booking/scheduling/RescheduleExpiryScheduler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 6 (86%)
+- INFERRED: 1 (14%)
 - AMBIGUOUS: 0 (0%)
 
 ---

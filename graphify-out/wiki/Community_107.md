@@ -1,26 +1,28 @@
 # Community 107
 
-> 4 nodes
+> 5 nodes
 
 ## Key Concepts
 
-- **TaskerJobsScreen.tsx** (3 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
-- **BookingCardHeader()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
-- **BookingCardBody()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
-- **getJobCardTestID()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **BookingIntentDeclineResultTest** (5 connections) — `services/api/src/test/java/mn/tasky/booking/dto/BookingIntentDeclineResultTest.java`
+- **.successCarriesIntentAndClearsErrorFields()** (5 connections) — `services/api/src/test/java/mn/tasky/booking/dto/BookingIntentDeclineResultTest.java`
+- **.sameValuesAreEqual()** (3 connections) — `services/api/src/test/java/mn/tasky/booking/dto/BookingIntentDeclineResultTest.java`
+- **.intentState()** (3 connections) — `services/api/src/test/java/mn/tasky/booking/dto/BookingIntentDeclineResultTest.java`
+- **BookingIntentDeclineResultTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/booking/dto/BookingIntentDeclineResultTest.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 0]] (3 shared connections)
+- [[Community 1]] (2 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- `services/api/src/test/java/mn/tasky/booking/dto/BookingIntentDeclineResultTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 13 (76%)
+- INFERRED: 4 (24%)
 - AMBIGUOUS: 0 (0%)
 
 ---

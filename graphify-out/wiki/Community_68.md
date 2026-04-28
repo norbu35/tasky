@@ -1,15 +1,16 @@
 # Community 68
 
-> 6 nodes
+> 7 nodes
 
 ## Key Concepts
 
-- **App.test.tsx** (5 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **render()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **RedirectMock()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **TabsMock()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **resetStores()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **installDefaultHookMocks()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **IntegrationTestBase** (6 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **.cleanTestState()** (4 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **.seedLaunchCatalogFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **.seedDistrictFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **.seedConfigFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **IntegrationTestBase.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **.registerDataSourceProperties()** (1 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
 
 ## Relationships
 
@@ -17,11 +18,11 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/App.test.tsx`
+- `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 18 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

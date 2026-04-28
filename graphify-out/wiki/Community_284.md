@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useSubmitReview.ts** (1 connections) — `apps/mobile/src/features/review/hooks/useSubmitReview.ts`
-- **useSubmitReview()** (1 connections) — `apps/mobile/src/features/review/hooks/useSubmitReview.ts`
+- **useTaskIntakeScreen.ts** (1 connections) — `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
+- **useTaskIntakeScreen()** (1 connections) — `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/review/hooks/useSubmitReview.ts`
+- `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
 
 ## Audit Trail
 

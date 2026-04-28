@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CustomerNoShowSheet.tsx** (0 connections) — `apps/mobile/src/features/bookings/components/CustomerNoShowSheet.tsx`
+- **TaskerJobDetailScreen.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetailScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/components/CustomerNoShowSheet.tsx`
+- `apps/mobile/src/features/bookings/screens/TaskerJobDetailScreen.tsx`
 
 ## Audit Trail
 

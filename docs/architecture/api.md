@@ -369,7 +369,14 @@ This section inventories the launch-aligned backend data model. Non-launch resid
 
 ### 4.1 Launch-aligned domain schema inventory
 
-For exact column definitions, use the Flyway migrations in `services/api/src/main/resources/db/migration/`.
+For exact column definitions, use the active Flyway baseline in
+`services/api/src/main/resources/db/migration/V1__baseline.sql` and the generated inventory in
+`tooling/config/expected-schema.json`.
+
+The pre-production database history has been reset to a schema-only baseline. Fresh databases start with tables,
+constraints, indexes, views, triggers, functions, and extensions, but no catalog, district, user, task, booking,
+review, moderation-policy, feature-toggle, or sandbox/demo rows. Launch catalog setup and private-sandbox sample data
+are operator/admin setup responsibilities, not Flyway migration data. Future schema changes start at `V2`.
 
 #### Identity and access
 
@@ -410,7 +417,7 @@ For exact column definitions, use the Flyway migrations in `services/api/src/mai
 
 #### Operational support
 
-- `oauth_states`, `oauth_outage_events`: auth-session coordination and provider outage posture.
+- `refresh_sessions`, `otp_challenges`: auth-session and dormant OTP challenge coordination.
 - `rate_limit_counters`: request-rate limiting state.
 - `moderation_policy`: operator-controlled moderation threshold configuration.
 - `booking_reliability_incidents`: auditable late-cancel and no-show incidents.
@@ -628,6 +635,7 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 - All SQL is written explicitly via JDBI SQL Object API. No ORM magic.
 - Flyway manages schema migrations. Migration naming: `V<version>__<description>.sql`.
+- `V1__baseline.sql` is the schema-only pre-production baseline. Future schema changes start at `V2`.
 - Migrations are forward-only in production. Use new migrations to fix; never modify merged migrations.
 
 ### 6.3 Async Workers & Outbox Consumers

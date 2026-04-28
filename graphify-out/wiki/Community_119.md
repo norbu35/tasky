@@ -4,23 +4,23 @@
 
 ## Key Concepts
 
-- **ModerationPolicyDao** (3 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
-- **ModerationPolicyDao.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
-- **.findActive()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
-- **.update()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
+- **ReviewForm.model.ts** (3 connections) — `apps/mobile/src/features/review/components/ReviewForm.model.ts`
+- **getCategoryLabel()** (2 connections) — `apps/mobile/src/features/review/components/ReviewForm.model.ts`
+- **createCategories()** (1 connections) — `apps/mobile/src/features/review/components/ReviewForm.model.ts`
+- **getMutationErrorMessage()** (1 connections) — `apps/mobile/src/features/review/components/ReviewForm.model.ts`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/dao/ModerationPolicyDao.java`
+- `apps/mobile/src/features/review/components/ReviewForm.model.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 6 (86%)
+- INFERRED: 1 (14%)
 - AMBIGUOUS: 0 (0%)
 
 ---

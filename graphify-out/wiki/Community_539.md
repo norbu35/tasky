@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ErrorStateTemplate.tsx** (0 connections) — `apps/mobile/src/components/templates/ErrorStateTemplate.tsx`
+- **FormField.tsx** (0 connections) — `apps/mobile/src/components/ui/FormField.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/templates/ErrorStateTemplate.tsx`
+- `apps/mobile/src/components/ui/FormField.tsx`
 
 ## Audit Trail
 

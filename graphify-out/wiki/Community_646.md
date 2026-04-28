@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **FaqList.tsx** (0 connections) — `apps/mobile/src/features/help/screens/HelpCenter/FaqList.tsx`
+- **NetworkErrorScreen.tsx** (0 connections) — `apps/mobile/src/features/infra/screens/NetworkErrorScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/help/screens/HelpCenter/FaqList.tsx`
+- `apps/mobile/src/features/infra/screens/NetworkErrorScreen.tsx`
 
 ## Audit Trail
 

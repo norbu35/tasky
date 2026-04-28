@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AppUpdateScreen.tsx** (0 connections) — `apps/mobile/src/features/infra/screens/AppUpdateScreen.tsx`
+- **appStore.ts** (0 connections) — `apps/mobile/src/store/appStore.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/infra/screens/AppUpdateScreen.tsx`
+- `apps/mobile/src/store/appStore.ts`
 
 ## Audit Trail
 

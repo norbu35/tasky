@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **authRouting.ts** (1 connections) — `apps/mobile/src/utils/authRouting.ts`
-- **resolvePostAuthHref()** (1 connections) — `apps/mobile/src/utils/authRouting.ts`
+- **ScreenFrame.tsx** (1 connections) — `apps/web/src/layout/ScreenFrame.tsx`
+- **ScreenFrame()** (1 connections) — `apps/web/src/layout/ScreenFrame.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/utils/authRouting.ts`
+- `apps/web/src/layout/ScreenFrame.tsx`
 
 ## Audit Trail
 

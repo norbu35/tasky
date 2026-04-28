@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **elevations.ts** (1 connections) — `apps/mobile/src/design/elevations.ts`
-- **toShadowStyle()** (1 connections) — `apps/mobile/src/design/elevations.ts`
+- **BookingSupportSheet.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/BookingSupportSheet.tsx`
+- **BookingSupportSheet()** (1 connections) — `apps/mobile/src/features/bookings/components/BookingSupportSheet.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/design/elevations.ts`
+- `apps/mobile/src/features/bookings/components/BookingSupportSheet.tsx`
 
 ## Audit Trail
 

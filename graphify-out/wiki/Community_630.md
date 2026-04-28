@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Header.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/Header.tsx`
+- **taskDraft.types.ts** (0 connections) — `apps/mobile/src/features/tasks/draft/taskDraft.types.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/CustomerTasks/Header.tsx`
+- `apps/mobile/src/features/tasks/draft/taskDraft.types.ts`
 
 ## Audit Trail
 

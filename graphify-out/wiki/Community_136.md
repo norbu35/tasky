@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **AutomationContractBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
-- **.automationContractMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
-- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
-- **AutomationContractBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
+- **BookingIntentDeclineResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

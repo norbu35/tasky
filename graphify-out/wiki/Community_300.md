@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **AppBootstrapProvider.tsx** (1 connections) — `apps/mobile/src/providers/AppBootstrapProvider.tsx`
-- **AppBootstrapProvider()** (1 connections) — `apps/mobile/src/providers/AppBootstrapProvider.tsx`
+- **LanguageSwitcher.tsx** (1 connections) — `apps/web/src/layout/LanguageSwitcher.tsx`
+- **LanguageSwitcher()** (1 connections) — `apps/web/src/layout/LanguageSwitcher.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/providers/AppBootstrapProvider.tsx`
+- `apps/web/src/layout/LanguageSwitcher.tsx`
 
 ## Audit Trail
 

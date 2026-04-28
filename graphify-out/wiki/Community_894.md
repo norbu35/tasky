@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PayoutRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/wallet/dto/PayoutRequest.java`
+- **index.d.ts** (0 connections) — `tooling/config/prettier/index.d.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/wallet/dto/PayoutRequest.java`
+- `tooling/config/prettier/index.d.ts`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `packages/test-utils/src/mocks/index.ts`
+- **UpdateFeatureToggleRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/admin/dto/UpdateFeatureToggleRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/test-utils/src/mocks/index.ts`
+- `services/api/src/main/java/mn/tasky/admin/dto/UpdateFeatureToggleRequest.java`
 
 ## Audit Trail
 

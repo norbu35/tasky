@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **FilterBar.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/FilterBar.test.tsx`
+- **ProfileAvatar.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/ProfileAvatar.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/FilterBar.test.tsx`
+- `apps/mobile/__tests__/components/ui/ProfileAvatar.test.tsx`
 
 ## Audit Trail
 

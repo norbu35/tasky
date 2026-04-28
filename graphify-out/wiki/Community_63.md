@@ -4,26 +4,26 @@
 
 ## Key Concepts
 
-- **AdminPayoutProcessingOutcome.java** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
-- **invalidWeekday()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
-- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
-- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
-- **featureDeferred()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
-- **badRequest()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **LlmProvider** (6 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **LlmProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.generate()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.classify()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.summarize()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (92%)
-- INFERRED: 1 (8%)
+- EXTRACTED: 12 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

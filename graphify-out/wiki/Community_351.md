@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **check-doc-governance.py** (1 connections) — `tooling/scripts/governance/check-doc-governance.py`
-- **print_remediation()** (1 connections) — `tooling/scripts/governance/check-doc-governance.py`
+- **history.tsx** (1 connections) — `archive/mobile-future/tasker/credits/history.tsx`
+- **resolveState()** (1 connections) — `archive/mobile-future/tasker/credits/history.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `tooling/scripts/governance/check-doc-governance.py`
+- `archive/mobile-future/tasker/credits/history.tsx`
 
 ## Audit Trail
 

@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskDetail.Summary.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
-- **getPublicCustomer()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
-- **getLocationText()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
+- **TaskerCancelSheet.test.tsx** (2 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
+- **t()** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
+- **isPending()** (1 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
+- `apps/mobile/__tests__/screens/tasker/jobs/TaskerCancelSheet.test.tsx`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **[id].tsx** (1 connections) — `apps/mobile/src/app/profile/[id].tsx`
-- **TaskerProfileRoute()** (1 connections) — `apps/mobile/src/app/profile/[id].tsx`
+- **StepIndicator.tsx** (1 connections) — `apps/mobile/src/components/ui/StepIndicator.tsx`
+- **StepIndicator()** (1 connections) — `apps/mobile/src/components/ui/StepIndicator.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/profile/[id].tsx`
+- `apps/mobile/src/components/ui/StepIndicator.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **setup.ts** (0 connections) — `apps/web/src/test/setup.ts`
+- **booking-payment.test.tsx** (0 connections) — `apps/web/tests/integration/booking-payment.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/test/setup.ts`
+- `apps/web/tests/integration/booking-payment.test.tsx`
 
 ## Audit Trail
 

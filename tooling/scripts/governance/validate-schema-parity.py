@@ -32,17 +32,19 @@ EXPECTED_SCHEMA_FILE = REPO_ROOT / "tooling" / "config" / "expected-schema.json"
 
 VERSION_RE = re.compile(r"^V(\d+)__")
 REPEATABLE_RE = re.compile(r"^R__[A-Za-z0-9_]+\.sql$")
+SQL_IDENT_RE = r'(?:"[^"]+"|\w+)'
+RELATION_RE = rf"(?:{SQL_IDENT_RE}\.)?({SQL_IDENT_RE})"
 
 CREATE_TABLE_RE = re.compile(
-    r"CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(\w+)\s*\((.*)\)",
+    rf"CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?{RELATION_RE}\s*\((.*)\)",
     re.IGNORECASE | re.DOTALL,
 )
 DROP_TABLE_RE = re.compile(
-    r"DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(\w+)",
+    rf"DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?{RELATION_RE}",
     re.IGNORECASE,
 )
 ALTER_TABLE_RE = re.compile(
-    r"ALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?(\w+)\s+(.*)",
+    rf"ALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:ONLY\s+)?{RELATION_RE}\s+(.*)",
     re.IGNORECASE | re.DOTALL,
 )
 RENAME_TABLE_RE = re.compile(
@@ -66,9 +68,15 @@ ADD_CONSTRAINT_RE = re.compile(
     re.IGNORECASE,
 )
 CHECK_IN_RE = re.compile(
-    r"CHECK\s*\(\s*(\w+)\s+(?:IS\s+NULL\s+OR\s+\1\s+)?IN\s*\(\s*([^)]+?)\s*\)",
+    r"\b(\w+)\s+(?:IS\s+NULL\s+OR\s+\1\s+)?IN\s*\(\s*([^)]+?)\s*\)",
     re.IGNORECASE,
 )
+CHECK_ANY_RE = re.compile(
+    r"\b(\w+)\s*=\s*ANY\s*\(\s*ARRAY\s*\[\s*(.*?)\s*\]\s*\)",
+    re.IGNORECASE | re.DOTALL,
+)
+CHECK_EQUALS_RE = re.compile(r"\b(\w+)\s*=\s*'([^']*)'", re.IGNORECASE)
+VALUE_LITERAL_RE = re.compile(r"'([^']*)'")
 
 SKIP_PREFIXES = (
     "CREATE INDEX",
@@ -184,19 +192,32 @@ def column_name_from_def(col_def: str) -> str | None:
     return tokens[0].strip('"').lower() if tokens else None
 
 
+def normalize_identifier(identifier: str) -> str:
+    return identifier.strip().strip('"').lower()
+
+
+def check_values(raw: str) -> list[str]:
+    literal_values = VALUE_LITERAL_RE.findall(raw)
+    if literal_values:
+        return sorted(literal_values)
+    return sorted(v.strip().strip("'") for v in raw.split(",") if v.strip())
+
+
 def extract_check_in_values(text: str) -> list[tuple[str, list[str]]]:
-    """Find all ``CHECK (col IN ('A','B',...))`` patterns in *text*.
+    """Find enum-like ``CHECK`` patterns in *text*.
 
     Returns a list of ``(column_name, sorted_values)``.
     """
     results: list[tuple[str, list[str]]] = []
     for m in CHECK_IN_RE.finditer(text):
         col = m.group(1).lower()
-        raw = m.group(2)
-        values = sorted(
-            v.strip().strip("'") for v in raw.split(",") if v.strip()
-        )
-        results.append((col, values))
+        results.append((col, check_values(m.group(2))))
+    for m in CHECK_ANY_RE.finditer(text):
+        col = m.group(1).lower()
+        results.append((col, check_values(m.group(2))))
+    for m in CHECK_EQUALS_RE.finditer(text):
+        col = m.group(1).lower()
+        results.append((col, [m.group(2)]))
     return results
 
 
@@ -225,22 +246,21 @@ def parse_schema(migrations: list[Path]) -> dict[str, dict]:
             # --- DROP TABLE ------------------------------------------------
             drop_m = DROP_TABLE_RE.match(stmt)
             if drop_m:
-                tables.pop(drop_m.group(1).lower(), None)
+                tables.pop(normalize_identifier(drop_m.group(1)), None)
                 continue
 
             # --- CREATE TABLE -----------------------------------------------
             create_m = CREATE_TABLE_RE.match(stmt)
             if create_m:
-                tname = create_m.group(1).lower()
+                tname = normalize_identifier(create_m.group(1))
                 body = create_m.group(2)
                 columns: set[str] = set()
                 checks: dict[str, list[str]] = {}
 
                 for col_def in split_top_level_commas(body):
                     cname = column_name_from_def(col_def)
-                    if cname is None:
-                        continue
-                    columns.add(cname)
+                    if cname is not None:
+                        columns.add(cname)
                     for chk_col, vals in extract_check_in_values(col_def):
                         checks[chk_col] = vals
 
@@ -250,13 +270,13 @@ def parse_schema(migrations: list[Path]) -> dict[str, dict]:
             # --- ALTER TABLE ------------------------------------------------
             alter_m = ALTER_TABLE_RE.match(stmt)
             if alter_m:
-                tname = alter_m.group(1).lower()
+                tname = normalize_identifier(alter_m.group(1))
                 action_text = alter_m.group(2).strip()
 
                 rename_table_m = RENAME_TABLE_RE.fullmatch(action_text)
                 if rename_table_m:
                     if tname in tables:
-                        new_name = rename_table_m.group(1).lower()
+                        new_name = normalize_identifier(rename_table_m.group(1))
                         tables[new_name] = tables.pop(tname)
                     continue
 

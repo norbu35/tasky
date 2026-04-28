@@ -4,25 +4,25 @@
 
 ## Key Concepts
 
-- **ScopeSummaryGenerator** (5 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
-- **.generate()** (3 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
-- **.formatValue()** (2 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
-- **.fallback()** (2 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
-- **ScopeSummaryGenerator.java** (1 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
-- **.ScopeSummaryGenerator()** (1 connections) — `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
+- **AdminBookingOverrideOutcome.java** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
+- **invalidTransition()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
+- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
+- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
+- **notFound()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/application/ScopeSummaryGenerator.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 10 (91%)
+- INFERRED: 1 (9%)
 - AMBIGUOUS: 0 (0%)
 
 ---

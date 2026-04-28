@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TaskFeedFilterSheet.tsx** (1 connections) — `apps/mobile/src/features/tasks/components/TaskFeedFilterSheet.tsx`
-- **TaskFeedFilterSheet()** (1 connections) — `apps/mobile/src/features/tasks/components/TaskFeedFilterSheet.tsx`
+- **LocationCard.tsx** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/LocationCard.tsx`
+- **LocationCard()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/LocationCard.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/components/TaskFeedFilterSheet.tsx`
+- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/LocationCard.tsx`
 
 ## Audit Trail
 

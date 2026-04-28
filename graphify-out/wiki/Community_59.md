@@ -1,16 +1,17 @@
 # Community 59
 
-> 7 nodes
+> 8 nodes
 
 ## Key Concepts
 
-- **StorageProvider** (6 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **StorageProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.generateUploadUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.generateDownloadUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.deleteObject()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
-- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **TrustQueryPort** (7 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **TrustQueryPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.listReviews()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.listPendingDisputes()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.getDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.getDisputeForUser()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.getDisputeEvidence()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.hasOpenDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
 
 ## Relationships
 
@@ -18,11 +19,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (100%)
+- EXTRACTED: 14 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

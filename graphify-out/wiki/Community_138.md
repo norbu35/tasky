@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **WorkflowBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
-- **.workflowAndAutomationPlaneMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
-- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
-- **WorkflowBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
+- **CategoryQueryHandler** (3 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
+- **CategoryQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
+- **.CategoryQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
+- **.getCategory()** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/WorkflowBoundaryTest.java`
+- `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

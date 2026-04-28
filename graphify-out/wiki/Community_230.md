@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **index.tsx** (1 connections) — `apps/mobile/src/app/(tasker)/verification/index.tsx`
-- **VerificationIndexScreen()** (1 connections) — `apps/mobile/src/app/(tasker)/verification/index.tsx`
+- **FormWizardTemplate.tsx** (1 connections) — `apps/mobile/src/components/templates/FormWizardTemplate.tsx`
+- **handleActionBarLayout()** (1 connections) — `apps/mobile/src/components/templates/FormWizardTemplate.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tasker)/verification/index.tsx`
+- `apps/mobile/src/components/templates/FormWizardTemplate.tsx`
 
 ## Audit Trail
 

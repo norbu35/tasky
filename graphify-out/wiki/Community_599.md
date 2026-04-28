@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/notifications/index.ts`
+- **ReviewForm.RatingInput.tsx** (0 connections) — `apps/mobile/src/features/review/components/ReviewForm.RatingInput.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/notifications/index.ts`
+- `apps/mobile/src/features/review/components/ReviewForm.RatingInput.tsx`
 
 ## Audit Trail
 

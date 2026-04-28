@@ -1,15 +1,16 @@
 # Community 69
 
-> 6 nodes
+> 7 nodes
 
 ## Key Concepts
 
-- **fixtures.ts** (5 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
-- **resetStores()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
-- **setAuthenticated()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
-- **setFirstTimeUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
-- **setBannedUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
-- **setSuspendedUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **validate-doc-references.py** (6 connections) — `tooling/scripts/governance/validate-doc-references.py`
+- **main()** (6 connections) — `tooling/scripts/governance/validate-doc-references.py`
+- **collect_scan_files()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
+- **load_pnpm_scripts()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
+- **find_pnpm_refs()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
+- **find_path_refs()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
+- **is_allowed_missing_path_ref()** (2 connections) — `tooling/scripts/governance/validate-doc-references.py`
 
 ## Relationships
 
@@ -17,11 +18,11 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/integration/fixtures.ts`
+- `tooling/scripts/governance/validate-doc-references.py`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 22 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -124,13 +124,18 @@ public interface DisputeDao {
     @SqlQuery("SELECT id, booking_id, raised_by, reason, status, resolution_action, "
             + "wrongful_party_user_id, resolution_notes, created_at, resolved_at, "
             + "evidence_reminder_sent_at, evidence_due_at "
-            + "FROM disputes WHERE status IN ('OPEN', 'EVIDENCE_NEEDED') ORDER BY id LIMIT :limit")
+            + "FROM disputes WHERE status IN ('OPEN', 'EVIDENCE_NEEDED') "
+            + "ORDER BY created_at ASC, id ASC LIMIT :limit")
     List<Dispute> findPendingFirstPage(@Bind("limit") int limit);
 
-    @SqlQuery("SELECT id, booking_id, raised_by, reason, status, resolution_action, "
-            + "wrongful_party_user_id, resolution_notes, created_at, resolved_at, "
-            + "evidence_reminder_sent_at, evidence_due_at "
-            + "FROM disputes WHERE status IN ('OPEN', 'EVIDENCE_NEEDED') AND id > :cursor ORDER BY id LIMIT :limit")
+    @SqlQuery("WITH cursor_row AS (SELECT created_at, id FROM disputes WHERE id = :cursor) "
+            + "SELECT d.id, d.booking_id, d.raised_by, d.reason, d.status, d.resolution_action, "
+            + "d.wrongful_party_user_id, d.resolution_notes, d.created_at, d.resolved_at, "
+            + "d.evidence_reminder_sent_at, d.evidence_due_at "
+            + "FROM disputes d, cursor_row c "
+            + "WHERE d.status IN ('OPEN', 'EVIDENCE_NEEDED') "
+            + "AND (d.created_at > c.created_at OR (d.created_at = c.created_at AND d.id > c.id)) "
+            + "ORDER BY d.created_at ASC, d.id ASC LIMIT :limit")
     List<Dispute> findPendingAfterCursor(@Bind("cursor") UUID cursor, @Bind("limit") int limit);
 
     default List<Dispute> findPending() {

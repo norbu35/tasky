@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **useBookings()** (2 connections) — `apps/mobile/src/features/bookings/hooks/useBookings.ts`
-- **useBookingsListScreen()** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
-- **useBookings.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useBookings.ts`
-- **useBookingsListScreen.ts** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
+- **NewTaskLayout.test.tsx** (3 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
+- **MockStack()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
+- **MockStackScreen()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
+- **MockRedirect()** (1 connections) — `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
 
 ## Relationships
 
@@ -15,13 +15,12 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/hooks/useBookings.ts`
-- `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
+- `apps/mobile/__tests__/screens/customer/NewTaskLayout.test.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (67%)
-- INFERRED: 2 (33%)
+- EXTRACTED: 6 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

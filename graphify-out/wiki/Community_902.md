@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **base.d.ts** (0 connections) — `tooling/config/vitest/base.d.ts`
+- **lead-unlock.tsx** (0 connections) — `archive/mobile-future/tasker/jobs/[bookingId]/lead-unlock.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/config/vitest/base.d.ts`
+- `archive/mobile-future/tasker/jobs/[bookingId]/lead-unlock.tsx`
 
 ## Audit Trail
 

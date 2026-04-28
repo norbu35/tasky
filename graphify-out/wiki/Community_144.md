@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **pre-push-hook.test.mjs** (3 connections) — `tooling/tests/pre-push-hook.test.mjs`
-- **setupFakeBinaries()** (3 connections) — `tooling/tests/pre-push-hook.test.mjs`
-- **writeExecutable()** (2 connections) — `tooling/tests/pre-push-hook.test.mjs`
-- **runHook()** (2 connections) — `tooling/tests/pre-push-hook.test.mjs`
+- **ReviewSubmissionOutcome.java** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
+- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
+- **internalError()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `tooling/tests/pre-push-hook.test.mjs`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionOutcome.java`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -1,35 +1,35 @@
 # Community 42
 
-> 12 nodes
+> 13 nodes
 
 ## Key Concepts
 
-- **.taskDetail()** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
-- **AdminTaskCompositionService** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
-- **TaskDetailTests** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
-- **.taskDetail_returnsMappedResponse()** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
-- **.taskDetail_returnsEmptyWhenNotFound()** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
-- **.taskDetail_mapsAllFields()** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
-- **.toTaskDetailResponse()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
-- **AdminTaskCompositionServiceTests.java** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
-- **AdminTaskCompositionServiceTests** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
-- **AdminTaskCompositionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
-- **.AdminTaskCompositionService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
-- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
+- **RuntimeSurfaceProperties** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **RuntimeSurfaceProperties.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **HttpSurface** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **Surface** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getPublicApi()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getAdminApi()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getWorker()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getScheduler()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.setEnabled()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.HttpSurface()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getBasePath()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.setBasePath()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **BackgroundSurface** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
 
 ## Relationships
 
-- [[Community 0]] (8 shared connections)
+- [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
-- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
+- `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
 
 ## Audit Trail
 
-- EXTRACTED: 20 (59%)
-- INFERRED: 14 (41%)
+- EXTRACTED: 25 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

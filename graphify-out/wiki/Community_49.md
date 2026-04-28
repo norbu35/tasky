@@ -1,30 +1,31 @@
 # Community 49
 
-> 9 nodes
+> 10 nodes
 
 ## Key Concepts
 
-- **TrustQueryHandler** (8 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **TrustQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.TrustQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.listReviews()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.listPendingDisputes()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.getDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.getDisputeForUser()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.getDisputeEvidence()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.hasOpenDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **BookingIntentCommandHandler** (11 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **BookingIntentCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.BookingIntentCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.confirmIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.declineIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.getIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.findPendingApplicationSelectionIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.expirePendingApplicationSelectionForTask()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.markIntentConfirmed()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.markIntentDeclined()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 1]] (2 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 16 (100%)
+- EXTRACTED: 20 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

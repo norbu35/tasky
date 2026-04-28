@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **inspection.spec.ts** (0 connections) — `apps/web/e2e/inspection.spec.ts`
+- **EmptyState.tsx** (0 connections) — `apps/web/src/components/feature/EmptyState.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/e2e/inspection.spec.ts`
+- `apps/web/src/components/feature/EmptyState.tsx`
 
 ## Audit Trail
 

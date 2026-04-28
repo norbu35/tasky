@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/help/screens/HelpCenter/index.ts`
+- **AppUpdateScreen.tsx** (0 connections) — `apps/mobile/src/features/infra/screens/AppUpdateScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/help/screens/HelpCenter/index.ts`
+- `apps/mobile/src/features/infra/screens/AppUpdateScreen.tsx`
 
 ## Audit Trail
 

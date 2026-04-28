@@ -1,16 +1,17 @@
 # Community 60
 
-> 7 nodes
+> 8 nodes
 
 ## Key Concepts
 
-- **LlmProvider** (6 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **LlmProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.generate()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.classify()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.summarize()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **TraceErrorAttributesTest** (4 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- **.getErrorAttributes()** (3 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
+- **TraceErrorAttributes** (2 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
+- **.setsTraceIdFromRequestAttribute()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- **.fallsBackToUuidWhenTraceIdAttributeIsNull()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- **TraceErrorAttributes.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
+- **TraceErrorAttributesTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
 
 ## Relationships
 
@@ -18,12 +19,13 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
+- `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 12 (75%)
+- INFERRED: 4 (25%)
 - AMBIGUOUS: 0 (0%)
 
 ---

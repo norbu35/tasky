@@ -1,25 +1,24 @@
 # Community 199
 
-> 3 nodes
+> 2 nodes
 
 ## Key Concepts
 
-- **validate-workspace-boundaries.mjs** (2 connections) — `tooling/scripts/governance/validate-workspace-boundaries.mjs`
-- **printRemediation()** (2 connections) — `tooling/scripts/governance/validate-workspace-boundaries.mjs`
-- **getZone()** (1 connections) — `tooling/scripts/governance/validate-workspace-boundaries.mjs`
+- **customer-journey.test.tsx** (1 connections) — `apps/mobile/__tests__/integration/customer-journey.test.tsx`
+- **render()** (1 connections) — `apps/mobile/__tests__/integration/customer-journey.test.tsx`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `tooling/scripts/governance/validate-workspace-boundaries.mjs`
+- `apps/mobile/__tests__/integration/customer-journey.test.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (80%)
-- INFERRED: 1 (20%)
+- EXTRACTED: 2 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

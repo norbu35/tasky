@@ -4,31 +4,31 @@
 
 ## Key Concepts
 
-- **validate-migrations.py** (11 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **main()** (8 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **run_git()** (5 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **detect_versioned_mutations_from_diff()** (5 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **is_versioned_path()** (4 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **detect_versioned_mutations_in_worktree()** (4 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **git_available()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **resolve_base_ref()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **print_remediation()** (2 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **parse_args()** (2 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **detect_naming_errors()** (2 connections) — `tooling/scripts/governance/validate-migrations.py`
-- **parse_name_status_line()** (2 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **IdentityQueryHandler** (12 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **IdentityQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.IdentityQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.getProfile()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.getVerificationStatus()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.getVerificationDetail()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.listPendingVerifications()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.verificationExists()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.searchUsersByPhone()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.searchUsersByName()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.searchUsersByFacebookId()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
+- **.getModerationPolicy()** (1 connections) — `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
 
 ## Relationships
 
-- [[Community 1]] (1 shared connections)
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `tooling/scripts/governance/validate-migrations.py`
+- `services/api/src/main/java/mn/tasky/identity/application/query/IdentityQueryHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 50 (98%)
-- INFERRED: 1 (2%)
+- EXTRACTED: 23 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

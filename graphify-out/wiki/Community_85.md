@@ -1,14 +1,15 @@
 # Community 85
 
-> 5 nodes
+> 6 nodes
 
 ## Key Concepts
 
-- **SummarySections.tsx** (4 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
-- **StatusBadge()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
-- **DisputeSummary()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
-- **ResolutionSection()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
-- **PhaseNote()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
+- **PackageMarkerTest** (5 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
+- **PackageMarkerTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/scheduler/PackageMarkerTest.java`
+- **.packageMarkerMethodCanBeInvokedWithoutError()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
+- **.constructorIsPrivate()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
+- **PackageMarkerTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/worker/PackageMarkerTest.java`
+- **PackageMarkerTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
 
 ## Relationships
 
@@ -16,11 +17,13 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
+- `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
+- `services/api/src/test/java/mn/tasky/runtime/scheduler/PackageMarkerTest.java`
+- `services/api/src/test/java/mn/tasky/runtime/worker/PackageMarkerTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -4,22 +4,22 @@
 
 ## Key Concepts
 
-- **BookingIntentCompositionService** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentCompositionService.java`
-- **.bookingIntentResponse()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentCompositionService.java`
-- **BookingIntentCompositionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentCompositionService.java`
+- **OutboxEventTypes** (2 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
+- **OutboxEventTypes.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
+- **.OutboxEventTypes()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentCompositionService.java`
+- `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (80%)
-- INFERRED: 1 (20%)
+- EXTRACTED: 4 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

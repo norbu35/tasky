@@ -100,10 +100,7 @@ public class MessagingService {
      * @return A list of {@link EnrichedConversation} objects.
      */
     public List<EnrichedConversation> listEnrichedConversations(String userId, String cursor, int limit) {
-        if (cursor == null || cursor.isBlank()) {
-            return conversationDao.findEnrichedFirstPage(userId, limit);
-        }
-        return conversationDao.findEnrichedAfterCursor(userId, cursor, limit);
+        return conversationDao.findEnriched(userId, cursor, limit);
     }
 
     /**

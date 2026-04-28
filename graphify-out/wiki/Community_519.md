@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **delete.tsx** (0 connections) — `apps/mobile/src/app/(shared)/profile/delete.tsx`
+- **index.tsx** (0 connections) — `apps/mobile/src/app/(tabs)/inbox/index.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(shared)/profile/delete.tsx`
+- `apps/mobile/src/app/(tabs)/inbox/index.tsx`
 
 ## Audit Trail
 

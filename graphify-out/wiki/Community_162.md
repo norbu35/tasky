@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **primitives.ts** (2 connections) — `apps/mobile/src/utils/primitives.ts`
-- **toFutureIso()** (1 connections) — `apps/mobile/src/utils/primitives.ts`
-- **createIdempotencyKey()** (1 connections) — `apps/mobile/src/utils/primitives.ts`
+- **SummarySections.tsx** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
+- **DividerSection()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
+- **DetailRow()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/utils/primitives.ts`
+- `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
 
 ## Audit Trail
 

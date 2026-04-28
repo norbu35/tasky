@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Screen.tsx** (0 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/Screen.tsx`
+- **index.ts** (0 connections) — `apps/mobile/src/features/review/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/disputes/screens/DisputeStatus/Screen.tsx`
+- `apps/mobile/src/features/review/index.ts`
 
 ## Audit Trail
 

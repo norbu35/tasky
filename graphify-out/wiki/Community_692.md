@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **select.tsx** (0 connections) — `apps/web/src/components/ui/select.tsx`
+- **BottomNavBar.test.tsx** (0 connections) — `apps/web/src/layout/__tests__/BottomNavBar.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/ui/select.tsx`
+- `apps/web/src/layout/__tests__/BottomNavBar.test.tsx`
 
 ## Audit Trail
 

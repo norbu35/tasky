@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ModalSheet.tsx** (0 connections) — `apps/mobile/src/components/ui/ModalSheet.tsx`
+- **TimelineStepper.tsx** (0 connections) — `apps/mobile/src/components/ui/TimelineStepper.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/ModalSheet.tsx`
+- `apps/mobile/src/components/ui/TimelineStepper.tsx`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **PermissionPrimer.Illustration.tsx** (1 connections) — `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
-- **IllustrationArea()** (1 connections) — `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
+- **elevations.ts** (1 connections) — `apps/mobile/src/design/elevations.ts`
+- **toShadowStyle()** (1 connections) — `apps/mobile/src/design/elevations.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
+- `apps/mobile/src/design/elevations.ts`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **RatingStars.tsx** (1 connections) — `apps/mobile/src/components/ui/RatingStars.tsx`
-- **RatingStars()** (1 connections) — `apps/mobile/src/components/ui/RatingStars.tsx`
+- **SearchBar.tsx** (1 connections) — `apps/mobile/src/components/ui/SearchBar.tsx`
+- **SearchBar()** (1 connections) — `apps/mobile/src/components/ui/SearchBar.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/RatingStars.tsx`
+- `apps/mobile/src/components/ui/SearchBar.tsx`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **reanimated-mock.js** (1 connections) — `apps/mobile/__tests__/test-utils/reanimated-mock.js`
-- **createLayoutAnimation()** (1 connections) — `apps/mobile/__tests__/test-utils/reanimated-mock.js`
+- **cancel.tsx** (1 connections) — `apps/mobile/src/app/(customer)/bookings/[bookingId]/cancel.tsx`
+- **CustomerCancelBookingRoute()** (1 connections) — `apps/mobile/src/app/(customer)/bookings/[bookingId]/cancel.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/test-utils/reanimated-mock.js`
+- `apps/mobile/src/app/(customer)/bookings/[bookingId]/cancel.tsx`
 
 ## Audit Trail
 

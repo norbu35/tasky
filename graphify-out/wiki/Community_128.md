@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **LocaleConfig** (3 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
-- **LocaleConfig.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
-- **.localeResolver()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
-- **.messageSource()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
+- **FacebookAuthException** (3 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
+- **FacebookAuthException.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
+- **.FacebookAuthException()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
+- **.code()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
+- `services/api/src/main/java/mn/tasky/auth/FacebookAuthException.java`
 
 ## Audit Trail
 

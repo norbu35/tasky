@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **authRouting.test.ts** (0 connections) — `apps/mobile/__tests__/utils/authRouting.test.ts`
+- **PostingGuidance.test.tsx** (0 connections) — `apps/mobile/__tests__/features/tasks/components/PostingGuidance.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/utils/authRouting.test.ts`
+- `apps/mobile/__tests__/features/tasks/components/PostingGuidance.test.tsx`
 
 ## Audit Trail
 

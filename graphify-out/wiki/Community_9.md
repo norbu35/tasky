@@ -1,73 +1,76 @@
 # Community 9
 
-> 172 nodes
+> 164 nodes
 
 ## Key Concepts
 
-- **t()** (52 connections) — `apps/mobile/src/features/tasks/screens/ApplicantsSelection.ApplicantCard.tsx`
-- **TaskSchedule.model.ts** (10 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
-- **parseError()** (9 connections) — `apps/web/src/lib/errorHandling.ts`
-- **useDisputeStatusScreen()** (7 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/useDisputeStatusScreen.ts`
-- **model.ts** (7 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
-- **useBookingRescheduleScreen()** (6 connections) — `apps/mobile/src/features/bookings/screens/BookingReschedule/useBookingRescheduleScreen.ts`
-- **model.ts** (6 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/model.ts`
-- **useBookingDetail()** (5 connections) — `apps/mobile/src/features/bookings/hooks/useBookingDetail.ts`
-- **getCtaConfig()** (5 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/model.ts`
-- **useBookingDetailScreen()** (5 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/useBookingDetailScreen.ts`
-- **model.ts** (5 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
-- **useConversationRouteForBooking()** (5 connections) — `apps/mobile/src/features/chat/hooks/useConversationRouteForBooking.ts`
-- **handleFacebookLogin()** (5 connections) — `apps/web/src/pages/AuthPage.tsx`
-- **MessagingNotificationsPage.tsx** (5 connections) — `apps/web/src/pages/MessagingNotificationsPage.tsx`
-- **handlePushToggle()** (5 connections) — `apps/web/src/pages/MessagingNotificationsPage.tsx`
-- **applyToTask()** (5 connections) — `apps/web/src/pages/TaskerFeedPage.tsx`
-- **withdrawApplication()** (5 connections) — `apps/web/src/pages/TaskerFeedPage.tsx`
-- **LoginForm.tsx** (4 connections) — `apps/mobile/src/features/auth/components/LoginForm.tsx`
-- **BookingCard()** (4 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/BookingCard.tsx`
-- **useCustomerTaskDetail()** (4 connections) — `apps/mobile/src/features/tasks/hooks/useCustomerTaskDetail.ts`
-- **useTaskScheduleScreen()** (4 connections) — `apps/mobile/src/features/tasks/screens/useTaskScheduleScreen.ts`
-- **model.ts** (4 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/model.ts`
-- **useCustomerTaskDetailScreen()** (4 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/useCustomerTaskDetailScreen.ts`
-- **TaskCard()** (4 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
-- **formatDate.ts** (4 connections) — `apps/mobile/src/utils/formatDate.ts`
-- _... and 147 more nodes in this community_
+- **.listPending()** (17 connections) — `services/api/src/main/java/mn/tasky/projection/admin/AdminVerificationQueueProjectionService.java`
+- **.recordAdminAction()** (16 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditCommandPort.java`
+- **UpdateModerationPolicy** (13 connections) — `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
+- **IdentityQueryHandlerTest** (13 connections) — `services/api/src/test/java/mn/tasky/identity/application/query/IdentityQueryHandlerTest.java`
+- **.updatePolicy()** (12 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationPolicyUpdateService.java`
+- **IdentityQueryPort** (11 connections) — `services/api/src/main/java/mn/tasky/identity/publicapi/IdentityQueryPort.java`
+- **.pendingVerifications()** (11 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- **GetVerificationDetail** (11 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- **ApproveVerification** (11 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- **.verificationDecisionNotificationIsSentToAffectedTasker()** (10 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
+- **AdminVerificationCompositionService** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- **.verificationDetail()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- **.detailResponse()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- **.approve()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionService.java`
+- **VerificationServiceTest.java** (9 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- **.approve_success()** (9 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
+- **PendingVerificationsTests** (9 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- **.pendingDisputes()** (8 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionService.java`
+- **GetVerificationStatus** (8 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- **.reject_success()** (8 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
+- **.strikePolicyResponse()** (7 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationCompositionService.java`
+- **.reject()** (7 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionService.java`
+- **VerificationExists** (7 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- **.approve_notPending()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
+- **.approve_notFound()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
+- _... and 139 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (15 shared connections)
-- [[Community 7]] (8 shared connections)
-- [[Community 4]] (3 shared connections)
-- [[Community 23]] (2 shared connections)
-- [[Community 8]] (2 shared connections)
-- [[Community 30]] (1 shared connections)
-- [[Community 12]] (1 shared connections)
+- [[Community 0]] (63 shared connections)
+- [[Community 1]] (23 shared connections)
+- [[Community 6]] (14 shared connections)
+- [[Community 2]] (10 shared connections)
+- [[Community 3]] (7 shared connections)
+- [[Community 19]] (3 shared connections)
+- [[Community 7]] (3 shared connections)
+- [[Community 13]] (2 shared connections)
+- [[Community 16]] (2 shared connections)
+- [[Community 4]] (2 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/auth/components/LoginForm.tsx`
-- `apps/mobile/src/features/auth/screens/AuthHomeScreen.tsx`
-- `apps/mobile/src/features/auth/screens/RoleSelectScreen.tsx`
-- `apps/mobile/src/features/bookings/hooks/useBookingDetail.ts`
-- `apps/mobile/src/features/bookings/hooks/useBookingTimeline.ts`
-- `apps/mobile/src/features/bookings/hooks/useFlagNoShow.ts`
-- `apps/mobile/src/features/bookings/hooks/useReschedule.ts`
-- `apps/mobile/src/features/bookings/screens/BookingDetail/model.ts`
-- `apps/mobile/src/features/bookings/screens/BookingDetail/useBookingDetailScreen.ts`
-- `apps/mobile/src/features/bookings/screens/BookingReschedule/Screen.tsx`
-- `apps/mobile/src/features/bookings/screens/BookingReschedule/SubmitAction.tsx`
-- `apps/mobile/src/features/bookings/screens/BookingReschedule/useBookingRescheduleScreen.ts`
-- `apps/mobile/src/features/bookings/screens/BookingTimeline.model.ts`
-- `apps/mobile/src/features/bookings/screens/BookingsList/BookingCard.tsx`
-- `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
-- `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
-- `apps/mobile/src/features/bookings/screens/useBookingConfirmedScreen.ts`
-- `apps/mobile/src/features/bookings/screens/useBookingTimelineScreen.ts`
-- `apps/mobile/src/features/chat/hooks/useConversationRouteForBooking.ts`
-- `apps/mobile/src/features/disputes/hooks/useDisputeCreate.ts`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminModerationController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminVerificationController.java`
+- `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditCommandPort.java`
+- `services/api/src/main/java/mn/tasky/identity/publicapi/IdentityQueryPort.java`
+- `services/api/src/main/java/mn/tasky/projection/admin/AdminVerificationQueueProjectionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationPolicyUpdateOutcome.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationPolicyUpdateService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationPublicCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/user/composition/UserAccountDeletionService.java`
+- `services/api/src/main/java/mn/tasky/user/api/UserProfileController.java`
+- `services/api/src/test/java/mn/tasky/admin/application/command/AdminAuditCommandHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
+- `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- `services/api/src/test/java/mn/tasky/identity/application/command/IdentityCommandHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/identity/application/query/IdentityQueryHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
 
 ## Audit Trail
 
-- EXTRACTED: 253 (58%)
-- INFERRED: 183 (42%)
+- EXTRACTED: 362 (56%)
+- INFERRED: 289 (44%)
 - AMBIGUOUS: 0 (0%)
 
 ---

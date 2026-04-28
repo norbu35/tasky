@@ -1,14 +1,15 @@
 # Community 84
 
-> 5 nodes
+> 6 nodes
 
 ## Key Concepts
 
-- **MessageBubble()** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/MessageBubble.tsx`
-- **model.ts** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
-- **formatMessageTimestamp()** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
-- **MessageBubble.tsx** (1 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/MessageBubble.tsx`
-- **orderMessagesChronologically()** (1 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
+- **WalletCommandHandler** (5 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
+- **WalletCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
+- **.WalletCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
+- **.requestPayout()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
+- **.processPayout()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
+- **.creditTaskCompletion()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
 
 ## Relationships
 
@@ -16,13 +17,12 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/chat/screens/ChatConversation/MessageBubble.tsx`
-- `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
+- `services/api/src/main/java/mn/tasky/wallet/application/command/WalletCommandHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (75%)
-- INFERRED: 2 (25%)
+- EXTRACTED: 10 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskIntakeScreen.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskIntakeScreen.tsx`
+- **Header.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Header.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskIntakeScreen.tsx`
+- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Header.tsx`
 
 ## Audit Trail
 

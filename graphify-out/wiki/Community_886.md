@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **UpdateProfileRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/user/dto/UpdateProfileRequest.java`
+- **CreatePayoutRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/wallet/dto/CreatePayoutRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/user/dto/UpdateProfileRequest.java`
+- `services/api/src/main/java/mn/tasky/wallet/dto/CreatePayoutRequest.java`
 
 ## Audit Trail
 

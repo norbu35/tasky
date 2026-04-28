@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **PaymentProvider** (6 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **PaymentProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.createIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.isValidSignature()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.resolvePaymentIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **StorageProvider** (6 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **StorageProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **.generateUploadUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **.generateDownloadUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **.deleteObject()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
+- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
 
 ## Relationships
 
@@ -18,7 +18,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/StorageProvider.java`
 
 ## Audit Trail
 

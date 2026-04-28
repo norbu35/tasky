@@ -2,7 +2,7 @@
 
 > God node · 52 connections · `apps/mobile/src/features/tasks/screens/ApplicantsSelection.ApplicantCard.tsx`
 
-**Community:** [[Community 9]]
+**Community:** [[Community 1]]
 
 ## Connections by Relation
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **profile.tsx** (0 connections) — `apps/mobile/src/app/(tabs)/profile.tsx`
+- **stats.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/stats.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tabs)/profile.tsx`
+- `apps/mobile/src/app/(tasker)/stats.tsx`
 
 ## Audit Trail
 

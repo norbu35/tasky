@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **UserProfile.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/UserProfile.java`
+- **BookingCompletionSignal.java** (0 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingCompletionSignal.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/dto/UserProfile.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/BookingCompletionSignal.java`
 
 ## Audit Trail
 

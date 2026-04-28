@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **AccountRestrictedException** (2 connections) — `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
-- **AccountRestrictedException.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
-- **.AccountRestrictedException()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
+- **TaskDetail.Summary.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
+- **getPublicCustomer()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
+- **getLocationText()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/AccountRestrictedException.java`
+- `apps/mobile/src/features/tasks/screens/TaskDetail.Summary.tsx`
 
 ## Audit Trail
 

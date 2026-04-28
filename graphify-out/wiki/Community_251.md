@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **VerifiedBadge.tsx** (1 connections) — `apps/mobile/src/components/ui/VerifiedBadge.tsx`
-- **VerifiedBadge()** (1 connections) — `apps/mobile/src/components/ui/VerifiedBadge.tsx`
+- **BookingLifecyclePreview.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/BookingLifecyclePreview.tsx`
+- **getActiveIndex()** (1 connections) — `apps/mobile/src/features/bookings/components/BookingLifecyclePreview.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/VerifiedBadge.tsx`
+- `apps/mobile/src/features/bookings/components/BookingLifecyclePreview.tsx`
 
 ## Audit Trail
 

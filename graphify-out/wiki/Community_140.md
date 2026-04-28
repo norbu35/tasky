@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **ProjectionBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
-- **.projectionPlaneMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
-- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
-- **ProjectionBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
+- **JsonSecurityResponseWriter** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- **JsonSecurityResponseWriter.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- **.JsonSecurityResponseWriter()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- **.write()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
+- `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

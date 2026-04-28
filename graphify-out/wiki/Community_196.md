@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **AssistanceOutcomeTypeTest** (2 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
-- **AssistanceOutcomeTypeTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
-- **.definesLaunchAssistanceOutcomeBuckets()** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
+- **otp.tsx** (2 connections) — `archive/mobile-future/auth/otp.tsx`
+- **resolveOtpState()** (1 connections) — `archive/mobile-future/auth/otp.tsx`
+- **cn()** (1 connections) — `archive/mobile-future/auth/otp.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
+- `archive/mobile-future/auth/otp.tsx`
 
 ## Audit Trail
 

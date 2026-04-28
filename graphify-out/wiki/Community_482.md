@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **onboarding.tsx** (0 connections) — `apps/mobile/src/app/onboarding.tsx`
+- **confirm.tsx** (0 connections) — `apps/mobile/src/app/(customer)/bookings/confirm.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/onboarding.tsx`
+- `apps/mobile/src/app/(customer)/bookings/confirm.tsx`
 
 ## Audit Trail
 

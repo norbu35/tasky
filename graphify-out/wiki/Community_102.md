@@ -4,24 +4,24 @@
 
 ## Key Concepts
 
-- **SecurityScopeController** (4 connections) — `services/api/src/main/java/mn/tasky/security/api/SecurityScopeController.java`
-- **.pingCustomer()** (2 connections) — `services/api/src/main/java/mn/tasky/security/api/SecurityScopeController.java`
-- **.pingTasker()** (2 connections) — `services/api/src/main/java/mn/tasky/security/api/SecurityScopeController.java`
-- **.pingAdmin()** (2 connections) — `services/api/src/main/java/mn/tasky/security/api/SecurityScopeController.java`
-- **SecurityScopeController.java** (1 connections) — `services/api/src/main/java/mn/tasky/security/api/SecurityScopeController.java`
+- **AdminTaskConciergeAssignmentOutcome.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentOutcome.java`
+- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentOutcome.java`
+- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentOutcome.java`
+- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentOutcome.java`
 
 ## Relationships
 
-- [[Community 0]] (3 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/security/api/SecurityScopeController.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentOutcome.java`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (73%)
-- INFERRED: 3 (27%)
+- EXTRACTED: 8 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

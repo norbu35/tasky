@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **tailwind.config.ts** (0 connections) — `apps/web/tailwind.config.ts`
+- **main.tsx** (0 connections) — `apps/web/src/main.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/tailwind.config.ts`
+- `apps/web/src/main.tsx`
 
 ## Audit Trail
 

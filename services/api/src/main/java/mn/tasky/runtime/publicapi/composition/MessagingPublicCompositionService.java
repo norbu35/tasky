@@ -27,7 +27,7 @@ public class MessagingPublicCompositionService {
         if (hasMore) {
             EnrichedConversation last = pageData.getLast();
             Instant cursorTime = last.lastMessageAt() != null ? last.lastMessageAt() : last.createdAt();
-            nextCursor = cursorTime.toString();
+            nextCursor = cursorTime + "|" + last.id();
         }
         List<Map<String, Object>> data =
                 pageData.stream().map(this::conversationResponse).toList();

@@ -1,26 +1,27 @@
 # Community 105
 
-> 4 nodes
+> 5 nodes
 
 ## Key Concepts
 
-- **Card.tsx** (3 connections) — `apps/mobile/src/components/ui/Card.tsx`
-- **CardDescription()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
-- **CardContent()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
-- **CardFooter()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
+- **WalletQueryCompositionService** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionService.java`
+- **.balanceResponse()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionService.java`
+- **WalletQueryCompositionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionService.java`
+- **.ledgerResponses()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionService.java`
+- **.ledgerResponse()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionService.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/Card.tsx`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionService.java`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 8 (89%)
+- INFERRED: 1 (11%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **polish.tsx** (3 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
-- **handlePrimaryAction()** (3 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
-- **handleGenerate()** (2 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
-- **handleApply()** (2 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **AutomationContractBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
+- **.automationContractMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
+- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
+- **AutomationContractBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `archive/mobile-future/tasker/profile/polish.tsx`
+- `services/api/src/test/java/mn/tasky/architecture/AutomationContractBoundaryTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

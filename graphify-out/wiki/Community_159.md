@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskSuccessScreen.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
-- **handleViewTask()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
-- **handleDone()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
+- **Reveal.tsx** (2 connections) — `apps/mobile/src/components/ui/Reveal.tsx`
+- **createRevealAnimation()** (2 connections) — `apps/mobile/src/components/ui/Reveal.tsx`
+- **Reveal()** (2 connections) — `apps/mobile/src/components/ui/Reveal.tsx`
 
 ## Relationships
 
@@ -14,11 +14,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
+- `apps/mobile/src/components/ui/Reveal.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

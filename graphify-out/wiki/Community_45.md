@@ -1,33 +1,36 @@
 # Community 45
 
-> 11 nodes
+> 12 nodes
 
 ## Key Concepts
 
-- **audit_unclaimed_refs.py** (6 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
-- **scan_file()** (6 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
-- **collect_scan_files()** (3 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
-- **has_nearby_claim_block()** (3 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
-- **extract_candidates_from_line()** (3 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
-- **main()** (3 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
-- **Candidate** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
-- **Same file set as validate-doc-claims.py.** (1 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
-- **Check if there's a fenced claim block within window lines of the given line.** (1 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
-- **Extract candidate references and their kind guesses from a prose line. Retu** (1 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
-- **Scan a file for load-bearing references that lack a nearby claim block.** (1 connections) — `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
+- **.taskDetail()** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
+- **AdminTaskCompositionService** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
+- **TaskDetailTests** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
+- **.taskDetail_returnsMappedResponse()** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
+- **.taskDetail_returnsEmptyWhenNotFound()** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
+- **.taskDetail_mapsAllFields()** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
+- **.toTaskDetailResponse()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
+- **AdminTaskCompositionServiceTests.java** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
+- **AdminTaskCompositionServiceTests** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
+- **AdminTaskCompositionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
+- **.AdminTaskCompositionService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
+- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 1]] (5 shared connections)
+- [[Community 0]] (3 shared connections)
 
 ## Source Files
 
-- `tooling/skills/doc-claims-remediation/scripts/audit_unclaimed_refs.py`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
+- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionServiceTests.java`
 
 ## Audit Trail
 
-- EXTRACTED: 30 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 20 (59%)
+- INFERRED: 14 (41%)
 - AMBIGUOUS: 0 (0%)
 
 ---

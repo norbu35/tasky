@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **cancel.tsx** (1 connections) — `apps/mobile/src/app/(customer)/bookings/[bookingId]/cancel.tsx`
-- **CustomerCancelBookingRoute()** (1 connections) — `apps/mobile/src/app/(customer)/bookings/[bookingId]/cancel.tsx`
+- **[taskId].tsx** (1 connections) — `apps/mobile/src/app/(tasker)/tasks/[taskId].tsx`
+- **TaskerTaskDetailRouteAlias()** (1 connections) — `apps/mobile/src/app/(tasker)/tasks/[taskId].tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/bookings/[bookingId]/cancel.tsx`
+- `apps/mobile/src/app/(tasker)/tasks/[taskId].tsx`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useTaskIntakeScreen.ts** (1 connections) — `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
-- **useTaskIntakeScreen()** (1 connections) — `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
+- **SearchBar.tsx** (1 connections) — `apps/mobile/src/features/help/screens/HelpCenter/SearchBar.tsx`
+- **HelpSearchBar()** (1 connections) — `apps/mobile/src/features/help/screens/HelpCenter/SearchBar.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/useTaskIntakeScreen.ts`
+- `apps/mobile/src/features/help/screens/HelpCenter/SearchBar.tsx`
 
 ## Audit Trail
 

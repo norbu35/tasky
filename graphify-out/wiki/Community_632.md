@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Screen.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/Screen.tsx`
+- **VerificationUploadScreen.tsx** (0 connections) — `apps/mobile/src/features/verification/screens/VerificationUploadScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/CustomerTasks/Screen.tsx`
+- `apps/mobile/src/features/verification/screens/VerificationUploadScreen.tsx`
 
 ## Audit Trail
 

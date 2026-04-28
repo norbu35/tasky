@@ -1,20 +1,21 @@
 # Community 44
 
-> 11 nodes
+> 12 nodes
 
 ## Key Concepts
 
-- **MarketplaceQueryPort** (10 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **MarketplaceQueryPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.listTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.getTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.listMyTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.recentLocations()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.listTaskApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.countApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.buildPhotoAccessUrls()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.buildOwnedPhotoAccessUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
-- **.getDraft()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **MarketplaceQueryHandler** (11 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **MarketplaceQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.MarketplaceQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.listTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.getTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.listMyTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.recentLocations()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.listTaskApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.countApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.buildPhotoAccessUrls()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.buildOwnedPhotoAccessUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
+- **.getDraft()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
 
 ## Relationships
 
@@ -22,11 +23,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- `services/api/src/main/java/mn/tasky/marketplace/application/query/MarketplaceQueryHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 20 (100%)
+- EXTRACTED: 22 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

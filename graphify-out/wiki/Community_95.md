@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **GeocodingProvider** (4 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
-- **GeocodingProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
-- **.reverseGeocode()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
-- **.isWithinServiceArea()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
-- **.search()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
+- **AdminDisputesPage.tsx** (4 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
+- **disputeStatusVariant()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
+- **getDisputeStatusLabelKey()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
+- **truncate()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
+- **formatDate()** (1 connections) — `apps/web/src/pages/admin/AdminDisputesPage.tsx`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/location/application/GeocodingProvider.java`
+- `apps/web/src/pages/admin/AdminDisputesPage.tsx`
 
 ## Audit Trail
 

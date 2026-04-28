@@ -4,28 +4,29 @@
 
 ## Key Concepts
 
-- **AudienceCompositionBoundaryTest** (8 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **.representativeControllersDelegateAudienceCompositionToRuntimeServices()** (5 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **.allControllersAreAccountedFor()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **.assertControllerDependsOn()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **.assertControllerDoesNotDependOn()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **.assertControllerOmitsMethods()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **AudienceCompositionBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **.exceptionControllerClasses()** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
-- **.runtimeAudienceCompositionPackagesAndServicesExist()** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **provider-chain.test.tsx** (5 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
+- **NotificationConsumer()** (2 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
+- **NotificationProvider.tsx** (2 connections) — `apps/mobile/src/providers/NotificationProvider.tsx`
+- **useNotificationContext()** (2 connections) — `apps/mobile/src/providers/NotificationProvider.tsx`
+- **TabsMock()** (1 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
+- **StackMock()** (1 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
+- **RoleConsumer()** (1 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
+- **SessionConsumer()** (1 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
+- **NotificationProvider()** (1 connections) — `apps/mobile/src/providers/NotificationProvider.tsx`
 
 ## Relationships
 
-- [[Community 0]] (2 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- `apps/mobile/__tests__/integration/provider-chain.test.tsx`
+- `apps/mobile/src/providers/NotificationProvider.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 22 (92%)
-- INFERRED: 2 (8%)
+- EXTRACTED: 14 (88%)
+- INFERRED: 2 (12%)
 - AMBIGUOUS: 0 (0%)
 
 ---

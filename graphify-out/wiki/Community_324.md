@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **NetworkErrorPage.tsx** (1 connections) — `apps/web/src/pages/shared/NetworkErrorPage.tsx`
-- **NetworkErrorPage()** (1 connections) — `apps/web/src/pages/shared/NetworkErrorPage.tsx`
+- **InboxPage.tsx** (1 connections) — `apps/web/src/pages/shared/InboxPage.tsx`
+- **InboxPage()** (1 connections) — `apps/web/src/pages/shared/InboxPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/NetworkErrorPage.tsx`
+- `apps/web/src/pages/shared/InboxPage.tsx`
 
 ## Audit Trail
 

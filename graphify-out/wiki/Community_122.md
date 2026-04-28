@@ -4,23 +4,23 @@
 
 ## Key Concepts
 
-- **BookingIntentConfirmResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentConfirmResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentConfirmResult.java`
-- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentConfirmResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentConfirmResult.java`
+- **model.ts** (3 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
+- **buildFaqSections()** (2 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
+- **resolveState()** (1 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
+- **filterSections()** (1 connections) — `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentConfirmResult.java`
+- `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 6 (86%)
+- INFERRED: 1 (14%)
 - AMBIGUOUS: 0 (0%)
 
 ---

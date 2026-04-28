@@ -4,14 +4,14 @@
 
 ## Key Concepts
 
-- **TraceErrorAttributesTest** (4 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **.getErrorAttributes()** (3 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- **TraceErrorAttributes** (2 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- **.setsTraceIdFromRequestAttribute()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **.fallsBackToUuidWhenTraceIdAttributeIsNull()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **TraceErrorAttributes.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- **TraceErrorAttributesTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- **BookingQueryHandler** (7 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **BookingQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **.BookingQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **.getBooking()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **.listBookings()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **.getTaskerMarkedDoneAt()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **.listScheduleEvents()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **.getScheduleEvent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
 
 ## Relationships
 
@@ -19,13 +19,12 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (75%)
-- INFERRED: 4 (25%)
+- EXTRACTED: 14 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

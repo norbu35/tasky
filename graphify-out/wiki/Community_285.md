@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **NoApplicantRescue.tsx** (1 connections) — `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
-- **RescueButton()** (1 connections) — `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
+- **TaskCategoryScreen.tsx** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
+- **getCategoryVisual()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
 
 ## Audit Trail
 

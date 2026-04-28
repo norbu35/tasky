@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **messaging.test.tsx** (0 connections) — `apps/web/tests/integration/messaging.test.tsx`
+- **taskSchema.ts** (0 connections) — `packages/core/src/tasks/taskSchema.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/tests/integration/messaging.test.tsx`
+- `packages/core/src/tasks/taskSchema.ts`
 
 ## Audit Trail
 

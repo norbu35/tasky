@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **VerificationGate.tsx** (1 connections) — `apps/mobile/src/features/verification/components/VerificationGate.tsx`
-- **VerificationGate()** (1 connections) — `apps/mobile/src/features/verification/components/VerificationGate.tsx`
+- **AppBootstrapProvider.tsx** (1 connections) — `apps/mobile/src/providers/AppBootstrapProvider.tsx`
+- **AppBootstrapProvider()** (1 connections) — `apps/mobile/src/providers/AppBootstrapProvider.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/verification/components/VerificationGate.tsx`
+- `apps/mobile/src/providers/AppBootstrapProvider.tsx`
 
 ## Audit Trail
 

@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **DisputeResolutionResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
-- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- **DataRetentionScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
+- **DataRetentionScheduler.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
+- **.DataRetentionScheduler()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
+- **.processRetention()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
 
 ## Audit Trail
 

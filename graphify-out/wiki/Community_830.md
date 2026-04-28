@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **OutboxEvent.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEvent.java`
+- **WorkflowContext.java** (0 connections) — `services/api/src/main/java/mn/tasky/kernel/context/WorkflowContext.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/outbox/OutboxEvent.java`
+- `services/api/src/main/java/mn/tasky/kernel/context/WorkflowContext.java`
 
 ## Audit Trail
 

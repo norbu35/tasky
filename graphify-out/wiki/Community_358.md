@@ -1,11 +1,10 @@
 # Community 358
 
-> 2 nodes
+> 1 nodes
 
 ## Key Concepts
 
-- **TaskerProfilePolishPage.tsx** (1 connections) — `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
-- **TaskerProfilePolishPage()** (1 connections) — `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
+- **jest.setup.ts** (0 connections) — `apps/mobile/jest.setup.ts`
 
 ## Relationships
 
@@ -13,11 +12,11 @@
 
 ## Source Files
 
-- `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
+- `apps/mobile/jest.setup.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 2 (100%)
+- EXTRACTED: 0 (0%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

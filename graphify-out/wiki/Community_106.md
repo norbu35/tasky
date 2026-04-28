@@ -1,13 +1,14 @@
 # Community 106
 
-> 4 nodes
+> 5 nodes
 
 ## Key Concepts
 
-- **CancelBookingScreen()** (2 connections) — `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
-- **useCancelBooking()** (2 connections) — `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
-- **CancelBookingScreen.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
-- **useCancelBooking.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
+- **RuntimeBoundaryTest** (4 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
+- **.canonicalPlaneMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
+- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
+- **RuntimeBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
+- **.runtimeConfigurationShellsExist()** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
 
 ## Relationships
 
@@ -15,13 +16,12 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/components/CancelBookingScreen.tsx`
-- `apps/mobile/src/features/bookings/hooks/useCancelBooking.ts`
+- `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (67%)
-- INFERRED: 2 (33%)
+- EXTRACTED: 10 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

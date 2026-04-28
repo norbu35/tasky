@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **queryKeys.ts** (0 connections) — `apps/mobile/src/lib/queryKeys.ts`
+- **postcss.config.mjs** (0 connections) — `apps/web/postcss.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/queryKeys.ts`
+- `apps/web/postcss.config.mjs`
 
 ## Audit Trail
 

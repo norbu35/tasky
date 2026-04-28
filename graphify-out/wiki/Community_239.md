@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **CategoryChip.tsx** (1 connections) — `apps/mobile/src/components/ui/CategoryChip.tsx`
-- **CategoryChip()** (1 connections) — `apps/mobile/src/components/ui/CategoryChip.tsx`
+- **Button.tsx** (1 connections) — `apps/mobile/src/components/ui/Button.tsx`
+- **getTextColor()** (1 connections) — `apps/mobile/src/components/ui/Button.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/CategoryChip.tsx`
+- `apps/mobile/src/components/ui/Button.tsx`
 
 ## Audit Trail
 

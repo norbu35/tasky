@@ -1,17 +1,18 @@
 # Community 52
 
-> 8 nodes
+> 9 nodes
 
 ## Key Concepts
 
-- **mockI18n.ts** (7 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
-- **resolveLanguage()** (3 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
-- **translate()** (3 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
-- **lookupTranslation()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
-- **interpolate()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
-- **createReactI18nextMock()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
-- **setTestLanguage()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
-- **resetTestI18n()** (1 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **TrustQueryHandler** (8 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **TrustQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **.TrustQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **.listReviews()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **.listPendingDisputes()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **.getDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **.getDisputeForUser()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **.getDisputeEvidence()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **.hasOpenDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
 
 ## Relationships
 
@@ -19,11 +20,11 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 22 (100%)
+- EXTRACTED: 16 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

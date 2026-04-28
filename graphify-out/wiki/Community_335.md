@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **check-package-structure.mjs** (1 connections) — `packages/design-tokens/scripts/check-package-structure.mjs`
-- **findFiles()** (1 connections) — `packages/design-tokens/scripts/check-package-structure.mjs`
+- **IdempotencyKey.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/idempotency/IdempotencyKey.java`
+- **of()** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/idempotency/IdempotencyKey.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `packages/design-tokens/scripts/check-package-structure.mjs`
+- `services/api/src/main/java/mn/tasky/kernel/idempotency/IdempotencyKey.java`
 
 ## Audit Trail
 

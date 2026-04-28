@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **primitives.ts** (0 connections) — `packages/design-tokens/src/core/primitives.ts`
+- **index.ts** (0 connections) — `packages/test-utils/src/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/design-tokens/src/core/primitives.ts`
+- `packages/test-utils/src/index.ts`
 
 ## Audit Trail
 

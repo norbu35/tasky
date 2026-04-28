@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **SchedulePickerSheet.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/SchedulePickerSheet.test.tsx`
+- **OnboardingScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/auth/OnboardingScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/SchedulePickerSheet.test.tsx`
+- `apps/mobile/__tests__/screens/auth/OnboardingScreen.test.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskDetail.Summary.test.tsx** (0 connections) — `apps/mobile/__tests__/features/tasks/screens/TaskDetail.Summary.test.tsx`
+- **TaskFeedFilterSheet.test.tsx** (0 connections) — `apps/mobile/__tests__/features/tasks/components/TaskFeedFilterSheet.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/tasks/screens/TaskDetail.Summary.test.tsx`
+- `apps/mobile/__tests__/features/tasks/components/TaskFeedFilterSheet.test.tsx`
 
 ## Audit Trail
 

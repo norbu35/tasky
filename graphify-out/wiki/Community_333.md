@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useTasks.ts** (1 connections) — `packages/core/src/tasks/useTasks.ts`
-- **useTasksQuery()** (1 connections) — `packages/core/src/tasks/useTasks.ts`
+- **CursorPagination.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/api/CursorPagination.java`
+- **from()** (1 connections) — `services/api/src/main/java/mn/tasky/common/api/CursorPagination.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `packages/core/src/tasks/useTasks.ts`
+- `services/api/src/main/java/mn/tasky/common/api/CursorPagination.java`
 
 ## Audit Trail
 

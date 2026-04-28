@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ReviewThresholdSummary.test.tsx** (0 connections) — `apps/mobile/__tests__/features/profile/components/ReviewThresholdSummary.test.tsx`
+- **onboarding.tsx** (0 connections) — `apps/mobile/src/app/onboarding.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/profile/components/ReviewThresholdSummary.test.tsx`
+- `apps/mobile/src/app/onboarding.tsx`
 
 ## Audit Trail
 

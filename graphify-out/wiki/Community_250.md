@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TrustBanner.tsx** (1 connections) — `apps/mobile/src/components/ui/TrustBanner.tsx`
-- **TrustBanner()** (1 connections) — `apps/mobile/src/components/ui/TrustBanner.tsx`
+- **LeadUnlockSheet.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/LeadUnlockSheet.tsx`
+- **formatTimer()** (1 connections) — `apps/mobile/src/features/bookings/components/LeadUnlockSheet.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/TrustBanner.tsx`
+- `apps/mobile/src/features/bookings/components/LeadUnlockSheet.tsx`
 
 ## Audit Trail
 

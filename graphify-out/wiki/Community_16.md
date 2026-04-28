@@ -1,78 +1,64 @@
 # Community 16
 
-> 104 nodes
+> 81 nodes
 
 ## Key Concepts
 
-- **.listPending()** (17 connections) — `services/api/src/main/java/mn/tasky/projection/admin/AdminVerificationQueueProjectionService.java`
-- **.recordAdminAction()** (16 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditCommandPort.java`
-- **IdentityQueryHandlerTest** (13 connections) — `services/api/src/test/java/mn/tasky/identity/application/query/IdentityQueryHandlerTest.java`
-- **.findPending()** (12 connections) — `services/api/src/main/java/mn/tasky/wallet/dao/PayoutRequestDao.java`
-- **.pendingVerifications()** (11 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
-- **GetVerificationDetail** (11 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **ApproveVerification** (11 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **.verificationDecisionNotificationIsSentToAffectedTasker()** (10 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
-- **AdminVerificationCompositionService** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
-- **.verificationDetail()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
-- **.detailResponse()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
-- **.approve()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionService.java`
-- **VerificationServiceTest.java** (9 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **RejectVerification** (9 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **.approve_success()** (9 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
-- **PendingVerificationsTests** (9 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
-- **.pendingDisputes()** (8 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionService.java`
-- **.returnsMappedPending()** (8 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **.reject_success()** (8 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
-- **.reject()** (7 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionService.java`
-- **VerificationExists** (7 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **.approve_notPending()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
-- **.approve_notFound()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
-- **.pendingVerifications_returnsPage()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
-- **.pendingVerifications_storageUrlFailure()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
-- _... and 79 more nodes in this community_
+- **.disputeDetail_fullResponse()** (12 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- **DisputeDetail** (11 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionServiceTests.java`
+- **.disputeDetail_noConversation()** (10 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- **.findFlaggedMessages()** (9 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
+- **.listFlagged()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
+- **MessagingPublicCompositionService** (8 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/MessagingPublicCompositionService.java`
+- **MessagingQueryHandlerTest** (8 connections) — `services/api/src/test/java/mn/tasky/messaging/application/query/MessagingQueryHandlerTest.java`
+- **.disputeDetail_noBooking()** (8 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- **.listEnrichedConversations()** (7 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
+- **AdminDisputeCompositionServiceTests** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- **ListFlaggedTests** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.message()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/MessagingPublicCompositionServiceTests.java`
+- **ListConversations** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/MessagingPublicCompositionServiceTests.java`
+- **ListMessages** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/MessagingPublicCompositionServiceTests.java`
+- **MessagingQueryPort** (6 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
+- **.findConversationByTaskAndParticipants()** (6 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
+- **AdminMessageCompositionService** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
+- **.toTaskApplicationResponse()** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionService.java`
+- **KernelErrorTest** (5 connections) — `services/api/src/test/java/mn/tasky/kernel/error/KernelErrorTest.java`
+- **DisputeDetailTests** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- **.buildDispute()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- **.listFlagged_returnsPage()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.listFlagged_hasMore()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.listFlagged_withCursor()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.listMessagesForConversation()** (4 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
+- _... and 56 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (64 shared connections)
-- [[Community 1]] (10 shared connections)
-- [[Community 4]] (9 shared connections)
-- [[Community 5]] (9 shared connections)
-- [[Community 13]] (6 shared connections)
-- [[Community 14]] (5 shared connections)
-- [[Community 11]] (5 shared connections)
-- [[Community 18]] (3 shared connections)
-- [[Community 8]] (2 shared connections)
-- [[Community 15]] (2 shared connections)
-- [[Community 2]] (2 shared connections)
-- [[Community 6]] (1 shared connections)
+- [[Community 0]] (25 shared connections)
+- [[Community 1]] (18 shared connections)
+- [[Community 6]] (5 shared connections)
+- [[Community 5]] (3 shared connections)
+- [[Community 9]] (2 shared connections)
+- [[Community 3]] (2 shared connections)
+- [[Community 10]] (1 shared connections)
+- [[Community 17]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditCommandPort.java`
-- `services/api/src/main/java/mn/tasky/auth/application/VerificationService.java`
-- `services/api/src/main/java/mn/tasky/dispute/application/DisputeService.java`
-- `services/api/src/main/java/mn/tasky/identity/publicapi/IdentityQueryPort.java`
-- `services/api/src/main/java/mn/tasky/projection/admin/AdminDisputeQueueProjectionService.java`
-- `services/api/src/main/java/mn/tasky/projection/admin/AdminVerificationQueueProjectionService.java`
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionService.java`
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionService.java`
-- `services/api/src/main/java/mn/tasky/user/api/UserProfileController.java`
-- `services/api/src/main/java/mn/tasky/wallet/application/WalletService.java`
-- `services/api/src/main/java/mn/tasky/wallet/dao/PayoutRequestDao.java`
-- `services/api/src/test/java/mn/tasky/admin/application/command/AdminAuditCommandHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- `services/api/src/test/java/mn/tasky/dispute/application/DisputeServiceTest.java`
-- `services/api/src/test/java/mn/tasky/identity/application/query/IdentityQueryHandlerTest.java`
+- `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/MessagingPublicCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionService.java`
+- `services/api/src/test/java/mn/tasky/kernel/error/KernelErrorTest.java`
+- `services/api/src/test/java/mn/tasky/messaging/application/query/MessagingQueryHandlerTest.java`
 - `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
-- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
-- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
-- `services/api/src/test/java/mn/tasky/trust/application/query/TrustQueryHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionServiceTests.java`
+- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/MessagingPublicCompositionServiceTests.java`
 
 ## Audit Trail
 
-- EXTRACTED: 243 (49%)
-- INFERRED: 255 (51%)
+- EXTRACTED: 189 (62%)
+- INFERRED: 116 (38%)
 - AMBIGUOUS: 0 (0%)
 
 ---

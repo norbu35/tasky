@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TermsOfService.Content.tsx** (1 connections) — `apps/mobile/src/features/legal/screens/TermsOfService.Content.tsx`
-- **resolveState()** (1 connections) — `apps/mobile/src/features/legal/screens/TermsOfService.Content.tsx`
+- **FeedCard.tsx** (1 connections) — `apps/web/src/components/feature/FeedCard.tsx`
+- **FeedCard()** (1 connections) — `apps/web/src/components/feature/FeedCard.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/legal/screens/TermsOfService.Content.tsx`
+- `apps/web/src/components/feature/FeedCard.tsx`
 
 ## Audit Trail
 

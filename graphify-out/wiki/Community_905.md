@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **referrals.tsx** (0 connections) — `archive/mobile-future/tasker/referrals.tsx`
+- **Split _text_ by commas at parenthesis depth 0.** (0 connections) — `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `archive/mobile-future/tasker/referrals.tsx`
+- `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Audit Trail
 

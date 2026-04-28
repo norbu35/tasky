@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **LedgerEntry.java** (0 connections) — `services/api/src/main/java/mn/tasky/wallet/dto/LedgerEntry.java`
+- **index.mjs** (0 connections) — `tooling/config/prettier/index.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/wallet/dto/LedgerEntry.java`
+- `tooling/config/prettier/index.mjs`
 
 ## Audit Trail
 

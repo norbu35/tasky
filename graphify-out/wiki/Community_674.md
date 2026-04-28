@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ComparisonVisuals.tsx** (0 connections) — `apps/web/src/components/feature/landing/ComparisonVisuals.tsx`
+- **skeleton.tsx** (0 connections) — `apps/web/src/components/ui/skeleton.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/feature/landing/ComparisonVisuals.tsx`
+- `apps/web/src/components/ui/skeleton.tsx`
 
 ## Audit Trail
 

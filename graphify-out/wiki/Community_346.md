@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **SchedulerRuntimeConfiguration.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/scheduler/SchedulerRuntimeConfiguration.java`
-- **SchedulerRuntimeConfiguration** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/scheduler/SchedulerRuntimeConfiguration.java`
+- **check_lifecycles.py** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
+- **main()** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/scheduler/SchedulerRuntimeConfiguration.java`
+- `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
 
 ## Audit Trail
 

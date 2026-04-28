@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **SubmittedScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/verification/SubmittedScreen.test.tsx`
+- **TaskDetail.Summary.test.tsx** (0 connections) — `apps/mobile/__tests__/features/tasks/screens/TaskDetail.Summary.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/tasker/verification/SubmittedScreen.test.tsx`
+- `apps/mobile/__tests__/features/tasks/screens/TaskDetail.Summary.test.tsx`
 
 ## Audit Trail
 

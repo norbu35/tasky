@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **RuntimeBoundaryTest** (4 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
-- **.canonicalPlaneMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
-- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
-- **RuntimeBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
-- **.runtimeConfigurationShellsExist()** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
+- **BookingIntentConfirmationOutcome.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
+- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
+- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
+- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
 
 ## Relationships
 
@@ -16,11 +16,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/RuntimeBoundaryTest.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationOutcome.java`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

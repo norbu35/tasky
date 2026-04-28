@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **VerificationSubmittedPage.tsx** (0 connections) — `apps/web/src/pages/tasker/VerificationSubmittedPage.tsx`
+- **setup.ts** (0 connections) — `apps/web/src/test/setup.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/tasker/VerificationSubmittedPage.tsx`
+- `apps/web/src/test/setup.ts`
 
 ## Audit Trail
 

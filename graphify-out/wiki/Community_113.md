@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **MainApplication** (3 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
-- **MainApplication.kt** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
-- **.onCreate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
-- **.onConfigurationChanged()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- **useBookings()** (2 connections) — `apps/mobile/src/features/bookings/hooks/useBookings.ts`
+- **useBookingsListScreen()** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
+- **useBookings.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useBookings.ts`
+- **useBookingsListScreen.ts** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
 
 ## Relationships
 
@@ -15,12 +15,13 @@
 
 ## Source Files
 
-- `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- `apps/mobile/src/features/bookings/hooks/useBookings.ts`
+- `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 4 (67%)
+- INFERRED: 2 (33%)
 - AMBIGUOUS: 0 (0%)
 
 ---

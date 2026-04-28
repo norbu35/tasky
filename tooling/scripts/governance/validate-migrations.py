@@ -10,6 +10,49 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 MIGRATION_DIR = REPO_ROOT / "services" / "api" / "src" / "main" / "resources" / "db" / "migration"
 VERSIONED_RE = re.compile(r"^V([0-9]+(?:_[0-9]+)*)__[A-Za-z0-9_]+\.sql$")
 REPEATABLE_RE = re.compile(r"^R__[A-Za-z0-9_]+\.sql$")
+BASELINE_RESET_FILE_NAME = "V1__baseline.sql"
+BASELINE_RESET_OLD_MIGRATION_NAMES = frozenset(
+    [
+        "V1__initial_schema.sql",
+        "V2__seed_categories.sql",
+        "V3__moderation_policy_and_reliability.sql",
+        "V4__idempotency_and_booking_done_signal.sql",
+        "V5__idempotency_user_fk_relax.sql",
+        "V6__facebook_oauth.sql",
+        "V7__distributed_rate_limit_counters.sql",
+        "V8__domain_outbox_events.sql",
+        "V9__read_path_indexes.sql",
+        "V10__phase0_schema_alignment.sql",
+        "V11__seed_intake_schemas.sql",
+        "V12__deferred_tiers_tables.sql",
+        "V13__shedlock_table.sql",
+        "V14__device_token_platform_constraint.sql",
+        "V15__districts_and_service_areas.sql",
+        "V16__wallet_balance_constraints.sql",
+        "V17__instant_match_revocation.sql",
+        "V18__booking_intents.sql",
+        "V19__seed_test_data.sql",
+        "V20__location_subsystem.sql",
+        "V21__profile_last_active.sql",
+        "V22__tasky_v2_projection_read_models.sql",
+        "V23__outbox_context_propagation.sql",
+        "V24__outbox_additional_context.sql",
+        "V25__event_idempotency_table.sql",
+        "V26__review_enforcement_cases_unique_constraint.sql",
+        "V27__profiles_add_bio.sql",
+        "V28__users_status_allow_deleted.sql",
+        "V29__rescue_intervention_type.sql",
+        "V30__dual_pricing_model.sql",
+        "V31__prd_alignment.sql",
+        "V32__task_rescue_intervention_stage.sql",
+        "V33__category_assisted_distribution_enabled.sql",
+        "V34__align_rescue_intervention_type_values.sql",
+        "V35__booking_intents_application_selection.sql",
+        "V36__dispute_evidence_grace_state.sql",
+        "V37__message_history_ordering_index.sql",
+        "V38__public_task_feed_projection.sql",
+    ]
+)
 
 
 def print_remediation() -> None:
@@ -78,6 +121,74 @@ def is_versioned_path(path: str) -> bool:
     return VERSIONED_RE.match(path_obj.name) is not None
 
 
+def migration_name(path: str) -> str:
+    return Path(path).name
+
+
+def baseline_reset_layout_active() -> bool:
+    names = sorted(p.name for p in MIGRATION_DIR.glob("*.sql"))
+    return names == [BASELINE_RESET_FILE_NAME]
+
+
+def baseline_reset_diff_is_exact(lines: list[str]) -> bool:
+    added: set[str] = set()
+    deleted: set[str] = set()
+    unexpected: list[str] = []
+
+    for line in lines:
+        code, old_path, new_path = parse_name_status_line(line)
+        if not code:
+            continue
+        if code == "A":
+            added.add(migration_name(old_path))
+            continue
+        if code == "D":
+            deleted.add(migration_name(old_path))
+            continue
+        unexpected.append(line)
+
+    return (
+        added == {BASELINE_RESET_FILE_NAME}
+        and deleted == BASELINE_RESET_OLD_MIGRATION_NAMES
+        and not unexpected
+    )
+
+
+def baseline_reset_status_is_exact(lines: list[str]) -> bool:
+    added: set[str] = set()
+    deleted: set[str] = set()
+    unexpected: list[str] = []
+
+    for raw_line in lines:
+        line = raw_line.rstrip()
+        if len(line) < 4:
+            continue
+        status = line[:2]
+        path_spec = line[3:]
+        if " -> " in path_spec:
+            unexpected.append(line)
+            continue
+
+        name = migration_name(path_spec)
+        if status == "??" and name == BASELINE_RESET_FILE_NAME:
+            added.add(name)
+            continue
+        if "A" in status and name == BASELINE_RESET_FILE_NAME:
+            added.add(name)
+            continue
+        if "D" in status and name in BASELINE_RESET_OLD_MIGRATION_NAMES:
+            deleted.add(name)
+            continue
+        if status.strip():
+            unexpected.append(line)
+
+    return (
+        added == {BASELINE_RESET_FILE_NAME}
+        and deleted == BASELINE_RESET_OLD_MIGRATION_NAMES
+        and not unexpected
+    )
+
+
 def detect_naming_errors(files: list[Path]) -> list[str]:
     errors: list[str] = []
     seen_versions: set[str] = set()
@@ -126,8 +237,12 @@ def detect_versioned_mutations_from_diff(base_ref: str) -> list[str]:
     if result.returncode != 0:
         return [f"Unable to diff migrations against base ref '{base_ref}': {result.stderr.strip()}"]
 
+    diff_lines = result.stdout.splitlines()
+    if baseline_reset_layout_active() and baseline_reset_diff_is_exact(diff_lines):
+        return []
+
     errors: list[str] = []
-    for line in result.stdout.splitlines():
+    for line in diff_lines:
         code, old_path, new_path = parse_name_status_line(line)
         if not code:
             continue
@@ -156,8 +271,12 @@ def detect_versioned_mutations_in_worktree() -> list[str]:
     if result.returncode != 0:
         return [f"Unable to inspect working tree migration status: {result.stderr.strip()}"]
 
+    status_lines = result.stdout.splitlines()
+    if baseline_reset_layout_active() and baseline_reset_status_is_exact(status_lines):
+        return []
+
     errors: list[str] = []
-    for raw_line in result.stdout.splitlines():
+    for raw_line in status_lines:
         line = raw_line.rstrip()
         if len(line) < 4:
             continue

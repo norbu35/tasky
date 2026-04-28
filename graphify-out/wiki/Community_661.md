@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **stryker.config.mjs** (0 connections) — `apps/web/stryker.config.mjs`
+- **inspection.spec.ts** (0 connections) — `apps/web/e2e/inspection.spec.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/stryker.config.mjs`
+- `apps/web/e2e/inspection.spec.ts`
 
 ## Audit Trail
 

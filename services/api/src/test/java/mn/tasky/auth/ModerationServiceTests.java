@@ -261,15 +261,21 @@ class ModerationServiceTests {
         }
 
         @Test
-        @DisplayName("Missing moderation policy row throws ISE")
-        void missingPolicyRowThrowsISE() {
+        @DisplayName("Missing moderation policy row is initialized on update")
+        void missingPolicyRowIsInitializedOnUpdate() {
             when(moderationPolicyDao.update(
                             anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), any(Boolean.class), any(Instant.class)))
-                    .thenReturn(0);
+                    .thenReturn(1);
+            when(moderationPolicyDao.findActive()).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> service.updateModerationPolicy(30, 3, 7, 14, 180, true))
-                    .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining("missing");
+            ModerationPolicy result = service.updateModerationPolicy(30, 3, 7, 14, 180, true);
+
+            assertThat(result.strikeWindowDays()).isEqualTo(30);
+            assertThat(result.strikeThreshold()).isEqualTo(3);
+            assertThat(result.firstSuspensionDays()).isEqualTo(7);
+            assertThat(result.repeatSuspensionDays()).isEqualTo(14);
+            assertThat(result.repeatOffenseWindowDays()).isEqualTo(180);
+            assertThat(result.autoUnsuspendEnabled()).isTrue();
         }
     }
 

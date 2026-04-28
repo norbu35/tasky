@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **HelpPage.tsx** (0 connections) — `apps/web/src/pages/shared/HelpPage.tsx`
+- **VerificationGatePage.tsx** (0 connections) — `apps/web/src/pages/tasker/VerificationGatePage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/HelpPage.tsx`
+- `apps/web/src/pages/tasker/VerificationGatePage.tsx`
 
 ## Audit Trail
 

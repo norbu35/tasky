@@ -4,21 +4,21 @@
 
 ## Key Concepts
 
-- **AdminPayoutProcessingService** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingService.java`
-- **AdminPayoutProcessingService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingService.java`
-- **.AdminPayoutProcessingService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingService.java`
+- **SettingsPage.tsx** (2 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
+- **SectionTitle()** (1 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
+- **ActionRow()** (1 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingService.java`
+- `apps/web/src/pages/shared/SettingsPage.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 5 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

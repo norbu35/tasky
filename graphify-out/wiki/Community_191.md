@@ -4,22 +4,22 @@
 
 ## Key Concepts
 
-- **useVerification.ts** (2 connections) — `apps/mobile/src/features/verification/hooks/useVerification.ts`
-- **useVerificationStatus()** (2 connections) — `apps/mobile/src/features/verification/hooks/useVerification.ts`
-- **useVerification()** (1 connections) — `apps/mobile/src/features/verification/hooks/useVerification.ts`
+- **AssistanceOutcomeTypeTest** (2 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
+- **AssistanceOutcomeTypeTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
+- **.definesLaunchAssistanceOutcomeBuckets()** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `apps/mobile/src/features/verification/hooks/useVerification.ts`
+- `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (80%)
-- INFERRED: 1 (20%)
+- EXTRACTED: 4 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

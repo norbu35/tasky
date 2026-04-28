@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **create.tsx** (1 connections) — `apps/mobile/src/app/create.tsx`
-- **CreateTaskScreen()** (1 connections) — `apps/mobile/src/app/create.tsx`
+- **banned.tsx** (1 connections) — `apps/mobile/src/app/(shared)/account/banned.tsx`
+- **BannedAccountRoute()** (1 connections) — `apps/mobile/src/app/(shared)/account/banned.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/create.tsx`
+- `apps/mobile/src/app/(shared)/account/banned.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **cn.test.ts** (0 connections) — `apps/mobile/src/lib/__tests__/cn.test.ts`
+- **stryker.config.mjs** (0 connections) — `apps/web/stryker.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/__tests__/cn.test.ts`
+- `apps/web/stryker.config.mjs`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **network-error.tsx** (0 connections) — `apps/mobile/src/app/(shared)/network-error.tsx`
+- **delete.tsx** (0 connections) — `apps/mobile/src/app/(shared)/profile/delete.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(shared)/network-error.tsx`
+- `apps/mobile/src/app/(shared)/profile/delete.tsx`
 
 ## Audit Trail
 

@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **DisputeEvidenceResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
-- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
+- **EventHandler** (3 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
+- **EventHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
+- **.eventType()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
+- **.handle()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
+- `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
 
 ## Audit Trail
 

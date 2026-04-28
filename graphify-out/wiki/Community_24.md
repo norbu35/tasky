@@ -1,60 +1,48 @@
 # Community 24
 
-> 53 nodes
+> 52 nodes
 
 ## Key Concepts
 
-- **.incrementAndGet()** (14 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
-- **.verifyOtp()** (8 connections) — `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
-- **.requestOtp()** (7 connections) — `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
-- **OtpRateLimitService** (7 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- **.enforce()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- **AssertRefreshAllowed** (6 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.deleteExpired()** (5 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
-- **AssertRequestAllowed** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **OtpController** (4 connections) — `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
-- **RefreshSessionDao** (4 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
-- **OtpRateLimitServiceTest.java** (4 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **AssertVerifyAllowed** (4 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **OtpSentResponse** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
-- **.assertRefreshAllowed()** (3 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- **RateLimitCounterDao** (3 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
-- **RateLimitCleanupScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/RateLimitCleanupScheduler.java`
-- **SessionCleanupScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/SessionCleanupScheduler.java`
-- **.allowsWhenUnderLimit()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.allowsWhenUnderLimit()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.usesTokenIdAsKey()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.fallsBackToHashedTokenWhenParsingFails()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.throwsWhenRefreshLimitExceeded()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **.throwsWhenRefreshIpLimitExceeded()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **OtpPublicCompositionServiceTests.java** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
-- **AuthSessionResponse** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
-- _... and 28 more nodes in this community_
+- **JdbiConfig** (51 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **JdbiConfig.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.jdbi()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.userDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.profileDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.otpChallengeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.refreshSessionDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.rateLimitCounterDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.verificationDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.auditEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.strikeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.moderationPolicyDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.suspensionEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.reliabilityScoreDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.badgeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.categoryDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.categorySchemaVersionDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskDraftDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskPhotoDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskApplicationDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.taskRescueEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.bookingDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.bookingIntentDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- **.bookingCompletionSignalDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- _... and 27 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (10 shared connections)
-- [[Community 4]] (3 shared connections)
-- [[Community 1]] (3 shared connections)
-- [[Community 21]] (1 shared connections)
-- [[Community 23]] (1 shared connections)
-- [[Community 2]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
-- `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
-- `services/api/src/main/java/mn/tasky/auth/scheduling/RateLimitCleanupScheduler.java`
-- `services/api/src/main/java/mn/tasky/auth/scheduling/SessionCleanupScheduler.java`
-- `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
+- `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
 
 ## Audit Trail
 
-- EXTRACTED: 99 (64%)
-- INFERRED: 56 (36%)
+- EXTRACTED: 102 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

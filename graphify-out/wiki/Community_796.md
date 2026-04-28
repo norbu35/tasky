@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **UserProfilePage.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/UserProfilePage.java`
+- **UserProfile.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/UserProfile.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/dto/UserProfilePage.java`
+- `services/api/src/main/java/mn/tasky/auth/dto/UserProfile.java`
 
 ## Audit Trail
 

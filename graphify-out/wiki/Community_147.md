@@ -1,12 +1,13 @@
 # Community 147
 
-> 3 nodes
+> 4 nodes
 
 ## Key Concepts
 
-- **BookingDetailScreen.test.tsx** (2 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
-- **hasAncestorTestID()** (1 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
-- **makeBooking()** (1 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
+- **ProviderBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
+- **.providerPlaneMarkersExist()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
+- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
+- **ProviderBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
 
 ## Relationships
 
@@ -14,11 +15,11 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
+- `services/api/src/test/java/mn/tasky/architecture/ProviderBoundaryTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

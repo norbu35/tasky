@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **RoleProvider.tsx** (1 connections) — `apps/mobile/src/providers/RoleProvider.tsx`
-- **RoleProvider()** (1 connections) — `apps/mobile/src/providers/RoleProvider.tsx`
+- **sonner.tsx** (1 connections) — `apps/web/src/components/ui/sonner.tsx`
+- **useSystemTheme()** (1 connections) — `apps/web/src/components/ui/sonner.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/providers/RoleProvider.tsx`
+- `apps/web/src/components/ui/sonner.tsx`
 
 ## Audit Trail
 

@@ -1,32 +1,36 @@
 # Community 46
 
-> 10 nodes
+> 11 nodes
 
 ## Key Concepts
 
-- **BookingIntentCommandHandler** (11 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **BookingIntentCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.BookingIntentCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.confirmIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.declineIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.getIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.findPendingApplicationSelectionIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.expirePendingApplicationSelectionForTask()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.markIntentConfirmed()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- **.markIntentDeclined()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **TaskCard()** (4 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
+- **BookingsTabScreen.tsx** (3 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
+- **getTaskVisual()** (3 connections) — `apps/mobile/src/features/tasks/components/CustomerTasksView.ts`
+- **mapStatus()** (3 connections) — `apps/mobile/src/utils/statusMapping.ts`
+- **mapBookingStatus()** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
+- **TaskCard.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
+- **formatMoney()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
+- **getBookingCardTestID()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
+- **CustomerTasksView.ts** (1 connections) — `apps/mobile/src/features/tasks/components/CustomerTasksView.ts`
+- **SkeletonCard()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
+- **statusMapping.ts** (1 connections) — `apps/mobile/src/utils/statusMapping.ts`
 
 ## Relationships
 
-- [[Community 0]] (2 shared connections)
+- [[Community 1]] (2 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- `apps/mobile/src/features/bookings/screens/BookingsTabScreen.tsx`
+- `apps/mobile/src/features/tasks/components/CustomerTasksView.ts`
+- `apps/mobile/src/features/tasks/screens/CustomerTasks/TaskCard.tsx`
+- `apps/mobile/src/utils/statusMapping.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 20 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 14 (64%)
+- INFERRED: 8 (36%)
 - AMBIGUOUS: 0 (0%)
 
 ---

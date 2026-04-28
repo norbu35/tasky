@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **OutboxEventTypes** (2 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
-- **OutboxEventTypes.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
-- **.OutboxEventTypes()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
+- **accessibility.spec.ts** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
+- **summarizeViolations()** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
+- **scan()** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
 
 ## Relationships
 
@@ -14,11 +14,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventTypes.java`
+- `apps/web/e2e/accessibility.spec.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

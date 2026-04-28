@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useMyStats.ts** (1 connections) — `apps/mobile/src/features/profile/hooks/useMyStats.ts`
-- **useMyStats()** (1 connections) — `apps/mobile/src/features/profile/hooks/useMyStats.ts`
+- **ReviewForm.CommentField.tsx** (1 connections) — `apps/mobile/src/features/review/components/ReviewForm.CommentField.tsx`
+- **CommentField()** (1 connections) — `apps/mobile/src/features/review/components/ReviewForm.CommentField.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/hooks/useMyStats.ts`
+- `apps/mobile/src/features/review/components/ReviewForm.CommentField.tsx`
 
 ## Audit Trail
 

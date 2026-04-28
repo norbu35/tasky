@@ -1,12 +1,11 @@
 # Community 200
 
-> 3 nodes
+> 2 nodes
 
 ## Key Concepts
 
-- **schema-parity.test.mjs** (2 connections) — `tooling/tests/schema-parity.test.mjs`
-- **writeMigration()** (1 connections) — `tooling/tests/schema-parity.test.mjs`
-- **runPython()** (1 connections) — `tooling/tests/schema-parity.test.mjs`
+- **navigation-wiring.test.tsx** (1 connections) — `apps/mobile/__tests__/integration/navigation-wiring.test.tsx`
+- **render()** (1 connections) — `apps/mobile/__tests__/integration/navigation-wiring.test.tsx`
 
 ## Relationships
 
@@ -14,11 +13,11 @@
 
 ## Source Files
 
-- `tooling/tests/schema-parity.test.mjs`
+- `apps/mobile/__tests__/integration/navigation-wiring.test.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 2 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

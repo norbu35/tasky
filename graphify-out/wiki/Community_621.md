@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Header.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Header.tsx`
+- **index.ts** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskLocation/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Header.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskLocation/index.ts`
 
 ## Audit Trail
 

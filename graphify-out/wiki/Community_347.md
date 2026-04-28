@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **WorkerRuntimeConfiguration.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/worker/WorkerRuntimeConfiguration.java`
-- **WorkerRuntimeConfiguration** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/worker/WorkerRuntimeConfiguration.java`
+- **check_screen_graph.py** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
+- **main()** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/worker/WorkerRuntimeConfiguration.java`
+- `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
 
 ## Audit Trail
 

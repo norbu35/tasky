@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **StatCard.tsx** (1 connections) — `apps/mobile/src/components/ui/StatCard.tsx`
-- **StatCard()** (1 connections) — `apps/mobile/src/components/ui/StatCard.tsx`
+- **theme.ts** (1 connections) — `apps/mobile/src/design/theme.ts`
+- **withAlpha()** (1 connections) — `apps/mobile/src/design/theme.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/StatCard.tsx`
+- `apps/mobile/src/design/theme.ts`
 
 ## Audit Trail
 

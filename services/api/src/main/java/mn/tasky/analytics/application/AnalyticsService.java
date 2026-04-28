@@ -45,6 +45,7 @@ public class AnalyticsService {
     public static final String PROPERTY_LOCALE = "locale";
     public static final String PROPERTY_PLATFORM = "platform";
 
+    private static final int DEFAULT_EVENT_READ_LIMIT = 1000;
     private static final Logger log = LoggerFactory.getLogger(AnalyticsService.class);
     private final AnalyticsEventDao analyticsEventDao;
     private final ObjectMapper objectMapper;
@@ -109,7 +110,7 @@ public class AnalyticsService {
      * @return A list of {@link Event} objects.
      */
     public List<Event> getEvents() {
-        return analyticsEventDao.findAll();
+        return analyticsEventDao.findLatest(DEFAULT_EVENT_READ_LIMIT);
     }
 
     private String sanitizeForLog(Object value) {

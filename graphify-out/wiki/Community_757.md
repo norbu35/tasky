@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `packages/core/src/tasks/index.ts`
+- **motion.ts** (0 connections) — `packages/design-tokens/src/core/motion.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/core/src/tasks/index.ts`
+- `packages/design-tokens/src/core/motion.ts`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **RoleActivationResult.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/RoleActivationResult.java`
+- **VerificationSubmitResult.java** (0 connections) — `services/api/src/main/java/mn/tasky/auth/dto/VerificationSubmitResult.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/dto/RoleActivationResult.java`
+- `services/api/src/main/java/mn/tasky/auth/dto/VerificationSubmitResult.java`
 
 ## Audit Trail
 

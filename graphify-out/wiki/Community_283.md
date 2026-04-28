@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReviewReminder.tsx** (1 connections) — `apps/mobile/src/features/review/components/ReviewReminder.tsx`
-- **handleReviewNow()** (1 connections) — `apps/mobile/src/features/review/components/ReviewReminder.tsx`
+- **useTaskPhotoUpload.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useTaskPhotoUpload.ts`
+- **useTaskPhotoUpload()** (1 connections) — `apps/mobile/src/features/tasks/hooks/useTaskPhotoUpload.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/review/components/ReviewReminder.tsx`
+- `apps/mobile/src/features/tasks/hooks/useTaskPhotoUpload.ts`
 
 ## Audit Trail
 

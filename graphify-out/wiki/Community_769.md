@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **api-types.ts** (0 connections) — `packages/sdk/src/generated/api-types.ts`
+- **ConciergeAssignRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/admin/dto/ConciergeAssignRequest.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/sdk/src/generated/api-types.ts`
+- `services/api/src/main/java/mn/tasky/admin/dto/ConciergeAssignRequest.java`
 
 ## Audit Trail
 

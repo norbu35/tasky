@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskOutcomeClassificationTest** (2 connections) — `services/api/src/test/java/mn/tasky/task/dto/TaskOutcomeClassificationTest.java`
-- **TaskOutcomeClassificationTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/TaskOutcomeClassificationTest.java`
-- **.storesOutcomeBucketAndReportingEligibilityFlags()** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/TaskOutcomeClassificationTest.java`
+- **pay.tsx** (2 connections) — `archive/mobile-future/tasker/credits/pay.tsx`
+- **resolveState()** (2 connections) — `archive/mobile-future/tasker/credits/pay.tsx`
+- **TaskerCreditsPayScreen()** (2 connections) — `archive/mobile-future/tasker/credits/pay.tsx`
 
 ## Relationships
 
@@ -14,11 +14,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/task/dto/TaskOutcomeClassificationTest.java`
+- `archive/mobile-future/tasker/credits/pay.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

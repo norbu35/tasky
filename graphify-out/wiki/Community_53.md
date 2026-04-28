@@ -1,32 +1,31 @@
 # Community 53
 
-> 8 nodes
+> 9 nodes
 
 ## Key Concepts
 
-- **i18n.ts** (4 connections) — `apps/mobile/src/utils/i18n.ts`
-- **normalizeLanguage()** (4 connections) — `apps/web/src/lib/i18n.ts`
-- **changeLanguage()** (3 connections) — `apps/mobile/src/components/ui/LanguageSwitcher.tsx`
-- **getStoredLanguage()** (3 connections) — `apps/mobile/src/utils/i18n.ts`
-- **setStoredLanguage()** (3 connections) — `apps/mobile/src/utils/i18n.ts`
-- **initializeI18n()** (3 connections) — `apps/mobile/src/utils/i18n.ts`
-- **LanguageSwitcher.tsx** (1 connections) — `apps/mobile/src/components/ui/LanguageSwitcher.tsx`
-- **i18n.ts** (1 connections) — `apps/web/src/lib/i18n.ts`
+- **AudienceCompositionBoundaryTest** (8 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **.representativeControllersDelegateAudienceCompositionToRuntimeServices()** (5 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **.allControllersAreAccountedFor()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **.assertControllerDependsOn()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **.assertControllerDoesNotDependOn()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **.assertControllerOmitsMethods()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **AudienceCompositionBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **.exceptionControllerClasses()** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
+- **.runtimeAudienceCompositionPackagesAndServicesExist()** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 0]] (2 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/LanguageSwitcher.tsx`
-- `apps/mobile/src/utils/i18n.ts`
-- `apps/web/src/lib/i18n.ts`
+- `services/api/src/test/java/mn/tasky/architecture/AudienceCompositionBoundaryTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 18 (82%)
-- INFERRED: 4 (18%)
+- EXTRACTED: 22 (92%)
+- INFERRED: 2 (8%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **async-storage.ts** (0 connections) — `packages/test-utils/src/mocks/async-storage.ts`
+- **StrikePolicyResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/admin/dto/StrikePolicyResponse.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `packages/test-utils/src/mocks/async-storage.ts`
+- `services/api/src/main/java/mn/tasky/admin/dto/StrikePolicyResponse.java`
 
 ## Audit Trail
 

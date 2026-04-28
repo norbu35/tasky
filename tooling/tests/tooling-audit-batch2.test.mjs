@@ -195,6 +195,42 @@ print(json.dumps(module.is_versioned_path("services/api/src/main/resources/db/mi
   assert.equal(JSON.parse(output), true);
 });
 
+test('migration validation allows the baseline reset transition exactly once', () => {
+  const output = runPython(
+    'tooling/scripts/governance/validate-migrations.py',
+    `
+import importlib.util
+import json
+import sys
+from pathlib import Path
+
+module_path = Path(sys.argv[1])
+spec = importlib.util.spec_from_file_location("migration_validator", module_path)
+module = importlib.util.module_from_spec(spec)
+assert spec.loader is not None
+spec.loader.exec_module(module)
+
+historical_deletes = [f"D\\tservices/api/src/main/resources/db/migration/{name}" for name in sorted(module.BASELINE_RESET_OLD_MIGRATION_NAMES)]
+exact_diff = historical_deletes + ["A\\tservices/api/src/main/resources/db/migration/V1__baseline.sql"]
+mutated_baseline = ["M\\tservices/api/src/main/resources/db/migration/V1__baseline.sql"]
+status_lines = [f" D services/api/src/main/resources/db/migration/{name}" for name in sorted(module.BASELINE_RESET_OLD_MIGRATION_NAMES)]
+status_lines.append("?? services/api/src/main/resources/db/migration/V1__baseline.sql")
+
+print(json.dumps({
+    "exact_diff": module.baseline_reset_diff_is_exact(exact_diff),
+    "mutated_baseline": module.baseline_reset_diff_is_exact(mutated_baseline),
+    "exact_status": module.baseline_reset_status_is_exact(status_lines),
+}, sort_keys=True))
+`,
+  );
+
+  assert.deepEqual(JSON.parse(output), {
+    exact_diff: true,
+    exact_status: true,
+    mutated_baseline: false,
+  });
+});
+
 test('OpenAPI bundler fails unresolved external refs instead of preserving file-relative refs', () => {
   const source = readRepo('tooling/scripts/contracts/bundle-openapi.mjs');
 

@@ -4,26 +4,26 @@
 
 ## Key Concepts
 
-- **instant-match.tsx** (6 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
-- **coerceState()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
-- **coerceDeclineCount()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
-- **coerceString()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
-- **onBack()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
-- **onConfirmBooking()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
-- **onViewApplicants()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **AdminPayoutProcessingOutcome.java** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **invalidWeekday()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **featureDeferred()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
+- **badRequest()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminPayoutProcessingOutcome.java`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 12 (92%)
+- INFERRED: 1 (8%)
 - AMBIGUOUS: 0 (0%)
 
 ---

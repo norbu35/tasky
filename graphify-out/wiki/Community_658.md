@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **authStore.ts** (0 connections) — `apps/mobile/src/store/authStore.ts`
+- **vite.config.ts** (0 connections) — `apps/web/vite.config.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/store/authStore.ts`
+- `apps/web/vite.config.ts`
 
 ## Audit Trail
 

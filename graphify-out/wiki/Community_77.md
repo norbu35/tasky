@@ -4,24 +4,24 @@
 
 ## Key Concepts
 
-- **BookingOperationOutcome.java** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
-- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
-- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
-- **internalError()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
+- **WebSocketConfig** (5 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
+- **WebSocketConfig.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
+- **.WebSocketConfig()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
+- **.registerStompEndpoints()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
+- **.configureMessageBroker()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
+- **.configureWebSocketTransport()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingOperationOutcome.java`
+- `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
 
 ## Audit Trail
 
-- EXTRACTED: 11 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

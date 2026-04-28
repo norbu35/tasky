@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReviewForm.CommentField.tsx** (1 connections) — `apps/mobile/src/features/review/components/ReviewForm.CommentField.tsx`
-- **CommentField()** (1 connections) — `apps/mobile/src/features/review/components/ReviewForm.CommentField.tsx`
+- **NoApplicantRescue.tsx** (1 connections) — `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
+- **RescueButton()** (1 connections) — `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/review/components/ReviewForm.CommentField.tsx`
+- `apps/mobile/src/features/tasks/components/NoApplicantRescue.tsx`
 
 ## Audit Trail
 

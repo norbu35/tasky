@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **help.tsx** (0 connections) — `apps/mobile/src/app/(shared)/help.tsx`
+- **terms.tsx** (0 connections) — `apps/mobile/src/app/(shared)/legal/terms.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(shared)/help.tsx`
+- `apps/mobile/src/app/(shared)/legal/terms.tsx`
 
 ## Audit Trail
 

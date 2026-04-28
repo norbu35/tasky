@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **CustomerRebookPage.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerRebookPage.tsx`
-- **CustomerRebookPage()** (1 connections) — `apps/web/src/pages/customer/CustomerRebookPage.tsx`
+- **BannedPage.tsx** (1 connections) — `apps/web/src/pages/shared/BannedPage.tsx`
+- **BannedPage()** (1 connections) — `apps/web/src/pages/shared/BannedPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/customer/CustomerRebookPage.tsx`
+- `apps/web/src/pages/shared/BannedPage.tsx`
 
 ## Audit Trail
 

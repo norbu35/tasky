@@ -39,6 +39,9 @@ Current rule:
 
 - any non-launch toggle must stay `false`
 - toggle presence must not be used as evidence that the feature is ready
+- fresh databases may have no feature-toggle rows until operator setup creates them
+- when rows are absent, runtime defaults keep `data_retention_dry_run=true` and deferred feature toggles such as
+  `escrow_enabled=false`
 
 ## Future release-grade staging
 

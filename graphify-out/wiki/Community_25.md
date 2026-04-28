@@ -1,48 +1,58 @@
 # Community 25
 
-> 52 nodes
+> 51 nodes
 
 ## Key Concepts
 
-- **JdbiConfig** (51 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **JdbiConfig.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.jdbi()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.userDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.profileDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.otpChallengeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.refreshSessionDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.rateLimitCounterDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.verificationDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.auditEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.strikeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.moderationPolicyDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.suspensionEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.reliabilityScoreDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.badgeDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.categoryDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.categorySchemaVersionDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.taskDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.taskDraftDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.taskPhotoDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.taskApplicationDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.taskRescueEventDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.bookingDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.bookingIntentDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- **.bookingCompletionSignalDao()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
-- _... and 27 more nodes in this community_
+- **.doFilterInternal()** (22 connections) — `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
+- **Write** (10 connections) — `services/api/src/test/java/mn/tasky/common/security/JsonSecurityResponseWriterTest.java`
+- **RequestObservabilityFilterTest.java** (6 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **JwtAuthenticationFilter** (5 connections) — `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
+- **PlatformResolution** (5 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **TraceAndCorrelationIdResolution** (4 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **RestAccessDeniedHandler** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAccessDeniedHandler.java`
+- **RestAuthenticationEntryPoint** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAuthenticationEntryPoint.java`
+- **.commence()** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAuthenticationEntryPoint.java`
+- **RequestObservabilityFilterTest** (3 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **MdcPopulation** (3 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **LocaleResolution** (3 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **FilterChainProceeds** (3 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **RestAccessDeniedHandlerTest** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/RestAccessDeniedHandlerTest.java`
+- **.writesForbiddenResponse()** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/RestAccessDeniedHandlerTest.java`
+- **RestAuthenticationEntryPointTest** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/RestAuthenticationEntryPointTest.java`
+- **.writesUnauthorizedResponse()** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/RestAuthenticationEntryPointTest.java`
+- **.handle()** (2 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAccessDeniedHandler.java`
+- **.isAuthOrPublicPath()** (2 connections) — `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
+- **.setUp()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **.tearDown()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **.usesHeaderValuesWhenValid()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **.generatesUuidsWhenHeadersMissing()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **.generatesUuidsWhenHeadersContainInvalidChars()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **.setsMdcKeysDuringFilterExecution()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- _... and 26 more nodes in this community_
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 0]] (3 shared connections)
+- [[Community 5]] (3 shared connections)
+- [[Community 6]] (2 shared connections)
+- [[Community 1]] (1 shared connections)
+- [[Community 7]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/config/JdbiConfig.java`
+- `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
+- `services/api/src/main/java/mn/tasky/common/security/RestAccessDeniedHandler.java`
+- `services/api/src/main/java/mn/tasky/common/security/RestAuthenticationEntryPoint.java`
+- `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- `services/api/src/test/java/mn/tasky/common/security/JsonSecurityResponseWriterTest.java`
+- `services/api/src/test/java/mn/tasky/common/security/RestAccessDeniedHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/common/security/RestAuthenticationEntryPointTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 102 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 90 (65%)
+- INFERRED: 48 (35%)
 - AMBIGUOUS: 0 (0%)
 
 ---

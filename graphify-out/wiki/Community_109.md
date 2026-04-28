@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **States.tsx** (3 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/States.tsx`
-- **DecorativeScale()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/States.tsx`
-- **LoadingState()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/States.tsx`
-- **ErrorState()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/States.tsx`
+- **Card.tsx** (3 connections) — `apps/mobile/src/components/ui/Card.tsx`
+- **CardDescription()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
+- **CardContent()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
+- **CardFooter()** (1 connections) — `apps/mobile/src/components/ui/Card.tsx`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/disputes/screens/DisputeStatus/States.tsx`
+- `apps/mobile/src/components/ui/Card.tsx`
 
 ## Audit Trail
 

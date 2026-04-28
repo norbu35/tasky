@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **CategoryQueryHandler** (3 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
-- **CategoryQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
-- **.CategoryQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
-- **.getCategory()** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
+- **AnalyticsCommandHandler** (3 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- **AnalyticsCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- **.AnalyticsCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- **.track()** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
+- `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
 
 ## Audit Trail
 

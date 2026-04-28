@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **\_layout.tsx** (1 connections) — `apps/mobile/src/app/(tabs)/inbox/_layout.tsx`
-- **InboxLayout()** (1 connections) — `apps/mobile/src/app/(tabs)/inbox/_layout.tsx`
+- **submitted.tsx** (1 connections) — `apps/mobile/src/app/(tasker)/verification/submitted.tsx`
+- **SubmittedScreen()** (1 connections) — `apps/mobile/src/app/(tasker)/verification/submitted.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tabs)/inbox/_layout.tsx`
+- `apps/mobile/src/app/(tasker)/verification/submitted.tsx`
 
 ## Audit Trail
 

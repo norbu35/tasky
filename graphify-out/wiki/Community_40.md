@@ -4,32 +4,34 @@
 
 ## Key Concepts
 
-- **RuntimeSurfaceProperties** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **RuntimeSurfaceProperties.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **HttpSurface** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **Surface** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.getPublicApi()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.getAdminApi()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.getWorker()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.getScheduler()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.setEnabled()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.HttpSurface()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.getBasePath()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **.setBasePath()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
-- **BackgroundSurface** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **model.ts** (5 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
+- **BookingCard()** (4 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/BookingCard.tsx`
+- **model.ts** (4 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/model.ts`
+- **formatSchedule()** (3 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/model.ts`
+- **formatAnswerValue()** (3 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/model.ts`
+- **getBookingStatusLabel()** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
+- **getBookingStatusColors()** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
+- **BookingCard.tsx** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/BookingCard.tsx`
+- **prettifyKey()** (2 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/model.ts`
+- **isActiveStatus()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
+- **isCompletedStatus()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
+- **LoadingSkeletonCard()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/BookingCard.tsx`
+- **formatBudget()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/model.ts`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- [[Community 1]] (3 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- `apps/mobile/src/features/bookings/screens/BookingsList/BookingCard.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingsList/model.ts`
+- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/model.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 25 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 24 (77%)
+- INFERRED: 7 (23%)
 - AMBIGUOUS: 0 (0%)
 
 ---

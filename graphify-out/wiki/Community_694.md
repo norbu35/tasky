@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **LoadingCard.tsx** (0 connections) — `apps/web/src/layout/LoadingCard.tsx`
+- **index.ts** (0 connections) — `apps/web/src/layout/parity/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/LoadingCard.tsx`
+- `apps/web/src/layout/parity/index.ts`
 
 ## Audit Trail
 

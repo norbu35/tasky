@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **model.ts** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/model.ts`
+- **index.ts** (0 connections) — `apps/mobile/src/features/tasks/draft/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/CustomerTasks/model.ts`
+- `apps/mobile/src/features/tasks/draft/index.ts`
 
 ## Audit Trail
 

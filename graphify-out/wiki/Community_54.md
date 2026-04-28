@@ -4,14 +4,14 @@
 
 ## Key Concepts
 
-- **BookingQueryHandler** (7 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
-- **BookingQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
-- **.BookingQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
-- **.getBooking()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
-- **.listBookings()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
-- **.getTaskerMarkedDoneAt()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
-- **.listScheduleEvents()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
-- **.getScheduleEvent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- **useAuth.ts** (4 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **useAuth.test.tsx** (2 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- **DevLoginHarness()** (2 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- **useDevLogin()** (2 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **createWrapper()** (1 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- **prefetchPostAuthHome()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **useRequestOtp()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **useVerifyOtp()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
 
 ## Relationships
 
@@ -19,12 +19,13 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/application/query/BookingQueryHandler.java`
+- `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- `apps/mobile/src/features/auth/hooks/useAuth.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 12 (86%)
+- INFERRED: 2 (14%)
 - AMBIGUOUS: 0 (0%)
 
 ---

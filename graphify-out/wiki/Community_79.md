@@ -4,25 +4,25 @@
 
 ## Key Concepts
 
-- **DisputePublicCompositionService** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **.disputeSummary()** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **.disputeSummaryWithEvidence()** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **DisputePublicCompositionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **.DisputePublicCompositionService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **.evidenceResponse()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- **PaymentCommandHandler** (5 connections) — `services/api/src/main/java/mn/tasky/payment/application/command/PaymentCommandHandler.java`
+- **PaymentCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/payment/application/command/PaymentCommandHandler.java`
+- **.PaymentCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/application/command/PaymentCommandHandler.java`
+- **.initiatePayment()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/application/command/PaymentCommandHandler.java`
+- **.findPaymentIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/application/command/PaymentCommandHandler.java`
+- **.processCallback()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/application/command/PaymentCommandHandler.java`
 
 ## Relationships
 
-- [[Community 0]] (3 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- `services/api/src/main/java/mn/tasky/payment/application/command/PaymentCommandHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (93%)
-- INFERRED: 1 (7%)
+- EXTRACTED: 10 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

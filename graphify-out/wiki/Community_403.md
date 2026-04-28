@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **MyTasksListScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/MyTasksListScreen.test.tsx`
+- **CategorySelectionScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/CategorySelectionScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/MyTasksListScreen.test.tsx`
+- `apps/mobile/__tests__/screens/customer/CategorySelectionScreen.test.tsx`
 
 ## Audit Trail
 

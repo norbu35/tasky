@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TaskCategoryScreen.tsx** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
-- **getCategoryVisual()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
+- **TermsOfService.Content.tsx** (1 connections) — `apps/mobile/src/features/legal/screens/TermsOfService.Content.tsx`
+- **resolveState()** (1 connections) — `apps/mobile/src/features/legal/screens/TermsOfService.Content.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskCategoryScreen.tsx`
+- `apps/mobile/src/features/legal/screens/TermsOfService.Content.tsx`
 
 ## Audit Trail
 

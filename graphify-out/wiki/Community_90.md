@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **BookingSafetyPage.tsx** (4 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
-- **closeDialog()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
-- **invalidateBookings()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
-- **handleRebook()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
-- **openDialog()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
+- **TaskDetailScreen.tsx** (4 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
+- **getTaskCustomerId()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
+- **getTaskPhotoUrls()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
+- **hasPublicCustomer()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
+- **noop()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/BookingSafetyPage.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
 
 ## Audit Trail
 

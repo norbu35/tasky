@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **jest.setup.ts** (0 connections) — `apps/mobile/jest.setup.ts`
+- **nativeGoogleMapsConfig.test.ts** (0 connections) — `apps/mobile/__tests__/nativeGoogleMapsConfig.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/jest.setup.ts`
+- `apps/mobile/__tests__/nativeGoogleMapsConfig.test.ts`
 
 ## Audit Trail
 

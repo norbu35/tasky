@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **TaskApplicationAcceptanceOutcome.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
-- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
-- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
+- **LocationQueryHandler** (4 connections) — `services/api/src/main/java/mn/tasky/location/application/query/LocationQueryHandler.java`
+- **LocationQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/query/LocationQueryHandler.java`
+- **.LocationQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/query/LocationQueryHandler.java`
+- **.reverseGeocode()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/query/LocationQueryHandler.java`
+- **.isWithinServiceArea()** (1 connections) — `services/api/src/main/java/mn/tasky/location/application/query/LocationQueryHandler.java`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/TaskApplicationAcceptanceOutcome.java`
+- `services/api/src/main/java/mn/tasky/location/application/query/LocationQueryHandler.java`
 
 ## Audit Trail
 

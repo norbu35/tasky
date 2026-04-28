@@ -1,46 +1,33 @@
-# Staging Seed Data
+# Staging Data Setup
 
 ## Scope
 
-This document describes how to interpret the current private sandbox seed data.
-It is a browsing and contract-check fixture set, not a release-grade product dataset.
+Tasky no longer uses Flyway to seed private-sandbox data. The active database migration history is a schema-only
+`V1__baseline.sql`; fresh local, test, private-staging, and future production databases start empty.
 
 ## Active-use rule
 
 When checking docs against the active Phase 1 baseline:
 
 - treat launch categories, launch booking flow, verification, reviews, disputes, and admin moderation as authoritative
-- do not treat leftover future-phase seed rows as part of the product baseline
-- do not use seed breadth as justification for keeping deferred code or docs active
+- do not treat the presence or absence of local/private-sandbox rows as product scope evidence
+- keep future-phase rows, toggles, and sample data out of Flyway
 
-## What the seeds are good for
+## Launch Catalog Setup
 
-The current seed set is useful for:
+Launch category templates, intake schemas, district/reference rows, moderation policy rows, and feature-toggle rows are
+operator/admin setup data. They may be created through admin tooling, deploy-time runbooks, or controlled private notes,
+but they are not versioned migration seed data.
 
-- non-empty admin/read surfaces
-- pagination checks
-- API shape validation
-- verifying that launch-phase screens are not empty in sandbox
+Runtime-safe defaults when rows are absent:
 
-## What the seeds are not
+- `data_retention_dry_run` behaves as enabled
+- `escrow_enabled` behaves as disabled
+- moderation policy reads use the built-in default policy, and policy updates create the singleton row if needed
 
-The current seeds are not:
+## Sandbox Accounts
 
-- a release-grade staging rehearsal dataset
-- proof that a future-phase feature is part of launch scope
-- a replacement for smoke identities created through the sandbox auth path
+Customer and tasker smoke testing in the private sandbox depends on dev-auth-created identities. Admin testing still
+requires controlled promotion of a sandbox user to `ADMIN`.
 
-## Login reality
-
-Seeded rows are primarily fixtures.
-Customer and tasker smoke testing in the private sandbox still depends on dev-auth-created identities.
-Admin testing still requires controlled promotion of a sandbox user to `ADMIN`.
-
-## Operational use
-
-Use the sandbox in two layers:
-
-1. use seed rows for browsing, admin lists, and contract validation
-2. use sandbox-created identities for end-to-end task, booking, review, and dispute smoke
-
-Keep those layers separate.
+Keep sandbox identities and any sample-data import notes in secure operator notes, not in the repository.

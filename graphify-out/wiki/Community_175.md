@@ -4,21 +4,21 @@
 
 ## Key Concepts
 
-- **AdminTaskConciergeAssignmentService** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentService.java`
-- **AdminTaskConciergeAssignmentService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentService.java`
-- **.AdminTaskConciergeAssignmentService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentService.java`
+- **TaskyApplication** (2 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
+- **TaskyApplication.java** (1 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
+- **.main()** (1 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentService.java`
+- `services/api/src/main/java/mn/tasky/TaskyApplication.java`
 
 ## Audit Trail
 
-- EXTRACTED: 5 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **DisputeRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeRequest.java`
+- **LocationSearchResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/location/dto/LocationSearchResponse.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeRequest.java`
+- `services/api/src/main/java/mn/tasky/location/dto/LocationSearchResponse.java`
 
 ## Audit Trail
 

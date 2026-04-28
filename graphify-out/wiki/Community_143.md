@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **AutomationEventTypesTest** (3 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
-- **AutomationEventTypesTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
-- **.constantsHaveExpectedValues()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
-- **.privateConstructor()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- **DisputeEvidenceResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeEvidenceResult.java`
 
 ## Audit Trail
 

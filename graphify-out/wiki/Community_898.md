@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **base.d.ts** (0 connections) — `tooling/config/eslint/base.d.ts`
+- **escrow.tsx** (0 connections) — `archive/mobile-future/customer/bookings/[bookingId]/escrow.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/config/eslint/base.d.ts`
+- `archive/mobile-future/customer/bookings/[bookingId]/escrow.tsx`
 
 ## Audit Trail
 

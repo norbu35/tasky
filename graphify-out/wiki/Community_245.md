@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **Button.tsx** (1 connections) — `apps/mobile/src/components/ui/Button.tsx`
-- **getTextColor()** (1 connections) — `apps/mobile/src/components/ui/Button.tsx`
+- **VerifiedBadge.tsx** (1 connections) — `apps/mobile/src/components/ui/VerifiedBadge.tsx`
+- **VerifiedBadge()** (1 connections) — `apps/mobile/src/components/ui/VerifiedBadge.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/Button.tsx`
+- `apps/mobile/src/components/ui/VerifiedBadge.tsx`
 
 ## Audit Trail
 

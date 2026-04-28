@@ -4,21 +4,21 @@
 
 ## Key Concepts
 
-- **ReviewSubmissionService** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionService.java`
-- **ReviewSubmissionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionService.java`
-- **.ReviewSubmissionService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionService.java`
+- **IdempotencyOperations** (2 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyOperations.java`
+- **IdempotencyOperations.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyOperations.java`
+- **.IdempotencyOperations()** (1 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyOperations.java`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewSubmissionService.java`
+- `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyOperations.java`
 
 ## Audit Trail
 
-- EXTRACTED: 5 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

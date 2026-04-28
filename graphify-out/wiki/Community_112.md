@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **handleConfirmCancel()** (2 connections) — `apps/mobile/src/features/tasks/components/TaskCancelSheet.tsx`
-- **generateIdempotencyKey()** (2 connections) — `apps/mobile/src/utils/uuid.ts`
-- **TaskCancelSheet.tsx** (1 connections) — `apps/mobile/src/features/tasks/components/TaskCancelSheet.tsx`
-- **uuid.ts** (1 connections) — `apps/mobile/src/utils/uuid.ts`
+- **TaskerJobsScreen.tsx** (3 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **BookingCardHeader()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **BookingCardBody()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **getJobCardTestID()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
 
 ## Relationships
 
@@ -15,13 +15,12 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/components/TaskCancelSheet.tsx`
-- `apps/mobile/src/utils/uuid.ts`
+- `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (67%)
-- INFERRED: 2 (33%)
+- EXTRACTED: 6 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

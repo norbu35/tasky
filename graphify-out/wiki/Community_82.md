@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **PackageMarkerTest** (5 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
-- **PackageMarkerTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/scheduler/PackageMarkerTest.java`
-- **.packageMarkerMethodCanBeInvokedWithoutError()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
-- **.constructorIsPrivate()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
-- **PackageMarkerTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/worker/PackageMarkerTest.java`
-- **PackageMarkerTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
+- **PaymentInitiationOutcome.java** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **featureDeferred()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
 
 ## Relationships
 
@@ -17,9 +17,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/scheduler/PackageMarkerTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/worker/PackageMarkerTest.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
 
 ## Audit Trail
 

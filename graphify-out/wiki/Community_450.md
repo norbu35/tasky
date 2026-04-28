@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ConsentScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/verification/ConsentScreen.test.tsx`
+- **TaskDetail.ApplicationForm.test.tsx** (0 connections) — `apps/mobile/__tests__/features/tasks/screens/TaskDetail.ApplicationForm.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/tasker/verification/ConsentScreen.test.tsx`
+- `apps/mobile/__tests__/features/tasks/screens/TaskDetail.ApplicationForm.test.tsx`
 
 ## Audit Trail
 

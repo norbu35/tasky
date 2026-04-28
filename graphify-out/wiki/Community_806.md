@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **RescheduleRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RescheduleRequest.java`
+- **CategoryPage.java** (0 connections) — `services/api/src/main/java/mn/tasky/category/dto/CategoryPage.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/dto/RescheduleRequest.java`
+- `services/api/src/main/java/mn/tasky/category/dto/CategoryPage.java`
 
 ## Audit Trail
 

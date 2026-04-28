@@ -4,22 +4,22 @@
 
 ## Key Concepts
 
-- **DisputeRaiseOutcome.java** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputeRaiseOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputeRaiseOutcome.java`
-- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputeRaiseOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputeRaiseOutcome.java`
+- **BookingTransitionResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingTransitionResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingTransitionResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingTransitionResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingTransitionResult.java`
 
 ## Relationships
 
-- [[Community 0]] (2 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputeRaiseOutcome.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/BookingTransitionResult.java`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

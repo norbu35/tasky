@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class FeatureToggleService {
 
+    private static final Map<String, Boolean> DEFAULT_STATES = Map.of("data_retention_dry_run", true);
+
     private final FeatureToggleDao featureToggleDao;
     private final AuditEventDao auditEventDao;
     private final ObjectMapper objectMapper;
@@ -25,10 +27,14 @@ public class FeatureToggleService {
     }
 
     public boolean isEnabled(String featureName) {
+        return isEnabled(featureName, DEFAULT_STATES.getOrDefault(featureName, false));
+    }
+
+    public boolean isEnabled(String featureName, boolean defaultState) {
         return featureToggleDao
                 .findByName(featureName)
                 .map(FeatureToggle::isEnabled)
-                .orElse(false);
+                .orElse(defaultState);
     }
 
     public FeatureToggle update(String featureName, boolean enabled, String actorUserId) {

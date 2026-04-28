@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **babel.config.js** (0 connections) — `apps/mobile/babel.config.js`
+- **metro.config.js** (0 connections) — `apps/mobile/metro.config.js`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/babel.config.js`
+- `apps/mobile/metro.config.js`
 
 ## Audit Trail
 

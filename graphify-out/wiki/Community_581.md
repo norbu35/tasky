@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ActionToolbar.tsx** (0 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/ActionToolbar.tsx`
+- **InboxScreen.tsx** (0 connections) — `apps/mobile/src/features/chat/screens/InboxScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/BookingDetail/ActionToolbar.tsx`
+- `apps/mobile/src/features/chat/screens/InboxScreen.tsx`
 
 ## Audit Trail
 

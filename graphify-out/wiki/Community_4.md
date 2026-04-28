@@ -1,78 +1,78 @@
 # Community 4
 
-> 269 nodes
+> 272 nodes
 
 ## Key Concepts
 
-- **.userId()** (93 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
-- **.errorBody()** (43 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiResponseSupport.java`
-- **.resolveTraceId()** (28 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiResponseSupport.java`
-- **TaskController** (18 connections) — `services/api/src/main/java/mn/tasky/task/api/TaskController.java`
-- **.toOperationResponse()** (14 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingController.java`
-- **from()** (14 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskDraftResponse.java`
-- **BookingController** (13 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingController.java`
-- **.idempotencyInProgress()** (12 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiResponseSupport.java`
-- **.idempotencyReplayMissing()** (12 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiResponseSupport.java`
-- **badRequest()** (12 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletPayoutRequestOutcome.java`
-- **.bookingIntentResponse()** (11 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingIntentController.java`
-- **.raiseDispute()** (11 connections) — `services/api/src/main/java/mn/tasky/dispute/api/DisputeController.java`
-- **featureDeferred()** (11 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletPayoutRequestOutcome.java`
-- **.addDisputeEvidence()** (10 connections) — `services/api/src/main/java/mn/tasky/dispute/api/DisputeController.java`
-- **.requestPayout()** (10 connections) — `services/api/src/main/java/mn/tasky/wallet/api/WalletController.java`
-- **.getPrincipal()** (10 connections) — `services/api/src/main/java/mn/tasky/wallet/api/WalletController.java`
-- **.createBookingIntent()** (9 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingIntentController.java`
-- **.acceptApplication()** (9 connections) — `services/api/src/main/java/mn/tasky/task/api/TaskController.java`
-- **.getVerificationUploadUrl()** (9 connections) — `services/api/src/main/java/mn/tasky/verification/api/VerificationController.java`
-- **model.ts** (8 connections) — `apps/mobile/src/features/bookings/screens/BookingReschedule/model.ts`
-- **.processPayout()** (8 connections) — `services/api/src/main/java/mn/tasky/admin/api/AdminPayoutController.java`
-- **.conciergeAssign()** (8 connections) — `services/api/src/main/java/mn/tasky/admin/api/AdminTaskController.java`
-- **DisputeController** (8 connections) — `services/api/src/main/java/mn/tasky/dispute/api/DisputeController.java`
-- **MessagingController** (8 connections) — `services/api/src/main/java/mn/tasky/messaging/api/MessagingController.java`
-- **.sendMessage()** (8 connections) — `services/api/src/main/java/mn/tasky/messaging/api/MessagingController.java`
-- _... and 244 more nodes in this community_
+- **.required()** (156 connections) — `services/api/src/main/java/mn/tasky/common/persistence/UuidHelper.java`
+- **.optional()** (25 connections) — `services/api/src/main/java/mn/tasky/common/persistence/UuidHelper.java`
+- **BookingDao** (21 connections) — `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
+- **TaskApplicationDao** (18 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- **BookingService** (15 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingService.java`
+- **.confirmIntent()** (15 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
+- **.customerSilenceTriggersTimeoutAutoComplete()** (12 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
+- **BookingIntentService** (11 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
+- **.findByBookingId()** (11 connections) — `services/api/src/main/java/mn/tasky/booking/dao/BookingCompletionSignalDao.java`
+- **DisputeDao** (11 connections) — `services/api/src/main/java/mn/tasky/dispute/dao/DisputeDao.java`
+- **ConversationDao** (11 connections) — `services/api/src/main/java/mn/tasky/messaging/dao/ConversationDao.java`
+- **ReviewEnforcementCaseDao** (11 connections) — `services/api/src/main/java/mn/tasky/review/dao/ReviewEnforcementCaseDao.java`
+- **VerificationDao** (10 connections) — `services/api/src/main/java/mn/tasky/auth/dao/VerificationDao.java`
+- **.declineIntent()** (10 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
+- **.findByTaskerId()** (10 connections) — `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
+- **BookingIntentDao** (9 connections) — `services/api/src/main/java/mn/tasky/booking/dao/BookingIntentDao.java`
+- **CategorySchemaVersionDao** (9 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategorySchemaVersionDao.java`
+- **.expireStaleSelections()** (9 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskApplicationService.java`
+- **.findByTaskId()** (9 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- **.setUp()** (9 connections) — `services/api/src/test/java/mn/tasky/booking/BookingScenarioTests.java`
+- **.transition()** (8 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingService.java`
+- **.cancelBooking()** (8 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingService.java`
+- **BookingScheduleEventDao** (8 connections) — `services/api/src/main/java/mn/tasky/booking/dao/BookingScheduleEventDao.java`
+- **.findByRevieweeId()** (8 connections) — `services/api/src/main/java/mn/tasky/review/dao/ReviewDao.java`
+- **.markBookingDone_success()** (8 connections) — `services/api/src/test/java/mn/tasky/booking/application/BookingServiceTest.java`
+- _... and 247 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (147 shared connections)
-- [[Community 16]] (9 shared connections)
-- [[Community 1]] (9 shared connections)
-- [[Community 12]] (9 shared connections)
-- [[Community 6]] (8 shared connections)
-- [[Community 13]] (8 shared connections)
-- [[Community 3]] (7 shared connections)
-- [[Community 11]] (7 shared connections)
-- [[Community 18]] (5 shared connections)
+- [[Community 0]] (119 shared connections)
+- [[Community 1]] (56 shared connections)
+- [[Community 3]] (41 shared connections)
+- [[Community 2]] (9 shared connections)
+- [[Community 19]] (9 shared connections)
+- [[Community 15]] (7 shared connections)
+- [[Community 27]] (5 shared connections)
+- [[Community 7]] (5 shared connections)
 - [[Community 20]] (5 shared connections)
-- [[Community 8]] (5 shared connections)
-- [[Community 14]] (3 shared connections)
+- [[Community 6]] (4 shared connections)
+- [[Community 5]] (4 shared connections)
+- [[Community 9]] (2 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/SchedulePickerSheet.tsx`
-- `apps/mobile/src/features/bookings/screens/BookingReschedule/model.ts`
-- `services/api/src/main/java/mn/tasky/admin/api/AdminBookingController.java`
-- `services/api/src/main/java/mn/tasky/admin/api/AdminDisputeController.java`
-- `services/api/src/main/java/mn/tasky/admin/api/AdminFeatureToggleController.java`
-- `services/api/src/main/java/mn/tasky/admin/api/AdminModerationController.java`
-- `services/api/src/main/java/mn/tasky/admin/api/AdminPayoutController.java`
-- `services/api/src/main/java/mn/tasky/admin/api/AdminTaskController.java`
-- `services/api/src/main/java/mn/tasky/admin/api/AdminUserController.java`
-- `services/api/src/main/java/mn/tasky/admin/api/AdminVerificationController.java`
-- `services/api/src/main/java/mn/tasky/auth/api/AuthController.java`
+- `services/api/src/main/java/mn/tasky/analytics/dao/AnalyticsEventDao.java`
+- `services/api/src/main/java/mn/tasky/auth/application/UserProfileService.java`
 - `services/api/src/main/java/mn/tasky/auth/dao/ProfileDao.java`
-- `services/api/src/main/java/mn/tasky/booking/api/BookingController.java`
-- `services/api/src/main/java/mn/tasky/booking/api/BookingIntentController.java`
-- `services/api/src/main/java/mn/tasky/common/api/ApiResponseSupport.java`
-- `services/api/src/main/java/mn/tasky/common/config/ChannelInterceptorConfig.java`
-- `services/api/src/main/java/mn/tasky/common/security/LastActiveFilter.java`
-- `services/api/src/main/java/mn/tasky/common/security/RateLimitFilter.java`
-- `services/api/src/main/java/mn/tasky/common/security/StompRateLimitInterceptor.java`
-- `services/api/src/main/java/mn/tasky/dispute/api/DisputeController.java`
+- `services/api/src/main/java/mn/tasky/auth/dao/ReliabilityScoreDao.java`
+- `services/api/src/main/java/mn/tasky/auth/dao/StrikeDao.java`
+- `services/api/src/main/java/mn/tasky/auth/dao/SuspensionEventDao.java`
+- `services/api/src/main/java/mn/tasky/auth/dao/VerificationDao.java`
+- `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
+- `services/api/src/main/java/mn/tasky/booking/application/BookingService.java`
+- `services/api/src/main/java/mn/tasky/booking/application/BookingTimelineService.java`
+- `services/api/src/main/java/mn/tasky/booking/application/CompletionTimeoutService.java`
+- `services/api/src/main/java/mn/tasky/booking/application/NoShowService.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingCompletionSignalDao.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingIntentDao.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingReliabilityIncidentDao.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingScheduleEventDao.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingTimelineEventDao.java`
+- `services/api/src/main/java/mn/tasky/booking/scheduling/CompletionTimeoutScheduler.java`
+- `services/api/src/main/java/mn/tasky/booking/scheduling/NoShowReminderScheduler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 591 (51%)
-- INFERRED: 566 (49%)
+- EXTRACTED: 578 (52%)
+- INFERRED: 524 (48%)
 - AMBIGUOUS: 0 (0%)
 
 ---

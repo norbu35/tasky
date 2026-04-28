@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **auth-flow.test.tsx** (0 connections) — `apps/mobile/__tests__/integration/auth-flow.test.tsx`
+- **RoleSelectScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/auth/RoleSelectScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/integration/auth-flow.test.tsx`
+- `apps/mobile/__tests__/screens/auth/RoleSelectScreen.test.tsx`
 
 ## Audit Trail
 

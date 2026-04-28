@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CreateSchemaVersionRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/category/dto/CreateSchemaVersionRequest.java`
+- **PagedResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/api/PagedResponse.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/category/dto/CreateSchemaVersionRequest.java`
+- `services/api/src/main/java/mn/tasky/common/api/PagedResponse.java`
 
 ## Audit Trail
 

@@ -4,21 +4,21 @@
 
 ## Key Concepts
 
-- **OAuthProviderException** (3 connections) — `services/api/src/main/java/mn/tasky/auth/provider/OAuthProviderException.java`
-- **OAuthProviderException.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/provider/OAuthProviderException.java`
-- **.OAuthProviderException()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/provider/OAuthProviderException.java`
+- **TaskReviewSubmit.SummarySections.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
+- **SectionCard()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
+- **icon()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/provider/OAuthProviderException.java`
+- `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 5 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

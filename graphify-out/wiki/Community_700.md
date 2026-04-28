@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/web/src/layout/parity/index.ts`
+- **intakeSchema.test.ts** (0 connections) — `apps/web/src/lib/intakeSchema.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/parity/index.ts`
+- `apps/web/src/lib/intakeSchema.test.ts`
 
 ## Audit Trail
 

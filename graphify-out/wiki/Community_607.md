@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/features/tasks/index.ts`
+- **ApplicantsSelection.model.ts** (0 connections) — `apps/mobile/src/features/tasks/screens/ApplicantsSelection.model.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/index.ts`
+- `apps/mobile/src/features/tasks/screens/ApplicantsSelection.model.ts`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **stats.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/stats.tsx`
+- **rejected.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/verification/rejected.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tasker)/stats.tsx`
+- `apps/mobile/src/app/(tasker)/verification/rejected.tsx`
 
 ## Audit Trail
 

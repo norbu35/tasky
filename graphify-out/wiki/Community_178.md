@@ -4,21 +4,21 @@
 
 ## Key Concepts
 
-- **WalletPayoutRequestService** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletPayoutRequestService.java`
-- **WalletPayoutRequestService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletPayoutRequestService.java`
-- **.WalletPayoutRequestService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletPayoutRequestService.java`
+- **NoShowFlagResult.java** (2 connections) — `services/api/src/main/java/mn/tasky/booking/dto/NoShowFlagResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/NoShowFlagResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/NoShowFlagResult.java`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletPayoutRequestService.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/NoShowFlagResult.java`
 
 ## Audit Trail
 
-- EXTRACTED: 5 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

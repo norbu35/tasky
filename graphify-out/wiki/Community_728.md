@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PrivacyPage.tsx** (0 connections) — `apps/web/src/pages/shared/PrivacyPage.tsx`
+- **VerificationApprovedPage.tsx** (0 connections) — `apps/web/src/pages/tasker/VerificationApprovedPage.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/PrivacyPage.tsx`
+- `apps/web/src/pages/tasker/VerificationApprovedPage.tsx`
 
 ## Audit Trail
 

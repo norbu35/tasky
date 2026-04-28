@@ -85,7 +85,7 @@ class MessagingPublicCompositionServiceTests {
 
             assertThat(page.data()).hasSize(2);
             assertThat(page.hasMore()).isTrue();
-            assertThat(page.nextCursor()).isEqualTo(later.toString());
+            assertThat(page.nextCursor()).isEqualTo(later + "|c-2");
         }
 
         @Test
@@ -100,7 +100,7 @@ class MessagingPublicCompositionServiceTests {
 
             MessagingConversationPage page = service.listConversations("user-1", null, 2);
 
-            assertThat(page.nextCursor()).isEqualTo(createdAt2.toString());
+            assertThat(page.nextCursor()).isEqualTo(createdAt2 + "|c-2");
         }
 
         @Test

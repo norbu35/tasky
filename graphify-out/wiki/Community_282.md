@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ReviewHardLock.tsx** (1 connections) — `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
-- **handleSubmitReview()** (1 connections) — `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
+- **useCategories.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useCategories.ts`
+- **useCategories()** (1 connections) — `apps/mobile/src/features/tasks/hooks/useCategories.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
+- `apps/mobile/src/features/tasks/hooks/useCategories.ts`
 
 ## Audit Trail
 

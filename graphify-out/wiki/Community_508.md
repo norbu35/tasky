@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **success.tsx** (0 connections) — `apps/mobile/src/app/(customer)/tasks/new/success.tsx`
+- **session-expired.tsx** (0 connections) — `apps/mobile/src/app/(shared)/session-expired.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/tasks/new/success.tsx`
+- `apps/mobile/src/app/(shared)/session-expired.tsx`
 
 ## Audit Trail
 

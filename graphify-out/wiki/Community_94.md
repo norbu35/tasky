@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **ClientIpResolver** (4 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
-- **.resolve()** (2 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
-- **.fallback()** (2 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
-- **ClientIpResolver.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
-- **.ClientIpResolver()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
+- **BookingSafetyPage.tsx** (4 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
+- **closeDialog()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
+- **invalidateBookings()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
+- **handleRebook()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
+- **openDialog()** (1 connections) — `apps/web/src/pages/BookingSafetyPage.tsx`
 
 ## Relationships
 
@@ -16,11 +16,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/security/ClientIpResolver.java`
+- `apps/web/src/pages/BookingSafetyPage.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

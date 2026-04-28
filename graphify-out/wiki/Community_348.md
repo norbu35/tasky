@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **UpdateDraftRequest.java** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/UpdateDraftRequest.java`
-- **isLocationPairValid()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/UpdateDraftRequest.java`
+- **doc-claims-validator.test.mjs** (1 connections) — `tooling/tests/doc-claims-validator.test.mjs`
+- **runPython()** (1 connections) — `tooling/tests/doc-claims-validator.test.mjs`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/dto/UpdateDraftRequest.java`
+- `tooling/tests/doc-claims-validator.test.mjs`
 
 ## Audit Trail
 

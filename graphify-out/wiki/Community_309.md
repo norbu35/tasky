@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ResponsiveDetailShell.tsx** (1 connections) — `apps/web/src/layout/parity/ResponsiveDetailShell.tsx`
-- **backLabel()** (1 connections) — `apps/web/src/layout/parity/ResponsiveDetailShell.tsx`
+- **AdminVerificationsPage.test.tsx** (1 connections) — `apps/web/src/pages/admin/__tests__/AdminVerificationsPage.test.tsx`
+- **makeVerification()** (1 connections) — `apps/web/src/pages/admin/__tests__/AdminVerificationsPage.test.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/layout/parity/ResponsiveDetailShell.tsx`
+- `apps/web/src/pages/admin/__tests__/AdminVerificationsPage.test.tsx`
 
 ## Audit Trail
 

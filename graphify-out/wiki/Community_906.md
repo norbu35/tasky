@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **subscription.tsx** (0 connections) — `archive/mobile-future/tasker/subscription.tsx`
+- **Return the column name from a column definition, or _None_ for standalone ta** (0 connections) — `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `archive/mobile-future/tasker/subscription.tsx`
+- `tooling/scripts/governance/validate-schema-parity.py`
 
 ## Audit Trail
 

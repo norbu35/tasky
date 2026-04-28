@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ProfileAvatar.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/ProfileAvatar.test.tsx`
+- **mobileApiClientBoundary.test.ts** (0 connections) — `apps/mobile/__tests__/lib/mobileApiClientBoundary.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/ProfileAvatar.test.tsx`
+- `apps/mobile/__tests__/lib/mobileApiClientBoundary.test.ts`
 
 ## Audit Trail
 

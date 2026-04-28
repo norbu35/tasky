@@ -4,24 +4,24 @@
 
 ## Key Concepts
 
-- **TaskDetailScreen.tsx** (4 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
-- **getTaskCustomerId()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
-- **getTaskPhotoUrls()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
-- **hasPublicCustomer()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
-- **noop()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
+- **LoginForm.tsx** (4 connections) — `apps/mobile/src/features/auth/components/LoginForm.tsx`
+- **handleFacebookLogin()** (2 connections) — `apps/mobile/src/features/auth/components/LoginForm.tsx`
+- **handleRequest()** (1 connections) — `apps/mobile/src/features/auth/components/LoginForm.tsx`
+- **handleVerify()** (1 connections) — `apps/mobile/src/features/auth/components/LoginForm.tsx`
+- **handleDevLoginAs()** (1 connections) — `apps/mobile/src/features/auth/components/LoginForm.tsx`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
+- `apps/mobile/src/features/auth/components/LoginForm.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 8 (89%)
+- INFERRED: 1 (11%)
 - AMBIGUOUS: 0 (0%)
 
 ---

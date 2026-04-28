@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **auth.test.tsx** (0 connections) — `apps/web/tests/integration/auth.test.tsx`
+- **index.ts** (0 connections) — `packages/core/src/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/tests/integration/auth.test.tsx`
+- `packages/core/src/index.ts`
 
 ## Audit Trail
 

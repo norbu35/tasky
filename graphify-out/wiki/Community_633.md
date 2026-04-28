@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **States.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/States.tsx`
+- **PendingScreen.tsx** (0 connections) — `apps/mobile/src/features/verification/screens/PendingScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/CustomerTasks/States.tsx`
+- `apps/mobile/src/features/verification/screens/PendingScreen.tsx`
 
 ## Audit Trail
 

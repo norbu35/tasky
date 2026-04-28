@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **additions.ts** (4 connections) — `packages/design-tokens/src/core/additions.ts`
-- **toRgba()** (4 connections) — `packages/design-tokens/src/core/additions.ts`
-- **primaryOpacityScale()** (2 connections) — `packages/design-tokens/src/core/additions.ts`
-- **softOpacityScale()** (2 connections) — `packages/design-tokens/src/core/additions.ts`
-- **dangerOpacityScale()** (2 connections) — `packages/design-tokens/src/core/additions.ts`
+- **permissions.ts** (4 connections) — `apps/mobile/src/utils/permissions.ts`
+- **requestCameraPermission()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
+- **requestLocationPermission()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
+- **getCurrentLocation()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
+- **requestNotificationPermission()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
 
 ## Relationships
 
@@ -16,11 +16,11 @@
 
 ## Source Files
 
-- `packages/design-tokens/src/core/additions.ts`
+- `apps/mobile/src/utils/permissions.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

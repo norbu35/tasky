@@ -1,42 +1,40 @@
 # Community 37
 
-> 17 nodes
+> 15 nodes
 
 ## Key Concepts
 
-- **OutboxEventDao** (10 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **OutboxReplayController** (7 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **.getEvent()** (4 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **.replayEvent()** (4 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **.replayAllFailed()** (4 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **.listEvents()** (3 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **.findByStatus()** (3 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.countByStatus()** (3 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.resetForReplay()** (3 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.getSummary()** (2 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **OutboxReplayController.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **.OutboxReplayController()** (1 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- **OutboxEventDao.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.insert()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.markProcessed()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.findById()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.findByStatuses()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
+- **TaskSchedule.model.ts** (10 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **useTaskScheduleScreen()** (4 connections) — `apps/mobile/src/features/tasks/screens/useTaskScheduleScreen.ts`
+- **createScheduleDateOptions()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **parseDateParam()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **TaskScheduleScreen()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskScheduleScreen.tsx`
+- **createDefaultScheduleDate()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **createScheduleTimeOptions()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **formatDateValue()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **formatTimeValue()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **isSameScheduleDate()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **isSameScheduleTime()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **combineDateAndTime()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **toValidDate()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **TaskScheduleScreen.tsx** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskScheduleScreen.tsx`
+- **useTaskScheduleScreen.ts** (1 connections) — `apps/mobile/src/features/tasks/screens/useTaskScheduleScreen.ts`
 
 ## Relationships
 
-- [[Community 0]] (5 shared connections)
-- [[Community 3]] (2 shared connections)
-- [[Community 4]] (1 shared connections)
+- [[Community 6]] (1 shared connections)
+- [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
-- `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
+- `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- `apps/mobile/src/features/tasks/screens/TaskScheduleScreen.tsx`
+- `apps/mobile/src/features/tasks/screens/useTaskScheduleScreen.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 32 (64%)
-- INFERRED: 18 (36%)
+- EXTRACTED: 24 (80%)
+- INFERRED: 6 (20%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **BannedPage.tsx** (1 connections) — `apps/web/src/pages/shared/BannedPage.tsx`
-- **BannedPage()** (1 connections) — `apps/web/src/pages/shared/BannedPage.tsx`
+- **SuspendedPage.tsx** (1 connections) — `apps/web/src/pages/shared/SuspendedPage.tsx`
+- **SuspendedPage()** (1 connections) — `apps/web/src/pages/shared/SuspendedPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/BannedPage.tsx`
+- `apps/web/src/pages/shared/SuspendedPage.tsx`
 
 ## Audit Trail
 

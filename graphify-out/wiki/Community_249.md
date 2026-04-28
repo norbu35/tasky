@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **Touchable.tsx** (1 connections) — `apps/mobile/src/components/ui/Touchable.tsx`
-- **Touchable()** (1 connections) — `apps/mobile/src/components/ui/Touchable.tsx`
+- **AccountStatusScreen.tsx** (1 connections) — `apps/mobile/src/features/auth/components/AccountStatusScreen.tsx`
+- **formatDate()** (1 connections) — `apps/mobile/src/features/auth/components/AccountStatusScreen.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/Touchable.tsx`
+- `apps/mobile/src/features/auth/components/AccountStatusScreen.tsx`
 
 ## Audit Trail
 

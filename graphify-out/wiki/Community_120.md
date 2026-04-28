@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **DataRetentionScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
-- **DataRetentionScheduler.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
-- **.DataRetentionScheduler()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
-- **.processRetention()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
+- **handleConfirmCancel()** (2 connections) — `apps/mobile/src/features/tasks/components/TaskCancelSheet.tsx`
+- **generateIdempotencyKey()** (2 connections) — `apps/mobile/src/utils/uuid.ts`
+- **TaskCancelSheet.tsx** (1 connections) — `apps/mobile/src/features/tasks/components/TaskCancelSheet.tsx`
+- **uuid.ts** (1 connections) — `apps/mobile/src/utils/uuid.ts`
 
 ## Relationships
 
@@ -15,12 +15,13 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
+- `apps/mobile/src/features/tasks/components/TaskCancelSheet.tsx`
+- `apps/mobile/src/utils/uuid.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 4 (67%)
+- INFERRED: 2 (33%)
 - AMBIGUOUS: 0 (0%)
 
 ---

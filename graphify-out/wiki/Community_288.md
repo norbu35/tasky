@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useCategories.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useCategories.ts`
-- **useCategories()** (1 connections) — `apps/mobile/src/features/tasks/hooks/useCategories.ts`
+- **VerificationGate.tsx** (1 connections) — `apps/mobile/src/features/verification/components/VerificationGate.tsx`
+- **VerificationGate()** (1 connections) — `apps/mobile/src/features/verification/components/VerificationGate.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/hooks/useCategories.ts`
+- `apps/mobile/src/features/verification/components/VerificationGate.tsx`
 
 ## Audit Trail
 

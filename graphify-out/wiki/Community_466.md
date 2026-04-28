@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **BookingSupportSheet.test.tsx** (0 connections) — `apps/mobile/__tests__/features/bookings/components/BookingSupportSheet.test.tsx`
+- **NetworkErrorScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/features/infra/screens/NetworkErrorScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/bookings/components/BookingSupportSheet.test.tsx`
+- `apps/mobile/__tests__/features/infra/screens/NetworkErrorScreen.test.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ErrorResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/api/ErrorResponse.java`
+- **IdempotencyRecord.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyRecord.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/api/ErrorResponse.java`
+- `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyRecord.java`
 
 ## Audit Trail
 

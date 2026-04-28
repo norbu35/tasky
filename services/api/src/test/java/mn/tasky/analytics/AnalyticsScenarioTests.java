@@ -376,11 +376,11 @@ class AnalyticsScenarioTests {
     // ── Branch coverage: getEvents() delegation ─────────────────────────────
 
     @Test
-    @DisplayName("SCN-ANALYTICS-001 branch: getEvents() delegates to DAO and returns all events")
+    @DisplayName("SCN-ANALYTICS-001 branch: getEvents() delegates to bounded DAO read")
     void getEventsDelegatesToDao() {
         Event event1 = new Event("id-1", "TASK_POSTED", "user-1", Map.of(), Instant.now());
         Event event2 = new Event("id-2", "BOOKING_COMPLETED", "user-2", Map.of(), Instant.now());
-        when(analyticsEventDao.findAll()).thenReturn(List.of(event1, event2));
+        when(analyticsEventDao.findLatest(1000)).thenReturn(List.of(event1, event2));
 
         List<Event> result = analyticsService.getEvents();
 

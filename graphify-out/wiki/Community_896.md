@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **react.d.ts** (0 connections) — `tooling/config/eslint/react.d.ts`
+- **base.d.ts** (0 connections) — `tooling/config/vitest/base.d.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/config/eslint/react.d.ts`
+- `tooling/config/vitest/base.d.ts`
 
 ## Audit Trail
 

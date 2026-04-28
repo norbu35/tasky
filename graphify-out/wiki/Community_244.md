@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ActionRow.tsx** (1 connections) — `apps/mobile/src/components/ui/ActionRow.tsx`
-- **ActionRow()** (1 connections) — `apps/mobile/src/components/ui/ActionRow.tsx`
+- **TrustBanner.tsx** (1 connections) — `apps/mobile/src/components/ui/TrustBanner.tsx`
+- **TrustBanner()** (1 connections) — `apps/mobile/src/components/ui/TrustBanner.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/ActionRow.tsx`
+- `apps/mobile/src/components/ui/TrustBanner.tsx`
 
 ## Audit Trail
 

@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **VerificationSubmissionOutcome.java** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationSubmissionOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationSubmissionOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationSubmissionOutcome.java`
+- **AutomationEventTypes** (2 connections) — `services/api/src/main/java/mn/tasky/automation/event/AutomationEventTypes.java`
+- **AutomationEventTypes.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/event/AutomationEventTypes.java`
+- **.AutomationEventTypes()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/event/AutomationEventTypes.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationSubmissionOutcome.java`
+- `services/api/src/main/java/mn/tasky/automation/event/AutomationEventTypes.java`
 
 ## Audit Trail
 

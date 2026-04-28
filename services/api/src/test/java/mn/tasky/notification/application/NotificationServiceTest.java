@@ -438,7 +438,7 @@ class NotificationServiceTest {
     void getLogs_delegatesToDao() {
         List<NotificationLog> expected =
                 List.of(new NotificationLog("l1", "u1", "TYPE", "PUSH", "SENT", "ev1", "msg1", null, now));
-        when(notificationLogDao.findAll()).thenReturn(expected);
+        when(notificationLogDao.findLatest(1000)).thenReturn(expected);
 
         List<NotificationLog> result = service.getLogs();
 
@@ -447,7 +447,7 @@ class NotificationServiceTest {
 
     @Test
     void getLogs_returnsEmpty_whenNoLogs() {
-        when(notificationLogDao.findAll()).thenReturn(Collections.emptyList());
+        when(notificationLogDao.findLatest(1000)).thenReturn(Collections.emptyList());
 
         assertThat(service.getLogs()).isEmpty();
     }

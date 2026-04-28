@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **StatusBadge.tsx** (1 connections) — `apps/mobile/src/components/ui/StatusBadge.tsx`
-- **StatusBadge()** (1 connections) — `apps/mobile/src/components/ui/StatusBadge.tsx`
+- **StatCard.tsx** (1 connections) — `apps/mobile/src/components/ui/StatCard.tsx`
+- **StatCard()** (1 connections) — `apps/mobile/src/components/ui/StatCard.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/StatusBadge.tsx`
+- `apps/mobile/src/components/ui/StatCard.tsx`
 
 ## Audit Trail
 

@@ -1,43 +1,38 @@
 # Community 35
 
-> 21 nodes
+> 17 nodes
 
 ## Key Concepts
 
-- **.existsByActionAndResourceId()** (7 connections) — `services/api/src/main/java/mn/tasky/common/audit/AuditEventDao.java`
-- **AuditEventDaoTest** (5 connections) — `services/api/src/test/java/mn/tasky/common/audit/AuditEventDaoTest.java`
-- **AdminAuditQueryHandler** (3 connections) — `services/api/src/main/java/mn/tasky/admin/application/query/AdminAuditQueryHandler.java`
-- **.hasActionForResource()** (3 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditQueryPort.java`
-- **AuditEventDao** (3 connections) — `services/api/src/main/java/mn/tasky/common/audit/AuditEventDao.java`
-- **AdminAuditQueryHandlerTest** (3 connections) — `services/api/src/test/java/mn/tasky/admin/application/query/AdminAuditQueryHandlerTest.java`
-- **.hasActionForResourceReturnsTrueWhenExists()** (3 connections) — `services/api/src/test/java/mn/tasky/admin/application/query/AdminAuditQueryHandlerTest.java`
-- **.hasActionForResourceReturnsFalseWhenNotExists()** (3 connections) — `services/api/src/test/java/mn/tasky/admin/application/query/AdminAuditQueryHandlerTest.java`
-- **.hasActionForResource()** (2 connections) — `services/api/src/main/java/mn/tasky/admin/application/query/AdminAuditQueryHandler.java`
-- **AdminAuditQueryPort** (2 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditQueryPort.java`
-- **.insert()** (2 connections) — `services/api/src/main/java/mn/tasky/common/audit/AuditEventDao.java`
-- **.insertStringDelegatesToUuidOverload()** (2 connections) — `services/api/src/test/java/mn/tasky/common/audit/AuditEventDaoTest.java`
-- **.insertHandlesNullIds()** (2 connections) — `services/api/src/test/java/mn/tasky/common/audit/AuditEventDaoTest.java`
-- **.existsByActionAndResourceIdDelegatesToUuidOverload()** (2 connections) — `services/api/src/test/java/mn/tasky/common/audit/AuditEventDaoTest.java`
-- **.existsByActionAndResourceIdHandlesNullResourceId()** (2 connections) — `services/api/src/test/java/mn/tasky/common/audit/AuditEventDaoTest.java`
-- **AdminAuditQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/application/query/AdminAuditQueryHandler.java`
-- **.AdminAuditQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/admin/application/query/AdminAuditQueryHandler.java`
-- **AdminAuditQueryPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditQueryPort.java`
-- **AuditEventDao.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/audit/AuditEventDao.java`
-- **AuditEventDaoTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/audit/AuditEventDaoTest.java`
-- **AdminAuditQueryHandlerTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/admin/application/query/AdminAuditQueryHandlerTest.java`
+- **OutboxEventDao** (10 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
+- **OutboxReplayController** (7 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
+- **.getEvent()** (4 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
+- **.replayEvent()** (4 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
+- **.replayAllFailed()** (4 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
+- **.listEvents()** (3 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
+- **.findByStatus()** (3 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
+- **.countByStatus()** (3 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
+- **.resetForReplay()** (3 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
+- **.getSummary()** (2 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
+- **OutboxReplayController.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
+- **.OutboxReplayController()** (1 connections) — `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
+- **OutboxEventDao.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
+- **.insert()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
+- **.markProcessed()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
+- **.findById()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
+- **.findByStatuses()** (1 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
 
 ## Relationships
 
-- [[Community 2]] (2 shared connections)
+- [[Community 0]] (3 shared connections)
+- [[Community 1]] (2 shared connections)
 - [[Community 5]] (2 shared connections)
+- [[Community 6]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/application/query/AdminAuditQueryHandler.java`
-- `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditQueryPort.java`
-- `services/api/src/main/java/mn/tasky/common/audit/AuditEventDao.java`
-- `services/api/src/test/java/mn/tasky/admin/application/query/AdminAuditQueryHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/common/audit/AuditEventDaoTest.java`
+- `services/api/src/main/java/mn/tasky/admin/api/OutboxReplayController.java`
+- `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
 
 ## Audit Trail
 

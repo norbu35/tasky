@@ -4,23 +4,23 @@
 
 ## Key Concepts
 
-- **AnalyticsCommandHandler** (3 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
-- **AnalyticsCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
-- **.AnalyticsCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
-- **.track()** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- **NotificationList.model.ts** (3 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
+- **formatRelativeTimestamp()** (2 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
+- **isSameDay()** (1 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
+- **buildRows()** (1 connections) — `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/analytics/application/command/AnalyticsCommandHandler.java`
+- `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 6 (86%)
+- INFERRED: 1 (14%)
 - AMBIGUOUS: 0 (0%)
 
 ---

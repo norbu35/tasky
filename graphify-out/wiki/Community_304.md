@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **FilterChip.tsx** (1 connections) — `apps/web/src/components/feature/FilterChip.tsx`
-- **FilterChip()** (1 connections) — `apps/web/src/components/feature/FilterChip.tsx`
+- **StatePanel.tsx** (1 connections) — `apps/web/src/layout/parity/StatePanel.tsx`
+- **StatePanel()** (1 connections) — `apps/web/src/layout/parity/StatePanel.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/web/src/components/feature/FilterChip.tsx`
+- `apps/web/src/layout/parity/StatePanel.tsx`
 
 ## Audit Trail
 

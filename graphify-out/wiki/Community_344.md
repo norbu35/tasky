@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **AdminApiRuntimeConfiguration.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/AdminApiRuntimeConfiguration.java`
-- **AdminApiRuntimeConfiguration** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/AdminApiRuntimeConfiguration.java`
+- **BackendArchitectureTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
+- **BackendArchitectureTest** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/AdminApiRuntimeConfiguration.java`
+- `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
 
 ## Audit Trail
 

@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **IntegrationTestBase** (3 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **IntegrationTestBase.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.registerDataSourceProperties()** (1 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.cleanTestState()** (1 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **DisputeResolutionResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- `services/api/src/main/java/mn/tasky/dispute/dto/DisputeResolutionResult.java`
 
 ## Audit Trail
 

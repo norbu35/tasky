@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ApplicantsSection.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/ApplicantsSection.tsx`
+- **BudgetCard.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/BudgetCard.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/ApplicantsSection.tsx`
+- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/BudgetCard.tsx`
 
 ## Audit Trail
 

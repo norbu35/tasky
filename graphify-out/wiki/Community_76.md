@@ -4,25 +4,25 @@
 
 ## Key Concepts
 
-- **AdminBookingOverrideOutcome.java** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
-- **invalidTransition()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
-- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
-- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
-- **notFound()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
+- **MainActivity** (5 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **MainActivity.kt** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **.onCreate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **.getMainComponentName()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **.createReactActivityDelegate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **.invokeDefaultOnBackPressed()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingOverrideOutcome.java`
+- `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (91%)
-- INFERRED: 1 (9%)
+- EXTRACTED: 10 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

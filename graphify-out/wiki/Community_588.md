@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Screen.tsx** (0 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/Screen.tsx`
+- **index.ts** (0 connections) — `apps/mobile/src/features/disputes/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/chat/screens/ChatConversation/Screen.tsx`
+- `apps/mobile/src/features/disputes/index.ts`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ActivateSchemaVersionRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/category/dto/ActivateSchemaVersionRequest.java`
+- **IdempotencyClaim.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyClaim.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/category/dto/ActivateSchemaVersionRequest.java`
+- `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyClaim.java`
 
 ## Audit Trail
 

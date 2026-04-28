@@ -33,6 +33,9 @@ For the current baseline:
 This catalog records the known DB-backed feature switches that may appear in admin tooling. The source of truth for
 phase ownership is `docs/ROLLOUT_PHASES.md`; this table records activation posture.
 
+Fresh databases start without Flyway-seeded toggle rows. Absence must resolve to the required default below until an
+operator/admin setup step creates an audited row.
+
 | Toggle                     | Feature family                    | Target phase     | Required default before activation                       |
 | -------------------------- | --------------------------------- | ---------------- | -------------------------------------------------------- |
 | `lead_fee_enabled`         | Lead credits / paid lead unlock   | Phase 2 optional | `false`                                                  |

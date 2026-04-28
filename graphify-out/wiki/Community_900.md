@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.d.ts** (0 connections) — `tooling/config/prettier/index.d.ts`
+- **subscription.tsx** (0 connections) — `archive/mobile-future/tasker/subscription.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `tooling/config/prettier/index.d.ts`
+- `archive/mobile-future/tasker/subscription.tsx`
 
 ## Audit Trail
 

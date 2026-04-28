@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **jest.config.js** (0 connections) — `apps/mobile/jest.config.js`
+- **SuccessCelebrationTemplate.test.tsx** (0 connections) — `apps/mobile/__tests__/components/templates/SuccessCelebrationTemplate.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/jest.config.js`
+- `apps/mobile/__tests__/components/templates/SuccessCelebrationTemplate.test.tsx`
 
 ## Audit Trail
 

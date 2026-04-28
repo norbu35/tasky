@@ -4,23 +4,24 @@
 
 ## Key Concepts
 
-- **EventHandler** (3 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
-- **EventHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
-- **.eventType()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
-- **.handle()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
+- **TaskPhotosScreen.tsx** (3 connections) — `apps/mobile/src/features/tasks/screens/TaskPhotosScreen.tsx`
+- **handleAddPhoto()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskPhotosScreen.tsx`
+- **handleNext()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskPhotosScreen.tsx`
+- **handleRemovePhoto()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskPhotosScreen.tsx`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 1]] (1 shared connections)
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
+- `apps/mobile/src/features/tasks/screens/TaskPhotosScreen.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 6 (75%)
+- INFERRED: 2 (25%)
 - AMBIGUOUS: 0 (0%)
 
 ---

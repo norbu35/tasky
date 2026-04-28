@@ -1,12 +1,13 @@
 # Community 152
 
-> 3 nodes
+> 4 nodes
 
 ## Key Concepts
 
-- **TaskerJobDetail.Sections.tsx** (2 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
-- **DetailSection()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
-- **DetailRow()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
+- **AutomationEventTypesTest** (3 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- **AutomationEventTypesTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- **.constantsHaveExpectedValues()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- **.privateConstructor()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
 
 ## Relationships
 
@@ -14,11 +15,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/screens/TaskerJobDetail.Sections.tsx`
+- `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

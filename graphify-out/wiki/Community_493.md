@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **reschedule.tsx** (0 connections) — `apps/mobile/src/app/(customer)/bookings/[bookingId]/reschedule.tsx`
+- **index.tsx** (0 connections) — `apps/mobile/src/app/(customer)/tasks/[taskId]/index.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/bookings/[bookingId]/reschedule.tsx`
+- `apps/mobile/src/app/(customer)/tasks/[taskId]/index.tsx`
 
 ## Audit Trail
 

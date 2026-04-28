@@ -1,16 +1,17 @@
 # Community 61
 
-> 7 nodes
+> 8 nodes
 
 ## Key Concepts
 
-- **PushNotificationProvider** (6 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **PushNotificationProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.sendPush()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.subscribeToTopics()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.sendToTopic()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
-- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
+- **triage_doc_claims.py** (7 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **main()** (5 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **grouped_summary()** (4 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **parse_args()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **classify()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **recommended_action()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **run_validator()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
+- **print_text()** (2 connections) — `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
 
 ## Relationships
 
@@ -18,11 +19,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/notification/provider/PushNotificationProvider.java`
+- `tooling/skills/doc-claims-remediation/scripts/triage_doc_claims.py`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (100%)
+- EXTRACTED: 26 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

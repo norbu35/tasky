@@ -4,21 +4,21 @@
 
 ## Key Concepts
 
-- **RepeatBookingService** (3 connections) — `services/api/src/main/java/mn/tasky/booking/application/RepeatBookingService.java`
-- **RepeatBookingService.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/RepeatBookingService.java`
-- **.RepeatBookingService()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/RepeatBookingService.java`
+- **Screen.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
+- **DetailRow()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
+- **StatusBanner()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
 
 ## Relationships
 
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/application/RepeatBookingService.java`
+- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 5 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

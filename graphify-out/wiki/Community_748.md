@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **analytics.test.tsx** (0 connections) — `apps/web/tests/integration/analytics.test.tsx`
+- **eslint.config.mjs** (0 connections) — `packages/core/eslint.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/web/tests/integration/analytics.test.tsx`
+- `packages/core/eslint.config.mjs`
 
 ## Audit Trail
 

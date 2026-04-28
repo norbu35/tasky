@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **WebSocketConfig** (5 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
-- **WebSocketConfig.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
-- **.WebSocketConfig()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
-- **.registerStompEndpoints()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
-- **.configureMessageBroker()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
-- **.configureWebSocketTransport()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
+- **fixtures.ts** (5 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **resetStores()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **setAuthenticated()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **setFirstTimeUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **setBannedUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **setSuspendedUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
+- `apps/mobile/__tests__/integration/fixtures.ts`
 
 ## Audit Trail
 

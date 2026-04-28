@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **AdminMessageController** (3 connections) — `services/api/src/main/java/mn/tasky/admin/api/AdminMessageController.java`
-- **AdminMessageController.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/api/AdminMessageController.java`
-- **.AdminMessageController()** (1 connections) — `services/api/src/main/java/mn/tasky/admin/api/AdminMessageController.java`
-- **.listFlagged()** (1 connections) — `services/api/src/main/java/mn/tasky/admin/api/AdminMessageController.java`
+- **States.tsx** (3 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/States.tsx`
+- **DecorativeScale()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/States.tsx`
+- **LoadingState()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/States.tsx`
+- **ErrorState()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/States.tsx`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/api/AdminMessageController.java`
+- `apps/mobile/src/features/disputes/screens/DisputeStatus/States.tsx`
 
 ## Audit Trail
 

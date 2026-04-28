@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **Timeline.tsx** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/Timeline.tsx`
-- **cn()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/Timeline.tsx`
+- **TaskerProfile.ReviewsSection.tsx** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
+- **cn()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/disputes/screens/DisputeStatus/Timeline.tsx`
+- `apps/mobile/src/features/profile/screens/TaskerProfile.ReviewsSection.tsx`
 
 ## Audit Trail
 

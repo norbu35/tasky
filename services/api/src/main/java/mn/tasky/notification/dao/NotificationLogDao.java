@@ -54,6 +54,6 @@ public interface NotificationLogDao {
     @SqlQuery("SELECT EXISTS(SELECT 1 FROM notification_log WHERE event_key = :eventKey)")
     boolean existsByEventKey(@Bind("eventKey") String eventKey);
 
-    @SqlQuery("SELECT * FROM notification_log ORDER BY created_at DESC")
-    List<NotificationLog> findAll();
+    @SqlQuery("SELECT * FROM notification_log ORDER BY created_at DESC, id DESC LIMIT :limit")
+    List<NotificationLog> findLatest(@Bind("limit") int limit);
 }

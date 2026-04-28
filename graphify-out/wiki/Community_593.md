@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **LowBalanceAlert.tsx** (0 connections) — `apps/mobile/src/features/credits/components/LowBalanceAlert.tsx`
+- **index.ts** (0 connections) — `apps/mobile/src/features/notifications/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/credits/components/LowBalanceAlert.tsx`
+- `apps/mobile/src/features/notifications/index.ts`
 
 ## Audit Trail
 

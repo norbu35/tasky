@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ConfirmBookingIntentRequest.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/ConfirmBookingIntentRequest.java`
-- **isLiabilityDisclaimerAccepted()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/ConfirmBookingIntentRequest.java`
+- **AdminApiRuntimeConfiguration.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/AdminApiRuntimeConfiguration.java`
+- **AdminApiRuntimeConfiguration** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/AdminApiRuntimeConfiguration.java`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/dto/ConfirmBookingIntentRequest.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/AdminApiRuntimeConfiguration.java`
 
 ## Audit Trail
 

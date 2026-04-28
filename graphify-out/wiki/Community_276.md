@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **ProfileDeleteScreen.tsx** (1 connections) — `apps/mobile/src/features/profile/screens/ProfileDeleteScreen.tsx`
-- **handleDelete()** (1 connections) — `apps/mobile/src/features/profile/screens/ProfileDeleteScreen.tsx`
+- **ReviewHardLock.tsx** (1 connections) — `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
+- **handleSubmitReview()** (1 connections) — `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/screens/ProfileDeleteScreen.tsx`
+- `apps/mobile/src/features/review/components/ReviewHardLock.tsx`
 
 ## Audit Trail
 

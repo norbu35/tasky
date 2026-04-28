@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerJobDetail.Actions.test.tsx** (0 connections) — `apps/mobile/__tests__/features/bookings/screens/TaskerJobDetail.Actions.test.tsx`
+- **model.test.ts** (0 connections) — `apps/mobile/__tests__/features/profile/model.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/bookings/screens/TaskerJobDetail.Actions.test.tsx`
+- `apps/mobile/__tests__/features/profile/model.test.ts`
 
 ## Audit Trail
 

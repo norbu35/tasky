@@ -1,63 +1,61 @@
 # Community 23
 
-> 65 nodes
+> 53 nodes
 
 ## Key Concepts
 
-- **.getState()** (19 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **.isOpen()** (17 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **.recordFailure()** (16 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **FacebookCircuitBreakerTests** (13 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
-- **.recordSuccess()** (10 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **QPayPaymentProvider** (10 connections) — `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
-- **FacebookCircuitBreakerTest** (8 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookCircuitBreakerTest.java`
-- **FacebookCircuitBreaker** (7 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **.health()** (7 connections) — `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
-- **getStatus()** (6 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
-- **.fetchProfile()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
-- **.doProbe()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/FacebookCircuitBreakerProbe.java`
-- **.tryHalfOpen()** (5 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **FacebookGraphClient** (5 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
-- **.successAfterOpenClosesCircuit()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
-- **.failuresAfterWindowExpiryDoNotOpenCircuit()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
-- **.tryHalfOpenTransitionsFromOpen()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
-- **.successFromHalfOpenClosesCircuit()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
-- **FacebookHealthIndicatorTest** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
-- **.reportsUpWhenClosed()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
-- **.reportsDownWhenOpen()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
-- **.reportsDownWhenHalfOpen()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
-- **FacebookAuthController** (4 connections) — `services/api/src/main/java/mn/tasky/auth/api/FacebookAuthController.java`
-- **.health()** (4 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookHealthIndicator.java`
-- **FacebookCircuitBreakerProbe** (4 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/FacebookCircuitBreakerProbe.java`
-- _... and 40 more nodes in this community_
+- **.incrementAndGet()** (14 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
+- **.verifyOtp()** (8 connections) — `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
+- **.requestOtp()** (7 connections) — `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
+- **OtpRateLimitService** (7 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
+- **.enforce()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
+- **AssertRefreshAllowed** (6 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
+- **.deleteExpired()** (5 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
+- **AssertRequestAllowed** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
+- **OtpController** (4 connections) — `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
+- **RefreshSessionDao** (4 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
+- **OtpRateLimitServiceTest.java** (4 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
+- **AssertVerifyAllowed** (4 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
+- **OtpSentResponse** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
+- **.assertRefreshAllowed()** (3 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
+- **RateLimitCounterDao** (3 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
+- **RateLimitCleanupScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/RateLimitCleanupScheduler.java`
+- **SessionCleanupScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/SessionCleanupScheduler.java`
+- **.allowsWhenUnderLimit()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
+- **.allowsWhenUnderLimit()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
+- **.usesTokenIdAsKey()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
+- **.fallsBackToHashedTokenWhenParsingFails()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
+- **.throwsWhenRefreshLimitExceeded()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
+- **.throwsWhenRefreshIpLimitExceeded()** (3 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
+- **OtpPublicCompositionServiceTests.java** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
+- **AuthSessionResponse** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
+- _... and 28 more nodes in this community_
 
 ## Relationships
 
-- [[Community 3]] (10 shared connections)
-- [[Community 1]] (5 shared connections)
-- [[Community 9]] (2 shared connections)
-- [[Community 0]] (2 shared connections)
-- [[Community 21]] (2 shared connections)
-- [[Community 24]] (1 shared connections)
-- [[Community 12]] (1 shared connections)
+- [[Community 0]] (8 shared connections)
+- [[Community 6]] (3 shared connections)
+- [[Community 2]] (3 shared connections)
+- [[Community 1]] (2 shared connections)
+- [[Community 17]] (1 shared connections)
+- [[Community 14]] (1 shared connections)
+- [[Community 4]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
-- `services/api/src/main/java/mn/tasky/auth/api/FacebookAuthController.java`
-- `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
-- `services/api/src/main/java/mn/tasky/auth/application/FacebookHealthIndicator.java`
-- `services/api/src/main/java/mn/tasky/auth/scheduling/FacebookCircuitBreakerProbe.java`
-- `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
-- `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
-- `services/api/src/test/java/mn/tasky/auth/application/FacebookCircuitBreakerTest.java`
-- `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
+- `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
+- `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
+- `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
+- `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
+- `services/api/src/main/java/mn/tasky/auth/scheduling/RateLimitCleanupScheduler.java`
+- `services/api/src/main/java/mn/tasky/auth/scheduling/SessionCleanupScheduler.java`
+- `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
+- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/OtpPublicCompositionServiceTests.java`
 
 ## Audit Trail
 
-- EXTRACTED: 131 (48%)
-- INFERRED: 144 (52%)
+- EXTRACTED: 99 (64%)
+- INFERRED: 56 (36%)
 - AMBIGUOUS: 0 (0%)
 
 ---

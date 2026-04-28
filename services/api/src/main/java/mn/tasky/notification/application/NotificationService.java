@@ -32,6 +32,7 @@ import org.springframework.util.StringUtils;
 @Service
 public class NotificationService {
 
+    private static final int DEFAULT_LOG_READ_LIMIT = 1000;
     private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
     private final DeviceTokenDao deviceTokenDao;
     private final NotificationLogDao notificationLogDao;
@@ -243,6 +244,6 @@ public class NotificationService {
      * @return A list of {@link NotificationLog} entries.
      */
     public List<NotificationLog> getLogs() {
-        return notificationLogDao.findAll();
+        return notificationLogDao.findLatest(DEFAULT_LOG_READ_LIMIT);
     }
 }

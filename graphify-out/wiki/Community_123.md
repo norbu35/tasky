@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **RebookResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
-- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
+- **MainApplication** (3 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- **MainApplication.kt** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- **.onCreate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- **.onConfigurationChanged()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/dto/RebookResult.java`
+- `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
 
 ## Audit Trail
 

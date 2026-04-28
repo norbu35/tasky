@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskFeedCard.tsx** (0 connections) — `apps/mobile/src/features/tasks/components/TaskFeedCard.tsx`
+- **ApplicantsSelectionScreen.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/ApplicantsSelectionScreen.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/components/TaskFeedCard.tsx`
+- `apps/mobile/src/features/tasks/screens/ApplicantsSelectionScreen.tsx`
 
 ## Audit Trail
 

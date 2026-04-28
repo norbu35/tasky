@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **useProfilePolish.ts** (1 connections) — `apps/mobile/src/features/profile/hooks/useProfilePolish.ts`
-- **useProfilePolishPreview()** (1 connections) — `apps/mobile/src/features/profile/hooks/useProfilePolish.ts`
+- **ReviewForm.SubmitSection.tsx** (1 connections) — `apps/mobile/src/features/review/components/ReviewForm.SubmitSection.tsx`
+- **SuccessOverlay()** (1 connections) — `apps/mobile/src/features/review/components/ReviewForm.SubmitSection.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/hooks/useProfilePolish.ts`
+- `apps/mobile/src/features/review/components/ReviewForm.SubmitSection.tsx`
 
 ## Audit Trail
 

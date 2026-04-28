@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **isNativeFirebaseAvailable()** (4 connections) — `apps/mobile/src/lib/nativeFirebase.ts`
-- **registerForPushNotificationsAsync()** (4 connections) — `apps/mobile/src/lib/notifications.ts`
-- **notifications.ts** (3 connections) — `apps/mobile/src/lib/notifications.ts`
-- **ensureAndroidChannel()** (3 connections) — `apps/mobile/src/lib/notifications.ts`
-- **requestPermission()** (3 connections) — `apps/mobile/src/lib/notifications.ts`
-- **nativeFirebase.ts** (1 connections) — `apps/mobile/src/lib/nativeFirebase.ts`
+- **app.config.ts** (5 connections) — `apps/mobile/app.config.ts`
+- **optionalEnvFromSources()** (3 connections) — `apps/mobile/app.config.ts`
+- **parseEnvFile()** (2 connections) — `apps/mobile/app.config.ts`
+- **readEnvFile()** (2 connections) — `apps/mobile/app.config.ts`
+- **optionalEnv()** (2 connections) — `apps/mobile/app.config.ts`
+- **resolveGoogleMapsApiKeys()** (2 connections) — `apps/mobile/app.config.ts`
 
 ## Relationships
 
@@ -17,13 +17,12 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/nativeFirebase.ts`
-- `apps/mobile/src/lib/notifications.ts`
+- `apps/mobile/app.config.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (67%)
-- INFERRED: 6 (33%)
+- EXTRACTED: 16 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

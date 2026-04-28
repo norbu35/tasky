@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **PostingGuidance.tsx** (2 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
-- **PostingGuidanceCard()** (1 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
-- **PostingProofChecklist()** (1 connections) — `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
+- **BookingDetailScreen.test.tsx** (2 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
+- **hasAncestorTestID()** (1 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
+- **makeBooking()** (1 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/components/PostingGuidance.tsx`
+- `apps/mobile/__tests__/screens/customer/bookings/BookingDetailScreen.test.tsx`
 
 ## Audit Trail
 

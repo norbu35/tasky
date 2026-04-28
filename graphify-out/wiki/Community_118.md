@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **RateLimitExceededException** (3 connections) — `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
-- **RateLimitExceededException.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
-- **.RateLimitExceededException()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
-- **.code()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
+- **TaskerStatsScreen.tsx** (3 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- **readNumber()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- **formatPercent()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- **formatRating()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/RateLimitExceededException.java`
+- `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
 
 ## Audit Trail
 

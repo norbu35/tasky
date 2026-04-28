@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **VerificationConsentScreen.tsx** (4 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
-- **checkIfContentFits()** (3 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
-- **handleContentSizeChange()** (2 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
-- **handleLayout()** (2 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
-- **handleScroll()** (1 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
+- **OnboardingScreen.tsx** (4 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- **handleFinish()** (3 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- **handleNext()** (2 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- **handleSkip()** (2 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- **onScroll()** (1 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
+- `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
 
 ## Audit Trail
 

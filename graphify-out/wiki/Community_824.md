@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PagedResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/api/PagedResponse.java`
+- **OutboxEvent.java** (0 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEvent.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/api/PagedResponse.java`
+- `services/api/src/main/java/mn/tasky/common/outbox/OutboxEvent.java`
 
 ## Audit Trail
 
