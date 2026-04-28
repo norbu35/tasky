@@ -7,21 +7,23 @@ Payout processing is a Phase 3 deferred surface (gated by `escrow_enabled`).
 
 All endpoints are under `/api/v1/admin/**` and require `ADMIN` role (enforced in `SecurityConfig`).
 
-| Method | Path                                       | Notes                                                              |
-| ------ | ------------------------------------------ | ------------------------------------------------------------------ |
-| `GET`  | `/api/v1/admin/users`                      | Search by `phone`, `name`, or `facebook_id`; cursor + limit        |
-| `POST` | `/api/v1/admin/users/{id}/ban`             | Ban user, writes audit log                                         |
-| `POST` | `/api/v1/admin/users/{id}/unban`           | Set user status to `ACTIVE`, writes audit log                      |
-| `GET`  | `/api/v1/admin/verifications/pending`      | List pending verification requests                                 |
-| `POST` | `/api/v1/admin/verifications/{id}/approve` | Approve verification (`PENDING` only)                              |
-| `POST` | `/api/v1/admin/verifications/{id}/reject`  | Reject verification (`PENDING` only)                               |
-| `GET`  | `/api/v1/admin/disputes`                   | List pending/open disputes                                         |
-| `GET`  | `/api/v1/admin/disputes/{id}`              | Dispute detail + booking context + up to 50 chat evidence messages |
-| `POST` | `/api/v1/admin/disputes/{id}/resolve`      | Resolve dispute; idempotent                                        |
-| `GET`  | `/api/v1/admin/moderation/strike-policy`   | Current moderation policy                                          |
-| `PUT`  | `/api/v1/admin/moderation/strike-policy`   | Update moderation policy                                           |
-| `GET`  | `/api/v1/admin/payouts/pending`            | **Deferred – Phase 3.** Pending payouts (escrow_enabled gate)      |
-| `POST` | `/api/v1/admin/payouts/{id}/process`       | **Deferred – Phase 3.** Process payout (Tue/Fri only, idempotent)  |
+| Method | Path                                          | Notes                                                              |
+| ------ | --------------------------------------------- | ------------------------------------------------------------------ |
+| `GET`  | `/api/v1/admin/users`                         | Search by `phone`, `name`, or `facebook_id`; cursor + limit        |
+| `POST` | `/api/v1/admin/users/{id}/ban`                | Ban user, writes audit log                                         |
+| `POST` | `/api/v1/admin/users/{id}/unban`              | Set user status to `ACTIVE`, writes audit log                      |
+| `GET`  | `/api/v1/admin/verifications/pending`         | List pending verification requests                                 |
+| `POST` | `/api/v1/admin/verifications/{id}/approve`    | Approve verification (`PENDING` only)                              |
+| `POST` | `/api/v1/admin/verifications/{id}/reject`     | Reject verification (`PENDING` only)                               |
+| `GET`  | `/api/v1/admin/disputes`                      | List pending/open disputes                                         |
+| `GET`  | `/api/v1/admin/disputes/{id}`                 | Dispute detail + booking context + up to 50 chat evidence messages |
+| `POST` | `/api/v1/admin/disputes/{id}/resolve`         | Resolve dispute; idempotent                                        |
+| `GET`  | `/api/v1/admin/moderation/strike-policy`      | Current moderation policy                                          |
+| `PUT`  | `/api/v1/admin/moderation/strike-policy`      | Update moderation policy                                           |
+| `GET`  | `/api/v1/admin/bookings/{id}`                 | Booking detail for admin inspection                                |
+| `POST` | `/api/v1/admin/bookings/{id}/override-status` | Force booking status transition; idempotent                        |
+| `GET`  | `/api/v1/admin/payouts/pending`               | **Deferred – Phase 3.** Pending payouts (escrow_enabled gate)      |
+| `POST` | `/api/v1/admin/payouts/{id}/process`          | **Deferred – Phase 3.** Process payout (Tue/Fri only, idempotent)  |
 
 ## Behavioral Notes
 
@@ -34,14 +36,17 @@ All endpoints are under `/api/v1/admin/**` and require `ADMIN` role (enforced in
 
 ## Idempotency
 
-| Endpoint                                   | Operation key     |
-| ------------------------------------------ | ----------------- |
-| `POST /api/v1/admin/disputes/{id}/resolve` | `dispute.resolve` |
+| Endpoint                                           | Operation key      |
+| -------------------------------------------------- | ------------------ |
+| `POST /api/v1/admin/disputes/{id}/resolve`         | `dispute.resolve`  |
+| `POST /api/v1/admin/bookings/{id}/override-status` | `booking.override` |
 
 Missing `Idempotency-Key` causes `400 IDEMPOTENCY_KEY_REQUIRED` via `IdempotencyService`.
 
 ## Cross-Module Dependencies
 
+- `AdminBookingCompositionService` (booking override and detail)
+- `AdminDisputeCompositionService`, `AdminDisputeResolutionService`
 - `AuthService` (user moderation, verification, moderation policy)
 - `DisputeService`
 - `BookingService`

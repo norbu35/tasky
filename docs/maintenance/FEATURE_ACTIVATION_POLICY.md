@@ -30,22 +30,32 @@ For the current baseline:
 
 ## Current toggle catalog
 
-This catalog records the known DB-backed feature switches that may appear in admin tooling. The source of truth for
-phase ownership is `docs/ROLLOUT_PHASES.md`; this table records activation posture.
+This catalog records known DB-backed feature switches and planned switch names for deferred product families. The source
+of truth for phase ownership is `docs/ROLLOUT_PHASES.md`; this table records activation posture.
 
 Fresh databases start without Flyway-seeded toggle rows. Absence must resolve to the required default below until an
 operator/admin setup step creates an audited row.
 
-| Toggle                     | Feature family                    | Target phase     | Required default before activation                       |
-| -------------------------- | --------------------------------- | ---------------- | -------------------------------------------------------- |
-| `lead_fee_enabled`         | Lead credits / paid lead unlock   | Phase 2 optional | `false`                                                  |
-| `subscription_enabled`     | Tasker subscription               | Phase 3          | `false`                                                  |
-| `escrow_enabled`           | Escrow, payments, wallet, payouts | Phase 3          | `false`                                                  |
-| `ai_scope_summary_enabled` | Runtime AI scope summary          | Phase 2 optional | `false`                                                  |
-| `data_retention_dry_run`   | Data-retention safety dry run     | Phase 1 ops      | `true` until destructive deletion is explicitly approved |
+| Toggle                       | Feature family                            | Target phase     | Required default before activation                       |
+| ---------------------------- | ----------------------------------------- | ---------------- | -------------------------------------------------------- |
+| `platform_fee_enabled`       | Platform / booking fee pilot              | Phase 2 optional | `false`                                                  |
+| `recurring_cleaning_enabled` | Recurring cleaning V1                     | Phase 2 optional | `false`                                                  |
+| `lead_fee_enabled`           | Lead credits / paid lead unlock           | Phase 3 optional | `false`                                                  |
+| `subscription_enabled`       | Tasker subscription                       | Phase 3          | `false`                                                  |
+| `escrow_enabled`             | Escrow, full-job payment, wallet, payouts | Phase 3          | `false`                                                  |
+| `ai_scope_summary_enabled`   | Runtime AI scope summary                  | Phase 2 optional | `false`                                                  |
+| `data_retention_dry_run`     | Data-retention safety dry run             | Phase 1 ops      | `true` until destructive deletion is explicitly approved |
 
 If future code needs a switch but none exists, add the switch as disabled-by-default scaffolding and document its phase
 owner before exposing it in admin UX.
+
+`platform_fee_enabled` is intentionally separate from `escrow_enabled`. A platform-fee pilot may collect Tasky's fee in
+approved categories, but it must not collect, hold, or pay out the underlying job amount and must not create payment
+protection, wallet, payout, or escrow copy.
+
+Manual B2B discovery does not require a public runtime toggle while it stays operator-managed. A self-serve B2B route,
+partner API, or customer-facing account portal needs its own disabled-by-default switch and activation evidence before
+exposure.
 
 ## Required evidence before any later activation
 
@@ -58,6 +68,8 @@ Every proposed activation must include:
 5. staging rehearsal and operator runbook update
 6. alerting and dashboard coverage
 7. rollback procedure
+8. phase-specific entry evidence from `docs/ROLLOUT_PHASES.md` when the activation is a commerce, recurring, B2B, partner,
+   payment, wallet, payout, subscription, lead-credit, promoted, referral, OTP, DAN, or runtime-AI surface
 
 For user-visible deferred features, verification must cover both states:
 

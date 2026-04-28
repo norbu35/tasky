@@ -29,7 +29,9 @@ When disabled, controllers return `503 FEATURE_DEFERRED`.
 
 ## Internal Service Capabilities (not directly exposed as user API)
 
-- credit task completion earnings
-- hold/release/confiscate funds
-- credit refund/cancellation amounts
-- process payout into ledger
+- **credit task completion earnings** — called by `BookingCompletedHandler` on `BOOKING_COMPLETED`.
+  Gated by `escrow_enabled`; Phase 1 direct-settlement skips the credit step and only fires notification
+  and analytics side effects.
+- hold/release/confiscate funds — Phase 3 escrow path; dormant until `escrow_enabled=true`
+- credit refund/cancellation amounts — Phase 3 escrow path
+- process payout into ledger — Phase 3; triggered by admin payout processing endpoint

@@ -57,9 +57,10 @@ Operations in `IdempotencyOperations`:
   - `BOOKING_COMPLETED`
 
 Side effects include messaging bootstrap, notifications, analytics tracking, and wallet
-crediting. Broker failure does **not** roll back the domain transaction because the outbox
-row is already persisted. Admin replay via `OutboxReplayController` resets `FAILED` → `PENDING`,
-and the relay picks up replayed events on the next cycle.
+crediting. Wallet credit on `BOOKING_COMPLETED` is gated by `escrow_enabled` — Phase 1
+direct-settlement skips the credit step. Broker failure does **not** roll back the domain
+transaction because the outbox row is already persisted. Admin replay via `OutboxReplayController`
+resets `FAILED` → `PENDING`, and the relay picks up replayed events on the next cycle.
 
 ```claim symbol-exists
 class: mn.tasky.common.outbox.DomainEventOutboxService
@@ -73,6 +74,22 @@ class: mn.tasky.common.outbox.OutboxRelayService
 ```claim config-key
 key: tasky.automation.broker.enabled
 ```
+
+## Internationalization — BackendMessageResolver
+
+`BackendMessageResolver` resolves localized strings from Spring `MessageSource` backed by
+`src/main/resources/i18n/messages_en.properties` and `messages_mn.properties`.
+
+- `message(key, defaultMessage, args...)` — resolves against `LocaleContextHolder` locale.
+- `messageForLocale(localeTag, key, defaultMessage, args...)` — resolves against a caller-supplied
+  locale tag (used by workflow handlers that carry locale from the event envelope).
+- `errorMessage(code, defaultMessage)` — resolves `error.<code>` key; used by `RateLimitFilter`,
+  `JsonSecurityResponseWriter`, and `ApiExceptionHandler`.
+
+Default locale is `mn` when the supplied tag is absent or unparseable.
+
+All user-visible error messages and notification copy must go through this resolver rather than
+embedding English literals in Java code.
 
 ## Security and Crypto
 

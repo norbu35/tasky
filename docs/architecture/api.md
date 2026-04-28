@@ -183,7 +183,10 @@ key: tasky.auth.oauth.provider
 key: tasky.location.geocoding.provider
 ```
 
-Deferred adapters for payment, escrow, payout, alternate auth, or LLM-assisted copy may exist in the codebase, but they are not part of the Phase 1 runtime contract and must stay disabled unless the PRD and downstream contracts are updated first.
+Deferred adapters for platform-fee collection, payment, escrow, payout, alternate auth, or LLM-assisted copy may exist in
+the codebase, but they are not part of the Phase 1 runtime contract and must stay disabled unless the PRD and downstream
+contracts are updated first. Platform-fee collection must use a separate activation guard from escrow/wallet/payout
+flows so a fee pilot cannot accidentally create payment-protection or money-hold semantics.
 
 **Boundary rules (ArchUnit-enforced):**
 
@@ -391,7 +394,7 @@ are operator/admin setup responsibilities, not Flyway migration data. Future sch
 - `categories`: admin-governed category catalog and active intake schema pointers.
 - `category_schema_versions`: versioned structured-intake definitions with draft/canary/active lifecycle.
 - `task_applications`: tasker applications, structured pricing response data, selection state, and response-window timestamps.
-- `bookings`: confirmed work agreement between customer and selected tasker. Phase 1 lifecycle centers on confirmed, completed, canceled, disputed, and no-show outcomes. If physical schema includes monetization-oriented states or settlement modes, they remain dormant outside launch.
+- `bookings`: confirmed work agreement between customer and selected tasker. Phase 1 lifecycle centers on confirmed, completed, canceled, disputed, and no-show outcomes. If physical schema includes monetization-oriented states or settlement modes, they remain dormant outside launch. A future platform-fee pilot must distinguish Tasky fee collection from the underlying job settlement mode.
 - `booking_intents`: the selected-tasker acceptance window between customer selection and booking confirmation.
 - `booking_schedule_events`: immutable reschedule request, accept, decline, and expiry records.
 - `booking_timeline_events`: auditable lifecycle and policy events such as reminders, status changes, and adjudication outcomes.
@@ -609,6 +612,9 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 - **Pricing contract**:
   - Every Phase 1 task uses exactly one of the two launch pricing modes: `I have a budget` or `I want quotes`.
   - Structured application pricing must support budget acceptance for budget-mode tasks and one quote submission for quote-mode tasks. Counter-offers are not part of the Phase 1 budget flow.
+  - Future platform-fee pilots must expose the customer-facing fee, underlying locked job price, and total payable amount
+    explicitly. They must not reuse escrow or wallet contracts unless the rollout phase intentionally activates those
+    money-movement semantics.
 - **Trust contract**:
   - Disputes may be opened during active bookings and for 24 hours after completion.
   - Evidence-backed moderation remains the dispute model for Phase 1.

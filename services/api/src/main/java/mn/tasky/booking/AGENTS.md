@@ -18,10 +18,17 @@ Booking lifecycle transitions and booking-side effects.
 ## Booking Statuses in Code
 
 - `ASSIGNED`
-- `PAID`
+- `PAID` — dormant payment-path status; only reachable through `transitionToPaid()` (QPay callback path).
+  Not exposed in admin override; Phase 1 direct settlement completes bookings without this intermediate state.
 - `COMPLETED`
 - `CANCELLED`
 - `NO_SHOW`
+- `DISPUTED`
+
+## Admin Override Status Allowlist
+
+Admin `override-status` accepts only: `ASSIGNED`, `COMPLETED`, `CANCELLED`, `NO_SHOW`, `DISPUTED`.
+`PAID` is intentionally excluded — it is a payment-lifecycle state, not an admin-manageable terminal/operational state.
 
 ## Lifecycle Rules
 
@@ -37,6 +44,9 @@ Booking lifecycle transitions and booking-side effects.
 - Tasker cancel: task reopens to `OPEN`; non-safety cancellations add a `TASKER_CANCELLATION` strike and may suspend the tasker under the moderation policy.
 - Late customer cancel (<4 hours before task schedule): reliability incident row is inserted.
 - Complete: task transitions to `COMPLETED` and outbox event `BOOKING_COMPLETED` is published.
+  `BookingCompletedHandler` fires: notification to tasker (i18n-keyed via `BackendMessageResolver`),
+  analytics tracking, review enforcement, and reliability score recompute. Wallet credit is
+  additionally fired only when `escrow_enabled=true` (Phase 3).
 - Mark-done: sends customer push notification when newly marked.
 - No-show: task transitions to `NO_SHOW`, writes immutable timeline + audit events, records strike when tasker is at fault,
   and creates bilateral review debt.
