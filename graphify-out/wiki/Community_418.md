@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ReviewHardLock.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/ReviewHardLock.test.tsx`
+- **SuspendedAccount.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/SuspendedAccount.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/shared/ReviewHardLock.test.tsx`
+- `apps/mobile/__tests__/screens/shared/SuspendedAccount.test.tsx`
 
 ## Audit Trail
 

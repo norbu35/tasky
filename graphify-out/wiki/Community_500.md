@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **privacy.tsx** (0 connections) — `apps/mobile/src/app/(shared)/legal/privacy.tsx`
+- **\_layout.tsx** (0 connections) — `apps/mobile/src/app/(shared)/_layout.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(shared)/legal/privacy.tsx`
+- `apps/mobile/src/app/(shared)/_layout.tsx`
 
 ## Audit Trail
 

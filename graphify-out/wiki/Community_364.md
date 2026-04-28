@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Touchable.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/Touchable.test.tsx`
+- **KeyComponents.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/KeyComponents.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/Touchable.test.tsx`
+- `apps/mobile/__tests__/components/ui/KeyComponents.test.tsx`
 
 ## Audit Trail
 

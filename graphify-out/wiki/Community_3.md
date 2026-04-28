@@ -1,78 +1,78 @@
 # Community 3
 
-> 314 nodes
+> 405 nodes
 
 ## Key Concepts
 
-- **.required()** (156 connections) — `services/api/src/main/java/mn/tasky/common/persistence/UuidHelper.java`
-- **.update()** (29 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskDraftDao.java`
-- **.optional()** (25 connections) — `services/api/src/main/java/mn/tasky/common/persistence/UuidHelper.java`
-- **BookingDao** (21 connections) — `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
-- **CategoryScenarioTests** (17 connections) — `services/api/src/test/java/mn/tasky/category/CategoryScenarioTests.java`
-- **.upsert()** (16 connections) — `services/api/src/main/java/mn/tasky/auth/dao/ReliabilityScoreDao.java`
+- **.findById()** (352 connections) — `services/api/src/main/java/mn/tasky/wallet/dao/PayoutRequestDao.java`
+- **.empty()** (205 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskQueryServiceTest.java`
+- **.errorCode()** (137 connections) — `services/api/src/main/java/mn/tasky/auth/provider/OAuthProviderException.java`
+- **.isUserLocked()** (37 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.getCategory()** (36 connections) — `services/api/src/main/java/mn/tasky/category/publicapi/CategoryQueryPort.java`
+- **.createBooking()** (28 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
+- **GetProfile** (26 connections) — `services/api/src/test/java/mn/tasky/auth/application/UserProfileServiceTest.java`
+- **BookingServiceTest** (26 connections) — `services/api/src/test/java/mn/tasky/booking/application/BookingServiceTest.java`
+- **PopulatePhotoKeys** (26 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskPhotoKeyHelperTest.java`
+- **.updateTask()** (24 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskMutationService.java`
+- **.hasAccepted()** (23 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- **.createTask()** (22 connections) — `services/api/src/test/java/mn/tasky/task/RecentLocationsTests.java`
+- **.customerSelectsApplicantAndSelectedTaskerAcceptanceConfirmsBooking()** (20 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
+- **.confirmAcceptance()** (18 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskApplicationService.java`
+- **TaskApplicationDao** (18 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- **AreOwnedTaskPhotoKeys** (18 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskPhotoKeyHelperTest.java`
+- **.createTask()** (17 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskCreationService.java`
+- **BookingSelectionScenarioTests** (17 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
+- **TaskApplicationScenarioTests** (17 connections) — `services/api/src/test/java/mn/tasky/task/TaskApplicationScenarioTests.java`
+- **.openTask()** (16 connections) — `services/api/src/test/java/mn/tasky/task/TaskApplicationServiceTests.java`
+- **ApplyToTask** (16 connections) — `services/api/src/test/java/mn/tasky/task/TaskApplicationServiceTests.java`
+- **BookingService** (15 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingService.java`
 - **.confirmIntent()** (15 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
-- **WalletService** (15 connections) — `services/api/src/main/java/mn/tasky/wallet/application/WalletService.java`
-- **.recompute()** (14 connections) — `services/api/src/main/java/mn/tasky/auth/application/ReliabilityScoreService.java`
-- **CategoryController** (14 connections) — `services/api/src/main/java/mn/tasky/category/api/CategoryController.java`
-- **CategorySchemaVersionService** (13 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
-- **.createVersion()** (13 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
-- **.findActiveByCategoryId()** (13 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategorySchemaVersionDao.java`
-- **.ensureExists()** (13 connections) — `services/api/src/main/java/mn/tasky/wallet/dao/WalletDao.java`
-- **.rollbackRestoresLastKnownGoodSchemaVersion()** (13 connections) — `services/api/src/test/java/mn/tasky/category/CategoryScenarioTests.java`
-- **.activate()** (12 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
-- **CategoryDao** (12 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
-- **.customerSilenceTriggersTimeoutAutoComplete()** (12 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
-- **.canaryActivationPublishesNewSchemaVersionWithoutRebindingExistingDrafts()** (12 connections) — `services/api/src/test/java/mn/tasky/category/CategoryScenarioTests.java`
-- **BookingIntentService** (11 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
-- **DisputeDao** (11 connections) — `services/api/src/main/java/mn/tasky/dispute/dao/DisputeDao.java`
-- **ConversationDao** (11 connections) — `services/api/src/main/java/mn/tasky/messaging/dao/ConversationDao.java`
-- **.submitReview()** (11 connections) — `services/api/src/main/java/mn/tasky/review/application/ReviewService.java`
-- **VerificationDao** (10 connections) — `services/api/src/main/java/mn/tasky/auth/dao/VerificationDao.java`
-- **.declineIntent()** (10 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
-- _... and 289 more nodes in this community_
+- **.onlyVerifiedTaskersCanApply()** (15 connections) — `services/api/src/test/java/mn/tasky/task/TaskApplicationScenarioTests.java`
+- **.successfulApplication()** (15 connections) — `services/api/src/test/java/mn/tasky/task/TaskApplicationServiceTests.java`
+- _... and 380 more nodes in this community_
 
 ## Relationships
 
-- [[Community 1]] (94 shared connections)
-- [[Community 0]] (81 shared connections)
-- [[Community 2]] (26 shared connections)
-- [[Community 10]] (20 shared connections)
-- [[Community 14]] (19 shared connections)
-- [[Community 5]] (12 shared connections)
-- [[Community 8]] (7 shared connections)
-- [[Community 15]] (7 shared connections)
-- [[Community 9]] (6 shared connections)
-- [[Community 19]] (4 shared connections)
-- [[Community 16]] (3 shared connections)
-- [[Community 12]] (3 shared connections)
+- [[Community 2]] (366 shared connections)
+- [[Community 0]] (190 shared connections)
+- [[Community 1]] (124 shared connections)
+- [[Community 4]] (102 shared connections)
+- [[Community 5]] (53 shared connections)
+- [[Community 14]] (32 shared connections)
+- [[Community 13]] (22 shared connections)
+- [[Community 12]] (15 shared connections)
+- [[Community 15]] (14 shared connections)
+- [[Community 20]] (13 shared connections)
+- [[Community 7]] (12 shared connections)
+- [[Community 6]] (10 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/analytics/dao/AnalyticsEventDao.java`
-- `services/api/src/main/java/mn/tasky/auth/application/ReliabilityScoreService.java`
-- `services/api/src/main/java/mn/tasky/auth/application/UserProfileService.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/ProfileDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/ReliabilityScoreDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/StrikeDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/VerificationDao.java`
+- `apps/mobile/ios/Tasky/AppDelegate.swift`
+- `services/api/src/main/java/mn/tasky/auth/provider/OAuthProviderException.java`
 - `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
 - `services/api/src/main/java/mn/tasky/booking/application/BookingService.java`
-- `services/api/src/main/java/mn/tasky/booking/application/CompletionTimeoutService.java`
-- `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
-- `services/api/src/main/java/mn/tasky/booking/dao/BookingIntentDao.java`
-- `services/api/src/main/java/mn/tasky/booking/dao/BookingReliabilityIncidentDao.java`
-- `services/api/src/main/java/mn/tasky/booking/dao/BookingScheduleEventDao.java`
-- `services/api/src/main/java/mn/tasky/booking/dao/BookingTimelineEventDao.java`
-- `services/api/src/main/java/mn/tasky/booking/scheduling/CompletionTimeoutScheduler.java`
-- `services/api/src/main/java/mn/tasky/category/api/CategoryController.java`
-- `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
-- `services/api/src/main/java/mn/tasky/category/application/CategoryService.java`
-- `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingCompletionSignalDao.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentCreateResult.java`
+- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
+- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingIntentCommandPort.java`
+- `services/api/src/main/java/mn/tasky/category/publicapi/CategoryQueryPort.java`
+- `services/api/src/main/java/mn/tasky/common/validation/TextSanitizer.java`
+- `services/api/src/main/java/mn/tasky/dispute/application/DisputeService.java`
+- `services/api/src/main/java/mn/tasky/location/publicapi/LocationQueryPort.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PublicTaskCompositionService.java`
+- `services/api/src/main/java/mn/tasky/task/application/TaskApplicationService.java`
+- `services/api/src/main/java/mn/tasky/task/application/TaskCreationService.java`
+- `services/api/src/main/java/mn/tasky/task/application/TaskDraftService.java`
+- `services/api/src/main/java/mn/tasky/task/application/TaskLifecycleService.java`
+- `services/api/src/main/java/mn/tasky/task/application/TaskMutationService.java`
+- `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
 
 ## Audit Trail
 
-- EXTRACTED: 696 (50%)
-- INFERRED: 699 (50%)
+- EXTRACTED: 994 (34%)
+- INFERRED: 1944 (66%)
 - AMBIGUOUS: 0 (0%)
 
 ---

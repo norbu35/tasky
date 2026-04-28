@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **eslint.config.mjs** (0 connections) — `eslint.config.mjs`
+- **settings.gradle.kts** (0 connections) — `settings.gradle.kts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `eslint.config.mjs`
+- `settings.gradle.kts`
 
 ## Audit Trail
 

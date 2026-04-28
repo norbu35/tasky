@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PrivacyPolicyScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/profile/PrivacyPolicyScreen.test.tsx`
+- **SettingsScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/profile/SettingsScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/shared/profile/PrivacyPolicyScreen.test.tsx`
+- `apps/mobile/__tests__/screens/shared/profile/SettingsScreen.test.tsx`
 
 ## Audit Trail
 

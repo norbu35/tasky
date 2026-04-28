@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **ProjectionBoundaryTest** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
-- **.projectionPlaneMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
-- **.assertMarkerExists()** (2 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
-- **ProjectionBoundaryTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
+- **CancelBookingRequestTest** (3 connections) — `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
+- **CancelBookingRequestTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
+- **.storesProvidedReason()** (1 connections) — `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
+- **.allowsNullReason()** (1 connections) — `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/ProjectionBoundaryTest.java`
+- `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

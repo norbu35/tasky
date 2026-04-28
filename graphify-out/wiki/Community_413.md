@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Help.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/infra/Help.test.tsx`
+- **ConversationList.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/ConversationList.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/infra/Help.test.tsx`
+- `apps/mobile/__tests__/screens/shared/ConversationList.test.tsx`
 
 ## Audit Trail
 

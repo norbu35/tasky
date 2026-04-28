@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **BackendArchitectureTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
-- **BackendArchitectureTest** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
+- **check-doc-governance.py** (1 connections) — `tooling/scripts/governance/check-doc-governance.py`
+- **print_remediation()** (1 connections) — `tooling/scripts/governance/check-doc-governance.py`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
+- `tooling/scripts/governance/check-doc-governance.py`
 
 ## Audit Trail
 

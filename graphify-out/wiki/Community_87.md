@@ -1,15 +1,14 @@
 # Community 87
 
-> 6 nodes
+> 5 nodes
 
 ## Key Concepts
 
-- **PackageMarkerTest** (5 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
-- **PackageMarkerTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/scheduler/PackageMarkerTest.java`
-- **.packageMarkerMethodCanBeInvokedWithoutError()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
-- **.constructorIsPrivate()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
-- **PackageMarkerTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/worker/PackageMarkerTest.java`
-- **PackageMarkerTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
+- **model.ts** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
+- **formatMessageTimestamp()** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
+- **MessageBubble()** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/MessageBubble.tsx`
+- **orderMessagesChronologically()** (1 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
+- **MessageBubble.tsx** (1 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/MessageBubble.tsx`
 
 ## Relationships
 
@@ -17,14 +16,13 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/automation/job/PackageMarkerTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/scheduler/PackageMarkerTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/worker/PackageMarkerTest.java`
+- `apps/mobile/src/features/chat/screens/ChatConversation/MessageBubble.tsx`
+- `apps/mobile/src/features/chat/screens/ChatConversation/model.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 6 (75%)
+- INFERRED: 2 (25%)
 - AMBIGUOUS: 0 (0%)
 
 ---

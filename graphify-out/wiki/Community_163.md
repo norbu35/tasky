@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **SettingsPage.tsx** (2 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
-- **SectionTitle()** (1 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
-- **ActionRow()** (1 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
+- **accessibility.spec.ts** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
+- **summarizeViolations()** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
+- **scan()** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
 
 ## Relationships
 
@@ -14,11 +14,11 @@
 
 ## Source Files
 
-- `apps/web/src/pages/shared/SettingsPage.tsx`
+- `apps/web/e2e/accessibility.spec.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 4 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

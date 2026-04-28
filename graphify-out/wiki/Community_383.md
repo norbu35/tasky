@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **LoginScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/auth/LoginScreen.test.tsx`
+- **SplashScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/auth/SplashScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/auth/LoginScreen.test.tsx`
+- `apps/mobile/__tests__/screens/auth/SplashScreen.test.tsx`
 
 ## Audit Trail
 

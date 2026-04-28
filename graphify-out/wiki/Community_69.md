@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **IntegrationTestBase** (6 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.cleanTestState()** (4 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.seedLaunchCatalogFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.seedDistrictFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.seedConfigFixtures()** (2 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **IntegrationTestBase.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
-- **.registerDataSourceProperties()** (1 connections) — `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- **WalletQueryHandler** (6 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
+- **WalletQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
+- **.WalletQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
+- **.getBalance()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
+- **.listTransactions()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
+- **.getPayout()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
+- **.listPendingPayouts()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
 
 ## Relationships
 
@@ -18,11 +18,11 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/common/IntegrationTestBase.java`
+- `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 18 (100%)
+- EXTRACTED: 12 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

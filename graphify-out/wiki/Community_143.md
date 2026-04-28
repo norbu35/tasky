@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **pre-push-hook.test.mjs** (3 connections) — `tooling/tests/pre-push-hook.test.mjs`
-- **setupFakeBinaries()** (3 connections) — `tooling/tests/pre-push-hook.test.mjs`
-- **writeExecutable()** (2 connections) — `tooling/tests/pre-push-hook.test.mjs`
-- **runHook()** (2 connections) — `tooling/tests/pre-push-hook.test.mjs`
+- **otp-migration.tsx** (3 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **resolveState()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **handleSubmit()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **handleSkip()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `tooling/tests/pre-push-hook.test.mjs`
+- `archive/mobile-future/auth/otp-migration.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

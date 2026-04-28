@@ -1,78 +1,78 @@
 # Community 0
 
-> 561 nodes
+> 623 nodes
 
 ## Key Concepts
 
-- **of()** (844 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeResolutionOutcome.java`
-- **isSuccess()** (165 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskApplyResult.java`
-- **isSuccess()** (165 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskCreateResult.java`
-- **.errorCode()** (137 connections) — `services/api/src/main/java/mn/tasky/auth/provider/OAuthProviderException.java`
-- **.getBooking()** (131 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingQueryPort.java`
-- **error()** (129 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskCreateResult.java`
-- **.isUserLocked()** (37 connections) — `services/api/src/main/java/mn/tasky/review/application/ReviewEnforcementService.java`
-- **BookingIntentServiceTest** (36 connections) — `services/api/src/test/java/mn/tasky/booking/application/BookingIntentServiceTest.java`
-- **RaiseDispute** (36 connections) — `services/api/src/test/java/mn/tasky/dispute/application/DisputeServiceTest.java`
-- **.getCategory()** (30 connections) — `services/api/src/main/java/mn/tasky/category/publicapi/CategoryQueryPort.java`
-- **.createBooking()** (28 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
-- **.resolveTraceId()** (28 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiResponseSupport.java`
-- **GetProfile** (26 connections) — `services/api/src/test/java/mn/tasky/auth/application/UserProfileServiceTest.java`
-- **PopulatePhotoKeys** (26 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskPhotoKeyHelperTest.java`
-- **BookingServiceTest** (25 connections) — `services/api/src/test/java/mn/tasky/booking/application/BookingServiceTest.java`
-- **.updateTask()** (23 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskMutationService.java`
-- **.hasAccepted()** (23 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
-- **.createTask()** (22 connections) — `services/api/src/test/java/mn/tasky/task/RecentLocationsTests.java`
-- **.customerSelectsApplicantAndSelectedTaskerAcceptanceConfirmsBooking()** (21 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
-- **.createIntent()** (20 connections) — `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
-- **ResolveDispute** (20 connections) — `services/api/src/test/java/mn/tasky/dispute/application/DisputeServiceTest.java`
-- **SubmitReview** (19 connections) — `services/api/src/test/java/mn/tasky/review/application/ReviewServiceTest.java`
-- **TaskController** (18 connections) — `services/api/src/main/java/mn/tasky/task/api/TaskController.java`
-- **.confirmAcceptance()** (18 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskApplicationService.java`
-- **TaskApplicationDao** (18 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
-- _... and 536 more nodes in this community_
+- **.status()** (367 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyException.java`
+- **Claim** (161 connections) — `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
+- **.success()** (110 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskCreationServiceTest.java`
+- **.success()** (95 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskMutationServiceTest.java`
+- **Abandon** (51 connections) — `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
+- **t()** (50 connections) — `apps/mobile/src/features/tasks/screens/ApplicantsSelection.ApplicantCard.tsx`
+- **.isEnabled()** (37 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **CompleteWithResource** (34 connections) — `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
+- **CancelBooking** (34 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationServiceTests.java`
+- **.overrideBookingStatus()** (32 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminBookingCompositionService.java`
+- **.findByIdForUpdate()** (30 connections) — `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
+- **FlagNoShow** (27 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationServiceTests.java`
+- **.booking()** (25 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingPublicCompositionServiceTests.java`
+- **GetTask** (25 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskQueryServiceTest.java`
+- **.conciergeAssign()** (23 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskConciergeAssignmentService.java`
+- **BookingLifecycleServiceTest** (23 connections) — `services/api/src/test/java/mn/tasky/booking/application/BookingLifecycleServiceTest.java`
+- **.recordEvent()** (22 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingTimelineService.java`
+- **.raiseDispute()** (22 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputeRaiseService.java`
+- **NoShowServiceTest** (20 connections) — `services/api/src/test/java/mn/tasky/booking/application/NoShowServiceTest.java`
+- **.flagNoShow_success_customerFlags_taskerNoShow()** (20 connections) — `services/api/src/test/java/mn/tasky/booking/application/NoShowServiceTest.java`
+- **CompleteBooking** (20 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationServiceTests.java`
+- **.confirmIntent()** (19 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationService.java`
+- **.markBookingDone()** (19 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationService.java`
+- **.initiatePayment()** (18 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationService.java`
+- **.declineIntent()** (18 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/BookingIntentConfirmationService.java`
+- _... and 598 more nodes in this community_
 
 ## Relationships
 
-- [[Community 1]] (434 shared connections)
-- [[Community 2]] (352 shared connections)
-- [[Community 10]] (167 shared connections)
-- [[Community 3]] (81 shared connections)
-- [[Community 14]] (69 shared connections)
-- [[Community 4]] (52 shared connections)
-- [[Community 11]] (46 shared connections)
-- [[Community 15]] (39 shared connections)
-- [[Community 5]] (38 shared connections)
-- [[Community 13]] (32 shared connections)
-- [[Community 18]] (31 shared connections)
-- [[Community 19]] (24 shared connections)
+- [[Community 2]] (404 shared connections)
+- [[Community 3]] (190 shared connections)
+- [[Community 4]] (72 shared connections)
+- [[Community 7]] (62 shared connections)
+- [[Community 1]] (41 shared connections)
+- [[Community 5]] (31 shared connections)
+- [[Community 6]] (22 shared connections)
+- [[Community 13]] (20 shared connections)
+- [[Community 12]] (18 shared connections)
+- [[Community 21]] (18 shared connections)
+- [[Community 8]] (16 shared connections)
+- [[Community 9]] (12 shared connections)
 
 ## Source Files
 
-- `apps/mobile/ios/Tasky/AppDelegate.swift`
-- `services/api/src/main/java/mn/tasky/admin/api/AdminVerificationController.java`
-- `services/api/src/main/java/mn/tasky/auth/api/OtpController.java`
-- `services/api/src/main/java/mn/tasky/auth/provider/OAuthProviderException.java`
-- `services/api/src/main/java/mn/tasky/booking/application/BookingService.java`
-- `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
-- `services/api/src/main/java/mn/tasky/booking/dao/BookingIntentDao.java`
-- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingCommandPort.java`
-- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingIntentCommandPort.java`
-- `services/api/src/main/java/mn/tasky/booking/publicapi/BookingQueryPort.java`
-- `services/api/src/main/java/mn/tasky/category/api/CategoryController.java`
-- `services/api/src/main/java/mn/tasky/category/publicapi/CategoryQueryPort.java`
-- `services/api/src/main/java/mn/tasky/common/api/ApiResponseSupport.java`
-- `services/api/src/main/java/mn/tasky/common/config/SecurityConfig.java`
-- `services/api/src/main/java/mn/tasky/common/scheduling/SchedulerLockRunner.java`
-- `services/api/src/main/java/mn/tasky/common/validation/TextSanitizer.java`
-- `services/api/src/main/java/mn/tasky/dispute/application/DisputeService.java`
-- `services/api/src/main/java/mn/tasky/dispute/dao/DisputeDao.java`
-- `services/api/src/main/java/mn/tasky/dispute/dao/DisputeEvidenceDao.java`
-- `services/api/src/main/java/mn/tasky/location/publicapi/LocationQueryPort.java`
+- `apps/mobile/src/features/auth/components/LoginForm.tsx`
+- `apps/mobile/src/features/auth/screens/AuthHomeScreen.tsx`
+- `apps/mobile/src/features/auth/screens/RoleSelectScreen.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingReschedule/SubmitAction.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingTimeline.model.ts`
+- `apps/mobile/src/features/help/screens/HelpCenter/model.ts`
+- `apps/mobile/src/features/help/screens/HelpCenter/useHelpCenterScreen.ts`
+- `apps/mobile/src/features/notifications/screens/NotificationList.model.ts`
+- `apps/mobile/src/features/profile/screens/ProfileSettingsScreen.tsx`
+- `apps/mobile/src/features/review/components/ReviewForm.model.ts`
+- `apps/mobile/src/features/tasks/components/ApplicationSentSuccess.tsx`
+- `apps/mobile/src/features/tasks/screens/ApplicantsSelection.ApplicantCard.tsx`
+- `apps/mobile/src/features/tasks/screens/HomeScreen.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskPhotosScreen.tsx`
+- `apps/mobile/src/features/verification/components/VerificationModal.tsx`
+- `apps/mobile/src/features/verification/hooks/useVerification.ts`
+- `apps/web/src/lib/adminApiClient.ts`
+- `apps/web/src/pages/CustomerDashboardPage.tsx`
+- `apps/web/src/pages/CustomerTaskDetailsPage.tsx`
+- `apps/web/src/pages/MessagingNotificationsPage.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 1400 (28%)
-- INFERRED: 3685 (72%)
+- EXTRACTED: 1385 (34%)
+- INFERRED: 2732 (66%)
 - AMBIGUOUS: 0 (0%)
 
 ---

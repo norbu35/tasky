@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **AdminMessageController** (3 connections) — `services/api/src/main/java/mn/tasky/admin/api/AdminMessageController.java`
-- **AdminMessageController.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/api/AdminMessageController.java`
-- **.AdminMessageController()** (1 connections) — `services/api/src/main/java/mn/tasky/admin/api/AdminMessageController.java`
-- **.listFlagged()** (1 connections) — `services/api/src/main/java/mn/tasky/admin/api/AdminMessageController.java`
+- **native.ts** (3 connections) — `packages/design-tokens/src/platform/native.ts`
+- **toNativeLetterSpacing()** (3 connections) — `packages/design-tokens/src/platform/native.ts`
+- **toNativeTextStyle()** (2 connections) — `packages/design-tokens/src/platform/native.ts`
+- **toNativeTypographyVariant()** (2 connections) — `packages/design-tokens/src/platform/native.ts`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/api/AdminMessageController.java`
+- `packages/design-tokens/src/platform/native.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

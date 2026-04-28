@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskCancelResult.java** (2 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskCancelResult.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskCancelResult.java`
-- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskCancelResult.java`
+- **TaskApplicationsListResult.java** (2 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskApplicationsListResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskApplicationsListResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/task/dto/TaskApplicationsListResult.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/task/dto/TaskCancelResult.java`
+- `services/api/src/main/java/mn/tasky/task/dto/TaskApplicationsListResult.java`
 
 ## Audit Trail
 

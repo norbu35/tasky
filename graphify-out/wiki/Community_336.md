@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **check-doc-governance.py** (1 connections) — `tooling/scripts/governance/check-doc-governance.py`
-- **print_remediation()** (1 connections) — `tooling/scripts/governance/check-doc-governance.py`
+- **check_lifecycles.py** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
+- **main()** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `tooling/scripts/governance/check-doc-governance.py`
+- `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
 
 ## Audit Trail
 

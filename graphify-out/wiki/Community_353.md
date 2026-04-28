@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **nativewind-env.d.ts** (0 connections) — `apps/mobile/nativewind-env.d.ts`
+- **nativeGoogleMapsConfig.test.ts** (0 connections) — `apps/mobile/__tests__/nativeGoogleMapsConfig.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/nativewind-env.d.ts`
+- `apps/mobile/__tests__/nativeGoogleMapsConfig.test.ts`
 
 ## Audit Trail
 

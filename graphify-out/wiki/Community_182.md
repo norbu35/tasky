@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **base.mjs** (2 connections) — `tooling/config/eslint/base.mjs`
-- **react-native.mjs** (1 connections) — `tooling/config/eslint/react-native.mjs`
-- **react.mjs** (1 connections) — `tooling/config/eslint/react.mjs`
+- **TaskOutcomeClassificationTest** (2 connections) — `services/api/src/test/java/mn/tasky/task/dto/TaskOutcomeClassificationTest.java`
+- **TaskOutcomeClassificationTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/TaskOutcomeClassificationTest.java`
+- **.storesOutcomeBucketAndReportingEligibilityFlags()** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/TaskOutcomeClassificationTest.java`
 
 ## Relationships
 
@@ -14,9 +14,7 @@
 
 ## Source Files
 
-- `tooling/config/eslint/base.mjs`
-- `tooling/config/eslint/react-native.mjs`
-- `tooling/config/eslint/react.mjs`
+- `services/api/src/test/java/mn/tasky/task/dto/TaskOutcomeClassificationTest.java`
 
 ## Audit Trail
 

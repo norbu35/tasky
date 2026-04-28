@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **AssistanceOutcomeTypeTest** (2 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
-- **AssistanceOutcomeTypeTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
-- **.definesLaunchAssistanceOutcomeBuckets()** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
+- **AssistanceEvaluationTest** (2 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
+- **AssistanceEvaluationTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
+- **.storesExternalDistributionDecisionAndReason()** (1 connections) — `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/task/dto/AssistanceOutcomeTypeTest.java`
+- `services/api/src/test/java/mn/tasky/task/dto/AssistanceEvaluationTest.java`
 
 ## Audit Trail
 

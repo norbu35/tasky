@@ -4,29 +4,30 @@
 
 ## Key Concepts
 
-- **BalanceResponse** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
-- **LedgerResponses** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
-- **WalletQueryCompositionServiceTests.java** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
-- **WalletQueryCompositionServiceTests** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
-- **.mapsListOfEntries()** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
-- **.returnsEmptyList()** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
-- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
-- **.mapsAllFields()** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
-- **.handlesZeroBalances()** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
+- **TaskerJobsScreen.tsx** (4 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **useBookings()** (3 connections) — `apps/mobile/src/features/bookings/hooks/useBookings.ts`
+- **TaskerJobsScreen()** (2 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **useBookingsListScreen()** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
+- **useBookings.ts** (1 connections) — `apps/mobile/src/features/bookings/hooks/useBookings.ts`
+- **BookingCardHeader()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **BookingCardBody()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **getJobCardTestID()** (1 connections) — `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
+- **useBookingsListScreen.ts** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
 
 ## Relationships
 
-- [[Community 2]] (2 shared connections)
-- [[Community 0]] (2 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/WalletQueryCompositionServiceTests.java`
+- `apps/mobile/src/features/bookings/hooks/useBookings.ts`
+- `apps/mobile/src/features/bookings/screens/BookingsList/useBookingsListScreen.ts`
+- `apps/mobile/src/features/bookings/screens/TaskerJobsScreen.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 16 (80%)
-- INFERRED: 4 (20%)
+- EXTRACTED: 12 (75%)
+- INFERRED: 4 (25%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **PaymentCommandHandler** (5 connections) — `services/api/src/main/java/mn/tasky/payment/application/command/PaymentCommandHandler.java`
-- **PaymentCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/payment/application/command/PaymentCommandHandler.java`
-- **.PaymentCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/application/command/PaymentCommandHandler.java`
-- **.initiatePayment()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/application/command/PaymentCommandHandler.java`
-- **.findPaymentIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/application/command/PaymentCommandHandler.java`
-- **.processCallback()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/application/command/PaymentCommandHandler.java`
+- **WebSocketConfig** (5 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
+- **WebSocketConfig.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
+- **.WebSocketConfig()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
+- **.registerStompEndpoints()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
+- **.configureMessageBroker()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
+- **.configureWebSocketTransport()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/payment/application/command/PaymentCommandHandler.java`
+- `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
 
 ## Audit Trail
 

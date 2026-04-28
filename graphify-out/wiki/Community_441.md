@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **BookingLifecyclePreview.test.tsx** (0 connections) — `apps/mobile/__tests__/features/bookings/components/BookingLifecyclePreview.test.tsx`
+- **TaskerJobDetail.Actions.test.tsx** (0 connections) — `apps/mobile/__tests__/features/bookings/screens/TaskerJobDetail.Actions.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/bookings/components/BookingLifecyclePreview.test.tsx`
+- `apps/mobile/__tests__/features/bookings/screens/TaskerJobDetail.Actions.test.tsx`
 
 ## Audit Trail
 

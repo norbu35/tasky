@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **WebSocketConfig** (5 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
-- **WebSocketConfig.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
-- **.WebSocketConfig()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
-- **.registerStompEndpoints()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
-- **.configureMessageBroker()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
-- **.configureWebSocketTransport()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
+- **MainActivity** (5 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **MainActivity.kt** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **.onCreate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **.getMainComponentName()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **.createReactActivityDelegate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **.invokeDefaultOnBackPressed()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/config/WebSocketConfig.java`
+- `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
 
 ## Audit Trail
 

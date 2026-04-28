@@ -1,30 +1,31 @@
 # Community 51
 
-> 9 nodes
+> 10 nodes
 
 ## Key Concepts
 
-- **TrustQueryHandler** (8 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **TrustQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.TrustQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.listReviews()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.listPendingDisputes()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.getDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.getDisputeForUser()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.getDisputeEvidence()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
-- **.hasOpenDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- **Constructor** (5 connections) — `services/api/src/test/java/mn/tasky/common/security/CryptoServiceTest.java`
+- **CryptoServiceTest.java** (4 connections) — `services/api/src/test/java/mn/tasky/common/security/CryptoServiceTest.java`
+- **CryptoServiceTest** (4 connections) — `services/api/src/test/java/mn/tasky/common/security/CryptoServiceTest.java`
+- **.validKey()** (4 connections) — `services/api/src/test/java/mn/tasky/common/security/CryptoServiceTest.java`
+- **.validBlindIndexKey()** (4 connections) — `services/api/src/test/java/mn/tasky/common/security/CryptoServiceTest.java`
+- **.setUp()** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/CryptoServiceTest.java`
+- **.rejectsBlankEncryptionKey()** (2 connections) — `services/api/src/test/java/mn/tasky/common/security/CryptoServiceTest.java`
+- **.rejectsBlankBlindIndexKey()** (2 connections) — `services/api/src/test/java/mn/tasky/common/security/CryptoServiceTest.java`
+- **.rejectsShortEncryptionKey()** (2 connections) — `services/api/src/test/java/mn/tasky/common/security/CryptoServiceTest.java`
+- **.rejectsShortBlindIndexKey()** (2 connections) — `services/api/src/test/java/mn/tasky/common/security/CryptoServiceTest.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 1]] (2 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/trust/application/query/TrustQueryHandler.java`
+- `services/api/src/test/java/mn/tasky/common/security/CryptoServiceTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 16 (100%)
+- EXTRACTED: 32 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

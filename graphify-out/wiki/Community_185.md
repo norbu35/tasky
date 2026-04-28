@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **otp.tsx** (2 connections) — `archive/mobile-future/auth/otp.tsx`
-- **resolveOtpState()** (1 connections) — `archive/mobile-future/auth/otp.tsx`
-- **cn()** (1 connections) — `archive/mobile-future/auth/otp.tsx`
+- **tooling-audit-batch2.test.mjs** (2 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
+- **readRepo()** (1 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
+- **runPython()** (1 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `archive/mobile-future/auth/otp.tsx`
+- `tooling/tests/tooling-audit-batch2.test.mjs`
 
 ## Audit Trail
 

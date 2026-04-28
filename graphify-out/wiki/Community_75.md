@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **OnboardingScreen.tsx** (5 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
-- **handleFinish()** (3 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
-- **handleNext()** (2 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
-- **handleSkip()** (2 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
-- **onScroll()** (1 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
-- **handleBack()** (1 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- **fixtures.ts** (5 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **resetStores()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **setAuthenticated()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **setFirstTimeUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **setBannedUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **setSuspendedUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
 
 ## Relationships
 
@@ -17,11 +17,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- `apps/mobile/__tests__/integration/fixtures.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

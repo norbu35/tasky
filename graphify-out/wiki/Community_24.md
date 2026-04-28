@@ -1,60 +1,59 @@
 # Community 24
 
-> 45 nodes
+> 51 nodes
 
 ## Key Concepts
 
-- **reanimated.ts** (11 connections) — `packages/test-utils/src/mocks/reanimated.ts`
-- **useSharedValue()** (7 connections) — `packages/test-utils/src/mocks/reanimated.ts`
-- **useAnimatedStyle()** (7 connections) — `packages/test-utils/src/mocks/reanimated.ts`
-- **animations.ts** (5 connections) — `apps/mobile/src/design/animations.ts`
-- **useSafeAreaInsets()** (5 connections) — `packages/test-utils/src/mocks/safe-area-context.ts`
-- **FAB()** (4 connections) — `apps/mobile/src/components/ui/FAB.tsx`
-- **withInteractiveSpring()** (4 connections) — `apps/mobile/src/design/animations.ts`
-- **safe-area-context.ts** (4 connections) — `packages/test-utils/src/mocks/safe-area-context.ts`
-- **withSpring()** (4 connections) — `packages/test-utils/src/mocks/reanimated.ts`
-- **AnimatedCheckmark()** (3 connections) — `apps/mobile/src/components/templates/SuccessCelebrationTemplate.tsx`
-- **SkeletonCard()** (3 connections) — `apps/mobile/src/components/templates/FeedListTemplate.tsx`
-- **PressableCard()** (3 connections) — `apps/mobile/src/components/ui/PressableCard.tsx`
-- **HandDrawnCheck()** (3 connections) — `apps/mobile/src/components/ui/HandDrawnCheck.tsx`
-- **SkeletonLoader()** (3 connections) — `apps/mobile/src/components/ui/SkeletonLoader.tsx`
-- **InsetScrollView()** (2 connections) — `apps/mobile/src/components/shells/InsetScrollView.tsx`
-- **StickyActionBar()** (2 connections) — `apps/mobile/src/components/shells/StickyActionBar.tsx`
-- **FeedListTemplate.tsx** (2 connections) — `apps/mobile/src/components/templates/FeedListTemplate.tsx`
-- **SplitCard.tsx** (2 connections) — `apps/mobile/src/components/ui/SplitCard.tsx`
-- **handlePressIn()** (2 connections) — `apps/mobile/src/components/ui/SplitCard.tsx`
-- **handlePressOut()** (2 connections) — `apps/mobile/src/components/ui/SplitCard.tsx`
-- **toEasing()** (2 connections) — `apps/mobile/src/design/animations.ts`
-- **toAnimationPreset()** (2 connections) — `apps/mobile/src/design/animations.ts`
-- **withFloatingSpring()** (2 connections) — `apps/mobile/src/design/animations.ts`
-- **withEmphasisSpring()** (2 connections) — `apps/mobile/src/design/animations.ts`
-- **InputBar()** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/InputBar.tsx`
-- _... and 20 more nodes in this community_
+- **.doFilterInternal()** (22 connections) — `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
+- **Write** (10 connections) — `services/api/src/test/java/mn/tasky/common/security/JsonSecurityResponseWriterTest.java`
+- **RequestObservabilityFilterTest.java** (6 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **JwtAuthenticationFilter** (5 connections) — `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
+- **PlatformResolution** (5 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **TraceAndCorrelationIdResolution** (4 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **RestAccessDeniedHandler** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAccessDeniedHandler.java`
+- **RestAuthenticationEntryPoint** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAuthenticationEntryPoint.java`
+- **.commence()** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAuthenticationEntryPoint.java`
+- **RequestObservabilityFilterTest** (3 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **MdcPopulation** (3 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **LocaleResolution** (3 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **FilterChainProceeds** (3 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **RestAccessDeniedHandlerTest** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/RestAccessDeniedHandlerTest.java`
+- **.writesForbiddenResponse()** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/RestAccessDeniedHandlerTest.java`
+- **RestAuthenticationEntryPointTest** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/RestAuthenticationEntryPointTest.java`
+- **.writesUnauthorizedResponse()** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/RestAuthenticationEntryPointTest.java`
+- **.handle()** (2 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAccessDeniedHandler.java`
+- **JwtAuthenticationFilter.java** (2 connections) — `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
+- **.isAuthOrPublicPath()** (2 connections) — `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
+- **.setUp()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **.tearDown()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **.usesHeaderValuesWhenValid()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **.generatesUuidsWhenHeadersMissing()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- **.generatesUuidsWhenHeadersContainInvalidChars()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- _... and 26 more nodes in this community_
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 7]] (3 shared connections)
+- [[Community 6]] (3 shared connections)
+- [[Community 3]] (2 shared connections)
+- [[Community 0]] (1 shared connections)
+- [[Community 9]] (1 shared connections)
+- [[Community 2]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/components/shells/InsetScrollView.tsx`
-- `apps/mobile/src/components/shells/StickyActionBar.tsx`
-- `apps/mobile/src/components/templates/FeedListTemplate.tsx`
-- `apps/mobile/src/components/templates/SuccessCelebrationTemplate.tsx`
-- `apps/mobile/src/components/ui/FAB.tsx`
-- `apps/mobile/src/components/ui/HandDrawnCheck.tsx`
-- `apps/mobile/src/components/ui/PressableCard.tsx`
-- `apps/mobile/src/components/ui/SkeletonLoader.tsx`
-- `apps/mobile/src/components/ui/SplitCard.tsx`
-- `apps/mobile/src/design/animations.ts`
-- `apps/mobile/src/features/chat/screens/ChatConversation/InputBar.tsx`
-- `packages/test-utils/src/mocks/reanimated.ts`
-- `packages/test-utils/src/mocks/safe-area-context.ts`
+- `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
+- `services/api/src/main/java/mn/tasky/common/security/RestAccessDeniedHandler.java`
+- `services/api/src/main/java/mn/tasky/common/security/RestAuthenticationEntryPoint.java`
+- `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
+- `services/api/src/test/java/mn/tasky/common/security/JsonSecurityResponseWriterTest.java`
+- `services/api/src/test/java/mn/tasky/common/security/RestAccessDeniedHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/common/security/RestAuthenticationEntryPointTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 66 (61%)
-- INFERRED: 42 (39%)
+- EXTRACTED: 91 (65%)
+- INFERRED: 48 (35%)
 - AMBIGUOUS: 0 (0%)
 
 ---

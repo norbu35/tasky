@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ProfileAvatar.tsx** (0 connections) — `apps/mobile/src/components/ui/ProfileAvatar.tsx`
+- **TimelineStepper.tsx** (0 connections) — `apps/mobile/src/components/ui/TimelineStepper.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/ProfileAvatar.tsx`
+- `apps/mobile/src/components/ui/TimelineStepper.tsx`
 
 ## Audit Trail
 

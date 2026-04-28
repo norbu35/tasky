@@ -5,8 +5,8 @@
 ## Key Concepts
 
 - **PriceTag.tsx** (2 connections) — `apps/mobile/src/components/ui/PriceTag.tsx`
-- **formatAmount()** (2 connections) — `apps/mobile/src/components/ui/PriceTag.tsx`
-- **PriceTag()** (2 connections) — `apps/mobile/src/components/ui/PriceTag.tsx`
+- **formatAmount()** (1 connections) — `apps/mobile/src/components/ui/PriceTag.tsx`
+- **PriceTag()** (1 connections) — `apps/mobile/src/components/ui/PriceTag.tsx`
 
 ## Relationships
 
@@ -18,7 +18,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

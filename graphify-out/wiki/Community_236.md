@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **theme.ts** (1 connections) — `apps/mobile/src/design/theme.ts`
-- **withAlpha()** (1 connections) — `apps/mobile/src/design/theme.ts`
+- **tailwind-screen-typography.ts** (1 connections) — `apps/mobile/src/design/tailwind-screen-typography.ts`
+- **px()** (1 connections) — `apps/mobile/src/design/tailwind-screen-typography.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/design/theme.ts`
+- `apps/mobile/src/design/tailwind-screen-typography.ts`
 
 ## Audit Trail
 

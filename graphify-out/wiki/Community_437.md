@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **UploadScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/verification/UploadScreen.test.tsx`
+- **permissions.test.ts** (0 connections) — `apps/mobile/__tests__/utils/permissions.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/tasker/verification/UploadScreen.test.tsx`
+- `apps/mobile/__tests__/utils/permissions.test.ts`
 
 ## Audit Trail
 

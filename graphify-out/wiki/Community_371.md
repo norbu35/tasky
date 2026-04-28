@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **FAB.worklet.test.ts** (0 connections) — `apps/mobile/__tests__/components/ui/FAB.worklet.test.ts`
+- **ProfileAvatar.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/ProfileAvatar.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/FAB.worklet.test.ts`
+- `apps/mobile/__tests__/components/ui/ProfileAvatar.test.tsx`
 
 ## Audit Trail
 

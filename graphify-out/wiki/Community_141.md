@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **CancelBookingRequestTest** (3 connections) — `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
-- **CancelBookingRequestTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
-- **.storesProvidedReason()** (1 connections) — `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
-- **.allowsNullReason()** (1 connections) — `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
+- **AutomationEventTypesTest** (3 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- **AutomationEventTypesTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- **.constantsHaveExpectedValues()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
+- **.privateConstructor()** (1 connections) — `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/test/java/mn/tasky/booking/dto/CancelBookingRequestTest.java`
+- `services/api/src/test/java/mn/tasky/automation/event/AutomationEventTypesTest.java`
 
 ## Audit Trail
 

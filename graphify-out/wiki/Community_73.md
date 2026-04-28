@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **App.test.tsx** (5 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **render()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **RedirectMock()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **TabsMock()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **resetStores()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
-- **installDefaultHookMocks()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **app.config.ts** (5 connections) — `apps/mobile/app.config.ts`
+- **optionalEnvFromSources()** (3 connections) — `apps/mobile/app.config.ts`
+- **parseEnvFile()** (2 connections) — `apps/mobile/app.config.ts`
+- **readEnvFile()** (2 connections) — `apps/mobile/app.config.ts`
+- **optionalEnv()** (2 connections) — `apps/mobile/app.config.ts`
+- **resolveGoogleMapsApiKeys()** (2 connections) — `apps/mobile/app.config.ts`
 
 ## Relationships
 
@@ -17,11 +17,11 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/App.test.tsx`
+- `apps/mobile/app.config.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 16 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

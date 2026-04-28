@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **CategoryQueryHandler** (3 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
-- **CategoryQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
-- **.CategoryQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
-- **.getCategory()** (1 connections) — `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
+- **BookingIntentDeclineResult.java** (3 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
+- **isSuccess()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/BookingIntentDeclineResult.java`
 
 ## Audit Trail
 

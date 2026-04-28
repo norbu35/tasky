@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Tasky-Bridging-Header.h** (0 connections) — `apps/mobile/ios/Tasky/Tasky-Bridging-Header.h`
+- **RejectedScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/features/verification/screens/RejectedScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/ios/Tasky/Tasky-Bridging-Header.h`
+- `apps/mobile/__tests__/features/verification/screens/RejectedScreen.test.tsx`
 
 ## Audit Trail
 

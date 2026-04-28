@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **SplashScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/auth/SplashScreen.test.tsx`
+- **MyTasksListScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/MyTasksListScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/auth/SplashScreen.test.tsx`
+- `apps/mobile/__tests__/screens/customer/MyTasksListScreen.test.tsx`
 
 ## Audit Trail
 

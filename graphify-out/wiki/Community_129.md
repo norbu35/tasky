@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **LocaleConfig** (3 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
-- **LocaleConfig.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
-- **.localeResolver()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
-- **.messageSource()** (1 connections) — `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
+- **JsonSecurityResponseWriter** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- **JsonSecurityResponseWriter.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- **.JsonSecurityResponseWriter()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
+- **.write()** (1 connections) — `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/config/LocaleConfig.java`
+- `services/api/src/main/java/mn/tasky/common/security/JsonSecurityResponseWriter.java`
 
 ## Audit Trail
 

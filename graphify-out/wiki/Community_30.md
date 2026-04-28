@@ -1,48 +1,55 @@
 # Community 30
 
-> 21 nodes
+> 35 nodes
 
 ## Key Concepts
 
-- **.existsByActionAndResourceId()** (7 connections) — `services/api/src/main/java/mn/tasky/common/audit/AuditEventDao.java`
-- **AuditEventDaoTest** (5 connections) — `services/api/src/test/java/mn/tasky/common/audit/AuditEventDaoTest.java`
-- **AdminAuditQueryHandler** (3 connections) — `services/api/src/main/java/mn/tasky/admin/application/query/AdminAuditQueryHandler.java`
-- **.hasActionForResource()** (3 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditQueryPort.java`
-- **AuditEventDao** (3 connections) — `services/api/src/main/java/mn/tasky/common/audit/AuditEventDao.java`
-- **AdminAuditQueryHandlerTest** (3 connections) — `services/api/src/test/java/mn/tasky/admin/application/query/AdminAuditQueryHandlerTest.java`
-- **.hasActionForResourceReturnsTrueWhenExists()** (3 connections) — `services/api/src/test/java/mn/tasky/admin/application/query/AdminAuditQueryHandlerTest.java`
-- **.hasActionForResourceReturnsFalseWhenNotExists()** (3 connections) — `services/api/src/test/java/mn/tasky/admin/application/query/AdminAuditQueryHandlerTest.java`
-- **.hasActionForResource()** (2 connections) — `services/api/src/main/java/mn/tasky/admin/application/query/AdminAuditQueryHandler.java`
-- **AdminAuditQueryPort** (2 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditQueryPort.java`
-- **.insert()** (2 connections) — `services/api/src/main/java/mn/tasky/common/audit/AuditEventDao.java`
-- **.insertStringDelegatesToUuidOverload()** (2 connections) — `services/api/src/test/java/mn/tasky/common/audit/AuditEventDaoTest.java`
-- **.insertHandlesNullIds()** (2 connections) — `services/api/src/test/java/mn/tasky/common/audit/AuditEventDaoTest.java`
-- **.existsByActionAndResourceIdDelegatesToUuidOverload()** (2 connections) — `services/api/src/test/java/mn/tasky/common/audit/AuditEventDaoTest.java`
-- **.existsByActionAndResourceIdHandlesNullResourceId()** (2 connections) — `services/api/src/test/java/mn/tasky/common/audit/AuditEventDaoTest.java`
-- **AdminAuditQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/application/query/AdminAuditQueryHandler.java`
-- **.AdminAuditQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/admin/application/query/AdminAuditQueryHandler.java`
-- **AdminAuditQueryPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditQueryPort.java`
-- **AuditEventDao.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/audit/AuditEventDao.java`
-- **AuditEventDaoTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/audit/AuditEventDaoTest.java`
-- **AdminAuditQueryHandlerTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/admin/application/query/AdminAuditQueryHandlerTest.java`
+- **intakeSchema.ts** (18 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **normalizeField()** (6 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **getLocale()** (6 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **IntakeFormRenderer.tsx** (4 connections) — `apps/web/src/components/feature/task-creation/IntakeFormRenderer.tsx`
+- **getFieldLabel()** (4 connections) — `apps/web/src/components/feature/task-creation/IntakeFormRenderer.tsx`
+- **prettifyIntakeToken()** (4 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **normalizeOption()** (4 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **resolveSelectableValue()** (4 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **normalizeIntakeSchema()** (4 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **getIntakeFieldLabel()** (4 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **getIntakeOptionLabel()** (4 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **TaskIntake.SchemaFieldRenderer.tsx** (3 connections) — `apps/mobile/src/features/tasks/screens/TaskIntake.SchemaFieldRenderer.tsx`
+- **coerceString()** (3 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **coerceNumber()** (3 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **asRecord()** (3 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **parseRawSchema()** (3 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **summarizeIntakeAnswers()** (3 connections) — `packages/core/src/tasks/intakeSchema.ts`
+- **SystemInfoController** (3 connections) — `services/api/src/main/java/mn/tasky/common/config/SystemInfoController.java`
+- **.getSystemVersion()** (3 connections) — `services/api/src/main/java/mn/tasky/common/config/SystemInfoController.java`
+- **TaskIntake.model.ts** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskIntake.model.ts`
+- **getFieldLabel()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskIntake.model.ts`
+- **validateIntake()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskIntake.model.ts`
+- **SchemaFieldRenderer()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskIntake.SchemaFieldRenderer.tsx`
+- **getOptionLabel()** (2 connections) — `apps/web/src/components/feature/task-creation/IntakeFormRenderer.tsx`
+- **SingleSelectField()** (2 connections) — `apps/web/src/components/feature/task-creation/IntakeFormRenderer.tsx`
+- _... and 10 more nodes in this community_
 
 ## Relationships
 
-- [[Community 3]] (2 shared connections)
-- [[Community 1]] (2 shared connections)
+- [[Community 0]] (2 shared connections)
+- [[Community 9]] (1 shared connections)
+- [[Community 6]] (1 shared connections)
+- [[Community 2]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/application/query/AdminAuditQueryHandler.java`
-- `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditQueryPort.java`
-- `services/api/src/main/java/mn/tasky/common/audit/AuditEventDao.java`
-- `services/api/src/test/java/mn/tasky/admin/application/query/AdminAuditQueryHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/common/audit/AuditEventDaoTest.java`
+- `apps/mobile/src/features/tasks/screens/TaskIntake.SchemaFieldRenderer.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskIntake.model.ts`
+- `apps/web/src/components/feature/task-creation/IntakeFormRenderer.tsx`
+- `packages/core/src/tasks/intakeSchema.ts`
+- `services/api/src/main/java/mn/tasky/common/config/SystemInfoController.java`
 
 ## Audit Trail
 
-- EXTRACTED: 32 (64%)
-- INFERRED: 18 (36%)
+- EXTRACTED: 98 (87%)
+- INFERRED: 15 (13%)
 - AMBIGUOUS: 0 (0%)
 
 ---

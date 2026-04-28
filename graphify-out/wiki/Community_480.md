@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.tsx** (0 connections) — `apps/mobile/src/app/(customer)/disputes/[disputeId]/index.tsx`
+- **reschedule.tsx** (0 connections) — `apps/mobile/src/app/(customer)/bookings/[bookingId]/reschedule.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/disputes/[disputeId]/index.tsx`
+- `apps/mobile/src/app/(customer)/bookings/[bookingId]/reschedule.tsx`
 
 ## Audit Trail
 

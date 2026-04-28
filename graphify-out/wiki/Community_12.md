@@ -1,78 +1,74 @@
 # Community 12
 
-> 157 nodes
+> 110 nodes
 
 ## Key Concepts
 
-- **.getState()** (19 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **.code()** (19 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyException.java`
-- **.isOpen()** (17 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **.recordFailure()** (16 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **FacebookCircuitBreakerTests** (13 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
-- **ApiExceptionHandler** (12 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
-- **.error()** (12 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
-- **.processCallback()** (11 connections) — `services/api/src/main/java/mn/tasky/payment/application/PaymentService.java`
-- **.recordSuccess()** (10 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **QPayPaymentProvider** (10 connections) — `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
-- **healthy()** (8 connections) — `services/api/src/main/java/mn/tasky/automation/provider/ProviderHealth.java`
-- **FacebookCircuitBreakerTest** (8 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookCircuitBreakerTest.java`
-- **FacebookCircuitBreaker** (7 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- **LoggingPushProvider** (7 connections) — `services/api/src/main/java/mn/tasky/notification/provider/LoggingPushProvider.java`
-- **.health()** (7 connections) — `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
-- **RequireKey** (7 connections) — `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
-- **getStatus()** (6 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
-- **.login()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/api/FacebookAuthController.java`
-- **.assertAllowed()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookRateLimitService.java`
-- **.fetchProfile()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
-- **FacebookOAuthProvider** (6 connections) — `services/api/src/main/java/mn/tasky/auth/provider/FacebookOAuthProvider.java`
-- **.doProbe()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/FacebookCircuitBreakerProbe.java`
-- **LoggingLlmProvider** (6 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LoggingLlmProvider.java`
-- **PaymentService** (6 connections) — `services/api/src/main/java/mn/tasky/payment/application/PaymentService.java`
-- **FacebookRateLimitServiceTest** (6 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookRateLimitServiceTest.java`
-- _... and 132 more nodes in this community_
+- **.findActive()** (16 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
+- **.updateStatusAndSuspensionEnd()** (15 connections) — `services/api/src/main/java/mn/tasky/auth/dao/UserDao.java`
+- **AddStrike** (15 connections) — `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
+- **.updatePolicy()** (13 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationPolicyUpdateService.java`
+- **UpdateModerationPolicy** (13 connections) — `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
+- **AutoUnsuspendEnabled** (12 connections) — `services/api/src/test/java/mn/tasky/auth/UserStatusResolverTests.java`
+- **IdentityQueryPort** (11 connections) — `services/api/src/main/java/mn/tasky/identity/publicapi/IdentityQueryPort.java`
+- **ModerationService** (10 connections) — `services/api/src/main/java/mn/tasky/auth/application/ModerationService.java`
+- **.countSince()** (10 connections) — `services/api/src/main/java/mn/tasky/auth/dao/SuspensionEventDao.java`
+- **.findSuspensionEndAt()** (9 connections) — `services/api/src/main/java/mn/tasky/auth/dao/UserDao.java`
+- **.atThresholdTriggersSuspension()** (9 connections) — `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
+- **.addStrike()** (8 connections) — `services/api/src/main/java/mn/tasky/auth/application/ModerationService.java`
+- **.repeatOffenderLongerSuspension()** (8 connections) — `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
+- **.strikePolicyResponse()** (7 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationCompositionService.java`
+- **.banUser()** (7 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminUserCompositionService.java`
+- **.bannedUserNotSuspended()** (7 connections) — `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
+- **.suspendedUserNotDoubled()** (7 connections) — `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
+- **.banSetsStatusAndAudits()** (7 connections) — `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
+- **.resolve()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/UserStatusResolver.java`
+- **.currentStrikePolicy()** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationCompositionService.java`
+- **.pastEndAutoUnsuspends()** (6 connections) — `services/api/src/test/java/mn/tasky/auth/UserStatusResolverTests.java`
+- **.usesDefaultPolicy()** (6 connections) — `services/api/src/test/java/mn/tasky/auth/UserStatusResolverTests.java`
+- **.belowThresholdNoSuspension()** (6 connections) — `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
+- **.unbanRestoresActiveAndAudits()** (6 connections) — `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
+- **.updatePolicy_success()** (6 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminModerationPolicyUpdateServiceTests.java`
+- _... and 85 more nodes in this community_
 
 ## Relationships
 
-- [[Community 4]] (14 shared connections)
-- [[Community 0]] (11 shared connections)
-- [[Community 2]] (10 shared connections)
-- [[Community 5]] (7 shared connections)
-- [[Community 1]] (5 shared connections)
-- [[Community 3]] (3 shared connections)
-- [[Community 6]] (2 shared connections)
-- [[Community 17]] (1 shared connections)
-- [[Community 11]] (1 shared connections)
-- [[Community 18]] (1 shared connections)
-- [[Community 10]] (1 shared connections)
-- [[Community 14]] (1 shared connections)
+- [[Community 1]] (22 shared connections)
+- [[Community 0]] (18 shared connections)
+- [[Community 2]] (17 shared connections)
+- [[Community 3]] (15 shared connections)
+- [[Community 4]] (13 shared connections)
+- [[Community 5]] (9 shared connections)
+- [[Community 7]] (5 shared connections)
+- [[Community 13]] (3 shared connections)
+- [[Community 9]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
-- `services/api/src/main/java/mn/tasky/auth/api/FacebookAuthController.java`
-- `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
-- `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
-- `services/api/src/main/java/mn/tasky/auth/application/FacebookHealthIndicator.java`
-- `services/api/src/main/java/mn/tasky/auth/application/FacebookRateLimitService.java`
-- `services/api/src/main/java/mn/tasky/auth/provider/FacebookOAuthProvider.java`
-- `services/api/src/main/java/mn/tasky/auth/scheduling/FacebookCircuitBreakerProbe.java`
-- `services/api/src/main/java/mn/tasky/automation/provider/ProviderHealth.java`
-- `services/api/src/main/java/mn/tasky/automation/provider/llm/LoggingLlmProvider.java`
-- `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
-- `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyException.java`
-- `services/api/src/main/java/mn/tasky/notification/provider/FirebasePushProvider.java`
-- `services/api/src/main/java/mn/tasky/notification/provider/LoggingPushProvider.java`
-- `services/api/src/main/java/mn/tasky/notification/provider/LoggingSmsNotificationProvider.java`
-- `services/api/src/main/java/mn/tasky/payment/application/PaymentService.java`
-- `services/api/src/main/java/mn/tasky/payment/dao/PaymentIntentDao.java`
-- `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
-- `services/api/src/test/java/mn/tasky/auth/AuthExceptionTest.java`
-- `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminModerationController.java`
+- `services/api/src/main/java/mn/tasky/auth/application/ModerationService.java`
+- `services/api/src/main/java/mn/tasky/auth/application/UserStatusResolver.java`
+- `services/api/src/main/java/mn/tasky/auth/dao/SuspensionEventDao.java`
+- `services/api/src/main/java/mn/tasky/auth/dao/UserDao.java`
+- `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
+- `services/api/src/main/java/mn/tasky/identity/publicapi/IdentityQueryPort.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationPolicyUpdateOutcome.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminModerationPolicyUpdateService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminUserCompositionService.java`
+- `services/api/src/test/java/mn/tasky/auth/AuthScenarioTests.java`
+- `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
+- `services/api/src/test/java/mn/tasky/auth/UserStatusResolverTests.java`
+- `services/api/src/test/java/mn/tasky/identity/application/command/IdentityCommandHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/identity/application/query/IdentityQueryHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminModerationCompositionServiceTests.java`
+- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminModerationPolicyUpdateServiceTests.java`
+- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminUserCompositionServiceTests.java`
 
 ## Audit Trail
 
-- EXTRACTED: 326 (58%)
-- INFERRED: 237 (42%)
+- EXTRACTED: 206 (46%)
+- INFERRED: 241 (54%)
 - AMBIGUOUS: 0 (0%)
 
 ---

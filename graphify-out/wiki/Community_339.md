@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **doc-claims-validator.test.mjs** (1 connections) — `tooling/tests/doc-claims-validator.test.mjs`
-- **runPython()** (1 connections) — `tooling/tests/doc-claims-validator.test.mjs`
+- **doc-references-validator.test.mjs** (1 connections) — `tooling/tests/doc-references-validator.test.mjs`
+- **runPython()** (1 connections) — `tooling/tests/doc-references-validator.test.mjs`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `tooling/tests/doc-claims-validator.test.mjs`
+- `tooling/tests/doc-references-validator.test.mjs`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **AppUpdateScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/features/infra/screens/AppUpdateScreen.test.tsx`
+- **Inbox.model.test.ts** (0 connections) — `apps/mobile/__tests__/features/chat/screens/Inbox.model.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/infra/screens/AppUpdateScreen.test.tsx`
+- `apps/mobile/__tests__/features/chat/screens/Inbox.model.test.ts`
 
 ## Audit Trail
 

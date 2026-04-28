@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.tsx** (0 connections) — `apps/mobile/src/app/(auth)/index.tsx`
+- **onboarding.tsx** (0 connections) — `apps/mobile/src/app/onboarding.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(auth)/index.tsx`
+- `apps/mobile/src/app/onboarding.tsx`
 
 ## Audit Trail
 

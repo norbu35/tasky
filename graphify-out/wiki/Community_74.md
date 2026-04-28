@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **fixtures.ts** (5 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
-- **resetStores()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
-- **setAuthenticated()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
-- **setFirstTimeUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
-- **setBannedUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
-- **setSuspendedUser()** (1 connections) — `apps/mobile/__tests__/integration/fixtures.ts`
+- **App.test.tsx** (5 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **render()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **RedirectMock()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **TabsMock()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **resetStores()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
+- **installDefaultHookMocks()** (1 connections) — `apps/mobile/__tests__/App.test.tsx`
 
 ## Relationships
 
@@ -17,7 +17,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/integration/fixtures.ts`
+- `apps/mobile/__tests__/App.test.tsx`
 
 ## Audit Trail
 

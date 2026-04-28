@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **FormField.tsx** (0 connections) — `apps/mobile/src/components/ui/FormField.tsx`
+- **InfoRow.tsx** (0 connections) — `apps/mobile/src/components/ui/InfoRow.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/FormField.tsx`
+- `apps/mobile/src/components/ui/InfoRow.tsx`
 
 ## Audit Trail
 

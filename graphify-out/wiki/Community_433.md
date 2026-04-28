@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **MyJobsScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/jobs/MyJobsScreen.test.tsx`
+- **ConsentScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/verification/ConsentScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/tasker/jobs/MyJobsScreen.test.tsx`
+- `apps/mobile/__tests__/screens/tasker/verification/ConsentScreen.test.tsx`
 
 ## Audit Trail
 

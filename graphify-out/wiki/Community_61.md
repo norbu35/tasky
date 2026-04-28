@@ -4,28 +4,27 @@
 
 ## Key Concepts
 
-- **TraceErrorAttributesTest** (4 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **.getErrorAttributes()** (3 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- **TraceErrorAttributes** (2 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- **.setsTraceIdFromRequestAttribute()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **.fallsBackToUuidWhenTraceIdAttributeIsNull()** (2 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **TraceErrorAttributes.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- **TraceErrorAttributesTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
-- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- **TrustQueryPort** (8 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **TrustQueryPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.listReviews()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.listPendingDisputes()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.getDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.getDisputeForUser()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.getDisputeEvidence()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **.hasOpenDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 3]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/observability/TraceErrorAttributes.java`
-- `services/api/src/test/java/mn/tasky/common/observability/TraceErrorAttributesTest.java`
+- `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (75%)
-- INFERRED: 4 (25%)
+- EXTRACTED: 15 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

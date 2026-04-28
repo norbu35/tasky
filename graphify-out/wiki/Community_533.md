@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **FilterBar.tsx** (0 connections) — `apps/mobile/src/components/ui/FilterBar.tsx`
+- **Input.tsx** (0 connections) — `apps/mobile/src/components/ui/Input.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/FilterBar.tsx`
+- `apps/mobile/src/components/ui/Input.tsx`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **tdd-gate.test.mjs** (1 connections) — `tooling/tests/tdd-gate.test.mjs`
-- **extractSingleQuotedAssignment()** (1 connections) — `tooling/tests/tdd-gate.test.mjs`
+- **history.tsx** (1 connections) — `archive/mobile-future/tasker/credits/history.tsx`
+- **resolveState()** (1 connections) — `archive/mobile-future/tasker/credits/history.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `tooling/tests/tdd-gate.test.mjs`
+- `archive/mobile-future/tasker/credits/history.tsx`
 
 ## Audit Trail
 

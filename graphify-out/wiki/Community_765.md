@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ResolveRequest.java** (0 connections) — `services/api/src/main/java/mn/tasky/admin/dto/ResolveRequest.java`
+- **VerificationDetailResponse.java** (0 connections) — `services/api/src/main/java/mn/tasky/admin/dto/VerificationDetailResponse.java`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/dto/ResolveRequest.java`
+- `services/api/src/main/java/mn/tasky/admin/dto/VerificationDetailResponse.java`
 
 ## Audit Trail
 

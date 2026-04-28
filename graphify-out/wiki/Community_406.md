@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **RescheduleScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/bookings/RescheduleScreen.test.tsx`
+- **CustomerNoShowSheet.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/disputes/CustomerNoShowSheet.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/bookings/RescheduleScreen.test.tsx`
+- `apps/mobile/__tests__/screens/customer/disputes/CustomerNoShowSheet.test.tsx`
 
 ## Audit Trail
 

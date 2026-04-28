@@ -4,14 +4,14 @@
 
 ## Key Concepts
 
-- **useAuth.ts** (4 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
-- **useAuth.test.tsx** (2 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
-- **DevLoginHarness()** (2 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
-- **useDevLogin()** (2 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
-- **createWrapper()** (1 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
-- **prefetchPostAuthHome()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
-- **useRequestOtp()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
-- **useVerifyOtp()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **mockI18n.ts** (7 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **resolveLanguage()** (3 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **translate()** (3 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **lookupTranslation()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **interpolate()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **createReactI18nextMock()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **setTestLanguage()** (2 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
+- **resetTestI18n()** (1 connections) — `apps/mobile/__tests__/test-utils/mockI18n.ts`
 
 ## Relationships
 
@@ -19,13 +19,12 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/hooks/useAuth.test.tsx`
-- `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- `apps/mobile/__tests__/test-utils/mockI18n.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (86%)
-- INFERRED: 2 (14%)
+- EXTRACTED: 22 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

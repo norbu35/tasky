@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **primitives.ts** (2 connections) — `apps/mobile/src/utils/primitives.ts`
-- **toFutureIso()** (1 connections) — `apps/mobile/src/utils/primitives.ts`
-- **createIdempotencyKey()** (1 connections) — `apps/mobile/src/utils/primitives.ts`
+- **useVerificationSubmit.ts** (2 connections) — `apps/mobile/src/features/verification/hooks/useVerificationSubmit.ts`
+- **uploadToS3()** (1 connections) — `apps/mobile/src/features/verification/hooks/useVerificationSubmit.ts`
+- **useVerificationSubmit()** (1 connections) — `apps/mobile/src/features/verification/hooks/useVerificationSubmit.ts`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/utils/primitives.ts`
+- `apps/mobile/src/features/verification/hooks/useVerificationSubmit.ts`
 
 ## Audit Trail
 

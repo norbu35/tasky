@@ -2,20 +2,17 @@
 
 > God node · 50 connections · `apps/mobile/src/features/tasks/screens/ApplicantsSelection.ApplicantCard.tsx`
 
-**Community:** [[Community 6]]
+**Community:** [[Community 0]]
 
 ## Connections by Relation
 
 ### calls
 
 - [[useDisputeStatusScreen()]] `INFERRED`
-- [[useBookingRescheduleScreen()]] `INFERRED`
 - [[handleFormSubmit()]] `INFERRED`
-- [[getCtaConfig()]] `INFERRED`
+- [[useBookingRescheduleScreen()]] `INFERRED`
 - [[handlePushToggle()]] `INFERRED`
-- [[applyToTask()]] `INFERRED`
 - [[withdrawApplication()]] `INFERRED`
-- [[handleFacebookLogin()]] `INFERRED`
 - [[handleToggleActive()]] `INFERRED`
 - [[handleConfirm()]] `INFERRED`
 - [[handleSave()]] `INFERRED`
@@ -23,6 +20,9 @@
 - [[handleUnban()]] `INFERRED`
 - [[handleProcess()]] `INFERRED`
 - [[handleSubmit()]] `INFERRED`
+- [[getCtaConfig()]] `INFERRED`
+- [[applyToTask()]] `INFERRED`
+- [[handleFacebookLogin()]] `INFERRED`
 - [[BookingCard()]] `INFERRED`
 - [[useTaskScheduleScreen()]] `INFERRED`
 - [[TaskCard()]] `INFERRED`

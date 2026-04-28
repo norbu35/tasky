@@ -4,14 +4,14 @@
 
 ## Key Concepts
 
-- **TrustQueryPort** (7 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
-- **TrustQueryPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
-- **.listReviews()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
-- **.listPendingDisputes()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
-- **.getDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
-- **.getDisputeForUser()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
-- **.getDisputeEvidence()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
-- **.hasOpenDispute()** (1 connections) — `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- **MessagingQueryHandler** (7 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
+- **MessagingQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
+- **.MessagingQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
+- **.listEnrichedConversations()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
+- **.listMessages()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
+- **.findConversationByTaskAndParticipants()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
+- **.listMessagesForConversation()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
+- **.findFlaggedMessages()** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
 
 ## Relationships
 
@@ -19,7 +19,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/trust/publicapi/TrustQueryPort.java`
+- `services/api/src/main/java/mn/tasky/messaging/application/query/MessagingQueryHandler.java`
 
 ## Audit Trail
 

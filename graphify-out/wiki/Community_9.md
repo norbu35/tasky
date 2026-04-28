@@ -4,69 +4,75 @@
 
 ## Key Concepts
 
-- **.search()** (18 connections) — `services/api/src/main/java/mn/tasky/location/application/DistrictGeocodingProvider.java`
-- **.search()** (17 connections) — `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
-- **.findAll()** (17 connections) — `services/api/src/main/java/mn/tasky/notification/dao/DistrictDao.java`
-- **validate-i18n.py** (17 connections) — `tooling/scripts/governance/validate-i18n.py`
-- **validate-prd-scenario-links.py** (17 connections) — `tooling/scripts/governance/validate-prd-scenario-links.py`
-- **scrape-unegui.py** (17 connections) — `research/unegui-scraper/scrape-unegui.py`
-- **validate-openapi-backend-contracts.py** (14 connections) — `tooling/scripts/contracts/validate-openapi-backend-contracts.py`
-- **structure-check.js** (13 connections) — `apps/mobile/scripts/structure-check.js`
-- **validate-screen-spec-traceability.py** (12 connections) — `tooling/scripts/governance/validate-screen-spec-traceability.py`
-- **main()** (11 connections) — `tooling/scripts/governance/validate-i18n.py`
-- **controller_endpoints()** (9 connections) — `tooling/scripts/contracts/validate-openapi-backend-contracts.py`
-- **main()** (9 connections) — `tooling/scripts/governance/validate-prd-scenario-links.py`
-- **main()** (9 connections) — `tooling/scripts/governance/validate-screen-spec-traceability.py`
-- **scrape_category()** (9 connections) — `research/unegui-scraper/scrape-unegui.py`
-- **validate-design-contracts.py** (8 connections) — `tooling/scripts/governance/validate-design-contracts.py`
-- **parse_scenario_block()** (8 connections) — `tooling/scripts/governance/validate-prd-scenario-links.py`
-- **main()** (8 connections) — `research/unegui-scraper/scrape-unegui.py`
-- **validate_component()** (7 connections) — `tooling/scripts/governance/validate-design-contracts.py`
-- **Finding** (7 connections) — `tooling/scripts/governance/validate-prd-scenario-links.py`
-- **main()** (7 connections) — `tooling/skills/scenario-fidelity/scripts/find_weak_coverage.py`
-- **\_probe_detail()** (7 connections) — `research/unegui-scraper/scrape-unegui.py`
-- **DistrictGeocodingProvider** (6 connections) — `services/api/src/main/java/mn/tasky/location/application/DistrictGeocodingProvider.java`
-- **parse_dto_shape()** (6 connections) — `tooling/scripts/contracts/validate-openapi-backend-contracts.py`
-- **build_prd_inventory()** (6 connections) — `tooling/scripts/governance/validate-prd-scenario-links.py`
-- **validate_screen_spec()** (6 connections) — `tooling/scripts/governance/validate-screen-spec-traceability.py`
+- **parse()** (42 connections) — `services/api/src/main/java/mn/tasky/messaging/dao/MessageDao.java`
+- **sync-ops-registry.mjs** (21 connections) — `tooling/scripts/gates/sync-ops-registry.mjs`
+- **.entries()** (15 connections) — `services/api/src/main/java/mn/tasky/common/CommonToKernelDeprecationPath.java`
+- **bundle-openapi.mjs** (13 connections) — `tooling/scripts/contracts/bundle-openapi.mjs`
+- **runSync()** (13 connections) — `tooling/scripts/gates/sync-ops-registry.mjs`
+- **MessagingService** (12 connections) — `services/api/src/main/java/mn/tasky/messaging/application/MessagingService.java`
+- **check-ops-config.mjs** (10 connections) — `tooling/scripts/gates/check-ops-config.mjs`
+- **.sendMessage()** (9 connections) — `services/api/src/main/java/mn/tasky/messaging/application/MessagingService.java`
+- **MessageDao** (9 connections) — `services/api/src/main/java/mn/tasky/messaging/dao/MessageDao.java`
+- **.findByConversationId()** (8 connections) — `services/api/src/main/java/mn/tasky/messaging/dao/MessageDao.java`
+- **ops-registry.mjs** (8 connections) — `tooling/scripts/gates/lib/ops-registry.mjs`
+- **ops-registry.test.mjs** (8 connections) — `tooling/tests/ops-registry.test.mjs`
+- **isDraftComplete()** (7 connections) — `apps/mobile/src/features/tasks/draft/taskDraft.validation.ts`
+- **web.ts** (7 connections) — `packages/design-tokens/src/platform/web.ts`
+- **buildBundleDocument()** (7 connections) — `tooling/scripts/contracts/bundle-openapi.mjs`
+- **validate-openapi-phase.mjs** (7 connections) — `tooling/scripts/contracts/validate-openapi-phase.mjs`
+- **main()** (7 connections) — `tooling/scripts/contracts/validate-openapi-phase.mjs`
+- **checkWorkflowJobDrift()** (7 connections) — `tooling/scripts/gates/sync-ops-registry.mjs`
+- **TaskReviewSubmit.model.ts** (6 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.model.ts`
+- **taskDraft.validation.ts** (6 connections) — `apps/mobile/src/features/tasks/draft/taskDraft.validation.ts`
+- **.findOpenFeed()** (6 connections) — `services/api/src/main/java/mn/tasky/projection/publicfeed/PublicTaskFeedProjectionDao.java`
+- **PublicTaskFeedCompositionService** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PublicTaskFeedCompositionService.java`
+- **.publicFeedProjectionFiltersAndApproximatesByDistrict()** (6 connections) — `services/api/src/test/java/mn/tasky/projection/publicfeed/PublicTaskFeedProjectionDaoTest.java`
+- **ListOpenFeed** (6 connections) — `services/api/src/test/java/mn/tasky/projection/publicfeed/PublicTaskFeedProjectionServiceTest.java`
+- **refreshWorkflowJobs()** (6 connections) — `tooling/scripts/gates/sync-ops-registry.mjs`
 - _... and 161 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (10 shared connections)
-- [[Community 16]] (8 shared connections)
-- [[Community 3]] (6 shared connections)
+- [[Community 2]] (18 shared connections)
+- [[Community 0]] (12 shared connections)
+- [[Community 3]] (10 shared connections)
+- [[Community 5]] (7 shared connections)
 - [[Community 1]] (4 shared connections)
-- [[Community 2]] (2 shared connections)
-- [[Community 32]] (1 shared connections)
-- [[Community 31]] (1 shared connections)
+- [[Community 15]] (3 shared connections)
+- [[Community 4]] (2 shared connections)
+- [[Community 6]] (2 shared connections)
+- [[Community 13]] (2 shared connections)
+- [[Community 11]] (2 shared connections)
+- [[Community 8]] (1 shared connections)
+- [[Community 30]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/scripts/structure-check.js`
-- `research/unegui-scraper/scrape-unegui.py`
-- `services/api/src/main/java/mn/tasky/location/api/LocationController.java`
-- `services/api/src/main/java/mn/tasky/location/application/DistrictGeocodingProvider.java`
-- `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
-- `services/api/src/main/java/mn/tasky/location/dao/DistrictGeoDao.java`
-- `services/api/src/main/java/mn/tasky/notification/dao/DistrictDao.java`
-- `services/api/src/test/java/mn/tasky/location/DistrictGeocodingProviderTests.java`
-- `tooling/scripts/contracts/validate-openapi-backend-contracts.py`
-- `tooling/scripts/governance/validate-assistance-vocabulary.py`
-- `tooling/scripts/governance/validate-design-contracts.py`
-- `tooling/scripts/governance/validate-doc-claims.py`
-- `tooling/scripts/governance/validate-i18n.py`
-- `tooling/scripts/governance/validate-prd-scenario-links.py`
-- `tooling/scripts/governance/validate-requirement-references.py`
-- `tooling/scripts/governance/validate-screen-spec-traceability.py`
-- `tooling/skills/design-surface-drift/scripts/check_journeys.py`
-- `tooling/skills/intake-to-prd/scripts/extract_prd_diff_ids.py`
-- `tooling/skills/scenario-fidelity/scripts/find_weak_coverage.py`
+- `apps/mobile/__tests__/hooks/useCreateTask.test.tsx`
+- `apps/mobile/src/features/tasks/draft/taskDraft.validation.ts`
+- `apps/mobile/src/features/tasks/hooks/useCreateTask.ts`
+- `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.model.ts`
+- `apps/mobile/src/features/tasks/screens/useTaskReviewSubmitScreen.ts`
+- `packages/design-tokens/src/platform/web.ts`
+- `services/api/src/main/java/mn/tasky/common/CommonToKernelDeprecationPath.java`
+- `services/api/src/main/java/mn/tasky/messaging/application/MessagingService.java`
+- `services/api/src/main/java/mn/tasky/messaging/application/PhoneLeakDetector.java`
+- `services/api/src/main/java/mn/tasky/messaging/dao/MessageDao.java`
+- `services/api/src/main/java/mn/tasky/projection/publicfeed/PublicTaskFeedProjectionDao.java`
+- `services/api/src/main/java/mn/tasky/projection/publicfeed/PublicTaskFeedProjectionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PublicTaskFeedCompositionService.java`
+- `services/api/src/test/java/mn/tasky/common/audit/AuditEventTest.java`
+- `services/api/src/test/java/mn/tasky/kernel/KernelSkeletonTest.java`
+- `services/api/src/test/java/mn/tasky/projection/publicfeed/PublicTaskFeedPageTest.java`
+- `services/api/src/test/java/mn/tasky/projection/publicfeed/PublicTaskFeedProjectionDaoTest.java`
+- `services/api/src/test/java/mn/tasky/projection/publicfeed/PublicTaskFeedProjectionServiceTest.java`
+- `services/api/src/test/java/mn/tasky/projection/publicfeed/PublicTaskFeedRowTest.java`
+- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/PublicTaskFeedCompositionServiceTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 582 (82%)
-- INFERRED: 124 (18%)
+- EXTRACTED: 470 (74%)
+- INFERRED: 169 (26%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **DetailTemplate.test.tsx** (0 connections) — `apps/mobile/__tests__/components/templates/DetailTemplate.test.tsx`
+- **SuccessCelebrationTemplate.test.tsx** (0 connections) — `apps/mobile/__tests__/components/templates/SuccessCelebrationTemplate.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/templates/DetailTemplate.test.tsx`
+- `apps/mobile/__tests__/components/templates/SuccessCelebrationTemplate.test.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CustomerCancelSheet.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/disputes/CustomerCancelSheet.test.tsx`
+- **DisputeRaiseScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/disputes/DisputeRaiseScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/disputes/CustomerCancelSheet.test.tsx`
+- `apps/mobile/__tests__/screens/customer/disputes/DisputeRaiseScreen.test.tsx`
 
 ## Audit Trail
 

@@ -1,37 +1,42 @@
 # Community 36
 
-> 14 nodes
+> 18 nodes
 
 ## Key Concepts
 
-- **mockApi.ts** (12 connections) — `apps/web/e2e/support/mockApi.ts`
-- **installMockApi()** (4 connections) — `apps/web/e2e/support/mockApi.ts`
-- **loginThroughDevAuth()** (3 connections) — `apps/web/e2e/support/mockApi.ts`
-- **Route()** (2 connections) — `apps/mobile/src/app/task/[id].tsx`
-- **makeUser()** (2 connections) — `apps/web/e2e/support/mockApi.ts`
-- **makeProfile()** (2 connections) — `apps/web/e2e/support/mockApi.ts`
-- **makeVerificationList()** (2 connections) — `apps/web/e2e/support/mockApi.ts`
-- **buttonLabelForRole()** (2 connections) — `apps/web/e2e/support/mockApi.ts`
-- **[id].tsx** (1 connections) — `apps/mobile/src/app/task/[id].tsx`
-- **makeCategories()** (1 connections) — `apps/web/e2e/support/mockApi.ts`
-- **makePublicTasks()** (1 connections) — `apps/web/e2e/support/mockApi.ts`
-- **makePublicTaskDetail()** (1 connections) — `apps/web/e2e/support/mockApi.ts`
-- **makeCustomerTasks()** (1 connections) — `apps/web/e2e/support/mockApi.ts`
-- **nextLocalDateTimeInput()** (1 connections) — `apps/web/e2e/support/mockApi.ts`
+- **.findFlaggedMessages()** (9 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
+- **.listFlagged()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
+- **ListFlaggedTests** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **AdminMessageCompositionService** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
+- **.listFlagged_returnsPage()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.listFlagged_hasMore()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.listFlagged_withCursor()** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.buildMessage()** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **AdminMessageCompositionServiceTests** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.listFlagged_empty()** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.listFlagged_clampsMaxLimit()** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.listFlagged_clampsMinLimit()** (3 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **.messageCursor()** (2 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
+- **AdminMessageCompositionServiceTests.java** (2 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
+- **AdminMessageCompositionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
+- **.AdminMessageCompositionService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
+- **.messageResponse()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
+- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
 
 ## Relationships
 
-- [[Community 7]] (1 shared connections)
+- [[Community 2]] (5 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/app/task/[id].tsx`
-- `apps/web/e2e/support/mockApi.ts`
+- `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingQueryPort.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionService.java`
+- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminMessageCompositionServiceTests.java`
 
 ## Audit Trail
 
-- EXTRACTED: 33 (94%)
-- INFERRED: 2 (6%)
+- EXTRACTED: 39 (57%)
+- INFERRED: 30 (43%)
 - AMBIGUOUS: 0 (0%)
 
 ---

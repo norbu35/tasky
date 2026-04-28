@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ApplicantsListScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/ApplicantsListScreen.test.tsx`
+- **ScheduleBudgetScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/ScheduleBudgetScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/ApplicantsListScreen.test.tsx`
+- `apps/mobile/__tests__/screens/customer/ScheduleBudgetScreen.test.tsx`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PressableCard.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/PressableCard.test.tsx`
+- **SplitCard.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/SplitCard.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/PressableCard.test.tsx`
+- `apps/mobile/__tests__/components/ui/SplitCard.test.tsx`
 
 ## Audit Trail
 

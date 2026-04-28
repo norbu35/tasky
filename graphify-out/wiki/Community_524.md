@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ErrorStateTemplate.tsx** (0 connections) — `apps/mobile/src/components/templates/ErrorStateTemplate.tsx`
+- **index.ts** (0 connections) — `apps/mobile/src/components/templates/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/templates/ErrorStateTemplate.tsx`
+- `apps/mobile/src/components/templates/index.ts`
 
 ## Audit Trail
 

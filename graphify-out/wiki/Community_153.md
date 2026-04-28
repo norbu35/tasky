@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **InstantMatchTaskerSheet.tsx** (2 connections) — `apps/mobile/src/features/matching/components/InstantMatchTaskerSheet.tsx`
-- **handleAccept()** (1 connections) — `apps/mobile/src/features/matching/components/InstantMatchTaskerSheet.tsx`
-- **handleDecline()** (1 connections) — `apps/mobile/src/features/matching/components/InstantMatchTaskerSheet.tsx`
+- **SummarySections.tsx** (2 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
+- **DividerSection()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
+- **DetailRow()** (1 connections) — `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/matching/components/InstantMatchTaskerSheet.tsx`
+- `apps/mobile/src/features/bookings/screens/BookingDetail/SummarySections.tsx`
 
 ## Audit Trail
 

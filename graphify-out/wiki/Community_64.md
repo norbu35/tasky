@@ -4,26 +4,26 @@
 
 ## Key Concepts
 
-- **LlmProvider** (6 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **LlmProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.generate()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.classify()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.summarize()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
-- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **SchedulePickerSheet.tsx** (6 connections) — `apps/mobile/src/components/ui/SchedulePickerSheet.tsx`
+- **buildCalendarRows()** (2 connections) — `apps/mobile/src/components/ui/SchedulePickerSheet.tsx`
+- **isSameDate()** (1 connections) — `apps/mobile/src/components/ui/SchedulePickerSheet.tsx`
+- **isSameTime()** (1 connections) — `apps/mobile/src/components/ui/SchedulePickerSheet.tsx`
+- **formatMonth()** (1 connections) — `apps/mobile/src/components/ui/SchedulePickerSheet.tsx`
+- **formatTime()** (1 connections) — `apps/mobile/src/components/ui/SchedulePickerSheet.tsx`
+- **useWeekdayLabels()** (1 connections) — `apps/mobile/src/components/ui/SchedulePickerSheet.tsx`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 2]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- `apps/mobile/src/components/ui/SchedulePickerSheet.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 12 (92%)
+- INFERRED: 1 (8%)
 - AMBIGUOUS: 0 (0%)
 
 ---

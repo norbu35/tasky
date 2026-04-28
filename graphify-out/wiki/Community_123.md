@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **EventHandler** (3 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
-- **EventHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
-- **.eventType()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
-- **.handle()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
+- **DataRetentionScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
+- **DataRetentionScheduler.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
+- **.DataRetentionScheduler()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
+- **.processRetention()** (1 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
 
 ## Relationships
 
@@ -15,7 +15,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/automation/worker/EventHandler.java`
+- `services/api/src/main/java/mn/tasky/auth/scheduling/DataRetentionScheduler.java`
 
 ## Audit Trail
 

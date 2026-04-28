@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **StatCard.tsx** (1 connections) — `apps/mobile/src/components/ui/StatCard.tsx`
-- **StatCard()** (1 connections) — `apps/mobile/src/components/ui/StatCard.tsx`
+- **Toast.tsx** (1 connections) — `apps/mobile/src/components/ui/Toast.tsx`
+- **Toast()** (1 connections) — `apps/mobile/src/components/ui/Toast.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/StatCard.tsx`
+- `apps/mobile/src/components/ui/Toast.tsx`
 
 ## Audit Trail
 

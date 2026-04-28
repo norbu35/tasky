@@ -1,78 +1,73 @@
 # Community 10
 
-> 162 nodes
+> 185 nodes
 
 ## Key Concepts
 
-- **.success()** (106 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskMutationServiceTest.java`
-- **CancelBooking** (34 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationServiceTests.java`
-- **.findByIdForUpdate()** (30 connections) — `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
-- **FlagNoShow** (27 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/BookingPublicOperationServiceTests.java`
-- **GetTask** (25 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskQueryServiceTest.java`
-- **.createCasesForBooking()** (23 connections) — `services/api/src/main/java/mn/tasky/review/application/ReviewEnforcementService.java`
-- **BookingLifecycleServiceTest** (23 connections) — `services/api/src/test/java/mn/tasky/booking/application/BookingLifecycleServiceTest.java`
-- **.recordEvent()** (22 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingTimelineService.java`
-- **NoShowServiceTest** (20 connections) — `services/api/src/test/java/mn/tasky/booking/application/NoShowServiceTest.java`
-- **.flagNoShow_success_customerFlags_taskerNoShow()** (19 connections) — `services/api/src/test/java/mn/tasky/booking/application/NoShowServiceTest.java`
-- **HasOpenDispute** (18 connections) — `services/api/src/test/java/mn/tasky/dispute/application/DisputeServiceTest.java`
-- **.cancelBooking()** (17 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingLifecycleService.java`
-- **.cancelBooking_taskerCancel_reopensTask()** (17 connections) — `services/api/src/test/java/mn/tasky/booking/application/BookingLifecycleServiceTest.java`
-- **.flagNoShow()** (16 connections) — `services/api/src/main/java/mn/tasky/booking/application/NoShowService.java`
-- **.cancelBooking_taskerCancel_safetyReason_noStrike()** (16 connections) — `services/api/src/test/java/mn/tasky/booking/application/BookingLifecycleServiceTest.java`
-- **.cancelBooking_customerLateCancel_transitionsTaskToCancelled_andCreatesReviewDebt()** (16 connections) — `services/api/src/test/java/mn/tasky/booking/application/BookingLifecycleServiceTest.java`
-- **.cancelBooking_customerEarlyCancel_transitionsTaskToCancelled_withoutReviewDebt()** (16 connections) — `services/api/src/test/java/mn/tasky/booking/application/BookingLifecycleServiceTest.java`
-- **.flagNoShow_success_taskerFlags_customerNoShow_noStrikeForCustomer()** (16 connections) — `services/api/src/test/java/mn/tasky/booking/application/NoShowServiceTest.java`
-- **BookingService** (15 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingService.java`
-- **.findByTaskAndParticipants()** (15 connections) — `services/api/src/main/java/mn/tasky/messaging/dao/ConversationDao.java`
-- **AddStrike** (15 connections) — `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
-- **.cancelBooking_taskerCancel_notifiesCustomerThatTaskIsOpenAgain()** (15 connections) — `services/api/src/test/java/mn/tasky/booking/application/BookingLifecycleServiceTest.java`
-- **.assignedBooking()** (14 connections) — `services/api/src/test/java/mn/tasky/booking/application/BookingLifecycleServiceTest.java`
-- **.completeBooking_success()** (14 connections) — `services/api/src/test/java/mn/tasky/booking/application/BookingLifecycleServiceTest.java`
-- **.validNoShowFlagTransitionsToNoShowAndRecordsAudit()** (13 connections) — `services/api/src/test/java/mn/tasky/booking/NoShowScenarioTests.java`
-- _... and 137 more nodes in this community_
+- **.search()** (18 connections) — `services/api/src/main/java/mn/tasky/location/application/DistrictGeocodingProvider.java`
+- **.search()** (17 connections) — `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
+- **.findAll()** (17 connections) — `services/api/src/main/java/mn/tasky/notification/dao/DistrictDao.java`
+- **validate-i18n.py** (17 connections) — `tooling/scripts/governance/validate-i18n.py`
+- **validate-prd-scenario-links.py** (17 connections) — `tooling/scripts/governance/validate-prd-scenario-links.py`
+- **scrape-unegui.py** (17 connections) — `research/unegui-scraper/scrape-unegui.py`
+- **validate-openapi-backend-contracts.py** (14 connections) — `tooling/scripts/contracts/validate-openapi-backend-contracts.py`
+- **structure-check.js** (13 connections) — `apps/mobile/scripts/structure-check.js`
+- **validate-screen-spec-traceability.py** (12 connections) — `tooling/scripts/governance/validate-screen-spec-traceability.py`
+- **main()** (11 connections) — `tooling/scripts/governance/validate-i18n.py`
+- **controller_endpoints()** (9 connections) — `tooling/scripts/contracts/validate-openapi-backend-contracts.py`
+- **main()** (9 connections) — `tooling/scripts/governance/validate-prd-scenario-links.py`
+- **main()** (9 connections) — `tooling/scripts/governance/validate-screen-spec-traceability.py`
+- **scrape_category()** (9 connections) — `research/unegui-scraper/scrape-unegui.py`
+- **validate-design-contracts.py** (8 connections) — `tooling/scripts/governance/validate-design-contracts.py`
+- **parse_scenario_block()** (8 connections) — `tooling/scripts/governance/validate-prd-scenario-links.py`
+- **main()** (8 connections) — `research/unegui-scraper/scrape-unegui.py`
+- **validate_component()** (7 connections) — `tooling/scripts/governance/validate-design-contracts.py`
+- **Finding** (7 connections) — `tooling/scripts/governance/validate-prd-scenario-links.py`
+- **main()** (7 connections) — `tooling/skills/scenario-fidelity/scripts/find_weak_coverage.py`
+- **\_probe_detail()** (7 connections) — `research/unegui-scraper/scrape-unegui.py`
+- **DistrictGeocodingProvider** (6 connections) — `services/api/src/main/java/mn/tasky/location/application/DistrictGeocodingProvider.java`
+- **parse_dto_shape()** (6 connections) — `tooling/scripts/contracts/validate-openapi-backend-contracts.py`
+- **build_prd_inventory()** (6 connections) — `tooling/scripts/governance/validate-prd-scenario-links.py`
+- **validate_screen_spec()** (6 connections) — `tooling/scripts/governance/validate-screen-spec-traceability.py`
+- _... and 160 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (167 shared connections)
-- [[Community 1]] (79 shared connections)
-- [[Community 2]] (76 shared connections)
-- [[Community 14]] (23 shared connections)
-- [[Community 3]] (20 shared connections)
-- [[Community 7]] (8 shared connections)
-- [[Community 4]] (3 shared connections)
-- [[Community 8]] (3 shared connections)
-- [[Community 15]] (3 shared connections)
-- [[Community 21]] (2 shared connections)
-- [[Community 6]] (2 shared connections)
-- [[Community 13]] (2 shared connections)
+- [[Community 21]] (7 shared connections)
+- [[Community 2]] (6 shared connections)
+- [[Community 5]] (6 shared connections)
+- [[Community 3]] (4 shared connections)
+- [[Community 1]] (3 shared connections)
+- [[Community 0]] (2 shared connections)
+- [[Community 4]] (1 shared connections)
+- [[Community 35]] (1 shared connections)
+- [[Community 34]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/booking/application/BookingLifecycleService.java`
-- `services/api/src/main/java/mn/tasky/booking/application/BookingService.java`
-- `services/api/src/main/java/mn/tasky/booking/application/BookingTimelineService.java`
-- `services/api/src/main/java/mn/tasky/booking/application/NoShowService.java`
-- `services/api/src/main/java/mn/tasky/booking/dao/BookingCompletionSignalDao.java`
-- `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
-- `services/api/src/main/java/mn/tasky/booking/dao/BookingScheduleEventDao.java`
-- `services/api/src/main/java/mn/tasky/booking/dao/BookingTimelineEventDao.java`
-- `services/api/src/main/java/mn/tasky/booking/scheduling/NoShowReminderScheduler.java`
-- `services/api/src/main/java/mn/tasky/messaging/dao/ConversationDao.java`
-- `services/api/src/main/java/mn/tasky/messaging/dao/MessageDao.java`
-- `services/api/src/main/java/mn/tasky/review/application/ReviewEnforcementService.java`
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminTaskCompositionService.java`
-- `services/api/src/main/java/mn/tasky/trust/application/command/TrustCommandHandler.java`
-- `services/api/src/main/java/mn/tasky/trust/publicapi/TrustCommandPort.java`
-- `services/api/src/test/java/mn/tasky/auth/ModerationServiceTests.java`
-- `services/api/src/test/java/mn/tasky/booking/BookingScenarioTests.java`
-- `services/api/src/test/java/mn/tasky/booking/NoShowScenarioTests.java`
-- `services/api/src/test/java/mn/tasky/booking/application/BookingLifecycleServiceTest.java`
-- `services/api/src/test/java/mn/tasky/booking/application/BookingTimelineServiceTest.java`
+- `apps/mobile/scripts/structure-check.js`
+- `research/unegui-scraper/scrape-unegui.py`
+- `services/api/src/main/java/mn/tasky/location/api/LocationController.java`
+- `services/api/src/main/java/mn/tasky/location/application/DistrictGeocodingProvider.java`
+- `services/api/src/main/java/mn/tasky/location/application/LocationService.java`
+- `services/api/src/main/java/mn/tasky/location/dao/DistrictGeoDao.java`
+- `services/api/src/main/java/mn/tasky/notification/dao/DistrictDao.java`
+- `services/api/src/test/java/mn/tasky/location/DistrictGeocodingProviderTests.java`
+- `tooling/scripts/contracts/validate-openapi-backend-contracts.py`
+- `tooling/scripts/governance/validate-assistance-vocabulary.py`
+- `tooling/scripts/governance/validate-design-contracts.py`
+- `tooling/scripts/governance/validate-i18n.py`
+- `tooling/scripts/governance/validate-prd-scenario-links.py`
+- `tooling/scripts/governance/validate-requirement-references.py`
+- `tooling/scripts/governance/validate-screen-spec-traceability.py`
+- `tooling/skills/design-surface-drift/scripts/check_journeys.py`
+- `tooling/skills/intake-to-prd/scripts/extract_prd_diff_ids.py`
+- `tooling/skills/scenario-fidelity/scripts/find_weak_coverage.py`
 
 ## Audit Trail
 
-- EXTRACTED: 450 (38%)
-- INFERRED: 738 (62%)
+- EXTRACTED: 579 (83%)
+- INFERRED: 122 (17%)
 - AMBIGUOUS: 0 (0%)
 
 ---

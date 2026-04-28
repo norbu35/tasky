@@ -1,15 +1,16 @@
 # Community 72
 
-> 6 nodes
+> 7 nodes
 
 ## Key Concepts
 
-- **app.config.ts** (5 connections) — `apps/mobile/app.config.ts`
-- **optionalEnvFromSources()** (3 connections) — `apps/mobile/app.config.ts`
-- **parseEnvFile()** (2 connections) — `apps/mobile/app.config.ts`
-- **readEnvFile()** (2 connections) — `apps/mobile/app.config.ts`
-- **optionalEnv()** (2 connections) — `apps/mobile/app.config.ts`
-- **resolveGoogleMapsApiKeys()** (2 connections) — `apps/mobile/app.config.ts`
+- **instant-match.tsx** (6 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **coerceState()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **coerceDeclineCount()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **coerceString()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **onBack()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **onConfirmBooking()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
+- **onViewApplicants()** (1 connections) — `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
 
 ## Relationships
 
@@ -17,11 +18,11 @@
 
 ## Source Files
 
-- `apps/mobile/app.config.ts`
+- `archive/mobile-future/customer/tasks/[taskId]/instant-match.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 16 (100%)
+- EXTRACTED: 12 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

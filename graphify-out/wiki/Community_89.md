@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **SummarySections.tsx** (4 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
-- **StatusBadge()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
-- **DisputeSummary()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
-- **ResolutionSection()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
-- **PhaseNote()** (1 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
+- **TaskDetailScreen.tsx** (4 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
+- **getTaskCustomerId()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
+- **getTaskPhotoUrls()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
+- **hasPublicCustomer()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
+- **noop()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
 
 ## Relationships
 
@@ -16,7 +16,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/disputes/screens/DisputeStatus/SummarySections.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskDetailScreen.tsx`
 
 ## Audit Trail
 

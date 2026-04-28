@@ -4,14 +4,14 @@
 
 ## Key Concepts
 
-- **i18n.ts** (4 connections) — `apps/mobile/src/utils/i18n.ts`
-- **normalizeLanguage()** (4 connections) — `apps/web/src/lib/i18n.ts`
-- **changeLanguage()** (3 connections) — `apps/mobile/src/components/ui/LanguageSwitcher.tsx`
-- **getStoredLanguage()** (3 connections) — `apps/mobile/src/utils/i18n.ts`
-- **setStoredLanguage()** (3 connections) — `apps/mobile/src/utils/i18n.ts`
-- **initializeI18n()** (3 connections) — `apps/mobile/src/utils/i18n.ts`
-- **LanguageSwitcher.tsx** (1 connections) — `apps/mobile/src/components/ui/LanguageSwitcher.tsx`
-- **i18n.ts** (1 connections) — `apps/web/src/lib/i18n.ts`
+- **useAuth.ts** (4 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **useAuth.test.tsx** (2 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- **DevLoginHarness()** (2 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- **useDevLogin()** (2 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **createWrapper()** (1 connections) — `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- **prefetchPostAuthHome()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **useRequestOtp()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
+- **useVerifyOtp()** (1 connections) — `apps/mobile/src/features/auth/hooks/useAuth.ts`
 
 ## Relationships
 
@@ -19,14 +19,13 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/LanguageSwitcher.tsx`
-- `apps/mobile/src/utils/i18n.ts`
-- `apps/web/src/lib/i18n.ts`
+- `apps/mobile/__tests__/hooks/useAuth.test.tsx`
+- `apps/mobile/src/features/auth/hooks/useAuth.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 18 (82%)
-- INFERRED: 4 (18%)
+- EXTRACTED: 12 (86%)
+- INFERRED: 2 (14%)
 - AMBIGUOUS: 0 (0%)
 
 ---

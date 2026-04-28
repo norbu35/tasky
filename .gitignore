@@ -120,3 +120,6 @@ research/market-data/unegui/*
 
 # Turborepo local cache
 .turbo/
+
+# Static media files
+output/

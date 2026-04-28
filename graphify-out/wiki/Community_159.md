@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **Screen.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
-- **DetailRow()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
-- **StatusBanner()** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
+- **TaskSuccessScreen.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
+- **handleViewTask()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
+- **handleDone()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/CustomerTaskDetail/Screen.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
 
 ## Audit Trail
 

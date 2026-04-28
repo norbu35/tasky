@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ModalSheetTemplate.test.tsx** (0 connections) — `apps/mobile/__tests__/components/templates/ModalSheetTemplate.test.tsx`
+- **RatingStars.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/RatingStars.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/templates/ModalSheetTemplate.test.tsx`
+- `apps/mobile/__tests__/components/ui/RatingStars.test.tsx`
 
 ## Audit Trail
 

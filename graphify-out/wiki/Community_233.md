@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **TrustBanner.tsx** (1 connections) — `apps/mobile/src/components/ui/TrustBanner.tsx`
-- **TrustBanner()** (1 connections) — `apps/mobile/src/components/ui/TrustBanner.tsx`
+- **StatusBadge.tsx** (1 connections) — `apps/mobile/src/components/ui/StatusBadge.tsx`
+- **StatusBadge()** (1 connections) — `apps/mobile/src/components/ui/StatusBadge.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/TrustBanner.tsx`
+- `apps/mobile/src/components/ui/StatusBadge.tsx`
 
 ## Audit Trail
 

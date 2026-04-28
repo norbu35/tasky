@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.tsx** (0 connections) — `apps/mobile/src/app/index.tsx`
+- **NotificationBellButton.test.tsx** (0 connections) — `apps/mobile/__tests__/features/notifications/components/NotificationBellButton.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/index.tsx`
+- `apps/mobile/__tests__/features/notifications/components/NotificationBellButton.test.tsx`
 
 ## Audit Trail
 

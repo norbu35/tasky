@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **eslint.config.mjs** (0 connections) — `apps/mobile/eslint.config.mjs`
+- **postcss.config.mjs** (0 connections) — `apps/mobile/postcss.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/eslint.config.mjs`
+- `apps/mobile/postcss.config.mjs`
 
 ## Audit Trail
 

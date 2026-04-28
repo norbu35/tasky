@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **doc-references-validator.test.mjs** (1 connections) — `tooling/tests/doc-references-validator.test.mjs`
-- **runPython()** (1 connections) — `tooling/tests/doc-references-validator.test.mjs`
+- **tdd-gate.test.mjs** (1 connections) — `tooling/tests/tdd-gate.test.mjs`
+- **extractSingleQuotedAssignment()** (1 connections) — `tooling/tests/tdd-gate.test.mjs`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `tooling/tests/doc-references-validator.test.mjs`
+- `tooling/tests/tdd-gate.test.mjs`
 
 ## Audit Trail
 

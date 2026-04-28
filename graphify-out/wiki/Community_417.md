@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ReviewForm.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/ReviewForm.test.tsx`
+- **ReviewReminder.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/shared/ReviewReminder.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/shared/ReviewForm.test.tsx`
+- `apps/mobile/__tests__/screens/shared/ReviewReminder.test.tsx`
 
 ## Audit Trail
 

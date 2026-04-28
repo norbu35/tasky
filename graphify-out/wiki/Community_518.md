@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **pending.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/verification/pending.tsx`
+- **consent.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/verification/consent.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tasker)/verification/pending.tsx`
+- `apps/mobile/src/app/(tasker)/verification/consent.tsx`
 
 ## Audit Trail
 

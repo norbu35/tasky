@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **elevations.ts** (1 connections) — `apps/mobile/src/design/elevations.ts`
-- **toShadowStyle()** (1 connections) — `apps/mobile/src/design/elevations.ts`
+- **ConfirmSheet.tsx** (1 connections) — `apps/mobile/src/components/ui/ConfirmSheet.tsx`
+- **ConfirmSheet()** (1 connections) — `apps/mobile/src/components/ui/ConfirmSheet.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/design/elevations.ts`
+- `apps/mobile/src/components/ui/ConfirmSheet.tsx`
 
 ## Audit Trail
 

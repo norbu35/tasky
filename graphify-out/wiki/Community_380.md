@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **mobileApiClientBoundary.test.ts** (0 connections) — `apps/mobile/__tests__/lib/mobileApiClientBoundary.test.ts`
+- **RoleSelectScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/auth/RoleSelectScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/lib/mobileApiClientBoundary.test.ts`
+- `apps/mobile/__tests__/screens/auth/RoleSelectScreen.test.tsx`
 
 ## Audit Trail
 

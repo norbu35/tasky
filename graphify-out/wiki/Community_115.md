@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **MainApplication** (3 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
-- **MainApplication.kt** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
-- **.onCreate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
-- **.onConfigurationChanged()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- **TaskFeedCard.tsx** (3 connections) — `apps/mobile/src/features/tasks/components/TaskFeedCard.tsx`
+- **decodeDisplayLabel()** (2 connections) — `apps/mobile/src/features/tasks/components/TaskFeedCard.tsx`
+- **getCategoryLabel()** (2 connections) — `apps/mobile/src/features/tasks/components/TaskFeedCard.tsx`
+- **TaskFeedPill()** (1 connections) — `apps/mobile/src/features/tasks/components/TaskFeedCard.tsx`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- `apps/mobile/src/features/tasks/components/TaskFeedCard.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

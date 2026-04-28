@@ -1,8 +1,8 @@
 # of()
 
-> God node · 844 connections · `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeResolutionOutcome.java`
+> God node · 845 connections · `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeResolutionOutcome.java`
 
-**Community:** [[Community 0]]
+**Community:** [[Community 2]]
 
 ## Connections by Relation
 
@@ -10,24 +10,24 @@
 
 - [[.empty()]] `INFERRED`
 - [[.success()]] `INFERRED`
+- [[.success()]] `INFERRED`
 - [[.userId()]] `INFERRED`
 - [[.errorBody()]] `INFERRED`
 - [[.overrideBookingStatus()]] `INFERRED`
-- [[.updateTask()]] `INFERRED`
-- [[.doFilterInternal()]] `INFERRED`
-- [[.conciergeAssign()]] `INFERRED`
 - [[.handle()]] `INFERRED`
+- [[.updateTask()]] `INFERRED`
+- [[.conciergeAssign()]] `INFERRED`
+- [[.doFilterInternal()]] `INFERRED`
 - [[.createTask()]] `INFERRED`
-- [[.customerSelectsApplicantAndSelectedTaskerAcceptanceConfirmsBooking()]] `INFERRED`
 - [[.shouldMarkProcessedWhenPublishSucceeds()]] `INFERRED`
+- [[.customerSelectsApplicantAndSelectedTaskerAcceptanceConfirmsBooking()]] `INFERRED`
 - [[.flagNoShow_success_customerFlags_taskerNoShow()]] `INFERRED`
 - [[.confirmAcceptance()]] `INFERRED`
-- [[.createTask()]] `INFERRED`
 - [[.cancelBooking_taskerCancel_reopensTask()]] `INFERRED`
-- [[.buildDisputeRequest()]] `INFERRED`
 - [[.processPayout()]] `INFERRED`
-- [[.consentDecisionAndStateChangesAuditable()]] `INFERRED`
-- [[.confirmIntent_applicationSelectionByTasker_confirmsBookingAndClosesOtherApplications()]] `INFERRED`
+- [[.createTask()]] `INFERRED`
+- [[.cancelBooking_taskerCancel_safetyReason_noStrike()]] `INFERRED`
+- [[.cancelBooking_customerLateCancel_transitionsTaskToCancelled_andCreatesReviewDebt()]] `INFERRED`
 
 ### contains
 

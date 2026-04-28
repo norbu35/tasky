@@ -9,6 +9,7 @@ import java.util.Optional;
 import mn.tasky.dispute.application.DisputeService;
 import mn.tasky.dispute.dto.Dispute;
 import mn.tasky.dispute.dto.DisputeEvidence;
+import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.review.application.ReviewService;
 import mn.tasky.review.dto.Review;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,11 +27,14 @@ class TrustQueryHandlerTest {
     @Mock
     private DisputeService disputeService;
 
+    @Mock
+    private ReviewEnforcementService reviewEnforcementService;
+
     private TrustQueryHandler handler;
 
     @BeforeEach
     void setUp() {
-        handler = new TrustQueryHandler(reviewService, disputeService);
+        handler = new TrustQueryHandler(reviewService, disputeService, reviewEnforcementService);
     }
 
     @Test
@@ -114,5 +118,15 @@ class TrustQueryHandlerTest {
         boolean result = handler.hasOpenDispute("b2");
 
         assertThat(result).isFalse();
+    }
+
+    @Test
+    void isUserLocked_delegatesToReviewEnforcementService() {
+        when(reviewEnforcementService.isUserLocked("u1")).thenReturn(true);
+
+        boolean result = handler.isUserLocked("u1");
+
+        assertThat(result).isTrue();
+        verify(reviewEnforcementService).isUserLocked("u1");
     }
 }

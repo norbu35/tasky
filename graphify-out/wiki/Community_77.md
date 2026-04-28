@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **isNativeFirebaseAvailable()** (4 connections) — `apps/mobile/src/lib/nativeFirebase.ts`
-- **registerForPushNotificationsAsync()** (4 connections) — `apps/mobile/src/lib/notifications.ts`
-- **notifications.ts** (3 connections) — `apps/mobile/src/lib/notifications.ts`
-- **ensureAndroidChannel()** (3 connections) — `apps/mobile/src/lib/notifications.ts`
-- **requestPermission()** (3 connections) — `apps/mobile/src/lib/notifications.ts`
-- **nativeFirebase.ts** (1 connections) — `apps/mobile/src/lib/nativeFirebase.ts`
+- **model.ts** (3 connections) — `apps/mobile/src/features/profile/model.ts`
+- **getReviewThresholdRemaining()** (2 connections) — `apps/mobile/src/features/profile/model.ts`
+- **ReviewThresholdSummary()** (2 connections) — `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
+- **canShowPublicRating()** (1 connections) — `apps/mobile/src/features/profile/model.ts`
+- **formatPublicRating()** (1 connections) — `apps/mobile/src/features/profile/model.ts`
+- **ReviewThresholdSummary.tsx** (1 connections) — `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
 
 ## Relationships
 
@@ -17,13 +17,13 @@
 
 ## Source Files
 
-- `apps/mobile/src/lib/nativeFirebase.ts`
-- `apps/mobile/src/lib/notifications.ts`
+- `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
+- `apps/mobile/src/features/profile/model.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (67%)
-- INFERRED: 6 (33%)
+- EXTRACTED: 8 (80%)
+- INFERRED: 2 (20%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskyApplication** (2 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
-- **TaskyApplication.java** (1 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
-- **.main()** (1 connections) — `services/api/src/main/java/mn/tasky/TaskyApplication.java`
+- **SettingsPage.tsx** (2 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
+- **SectionTitle()** (1 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
+- **ActionRow()** (1 connections) — `apps/web/src/pages/shared/SettingsPage.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/TaskyApplication.java`
+- `apps/web/src/pages/shared/SettingsPage.tsx`
 
 ## Audit Trail
 

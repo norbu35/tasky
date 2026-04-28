@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **FeedListTemplate.test.tsx** (0 connections) — `apps/mobile/__tests__/components/templates/FeedListTemplate.test.tsx`
+- **ModalSheetTemplate.test.tsx** (0 connections) — `apps/mobile/__tests__/components/templates/ModalSheetTemplate.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/templates/FeedListTemplate.test.tsx`
+- `apps/mobile/__tests__/components/templates/ModalSheetTemplate.test.tsx`
 
 ## Audit Trail
 

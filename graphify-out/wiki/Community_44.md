@@ -1,36 +1,35 @@
 # Community 44
 
-> 12 nodes
+> 13 nodes
 
 ## Key Concepts
 
-- **DisputePublicCompositionService** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **ReviewPublicCompositionService** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
-- **.disputeDetail()** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **.disputeSummary()** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **.disputeSummaryWithEvidence()** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **ReviewPublicCompositionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
-- **.ReviewPublicCompositionService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
-- **.listReviews()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
-- **.reviewResponse()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
-- **DisputePublicCompositionService.java** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **.DisputePublicCompositionService()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- **.evidenceResponse()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
+- **RuntimeSurfaceProperties** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **RuntimeSurfaceProperties.java** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **HttpSurface** (4 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **Surface** (3 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getPublicApi()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getAdminApi()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getWorker()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getScheduler()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.setEnabled()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.HttpSurface()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.getBasePath()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **.setBasePath()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
+- **BackgroundSurface** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
 
 ## Relationships
 
-- [[Community 2]] (3 shared connections)
-- [[Community 0]] (2 shared connections)
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/DisputePublicCompositionService.java`
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/ReviewPublicCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/RuntimeSurfaceProperties.java`
 
 ## Audit Trail
 
-- EXTRACTED: 25 (86%)
-- INFERRED: 4 (14%)
+- EXTRACTED: 25 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

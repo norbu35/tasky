@@ -1,34 +1,33 @@
 # Community 48
 
-> 10 nodes
+> 11 nodes
 
 ## Key Concepts
 
-- **StompRateLimitInterceptorTest** (8 connections) — `services/api/src/test/java/mn/tasky/common/security/StompRateLimitInterceptorTest.java`
-- **.preSend()** (7 connections) — `services/api/src/main/java/mn/tasky/common/security/StompRateLimitInterceptor.java`
-- **.stompSend()** (6 connections) — `services/api/src/test/java/mn/tasky/common/security/StompRateLimitInterceptorTest.java`
-- **.preSend_noUser_passesThrough()** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/StompRateLimitInterceptorTest.java`
-- **.preSend_withUser_passesThrough()** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/StompRateLimitInterceptorTest.java`
-- **.preSend_rateLimitExceeded_throws()** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/StompRateLimitInterceptorTest.java`
-- **.preSend_differentUsers_separateBuckets()** (3 connections) — `services/api/src/test/java/mn/tasky/common/security/StompRateLimitInterceptorTest.java`
-- **.preSend_nonSendCommand_passesThrough()** (2 connections) — `services/api/src/test/java/mn/tasky/common/security/StompRateLimitInterceptorTest.java`
-- **StompRateLimitInterceptorTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/security/StompRateLimitInterceptorTest.java`
-- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/common/security/StompRateLimitInterceptorTest.java`
+- **MarketplaceQueryPort** (10 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **MarketplaceQueryPort.java** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.listTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.getTask()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.listMyTasks()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.recentLocations()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.listTaskApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.countApplications()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.buildPhotoAccessUrls()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.buildOwnedPhotoAccessUrl()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
+- **.getDraft()** (1 connections) — `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
 
 ## Relationships
 
-- [[Community 2]] (2 shared connections)
-- [[Community 0]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/security/StompRateLimitInterceptor.java`
-- `services/api/src/test/java/mn/tasky/common/security/StompRateLimitInterceptorTest.java`
+- `services/api/src/main/java/mn/tasky/marketplace/publicapi/MarketplaceQueryPort.java`
 
 ## Audit Trail
 
-- EXTRACTED: 26 (70%)
-- INFERRED: 11 (30%)
+- EXTRACTED: 20 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ProfileAvatar.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/ProfileAvatar.test.tsx`
+- **ListItemCard.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/ListItemCard.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/ProfileAvatar.test.tsx`
+- `apps/mobile/__tests__/components/ui/ListItemCard.test.tsx`
 
 ## Audit Trail
 

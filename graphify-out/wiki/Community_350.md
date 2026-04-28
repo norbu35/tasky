@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **postcss.config.mjs** (0 connections) — `apps/mobile/postcss.config.mjs`
+- **jest.config.js** (0 connections) — `apps/mobile/jest.config.js`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/postcss.config.mjs`
+- `apps/mobile/jest.config.js`
 
 ## Audit Trail
 

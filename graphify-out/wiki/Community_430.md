@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskFeedScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/TaskFeedScreen.test.tsx`
+- **TaskerStatsScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/tasker/jobs/TaskerStatsScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/tasker/TaskFeedScreen.test.tsx`
+- `apps/mobile/__tests__/screens/tasker/jobs/TaskerStatsScreen.test.tsx`
 
 ## Audit Trail
 

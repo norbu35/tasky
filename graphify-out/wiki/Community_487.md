@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **intake.tsx** (0 connections) — `apps/mobile/src/app/(customer)/tasks/new/intake.tsx`
+- **rescue.tsx** (0 connections) — `apps/mobile/src/app/(customer)/tasks/[taskId]/rescue.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/tasks/new/intake.tsx`
+- `apps/mobile/src/app/(customer)/tasks/[taskId]/rescue.tsx`
 
 ## Audit Trail
 

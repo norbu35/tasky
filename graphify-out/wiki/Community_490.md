@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **category.tsx** (0 connections) — `apps/mobile/src/app/(customer)/tasks/new/category.tsx`
+- **photos.tsx** (0 connections) — `apps/mobile/src/app/(customer)/tasks/new/photos.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/tasks/new/category.tsx`
+- `apps/mobile/src/app/(customer)/tasks/new/photos.tsx`
 
 ## Audit Trail
 

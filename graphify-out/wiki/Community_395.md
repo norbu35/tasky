@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **IntakeFormScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/IntakeFormScreen.test.tsx`
+- **TaskerProfileScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/TaskerProfileScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/IntakeFormScreen.test.tsx`
+- `apps/mobile/__tests__/screens/customer/TaskerProfileScreen.test.tsx`
 
 ## Audit Trail
 

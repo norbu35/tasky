@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **\_layout.tsx** (0 connections) — `apps/mobile/src/app/(tabs)/_layout.tsx`
+- **profile.tsx** (0 connections) — `apps/mobile/src/app/(tabs)/profile.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tabs)/_layout.tsx`
+- `apps/mobile/src/app/(tabs)/profile.tsx`
 
 ## Audit Trail
 

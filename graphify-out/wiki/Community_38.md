@@ -1,44 +1,38 @@
 # Community 38
 
-> 14 nodes
+> 16 nodes
 
 ## Key Concepts
 
-- **.findLatest()** (6 connections) — `services/api/src/main/java/mn/tasky/notification/dao/NotificationLogDao.java`
-- **AnalyticsService** (5 connections) — `services/api/src/main/java/mn/tasky/analytics/application/AnalyticsService.java`
-- **.getLogs()** (4 connections) — `services/api/src/main/java/mn/tasky/notification/application/NotificationService.java`
-- **NotificationLogDao** (4 connections) — `services/api/src/main/java/mn/tasky/notification/dao/NotificationLogDao.java`
-- **.getEventsDelegatesToDao()** (4 connections) — `services/api/src/test/java/mn/tasky/analytics/AnalyticsScenarioTests.java`
-- **.getLogs_delegatesToDao()** (4 connections) — `services/api/src/test/java/mn/tasky/notification/application/NotificationServiceTest.java`
-- **.track()** (3 connections) — `services/api/src/main/java/mn/tasky/analytics/application/AnalyticsService.java`
-- **.getLogs_returnsEmpty_whenNoLogs()** (3 connections) — `services/api/src/test/java/mn/tasky/notification/application/NotificationServiceTest.java`
-- **.getEvents()** (2 connections) — `services/api/src/main/java/mn/tasky/analytics/application/AnalyticsService.java`
-- **.sanitizeForLog()** (2 connections) — `services/api/src/main/java/mn/tasky/analytics/application/AnalyticsService.java`
-- **.insert()** (2 connections) — `services/api/src/main/java/mn/tasky/notification/dao/NotificationLogDao.java`
-- **AnalyticsService.java** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/AnalyticsService.java`
-- **.AnalyticsService()** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/application/AnalyticsService.java`
-- **NotificationLogDao.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/dao/NotificationLogDao.java`
+- **validate-migrations.py** (15 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **main()** (8 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **detect_versioned_mutations_from_diff()** (7 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **detect_versioned_mutations_in_worktree()** (6 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **run_git()** (5 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **is_versioned_path()** (4 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **baseline_reset_diff_is_exact()** (4 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **git_available()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **resolve_base_ref()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **migration_name()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **baseline_reset_layout_active()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **baseline_reset_status_is_exact()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **parse_name_status_line()** (3 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **print_remediation()** (2 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **parse_args()** (2 connections) — `tooling/scripts/governance/validate-migrations.py`
+- **detect_naming_errors()** (2 connections) — `tooling/scripts/governance/validate-migrations.py`
 
 ## Relationships
 
-- [[Community 1]] (5 shared connections)
-- [[Community 0]] (2 shared connections)
-- [[Community 3]] (1 shared connections)
-- [[Community 10]] (1 shared connections)
-- [[Community 4]] (1 shared connections)
+- [[Community 1]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/analytics/application/AnalyticsService.java`
-- `services/api/src/main/java/mn/tasky/notification/application/NotificationService.java`
-- `services/api/src/main/java/mn/tasky/notification/dao/NotificationLogDao.java`
-- `services/api/src/test/java/mn/tasky/analytics/AnalyticsScenarioTests.java`
-- `services/api/src/test/java/mn/tasky/notification/application/NotificationServiceTest.java`
+- `tooling/scripts/governance/validate-migrations.py`
 
 ## Audit Trail
 
-- EXTRACTED: 23 (55%)
-- INFERRED: 19 (45%)
+- EXTRACTED: 72 (99%)
+- INFERRED: 1 (1%)
 - AMBIGUOUS: 0 (0%)
 
 ---

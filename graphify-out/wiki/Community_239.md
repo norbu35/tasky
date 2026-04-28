@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **BookingLifecyclePreview.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/BookingLifecyclePreview.tsx`
-- **getActiveIndex()** (1 connections) — `apps/mobile/src/features/bookings/components/BookingLifecyclePreview.tsx`
+- **LeadUnlockSheet.tsx** (1 connections) — `apps/mobile/src/features/bookings/components/LeadUnlockSheet.tsx`
+- **formatTimer()** (1 connections) — `apps/mobile/src/features/bookings/components/LeadUnlockSheet.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/bookings/components/BookingLifecyclePreview.tsx`
+- `apps/mobile/src/features/bookings/components/LeadUnlockSheet.tsx`
 
 ## Audit Trail
 

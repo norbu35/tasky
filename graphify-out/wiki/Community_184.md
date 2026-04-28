@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **tooling-audit-batch2.test.mjs** (2 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
-- **readRepo()** (1 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
-- **runPython()** (1 connections) — `tooling/tests/tooling-audit-batch2.test.mjs`
+- **schema-parity.test.mjs** (2 connections) — `tooling/tests/schema-parity.test.mjs`
+- **writeMigration()** (1 connections) — `tooling/tests/schema-parity.test.mjs`
+- **runPython()** (1 connections) — `tooling/tests/schema-parity.test.mjs`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `tooling/tests/tooling-audit-batch2.test.mjs`
+- `tooling/tests/schema-parity.test.mjs`
 
 ## Audit Trail
 

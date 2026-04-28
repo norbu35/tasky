@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **DisputeRaiseScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/disputes/DisputeRaiseScreen.test.tsx`
+- **Terms.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/infra/Terms.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/disputes/DisputeRaiseScreen.test.tsx`
+- `apps/mobile/__tests__/screens/infra/Terms.test.tsx`
 
 ## Audit Trail
 

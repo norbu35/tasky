@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **consent.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/verification/consent.tsx`
+- **index.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/jobs/index.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(tasker)/verification/consent.tsx`
+- `apps/mobile/src/app/(tasker)/jobs/index.tsx`
 
 ## Audit Trail
 

@@ -1,44 +1,61 @@
 # Community 31
 
-> 21 nodes
+> 30 nodes
 
 ## Key Concepts
 
-- **validate-schema-parity.py** (15 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **parse_schema()** (8 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **main()** (8 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **extract_check_in_values()** (4 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **strip_comments()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **split_top_level_commas()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **column_name_from_def()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **check_values()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **compare_schemas()** (3 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **parse_args()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **collect_migration_files()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **migration_range_label()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **normalize_identifier()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **schema_to_json()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **schema_diff()** (2 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **migration_version()** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **Split _text_ by commas at parenthesis depth 0.** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **Return the column name from a column definition, or _None_ for standalone ta** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **Find enum-like `CHECK` patterns in _text_. Returns a list of ``(column_na** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **Walk _migrations_ in order and return the final schema state. Returns ``{ta** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
-- **Return `(errors, warnings)`.** (1 connections) — `tooling/scripts/governance/validate-schema-parity.py`
+- **useAppContext()** (11 connections) — `apps/web/src/context/AppContext.ts`
+- **async()** (3 connections) — `apps/web/src/pages/ProfilePage.tsx`
+- **CustomerApplicantsPage()** (3 connections) — `apps/web/src/pages/customer/CustomerApplicantsPage.tsx`
+- **HomeRedirect()** (3 connections) — `apps/web/src/router/AppRoutes.tsx`
+- **BottomNavBar()** (2 connections) — `apps/web/src/layout/BottomNavBar.tsx`
+- **Header()** (2 connections) — `apps/web/src/layout/Header.tsx`
+- **avatarHelpers.ts** (2 connections) — `apps/web/src/lib/avatarHelpers.ts`
+- **avatarValueToPreviewUrl()** (2 connections) — `apps/web/src/lib/avatarHelpers.ts`
+- **isRestrictedUser()** (2 connections) — `apps/web/src/lib/userAccess.ts`
+- **ProfilePage.tsx** (2 connections) — `apps/web/src/pages/ProfilePage.tsx`
+- **ProfilePage()** (2 connections) — `apps/web/src/pages/ProfilePage.tsx`
+- **CustomerApplicantsPage.tsx** (2 connections) — `apps/web/src/pages/customer/CustomerApplicantsPage.tsx`
+- **CustomerBookingsPage()** (2 connections) — `apps/web/src/pages/customer/CustomerBookingsPage.tsx`
+- **CustomerTaskWizardPage()** (2 connections) — `apps/web/src/pages/customer/CustomerTaskWizardPage.tsx`
+- **CustomerTasksListPage.tsx** (2 connections) — `apps/web/src/pages/customer/CustomerTasksListPage.tsx`
+- **CustomerTasksListPage()** (2 connections) — `apps/web/src/pages/customer/CustomerTasksListPage.tsx`
+- **AdminRoute()** (2 connections) — `apps/web/src/router/AdminRoute.tsx`
+- **ProtectedRoute()** (2 connections) — `apps/web/src/router/RouteGuards.tsx`
+- **AppContext.ts** (1 connections) — `apps/web/src/context/AppContext.ts`
+- **BottomNavBar.tsx** (1 connections) — `apps/web/src/layout/BottomNavBar.tsx`
+- **Header.tsx** (1 connections) — `apps/web/src/layout/Header.tsx`
+- **avatarValueToApiPayload()** (1 connections) — `apps/web/src/lib/avatarHelpers.ts`
+- **userAccess.ts** (1 connections) — `apps/web/src/lib/userAccess.ts`
+- **formatMnt()** (1 connections) — `apps/web/src/pages/customer/CustomerApplicantsPage.tsx`
+- **CustomerBookingsPage.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerBookingsPage.tsx`
+- _... and 5 more nodes in this community_
 
 ## Relationships
 
-- [[Community 2]] (1 shared connections)
-- [[Community 9]] (1 shared connections)
+- [[Community 7]] (1 shared connections)
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `tooling/scripts/governance/validate-schema-parity.py`
+- `apps/web/src/context/AppContext.ts`
+- `apps/web/src/layout/BottomNavBar.tsx`
+- `apps/web/src/layout/Header.tsx`
+- `apps/web/src/lib/avatarHelpers.ts`
+- `apps/web/src/lib/userAccess.ts`
+- `apps/web/src/pages/ProfilePage.tsx`
+- `apps/web/src/pages/customer/CustomerApplicantsPage.tsx`
+- `apps/web/src/pages/customer/CustomerBookingsPage.tsx`
+- `apps/web/src/pages/customer/CustomerTaskWizardPage.tsx`
+- `apps/web/src/pages/customer/CustomerTasksListPage.tsx`
+- `apps/web/src/router/AdminRoute.tsx`
+- `apps/web/src/router/AppRoutes.tsx`
+- `apps/web/src/router/RouteGuards.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 66 (97%)
-- INFERRED: 2 (3%)
+- EXTRACTED: 34 (57%)
+- INFERRED: 26 (43%)
 - AMBIGUOUS: 0 (0%)
 
 ---

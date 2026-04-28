@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **accessibility.spec.ts** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
-- **summarizeViolations()** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
-- **scan()** (2 connections) — `apps/web/e2e/accessibility.spec.ts`
+- **primitives.ts** (2 connections) — `apps/mobile/src/utils/primitives.ts`
+- **toFutureIso()** (1 connections) — `apps/mobile/src/utils/primitives.ts`
+- **createIdempotencyKey()** (1 connections) — `apps/mobile/src/utils/primitives.ts`
 
 ## Relationships
 
@@ -14,11 +14,11 @@
 
 ## Source Files
 
-- `apps/web/e2e/accessibility.spec.ts`
+- `apps/mobile/src/utils/primitives.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

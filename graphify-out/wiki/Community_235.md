@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **tailwind-screen-typography.ts** (1 connections) — `apps/mobile/src/design/tailwind-screen-typography.ts`
-- **px()** (1 connections) — `apps/mobile/src/design/tailwind-screen-typography.ts`
+- **elevations.ts** (1 connections) — `apps/mobile/src/design/elevations.ts`
+- **toShadowStyle()** (1 connections) — `apps/mobile/src/design/elevations.ts`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/design/tailwind-screen-typography.ts`
+- `apps/mobile/src/design/elevations.ts`
 
 ## Audit Trail
 

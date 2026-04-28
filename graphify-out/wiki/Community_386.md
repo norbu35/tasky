@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CreateTaskScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/create/CreateTaskScreen.test.tsx`
+- **NoApplicantRescue.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/NoApplicantRescue.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/create/CreateTaskScreen.test.tsx`
+- `apps/mobile/__tests__/screens/customer/NoApplicantRescue.test.tsx`
 
 ## Audit Trail
 

@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **PaymentProvider** (6 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **PaymentProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.createIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.isValidSignature()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
-- **.resolvePaymentIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **LlmProvider** (6 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **LlmProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.generate()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.classify()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.summarize()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
+- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
 
 ## Relationships
 
@@ -18,7 +18,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/llm/LlmProvider.java`
 
 ## Audit Trail
 

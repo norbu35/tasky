@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ModalSheetTemplate.tsx** (0 connections) — `apps/mobile/src/components/templates/ModalSheetTemplate.tsx`
+- **EmptyStateTemplate.tsx** (0 connections) — `apps/mobile/src/components/templates/EmptyStateTemplate.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/templates/ModalSheetTemplate.tsx`
+- `apps/mobile/src/components/templates/EmptyStateTemplate.tsx`
 
 ## Audit Trail
 

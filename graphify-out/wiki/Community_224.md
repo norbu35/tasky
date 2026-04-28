@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **Button.tsx** (1 connections) — `apps/mobile/src/components/ui/Button.tsx`
-- **getTextColor()** (1 connections) — `apps/mobile/src/components/ui/Button.tsx`
+- **PermissionPrimer.Illustration.tsx** (1 connections) — `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
+- **IllustrationArea()** (1 connections) — `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/Button.tsx`
+- `apps/mobile/src/components/ui/PermissionPrimer.Illustration.tsx`
 
 ## Audit Trail
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **history.tsx** (1 connections) — `archive/mobile-future/tasker/credits/history.tsx`
-- **resolveState()** (1 connections) — `archive/mobile-future/tasker/credits/history.tsx`
+- **TaskerProfilePolishPage.tsx** (1 connections) — `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
+- **TaskerProfilePolishPage()** (1 connections) — `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `archive/mobile-future/tasker/credits/history.tsx`
+- `archive/web-future-tasker/TaskerProfilePolishPage.tsx`
 
 ## Audit Trail
 

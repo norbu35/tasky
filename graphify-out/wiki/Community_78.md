@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **MainActivity** (5 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **MainActivity.kt** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **.onCreate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **.getMainComponentName()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **.createReactActivityDelegate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
-- **.invokeDefaultOnBackPressed()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- **isNativeFirebaseAvailable()** (4 connections) — `apps/mobile/src/lib/nativeFirebase.ts`
+- **registerForPushNotificationsAsync()** (4 connections) — `apps/mobile/src/lib/notifications.ts`
+- **notifications.ts** (3 connections) — `apps/mobile/src/lib/notifications.ts`
+- **ensureAndroidChannel()** (3 connections) — `apps/mobile/src/lib/notifications.ts`
+- **requestPermission()** (3 connections) — `apps/mobile/src/lib/notifications.ts`
+- **nativeFirebase.ts** (1 connections) — `apps/mobile/src/lib/nativeFirebase.ts`
 
 ## Relationships
 
@@ -17,12 +17,13 @@
 
 ## Source Files
 
-- `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainActivity.kt`
+- `apps/mobile/src/lib/nativeFirebase.ts`
+- `apps/mobile/src/lib/notifications.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 12 (67%)
+- INFERRED: 6 (33%)
 - AMBIGUOUS: 0 (0%)
 
 ---

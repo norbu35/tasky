@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **confirmed.tsx** (0 connections) — `apps/mobile/src/app/(customer)/bookings/confirmed.tsx`
+- **\_layout.tsx** (0 connections) — `apps/mobile/src/app/(customer)/_layout.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/bookings/confirmed.tsx`
+- `apps/mobile/src/app/(customer)/_layout.tsx`
 
 ## Audit Trail
 

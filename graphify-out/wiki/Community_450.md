@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **profileRouteParams.test.ts** (0 connections) — `apps/mobile/__tests__/features/profile/profileRouteParams.test.ts`
+- **model.test.ts** (0 connections) — `apps/mobile/__tests__/features/profile/model.test.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/profile/profileRouteParams.test.ts`
+- `apps/mobile/__tests__/features/profile/model.test.ts`
 
 ## Audit Trail
 

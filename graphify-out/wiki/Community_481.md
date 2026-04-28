@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **[taskerId].tsx** (0 connections) — `apps/mobile/src/app/(customer)/taskers/[taskerId].tsx`
+- **timeline.tsx** (0 connections) — `apps/mobile/src/app/(customer)/bookings/[bookingId]/timeline.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/taskers/[taskerId].tsx`
+- `apps/mobile/src/app/(customer)/bookings/[bookingId]/timeline.tsx`
 
 ## Audit Trail
 

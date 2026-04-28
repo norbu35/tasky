@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **VerificationConsentScreen.tsx** (4 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
-- **checkIfContentFits()** (3 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
-- **handleContentSizeChange()** (2 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
-- **handleLayout()** (2 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
-- **handleScroll()** (1 connections) — `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
+- **permissions.ts** (4 connections) — `apps/mobile/src/utils/permissions.ts`
+- **requestCameraPermission()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
+- **requestLocationPermission()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
+- **getCurrentLocation()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
+- **requestNotificationPermission()** (1 connections) — `apps/mobile/src/utils/permissions.ts`
 
 ## Relationships
 
@@ -16,11 +16,11 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/verification/screens/VerificationConsentScreen.tsx`
+- `apps/mobile/src/utils/permissions.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 12 (100%)
+- EXTRACTED: 8 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

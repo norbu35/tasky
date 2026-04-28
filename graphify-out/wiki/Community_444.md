@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskerJobDetail.Sections.test.tsx** (0 connections) — `apps/mobile/__tests__/features/bookings/screens/TaskerJobDetail.Sections.test.tsx`
+- **useConversationRouteForBooking.test.tsx** (0 connections) — `apps/mobile/__tests__/features/chat/hooks/useConversationRouteForBooking.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/bookings/screens/TaskerJobDetail.Sections.test.tsx`
+- `apps/mobile/__tests__/features/chat/hooks/useConversationRouteForBooking.test.tsx`
 
 ## Audit Trail
 

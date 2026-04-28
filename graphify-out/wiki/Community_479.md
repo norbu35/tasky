@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **timeline.tsx** (0 connections) — `apps/mobile/src/app/(customer)/bookings/[bookingId]/timeline.tsx`
+- **dispute.tsx** (0 connections) — `apps/mobile/src/app/(customer)/bookings/[bookingId]/dispute.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/bookings/[bookingId]/timeline.tsx`
+- `apps/mobile/src/app/(customer)/bookings/[bookingId]/dispute.tsx`
 
 ## Audit Trail
 

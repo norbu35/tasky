@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/components/templates/index.ts`
+- **ScreenContainer.tsx** (0 connections) — `apps/mobile/src/components/shells/ScreenContainer.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/templates/index.ts`
+- `apps/mobile/src/components/shells/ScreenContainer.tsx`
 
 ## Audit Trail
 

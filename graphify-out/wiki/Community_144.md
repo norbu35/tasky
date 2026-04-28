@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **otp-migration.tsx** (3 connections) — `archive/mobile-future/auth/otp-migration.tsx`
-- **resolveState()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
-- **handleSubmit()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
-- **handleSkip()** (1 connections) — `archive/mobile-future/auth/otp-migration.tsx`
+- **polish.tsx** (3 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **handlePrimaryAction()** (3 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **handleGenerate()** (2 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **handleApply()** (2 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `archive/mobile-future/auth/otp-migration.tsx`
+- `archive/mobile-future/tasker/profile/polish.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

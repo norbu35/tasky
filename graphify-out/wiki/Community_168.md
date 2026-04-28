@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **IdempotencyOperations** (2 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyOperations.java`
-- **IdempotencyOperations.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyOperations.java`
-- **.IdempotencyOperations()** (1 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyOperations.java`
+- **NoShowFlagResult.java** (2 connections) — `services/api/src/main/java/mn/tasky/booking/dto/NoShowFlagResult.java`
+- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/NoShowFlagResult.java`
+- **error()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/dto/NoShowFlagResult.java`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyOperations.java`
+- `services/api/src/main/java/mn/tasky/booking/dto/NoShowFlagResult.java`
 
 ## Audit Trail
 

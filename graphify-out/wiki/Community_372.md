@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Input.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/Input.test.tsx`
+- **SchedulePickerSheet.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/SchedulePickerSheet.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/Input.test.tsx`
+- `apps/mobile/__tests__/components/ui/SchedulePickerSheet.test.tsx`
 
 ## Audit Trail
 

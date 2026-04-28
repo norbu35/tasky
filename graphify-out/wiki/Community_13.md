@@ -1,76 +1,70 @@
 # Community 13
 
-> 117 nodes
+> 105 nodes
 
 ## Key Concepts
 
-- **.generateUploadUrl()** (22 connections) — `services/api/src/main/java/mn/tasky/common/storage/S3PresignedUrlService.java`
-- **.createKey()** (20 connections) — `services/api/src/main/java/mn/tasky/common/storage/StorageKeyPolicy.java`
-- **.validateOwnedKey()** (14 connections) — `services/api/src/main/java/mn/tasky/common/storage/StorageKeyPolicy.java`
-- **UpdateProfile** (13 connections) — `services/api/src/test/java/mn/tasky/auth/application/UserProfileServiceTest.java`
-- **ExtractAvatarStorageKey** (13 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/UserProfileCompositionServiceTests.java`
-- **StorageKeyPolicy** (10 connections) — `services/api/src/main/java/mn/tasky/common/storage/StorageKeyPolicy.java`
-- **.profileResponse()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileCompositionService.java`
-- **CreateAvatarUploadUrl** (8 connections) — `services/api/src/test/java/mn/tasky/auth/application/UserProfileServiceTest.java`
-- **CreateVerificationUploadUrl** (8 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- **.updatesProfileSuccessfully()** (8 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateServiceTests.java`
-- **.skipsAvatarValidationWhenNull()** (8 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateServiceTests.java`
-- **.parse()** (7 connections) — `services/api/src/main/java/mn/tasky/common/storage/StorageKeyPolicy.java`
-- **.delegatesCorrectProfileUpdate()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateServiceTests.java`
-- **CreatePhotoUploadUrl** (7 connections) — `services/api/src/test/java/mn/tasky/task/application/TaskPhotoServiceTest.java`
-- **.updateProfile()** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateService.java`
-- **.buildOwnedPhotoAccessUrl()** (6 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskPhotoService.java`
-- **key()** (5 connections) — `services/api/src/main/java/mn/tasky/kernel/logging/LogField.java`
-- **.submitVerification()** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationSubmissionService.java`
-- **UserProfileCompositionService** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileCompositionService.java`
-- **TaskPhotoService** (5 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskPhotoService.java`
-- **.createPhotoUploadUrl()** (5 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskPhotoService.java`
-- **.returnsUploadUrlForSupportedType()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/UserProfileServiceTest.java`
-- **.normalizesContentType()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/UserProfileServiceTest.java`
-- **.supportsWebp()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/UserProfileServiceTest.java`
-- **.returnsUploadUrlForJpeg()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
-- _... and 92 more nodes in this community_
+- **.listPending()** (17 connections) — `services/api/src/main/java/mn/tasky/projection/admin/AdminVerificationQueueProjectionService.java`
+- **.recordAdminAction()** (16 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditCommandPort.java`
+- **.pendingVerifications()** (11 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- **GetVerificationDetail** (11 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- **ApproveVerification** (11 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- **.approve_success()** (10 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
+- **.verificationDecisionNotificationIsSentToAffectedTasker()** (10 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
+- **AdminVerificationCompositionService** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- **.verificationDetail()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- **.detailResponse()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- **.approve()** (9 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionService.java`
+- **VerificationServiceTest.java** (9 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- **RejectVerification** (9 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- **PendingVerificationsTests** (9 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- **.pendingDisputes()** (8 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionService.java`
+- **GetVerificationStatus** (8 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- **.approve_notPending()** (8 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
+- **.approve_notFound()** (8 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
+- **.reject_success()** (8 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
+- **.reject()** (7 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionService.java`
+- **VerificationExists** (7 connections) — `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
+- **.pendingVerifications_returnsPage()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- **.pendingVerifications_storageUrlFailure()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- **.reject_notFound()** (7 connections) — `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
+- **.queueDetailResponse()** (6 connections) — `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- _... and 80 more nodes in this community_
 
 ## Relationships
 
-- [[Community 1]] (37 shared connections)
-- [[Community 0]] (32 shared connections)
-- [[Community 2]] (14 shared connections)
-- [[Community 4]] (4 shared connections)
-- [[Community 5]] (3 shared connections)
-- [[Community 15]] (2 shared connections)
-- [[Community 10]] (2 shared connections)
-- [[Community 3]] (2 shared connections)
-- [[Community 11]] (1 shared connections)
-- [[Community 16]] (1 shared connections)
-- [[Community 29]] (1 shared connections)
+- [[Community 2]] (29 shared connections)
+- [[Community 3]] (22 shared connections)
+- [[Community 1]] (21 shared connections)
+- [[Community 0]] (20 shared connections)
+- [[Community 7]] (9 shared connections)
+- [[Community 4]] (6 shared connections)
+- [[Community 12]] (3 shared connections)
+- [[Community 9]] (2 shared connections)
+- [[Community 21]] (2 shared connections)
+- [[Community 14]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/storage/S3PresignedUrlService.java`
-- `services/api/src/main/java/mn/tasky/common/storage/StorageKeyPolicy.java`
-- `services/api/src/main/java/mn/tasky/kernel/logging/LogField.java`
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileCompositionService.java`
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateService.java`
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationSubmissionService.java`
-- `services/api/src/main/java/mn/tasky/task/application/TaskPhotoKeyHelper.java`
-- `services/api/src/main/java/mn/tasky/task/application/TaskPhotoService.java`
-- `services/api/src/main/java/mn/tasky/task/dao/TaskPhotoDao.java`
-- `services/api/src/test/java/mn/tasky/auth/application/UserProfileServiceTest.java`
+- `services/api/src/main/java/mn/tasky/admin/publicapi/AdminAuditCommandPort.java`
+- `services/api/src/main/java/mn/tasky/projection/admin/AdminVerificationQueueProjectionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionService.java`
+- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/VerificationPublicCompositionService.java`
+- `services/api/src/test/java/mn/tasky/admin/application/command/AdminAuditCommandHandlerTest.java`
 - `services/api/src/test/java/mn/tasky/auth/application/VerificationServiceTest.java`
 - `services/api/src/test/java/mn/tasky/identity/application/command/IdentityCommandHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/kernel/logging/LogFieldTest.java`
-- `services/api/src/test/java/mn/tasky/marketplace/application/command/MarketplaceCommandHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/UserProfileCompositionServiceTests.java`
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/UserProfileUpdateServiceTests.java`
-- `services/api/src/test/java/mn/tasky/task/TaskPhotoServiceTests.java`
-- `services/api/src/test/java/mn/tasky/task/application/TaskPhotoKeyHelperTest.java`
-- `services/api/src/test/java/mn/tasky/task/application/TaskPhotoServiceTest.java`
+- `services/api/src/test/java/mn/tasky/identity/application/query/IdentityQueryHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminDisputeCompositionServiceTests.java`
+- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationCompositionServiceTests.java`
+- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminVerificationDecisionServiceTests.java`
+- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/VerificationPublicCompositionServiceTests.java`
 
 ## Audit Trail
 
-- EXTRACTED: 249 (55%)
-- INFERRED: 200 (45%)
+- EXTRACTED: 241 (49%)
+- INFERRED: 246 (51%)
 - AMBIGUOUS: 0 (0%)
 
 ---

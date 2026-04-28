@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ReviewCard.tsx** (0 connections) — `apps/mobile/src/components/ui/ReviewCard.tsx`
+- **ListItemCard.tsx** (0 connections) — `apps/mobile/src/components/ui/ListItemCard.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/ReviewCard.tsx`
+- `apps/mobile/src/components/ui/ListItemCard.tsx`
 
 ## Audit Trail
 

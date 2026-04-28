@@ -1,76 +1,78 @@
 # Community 5
 
-> 228 nodes
+> 267 nodes
 
 ## Key Concepts
 
-- **BlindIndex** (33 connections) — `services/api/src/test/java/mn/tasky/common/security/CryptoServiceTest.java`
-- **.debugToken()** (25 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
-- **.findByFacebookId()** (22 connections) — `services/api/src/main/java/mn/tasky/auth/dao/UserDao.java`
-- **.findByPhoneBlindIndex()** (21 connections) — `services/api/src/main/java/mn/tasky/auth/dao/UserDao.java`
-- **AuthService** (20 connections) — `services/api/src/main/java/mn/tasky/auth/application/AuthService.java`
-- **IdentityCommandHandlerTest** (20 connections) — `services/api/src/test/java/mn/tasky/identity/application/command/IdentityCommandHandlerTest.java`
-- **.fetchProfile()** (17 connections) — `services/api/src/main/java/mn/tasky/auth/provider/OAuthProvider.java`
-- **SearchUsersByName** (16 connections) — `services/api/src/test/java/mn/tasky/auth/application/UserSearchServiceTest.java`
-- **.findByPhoneBlindIdx()** (15 connections) — `services/api/src/main/java/mn/tasky/auth/dao/OtpChallengeDao.java`
-- **UserDao** (15 connections) — `services/api/src/main/java/mn/tasky/auth/dao/UserDao.java`
-- **VerifyOtp** (15 connections) — `services/api/src/test/java/mn/tasky/auth/application/AuthServiceTest.java`
-- **.linksPhoneToFacebookUser()** (15 connections) — `services/api/src/test/java/mn/tasky/auth/application/AuthServiceTest.java`
-- **.verifyOtp()** (14 connections) — `services/api/src/main/java/mn/tasky/auth/application/AuthService.java`
-- **SearchUsersByPhone** (14 connections) — `services/api/src/test/java/mn/tasky/auth/application/UserSearchServiceTest.java`
-- **.fallsBackToPhoneUser()** (13 connections) — `services/api/src/test/java/mn/tasky/auth/application/AuthServiceTest.java`
-- **FacebookLogin** (13 connections) — `services/api/src/test/java/mn/tasky/auth/application/AuthServiceTest.java`
-- **IdentityQueryHandlerTest** (13 connections) — `services/api/src/test/java/mn/tasky/identity/application/query/IdentityQueryHandlerTest.java`
-- **.resolveOtpUser()** (12 connections) — `services/api/src/main/java/mn/tasky/auth/application/AuthService.java`
-- **SearchByName** (12 connections) — `services/api/src/test/java/mn/tasky/auth/UserSearchServiceTests.java`
-- **SearchUsersByFacebookId** (12 connections) — `services/api/src/test/java/mn/tasky/auth/application/UserSearchServiceTest.java`
-- **.ensureUser()** (11 connections) — `services/api/src/main/java/mn/tasky/auth/application/AuthService.java`
-- **.throwsWhenFacebookUserHasDifferentPhone()** (11 connections) — `services/api/src/test/java/mn/tasky/auth/application/AuthServiceTest.java`
-- **.validFacebookTokenCreatesCustomerSession()** (10 connections) — `services/api/src/test/java/mn/tasky/auth/AuthScenarioTests.java`
-- **.returnsSessionOnSuccess()** (10 connections) — `services/api/src/test/java/mn/tasky/auth/application/AuthServiceTest.java`
-- **.createsNewUserWhenNotFound()** (10 connections) — `services/api/src/test/java/mn/tasky/auth/application/AuthServiceTest.java`
-- _... and 203 more nodes in this community_
+- **.required()** (156 connections) — `services/api/src/main/java/mn/tasky/common/persistence/UuidHelper.java`
+- **.update()** (29 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskDraftDao.java`
+- **.optional()** (25 connections) — `services/api/src/main/java/mn/tasky/common/persistence/UuidHelper.java`
+- **BookingDao** (21 connections) — `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
+- **CategoryScenarioTests** (17 connections) — `services/api/src/test/java/mn/tasky/category/CategoryScenarioTests.java`
+- **CategoryController** (14 connections) — `services/api/src/main/java/mn/tasky/category/api/CategoryController.java`
+- **CategorySchemaVersionService** (13 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- **.createVersion()** (13 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- **.rollbackRestoresLastKnownGoodSchemaVersion()** (13 connections) — `services/api/src/test/java/mn/tasky/category/CategoryScenarioTests.java`
+- **.activate()** (12 connections) — `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- **CategoryDao** (12 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
+- **.canaryActivationPublishesNewSchemaVersionWithoutRebindingExistingDrafts()** (12 connections) — `services/api/src/test/java/mn/tasky/category/CategoryScenarioTests.java`
+- **BookingIntentService** (11 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
+- **.findActiveByCategoryId()** (11 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategorySchemaVersionDao.java`
+- **DisputeDao** (11 connections) — `services/api/src/main/java/mn/tasky/dispute/dao/DisputeDao.java`
+- **ConversationDao** (11 connections) — `services/api/src/main/java/mn/tasky/messaging/dao/ConversationDao.java`
+- **ReviewEnforcementCaseDao** (11 connections) — `services/api/src/main/java/mn/tasky/review/dao/ReviewEnforcementCaseDao.java`
+- **VerificationDao** (10 connections) — `services/api/src/main/java/mn/tasky/auth/dao/VerificationDao.java`
+- **.declineIntent()** (10 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
+- **.findByTaskerId()** (10 connections) — `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
+- **BookingIntentDao** (9 connections) — `services/api/src/main/java/mn/tasky/booking/dao/BookingIntentDao.java`
+- **.activateSchemaVersion()** (9 connections) — `services/api/src/main/java/mn/tasky/category/api/CategoryController.java`
+- **CategoryService** (9 connections) — `services/api/src/main/java/mn/tasky/category/application/CategoryService.java`
+- **CategorySchemaVersionDao** (9 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategorySchemaVersionDao.java`
+- **.findByCategoryIdAndVersion()** (9 connections) — `services/api/src/main/java/mn/tasky/category/dao/CategorySchemaVersionDao.java`
+- _... and 242 more nodes in this community_
 
 ## Relationships
 
-- [[Community 1]] (114 shared connections)
-- [[Community 0]] (38 shared connections)
-- [[Community 2]] (13 shared connections)
-- [[Community 3]] (12 shared connections)
-- [[Community 12]] (7 shared connections)
-- [[Community 21]] (4 shared connections)
-- [[Community 11]] (3 shared connections)
-- [[Community 13]] (3 shared connections)
-- [[Community 4]] (2 shared connections)
-- [[Community 16]] (2 shared connections)
-- [[Community 22]] (2 shared connections)
-- [[Community 29]] (1 shared connections)
+- [[Community 3]] (53 shared connections)
+- [[Community 2]] (46 shared connections)
+- [[Community 4]] (39 shared connections)
+- [[Community 0]] (31 shared connections)
+- [[Community 1]] (24 shared connections)
+- [[Community 12]] (9 shared connections)
+- [[Community 9]] (7 shared connections)
+- [[Community 15]] (7 shared connections)
+- [[Community 22]] (6 shared connections)
+- [[Community 10]] (6 shared connections)
+- [[Community 7]] (4 shared connections)
+- [[Community 20]] (4 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/application/AuthService.java`
-- `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
-- `services/api/src/main/java/mn/tasky/auth/application/LoggingSmsService.java`
-- `services/api/src/main/java/mn/tasky/auth/application/SmsService.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/OtpChallengeDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/UserDao.java`
-- `services/api/src/main/java/mn/tasky/auth/provider/OAuthProvider.java`
-- `services/api/src/main/java/mn/tasky/common/security/CryptoService.java`
-- `services/api/src/main/java/mn/tasky/runtime/adminapi/composition/AdminUserCompositionService.java`
-- `services/api/src/test/java/mn/tasky/auth/AuthScenarioTests.java`
-- `services/api/src/test/java/mn/tasky/auth/UserSearchServiceTests.java`
-- `services/api/src/test/java/mn/tasky/auth/application/AuthServiceTest.java`
-- `services/api/src/test/java/mn/tasky/auth/application/LoggingSmsServiceTest.java`
-- `services/api/src/test/java/mn/tasky/auth/application/UserSearchServiceTest.java`
-- `services/api/src/test/java/mn/tasky/common/security/CryptoServiceTest.java`
-- `services/api/src/test/java/mn/tasky/identity/application/command/IdentityCommandHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/identity/application/query/IdentityQueryHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/adminapi/composition/AdminUserCompositionServiceTests.java`
+- `services/api/src/main/java/mn/tasky/analytics/dao/AnalyticsEventDao.java`
+- `services/api/src/main/java/mn/tasky/auth/application/UserProfileService.java`
+- `services/api/src/main/java/mn/tasky/auth/dao/ProfileDao.java`
+- `services/api/src/main/java/mn/tasky/auth/dao/StrikeDao.java`
+- `services/api/src/main/java/mn/tasky/auth/dao/VerificationDao.java`
+- `services/api/src/main/java/mn/tasky/booking/application/BookingIntentService.java`
+- `services/api/src/main/java/mn/tasky/booking/application/BookingService.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingIntentDao.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingReliabilityIncidentDao.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingScheduleEventDao.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingTimelineEventDao.java`
+- `services/api/src/main/java/mn/tasky/category/api/CategoryController.java`
+- `services/api/src/main/java/mn/tasky/category/application/CategorySchemaVersionService.java`
+- `services/api/src/main/java/mn/tasky/category/application/CategoryService.java`
+- `services/api/src/main/java/mn/tasky/category/application/query/CategoryQueryHandler.java`
+- `services/api/src/main/java/mn/tasky/category/dao/CategoryDao.java`
+- `services/api/src/main/java/mn/tasky/category/dao/CategorySchemaVersionDao.java`
+- `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyDao.java`
+- `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyService.java`
 
 ## Audit Trail
 
-- EXTRACTED: 536 (50%)
-- INFERRED: 533 (50%)
+- EXTRACTED: 612 (54%)
+- INFERRED: 521 (46%)
 - AMBIGUOUS: 0 (0%)
 
 ---

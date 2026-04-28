@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **native.ts** (3 connections) — `packages/design-tokens/src/platform/native.ts`
-- **toNativeLetterSpacing()** (3 connections) — `packages/design-tokens/src/platform/native.ts`
-- **toNativeTextStyle()** (2 connections) — `packages/design-tokens/src/platform/native.ts`
-- **toNativeTypographyVariant()** (2 connections) — `packages/design-tokens/src/platform/native.ts`
+- **MainApplication** (3 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- **MainApplication.kt** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- **.onCreate()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
+- **.onConfigurationChanged()** (1 connections) — `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
 
 ## Relationships
 
@@ -15,11 +15,11 @@
 
 ## Source Files
 
-- `packages/design-tokens/src/platform/native.ts`
+- `apps/mobile/android/app/src/main/java/mn/tasky/mobile/MainApplication.kt`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

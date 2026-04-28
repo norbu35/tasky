@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskFeedCard.test.tsx** (0 connections) — `apps/mobile/__tests__/features/tasks/components/TaskFeedCard.test.tsx`
+- **TaskFeedHeader.test.tsx** (0 connections) — `apps/mobile/__tests__/features/tasks/components/TaskFeedHeader.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/tasks/components/TaskFeedCard.test.tsx`
+- `apps/mobile/__tests__/features/tasks/components/TaskFeedHeader.test.tsx`
 
 ## Audit Trail
 

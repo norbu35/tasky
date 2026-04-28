@@ -1,69 +1,63 @@
 # Community 20
 
-> 68 nodes
+> 67 nodes
 
 ## Key Concepts
 
-- **factories.ts** (15 connections) — `apps/web/src/test/factories.ts`
-- **makeSession()** (14 connections) — `apps/web/src/test/factories.ts`
-- **render()** (13 connections) — `apps/mobile/__tests__/integration/tasker-journey.test.tsx`
-- **render()** (13 connections) — `apps/mobile/__tests__/integration/customer-journey.test.tsx`
-- **makeProfile()** (13 connections) — `apps/web/src/test/factories.ts`
-- **createMockApiClient()** (13 connections) — `apps/web/src/test/mocks.ts`
-- **createMockApiClient()** (11 connections) — `apps/web/tests/accessibility/parity.test.tsx`
-- **renderWithAppContext()** (7 connections) — `apps/web/src/test/render-helpers.tsx`
-- **renderWithAppContext()** (7 connections) — `apps/web/tests/integration/shared-parity.test.tsx`
-- **renderProfilePage()** (6 connections) — `apps/web/src/pages/__tests__/ProfilePage.test.tsx`
-- **createMockAdminApiClient()** (6 connections) — `apps/web/src/test/mocks.ts`
-- **makeCategory()** (5 connections) — `apps/web/src/test/factories.ts`
-- **renderWithContext()** (5 connections) — `apps/web/tests/integration/customer-bookings.test.tsx`
-- **renderWithRoute()** (5 connections) — `apps/web/tests/integration/customer-bookings.test.tsx`
-- **createContext()** (5 connections) — `apps/web/tests/integration/tasker.test.tsx`
-- **wave-1-5.test.tsx** (5 connections) — `apps/web/tests/integration/wave-1-5.test.tsx`
-- **createCustomerContext()** (5 connections) — `apps/web/tests/integration/wave-1-5.test.tsx`
-- **createTaskerContext()** (5 connections) — `apps/web/tests/integration/wave-1-5.test.tsx`
-- **createContext()** (4 connections) — `apps/web/src/pages/__tests__/CustomerTaskDetailsPage.test.tsx`
-- **AdminDisputesPage.test.tsx** (4 connections) — `apps/web/src/pages/admin/__tests__/AdminDisputesPage.test.tsx`
-- **renderListPage()** (4 connections) — `apps/web/src/pages/admin/__tests__/AdminDisputesPage.test.tsx`
-- **renderDetailPage()** (4 connections) — `apps/web/src/pages/admin/__tests__/AdminDisputesPage.test.tsx`
-- **createContext()** (4 connections) — `apps/web/src/pages/customer/__tests__/CustomerBookingDetailPage.test.tsx`
-- **createContext()** (4 connections) — `apps/web/src/pages/customer/__tests__/CustomerApplicantsPage.test.tsx`
-- **makeTask()** (4 connections) — `apps/web/src/test/factories.ts`
-- _... and 43 more nodes in this community_
+- **TaskAssistanceScenarioTests** (15 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **MarketplaceCommandHandler** (14 connections) — `services/api/src/main/java/mn/tasky/marketplace/application/command/MarketplaceCommandHandler.java`
+- **.evaluateExternalDistribution()** (12 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.recordExternalDistribution()** (10 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.processRescue()** (10 connections) — `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
+- **TaskAssistanceService** (9 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.countByTaskId()** (9 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- **.processRescue_createsEventForOldOpenTaskWithZeroApplications()** (8 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.findOpenOlderThan()** (7 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
+- **.externalDistributionTriggersOnlyAfterEightHoursWithoutQualifiedApplication()** (7 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **.externalDistributionLimitedToAdminEligibleCategories()** (7 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **.adminLaunchControlMarksInitialSeedCategoriesEligible()** (7 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **RescueSchedulerTest** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.processRescue_skipsTaskWithExistingApplications()** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.processRescue_skipsTaskWithExistingRescueEvent()** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.processRescue_continuesAfterException()** (7 connections) — `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
+- **.recordManualRescue()** (6 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.classifyOutcome()** (6 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **.existsByTaskId()** (6 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskRescueEventDao.java`
+- **.findLatestByTaskId()** (6 connections) — `services/api/src/main/java/mn/tasky/task/dao/TaskRescueEventDao.java`
+- **.processTask()** (6 connections) — `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
+- **.openTaskCreatedHoursAgo()** (6 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- **.trackIntervention()** (5 connections) — `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- **RescueScheduler** (5 connections) — `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
+- **.systemAssistedOutcomeWhenExternalDistributionWasUsed()** (5 connections) — `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- _... and 42 more nodes in this community_
 
 ## Relationships
 
-- [[Community 1]] (5 shared connections)
-- [[Community 8]] (1 shared connections)
-- [[Community 10]] (1 shared connections)
+- [[Community 2]] (15 shared connections)
+- [[Community 3]] (13 shared connections)
+- [[Community 4]] (5 shared connections)
+- [[Community 5]] (4 shared connections)
+- [[Community 6]] (3 shared connections)
+- [[Community 0]] (2 shared connections)
+- [[Community 15]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/__tests__/integration/customer-journey.test.tsx`
-- `apps/mobile/__tests__/integration/tasker-journey.test.tsx`
-- `apps/web/src/pages/__tests__/CustomerTaskDetailsPage.test.tsx`
-- `apps/web/src/pages/__tests__/ProfilePage.test.tsx`
-- `apps/web/src/pages/admin/__tests__/AdminDisputesPage.test.tsx`
-- `apps/web/src/pages/admin/__tests__/AdminFeaturesPage.test.tsx`
-- `apps/web/src/pages/customer/__tests__/CustomerApplicantsPage.test.tsx`
-- `apps/web/src/pages/customer/__tests__/CustomerBookingDetailPage.test.tsx`
-- `apps/web/src/test/factories.ts`
-- `apps/web/src/test/mocks.ts`
-- `apps/web/src/test/render-helpers.tsx`
-- `apps/web/tests/accessibility/parity.test.tsx`
-- `apps/web/tests/integration/customer-bookings.test.tsx`
-- `apps/web/tests/integration/customer.test.tsx`
-- `apps/web/tests/integration/shared-parity.test.tsx`
-- `apps/web/tests/integration/tasker.test.tsx`
-- `apps/web/tests/integration/wave-1-5.test.tsx`
-- `packages/test-utils/src/query-client.ts`
-- `packages/test-utils/src/render-helpers.tsx`
-- `services/api/src/test/java/mn/tasky/trust/application/query/TrustQueryHandlerTest.java`
+- `services/api/src/main/java/mn/tasky/marketplace/application/command/MarketplaceCommandHandler.java`
+- `services/api/src/main/java/mn/tasky/task/application/TaskAssistanceService.java`
+- `services/api/src/main/java/mn/tasky/task/dao/TaskApplicationDao.java`
+- `services/api/src/main/java/mn/tasky/task/dao/TaskDao.java`
+- `services/api/src/main/java/mn/tasky/task/dao/TaskRescueEventDao.java`
+- `services/api/src/main/java/mn/tasky/task/scheduling/RescueScheduler.java`
+- `services/api/src/test/java/mn/tasky/marketplace/application/command/MarketplaceCommandHandlerTest.java`
+- `services/api/src/test/java/mn/tasky/task/TaskAssistanceScenarioTests.java`
+- `services/api/src/test/java/mn/tasky/task/application/TaskAssistanceServiceTest.java`
+- `services/api/src/test/java/mn/tasky/task/scheduling/RescueSchedulerTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 109 (41%)
-- INFERRED: 158 (59%)
+- EXTRACTED: 154 (54%)
+- INFERRED: 133 (46%)
 - AMBIGUOUS: 0 (0%)
 
 ---

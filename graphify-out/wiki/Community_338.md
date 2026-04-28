@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **check_screen_graph.py** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
-- **main()** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
+- **doc-claims-validator.test.mjs** (1 connections) — `tooling/tests/doc-claims-validator.test.mjs`
+- **runPython()** (1 connections) — `tooling/tests/doc-claims-validator.test.mjs`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
+- `tooling/tests/doc-claims-validator.test.mjs`
 
 ## Audit Trail
 

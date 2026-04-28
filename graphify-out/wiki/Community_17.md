@@ -1,67 +1,65 @@
 # Community 17
 
-> 94 nodes
+> 75 nodes
 
 ## Key Concepts
 
-- **.doFilterInternal()** (22 connections) — `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
-- **.incrementAndGet()** (14 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
-- **Write** (10 connections) — `services/api/src/test/java/mn/tasky/common/security/JsonSecurityResponseWriterTest.java`
-- **OtpRateLimitService** (7 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- **.enforce()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- **.doFilterInternal()** (6 connections) — `services/api/src/main/java/mn/tasky/common/security/RateLimitFilter.java`
-- **AssertRefreshAllowed** (6 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **RequestObservabilityFilterTest.java** (6 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **.deleteExpired()** (5 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
-- **RateLimitFilter** (5 connections) — `services/api/src/main/java/mn/tasky/common/security/RateLimitFilter.java`
-- **JwtAuthenticationFilter** (5 connections) — `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
-- **AssertRequestAllowed** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **PlatformResolution** (5 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **RefreshSessionDao** (4 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
-- **OtpRateLimitServiceTest.java** (4 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **AssertVerifyAllowed** (4 connections) — `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- **TraceAndCorrelationIdResolution** (4 connections) — `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- **.assertRefreshAllowed()** (3 connections) — `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- **RateLimitCounterDao** (3 connections) — `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
-- **RateLimitCleanupScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/RateLimitCleanupScheduler.java`
-- **SessionCleanupScheduler** (3 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/SessionCleanupScheduler.java`
-- **RestAccessDeniedHandler** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAccessDeniedHandler.java`
-- **RestAuthenticationEntryPoint** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAuthenticationEntryPoint.java`
-- **.commence()** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/RestAuthenticationEntryPoint.java`
-- **.writeRateLimitResponse()** (3 connections) — `services/api/src/main/java/mn/tasky/common/security/RateLimitFilter.java`
-- _... and 69 more nodes in this community_
+- **.code()** (19 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyException.java`
+- **ApiExceptionHandler** (13 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
+- **.error()** (13 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
+- **healthy()** (8 connections) — `services/api/src/main/java/mn/tasky/automation/provider/ProviderHealth.java`
+- **LoggingPushProvider** (7 connections) — `services/api/src/main/java/mn/tasky/notification/provider/LoggingPushProvider.java`
+- **RequireKey** (7 connections) — `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
+- **.assertAllowed()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookRateLimitService.java`
+- **FacebookOAuthProvider** (6 connections) — `services/api/src/main/java/mn/tasky/auth/provider/FacebookOAuthProvider.java`
+- **LoggingLlmProvider** (6 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LoggingLlmProvider.java`
+- **FacebookRateLimitServiceTest** (6 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookRateLimitServiceTest.java`
+- **.health()** (5 connections) — `services/api/src/main/java/mn/tasky/auth/provider/FacebookOAuthProvider.java`
+- **.handleIdempotency()** (4 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
+- **IdempotencyException** (4 connections) — `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyException.java`
+- **LoggingSmsNotificationProvider** (4 connections) — `services/api/src/main/java/mn/tasky/notification/provider/LoggingSmsNotificationProvider.java`
+- **AuthExceptionTest.java** (4 connections) — `services/api/src/test/java/mn/tasky/auth/AuthExceptionTest.java`
+- **FacebookAuth** (4 connections) — `services/api/src/test/java/mn/tasky/auth/AuthExceptionTest.java`
+- **.validateToken()** (3 connections) — `services/api/src/main/java/mn/tasky/auth/provider/FacebookOAuthProvider.java`
+- **.health()** (3 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/LoggingLlmProvider.java`
+- **.handleRateLimit()** (3 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
+- **.handleFacebookAuth()** (3 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
+- **.health()** (3 connections) — `services/api/src/main/java/mn/tasky/notification/provider/LoggingSmsNotificationProvider.java`
+- **.maskToken()** (3 connections) — `services/api/src/main/java/mn/tasky/notification/provider/LoggingPushProvider.java`
+- **.health()** (3 connections) — `services/api/src/main/java/mn/tasky/notification/provider/LoggingPushProvider.java`
+- **AccountRestricted** (3 connections) — `services/api/src/test/java/mn/tasky/auth/AuthExceptionTest.java`
+- **RateLimitExceeded** (3 connections) — `services/api/src/test/java/mn/tasky/auth/AuthExceptionTest.java`
+- _... and 50 more nodes in this community_
 
 ## Relationships
 
 - [[Community 0]] (7 shared connections)
-- [[Community 1]] (5 shared connections)
-- [[Community 2]] (4 shared connections)
-- [[Community 4]] (2 shared connections)
-- [[Community 12]] (1 shared connections)
-- [[Community 3]] (1 shared connections)
-- [[Community 8]] (1 shared connections)
+- [[Community 6]] (4 shared connections)
+- [[Community 1]] (3 shared connections)
+- [[Community 16]] (2 shared connections)
+- [[Community 7]] (1 shared connections)
+- [[Community 2]] (1 shared connections)
+- [[Community 5]] (1 shared connections)
+- [[Community 29]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/auth/application/OtpRateLimitService.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/RateLimitCounterDao.java`
-- `services/api/src/main/java/mn/tasky/auth/dao/RefreshSessionDao.java`
-- `services/api/src/main/java/mn/tasky/auth/scheduling/RateLimitCleanupScheduler.java`
-- `services/api/src/main/java/mn/tasky/auth/scheduling/SessionCleanupScheduler.java`
-- `services/api/src/main/java/mn/tasky/common/security/JwtAuthenticationFilter.java`
-- `services/api/src/main/java/mn/tasky/common/security/RateLimitFilter.java`
-- `services/api/src/main/java/mn/tasky/common/security/RestAccessDeniedHandler.java`
-- `services/api/src/main/java/mn/tasky/common/security/RestAuthenticationEntryPoint.java`
-- `services/api/src/test/java/mn/tasky/auth/application/OtpRateLimitServiceTest.java`
-- `services/api/src/test/java/mn/tasky/common/observability/RequestObservabilityFilterTest.java`
-- `services/api/src/test/java/mn/tasky/common/security/JsonSecurityResponseWriterTest.java`
-- `services/api/src/test/java/mn/tasky/common/security/RestAccessDeniedHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/common/security/RestAuthenticationEntryPointTest.java`
+- `services/api/src/main/java/mn/tasky/auth/application/FacebookRateLimitService.java`
+- `services/api/src/main/java/mn/tasky/auth/provider/FacebookOAuthProvider.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/ProviderHealth.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/llm/LoggingLlmProvider.java`
+- `services/api/src/main/java/mn/tasky/common/api/ApiExceptionHandler.java`
+- `services/api/src/main/java/mn/tasky/common/idempotency/IdempotencyException.java`
+- `services/api/src/main/java/mn/tasky/notification/provider/LoggingPushProvider.java`
+- `services/api/src/main/java/mn/tasky/notification/provider/LoggingSmsNotificationProvider.java`
+- `services/api/src/test/java/mn/tasky/auth/AuthExceptionTest.java`
+- `services/api/src/test/java/mn/tasky/auth/application/FacebookRateLimitServiceTest.java`
+- `services/api/src/test/java/mn/tasky/common/idempotency/IdempotencyServiceTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 174 (66%)
-- INFERRED: 91 (34%)
+- EXTRACTED: 163 (73%)
+- INFERRED: 59 (27%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **metro.config.js** (0 connections) — `apps/mobile/metro.config.js`
+- **nativewind-env.d.ts** (0 connections) — `apps/mobile/nativewind-env.d.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/metro.config.js`
+- `apps/mobile/nativewind-env.d.ts`
 
 ## Audit Trail
 

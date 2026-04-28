@@ -1,71 +1,78 @@
 # Community 7
 
-> 197 nodes
+> 205 nodes
 
 ## Key Concepts
 
-- **.requestJson()** (116 connections) — `packages/core/src/http/transport.ts`
-- **HttpApiClient** (49 connections) — `apps/web/src/lib/apiClient.ts`
-- **getClient()** (44 connections) — `apps/mobile/src/features/verification/api.ts`
-- **HttpAdminApiClient** (26 connections) — `apps/web/src/lib/adminApiClient.ts`
-- **api.ts** (14 connections) — `apps/mobile/src/features/bookings/api.ts`
-- **getClient()** (12 connections) — `apps/mobile/src/features/tasks/api.ts`
-- **api.ts** (11 connections) — `apps/mobile/src/features/tasks/api.ts`
-- **.requestVoid()** (10 connections) — `packages/core/src/http/transport.ts`
-- **api.ts** (8 connections) — `apps/mobile/src/features/profile/api.ts`
-- **AdminCategoriesPage.tsx** (7 connections) — `apps/web/src/pages/admin/AdminCategoriesPage.tsx`
-- **HttpTransport** (7 connections) — `packages/core/src/http/transport.ts`
-- **handleFormSubmit()** (6 connections) — `apps/web/src/pages/admin/AdminCategoriesPage.tsx`
-- **mobileApiClient.ts** (5 connections) — `apps/mobile/src/lib/mobileApiClient.ts`
-- **apiClient.ts** (5 connections) — `apps/web/src/lib/apiClient.ts`
-- **buildBaseUrl()** (5 connections) — `apps/web/src/lib/apiClient.ts`
-- **handleToggleActive()** (5 connections) — `apps/web/src/pages/admin/AdminCategoriesPage.tsx`
-- **handleConfirm()** (5 connections) — `apps/web/src/pages/admin/AdminFeaturesPage.tsx`
-- **handleSave()** (5 connections) — `apps/web/src/pages/admin/AdminModerationPage.tsx`
-- **handleBan()** (5 connections) — `apps/web/src/pages/admin/AdminUsersPage.tsx`
-- **handleUnban()** (5 connections) — `apps/web/src/pages/admin/AdminUsersPage.tsx`
-- **transport.ts** (5 connections) — `packages/core/src/http/transport.ts`
-- **normalizeBaseUrl()** (5 connections) — `packages/core/src/http/transport.ts`
-- **handleProcess()** (5 connections) — `archive/web-future-admin/AdminPayoutsPage.tsx`
-- **handleSubmit()** (5 connections) — `archive/web-future-admin/AdminLeadPricingPage.tsx`
-- **api.ts** (4 connections) — `apps/mobile/src/features/auth/api.ts`
-- _... and 172 more nodes in this community_
+- **.userId()** (93 connections) — `services/api/src/test/java/mn/tasky/task/TaskScenarioTests.java`
+- **.errorBody()** (43 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiResponseSupport.java`
+- **.errorMessage()** (40 connections) — `services/api/src/main/java/mn/tasky/common/i18n/BackendMessageResolver.java`
+- **.toOperationResponse()** (15 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingController.java`
+- **BookingController** (13 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingController.java`
+- **.bookingIntentResponse()** (12 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingIntentController.java`
+- **.idempotencyInProgress()** (12 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiResponseSupport.java`
+- **.idempotencyReplayMissing()** (12 connections) — `services/api/src/main/java/mn/tasky/common/api/ApiResponseSupport.java`
+- **.raiseDispute()** (12 connections) — `services/api/src/main/java/mn/tasky/dispute/api/DisputeController.java`
+- **badRequest()** (12 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletPayoutRequestOutcome.java`
+- **.createBookingIntent()** (11 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingIntentController.java`
+- **.addDisputeEvidence()** (11 connections) — `services/api/src/main/java/mn/tasky/dispute/api/DisputeController.java`
+- **featureDeferred()** (11 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/WalletPayoutRequestOutcome.java`
+- **.requestPayout()** (11 connections) — `services/api/src/main/java/mn/tasky/wallet/api/WalletController.java`
+- **.acceptApplication()** (10 connections) — `services/api/src/main/java/mn/tasky/task/api/TaskController.java`
+- **.getPrincipal()** (10 connections) — `services/api/src/main/java/mn/tasky/wallet/api/WalletController.java`
+- **.processPayout()** (9 connections) — `services/api/src/main/java/mn/tasky/admin/api/AdminPayoutController.java`
+- **.conciergeAssign()** (9 connections) — `services/api/src/main/java/mn/tasky/admin/api/AdminTaskController.java`
+- **.initiatePayment()** (9 connections) — `services/api/src/main/java/mn/tasky/payment/api/PaymentController.java`
+- **.submitReview()** (9 connections) — `services/api/src/main/java/mn/tasky/review/api/ReviewController.java`
+- **.updateStrikePolicy()** (8 connections) — `services/api/src/main/java/mn/tasky/admin/api/AdminModerationController.java`
+- **DisputeController** (8 connections) — `services/api/src/main/java/mn/tasky/dispute/api/DisputeController.java`
+- **MessagingController** (8 connections) — `services/api/src/main/java/mn/tasky/messaging/api/MessagingController.java`
+- **.sendMessage()** (8 connections) — `services/api/src/main/java/mn/tasky/messaging/api/MessagingController.java`
+- **UserProfileController** (8 connections) — `services/api/src/main/java/mn/tasky/user/api/UserProfileController.java`
+- _... and 180 more nodes in this community_
 
 ## Relationships
 
-- [[Community 6]] (13 shared connections)
-- [[Community 10]] (8 shared connections)
-- [[Community 0]] (8 shared connections)
-- [[Community 8]] (2 shared connections)
-- [[Community 36]] (1 shared connections)
+- [[Community 2]] (64 shared connections)
+- [[Community 0]] (62 shared connections)
+- [[Community 3]] (12 shared connections)
+- [[Community 1]] (10 shared connections)
+- [[Community 6]] (10 shared connections)
+- [[Community 13]] (9 shared connections)
+- [[Community 4]] (8 shared connections)
+- [[Community 12]] (5 shared connections)
+- [[Community 14]] (5 shared connections)
+- [[Community 5]] (4 shared connections)
+- [[Community 11]] (4 shared connections)
+- [[Community 24]] (3 shared connections)
 
 ## Source Files
 
-- `apps/mobile/src/features/auth/api.ts`
-- `apps/mobile/src/features/bookings/api.ts`
-- `apps/mobile/src/features/chat/api.ts`
-- `apps/mobile/src/features/disputes/api.ts`
-- `apps/mobile/src/features/notifications/api.ts`
-- `apps/mobile/src/features/profile/api.ts`
-- `apps/mobile/src/features/review/api.ts`
-- `apps/mobile/src/features/tasks/api.ts`
-- `apps/mobile/src/features/verification/api.ts`
-- `apps/mobile/src/lib/clientAnalytics.ts`
-- `apps/mobile/src/lib/mobileApiClient.ts`
-- `apps/web/e2e/support/mockApi.ts`
-- `apps/web/src/App.tsx`
-- `apps/web/src/lib/adminApiClient.ts`
-- `apps/web/src/lib/apiClient.ts`
-- `apps/web/src/lib/clientAnalytics.ts`
-- `apps/web/src/pages/admin/AdminCategoriesPage.tsx`
-- `apps/web/src/pages/admin/AdminConciergePage.tsx`
-- `apps/web/src/pages/admin/AdminFeaturesPage.tsx`
-- `apps/web/src/pages/admin/AdminModerationPage.tsx`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminBookingController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminDisputeController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminFeatureToggleController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminModerationController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminPayoutController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminTaskController.java`
+- `services/api/src/main/java/mn/tasky/admin/api/AdminUserController.java`
+- `services/api/src/main/java/mn/tasky/auth/api/AuthController.java`
+- `services/api/src/main/java/mn/tasky/auth/dao/ProfileDao.java`
+- `services/api/src/main/java/mn/tasky/booking/api/BookingController.java`
+- `services/api/src/main/java/mn/tasky/booking/api/BookingIntentController.java`
+- `services/api/src/main/java/mn/tasky/common/api/ApiResponseSupport.java`
+- `services/api/src/main/java/mn/tasky/common/config/ChannelInterceptorConfig.java`
+- `services/api/src/main/java/mn/tasky/common/i18n/BackendMessageResolver.java`
+- `services/api/src/main/java/mn/tasky/common/observability/RequestObservabilityFilter.java`
+- `services/api/src/main/java/mn/tasky/common/security/LastActiveFilter.java`
+- `services/api/src/main/java/mn/tasky/common/security/RateLimitFilter.java`
+- `services/api/src/main/java/mn/tasky/common/security/StompRateLimitInterceptor.java`
+- `services/api/src/main/java/mn/tasky/dispute/api/DisputeController.java`
+- `services/api/src/main/java/mn/tasky/messaging/api/MessagingController.java`
 
 ## Audit Trail
 
-- EXTRACTED: 483 (61%)
-- INFERRED: 309 (39%)
+- EXTRACTED: 454 (48%)
+- INFERRED: 498 (52%)
 - AMBIGUOUS: 0 (0%)
 
 ---

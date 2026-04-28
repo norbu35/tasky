@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **babel.config.js** (0 connections) — `apps/mobile/babel.config.js`
+- **eslint.config.mjs** (0 connections) — `apps/mobile/eslint.config.mjs`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/babel.config.js`
+- `apps/mobile/eslint.config.mjs`
 
 ## Audit Trail
 

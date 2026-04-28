@@ -1,78 +1,78 @@
 # Community 4
 
-> 273 nodes
+> 292 nodes
 
 ## Key Concepts
 
-- **builder()** (42 connections) — `services/api/src/main/java/mn/tasky/automation/event/AutomationEventEnvelope.java`
-- **.build()** (40 connections) — `services/api/src/main/java/mn/tasky/automation/event/AutomationEventEnvelope.java`
-- **.publish()** (38 connections) — `services/api/src/main/java/mn/tasky/common/outbox/DomainEventOutboxService.java`
-- **.relayPending()** (33 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxRelayService.java`
-- **.track()** (30 connections) — `services/api/src/main/java/mn/tasky/analytics/publicapi/AnalyticsCommandPort.java`
-- **.handle()** (22 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/BookingCompletedHandler.java`
-- **.eventType()** (21 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/BookingCompletedHandler.java`
-- **.shouldMarkProcessedWhenPublishSucceeds()** (21 connections) — `services/api/src/test/java/mn/tasky/common/outbox/OutboxRelayServiceTests.java`
-- **.eventId()** (18 connections) — `services/api/src/main/java/mn/tasky/automation/event/AutomationEventEnvelope.java`
-- **AnalyticsScenarioTests** (16 connections) — `services/api/src/test/java/mn/tasky/analytics/AnalyticsScenarioTests.java`
-- **.differentEventsExecuteIndependently()** (16 connections) — `services/api/src/test/java/mn/tasky/messaging/workflow/TaskApplicationAcceptedHandlerTest.java`
-- **.bookingConfirmedEventEmittedWhenSelectedTaskerAccepts()** (15 connections) — `services/api/src/test/java/mn/tasky/analytics/AnalyticsScenarioTests.java`
-- **.envelope()** (15 connections) — `services/api/src/test/java/mn/tasky/messaging/workflow/TaskApplicationAcceptedHandlerTest.java`
-- **.correlationId()** (14 connections) — `services/api/src/main/java/mn/tasky/automation/event/AutomationEventEnvelope.java`
-- **.bookingCompletedEventEmittedOnTransition()** (14 connections) — `services/api/src/test/java/mn/tasky/analytics/AnalyticsScenarioTests.java`
-- **.startConversation()** (13 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/MessagingCommandPort.java`
-- **AbstractEventHandlerTest** (13 connections) — `services/api/src/test/java/mn/tasky/automation/worker/AbstractEventHandlerTest.java`
-- **BrokerConfig** (12 connections) — `services/api/src/main/java/mn/tasky/automation/broker/BrokerConfig.java`
-- **.payload()** (12 connections) — `services/api/src/main/java/mn/tasky/automation/event/AutomationEventEnvelope.java`
-- **.propagateMdc()** (12 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventWorkerConsumer.java`
-- **.claimBatch()** (12 connections) — `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- **.propagate()** (12 connections) — `services/api/src/main/java/mn/tasky/kernel/context/ContextPropagator.java`
-- **.createHandler()** (12 connections) — `services/api/src/test/java/mn/tasky/automation/worker/AbstractEventHandlerTest.java`
-- **.handle()** (11 connections) — `services/api/src/main/java/mn/tasky/messaging/workflow/TaskApplicationAcceptedHandler.java`
-- **.onMessage()** (10 connections) — `services/api/src/main/java/mn/tasky/automation/worker/EventWorkerConsumer.java`
-- _... and 248 more nodes in this community_
+- **.insert()** (135 connections) — `services/api/src/main/java/mn/tasky/wallet/dao/PayoutRequestDao.java`
+- **.updateStatus()** (72 connections) — `services/api/src/main/java/mn/tasky/wallet/dao/PayoutRequestDao.java`
+- **.sendPush()** (43 connections) — `services/api/src/main/java/mn/tasky/notification/publicapi/NotificationCommandPort.java`
+- **.sendPushWithEventKey()** (31 connections) — `services/api/src/main/java/mn/tasky/notification/publicapi/NotificationCommandPort.java`
+- **NotificationServiceTest** (25 connections) — `services/api/src/test/java/mn/tasky/notification/application/NotificationServiceTest.java`
+- **ReviewEnforcementServiceTest** (25 connections) — `services/api/src/test/java/mn/tasky/review/application/ReviewEnforcementServiceTest.java`
+- **.createCasesForBooking()** (23 connections) — `services/api/src/main/java/mn/tasky/review/application/ReviewEnforcementService.java`
+- **.existsByEventKey()** (19 connections) — `services/api/src/main/java/mn/tasky/notification/dao/NotificationLogDao.java`
+- **.makeCase()** (16 connections) — `services/api/src/test/java/mn/tasky/review/application/ReviewEnforcementServiceTest.java`
+- **VerificationService** (15 connections) — `services/api/src/main/java/mn/tasky/auth/application/VerificationService.java`
+- **.findByBookingAndUser()** (15 connections) — `services/api/src/main/java/mn/tasky/review/dao/ReviewEnforcementCaseDao.java`
+- **WalletService** (15 connections) — `services/api/src/main/java/mn/tasky/wallet/application/WalletService.java`
+- **.makeUser()** (15 connections) — `services/api/src/test/java/mn/tasky/notification/application/NotificationServiceTest.java`
+- **.resolveCase()** (12 connections) — `services/api/src/main/java/mn/tasky/review/application/ReviewEnforcementService.java`
+- **.findOpenByUser()** (12 connections) — `services/api/src/main/java/mn/tasky/review/dao/ReviewEnforcementCaseDao.java`
+- **.findPending()** (12 connections) — `services/api/src/main/java/mn/tasky/wallet/dao/PayoutRequestDao.java`
+- **.customerSilenceTriggersTimeoutAutoComplete()** (12 connections) — `services/api/src/test/java/mn/tasky/booking/BookingSelectionScenarioTests.java`
+- **.submitReview()** (11 connections) — `services/api/src/main/java/mn/tasky/review/application/ReviewService.java`
+- **.sendPushWithSmsFallback_sendsPushAndSms()** (11 connections) — `services/api/src/test/java/mn/tasky/notification/application/NotificationServiceTest.java`
+- **RegisterDevice** (11 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/NotificationCompositionServiceTests.java`
+- **.resolveVerification()** (10 connections) — `services/api/src/main/java/mn/tasky/auth/application/VerificationService.java`
+- **.setUp()** (10 connections) — `services/api/src/test/java/mn/tasky/notification/NotificationScenarioTests.java`
+- **.sendPushWithEventKey_noTokens_criticalType_triggersSmsFallback()** (10 connections) — `services/api/src/test/java/mn/tasky/notification/application/NotificationServiceTest.java`
+- **.sendPushWithEventKey_smsFallback_smsFails_logsFailedStatus()** (10 connections) — `services/api/src/test/java/mn/tasky/notification/application/NotificationServiceTest.java`
+- **.respondToReschedule()** (9 connections) — `services/api/src/main/java/mn/tasky/booking/application/BookingScheduleService.java`
+- _... and 267 more nodes in this community_
 
 ## Relationships
 
-- [[Community 0]] (52 shared connections)
-- [[Community 1]] (32 shared connections)
-- [[Community 2]] (24 shared connections)
-- [[Community 12]] (14 shared connections)
-- [[Community 11]] (5 shared connections)
-- [[Community 13]] (4 shared connections)
-- [[Community 19]] (3 shared connections)
-- [[Community 18]] (3 shared connections)
-- [[Community 10]] (3 shared connections)
-- [[Community 14]] (3 shared connections)
-- [[Community 5]] (2 shared connections)
-- [[Community 33]] (2 shared connections)
+- [[Community 3]] (102 shared connections)
+- [[Community 2]] (91 shared connections)
+- [[Community 0]] (72 shared connections)
+- [[Community 1]] (65 shared connections)
+- [[Community 5]] (39 shared connections)
+- [[Community 6]] (26 shared connections)
+- [[Community 12]] (13 shared connections)
+- [[Community 7]] (8 shared connections)
+- [[Community 13]] (6 shared connections)
+- [[Community 20]] (5 shared connections)
+- [[Community 19]] (5 shared connections)
+- [[Community 27]] (3 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/analytics/publicapi/AnalyticsCommandPort.java`
-- `services/api/src/main/java/mn/tasky/auth/api/AuthController.java`
-- `services/api/src/main/java/mn/tasky/automation/broker/BrokerConfig.java`
-- `services/api/src/main/java/mn/tasky/automation/broker/EventRelayPublisher.java`
-- `services/api/src/main/java/mn/tasky/automation/broker/JsonMessageConverter.java`
-- `services/api/src/main/java/mn/tasky/automation/event/AutomationEventEnvelope.java`
-- `services/api/src/main/java/mn/tasky/automation/provider/S3StorageProvider.java`
-- `services/api/src/main/java/mn/tasky/automation/worker/AbstractEventHandler.java`
-- `services/api/src/main/java/mn/tasky/automation/worker/EventWorkerConsumer.java`
-- `services/api/src/main/java/mn/tasky/common/config/CacheConfig.java`
-- `services/api/src/main/java/mn/tasky/common/config/ShedLockConfig.java`
-- `services/api/src/main/java/mn/tasky/common/health/OutboxHealthIndicator.java`
-- `services/api/src/main/java/mn/tasky/common/observability/RequestObservabilityFilter.java`
-- `services/api/src/main/java/mn/tasky/common/outbox/DomainEventOutboxService.java`
-- `services/api/src/main/java/mn/tasky/common/outbox/OutboxEventDao.java`
-- `services/api/src/main/java/mn/tasky/common/outbox/OutboxRelayService.java`
-- `services/api/src/main/java/mn/tasky/common/scheduling/OutboxRelayScheduler.java`
-- `services/api/src/main/java/mn/tasky/common/security/StompRateLimitInterceptor.java`
-- `services/api/src/main/java/mn/tasky/common/storage/S3PresignedUrlService.java`
-- `services/api/src/main/java/mn/tasky/common/storage/S3StorageService.java`
+- `services/api/src/main/java/mn/tasky/admin/application/command/AdminAuditCommandHandler.java`
+- `services/api/src/main/java/mn/tasky/analytics/application/AnalyticsService.java`
+- `services/api/src/main/java/mn/tasky/auth/application/VerificationService.java`
+- `services/api/src/main/java/mn/tasky/booking/application/BookingScheduleService.java`
+- `services/api/src/main/java/mn/tasky/booking/application/BookingTimelineService.java`
+- `services/api/src/main/java/mn/tasky/booking/application/CompletionTimeoutService.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingDao.java`
+- `services/api/src/main/java/mn/tasky/booking/dao/BookingScheduleEventDao.java`
+- `services/api/src/main/java/mn/tasky/booking/scheduling/CompletionTimeoutScheduler.java`
+- `services/api/src/main/java/mn/tasky/booking/scheduling/RescheduleExpiryScheduler.java`
+- `services/api/src/main/java/mn/tasky/dispute/application/DisputeService.java`
+- `services/api/src/main/java/mn/tasky/notification/application/NotificationService.java`
+- `services/api/src/main/java/mn/tasky/notification/application/command/NotificationCommandHandler.java`
+- `services/api/src/main/java/mn/tasky/notification/dao/DistrictDao.java`
+- `services/api/src/main/java/mn/tasky/notification/dao/NotificationLogDao.java`
+- `services/api/src/main/java/mn/tasky/notification/dao/TaskerServiceAreaDao.java`
+- `services/api/src/main/java/mn/tasky/notification/provider/SmsNotificationProvider.java`
+- `services/api/src/main/java/mn/tasky/notification/publicapi/NotificationCommandPort.java`
+- `services/api/src/main/java/mn/tasky/projection/admin/AdminDisputeQueueProjectionService.java`
+- `services/api/src/main/java/mn/tasky/review/application/ReviewEnforcementService.java`
 
 ## Audit Trail
 
-- EXTRACTED: 597 (44%)
-- INFERRED: 753 (56%)
+- EXTRACTED: 602 (39%)
+- INFERRED: 940 (61%)
 - AMBIGUOUS: 0 (0%)
 
 ---

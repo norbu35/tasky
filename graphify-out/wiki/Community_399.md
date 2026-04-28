@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **CategorySelectionScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/CategorySelectionScreen.test.tsx`
+- **BookingsListScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/customer/bookings/BookingsListScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/customer/CategorySelectionScreen.test.tsx`
+- `apps/mobile/__tests__/screens/customer/bookings/BookingsListScreen.test.tsx`
 
 ## Audit Trail
 

@@ -1,40 +1,40 @@
 # Community 39
 
-> 13 nodes
+> 15 nodes
 
 ## Key Concepts
 
-- **useReviewGate()** (4 connections) — `apps/mobile/src/features/review/components/ReviewGateProvider.tsx`
-- **useCustomerTasksScreen()** (3 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/useCustomerTasksScreen.ts`
-- **GateStateProbe()** (2 connections) — `apps/mobile/__tests__/features/review/components/ReviewGateProvider.test.tsx`
-- **NewTaskLayout()** (2 connections) — `apps/mobile/src/app/(customer)/tasks/new/_layout.tsx`
-- **ReviewGateProvider.tsx** (2 connections) — `apps/mobile/src/features/review/components/ReviewGateProvider.tsx`
-- **ReviewGateProvider()** (2 connections) — `apps/mobile/src/features/review/components/ReviewGateProvider.tsx`
-- **usePendingReviews()** (2 connections) — `apps/mobile/src/features/review/hooks/usePendingReviews.ts`
-- **useMyTasks()** (2 connections) — `apps/mobile/src/features/tasks/hooks/useMyTasks.ts`
-- **ReviewGateProvider.test.tsx** (1 connections) — `apps/mobile/__tests__/features/review/components/ReviewGateProvider.test.tsx`
-- **\_layout.tsx** (1 connections) — `apps/mobile/src/app/(customer)/tasks/new/_layout.tsx`
-- **usePendingReviews.ts** (1 connections) — `apps/mobile/src/features/review/hooks/usePendingReviews.ts`
-- **useMyTasks.ts** (1 connections) — `apps/mobile/src/features/tasks/hooks/useMyTasks.ts`
-- **useCustomerTasksScreen.ts** (1 connections) — `apps/mobile/src/features/tasks/screens/CustomerTasks/useCustomerTasksScreen.ts`
+- **TaskSchedule.model.ts** (10 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **useTaskScheduleScreen()** (4 connections) — `apps/mobile/src/features/tasks/screens/useTaskScheduleScreen.ts`
+- **createScheduleDateOptions()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **parseDateParam()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **TaskScheduleScreen()** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskScheduleScreen.tsx`
+- **createDefaultScheduleDate()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **createScheduleTimeOptions()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **formatDateValue()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **formatTimeValue()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **isSameScheduleDate()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **isSameScheduleTime()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **combineDateAndTime()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **toValidDate()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- **useTaskScheduleScreen.ts** (1 connections) — `apps/mobile/src/features/tasks/screens/useTaskScheduleScreen.ts`
+- **TaskScheduleScreen.tsx** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskScheduleScreen.tsx`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 2]] (1 shared connections)
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `apps/mobile/__tests__/features/review/components/ReviewGateProvider.test.tsx`
-- `apps/mobile/src/app/(customer)/tasks/new/_layout.tsx`
-- `apps/mobile/src/features/review/components/ReviewGateProvider.tsx`
-- `apps/mobile/src/features/review/hooks/usePendingReviews.ts`
-- `apps/mobile/src/features/tasks/hooks/useMyTasks.ts`
-- `apps/mobile/src/features/tasks/screens/CustomerTasks/useCustomerTasksScreen.ts`
+- `apps/mobile/src/features/tasks/screens/TaskSchedule.model.ts`
+- `apps/mobile/src/features/tasks/screens/TaskScheduleScreen.tsx`
+- `apps/mobile/src/features/tasks/screens/useTaskScheduleScreen.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (58%)
-- INFERRED: 10 (42%)
+- EXTRACTED: 24 (80%)
+- INFERRED: 6 (20%)
 - AMBIGUOUS: 0 (0%)
 
 ---

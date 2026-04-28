@@ -2,32 +2,32 @@
 
 > God node · 129 connections · `services/api/src/main/java/mn/tasky/task/dto/TaskCreateResult.java`
 
-**Community:** [[Community 0]]
+**Community:** [[Community 2]]
 
 ## Connections by Relation
 
 ### calls
 
 - [[.raiseDispute()]] `INFERRED`
-- [[.createTask()]] `INFERRED`
 - [[.flagNoShow()]] `INFERRED`
+- [[.createTask()]] `INFERRED`
 - [[.acceptApplication()]] `INFERRED`
 - [[.resolveDispute()]] `INFERRED`
-- [[runSync()]] `INFERRED`
 - [[.addEvidence()]] `INFERRED`
+- [[runSync()]] `INFERRED`
+- [[.raiseDispute()]] `INFERRED`
+- [[.resolveDispute()]] `INFERRED`
 - [[.raiseDispute_successAssigned_withoutEvidence()]] `INFERRED`
 - [[.submitReview_successCustomerReviewingTasker()]] `INFERRED`
 - [[.submitReview_successTaskerReviewingCustomer()]] `INFERRED`
-- [[.raiseDispute()]] `INFERRED`
-- [[.resolveDispute()]] `INFERRED`
+- [[.submitReview()]] `INFERRED`
 - [[.resolveDispute_resolveTasker()]] `INFERRED`
 - [[.onMessage()]] `INFERRED`
-- [[.submitReview()]] `INFERRED`
+- [[.addEvidence()]] `INFERRED`
 - [[.processRescue()]] `INFERRED`
 - [[.phase1ResolutionAllowsOnlyEvidenceOutcomes()]] `INFERRED`
 - [[.raiseDispute_success_withEvidence()]] `INFERRED`
 - [[.publish()]] `INFERRED`
-- [[.addEvidence()]] `INFERRED`
 
 ### contains
 

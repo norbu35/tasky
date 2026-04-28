@@ -1,35 +1,35 @@
 # Community 25
 
-> 44 nodes
+> 47 nodes
 
 ## Key Concepts
 
-- **PackageMarker** (43 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/PackageMarker.java`
-- **.PackageMarker()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/provider/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/broker/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/event/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/job/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/workflow/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/category/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/outbox/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/workflow/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/publicapi/PackageMarker.java`
-- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/workflow/PackageMarker.java`
-- _... and 19 more nodes in this community_
+- **reanimated.ts** (11 connections) — `packages/test-utils/src/mocks/reanimated.ts`
+- **useSharedValue()** (8 connections) — `packages/test-utils/src/mocks/reanimated.ts`
+- **useAnimatedStyle()** (8 connections) — `packages/test-utils/src/mocks/reanimated.ts`
+- **animations.ts** (5 connections) — `apps/mobile/src/design/animations.ts`
+- **useSafeAreaInsets()** (5 connections) — `packages/test-utils/src/mocks/safe-area-context.ts`
+- **FAB()** (4 connections) — `apps/mobile/src/components/ui/FAB.tsx`
+- **SplitCard()** (4 connections) — `apps/mobile/src/components/ui/SplitCard.tsx`
+- **safe-area-context.ts** (4 connections) — `packages/test-utils/src/mocks/safe-area-context.ts`
+- **withSpring()** (4 connections) — `packages/test-utils/src/mocks/reanimated.ts`
+- **AnimatedCheckmark()** (3 connections) — `apps/mobile/src/components/templates/SuccessCelebrationTemplate.tsx`
+- **SkeletonCard()** (3 connections) — `apps/mobile/src/components/templates/FeedListTemplate.tsx`
+- **PressableCard()** (3 connections) — `apps/mobile/src/components/ui/PressableCard.tsx`
+- **HandDrawnCheck()** (3 connections) — `apps/mobile/src/components/ui/HandDrawnCheck.tsx`
+- **SkeletonLoader()** (3 connections) — `apps/mobile/src/components/ui/SkeletonLoader.tsx`
+- **InsetScrollView()** (2 connections) — `apps/mobile/src/components/shells/InsetScrollView.tsx`
+- **StickyActionBar()** (2 connections) — `apps/mobile/src/components/shells/StickyActionBar.tsx`
+- **FeedListTemplate.tsx** (2 connections) — `apps/mobile/src/components/templates/FeedListTemplate.tsx`
+- **toEasing()** (2 connections) — `apps/mobile/src/design/animations.ts`
+- **toAnimationPreset()** (2 connections) — `apps/mobile/src/design/animations.ts`
+- **withInteractiveSpring()** (2 connections) — `apps/mobile/src/design/animations.ts`
+- **withFloatingSpring()** (2 connections) — `apps/mobile/src/design/animations.ts`
+- **withEmphasisSpring()** (2 connections) — `apps/mobile/src/design/animations.ts`
+- **InputBar()** (2 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/InputBar.tsx`
+- **otp.tsx** (2 connections) — `archive/mobile-future/auth/otp.tsx`
+- **cn()** (2 connections) — `archive/mobile-future/auth/otp.tsx`
+- _... and 22 more nodes in this community_
 
 ## Relationships
 
@@ -37,31 +37,25 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/admin/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/analytics/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/auth/provider/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/auth/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/broker/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/event/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/job/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/provider/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/provider/llm/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/worker/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/automation/workflow/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/booking/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/category/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/dispute/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/kernel/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/kernel/outbox/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/location/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/messaging/publicapi/PackageMarker.java`
-- `services/api/src/main/java/mn/tasky/messaging/workflow/PackageMarker.java`
+- `apps/mobile/src/components/shells/InsetScrollView.tsx`
+- `apps/mobile/src/components/shells/StickyActionBar.tsx`
+- `apps/mobile/src/components/templates/FeedListTemplate.tsx`
+- `apps/mobile/src/components/templates/SuccessCelebrationTemplate.tsx`
+- `apps/mobile/src/components/ui/FAB.tsx`
+- `apps/mobile/src/components/ui/HandDrawnCheck.tsx`
+- `apps/mobile/src/components/ui/PressableCard.tsx`
+- `apps/mobile/src/components/ui/SkeletonLoader.tsx`
+- `apps/mobile/src/components/ui/SplitCard.tsx`
+- `apps/mobile/src/design/animations.ts`
+- `apps/mobile/src/features/chat/screens/ChatConversation/InputBar.tsx`
+- `archive/mobile-future/auth/otp.tsx`
+- `packages/test-utils/src/mocks/reanimated.ts`
+- `packages/test-utils/src/mocks/safe-area-context.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 86 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 68 (61%)
+- INFERRED: 44 (39%)
 - AMBIGUOUS: 0 (0%)
 
 ---

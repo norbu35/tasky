@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **PermissionScreens.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/auth/PermissionScreens.test.tsx`
+- **LoginScreen.test.tsx** (0 connections) — `apps/mobile/__tests__/screens/auth/LoginScreen.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/screens/auth/PermissionScreens.test.tsx`
+- `apps/mobile/__tests__/screens/auth/LoginScreen.test.tsx`
 
 ## Audit Trail
 

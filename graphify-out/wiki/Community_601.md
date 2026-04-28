@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **TaskReviewSubmitScreen.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmitScreen.tsx`
+- **ApplicantsSelection.ConfirmationSheet.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/ApplicantsSelection.ConfirmationSheet.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskReviewSubmitScreen.tsx`
+- `apps/mobile/src/features/tasks/screens/ApplicantsSelection.ConfirmationSheet.tsx`
 
 ## Audit Trail
 

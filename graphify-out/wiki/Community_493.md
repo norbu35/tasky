@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **success.tsx** (0 connections) — `apps/mobile/src/app/(customer)/tasks/new/success.tsx`
+- **location.tsx** (0 connections) — `apps/mobile/src/app/(customer)/tasks/new/location.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/tasks/new/success.tsx`
+- `apps/mobile/src/app/(customer)/tasks/new/location.tsx`
 
 ## Audit Trail
 

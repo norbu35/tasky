@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **check_lifecycles.py** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
-- **main()** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
+- **check_screen_graph.py** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
+- **main()** (1 connections) — `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
 
 ## Relationships
 
@@ -13,7 +13,7 @@
 
 ## Source Files
 
-- `tooling/skills/design-surface-drift/scripts/check_lifecycles.py`
+- `tooling/skills/design-surface-drift/scripts/check_screen_graph.py`
 
 ## Audit Trail
 

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **ListItemCard.tsx** (0 connections) — `apps/mobile/src/components/ui/ListItemCard.tsx`
+- **index.ts** (0 connections) — `apps/mobile/src/components/ui/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/ListItemCard.tsx`
+- `apps/mobile/src/components/ui/index.ts`
 
 ## Audit Trail
 

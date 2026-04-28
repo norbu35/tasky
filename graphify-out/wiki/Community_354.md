@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **appConfig.test.ts** (0 connections) — `apps/mobile/__tests__/appConfig.test.ts`
+- **DetailTemplate.test.tsx** (0 connections) — `apps/mobile/__tests__/components/templates/DetailTemplate.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/appConfig.test.ts`
+- `apps/mobile/__tests__/components/templates/DetailTemplate.test.tsx`
 
 ## Audit Trail
 

@@ -1,32 +1,32 @@
 # Community 50
 
-> 9 nodes
+> 10 nodes
 
 ## Key Concepts
 
-- **provider-chain.test.tsx** (5 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
-- **NotificationConsumer()** (2 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
-- **NotificationProvider.tsx** (2 connections) — `apps/mobile/src/providers/NotificationProvider.tsx`
-- **useNotificationContext()** (2 connections) — `apps/mobile/src/providers/NotificationProvider.tsx`
-- **TabsMock()** (1 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
-- **StackMock()** (1 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
-- **RoleConsumer()** (1 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
-- **SessionConsumer()** (1 connections) — `apps/mobile/__tests__/integration/provider-chain.test.tsx`
-- **NotificationProvider()** (1 connections) — `apps/mobile/src/providers/NotificationProvider.tsx`
+- **BookingIntentCommandHandler** (11 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **BookingIntentCommandHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.BookingIntentCommandHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.confirmIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.declineIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.getIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.findPendingApplicationSelectionIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.expirePendingApplicationSelectionForTask()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.markIntentConfirmed()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
+- **.markIntentDeclined()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 2]] (2 shared connections)
 
 ## Source Files
 
-- `apps/mobile/__tests__/integration/provider-chain.test.tsx`
-- `apps/mobile/src/providers/NotificationProvider.tsx`
+- `services/api/src/main/java/mn/tasky/booking/application/command/BookingIntentCommandHandler.java`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (88%)
-- INFERRED: 2 (12%)
+- EXTRACTED: 20 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

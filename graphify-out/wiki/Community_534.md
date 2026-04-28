@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **Input.tsx** (0 connections) — `apps/mobile/src/components/ui/Input.tsx`
+- **LoginRequiredCTA.tsx** (0 connections) — `apps/mobile/src/components/ui/LoginRequiredCTA.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/ui/Input.tsx`
+- `apps/mobile/src/components/ui/LoginRequiredCTA.tsx`
 
 ## Audit Trail
 

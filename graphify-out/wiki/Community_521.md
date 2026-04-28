@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.ts** (0 connections) — `apps/mobile/src/components/shells/index.ts`
+- **rejected.tsx** (0 connections) — `apps/mobile/src/app/(tasker)/verification/rejected.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/shells/index.ts`
+- `apps/mobile/src/app/(tasker)/verification/rejected.tsx`
 
 ## Audit Trail
 

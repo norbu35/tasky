@@ -1,13 +1,12 @@
 # Community 145
 
-> 4 nodes
+> 3 nodes
 
 ## Key Concepts
 
-- **polish.tsx** (3 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
-- **handlePrimaryAction()** (3 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
-- **handleGenerate()** (2 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
-- **handleApply()** (2 connections) — `archive/mobile-future/tasker/profile/polish.tsx`
+- **jest.setup.ts** (2 connections) — `apps/mobile/jest.setup.ts`
+- **BottomSheetView()** (1 connections) — `apps/mobile/jest.setup.ts`
+- **BottomSheetBackdrop()** (1 connections) — `apps/mobile/jest.setup.ts`
 
 ## Relationships
 
@@ -15,11 +14,11 @@
 
 ## Source Files
 
-- `archive/mobile-future/tasker/profile/polish.tsx`
+- `apps/mobile/jest.setup.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

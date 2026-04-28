@@ -1,47 +1,53 @@
 # Community 32
 
-> 18 nodes
+> 28 nodes
 
 ## Key Concepts
 
-- **.findByName()** (6 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleDao.java`
-- **FeatureToggleService** (6 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
-- **.update()** (5 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
-- **FeatureToggleServiceTest** (5 connections) — `services/api/src/test/java/mn/tasky/common/feature/FeatureToggleServiceTest.java`
-- **.persistedRowsOverrideDefaults()** (5 connections) — `services/api/src/test/java/mn/tasky/common/feature/FeatureToggleServiceTest.java`
-- **FeatureToggleDao** (4 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleDao.java`
-- **.dataRetentionDryRunDefaultsEnabledWhenMissing()** (4 connections) — `services/api/src/test/java/mn/tasky/common/feature/FeatureToggleServiceTest.java`
-- **.escrowDefaultsDisabledWhenMissing()** (4 connections) — `services/api/src/test/java/mn/tasky/common/feature/FeatureToggleServiceTest.java`
-- **.update()** (2 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleDao.java`
-- **.listAll()** (2 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
-- **.isEnabled()** (2 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
-- **.safeJson()** (2 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
-- **FeatureToggleDao.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleDao.java`
-- **.findAll()** (1 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleDao.java`
-- **FeatureToggleService.java** (1 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
-- **.FeatureToggleService()** (1 connections) — `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
-- **FeatureToggleServiceTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/common/feature/FeatureToggleServiceTest.java`
-- **.setUp()** (1 connections) — `services/api/src/test/java/mn/tasky/common/feature/FeatureToggleServiceTest.java`
+- **OpenApiContractTestSupport** (9 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
+- **.resolveFromRepoRoot()** (9 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
+- **ApiContractTraceabilityTests** (8 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
+- **.readOpenApi()** (6 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
+- **.liveApiPaths()** (5 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
+- **.specOnlyEndpointsDeclareExplicitDeferralMetadata()** (5 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
+- **MessageDaoTest** (5 connections) — `services/api/src/test/java/mn/tasky/messaging/dao/MessageDaoTest.java`
+- **.documentedPaths()** (4 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
+- **.requestMappingPaths()** (4 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
+- **.liveSpringMvcApiPathsAreDocumented()** (4 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiSpringParityTests.java`
+- **.taskFeedListUsesSummarySchema()** (4 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
+- **.listEndpointsExposeCursorAndLimitContract()** (4 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
+- **.endpointBlock()** (4 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
+- **.normalizePath()** (3 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
+- **.ordersMessagePagesBySentAtAndId()** (3 connections) — `services/api/src/test/java/mn/tasky/messaging/dao/MessageDaoTest.java`
+- **.normalize()** (3 connections) — `services/api/src/test/java/mn/tasky/messaging/dao/MessageDaoTest.java`
+- **OpenApiSpringParityTests** (2 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiSpringParityTests.java`
+- **.openApiContractBaselineIsPresent()** (2 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
+- **.sdkGeneratedOutputsAreWired()** (2 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
+- **.contractDriftGateScriptExists()** (2 connections) — `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
+- **.queryFor()** (2 connections) — `services/api/src/test/java/mn/tasky/messaging/dao/MessageDaoTest.java`
+- **OpenApiContractTestSupport.java** (1 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
+- **.OpenApiContractTestSupport()** (1 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
+- **.endpointBlock()** (1 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
+- **OpenApiSpringParityTests.java** (1 connections) — `services/api/src/test/java/mn/tasky/contract/OpenApiSpringParityTests.java`
+- _... and 3 more nodes in this community_
 
 ## Relationships
 
-- [[Community 1]] (3 shared connections)
 - [[Community 2]] (3 shared connections)
-- [[Community 0]] (2 shared connections)
-- [[Community 3]] (1 shared connections)
-- [[Community 9]] (1 shared connections)
-- [[Community 8]] (1 shared connections)
+- [[Community 1]] (1 shared connections)
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleDao.java`
-- `services/api/src/main/java/mn/tasky/common/feature/FeatureToggleService.java`
-- `services/api/src/test/java/mn/tasky/common/feature/FeatureToggleServiceTest.java`
+- `services/api/src/test/java/mn/tasky/contract/ApiContractTraceabilityTests.java`
+- `services/api/src/test/java/mn/tasky/contract/OpenApiContractTestSupport.java`
+- `services/api/src/test/java/mn/tasky/contract/OpenApiSpringParityTests.java`
+- `services/api/src/test/java/mn/tasky/messaging/dao/MessageDaoTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 32 (60%)
-- INFERRED: 21 (40%)
+- EXTRACTED: 66 (68%)
+- INFERRED: 31 (32%)
 - AMBIGUOUS: 0 (0%)
 
 ---

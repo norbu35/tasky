@@ -1,60 +1,67 @@
 # Community 26
 
-> 34 nodes
+> 44 nodes
 
 ## Key Concepts
 
-- **useMyProfile()** (6 connections) — `apps/mobile/src/features/profile/hooks/useProfile.ts`
-- **useConversations()** (5 connections) — `apps/mobile/src/features/chat/hooks/useConversations.ts`
-- **useChatConversationScreen()** (5 connections) — `apps/mobile/src/features/chat/screens/ChatConversation/useChatConversationScreen.ts`
-- **useProfile.ts** (5 connections) — `apps/mobile/src/features/profile/hooks/useProfile.ts`
-- **useTasks.test.tsx** (4 connections) — `apps/mobile/__tests__/hooks/useTasks.test.tsx`
-- **useRouteGuard()** (4 connections) — `apps/mobile/src/hooks/useRouteGuard.ts`
-- **useMyUserId()** (3 connections) — `apps/mobile/src/features/profile/hooks/useProfile.ts`
-- **ProfileEditScreen()** (3 connections) — `apps/mobile/src/features/profile/screens/ProfileEditScreen.tsx`
-- **useTaskDetail()** (3 connections) — `apps/mobile/src/features/tasks/hooks/useTasks.ts`
-- **GuardConsumer()** (2 connections) — `apps/mobile/__tests__/hooks/useRouteGuard.test.tsx`
-- **UseTasksHarness()** (2 connections) — `apps/mobile/__tests__/hooks/useTasks.test.tsx`
-- **UseTaskDetailHarness()** (2 connections) — `apps/mobile/__tests__/hooks/useTasks.test.tsx`
-- **useUnreadCount()** (2 connections) — `apps/mobile/src/features/chat/hooks/useUnreadCount.ts`
-- **useMessages()** (2 connections) — `apps/mobile/src/features/chat/hooks/useMessages.ts`
-- **useSendMessage()** (2 connections) — `apps/mobile/src/features/chat/hooks/useSendMessage.ts`
-- **InboxScreen()** (2 connections) — `apps/mobile/src/features/chat/screens/InboxScreen.tsx`
-- **useUpdateProfile()** (2 connections) — `apps/mobile/src/features/profile/hooks/useProfile.ts`
-- **useCurrentUserStatus()** (2 connections) — `apps/mobile/src/features/profile/hooks/useProfile.ts`
-- **useTasks.ts** (2 connections) — `apps/mobile/src/features/tasks/hooks/useTasks.ts`
-- **useTasks()** (2 connections) — `apps/mobile/src/features/tasks/hooks/useTasks.ts`
-- **isRestricted()** (2 connections) — `apps/mobile/src/utils/routeGuard.ts`
-- **useRouteGuard.test.tsx** (1 connections) — `apps/mobile/__tests__/hooks/useRouteGuard.test.tsx`
-- **page()** (1 connections) — `apps/mobile/__tests__/hooks/useTasks.test.tsx`
-- **createWrapper()** (1 connections) — `apps/mobile/__tests__/hooks/useTasks.test.tsx`
-- **useUnreadCount.ts** (1 connections) — `apps/mobile/src/features/chat/hooks/useUnreadCount.ts`
-- _... and 9 more nodes in this community_
+- **PackageMarker** (43 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/admin/publicapi/PackageMarker.java`
+- **.PackageMarker()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/analytics/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/provider/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/auth/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/broker/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/event/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/job/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/provider/llm/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/worker/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/automation/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/category/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/dispute/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/kernel/outbox/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/location/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/messaging/workflow/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/provider/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/publicapi/PackageMarker.java`
+- **PackageMarker.java** (1 connections) — `services/api/src/main/java/mn/tasky/notification/workflow/PackageMarker.java`
+- _... and 19 more nodes in this community_
 
 ## Relationships
 
-- [[Community 6]] (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `apps/mobile/__tests__/hooks/useRouteGuard.test.tsx`
-- `apps/mobile/__tests__/hooks/useTasks.test.tsx`
-- `apps/mobile/src/features/chat/hooks/useConversations.ts`
-- `apps/mobile/src/features/chat/hooks/useMessages.ts`
-- `apps/mobile/src/features/chat/hooks/useSendMessage.ts`
-- `apps/mobile/src/features/chat/hooks/useUnreadCount.ts`
-- `apps/mobile/src/features/chat/screens/ChatConversation/useChatConversationScreen.ts`
-- `apps/mobile/src/features/chat/screens/InboxScreen.tsx`
-- `apps/mobile/src/features/profile/hooks/useProfile.ts`
-- `apps/mobile/src/features/profile/screens/ProfileEditScreen.tsx`
-- `apps/mobile/src/features/tasks/hooks/useTasks.ts`
-- `apps/mobile/src/hooks/useRouteGuard.ts`
-- `apps/mobile/src/utils/routeGuard.ts`
+- `services/api/src/main/java/mn/tasky/admin/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/analytics/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/auth/provider/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/auth/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/broker/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/event/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/job/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/provider/llm/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/worker/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/automation/workflow/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/booking/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/category/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/dispute/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/kernel/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/kernel/outbox/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/location/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/messaging/publicapi/PackageMarker.java`
+- `services/api/src/main/java/mn/tasky/messaging/workflow/PackageMarker.java`
 
 ## Audit Trail
 
-- EXTRACTED: 46 (61%)
-- INFERRED: 29 (39%)
+- EXTRACTED: 86 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

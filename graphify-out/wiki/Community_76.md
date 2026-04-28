@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
-- **model.ts** (3 connections) — `apps/mobile/src/features/profile/model.ts`
-- **getReviewThresholdRemaining()** (2 connections) — `apps/mobile/src/features/profile/model.ts`
-- **ReviewThresholdSummary()** (2 connections) — `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
-- **canShowPublicRating()** (1 connections) — `apps/mobile/src/features/profile/model.ts`
-- **formatPublicRating()** (1 connections) — `apps/mobile/src/features/profile/model.ts`
-- **ReviewThresholdSummary.tsx** (1 connections) — `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
+- **OnboardingScreen.tsx** (5 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- **handleFinish()** (3 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- **handleNext()** (2 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- **handleSkip()** (2 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- **onScroll()** (1 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
+- **handleBack()** (1 connections) — `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
 
 ## Relationships
 
@@ -17,13 +17,12 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/components/ReviewThresholdSummary.tsx`
-- `apps/mobile/src/features/profile/model.ts`
+- `apps/mobile/src/features/auth/screens/OnboardingScreen.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 8 (80%)
-- INFERRED: 2 (20%)
+- EXTRACTED: 14 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

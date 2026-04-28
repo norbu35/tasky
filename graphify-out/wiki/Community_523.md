@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **EmptyStateTemplate.tsx** (0 connections) — `apps/mobile/src/components/templates/EmptyStateTemplate.tsx`
+- **index.ts** (0 connections) — `apps/mobile/src/components/shells/index.ts`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/components/templates/EmptyStateTemplate.tsx`
+- `apps/mobile/src/components/shells/index.ts`
 
 ## Audit Trail
 

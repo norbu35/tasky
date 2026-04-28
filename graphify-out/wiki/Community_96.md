@@ -4,24 +4,24 @@
 
 ## Key Concepts
 
-- **additions.ts** (4 connections) — `packages/design-tokens/src/core/additions.ts`
-- **toRgba()** (4 connections) — `packages/design-tokens/src/core/additions.ts`
-- **primaryOpacityScale()** (2 connections) — `packages/design-tokens/src/core/additions.ts`
-- **softOpacityScale()** (2 connections) — `packages/design-tokens/src/core/additions.ts`
-- **dangerOpacityScale()** (2 connections) — `packages/design-tokens/src/core/additions.ts`
+- **BookingResponseMapper** (4 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
+- **.basic()** (3 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
+- **.withCancellationFee()** (2 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
+- **BookingResponseMapper.java** (1 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
+- **.BookingResponseMapper()** (1 connections) — `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 0]] (1 shared connections)
 
 ## Source Files
 
-- `packages/design-tokens/src/core/additions.ts`
+- `services/api/src/main/java/mn/tasky/booking/api/BookingResponseMapper.java`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 10 (91%)
+- INFERRED: 1 (9%)
 - AMBIGUOUS: 0 (0%)
 
 ---

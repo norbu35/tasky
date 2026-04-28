@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **TaskerStatsScreen.tsx** (3 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
-- **readNumber()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
-- **formatPercent()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
-- **formatRating()** (1 connections) — `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- **useNotifications()** (2 connections) — `apps/mobile/src/features/notifications/hooks/useNotifications.ts`
+- **NotificationListScreen()** (2 connections) — `apps/mobile/src/features/notifications/screens/NotificationListScreen.tsx`
+- **useNotifications.ts** (1 connections) — `apps/mobile/src/features/notifications/hooks/useNotifications.ts`
+- **NotificationListScreen.tsx** (1 connections) — `apps/mobile/src/features/notifications/screens/NotificationListScreen.tsx`
 
 ## Relationships
 
@@ -15,12 +15,13 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/profile/screens/TaskerStatsScreen.tsx`
+- `apps/mobile/src/features/notifications/hooks/useNotifications.ts`
+- `apps/mobile/src/features/notifications/screens/NotificationListScreen.tsx`
 
 ## Audit Trail
 
-- EXTRACTED: 6 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 4 (67%)
+- INFERRED: 2 (33%)
 - AMBIGUOUS: 0 (0%)
 
 ---

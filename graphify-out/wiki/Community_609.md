@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **LocationCard.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskLocation/LocationCard.tsx`
+- **MapOverlay.tsx** (0 connections) — `apps/mobile/src/features/tasks/screens/TaskLocation/MapOverlay.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskLocation/LocationCard.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskLocation/MapOverlay.tsx`
 
 ## Audit Trail
 

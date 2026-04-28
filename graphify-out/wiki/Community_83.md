@@ -4,25 +4,26 @@
 
 ## Key Concepts
 
-- **PaymentInitiationOutcome.java** (5 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
-- **inProgress()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
-- **replayMissing()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
-- **featureDeferred()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
-- **success()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
-- **failure()** (1 connections) — `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- **BackendArchitectureTest** (5 connections) — `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
+- **.crossFeatureInternalDependency()** (5 connections) — `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
+- **.featureRoot()** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
+- **.segmentAfterFeature()** (3 connections) — `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
+- **BackendArchitectureTest.java** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
+- **.featureModulesMustNotAddCrossFeatureInternalDependencies()** (1 connections) — `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [[Community 2]] (1 shared connections)
+- [[Community 3]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/runtime/publicapi/composition/PaymentInitiationOutcome.java`
+- `services/api/src/test/java/mn/tasky/architecture/BackendArchitectureTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 16 (89%)
+- INFERRED: 2 (11%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **onboarding.tsx** (0 connections) — `apps/mobile/src/app/onboarding.tsx`
+- **Tasky-Bridging-Header.h** (0 connections) — `apps/mobile/ios/Tasky/Tasky-Bridging-Header.h`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/onboarding.tsx`
+- `apps/mobile/ios/Tasky/Tasky-Bridging-Header.h`
 
 ## Audit Trail
 

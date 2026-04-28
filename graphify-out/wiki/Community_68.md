@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **WalletQueryHandler** (6 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
-- **WalletQueryHandler.java** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
-- **.WalletQueryHandler()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
-- **.getBalance()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
-- **.listTransactions()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
-- **.getPayout()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
-- **.listPendingPayouts()** (1 connections) — `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
+- **PaymentProvider** (6 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **PaymentProvider.java** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.createIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.isValidSignature()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.health()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.providerName()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
+- **.resolvePaymentIntent()** (1 connections) — `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
 
 ## Relationships
 
@@ -18,7 +18,7 @@
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/wallet/application/query/WalletQueryHandler.java`
+- `services/api/src/main/java/mn/tasky/payment/provider/PaymentProvider.java`
 
 ## Audit Trail
 

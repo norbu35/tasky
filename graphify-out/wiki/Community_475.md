@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **index.tsx** (0 connections) — `apps/mobile/src/app/(customer)/bookings/index.tsx`
+- **confirm.tsx** (0 connections) — `apps/mobile/src/app/(customer)/bookings/confirm.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/(customer)/bookings/index.tsx`
+- `apps/mobile/src/app/(customer)/bookings/confirm.tsx`
 
 ## Audit Trail
 

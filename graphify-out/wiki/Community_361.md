@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **RatingStars.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/RatingStars.test.tsx`
+- **StatusBadge.test.tsx** (0 connections) — `apps/mobile/__tests__/components/ui/StatusBadge.test.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/__tests__/components/ui/RatingStars.test.tsx`
+- `apps/mobile/__tests__/components/ui/StatusBadge.test.tsx`
 
 ## Audit Trail
 

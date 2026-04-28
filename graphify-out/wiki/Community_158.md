@@ -4,9 +4,9 @@
 
 ## Key Concepts
 
-- **TaskSuccessScreen.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
-- **handleViewTask()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
-- **handleDone()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
+- **TaskReviewSubmit.SummarySections.tsx** (2 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
+- **SectionCard()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
+- **icon()** (1 connections) — `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
 
 ## Relationships
 
@@ -14,7 +14,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/features/tasks/screens/TaskSuccessScreen.tsx`
+- `apps/mobile/src/features/tasks/screens/TaskReviewSubmit.SummarySections.tsx`
 
 ## Audit Trail
 

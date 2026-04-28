@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **\_layout.tsx** (0 connections) — `apps/mobile/src/app/_layout.tsx`
+- **index.tsx** (0 connections) — `apps/mobile/src/app/index.tsx`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `apps/mobile/src/app/_layout.tsx`
+- `apps/mobile/src/app/index.tsx`
 
 ## Audit Trail
 

@@ -1258,7 +1258,7 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Concierge assign task to tasker (Phase 0-1)
+         * Concierge assign task to tasker (Phase 1)
          * @description Founder/admin manual dispatch fallback for low-liquidity periods.
          *     Creates booking assignment if target tasker is eligible and verified.
          *     Requires Idempotency-Key header.
@@ -1976,7 +1976,7 @@ export interface paths {
         };
         /**
          * Get lead-unlock credit balance
-         * @description **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
+         * @description **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
          *     Tasker credit balance for lead-unlock purchases.
          */
         get: operations["getCreditBalance"];
@@ -6078,7 +6078,7 @@ export interface operations {
             content: {
                 "application/json": {
                     /** @enum {string} */
-                    new_status: "ASSIGNED" | "PAID" | "COMPLETED" | "CANCELLED" | "NO_SHOW" | "DISPUTED";
+                    new_status: "ASSIGNED" | "COMPLETED" | "CANCELLED" | "NO_SHOW" | "DISPUTED";
                     reason: string;
                 };
             };
@@ -6130,7 +6130,7 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
-            /** @description Payout operations are deferred during the liquidity-first MVP phase. */
+            /** @description Payout operations are deferred during the Phase 1 launch baseline. */
             503: {
                 headers: {
                     [name: string]: unknown;
@@ -6186,7 +6186,7 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
-            /** @description Payout operations are deferred during the liquidity-first MVP phase. */
+            /** @description Payout operations are deferred during the Phase 1 launch baseline. */
             503: {
                 headers: {
                     [name: string]: unknown;

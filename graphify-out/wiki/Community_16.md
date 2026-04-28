@@ -1,59 +1,68 @@
 # Community 16
 
-> 104 nodes
+> 82 nodes
 
 ## Key Concepts
 
-- **validate-doc-claims.py** (55 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **Failure** (39 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **main()** (34 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **IdentityCommandHandler** (20 connections) — `services/api/src/main/java/mn/tasky/identity/application/command/IdentityCommandHandler.java`
-- **IdentityCommandPort** (19 connections) — `services/api/src/main/java/mn/tasky/identity/publicapi/IdentityCommandPort.java`
-- **closest()** (15 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **.evaluate()** (10 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **extract_line_references()** (10 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **build_config_inventory()** (6 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **scan_doc()** (6 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **validate_claim_symbol_exists()** (6 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **DisputeEvidenceOutcomeTest** (5 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputeEvidenceOutcomeTest.java`
-- **load_allowlist()** (5 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **parse_claim_block()** (5 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **validate_java_class()** (5 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **.failureCarriesStatusAndErrorOnly()** (4 connections) — `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputeEvidenceOutcomeTest.java`
-- **Reference** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **JavaInventory** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **collect_scan_files()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **normalize_flyway_version()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **build_flyway_inventory()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **build_workflow_inventory()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **build_prd_requirement_inventory()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **relative()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- **validate_java_fqn()** (4 connections) — `tooling/scripts/governance/validate-doc-claims.py`
-- _... and 79 more nodes in this community_
+- **.getState()** (19 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
+- **.isOpen()** (17 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
+- **.recordFailure()** (16 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
+- **FacebookCircuitBreakerTests** (13 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
+- **.processCallback()** (11 connections) — `services/api/src/main/java/mn/tasky/payment/application/PaymentService.java`
+- **.recordSuccess()** (10 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
+- **QPayPaymentProvider** (10 connections) — `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
+- **FacebookCircuitBreakerTest** (8 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookCircuitBreakerTest.java`
+- **useDisputeStatusScreen()** (7 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/useDisputeStatusScreen.ts`
+- **model.ts** (7 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
+- **FacebookCircuitBreaker** (7 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
+- **.health()** (7 connections) — `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
+- **getStatus()** (6 connections) — `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
+- **.fetchProfile()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
+- **.doProbe()** (6 connections) — `services/api/src/main/java/mn/tasky/auth/scheduling/FacebookCircuitBreakerProbe.java`
+- **PaymentService** (6 connections) — `services/api/src/main/java/mn/tasky/payment/application/PaymentService.java`
+- **.tryHalfOpen()** (5 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
+- **FacebookGraphClient** (5 connections) — `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
+- **.findBookingIdByPaymentId()** (5 connections) — `services/api/src/main/java/mn/tasky/payment/dao/PaymentIntentDao.java`
+- **.successAfterOpenClosesCircuit()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
+- **.failuresAfterWindowExpiryDoNotOpenCircuit()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
+- **.tryHalfOpenTransitionsFromOpen()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
+- **.successFromHalfOpenClosesCircuit()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
+- **FacebookHealthIndicatorTest** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
+- **.reportsUpWhenClosed()** (5 connections) — `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
+- _... and 57 more nodes in this community_
 
 ## Relationships
 
-- [[Community 2]] (15 shared connections)
-- [[Community 9]] (8 shared connections)
-- [[Community 1]] (7 shared connections)
+- [[Community 6]] (12 shared connections)
 - [[Community 0]] (6 shared connections)
+- [[Community 1]] (5 shared connections)
+- [[Community 2]] (5 shared connections)
 - [[Community 3]] (3 shared connections)
-- [[Community 4]] (2 shared connections)
+- [[Community 17]] (2 shared connections)
 - [[Community 5]] (2 shared connections)
-- [[Community 13]] (1 shared connections)
+- [[Community 28]] (1 shared connections)
+- [[Community 11]] (1 shared connections)
 
 ## Source Files
 
-- `services/api/src/main/java/mn/tasky/identity/application/command/IdentityCommandHandler.java`
-- `services/api/src/main/java/mn/tasky/identity/publicapi/IdentityCommandPort.java`
-- `services/api/src/test/java/mn/tasky/identity/application/command/IdentityCommandHandlerTest.java`
-- `services/api/src/test/java/mn/tasky/runtime/publicapi/composition/DisputeEvidenceOutcomeTest.java`
-- `tooling/scripts/governance/validate-doc-claims.py`
+- `apps/mobile/src/features/disputes/hooks/useDisputeDetail.ts`
+- `apps/mobile/src/features/disputes/screens/DisputeStatus/model.ts`
+- `apps/mobile/src/features/disputes/screens/DisputeStatus/useDisputeStatusScreen.ts`
+- `services/api/src/main/java/mn/tasky/auth/application/FacebookCircuitBreaker.java`
+- `services/api/src/main/java/mn/tasky/auth/application/FacebookGraphClient.java`
+- `services/api/src/main/java/mn/tasky/auth/application/FacebookHealthIndicator.java`
+- `services/api/src/main/java/mn/tasky/auth/scheduling/FacebookCircuitBreakerProbe.java`
+- `services/api/src/main/java/mn/tasky/payment/application/PaymentService.java`
+- `services/api/src/main/java/mn/tasky/payment/dao/PaymentIntentDao.java`
+- `services/api/src/main/java/mn/tasky/payment/provider/QPayPaymentProvider.java`
+- `services/api/src/test/java/mn/tasky/auth/FacebookCircuitBreakerTests.java`
+- `services/api/src/test/java/mn/tasky/auth/application/FacebookCircuitBreakerTest.java`
+- `services/api/src/test/java/mn/tasky/auth/application/FacebookHealthIndicatorTest.java`
 
 ## Audit Trail
 
-- EXTRACTED: 392 (90%)
-- INFERRED: 44 (10%)
+- EXTRACTED: 163 (49%)
+- INFERRED: 172 (51%)
 - AMBIGUOUS: 0 (0%)
 
 ---
