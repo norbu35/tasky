@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { useConversations } from '../../../../src/features/chat/hooks/useConversations';
 import { useBookingDetail } from '../../../../src/features/bookings/hooks/useBookingDetail';
 import type { Booking } from '../../../../src/lib/api/types';
 import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
@@ -49,6 +50,10 @@ jest.mock('@gorhom/bottom-sheet', () => {
 
 jest.mock('../../../../src/features/bookings/hooks/useBookingDetail', () => ({
   useBookingDetail: jest.fn(),
+}));
+
+jest.mock('../../../../src/features/chat/hooks/useConversations', () => ({
+  useConversations: jest.fn(),
 }));
 
 const mockMarkBookingDone = jest.fn();
@@ -102,6 +107,18 @@ jest.mock('../../../../src/store/authStore', () => ({
 }));
 
 const mockUseBookingDetail = useBookingDetail as jest.MockedFunction<typeof useBookingDetail>;
+const mockUseConversations = useConversations as jest.MockedFunction<typeof useConversations>;
+
+const hasAncestorTestID = (node: any, testID: string): boolean => {
+  let parent = node.parent;
+  while (parent) {
+    if (parent.props?.testID === testID) {
+      return true;
+    }
+    parent = parent.parent;
+  }
+  return false;
+};
 
 const assignedBooking: Booking = {
   id: 'booking-123',
@@ -117,6 +134,7 @@ const assignedBooking: Booking = {
       is_active: true,
       sort_order: 1,
       intake_enabled: false,
+      assisted_distribution_enabled: false,
       intake_schema_version: 0,
     },
     customer_id: 'customer-1',
@@ -156,6 +174,30 @@ beforeEach(() => {
   jest.clearAllMocks();
   resetTestI18n();
   setTestLanguage('mn');
+  mockUseConversations.mockReturnValue({
+    data: {
+      data: [
+        {
+          id: 'conversation-123',
+          task_id: 'task-1',
+          task_title: 'Deep clean a 3-bedroom apartment',
+          counterparty_id: 'customer-1',
+          counterparty_name: 'John Customer',
+          counterparty_avatar_url: null,
+          counterparty_last_active_at: null,
+          last_message_content: 'See you soon',
+          last_message_at: '2026-03-23T00:00:00Z',
+          unread_count: 0,
+          created_at: '2026-03-23T00:00:00Z',
+        },
+      ],
+      cursor: { next: null, prev: null },
+    },
+    isLoading: false,
+    isError: false,
+    isRefetching: false,
+    refetch: jest.fn(),
+  } as unknown as ReturnType<typeof useConversations>);
 });
 
 describe('BookingDetailTasker (SCR-TASK-013)', () => {
@@ -186,8 +228,14 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
+    expect(screen.getByTestId('booking-lifecycle-preview')).toBeTruthy();
     expect(screen.getByText('John Customer')).toBeTruthy();
     expect(screen.getByText('Deep clean a 3-bedroom apartment')).toBeTruthy();
+    expect(screen.getByTestId('booking-detail-tasker-address-section')).toBeTruthy();
+    expect(screen.getByTestId('booking-detail-tasker-payment-note')).toBeTruthy();
+    expect(
+      screen.getByText('Төлбөрийг захиалагчтай шууд тохиролцоно. Tasky төлбөр зуучлахгүй.'),
+    ).toBeTruthy();
   });
 
   it('shows "Mark Done" CTA for assigned booking', () => {
@@ -268,6 +316,23 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
     expect(screen.getByText('Зурвас илгээх')).toBeTruthy();
   });
 
+  it('routes the message button to the confirmed-booking conversation', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: assignedBooking,
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useBookingDetail>);
+
+    const BookingDetailScreen =
+      require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
+    render(<BookingDetailScreen />);
+
+    fireEvent.press(screen.getByTestId('SCR-TASK-013-secondary-cta'));
+
+    expect(mockPush).toHaveBeenCalledWith('/inbox/conversation-123');
+  });
+
   it('shows cancel button for assigned booking', () => {
     mockUseBookingDetail.mockReturnValue({
       data: assignedBooking,
@@ -296,7 +361,29 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
     render(<BookingDetailScreen />);
 
     fireEvent.press(screen.getByTestId('booking-detail-tasker-cancel'));
-    expect(screen.getByTestId('tasker-cancel-sheet')).toBeTruthy();
+    const cancelSheet = screen.getByTestId('tasker-cancel-sheet');
+    expect(cancelSheet).toBeTruthy();
+    expect(screen.getByText('Захиалга цуцлах уу?')).toBeTruthy();
+    expect(hasAncestorTestID(cancelSheet, 'SCR-TASK-013')).toBe(false);
+  });
+
+  it('opens a support reason sheet from booking detail', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: assignedBooking,
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useBookingDetail>);
+
+    const BookingDetailScreen =
+      require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
+    render(<BookingDetailScreen />);
+
+    fireEvent.press(screen.getByTestId('booking-detail-tasker-support'));
+
+    expect(screen.getByTestId('booking-support-sheet')).toBeTruthy();
+    expect(screen.getByText('Юу болсон бэ?')).toBeTruthy();
+    expect(screen.getByText('Шаардлагатай үед зөвхөн Tasky операторт илгээгдэнэ.')).toBeTruthy();
   });
 
   it('shows awaiting confirmation banner after tasker marked done', () => {

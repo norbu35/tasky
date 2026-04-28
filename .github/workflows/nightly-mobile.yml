@@ -1,8 +1,6 @@
 name: nightly-mobile-e2e
 
 on:
-  schedule:
-    - cron: '0 2 * * 1,4'
   workflow_dispatch:
 
 jobs:

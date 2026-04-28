@@ -5,8 +5,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { elevations } from '@/design/elevations';
 import { screenLayout } from '@/design/screenLayout';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
-import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
 
 type StickyActionBarProps = {
   children: React.ReactNode;
@@ -37,6 +37,7 @@ export function StickyActionBar({
       style={[
         {
           paddingBottom: insets.bottom + screenLayout.actions.barPadding + tabClearance,
+          backgroundColor: colors.background,
           zIndex: 10,
         },
         style,
@@ -47,7 +48,7 @@ export function StickyActionBar({
         intensity={48}
         tint="light"
         className="absolute inset-0"
-        style={[{ backgroundColor: withAlpha(colors.background, 0.8) }]}
+        style={[{ backgroundColor: colors.background }]}
       />
       <View className="px-action-bar pt-action-bar" style={[elevations.navBar]}>
         {children}

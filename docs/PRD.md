@@ -7,7 +7,7 @@ This PRD defines the **Phase 1 launch product** for Tasky. It is the governing p
 - intended product behavior
 - launch scope
 - requirement-level policy
-- KPI definitions
+- KPI ownership and launch metric policy
 - launch trust and coverage promises
 
 When active documents conflict:
@@ -46,16 +46,16 @@ The product is aligned only when:
 - code and tests implement this PRD
 - downstream docs do not exceed this PRD
 - contracts do not present deferred behavior as part of the launch baseline
-- launch dashboards measure the KPI model defined here
+- launch dashboards measure the KPI model defined in `docs/METRICS.md`
 - public copy does not promise behavior outside this PRD
 
 ## 2. Product thesis
 
-Tasky is a trust-first, liquidity-first domestic services marketplace for Ulaanbaatar. Phase 1 is not trying to prove full city coverage, monetization, or mature marketplace automation. Phase 1 is trying to prove that a citywide launch can generate enough structured demand and qualified supply to complete real jobs through a mostly self-serve platform flow.
+Tasky is a trust-first, liquidity-first domestic services marketplace for Ulaanbaatar. Phase 1 is not trying to prove full city coverage, monetization, or mature marketplace automation. Phase 1 is trying to prove that a citywide launch can generate enough structured demand and ID-verified tasker supply to complete real jobs through a mostly self-serve platform flow.
 
 The Phase 1 product question is:
 
-**Can a customer in Ulaanbaatar post a structured task, receive qualified supply quickly, confirm a booking, and get the job completed without rescue?**
+**Can a customer in Ulaanbaatar post a structured task, receive applications from ID-verified taskers quickly, confirm a booking, and get the job completed without rescue?**
 
 ## 3. Problem statement and value proposition
 
@@ -113,13 +113,13 @@ Phase 1 does **not** promise:
 
 Phase 1 succeeds when the Ulaanbaatar launch demonstrates:
 
-- qualified applications in the launch categories
+- applications from ID-verified taskers in the launch categories
 - conversion from posting to confirmed booking
 - enough completed jobs to show operational viability
 - trust outcomes good enough to justify expansion
 - decreasing reliance on assistance over time
 
-The KPI model in this PRD is normative. Supporting dashboards, exports, alerts, and downstream scorecards must conform to it.
+The dedicated KPI source is `docs/METRICS.md`. Supporting dashboards, exports, alerts, and downstream scorecards must conform to that file's formulas, thresholds, denominator rules, and event vocabulary.
 
 ## 5. Users and JTBD
 
@@ -171,7 +171,7 @@ The launch depends on an operator-managed backstop. Admin is not a future abstra
 
 ### 6.2 Launch categories
 
-Phase 1 launches only the following service categories:
+Phase 1 launch starts with the following initial service categories:
 
 1. Home cleaning
 2. Furniture assembly
@@ -179,6 +179,9 @@ Phase 1 launches only the following service categories:
 4. Minor handyman
 
 Minor handyman is subtype-based and excludes regulated, dangerous, or diagnosis-heavy work.
+
+The admin dashboard is the runtime source of truth for category activation. Operators may activate or deactivate
+category templates during Phase 1, so the exact count of active posting categories can vary without changing this PRD.
 
 ### 6.3 Out of scope for launch
 
@@ -208,19 +211,20 @@ The following remain out of scope for Phase 1 launch and must not be treated as 
 
 ### 8.1 Eligible task
 
-An `eligible_task` is a task whose service location is within Ulaanbaatar, belongs to a launch category, and is not invalidated by spam, fraud, or admin rejection.
+An `eligible_task` is a task whose service location is within Ulaanbaatar, belongs to the current admin-active
+category catalog, and is not invalidated by spam, fraud, or admin rejection.
 
 ### 8.2 Qualified application
 
 A `qualified_application` is an application submitted through the platform by a tasker who, at the time of apply:
 
-- is identity-verified and active
-- is eligible for the task category
-- has passed category-specific vetting where required
-- has declared willingness to serve the task area
-- is not banned, paused, or otherwise blocked from taking work
+- has active Tasker role with global `VERIFIED` status
+- is applying to an `eligible_task` through the platform flow
+- is not banned, suspended, paused, or otherwise blocked from taking work
 
-Time-slot availability is not part of qualification in Phase 1.
+Time-slot availability, service-area preference, and category-specific vetting are not qualification gates in Phase 1.
+
+`qualified_application` is a metric and event term. Customer-facing copy should say "ID-verified tasker" or "application from an ID-verified tasker" where that is the actual trust claim.
 
 ### 8.3 Booking confirmation
 
@@ -264,7 +268,7 @@ The following events support KPI computation:
 ### 9.1 Customer journey
 
 1. Sign in with Facebook OAuth.
-2. Browse available categories and select a launch category.
+2. Browse currently active categories and select one.
 3. Start a category-specific intake flow.
 4. Provide task location, date, time window, structured scope details, pricing mode, optional photos, and short title.
 5. Post the task and await applications.
@@ -272,8 +276,8 @@ The following events support KPI computation:
 7. The selected tasker accepts within the SLA and the booking becomes confirmed.
 8. The task proceeds to fulfillment.
 9. The tasker marks the job complete.
-10. The customer confirms or disputes completion. If silent, SMS nudges and timeout handling apply.
-11. After completion, the customer must submit a structured review before posting another task.
+10. The customer confirms or disputes completion. If silent, push notification nudges where available and timeout handling apply.
+11. After review debt is created, the customer must submit a structured review before posting another task.
 
 ### 9.2 Tasker journey
 
@@ -283,14 +287,14 @@ The following events support KPI computation:
 4. Browse and apply to eligible open tasks.
 5. Submit a structured application with pricing response and short note.
 6. Withdraw before selection if needed.
-7. If selected, accept within the SLA.
+7. If selected, accept or decline within the SLA.
 8. Complete the job and mark it complete.
-9. Submit the required post-completion review before applying to another task.
+9. Submit any required review before applying to another task.
 
 ### 9.3 Admin journey
 
 1. Review verification submissions.
-2. Manage launch categories and intake schemas.
+2. Manage category activation state and intake schemas.
 3. Manage feature activation posture.
 4. Moderate users and resolve disputes or serious complaints.
 5. Trigger or monitor assisted distribution when native matching fails.
@@ -300,20 +304,20 @@ The following events support KPI computation:
 
 These rules are normative for Phase 1 unless a more specific requirement below overrides them.
 
-1. **No qualified application window**: if an eligible task has no qualified application within 8 hours of posting, the system may trigger external distribution for eligible categories.
-2. **Selected tasker timeout**: selected-tasker acceptance expires after 4 hours. Expiry returns the task to selectable-applicant state without confirming booking.
+1. **No ID-verified application window**: if an eligible task has no `qualified_application` event within 8 hours of posting, the system may trigger external distribution for eligible categories.
+2. **Selected tasker timeout or decline**: selected-tasker acceptance expires after 4 hours. Expiry or explicit decline returns the task to selectable-applicant state without confirming booking.
 3. **Reschedule authority**: only mutually accepted in-app reschedules change the canonical schedule. Chat-only schedule changes do not affect timers.
-4. **No-show rule**: at scheduled start +10 minutes, both parties receive a reminder to update status. At +15 minutes, a no-show flag is allowed only if recent activity and accepted reschedules do not block it.
+4. **No-show rule**: at scheduled start +30 minutes, both parties receive a reminder to update status. At +1 hour, a no-show flag is allowed only if no in-app activity occurred in the trailing 30 minutes and accepted reschedules do not block it.
 5. **Late cancellation rule**: customer cancellation more than 4 hours before start is non-incident; cancellation at or within 4 hours creates a reliability incident.
-6. **Dispute evidence rule**: disputes must include evidence artifacts or enter a grace path that can close as insufficient evidence.
-7. **Review enforcement rule**: after completion, both parties owe a review, and unresolved review debt blocks the next posting or applying action.
+6. **Dispute evidence rule**: disputes must include evidence artifacts or enter a 24-hour grace path after the evidence reminder; unresolved grace cases can close as insufficient evidence.
+7. **Review enforcement rule**: after a reviewable terminal outcome, both parties owe a review, and unresolved review debt blocks the next posting or applying action.
 
 ## 11. Detailed functional requirements
 
 ### 11.1 Coverage and availability
 
 - **REQ-P1-COVER-01**: The product MUST present itself as built for Ulaanbaatar. Live posting is available citywide.
-- **REQ-P1-COVER-02**: The system MUST determine task eligibility from the task location, launch category membership, and fraud/spam status.
+- **REQ-P1-COVER-02**: The system MUST determine task eligibility from the task location, current admin-active category availability, and fraud/spam status.
 - **REQ-P1-COVER-05**: Taskers MAY onboard from anywhere in Ulaanbaatar. Service-area preferences are used for notification targeting, not posting gates.
 - **REQ-P1-COVER-06**: Public launch copy and onboarding copy MUST communicate that the service is live in Ulaanbaatar.
 
@@ -330,14 +334,14 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 
 - **REQ-P1-SAFE-01**: A user MAY request tasker role activation before verification, but MUST remain verification-gated until approved.
 - **REQ-P1-SAFE-02**: New taskers MUST remain pending until manual verification is completed by admin.
-- **REQ-P1-SAFE-03**: Category-specific vetting MUST be supported for categories that require additional eligibility beyond identity verification. _(Phase 2+: Phase 1 uses a single VERIFIED status per user; per-category qualifications are deferred.)_
+- **REQ-P1-SAFE-03**: Phase 1 tasker work eligibility MUST use a single global `VERIFIED` status per user. Category-specific vetting and per-category qualifications are deferred to Phase 2+ and MUST NOT gate Phase 1 applications.
 - **REQ-P1-SAFE-04**: Taskers MAY declare service-area preferences to improve notification relevance, but service-area is not a posting or application gate.
 - **REQ-P1-SAFE-05**: The platform MUST preserve auditable evidence of verification consent, verification decision, and verification state changes.
 
 ### 11.4 Category model and fixed templates
 
 - **REQ-P1-CAT-01**: Phase 1 task creation MUST use category-specific intake templates. A generic free-form posting flow MUST NOT be the primary creation path.
-- **REQ-P1-CAT-02**: The launch category catalog MUST include home cleaning, furniture assembly, moving help / lifting help, and minor handyman.
+- **REQ-P1-CAT-02**: The initial launch category catalog MUST include home cleaning, furniture assembly, moving help / lifting help, and minor handyman.
 - **REQ-P1-CAT-03**: Minor handyman MUST be subtype-based and MUST exclude regulated, dangerous, or diagnosis-heavy work.
 - **REQ-P1-CAT-04**: Admin MUST be able to add, edit, activate, deactivate, and reorder category templates.
 - **REQ-P1-CAT-05**: Deactivating a category MUST block new draft and create requests for that category while preserving existing task lifecycle continuity.
@@ -361,23 +365,23 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 - **REQ-P1-TASK-12**: Furniture assembly intake MUST capture furniture type, item count, brand/model when known, delivered yes/no, instructions available yes/no, preferred date and time window, and pricing mode.
 - **REQ-P1-TASK-13**: Moving help intake MUST capture move type, estimated load size, pickup stairs/elevator, dropoff stairs/elevator, vehicle needed yes/no, helper count needed, preferred date and time window, and pricing mode.
 - **REQ-P1-TASK-14**: Minor handyman intake MUST capture task subtype, material/item available yes/no, wall/surface type where relevant, estimated item count, preferred date and time window, and pricing mode.
-- **REQ-P1-TASK-15**: Each launch template MAY collect optional photos and notes, but the required fields MUST be sufficient for a tasker to make a yes/no application decision without pre-booking chat.
+- **REQ-P1-TASK-15**: Each launch template MAY collect optional photos and notes, but the required fields MUST be sufficient for a tasker to make a yes/no application decision without pre-booking chat. Where supplies, materials, items, or vehicles materially affect scope, the intake MUST capture whether the customer has them or expects the tasker to bring them.
 
 ### 11.7 Pricing model
 
 - **REQ-P1-PRICE-01**: Every launch-category task MUST support exactly two pricing modes: `I have a budget` and `I want quotes`.
 - **REQ-P1-PRICE-02**: When a customer chooses `I have a budget`, the posted budget MUST be visible to applicants.
-- **REQ-P1-PRICE-03**: When a customer chooses `I have a budget`, taskers MUST be allowed either to accept the budget or to submit a counter-offer.
+- **REQ-P1-PRICE-03**: When a customer chooses `I have a budget`, taskers MUST accept the posted budget to apply. Counter-offers MUST NOT be supported in the Phase 1 budget flow.
 - **REQ-P1-PRICE-04**: When a customer chooses `I want quotes`, taskers MUST submit a price quote as part of the application.
-- **REQ-P1-PRICE-05**: The customer MUST see both original budget and counter-offer where counter-offers exist.
-- **REQ-P1-PRICE-06**: Quote and counter-offer submission MUST be structured, not open-ended free-form negotiation.
+- **REQ-P1-PRICE-05**: The customer MUST see the posted budget consistently while reviewing budget-mode applications.
+- **REQ-P1-PRICE-06**: Application pricing MUST be structured: budget-mode applications accept the posted budget, and quote-mode applications submit one price quote.
 - **REQ-P1-PRICE-07**: The agreed booking price MUST lock at confirmed booking.
 - **REQ-P1-PRICE-08**: Pricing state changes relevant to booking must be auditable.
 
 ### 11.8 Applications and matching
 
-- **REQ-P1-MATCH-01**: Only qualified taskers MUST be allowed to apply to an eligible task. _(Phase 1: any verified tasker may apply to any eligible task regardless of category.)_
-- **REQ-P1-MATCH-02**: Applications MUST include a structured pricing response and a short structured note.
+- **REQ-P1-MATCH-01**: Only ID-verified taskers MUST be allowed to apply to an eligible task. _(Phase 1: any globally verified tasker may apply to any eligible task regardless of category.)_
+- **REQ-P1-MATCH-02**: Applications MUST include the required pricing-mode response and a short structured note.
 - **REQ-P1-MATCH-03**: Customers MUST be able to review all applications on a task. The UI MAY rank or highlight top candidates, but MUST NOT hard-cap comparison to a fixed maximum.
 - **REQ-P1-MATCH-04**: Customers MUST select exactly one applicant to proceed toward booking confirmation.
 - **REQ-P1-MATCH-05**: Taskers MUST be allowed to withdraw an application before customer selection.
@@ -388,16 +392,17 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 
 - **REQ-P1-BOOK-01**: A booking MUST become confirmed only when the customer selects a tasker and the selected tasker accepts within the active acceptance window.
 - **REQ-P1-BOOK-02**: The default acceptance window for a selected tasker MUST be four hours.
-- **REQ-P1-BOOK-03**: If the selected tasker does not accept within the window, the pending selection MUST expire without confirming the booking.
+- **REQ-P1-BOOK-03**: If the selected tasker does not accept within the window or explicitly declines the request, the pending selection MUST close without confirming the booking and the task MUST return to selectable-applicant state.
 - **REQ-P1-BOOK-04**: Non-selected applications MUST close automatically once one tasker is confirmed.
 - **REQ-P1-BOOK-05**: Booking confirmation MUST require explicit liability disclaimer acceptance.
 - **REQ-P1-BOOK-06**: The booking record MUST store the acceptance of the liability disclaimer and the locked booking price.
 - **REQ-P1-BOOK-07**: Exact address reveal MUST occur only after booking confirmation.
-- **REQ-P1-BOOK-08**: Direct raw phone-number exchange MUST NOT be required for Phase 1 fulfillment; if messaging or calling exists post-confirmation, it MUST remain platform-mediated and available for admin review.
+- **REQ-P1-BOOK-08**: Direct raw phone-number exchange MUST NOT be required for Phase 1 fulfillment; post-confirmation in-app chat is the launch contact path after booking price is locked and MUST remain platform-mediated and available for admin review.
 - **REQ-P1-BOOK-09**: Only in-app reschedule requests and responses may change policy timers.
 - **REQ-P1-BOOK-10**: Reschedule lifecycle events MUST be immutable and auditable, including request, accept, decline, and expiry.
 - **REQ-P1-BOOK-11**: Accepted reschedule requests MUST update the canonical schedule and reset policy timers.
 - **REQ-P1-BOOK-12**: Declined or expired reschedule requests MUST preserve the prior accepted schedule.
+- **REQ-P1-BOOK-29**: Booking confirmation surfaces MUST inform both parties that the locked booking price and intake scope are the baseline agreement. Material, supply, or scope changes after confirmation must be agreed between the parties and kept in platform-mediated chat or support evidence; Tasky does not provide automatic price adjustment, payment hold, or payment protection in Phase 1.
 
 ### 11.10 Booking lifecycle, cancellation, and no-show
 
@@ -407,32 +412,32 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 - **REQ-P1-BOOK-16**: Tasker cancellation of a confirmed booking MUST reopen the linked task to eligible supply unless the customer cancels instead.
 - **REQ-P1-BOOK-17**: Repeated tasker cancellation behavior MUST support reliability enforcement, including suspension thresholds defined in derived operations policy.
 - **REQ-P1-BOOK-18**: Safety or fraud-coded tasker cancellations MUST bypass ordinary automated strike logic and open the appropriate trust-and-safety handling path.
-- **REQ-P1-BOOK-19**: The system MUST send a no-show reminder to both participants at scheduled start plus ten minutes if the booking remains unresolved.
-- **REQ-P1-BOOK-20**: A no-show flag MUST NOT be accepted before fifteen minutes after scheduled start.
-- **REQ-P1-BOOK-21**: Recent in-app activity within the configured lookback window MUST block premature no-show adjudication.
+- **REQ-P1-BOOK-19**: The system MUST send a no-show reminder to both participants at scheduled start plus thirty minutes if the booking remains unresolved.
+- **REQ-P1-BOOK-20**: A no-show flag MUST NOT be accepted before one hour after scheduled start.
+- **REQ-P1-BOOK-21**: Recent in-app activity within the trailing 30-minute lookback window MUST block premature no-show adjudication.
 - **REQ-P1-BOOK-22**: A future accepted in-app reschedule MUST supersede no-show adjudication on the original schedule.
 - **REQ-P1-BOOK-23**: A valid no-show adjudication MUST transition booking and task state consistently and leave an audit trail.
 - **REQ-P1-BOOK-24**: Repeated no-show behavior MUST support strike-review or equivalent trust escalation.
 
 ### 11.11 Completion flow
 
-- **REQ-P1-BOOK-25**: Task completion MUST follow this sequence: tasker marks complete -> customer confirms or disputes -> SMS reminder on silence -> timeout auto-complete -> ops fallback for edge cases.
+- **REQ-P1-BOOK-25**: Task completion MUST follow this sequence: tasker marks complete -> customer confirms or disputes -> push notification reminder on silence where a device token is available -> timeout auto-complete -> ops fallback for edge cases.
 - **REQ-P1-BOOK-26**: Customer silence after tasker-marked completion MUST not block the product indefinitely; the platform MUST support timeout-based auto-complete after reminder attempts.
 - **REQ-P1-BOOK-27**: Ops MUST be able to review and resolve edge cases before finalization when the normal completion flow stalls or becomes contested.
 - **REQ-P1-BOOK-28**: Completion proof MAY remain optional for most launch categories, but the product MUST support attaching evidence artifacts where disputes or complaints require them.
 
 ### 11.12 Reviews, reputation, complaints, and disputes
 
-- **REQ-P1-SAFE-06**: After a booking reaches `COMPLETED`, both parties MUST owe a structured review.
+- **REQ-P1-SAFE-06**: After a booking reaches a reviewable terminal outcome, both parties MUST owe a structured review. Reviewable terminal outcomes are `COMPLETED`, validated `NO_SHOW`, and fault-attributed post-confirmation cancellations; safety/fraud-coded cancellations become reviewable only after trust handling attributes fault.
 - **REQ-P1-SAFE-07**: Until the owed review is submitted, the customer MUST be blocked from posting a new task and the tasker MUST be blocked from applying to another task.
-- **REQ-P1-SAFE-08**: Review obligation MUST be enforced as a post-completion gate, not as part of the completion-state definition itself.
-- **REQ-P1-SAFE-09**: The platform MUST send a review prompt immediately at completion and support reminder prompts for unresolved review obligations.
-- **REQ-P1-SAFE-10**: The structured review model MUST support at least an overall rating, whether the tasker showed up on time, whether the task was completed as expected, whether the user would book again, and optional text.
+- **REQ-P1-SAFE-08**: Review obligation MUST be enforced as a post-terminal-outcome gate, not as part of the terminal-state definition itself.
+- **REQ-P1-SAFE-09**: The platform MUST send a review prompt immediately when review debt is created and send unresolved-review reminders at 24 hours and 72 hours after review debt creation.
+- **REQ-P1-SAFE-10**: The structured review model MUST support three required role-specific star rating categories. Customer-to-tasker reviews MUST capture quality, punctuality, and communication. Tasker-to-customer reviews MUST capture clarity, punctuality, and respectfulness. Customer-to-tasker reviews MUST support whether the customer would book again. Optional text MUST remain optional in validation, and the UI MUST clearly show that the text field is not required.
 - **REQ-P1-SAFE-11**: Tasker-to-customer reviews MUST be supported in Phase 1.
 - **REQ-P1-SAFE-12**: Serious complaints MUST remain a separate path from ordinary reviews. In Phase 1, disputes serve as the unified complaint pathway.
-- **REQ-P1-SAFE-13**: Public reputation in Phase 1 MUST prioritize verification and trust badges; public rating display MUST remain hidden until a minimum review-count threshold is reached.
-- **REQ-P1-SAFE-14**: A dispute MUST be openable during an active booking and for a limited period after completion.
-- **REQ-P1-SAFE-15**: Dispute submission MUST require evidence artifacts or enter a grace process that can auto-close for insufficient evidence.
+- **REQ-P1-SAFE-13**: Public reputation in Phase 1 MUST prioritize verification and trust badges; public rating display MUST remain hidden until at least three customer-to-tasker reviews are submitted.
+- **REQ-P1-SAFE-14**: A dispute MUST be openable during an active booking and for 24 hours after completion.
+- **REQ-P1-SAFE-15**: Dispute submission MUST require evidence artifacts or enter a grace process that can auto-close for insufficient evidence 24 hours after the evidence reminder.
 - **REQ-P1-SAFE-16**: Phase 1 dispute resolution MUST remain limited to evidence-backed moderation outcomes and admin misconduct notes rather than escrow or payout adjudication.
 - **REQ-P1-SAFE-17**: Verification consent, review enforcement, complaint handling, and admin evidence access MUST remain auditable.
 - **REQ-P1-SAFE-18**: Customer-facing trust messaging MUST promise identity, records, evidence, moderation, and dispute handling, and MUST NOT promise payment protection, payment hold, or escrow.
@@ -440,7 +445,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 ### 11.13 Messaging, privacy, and contact
 
 - **REQ-P1-MSG-01**: Phase 1 MUST NOT support open-ended pre-booking chat.
-- **REQ-P1-MSG-02**: Any post-confirmation contact channel that exists MUST remain platform-mediated and available for admin review.
+- **REQ-P1-MSG-02**: When a booking becomes confirmed and the booking price is locked, the platform MUST create or enable an in-app conversation between the confirmed customer and tasker. That conversation MUST remain platform-mediated and available for admin review.
 - **REQ-P1-MSG-03**: Non-participants MUST NOT be able to read or send post-confirmation messages.
 - **REQ-P1-MSG-04**: Raw direct contact details MUST remain hidden until the product intentionally unlocks them through an approved policy surface; Phase 1 does not require such unlock for normal operation.
 - **REQ-P1-MSG-05**: If message content contains obvious off-platform contact-sharing patterns, the system SHOULD support moderation flags.
@@ -451,7 +456,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 - **REQ-P1-NOTIF-02**: The system MUST notify the selected tasker when chosen by a customer.
 - **REQ-P1-NOTIF-03**: The system MUST notify both participants when a booking becomes confirmed.
 - **REQ-P1-NOTIF-04**: The system MUST notify both participants about no-show reminders and other schedule-critical lifecycle events.
-- **REQ-P1-NOTIF-05**: The system MUST notify both participants about completion prompts and review obligations.
+- **REQ-P1-NOTIF-05**: The system MUST notify both participants about lifecycle prompts and review obligations. Push notifications are the default launch nudge where the user has a registered device token; SMS may exist only as a policy-controlled fallback and is not required for the completion nudge.
 - **REQ-P1-NOTIF-06**: The system MUST notify taskers of verification decisions.
 - **REQ-P1-NOTIF-07**: Notification delivery for launch-critical lifecycle events MUST be auditable.
 
@@ -460,7 +465,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 - **REQ-P1-ASSIST-01**: The product MUST classify task outcomes as self-serve, system-assisted, or manual-assisted.
 - **REQ-P1-ASSIST-02**: Task-level external distribution MUST NOT be used by default.
 - **REQ-P1-ASSIST-03**: External distribution MAY trigger only when an eligible task has received no qualified application within eight hours of posting.
-- **REQ-P1-ASSIST-04**: External distribution MUST be limited in Phase 1 to home cleaning, furniture assembly, moving help, and minor handyman.
+- **REQ-P1-ASSIST-04**: External distribution MUST be limited in Phase 1 to categories explicitly eligible for assisted distribution in admin launch controls. The initial assisted-distribution set is home cleaning, furniture assembly, moving help, and minor handyman.
 - **REQ-P1-ASSIST-05**: External distribution payloads MUST be sanitized and MUST NOT expose exact address, raw contact details, or unsupported trust claims.
 - **REQ-P1-ASSIST-06**: Tasks advanced through external distribution MUST remain eligible for booking and completion metrics but MUST be excluded from self-serve fulfillment reporting.
 - **REQ-P1-ASSIST-07**: Manual task-specific rescue performed by the operator MUST be recorded as intervention.
@@ -481,8 +486,8 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 
 ### 11.17 Analytics, KPI instrumentation, and launch telemetry
 
-- **REQ-P1-KPI-01**: The platform MUST expose the canonical business events and state transitions needed to compute the Phase 1 KPI stack.
-- **REQ-P1-KPI-02**: KPI computation MUST be based on backend-exported business metrics or derived state transitions, not ad hoc dashboard SQL.
+- **REQ-P1-KPI-01**: The platform MUST expose the canonical business events and state transitions needed to compute the Phase 1 KPI stack defined in `docs/METRICS.md`.
+- **REQ-P1-KPI-02**: KPI computation MUST be based on backend-exported business metrics or derived state transitions, not ad hoc dashboard SQL. Metric formulas, denominator thresholds, alert thresholds, and diagnostic slices are owned by `docs/METRICS.md`.
 - **REQ-P1-KPI-03**: The product MUST distinguish self-serve outcomes from assisted outcomes in its event model.
 - **REQ-P1-KPI-04**: The platform MUST emit telemetry for eligible task creation, qualified applications, confirmed bookings, completed bookings, and interventions.
 - **REQ-P1-KPI-05**: Category MUST be the default scorecard slice for launch KPI reporting, with district as drilldown.
@@ -490,52 +495,27 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 
 ## 12. KPI model
 
-### 12.1 Hard-gate metrics
+`docs/METRICS.md` is the dedicated Phase 1 KPI source. It owns:
 
-1. **Qualified Match Rate within 24h**  
-   `% of eligible_task posts receiving at least one qualified_application within 24h`
-2. **Post -> Confirmed Booking Rate within 48h**  
-   `% of eligible_task posts that reach confirmed_booking within 48h of posting`
-3. **Intervention Rate**  
-   `% of eligible_task posts requiring intervention`
-4. **Trust Failure Rate**  
-   `% of confirmed bookings ending in objective trust-damaging failure`
+- metric names
+- formulas
+- event and state vocabulary
+- hard-gate thresholds and monitored targets
+- denominator thresholds
+- data-quality rules
+- dashboard and alert policy
 
-#### 12.1.1 Hard-gate thresholds
+The required KPI stack remains seven metrics:
 
-| Metric                                    |    Green |   Yellow |     Red |
-| ----------------------------------------- | -------: | -------: | ------: |
-| Qualified Match Rate within 24h           | `>= 50%` | `40-49%` | `< 40%` |
-| Post -> Confirmed Booking Rate within 48h | `>= 25%` | `15-24%` | `< 15%` |
-| Intervention Rate                         | `<= 40%` | `41-55%` | `> 55%` |
-| Trust Failure Rate                        | `<= 15%` | `16-20%` | `> 20%` |
+1. Qualified Match Rate within 24h
+2. Post -> Confirmed Booking Rate within 48h
+3. Intervention Rate
+4. Trust Failure Rate
+5. Self-Serve Fulfillment Rate
+6. Booking Completion Rate
+7. Verification Queue Turnaround
 
-### 12.2 Monitored metrics
-
-1. **Self-Serve Fulfillment Rate**  
-   `% of eligible_task posts reaching completed_booking within 7 days of posting, through the platform flow, with no intervention`
-2. **Booking Completion Rate**  
-   `% of confirmed bookings reaching completed_booking within 7 days of confirmation`
-3. **Verification Queue Turnaround**  
-   median and p95 from complete document submission to final decision, split for identity verification and category vetting
-
-#### 12.2.1 Monitored targets
-
-| Metric                           | Target                         |
-| -------------------------------- | ------------------------------ |
-| Self-Serve Fulfillment Rate      | `>= 15%`                       |
-| Booking Completion Rate          | `>= 65%`                       |
-| Identity Verification Turnaround | median `<= 36h`, p95 `<= 96h`  |
-| Category Vetting Turnaround      | median `<= 72h`, p95 `<= 120h` |
-
-### 12.3 KPI policy rules
-
-- All seven KPIs MUST exist on a real dashboard before launch.
-- Alerts are required only for the hard-gate metrics.
-- KPI decisions are valid only once denominator thresholds are met.
-- Category is the primary launch scorecard slice; district is diagnostic drilldown.
-- Native self-serve reporting MUST exclude both system-assisted and manual-assisted outcomes.
-- If data quality is degraded, gate decisions are paused until tracking is repaired and backfilled.
+Changes to `docs/METRICS.md` that alter metric formulas, thresholds, denominator policy, KPI event vocabulary, or launch decision semantics are product behavior changes and MUST follow the PRD change discipline in section 1.3.
 
 ## 13. Non-functional requirements
 
@@ -582,7 +562,7 @@ These rules are normative for Phase 1 unless a more specific requirement below o
 
 - **NFR-OBS-01**: The system MUST emit product events for posting, applications, selection, acceptance, booking confirmation, completion, reviews, disputes, and interventions.
 - **NFR-OBS-02**: KPI dashboards MUST be grounded in canonical events and state transitions, not dashboard-only ad hoc logic.
-- **NFR-OBS-03**: Hard-gate metric alerts MUST be auditable and tied to documented KPI definitions.
+- **NFR-OBS-03**: Hard-gate metric alerts MUST be auditable and tied to the documented KPI definitions in `docs/METRICS.md`.
 
 ## 14. Operating constraints and execution assumptions
 
@@ -630,12 +610,17 @@ The following clarifications should be reflected consistently across code, tests
 2. Phase 1 uses structured applications and does not expose open-ended pre-booking chat.
 3. Phase 1 allows live posting across all of Ulaanbaatar.
 4. Phase 1 makes no escrow or payment-protection promise.
-5. System-assisted and manual-assisted outcomes are excluded from self-serve fulfillment.
+5. System-assisted and manual-assisted outcomes are excluded from self-serve fulfillment and native confirmation success.
 6. Intervention is tracked through a generic intervention model rather than a founder-only metric.
 7. Owed review blocks the next post or apply action until fulfilled.
 8. Applying to a task does not create an open-ended pre-booking conversation.
 9. Launch contracts should expose only live or deliberately gated behavior.
 10. Posting is available citywide across Ulaanbaatar.
+11. Booking confirmation enables in-app chat only after the tasker accepts and the booking price is locked.
+12. Selected tasker decline is a Phase 1 path and returns the task to selectable-applicant state without confirming a booking.
+13. Completion silence nudges are push-notification first where a device token exists.
+14. Phase 1 KPI formulas, thresholds, and denominator rules live in `docs/METRICS.md`.
+15. Material, supply, and post-confirmation scope changes must be communicated as participant agreements in platform-mediated chat or support evidence, not as Tasky payment protection.
 
 ## 17. Requirements governance
 
@@ -686,16 +671,16 @@ They must not enter the launch baseline without an explicit PRD change.
 
 The current rollout shape is:
 
-| Phase       | Purpose                                      | Capabilities intended for that phase                                                                                                                                                                    | Still out of scope in that phase                                                                                                               |
-| ----------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Phase 1** | Launch baseline                              | Citywide Ulaanbaatar posting, four launch categories, structured intake, budget-or-quote pricing, open application, direct settlement, verification, reviews, disputes, moderation, measured assistance | OTP-primary auth, DAN, lead fees, promoted listings, subscriptions, escrow, wallet, payouts, referrals, B2B, instant match, runtime AI posting |
-| **Phase 2** | Liquidity systems and soft monetization      | Algorithm-assisted application, OTP migration, DAN fast-path, lead credits if justified, promoted listings if justified, direct settlement still standard                                               | Escrow, wallet, payouts, subscriptions, instant match by default, geographic expansion                                                         |
-| **Phase 3** | Stronger trust rails and supply monetization | Tasker subscription, opt-in escrow, wallet and payout operations, tighter anti-leakage enforcement, instant match only after liquidity proof                                                            | Geographic expansion, managed B2B, broad revenue diversification                                                                               |
-| **Phase 4** | Expansion and broader revenue mix            | Additional payment rails, customer subscription products, geographic expansion, managed B2B only if earlier validation exists                                                                           | None by default; every addition still requires explicit scope approval                                                                         |
+| Phase       | Purpose                                      | Capabilities intended for that phase                                                                                                                                                                             | Still out of scope in that phase                                                                                                               |
+| ----------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1** | Launch baseline                              | Citywide Ulaanbaatar posting, initial launch category catalog, structured intake, budget-or-quote pricing, open application, direct settlement, verification, reviews, disputes, moderation, measured assistance | OTP-primary auth, DAN, lead fees, promoted listings, subscriptions, escrow, wallet, payouts, referrals, B2B, instant match, runtime AI posting |
+| **Phase 2** | Liquidity systems and soft monetization      | Algorithm-assisted application, OTP migration, DAN fast-path, lead credits if justified, promoted listings if justified, direct settlement still standard                                                        | Escrow, wallet, payouts, subscriptions, instant match by default, geographic expansion                                                         |
+| **Phase 3** | Stronger trust rails and supply monetization | Tasker subscription, opt-in escrow, wallet and payout operations, tighter anti-leakage enforcement, instant match only after liquidity proof                                                                     | Geographic expansion, managed B2B, broad revenue diversification                                                                               |
+| **Phase 4** | Expansion and broader revenue mix            | Additional payment rails, customer subscription products, geographic expansion, managed B2B only if earlier validation exists                                                                                    | None by default; every addition still requires explicit scope approval                                                                         |
 
 ### 18.3 Rollout rules
 
 - A feature toggle does not advance the product to the next phase.
 - A future-phase endpoint or schema may exist in code, but it is not part of product scope until the PRD, strategy, maintenance policies, and launch-facing copy all say so.
-- Phase advancement is evidence-driven. The KPI model in this PRD remains the launch decision frame until a later-phase change is explicitly approved.
+- Phase advancement is evidence-driven. The KPI model in `docs/METRICS.md` remains the launch decision frame until a later-phase change is explicitly approved.
 - Referrals and B2B are conditional tracks, not required ingredients of the core Phase 2 path.

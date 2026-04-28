@@ -2,10 +2,13 @@ package mn.tasky.task;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,10 +21,12 @@ import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.UserProfileService;
 import mn.tasky.auth.dto.UserProfile;
 import mn.tasky.booking.publicapi.BookingCommandPort;
+import mn.tasky.booking.publicapi.BookingIntentCommandPort;
 import mn.tasky.category.application.CategoryService;
 import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.category.dto.CategoryState;
 import mn.tasky.common.outbox.DomainEventOutboxService;
+import mn.tasky.location.publicapi.LocationQueryPort;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.ScopeSummaryGenerator;
@@ -51,11 +56,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Domain-unit tests for task application, pricing, and service-area scenarios
  * SCN-TASK-021 through SCN-TASK-029.
  *
- * <p>GAP: SCN-TASK-020 (UB service-area rejection at posting) has no implementation.
- * TaskCreationService accepts any lat/lng without validating against UB district boundaries.
- * The DistrictGeocodingProvider only performs reverse-geocoding (nearest district match)
- * and never rejects coordinates outside the service area.
- *
  * <p>No Spring context. DAOs and external boundaries are mocked.
  * Services under test are real instances constructed with mocked dependencies.
  */
@@ -75,6 +75,9 @@ class TaskApplicationScenarioTests {
     private BookingCommandPort bookingCommandPort;
 
     @Mock
+    private BookingIntentCommandPort bookingIntentCommandPort;
+
+    @Mock
     private NotificationService notificationService;
 
     @Mock
@@ -85,6 +88,9 @@ class TaskApplicationScenarioTests {
 
     @Mock
     private ReviewEnforcementService reviewEnforcementService;
+
+    @Mock
+    private LocationQueryPort locationQueryPort;
 
     @Mock
     private TaskDao taskDao;
@@ -118,6 +124,7 @@ class TaskApplicationScenarioTests {
         applicationService = new TaskApplicationService(
                 userProfileService,
                 bookingCommandPort,
+                bookingIntentCommandPort,
                 notificationService,
                 analyticsService,
                 domainEventOutboxService,
@@ -130,6 +137,7 @@ class TaskApplicationScenarioTests {
                 notificationService,
                 analyticsService,
                 reviewEnforcementService,
+                locationQueryPort,
                 scopeSummaryGenerator,
                 taskDao,
                 taskPhotoDao,
@@ -209,16 +217,89 @@ class TaskApplicationScenarioTests {
                 Instant.now().toString());
     }
 
+    // ── SCN-TASK-020 ─────────────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("SCN-TASK-020: Task location outside Ulaanbaatar service area is rejected at posting")
+    void rejectsTaskCreationOutsideUlaanbaatarServiceArea() {
+        CategoryState activeCategory = new CategoryState(
+                CATEGORY_ID,
+                "Cleaning",
+                "Cleaning MN",
+                "https://example.com/icon.png",
+                true,
+                1,
+                null,
+                false,
+                null,
+                null);
+        when(categoryService.getCategory(CATEGORY_ID)).thenReturn(Optional.of(activeCategory));
+        when(reviewEnforcementService.isUserLocked(CUSTOMER_ID)).thenReturn(false);
+        when(taskPhotoKeyHelper.areOwnedTaskPhotoKeys(List.of(), CUSTOMER_ID)).thenReturn(true);
+        when(locationQueryPort.isWithinServiceArea(49.4867, 105.9228)).thenReturn(false);
+
+        CreateTask command = new CreateTask(
+                CATEGORY_ID,
+                "Valid description",
+                50000,
+                49.4867,
+                105.9228,
+                "Darkhan",
+                Instant.now().plusSeconds(3600).toString(),
+                PricingMode.BUDGET.name(),
+                List.of(),
+                null,
+                null,
+                null,
+                null);
+
+        TaskCreateResult result = creationService.createTask(CUSTOMER_ID, command);
+
+        assertThat(result.errorCode()).isEqualTo(TaskCreateResult.OUTSIDE_SERVICE_AREA);
+        verify(taskDao, never())
+                .insert(
+                        anyString(),
+                        anyString(),
+                        anyString(),
+                        anyString(),
+                        any(),
+                        anyDouble(),
+                        anyDouble(),
+                        anyString(),
+                        anyString(),
+                        any(),
+                        anyString(),
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any());
+    }
+
     // ── SCN-TASK-021 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-021: Task creation in a non-launch category is rejected")
-    void taskCreationInactiveCategoryRejected() {
-        // Given: an inactive category
-        CategoryState inactiveCategory = new CategoryState(
-                CATEGORY_ID, "Inactive", "Inactive MN", "https://example.com/icon.png", false, 1, null, null, null);
-        when(categoryService.getCategory(CATEGORY_ID)).thenReturn(Optional.of(inactiveCategory));
+    @DisplayName("SCN-TASK-021: Task creation eligibility uses the admin-active category catalog")
+    void taskCreationUsesAdminActiveCategoryCatalog() {
+        // Given: an admin-active category, regardless of whether it was in the initial launch seed.
+        CategoryState activeAdminCategory = new CategoryState(
+                CATEGORY_ID,
+                "Admin Active",
+                "Admin Active MN",
+                "https://example.com/icon.png",
+                true,
+                1,
+                null,
+                false,
+                null,
+                null);
+        when(categoryService.getCategory(CATEGORY_ID)).thenReturn(Optional.of(activeAdminCategory));
         when(reviewEnforcementService.isUserLocked(CUSTOMER_ID)).thenReturn(false);
+        when(taskPhotoKeyHelper.areOwnedTaskPhotoKeys(List.of(), CUSTOMER_ID)).thenReturn(true);
+        when(locationQueryPort.isWithinServiceArea(47.9, 106.9)).thenReturn(true);
+        when(taskApplicationDao.findNearbyTaskerCandidates(
+                        anyString(), anyDouble(), anyDouble(), anyDouble(), anyString(), anyInt()))
+                .thenReturn(List.of());
 
         CreateTask command = new CreateTask(
                 CATEGORY_ID,
@@ -238,10 +319,27 @@ class TaskApplicationScenarioTests {
         // When
         TaskCreateResult result = creationService.createTask(CUSTOMER_ID, command);
 
-        // Then: rejected with INVALID_CATEGORY identifying the category as unavailable
-        assertThat(result.isSuccess()).isFalse();
-        assertThat(result.errorCode()).isEqualTo(TaskCreateResult.INVALID_CATEGORY);
-        assertThat(result.errorMessage()).contains("inactive");
+        // Then: the active admin catalog, not the initial seed list, controls category availability.
+        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.task().categoryId()).isEqualTo(CATEGORY_ID);
+        verify(taskDao)
+                .insert(
+                        anyString(),
+                        eq(CUSTOMER_ID),
+                        eq(CATEGORY_ID),
+                        anyString(),
+                        any(),
+                        anyDouble(),
+                        anyDouble(),
+                        anyString(),
+                        eq("OPEN"),
+                        any(),
+                        eq(PricingMode.BUDGET.name()),
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any());
     }
 
     // ── SCN-TASK-022 ─────────────────────────────────────────────────────────
@@ -393,6 +491,42 @@ class TaskApplicationScenarioTests {
         verify(taskApplicationDao).updateStatus(APPLICATION_ID, "WITHDRAWN");
     }
 
+    // ── SCN-TASK-025 selected-state guard ───────────────────────────────────
+
+    @Test
+    @DisplayName("SCN-TASK-025: Selected tasker cannot withdraw after customer selection")
+    void selectedTaskerCannotWithdrawAfterCustomerSelection() {
+        Instant now = Instant.now();
+        TaskApplicationState selectedApp = new TaskApplicationState(
+                APPLICATION_ID,
+                TASK_ID,
+                TASKER_ID,
+                "Tasker Name",
+                null,
+                4.5,
+                10,
+                false,
+                "I can do this",
+                null,
+                "SELECTED",
+                null,
+                null,
+                now,
+                now.plusSeconds(3600),
+                now);
+        when(taskApplicationDao.findByTaskerAndId(TASKER_ID, APPLICATION_ID)).thenReturn(Optional.of(selectedApp));
+
+        TaskWithdrawResult result = applicationService.withdrawApplication(TASKER_ID, APPLICATION_ID);
+
+        assertThat(result.isSuccess()).isFalse();
+        assertThat(result.errorCode()).isEqualTo(TaskWithdrawResult.INVALID_STATUS);
+        verify(taskApplicationDao, never()).updateStatus(APPLICATION_ID, "WITHDRAWN");
+        verify(taskDao, never()).updateStatus(eq(TASK_ID), eq("OPEN"), any());
+        verify(bookingCommandPort, never())
+                .createBooking(anyString(), anyString(), anyString(), anyInt(), eq(true), any());
+        verifyNoInteractions(notificationService);
+    }
+
     // ── SCN-TASK-026 ─────────────────────────────────────────────────────────
 
     @Test
@@ -450,8 +584,8 @@ class TaskApplicationScenarioTests {
     // ── SCN-TASK-028 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-028: Tasker counter-offer on budget-mode task is structured and recorded")
-    void counterOfferOnBudgetModeTaskRecorded() {
+    @DisplayName("SCN-TASK-028: Budget-mode application rejects counter-offer price")
+    void budgetModeRejectsCounterOfferPrice() {
         // Given: a BUDGET mode task with budget 50000 MNT
         TaskState budgetTask = openBudgetTask(50000);
         when(reviewEnforcementService.isUserLocked(TASKER_ID)).thenReturn(false);
@@ -460,41 +594,29 @@ class TaskApplicationScenarioTests {
         when(userProfileService.getProfile(TASKER_ID)).thenReturn(Optional.of(verifiedProfile()));
         when(taskApplicationDao.existsByTaskIdAndTaskerId(TASK_ID, TASKER_ID)).thenReturn(false);
 
-        // When: tasker submits a counter-offer of 60000 MNT (different from posted budget)
+        // When: tasker submits a price different from the posted budget
         TaskApplyResult result = applicationService.applyToTask(TASKER_ID, "TASKER", TASK_ID, "Counter-offer", 60000);
 
-        // Then: the counter-offer is recorded as a structured pricing response
-        assertThat(result.isSuccess()).isTrue();
-        assertThat(result.application().quotePrice()).isEqualTo(60000);
+        // Then: the application is rejected because budget mode is accept-only
+        assertThat(result.isSuccess()).isFalse();
+        assertThat(result.errorCode()).isEqualTo(TaskApplyResult.BUDGET_PRICE_NOT_ALLOWED);
 
-        // And: the counter-offer is distinguishable from budget acceptance
-        assertThat(result.application().quotePrice()).isNotEqualTo(budgetTask.budget());
-
-        // Verify the DAO persisted the counter-offer price
-        verify(taskApplicationDao)
-                .insert(
-                        anyString(),
-                        eq(TASK_ID),
-                        eq(TASKER_ID),
-                        anyString(),
-                        eq(60000),
-                        eq("APPLIED"),
-                        any(Instant.class));
+        verify(taskApplicationDao, never())
+                .insert(anyString(), anyString(), anyString(), anyString(), any(), anyString(), any());
     }
 
     // ── SCN-TASK-029 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-029: Customer sees original budget and counter-offer where both exist")
-    void customerSeesBudgetAndCounterOffer() {
+    @DisplayName("SCN-TASK-029: Customer sees posted budget for budget-mode applications")
+    void customerSeesPostedBudgetForBudgetApplications() {
         // Given: a BUDGET mode task with posted budget 50000 MNT
         int postedBudget = 50000;
         TaskState budgetTask = openBudgetTask(postedBudget);
         when(taskDao.findById(TASK_ID)).thenReturn(Optional.of(budgetTask));
 
-        // And: at least one application with a counter-offer of 60000 MNT
-        int counterOffer = 60000;
-        TaskApplicationState appWithCounterOffer = new TaskApplicationState(
+        // And: at least one application that accepted the posted budget
+        TaskApplicationState appWithBudgetAcceptance = new TaskApplicationState(
                 APPLICATION_ID,
                 TASK_ID,
                 TASKER_ID,
@@ -503,31 +625,28 @@ class TaskApplicationScenarioTests {
                 4.5,
                 10,
                 false,
-                "My counter-offer",
-                counterOffer,
+                "I accept the posted budget",
+                null,
                 "APPLIED",
                 null,
                 null,
                 null,
                 null,
                 Instant.now());
-        when(taskApplicationDao.findByTaskId(TASK_ID, null, 50)).thenReturn(List.of(appWithCounterOffer));
+        when(taskApplicationDao.findByTaskId(TASK_ID, null, 50)).thenReturn(List.of(appWithBudgetAcceptance));
 
         // When: customer reviews applications
         TaskApplicationsListResult result = applicationService.listTaskApplications(CUSTOMER_ID, TASK_ID);
 
-        // Then: the response includes both the original posted budget and the counter-offer
+        // Then: the original posted budget remains the pricing value for comparison
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.applications()).hasSize(1);
 
         // Original posted budget is accessible on the task used in the listing flow
         assertThat(budgetTask.budget()).isEqualTo(postedBudget);
 
-        // Counter-offer is accessible on the application
+        // Budget-mode applications do not carry a separate quote/counter-offer
         TaskApplicationState app = result.applications().get(0);
-        assertThat(app.quotePrice()).isEqualTo(counterOffer);
-
-        // Customer can compare both values side by side
-        assertThat(budgetTask.budget()).isNotEqualTo(app.quotePrice());
+        assertThat(app.quotePrice()).isNull();
     }
 }

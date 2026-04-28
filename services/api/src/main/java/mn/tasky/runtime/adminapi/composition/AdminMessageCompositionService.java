@@ -23,7 +23,7 @@ public class AdminMessageCompositionService {
         List<Message> page = hasMore ? results.subList(0, clampedLimit) : results;
         List<Map<String, Object>> data =
                 page.stream().map(this::messageResponse).toList();
-        String nextCursor = hasMore ? page.getLast().id() : null;
+        String nextCursor = hasMore ? messageCursor(page.getLast()) : null;
         return new AdminMessagePage(data, nextCursor, hasMore);
     }
 
@@ -36,5 +36,9 @@ public class AdminMessageCompositionService {
         response.put("phone_number_flagged", message.phoneNumberFlagged());
         response.put("sent_at", message.sentAt().toString());
         return response;
+    }
+
+    private static String messageCursor(Message message) {
+        return message.sentAt().toString() + "|" + message.id();
     }
 }

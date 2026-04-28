@@ -32,8 +32,7 @@ This roadmap summarizes the current launch baseline. Product behavior is defined
 
 | Item                                                 | Canonical requirement                                                    | Trigger                                          |
 | ---------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------ |
-| Backend assisted-distribution module and persistence | `REQ-P1-ASSIST-03`, `REQ-P1-ASSIST-03A`, `REQ-P1-ADMIN-08`               | Native matching shows repeated citywide failures |
-| Review enforcement hard-lock tuning                  | `REQ-P1-SAFE-02`                                                         | Review obligation compliance is materially weak  |
+| Backend assisted-distribution module and persistence | `REQ-P1-ASSIST-03`, `REQ-P1-ASSIST-04`, `REQ-P1-ADMIN-08`                | Native matching shows repeated citywide failures |
 | Verification and moderation ops hardening            | `REQ-P1-SAFE-01`, `REQ-P1-SAFE-06`, `REQ-P1-ADMIN-01`, `REQ-P1-ADMIN-04` | Operational volume requires tighter tooling      |
 | KPI dashboard and alert ratification on real host    | KPI policy in `docs/PRD.md` / `docs/METRICS.md`                          | Required before production                       |
 

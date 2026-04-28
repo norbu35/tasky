@@ -21,20 +21,33 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[3]
 PRD_FILE = REPO_ROOT / "docs" / "PRD.md"
 SCENARIOS_DIR = REPO_ROOT / "tests" / "scenarios"
+BACKEND_TEST_DIR = REPO_ROOT / "services" / "api" / "src" / "test" / "java"
 
-PRD_SECTION_START_RE = re.compile(r"^## 11\. ", re.MULTILINE)
-PRD_SECTION_END_RE = re.compile(r"^## 16\. ", re.MULTILINE)
-CANONICAL_PRD_ID_RE = re.compile(r"\b(?:REQ-P1|NFR)-[A-Z]+-\d+\b")
-REQ_P1_RE = re.compile(r"\bREQ-P1-[A-Z]+-\d+\b")
-SCENARIO_PRD_TOKEN_RE = re.compile(r"\b(?:REQ|NFR)-[A-Z0-9-]+\b")
-SCENARIO_HEADER_RE = re.compile(r"^## (SCN-[A-Z]+\d*-\d+)\s*$", re.MULTILINE)
-RISK_RE = re.compile(r"^\*\*Risk:\*\*\s*(\w+)\s*$", re.MULTILINE)
+PRD_REQUIREMENTS_START_MARKER = "<!-- prd:requirements:start -->"
+PRD_REQUIREMENTS_END_MARKER = "<!-- prd:requirements:end -->"
+PRD_SECTION_HEADING_RE = re.compile(r"^##\s+(?:\d+\.\s+)?(.+?)\s*$", re.MULTILINE)
+PRD_REQUIREMENTS_HEADING = "Detailed functional requirements"
+PRD_REQUIREMENTS_END_HEADING = "Launch baseline clarifications for derived artifacts"
+CANONICAL_PRD_ID_RE = re.compile(r"\b(?:REQ-P1|NFR)-[A-Z]+-\d{2}\b")
+REQ_P1_RE = re.compile(r"\bREQ-P1-[A-Z]+-\d{2}\b")  # Enforce 2-digit zero-padded
+SCENARIO_PRD_TOKEN_RE = re.compile(r"\b(?:REQ-P1|NFR)-[A-Z]+-\d{2}\b")
+SCENARIO_HEADER_RE = re.compile(r"^## (SCN-[A-Z]+-\d{3})\s*$", re.MULTILINE)  # Enforce 3-digit
+RISK_RE = re.compile(r"^\*\*Risk:\*\*\s*(Critical|High|Medium)\s*$", re.MULTILINE)  # Enforce capitalization
 PRD_LINE_RE = re.compile(r"^\*\*PRD:\*\*\s*(.+?)\s*$", re.MULTILINE)
 TITLE_RE = re.compile(r"^\*\*Title:\*\*\s*(.+?)\s*$", re.MULTILINE)
-DEFERRED_MARKER_RE = re.compile(r"tasky:req-deferred\s+((?:REQ-P1|NFR)-[A-Z]+-\d+)")
+DEFERRED_MARKER_RE = re.compile(r"tasky:req-deferred\s+((?:REQ-P1|NFR)-[A-Z]+-\d{2})")
+NEEDS_SCENARIO_RE = re.compile(r"needs-scenario:", re.IGNORECASE)
 
 HIGH_COVERAGE_RISKS = {"critical", "high"}
-VALID_RISKS = {"critical", "high", "medium", "low"}
+VALID_RISKS = {"critical", "high", "medium"}  # Phase 1: no "low" risk tier
+NEEDS_SCENARIO_TEST_ROOTS = [
+    BACKEND_TEST_DIR,
+    REPO_ROOT / "apps" / "web" / "tests",
+    REPO_ROOT / "apps" / "web" / "src",
+    REPO_ROOT / "apps" / "mobile" / "__tests__",
+    REPO_ROOT / "apps" / "mobile" / "src",
+]
+FRONTEND_TEST_EXTENSIONS = {".js", ".jsx", ".ts", ".tsx"}
 
 
 @dataclass(frozen=True)
@@ -75,6 +88,11 @@ class Finding:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Validate tests/scenarios/** PRD references.")
     parser.add_argument("--json", action="store_true", help="Emit structured JSON.")
+    parser.add_argument(
+        "--fail-on-coverage-gap",
+        action="store_true",
+        help="Treat Phase 1 high/critical scenario coverage gaps as blocking failures.",
+    )
     return parser.parse_args()
 
 
@@ -87,11 +105,26 @@ def closest(value: str, choices: set[str]) -> str | None:
     return matches[0] if matches else None
 
 
+def find_prd_heading(text: str, heading: str, start: int = 0) -> re.Match[str] | None:
+    normalized = heading.casefold()
+    for match in PRD_SECTION_HEADING_RE.finditer(text, start):
+        if match.group(1).strip().casefold() == normalized:
+            return match
+    return None
+
+
 def prd_governed_body(text: str) -> str:
-    start_match = PRD_SECTION_START_RE.search(text)
+    marker_start = text.find(PRD_REQUIREMENTS_START_MARKER)
+    if marker_start >= 0:
+        marker_body_start = marker_start + len(PRD_REQUIREMENTS_START_MARKER)
+        marker_end = text.find(PRD_REQUIREMENTS_END_MARKER, marker_body_start)
+        end = marker_end if marker_end >= 0 else len(text)
+        return text[marker_body_start:end]
+
+    start_match = find_prd_heading(text, PRD_REQUIREMENTS_HEADING)
     if not start_match:
         return text
-    end_match = PRD_SECTION_END_RE.search(text, start_match.end())
+    end_match = find_prd_heading(text, PRD_REQUIREMENTS_END_HEADING, start_match.end())
     end = end_match.start() if end_match else len(text)
     return text[start_match.start() : end]
 
@@ -113,7 +146,7 @@ def build_prd_inventory() -> PrdInventory:
 
 
 def parse_scenario_block(block: str, source_file: Path, line: int) -> tuple[Scenario | None, Finding | None]:
-    header = re.match(r"## (SCN-[A-Z]+\d*-\d+)", block)
+    header = re.match(r"## (SCN-[A-Z]+-\d{3})", block)
     if not header:
         return None, None
 
@@ -183,6 +216,26 @@ def parse_scenarios() -> tuple[list[Scenario], list[Finding]]:
     return scenarios, failures
 
 
+def detect_duplicate_scenario_ids(scenarios: list[Scenario]) -> list[Finding]:
+    failures: list[Finding] = []
+    seen: dict[str, Scenario] = {}
+    for scenario in scenarios:
+        previous = seen.get(scenario.scenario_id)
+        if previous:
+            failures.append(
+                Finding(
+                    scenario.source_file,
+                    scenario.line,
+                    f"Duplicate scenario id `{scenario.scenario_id}` also appears at "
+                    f"{previous.source_file.as_posix()}:{previous.line}.",
+                    "Give each scenario a unique SCN-* identifier before syncing registry coverage.",
+                )
+            )
+            continue
+        seen[scenario.scenario_id] = scenario
+    return failures
+
+
 def validate_refs(scenarios: list[Scenario], prd: PrdInventory) -> list[Finding]:
     failures: list[Finding] = []
     for scenario in scenarios:
@@ -194,7 +247,7 @@ def validate_refs(scenarios: list[Scenario], prd: PrdInventory) -> list[Finding]
                 Finding(
                     scenario.source_file,
                     scenario.line,
-                    f"{scenario.scenario_id} references PRD id `{ref}`, which is not live in docs/PRD.md §11-§15.",
+                    f"{scenario.scenario_id} references PRD id `{ref}`, which is not live in docs/PRD.md.",
                     f"Did you mean `{suggestion}`?" if suggestion else None,
                 )
             )
@@ -221,12 +274,50 @@ def coverage_warnings(scenarios: list[Scenario], prd: PrdInventory) -> list[Find
     ]
 
 
+def needs_scenario_files(root: Path) -> list[Path]:
+    if not root.exists():
+        return []
+    if root == BACKEND_TEST_DIR:
+        return sorted(root.rglob("*.java"))
+    return sorted(
+        path
+        for path in root.rglob("*")
+        if path.is_file()
+        and path.suffix in FRONTEND_TEST_EXTENSIONS
+        and (".test." in path.name or ".spec." in path.name or "__tests__" in path.parts)
+    )
+
+
+def validate_tests_do_not_use_needs_scenario() -> list[Finding]:
+    failures: list[Finding] = []
+    for root in NEEDS_SCENARIO_TEST_ROOTS:
+        for path in needs_scenario_files(root):
+            text = path.read_text(encoding="utf-8")
+            for match in NEEDS_SCENARIO_RE.finditer(text):
+                failures.append(
+                    Finding(
+                        relative(path),
+                        text.count("\n", 0, match.start()) + 1,
+                        "`needs-scenario:` markers are not allowed in tests; add a curated SCN entry first.",
+                    )
+                )
+    return failures
+
+
 def main() -> int:
     args = parse_args()
     prd = build_prd_inventory()
     scenarios, parse_failures = parse_scenarios()
-    failures = parse_failures + validate_refs(scenarios, prd)
+    failures = (
+        parse_failures
+        + detect_duplicate_scenario_ids(scenarios)
+        + validate_refs(scenarios, prd)
+        + validate_tests_do_not_use_needs_scenario()
+    )
     warnings = coverage_warnings(scenarios, prd)
+    if args.fail_on_coverage_gap:
+        failures += warnings
+        warnings = []
 
     failures = sorted(failures, key=lambda item: (item.source_file.as_posix(), item.line, item.message))
     warnings = sorted(warnings, key=lambda item: (item.source_file.as_posix(), item.line, item.message))
@@ -257,6 +348,11 @@ def main() -> int:
         print(f" - {warning.source_file.as_posix()}:{warning.line}: warning: {warning.message}")
     if failures:
         print(f"prd-scenario-links: {len(failures)} failure(s)")
+        print("autonomous remediation:")
+        print(" - reconcile tests/scenarios/** with live IDs in docs/PRD.md before writing new backend tests")
+        print(" - if the issue is scenario structure, fix the scenario file; if the PRD changed, re-route through the active PRD baseline")
+        print(" - rerun: python3 tooling/scripts/governance/validate-prd-scenario-links.py")
+        print(" - if registry drift is involved, then run: bash services/api/scripts/sync-registry.sh")
     else:
         print(
             "prd-scenario-links: "

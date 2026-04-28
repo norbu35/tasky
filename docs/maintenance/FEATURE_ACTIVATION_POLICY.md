@@ -9,6 +9,10 @@ It does not define future product scope. That belongs in `docs/ROLLOUT_PHASES.md
 
 A feature toggle is an operational switch, not proof that the feature belongs in the live product.
 
+The product is intentionally allowed to contain future-ready dormant surfaces. Those surfaces should be easy to activate
+when their rollout phase arrives, but they must remain disabled and non-promissory until the governing docs, contracts,
+UX, verification, monitoring, and rollback posture are all updated.
+
 ## Activation principles
 
 1. Phase 1 remains the active baseline until the PRD changes.
@@ -24,6 +28,25 @@ For the current baseline:
 - non-launch capabilities must remain disabled
 - future-phase toggles are not activation candidates merely because code exists
 
+## Current toggle catalog
+
+This catalog records the known DB-backed feature switches that may appear in admin tooling. The source of truth for
+phase ownership is `docs/ROLLOUT_PHASES.md`; this table records activation posture.
+
+Fresh databases start without Flyway-seeded toggle rows. Absence must resolve to the required default below until an
+operator/admin setup step creates an audited row.
+
+| Toggle                     | Feature family                    | Target phase     | Required default before activation                       |
+| -------------------------- | --------------------------------- | ---------------- | -------------------------------------------------------- |
+| `lead_fee_enabled`         | Lead credits / paid lead unlock   | Phase 2 optional | `false`                                                  |
+| `subscription_enabled`     | Tasker subscription               | Phase 3          | `false`                                                  |
+| `escrow_enabled`           | Escrow, payments, wallet, payouts | Phase 3          | `false`                                                  |
+| `ai_scope_summary_enabled` | Runtime AI scope summary          | Phase 2 optional | `false`                                                  |
+| `data_retention_dry_run`   | Data-retention safety dry run     | Phase 1 ops      | `true` until destructive deletion is explicitly approved |
+
+If future code needs a switch but none exists, add the switch as disabled-by-default scaffolding and document its phase
+owner before exposing it in admin UX.
+
 ## Required evidence before any later activation
 
 Every proposed activation must include:
@@ -35,6 +58,11 @@ Every proposed activation must include:
 5. staging rehearsal and operator runbook update
 6. alerting and dashboard coverage
 7. rollback procedure
+
+For user-visible deferred features, verification must cover both states:
+
+- toggle off: launch behavior remains unchanged and no deferred copy, route, or promise is exposed
+- toggle on: the intended future-phase behavior works against updated contracts and launch-facing copy
 
 ## Rollout note requirement
 

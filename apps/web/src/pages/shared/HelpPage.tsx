@@ -7,27 +7,17 @@ export function HelpPage() {
 
   return (
     <ResponsiveFeedShell
-      title={t('sharedPages.help.title', 'Help & support')}
-      description={t(
-        'sharedPages.help.description',
-        'FAQs and next-step guidance for common marketplace issues.',
-      )}
+      title={t('sharedPages.help.title')}
+      description={t('sharedPages.help.description')}
     >
       <div className="space-y-6">
         <section>
-          <p className="mb-2 text-[13px] font-bold font-display text-primary-deep uppercase tracking-[0.075em]">
-            {t('sharedPages.help.sectionGeneral', 'General')}
+          <p className="mb-2 text-overline font-bold font-display text-primary-deep uppercase">
+            {t('sharedPages.help.sectionGeneral')}
           </p>
           <div className="rounded-md bg-card p-4 shadow-sm space-y-2">
-            <div className="font-medium text-foreground">
-              {t('sharedPages.help.faq1Question', 'How do I reschedule a booking?')}
-            </div>
-            <div className="text-sm text-text-secondary">
-              {t(
-                'sharedPages.help.faq1Answer',
-                'Open the booking detail and choose the new time before the task starts.',
-              )}
-            </div>
+            <div className="font-medium text-foreground">{t('sharedPages.help.faq1Question')}</div>
+            <div className="text-sm text-text-secondary">{t('sharedPages.help.faq1Answer')}</div>
           </div>
         </section>
       </div>

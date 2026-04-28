@@ -3,12 +3,14 @@ import type { components } from '@tasky/sdk';
 export type User = components['schemas']['User'];
 export type Profile = components['schemas']['Profile'];
 export type Category = components['schemas']['Category'];
+export type TaskFeedItem = components['schemas']['TaskFeedItem'];
 export type PublicTask = components['schemas']['PublicTask'];
 export type Task = components['schemas']['Task'];
 export type CreateTaskRequest = components['schemas']['CreateTaskRequest'];
 export type TaskApplication = components['schemas']['TaskApplication'];
 export type Booking = components['schemas']['Booking'];
 export type BookingIntent = components['schemas']['BookingIntent'];
+export type BookingScheduleEvent = components['schemas']['BookingScheduleEvent'];
 export type Review = components['schemas']['Review'];
 export type Dispute = components['schemas']['Dispute'];
 export type Conversation = components['schemas']['Conversation'];
@@ -29,6 +31,8 @@ export type PayoutRequest = components['schemas']['PayoutRequest'];
 export type AdminDisputeDetail = components['schemas']['AdminDisputeDetail'];
 export type CategorySchemaVersion = components['schemas']['CategorySchemaVersion'];
 export type AdminCategoryPayload = components['schemas']['AdminCategoryPayload'];
+export type TaskDraft = components['schemas']['TaskDraft'];
+export type RecentLocation = components['schemas']['RecentLocation'];
 
 export interface LeadUnlockPrice {
   id: string;
@@ -65,6 +69,8 @@ export interface TaskFilters {
   lat?: number;
   lng?: number;
   radiusKm?: number;
+  cursor?: string;
+  limit?: number;
 }
 
 export interface BookingFilters {

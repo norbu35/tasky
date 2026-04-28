@@ -11,7 +11,7 @@ import Animated, {
 import { animationPresets } from '@/design/animations';
 import { mobileTheme } from '@/design/tokenAdapter';
 
-const { radius } = mobileTheme;
+const { interaction, radius } = mobileTheme;
 
 interface SkeletonLoaderProps {
   width?: number | string;
@@ -29,7 +29,7 @@ export function SkeletonLoader({
   testID,
 }: SkeletonLoaderProps) {
   const { t } = useTranslation();
-  const opacity = useSharedValue(0.4);
+  const opacity = useSharedValue<number>(interaction.disabled.opacity);
 
   useEffect(() => {
     opacity.value = withRepeat(

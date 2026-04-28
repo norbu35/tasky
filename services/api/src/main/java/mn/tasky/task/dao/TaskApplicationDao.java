@@ -84,10 +84,11 @@ public interface TaskApplicationDao {
             + "ta.selected_at, ta.respond_by_at, ta.created_at "
             + "FROM task_applications ta "
             + "LEFT JOIN profiles p ON p.user_id = ta.tasker_id "
-            + "WHERE ta.task_id = :taskId ORDER BY ta.id LIMIT :limit")
+            + "WHERE ta.task_id = :taskId ORDER BY ta.created_at DESC, ta.id DESC LIMIT :limit")
     List<TaskApplicationState> findByTaskIdFirstPage(@Bind("taskId") UUID taskId, @Bind("limit") int limit);
 
-    @SqlQuery("SELECT ta.id, ta.task_id, ta.tasker_id, "
+    @SqlQuery("WITH cursor_row AS (SELECT created_at, id FROM task_applications WHERE id = :cursor) "
+            + "SELECT ta.id, ta.task_id, ta.tasker_id, "
             + "p.full_name AS tasker_full_name, p.avatar_url AS tasker_avatar_url, "
             + "p.rating_avg AS tasker_rating_avg, p.completed_tasks AS tasker_completed_tasks, "
             + "CASE WHEN p.completed_tasks >= 6 AND p.rating_avg >= 4.5 "
@@ -95,8 +96,11 @@ public interface TaskApplicationDao {
             + "ta.message, ta.quote_price, ta.status, ta.relevance_score, ta.recommended, "
             + "ta.selected_at, ta.respond_by_at, ta.created_at "
             + "FROM task_applications ta "
+            + "CROSS JOIN cursor_row c "
             + "LEFT JOIN profiles p ON p.user_id = ta.tasker_id "
-            + "WHERE ta.task_id = :taskId AND ta.id > :cursor ORDER BY ta.id LIMIT :limit")
+            + "WHERE ta.task_id = :taskId "
+            + "AND (ta.created_at < c.created_at OR (ta.created_at = c.created_at AND ta.id < c.id)) "
+            + "ORDER BY ta.created_at DESC, ta.id DESC LIMIT :limit")
     List<TaskApplicationState> findByTaskIdAfterCursor(
             @Bind("taskId") UUID taskId, @Bind("cursor") UUID cursor, @Bind("limit") int limit);
 
@@ -113,6 +117,24 @@ public interface TaskApplicationDao {
 
     @SqlQuery("SELECT EXISTS(SELECT 1 FROM task_applications WHERE task_id = :taskId AND status = 'ACCEPTED')")
     boolean hasAccepted(@Bind("taskId") UUID taskId);
+
+    default boolean hasActiveSelection(String taskId, Instant now) {
+        return hasActiveSelection(required(taskId, "taskId"), now);
+    }
+
+    @SqlQuery("SELECT EXISTS(SELECT 1 FROM task_applications "
+            + "WHERE task_id = :taskId "
+            + "AND status = 'SELECTED' "
+            + "AND (respond_by_at IS NULL OR respond_by_at >= :now))")
+    boolean hasActiveSelection(@Bind("taskId") UUID taskId, @Bind("now") Instant now);
+
+    default int expireSelectedForTask(String taskId, Instant now) {
+        return expireSelectedForTask(required(taskId, "taskId"), now);
+    }
+
+    @SqlUpdate("UPDATE task_applications SET status = 'EXPIRED' "
+            + "WHERE task_id = :taskId AND status = 'SELECTED' AND respond_by_at < :now")
+    int expireSelectedForTask(@Bind("taskId") UUID taskId, @Bind("now") Instant now);
 
     default int countByTaskId(String taskId) {
         return countByTaskId(required(taskId, "taskId"));
@@ -133,7 +155,7 @@ public interface TaskApplicationDao {
     }
 
     @SqlUpdate("UPDATE task_applications SET status = 'DECLINED' "
-            + "WHERE task_id = :taskId AND status = 'APPLIED' AND id != :excludeId")
+            + "WHERE task_id = :taskId AND status IN ('APPLIED', 'SELECTED') AND id != :excludeId")
     void rejectOthers(@Bind("taskId") UUID taskId, @Bind("excludeId") UUID excludeId);
 
     default void updateSelection(String id, String status, Instant selectedAt, Instant respondByAt) {

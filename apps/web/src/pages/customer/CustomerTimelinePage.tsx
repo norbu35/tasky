@@ -9,40 +9,34 @@ export function CustomerTimelinePage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('customerPages.timeline.title', 'Booking timeline')}
-      description={t(
-        'customerPages.timeline.description',
-        'Follow the booking from confirmation to completion and disputes.',
-      )}
+      title={t('customerPages.timeline.title')}
+      description={t('customerPages.timeline.description')}
       primaryAction={
         <Button type="button" variant="secondary">
-          {t('customerPages.timeline.backAction', 'Back to booking')}
+          {t('customerPages.timeline.backAction')}
         </Button>
       }
     >
       <Card className="border-border/60 shadow-sm">
         <CardHeader>
-          <CardTitle>{t('customerPages.timeline.cardTitle', 'Timeline')}</CardTitle>
+          <CardTitle>{t('customerPages.timeline.cardTitle')}</CardTitle>
         </CardHeader>
         <CardContent>
           <TimelineList
             items={[
               {
-                label: t('customerPages.timeline.step1', 'Booking confirmed'),
-                detail: t('customerPages.timeline.step1Desc', 'Customer accepted the tasker'),
+                label: t('customerPages.timeline.step1'),
+                detail: t('customerPages.timeline.step1Desc'),
                 tone: 'completed',
               },
               {
-                label: t('customerPages.timeline.step2', 'Task in progress'),
-                detail: t('customerPages.timeline.step2Desc', 'Tasker is on the way'),
+                label: t('customerPages.timeline.step2'),
+                detail: t('customerPages.timeline.step2Desc'),
                 tone: 'active',
               },
               {
-                label: t('customerPages.timeline.step3', 'Awaiting completion'),
-                detail: t(
-                  'customerPages.timeline.step3Desc',
-                  'Capture final review or raise a dispute',
-                ),
+                label: t('customerPages.timeline.step3'),
+                detail: t('customerPages.timeline.step3Desc'),
               },
             ]}
           />

@@ -38,9 +38,7 @@ export function ProfilePage() {
       contentType !== 'image/png' &&
       contentType !== 'image/webp'
     ) {
-      toast.error(
-        t('profile.invalidFileFormat', 'Invalid file format. Please use JPEG, PNG, or WebP.'),
-      );
+      toast.error(t('profile.invalidFileFormat'));
       return;
     }
 
@@ -79,9 +77,7 @@ export function ProfilePage() {
 
       // 3. Set preview URL
       setAvatarUrl(avatarValueToPreviewUrl(storageKey));
-      toast.success(
-        t('profile.avatarUploaded', 'Avatar uploaded to bucket. Click Save below to apply.'),
-      );
+      toast.success(t('profile.avatarUploaded'));
     } catch (error) {
       toast.error(parseError(error));
     } finally {
@@ -102,7 +98,7 @@ export function ProfilePage() {
         avatar_url: avatarValueToApiPayload(avatarUrl),
       });
       setProfile(updated);
-      toast.success(t('profile.profileUpdated', 'Profile updated successfully'));
+      toast.success(t('profile.profileUpdated'));
     } catch (error) {
       toast.error(parseError(error));
     } finally {
@@ -118,9 +114,7 @@ export function ProfilePage() {
       const user = await apiClient.activateTaskerRole(session.accessToken);
       updateSessionUser(user);
       await refreshProfile();
-      toast.success(
-        t('profile.taskerActivated', 'Welcome to the Tasker network! Your role is now active.'),
-      );
+      toast.success(t('profile.taskerActivated'));
     } catch (error) {
       toast.error(parseError(error));
     } finally {
@@ -133,17 +127,15 @@ export function ProfilePage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('profile.yourProfile', 'Your Profile')}
-      description={t('profile.manageInfo', 'Manage your personal information and preferences.')}
+      title={t('profile.yourProfile')}
+      description={t('profile.manageInfo')}
       detailRail={
         <Card className="border-border/60 shadow-sm">
           <CardHeader className="space-y-1.5 border-b border-border/50 bg-muted/20 pb-4">
             <CardTitle className="text-xl font-display">
-              {t('profile.accountVerification', 'Account Verification')}
+              {t('profile.accountVerification')}
             </CardTitle>
-            <CardDescription>
-              {t('profile.addPhoto', 'Add a photo to build trust with others in the network.')}
-            </CardDescription>
+            <CardDescription>{t('profile.addPhoto')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-5">
             <div className="flex items-start gap-4 rounded-2xl border border-border/60 bg-muted/30 p-4">
@@ -157,7 +149,7 @@ export function ProfilePage() {
                 )}
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-semibold">{t('profile.status', 'Status')}</p>
+                <p className="text-sm font-semibold">{t('profile.status')}</p>
                 <p className="text-lg font-display capitalize tracking-tight text-foreground">
                   {profile?.status?.toLowerCase() ?? 'Unknown'}
                 </p>
@@ -170,15 +162,10 @@ export function ProfilePage() {
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-accent" />
                     <h2 className="text-base font-semibold font-display text-foreground">
-                      {t('profile.earnWithTasky', 'Earn with Tasky')}
+                      {t('profile.earnWithTasky')}
                     </h2>
                   </div>
-                  <p className="text-sm text-foreground/70">
-                    {t(
-                      'profile.activateTaskerDesc',
-                      'Ready to offer your services? Activate your Tasker role to start browsing and applying to open tasks.',
-                    )}
-                  </p>
+                  <p className="text-sm text-foreground/70">{t('profile.activateTaskerDesc')}</p>
                 </div>
                 <Button
                   onClick={activateTaskerRole}
@@ -187,7 +174,7 @@ export function ProfilePage() {
                   className="w-full rounded-xl shadow-sm sm:w-auto"
                 >
                   {working ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                  {t('profile.activateTaskerBtn', 'Activate Tasker Account')}
+                  {t('profile.activateTaskerBtn')}
                 </Button>
               </div>
             ) : null}
@@ -199,19 +186,15 @@ export function ProfilePage() {
         <CardHeader className="space-y-1.5 border-b border-border/50 bg-muted/20 pb-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-1">
-              <CardTitle className="text-xl font-display">
-                {t('profile.identityAvatar', 'Identity & Avatar')}
-              </CardTitle>
-              <CardDescription>
-                {t('profile.addPhoto', 'Add a photo to build trust with others in the network.')}
-              </CardDescription>
+              <CardTitle className="text-xl font-display">{t('profile.identityAvatar')}</CardTitle>
+              <CardDescription>{t('profile.addPhoto')}</CardDescription>
             </div>
             <div className="flex flex-col items-start gap-1 sm:items-end">
-              <span className="text-xs font-semibold uppercase tracking-[0.075em] text-muted-foreground">
-                {t('profile.networkRole', 'Network Role')}
+              <span className="text-xs font-semibold uppercase tracking-caps text-muted-foreground">
+                {t('profile.networkRole')}
               </span>
               <div
-                className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-[0.075em] ${isCustomer ? 'border-primary/20 bg-secondary text-secondary-foreground' : 'border-accent/30 bg-accent/10 text-accent-foreground'}`}
+                className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-caps ${isCustomer ? 'border-primary/20 bg-secondary text-secondary-foreground' : 'border-accent/30 bg-accent/10 text-accent-foreground'}`}
               >
                 {profile?.role ?? 'UNKNOWN'}
               </div>
@@ -238,8 +221,8 @@ export function ProfilePage() {
               ) : (
                 <User className="h-6 w-6 text-primary/40" />
               )}
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                <Camera className="h-6 w-6 text-white" />
+              <div className="absolute inset-0 flex items-center justify-center bg-primary-deep/40 opacity-0 transition-opacity group-hover:opacity-100">
+                <Camera className="h-6 w-6 text-primary-foreground" />
               </div>
               {working ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
@@ -256,10 +239,8 @@ export function ProfilePage() {
               disabled={working}
             />
             <div className="space-y-1 text-center">
-              <p className="text-sm font-medium">{t('profile.profilePhoto', 'Profile Photo')}</p>
-              <p className="text-xs text-muted-foreground">
-                {t('profile.photoFormats', 'JPEG, PNG, WebP')}
-              </p>
+              <p className="text-sm font-medium">{t('profile.profilePhoto')}</p>
+              <p className="text-xs text-muted-foreground">{t('profile.photoFormats')}</p>
               <p className="text-xs text-muted-foreground">
                 Your browser may prompt you to choose a photo when you update your avatar.
               </p>
@@ -270,16 +251,16 @@ export function ProfilePage() {
             <div className="space-y-2">
               <Label
                 htmlFor="full-name"
-                className="text-xs font-semibold uppercase tracking-[0.075em] text-muted-foreground"
+                className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
               >
-                {t('profile.displayName', 'Display Name')}
+                {t('profile.displayName')}
               </Label>
               <Input
                 id="full-name"
-                aria-label={t('profile.displayName', 'Display Name')}
+                aria-label={t('profile.displayName')}
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
-                placeholder={t('profile.displayNamePlaceholder', 'e.g. Бат-Эрдэнэ')}
+                placeholder={t('profile.displayNamePlaceholder')}
                 className="h-12 rounded-xl border-transparent bg-muted/50 text-lg transition-colors focus:border-primary focus:bg-background"
                 disabled={working}
               />
@@ -296,7 +277,7 @@ export function ProfilePage() {
                 ) : (
                   <Save className="mr-2 h-5 w-5" />
                 )}
-                {t('profile.saveChanges', 'Save Changes')}
+                {t('profile.saveChanges')}
               </Button>
             </div>
           </div>

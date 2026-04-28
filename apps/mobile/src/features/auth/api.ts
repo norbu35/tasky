@@ -1,5 +1,5 @@
-import { createMobileApiClient } from '@/lib/mobileApiClient';
 import type { AuthTokens, User } from '@/lib/api/types';
+import { createMobileApiClient } from '@/lib/mobileApiClient';
 
 const getClient = () => createMobileApiClient();
 

@@ -4,6 +4,21 @@ name: 'Selection Sent — Success'
 route: '/(customer)/tasks/selection-sent'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-015
+  prd_refs:
+    - REQ-P1-BOOK-01
+    - REQ-P1-BOOK-02
+    - REQ-P1-BOOK-03
+    - REQ-P1-NOTIF-02
+  journey_refs:
+    - JRN-CUST-02:step-6
+    - JRN-CUST-02-A5
+  scenario_refs:
+    - SCN-BOOK-022
+    - SCN-BOOK-023
+    - SCN-NOTIF-002
 template: success_celebration
 figma_page: 'Customer/Selection Sent Success'
 feature: 'booking'

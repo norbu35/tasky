@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { useConversations } from '../../../src/features/chat/hooks/useConversations';
 
 import TaskDetailCustomerScreen from '../../../src/app/(customer)/tasks/[taskId]/index';
 
@@ -54,6 +55,15 @@ jest.mock('../../../src/features/tasks/hooks/useCustomerTaskDetail', () => ({
   useCustomerTaskDetail: () => mockUseCustomerTaskDetail(),
 }));
 
+const mockUseApplications = jest.fn();
+jest.mock('../../../src/features/tasks/hooks/useApplications', () => ({
+  useApplications: () => mockUseApplications(),
+}));
+
+jest.mock('../../../src/features/chat/hooks/useConversations', () => ({
+  useConversations: jest.fn(),
+}));
+
 const mockCompleteBookingMutateAsync = jest.fn();
 jest.mock('../../../src/features/bookings/hooks/useCompleteBooking', () => ({
   useCompleteBooking: () => ({
@@ -70,11 +80,43 @@ jest.mock('../../../src/features/bookings/hooks/useCancelBooking', () => ({
   }),
 }));
 
+const mockUseConversations = useConversations as jest.MockedFunction<typeof useConversations>;
+
 beforeEach(() => {
   const { resetTestI18n, setTestLanguage } = require('../../test-utils/mockI18n');
   jest.clearAllMocks();
   resetTestI18n();
   setTestLanguage('en');
+  mockUseApplications.mockReturnValue({
+    data: { data: [] },
+    isLoading: false,
+    isError: false,
+    refetch: jest.fn(),
+  });
+  mockUseConversations.mockReturnValue({
+    data: {
+      data: [
+        {
+          id: 'conversation-1',
+          task_id: 'task-1',
+          task_title: 'Fix my sink',
+          counterparty_id: 'tasker-1',
+          counterparty_name: 'Bold Bat',
+          counterparty_avatar_url: null,
+          counterparty_last_active_at: null,
+          last_message_content: 'See you soon',
+          last_message_at: '2026-04-01T10:00:00Z',
+          unread_count: 0,
+          created_at: '2026-04-01T10:00:00Z',
+        },
+      ],
+      cursor: { next: null, prev: null },
+    },
+    isLoading: false,
+    isError: false,
+    isRefetching: false,
+    refetch: jest.fn(),
+  } as unknown as ReturnType<typeof useConversations>);
 });
 
 const makeTask = (overrides: Record<string, any> = {}) => ({
@@ -159,6 +201,26 @@ describe('TaskDetailCustomerScreen (SCR-CUST-009)', () => {
     expect(screen.getByText('View Applicants')).toBeTruthy();
   });
 
+  it('derives applicant count from applications when the task list omits applicant_count', () => {
+    mockUseCustomerTaskDetail.mockReturnValue({
+      task: makeTask({ status: 'OPEN', applicant_count: undefined }),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    mockUseApplications.mockReturnValue({
+      data: { data: [{ id: 'app-1' }, { id: 'app-2' }] },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+
+    render(<TaskDetailCustomerScreen />);
+
+    expect(screen.getByText('View Applicants')).toBeTruthy();
+    expect(screen.getByText('2')).toBeTruthy();
+  });
+
   it('navigates to applicants list when View Applicants is pressed', () => {
     mockUseCustomerTaskDetail.mockReturnValue({
       task: makeTask({ status: 'OPEN', applicant_count: 3 }),
@@ -222,7 +284,17 @@ describe('TaskDetailCustomerScreen (SCR-CUST-009)', () => {
     render(<TaskDetailCustomerScreen />);
 
     fireEvent.press(screen.getByTestId('task-detail-customer-screen-tasker-card'));
-    expect(mockPush).toHaveBeenCalledWith('/(customer)/taskers/tasker-1');
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pathname: '/(customer)/taskers/[taskerId]',
+        params: expect.objectContaining({
+          taskerId: 'tasker-1',
+          taskerName: 'Bold Bat',
+          taskerRating: '4.5',
+          taskerVerified: 'true',
+        }),
+      }),
+    );
   });
 
   it('navigates to inbox when Message Tasker is pressed', () => {
@@ -244,7 +316,7 @@ describe('TaskDetailCustomerScreen (SCR-CUST-009)', () => {
     render(<TaskDetailCustomerScreen />);
 
     fireEvent.press(screen.getByText('Message Tasker'));
-    expect(mockPush).toHaveBeenCalledWith('/inbox');
+    expect(mockPush).toHaveBeenCalledWith('/inbox/conversation-1');
   });
 
   it('shows Cancel Task button when open or assigned', () => {

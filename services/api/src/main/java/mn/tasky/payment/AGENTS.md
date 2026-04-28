@@ -5,7 +5,7 @@ Escrow payment intent initiation and QPay callback processing.
 ## Implemented API
 
 | Method | Path                                      | Notes                                          |
-|--------|-------------------------------------------|------------------------------------------------|
+| ------ | ----------------------------------------- | ---------------------------------------------- |
 | `POST` | `/api/v1/payments/bookings/{id}/initiate` | Customer initiates booking payment; idempotent |
 | `POST` | `/api/v1/payments/qpay/callback`          | Gateway callback (public endpoint)             |
 
@@ -42,6 +42,6 @@ Repeated callback for already-processed payment returns success (`true`) without
 
 ## Idempotency
 
-| Endpoint                                | Operation key      |
-|-----------------------------------------|--------------------|
-| `POST /payments/bookings/{id}/initiate` | `payment.initiate` |
+| Endpoint                                       | Operation key      |
+| ---------------------------------------------- | ------------------ |
+| `POST /api/v1/payments/bookings/{id}/initiate` | `payment.initiate` |

@@ -75,7 +75,7 @@ describe('LoginScreen (SCR-SHARED-002)', () => {
     fireEvent.press(screen.getByTestId('dev-login-customer'));
 
     expect(mockDevLoginMutate).toHaveBeenCalledWith({
-      phone: '+97692000001',
+      phone: '+97692000002',
       role: 'CUSTOMER',
     });
   });

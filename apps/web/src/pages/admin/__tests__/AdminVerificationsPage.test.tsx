@@ -2,18 +2,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import type { VerificationDetail } from '../../../lib/apiClient';
+import i18n from '../../../lib/i18n';
 import { AdminVerificationsPage } from '../AdminVerificationsPage';
-
-// ── Mock i18n ────────────────────────────────────────────────────────
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (_key: string, fallback: string) => fallback,
-    i18n: {
-      language: 'en',
-      resolvedLanguage: 'en',
-    },
-  }),
-}));
 
 // ── Mock AppContext ──────────────────────────────────────────────────
 const mockAdminListPendingVerifications = vi.fn();
@@ -67,6 +57,7 @@ describe('AdminVerificationsPage', () => {
     vi.clearAllMocks();
     vi.useFakeTimers({ shouldAdvanceTime: true });
     vi.setSystemTime(new Date('2026-03-23T12:00:00Z'));
+    void i18n.changeLanguage('en');
   });
 
   afterEach(() => {

@@ -1,5 +1,7 @@
 package mn.tasky.runtime.adminapi.composition;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import mn.tasky.admin.dto.VerificationDetailResponse;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AdminVerificationCompositionService {
+
+    private static final Duration VERIFICATION_REVIEW_SLA = Duration.ofHours(24);
 
     private final AdminVerificationQueueProjectionService queueProjectionService;
     private final IdentityQueryPort identityQueryPort;
@@ -79,10 +83,12 @@ public class AdminVerificationCompositionService {
                 detail.status(),
                 detail.adminNotes(),
                 detail.submittedAt(),
-                detail.reviewedAt());
+                detail.reviewedAt(),
+                slaDeadlineAt(detail.submittedAt()));
     }
 
     private VerificationDetailResponse queueDetailResponse(AdminVerificationQueueRow row) {
+        String submittedAt = row.submittedAt() != null ? row.submittedAt().toString() : null;
         return new VerificationDetailResponse(
                 row.id(),
                 row.userId(),
@@ -92,8 +98,27 @@ public class AdminVerificationCompositionService {
                 safeVerificationDownloadUrl(row.idCardBackKey()),
                 row.status(),
                 row.adminNotes(),
-                row.submittedAt() != null ? row.submittedAt().toString() : null,
-                row.reviewedAt() != null ? row.reviewedAt().toString() : null);
+                submittedAt,
+                row.reviewedAt() != null ? row.reviewedAt().toString() : null,
+                slaDeadlineAt(row.submittedAt()));
+    }
+
+    private String slaDeadlineAt(String submittedAt) {
+        if (submittedAt == null || submittedAt.isBlank()) {
+            return null;
+        }
+        try {
+            return slaDeadlineAt(Instant.parse(submittedAt));
+        } catch (RuntimeException exception) {
+            return null;
+        }
+    }
+
+    private String slaDeadlineAt(Instant submittedAt) {
+        if (submittedAt == null) {
+            return null;
+        }
+        return submittedAt.plus(VERIFICATION_REVIEW_SLA).toString();
     }
 
     private String decryptPhone(String encryptedPhone) {

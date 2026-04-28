@@ -62,7 +62,8 @@ class ReviewScenarioTests {
     // ── SCN-REVIEW-001 ───────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-REVIEW-001: Booking completion creates structured review prompts for both customer and tasker")
+    @DisplayName("SCN-REVIEW-001: Reviewable terminal outcome creates structured review prompts for both customer "
+            + "and tasker")
     void bookingCompletionCreatesCasesForBothParticipants() {
         service.createCasesForBooking(BOOKING_ID, CUSTOMER_ID, TASKER_ID);
 
@@ -74,7 +75,7 @@ class ReviewScenarioTests {
     // ── SCN-REVIEW-002 ───────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-REVIEW-002: Immediate review prompt is sent at completion time")
+    @DisplayName("SCN-REVIEW-002: Immediate review prompt is sent when review debt is created")
     void immediateReviewPromptSentOnCompletion() {
         service.createCasesForBooking(BOOKING_ID, CUSTOMER_ID, TASKER_ID);
 

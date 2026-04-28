@@ -37,8 +37,8 @@ src/
 When the OpenAPI spec (`docs/openapi/**`) changes:
 
 ```bash
-pnpm openapi:bundle
-pnpm --filter @tasky/sdk generate   # Regenerate api-types.ts from split OpenAPI source
+pnpm contract:openapi:bundle
+pnpm contract:sdk:generate   # Regenerate api-types.ts from split OpenAPI source
 ```
 
 This runs: `node ../../tooling/scripts/contracts/bundle-openapi.mjs && openapi-typescript ../../docs/openapi/openapi.yaml -o src/generated/api-types.ts`

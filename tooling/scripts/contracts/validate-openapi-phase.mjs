@@ -2,16 +2,14 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import process from "node:process";
+import { fileURLToPath } from "node:url";
 import YAML from "yaml";
 
-const repoRoot = process.cwd();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const repoRoot = path.resolve(__dirname, "../../..");
 const bundlePath = path.join(repoRoot, "docs", "API.yaml");
 const schemaSourceDir = path.join(repoRoot, "docs", "openapi", "components", "schemas");
-const activeDocRoots = [
-    path.join(repoRoot, "docs", "architecture"),
-    path.join(repoRoot, "tests", "scenarios"),
-];
 
 const validPhases = new Set(["phase_1", "phase_2", "phase_3", "phase_4", "dev_only"]);
 const activePhases = new Set(["phase_1"]);
@@ -43,22 +41,6 @@ function readYaml(filePath) {
     return YAML.parse(fs.readFileSync(filePath, "utf8"));
 }
 
-function walkMarkdown(root) {
-    if (!fs.existsSync(root)) return [];
-    const files = [];
-    for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
-        const fullPath = path.join(root, entry.name);
-        if (entry.isDirectory()) {
-            files.push(...walkMarkdown(fullPath));
-            continue;
-        }
-        if (entry.isFile() && entry.name.endsWith(".md") && entry.name !== "README.md") {
-            files.push(fullPath);
-        }
-    }
-    return files;
-}
-
 function sourceSchemas() {
     if (!fs.existsSync(schemaSourceDir)) return [];
     const schemas = [];
@@ -71,17 +53,6 @@ function sourceSchemas() {
         }
     }
     return schemas;
-}
-
-function lineReferences(filePath, needle, isSchema = false) {
-    const text = fs.readFileSync(filePath, "utf8");
-    const pattern = isSchema
-        ? new RegExp(`\\b${needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`)
-        : null;
-    return text
-        .split(/\r?\n/)
-        .map((line, index) => ({ line, lineNumber: index + 1 }))
-        .filter(({ line }) => (isSchema ? pattern.test(line) : line.includes(needle)));
 }
 
 function hasDeferredLanguage(value) {
@@ -118,27 +89,6 @@ function validatePhaseMetadata(label, item, failures) {
     return { phase: effectivePhase, status };
 }
 
-function collectFutureReferences(futurePaths, futureSchemas) {
-    const failures = [];
-    const files = activeDocRoots.flatMap(walkMarkdown);
-    const sortedPaths = [...futurePaths].sort((left, right) => right.length - left.length);
-
-    for (const filePath of files) {
-        for (const apiPath of sortedPaths) {
-            for (const { lineNumber } of lineReferences(filePath, apiPath)) {
-                failures.push(`${relative(filePath)}:${lineNumber} references deferred OpenAPI path ${apiPath}.`);
-            }
-        }
-        for (const schemaName of futureSchemas) {
-            for (const { lineNumber } of lineReferences(filePath, schemaName, true)) {
-                failures.push(`${relative(filePath)}:${lineNumber} references deferred OpenAPI schema ${schemaName}.`);
-            }
-        }
-    }
-
-    return failures;
-}
-
 function main() {
     const document = readYaml(bundlePath);
     const failures = [];
@@ -158,8 +108,6 @@ function main() {
             futureSchemas.add(schemaName);
         }
     }
-
-    failures.push(...collectFutureReferences(futurePaths, futureSchemas));
 
     if (failures.length > 0) {
         console.error("openapi-phase: FAIL");

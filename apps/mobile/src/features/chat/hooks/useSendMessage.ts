@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { sendMessage } from '../api';
-import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
+import { useAuthStore } from '@/store/authStore';
+
+import { sendMessage } from '../api';
 
 interface SendMessageInput {
   conversationId: string;

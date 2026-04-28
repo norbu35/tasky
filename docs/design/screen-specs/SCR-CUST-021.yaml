@@ -2,8 +2,32 @@
 screen_id: SCR-CUST-021
 name: 'No-Show Flag + Reminder'
 route: null
+presentation:
+  type: inline_modal_sheet
+  host_screen: SCR-CUST-017
+  invocation: 'Customer opens the no-show reminder or flag action from booking detail after policy timers allow it'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-021
+  prd_refs:
+    - REQ-P1-BOOK-19
+    - REQ-P1-BOOK-20
+    - REQ-P1-BOOK-21
+    - REQ-P1-BOOK-22
+    - REQ-P1-BOOK-23
+    - REQ-P1-BOOK-24
+  journey_refs:
+    - JRN-CUST-04-A3
+  scenario_refs:
+    - SCN-BOOK-010
+    - SCN-BOOK-011
+    - SCN-BOOK-012
+    - SCN-BOOK-013
+    - SCN-BOOK-014
+    - SCN-BOOK-015
+    - SCN-BOOK-016
 template: modal_sheet
 figma_page: 'Customer/No-Show Flag Reminder'
 feature: 'booking'
@@ -40,13 +64,13 @@ components:
     variant: success
 
 states:
-  - id: pre_reminder_10min
-    description: 'At scheduled start +10 minutes, system sends a reminder asking customer to update arrival status. Sheet shows gentle prompt asking if the Tasker has arrived'
+  - id: pre_reminder_30min
+    description: 'At scheduled start +30 minutes, system sends a reminder asking customer to update arrival status. Sheet shows gentle prompt asking if the Tasker has arrived'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
-  - id: flag_available_15min
-    description: 'At scheduled start +15 minutes, if neither party checked in within the last 30 minutes and no accepted reschedule supersedes the schedule, the no-show flag button becomes active'
+  - id: flag_available_1h
+    description: 'At scheduled start +1 hour, if neither party checked in within the last 30 minutes and no accepted reschedule supersedes the schedule, the no-show flag button becomes active'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
@@ -67,8 +91,8 @@ copy:
     max_chars: 30
 
   - key: reminder_description
-    mn: 'Товлосон цагаас 10 минут өнгөрлөө. Байдлаа шинэчилнэ үү.'
-    en: '10 minutes past scheduled time. Please update the status.'
+    mn: 'Товлосон цагаас 30 минут өнгөрлөө. Байдлаа шинэчилнэ үү.'
+    en: '30 minutes past scheduled time. Please update the status.'
     max_chars: 80
 
   - key: cta_tasker_arrived
@@ -87,8 +111,8 @@ copy:
     max_chars: 30
 
   - key: flag_description
-    mn: 'Товлосон цагаас 15 минут өнгөрлөө. Ирээгүй гэж тэмдэглэх үү? Энэ нь захиалгыг цуцалж, админ шалгалтад оруулна.'
-    en: '15 minutes past scheduled time. Flag as no-show? This will cancel the booking and trigger an admin review.'
+    mn: 'Товлосон цагаас 1 цаг өнгөрлөө. Ирээгүй гэж тэмдэглэх үү? Энэ нь захиалгыг цуцалж, админ шалгалтад оруулна.'
+    en: '1 hour past scheduled time. Flag as no-show? This will cancel the booking and trigger an admin review.'
     max_chars: 150
 
   - key: cta_flag_no_show
@@ -118,11 +142,11 @@ api_endpoints:
 
 analytics_events:
   - event: 'no_show_reminder_shown'
-    trigger: 'Pre-reminder sheet appears at scheduled start +10 minutes'
+    trigger: 'Pre-reminder sheet appears at scheduled start +30 minutes'
   - event: 'no_show_reminder_tasker_arrived'
-    trigger: 'Customer confirms Tasker arrived at +10 min reminder'
+    trigger: 'Customer confirms Tasker arrived at +30 min reminder'
   - event: 'no_show_flag_available'
-    trigger: 'Flag button becomes active at scheduled start +15 minutes'
+    trigger: 'Flag button becomes active at scheduled start +1 hour'
   - event: 'no_show_flag_submitted'
     trigger: 'Customer taps flag button and POST is sent'
   - event: 'no_show_flag_success'
@@ -131,8 +155,8 @@ analytics_events:
     trigger: 'Customer dismisses the sheet without flagging'
 
 acceptance_criteria:
-  - 'Pre-reminder appears at scheduled start +10 minutes per launch no-show policy'
-  - 'No-show flag button activates only at scheduled start +15 minutes'
+  - 'Pre-reminder appears at scheduled start +30 minutes per launch no-show policy'
+  - 'No-show flag button activates only at scheduled start +1 hour'
   - 'Flag button is only active if the system verifies neither party posted an in-app status update or check-in in the preceding 30 minutes'
   - 'Flag button is disabled if an accepted in-app reschedule has superseded the original schedule'
   - 'Flagging uses danger button variant requiring explicit tap'

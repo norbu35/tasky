@@ -53,11 +53,19 @@ docker compose up -d postgres minio minio-bootstrap
 curl http://127.0.0.1:8080/actuator/health
 ```
 
+Fresh databases run a schema-only Flyway baseline. Before posting-flow smoke tests, create launch categories and intake
+schemas through the admin/setup path. If your local Postgres volume ran the old pre-baseline migration chain, recreate it:
+
+```bash
+docker compose down
+docker volume rm "$(basename "$PWD")_postgres_data"
+```
+
 ## Frontend
 
 ```bash
 pnpm install
-pnpm sdk:generate
+pnpm contract:sdk:generate
 pnpm --filter @tasky/web dev
 pnpm --filter @tasky/mobile start
 ```

@@ -16,6 +16,7 @@ import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
 import mn.tasky.messaging.dto.Conversation;
 import mn.tasky.notification.application.NotificationService;
+import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.TaskLifecycleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Handles NO_SHOW adjudication for bookings.
  * <p>
- * A booking is eligible for a no-show reminder 10 minutes after its confirmed schedule.
- * A booking can be flagged as NO_SHOW 15 minutes after its confirmed schedule,
+ * A booking is eligible for a no-show reminder 30 minutes after its confirmed schedule.
+ * A booking can be flagged as NO_SHOW 1 hour after its confirmed schedule,
  * provided there is no recent activity from either party and no future reschedule.
  */
 @Service
@@ -34,8 +35,8 @@ public class NoShowService {
 
     private static final Logger log = LoggerFactory.getLogger(NoShowService.class);
 
-    private static final int REMINDER_DELAY_MINUTES = 10;
-    private static final int FLAG_ELIGIBILITY_MINUTES = 15;
+    private static final int REMINDER_DELAY_MINUTES = 30;
+    private static final int FLAG_ELIGIBILITY_MINUTES = 60;
     private static final int INACTIVITY_WINDOW_MINUTES = 30;
 
     private final BookingDao bookingDao;
@@ -48,6 +49,7 @@ public class NoShowService {
     private final ModerationService moderationService;
     private final NotificationService notificationService;
     private final AuditEventDao auditEventDao;
+    private final ReviewEnforcementService reviewEnforcementService;
 
     public NoShowService(
             BookingDao bookingDao,
@@ -59,7 +61,8 @@ public class NoShowService {
             TaskLifecycleService taskLifecycleService,
             ModerationService moderationService,
             NotificationService notificationService,
-            AuditEventDao auditEventDao) {
+            AuditEventDao auditEventDao,
+            ReviewEnforcementService reviewEnforcementService) {
         this.bookingDao = bookingDao;
         this.timelineService = timelineService;
         this.bookingTimelineEventDao = bookingTimelineEventDao;
@@ -70,10 +73,11 @@ public class NoShowService {
         this.moderationService = moderationService;
         this.notificationService = notificationService;
         this.auditEventDao = auditEventDao;
+        this.reviewEnforcementService = reviewEnforcementService;
     }
 
     /**
-     * Finds ASSIGNED bookings past their confirmed schedule by 10+ minutes
+     * Finds ASSIGNED bookings past their confirmed schedule by 30+ minutes
      * that have not yet received a NO_SHOW_REMINDER_SENT timeline event.
      */
     public List<BookingState> findBookingsNeedingReminder() {
@@ -126,7 +130,7 @@ public class NoShowService {
             return NoShowFlagResult.error("FORBIDDEN");
         }
 
-        // 2. now() >= confirmedScheduledAt + 15 minutes
+        // 2. now() >= confirmedScheduledAt + 1 hour
         Instant now = Instant.now();
         if (booking.confirmedScheduledAt() == null) {
             return NoShowFlagResult.error("NO_SCHEDULE");
@@ -180,6 +184,9 @@ public class NoShowService {
         if (booking.taskerId().equals(noShowPartyId)) {
             moderationService.addStrike(noShowPartyId, "NO_SHOW", bookingId);
         }
+
+        reviewEnforcementService.createCasesForBooking(
+                bookingId, booking.customerId(), booking.taskerId(), ReviewEnforcementService.REASON_BOOKING_NO_SHOW);
 
         // Return updated booking
         BookingState updated = bookingDao.findById(bookingId).orElse(booking);

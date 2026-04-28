@@ -19,12 +19,12 @@ Use this file when the change touches `docs/openapi/**` or restructures request/
   `x-tasky-phase`, and `x-tasky-target-phase`. Deferred schemas must carry `x-tasky-status: deferred` and
   `x-tasky-phase`.
 - Keep fragments domain-level. Extend the nearest existing file before creating a new fragment.
-- When the contract changes: update `docs/openapi/**`, run `pnpm openapi:bundle`, regenerate the SDK, then validate the backend contract.
+- When the contract changes: update `docs/openapi/**`, run `pnpm contract:openapi:bundle`, regenerate the SDK, then validate the backend contract.
 
 ## Verification
 
 ```bash
-pnpm openapi:bundle
-pnpm sdk:generate
+pnpm contract:openapi:bundle
+pnpm contract:sdk:generate
 ./gradlew --no-daemon :services:api:openApiValidate
 ```

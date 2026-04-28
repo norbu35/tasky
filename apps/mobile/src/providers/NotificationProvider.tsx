@@ -3,7 +3,6 @@ import { Platform } from 'react-native';
 
 import { registerDevice } from '../features/notifications/api';
 import { registerForPushNotificationsAsync } from '../lib/notifications';
-
 import { useAuthStore } from '../store/authStore';
 
 interface NotificationContextValue {

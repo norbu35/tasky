@@ -1,7 +1,12 @@
 import { ApiError } from './apiClient';
+import { resolveClientLocale } from './clientAnalytics';
 import type { ClientAnalyticsTracker } from './clientAnalytics';
 
-export function parseError(error: unknown, tracker?: ClientAnalyticsTracker): string {
+export function parseError(
+  error: unknown,
+  tracker?: ClientAnalyticsTracker,
+  locale = resolveClientLocale(),
+): string {
   let message = 'Unexpected error. Please try again.';
 
   if (error instanceof ApiError) {
@@ -14,7 +19,7 @@ export function parseError(error: unknown, tracker?: ClientAnalyticsTracker): st
     tracker({
       event_name: 'ERROR_LOGGED',
       platform: 'WEB',
-      locale: 'mn-MN', // Default or extract from context if available
+      locale,
       actor_role: 'UNKNOWN',
       error_message: message,
       error_stack: error instanceof Error ? error.stack : undefined,

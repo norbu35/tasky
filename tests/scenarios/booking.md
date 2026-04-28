@@ -126,9 +126,9 @@ And the terminal booking statuses do not change
 
 **Risk:** Critical
 **PRD:** REQ-P1-BOOK-19
-**Title:** Scheduled start plus 10 minutes sends no-show reminder to both parties
+**Title:** Scheduled start plus 30 minutes sends no-show reminder to both parties
 
-Given a booking remains ASSIGNED at 10 minutes after the current confirmed schedule
+Given a booking remains ASSIGNED at 30 minutes after the current confirmed schedule
 When the no-show reminder job runs
 Then the customer receives a no-show reminder notification
 And the tasker receives a no-show reminder notification
@@ -138,10 +138,10 @@ And a NO_SHOW_REMINDER_SENT timeline event is recorded
 
 **Risk:** Critical
 **PRD:** REQ-P1-BOOK-20
-**Title:** No-show flag before 15 minutes after schedule returns TOO_EARLY
+**Title:** No-show flag before 1 hour after schedule returns TOO_EARLY
 
 Given a booking remains ASSIGNED
-And fewer than 15 minutes have passed since the current confirmed schedule
+And fewer than 1 hour has passed since the current confirmed schedule
 When either participant tries to flag the booking as NO_SHOW
 Then the request is rejected
 And the error code is TOO_EARLY
@@ -153,7 +153,7 @@ And the error code is TOO_EARLY
 **Title:** Recent in-app activity within 30 minutes blocks no-show flag
 
 Given a booking remains ASSIGNED
-And at least 15 minutes have passed since the current confirmed schedule
+And at least 1 hour has passed since the current confirmed schedule
 And either participant has posted an in-app status update, check-in, or message within the last 30 minutes
 When the counterparty tries to flag the booking as NO_SHOW
 Then the request is rejected
@@ -178,7 +178,7 @@ And the error code is RESCHEDULE_SUPERSEDES
 **Title:** Valid no-show flag transitions booking and task to NO_SHOW and records audit history
 
 Given a booking remains ASSIGNED
-And at least 15 minutes have passed since the current confirmed schedule
+And at least 1 hour has passed since the current confirmed schedule
 And neither participant has recent in-app activity in the prior 30 minutes
 And no accepted in-app reschedule supersedes the current schedule
 When a participant validly flags the booking as NO_SHOW
@@ -260,13 +260,15 @@ And reschedule request, accept, decline, and expiry actions are returned as immu
 ## SCN-BOOK-022
 
 **Risk:** Critical
-**PRD:** REQ-P1-BOOK-01
-**Title:** Customer selects one applicant and booking becomes ASSIGNED
+**PRD:** REQ-P1-BOOK-01, REQ-P1-MATCH-04
+**Title:** Customer selects one applicant and selected tasker acceptance confirms booking
 
 Given a task has multiple qualified applications in OPEN status
 When the customer selects exactly one applicant
+Then the selected application enters pending acceptance state
+And no booking is confirmed yet
+And when the selected tasker accepts within the active acceptance window
 Then the booking is created in ASSIGNED status
-And the selected applicant becomes the assigned tasker
 And the booking record references the selected application
 
 ## SCN-BOOK-023
@@ -329,3 +331,64 @@ When the customer does not respond within the configured timeout after reminder 
 Then the booking auto-completes via the timeout path
 And the booking transitions to COMPLETED
 And the completion is recorded as auto-completed rather than customer-confirmed
+
+## SCN-BOOK-028
+
+**Risk:** High
+**PRD:** REQ-P1-BOOK-27
+**Title:** Ops can resolve stalled or contested completion before finalization
+
+Given a booking is in customer-confirmation-pending state
+And the normal completion flow stalls or becomes contested
+When an admin reviews the completion edge case
+Then the admin can record the resolution decision before final booking finalization
+And the decision leaves an audit trail tied to the booking
+
+## SCN-BOOK-029
+
+**Risk:** High
+**PRD:** REQ-P1-BOOK-28
+**Title:** Completion or complaint evidence artifacts can be attached when required
+
+Given a completion dispute or complaint requires supporting evidence
+When a participant or admin attaches an evidence artifact
+Then the artifact is associated with the booking or completion case
+And the artifact is available to authorized admin review surfaces
+
+## SCN-BOOK-030
+
+**Risk:** High
+**PRD:** REQ-P1-PRICE-08
+**Title:** Pricing state changes are auditable from application through booking lock
+
+Given a task receives applications and one applicant is selected
+When application pricing, selection, acceptance, and booking lock events are recorded
+Then each price-relevant state change has an immutable audit event
+And the final locked booking price can be traced back to the accepted budget or quote response
+
+## SCN-BOOK-031
+
+**Risk:** Critical
+**PRD:** REQ-P1-BOOK-03
+**Title:** Selected tasker explicitly declines and task returns to selectable applicants
+
+Given a customer has selected an applicant for a task
+And the pending selection is still within the active acceptance window
+When the selected tasker declines the booking request
+Then no booking is confirmed
+And the pending selection closes as declined
+And the task returns to selectable-applicant state
+And the customer may select a different applicant
+
+## SCN-BOOK-032
+
+**Risk:** High
+**PRD:** REQ-P1-BOOK-29, REQ-P1-PRICE-07, NFR-LEGAL-03
+**Title:** Booking confirmation explains locked price baseline and post-confirmation scope changes
+
+Given a customer is confirming a selected tasker
+When the booking confirmation surface is shown
+Then the locked booking price and intake scope are presented as the baseline agreement
+And the copy explains that material, supply, or scope changes after confirmation must be agreed between the parties
+And the copy instructs participants to keep those agreements in platform-mediated chat or support evidence
+And the copy does not promise automatic price adjustment, payment hold, or payment protection

@@ -135,6 +135,7 @@ public class AdminTaskConciergeAssignmentService {
                 log.warn("Failed to serialize concierge-assign audit metadata", jsonException);
             }
             adminAuditCommandPort.recordAdminAction(adminId, "CONCIERGE_ASSIGN", "BOOKING", booking.id(), metadataJson);
+            marketplaceCommandPort.recordManualRescueIntervention(task.id(), "pre_match", adminId);
 
             idempotencyService.completeWithResource(
                     adminId, IdempotencyOperations.CONCIERGE_ASSIGN, idempotencyKey, "BOOKING", booking.id());

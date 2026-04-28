@@ -44,7 +44,7 @@ export function AdminLayout() {
         <div className="flex h-16 items-center gap-2 border-b border-border px-6">
           <ShieldCheck className="h-6 w-6 text-primary" />
           <span className="text-lg font-extrabold tracking-tight text-primary">
-            {t('admin.title', 'Tasky Admin')}
+            {t('admin.title')}
           </span>
         </div>
         <nav className="flex flex-col gap-1 p-4" aria-label="Admin navigation">
@@ -73,11 +73,11 @@ export function AdminLayout() {
         {/* Top header */}
         <header className="flex h-16 items-center justify-between border-b border-border bg-background/70 backdrop-blur-md px-6">
           <span className="text-lg font-extrabold tracking-tight text-primary md:hidden">
-            {t('admin.title', 'Tasky Admin')}
+            {t('admin.title')}
           </span>
           <div className="ml-auto">
             <Button variant="ghost" size="sm" className="text-xs font-semibold" onClick={signOut}>
-              {t('nav.logout', 'Sign out')}
+              {t('nav.logout')}
             </Button>
           </div>
         </header>

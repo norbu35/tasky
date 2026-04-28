@@ -8,17 +8,12 @@ export function TaskerPrivacyPage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('taskerPages.privacy.title', 'Privacy policy')}
-      description={t('taskerPages.privacy.description', 'How tasker data is handled in Phase 1.')}
+      title={t('taskerPages.privacy.title')}
+      description={t('taskerPages.privacy.description')}
     >
       <Card>
         <CardContent className="space-y-3 p-4 text-sm text-muted-foreground">
-          <p>
-            {t(
-              'taskerPages.privacy.content',
-              'We only show the minimum task details needed to complete assigned jobs safely.',
-            )}
-          </p>
+          <p>{t('taskerPages.privacy.content')}</p>
         </CardContent>
       </Card>
     </ResponsiveDetailShell>

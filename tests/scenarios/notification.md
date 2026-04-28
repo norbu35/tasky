@@ -4,7 +4,7 @@
 
 ## SCN-NOTIF-001
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-NOTIF-01
 **Title:** New task matching a tasker's category triggers a push notification to that tasker
 
@@ -14,27 +14,28 @@ Then a push notification is sent to the tasker's device token
 
 ## SCN-NOTIF-002
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-NOTIF-02
-**Title:** Booking confirmation sends hired notification to the tasker
+**Title:** Selected tasker notification is sent when chosen by a customer
 
-Given a customer has accepted a tasker's application
-When the booking is confirmed
-Then a push notification is sent to the tasker indicating they are hired
+Given a customer selects exactly one applicant for a task
+When the pending acceptance window starts
+Then a push notification is sent to the selected tasker indicating they were chosen
+And the notification does not imply booking confirmation before tasker acceptance
 
 ## SCN-NOTIF-003
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-NOTIF-04
 **Title:** No-show reminder sends notification to both booking participants
 
-Given a booking is past scheduled start plus 10 minutes with no check-in
+Given a booking is past scheduled start plus 30 minutes with no check-in
 When the no-show reminder job runs
 Then both customer and tasker receive a push notification
 
 ## SCN-NOTIF-004
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-NOTIF-07
 **Title:** Registering a device token stores it for the authenticated user
 
@@ -44,7 +45,7 @@ Then the token is stored and associated with the user
 
 ## SCN-NOTIF-005
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-NOTIF-07
 **Title:** Unregistering a device token removes it for the authenticated user
 
@@ -54,7 +55,7 @@ Then the token is no longer associated with the user
 
 ## SCN-NOTIF-006
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-NOTIF-06
 **Title:** Verification decision notification is sent to the affected tasker
 
@@ -64,10 +65,33 @@ Then the affected tasker receives a push notification informing them of the deci
 
 ## SCN-NOTIF-007
 
-**Risk:** Medium
+**Risk:** High
 **PRD:** REQ-P1-NOTIF-05
-**Title:** Completion prompt and review obligation notification is sent to both participants
+**Title:** Review obligation notification is sent to both participants
 
-Given a booking has just transitioned to COMPLETED
-When the completion workflow finishes
+Given a reviewable terminal outcome has created review debt
+When the review obligation workflow finishes
 Then both the customer and tasker receive a notification prompting them to submit their owed review
+
+## SCN-NOTIF-008
+
+**Risk:** High
+**PRD:** REQ-P1-NOTIF-03
+**Title:** Booking confirmation notification is sent to both participants
+
+Given a selected tasker accepts within the active acceptance window
+When the booking becomes confirmed
+Then the customer receives a booking-confirmed notification
+And the tasker receives a booking-confirmed notification
+
+## SCN-NOTIF-009
+
+**Risk:** High
+**PRD:** REQ-P1-NOTIF-05, REQ-P1-BOOK-25
+**Title:** Completion silence reminder uses push notification when a device token exists
+
+Given a booking is waiting on customer confirmation after the tasker marked it complete
+And the customer has a registered device token
+When the completion silence reminder is due
+Then the customer receives a push notification asking them to confirm or dispute completion
+And the reminder is recorded as a completion reminder attempt

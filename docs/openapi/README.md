@@ -12,8 +12,8 @@ Tasky authors the active API contract in split source files under `docs/openapi/
 ## Workflow
 
 1. Edit the relevant split source file under `docs/openapi/**`.
-2. Run `pnpm openapi:bundle` to refresh `docs/API.yaml`.
-3. Run `pnpm sdk:generate` if consumer SDKs need regeneration.
+2. Run `pnpm contract:openapi:bundle` to refresh `docs/API.yaml`.
+3. Run `pnpm contract:sdk:generate` if consumer SDKs need regeneration.
 4. Run `./gradlew --no-daemon :services:api:openApiValidate`.
 
 ## Contract boundary

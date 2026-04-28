@@ -8,15 +8,12 @@ export function NotificationsPage() {
 
   return (
     <ResponsiveFeedShell
-      title={t('sharedPages.notifications.title', 'Notifications')}
-      description={t(
-        'sharedPages.notifications.description',
-        'Important updates across bookings, disputes, and reviews.',
-      )}
+      title={t('sharedPages.notifications.title')}
+      description={t('sharedPages.notifications.description')}
     >
       <StatePanel
-        title={t('sharedPages.notifications.emptyTitle', 'All caught up')}
-        description={t('sharedPages.notifications.emptyDesc', 'You are all caught up for now.')}
+        title={t('sharedPages.notifications.emptyTitle')}
+        description={t('sharedPages.notifications.emptyDesc')}
         icon={<Bell className="h-4 w-4" />}
         tone="muted"
       />

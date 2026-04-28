@@ -4,6 +4,17 @@ name: 'Booking Timeline'
 route: '/(customer)/bookings/:bookingId/timeline'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-019
+  prd_refs:
+    - REQ-P1-BOOK-10
+    - REQ-P1-PRICE-08
+    - NFR-RELI-02
+  journey_refs:
+    - JRN-CUST-04-A4
+  scenario_refs:
+    - SCN-BOOK-020
 template: detail
 figma_page: 'Customer/Booking Timeline'
 feature: 'booking'

@@ -23,7 +23,7 @@ export function StepIndicator() {
         >
           <Text className="text-micro font-sans-bold text-primary-foreground">1</Text>
         </View>
-        <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-[0.075em]">
+        <Text className="text-overline font-sans-bold text-text-secondary uppercase">
           {t('customer.bookings.stepChooseDay')}
         </Text>
       </View>
@@ -38,7 +38,7 @@ export function StepIndicator() {
         >
           <Text className="text-micro font-sans-bold text-primary-deep">2</Text>
         </View>
-        <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-[0.075em]">
+        <Text className="text-overline font-sans-bold text-text-secondary uppercase">
           {t('customer.bookings.stepConfirm')}
         </Text>
       </View>

@@ -7,7 +7,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import { ModalSheet } from '@/components/ui/ModalSheet';
 import { overlays } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
-import { mobileSurfaces } from '@/design/surfaces';
 import { useAuthStore } from '@/store/authStore';
 
 const { colors } = mobileTheme;
@@ -41,13 +40,7 @@ export default function SessionExpiredScreen() {
         }}
       >
         <View className="items-center pt-sm">
-          <View
-            className="rounded-full items-center justify-center bg-muted mb-lg"
-            style={{
-              width: mobileSurfaces.statusHero.iconBox,
-              height: mobileSurfaces.statusHero.iconBox,
-            }}
-          >
+          <View className="h-20 w-20 rounded-full items-center justify-center bg-muted mb-lg">
             <LogIn size={24} color={colors.primary} />
           </View>
           <Text className="text-body text-text-secondary text-center leading-6">

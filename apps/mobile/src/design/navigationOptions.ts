@@ -1,13 +1,18 @@
 import { mobileTheme } from './theme';
 
+const headerTitle = mobileTheme.typographyVariants.sectionHeading;
+
 export const defaultStackScreenOptions = {
   headerStyle: {
     backgroundColor: mobileTheme.colors.background,
   },
   headerTintColor: mobileTheme.colors.primary,
   headerTitleStyle: {
-    fontWeight: '700' as const,
-    fontSize: mobileTheme.typography.subtitle,
+    fontFamily: headerTitle.fontFamily,
+    fontWeight: headerTitle.fontWeight,
+    fontSize: headerTitle.fontSize,
+    lineHeight: headerTitle.lineHeight,
+    letterSpacing: headerTitle.letterSpacing,
   },
   headerShadowVisible: false,
 };

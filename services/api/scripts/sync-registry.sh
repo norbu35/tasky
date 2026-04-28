@@ -46,7 +46,7 @@ scenarios = {}
 parse_errors = []
 duplicate_ids = []
 
-VALID_RISKS = {"critical", "high", "medium", "low"}
+VALID_RISKS = {"critical", "high", "medium"}  # Phase 1: no "low" risk tier
 
 for md_file in sorted(scenarios_dir.glob("*.md")):
     domain = md_file.stem
@@ -56,14 +56,15 @@ for md_file in sorted(scenarios_dir.glob("*.md")):
     blocks = re.split(r'\n(?=## SCN-)', content)
     for block in blocks:
         # Detect SCN header presence before full parse — catches malformed blocks
-        header_match = re.match(r'## (SCN-[A-Z]+\d*-\d+)', block)
+        # Enforce 3-digit zero-padded format: SCN-DOMAIN-NNN
+        header_match = re.match(r'## (SCN-[A-Z]+\d*-\d{3})', block)
         if not header_match:
             continue  # Not a scenario block (e.g., file header text)
 
         scn_id_candidate = header_match.group(1)
 
         m = re.match(
-            r'## (SCN-[A-Z]+\d*-\d+)\n+\*\*Risk:\*\* (\w+)\n\*\*PRD:\*\* ([^\n]+)\n\*\*Title:\*\* ([^\n]+)',
+            r'## (SCN-[A-Z]+\d*-\d{3})\n+\*\*Risk:\*\* (Critical|High|Medium)\n\*\*PRD:\*\* ([^\n]+)\n\*\*Title:\*\* ([^\n]+)',
             block
         )
         if not m:
@@ -97,6 +98,16 @@ for md_file in sorted(scenarios_dir.glob("*.md")):
             test_type = "integration"
 
         prev = existing.get(scn_id) or {}
+
+        override_status = prev.get("override_status")
+        valid_override_statuses = {None, "covered", "untested", "waived", "pending"}
+        if override_status not in valid_override_statuses:
+            parse_errors.append(
+                f"  INVALID override_status '{override_status}' for {scn_id} "
+                f"— must be one of: {', '.join(str(s) for s in sorted(valid_override_statuses) if s)}"
+            )
+            continue
+
         scenarios[scn_id] = {
             "title": title,
             "domain": domain,
@@ -107,7 +118,7 @@ for md_file in sorted(scenarios_dir.glob("*.md")):
             "mutation_kill_rate": prev.get("mutation_kill_rate"),
             "mutation_kill_rate_updated_at": prev.get("mutation_kill_rate_updated_at"),
             "notes": prev.get("notes"),
-            "override_status": prev.get("override_status"),
+            "override_status": override_status,
         }
 
 # Report parse errors as warnings (stderr)

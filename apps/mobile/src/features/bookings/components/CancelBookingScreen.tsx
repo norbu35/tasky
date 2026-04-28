@@ -28,6 +28,29 @@ const SHEET_TEST_IDS: Record<Role, string> = {
   tasker: 'tasker-cancel-booking-sheet',
 };
 
+const CANCEL_SCREEN_COPY_KEYS: Record<
+  Role,
+  {
+    title: string;
+    warning: string;
+    confirm: string;
+    error: string;
+  }
+> = {
+  customer: {
+    title: 'Cancel.title',
+    warning: 'CustomerCancelSheet.copy1',
+    confirm: 'Cancel.confirm',
+    error: 'CustomerCancelSheet.cancelError',
+  },
+  tasker: {
+    title: 'Cancel.title',
+    warning: 'TaskerCancelSheet.copy1',
+    confirm: 'Cancel.confirm',
+    error: 'TaskerCancelSheet.cancelError',
+  },
+};
+
 export default function CancelBookingScreen({ role }: CancelBookingScreenProps) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -43,10 +66,7 @@ export default function CancelBookingScreen({ role }: CancelBookingScreenProps) 
       setIsOpen(false);
       router.back();
     } catch {
-      Alert.alert(
-        t('common.error'),
-        t(role === 'customer' ? 'customer.bookings.cancelError' : 'tasker.jobs.cancelError'),
-      );
+      Alert.alert(t('common.error'), t(CANCEL_SCREEN_COPY_KEYS[role].error));
     }
   }, [bookingId, cancelBooking, router, t, role]);
 
@@ -58,23 +78,23 @@ export default function CancelBookingScreen({ role }: CancelBookingScreenProps) 
           setIsOpen(false);
           router.back();
         }}
-        title={t(`${role}.cancelBooking.title`)}
+        title={t(CANCEL_SCREEN_COPY_KEYS[role].title)}
         testID={SHEET_TEST_IDS[role]}
       >
         <View className="items-center gap-lg">
           <AlertTriangle size={24} color={colors.danger} />
           <Text className="text-body text-muted-foreground text-center leading-6">
-            {t(`${role}.cancelBooking.warning`)}
+            {t(CANCEL_SCREEN_COPY_KEYS[role].warning)}
           </Text>
           <Button
-            label={t(`${role}.cancelBooking.confirm`)}
+            label={t(CANCEL_SCREEN_COPY_KEYS[role].confirm)}
             variant="destructive"
             onPress={() => void handleCancel()}
             isLoading={isPending}
             className="self-stretch"
           />
           <Button
-            label={t('common.goBack')}
+            label={t('common.back')}
             variant="ghost"
             onPress={() => {
               setIsOpen(false);

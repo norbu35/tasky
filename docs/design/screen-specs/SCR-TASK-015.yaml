@@ -1,9 +1,27 @@
 # Screen Spec: Booking Cancel (Tasker)
 screen_id: SCR-TASK-015
 name: 'Booking Cancel (Tasker)'
-route: null
+route: '/(tasker)/jobs/:bookingId/cancel'
+presentation:
+  type: route_backed_modal_sheet
+  host_screen: SCR-TASK-013
+  invocation: "Tasker taps 'Cancel' on a confirmed booking"
 role: [tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-015
+  prd_refs:
+    - REQ-P1-BOOK-16
+    - REQ-P1-BOOK-17
+    - REQ-P1-BOOK-18
+  journey_refs:
+    - JRN-TASK-04-A1
+    - JRN-TASK-04-A3
+  scenario_refs:
+    - SCN-BOOK-005
+    - SCN-BOOK-006
+    - SCN-BOOK-021
 template: modal_sheet
 figma_page: 'Tasker/Booking Cancel Tasker'
 feature: 'tasker-bookings'
@@ -86,6 +104,12 @@ states:
     components_hidden:
       [reason_selector, cancel_button, back_button, strike_warning, suspension_warning]
 
+  - id: safety_fraud_selected
+    description: 'Safety or fraud reason selected — ordinary strike messaging is suppressed and trust handling copy is shown'
+    components_visible:
+      [handle_bar, cancel_heading, reason_selector, safety_fraud_notice, cancel_button, back_button]
+    components_hidden: [strike_warning, suspension_warning, impact_notice, confirming_spinner]
+
 copy:
   - key: cancel_heading
     mn: 'Захиалга цуцлах уу?'
@@ -95,12 +119,12 @@ copy:
   - key: cancel_description
     mn: 'Захиалга цуцлагдвал даалгавар дахин нээлттэй болно. Цуцлалт таны найдвартай байдлын үзүүлэлтэд нөлөөлнө.'
     en: 'Cancelling will reopen the task. Cancellations affect your reliability score.'
-    max_chars: 100
+    max_chars: 120
 
   - key: impact_notice
-    mn: 'Цуцлалт нь таны хайлтын эрэмбэлэлт болон найдвартай байдлын үнэлгээнд нөлөөлнө.'
-    en: 'Cancellations affect your search ranking and reliability score.'
-    max_chars: 70
+    mn: 'Энгийн цуцлалт нь таны найдвартай байдлын бүртгэлд нөлөөлж, хяналт үүсгэж болно.'
+    en: 'Ordinary cancellations affect your reliability record and may trigger enforcement review.'
+    max_chars: 100
 
   - key: strike_warning
     mn: 'Анхааруулга: Та сүүлийн 30 хоногт {count} удаа цуцалсан байна.'
@@ -137,10 +161,20 @@ copy:
     en: 'Emergency'
     max_chars: 25
 
+  - key: reason_safety_fraud
+    mn: 'Аюулгүй байдал эсвэл залилан'
+    en: 'Safety or fraud concern'
+    max_chars: 35
+
   - key: reason_other
     mn: 'Бусад'
     en: 'Other'
     max_chars: 10
+
+  - key: safety_fraud_notice
+    mn: 'Энэ шалтгаан нь энгийн цохилтод тооцогдохгүй. Tasky баг аюулгүй байдлын шалгалтаар хянана.'
+    en: 'This reason bypasses ordinary strike handling and opens a trust-and-safety review.'
+    max_chars: 120
 
   - key: cancel_confirm_button
     mn: 'Цуцлахыг баталгаажуулах'
@@ -160,7 +194,7 @@ copy:
 api_endpoints:
   - method: PUT
     path: '/bookings/:id/cancel'
-    purpose: 'Cancel the booking — task reverts to OPEN, strike count incremented'
+    purpose: 'Cancel the booking — ordinary cancellations reopen the task and increment strike count; safety/fraud reasons open trust handling'
 
 analytics_events:
   - event: 'booking_cancel_tasker_viewed'
@@ -173,6 +207,8 @@ analytics_events:
     trigger: 'Tasker confirms cancellation'
   - event: 'booking_cancel_tasker_reason_selected'
     trigger: 'Tasker selects a cancellation reason'
+  - event: 'booking_cancel_tasker_safety_fraud_selected'
+    trigger: 'Tasker selects Safety or fraud concern as the cancellation reason'
   - event: 'booking_cancel_tasker_aborted'
     trigger: 'Tasker taps Go Back to keep the booking'
 
@@ -185,6 +221,7 @@ acceptance_criteria:
   - "Suspension warning state shows explicit '7 хоногоор түдгэлзэнэ' message when at 2/3 strikes"
   - "At 2/3 strikes, confirm button text changes to 'Цуцлах (түдгэлзүүлэх эрсдэлтэй!)'"
   - 'Reason selector requires selection before confirm button enables'
+  - 'Safety/Fraud reason bypasses strike increment and opens trust-and-safety handling path'
   - 'Confirm button uses danger variant for destructive action'
   - 'Cancel triggers PUT /bookings/:id/cancel'
   - 'On confirmation, navigates to My Jobs (SCR-TASK-012) via replace'

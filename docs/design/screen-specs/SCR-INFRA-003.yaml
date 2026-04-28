@@ -1,71 +1,84 @@
 # Screen Spec: Session Expired
 screen_id: SCR-INFRA-003
-name: "Session Expired"
-route: null
+name: 'Session Expired'
+route: '/(shared)/session-expired'
+presentation:
+  type: route_backed_full_screen
+  invocation: 'Shown after token expiry, token revocation, or a non-recoverable authenticated 401'
 role: [customer, tasker]
-phase: "0-1"
-template: modal_sheet
-figma_page: "Infrastructure/Session Expired"
-feature: "infrastructure"
+phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-INFRA-003
+  prd_refs:
+    - REQ-P1-AUTH-03
+    - NFR-SEC-04
+  journey_refs:
+    - JRN-INFRA-01-P2
+  scenario_refs:
+    - SCN-SEC-001
+    - SCN-AUTH-007
+template: error_state
+figma_page: 'Infrastructure/Session Expired'
+feature: 'infrastructure'
 
 layout:
-  template: modal_sheet
-  density: default
-  structure: "scrim -> sheet(handle + icon + message + cta)"
+  template: error_state
+  density: comfortable
+  structure: 'safe_area -> centered(icon + message + cta)'
 
 components:
-  - id: COMP-MODALSHEET
-    usage: "Bottom sheet container for session expired prompt"
+  - id: COMP-EMPTYSTATE
+    usage: 'Full-screen blocker explaining that the current session expired'
     props:
-      visible: true
-      title: "Хугацаа дууссан"
-      primaryAction:
-        label: "Дахин нэвтрэх"
-        onPress: "navigate_to_login"
-    variant: default
+      illustration: 'session_expired'
+      headline: 'Хугацаа дууссан'
+      description: 'Таны нэвтрэх хугацаа дууссан байна. Дахин нэвтэрнэ үү'
+      ctaLabel: 'Дахин нэвтрэх'
+    variant: error
 
   - id: COMP-BUTTON
-    usage: "Primary CTA to navigate to login screen for re-authentication"
+    usage: 'Primary CTA to navigate to login screen for re-authentication'
     props:
-      label: "Дахин нэвтрэх"
+      label: 'Дахин нэвтрэх'
       variant: primary
       size: lg
     variant: primary
 
 states:
   - id: default
-    description: "JWT expired or invalidated server-side; user must re-login"
-    components_visible: [COMP-MODALSHEET, COMP-BUTTON]
+    description: 'JWT expired or invalidated server-side; user must re-login'
+    components_visible: [COMP-EMPTYSTATE, COMP-BUTTON]
     components_hidden: []
 
 copy:
   - key: sheet_title
-    mn: "Хугацаа дууссан"
-    en: "Session expired"
+    mn: 'Хугацаа дууссан'
+    en: 'Session expired'
     max_chars: 30
 
   - key: sheet_description
-    mn: "Таны нэвтрэх хугацаа дууссан байна. Дахин нэвтэрнэ үү"
-    en: "Your session has expired. Please log in again"
+    mn: 'Таны нэвтрэх хугацаа дууссан байна. Дахин нэвтэрнэ үү'
+    en: 'Your session has expired. Please log in again'
     max_chars: 80
 
   - key: cta_relogin
-    mn: "Дахин нэвтрэх"
-    en: "Log in again"
+    mn: 'Дахин нэвтрэх'
+    en: 'Log in again'
     max_chars: 20
 
 api_endpoints: []
 
 analytics_events:
-  - event: "session_expired_shown"
-    trigger: "Bottom sheet displayed after 401 response or JWT expiry detected"
-  - event: "session_relogin_tapped"
+  - event: 'session_expired_shown'
+    trigger: 'Full-screen session-expired route displayed after 401 response or JWT expiry detected'
+  - event: 'session_relogin_tapped'
     trigger: "User taps 'Log in again' to navigate to login"
 
 acceptance_criteria:
-  - "Bottom sheet appears with branded scrim overlay (primaryDeep at 35%)"
-  - "Sheet is not dismissible by drag-to-close; user must tap 'Log in again'"
+  - 'Full-screen blocker appears above the app after token expiry or revocation'
+  - "Screen is not dismissible as a normal modal; user must tap 'Log in again'"
   - "Tapping 'Log in again' replaces entire navigation stack with login screen (SCR-SHARED-002)"
-  - "All local user state is preserved; only auth token is cleared"
-  - "Sheet renders at z-index 30 (sheet elevation)"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'All local user state is preserved; only auth token is cleared'
+  - 'Route renders without tab chrome or protected-app actions'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

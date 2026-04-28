@@ -1,250 +1,307 @@
 # Screen Spec: Profile — Settings
 screen_id: SCR-SHARED-014
-name: "Profile — Settings"
-route: "/profile/settings"
+name: 'Profile — Settings'
+route: '/profile/settings'
 role: [customer, tasker]
-phase: "0-1"
+phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-SHARED-014
+  prd_refs:
+    - REQ-P1-AUTH-06
+    - REQ-P1-SAFE-01
+    - REQ-P1-SAFE-04
+    - REQ-P1-COVER-05
+    - NFR-SEC-04
+    - NFR-LEGAL-03
+  journey_refs:
+    - JRN-SHARED-06:step-1
+    - JRN-SHARED-06-A1
+    - JRN-SHARED-06-A2
+    - JRN-SHARED-06-A6
+  scenario_refs:
+    - SCN-AUTH-002
+    - SCN-AUTH-003
+    - SCN-VERIF-001
+    - SCN-TASK-032
+    - SCN-SEC-013
 template: settings
-figma_page: "Shared/Profile — Settings"
-feature: "settings"
+figma_page: 'Shared/Profile — Settings'
+feature: 'settings'
 
 layout:
   template: settings
   density: default
-  structure: "safe_area -> nav_header(back + title) -> scrollview(grouped_list_sections: preferences, account, legal, danger_zone)"
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(grouped_list_sections: preferences, account, legal, danger_zone)'
 
 components:
   - id: COMP-LISTROW
-    usage: "Each setting item displayed as a tappable row with disclosure or toggle"
+    usage: 'Each setting item displayed as a tappable row with disclosure or toggle'
     props:
-      label: "Хэл"
-      value: "Монгол"
+      label: 'Хэл'
+      value: 'Монгол'
       showDisclosure: true
-      icon: "globe"
+      icon: 'globe'
     variant: default
 
   - id: COMP-LISTROW
-    usage: "Destructive account deletion row at bottom in danger color"
+    usage: 'Tasker-only row for service-area notification preferences; preferences do not gate browsing or applications'
     props:
-      label: "Бүртгэл устгах"
+      label: 'Үйлчлэх дүүргүүд'
+      value: '{selected_district_count}'
+      showDisclosure: true
+      icon: 'map-pin'
+    variant: default
+
+  - id: COMP-LISTROW
+    usage: 'Destructive account deletion row at bottom in danger color'
+    props:
+      label: 'Бүртгэл устгах'
       isDestructive: true
-      icon: "trash"
+      icon: 'trash'
     variant: destructive
 
   - id: COMP-TOGGLE
-    usage: "Toggle switch for notification and language settings"
+    usage: 'Toggle switch for notification and language settings'
     props:
       value: true
-      onValueChange: "handleNotificationToggle"
+      onValueChange: 'handleNotificationToggle'
       disabled: false
     variant: default
 
   - id: COMP-LANGUAGESWITCHER
-    usage: "Language preference toggle between Mongolian and English"
+    usage: 'Language preference toggle between Mongolian and English'
     props:
-      currentLang: "mn"
-      onSwitch: "handleLanguageSwitch"
+      currentLang: 'mn'
+      onSwitch: 'handleLanguageSwitch'
     variant: default
 
   - id: COMP-MODALSHEET
-    usage: "Confirmation sheet for role switch and account deletion"
+    usage: 'Confirmation sheet for role switch and account deletion'
     props:
       visible: false
-      title: "Бүртгэл устгах уу?"
-      primaryAction: "Тийм"
-      secondaryAction: "Үгүй"
+      title: 'Бүртгэл устгах уу?'
+      primaryAction: 'Тийм'
+      secondaryAction: 'Үгүй'
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Primary and secondary action buttons inside confirmation modal sheets"
+    usage: 'Primary and secondary action buttons inside confirmation modal sheets'
     props:
-      label: "Батлах"
+      label: 'Батлах'
       variant: danger
       size: lg
     variant: danger
 
 states:
   - id: default
-    description: "Settings screen loaded with current preferences; all list rows visible"
+    description: 'Settings screen loaded with current preferences; all list rows visible'
     components_visible: [COMP-LISTROW, COMP-TOGGLE, COMP-LANGUAGESWITCHER]
     components_hidden: [COMP-MODALSHEET]
 
+  - id: tasker_service_area_preferences
+    description: 'Verified Tasker edits district preferences used for notification targeting only; citywide browsing and application eligibility are unchanged'
+    components_visible: [COMP-LISTROW, COMP-MODALSHEET, COMP-BUTTON]
+    components_hidden: []
+
   - id: language_mn
-    description: "Language is set to Mongolian (default); toggle reflects mn state"
+    description: 'Language is set to Mongolian (default); toggle reflects mn state'
     components_visible: [COMP-LISTROW, COMP-TOGGLE, COMP-LANGUAGESWITCHER]
     components_hidden: [COMP-MODALSHEET]
 
   - id: language_en
-    description: "Language is set to English; toggle reflects en state, all UI copy switches"
+    description: 'Language is set to English; toggle reflects en state, all UI copy switches'
     components_visible: [COMP-LISTROW, COMP-TOGGLE, COMP-LANGUAGESWITCHER]
     components_hidden: [COMP-MODALSHEET]
 
   - id: notification_on
-    description: "Push notifications are enabled; notification toggle is ON"
+    description: 'Push notifications are enabled; notification toggle is ON'
     components_visible: [COMP-LISTROW, COMP-TOGGLE]
     components_hidden: [COMP-MODALSHEET]
 
   - id: notification_off
-    description: "Push notifications are disabled; notification toggle is OFF"
+    description: 'Push notifications are disabled; notification toggle is OFF'
     components_visible: [COMP-LISTROW, COMP-TOGGLE]
     components_hidden: [COMP-MODALSHEET]
 
   - id: role_switch_confirm
-    description: "User tapped role switch; confirmation modal sheet appears asking to confirm"
+    description: 'User tapped role switch; confirmation modal sheet appears asking to confirm'
     components_visible: [COMP-LISTROW, COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: []
 
   - id: delete_confirm
-    description: "User tapped Delete Account; confirmation modal sheet appears with danger styling"
+    description: 'User tapped Delete Account; confirmation modal sheet appears with danger styling'
     components_visible: [COMP-LISTROW, COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: []
 
 copy:
   - key: nav_title
-    mn: "Тохиргоо"
-    en: "Settings"
+    mn: 'Тохиргоо'
+    en: 'Settings'
     max_chars: 15
 
   - key: section_preferences
-    mn: "Тохируулга"
-    en: "Preferences"
+    mn: 'Тохируулга'
+    en: 'Preferences'
     max_chars: 20
 
   - key: label_language
-    mn: "Хэл"
-    en: "Language"
+    mn: 'Хэл'
+    en: 'Language'
     max_chars: 10
 
   - key: label_notifications
-    mn: "Мэдэгдэл"
-    en: "Notifications"
+    mn: 'Мэдэгдэл'
+    en: 'Notifications'
     max_chars: 20
 
+  - key: label_service_areas
+    mn: 'Үйлчлэх дүүргүүд'
+    en: 'Service areas'
+    max_chars: 25
+
+  - key: service_areas_note
+    mn: 'Эдгээр сонголт нь зөвхөн мэдэгдлийн чиглүүлэлтэд ашиглагдана'
+    en: 'These preferences only affect notification targeting'
+    max_chars: 80
+
   - key: section_account
-    mn: "Бүртгэл"
-    en: "Account"
+    mn: 'Бүртгэл'
+    en: 'Account'
     max_chars: 15
 
   - key: label_role_switch
-    mn: "Дүр солих"
-    en: "Switch Role"
+    mn: 'Дүр солих'
+    en: 'Switch Role'
     max_chars: 20
 
   - key: value_customer
-    mn: "Захиалагч"
-    en: "Customer"
+    mn: 'Захиалагч'
+    en: 'Customer'
     max_chars: 15
 
   - key: value_tasker
-    mn: "Гүйцэтгэгч"
-    en: "Tasker"
+    mn: 'Гүйцэтгэгч'
+    en: 'Tasker'
     max_chars: 15
 
   - key: section_legal
-    mn: "Хуулийн мэдээлэл"
-    en: "Legal"
+    mn: 'Хуулийн мэдээлэл'
+    en: 'Legal'
     max_chars: 25
 
   - key: label_terms
-    mn: "Үйлчилгээний нөхцөл"
-    en: "Terms of Service"
+    mn: 'Үйлчилгээний нөхцөл'
+    en: 'Terms of Service'
     max_chars: 25
 
   - key: label_privacy
-    mn: "Нууцлалын бодлого"
-    en: "Privacy Policy"
+    mn: 'Нууцлалын бодлого'
+    en: 'Privacy Policy'
     max_chars: 25
 
   - key: label_help
-    mn: "Тусламж"
-    en: "Help & Support"
+    mn: 'Тусламж'
+    en: 'Help & Support'
     max_chars: 20
 
   - key: section_danger
-    mn: "Аюултай бүс"
-    en: "Danger Zone"
+    mn: 'Аюултай бүс'
+    en: 'Danger Zone'
     max_chars: 20
 
   - key: label_delete_account
-    mn: "Бүртгэл устгах"
-    en: "Delete Account"
+    mn: 'Бүртгэл устгах'
+    en: 'Delete Account'
     max_chars: 20
 
   - key: modal_role_switch_title
-    mn: "Дүр солих уу?"
-    en: "Switch role?"
+    mn: 'Дүр солих уу?'
+    en: 'Switch role?'
     max_chars: 20
 
   - key: modal_role_switch_body
-    mn: "Та гүйцэтгэгч болж өөрчлөхдөө итгэлтэй байна уу?"
-    en: "Are you sure you want to switch to Tasker?"
+    mn: 'Та гүйцэтгэгч болж өөрчлөхдөө итгэлтэй байна уу?'
+    en: 'Are you sure you want to switch to Tasker?'
     max_chars: 80
 
   - key: modal_delete_title
-    mn: "Бүртгэл устгах уу?"
-    en: "Delete account?"
+    mn: 'Бүртгэл устгах уу?'
+    en: 'Delete account?'
     max_chars: 25
 
   - key: modal_delete_body
-    mn: "Энэ үйлдлийг буцаах боломжгүй. Таны бүх мэдээлэл устгагдана."
-    en: "This action cannot be undone. All your data will be permanently deleted."
+    mn: 'Энэ үйлдлийг буцаах боломжгүй. Таны бүх мэдээлэл устгагдана.'
+    en: 'This action cannot be undone. All your data will be permanently deleted.'
     max_chars: 100
 
   - key: cta_confirm
-    mn: "Батлах"
-    en: "Confirm"
+    mn: 'Батлах'
+    en: 'Confirm'
     max_chars: 10
 
   - key: cta_cancel
-    mn: "Болих"
-    en: "Cancel"
+    mn: 'Болих'
+    en: 'Cancel'
     max_chars: 10
 
   - key: label_app_version
-    mn: "Хувилбар"
-    en: "App Version"
+    mn: 'Хувилбар'
+    en: 'App Version'
     max_chars: 15
 
 api_endpoints:
   - method: GET
-    path: "/users/me"
-    purpose: "Fetch current user settings including role, language preference, notification status"
+    path: '/users/me'
+    purpose: 'Fetch current user settings including role, language preference, notification status'
   - method: PUT
-    path: "/users/me/role"
-    purpose: "Switch user role between customer and tasker"
+    path: '/users/me/role'
+    purpose: 'Switch user role between customer and tasker'
+  - method: GET
+    path: '/taskers/me/service-areas'
+    purpose: 'Fetch the authenticated Tasker service-area notification preferences'
+  - method: PUT
+    path: '/taskers/me/service-areas'
+    purpose: 'Replace the authenticated Tasker service-area notification preferences'
 
 analytics_events:
-  - event: "settings_viewed"
-    trigger: "Settings screen loads"
-  - event: "settings_language_changed"
-    trigger: "User toggles language between mn and en"
-  - event: "settings_notifications_toggled"
-    trigger: "User toggles notification preference on or off"
-  - event: "settings_role_switch_initiated"
-    trigger: "User taps Switch Role row"
-  - event: "settings_role_switch_confirmed"
-    trigger: "User confirms role switch in modal"
-  - event: "settings_delete_account_initiated"
-    trigger: "User taps Delete Account row"
-  - event: "settings_terms_tapped"
-    trigger: "User taps Terms of Service"
-  - event: "settings_privacy_tapped"
-    trigger: "User taps Privacy Policy"
-  - event: "settings_help_tapped"
-    trigger: "User taps Help & Support"
+  - event: 'settings_viewed'
+    trigger: 'Settings screen loads'
+  - event: 'settings_language_changed'
+    trigger: 'User toggles language between mn and en'
+  - event: 'settings_notifications_toggled'
+    trigger: 'User toggles notification preference on or off'
+  - event: 'settings_service_areas_tapped'
+    trigger: 'Verified Tasker opens service-area notification preferences'
+  - event: 'settings_service_areas_saved'
+    trigger: 'Tasker saves service-area notification preferences'
+  - event: 'settings_role_switch_initiated'
+    trigger: 'User taps Switch Role row'
+  - event: 'settings_role_switch_confirmed'
+    trigger: 'User confirms role switch in modal'
+  - event: 'settings_delete_account_initiated'
+    trigger: 'User taps Delete Account row'
+  - event: 'settings_terms_tapped'
+    trigger: 'User taps Terms of Service'
+  - event: 'settings_privacy_tapped'
+    trigger: 'User taps Privacy Policy'
+  - event: 'settings_help_tapped'
+    trigger: 'User taps Help & Support'
 
 acceptance_criteria:
-  - "Settings screen displays grouped list rows: Preferences, Account, Legal, and Danger Zone sections"
-  - "Language toggle switches between Mongolian and English and persists immediately"
-  - "Notification toggle enables/disables push notifications"
-  - "Switch Role row shows current role and opens confirmation modal sheet on tap"
-  - "Role switch confirmation calls PUT /users/me/role on confirm"
-  - "If user switches to Tasker and is not verified, navigates (push) to SCR-TASK-003 after confirmation"
-  - "Delete Account row is styled in danger color and opens deletion confirmation modal on tap"
-  - "Delete Account confirmation modal navigates (modal) to SCR-SHARED-015"
-  - "Terms of Service row navigates (push) to SCR-INFRA-004"
-  - "Privacy Policy row navigates (push) to SCR-TASK-018"
-  - "Help & Support row navigates (push) to SCR-INFRA-005"
-  - "Back button navigates (pop) to SCR-SHARED-012"
-  - "All list rows have 44pt minimum touch target"
-  - "Destructive row (Delete Account) uses danger color and is placed at the bottom of the screen"
+  - 'Settings screen displays grouped list rows: Preferences, Account, Legal, and Danger Zone sections'
+  - 'Language toggle switches between Mongolian and English and persists immediately'
+  - 'Notification toggle enables/disables push notifications'
+  - 'Verified Taskers can edit service-area notification preferences from Settings'
+  - 'Service-area preferences affect notification targeting only and never block citywide browsing or application eligibility'
+  - 'Switch Role row shows current role and opens confirmation modal sheet on tap'
+  - 'Role switch confirmation calls PUT /users/me/role on confirm'
+  - 'If user switches to Tasker and is not verified, navigates (push) to SCR-TASK-003 after confirmation'
+  - 'Delete Account row is styled in danger color and opens deletion confirmation modal on tap'
+  - 'Delete Account confirmation modal navigates (modal) to SCR-SHARED-015'
+  - 'Terms of Service row navigates (push) to SCR-INFRA-004'
+  - 'Privacy Policy row navigates (push) to SCR-TASK-018'
+  - 'Help & Support row navigates (push) to SCR-INFRA-005'
+  - 'Back button navigates (pop) to SCR-SHARED-012'
+  - 'All list rows have 44pt minimum touch target'
+  - 'Destructive row (Delete Account) uses danger color and is placed at the bottom of the screen'

@@ -413,7 +413,9 @@ export interface paths {
         /**
          * List open tasks
          * @description Returns a paginated list of OPEN tasks. Supports filtering by category and
-         *     geospatial radius search. Location data is fuzzed for privacy.
+         *     geospatial radius search. The feed is a summary projection: location data
+         *     is district-level/approximate, and customer identity, photos, application
+         *     counts, exact location, and intake details are detail-only.
          */
         get: operations["listTasks"];
         put?: never;
@@ -422,6 +424,8 @@ export interface paths {
          * @description Creates a new task in OPEN status using schema-driven intake payload.
          *     Deterministic scope summary generation runs before final submit; if generation fails,
          *     server falls back to canonical key-value summary and still returns success.
+         *     Task coordinates are validated against the Ulaanbaatar service area at posting time;
+         *     outside-area locations return `400 OUTSIDE_SERVICE_AREA`.
          *     Only authenticated customers can create tasks.
          */
         post: operations["createTask"];
@@ -559,7 +563,8 @@ export interface paths {
         /**
          * Apply to a task
          * @description Tasker applies to an OPEN task. Only verified taskers can apply.
-         *     The current live contract captures a short application note and optional quote_price.
+         *     The current live contract captures a short application note and quote_price for QUOTE tasks.
+         *     BUDGET task applications accept the posted budget and must omit quote_price or send it as null.
          *     Phase 1 launch UX does not expose open-ended pre-booking chat.
          */
         post: operations["applyToTask"];
@@ -594,48 +599,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/tasks/{id}/applications/{applicationId}/select": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Select an applicant (customer action)
-         * @description Customer selects a tasker's application, starting the 4-hour acceptance window.
-         *     The tasker receives a push notification to confirm.
-         */
-        post: operations["selectApplication"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/tasks/{id}/applications/{applicationId}/confirm": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Confirm acceptance (tasker action)
-         * @description Tasker confirms their selection within the 4-hour window.
-         *     Creates a booking and rejects other pending applications.
-         */
-        post: operations["confirmAcceptance"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/tasks/{id}/applications/{applicationId}/withdraw": {
         parameters: {
             query?: never;
@@ -647,8 +610,8 @@ export interface paths {
         put?: never;
         /**
          * Withdraw an application (tasker action)
-         * @description Tasker withdraws their application. If the application was SELECTED,
-         *     the task is reopened for new applications.
+         * @description Tasker withdraws an application before customer selection. Selected applications must be
+         *     accepted or declined through the booking-intent response endpoints.
          */
         post: operations["withdrawApplication"];
         delete?: never;
@@ -818,7 +781,7 @@ export interface paths {
         /**
          * Flag and adjudicate no-show
          * @description No-show adjudication follows deterministic rules:
-         *     reminder at scheduled +10m; no-show flag eligibility at +15m; rejected if either party
+         *     reminder at scheduled +30m; no-show flag eligibility at +1h; rejected if either party
          *     posted a status/check-in in trailing 30 minutes or a newer accepted reschedule supersedes schedule.
          *     On success, both booking and linked task transition to NO_SHOW in one transaction.
          *     Requires Idempotency-Key header.
@@ -952,6 +915,7 @@ export interface paths {
          * Tasker declines booking intent
          * @description The selected tasker declines a pending booking intent.
          *     The customer can then return to the applicant list and choose another tasker.
+         *     Requires Idempotency-Key header.
          */
         post: operations["declineBookingIntent"];
         delete?: never;
@@ -971,7 +935,9 @@ export interface paths {
         put?: never;
         /**
          * Submit a review
-         * @description Submit a review for a COMPLETED booking. Both customer and tasker can review each other.
+         * @description Submit a review for a reviewable terminal booking outcome. Both customer and tasker can review each other.
+         *     COMPLETED bookings are always reviewable for participants.
+         *     NO_SHOW and CANCELLED bookings are reviewable only when the caller has an enforcement case for that booking.
          *     Each party can only submit one review per booking.
          */
         post: operations["submitReview"];
@@ -1036,6 +1002,8 @@ export interface paths {
          *     Allowed states:
          *     - ASSIGNED booking (in-progress)
          *     - COMPLETED booking within 24 hours of completion
+         *     Evidence may be supplied at creation. Without evidence, the dispute enters an evidence-needed grace path with
+         *     a 24-hour deadline measured from the recorded reminder.
          *     Raising a dispute blocks booking closure actions until admin resolution.
          *     Requires Idempotency-Key header.
          */
@@ -1060,6 +1028,27 @@ export interface paths {
         get: operations["getDispute"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/disputes/{id}/evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add dispute evidence
+         * @description Adds evidence to an open dispute. Evidence added during the evidence-needed grace window moves the dispute back
+         *     to ordinary open review and prevents insufficient-evidence auto-close.
+         */
+        post: operations["addDisputeEvidence"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1095,7 +1084,8 @@ export interface paths {
         };
         /**
          * Get messages in a conversation
-         * @description Returns paginated messages in a conversation, ordered by most recent first.
+         * @description Returns paginated messages in a conversation, ordered by most recent first
+         *     using sent_at DESC, id DESC for deterministic keyset pagination.
          *     Only accessible by conversation participants and admins (for dispute resolution).
          */
         get: operations["listMessages"];
@@ -2239,11 +2229,50 @@ export interface components {
             is_active: boolean;
             sort_order: number;
             intake_enabled: boolean;
+            /** @description Admin launch-control flag for task-level assisted distribution. */
+            assisted_distribution_enabled: boolean;
             intake_schema_version: number;
             /** @description Active intake schema payload for task-posting clients. */
             intake_schema_json?: ({
                 [key: string]: unknown;
             } | components["schemas"]["IntakeFieldSchema"][]) | null;
+        };
+        TaskFeedItem: {
+            /** Format: uuid */
+            id: string;
+            category: components["schemas"]["TaskFeedCategory"];
+            description: string;
+            /**
+             * @description BUDGET = customer sets a fixed budget that taskers accept to apply. QUOTE = taskers submit price quotes.
+             * @enum {string}
+             */
+            pricing_mode: "BUDGET" | "QUOTE";
+            /**
+             * @description Budget in MNT when pricing_mode is BUDGET. Null for QUOTE mode tasks.
+             * @example 50000
+             */
+            budget: number | null;
+            /**
+             * @description District-level approximate location for feed scanning. Exact address is detail-only after authorization.
+             * @example Sukhbaatar, Ulaanbaatar
+             */
+            approximate_location: string;
+            /**
+             * Format: double
+             * @description District centroid latitude, not the exact task latitude.
+             */
+            approximate_lat: number;
+            /**
+             * Format: double
+             * @description District centroid longitude, not the exact task longitude.
+             */
+            approximate_lng: number;
+            /** @enum {string} */
+            status: "OPEN";
+            /** Format: date-time */
+            scheduled_at: string;
+            /** Format: date-time */
+            created_at: string;
         };
         PublicTask: {
             /** Format: uuid */
@@ -2257,7 +2286,7 @@ export interface components {
                 avatar_url: string | null;
                 /**
                  * Format: double
-                 * @description Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
+                 * @description Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until at least three customer-to-tasker reviews are submitted.
                  */
                 rating_avg: number;
             };
@@ -2268,7 +2297,7 @@ export interface components {
              */
             budget: number | null;
             /**
-             * @description BUDGET = customer sets a budget, taskers accept or counter-offer. QUOTE = taskers submit price quotes.
+             * @description BUDGET = customer sets a fixed budget that taskers accept to apply. QUOTE = taskers submit price quotes.
              * @enum {string}
              */
             pricing_mode?: "BUDGET" | "QUOTE";
@@ -2311,7 +2340,7 @@ export interface components {
              */
             budget: number | null;
             /**
-             * @description BUDGET = customer sets a budget, taskers accept or counter-offer. QUOTE = taskers submit price quotes.
+             * @description BUDGET = customer sets a fixed budget that taskers accept to apply. QUOTE = taskers submit price quotes.
              * @enum {string}
              */
             pricing_mode?: "BUDGET" | "QUOTE";
@@ -2442,7 +2471,7 @@ export interface components {
                 avatar_url: string | null;
                 /**
                  * Format: double
-                 * @description Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
+                 * @description Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until at least three customer-to-tasker reviews are submitted.
                  */
                 rating_avg: number;
                 completed_tasks: number;
@@ -2450,7 +2479,7 @@ export interface components {
             };
             /** @description Tasker's short structured application note. */
             message: string;
-            /** @description Tasker's price. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the quote (required). */
+            /** @description Tasker's quote for QUOTE tasks. Omit or send null for BUDGET tasks, where applying accepts the posted budget. */
             quote_price?: number | null;
             /** @enum {string} */
             status: "APPLIED" | "SELECTED" | "ACCEPTED" | "DECLINED" | "EXPIRED" | "WITHDRAWN";
@@ -2511,11 +2540,15 @@ export interface components {
             /** Format: uuid */
             customer_id: string;
             /** @enum {string} */
-            source: "APPLICATION_SELECTION";
+            source: "APPLICATION_SELECTION" | "REBOOK" | "INSTANT_MATCH";
             /** @enum {string} */
             status: "PENDING" | "CONFIRMED" | "DECLINED" | "EXPIRED" | "CANCELLED";
             /** Format: uuid */
             selected_application_id?: string | null;
+            /** Format: uuid */
+            original_booking_id?: string | null;
+            /** Format: uuid */
+            offer_id?: string | null;
             /** Format: date-time */
             expires_at?: string | null;
             /** Format: uuid */
@@ -2572,6 +2605,7 @@ export interface components {
             communication_rating?: number;
             clarity_rating?: number;
             respectfulness_rating?: number;
+            /** @description Optional free-text review comment. */
             comment?: string | null;
             /** @description Whether the reviewer would book again. */
             would_book_again?: boolean | null;
@@ -2588,7 +2622,7 @@ export interface components {
             raised_by: string;
             reason: string;
             /** @enum {string} */
-            status: "OPEN" | "RESOLVED_TASKER" | "RESOLVED_CUSTOMER" | "ESCALATED" | "CLOSED_INSUFFICIENT_EVIDENCE";
+            status: "EVIDENCE_NEEDED" | "OPEN" | "RESOLVED_TASKER" | "RESOLVED_CUSTOMER" | "ESCALATED" | "CLOSED_INSUFFICIENT_EVIDENCE";
             /** @enum {string|null} */
             resolution_action?: "RESOLVE_CUSTOMER" | "RESOLVE_TASKER" | "ESCALATE" | "REFUND" | "RELEASE" | null;
             /** Format: uuid */
@@ -2600,12 +2634,25 @@ export interface components {
             created_at: string;
             /** Format: date-time */
             resolved_at?: string | null;
+            /**
+             * Format: date-time
+             * @description Set when the dispute entered the evidence-needed grace path.
+             */
+            evidence_reminder_sent_at?: string | null;
+            /**
+             * Format: date-time
+             * @description Deadline after which a zero-evidence grace dispute can close for insufficient evidence.
+             */
+            evidence_due_at?: string | null;
         };
         DisputeEvidence: {
             /** @enum {string} */
             type: "CHAT_EXCERPT" | "PHOTO" | "WRITTEN_TIMELINE";
             storage_key?: string | null;
             text_payload?: string | null;
+        };
+        AddDisputeEvidenceRequest: {
+            evidence: components["schemas"]["DisputeEvidence"][];
         };
         Conversation: {
             /** Format: uuid */
@@ -2641,7 +2688,80 @@ export interface components {
             phone_number_flagged?: boolean | null;
             content_hash?: string | null;
             /** Format: date-time */
+            sent_at: string;
+        };
+        CreditBalance: {
+            balance: number;
+            total_purchased: number;
+            total_spent: number;
+            total_refunded: number;
+        };
+        CreditTransaction: {
+            /** Format: uuid */
+            id: string;
+            amount: number;
+            /** @enum {string} */
+            type: "PURCHASE" | "SPEND" | "REFUND" | "SIGNUP_BONUS";
+            reference_id?: string | null;
+            /** Format: date-time */
             created_at: string;
+        };
+        CreditPack: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            credit_count: number;
+            price_mnt: number;
+            is_active: boolean;
+        };
+        WalletBalance: {
+            /**
+             * @description Available balance in MNT.
+             * @example 250000
+             */
+            available_balance: number;
+            /**
+             * @description Pending balance in MNT (not yet eligible for payout).
+             * @example 100000
+             */
+            pending_balance: number;
+            /** @example MNT */
+            currency: string;
+        };
+        LedgerEntry: {
+            /** Format: uuid */
+            id: string;
+            /** @description Signed amount in MNT. Positive = credit, negative = debit. */
+            amount: number;
+            /** @enum {string} */
+            type: "DEPOSIT" | "FEE" | "PAYOUT" | "REFUND";
+            /**
+             * Format: uuid
+             * @description Related booking or payout ID.
+             */
+            reference_id?: string | null;
+            /** @example Цэвэрлэгээ ажил #1234 — орлого */
+            description: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        PayoutRequest: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            user_id?: string;
+            /** @description Payout amount in MNT. */
+            amount: number;
+            /** @example Хаан банк */
+            bank_name: string;
+            /** @example 5012345678 */
+            bank_account: string;
+            /** @enum {string} */
+            status: "PENDING" | "PROCESSED" | "REJECTED";
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            processed_at?: string | null;
         };
         FeatureToggle: {
             /** @description Feature toggle key. Active launch docs do not treat toggle presence as rollout scope. */
@@ -2651,6 +2771,26 @@ export interface components {
             updated_by?: string | null;
             /** Format: date-time */
             updated_at: string;
+        };
+        TaskerSubscription: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tasker_id: string;
+            /** @enum {string} */
+            status: "ACTIVE" | "CANCELLED" | "EXPIRED";
+            /** Format: date-time */
+            started_at: string;
+            /** Format: date-time */
+            expires_at?: string | null;
+        };
+        ReferralSummary: {
+            referral_code: string;
+            /** Format: uri */
+            referral_link: string;
+            successful_referrals_this_month: number;
+            /** @description Remaining successful referrals eligible for rewards within monthly cap. */
+            remaining_reward_capacity_this_month?: number;
         };
         ReverseGeocodeResponse: {
             formatted_address: string;
@@ -2738,100 +2878,16 @@ export interface components {
             icon_url: string;
             sort_order: number;
             intake_enabled: boolean;
+            assisted_distribution_enabled: boolean;
             is_active?: boolean;
         };
-        PayoutRequest: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            user_id?: string;
-            /** @description Payout amount in MNT. */
-            amount: number;
-            /** @example Хаан банк */
-            bank_name: string;
-            /** @example 5012345678 */
-            bank_account: string;
-            /** @enum {string} */
-            status: "PENDING" | "PROCESSED" | "REJECTED";
-            /** Format: date-time */
-            created_at: string;
-            /** Format: date-time */
-            processed_at?: string | null;
-        };
-        WalletBalance: {
-            /**
-             * @description Available balance in MNT.
-             * @example 250000
-             */
-            available_balance: number;
-            /**
-             * @description Pending balance in MNT (not yet eligible for payout).
-             * @example 100000
-             */
-            pending_balance: number;
-            /** @example MNT */
-            currency: string;
-        };
-        LedgerEntry: {
-            /** Format: uuid */
-            id: string;
-            /** @description Signed amount in MNT. Positive = credit, negative = debit. */
-            amount: number;
-            /** @enum {string} */
-            type: "DEPOSIT" | "FEE" | "PAYOUT" | "REFUND";
-            /**
-             * Format: uuid
-             * @description Related booking or payout ID.
-             */
-            reference_id?: string | null;
-            /** @example Цэвэрлэгээ ажил #1234 — орлого */
-            description: string;
-            /** Format: date-time */
-            created_at: string;
-        };
-        TaskerSubscription: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            tasker_id: string;
-            /** @enum {string} */
-            status: "ACTIVE" | "CANCELLED" | "EXPIRED";
-            /** Format: date-time */
-            started_at: string;
-            /** Format: date-time */
-            expires_at?: string | null;
-        };
-        CreditBalance: {
-            balance: number;
-            total_purchased: number;
-            total_spent: number;
-            total_refunded: number;
-        };
-        CreditTransaction: {
-            /** Format: uuid */
-            id: string;
-            amount: number;
-            /** @enum {string} */
-            type: "PURCHASE" | "SPEND" | "REFUND" | "SIGNUP_BONUS";
-            reference_id?: string | null;
-            /** Format: date-time */
-            created_at: string;
-        };
-        CreditPack: {
+        TaskFeedCategory: {
             /** Format: uuid */
             id: string;
             name: string;
-            credit_count: number;
-            price_mnt: number;
-            is_active: boolean;
-        };
-        ReferralSummary: {
-            referral_code: string;
+            name_mn: string;
             /** Format: uri */
-            referral_link: string;
-            successful_referrals_this_month: number;
-            /** @description Remaining successful referrals eligible for rewards within monthly cap. */
-            remaining_reward_capacity_this_month?: number;
+            icon_url?: string | null;
         };
     };
     responses: {
@@ -3648,7 +3704,15 @@ export interface operations {
                     "application/json": components["schemas"]["PresignedUrlResponse"];
                 };
             };
-            400: components["responses"]["BadRequest"];
+            /** @description Bad request for pricing-mode validation. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
             401: components["responses"]["Unauthorized"];
         };
     };
@@ -3681,7 +3745,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data: components["schemas"]["PublicTask"][];
+                        data: components["schemas"]["TaskFeedItem"][];
                         cursor: components["schemas"]["CursorPagination"];
                     };
                 };
@@ -3951,7 +4015,7 @@ export interface operations {
                 "application/json": {
                     /** @description Short application note. */
                     message: string;
-                    /** @description Tasker's price response. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the required quote. */
+                    /** @description Tasker's price response for QUOTE tasks. For BUDGET tasks, omit or send null because applying accepts the posted budget. */
                     quote_price?: number | null;
                 };
             };
@@ -3966,7 +4030,15 @@ export interface operations {
                     "application/json": components["schemas"]["TaskApplication"];
                 };
             };
-            400: components["responses"]["BadRequest"];
+            /** @description Bad request for pricing-mode validation. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
             401: components["responses"]["Unauthorized"];
             /** @description User is not a verified tasker. */
             403: {
@@ -4037,83 +4109,6 @@ export interface operations {
             };
             /** @description Liability disclaimer not accepted. */
             422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    selectApplication: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: components["parameters"]["PathId"];
-                applicationId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Application selected. Tasker has 4 hours to confirm. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TaskApplication"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            /** @description Application already processed or task assigned. */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    confirmAcceptance: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
-                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
-            };
-            path: {
-                id: components["parameters"]["PathId"];
-                applicationId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Booking created successfully. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** Format: uuid */
-                        booking_id?: string;
-                        status?: string;
-                    };
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            /** @description Selection expired or already processed. */
-            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4263,7 +4258,7 @@ export interface operations {
         requestBody?: {
             content: {
                 "application/json": {
-                    /** @description Optional cancellation reason. Taskers can use "Safety/Fraud" to bypass strikes. */
+                    /** @description Optional cancellation reason. Taskers can use `SAFETY_FRAUD` to mark a safety/fraud cancellation. */
                     reason?: string;
                 };
             };
@@ -4733,7 +4728,7 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
-            /** @description Review already submitted for this booking or booking is not COMPLETED. */
+            /** @description Review already submitted for this booking or booking is not reviewable. */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -4815,7 +4810,7 @@ export interface operations {
             content: {
                 "application/json": {
                     reason: string;
-                    evidence: components["schemas"]["DisputeEvidence"][];
+                    evidence?: components["schemas"]["DisputeEvidence"][];
                 };
             };
         };
@@ -4864,6 +4859,36 @@ export interface operations {
                     "application/json": components["schemas"]["Dispute"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    addDisputeEvidence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["PathId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddDisputeEvidenceRequest"];
+            };
+        };
+        responses: {
+            /** @description Evidence accepted and dispute returned. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Dispute"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
@@ -5649,6 +5674,11 @@ export interface operations {
                     sort_order: number;
                     /** @default true */
                     intake_enabled?: boolean;
+                    /**
+                     * @description Admin launch-control flag for task-level assisted distribution.
+                     * @default false
+                     */
+                    assisted_distribution_enabled?: boolean;
                 };
             };
         };
@@ -5686,6 +5716,8 @@ export interface operations {
                     is_active?: boolean;
                     sort_order?: number;
                     intake_enabled?: boolean;
+                    /** @description Admin launch-control flag for task-level assisted distribution. */
+                    assisted_distribution_enabled?: boolean;
                 };
             };
         };

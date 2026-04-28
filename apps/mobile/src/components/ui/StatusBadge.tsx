@@ -3,6 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
+import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
 type StatusType = 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show';
@@ -19,7 +20,7 @@ const badgeVariants = cva('self-start px-md py-xs rounded-full', {
   },
 });
 
-const textVariants = cva('text-micro font-sans-bold uppercase tracking-[0.075em]', {
+const textVariants = cva('text-micro font-sans-bold uppercase', {
   variants: {
     status: {
       open: 'text-status-open-foreground',
@@ -37,11 +38,24 @@ interface StatusBadgeProps {
   testID?: string;
 }
 
+const STATUS_LABEL_KEYS: Readonly<Record<StatusType, string>> = {
+  open: 'status.open',
+  assigned: 'status.assigned',
+  completed: 'status.completed',
+  cancelled: 'status.cancelled',
+  no_show: 'status.no_show',
+};
+
 export function StatusBadge({ status, className, testID }: StatusBadgeProps) {
   const { t } = useTranslation();
   return (
     <View className={cn(badgeVariants({ status }), className)} testID={testID}>
-      <Text className={textVariants({ status })}>{t(`status.${status}`)}</Text>
+      <Text
+        className={textVariants({ status })}
+        style={{ letterSpacing: mobileTheme.typographyVariants.badgeText.letterSpacing }}
+      >
+        {t(STATUS_LABEL_KEYS[status])}
+      </Text>
     </View>
   );
 }

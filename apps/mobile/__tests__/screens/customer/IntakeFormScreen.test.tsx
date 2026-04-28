@@ -176,6 +176,18 @@ describe('IntakeFormScreen (SCR-CUST-003)', () => {
     expect(screen.getByTestId('intake-supplies_provided-no')).toBeTruthy();
   });
 
+  it('keeps yes_no automation identifiers stable across locales', () => {
+    const { setTestLanguage } = require('../../test-utils/mockI18n');
+    setTestLanguage('mn');
+
+    render(<IntakeFormScreen />);
+
+    expect(screen.getByText('Тийм')).toBeTruthy();
+    expect(screen.getByText('Үгүй')).toBeTruthy();
+    expect(screen.getByTestId('intake-supplies_provided-yes')).toBeTruthy();
+    expect(screen.getByTestId('intake-supplies_provided-no')).toBeTruthy();
+  });
+
   it('shows validation error when next pressed with empty description', () => {
     render(<IntakeFormScreen />);
     fireEvent.press(screen.getByTestId('SCR-CUST-003-next'));

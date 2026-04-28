@@ -1,6 +1,16 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
+import mnTranslation from '../../../../src/locales/mn/translation.json';
+
+const translation = mnTranslation as Record<string, unknown>;
+const t = (key: string) =>
+  key.split('.').reduce<unknown>((node, segment) => {
+    if (!node || typeof node !== 'object') {
+      return undefined;
+    }
+    return (node as Record<string, unknown>)[segment];
+  }, translation) as string;
 
 jest.mock('react-i18next', () => {
   const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
@@ -70,13 +80,9 @@ describe('TaskerCancelSheet (SCR-TASK-015)', () => {
       />,
     );
 
-    expect(screen.getByText('Захиалга цуцлах уу?')).toBeTruthy();
-    expect(
-      screen.getByText(
-        'Захиалга цуцлагдвал даалгавар дахин нээлттэй болно. Цуцлалт таны найдвартай байдлын үзүүлэлтэд нөлөөлнө.',
-      ),
-    ).toBeTruthy();
-    expect(screen.getByText('Цуцлах шалтгаан')).toBeTruthy();
+    expect(screen.getByText(t('tasker.jobs.cancel.heading'))).toBeTruthy();
+    expect(screen.getByText(t('tasker.jobs.cancel.description'))).toBeTruthy();
+    expect(screen.getByText(t('tasker.jobs.cancel.reasonLabel'))).toBeTruthy();
   });
 
   it('confirm button calls cancelBooking', () => {
@@ -92,8 +98,8 @@ describe('TaskerCancelSheet (SCR-TASK-015)', () => {
       />,
     );
 
-    fireEvent.press(screen.getByText('Цагийн хуваарь таарахгүй болсон'));
-    fireEvent.press(screen.getByText('Цуцлахыг баталгаажуулах'));
+    fireEvent.press(screen.getByText(t('tasker.jobs.cancel.reasonScheduleConflict')));
+    fireEvent.press(screen.getByText(t('tasker.jobs.cancel.confirmButton')));
     expect(mockCancelBooking).toHaveBeenCalled();
   });
 
@@ -124,7 +130,7 @@ describe('TaskerCancelSheet (SCR-TASK-015)', () => {
       <TaskerCancelSheet isOpen={true} onClose={onClose} bookingId="booking-123" strikeCount={0} />,
     );
 
-    fireEvent.press(screen.getByText('Буцах'));
+    fireEvent.press(screen.getByText(t('tasker.jobs.cancel.backButton')));
     expect(onClose).toHaveBeenCalled();
   });
 
@@ -141,11 +147,7 @@ describe('TaskerCancelSheet (SCR-TASK-015)', () => {
       />,
     );
 
-    expect(
-      screen.getByText(
-        'Анхааруулга: Та сүүлийн 30 хоногт 2 удаа цуцалсан байна. Дахин нэг удаа цуцалвал таны бүртгэл 7 хоногоор түдгэлзэнэ!',
-      ),
-    ).toBeTruthy();
+    expect(screen.getByText(t('TaskerCancelSheet.copy2'))).toBeTruthy();
   });
 
   it('requires a reason before enabling confirm', () => {
@@ -157,10 +159,10 @@ describe('TaskerCancelSheet (SCR-TASK-015)', () => {
       <TaskerCancelSheet isOpen={true} onClose={onClose} bookingId="booking-123" strikeCount={0} />,
     );
 
-    fireEvent.press(screen.getByText('Цуцлахыг баталгаажуулах'));
+    fireEvent.press(screen.getByText(t('tasker.jobs.cancel.confirmButton')));
     expect(mockCancelBooking).not.toHaveBeenCalled();
-    fireEvent.press(screen.getByText('Цагийн хуваарь таарахгүй болсон'));
-    fireEvent.press(screen.getByText('Цуцлахыг баталгаажуулах'));
+    fireEvent.press(screen.getByText(t('tasker.jobs.cancel.reasonScheduleConflict')));
+    fireEvent.press(screen.getByText(t('tasker.jobs.cancel.confirmButton')));
     expect(mockCancelBooking).toHaveBeenCalledWith(
       expect.objectContaining({ bookingId: 'booking-123' }),
     );

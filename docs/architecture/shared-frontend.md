@@ -2,8 +2,8 @@
 
 This document defines the shared frontend contract for `apps/web` and `apps/mobile`.
 
-Read after: `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, the surface-specific doc (`web.md` or `mobile.md`), then `common.md`
-when needed.
+Read after: `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, relevant `docs/maintenance/*.md`, the
+surface-specific doc (`web.md` or `mobile.md`), then `common.md` when needed.
 
 ## 1. Scope
 
@@ -13,11 +13,17 @@ Phase-specific UI behavior must follow `docs/PRD.md` for the active launch basel
 
 ## 2. Design Tokens
 
-- The governing design-token source for implementation is `packages/design-tokens`, structured as primitive values,
-  semantic aliases, and platform outputs.
-- Web consumes the token graph via Tailwind/theme variables (`packages/design-tokens/tokens.css` for CSS variables).
+- The canonical design system documentation lives in `docs/design/**`. The runtime token implementation lives in
+  `packages/design-tokens` and must stay derived from that design surface.
+- `packages/design-tokens` is code-only: `src/core/**` owns primitive, semantic, motion, and promoted system-addition definitions;
+  `src/platform/**` owns web/native outputs; `src/compat/**` owns legacy aggregate exports; `src/styles/tokens.css`
+  owns runtime CSS.
+- Web consumes the token graph via Tailwind/theme variables (`@tasky/design-tokens/tokens.css` for CSS variables).
 - Mobile consumes the token graph via NativeWind theme bindings and shared shell/primitive adapters.
 - Token contract: all parity components consume the canonical token graph from `packages/design-tokens` via platform outputs.
+- Active design docs describe the design-system contract in prose and machine-readable contracts. Static UI-kit
+  prototypes and handoff CSS must not be imported at runtime and should not remain as duplicate active implementation
+  snippets once their intent is promoted into `@tasky/design-tokens`.
 - During the NativeWind foundation refactor, the parity baseline table (§4) is reference-only and does not drive implementation sequencing.
 
 ## 3. Component Ownership by Platform
@@ -72,23 +78,57 @@ apps/mobile/src/components/
 2. If not, create them first according to the platform rules for the affected surface.
 3. Assemble Molecules/Organisms exclusively from those Atoms using spacing/layout variables from `@tasky/design-tokens`.
 
-## 7. Test Location and TID Naming Rule
+## 7. Test Location and Naming Rules
 
 | Platform | Test type      | Location                                                                |
 | -------- | -------------- | ----------------------------------------------------------------------- |
 | Web      | Unit/component | `apps/web/src/**/*.test.tsx` or `apps/web/tests/**/*.test.tsx` (Vitest) |
-| Web      | E2E            | `apps/web/e2e/**/*.test.ts` (Playwright)                                |
+| Web      | E2E            | `apps/web/e2e/**/*.spec.ts` (Playwright)                                |
 | Mobile   | Unit/component | `apps/mobile/__tests__/**/*.test.tsx` (Jest)                            |
 
-**Critical rule:** Every test block must include its `TID-*` identifier directly in the `it()` or `test()` description string — bare, with no brackets or decorators. The self-verification script discovers AC coverage by scanning for this string in test runner output.
+**Behavioral rule for new or touched frontend flow tests:** When an integration or E2E test maps cleanly to an existing launch scenario in `tests/scenarios/*.md`, name that test `SCN-XXX-NNN: <exact title from scenario file>`. This keeps frontend launch evidence aligned with the same scenario spine used by backend tests.
+
+**Technical rule:** Use `TID-*` only for frontend-specific technical checks that do not have a single scenario source of truth, such as token binding, parity, accessibility, shell rendering, and API-client boundary tests.
+
+**Flow rule:** If a frontend test covers multiple launch behaviors, split it into scenario-backed tests or keep it technical. Do not force a fake one-to-one SCN mapping.
+
+Examples:
 
 ```typescript
-it('TID-TASK-080-WEB-AUTH-OAUTH-FLOW should allow user to continue with Facebook and redirect to feed', async () => {
-  // test logic
+it('SCN-AUTH-004: Valid Facebook OAuth token creates a CUSTOMER session', async () => {
+  // scenario-backed frontend behavior
+});
+
+it('TID-TASK-070-WEB-TOKEN-BINDING binds shared tokens to tailwind theme variables', () => {
+  // frontend-only technical check
 });
 ```
 
-## 8. Structured Intake Renderer Contract
+## 8. Screen Spec Traceability
+
+Frontend screen work starts from the traceable design contract, not from isolated screenshots or static prototypes.
+
+For every active screen spec in `docs/design/screen-specs/SCR-*.yaml`:
+
+- `traceability.screen_graph_node` must equal `screen_id` and resolve in `docs/design/screen-graph.yaml`.
+- `traceability.prd_refs` names the governing `REQ-P1-*` or `NFR-*` requirements from `docs/PRD.md`.
+- `traceability.journey_refs` names the relevant `JRN-*`, `JRN-*:step-N`, alternate-path IDs, or journey `paths[].id` refs from `docs/design/journey-catalog.yaml`.
+- `traceability.scenario_refs` names existing `SCN-*` tests from `tests/registry.yaml` when the behavior has scenario-backed coverage.
+
+`traceability.status: pending_audit` is permitted only for an explicitly scoped follow-up audit. New or materially
+changed screen specs should be `validated`, which requires at least one PRD reference and one journey reference. Do not
+create new scenario IDs while implementing a frontend slice unless the execution brief explicitly assigns scenario
+curation.
+
+Implementation flow:
+
+1. Read the PRD requirements named by the screen spec.
+2. Read the journey and screen-graph nodes to understand entry, exit, guards, and alternate paths.
+3. Implement through the platform architecture: route adapter -> screen family -> shared primitives/templates -> tokens.
+4. Add or update i18n-backed copy and tests using the scenario naming rules above.
+5. Run `python3 tooling/scripts/governance/validate-screen-spec-traceability.py` for spec changes and `pnpm repo:docs:check` for the full docs lane.
+
+## 9. Structured Intake Renderer Contract
 
 1. **Renderer input contract**:
    - Task-post UI loads `intake_schema_json` and `intake_schema_version` from category metadata.

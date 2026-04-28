@@ -78,19 +78,21 @@ describe('AdminFeaturesPage', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText('Lead Fee')).toBeInTheDocument();
+      expect(screen.getByText('Lead fee controls (deferred)')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('Subscriptions')).toBeInTheDocument();
-    expect(screen.getByText('Escrow Payments')).toBeInTheDocument();
-    expect(screen.getByText('AI Scope Summary')).toBeInTheDocument();
+    expect(screen.getByText('Subscriptions (deferred)')).toBeInTheDocument();
+    expect(screen.getByText('Escrow controls (deferred)')).toBeInTheDocument();
+    expect(screen.getByText('AI scope summary (deferred)')).toBeInTheDocument();
+    expect(screen.getAllByText(/must remain off unless the PRD/i)).toHaveLength(2);
+    expect(screen.getByText(/not a Phase 1 payment-protection promise/i)).toBeInTheDocument();
   });
 
   it('each toggle shows name and switch in correct state', async () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText('Lead Fee')).toBeInTheDocument();
+      expect(screen.getByText('Lead fee controls (deferred)')).toBeInTheDocument();
     });
 
     // lead_fee_enabled is true -> switch should be checked
@@ -108,7 +110,7 @@ describe('AdminFeaturesPage', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText('Lead Fee')).toBeInTheDocument();
+      expect(screen.getByText('Lead fee controls (deferred)')).toBeInTheDocument();
     });
 
     const leadFeeRow = screen.getByTestId('toggle-row-lead_fee_enabled');
@@ -117,7 +119,9 @@ describe('AdminFeaturesPage', () => {
     fireEvent.click(leadFeeSwitch);
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /confirm title/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: /confirm feature toggle change/i }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -125,7 +129,7 @@ describe('AdminFeaturesPage', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText('Lead Fee')).toBeInTheDocument();
+      expect(screen.getByText('Lead fee controls (deferred)')).toBeInTheDocument();
     });
 
     const leadFeeRow = screen.getByTestId('toggle-row-lead_fee_enabled');
@@ -134,7 +138,9 @@ describe('AdminFeaturesPage', () => {
     fireEvent.click(leadFeeSwitch);
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /confirm title/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: /confirm feature toggle change/i }),
+      ).toBeInTheDocument();
     });
 
     const confirmButton = screen.getByRole('button', { name: /confirm/i });
@@ -157,7 +163,7 @@ describe('AdminFeaturesPage', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText('Lead Fee')).toBeInTheDocument();
+      expect(screen.getByText('Lead fee controls (deferred)')).toBeInTheDocument();
     });
 
     const subRow = screen.getByTestId('toggle-row-subscription_enabled');
@@ -166,7 +172,9 @@ describe('AdminFeaturesPage', () => {
     fireEvent.click(subSwitch);
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /confirm title/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: /confirm feature toggle change/i }),
+      ).toBeInTheDocument();
     });
 
     const cancelButton = screen.getByRole('button', { name: /cancel/i });
@@ -181,7 +189,7 @@ describe('AdminFeaturesPage', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText(/load error/i)).toBeInTheDocument();
+      expect(screen.getByText(/feature toggles could not be loaded/i)).toBeInTheDocument();
     });
 
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
@@ -192,7 +200,7 @@ describe('AdminFeaturesPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /retry/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('Lead Fee')).toBeInTheDocument();
+      expect(screen.getByText('Lead fee controls (deferred)')).toBeInTheDocument();
     });
   });
 
@@ -200,7 +208,7 @@ describe('AdminFeaturesPage', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText('Lead Fee')).toBeInTheDocument();
+      expect(screen.getByText('Lead fee controls (deferred)')).toBeInTheDocument();
     });
 
     // Verify that timestamp info is rendered for each toggle

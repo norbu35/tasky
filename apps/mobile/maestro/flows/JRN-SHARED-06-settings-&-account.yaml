@@ -23,7 +23,7 @@ appId: mn.tasky.mobile
 
 # Open settings via the profile secondary CTA.
 - tapOn:
-    id: 'SCR-SHARED-012-secondary-cta'
+    id: 'action-row-settings'
 
 - extendedWaitUntil:
     visible:

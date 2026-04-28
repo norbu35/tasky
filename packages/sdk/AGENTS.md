@@ -14,9 +14,18 @@ Use this file when the change touches `packages/sdk/**`.
 
 ## Verification
 
+Default SDK validation:
+
 ```bash
-pnpm openapi:bundle
-pnpm --filter @tasky/sdk generate
-pnpm --filter @tasky/sdk drift:check
 pnpm --filter @tasky/sdk typecheck
 ```
+
+Conditional contract-regeneration validation:
+
+```bash
+pnpm contract:openapi:bundle
+pnpm contract:sdk:generate
+pnpm --filter @tasky/sdk drift:check
+```
+
+Run the regeneration path when `docs/openapi/**` or bundled contract output changed, or when package structure work could affect generated SDK output.

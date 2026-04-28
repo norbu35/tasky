@@ -1,26 +1,38 @@
 import { useRouter } from 'expo-router';
-import { Star } from 'lucide-react-native';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { DetailTemplate } from '@/components/templates/DetailTemplate';
-import { CategoryChip } from '@/components/ui/CategoryChip';
-import { LocationPin } from '@/components/ui/LocationPin';
 import { PhotoGrid } from '@/components/ui/PhotoGrid';
-import { PriceTag } from '@/components/ui/PriceTag';
-import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
-import { mobileTheme } from '@/design/tokenAdapter';
+import { Toast } from '@/components/ui/Toast';
+import { applyToTask } from '@/features/tasks/api';
 import { ApplicationSentSuccess } from '@/features/tasks/components/ApplicationSentSuccess';
 import { useTaskDetail } from '@/features/tasks/hooks/useTasks';
-import { applyToTask } from '@/features/tasks/api';
+import type { PublicTask, TaskDetail } from '@/lib/api/types';
 import { useAuthStore } from '@/store/authStore';
-import { formatFullDate } from '@/utils/formatDate';
 
-const { colors } = mobileTheme;
+import { ApplicationForm } from './TaskDetail.ApplicationForm';
+import { TaskDetailSummary } from './TaskDetail.Summary';
 
 interface TaskDetailScreenProps {
   id: string;
+}
+
+function getTaskCustomerId(task: TaskDetail | null): string | null {
+  if (!task) return null;
+  if ('customer' in task) return task.customer?.id ?? null;
+  if ('customer_id' in task) return task.customer_id ?? null;
+  return null;
+}
+
+function getTaskPhotoUrls(task: TaskDetail): string[] {
+  if ('photo_urls' in task) return task.photo_urls;
+  return task.photos.flatMap((photo) => (photo.url ? [photo.url] : []));
+}
+
+function hasPublicCustomer(task: TaskDetail | null): task is PublicTask {
+  return !!task && 'customer' in task && !!task.customer;
 }
 
 export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
@@ -35,25 +47,52 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
   const [isApplying, setIsApplying] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [localApplied, setLocalApplied] = useState(false);
+  const [applicationError, setApplicationError] = useState<string | null>(null);
+  const [applicationNote, setApplicationNote] = useState('');
+  const [quotePrice, setQuotePrice] = useState('');
   const appliedState = hasApplied || localApplied;
+  const pricingMode = task?.pricing_mode ?? 'BUDGET';
+  const quotePriceNumber = Number(quotePrice);
+  const isQuoteMode = pricingMode === 'QUOTE';
+  const isApplicationNoteValid = applicationNote.trim().length > 0;
+  const isQuoteValid =
+    !isQuoteMode ||
+    (quotePrice !== '' && Number.isFinite(quotePriceNumber) && quotePriceNumber >= 20000);
+  const canSubmitApplication = isApplicationNoteValid && isQuoteValid;
+  const isOwnTask = getTaskCustomerId(task) === session?.user.id;
+  const hasCustomerProfile = hasPublicCustomer(task);
+  const canStartApplication =
+    isVerified && hasCustomerProfile && !isOwnTask && !appliedState && !capReached;
+  const photoUrls = task ? getTaskPhotoUrls(task) : [];
 
   const handleApply = useCallback(async () => {
-    if (!session?.accessToken || !taskId) return;
+    if (!session?.accessToken || !taskId || !canSubmitApplication || !canStartApplication) return;
     setIsApplying(true);
+    setApplicationError(null);
     try {
       await applyToTask(
         session.accessToken,
         taskId,
-        'I am interested in this task. Please consider my application.',
+        applicationNote.trim(),
+        isQuoteMode ? quotePriceNumber : null,
       );
       setLocalApplied(true);
       setShowSuccess(true);
     } catch {
-      // Error handling would go here
+      setApplicationError(t('tasker.taskDetail.applyError'));
     } finally {
       setIsApplying(false);
     }
-  }, [session, taskId]);
+  }, [
+    applicationNote,
+    canStartApplication,
+    canSubmitApplication,
+    isQuoteMode,
+    quotePriceNumber,
+    session,
+    taskId,
+    t,
+  ]);
 
   const handleGetVerified = useCallback(() => {
     router.push('/(tasker)/verification' as `${string}`);
@@ -67,10 +106,6 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
     setShowSuccess(false);
   }, []);
 
-  const handleMessageCustomer = useCallback(() => {
-    router.push(`/inbox/${taskId}` as `${string}`);
-  }, [router, taskId]);
-
   // Show success celebration inline after applying
   if (showSuccess) {
     return <ApplicationSentSuccess onBrowseMore={handleBrowseMore} onViewTask={handleViewTask} />;
@@ -83,7 +118,13 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
 
   const noop = () => {};
 
-  if (appliedState) {
+  if (!task) {
+    ctaLabel = undefined;
+  } else if (isOwnTask) {
+    ctaLabel = t('tasker.taskDetail.ownTaskCta');
+    ctaDisabled = true;
+    ctaOnPress = noop;
+  } else if (appliedState) {
     ctaLabel = t('tasker.taskDetail.alreadyApplied');
     ctaDisabled = true;
     ctaOnPress = noop;
@@ -91,10 +132,11 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
     ctaLabel = t('tasker.browse.capReached');
     ctaDisabled = true;
     ctaOnPress = noop;
-  } else if (isVerified) {
+  } else if (isVerified && hasCustomerProfile) {
     ctaLabel = t('tasker.taskDetail.applyButton');
     ctaOnPress = handleApply;
-  } else {
+    ctaDisabled = !canSubmitApplication;
+  } else if (hasCustomerProfile) {
     ctaLabel = t('tasker.taskDetail.getVerified');
     ctaOnPress = handleGetVerified;
   }
@@ -105,8 +147,6 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
       ctaOnPress={ctaOnPress}
       ctaLoading={isApplying}
       ctaDisabled={ctaDisabled}
-      secondaryCtaLabel={isVerified ? t('tasker.taskDetail.messageButton') : undefined}
-      secondaryCtaOnPress={isVerified ? handleMessageCustomer : undefined}
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
@@ -114,90 +154,33 @@ export default function TaskDetailScreen({ id }: TaskDetailScreenProps) {
     >
       {task && (
         <View className="gap-lg">
-          {/* Customer hero — avatar, name, rating */}
-          <View className="flex-row items-center gap-md bg-muted rounded-md p-lg">
-            <ProfileAvatar uri={undefined} name={task.customer.full_name} size="lg" />
-            <View className="flex-1 gap-xs">
-              <Text className="text-subtitle font-sans-bold text-foreground">
-                {task.customer.full_name}
-              </Text>
-              {task.customer.rating_avg > 0 && (
-                <View className="flex-row items-center gap-xs">
-                  <Star size={16} color={colors.accent} fill={colors.accent} />
-                  <Text className="text-label font-sans-bold text-foreground">
-                    {task.customer.rating_avg.toFixed(1)}
-                  </Text>
-                </View>
-              )}
-            </View>
-          </View>
+          <TaskDetailSummary task={task} isQuoteMode={isQuoteMode} />
 
-          {/* Task description — hero element */}
-          <Text className="text-heading font-sans-bold text-primary-deep leading-tight">
-            {task.description}
-          </Text>
+          {isOwnTask ? (
+            <Toast message={t('tasker.taskDetail.ownTaskNotice')} variant="info" />
+          ) : null}
 
-          {/* Task details — budget, category, location, schedule inline */}
-          <View className="bg-muted rounded-md p-lg gap-md">
-            {task.category && (
-              <View className="flex-row items-center justify-between">
-                <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
-                  {t('TaskDetailCustomerScreen.categoryLabel')}
-                </Text>
-                <CategoryChip label={task.category.name} isActive />
-              </View>
-            )}
+          {applicationError ? <Toast message={applicationError} variant="error" /> : null}
 
-            <View className="flex-row items-center justify-between">
-              <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
-                {t('taskDetails.budget')}
-              </Text>
-              <PriceTag amount={task.budget} size="sm" />
-            </View>
-
-            {task.approximate_location && (
-              <View className="flex-row items-center justify-between">
-                <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
-                  {t('taskDetails.location')}
-                </Text>
-                <LocationPin text={task.approximate_location} compact />
-              </View>
-            )}
-
-            {task.scheduled_at && (
-              <View className="flex-row items-center justify-between">
-                <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
-                  {t('taskDetail.dateTime')}
-                </Text>
-                <Text className="text-label font-sans-medium text-foreground">
-                  {formatFullDate(task.scheduled_at)}
-                </Text>
-              </View>
-            )}
-          </View>
-
-          {/* Location note */}
-          {task.approximate_location && (
-            <Text className="text-caption text-text-secondary leading-[20px]">
-              {t('TaskDetailScreen.copy1')}
-            </Text>
-          )}
+          {canStartApplication ? (
+            <ApplicationForm
+              isQuoteMode={isQuoteMode}
+              isQuoteValid={isQuoteValid}
+              applicationNote={applicationNote}
+              quotePrice={quotePrice}
+              onApplicationNoteChange={setApplicationNote}
+              onQuotePriceChange={setQuotePrice}
+            />
+          ) : null}
 
           {/* Photos */}
-          {task.photo_urls.length > 0 && (
+          {photoUrls.length > 0 && (
             <View className="gap-xs bg-muted rounded-md p-md">
-              <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
+              <Text className="text-caption font-sans-semibold text-text-secondary uppercase tracking-normal">
                 {t('tasker.taskDetail.photosLabel')}
               </Text>
-              <PhotoGrid photos={task.photo_urls} testID="task-detail-photos" />
+              <PhotoGrid photos={photoUrls} testID="task-detail-photos" />
             </View>
-          )}
-
-          {/* Application count */}
-          {task.application_count > 0 && (
-            <Text className="text-label text-text-secondary mt-sm">
-              {task.application_count} {t('TaskDetailCustomerScreen.applicants')}
-            </Text>
           )}
         </View>
       )}

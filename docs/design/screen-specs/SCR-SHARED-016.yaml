@@ -1,180 +1,216 @@
 # Screen Spec: Notification Center
 screen_id: SCR-SHARED-016
-name: "Notification Center"
-route: "/notifications"
+name: 'Notification Center'
+route: '/notifications'
 role: [customer, tasker]
-phase: "0-1"
+phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-SHARED-016
+  prd_refs:
+    - REQ-P1-NOTIF-01
+    - REQ-P1-NOTIF-02
+    - REQ-P1-NOTIF-03
+    - REQ-P1-NOTIF-04
+    - REQ-P1-NOTIF-05
+    - REQ-P1-NOTIF-06
+    - REQ-P1-NOTIF-07
+  journey_refs:
+    - JRN-SHARED-08:step-1
+    - JRN-SHARED-08-A1
+    - JRN-SHARED-08-A2
+  scenario_refs:
+    - SCN-NOTIF-001
+    - SCN-NOTIF-002
+    - SCN-NOTIF-003
+    - SCN-NOTIF-004
+    - SCN-NOTIF-005
+    - SCN-NOTIF-006
+    - SCN-NOTIF-007
+    - SCN-NOTIF-009
 template: feed_list
-figma_page: "Shared/Notification Center"
-feature: "notifications"
+figma_page: 'Shared/Notification Center'
+feature: 'notifications'
 
 layout:
   template: feed_list
   density: default
-  structure: "safe_area -> nav_header(back + title) -> scrollview(notification_list + pull_to_refresh) -> empty_state"
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(notification_list + pull_to_refresh) -> empty_state'
 
 components:
   - id: COMP-CARD
-    usage: "Notification item card with icon, title, body text, and timestamp"
+    usage: 'Notification item card with icon, title, body text, and timestamp'
     props:
-      onPress: "handleNotificationTap"
+      onPress: 'handleNotificationTap'
       disabled: false
     variant: default
 
   - id: COMP-EMPTYSTATE
-    usage: "Empty state when no notifications exist"
+    usage: 'Empty state when no notifications exist'
     props:
-      illustration: "notification_empty"
-      headline: "Мэдэгдэл алга"
-      description: "Танд одоогоор мэдэгдэл ирээгүй байна"
-      ctaLabel: ""
+      illustration: 'notification_empty'
+      headline: 'Мэдэгдэл алга'
+      description: 'Танд одоогоор мэдэгдэл ирээгүй байна'
+      ctaLabel: ''
       onCtaPress: null
     variant: no_results
 
   - id: COMP-LOADINGSKELETON
-    usage: "Skeleton list matching notification card layout while data loads"
+    usage: 'Skeleton list matching notification card layout while data loads'
     props:
       variant: list_row
       count: 6
     variant: list_row
 
   - id: COMP-STATUSBADGE
-    usage: "Unread indicator dot on notification cards"
+    usage: 'Unread indicator dot on notification cards'
     props:
-      status: "open"
+      status: 'open'
       size: xs
     variant: open
 
 states:
   - id: loading_initial
-    description: "GET /notifications is in flight; skeleton list displayed"
+    description: 'GET /notifications is in flight; skeleton list displayed'
     components_visible: [COMP-LOADINGSKELETON]
     components_hidden: [COMP-CARD, COMP-EMPTYSTATE]
 
   - id: empty
-    description: "GET /notifications returned zero results; empty state with illustration and message"
+    description: 'GET /notifications returned zero results; empty state with illustration and message'
     components_visible: [COMP-EMPTYSTATE]
     components_hidden: [COMP-LOADINGSKELETON, COMP-CARD]
 
   - id: populated
-    description: "Notification list loaded with items; unread items have accent indicator dot"
+    description: 'Notification list loaded with items; unread items have accent indicator dot'
     components_visible: [COMP-CARD, COMP-STATUSBADGE]
     components_hidden: [COMP-LOADINGSKELETON, COMP-EMPTYSTATE]
 
   - id: loading_refresh
-    description: "User pulled to refresh; pull-to-refresh spinner active while re-fetching"
+    description: 'User pulled to refresh; pull-to-refresh spinner active while re-fetching'
     components_visible: [COMP-CARD]
     components_hidden: [COMP-LOADINGSKELETON, COMP-EMPTYSTATE]
 
   - id: error_network
-    description: "GET /notifications failed due to network error; error state with retry"
+    description: 'GET /notifications failed due to network error; error state with retry'
     components_visible: [COMP-EMPTYSTATE]
     components_hidden: [COMP-LOADINGSKELETON, COMP-CARD]
 
 copy:
   - key: nav_title
-    mn: "Мэдэгдлүүд"
-    en: "Notifications"
+    mn: 'Мэдэгдлүүд'
+    en: 'Notifications'
     max_chars: 20
 
   - key: empty_headline
-    mn: "Мэдэгдэл алга"
-    en: "No notifications"
+    mn: 'Мэдэгдэл алга'
+    en: 'No notifications'
     max_chars: 20
 
   - key: empty_description
-    mn: "Танд одоогоор мэдэгдэл ирээгүй байна"
-    en: "You have no notifications yet"
+    mn: 'Танд одоогоор мэдэгдэл ирээгүй байна'
+    en: 'You have no notifications yet'
     max_chars: 50
 
   - key: notif_new_applicant
-    mn: "Шинэ хүсэлт ирлээ"
-    en: "New applicant"
+    mn: 'Шинэ хүсэлт ирлээ'
+    en: 'New applicant'
     max_chars: 25
 
   - key: notif_booking_confirmed
-    mn: "Захиалга баталгаажлаа"
-    en: "Booking confirmed"
+    mn: 'Захиалга баталгаажлаа'
+    en: 'Booking confirmed'
+    max_chars: 25
+
+  - key: notif_booking_request
+    mn: 'Захиалгын хүсэлт ирлээ'
+    en: 'Booking request'
     max_chars: 25
 
   - key: notif_tasker_done
-    mn: "Гүйцэтгэгч ажлаа дууслаа"
-    en: "Tasker marked done"
+    mn: 'Гүйцэтгэгч ажлаа дууслаа'
+    en: 'Tasker marked done'
     max_chars: 30
 
+  - key: notif_completion_reminder
+    mn: 'Ажил дууссан эсэхийг баталгаажуулна уу'
+    en: 'Confirm or dispute completion'
+    max_chars: 40
+
   - key: notif_new_message
-    mn: "Шинэ зурвас ирлээ"
-    en: "New message"
+    mn: 'Шинэ зурвас ирлээ'
+    en: 'New message'
     max_chars: 25
 
   - key: notif_review_reminder
-    mn: "Сэтгэгдэл үлдээнэ үү"
-    en: "Please leave a review"
+    mn: 'Сэтгэгдэл үлдээнэ үү'
+    en: 'Please leave a review'
     max_chars: 30
 
   - key: notif_dispute_update
-    mn: "Маргааны шинэчлэл"
-    en: "Dispute update"
+    mn: 'Маргааны шинэчлэл'
+    en: 'Dispute update'
     max_chars: 25
 
   - key: notif_verification_approved
-    mn: "Баталгаажуулалт зөвшөөрөгдлөө"
-    en: "Verification approved"
+    mn: 'Баталгаажуулалт зөвшөөрөгдлөө'
+    en: 'Verification approved'
     max_chars: 35
 
   - key: notif_verification_rejected
-    mn: "Баталгаажуулалт татгалзагдлаа"
-    en: "Verification rejected"
+    mn: 'Баталгаажуулалт татгалзагдлаа'
+    en: 'Verification rejected'
     max_chars: 35
 
   - key: label_today
-    mn: "Өнөөдөр"
-    en: "Today"
+    mn: 'Өнөөдөр'
+    en: 'Today'
     max_chars: 10
 
   - key: label_earlier
-    mn: "Өмнөх"
-    en: "Earlier"
+    mn: 'Өмнөх'
+    en: 'Earlier'
     max_chars: 10
 
   - key: error_title
-    mn: "Алдаа гарлаа"
-    en: "Something went wrong"
+    mn: 'Алдаа гарлаа'
+    en: 'Something went wrong'
     max_chars: 25
 
   - key: error_body
-    mn: "Мэдэгдлүүдийг ачаалахад алдаа гарлаа"
-    en: "Failed to load notifications"
+    mn: 'Мэдэгдлүүдийг ачаалахад алдаа гарлаа'
+    en: 'Failed to load notifications'
     max_chars: 50
 
   - key: cta_retry
-    mn: "Дахин оролдох"
-    en: "Retry"
+    mn: 'Дахин оролдох'
+    en: 'Retry'
     max_chars: 20
 
 api_endpoints:
   - method: GET
-    path: "/notifications"
-    purpose: "Fetch paginated list of notifications for the authenticated user"
+    path: '/notifications'
+    purpose: 'Fetch paginated list of notifications for the authenticated user'
 
 analytics_events:
-  - event: "notifications_viewed"
-    trigger: "Notification center screen loads successfully"
-  - event: "notification_tapped"
-    trigger: "User taps a notification card to navigate to its target"
-  - event: "notifications_refreshed"
-    trigger: "User pulls to refresh the notification list"
+  - event: 'notifications_viewed'
+    trigger: 'Notification center screen loads successfully'
+  - event: 'notification_tapped'
+    trigger: 'User taps a notification card to navigate to its target'
+  - event: 'notifications_refreshed'
+    trigger: 'User pulls to refresh the notification list'
 
 acceptance_criteria:
-  - "Screen displays loading skeleton with 6 list row placeholders while data is fetching"
+  - 'Screen displays loading skeleton with 6 list row placeholders while data is fetching'
   - "Empty state shows illustration with 'Мэдэгдэл алга' headline when no notifications exist"
   - "Populated list shows notification cards grouped by 'Today' and 'Earlier' sections"
-  - "Unread notifications display an accent-colored indicator dot"
-  - "Tapping a task notification navigates (push) to SCR-CUST-009 (customer) or SCR-TASK-002 (tasker)"
-  - "Tapping a booking notification navigates (push) to SCR-CUST-017 (customer) or SCR-TASK-013 (tasker)"
-  - "Tapping a dispute notification navigates (push) to SCR-CUST-025"
-  - "Pull-to-refresh re-fetches GET /notifications"
-  - "Network error state shows error illustration with retry button"
+  - 'Unread notifications display an accent-colored indicator dot'
+  - 'Tapping a task notification navigates (push) to SCR-CUST-009 (customer) or SCR-TASK-002 (tasker)'
+  - 'Tapping a booking notification navigates (push) to SCR-CUST-017 (customer) or SCR-TASK-013 (tasker)'
+  - 'Tapping a selected-tasker booking request notification opens SCR-TASK-017 for accept or decline when the booking intent is active'
+  - 'Completion silence reminder notifications route the customer to SCR-CUST-017 with confirm or dispute actions available'
+  - 'Tapping a dispute notification navigates (push) to SCR-CUST-025'
+  - 'Pull-to-refresh re-fetches GET /notifications'
+  - 'Network error state shows error illustration with retry button'
   - "Notification timestamps use relative format within 24h ('2 цагийн өмнө'), absolute after"
-  - "Pagination uses cursor-based infinite scroll with skeleton footer"
-  - "Back button navigates (pop) to the previous screen"
+  - 'Pagination uses cursor-based infinite scroll with skeleton footer'
+  - 'Back button navigates (pop) to the previous screen'

@@ -11,8 +11,32 @@ const colorsWithKebab = Object.fromEntries(
   Object.entries(nativeTokens.colors).map(([key, value]) => [camelToKebab(key), value]),
 );
 
+const typographyScaleWithKebab = Object.fromEntries(
+  Object.entries(nativeTokens.typography.scale).map(([key, value]) => [camelToKebab(key), value]),
+);
+
+const typographyVariantScaleWithKebab = Object.fromEntries(
+  Object.entries(nativeTokens.typographyVariants).map(([key, value]) => [
+    camelToKebab(key),
+    value.fontSize,
+  ]),
+);
+
+const radiusWithAliases = {
+  ...nativeTokens.radius,
+  xl: nativeTokens.radius.lg,
+  '2xl': nativeTokens.radius.lg,
+};
+
+const interactionClassNames = [
+  'active:opacity-pressed',
+  'active:scale-pressed',
+  'disabled:opacity-disabled',
+];
+
 const config: Config = {
   content: ['./src/**/*.{ts,tsx}'],
+  safelist: interactionClassNames,
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
@@ -33,7 +57,7 @@ const config: Config = {
         'action-buttons': nativeTokens.spacing.sm,
         'wizard-step': nativeTokens.spacing.xs,
       },
-      borderRadius: nativeTokens.radius,
+      borderRadius: radiusWithAliases,
       fontFamily: {
         sans: [nativeTokens.typography.families.sans],
         'sans-medium': ['PlusJakartaSans_500Medium'],
@@ -42,7 +66,18 @@ const config: Config = {
         display: [nativeTokens.typography.families.display],
         'display-bold': ['Manrope_700Bold'],
       },
-      fontSize: nativeTokens.typography.scale,
+      fontSize: {
+        ...typographyScaleWithKebab,
+        ...typographyVariantScaleWithKebab,
+      },
+      opacity: {
+        pressed: `${nativeTokens.interaction.pressed.opacity}`,
+        disabled: `${nativeTokens.interaction.disabled.opacity}`,
+        hover: `${nativeTokens.interaction.hover.opacity}`,
+      },
+      scale: {
+        pressed: `${nativeTokens.interaction.pressed.scale}`,
+      },
     },
   },
   plugins: [screenTypographyPlugin],

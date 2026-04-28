@@ -113,12 +113,9 @@ export default function RebookScreen() {
       nextDisabled={budgetTooLow}
       nextLoading={isPending || isCreatingBookingIntent}
       showBack
+      title={t('customer.bookings.rebook')}
+      subtitle={t('customer.bookings.prefilledNote')}
     >
-      {/* Prefilled Note */}
-      <Text className="text-caption text-accent italic mb-item">
-        {t('customer.bookings.prefilledNote')}
-      </Text>
-
       {/* Tasker Info Card */}
       <View className="mb-section bg-muted rounded-md p-card" style={elevations.soft}>
         <Text className="text-screen-section-title font-sans-bold text-primary-deep mb-item">

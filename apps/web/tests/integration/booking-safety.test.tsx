@@ -10,6 +10,7 @@ import {
   makeProfile,
   makeReview,
   makeSession,
+  makeUser,
 } from '../../src/test/factories';
 import type { Booking } from '../../src/lib/apiClient';
 
@@ -29,10 +30,42 @@ vi.mock('../../src/components/ui/dropdown-menu', () => ({
   ),
 }));
 
+// 2. Mock Radix Select to render as a native select for JSDOM testing
+vi.mock('../../src/components/ui/select', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Select: ({ children, value, onValueChange }: any) => (
+    <select
+      aria-label="Reason Category"
+      value={value}
+      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onValueChange(e.target.value)}
+    >
+      {children}
+    </select>
+  ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SelectTrigger: ({ children }: any) => <>{children}</>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SelectValue: ({ placeholder }: any) => (
+    <option value="" disabled>
+      {placeholder}
+    </option>
+  ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SelectContent: ({ children }: any) => <>{children}</>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SelectItem: ({ children, value }: any) => <option value={value}>{children}</option>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SelectGroup: ({ children }: any) => <>{children}</>,
+  SelectSeparator: () => null,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SelectLabel: ({ children }: any) => <>{children}</>,
+}));
+
 describe('Booking Safety Integration', () => {
   it('TID-TASK-081-WEB-BOOKING-SAFETY-FLOW supports booking transitions, review, and dispute actions', async () => {
     const activeBooking: Booking = { ...makeBooking(), status: 'ASSIGNED', id: 'active-bkg' };
     const completedBooking: Booking = { ...makeBooking(), status: 'COMPLETED', id: 'complete-bkg' };
+    const session = makeSession({ user: { ...makeUser(), id: 'cust-1' } });
 
     const apiClient = createMockApiClient({
       getMyProfile: vi.fn().mockResolvedValue(makeProfile()),
@@ -44,14 +77,29 @@ describe('Booking Safety Integration', () => {
         return { data: [], cursor: { next: null, has_more: false } };
       }),
       cancelBooking: vi.fn().mockResolvedValue({ ...activeBooking, status: 'CANCELLED' }),
+      requestReschedule: vi.fn().mockResolvedValue({
+        id: 'event-1',
+        booking_id: 'active-bkg',
+        event_type: 'RESCHEDULE_REQUESTED',
+        proposed_scheduled_at: new Date().toISOString(),
+        status: 'PENDING',
+        created_at: new Date().toISOString(),
+      }),
+      respondReschedule: vi.fn().mockResolvedValue({
+        id: 'event-1',
+        booking_id: 'active-bkg',
+        event_type: 'RESCHEDULE_ACCEPTED',
+        proposed_scheduled_at: new Date().toISOString(),
+        status: 'ACCEPTED',
+        created_at: new Date().toISOString(),
+      }),
+      flagNoShow: vi.fn().mockResolvedValue({ ...activeBooking, status: 'NO_SHOW' }),
       completeBooking: vi.fn().mockResolvedValue({ ...activeBooking, status: 'COMPLETED' }),
       submitReview: vi.fn().mockResolvedValue(makeReview()),
       raiseDispute: vi.fn().mockResolvedValue(makeDispute()),
     });
 
-    render(
-      <App apiClient={apiClient} initialRoute="/booking/safety" initialSession={makeSession()} />,
-    );
+    render(<App apiClient={apiClient} initialRoute="/booking/safety" initialSession={session} />);
 
     await screen.findByRole('heading', { name: /Booking Management/i });
 
@@ -98,14 +146,21 @@ describe('Booking Safety Integration', () => {
 
     // Inside Review Dialog
     await screen.findByRole('heading', { name: 'Leave a Review' });
-    fireEvent.change(screen.getByLabelText('Comment'), { target: { value: 'Great job!' } });
+    fireEvent.change(screen.getByLabelText('Comment (optional)'), {
+      target: { value: 'Great job!' },
+    });
     fireEvent.click(screen.getByRole('button', { name: 'Submit Review' }));
 
     await waitFor(() => {
       expect(apiClient.submitReview).toHaveBeenCalledWith(
         'access-token',
         'complete-bkg',
-        expect.objectContaining({ comment: 'Great job!' }),
+        expect.objectContaining({
+          comment: 'Great job!',
+          quality_rating: 5,
+          punctuality_rating: 5,
+          communication_rating: 5,
+        }),
       );
     });
 
@@ -118,6 +173,7 @@ describe('Booking Safety Integration', () => {
     fireEvent.change(screen.getByLabelText('Reason Category'), {
       target: { value: 'POOR_QUALITY' },
     });
+
     fireEvent.change(screen.getByLabelText('Additional Details'), {
       target: { value: 'There was a quality issue with part of the service.' },
     });

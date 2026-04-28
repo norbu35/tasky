@@ -9,9 +9,11 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import mn.tasky.category.application.CategorySchemaVersionService;
 import mn.tasky.category.application.CategoryService;
+import mn.tasky.category.dto.ActivateSchemaVersionRequest;
 import mn.tasky.category.dto.CategoryPage;
 import mn.tasky.category.dto.CategoryResponse;
 import mn.tasky.category.dto.CategorySchemaVersion;
@@ -96,6 +98,7 @@ public class CategoryController {
                 category.isActive(),
                 category.sortOrder(),
                 Boolean.TRUE.equals(category.intakeEnabled()),
+                Boolean.TRUE.equals(category.assistedDistributionEnabled()),
                 category.intakeSchemaVersion() != null ? category.intakeSchemaVersion() : 0,
                 parseJson(category.intakeSchemaJson()));
     }
@@ -125,8 +128,13 @@ public class CategoryController {
 
     @PostMapping("/admin/categories")
     public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CreateCategoryRequest body) {
-        CategoryState created = categoryService.createCategory(
-                new CreateCategory(body.name(), body.nameMn(), body.iconUrl(), body.sortOrder()));
+        CategoryState created = categoryService.createCategory(new CreateCategory(
+                body.name(),
+                body.nameMn(),
+                body.iconUrl(),
+                body.sortOrder(),
+                body.intakeEnabled(),
+                body.assistedDistributionEnabled()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(toCategoryResponse(created));
     }
@@ -138,7 +146,13 @@ public class CategoryController {
                 .updateCategory(
                         id,
                         new UpdateCategory(
-                                body.name(), body.nameMn(), body.iconUrl(), body.isActive(), body.sortOrder()))
+                                body.name(),
+                                body.nameMn(),
+                                body.iconUrl(),
+                                body.isActive(),
+                                body.sortOrder(),
+                                body.intakeEnabled(),
+                                body.assistedDistributionEnabled()))
                 .<ResponseEntity<?>>map(category -> ResponseEntity.ok(toCategoryResponse(category)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of(
@@ -179,10 +193,27 @@ public class CategoryController {
 
     @PostMapping("/admin/categories/{id}/schemas/{version}/activate")
     public ResponseEntity<?> activateSchemaVersion(
-            @PathVariable String id, @PathVariable int version, HttpServletRequest request) {
+            @PathVariable String id,
+            @PathVariable int version,
+            @Valid @RequestBody ActivateSchemaVersionRequest body,
+            HttpServletRequest request) {
         try {
-            CategorySchemaVersion activated = schemaVersionService.activate(id, version);
+            CategorySchemaVersion activated =
+                    switch (body.mode().toUpperCase(Locale.ROOT)) {
+                        case "ACTIVE" -> schemaVersionService.activate(id, version);
+                        case "CANARY" -> schemaVersionService.canaryActivate(id, version);
+                        case "ROLLBACK_TO_LAST_KNOWN_GOOD", "ROLLBACK" -> schemaVersionService.rollbackToLastKnownGood(
+                                id);
+                        default -> throw new IllegalArgumentException(
+                                "Unsupported schema activation mode: " + body.mode());
+                    };
             return ResponseEntity.ok(toSchemaVersionResponse(activated));
+        } catch (CategorySchemaVersionService.NoFallbackException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of(
+                            "code", e.code(),
+                            "message", e.getMessage(),
+                            "trace_id", resolveTraceId(request)));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of(

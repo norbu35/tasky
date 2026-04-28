@@ -63,7 +63,7 @@ export function RatingSection({
   const { t } = useTranslation();
 
   return (
-    <View className="rounded-md bg-muted p-xl gap-[20px]">
+    <View className="rounded-md bg-muted p-xl gap-lg">
       {categories.map((category) => (
         <View key={category.key} className="gap-md">
           <View className="flex-row items-center justify-between gap-lg">

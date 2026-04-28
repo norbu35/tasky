@@ -30,14 +30,14 @@ function computeSla(submittedAt: string, now: Date, t: TFunction): SlaInfo {
 
   if (remainingMs <= 0) {
     return {
-      label: t('admin.verifications.overdue', 'Overdue'),
+      label: t('admin.verifications.overdue'),
       colorClass: 'bg-destructive text-destructive-foreground',
     };
   }
 
   const hoursLeft = differenceInHours(deadlineMs, now);
   const minutesLeft = differenceInMinutes(deadlineMs, now) % 60;
-  const label = t('admin.verifications.slaTimeLeft', '{{hours}}h {{minutes}}m', {
+  const label = t('admin.verifications.slaTimeLeft', {
     hours: hoursLeft,
     minutes: minutesLeft,
   });
@@ -159,9 +159,7 @@ export function AdminVerificationsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold font-display">
-          {t('admin.verifications.title', 'Verifications')}
-        </h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.verifications.title')}</h1>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-20 w-full" />
@@ -175,15 +173,13 @@ export function AdminVerificationsPage() {
   if (error && verifications.length === 0) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold font-display">
-          {t('admin.verifications.title', 'Verifications')}
-        </h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.verifications.title')}</h1>
         <Card>
           <CardContent className="py-12 text-center space-y-4">
             <p className="text-destructive">{error}</p>
             <Button variant="secondary" onClick={fetchVerifications}>
               <RefreshCw className="mr-2 h-4 w-4" />
-              {t('admin.verifications.retry', 'Retry')}
+              {t('admin.verifications.retry')}
             </Button>
           </CardContent>
         </Card>
@@ -195,14 +191,10 @@ export function AdminVerificationsPage() {
   if (verifications.length === 0) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold font-display">
-          {t('admin.verifications.title', 'Verifications')}
-        </h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.verifications.title')}</h1>
         <Card>
           <CardContent className="py-16 text-center">
-            <p className="text-muted-foreground">
-              {t('admin.verifications.empty', 'No pending verifications')}
-            </p>
+            <p className="text-muted-foreground">{t('admin.verifications.empty')}</p>
           </CardContent>
         </Card>
       </div>
@@ -213,12 +205,10 @@ export function AdminVerificationsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold font-display">
-          {t('admin.verifications.title', 'Verifications')}
-        </h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.verifications.title')}</h1>
         <Button variant="secondary" size="sm" onClick={fetchVerifications}>
           <RefreshCw className="mr-2 h-4 w-4" />
-          {t('admin.verifications.refresh', 'Refresh')}
+          {t('admin.verifications.refresh')}
         </Button>
       </div>
 
@@ -258,7 +248,7 @@ export function AdminVerificationsPage() {
                     <span className="text-sm text-muted-foreground">{v.user_phone}</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    {t('admin.verifications.submittedAt', 'Submitted:')}{' '}
+                    {t('admin.verifications.submittedAt')}{' '}
                     {new Date(v.submitted_at).toLocaleString(locale)}
                   </p>
                 </div>
@@ -274,37 +264,37 @@ export function AdminVerificationsPage() {
                   {/* ID Card Images */}
                   <div>
                     <h3 className="text-sm font-semibold mb-3">
-                      {t('admin.verifications.documents', 'Identity Documents')}
+                      {t('admin.verifications.documents')}
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
                         <p className="text-xs text-muted-foreground mb-1">
-                          {t('admin.verifications.idFront', 'ID Front')}
+                          {t('admin.verifications.idFront')}
                         </p>
                         <img
                           src={v.id_card_front_url}
-                          alt={t('admin.verifications.idFront', 'ID Front')}
+                          alt={t('admin.verifications.idFront')}
                           className="rounded-lg border object-cover w-full max-h-48"
                         />
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground mb-1">
-                          {t('admin.verifications.idBack', 'ID Back')}
+                          {t('admin.verifications.idBack')}
                         </p>
                         <img
                           src={v.id_card_back_url}
-                          alt={t('admin.verifications.idBack', 'ID Back')}
+                          alt={t('admin.verifications.idBack')}
                           className="rounded-lg border object-cover w-full max-h-48"
                         />
                       </div>
                       {v.selfie_url && (
                         <div>
                           <p className="text-xs text-muted-foreground mb-1">
-                            {t('admin.verifications.selfie', 'Selfie')}
+                            {t('admin.verifications.selfie')}
                           </p>
                           <img
                             src={v.selfie_url}
-                            alt={t('admin.verifications.selfie', 'Selfie')}
+                            alt={t('admin.verifications.selfie')}
                             className="rounded-lg border object-cover w-full max-h-48"
                           />
                         </div>
@@ -316,10 +306,7 @@ export function AdminVerificationsPage() {
                   {isRejecting && (
                     <div className="space-y-2">
                       <Input
-                        placeholder={t(
-                          'admin.verifications.rejectReasonPlaceholder',
-                          'Enter rejection reason...',
-                        )}
+                        placeholder={t('admin.verifications.rejectReasonPlaceholder')}
                         value={rejectReason}
                         onChange={(e) => setRejectReason(e.target.value)}
                         autoFocus
@@ -335,8 +322,8 @@ export function AdminVerificationsPage() {
                           }}
                         >
                           {confirmingRejectId === v.id
-                            ? t('admin.verifications.rejecting', 'Rejecting...')
-                            : t('admin.verifications.confirmReject', 'Confirm Reject')}
+                            ? t('admin.verifications.rejecting')
+                            : t('admin.verifications.confirmReject')}
                         </Button>
                         <Button
                           size="sm"
@@ -347,7 +334,7 @@ export function AdminVerificationsPage() {
                             setRejectReason('');
                           }}
                         >
-                          {t('admin.verifications.cancel', 'Cancel')}
+                          {t('admin.verifications.cancel')}
                         </Button>
                       </div>
                     </div>
@@ -358,7 +345,7 @@ export function AdminVerificationsPage() {
                     <div className="flex gap-3">
                       <Button
                         size="sm"
-                        className="bg-verified hover:bg-verified/90 text-white"
+                        className="bg-verified hover:bg-verified/90 text-verified-foreground"
                         disabled={approvingId === v.id}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -367,8 +354,8 @@ export function AdminVerificationsPage() {
                       >
                         <CheckCircle className="mr-2 h-4 w-4" />
                         {approvingId === v.id
-                          ? t('admin.verifications.approving', 'Approving...')
-                          : t('admin.verifications.approve', 'Approve')}
+                          ? t('admin.verifications.approving')
+                          : t('admin.verifications.approve')}
                       </Button>
                       <Button
                         size="sm"
@@ -379,7 +366,7 @@ export function AdminVerificationsPage() {
                         }}
                       >
                         <XCircle className="mr-2 h-4 w-4" />
-                        {t('admin.verifications.reject', 'Reject')}
+                        {t('admin.verifications.reject')}
                       </Button>
                     </div>
                   )}

@@ -28,6 +28,7 @@ public interface AnalyticsEventDao {
             @Bind("properties") String properties,
             @Bind("timestamp") Instant timestamp);
 
-    @SqlQuery("SELECT id, name, user_id, properties, timestamp FROM analytics_events ORDER BY " + "timestamp DESC")
-    List<Event> findAll();
+    @SqlQuery("SELECT id, name, user_id, properties, timestamp FROM analytics_events "
+            + "ORDER BY timestamp DESC, id DESC LIMIT :limit")
+    List<Event> findLatest(@Bind("limit") int limit);
 }

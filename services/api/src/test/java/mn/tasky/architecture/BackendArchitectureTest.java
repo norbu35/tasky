@@ -161,4 +161,22 @@ class BackendArchitectureTest {
             .dependOnClassesThat()
             .resideInAnyPackage("mn.tasky.common.audit..")
             .because("runtime composition must use AdminAuditCommandPort, not AuditEventDao");
+
+    @ArchTest
+    static final ArchRule assistanceServicesMustUseCategoryPublicPort = noClasses()
+            .that()
+            .haveSimpleName("TaskAssistanceService")
+            .should()
+            .dependOnClassesThat()
+            .resideInAnyPackage("mn.tasky.category.dao..")
+            .because("task assistance crosses the category boundary through CategoryQueryPort");
+
+    @ArchTest
+    static final ArchRule taskSchedulersMustUseNotificationPublicPort = noClasses()
+            .that()
+            .resideInAnyPackage("mn.tasky.task.scheduling..")
+            .should()
+            .dependOnClassesThat()
+            .resideInAnyPackage("mn.tasky.notification.application..")
+            .because("task schedulers cross the notification boundary through NotificationCommandPort");
 }

@@ -1,14 +1,15 @@
-import { createMobileApiClient } from '@/lib/mobileApiClient';
 import type {
   Category,
   CreateTaskRequest,
   CursorPage,
-  PublicTask,
   Task,
+  TaskDetail,
+  TaskFeedItem,
   TaskApplication,
   TaskFilters,
   RecentLocation,
 } from '@/lib/api/types';
+import { createMobileApiClient } from '@/lib/mobileApiClient';
 
 const getClient = () => createMobileApiClient();
 
@@ -26,14 +27,24 @@ export async function createTask(accessToken: string, payload: CreateTaskRequest
 export async function listTasks(
   accessToken: string,
   filters?: TaskFilters,
-): Promise<CursorPage<PublicTask>> {
-  return getClient().requestJson<CursorPage<PublicTask>>('/tasks', { method: 'GET' }, accessToken, {
-    category: filters?.categoryId,
-    lat: filters?.lat,
-    lng: filters?.lng,
-    radius_km: filters?.radiusKm,
-    limit: 100,
-  });
+): Promise<CursorPage<TaskFeedItem>> {
+  return getClient().requestJson<CursorPage<TaskFeedItem>>(
+    '/tasks',
+    { method: 'GET' },
+    accessToken,
+    {
+      category: filters?.categoryId,
+      lat: filters?.lat,
+      lng: filters?.lng,
+      radius_km: filters?.radiusKm,
+      cursor: filters?.cursor,
+      limit: filters?.limit ?? 20,
+    },
+  );
+}
+
+export async function getTask(accessToken: string, taskId: string): Promise<TaskDetail> {
+  return getClient().requestJson<TaskDetail>(`/tasks/${taskId}`, { method: 'GET' }, accessToken);
 }
 
 export async function listMyTasks(accessToken: string): Promise<CursorPage<Task>> {
@@ -57,12 +68,21 @@ export async function applyToTask(
   accessToken: string,
   taskId: string,
   message: string,
+  quotePrice?: number | null,
 ): Promise<TaskApplication> {
+  const body =
+    quotePrice == null
+      ? { message }
+      : {
+          message,
+          quote_price: quotePrice,
+        };
+
   return getClient().requestJson<TaskApplication>(
     `/tasks/${taskId}/applications`,
     {
       method: 'POST',
-      body: JSON.stringify({ message }),
+      body: JSON.stringify(body),
     },
     accessToken,
   );

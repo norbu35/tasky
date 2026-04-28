@@ -2,8 +2,21 @@
 screen_id: SCR-CUST-010
 name: 'Task Cancel Confirmation'
 route: null
+presentation:
+  type: inline_modal_sheet
+  host_screen: SCR-CUST-009
+  invocation: "Customer taps 'Cancel Task' on an OPEN task detail"
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-010
+  prd_refs:
+    - NFR-RELI-02
+    - REQ-P1-KPI-01
+  journey_refs:
+    - JRN-CUST-07:step-2
+  scenario_refs: []
 template: modal_sheet
 figma_page: 'Customer/Task Cancel Confirmation'
 feature: 'tasks'
@@ -15,7 +28,7 @@ layout:
 
 components:
   - id: COMP-MODALSHEET
-    usage: 'Bottom sheet for task/booking cancellation confirmation with contextual warning'
+    usage: 'Bottom sheet for open-task cancellation confirmation'
     props:
       visible: true
       title: 'Даалгавар цуцлах'
@@ -38,18 +51,8 @@ states:
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: []
 
-  - id: assigned_cancel_free
-    description: 'Task is ASSIGNED but cancellation is >4 hours before schedule; free cancellation'
-    components_visible: [COMP-MODALSHEET, COMP-BUTTON]
-    components_hidden: []
-
-  - id: assigned_cancel_late_warning
-    description: 'Task is ASSIGNED and cancellation is <4 hours before schedule; late cancellation warning with reliability incident notice'
-    components_visible: [COMP-MODALSHEET, COMP-BUTTON]
-    components_hidden: []
-
   - id: confirming
-    description: 'User confirmed cancellation; API call in progress (DELETE /tasks/:id or PUT /bookings/:id/cancel)'
+    description: 'User confirmed open-task cancellation; DELETE /tasks/:id is in progress'
     components_visible: [COMP-MODALSHEET, COMP-BUTTON]
     components_hidden: []
 
@@ -63,31 +66,6 @@ copy:
     mn: 'Энэ даалгаврыг цуцлахад ямар нэг торгууль ногдохгүй'
     en: 'Cancelling this task has no penalty'
     max_chars: 60
-
-  - key: title_assigned_free
-    mn: 'Захиалга цуцлах уу?'
-    en: 'Cancel this booking?'
-    max_chars: 25
-
-  - key: body_assigned_free
-    mn: 'Хуваарьт цагаас 4+ цагийн өмнө цуцалж байгаа тул торгууль ногдохгүй'
-    en: 'Cancelling more than 4 hours before schedule incurs no penalty'
-    max_chars: 80
-
-  - key: title_assigned_late
-    mn: 'Хожуу цуцлалт'
-    en: 'Late Cancellation'
-    max_chars: 20
-
-  - key: body_assigned_late
-    mn: 'Хуваарьт цагаас 4 цагийн дотор цуцалж байна. Энэ нь найдвартай байдлын тэмдэглэлд бүртгэгдэнэ'
-    en: 'Cancelling within 4 hours of schedule. This will be recorded as a reliability incident'
-    max_chars: 120
-
-  - key: late_warning_detail
-    mn: '28 хоногийн дотор 2 удаа хожуу цуцалбал зэрэглэлд нөлөөлнө'
-    en: '2 late cancellations within 28 days will affect your ranking'
-    max_chars: 80
 
   - key: cta_cancel_confirm
     mn: 'Тийм, цуцлах'
@@ -103,28 +81,22 @@ api_endpoints:
   - method: DELETE
     path: '/tasks/:id'
     purpose: 'Cancel an OPEN task (no booking exists)'
-  - method: PUT
-    path: '/bookings/:id/cancel'
-    purpose: 'Cancel an ASSIGNED booking (task has active booking)'
 
 analytics_events:
   - event: 'cancel_sheet_opened'
-    trigger: 'Bottom sheet becomes visible; includes task_id and cancel_type (open/assigned_free/assigned_late)'
+    trigger: 'Bottom sheet becomes visible for an open task'
   - event: 'cancel_confirmed'
-    trigger: 'User taps confirm cancel; includes task_id and cancel_type'
+    trigger: 'User taps confirm cancel; includes task_id'
   - event: 'cancel_aborted'
     trigger: 'User dismisses sheet or taps Go Back'
 
 acceptance_criteria:
   - 'Bottom sheet uses ModalSheet with handle bar for drag-to-dismiss'
   - 'OPEN task cancellation shows no-penalty confirmation'
-  - 'ASSIGNED free cancellation (>4 hours) shows no-penalty confirmation'
-  - 'ASSIGNED late cancellation (<4 hours) shows danger-styled warning about reliability incident'
-  - 'Late cancellation warning explains 28-day trailing window and ranking penalty'
+  - 'Assigned booking cancellation is handled by SCR-CUST-022, not this open-task sheet'
   - 'Cancel button uses danger variant per composition rules'
   - 'Confirm cancel button enters loading state during API call'
   - 'On open task cancel success, dismiss sheet and replace to My Tasks SCR-CUST-001'
-  - 'On assigned booking cancel success, dismiss sheet and replace to My Tasks SCR-CUST-001'
   - 'Cancel aborted dismisses sheet back to Task Detail SCR-CUST-009'
   - 'Scrim uses branded primaryDeep at 35% opacity'
   - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

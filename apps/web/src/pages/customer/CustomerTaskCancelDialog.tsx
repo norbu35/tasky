@@ -10,19 +10,16 @@ export function CustomerTaskCancelDialog() {
   return (
     <StatePanel
       icon={<AlertTriangle className="h-5 w-5 text-sun-light" />}
-      title={t('customerPages.taskCancel.title', 'Cancel task?')}
-      description={t(
-        'customerPages.taskCancel.description',
-        'Stopping this task will remove it from the active customer flow.',
-      )}
+      title={t('customerPages.taskCancel.title')}
+      description={t('customerPages.taskCancel.description')}
       tone="warning"
       actions={
         <>
           <Button type="button" variant="secondary">
-            {t('customerPages.taskCancel.keepAction', 'Keep task')}
+            {t('customerPages.taskCancel.keepAction')}
           </Button>
           <Button type="button" variant="destructive">
-            {t('customerPages.taskCancel.cancelAction', 'Cancel task')}
+            {t('customerPages.taskCancel.cancelAction')}
           </Button>
         </>
       }

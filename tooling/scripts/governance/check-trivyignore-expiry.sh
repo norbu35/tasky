@@ -25,6 +25,10 @@ if [ "$EXPIRED" -gt 0 ]; then
   echo ""
   echo "ERROR: $EXPIRED .trivyignore entries have expired."
   echo "Fix the underlying CVEs and remove them, or extend the expiry date with justification."
+  echo "autonomous remediation:"
+  echo " - prefer removing the ignore after fixing the vulnerability"
+  echo " - if the exception is still required, extend the expiry in .trivyignore with an updated justification"
+  echo " - rerun: bash tooling/scripts/governance/check-trivyignore-expiry.sh"
   exit 1
 fi
 

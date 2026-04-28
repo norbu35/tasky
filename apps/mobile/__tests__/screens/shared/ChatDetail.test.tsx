@@ -1,5 +1,8 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import React from 'react';
+import { Text, type TextProps } from 'react-native';
+
+import ChatDetailScreen from '../../../src/app/(tabs)/inbox/[id]';
 import { useMessages } from '../../../src/features/chat/hooks/useMessages';
 import { useSendMessage } from '../../../src/features/chat/hooks/useSendMessage';
 import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
@@ -11,14 +14,16 @@ jest.mock('expo-router', () => ({
 }));
 
 jest.mock('react-i18next', () => {
-  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  const { createReactI18nextMock } = jest.requireActual(
+    '../../test-utils/mockI18n',
+  ) as typeof import('../../test-utils/mockI18n');
   return createReactI18nextMock('mn');
 });
 
-jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
+jest.mock('react-native-reanimated', () => jest.requireActual('react-native-reanimated/mock'));
 
 jest.mock('@gorhom/bottom-sheet', () => {
-  const { View } = require('react-native');
+  const { View } = jest.requireActual('react-native') as typeof import('react-native');
   return {
     __esModule: true,
     default: View,
@@ -29,10 +34,15 @@ jest.mock('@gorhom/bottom-sheet', () => {
 });
 
 jest.mock('lucide-react-native', () => {
-  const { Text } = require('react-native');
+  const { Text } = jest.requireActual('react-native') as typeof import('react-native');
   return new Proxy(
     {},
-    { get: (_, name) => (props: any) => <Text testID={`icon-${String(name)}`} {...props} /> },
+    {
+      get: (_target: unknown, name: string) =>
+        function MockIcon(props: TextProps) {
+          return <Text testID={`icon-${String(name)}`} {...props} />;
+        },
+    },
   );
 });
 
@@ -68,8 +78,14 @@ jest.mock('../../../src/features/chat/hooks/useConversations', () => ({
   }),
 }));
 
+type AuthStoreState = {
+  session: {
+    accessToken: string;
+  };
+};
+
 jest.mock('../../../src/store/authStore', () => ({
-  useAuthStore: (selector: any) =>
+  useAuthStore: (selector: (state: AuthStoreState) => unknown) =>
     selector({
       session: { accessToken: 'test-token' },
     }),
@@ -96,21 +112,27 @@ beforeEach(() => {
 });
 
 describe('ChatDetailScreen (SCR-SHARED-011)', () => {
-  it('renders messages in the conversation', () => {
+  it('renders transport messages chronologically by sent timestamp', () => {
     mockUseMessages.mockReturnValue({
       data: {
         data: [
           {
-            id: 'msg-1',
-            content: 'Hello there',
-            sender_id: 'user-other',
-            created_at: '2026-03-23T09:00:00Z',
+            id: 'msg-latest',
+            content: 'Latest message',
+            sender_id: 'user-me',
+            sent_at: '2026-03-23T09:02:00Z',
           },
           {
-            id: 'msg-2',
-            content: 'Hi! How can I help?',
-            sender_id: 'user-me',
-            created_at: '2026-03-23T09:01:00Z',
+            id: 'msg-earliest',
+            content: 'Earliest message',
+            sender_id: 'user-other',
+            sent_at: '2026-03-23T09:00:00Z',
+          },
+          {
+            id: 'msg-middle',
+            content: 'Middle message',
+            sender_id: 'user-other',
+            sent_at: '2026-03-23T09:01:00Z',
           },
         ],
         cursor: { next: null, prev: null },
@@ -119,12 +141,47 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
       isError: false,
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useMessages>);
+    const view = render(<ChatDetailScreen />);
+    const renderedText = view.UNSAFE_getAllByType(Text).map((node) => node.props.children);
 
-    const ChatDetailScreen = require('../../../src/app/(tabs)/inbox/[id]').default;
+    expect(renderedText.indexOf('Earliest message')).toBeLessThan(
+      renderedText.indexOf('Middle message'),
+    );
+    expect(renderedText.indexOf('Middle message')).toBeLessThan(
+      renderedText.indexOf('Latest message'),
+    );
+  });
+
+  it('renders messages in the conversation', () => {
+    mockUseMessages.mockReturnValue({
+      data: {
+        data: [
+          {
+            id: 'msg-1',
+            content: 'Hello there',
+            sender_id: 'user-other',
+            sent_at: '2026-03-23T09:00:00Z',
+          },
+          {
+            id: 'msg-2',
+            content: 'Hi! How can I help?',
+            sender_id: 'user-me',
+            sent_at: '2026-03-23T09:01:00Z',
+          },
+        ],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useMessages>);
     render(<ChatDetailScreen />);
 
     expect(screen.getByText('Hello there')).toBeTruthy();
     expect(screen.getByText('Hi! How can I help?')).toBeTruthy();
+    expect(screen.getByText('Өнөөдөр')).toBeTruthy();
+    expect(screen.getByTestId('chat-details-button')).toBeTruthy();
+    expect(screen.getByTestId('chat-attach-image-button')).toBeTruthy();
   });
 
   it('applies sent bubble styling for own messages', () => {
@@ -135,7 +192,7 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
             id: 'msg-1',
             content: 'My message',
             sender_id: 'user-me',
-            created_at: '2026-03-23T09:00:00Z',
+            sent_at: '2026-03-23T09:00:00Z',
           },
         ],
         cursor: { next: null, prev: null },
@@ -144,8 +201,6 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
       isError: false,
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useMessages>);
-
-    const ChatDetailScreen = require('../../../src/app/(tabs)/inbox/[id]').default;
     render(<ChatDetailScreen />);
 
     const bubble = screen.getByTestId('message-bubble-msg-1');
@@ -161,7 +216,7 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
             id: 'msg-1',
             content: 'Their message',
             sender_id: 'user-other',
-            created_at: '2026-03-23T09:00:00Z',
+            sent_at: '2026-03-23T09:00:00Z',
           },
         ],
         cursor: { next: null, prev: null },
@@ -170,8 +225,6 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
       isError: false,
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useMessages>);
-
-    const ChatDetailScreen = require('../../../src/app/(tabs)/inbox/[id]').default;
     render(<ChatDetailScreen />);
 
     expect(screen.getByTestId('message-received-msg-1')).toBeTruthy();
@@ -184,8 +237,6 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
       isError: false,
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useMessages>);
-
-    const ChatDetailScreen = require('../../../src/app/(tabs)/inbox/[id]').default;
     render(<ChatDetailScreen />);
 
     const input = screen.getByTestId('chat-input');
@@ -200,8 +251,6 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
       isError: false,
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useMessages>);
-
-    const ChatDetailScreen = require('../../../src/app/(tabs)/inbox/[id]').default;
     render(<ChatDetailScreen />);
 
     const input = screen.getByTestId('chat-input');
@@ -222,7 +271,7 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
             id: 'msg-1',
             content: 'Hello there',
             sender_id: 'user-other',
-            created_at: '2026-03-23T09:00:00Z',
+            sent_at: '2026-03-23T09:00:00Z',
           },
         ],
         cursor: { next: null, prev: null },
@@ -231,8 +280,6 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
       isError: false,
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useMessages>);
-
-    const ChatDetailScreen = require('../../../src/app/(tabs)/inbox/[id]').default;
     render(<ChatDetailScreen />);
 
     expect(screen.getByTestId('message-timestamp-msg-1')).toBeTruthy();
@@ -246,8 +293,6 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
       isError: true,
       refetch,
     } as unknown as ReturnType<typeof useMessages>);
-
-    const ChatDetailScreen = require('../../../src/app/(tabs)/inbox/[id]').default;
     render(<ChatDetailScreen />);
 
     expect(screen.getByText('Мессежүүдийг ачаалж чадсангүй')).toBeTruthy();
@@ -262,8 +307,6 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
       isError: false,
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useMessages>);
-
-    const ChatDetailScreen = require('../../../src/app/(tabs)/inbox/[id]').default;
     render(<ChatDetailScreen />);
 
     const input = screen.getByTestId('chat-input');

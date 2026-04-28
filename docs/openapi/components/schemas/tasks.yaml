@@ -1,3 +1,76 @@
+TaskFeedCategory:
+  type: object
+  required:
+    - id
+    - name
+    - name_mn
+  properties:
+    id:
+      type: string
+      format: uuid
+    name:
+      type: string
+    name_mn:
+      type: string
+    icon_url:
+      type: string
+      format: uri
+      nullable: true
+TaskFeedItem:
+  type: object
+  required:
+    - id
+    - category
+    - description
+    - pricing_mode
+    - budget
+    - approximate_location
+    - approximate_lat
+    - approximate_lng
+    - status
+    - scheduled_at
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+    category:
+      $ref: '#/TaskFeedCategory'
+    description:
+      type: string
+    pricing_mode:
+      type: string
+      enum:
+        - BUDGET
+        - QUOTE
+      description: 'BUDGET = customer sets a fixed budget that taskers accept to apply. QUOTE = taskers submit price quotes.'
+    budget:
+      type: integer
+      nullable: true
+      description: Budget in MNT when pricing_mode is BUDGET. Null for QUOTE mode tasks.
+      example: 50000
+    approximate_location:
+      type: string
+      description: District-level approximate location for feed scanning. Exact address is detail-only after authorization.
+      example: Sukhbaatar, Ulaanbaatar
+    approximate_lat:
+      type: number
+      format: double
+      description: District centroid latitude, not the exact task latitude.
+    approximate_lng:
+      type: number
+      format: double
+      description: District centroid longitude, not the exact task longitude.
+    status:
+      type: string
+      enum:
+        - OPEN
+    scheduled_at:
+      type: string
+      format: date-time
+    created_at:
+      type: string
+      format: date-time
 PublicTask:
   type: object
   required:
@@ -38,7 +111,7 @@ PublicTask:
         rating_avg:
           type: number
           format: double
-          description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
+          description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until at least three customer-to-tasker reviews are submitted.
     description:
       type: string
     budget:
@@ -51,7 +124,7 @@ PublicTask:
       enum:
         - BUDGET
         - QUOTE
-      description: 'BUDGET = customer sets a budget, taskers accept or counter-offer. QUOTE = taskers submit price quotes.'
+      description: 'BUDGET = customer sets a fixed budget that taskers accept to apply. QUOTE = taskers submit price quotes.'
     approximate_location:
       type: string
       description: Fuzzed location (district/khoroo level). Exact address hidden until booking.
@@ -121,7 +194,7 @@ Task:
       enum:
         - BUDGET
         - QUOTE
-      description: 'BUDGET = customer sets a budget, taskers accept or counter-offer. QUOTE = taskers submit price quotes.'
+      description: 'BUDGET = customer sets a fixed budget that taskers accept to apply. QUOTE = taskers submit price quotes.'
     location_lat:
       type: number
       format: double
@@ -367,7 +440,7 @@ TaskApplication:
         rating_avg:
           type: number
           format: double
-          description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until the minimum review-count threshold is met.
+          description: Aggregate rating. Current live contract returns this value, but Phase 1 public display is PRD-gated until at least three customer-to-tasker reviews are submitted.
         completed_tasks:
           type: integer
         is_pro:
@@ -378,7 +451,7 @@ TaskApplication:
     quote_price:
       type: integer
       nullable: true
-      description: "Tasker's price. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the quote (required)."
+      description: "Tasker's quote for QUOTE tasks. Omit or send null for BUDGET tasks, where applying accepts the posted budget."
     status:
       type: string
       enum:

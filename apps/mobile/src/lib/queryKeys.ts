@@ -11,8 +11,10 @@ export const queryKeys = {
   // ── Tasks ───────────────────────────────────────────────────────
   tasks: {
     all: (token: string) => ['tasks', token] as const,
+    feed: (token: string, filters?: Record<string, unknown>) =>
+      ['tasks', 'feed', token, filters ?? {}] as const,
     my: (token: string) => ['myTasks', token] as const,
-    detail: (token: string, taskId: string) => ['task', token, taskId] as const,
+    detail: (token: string, taskId: string) => ['tasks', 'detail', token, taskId] as const,
     categories: (token: string) => ['categories', token] as const,
     applications: (token: string, taskId: string) => ['applications', token, taskId] as const,
     recentLocations: (token: string) => ['recentLocations', token] as const,
@@ -47,7 +49,6 @@ export const queryKeys = {
 
   // ── Profile ─────────────────────────────────────────────────────
   profile: {
-    public: (token: string, userId: string) => ['publicProfile', token, userId] as const,
     stats: (token: string) => ['myStats', token] as const,
   },
 

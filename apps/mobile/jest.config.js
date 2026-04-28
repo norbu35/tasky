@@ -7,6 +7,8 @@ module.exports = {
   testMatch: ['**/__tests__/**/*.test.ts?(x)'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@assets/(.*)$': '<rootDir>/assets/$1',
+    '^@react-native/assets-registry/(.*)$': '<rootDir>/node_modules/@react-native/assets-registry/$1',
     '^@tasky/core$': '<rootDir>/../../packages/core/src/index.ts',
     '^react-native-reanimated/mock$': '<rootDir>/__tests__/test-utils/reanimated-mock.js',
   },

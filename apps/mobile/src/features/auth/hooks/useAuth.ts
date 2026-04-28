@@ -1,15 +1,27 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 
-import { requestOtp, verifyOtp, devLogin } from '../api';
 import { getMyProfile } from '@/features/profile';
+import { listMyTasks } from '@/features/tasks';
+import type { AuthTokens } from '@/lib/api/types';
+import { queryKeys } from '@/lib/queryKeys';
 import { useAppStore } from '@/store/appStore';
 import { useAuthStore } from '@/store/authStore';
-import { queryKeys } from '@/lib/queryKeys';
 import { resolvePostAuthHref } from '@/utils/authRouting';
 
-export const DEV_LOGIN_CUSTOMER_PHONE = '+97692000001';
+import { requestOtp, verifyOtp, devLogin } from '../api';
+
+export const DEV_LOGIN_CUSTOMER_PHONE = '+97692000002';
 export const DEV_LOGIN_TASKER_PHONE = '+97693000001';
+
+function prefetchPostAuthHome(queryClient: QueryClient, session: AuthTokens): void {
+  if (session.user.role !== 'CUSTOMER') return;
+
+  void queryClient.prefetchQuery({
+    queryKey: queryKeys.tasks.my(session.accessToken),
+    queryFn: () => listMyTasks(session.accessToken),
+  });
+}
 
 export function useRequestOtp() {
   return useMutation({
@@ -29,6 +41,7 @@ export function useVerifyOtp() {
     },
     onSuccess: async (session) => {
       setSession(session);
+      prefetchPostAuthHome(queryClient, session);
       try {
         const profile = await getMyProfile(session.accessToken);
         queryClient.setQueryData(queryKeys.me.all(session.accessToken), profile);
@@ -53,6 +66,7 @@ export function useDevLogin() {
     onSuccess: async (session, variables) => {
       setSession(session);
       setRole(variables.role.toLowerCase() as 'customer' | 'tasker');
+      prefetchPostAuthHome(queryClient, session);
       try {
         const profile = await getMyProfile(session.accessToken);
         queryClient.setQueryData(queryKeys.me.all(session.accessToken), profile);

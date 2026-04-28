@@ -9,47 +9,49 @@ appId: mn.tasky.mobile
 # Precondition: Logged in as customer; task has applicants requiring lead unlock
 
 - launchApp:
+    appId: 'mn.tasky.mobile'
     clearState: true
+
+- launchApp:
+    appId: 'mn.tasky.mobile'
 
 - runFlow: ../_support/login-customer.yaml
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-001"
+      id: 'SCR-CUST-001'
     timeout: 5000
 
 - tapOn:
-    id: "my-tasks-feed"
+    id: 'my-tasks-feed'
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-009"
+      id: 'SCR-CUST-009'
     timeout: 5000
 
 - tapOn:
-    id: "task-detail-view-applicants"
+    id: 'SCR-CUST-009-cta'
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-011"
+      id: 'SCR-CUST-011'
     timeout: 5000
 
 # Accept applicant — triggers LeadUnlockSheet
 - tapOn:
-    id: "applicant-card-0"
-- tapOn:
-    id: "applicant-accept-sheet"
+    id: 'applicant-accept-0'
 
 # Lead unlock sheet appears
 - extendedWaitUntil:
     visible:
-      id: "lead-unlock-sheet"
+      id: 'lead-unlock-sheet'
     timeout: 3000
 - tapOn:
-    id: "lead-unlock-accept"
+    id: 'lead-unlock-accept'
 
 # Booking confirmation
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-014"
+      id: 'SCR-CUST-014'
     timeout: 5000

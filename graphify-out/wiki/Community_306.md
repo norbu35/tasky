@@ -1,0 +1,26 @@
+# Community 306
+
+> 2 nodes
+
+## Key Concepts
+
+- **CustomerTaskCancelDialog.tsx** (1 connections) — `apps/web/src/pages/customer/CustomerTaskCancelDialog.tsx`
+- **CustomerTaskCancelDialog()** (1 connections) — `apps/web/src/pages/customer/CustomerTaskCancelDialog.tsx`
+
+## Relationships
+
+- No strong cross-community connections detected
+
+## Source Files
+
+- `apps/web/src/pages/customer/CustomerTaskCancelDialog.tsx`
+
+## Audit Trail
+
+- EXTRACTED: 2 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+_Part of the graphify knowledge wiki. See [[index]] to navigate._

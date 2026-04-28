@@ -6,6 +6,10 @@ import { Text, View } from 'react-native';
 import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 import { Toast } from '@/components/ui/Toast';
 import { mobileTheme } from '@/design/tokenAdapter';
+import {
+  PostingGuidanceCard,
+  PostingProofChecklist,
+} from '@/features/tasks/components/PostingGuidance';
 
 import { formatBudget, formatSchedule } from './TaskReviewSubmit.model';
 import {
@@ -48,15 +52,16 @@ export default function TaskReviewSubmitScreen() {
       nextDisabled={isSubmitting || !isValid}
       testID="SCR-CUST-007"
       nextButtonTestID="SCR-CUST-007-cta"
+      greeting={t('ReviewSubmitScreen.finalStep')}
+      title={t('ReviewSubmitScreen.reviewTitle')}
     >
-      <View className="gap-xs mb-sm">
-        <Text className="text-caption font-bold text-text-secondary uppercase tracking-[0.075em]">
-          {t('ReviewSubmitScreen.finalStep')}
-        </Text>
-        <Text className="text-heading font-display-bold text-primary-deep">
-          {t('ReviewSubmitScreen.reviewTitle')}
-        </Text>
-      </View>
+      <PostingGuidanceCard
+        titleKey="PostingGuidance.summaryTitle"
+        bodyKey="PostingGuidance.summaryBody"
+        testID="posting-guidance-review-summary"
+      />
+
+      <PostingProofChecklist testID="posting-proof-checklist" />
 
       <SectionCard
         label={t('ReviewSubmitScreen.sectionCategory')}
@@ -102,12 +107,22 @@ export default function TaskReviewSubmitScreen() {
       />
 
       <SectionCard
-        label={t('ReviewSubmitScreen.sectionBudget')}
-        value={formatBudget(draft.budget || '0')}
+        label={t('ReviewSubmitScreen.sectionPricing')}
+        value={
+          draft.pricingMode === 'QUOTE'
+            ? t('ReviewSubmitScreen.pricingModeQuote')
+            : formatBudget(draft.budget || '0')
+        }
         onEdit={navigateToSchedule}
-        testID="review-section-budget"
+        testID="review-section-pricing"
         icon={<CircleDollarSign size={16} color={colors.accent} />}
-      />
+      >
+        <Text className="text-caption text-text-secondary leading-relaxed">
+          {draft.pricingMode === 'QUOTE'
+            ? t('ReviewSubmitScreen.quoteModeHelper')
+            : t('ReviewSubmitScreen.budgetModeHelper')}
+        </Text>
+      </SectionCard>
 
       <View className="rounded-md bg-muted p-md flex-row items-start gap-sm mb-sm">
         <CircleAlert size={16} color={colors.accent} />

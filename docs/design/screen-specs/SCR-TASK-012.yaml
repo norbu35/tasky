@@ -1,193 +1,205 @@
 # Screen Spec: Tasker Bookings (My Jobs)
 screen_id: SCR-TASK-012
-name: "Tasker Bookings (My Jobs)"
-route: "/(tasker)/jobs"
+name: 'Tasker Bookings (My Jobs)'
+route: '/(tasker)/jobs'
 role: [tasker]
-phase: "0-1"
+phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-012
+  prd_refs:
+    - REQ-P1-BOOK-13
+    - NFR-RELI-04
+  journey_refs:
+    - JRN-TASK-04:step-1
+  scenario_refs:
+    - SCN-BOOK-009
 template: feed_list
-figma_page: "Tasker/My Jobs"
-feature: "tasker-bookings"
+figma_page: 'Tasker/My Jobs'
+feature: 'tasker-bookings'
 
 layout:
   template: feed_list
   density: default
-  structure: "safe_area -> sticky_header(page_title + tab_filter) -> scrollview(booking_split_cards) -> pagination_footer"
+  structure: 'safe_area -> sticky_header(page_title + tab_filter) -> scrollview(booking_split_cards) -> pagination_footer'
 
 components:
   - id: COMP-SPLITCARD
-    usage: "Booking card — dark teal header with customer avatar + booking status, light body with task title, date, location"
+    usage: 'Booking card — dark teal header with customer avatar + booking status, light body with task title, date, location'
     props:
-      headerContent: { avatar: "customer_avatar", status: "assigned" }
-      bodyContent: { title: "Гэрийн цэвэрлэгээ", date: "2026.03.25", location: "Баянгол дүүрэг" }
-      status: "assigned"
+      headerContent: { avatar: 'customer_avatar', status: 'assigned' }
+      bodyContent: { title: 'Гэрийн цэвэрлэгээ', date: '2026.03.25', location: 'Баянгол дүүрэг' }
+      status: 'assigned'
     variant: booking
 
   - id: COMP-SPLITCARD
-    usage: "Completed booking card variant"
+    usage: 'Completed booking card variant'
     props:
-      headerContent: { avatar: "customer_avatar", status: "completed" }
-      bodyContent: { title: "Сантехникийн засвар", date: "2026.03.20", location: "Сүхбаатар дүүрэг" }
-      status: "completed"
+      headerContent: { avatar: 'customer_avatar', status: 'completed' }
+      bodyContent:
+        { title: 'Сантехникийн засвар', date: '2026.03.20', location: 'Сүхбаатар дүүрэг' }
+      status: 'completed'
     variant: booking
 
   - id: COMP-STATUSBADGE
-    usage: "Status badge on each booking card (Assigned, Completed, Cancelled, No-Show)"
+    usage: 'Status badge on each booking card (Assigned, Completed, Cancelled, No-Show)'
     props:
-      status: "assigned"
-      size: "md"
+      status: 'assigned'
+      size: 'md'
     variant: assigned
 
   - id: COMP-EMPTYSTATE
-    usage: "Empty state when tasker has no bookings yet — encourage applying"
+    usage: 'Empty state when tasker has no bookings yet — encourage applying'
     props:
-      illustration: "empty_jobs"
-      headline: "Одоогоор ажил байхгүй байна"
-      description: "Даалгавруудад анкет илгээж, эхний ажлаа аваарай"
-      ctaLabel: "Даалгавар хайх"
+      illustration: 'empty_jobs'
+      headline: 'Одоогоор ажил байхгүй байна'
+      description: 'Даалгавруудад анкет илгээж, эхний ажлаа аваарай'
+      ctaLabel: 'Даалгавар хайх'
     variant: activation
 
   - id: COMP-LOADINGSKELETON
-    usage: "Skeleton placeholders matching SplitCard booking layout during load"
+    usage: 'Skeleton placeholders matching SplitCard booking layout during load'
     props:
       variant: card
       count: 3
     variant: card
 
   - id: COMP-CATEGORYCHIP
-    usage: "Tab filter chips for Active vs Completed bookings"
+    usage: 'Tab filter chips for Active vs Completed bookings'
     props:
-      category: "Идэвхтэй"
+      category: 'Идэвхтэй'
       isActive: true
     variant: active
 
 states:
   - id: loading_initial
-    description: "First load of bookings list — skeleton cards displayed"
+    description: 'First load of bookings list — skeleton cards displayed'
     components_visible: [page_title, tab_filter, loading_skeleton]
     components_hidden: [booking_cards, empty_state, pagination_footer]
 
   - id: empty
-    description: "No bookings yet — activation empty state encouraging the tasker to apply to tasks"
+    description: 'No bookings yet — activation empty state encouraging the tasker to apply to tasks'
     components_visible: [page_title, tab_filter, empty_state]
     components_hidden: [booking_cards, loading_skeleton, pagination_footer]
 
   - id: populated_active
-    description: "Active bookings (ASSIGNED status) displayed in list"
+    description: 'Active bookings (ASSIGNED status) displayed in list'
     components_visible: [page_title, tab_filter_active, booking_cards_active, pagination_footer]
     components_hidden: [empty_state, loading_skeleton, booking_cards_completed]
 
   - id: populated_completed
-    description: "Completed bookings tab selected — past bookings displayed"
-    components_visible: [page_title, tab_filter_completed, booking_cards_completed, pagination_footer]
+    description: 'Completed bookings tab selected — past bookings displayed'
+    components_visible:
+      [page_title, tab_filter_completed, booking_cards_completed, pagination_footer]
     components_hidden: [empty_state, loading_skeleton, booking_cards_active]
 
   - id: loading_refresh
-    description: "Pull-to-refresh in progress — refresh indicator visible with existing cards"
+    description: 'Pull-to-refresh in progress — refresh indicator visible with existing cards'
     components_visible: [page_title, tab_filter, booking_cards, refresh_indicator]
     components_hidden: [empty_state, loading_skeleton]
 
   - id: error_network
-    description: "Network error loading bookings — error message with retry"
+    description: 'Network error loading bookings — error message with retry'
     components_visible: [page_title, tab_filter, error_message, retry_button]
     components_hidden: [booking_cards, empty_state, loading_skeleton]
 
   - id: offline_cached
-    description: "Device is offline — offline banner with cached bookings if available"
+    description: 'Device is offline — offline banner with cached bookings if available'
     components_visible: [page_title, tab_filter, offline_banner, cached_booking_cards]
     components_hidden: [loading_skeleton, empty_state]
 
 copy:
   - key: page_title
-    mn: "Миний ажлууд"
-    en: "My Jobs"
+    mn: 'Миний ажлууд'
+    en: 'My Jobs'
     max_chars: 20
 
   - key: tab_active
-    mn: "Идэвхтэй"
-    en: "Active"
+    mn: 'Идэвхтэй'
+    en: 'Active'
     max_chars: 12
 
   - key: tab_completed
-    mn: "Дууссан"
-    en: "Completed"
+    mn: 'Дууссан'
+    en: 'Completed'
     max_chars: 12
 
   - key: empty_headline
-    mn: "Одоогоор ажил байхгүй байна"
-    en: "No jobs yet"
+    mn: 'Одоогоор ажил байхгүй байна'
+    en: 'No jobs yet'
     max_chars: 30
 
   - key: empty_description
-    mn: "Даалгавруудад анкет илгээж, эхний ажлаа аваарай"
-    en: "Apply to tasks and get your first job"
+    mn: 'Даалгавруудад анкет илгээж, эхний ажлаа аваарай'
+    en: 'Apply to tasks and get your first job'
     max_chars: 50
 
   - key: empty_cta
-    mn: "Даалгавар хайх"
-    en: "Browse Tasks"
+    mn: 'Даалгавар хайх'
+    en: 'Browse Tasks'
     max_chars: 20
 
   - key: status_assigned
-    mn: "Хуваарилагдсан"
-    en: "Assigned"
+    mn: 'Хуваарилагдсан'
+    en: 'Assigned'
     max_chars: 15
 
   - key: status_completed
-    mn: "Дууссан"
-    en: "Completed"
+    mn: 'Дууссан'
+    en: 'Completed'
     max_chars: 12
 
   - key: status_cancelled
-    mn: "Цуцлагдсан"
-    en: "Cancelled"
+    mn: 'Цуцлагдсан'
+    en: 'Cancelled'
     max_chars: 12
 
   - key: status_no_show
-    mn: "Ирээгүй"
-    en: "No-Show"
+    mn: 'Ирээгүй'
+    en: 'No-Show'
     max_chars: 10
 
   - key: error_network
-    mn: "Интернэт холболтоо шалгана уу"
-    en: "Please check your internet connection"
+    mn: 'Интернэт холболтоо шалгана уу'
+    en: 'Please check your internet connection'
     max_chars: 45
 
   - key: retry_button
-    mn: "Дахин оролдох"
-    en: "Retry"
+    mn: 'Дахин оролдох'
+    en: 'Retry'
     max_chars: 15
 
   - key: offline_banner
-    mn: "Офлайн байна. Хадгалсан мэдээлэл харагдаж байна."
-    en: "You are offline. Showing cached data."
+    mn: 'Офлайн байна. Хадгалсан мэдээлэл харагдаж байна.'
+    en: 'You are offline. Showing cached data.'
     max_chars: 55
 
 api_endpoints:
   - method: GET
-    path: "/bookings/mine"
+    path: '/bookings/mine'
     purpose: "Fetch paginated list of tasker's bookings with status filter"
 
 analytics_events:
-  - event: "my_jobs_viewed"
-    trigger: "My Jobs screen becomes visible"
-  - event: "my_jobs_tab_switched"
-    trigger: "User switches between Active and Completed tabs"
-  - event: "my_jobs_booking_tapped"
-    trigger: "User taps a booking card to view detail"
-  - event: "my_jobs_refreshed"
-    trigger: "User pulls to refresh the bookings list"
-  - event: "my_jobs_empty_browse_tapped"
-    trigger: "User taps Browse Tasks from empty state"
+  - event: 'my_jobs_viewed'
+    trigger: 'My Jobs screen becomes visible'
+  - event: 'my_jobs_tab_switched'
+    trigger: 'User switches between Active and Completed tabs'
+  - event: 'my_jobs_booking_tapped'
+    trigger: 'User taps a booking card to view detail'
+  - event: 'my_jobs_refreshed'
+    trigger: 'User pulls to refresh the bookings list'
+  - event: 'my_jobs_empty_browse_tapped'
+    trigger: 'User taps Browse Tasks from empty state'
 
 acceptance_criteria:
-  - "My Jobs is the second tab in the tasker bottom navigation"
-  - "Bookings display as SplitCard components with status badge"
-  - "Tab filter switches between Active (ASSIGNED) and Completed bookings"
-  - "Each booking card shows task title, scheduled date, location, and status"
-  - "Empty state shows activation CTA to browse tasks"
-  - "Tapping a booking card navigates to Booking Detail Tasker (SCR-TASK-013)"
-  - "Pull-to-refresh reloads the bookings list"
-  - "Loading state uses card-matching skeleton placeholders"
-  - "Network error shows retry button"
-  - "Offline state shows banner with cached bookings if available"
-  - "Cancelled and No-Show bookings use danger-colored status badges"
+  - 'My Jobs is the second tab in the tasker bottom navigation'
+  - 'Bookings display as SplitCard components with status badge'
+  - 'Tab filter switches between Active (ASSIGNED) and Completed bookings'
+  - 'Each booking card shows task title, scheduled date, location, and status'
+  - 'Empty state shows activation CTA to browse tasks'
+  - 'Tapping a booking card navigates to Booking Detail Tasker (SCR-TASK-013)'
+  - 'Pull-to-refresh reloads the bookings list'
+  - 'Loading state uses card-matching skeleton placeholders'
+  - 'Network error shows retry button'
+  - 'Offline state shows banner with cached bookings if available'
+  - 'Cancelled and No-Show bookings use danger-colored status badges'

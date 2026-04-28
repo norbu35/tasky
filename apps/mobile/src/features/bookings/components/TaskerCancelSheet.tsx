@@ -5,6 +5,7 @@ import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
 import { Button } from '@/components/ui/Button';
 import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
+
 import { useCancelBooking } from '../hooks/useCancelBooking';
 
 const { colors } = mobileTheme;
@@ -73,16 +74,13 @@ export function TaskerCancelSheet({
           </Text>
 
           <Text className="text-body text-muted-foreground leading-[22px]">
-            {t('tasker.jobs.cancel.description', t('TaskerCancelSheet.copy1'))}
+            {t('tasker.jobs.cancel.description')}
           </Text>
 
           {strikeCount > 0 && !hasSuspensionRisk && (
             <View className="bg-muted rounded-md p-md gap-xs">
               <Text className="text-body text-foreground font-medium">
-                {t(
-                  'tasker.jobs.cancel.strikeWarning',
-                  `Анхааруулга: Та сүүлийн 30 хоногт ${strikeCount} удаа цуцалсан байна.`,
-                )}
+                {t('tasker.jobs.cancel.strikeWarning', { count: strikeCount })}
               </Text>
               <Text className="text-micro text-muted-foreground font-bold">
                 {`${strikeCount}/3`} {t('tasker.jobs.cancel.strikeCountLabel')}

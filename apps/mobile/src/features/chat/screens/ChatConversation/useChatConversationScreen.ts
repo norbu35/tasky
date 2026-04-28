@@ -7,9 +7,8 @@ import { useConversations } from '@/features/chat/hooks/useConversations';
 import { useMessages } from '@/features/chat/hooks/useMessages';
 import { useSendMessage } from '@/features/chat/hooks/useSendMessage';
 import { useMyUserId } from '@/features/profile';
-import { formatLastActive } from '@/lib/formatLastActive';
 
-import { type MessageItem, PHONE_REGEX } from './model';
+import { type MessageItem, orderMessagesChronologically, PHONE_REGEX } from './model';
 
 export function useChatConversationScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -24,12 +23,14 @@ export function useChatConversationScreen() {
     () => conversationsData?.data?.find((c: { id: string }) => c.id === id),
     [conversationsData, id],
   );
-  const activity = formatLastActive(conversation?.counterparty_last_active_at);
 
   const [draft, setDraft] = useState('');
   const flatListRef = useRef<FlatList>(null);
 
-  const messages: MessageItem[] = useMemo(() => [...(data?.data ?? [])].reverse(), [data?.data]);
+  const messages: MessageItem[] = useMemo(
+    () => orderMessagesChronologically(data?.data ?? []),
+    [data?.data],
+  );
   const showPhoneWarning = PHONE_REGEX.test(draft);
 
   const handleSend = useCallback(() => {
@@ -38,13 +39,16 @@ export function useChatConversationScreen() {
     setDraft('');
   }, [draft, id, sendMessage]);
 
+  const handleAttachImage = useCallback(() => {
+    // UI placeholder for the next pass, where image picking and upload will be wired.
+  }, []);
+
   return {
     id,
     router,
     t,
     myId,
     conversation,
-    activity,
     draft,
     setDraft,
     flatListRef,
@@ -55,5 +59,6 @@ export function useChatConversationScreen() {
     isPending,
     refetch,
     handleSend,
+    handleAttachImage,
   };
 }

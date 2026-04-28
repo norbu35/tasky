@@ -14,4 +14,5 @@ public record VerificationDetailResponse(
         String status,
         @JsonProperty("admin_notes") String adminNotes,
         @JsonProperty("submitted_at") String submittedAt,
-        @JsonProperty("reviewed_at") String reviewedAt) {}
+        @JsonProperty("reviewed_at") String reviewedAt,
+        @JsonProperty("sla_deadline_at") String slaDeadlineAt) {}

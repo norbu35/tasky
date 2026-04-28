@@ -24,6 +24,7 @@ Dispute:
     status:
       type: string
       enum:
+        - EVIDENCE_NEEDED
         - OPEN
         - RESOLVED_TASKER
         - RESOLVED_CUSTOMER
@@ -59,6 +60,16 @@ Dispute:
       type: string
       format: date-time
       nullable: true
+    evidence_reminder_sent_at:
+      type: string
+      format: date-time
+      nullable: true
+      description: Set when the dispute entered the evidence-needed grace path.
+    evidence_due_at:
+      type: string
+      format: date-time
+      nullable: true
+      description: Deadline after which a zero-evidence grace dispute can close for insufficient evidence.
 DisputeEvidence:
   type: object
   required:
@@ -76,6 +87,16 @@ DisputeEvidence:
     text_payload:
       type: string
       nullable: true
+AddDisputeEvidenceRequest:
+  type: object
+  required:
+    - evidence
+  properties:
+    evidence:
+      type: array
+      minItems: 1
+      items:
+        $ref: '#/DisputeEvidence'
 AdminDisputeDetail:
   type: object
   required:

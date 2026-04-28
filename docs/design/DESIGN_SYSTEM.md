@@ -1,18 +1,30 @@
 # Tasky Design System
 
-This document is derived from `docs/PRD.md`, `docs/STRATEGY.md`, and `docs/BRAND.md`.
+This document is derived from `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, relevant
+`docs/maintenance/*.md` policy, frontend architecture docs, and `docs/BRAND.md`.
 
 ## 1. Scope
 
 This design system supports the active Phase 1 Ulaanbaatar launch.
-Product behavior is defined in the PRD.
+Product behavior is defined in the PRD. Strategy, rollout, maintenance policy, and frontend architecture constrain
+what the active design surface may describe. Brand informs tone and visual identity, but it does not override product
+or rollout authority.
 
 ### Active design boundary
 
 - `docs/design/**` is the active design surface for the current phase.
+- This directory is the canonical design-system documentation surface. Keep design references, component contracts,
+  screen specs, journeys, and lifecycle maps here.
+- `packages/design-tokens` is the runtime implementation package derived from this surface. It should contain code and
+  package metadata only, not duplicate design documentation or preview artifacts.
+- Static UI-kit prototypes and YAML-only token additions are not active design-system sources. Promote their intent into
+  this prose contract and `@tasky/design-tokens`, then remove the static handoff files from the active docs path.
 - Only screen specs with `phase: "0-1"` remain in the live design path.
 - Deferred-phase design drafts have been removed from the active path so launch UX can be checked directly against the current product baseline.
-- Historical future drafts, if needed, belong under `archive/**` and are not authoritative.
+- Historical future drafts, if needed, belong under `archive/design-future/**` and are not authoritative.
+- A screen spec may return from `archive/design-future/screen-specs/**` to `docs/design/screen-specs/**` only when
+  the governing product and rollout documents activate that phase. Reactivation must update the affected design
+  contracts, copy, verification, monitoring, and rollback guidance in the same workflow.
 
 ## 2. Content fundamentals
 
@@ -26,7 +38,7 @@ Product behavior is defined in the PRD.
 ### Phase 1 copy constraints
 
 - Operational screens must communicate that the service is live across Ulaanbaatar.
-- Pricing copy must support both `I have a budget` and `I want quotes`, including quote, counter-offer, and locked booking price states where applicable.
+- Pricing copy must support both `I have a budget` and `I want quotes`, including posted-budget acceptance, quote, and locked booking price states where applicable.
 - Do not promise payment hold, payment protection, wallet protection, or escrow.
 - Do not imply open-ended pre-booking chat.
 - Before confirmation, show only approximate location. Exact address appears only after confirmed booking.
@@ -52,3 +64,60 @@ Product behavior is defined in the PRD.
 ## 4. Visual foundations
 
 The existing color, typography, spacing, iconography, and motion foundations remain valid where they do not conflict with the launch baseline. Derived preview assets and UI kits must keep the same constraint: no claims beyond the active launch scope.
+
+Runtime consumers must import code through `@tasky/design-tokens`; app code must not import from `docs/design/**`.
+
+The active runtime token graph includes:
+
+- primitive and semantic color, spacing, radius, typography, shadow, and motion tokens
+- interaction states for pressed, focus, disabled, and hover behavior
+- branded overlays/scrims derived from the primary-deep color
+- icon size and touch-target tokens
+- elevation/z-index layers for sticky, dropdown, sheet, modal, toast, and system overlays
+- composed typography variants with zero letter spacing for Cyrillic readability
+- density presets that change spacing without shrinking text
+- animation presets derived from the canonical motion duration/easing tokens
+- opacity color steps for tint, border, and state variations
+- content rules for Mongolian Cyrillic sizing, truncation, currency, and dates
+
+Web consumes those tokens through Tailwind/theme variables and `@tasky/design-tokens/tokens.css`. Mobile consumes the
+same graph through `nativeTokens`, NativeWind configuration, and native shell/primitive adapters.
+
+`docs/design/component-contract.yaml` records the active mobile component contract. Entries may map a stable design
+component name to a differently named runtime export with `runtime_name`, and they must classify implementation posture
+with `implementation_status` when the component is implemented as a template, screen-local implementation, or deferred
+intent. Deferred entries preserve design vocabulary only; they are not active runtime promises.
+
+## 5. Screen Traceability Contract
+
+Screen specs are the per-screen bridge from product intent to implementation. They do not own product behavior; they
+translate the governing product chain into concrete UX contracts:
+
+```text
+docs/PRD.md -> REQ-P1/NFR ids -> journey-catalog.yaml JRN ids -> screen-graph.yaml SCR ids -> screen-specs/SCR-*.yaml -> app implementation and tests
+```
+
+`tests/registry.yaml` supplies optional `SCN-*` coverage references when a scenario-backed test already exists.
+
+Every active screen spec must contain a `traceability` block:
+
+```yaml
+traceability:
+  status: pending_audit | validated
+  screen_graph_node: SCR-...
+  prd_refs: []
+  journey_refs: []
+  scenario_refs: []
+```
+
+Use `pending_audit` only for an explicitly scoped traceability-audit pass. A new or materially changed screen spec
+should be `validated` before implementation begins. In `validated` state, `prd_refs` and `journey_refs` must be
+non-empty and all references must resolve to live IDs. `journey_refs` may use journey IDs, `JRN-*:step-N`,
+alternate-path IDs, or journey `paths[].id` refs. `scenario_refs` should name existing `SCN-*` IDs when a
+scenario-backed test exists; otherwise keep it empty rather than inventing a scenario outside the scenario-curation
+workflow.
+
+Implementation work should read the screen spec as a contract for layout, states, copy intent, data dependencies, and
+acceptance criteria, then realize it through the appropriate app architecture. Mobile screens use the screen-family
+contract in `docs/architecture/mobile.md`; web screens use the web structure in `docs/architecture/web.md`. Both must
+consume shared tokens and primitives rather than one-off styling.

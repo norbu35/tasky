@@ -123,12 +123,26 @@ public class CategorySchemaVersionService {
                 category.isActive(),
                 category.sortOrder(),
                 category.intakeEnabled(),
+                category.assistedDistributionEnabled(),
                 version,
                 target.schemaJson());
 
         return schemaVersionDao
                 .findByCategoryIdAndVersion(categoryId, version)
                 .orElseThrow(() -> new IllegalStateException("Activated version could not be retrieved."));
+    }
+
+    @Transactional
+    public CategorySchemaVersion canaryActivate(String categoryId, int version) {
+        return activate(categoryId, version);
+    }
+
+    @Transactional
+    public CategorySchemaVersion rollbackToLastKnownGood(String categoryId) {
+        CategorySchemaVersion fallback = schemaVersionDao
+                .findLastKnownGoodByCategoryId(categoryId)
+                .orElseThrow(() -> new NoFallbackException(categoryId));
+        return activate(categoryId, fallback.version());
     }
 
     /**
@@ -248,5 +262,18 @@ public class CategorySchemaVersionService {
                     "Field at index " + index + " must have a non-blank string '" + property + "' property.");
         }
         return node.asText();
+    }
+
+    public static class NoFallbackException extends IllegalStateException {
+        private final String code;
+
+        public NoFallbackException(String categoryId) {
+            super("No last-known-good schema version exists for category " + categoryId + ".");
+            this.code = "NO_FALLBACK";
+        }
+
+        public String code() {
+            return code;
+        }
     }
 }

@@ -1,7 +1,6 @@
 package mn.tasky.dispute.scheduling;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.dispute.dao.DisputeEvidenceDao;
 import mn.tasky.dispute.dto.Dispute;
@@ -12,8 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * Hourly scheduler that auto-closes OPEN disputes with zero evidence
- * after the 24-hour grace period has elapsed.
+ * Hourly scheduler that auto-closes evidence-needed disputes with zero evidence after the explicit grace deadline.
  */
 @Component
 public class DisputeEvidenceGraceScheduler {
@@ -36,8 +34,7 @@ public class DisputeEvidenceGraceScheduler {
     }
 
     private void processStaleDisputes() {
-        Instant cutoff = Instant.now().minus(24, ChronoUnit.HOURS);
-        var disputes = disputeDao.findOpenOlderThan(cutoff);
+        var disputes = disputeDao.findEvidenceGraceDue(Instant.now());
 
         int closed = 0;
         for (Dispute dispute : disputes) {
@@ -46,6 +43,8 @@ public class DisputeEvidenceGraceScheduler {
                 disputeDao.update(dispute.id(), CLOSED_STATUS, null, null, null, Instant.now());
                 closed++;
                 log.info("Auto-closed dispute {} — no evidence after 24h grace period", dispute.id());
+            } else {
+                disputeDao.markEvidenceSubmitted(dispute.id());
             }
         }
 

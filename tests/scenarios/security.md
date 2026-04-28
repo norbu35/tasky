@@ -84,7 +84,7 @@ And other authorized users do not receive those exact address fields
 ## SCN-SEC-008
 
 **Risk:** Critical
-**PRD:** REQ-P1-MSG-04
+**PRD:** REQ-P1-MSG-04, REQ-P1-BOOK-08
 **Title:** Customer-facing payloads never expose tasker phone fields
 
 Given a customer views tasker-related profile, booking, chat, or receipt payloads
@@ -94,7 +94,7 @@ Then no tasker phone field is present anywhere in the customer-facing payload
 ## SCN-SEC-011
 
 **Risk:** Critical
-**PRD:** REQ-P1-MSG-04
+**PRD:** REQ-P1-MSG-04, REQ-P1-BOOK-08, REQ-P1-SAFE-18
 **Title:** Customer phone is not exposed in tasker-facing payloads in Phase 1
 
 Given the product is in Phase 1 with no contact-unlock mechanism
@@ -123,3 +123,14 @@ Given a bearer token identifies a deleted user account
 When the user calls a protected product endpoint
 Then the response status is 403
 And the account is not granted access
+
+## SCN-SEC-014
+
+**Risk:** High
+**PRD:** REQ-P1-SAFE-17
+**Title:** Trust-sensitive actions and evidence access are audit-queryable
+
+Given verification decisions, review enforcement actions, complaint handling, dispute handling, and admin evidence access occur
+When an authorized audit query is run for the affected user or booking
+Then each action is returned with actor, timestamp, action type, and target record
+And admin evidence access is included in the audit history

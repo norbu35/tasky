@@ -13,6 +13,7 @@ import {
 import { screenLayout } from '@/design/screenLayout';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
+
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 import { Button } from '../ui/Button';
 import { ScreenHeader } from '../ui/ScreenHeader';
@@ -35,6 +36,8 @@ export interface FormWizardTemplateProps {
   hideNext?: boolean;
   /** Optional screen header — rendered above children with consistent typography. */
   title?: string;
+  /** Optional supporting copy below the title. */
+  subtitle?: string;
   /** Optional eyebrow text above the title (e.g. "STEP 1 OF 7"). */
   greeting?: string;
   testID?: string;
@@ -55,6 +58,7 @@ export function FormWizardTemplate({
   showBack = true,
   hideNext = false,
   title,
+  subtitle,
   greeting,
   testID,
   nextButtonTestID,
@@ -63,8 +67,9 @@ export function FormWizardTemplate({
   const { t } = useTranslation();
   const router = useRouter();
   const [actionBarHeight, setActionBarHeight] = useState(96);
-  const showBackButton = showBack && onBack && (currentStep > 0 || totalSteps === 1);
+  const showBackButton = showBack && onBack;
   const effectiveNextTestID = nextButtonTestID ?? (testID ? `${testID}-next` : undefined);
+  const isMultiStep = totalSteps > 1;
 
   const handleActionBarLayout = (event: LayoutChangeEvent) => {
     const height = event.nativeEvent.layout.height;
@@ -75,22 +80,32 @@ export function FormWizardTemplate({
 
   return (
     <ScreenContainer testID={testID} className={className}>
-      {/* Step Indicator — bar segments + close button */}
-      <View className="flex-row items-center pt-header-top pb-item gap-md">
-        <View
-          testID="wizard-progress"
-          className="flex-1 flex-row items-center gap-wizard-step"
-          accessibilityRole="progressbar"
-          accessibilityLabel={`Step ${currentStep + 1} of ${totalSteps}`}
-        >
-          {Array.from({ length: totalSteps }).map((_, i) => (
-            <View
-              key={i}
-              className={cn('flex-1 rounded-md', i <= currentStep ? 'bg-foreground' : 'bg-border')}
-              style={{ height: BAR_HEIGHT }}
-            />
-          ))}
-        </View>
+      {/* Step indicator row: bars shown only for multi-step flows; close button always present */}
+      <View
+        className={cn(
+          'flex-row items-center pt-header-top pb-item',
+          isMultiStep ? 'gap-md' : 'justify-end',
+        )}
+      >
+        {isMultiStep && (
+          <View
+            testID="wizard-progress"
+            className="flex-1 flex-row items-center gap-wizard-step"
+            accessibilityRole="progressbar"
+            accessibilityLabel={`Step ${currentStep + 1} of ${totalSteps}`}
+          >
+            {Array.from({ length: totalSteps }).map((_, i) => (
+              <View
+                key={i}
+                className={cn(
+                  'flex-1 rounded-md',
+                  i <= currentStep ? 'bg-foreground' : 'bg-border',
+                )}
+                style={{ height: BAR_HEIGHT }}
+              />
+            ))}
+          </View>
+        )}
         <Pressable
           onPress={() => router.replace('/(tabs)')}
           className="w-8 h-8 items-center justify-center"
@@ -112,6 +127,7 @@ export function FormWizardTemplate({
         <InsetScrollView
           className="flex-1"
           contentContainerStyle={{
+            paddingTop: screenLayout.body.blockGap,
             gap: screenLayout.body.blockGap,
             paddingBottom: screenLayout.body.sectionGap,
           }}
@@ -119,7 +135,7 @@ export function FormWizardTemplate({
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {title != null && <ScreenHeader greeting={greeting} title={title} />}
+          {title != null && <ScreenHeader greeting={greeting} title={title} subtitle={subtitle} />}
           {children}
         </InsetScrollView>
 
@@ -127,11 +143,7 @@ export function FormWizardTemplate({
         {!hideNext && (
           <StickyActionBar testID="wizard-bottom-bar">
             <View onLayout={handleActionBarLayout}>
-              <View
-                style={{
-                  paddingTop: screenLayout.actions.barPadding,
-                }}
-              >
+              <View>
                 {showBackButton ? (
                   <View className="flex-row gap-md">
                     <Button

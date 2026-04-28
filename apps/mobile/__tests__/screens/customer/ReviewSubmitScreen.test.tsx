@@ -16,6 +16,7 @@ const baseDraft = {
   location: { lat: 47.92123, lng: 106.91876, text: 'Behind State Dept Store' },
   scheduledAt: new Date(2026, 3, 1, 10, 0).toISOString(),
   budget: 50000,
+  pricingMode: 'BUDGET',
   intakeAnswers: {} as Record<string, unknown>,
   intakeSchemaVersion: 1,
   intakeSchemaJson: undefined as string | undefined,
@@ -35,7 +36,7 @@ jest.mock('../../../src/features/tasks/draft', () => ({
     draft.description &&
     draft.location &&
     draft.scheduledAt &&
-    draft.budget,
+    (draft.pricingMode === 'QUOTE' || draft.budget),
 }));
 
 jest.mock('expo-router', () => ({
@@ -99,6 +100,19 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
   it('shows task summary with budget', () => {
     render(<ReviewSubmitScreen />);
     expect(screen.getByText('₮50,000')).toBeTruthy();
+  });
+
+  it('shows task summary with quote pricing mode', () => {
+    mockDraftStoreState['test-draft-id'] = {
+      ...baseDraft,
+      pricingMode: 'QUOTE',
+      budget: null,
+    };
+
+    render(<ReviewSubmitScreen />);
+
+    expect(screen.getByText('I want quotes')).toBeTruthy();
+    expect(screen.getByText('Taskers will include a price quote when they apply.')).toBeTruthy();
   });
 
   it('renders structured intake answers with schema-backed labels in the review summary', () => {
@@ -257,6 +271,34 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
         location_text: 'Behind State Dept Store',
         photo_keys: ['photo-key-1', 'photo-key-2'],
         pricing_mode: 'BUDGET',
+        scheduled_at: new Date(2026, 3, 1, 10, 0).toISOString(),
+      });
+    });
+  });
+
+  it('SCN-TASK-027: submits quote-mode tasks without a budget', async () => {
+    mockMutateAsync.mockResolvedValue({ id: 'task-new-1' });
+    mockDraftStoreState['test-draft-id'] = {
+      ...baseDraft,
+      pricingMode: 'QUOTE',
+      budget: null,
+    };
+
+    render(<ReviewSubmitScreen />);
+    fireEvent.press(screen.getByText('Post Task'));
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        budget: null,
+        category_id: 'cat-123',
+        description: 'Fix my sink',
+        intake_answers: {},
+        intake_schema_version: 1,
+        location_lat: 47.92123,
+        location_lng: 106.91876,
+        location_text: 'Behind State Dept Store',
+        photo_keys: [],
+        pricing_mode: 'QUOTE',
         scheduled_at: new Date(2026, 3, 1, 10, 0).toISOString(),
       });
     });

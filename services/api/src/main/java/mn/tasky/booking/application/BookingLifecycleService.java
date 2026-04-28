@@ -6,6 +6,8 @@ import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.outbox.OutboxEventTypes;
+import mn.tasky.notification.application.NotificationService;
+import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.TaskLifecycleService;
 import mn.tasky.task.application.TaskQueryService;
 import mn.tasky.task.dto.TaskState;
@@ -15,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BookingLifecycleService {
+    private static final String TASKER_CANCELLATION_STRIKE_REASON = "TASKER_CANCELLATION";
+    private static final String SAFETY_FRAUD_REASON = "SAFETY_FRAUD";
+
     private final BookingService bookingService;
     private final BookingTimelineService timelineService;
     private final TaskQueryService taskQueryService;
@@ -22,6 +27,8 @@ public class BookingLifecycleService {
     private final ModerationService moderationService;
     private final DomainEventOutboxService domainEventOutboxService;
     private final TrustQueryPort trustQueryPort;
+    private final ReviewEnforcementService reviewEnforcementService;
+    private final NotificationService notificationService;
 
     public BookingLifecycleService(
             BookingService bookingService,
@@ -30,7 +37,9 @@ public class BookingLifecycleService {
             TaskLifecycleService taskLifecycleService,
             ModerationService moderationService,
             DomainEventOutboxService domainEventOutboxService,
-            TrustQueryPort trustQueryPort) {
+            TrustQueryPort trustQueryPort,
+            ReviewEnforcementService reviewEnforcementService,
+            NotificationService notificationService) {
         this.bookingService = bookingService;
         this.timelineService = timelineService;
         this.taskQueryService = taskQueryService;
@@ -38,6 +47,8 @@ public class BookingLifecycleService {
         this.moderationService = moderationService;
         this.domainEventOutboxService = domainEventOutboxService;
         this.trustQueryPort = trustQueryPort;
+        this.reviewEnforcementService = reviewEnforcementService;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -58,6 +69,8 @@ public class BookingLifecycleService {
                 .getTask(booking.taskId())
                 .orElseThrow(
                         () -> new IllegalStateException("Task not found when cancelling booking " + bookingId + "."));
+        boolean customerLateCancellation =
+                booking.customerId().equals(actorUserId) && isLateCancellation(task.scheduledAt());
         BookingTransitionResult result = bookingService.cancelBooking(actorUserId, bookingId, task.scheduledAt());
         if (!result.isSuccess()) {
             return result;
@@ -66,10 +79,19 @@ public class BookingLifecycleService {
         if (updated.taskerId().equals(actorUserId)) {
             requireTaskUpdate(
                     taskLifecycleService.reopenTask(updated.taskId()), "reopening", bookingId, updated.taskId());
-            boolean isSafetyOrFraud =
-                    reason != null && reason.toLowerCase(java.util.Locale.ROOT).contains("safety");
-            if (!isSafetyOrFraud) {
-                moderationService.addStrike(actorUserId, reason, bookingId);
+            notificationService.sendPushWithEventKey(
+                    updated.customerId(),
+                    "Tasker cancelled",
+                    "Your task is open again. Review the original task and choose another tasker.",
+                    "TASKER_CANCELLED_BOOKING",
+                    "TASKER_CANCELLED_BOOKING_" + updated.id());
+            if (!isSafetyFraudCancellation(reason)) {
+                moderationService.addStrike(actorUserId, TASKER_CANCELLATION_STRIKE_REASON, bookingId);
+                reviewEnforcementService.createCasesForBooking(
+                        bookingId,
+                        updated.customerId(),
+                        updated.taskerId(),
+                        ReviewEnforcementService.REASON_BOOKING_CANCELLED);
             }
         } else if (updated.customerId().equals(actorUserId)) {
             requireTaskUpdate(
@@ -77,6 +99,13 @@ public class BookingLifecycleService {
                     "cancelling",
                     bookingId,
                     updated.taskId());
+            if (customerLateCancellation) {
+                reviewEnforcementService.createCasesForBooking(
+                        bookingId,
+                        updated.customerId(),
+                        updated.taskerId(),
+                        ReviewEnforcementService.REASON_BOOKING_CANCELLED);
+            }
         }
         timelineService.recordEvent(bookingId, BookingTimelineService.BOOKING_CANCELLED, actorUserId, null);
         return bookingService
@@ -128,6 +157,18 @@ public class BookingLifecycleService {
 
     private boolean hasOpenDispute(String bookingId) {
         return trustQueryPort.hasOpenDispute(bookingId);
+    }
+
+    private boolean isLateCancellation(java.time.Instant scheduledAt) {
+        return scheduledAt != null
+                && java.time.Instant.now().isAfter(scheduledAt.minus(4, java.time.temporal.ChronoUnit.HOURS));
+    }
+
+    private boolean isSafetyFraudCancellation(String reason) {
+        if (reason == null || reason.isBlank()) {
+            return false;
+        }
+        return reason.toUpperCase(java.util.Locale.ROOT).contains(SAFETY_FRAUD_REASON);
     }
 
     private void requireTaskUpdate(

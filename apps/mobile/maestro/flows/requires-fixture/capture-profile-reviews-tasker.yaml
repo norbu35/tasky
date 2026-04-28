@@ -1,0 +1,26 @@
+appId: mn.tasky.mobile
+---
+# Capture SCR-SHARED-012 tasker profile reputation state.
+# Precondition: app is already logged in as a tasker on SCR-TASK-001.
+
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-TASK-001'
+    timeout: 10000
+
+- tapOn:
+    id: 'tab-profile'
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-SHARED-012'
+    timeout: 10000
+- assertVisible:
+    id: 'my-profile-hero-card'
+- takeScreenshot: screenshots/SCR-SHARED-012-profile-tasker
+
+- runFlow:
+    when:
+      visible:
+        id: 'my-profile-reputation-summary'
+    commands:
+      - takeScreenshot: screenshots/SCR-SHARED-012-profile-tasker-reputation

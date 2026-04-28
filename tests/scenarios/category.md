@@ -5,7 +5,7 @@
 ## SCN-CATEGORY-001
 
 **Risk:** High
-**PRD:** REQ-P1-CAT-04
+**PRD:** REQ-P1-CAT-04, REQ-P1-ADMIN-02
 **Title:** Admin can add a new service category
 
 Given an authenticated admin is managing categories
@@ -15,7 +15,7 @@ Then the category is stored as available for category management
 ## SCN-CATEGORY-002
 
 **Risk:** High
-**PRD:** REQ-P1-CAT-04
+**PRD:** REQ-P1-CAT-04, REQ-P1-ADMIN-02
 **Title:** Admin can edit, deactivate, and reorder categories with immediate picker propagation
 
 Given one or more categories already exist
@@ -89,3 +89,80 @@ Given a category has no recorded last-known-good schema version
 When an admin attempts to roll the category back
 Then the rollback request is rejected
 And the error code is NO_FALLBACK
+
+## SCN-CATEGORY-009
+
+**Risk:** High
+**PRD:** REQ-P1-ADMIN-09
+**Title:** Admin can activate a schema version from ROLLED_BACK status
+
+Given a category schema version was previously rolled back
+When an admin activates that schema version again
+Then the selected schema version becomes ACTIVE
+And any previously active schema version is marked ROLLED_BACK
+
+## SCN-CATEGORY-010
+
+**Risk:** High
+**PRD:** REQ-P1-ADMIN-09
+**Title:** Schema lint rejects fields missing Mongolian labels
+
+Given an admin is creating or updating an intake schema version
+When a field is missing label_mn
+Then the schema is rejected by lint or preview checks
+And the version is not activated
+
+## SCN-CATEGORY-011
+
+**Risk:** High
+**PRD:** REQ-P1-ADMIN-09
+**Title:** Schema lint accepts text and textarea field types
+
+Given an admin is creating or updating an intake schema version
+When the schema includes supported text and textarea field types
+Then the schema passes lint or preview checks
+And the version can be saved for activation
+
+## SCN-CATEGORY-012
+
+**Risk:** High
+**PRD:** REQ-P1-ADMIN-09
+**Title:** Schema lint rejects text fields without max_length
+
+Given an admin is creating or updating an intake schema version
+When a text field omits max_length
+Then the schema is rejected by lint or preview checks
+And the version is not activated
+
+## SCN-CATEGORY-013
+
+**Risk:** High
+**PRD:** REQ-P1-ADMIN-09
+**Title:** Schema lint rejects options missing Mongolian labels
+
+Given an admin is creating or updating an intake schema version
+When an option object is missing label_mn
+Then the schema is rejected by lint or preview checks
+And the version is not activated
+
+## SCN-CATEGORY-014
+
+**Risk:** High
+**PRD:** REQ-P1-CAT-02
+**Title:** Initial launch catalog includes the four seed categories
+
+Given the Phase 1 category catalog is initialized
+When the launch category catalog is read for task posting and admin preview
+Then home cleaning, furniture assembly, moving help or lifting help, and minor handyman are present
+And each seed category has a category template available for activation
+
+## SCN-CATEGORY-015
+
+**Risk:** High
+**PRD:** REQ-P1-CAT-03
+**Title:** Minor handyman template excludes regulated or dangerous work
+
+Given the minor handyman intake template is configured
+When the template subtypes and helper copy are inspected
+Then selectable subtypes are limited to minor non-regulated work
+And regulated, dangerous, or diagnosis-heavy options are not selectable

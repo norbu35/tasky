@@ -102,7 +102,8 @@ public class CategoryService {
                 command.iconUrl().trim(),
                 true,
                 command.sortOrder(),
-                null,
+                command.intakeEnabled() == null ? Boolean.TRUE : command.intakeEnabled(),
+                Boolean.TRUE.equals(command.assistedDistributionEnabled()),
                 null,
                 null);
         categoryDao.insert(
@@ -113,6 +114,7 @@ public class CategoryService {
                 created.isActive(),
                 created.sortOrder(),
                 created.intakeEnabled(),
+                created.assistedDistributionEnabled(),
                 created.intakeSchemaVersion(),
                 created.intakeSchemaJson());
         return created;
@@ -139,7 +141,10 @@ public class CategoryService {
                 command.iconUrl() != null ? command.iconUrl().trim() : current.iconUrl(),
                 command.isActive() != null ? command.isActive() : current.isActive(),
                 command.sortOrder() != null ? command.sortOrder() : current.sortOrder(),
-                current.intakeEnabled(),
+                command.intakeEnabled() != null ? command.intakeEnabled() : current.intakeEnabled(),
+                command.assistedDistributionEnabled() != null
+                        ? command.assistedDistributionEnabled()
+                        : current.assistedDistributionEnabled(),
                 current.intakeSchemaVersion(),
                 current.intakeSchemaJson());
         categoryDao.update(
@@ -150,6 +155,7 @@ public class CategoryService {
                 updated.isActive(),
                 updated.sortOrder(),
                 updated.intakeEnabled(),
+                updated.assistedDistributionEnabled(),
                 updated.intakeSchemaVersion(),
                 updated.intakeSchemaJson());
         return Optional.of(updated);

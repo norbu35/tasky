@@ -18,4 +18,9 @@ public class LocationQueryHandler implements LocationQueryPort {
     public ReverseGeocodeResponse reverseGeocode(double lat, double lng) {
         return locationService.reverseGeocode(lat, lng);
     }
+
+    @Override
+    public boolean isWithinServiceArea(double lat, double lng) {
+        return locationService.isWithinServiceArea(lat, lng);
+    }
 }

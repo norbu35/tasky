@@ -1,0 +1,26 @@
+# Community 320
+
+> 2 nodes
+
+## Key Concepts
+
+- **useCategories.ts** (1 connections) — `packages/core/src/tasks/useCategories.ts`
+- **useCategoriesQuery()** (1 connections) — `packages/core/src/tasks/useCategories.ts`
+
+## Relationships
+
+- No strong cross-community connections detected
+
+## Source Files
+
+- `packages/core/src/tasks/useCategories.ts`
+
+## Audit Trail
+
+- EXTRACTED: 2 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+_Part of the graphify knowledge wiki. See [[index]] to navigate._

@@ -5,12 +5,30 @@ Authentication, session issuance/refresh, and shared user-account application lo
 ## Public API Endpoints
 
 | Method | Path                         | Availability                            |
-|--------|------------------------------|-----------------------------------------|
+| ------ | ---------------------------- | --------------------------------------- |
 | `POST` | `/api/v1/auth/facebook`      | Always enabled                          |
 | `POST` | `/api/v1/auth/otp/request`   | Only when `tasky.otp.enabled=true`      |
 | `POST` | `/api/v1/auth/otp/verify`    | Only when `tasky.otp.enabled=true`      |
 | `POST` | `/api/v1/auth/token/refresh` | Always enabled                          |
 | `POST` | `/api/v1/auth/dev/login`     | Only when `tasky.dev-auth.enabled=true` |
+
+```claim endpoint
+operationId: requestOtp
+method: POST
+path: /api/v1/auth/otp/request
+```
+
+```claim endpoint
+operationId: verifyOtp
+method: POST
+path: /api/v1/auth/otp/verify
+```
+
+```claim endpoint
+operationId: devLogin
+method: POST
+path: /api/v1/auth/dev/login
+```
 
 ## Session and Identity Behavior
 
@@ -19,6 +37,10 @@ Authentication, session issuance/refresh, and shared user-account application lo
 - User phone is encrypted at rest; decrypted only for responses.
 - Login/refresh blocks suspended or banned accounts.
 - Suspended accounts can auto-unsuspend based on moderation policy and suspension end time.
+
+```claim symbol-exists
+class: mn.tasky.common.security.JwtTokenService
+```
 
 ## Rate Limiting
 
@@ -43,3 +65,19 @@ Authentication, session issuance/refresh, and shared user-account application lo
 - `tasky.auth.rate-limit.*`
 - `tasky.auth.otp-ttl-seconds`
 - `tasky.facebook.*`
+
+```claim config-key
+key: tasky.otp.enabled
+```
+
+```claim config-key
+key: tasky.dev-auth.enabled
+```
+
+```claim config-key
+key: tasky.auth.otp-migration-enforced
+```
+
+```claim config-key
+key: tasky.auth.otp-ttl-seconds
+```

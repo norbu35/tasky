@@ -3,6 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "build": "pnpm run lint",
+    "typecheck": "pnpm run lint",
+    "lint": "find . -type f -name '*.mjs' -print0 | xargs -0 -n1 node --check",
+    "format": "prettier --write \"**/*.{json,yaml,yml,xml,mjs,ts}\"",
+    "format:check": "prettier --check \"**/*.{json,yaml,yml,xml,mjs,ts}\"",
+    "test": "pnpm run lint"
+  },
   "exports": {
     "./tsconfig/base": "./tsconfig/base.json",
     "./tsconfig/strict": "./tsconfig/strict.json",

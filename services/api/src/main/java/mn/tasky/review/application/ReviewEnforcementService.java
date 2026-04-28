@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Manages review enforcement lifecycle: case creation on booking completion,
+ * Manages review enforcement lifecycle: case creation on reviewable terminal outcomes,
  * resolution on review submission, soft-gate reminders, hard-lock evaluation,
  * and auto-expiry of stale cases.
  */
@@ -32,7 +32,9 @@ public class ReviewEnforcementService implements mn.tasky.review.publicapi.Revie
     private static final String STATUS_COMPLETED = "COMPLETED";
     private static final String STATUS_EXPIRED = "EXPIRED";
 
-    private static final String REASON_BOOKING_COMPLETED = "BOOKING_COMPLETED";
+    public static final String REASON_BOOKING_COMPLETED = "BOOKING_COMPLETED";
+    public static final String REASON_BOOKING_CANCELLED = "BOOKING_CANCELLED";
+    public static final String REASON_BOOKING_NO_SHOW = "BOOKING_NO_SHOW";
     private static final String NOTIFICATION_TYPE = "REVIEW_PROMPT";
 
     private final ReviewEnforcementCaseDao reviewEnforcementCaseDao;
@@ -55,14 +57,17 @@ public class ReviewEnforcementService implements mn.tasky.review.publicapi.Revie
      */
     @Transactional
     public void createCasesForBooking(String bookingId, String customerId, String taskerId) {
+        createCasesForBooking(bookingId, customerId, taskerId, REASON_BOOKING_COMPLETED);
+    }
+
+    @Transactional
+    public void createCasesForBooking(String bookingId, String customerId, String taskerId, String reason) {
         // Idempotency: only insert if no case exists for this booking+user pair
         if (reviewEnforcementCaseDao.findByBookingAndUser(bookingId, customerId).isEmpty()) {
-            reviewEnforcementCaseDao.insert(
-                    UUID.randomUUID().toString(), bookingId, customerId, REASON_BOOKING_COMPLETED);
+            reviewEnforcementCaseDao.insert(UUID.randomUUID().toString(), bookingId, customerId, reason);
         }
         if (reviewEnforcementCaseDao.findByBookingAndUser(bookingId, taskerId).isEmpty()) {
-            reviewEnforcementCaseDao.insert(
-                    UUID.randomUUID().toString(), bookingId, taskerId, REASON_BOOKING_COMPLETED);
+            reviewEnforcementCaseDao.insert(UUID.randomUUID().toString(), bookingId, taskerId, reason);
         }
 
         // Use event-keyed push for dedup on retry
@@ -79,7 +84,16 @@ public class ReviewEnforcementService implements mn.tasky.review.publicapi.Revie
                 NOTIFICATION_TYPE,
                 "REVIEW_PROMPT_" + bookingId + "_tasker");
 
-        log.info("Created enforcement cases for booking={} customer={} tasker={}", bookingId, customerId, taskerId);
+        log.info(
+                "Created enforcement cases for booking={} customer={} tasker={} reason={}",
+                bookingId,
+                customerId,
+                taskerId,
+                reason);
+    }
+
+    public boolean hasCaseForBookingAndUser(String bookingId, String userId) {
+        return reviewEnforcementCaseDao.findByBookingAndUser(bookingId, userId).isPresent();
     }
 
     /**

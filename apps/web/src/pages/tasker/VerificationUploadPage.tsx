@@ -8,20 +8,12 @@ export function VerificationUploadPage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('verification.upload.title', 'Upload verification documents')}
-      description={t(
-        'verification.upload.description',
-        'Upload the front and back of your ID card.',
-      )}
+      title={t('verification.upload.title')}
+      description={t('verification.upload.description')}
     >
       <Card>
         <CardContent className="space-y-3 p-4 text-sm text-muted-foreground">
-          <p>
-            {t(
-              'verification.upload.content',
-              'Phase 1 keeps the upload step simple and reviewable.',
-            )}
-          </p>
+          <p>{t('verification.upload.content')}</p>
         </CardContent>
       </Card>
     </ResponsiveDetailShell>

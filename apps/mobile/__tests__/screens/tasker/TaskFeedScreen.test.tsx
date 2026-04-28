@@ -1,34 +1,47 @@
-import React from 'react';
-import { render as rtlRender, screen, fireEvent } from '@testing-library/react-native';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-const render = (ui: React.ReactElement, options?: any) =>
-  rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
+import { render as rtlRender, screen, fireEvent } from '@testing-library/react-native';
+import React from 'react';
+import { StyleSheet, type TextProps } from 'react-native';
 
+import TaskFeedScreen from '../../../src/app/(tabs)/index';
+import { useReviewGate } from '../../../src/features/review/components/ReviewGateProvider';
 import { useTasks } from '../../../src/features/tasks/hooks/useTasks';
-import type { PublicTask } from '../../../src/lib/api/types';
+import type { TaskFeedItem } from '../../../src/lib/api/types';
 import { RoleProvider } from '../../../src/providers/RoleProvider';
 import { useAppStore } from '../../../src/store/appStore';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
+
+const render = (ui: React.ReactElement, options?: Parameters<typeof rtlRender>[1]) => {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
+};
+
+const mockRouter = {
+  push: jest.fn(),
+  replace: jest.fn(),
+  back: jest.fn(),
+};
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
+  useRouter: () => mockRouter,
   useLocalSearchParams: () => ({}),
 }));
 
 jest.mock('react-i18next', () => {
-  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  const { createReactI18nextMock } = jest.requireActual<typeof import('../../test-utils/mockI18n')>(
+    '../../test-utils/mockI18n',
+  );
   return createReactI18nextMock('mn');
 });
 
-jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
+jest.mock('react-native-reanimated', () => jest.requireActual('react-native-reanimated/mock'));
 
 jest.mock('lucide-react-native', () => {
-  const { Text } = require('react-native');
+  const { Text } = jest.requireActual<typeof import('react-native')>('react-native');
   return new Proxy(
     {},
     {
-      get: (_, name) => (props: any) => <Text testID={`icon-${String(name)}`} {...props} />,
+      get: (_, name) => (props: TextProps) => <Text testID={`icon-${String(name)}`} {...props} />,
     },
   );
 });
@@ -37,39 +50,33 @@ jest.mock('../../../src/features/tasks/hooks/useTasks', () => ({
   useTasks: jest.fn(),
 }));
 
-const mockUseTasks = useTasks as jest.MockedFunction<typeof useTasks>;
+jest.mock('../../../src/features/review/components/ReviewGateProvider', () => ({
+  useReviewGate: jest.fn(),
+}));
 
-const baseTask: PublicTask = {
+const mockUseTasks = useTasks as jest.MockedFunction<typeof useTasks>;
+const mockUseReviewGate = useReviewGate as jest.MockedFunction<typeof useReviewGate>;
+
+const baseTask: TaskFeedItem = {
   id: 'task-1',
   category: {
     id: 'cat-cleaning',
     name: 'Cleaning',
     name_mn: 'Цэвэрлэгээ',
     icon_url: 'https://example/icon.png',
-    is_active: true,
-    sort_order: 1,
-    intake_enabled: false,
-    intake_schema_version: 0,
-  },
-  customer: {
-    id: 'customer-1',
-    full_name: 'John Customer',
-    avatar_url: null,
-    rating_avg: 4.5,
   },
   description: 'Deep clean apartment',
+  pricing_mode: 'BUDGET',
   budget: 50000,
   approximate_location: 'Bayangol district',
   approximate_lat: 47.91,
   approximate_lng: 106.91,
   status: 'OPEN',
   scheduled_at: '2026-03-25T10:00:00Z',
-  photo_urls: [],
-  application_count: 3,
   created_at: '2026-03-23T00:00:00Z',
 };
 
-const secondTask: PublicTask = {
+const secondTask: TaskFeedItem = {
   ...baseTask,
   id: 'task-2',
   description: 'Fix kitchen sink',
@@ -80,25 +87,27 @@ const secondTask: PublicTask = {
     name: 'Repair',
     name_mn: 'Засвар',
   },
-  customer: {
-    ...baseTask.customer,
-    full_name: 'Jane Poster',
-  },
 };
 
 beforeEach(() => {
-  const { resetTestI18n, setTestLanguage } = require('../../test-utils/mockI18n');
   jest.clearAllMocks();
+  mockRouter.push.mockClear();
+  mockRouter.replace.mockClear();
+  mockRouter.back.mockClear();
   resetTestI18n();
   setTestLanguage('mn');
   useAppStore.setState({
     hasSeenOnboarding: true,
     currentRole: 'tasker',
   });
+  mockUseReviewGate.mockReturnValue({
+    isLocked: false,
+    hasPending: false,
+    oldestPending: null,
+  });
 });
 
 function renderTaskFeed() {
-  const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
   return render(
     <RoleProvider>
       <TaskFeedScreen />
@@ -169,11 +178,45 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
 
     expect(screen.getByText('Deep clean apartment')).toBeTruthy();
     expect(screen.getByText('Fix kitchen sink')).toBeTruthy();
-    expect(screen.getByText('John Customer')).toBeTruthy();
-    expect(screen.getAllByText('Bayangol district').length).toBeGreaterThan(0);
+    expect(screen.queryByText('John Customer')).toBeNull();
+    expect(screen.getAllByText(/Bayangol district/).length).toBeGreaterThan(0);
   });
 
-  it('filter bar toggles work', () => {
+  it('does not expose applicant counts on tasker feed cards', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    renderTaskFeed();
+
+    expect(screen.queryByText('3 өргөдөл')).toBeNull();
+  });
+
+  it('renders quote-mode task cards with a clear pricing state', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [{ ...baseTask, budget: null, pricing_mode: 'QUOTE' }],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    renderTaskFeed();
+
+    expect(screen.getByText('Үнийн санал шаардлагатай')).toBeTruthy();
+  });
+
+  it('keeps category filters inside the filter sheet', () => {
     mockUseTasks.mockReturnValue({
       data: {
         data: [baseTask, secondTask],
@@ -187,8 +230,55 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
 
     renderTaskFeed();
 
-    const filterBar = screen.getByTestId('task-feed-filter-bar');
-    expect(filterBar).toBeTruthy();
+    expect(screen.queryByTestId('task-feed-filter-bar')).toBeNull();
+
+    fireEvent.press(screen.getByTestId('task-feed-open-filters'));
+
+    expect(screen.getByTestId('task-feed-filter-sheet-options')).toBeTruthy();
+  });
+
+  it('opens the filter sheet with a result-count CTA', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask, secondTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    renderTaskFeed();
+
+    fireEvent.press(screen.getByTestId('task-feed-open-filters'));
+
+    expect(screen.getByTestId('task-feed-filter-sheet')).toBeTruthy();
+    expect(screen.getByText('2 даалгавар боломжтой')).toBeTruthy();
+    expect(screen.getByText('Ангилал')).toBeTruthy();
+    expect(screen.getByTestId('task-feed-filter-sheet-close')).toBeTruthy();
+    expect(screen.getByTestId('task-feed-filter-sheet-show-results')).toBeTruthy();
+  });
+
+  it('summarizes active search filters near the filter control', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask, secondTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    renderTaskFeed();
+
+    fireEvent.changeText(screen.getByPlaceholderText('Асуулт хайх...'), 'sink');
+
+    expect(screen.getByTestId('task-feed-filter-count')).toBeTruthy();
+    expect(screen.getByTestId('task-feed-active-filter-search')).toBeTruthy();
+    expect(screen.getByTestId('task-feed-active-filter-clear')).toBeTruthy();
   });
 
   it('filters tasks by search text', () => {
@@ -211,6 +301,30 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
     expect(screen.getByText('Fix kitchen sink')).toBeTruthy();
   });
 
+  it('shows active filter summary and no-results remediation', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask, secondTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    renderTaskFeed();
+
+    fireEvent.changeText(screen.getByPlaceholderText('Асуулт хайх...'), 'not-a-match');
+
+    expect(screen.getByText('0 даалгавар таны шүүлтүүрт таарч байна')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Шүүлтүүрээ арилгах эсвэл хайлтаа өргөтгөж илүү олон нээлттэй даалгавар харна уу.',
+      ),
+    ).toBeTruthy();
+  });
+
   it('renders trust banner in populated state', () => {
     mockUseTasks.mockReturnValue({
       data: {
@@ -225,7 +339,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
 
     renderTaskFeed();
 
-    expect(screen.getByText('Баталгаажсан даалгавар гүйцэтгэгч')).toBeTruthy();
+    expect(screen.getByText('ID баталгаажсан даалгавар гүйцэтгэгч')).toBeTruthy();
   });
 
   it('calls refresh on pull-down', () => {
@@ -264,13 +378,6 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
   });
 
   it('navigates to task detail on card press', () => {
-    const mockPush = jest.fn();
-    jest.spyOn(require('expo-router'), 'useRouter').mockReturnValue({
-      push: mockPush,
-      replace: jest.fn(),
-      back: jest.fn(),
-    });
-
     mockUseTasks.mockReturnValue({
       data: {
         data: [baseTask],
@@ -285,6 +392,42 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
     renderTaskFeed();
 
     fireEvent.press(screen.getByTestId('task-card-task-1'));
-    expect(mockPush).toHaveBeenCalledWith('/task/task-1');
+    expect(mockRouter.push).toHaveBeenCalledWith('/task/task-1');
+  });
+
+  it('keeps review-locked task cards visually stable and non-interactive', () => {
+    mockUseReviewGate.mockReturnValue({
+      isLocked: true,
+      hasPending: true,
+      oldestPending: {
+        id: 'review-case-1',
+        booking_id: 'booking-1',
+        user_id: 'tasker-1',
+        status: 'PENDING',
+        triggered_at: '2026-03-24T10:00:00Z',
+        resolved_at: null,
+        investigation_active: false,
+      },
+    });
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    renderTaskFeed();
+
+    const cardWrapperStyle = StyleSheet.flatten(
+      screen.getByTestId('task-card-index-0').props.style,
+    );
+    expect(cardWrapperStyle?.opacity).toBeUndefined();
+
+    fireEvent.press(screen.getByTestId('task-card-task-1'));
+    expect(mockRouter.push).not.toHaveBeenCalled();
   });
 });

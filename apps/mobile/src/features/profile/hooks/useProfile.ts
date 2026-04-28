@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { getMyProfile, updateMyProfile } from '../api';
-import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
+import { useAuthStore } from '@/store/authStore';
+
+import { getMyProfile, updateMyProfile } from '../api';
 
 export function useMyProfile() {
   const session = useAuthStore((s) => s.session);

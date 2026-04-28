@@ -5,6 +5,7 @@ import { Alert, Image, Modal, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui';
 import { mobileTheme } from '@/design/tokenAdapter';
+
 import { useVerificationSubmit } from '../hooks/useVerificationSubmit';
 
 interface Props {
@@ -71,8 +72,8 @@ export function VerificationModal({ visible, onClose, onSuccess }: Props) {
       presentationStyle="pageSheet"
       onRequestClose={onClose}
     >
-      <View className="pt-[60] pb-[20] px-[20] bg-card border-b border-border">
-        <Text className="text-[20] font-bold text-card-foreground text-center">
+      <View className="pt-3xl pb-lg px-lg bg-card border-b border-border">
+        <Text className="text-title font-sans-bold text-card-foreground text-center">
           {t('verification.title')}
         </Text>
       </View>
@@ -80,7 +81,7 @@ export function VerificationModal({ visible, onClose, onSuccess }: Props) {
         className="flex-1 bg-background"
         contentContainerStyle={{ padding: mobileTheme.spacing.xl }}
       >
-        <Text className="text-[14] text-muted-foreground mb-[30] text-center leading-[20]">
+        <Text className="text-label text-muted-foreground mb-2xl text-center leading-relaxed">
           {t('verification.description')}
         </Text>
 
@@ -106,14 +107,14 @@ export function VerificationModal({ visible, onClose, onSuccess }: Props) {
           label={t('verification.submit')}
           onPress={handleSubmit}
           isLoading={submitMutation.isPending}
-          style={{ marginTop: 12 }}
+          className="mt-md"
         />
         <Button
           label={t('common.cancel')}
           variant="ghost"
           onPress={onClose}
           disabled={submitMutation.isPending}
-          style={{ marginTop: 8 }}
+          className="mt-sm"
         />
       </ScrollView>
     </Modal>
@@ -131,11 +132,11 @@ function PhotoSection({
 }) {
   const { t } = useTranslation();
   return (
-    <View className="mb-[24] bg-card p-[16] rounded-[12]">
-      <Text className="text-[16] font-semibold mb-[12] text-card-foreground">{title}</Text>
+    <View className="mb-xl bg-card p-lg rounded-md">
+      <Text className="text-body font-sans-semibold mb-md text-card-foreground">{title}</Text>
       {uri ? (
         <View>
-          <Image source={{ uri }} className="self-stretch h-[200] rounded-[8] bg-muted mb-[12]" />
+          <Image source={{ uri }} className="self-stretch h-[200] rounded-sm bg-muted mb-md" />
           <Button
             label={t('verification.retakePhoto')}
             variant="secondary"

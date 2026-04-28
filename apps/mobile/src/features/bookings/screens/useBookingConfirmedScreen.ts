@@ -2,6 +2,10 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Linking, Platform } from 'react-native';
 
+import { useConversationRouteForBooking } from '@/features/chat';
+
+import { useBookingDetail } from '../hooks/useBookingDetail';
+
 export interface BookingConfirmedScreenState {
   bookingId: string | undefined;
   taskerName: string | undefined;
@@ -17,6 +21,11 @@ export function useBookingConfirmedScreen(): BookingConfirmedScreenState {
     bookingId: string;
     taskerName?: string;
   }>();
+  const { data: booking } = useBookingDetail(bookingId);
+  const { route: conversationRoute } = useConversationRouteForBooking({
+    taskId: booking?.task_id ?? booking?.task?.id,
+    counterpartyId: booking?.tasker_id ?? booking?.tasker?.id,
+  });
   const [canAddToCalendar, setCanAddToCalendar] = React.useState(false);
   const canAddToCalendarRef = React.useRef(canAddToCalendar);
 
@@ -60,8 +69,8 @@ export function useBookingConfirmedScreen(): BookingConfirmedScreenState {
   }, [router]);
 
   const handleMessage = React.useCallback(() => {
-    router.push(bookingId ? `/inbox/${bookingId}` : '/inbox');
-  }, [bookingId, router]);
+    router.push(conversationRoute);
+  }, [conversationRoute, router]);
 
   return {
     bookingId,

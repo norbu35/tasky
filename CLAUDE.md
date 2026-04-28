@@ -17,4 +17,4 @@ Call `mcp__serena__initial_instructions` once at session start, then use the `mc
 Requires JetBrains with the project open and the Serena plugin installed.
 
 Read `AGENTS.md` for the canonical rules; this file only covers Claude-specific setup.
-For doc-claim failures or architecture / maintenance doc work, use the repo-local skill `tooling/skills/doc-claims-remediation/SKILL.md`.
+All repo skill references live in `AGENTS.md` §Repo Skills.

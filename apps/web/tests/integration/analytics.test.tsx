@@ -42,7 +42,7 @@ describe('Analytics Integration', () => {
         apiClient={customerApi}
         initialRoute="/customer/tasks/new"
         initialSession={makeSession()}
-        locale="mn-MN"
+        locale="en"
         analyticsTracker={analytics.track}
       />,
     );
@@ -96,7 +96,7 @@ describe('Analytics Integration', () => {
         apiClient={taskerApi}
         initialRoute="/tasker/tasks"
         initialSession={taskerSession}
-        locale="mn-MN"
+        locale="en"
         analyticsTracker={analytics.track}
       />,
     );
@@ -118,14 +118,14 @@ describe('Analytics Integration', () => {
         expect.objectContaining({
           event_name: 'TASK_POSTED',
           platform: 'WEB',
-          locale: 'mn-MN',
+          locale: 'en',
           actor_role: 'CUSTOMER',
           task_id: 'task-analytics-1',
         }),
         expect.objectContaining({
           event_name: 'APPLICATION_SUBMITTED',
           platform: 'WEB',
-          locale: 'mn-MN',
+          locale: 'en',
           actor_role: 'TASKER',
           task_id: 'task-1',
         }),

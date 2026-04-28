@@ -3,8 +3,8 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 import { Touchable } from '@/components/ui/Touchable';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 import type { FaqItem, FaqSection } from './model';
 
@@ -73,7 +73,9 @@ export function CategorySection({
 }) {
   return (
     <View className="mb-xl">
-      <Text className="text-[13px] font-display-bold text-primary-deep mb-md">{section.title}</Text>
+      <Text className="text-label-ui font-display-bold text-primary-deep mb-md">
+        {section.title}
+      </Text>
       {section.items.map((item) => (
         <FaqItemRow
           key={item.id}

@@ -13,11 +13,19 @@ export interface TouchableProps extends PressableProps {
  * `no-raw-pressable-in-screens`.
  */
 export function Touchable({ className, style, children, testID, ...props }: TouchableProps) {
-  if (__DEV__ && !testID) {
+  if (__DEV__ && process.env.NODE_ENV === 'test' && !testID) {
     console.warn('Touchable: testID is required for all interactive elements');
   }
   return (
-    <Pressable className={cn(className)} style={style} testID={testID} {...props}>
+    <Pressable
+      className={cn(
+        'active:opacity-pressed active:scale-pressed disabled:opacity-disabled',
+        className,
+      )}
+      style={style}
+      testID={testID}
+      {...props}
+    >
       {children}
     </Pressable>
   );

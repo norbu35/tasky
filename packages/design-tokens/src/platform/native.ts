@@ -1,5 +1,16 @@
-import { motionTokens } from '../motion';
-import { semanticTokens } from '../semantic';
+import {
+  animationPresetTokens,
+  colorOpacityTokens,
+  contentRuleTokens,
+  densityTokens,
+  elevationTokens,
+  iconSizeTokens,
+  interactionTokens,
+  overlayTokens,
+  typographyVariantTokens,
+} from '../core/additions';
+import { motionTokens } from '../core/motion';
+import { semanticTokens } from '../core/semantic';
 
 const textStyleRoles = {
   heroTitle: {
@@ -78,6 +89,20 @@ const toNativeTextStyle = <
   };
 };
 
+const toNativeTypographyVariant = <Variant extends keyof typeof typographyVariantTokens>(
+  variant: Variant,
+) => {
+  const config = typographyVariantTokens[variant];
+
+  return {
+    fontSize: config.fontSize,
+    fontFamily: config.fontFamily.native,
+    fontWeight: config.fontWeight,
+    lineHeight: Math.round(config.fontSize * config.lineHeight),
+    letterSpacing: toNativeLetterSpacing(config.fontSize, config.letterSpacing),
+  };
+};
+
 export const nativeTokens = {
   colors: {
     background: semanticTokens.colors.background.hex,
@@ -144,6 +169,28 @@ export const nativeTokens = {
       navLabel: toNativeTextStyle('navLabel'),
     },
   },
+  interaction: interactionTokens,
+  overlays: overlayTokens,
+  iconSizes: iconSizeTokens,
+  elevation: elevationTokens,
+  typographyVariants: {
+    heroTitle: toNativeTypographyVariant('heroTitle'),
+    pageHeading: toNativeTypographyVariant('pageHeading'),
+    sectionHeading: toNativeTypographyVariant('sectionHeading'),
+    cardTitle: toNativeTypographyVariant('cardTitle'),
+    bodyDefault: toNativeTypographyVariant('bodyDefault'),
+    bodyEmphasis: toNativeTypographyVariant('bodyEmphasis'),
+    label: toNativeTypographyVariant('label'),
+    caption: toNativeTypographyVariant('caption'),
+    buttonLabel: toNativeTypographyVariant('buttonLabel'),
+    navLabel: toNativeTypographyVariant('navLabel'),
+    priceDisplay: toNativeTypographyVariant('priceDisplay'),
+    badgeText: toNativeTypographyVariant('badgeText'),
+  },
+  density: densityTokens,
+  animationPresets: animationPresetTokens,
+  colorOpacity: colorOpacityTokens,
+  contentRules: contentRuleTokens,
   shadows: semanticTokens.shadows,
   motion: motionTokens,
 } as const;

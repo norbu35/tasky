@@ -16,6 +16,7 @@ public final class IdempotencyOperations {
     public static final String RESCHEDULE_REQUEST = "booking.reschedule_request";
     public static final String RESCHEDULE_RESPOND = "booking.reschedule_respond";
     public static final String CONFIRM_BOOKING_INTENT = "booking.confirm_intent";
+    public static final String DECLINE_BOOKING_INTENT = "booking.decline_intent";
 
     private IdempotencyOperations() {}
 }

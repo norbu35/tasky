@@ -1,12 +1,12 @@
 import { Stack } from 'expo-router';
 
-import { TaskerPublicProfile } from '@/features/profile/components/TaskerPublicProfile';
+import TaskerProfileScreen from '@/features/profile/screens/TaskerProfileScreen';
 
 export default function TaskerProfileRoute() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <TaskerPublicProfile />
+      <TaskerProfileScreen />
     </>
   );
 }

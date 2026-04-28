@@ -129,7 +129,7 @@ describe('Customer journey integration', () => {
       );
 
       expect(screen.getByText('Window cleaning')).toBeTruthy();
-      expect(screen.getByText('Сүхбаатар дүүрэг')).toBeTruthy();
+      expect(screen.getByText(/Сүхбаатар дүүрэг/)).toBeTruthy();
       expect(screen.getByTestId('task-card-public-task-1')).toBeTruthy();
     });
 

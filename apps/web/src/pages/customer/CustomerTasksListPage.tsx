@@ -11,6 +11,20 @@ import { useAppContext } from '../../context/AppContext';
 import { ResponsiveFeedShell, StatePanel } from '../../layout/parity';
 import type { Task } from '../../lib/apiClient';
 
+const TASK_STATUS_LABEL_KEYS: Readonly<Record<string, string>> = {
+  OPEN: 'sharedPages.status.OPEN',
+  ASSIGNED: 'sharedPages.status.ASSIGNED',
+  COMPLETED: 'sharedPages.status.COMPLETED',
+  CANCELLED: 'sharedPages.status.CANCELLED',
+  NO_SHOW: 'sharedPages.status.NO_SHOW',
+  PENDING: 'sharedPages.status.PENDING',
+  UNKNOWN: 'sharedPages.status.UNKNOWN',
+};
+
+function getTaskStatusLabelKey(status: string): string {
+  return TASK_STATUS_LABEL_KEYS[status] ?? 'sharedPages.status.UNKNOWN';
+}
+
 export function CustomerTasksListPage() {
   const { apiClient, session } = useAppContext();
   const { t } = useTranslation();
@@ -36,24 +50,18 @@ export function CustomerTasksListPage() {
 
   return (
     <ResponsiveFeedShell
-      title={t('customerPages.tasksList.title', 'My tasks')}
-      description={t(
-        'customerPages.tasksList.description',
-        'Track what you have posted and jump back into the posting flow.',
-      )}
+      title={t('customerPages.tasksList.title')}
+      description={t('customerPages.tasksList.description')}
       primaryAction={
         <Button type="button" onClick={() => navigate('/customer/tasks/new')}>
           <Plus className="mr-2 h-4 w-4" />
-          {t('customerPages.tasksList.postNew', 'Post new task')}
+          {t('customerPages.tasksList.postNew')}
         </Button>
       }
       sideRail={
         <StatePanel
-          title={t('customerPages.tasksList.freshRequest', 'Need a fresh request?')}
-          description={t(
-            'customerPages.tasksList.startNewDesc',
-            'Start a new customer task from the same posting flow.',
-          )}
+          title={t('customerPages.tasksList.freshRequest')}
+          description={t('customerPages.tasksList.startNewDesc')}
           tone="muted"
           actions={
             <Button
@@ -61,7 +69,7 @@ export function CustomerTasksListPage() {
               variant="secondary"
               onClick={() => navigate('/customer/tasks/new')}
             >
-              {t('customerPages.tasksList.startPosting', 'Start posting')}
+              {t('customerPages.tasksList.startPosting')}
             </Button>
           }
         />
@@ -69,11 +77,9 @@ export function CustomerTasksListPage() {
     >
       {error ? (
         <StatePanel
-          title={t('customerPages.tasksList.errorTitle', 'Failed to load tasks')}
+          title={t('customerPages.tasksList.errorTitle')}
           description={
-            error instanceof Error
-              ? error.message
-              : t('customerPages.tasksList.tryAgain', 'Please try again.')
+            error instanceof Error ? error.message : t('customerPages.tasksList.tryAgain')
           }
           tone="destructive"
         />
@@ -94,15 +100,12 @@ export function CustomerTasksListPage() {
         </div>
       ) : tasks.length === 0 ? (
         <StatePanel
-          title={t('customerPages.tasksList.noTasks', 'No tasks yet')}
-          description={t(
-            'customerPages.tasksList.postFirst',
-            'Post your first task to start collecting applications.',
-          )}
+          title={t('customerPages.tasksList.noTasks')}
+          description={t('customerPages.tasksList.postFirst')}
           actions={
             <Button type="button" onClick={() => navigate('/customer/tasks/new')}>
               <Plus className="mr-2 h-4 w-4" />
-              {t('customerPages.tasksList.postNew', 'Post new task')}
+              {t('customerPages.tasksList.postNew')}
             </Button>
           }
         />
@@ -141,10 +144,10 @@ function TaskCard({ task, onOpen }: { task: Task; onOpen: () => void }) {
         <div className="min-w-0 space-y-2">
           <div className="flex items-center gap-2">
             <Badge variant={task.status === 'OPEN' ? 'default' : 'secondary'}>
-              {t(`sharedPages.status.${task.status}`, task.status)}
+              {t(getTaskStatusLabelKey(task.status))}
             </Badge>
-            <span className="text-xs uppercase tracking-[0.075em] text-muted-foreground">
-              {t('customerPages.tasksList.cardType', 'Customer task')}
+            <span className="text-xs uppercase tracking-caps text-muted-foreground">
+              {t('customerPages.tasksList.cardType')}
             </span>
           </div>
           <h2 className="truncate text-base font-semibold">{task.description}</h2>
@@ -163,12 +166,12 @@ function TaskCard({ task, onOpen }: { task: Task; onOpen: () => void }) {
           <div className="text-lg font-semibold font-display">
             {task.budget != null && (
               <>
-                {task.budget.toLocaleString()} {t('sharedPages.currencyMNT', 'MNT')}
+                {task.budget.toLocaleString()} {t('sharedPages.currencyMNT')}
               </>
             )}
           </div>
           <Button type="button" variant="outline" size="sm" className="mt-2" onClick={onOpen}>
-            {t('customerPages.tasksList.viewDetails', 'View details')}
+            {t('customerPages.tasksList.viewDetails')}
           </Button>
         </div>
       </CardContent>

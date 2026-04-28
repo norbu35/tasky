@@ -15,8 +15,8 @@ import {
 import { ScreenContainer } from '@/components/shells';
 import { Button } from '@/components/ui/Button';
 import { Touchable } from '@/components/ui/Touchable';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 const { width } = Dimensions.get('window');
 const { colors, spacing } = mobileTheme;
@@ -84,6 +84,15 @@ export default function OnboardingScreen() {
     handleFinish();
   };
 
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    router.replace('/(auth)');
+  };
+
   const handleFinish = () => {
     router.replace('/(auth)/role-select');
   };
@@ -99,7 +108,7 @@ export default function OnboardingScreen() {
         style={{ width, paddingTop: spacing['3xl'] }}
       >
         <View
-          className="mb-[32px] items-center justify-center"
+          className="mb-2xl items-center justify-center"
           style={{
             width: illustrationCard.width,
             height: illustrationCard.height,
@@ -131,8 +140,8 @@ export default function OnboardingScreen() {
                 style={{ backgroundColor: colors.primaryDeep }}
               >
                 <Text
-                  className="text-caption font-sans-bold"
-                  style={{ color: colors.primaryForeground, letterSpacing: 0.3 }}
+                  className="text-caption font-sans-bold tracking-normal"
+                  style={{ color: colors.primaryForeground }}
                 >
                   {t('auth.onboarding.badge')}
                 </Text>
@@ -142,7 +151,7 @@ export default function OnboardingScreen() {
         </View>
         <View className="items-center">
           <Text
-            className="text-heading font-sans-extrabold text-center"
+            className="text-heading font-display-bold text-center"
             style={{ color: colors.primaryDeep }}
           >
             {titleText}
@@ -159,7 +168,12 @@ export default function OnboardingScreen() {
         className="absolute z-10 flex-row items-center justify-between"
         style={{ top: spacing.lg, left: spacing.lg, right: spacing.lg }}
       >
-        <Touchable onPress={() => router.back()} hitSlop={12} accessibilityLabel={t('common.back')}>
+        <Touchable
+          testID="onboarding-back"
+          onPress={handleBack}
+          hitSlop={12}
+          accessibilityLabel={t('common.back')}
+        >
           <ArrowLeft size={24} color={colors.primaryDeep} />
         </Touchable>
         {isLastSlide ? (

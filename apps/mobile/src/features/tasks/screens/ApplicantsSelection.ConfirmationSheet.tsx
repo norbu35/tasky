@@ -1,11 +1,17 @@
+import { X } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
 import { Button } from '@/components/ui/Button';
+import { ModalSheet } from '@/components/ui/ModalSheet';
+import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
+import { Touchable } from '@/components/ui/Touchable';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 import { type ApplicantItem } from './ApplicantsSelection.model';
+
+const { colors, spacing } = mobileTheme;
 
 interface ConfirmationSheetProps {
   selectedApplicant: ApplicantItem | null;
@@ -23,32 +29,61 @@ export function ConfirmationSheet({
   const { t } = useTranslation();
 
   return (
-    <ModalSheetTemplate
-      isOpen={isOpen}
+    <ModalSheet
+      visible={isOpen}
       onClose={onClose}
       title={t('customer.applicants.confirmTitle')}
       testID="applicant-accept-sheet"
+      titleAlign="left"
+      hideDefaultAction
+      headerTrailing={
+        <Touchable
+          onPress={onClose}
+          accessibilityRole="button"
+          testID="applicant-accept-sheet-close"
+          className="h-9 w-9 items-center justify-center rounded-full bg-muted"
+        >
+          <X size={18} color={colors.foreground} />
+        </Touchable>
+      }
+      footer={
+        <View className="gap-sm pt-xs">
+          <Button
+            label={t('customer.applicants.confirmCta')}
+            onPress={onConfirm}
+            testID="applicant-accept-sheet-confirm"
+          />
+          <Button label={t('common.cancel')} variant="ghost" onPress={onClose} />
+        </View>
+      }
     >
-      <Text className="text-body text-text-secondary">{t('customer.applicants.confirmBody')}</Text>
+      <Text className="text-body text-text-secondary leading-snug">
+        {t('customer.applicants.confirmBody')}
+      </Text>
       {selectedApplicant ? (
-        <View className="rounded-lg bg-muted p-lg gap-xs">
-          <Text className="text-title font-sans-bold text-primary-deep">
-            {selectedApplicant.name}
-          </Text>
-          <Text className="text-caption text-text-secondary">
-            {t('customer.applicants.confirmBody')}
-          </Text>
+        <View className="border-y border-border py-md" style={{ gap: spacing.sm }}>
+          <View className="flex-row items-center" style={{ gap: spacing.md }}>
+            <ProfileAvatar
+              uri={selectedApplicant.avatarUrl}
+              name={selectedApplicant.name}
+              size="lg"
+              showVerified={selectedApplicant.isVerified}
+            />
+            <View className="flex-1" style={{ gap: spacing.xs / 2 }}>
+              <Text className="text-subtitle font-sans-bold text-primary-deep">
+                {selectedApplicant.name}
+              </Text>
+              <Text className="text-caption text-text-secondary">
+                {t(
+                  selectedApplicant.publicRatingVisible
+                    ? 'customer.applicants.confirmEvidenceVisible'
+                    : 'customer.applicants.confirmEvidencePending',
+                )}
+              </Text>
+            </View>
+          </View>
         </View>
       ) : null}
-      <View className="flex-row items-center gap-md">
-        <Button label={t('common.cancel')} variant="ghost" onPress={onClose} style={{ flex: 1 }} />
-        <Button
-          label={t('customer.applicants.confirmCta')}
-          onPress={onConfirm}
-          style={{ flex: 1 }}
-          testID="applicant-accept-sheet-confirm"
-        />
-      </View>
-    </ModalSheetTemplate>
+    </ModalSheet>
   );
 }

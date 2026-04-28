@@ -11,4 +11,6 @@ public record CreateCategoryRequest(
         @NotBlank @Size(max = 120) String name,
         @JsonProperty("name_mn") @NotBlank @Size(max = 120) String nameMn,
         @JsonProperty("icon_url") @NotBlank @Size(max = 512) @Pattern(regexp = "^https?://\\S+$") String iconUrl,
-        @JsonProperty("sort_order") @NotNull @Min(0) Integer sortOrder) {}
+        @JsonProperty("sort_order") @NotNull @Min(0) Integer sortOrder,
+        @JsonProperty("intake_enabled") Boolean intakeEnabled,
+        @JsonProperty("assisted_distribution_enabled") Boolean assistedDistributionEnabled) {}

@@ -1,0 +1,164 @@
+# Screen Spec: Credits — Transaction History
+screen_id: SCR-P2-003
+name: 'Credits — Transaction History'
+route: '/(tasker)/credits/history'
+role: [tasker]
+phase: '2'
+template: feed_list
+figma_page: 'Phase 2/Credits Transaction History'
+feature: 'credits'
+
+layout:
+  template: feed_list
+  density: compact
+  structure: 'safe_area -> sticky_header(nav) -> scrollview(transaction_list) -> pagination_footer'
+
+components:
+  - id: COMP-LOADINGSKELETON
+    usage: 'List row skeletons matching transaction row layout during initial load'
+    props:
+      variant: list_row
+      count: 8
+    variant: list_row
+
+  - id: COMP-LISTROW
+    usage: 'Each transaction as a list row showing type, date, credit change, and running balance'
+    props:
+      label: 'Transaction description'
+      value: '+2 кредит'
+      showDisclosure: false
+    variant: default
+
+  - id: COMP-EMPTYSTATE
+    usage: 'Empty state when no transactions exist yet'
+    props:
+      illustration: 'empty_history'
+      headline: 'Гүйлгээ байхгүй'
+      description: 'Кредит худалдаж авсны дараа гүйлгээний түүх энд харагдана'
+      ctaLabel: 'Кредит авах'
+    variant: no_results
+
+  - id: COMP-EMPTYSTATE
+    usage: 'Error state when transaction history fails to load'
+    props:
+      illustration: 'error_history'
+      headline: 'Ачааллах боломжгүй'
+      description: 'Гүйлгээний түүхийг ачааллахад алдаа гарлаа'
+      ctaLabel: 'Дахин оролдох'
+    variant: error
+
+  - id: COMP-BUTTON
+    usage: 'Back button in nav header'
+    props:
+      label: 'Буцах'
+      variant: ghost
+      icon: 'arrow_left'
+    variant: ghost
+
+states:
+  - id: loading_initial
+    description: 'Fetching transaction history from API'
+    components_visible: [COMP-LOADINGSKELETON]
+    components_hidden: [COMP-LISTROW, COMP-EMPTYSTATE]
+
+  - id: empty
+    description: 'No transactions yet; user has never purchased or used credits'
+    components_visible: [COMP-EMPTYSTATE.no_results]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-LISTROW, COMP-EMPTYSTATE.error]
+
+  - id: populated
+    description: 'Transaction list loaded with entries sorted newest-first'
+    components_visible: [COMP-LISTROW]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-EMPTYSTATE]
+
+  - id: loading_pagination
+    description: 'Loading next page of transactions via infinite scroll'
+    components_visible: [COMP-LISTROW, COMP-LOADINGSKELETON]
+    components_hidden: [COMP-EMPTYSTATE]
+
+  - id: error_network
+    description: 'Failed to load transactions due to network error'
+    components_visible: [COMP-EMPTYSTATE.error]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-LISTROW, COMP-EMPTYSTATE.no_results]
+
+copy:
+  - key: nav_title
+    mn: 'Гүйлгээний түүх'
+    en: 'Transaction History'
+    max_chars: 25
+
+  - key: type_purchase
+    mn: 'Кредит худалдаж авсан'
+    en: 'Credits purchased'
+    max_chars: 30
+
+  - key: type_lead_unlock
+    mn: 'Санал хүлээн авсан'
+    en: 'Lead unlocked'
+    max_chars: 25
+
+  - key: type_refund
+    mn: 'Буцаалт'
+    en: 'Refund'
+    max_chars: 15
+
+  - key: credit_added
+    mn: '+{count} кредит'
+    en: '+{count} credits'
+    max_chars: 15
+
+  - key: credit_spent
+    mn: '-{count} кредит'
+    en: '-{count} credits'
+    max_chars: 15
+
+  - key: empty_headline
+    mn: 'Гүйлгээ байхгүй'
+    en: 'No transactions'
+    max_chars: 25
+
+  - key: empty_description
+    mn: 'Кредит худалдаж авсны дараа гүйлгээний түүх энд харагдана'
+    en: 'Transaction history will appear here after your first purchase'
+    max_chars: 80
+
+  - key: empty_cta
+    mn: 'Кредит авах'
+    en: 'Buy credits'
+    max_chars: 20
+
+  - key: error_headline
+    mn: 'Ачааллах боломжгүй'
+    en: 'Unable to load'
+    max_chars: 30
+
+  - key: error_retry
+    mn: 'Дахин оролдох'
+    en: 'Try again'
+    max_chars: 20
+
+api_endpoints:
+  - method: GET
+    path: '/credits/transactions'
+    purpose: 'Fetch paginated credit transaction history'
+
+analytics_events:
+  - event: 'credits_history_viewed'
+    trigger: 'Transaction history screen loaded successfully'
+  - event: 'credits_history_pagination'
+    trigger: 'User scrolls to load next page of transactions'
+  - event: 'credits_history_empty_cta'
+    trigger: "User taps 'Buy credits' from empty state"
+
+acceptance_criteria:
+  - 'Loading state shows 8 list row skeletons in compact density'
+  - 'Each transaction row shows type icon, description, date, and credit delta (+/-)'
+  - 'Credit additions are displayed in verified (green) color, deductions in default'
+  - 'Transactions are sorted newest-first with date grouping headers'
+  - 'Infinite scroll pagination loads next page with skeleton footer'
+  - 'Empty state directs user to purchase credits with actionable CTA'
+  - 'Network error state shows retry CTA'
+  - 'Back button returns to SCR-P2-001 (Credits Balance)'
+  - 'Compact density applies 0.75x spacing multiplier to list rows'
+  - 'Date format follows YYYY.MM.DD Mongolian convention'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

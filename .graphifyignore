@@ -1,0 +1,68 @@
+# Dependencies and package-manager state
+node_modules/
+apps/*/node_modules/
+packages/*/node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Build, coverage, and tool caches
+.gradle/
+.gradle-home/
+.turbo/
+.expo/
+build/
+dist/
+out/
+apps/*/dist/
+packages/*/dist/
+apps/*/coverage/
+apps/*/playwright-report/
+apps/*/test-results/
+services/api/build/
+
+# Local environments and secrets
+.env
+.env.*
+apps/*/.env
+apps/*/.env.*
+local.properties
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Agent and assistant adapters
+.agents/
+.claude/
+.codex/
+.cursor/
+.gemini/
+.serena/cache/
+.serena/memories/
+CLAUDE.md
+GEMINI.md
+.github/copilot-instructions.md
+
+# Generated docs, snapshots, and reports
+docs/API.yaml
+docs/maintenance/generated/
+docs/DEPENDENCY_VERSION_MATRIX.md
+docs/MAINTENANCE_AUDIT_*.md
+docs/QUALITY_GATES_AUDIT.md
+repomix-output.xml
+repomix-output.*
+repomix-*.xml
+artifacts/
+test-results.json
+
+# Graphify internals and optional heavy outputs
+graphify-out/cache/
+graphify-out/converted/
+graphify-out/memory/
+graphify-out/manifest.json
+graphify-out/cost.json
+graphify-out/needs_update
+graphify-out/graph.html
+graphify-out/*.tmp
+graphify-out/*.log

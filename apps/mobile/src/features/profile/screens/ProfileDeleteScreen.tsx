@@ -7,11 +7,11 @@ import { Text, View } from 'react-native';
 import { ScreenContainer } from '@/components/shells/ScreenContainer';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { useDeleteAccount } from '@/features/profile/hooks/useDeleteAccount';
 
-const { colors } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 const { statusHero, paragraphLineHeight } = mobileSurfaces;
 
 export default function ProfileDeleteScreen() {
@@ -36,7 +36,7 @@ export default function ProfileDeleteScreen() {
   return (
     <ScreenContainer testID="SCR-SHARED-015">
       <View className="flex-1 justify-center">
-        <View className="px-lg items-center">
+        <View className="items-center">
           <View
             className="rounded-full bg-muted items-center justify-center mb-lg"
             style={{ width: statusHero.iconBox, height: statusHero.iconBox }}
@@ -96,7 +96,7 @@ export default function ProfileDeleteScreen() {
                 autoCapitalize="characters"
                 autoCorrect={false}
                 placeholder={t('shared.profile.deleteConfirmationPlaceholder')}
-                style={{ alignSelf: 'stretch', marginBottom: 24 }}
+                style={{ alignSelf: 'stretch', marginBottom: spacing.xl }}
               />
 
               <View className="self-stretch gap-sm">

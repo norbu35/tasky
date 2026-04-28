@@ -14,7 +14,7 @@ export function FilterChip({ label, active = false, onClick }: FilterChipProps) 
       className={cn(
         'shrink-0 rounded-full border px-4 py-1.5 text-xs font-semibold font-sans transition-all duration-200',
         active
-          ? 'border-primary bg-primary text-primary-foreground shadow-[var(--shadow-card)]'
+          ? 'border-primary bg-primary text-primary-foreground shadow-card'
           : 'border-border bg-card text-text-secondary hover:bg-muted',
       )}
     >

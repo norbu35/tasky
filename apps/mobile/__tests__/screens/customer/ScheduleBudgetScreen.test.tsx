@@ -3,20 +3,23 @@ import { render, screen, fireEvent } from '@testing-library/react-native';
 import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 import ScheduleBudgetScreen from '../../../src/app/(customer)/tasks/new/schedule';
+import {
+  createScheduleDateOptions,
+  createScheduleTimeOptions,
+} from '../../../src/features/tasks/screens/TaskSchedule.model';
 
 const mockPush = jest.fn();
 const mockBack = jest.fn();
 
-const mockDraftStoreState: any = {
-  'test-draft-id': {
-    draftId: 'test-draft-id',
-    categoryId: 'cat-123',
-    description: 'Fix my sink',
-    photos: [],
-    location: { lat: 47.92123, lng: 106.91876, text: 'Behind State Dept Store' },
-    currentStep: 3,
-  },
+const baseDraft = {
+  draftId: 'test-draft-id',
+  categoryId: 'cat-123',
+  description: 'Fix my sink',
+  photos: [],
+  location: { lat: 47.92123, lng: 106.91876, text: 'Behind State Dept Store' },
+  currentStep: 3,
 };
+const mockDraftStoreState: any = {};
 
 const mockUpdateDraft = jest.fn();
 jest.mock('../../../src/features/tasks/draft', () => ({
@@ -36,17 +39,6 @@ jest.mock('react-i18next', () => {
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
-jest.mock('@react-native-community/datetimepicker', () => {
-  const React = require('react');
-  const { View } = require('react-native');
-  const MockDateTimePicker = ({ mode, testID, ...props }: any) => (
-    <View testID={testID ?? `schedule-${mode}-picker`} {...props} />
-  );
-  MockDateTimePicker.displayName = 'MockDateTimePicker';
-
-  return MockDateTimePicker;
-});
-
 jest.mock('lucide-react-native', () => {
   const { Text } = require('react-native');
   return new Proxy(
@@ -59,31 +51,26 @@ jest.mock('lucide-react-native', () => {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  Object.keys(mockDraftStoreState).forEach((key) => {
+    delete mockDraftStoreState[key];
+  });
+  mockDraftStoreState['test-draft-id'] = { ...baseDraft };
   resetTestI18n();
   setTestLanguage('en');
 });
 
-function getFutureDate(days = 1): Date {
-  const date = new Date();
-  date.setDate(date.getDate() + days);
-  date.setHours(10, 0, 0, 0);
-  return date;
+function getPickedDateAndTime(): { date: Date; time: Date } {
+  const date = createScheduleDateOptions()[0];
+  const time = createScheduleTimeOptions(date)[7];
+  return { date, time };
 }
 
-function getFutureTimeFrom(base: Date): Date {
-  const time = new Date(base);
-  time.setHours(11, 30, 0, 0);
-  return time;
-}
-
-function pickDateAndTime(date: Date, time: Date) {
+function pickDateAndTime() {
   fireEvent.press(screen.getByTestId('schedule-date-input'));
-  fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, date);
-  fireEvent.press(screen.getByTestId('schedule-picker-confirm'));
-
-  fireEvent.press(screen.getByTestId('schedule-time-input'));
-  fireEvent(screen.getByTestId('schedule-time-picker'), 'onChange', { type: 'set' }, time);
-  fireEvent.press(screen.getByTestId('schedule-picker-confirm'));
+  fireEvent.press(screen.getByTestId('schedule-day-option-0'));
+  fireEvent.press(screen.getByTestId('schedule-picker-time-tab'));
+  fireEvent.press(screen.getByTestId('schedule-time-option-7'));
+  fireEvent.press(screen.getByTestId('schedule-picker-save'));
 }
 
 describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
@@ -108,6 +95,12 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
     expect(screen.getByTestId('schedule-budget-input')).toBeTruthy();
   });
 
+  it('renders both Phase 1 pricing modes', () => {
+    render(<ScheduleBudgetScreen />);
+    expect(screen.getByText('I have a budget')).toBeTruthy();
+    expect(screen.getByText('I want quotes')).toBeTruthy();
+  });
+
   it('renders budget label', () => {
     render(<ScheduleBudgetScreen />);
     expect(screen.getByText('Budget')).toBeTruthy();
@@ -115,9 +108,7 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
 
   it('shows budget validation when amount is below minimum', () => {
     render(<ScheduleBudgetScreen />);
-    const date = getFutureDate(1);
-    const time = getFutureTimeFrom(date);
-    pickDateAndTime(date, time);
+    pickDateAndTime();
 
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '1000');
     expect(screen.getByText('Budget must be at least ₮20,000')).toBeTruthy();
@@ -125,11 +116,15 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
   });
 
   it('shows schedule validation when a past date is selected', () => {
-    render(<ScheduleBudgetScreen />);
     const now = new Date();
     const pastDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 10, 0, 0, 0);
-    const pastTime = new Date(pastDate);
-    pickDateAndTime(pastDate, pastTime);
+    mockDraftStoreState['test-draft-id'] = {
+      ...baseDraft,
+      scheduledAt: pastDate.toISOString(),
+    };
+    render(<ScheduleBudgetScreen />);
+
+    fireEvent.press(screen.getByTestId('schedule-date-input'));
 
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '50000');
     expect(screen.getByText('Cannot select a past date/time')).toBeTruthy();
@@ -141,9 +136,7 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
     const nextButton = screen.getByTestId('SCR-CUST-006-next');
     expect(nextButton).toBeDisabled();
 
-    const date = getFutureDate(1);
-    const time = getFutureTimeFrom(date);
-    pickDateAndTime(date, time);
+    pickDateAndTime();
 
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '50000');
 
@@ -152,8 +145,7 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
 
   it('navigates to review when valid', () => {
     render(<ScheduleBudgetScreen />);
-    const date = getFutureDate(1);
-    const time = getFutureTimeFrom(date);
+    const { date, time } = getPickedDateAndTime();
     const expectedScheduledAt = new Date(
       date.getFullYear(),
       date.getMonth(),
@@ -163,7 +155,7 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
       0,
       0,
     ).toISOString();
-    pickDateAndTime(date, time);
+    pickDateAndTime();
 
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '50000');
     fireEvent.press(screen.getByTestId('SCR-CUST-006-next'));
@@ -181,19 +173,61 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
     });
   });
 
-  it('keeps iOS picker visible while scrolling until user confirms', () => {
+  it('SCN-TASK-027: accepts quote mode without a posted budget', () => {
     render(<ScheduleBudgetScreen />);
-    const date = getFutureDate(1);
+    const { date, time } = getPickedDateAndTime();
+    const expectedScheduledAt = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      time.getHours(),
+      time.getMinutes(),
+      0,
+      0,
+    ).toISOString();
+    pickDateAndTime();
+
+    fireEvent.press(screen.getByTestId('pricing-mode-quote'));
+
+    expect(screen.queryByTestId('schedule-budget-input')).toBeNull();
+    expect(
+      screen.getByText('Taskers will send a structured price quote with their application.'),
+    ).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-006-next')).not.toBeDisabled();
+
+    fireEvent.press(screen.getByTestId('SCR-CUST-006-next'));
+
+    expect(mockUpdateDraft).toHaveBeenCalledWith(
+      'test-draft-id',
+      expect.objectContaining({
+        scheduledAt: expectedScheduledAt,
+        pricingMode: 'QUOTE',
+        budget: null,
+        currentStep: 4,
+      }),
+    );
+  });
+
+  it('selects a schedule through the Tasky calendar sheet picker', () => {
+    render(<ScheduleBudgetScreen />);
 
     fireEvent.press(screen.getByTestId('schedule-date-input'));
-    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, date);
 
-    expect(screen.getByTestId('schedule-ios-picker-card')).toBeTruthy();
-    expect(screen.getByTestId('schedule-picker-confirm')).toBeTruthy();
+    expect(screen.getByTestId('schedule-picker-sheet')).toBeTruthy();
+    expect(screen.getByTestId('schedule-calendar-grid')).toBeTruthy();
+    expect(screen.getByTestId('schedule-picker-date-tab')).toBeTruthy();
+    expect(screen.getByTestId('schedule-picker-time-tab')).toBeTruthy();
+    expect(screen.getByTestId('schedule-picker-reset')).toBeTruthy();
+    expect(screen.getByTestId('schedule-picker-save')).toBeTruthy();
+    expect(screen.queryByTestId('schedule-picker-confirm')).toBeNull();
+    expect(screen.queryByTestId('schedule-picker-cancel')).toBeNull();
 
-    fireEvent.press(screen.getByTestId('schedule-picker-confirm'));
+    fireEvent.press(screen.getByTestId('schedule-day-option-0'));
+    fireEvent.press(screen.getByTestId('schedule-picker-time-tab'));
+    fireEvent.press(screen.getByTestId('schedule-time-option-7'));
+    fireEvent.press(screen.getByTestId('schedule-picker-save'));
 
-    expect(screen.queryByTestId('schedule-ios-picker-card')).toBeNull();
+    expect(screen.queryByTestId('schedule-picker-sheet')).toBeNull();
   });
 
   it('renders as step 5 of 7 wizard', () => {

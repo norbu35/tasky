@@ -43,9 +43,9 @@ The following controls must remain intact:
 ### 5.1 Local and CI
 
 - Local baseline verification is documented in `AGENTS.md` and `docs/maintenance/OPERATING_MODEL.md`.
-- PR CI is `quality-gates.yml`.
+- Merge CI is `quality-gates.yml` on pushes to `main` and `staging`.
 - Release gate is `release-gate.yml`.
-- Nightly regression is `nightly-regression` plus `./gradlew gateRegression`.
+- Nightly regression is `nightly-regression` when manually dispatched plus `./gradlew gateRegression`.
 
 ### 5.2 Launch evidence expectations
 
@@ -62,7 +62,7 @@ The following controls must remain intact:
 
 ## 7. Launch KPI and dashboard gate
 
-Production launch must not proceed without a real dashboard for all seven approved Phase 1 metrics:
+Production launch must not proceed without a real dashboard for all seven approved Phase 1 metrics. Metric formulas, thresholds, denominator rules, and data-quality policy are defined in `docs/METRICS.md`:
 
 1. Self-Serve Fulfillment Rate
 2. Qualified Match Rate within 24h
@@ -78,6 +78,7 @@ Rules:
 - District is drilldown.
 - Alerts are required only for the four hard-gate metrics.
 - KPI computation must come from backend-exported business metrics, not ad hoc dashboard SQL.
+- Native confirmation and self-serve reporting must not count successes that occur after assisted or manual intervention.
 
 ## 8. Incident severity and ownership
 

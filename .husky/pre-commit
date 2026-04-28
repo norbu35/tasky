@@ -20,4 +20,8 @@ if echo "$STAGED_FILES" | grep -Eq '^(apps|services)/' \
   exit 1
 fi
 
+if echo "$STAGED_FILES" | grep -qE 'tests/scenarios/|docs/PRD\.md'; then
+  python3 tooling/scripts/governance/validate-prd-scenario-links.py
+fi
+
 pnpm exec lint-staged

@@ -8,8 +8,11 @@ import java.util.UUID;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.UserProfileService;
 import mn.tasky.auth.dto.UserProfile;
+import mn.tasky.booking.dto.BookingIntentCreateResult;
+import mn.tasky.booking.dto.BookingIntentState;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.publicapi.BookingCommandPort;
+import mn.tasky.booking.publicapi.BookingIntentCommandPort;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.common.validation.TextSanitizer;
@@ -22,7 +25,6 @@ import mn.tasky.task.dto.TaskAcceptResult;
 import mn.tasky.task.dto.TaskApplicationState;
 import mn.tasky.task.dto.TaskApplicationsListResult;
 import mn.tasky.task.dto.TaskApplyResult;
-import mn.tasky.task.dto.TaskSelectResult;
 import mn.tasky.task.dto.TaskState;
 import mn.tasky.task.dto.TaskWithdrawResult;
 import org.slf4j.Logger;
@@ -36,6 +38,7 @@ public class TaskApplicationService {
     private static final long SELECTION_WINDOW_HOURS = 4;
     private final UserProfileService userProfileService;
     private final BookingCommandPort bookingCommandPort;
+    private final BookingIntentCommandPort bookingIntentCommandPort;
     private final NotificationService notificationService;
     private final AnalyticsService analyticsService;
     private final DomainEventOutboxService domainEventOutboxService;
@@ -46,6 +49,7 @@ public class TaskApplicationService {
     public TaskApplicationService(
             UserProfileService userProfileService,
             BookingCommandPort bookingCommandPort,
+            BookingIntentCommandPort bookingIntentCommandPort,
             NotificationService notificationService,
             AnalyticsService analyticsService,
             DomainEventOutboxService domainEventOutboxService,
@@ -54,6 +58,7 @@ public class TaskApplicationService {
             TaskApplicationDao taskApplicationDao) {
         this.userProfileService = userProfileService;
         this.bookingCommandPort = bookingCommandPort;
+        this.bookingIntentCommandPort = bookingIntentCommandPort;
         this.notificationService = notificationService;
         this.analyticsService = analyticsService;
         this.domainEventOutboxService = domainEventOutboxService;
@@ -93,6 +98,9 @@ public class TaskApplicationService {
         if (isQuoteMode && quotePrice == null) {
             return new TaskApplyResult(null, TaskApplyResult.QUOTE_PRICE_REQUIRED);
         }
+        if (!isQuoteMode && quotePrice != null) {
+            return new TaskApplyResult(null, TaskApplyResult.BUDGET_PRICE_NOT_ALLOWED);
+        }
         String applicationId = UUID.randomUUID().toString();
         String sanitizedMessage = TextSanitizer.plainText(message);
         taskApplicationDao.insert(
@@ -120,6 +128,18 @@ public class TaskApplicationService {
                 AnalyticsService.EVENT_APPLICATION_SUBMITTED,
                 taskerId,
                 Map.of(AnalyticsService.PROPERTY_TASK_ID, taskId, "application_id", application.id()));
+        analyticsService.track(
+                AnalyticsService.EVENT_QUALIFIED_APPLICATION,
+                taskerId,
+                Map.of(
+                        AnalyticsService.PROPERTY_TASK_ID,
+                        taskId,
+                        AnalyticsService.PROPERTY_TASKER_ID,
+                        taskerId,
+                        AnalyticsService.PROPERTY_CATEGORY_ID,
+                        task.categoryId(),
+                        AnalyticsService.PROPERTY_PRICING_MODE,
+                        task.pricingMode()));
         return TaskApplyResult.success(application);
     }
 
@@ -145,66 +165,28 @@ public class TaskApplicationService {
     }
 
     @Transactional
-    public TaskSelectResult selectApplication(String customerId, String taskId, String applicationId) {
-        Optional<TaskState> taskOpt = taskDao.findById(taskId);
-        if (taskOpt.isEmpty()) {
-            return TaskSelectResult.NOT_FOUND_RESULT;
-        }
-        TaskState task = taskOpt.get();
-        if (!task.customerId().equals(customerId)) {
-            return TaskSelectResult.FORBIDDEN_RESULT;
-        }
-        if (!"OPEN".equals(task.status())) {
-            return TaskSelectResult.TASK_NOT_OPEN_RESULT;
-        }
-        if (taskApplicationDao.hasAccepted(taskId)) {
-            return TaskSelectResult.CONFLICT_RESULT;
-        }
-        Optional<TaskApplicationState> selectedOpt = taskApplicationDao.findById(applicationId);
-        if (selectedOpt.isEmpty() || !taskId.equals(selectedOpt.get().taskId())) {
-            return TaskSelectResult.NOT_FOUND_RESULT;
-        }
-        TaskApplicationState selected = selectedOpt.get();
-        if (!"APPLIED".equals(selected.status())) {
-            return TaskSelectResult.CONFLICT_RESULT;
-        }
-        Instant now = Instant.now();
-        Instant respondBy = now.plusSeconds(SELECTION_WINDOW_HOURS * 3600);
-        taskApplicationDao.updateSelection(selected.id(), "SELECTED", now, respondBy);
-        notificationService.sendPush(
-                selected.taskerId(),
-                "You've been selected!",
-                "A customer has selected you for their task. You have 4 hours to confirm.",
-                "TASKER_SELECTED");
-        analyticsService.track(
-                "APPLICATION_SELECTED",
-                customerId,
-                Map.of(
-                        AnalyticsService.PROPERTY_TASK_ID,
-                        taskId,
-                        "application_id",
-                        applicationId,
-                        "tasker_id",
-                        selected.taskerId()));
-        TaskApplicationState updated =
-                taskApplicationDao.findById(applicationId).orElse(selected);
-        return TaskSelectResult.success(updated);
-    }
-
-    @Transactional
-    public TaskAcceptResult confirmAcceptance(String taskerId, String applicationId) {
+    public TaskAcceptResult confirmAcceptance(String taskerId, String taskId, String applicationId) {
         Optional<TaskApplicationState> selectedOpt = taskApplicationDao.findByTaskerAndId(taskerId, applicationId);
         if (selectedOpt.isEmpty()) {
             return TaskAcceptResult.NOT_FOUND_RESULT;
         }
         TaskApplicationState selected = selectedOpt.get();
+        if (!taskId.equals(selected.taskId())) {
+            return TaskAcceptResult.NOT_FOUND_RESULT;
+        }
         if (!"SELECTED".equals(selected.status())) {
             return TaskAcceptResult.CONFLICT_RESULT;
         }
-        if (selected.respondByAt() != null && Instant.now().isAfter(selected.respondByAt())) {
+        Instant now = Instant.now();
+        if (selected.respondByAt() != null && now.isAfter(selected.respondByAt())) {
             return TaskAcceptResult.CONFLICT_RESULT;
         }
-        Optional<TaskState> taskOpt = taskDao.findById(selected.taskId());
+        Optional<BookingIntentState> intentOpt =
+                bookingIntentCommandPort.findPendingApplicationSelectionIntent(taskId, applicationId, now);
+        if (intentOpt.isEmpty()) {
+            return TaskAcceptResult.CONFLICT_RESULT;
+        }
+        Optional<TaskState> taskOpt = taskDao.findById(taskId);
         if (taskOpt.isEmpty()) {
             return TaskAcceptResult.NOT_FOUND_RESULT;
         }
@@ -212,8 +194,6 @@ public class TaskApplicationService {
         if (taskApplicationDao.hasAccepted(selected.taskId())) {
             return TaskAcceptResult.CONFLICT_RESULT;
         }
-        taskApplicationDao.updateStatus(selected.id(), "ACCEPTED");
-        taskApplicationDao.rejectOthers(selected.taskId(), selected.id());
         int bookingPrice;
         if (PricingMode.QUOTE.name().equals(task.pricingMode())) {
             if (selected.quotePrice() == null) {
@@ -225,7 +205,10 @@ public class TaskApplicationService {
         }
         BookingState booking = bookingCommandPort.createBooking(
                 task.id(), selected.taskerId(), task.customerId(), bookingPrice, true, task.scheduledAt());
-        taskDao.updateStatus(task.id(), "ASSIGNED", Instant.now());
+        taskApplicationDao.updateStatus(selected.id(), "ACCEPTED");
+        taskApplicationDao.rejectOthers(selected.taskId(), selected.id());
+        taskDao.updateStatus(task.id(), "ASSIGNED", now);
+        bookingIntentCommandPort.markIntentConfirmed(intentOpt.get().id(), booking.id(), now);
         domainEventOutboxService.publish(
                 OutboxEventTypes.TASK_APPLICATION_ACCEPTED,
                 "BOOKING",
@@ -278,27 +261,16 @@ public class TaskApplicationService {
             return TaskWithdrawResult.NOT_FOUND_RESULT;
         }
         TaskApplicationState application = appOpt.get();
-        if (!"APPLIED".equals(application.status()) && !"SELECTED".equals(application.status())) {
+        if (!"APPLIED".equals(application.status())) {
             return TaskWithdrawResult.INVALID_STATUS_RESULT;
         }
         taskApplicationDao.updateStatus(application.id(), "WITHDRAWN");
-        boolean wasSelected = "SELECTED".equals(application.status());
-        if (wasSelected) {
-            taskDao.updateStatus(application.taskId(), "OPEN", Instant.now());
-            Optional<TaskState> taskOpt = taskDao.findById(application.taskId());
-            taskOpt.ifPresent(task -> notificationService.sendPush(
-                    task.customerId(),
-                    "Applicant withdrew",
-                    "A selected tasker has withdrawn from your task. You can select another applicant.",
-                    "APPLICANT_WITHDREW"));
-        } else {
-            Optional<TaskState> taskOpt = taskDao.findById(application.taskId());
-            taskOpt.ifPresent(task -> notificationService.sendPush(
-                    task.customerId(),
-                    "Applicant withdrew",
-                    "A tasker has withdrawn their application from your task.",
-                    "APPLICANT_WITHDREW"));
-        }
+        Optional<TaskState> taskOpt = taskDao.findById(application.taskId());
+        taskOpt.ifPresent(task -> notificationService.sendPush(
+                task.customerId(),
+                "Applicant withdrew",
+                "A tasker has withdrawn their application from your task.",
+                "APPLICANT_WITHDREW"));
         analyticsService.track(
                 "APPLICATION_WITHDRAWN",
                 taskerId,
@@ -308,70 +280,76 @@ public class TaskApplicationService {
                         "application_id",
                         applicationId,
                         "was_selected",
-                        wasSelected));
+                        false));
         TaskApplicationState updated =
                 taskApplicationDao.findById(applicationId).orElse(application);
         return TaskWithdrawResult.success(updated);
     }
 
     @Transactional
-    @Deprecated
-    public TaskAcceptResult acceptApplication(
+    public BookingIntentCreateResult acceptApplication(
             String customerId, String taskId, String applicationId, boolean liabilityDisclaimerAccepted) {
         Optional<TaskState> taskOpt = taskDao.findById(taskId);
         if (taskOpt.isEmpty()) {
-            return TaskAcceptResult.NOT_FOUND_RESULT;
+            return BookingIntentCreateResult.error(BookingIntentCreateResult.NOT_FOUND, "Task not found.");
         }
         TaskState task = taskOpt.get();
         if (!task.customerId().equals(customerId)) {
-            return TaskAcceptResult.FORBIDDEN_RESULT;
+            return BookingIntentCreateResult.error(
+                    BookingIntentCreateResult.FORBIDDEN, "Only the task owner can select applicants.");
         }
         if (!"OPEN".equals(task.status())) {
-            return TaskAcceptResult.TASK_NOT_OPEN_RESULT;
+            return BookingIntentCreateResult.error(BookingIntentCreateResult.TASK_NOT_OPEN, "Task is no longer open.");
         }
         if (!liabilityDisclaimerAccepted) {
-            return TaskAcceptResult.DISCLAIMER_REQUIRED_RESULT;
+            return BookingIntentCreateResult.error(
+                    BookingIntentCreateResult.DISCLAIMER_REQUIRED, "Liability disclaimer must be accepted.");
         }
         if (taskApplicationDao.hasAccepted(taskId)) {
-            return TaskAcceptResult.CONFLICT_RESULT;
+            return BookingIntentCreateResult.error(
+                    BookingIntentCreateResult.CONFLICT, "Application already processed or task assigned.");
+        }
+        Instant now = Instant.now();
+        taskApplicationDao.expireSelectedForTask(taskId, now);
+        bookingIntentCommandPort.expirePendingApplicationSelectionForTask(taskId, now);
+        if (taskApplicationDao.hasActiveSelection(taskId, now)) {
+            return BookingIntentCreateResult.error(
+                    BookingIntentCreateResult.CONFLICT, "A pending selection already exists for this task.");
         }
         Optional<TaskApplicationState> selectedOpt = taskApplicationDao.findById(applicationId);
         if (selectedOpt.isEmpty() || !taskId.equals(selectedOpt.get().taskId())) {
-            return TaskAcceptResult.NOT_FOUND_RESULT;
+            return BookingIntentCreateResult.error(
+                    BookingIntentCreateResult.NOT_FOUND, "Task or application not found.");
         }
         TaskApplicationState selected = selectedOpt.get();
         if (!"APPLIED".equals(selected.status())) {
-            return TaskAcceptResult.CONFLICT_RESULT;
+            return BookingIntentCreateResult.error(
+                    BookingIntentCreateResult.CONFLICT, "Application already processed or task assigned.");
         }
-        taskApplicationDao.updateStatus(selected.id(), "ACCEPTED");
-        taskApplicationDao.rejectOthers(taskId, selected.id());
-        int bookingPrice;
-        if (PricingMode.QUOTE.name().equals(task.pricingMode())) {
-            if (selected.quotePrice() == null) {
-                return new TaskAcceptResult(null, "QUOTE_PRICE_MISSING");
-            }
-            bookingPrice = selected.quotePrice();
-        } else {
-            bookingPrice = task.budget() != null ? task.budget() : 0;
+        Instant respondBy = now.plusSeconds(SELECTION_WINDOW_HOURS * 3600);
+        BookingIntentCreateResult intentResult = bookingIntentCommandPort.createApplicationSelectionIntent(
+                customerId, taskId, applicationId, selected.taskerId(), respondBy);
+        if (!intentResult.isSuccess()) {
+            return intentResult;
         }
-        BookingState booking = bookingCommandPort.createBooking(
-                task.id(), selected.taskerId(), task.customerId(), bookingPrice, true, task.scheduledAt());
-        taskDao.updateStatus(task.id(), "ASSIGNED", Instant.now());
-        domainEventOutboxService.publish(
-                OutboxEventTypes.TASK_APPLICATION_ACCEPTED,
-                "BOOKING",
-                booking.id(),
+        taskApplicationDao.updateSelection(selected.id(), "SELECTED", now, respondBy);
+        notificationService.sendPush(
+                selected.taskerId(),
+                "You've been selected!",
+                "A customer has selected you for their task. You have 4 hours to confirm.",
+                "TASKER_SELECTED");
+        analyticsService.track(
+                "APPLICATION_SELECTED",
+                customerId,
                 Map.of(
                         AnalyticsService.PROPERTY_TASK_ID,
-                        task.id(),
-                        AnalyticsService.PROPERTY_BOOKING_ID,
-                        booking.id(),
-                        "customer_id",
-                        customerId,
+                        taskId,
+                        "application_id",
+                        applicationId,
                         "tasker_id",
                         selected.taskerId(),
-                        "application_id",
-                        applicationId));
-        return TaskAcceptResult.success(booking);
+                        AnalyticsService.PROPERTY_CATEGORY_ID,
+                        task.categoryId()));
+        return intentResult;
     }
 }

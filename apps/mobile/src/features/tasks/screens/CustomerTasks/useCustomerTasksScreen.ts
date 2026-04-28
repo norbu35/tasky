@@ -34,12 +34,17 @@ export function useCustomerTasksScreen() {
     [tasks],
   );
 
-  const { isLocked } = useReviewGate();
+  const { isLocked, oldestPending } = useReviewGate();
 
   const handleFabPress = useCallback(() => {
-    if (isLocked) return;
+    if (isLocked) {
+      if (oldestPending?.booking_id) {
+        router.push(`/(shared)/review/${oldestPending.booking_id}`);
+      }
+      return;
+    }
     router.push('/(customer)/tasks/new');
-  }, [router, isLocked]);
+  }, [router, isLocked, oldestPending?.booking_id]);
 
   const handleNotificationsPress = useCallback(() => {
     router.push('/(shared)/notifications');

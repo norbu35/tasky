@@ -3,32 +3,54 @@ set -euo pipefail
 
 echo "Running pre-push checks..."
 
-# Detect docs-only changes — skip heavy checks.
-# docs/openapi/** and docs/API.yaml are contract surfaces, not pure docs,
-# and are intentionally excluded from the docs-only fast path.
-CHANGED_FILES=$(git diff --name-only @{push}.. 2>/dev/null || git diff --name-only HEAD~1)
-NON_DOC_FILES=$(echo "$CHANGED_FILES" | grep -v -E '\.(md|txt)$|^research/|^README' | grep -v -E '^docs/' || true)
-CONTRACT_FILES=$(echo "$CHANGED_FILES" | grep -E '^docs/(openapi/|API\.yaml)' || true)
+require_clean_tree() {
+  local phase="$1"
+  if ! git diff --quiet; then
+    if [ "$phase" = "before" ]; then
+      echo "pre-push: worktree has unstaged changes. Commit or stash tracked changes before pushing main." >&2
+    else
+      echo "pre-push: validation changed tracked files in the worktree. Review and commit them before pushing main." >&2
+    fi
+    exit 1
+  fi
 
-if [ -z "$NON_DOC_FILES" ] && [ -z "$CONTRACT_FILES" ]; then
-  echo "Docs-only change detected — running docs and ops checks."
-  pnpm repo:docs:check
-  pnpm verify:ops
-  echo "All pre-push checks passed (docs-only fast path)."
+  if ! git diff --cached --quiet; then
+    if [ "$phase" = "before" ]; then
+      echo "pre-push: index has staged changes. Commit or unstage tracked changes before pushing main." >&2
+    else
+      echo "pre-push: validation changed staged files. Review and commit them before pushing main." >&2
+    fi
+    exit 1
+  fi
+}
+
+updates="$(cat)"
+pushes_main=0
+if [ -n "$updates" ]; then
+  while read -r local_ref local_sha remote_ref remote_sha; do
+    if [ "$remote_ref" = "refs/heads/main" ]; then
+      pushes_main=1
+      break
+    fi
+  done <<< "$updates"
+fi
+
+if [ "$pushes_main" -eq 0 ]; then
+  echo "Non-main push detected — skipping local heavy gates."
+  echo "CI quality gates run on merges to 'staging' and 'main'."
+  echo "Set RUN_LIGHT_PREPUSH_ON_NON_MAIN=1 to run cleanup+ops on non-main pushes."
+  if [ "${RUN_LIGHT_PREPUSH_ON_NON_MAIN:-0}" = "1" ]; then
+    pnpm verify:cleanup
+    pnpm verify:ops
+  fi
+  echo "Pre-push checks passed."
   exit 0
 fi
 
-pnpm verify:cleanup
-pnpm verify:ops
+echo "Push target includes 'main' — running full local gate."
 
-if [ "${SKIP_QUALITY_GATES:-0}" = "1" ]; then
-  echo "SKIP_QUALITY_GATES=1 — skipping quality gate."
-else
-  pnpm verify:backend
-  pnpm verify:frontend
-  pnpm verify:scenario:smoke
-fi
-
-pnpm verify:drift
+require_clean_tree "before"
+pnpm verify:prepush
+require_clean_tree "after"
 
 echo "All pre-push checks passed."

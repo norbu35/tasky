@@ -19,13 +19,20 @@ fi
 
 if [ ! -f "$CONFIG" ]; then
   echo "gitleaks-secret-scan: FAIL (.gitleaks.toml missing)" >&2
+  echo "autonomous remediation:" >&2
+  echo " - restore the repo-level gitleaks config before using this gate" >&2
   exit 1
 fi
 
 echo "Running gitleaks secret scan..."
-gitleaks detect \
+if ! gitleaks detect \
   --config "$CONFIG" \
   --no-banner \
-  --exit-code 1
+  --exit-code 1; then
+  echo "autonomous remediation:" >&2
+  echo " - remove the committed secret or rotate and purge it, then update .gitleaksignore/.gitleaks.toml only when the finding is intentionally suppressed" >&2
+  echo " - rerun: bash tooling/scripts/governance/check-gitleaks-secret-scan.sh" >&2
+  exit 1
+fi
 
 echo "gitleaks-secret-scan: PASS"

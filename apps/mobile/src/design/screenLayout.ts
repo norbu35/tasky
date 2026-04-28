@@ -2,7 +2,7 @@ import { Platform } from 'react-native';
 
 import { mobileTheme } from './theme';
 
-const { spacing } = mobileTheme;
+const { iconSizes, interaction, spacing } = mobileTheme;
 
 export const screenLayout = {
   /** Horizontal padding for all screen content */
@@ -47,7 +47,7 @@ export const screenLayout = {
     /** Tab bar fixed gap above safe area zone (components add insets.bottom on top) */
     tabBarBottom: 8,
     /** Tab icon size */
-    tabIconSize: 24,
+    tabIconSize: iconSizes.semantic.tabBar,
     /** Tab button pill height */
     tabButtonHeight: 72,
     /** Tab button pill radius */
@@ -59,11 +59,11 @@ export const screenLayout = {
     /** Tab bar top/bottom padding before safe-area adjustment */
     tabBarInsetY: spacing.xs,
     /** Tab bar frosted surface tint */
-    tabBarSurfaceOpacity: 0.92,
+    tabBarSurfaceOpacity: interaction.hover.opacity,
     /** FAB diameter */
     fabSize: 52,
     /** FAB icon size */
-    fabIconSize: 24,
+    fabIconSize: iconSizes.semantic.fab,
     /** FAB distance from right edge */
     fabInsetRight: spacing.lg,
     /** FAB distance from top edge */

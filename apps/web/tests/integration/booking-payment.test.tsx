@@ -2,13 +2,28 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { App } from '../../src/App';
 import { createMockApiClient } from '../../src/test/mocks';
-import { makeBooking, makeProfile, makeSession } from '../../src/test/factories';
+import { makeProfile, makeSession } from '../../src/test/factories';
 
 describe('Booking Payment Integration', () => {
   it('TID-TASK-081-WEB-BOOKING-PAYMENT-FLOW supports applicant acceptance and disclaimer-gated confirmation', async () => {
     const apiClient = createMockApiClient({
       getMyProfile: vi.fn().mockResolvedValue(makeProfile()),
-      acceptApplication: vi.fn().mockResolvedValue(makeBooking()),
+      acceptApplication: vi.fn().mockResolvedValue({
+        id: 'intent-1',
+        task_id: 'task-1',
+        tasker_id: 'tasker-1',
+        customer_id: 'customer-1',
+        source: 'APPLICATION_SELECTION',
+        status: 'PENDING',
+        selected_application_id: 'application-1',
+        original_booking_id: null,
+        offer_id: null,
+        expires_at: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
+        confirmed_booking_id: null,
+        confirmed_at: null,
+        created_at: '2026-02-14T00:00:00Z',
+        updated_at: '2026-02-14T00:00:00Z',
+      }),
       listMyTasks: vi.fn().mockResolvedValue({ data: [] }),
       listTaskApplications: vi.fn().mockResolvedValue({ data: [] }),
     });
@@ -39,6 +54,6 @@ describe('Booking Payment Integration', () => {
       );
     });
 
-    expect(await screen.findByText(/Booking Confirmed!/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Selection request sent/i)).toBeInTheDocument();
   });
 });

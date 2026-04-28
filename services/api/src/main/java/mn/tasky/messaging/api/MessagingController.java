@@ -4,8 +4,6 @@ import static mn.tasky.common.api.ApiResponseSupport.errorBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import java.util.UUID;
 import mn.tasky.api.generated.ConversationsApi;
 import mn.tasky.common.api.CursorPagination;
@@ -15,7 +13,6 @@ import mn.tasky.messaging.dto.MessageRequest;
 import mn.tasky.messaging.publicapi.MessagingCommandPort;
 import mn.tasky.runtime.publicapi.composition.MessagingPublicCompositionService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -57,8 +54,8 @@ public class MessagingController implements ConversationsApi {
     @Override
     @GetMapping
     public ResponseEntity<mn.tasky.api.generated.model.ListConversations200Response> listConversations(
-            @RequestParam(value = "cursor", required = false) @Nullable String cursor,
-            @RequestParam(value = "limit", required = false, defaultValue = "50") @Min(1) @Max(100) Integer limit) {
+            @RequestParam(value = "cursor", required = false) String cursor,
+            @RequestParam(value = "limit", required = false, defaultValue = "20") Integer limit) {
         JwtPrincipal principal = getPrincipal();
         var page = messagingPublicCompositionService.listConversations(principal.userId(), cursor, limit);
         var result = ResponseEntity.ok(
@@ -70,8 +67,8 @@ public class MessagingController implements ConversationsApi {
     @GetMapping("/{id}/messages")
     public ResponseEntity<mn.tasky.api.generated.model.ListMessages200Response> listMessages(
             @PathVariable("id") UUID id,
-            @RequestParam(value = "cursor", required = false) @Nullable String cursor,
-            @RequestParam(value = "limit", required = false, defaultValue = "50") @Min(1) @Max(100) Integer limit) {
+            @RequestParam(value = "cursor", required = false) String cursor,
+            @RequestParam(value = "limit", required = false, defaultValue = "20") Integer limit) {
         JwtPrincipal principal = getPrincipal();
         HttpServletRequest request = getRequest();
         try {

@@ -6,6 +6,7 @@ import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import mn.tasky.booking.dto.CancelBookingRequest;
 import mn.tasky.booking.dto.RescheduleRequest;
 import mn.tasky.booking.dto.RescheduleRespondRequest;
 import mn.tasky.common.api.CursorPagination;
@@ -68,10 +69,13 @@ public class BookingController {
     public ResponseEntity<?> cancelBooking(
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
+            @RequestBody(required = false) CancelBookingRequest body,
             @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
             HttpServletRequest request) {
         return toOperationResponse(
-                bookingPublicOperationService.cancelBooking(principal.userId(), id, idempotencyKey), request);
+                bookingPublicOperationService.cancelBooking(
+                        principal.userId(), id, idempotencyKey, body != null ? body.reason() : null),
+                request);
     }
 
     @PostMapping("/{id}/complete")

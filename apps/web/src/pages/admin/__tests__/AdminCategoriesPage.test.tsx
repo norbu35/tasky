@@ -57,6 +57,7 @@ const MOCK_CATEGORIES: Category[] = [
     is_active: true,
     sort_order: 1,
     intake_enabled: true,
+    assisted_distribution_enabled: true,
     intake_schema_version: 1,
     intake_schema_json: null,
   },
@@ -68,6 +69,7 @@ const MOCK_CATEGORIES: Category[] = [
     is_active: false,
     sort_order: 2,
     intake_enabled: false,
+    assisted_distribution_enabled: false,
     intake_schema_version: 0,
     intake_schema_json: null,
   },
@@ -79,6 +81,7 @@ const MOCK_CATEGORIES: Category[] = [
     is_active: true,
     sort_order: 3,
     intake_enabled: true,
+    assisted_distribution_enabled: false,
     intake_schema_version: 2,
     intake_schema_json: null,
   },
@@ -128,6 +131,7 @@ describe('AdminCategoriesPage', () => {
         is_active: true,
         sort_order: payload.sort_order,
         intake_enabled: payload.intake_enabled,
+        assisted_distribution_enabled: payload.assisted_distribution_enabled,
         intake_schema_version: 0,
         intake_schema_json: null,
       }),
@@ -148,9 +152,9 @@ describe('AdminCategoriesPage', () => {
       }),
     );
     vi.mocked(mockAdminApiClient.adminActivateCategorySchema!).mockImplementation(
-      async (_token, _categoryId, version, mode) => ({
+      async (_token, _categoryId, version) => ({
         version,
-        status: mode === 'rollback' ? 'ROLLED_BACK' : 'ACTIVE',
+        status: 'ACTIVE',
         schema_json: {},
         created_at: new Date().toISOString(),
       }),
@@ -288,6 +292,7 @@ describe('AdminCategoriesPage', () => {
           name_mn: '\u0417\u04e9\u04e9\u0445',
           icon_url: 'https://example.com/moving.png',
           sort_order: 4,
+          assisted_distribution_enabled: false,
         }),
       );
     });
@@ -330,6 +335,7 @@ describe('AdminCategoriesPage', () => {
         'cat-1',
         expect.objectContaining({
           name: 'Deep Cleaning',
+          assisted_distribution_enabled: true,
         }),
       );
     });
@@ -463,6 +469,33 @@ describe('AdminCategoriesPage', () => {
 
     await waitFor(() => {
       expect(toast.success).toHaveBeenCalled();
+    });
+  });
+
+  it('rollback schema calls adminActivateCategorySchema with last-known-good mode', async () => {
+    renderPage();
+
+    await waitFor(() => {
+      expect(screen.getByText('Cleaning')).toBeInTheDocument();
+    });
+
+    const row1 = screen.getByTestId('category-row-cat-1');
+    fireEvent.click(within(row1).getByRole('button', { name: /schema/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('ACTIVE')).toBeInTheDocument();
+    });
+
+    const activeRow = screen.getByTestId('schema-row-1');
+    fireEvent.click(within(activeRow).getByRole('button', { name: /rollback/i }));
+
+    await waitFor(() => {
+      expect(mockAdminApiClient.adminActivateCategorySchema).toHaveBeenCalledWith(
+        'test-token',
+        'cat-1',
+        1,
+        'ROLLBACK_TO_LAST_KNOWN_GOOD',
+      );
     });
   });
 });

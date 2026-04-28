@@ -10,6 +10,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { useAppContext } from '../../context/AppContext';
 import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../layout/parity';
 
+function formatMnt(amount: number): string {
+  return `${amount.toLocaleString()} MNT`;
+}
+
 export function CustomerApplicantsPage() {
   const { apiClient, session } = useAppContext();
   const { t } = useTranslation();
@@ -50,35 +54,32 @@ export function CustomerApplicantsPage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('customerPages.applicants.liveTitle', 'Applicants')}
-      description={t(
-        'customerPages.applicants.liveDescription',
-        'Review the taskers who are interested in this task and continue to acceptance when ready.',
-      )}
+      title={t('customerPages.applicants.liveTitle')}
+      description={t('customerPages.applicants.liveDescription')}
       primaryAction={
         <Button
           type="button"
           variant="secondary"
           onClick={() => taskId && navigate(`/customer/tasks/${taskId}`)}
         >
-          {t('customerPages.applicants.backToTask', 'Back to task')}
+          {t('customerPages.applicants.backToTask')}
         </Button>
       }
       detailRail={
         <ActionRail
-          title={t('customerPages.applicants.nextStep', 'Next step')}
+          title={t('customerPages.applicants.nextStep')}
           primaryAction={
             <Button
               type="button"
               className="w-full"
               onClick={() => taskId && navigate(`/customer/tasks/${taskId}`)}
             >
-              {t('customerPages.applicants.reviewTask', 'Review task')}
+              {t('customerPages.applicants.reviewTask')}
             </Button>
           }
           footnote={
             task
-              ? t('customerPages.applicants.taskContext', 'Task: {{description}}', {
+              ? t('customerPages.applicants.taskContext', {
                   description: task.description,
                 })
               : undefined
@@ -90,54 +91,36 @@ export function CustomerApplicantsPage() {
         {!taskId ? (
           <StatePanel
             icon={<Users className="h-5 w-5 text-primary" />}
-            title={t('customerPages.applicants.invalidTitle', 'Applicants')}
-            description={t(
-              'customerPages.applicants.invalidDesc',
-              'Task ID is missing from the route.',
-            )}
+            title={t('customerPages.applicants.invalidTitle')}
+            description={t('customerPages.applicants.invalidDesc')}
             tone="destructive"
           />
         ) : loading ? (
           <StatePanel
             icon={<Users className="h-5 w-5 text-primary" />}
-            title={t('customerPages.applicants.loading', 'Loading applicants...')}
-            description={t(
-              'customerPages.applicants.loadingDesc',
-              'Loading the current applicant queue for this task.',
-            )}
+            title={t('customerPages.applicants.loading')}
+            description={t('customerPages.applicants.loadingDesc')}
             tone="muted"
           />
         ) : !task ? (
           <StatePanel
             icon={<Users className="h-5 w-5 text-primary" />}
-            title={t('customerPages.applicants.notFoundTitle', 'Task not found')}
-            description={t(
-              'customerPages.applicants.notFoundDesc',
-              'This task could not be found in your customer tasks.',
-            )}
+            title={t('customerPages.applicants.notFoundTitle')}
+            description={t('customerPages.applicants.notFoundDesc')}
             tone="destructive"
           />
         ) : applicationsError ? (
           <StatePanel
             icon={<Users className="h-5 w-5 text-primary" />}
-            title={t('customerPages.applicants.errorTitle', 'Applicants unavailable')}
-            description={
-              applicationsError.message ??
-              t(
-                'customerPages.applicants.errorDesc',
-                'The applicant queue could not be loaded right now.',
-              )
-            }
+            title={t('customerPages.applicants.errorTitle')}
+            description={applicationsError.message ?? t('customerPages.applicants.errorDesc')}
             tone="destructive"
           />
         ) : !applicationsPage?.data.length ? (
           <StatePanel
             icon={<Users className="h-5 w-5 text-primary" />}
-            title={t('customerPages.applicants.emptyTitle', 'No applicants yet')}
-            description={t(
-              'customerPages.applicants.emptyDesc',
-              'Taskers have not applied to this task yet.',
-            )}
+            title={t('customerPages.applicants.emptyTitle')}
+            description={t('customerPages.applicants.emptyDesc')}
             tone="muted"
             actions={
               <Button
@@ -145,7 +128,7 @@ export function CustomerApplicantsPage() {
                 variant="outline"
                 onClick={() => navigate(`/customer/tasks/${task.id}/no-applicants`)}
               >
-                {t('customerPages.applicants.openRescue', 'Open follow-up options')}
+                {t('customerPages.applicants.openRescue')}
               </Button>
             }
           />
@@ -156,7 +139,7 @@ export function CustomerApplicantsPage() {
                 <CardTitle>{task.description}</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                {t('customerPages.applicants.summary', '{{count}} applicant(s) ready for review.', {
+                {t('customerPages.applicants.summary', {
                   count: applicationsPage.data.length,
                 })}
               </CardContent>
@@ -182,15 +165,24 @@ export function CustomerApplicantsPage() {
                           {application.tasker.rating_avg.toFixed(1)}
                         </span>
                         <span>
-                          {t(
-                            'customerPages.applicants.completedTasks',
-                            '{{count}} completed tasks',
-                            {
-                              count: application.tasker.completed_tasks,
-                            },
-                          )}
+                          {t('customerPages.applicants.completedTasks', {
+                            count: application.tasker.completed_tasks,
+                          })}
                         </span>
-                        {application.tasker.is_pro ? <Badge variant="secondary">PRO</Badge> : null}
+                        <Badge variant="secondary">
+                          {t('customerPages.applicants.idVerifiedTasker')}
+                        </Badge>
+                        <Badge variant="outline">
+                          {task.pricing_mode === 'QUOTE'
+                            ? application.quote_price != null
+                              ? t('customerPages.applicants.quotePrice', {
+                                  amount: formatMnt(application.quote_price),
+                                })
+                              : t('customerPages.applicants.quoteMissing')
+                            : t('customerPages.applicants.postedBudget', {
+                                amount: formatMnt(task.budget ?? 0),
+                              })}
+                        </Badge>
                       </div>
                     </div>
                   </div>
@@ -201,7 +193,7 @@ export function CustomerApplicantsPage() {
                       variant="outline"
                       onClick={() => navigate(`/customer/taskers/${application.tasker.id}`)}
                     >
-                      {t('customerPages.applicants.viewProfile', 'View profile')}
+                      {t('customerPages.applicants.viewProfile')}
                     </Button>
                     <Button
                       type="button"
@@ -211,7 +203,7 @@ export function CustomerApplicantsPage() {
                         )
                       }
                     >
-                      {t('customerPages.applicants.reviewAccept', 'Review & Accept')}
+                      {t('customerPages.applicants.reviewAccept')}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>

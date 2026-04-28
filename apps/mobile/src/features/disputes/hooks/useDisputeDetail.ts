@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { getDispute } from '../api';
-import { useAuthStore } from '@/store/authStore';
 import { queryKeys } from '@/lib/queryKeys';
+import { useAuthStore } from '@/store/authStore';
+
+import { getDispute } from '../api';
 
 export function useDisputeDetail(disputeId: string | undefined) {
   const session = useAuthStore((s) => s.session);

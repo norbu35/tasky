@@ -110,7 +110,20 @@ describe('BookingConfirmScreen (SCR-CUST-014)', () => {
   });
 
   it('confirm calls acceptApplication with idempotency key', async () => {
-    mockAcceptApplication.mockResolvedValue({ id: 'booking-1' });
+    mockAcceptApplication.mockResolvedValue({
+      id: 'intent-1',
+      task_id: 'task-1',
+      tasker_id: 'tasker-1',
+      customer_id: 'customer-1',
+      source: 'APPLICATION_SELECTION',
+      status: 'PENDING',
+      selected_application_id: 'app-1',
+      expires_at: '2026-04-01T14:00:00Z',
+      confirmed_booking_id: null,
+      confirmed_at: null,
+      created_at: '2026-04-01T10:00:00Z',
+      updated_at: '2026-04-01T10:00:00Z',
+    });
     render(<BookingConfirmScreen />);
     fireEvent.press(screen.getByTestId('booking-confirm-screen-disclaimer'));
     fireEvent.press(screen.getByTestId('SCR-CUST-014-cta'));
@@ -124,6 +137,10 @@ describe('BookingConfirmScreen (SCR-CUST-014)', () => {
         }),
       );
     });
+    expect(await screen.findByText('Selection request sent')).toBeTruthy();
+    expect(mockReplace).not.toHaveBeenCalledWith(
+      expect.objectContaining({ pathname: '/(customer)/bookings/confirmed' }),
+    );
   });
 
   it('renders add-to-calendar option text', () => {
@@ -133,7 +150,11 @@ describe('BookingConfirmScreen (SCR-CUST-014)', () => {
 
   it('renders payment note', () => {
     render(<BookingConfirmScreen />);
-    expect(screen.getByText('Payment is settled directly with the Tasker')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Payment is settled directly with the Tasker. The locked price and intake scope are the baseline.',
+      ),
+    ).toBeTruthy();
   });
 
   it('confirm uses booking intent flow when source is rebook', async () => {
@@ -158,7 +179,6 @@ describe('BookingConfirmScreen (SCR-CUST-014)', () => {
       expect(mockConfirmBookingIntent).toHaveBeenCalledWith(
         expect.objectContaining({
           bookingIntentId: 'intent-1',
-          liabilityDisclaimerAccepted: true,
           idempotencyKey: expect.any(String),
         }),
       );

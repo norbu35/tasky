@@ -28,7 +28,7 @@ export function ResponsiveWizardShell({
       <section aria-labelledby={titleId} className={cn('space-y-5', className)}>
         <header className="space-y-3">
           {stepLabel ? (
-            <div className="text-xs font-semibold uppercase tracking-[0.075em] text-text-secondary">
+            <div className="text-xs font-semibold uppercase tracking-caps text-text-secondary">
               {stepLabel}
             </div>
           ) : null}

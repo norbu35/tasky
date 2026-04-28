@@ -6,6 +6,12 @@ description: Use when `tooling/scripts/governance/validate-doc-claims.py` fails,
 # Doc Claims Remediation
 
 Use this skill to repair doc-surface drift without weakening the validator.
+Trigger it in two cases:
+
+- Reactively, when `validate-doc-claims.py` fails.
+- Proactively, when editing architecture docs, maintenance docs, or backend module `AGENTS.md` files that name live repo surfaces.
+
+Do not route generic prose cleanup here unless the doc names code, schema, env vars, config keys, endpoints, Flyway migrations, or workflows that the validator is expected to track.
 
 ## Quick Start
 
@@ -49,7 +55,24 @@ Supported claim types are documented in `docs/maintenance/DOCUMENTATION_GOVERNAN
 - Prefer short-lived allowlist entries with `reason` and `expires`.
 - If a failure implies product or contract disagreement rather than name drift, escalate instead of auto-fixing.
 
-## Bundled Helper
+## Bundled Helpers
 
 - `scripts/triage_doc_claims.py`
   Runs the validator in JSON mode, groups failures by file and surface kind, and prints the recommended repair order.
+
+- `scripts/audit_unclaimed_refs.py`
+  Proactive authoring aid that scans the same files as the blocking validator and emits candidate references that look load-bearing but currently lack a nearby claim block. Output is JSON with `file`, `line`, `candidate`, and `kind_guess`. Always exits 0.
+
+  ```bash
+  pnpm repo:docs:claims:audit
+  ```
+
+## Proactive Audit Workflow
+
+When editing architecture, maintenance, or backend module `AGENTS.md` docs:
+
+1. Run `pnpm repo:docs:claims:audit` to find load-bearing references without claim blocks.
+2. Fix stale prose first.
+3. Add claim blocks where the assertion is load-bearing and exactness matters.
+4. Touch the allowlist only for intentional external, historical, or otherwise unavoidable references.
+5. Re-run `pnpm repo:docs:check` or `pnpm repo:docs:claims`.

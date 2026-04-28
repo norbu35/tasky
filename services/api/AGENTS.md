@@ -20,7 +20,7 @@ File a doc-fix issue when you find a conflict.
 4. `docs/architecture/common.md` — only for cross-cutting runtime/NFR/dev workflow topics
 5. `docs/openapi/AGENTS.md` + `docs/openapi/openapi.yaml` — only for contract changes
 
-Bundled API contract (compatibility only): `docs/API.yaml`
+Bundled API contract (compatibility only): `docs/API.yaml`.
 
 ## Foundational Design Patterns (Mandatory)
 
@@ -44,17 +44,44 @@ Quick reference:
 ## Boundaries
 
 - Persistence is JDBI + explicit SQL. Do not introduce JPA.
-- Contract-first still applies: update `docs/openapi/**` before implementation when the API changes, then regenerate `docs/API.yaml`.
-- Security-sensitive code needs positive and negative tests.
-- Follow scenario-first testing rules from root `AGENTS.md`.
 - Keep feature behavior local to the owning module instead of leaking cross-module logic into common infrastructure.
+- Security-sensitive code needs positive and negative tests.
 - Schema parity: if a Flyway migration adds, drops, or renames a column or table, run `python3 tooling/scripts/governance/validate-schema-parity.py --update-expected` and commit the updated `tooling/config/expected-schema.json`.
 
+## Backend Testing Rules
+
+Before writing any backend test: check `tests/registry.yaml` for an existing scenario and read `tests/scenarios/<domain>.md`. If no scenario covers the behavior, stop and report the gap unless you are the designated scenario curator for the current execution brief.
+
+- Identifier format rules (SCN 3-digit, REQ-P1 2-digit, capitalized Risk): `docs/identifiers/STANDARDS.md`.
+- Coverage gaps and domain-to-domain map: `docs/identifiers/REFERENCE-MAP.md`.
+- `@DisplayName` must be `"SCN-XXX-NNN: <exact title from scenario file>"`.
+- Domain-unit tests: no `@SpringBootTest`, `@Autowired`, or `@MockBean`.
+- Mock only external boundaries: `FacebookGraphClient`, `FirebasePushProvider`, `S3StorageService`.
+- Scenario curation is single-owner work. Only the designated curator for the current execution brief may edit `tests/scenarios/**`; other agents treat it as read-only.
+- Curation must reconcile the active baseline from `docs/PRD.md`, `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`, active `docs/openapi/**`, and active `docs/design/**` before test-writing slices begin.
+- Obsolete tests tied to removed or future-phase behavior may be deleted once the active scenario set no longer covers that behavior.
+- After scenario curation or writing tests: run `./services/api/scripts/sync-registry.sh` and commit the updated `tests/registry.yaml`.
+- Never use `@DirtiesContext`.
+- PIT survived mutation: fix the assertion, not production code; if no scenario covers it, report the gap.
+
+| Gate       | Command                    | Use for                                 |
+| ---------- | -------------------------- | --------------------------------------- |
+| Smoke      | `./gradlew gateSmoke`      | fast local critical-scenario confidence |
+| Regression | `./gradlew gateRegression` | nightly / extended validation           |
+| Full       | `./gradlew gateFull`       | full suite / mutation testing           |
+
 ## Verification
+
+Default backend validation:
 
 ```bash
 ./gradlew --no-daemon :services:api:test
 ./gradlew --no-daemon :services:api:openApiValidate
 ./gradlew --no-daemon gateSmoke
+```
+
+Conditional drift and schema checks (only when migrations or schema-owned tables/columns are touched):
+
+```bash
 python3 tooling/scripts/governance/validate-schema-parity.py
 ```

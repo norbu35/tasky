@@ -2,7 +2,6 @@ import { cva } from 'class-variance-authority';
 import React from 'react';
 import {
   ActivityIndicator,
-  type GestureResponderEvent,
   Pressable,
   PressableProps,
   Text,
@@ -15,10 +14,10 @@ import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
-const { colors } = mobileTheme;
+const { colors, iconSizes } = mobileTheme;
 
 const buttonVariants = cva(
-  'flex-row items-center justify-center rounded-md active:opacity-85 active:scale-[0.98]',
+  'flex-row items-center justify-center rounded-md active:opacity-pressed active:scale-pressed disabled:opacity-disabled',
   {
     variants: {
       variant: {
@@ -106,27 +105,17 @@ export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, Butto
     const isInteractive = !disabled && !isLoading;
     const textColor = getTextColor(variant);
 
-    const handlePressIn = (e: GestureResponderEvent) => {
-      props.onPressIn?.(e);
-    };
-
-    const handlePressOut = (e: GestureResponderEvent) => {
-      props.onPressOut?.(e);
-    };
-
     return (
       <Pressable
         ref={ref}
         style={[variant === 'default' && elevations.card, style]}
-        className={cn(buttonVariants({ variant, size }), !isInteractive && 'opacity-40', className)}
+        className={cn(buttonVariants({ variant, size }), className)}
         disabled={!isInteractive}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
         {...props}
       >
         <View className="flex-row items-center justify-center">
           {isLoading ? (
-            <ActivityIndicator color={textColor} />
+            <ActivityIndicator color={textColor} size={iconSizes.semantic.status} />
           ) : children ? (
             children
           ) : (

@@ -2,6 +2,9 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { canShowPublicRating } from '@/features/profile/model';
+import { buildTaskerProfileRoute } from '@/features/profile/profileRouteParams';
+
 import { useApplications } from '../hooks/useApplications';
 import { useCustomerTaskDetail } from '../hooks/useCustomerTaskDetail';
 
@@ -19,17 +22,26 @@ export function useApplicantsSelectionScreen() {
 
   const applicants: ApplicantItem[] = useMemo(
     () =>
-      (data?.data ?? []).map((a, index: number) => ({
-        id: a.id,
-        taskerId: a.tasker?.id ?? a.task_id ?? '',
-        name: a.tasker?.full_name ?? '',
-        avatarUrl: a.tasker?.avatar_url ?? undefined,
-        rating: a.tasker?.rating_avg ?? 0,
-        reviewCount: a.tasker?.completed_tasks ?? 0,
-        isVerified: a.tasker?.is_pro ?? false,
-        isRecommended: Boolean(a.recommended ?? index === 0),
-        message: a.message ?? '',
-      })),
+      (data?.data ?? []).map((a) => {
+        const rating = a.tasker?.rating_avg ?? 0;
+        const completedJobs = a.tasker?.completed_tasks ?? 0;
+        const reviewCount = 0;
+        const message = a.message ?? '';
+        return {
+          id: a.id,
+          taskerId: a.tasker?.id ?? a.task_id ?? '',
+          name: a.tasker?.full_name ?? '',
+          avatarUrl: a.tasker?.avatar_url ?? undefined,
+          rating,
+          completedJobs,
+          reviewCount,
+          publicRatingVisible: canShowPublicRating(reviewCount, rating),
+          isVerified: true,
+          message,
+          quotePrice: a.quote_price ?? null,
+          responseSignal: message.trim().length >= 24 ? 'detailed' : 'brief',
+        };
+      }),
     [data?.data],
   );
 
@@ -58,8 +70,19 @@ export function useApplicantsSelectionScreen() {
     setSelectedApplicant(null);
   };
 
-  const handleViewProfile = (taskerId: string) => {
-    router.push(`/(customer)/taskers/${taskerId}`);
+  const handleViewProfile = (applicant: ApplicantItem) => {
+    router.push(
+      buildTaskerProfileRoute({
+        id: applicant.taskerId,
+        full_name: applicant.name,
+        avatar_url: applicant.avatarUrl ?? null,
+        bio: applicant.bio ?? null,
+        rating_avg: applicant.rating,
+        completed_tasks: applicant.completedJobs,
+        is_pro: applicant.isVerified,
+        created_at: applicant.createdAt ?? null,
+      }),
+    );
   };
 
   return {

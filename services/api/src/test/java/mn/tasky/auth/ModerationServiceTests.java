@@ -155,14 +155,14 @@ class ModerationServiceTests {
         }
 
         @Test
-        @DisplayName("Three-arg overload delegates to single-arg logic")
-        void threeArgDelegatesToSingleArg() {
+        @DisplayName("Three-arg overload records reason and booking context")
+        void threeArgRecordsReasonAndBookingContext() {
             when(moderationPolicyDao.findActive()).thenReturn(Optional.of(ModerationPolicy.DEFAULT));
             when(strikeDao.countSince(eq(USER_ID), any(Instant.class))).thenReturn(1L);
 
             service.addStrike(USER_ID, "NO_SHOW", "booking-123");
 
-            verify(strikeDao).insert(anyString(), eq(USER_ID), any(), any(), any(Instant.class));
+            verify(strikeDao).insert(anyString(), eq(USER_ID), eq("NO_SHOW"), eq("booking-123"), any(Instant.class));
         }
     }
 
@@ -261,15 +261,21 @@ class ModerationServiceTests {
         }
 
         @Test
-        @DisplayName("Missing moderation policy row throws ISE")
-        void missingPolicyRowThrowsISE() {
+        @DisplayName("Missing moderation policy row is initialized on update")
+        void missingPolicyRowIsInitializedOnUpdate() {
             when(moderationPolicyDao.update(
                             anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), any(Boolean.class), any(Instant.class)))
-                    .thenReturn(0);
+                    .thenReturn(1);
+            when(moderationPolicyDao.findActive()).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> service.updateModerationPolicy(30, 3, 7, 14, 180, true))
-                    .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining("missing");
+            ModerationPolicy result = service.updateModerationPolicy(30, 3, 7, 14, 180, true);
+
+            assertThat(result.strikeWindowDays()).isEqualTo(30);
+            assertThat(result.strikeThreshold()).isEqualTo(3);
+            assertThat(result.firstSuspensionDays()).isEqualTo(7);
+            assertThat(result.repeatSuspensionDays()).isEqualTo(14);
+            assertThat(result.repeatOffenseWindowDays()).isEqualTo(180);
+            assertThat(result.autoUnsuspendEnabled()).isTrue();
         }
     }
 

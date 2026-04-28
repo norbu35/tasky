@@ -2,8 +2,8 @@ import { Client } from '@stomp/stompjs';
 import { Bell, BellOff, MessageSquareText, Search, Send } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import SockJS from 'sockjs-client';
+import { toast } from 'sonner';
 
 import { Avatar, AvatarFallback } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
@@ -12,6 +12,22 @@ import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
 import { buildSocketBaseUrl, type Conversation, type Message } from '../lib/apiClient';
 import { parseError } from '../lib/errorHandling';
+
+function orderMessagesChronologically(messages: Message[]): Message[] {
+  return [...messages].sort((a, b) => {
+    const timeDelta = new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime();
+    if (timeDelta !== 0) {
+      return timeDelta;
+    }
+    return a.id.localeCompare(b.id);
+  });
+}
+
+function upsertMessage(messages: Message[], message: Message): Message[] {
+  const byId = new Map(messages.map((item) => [item.id, item]));
+  byId.set(message.id, message);
+  return Array.from(byId.values());
+}
 
 export function MessagingNotificationsPage() {
   const { apiClient, session, profile } = useAppContext();
@@ -84,7 +100,7 @@ export function MessagingNotificationsPage() {
           client.subscribe(`/topic/conversations/${selectedConvId}`, (msg) => {
             try {
               const newMsg = JSON.parse(msg.body) as Message;
-              setMessages((prev) => [newMsg, ...prev]);
+              setMessages((prev) => upsertMessage(prev, newMsg));
               scrollToBottom();
             } catch {
               /* no-op */
@@ -119,7 +135,7 @@ export function MessagingNotificationsPage() {
         selectedConvId,
         messageDraft.trim(),
       );
-      setMessages((prev) => [sent, ...prev]);
+      setMessages((prev) => upsertMessage(prev, sent));
       setMessageDraft('');
       scrollToBottom();
     } catch (error) {
@@ -135,9 +151,9 @@ export function MessagingNotificationsPage() {
     setWorking(true);
     try {
       if (checked) {
-        toast.success(t('messaging.pushEnabled', 'Push notifications enabled.'));
+        toast.success(t('messaging.pushEnabled'));
       } else {
-        toast.success(t('messaging.pushDisabled', 'Push notifications disabled.'));
+        toast.success(t('messaging.pushDisabled'));
       }
     } catch (error) {
       toast.error(parseError(error));
@@ -156,12 +172,10 @@ export function MessagingNotificationsPage() {
     <ScreenFrame>
       <div className="h-[calc(100vh-140px)] flex flex-col items-center">
         <div className="w-full flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-display font-bold">
-            {t('messaging.inboxTitle', 'Messages')}
-          </h1>
+          <h1 className="text-2xl font-display font-bold">{t('messaging.inboxTitle')}</h1>
           <button
             type="button"
-            aria-label={t('messaging.notificationsLabel', 'Notifications')}
+            aria-label={t('messaging.notificationsLabel')}
             onClick={() => void handlePushToggle(!pushEnabled)}
             className="p-2 rounded-full hover:bg-muted transition-colors"
           >
@@ -174,10 +188,7 @@ export function MessagingNotificationsPage() {
         </div>
 
         <p className="w-full mb-4 text-sm text-muted-foreground">
-          {t(
-            'messaging.pushDescription',
-            'Browser notifications keep you updated on new messages and booking changes.',
-          )}
+          {t('messaging.pushDescription')}
         </p>
 
         <div className="w-full flex-1 border rounded-lg overflow-hidden bg-card flex shadow-sm">
@@ -188,7 +199,7 @@ export function MessagingNotificationsPage() {
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   className="w-full pl-9 bg-background"
-                  placeholder={t('messaging.searchPlaceholder', 'Search chats...')}
+                  placeholder={t('messaging.searchPlaceholder')}
                 />
               </div>
             </div>
@@ -196,7 +207,7 @@ export function MessagingNotificationsPage() {
               {conversations.length === 0 ? (
                 <div className="p-6 text-center text-muted-foreground text-sm flex flex-col items-center gap-2">
                   <MessageSquareText className="w-6 h-6 opacity-20" />
-                  {t('messaging.noConversations', 'No conversations found.')}
+                  {t('messaging.noConversations')}
                 </div>
               ) : (
                 conversations.map((conv) => (
@@ -212,7 +223,7 @@ export function MessagingNotificationsPage() {
                     </Avatar>
                     <div className="overflow-hidden">
                       <div className="font-medium text-sm truncate">
-                        {conv.task_title || t('messaging.taskDiscussion', 'Task Discussion')}
+                        {conv.task_title || t('messaging.taskDiscussion')}
                       </div>
                       <div className="text-xs text-muted-foreground truncate">
                         {conv.id.substring(0, 8)}...
@@ -230,17 +241,17 @@ export function MessagingNotificationsPage() {
               <>
                 <div className="p-4 border-b bg-card/80 backdrop-blur-sm z-10 shadow-sm flex items-center justify-between">
                   <div className="font-medium">
-                    {selectedConvData?.task_title || t('messaging.taskChat', 'Task Chat')}
+                    {selectedConvData?.task_title || t('messaging.taskChat')}
                   </div>
                   {bookingId && (
                     <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                      {t('messaging.bookingPrefix', 'Booking #')}
+                      {t('messaging.bookingPrefix')}
                       {bookingId.substring(0, 6)}...
                     </div>
                   )}
                 </div>
                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                  {[...messages].reverse().map((msg, i) => {
+                  {orderMessagesChronologically(messages).map((msg, i) => {
                     const isMe = msg.sender_id === profile?.id;
                     return (
                       <div
@@ -256,10 +267,10 @@ export function MessagingNotificationsPage() {
                         >
                           {msg?.content || ''}
                           <div
-                            className={`text-[10px] mt-1 ${isMe ? 'text-primary-foreground/70' : 'text-muted-foreground'} text-right`}
+                            className={`text-caption mt-1 ${isMe ? 'text-primary-foreground/70' : 'text-muted-foreground'} text-right`}
                           >
-                            {msg?.created_at
-                              ? new Date(msg.created_at).toLocaleTimeString([], {
+                            {msg?.sent_at
+                              ? new Date(msg.sent_at).toLocaleTimeString([], {
                                   hour: '2-digit',
                                   minute: '2-digit',
                                 })
@@ -276,7 +287,7 @@ export function MessagingNotificationsPage() {
                     <Input
                       value={messageDraft}
                       onChange={(e) => setMessageDraft(e.target.value)}
-                      placeholder={t('messaging.typeMessagePlaceholder', 'Type your message...')}
+                      placeholder={t('messaging.typeMessagePlaceholder')}
                       className="flex-1 bg-background"
                       disabled={working}
                     />
@@ -287,7 +298,7 @@ export function MessagingNotificationsPage() {
                       className="px-3"
                     >
                       <Send className="w-4 h-4" />
-                      <span className="sr-only">{t('messaging.sendAriaLabel', 'Send')}</span>
+                      <span className="sr-only">{t('messaging.sendAriaLabel')}</span>
                     </Button>
                   </form>
                 </div>
@@ -295,12 +306,7 @@ export function MessagingNotificationsPage() {
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground">
                 <MessageSquareText className="w-6 h-6 opacity-10 mb-4" />
-                <p>
-                  {t(
-                    'messaging.selectConversationPrompt',
-                    'Select a conversation to start messaging',
-                  )}
-                </p>
+                <p>{t('messaging.selectConversationPrompt')}</p>
               </div>
             )}
           </div>

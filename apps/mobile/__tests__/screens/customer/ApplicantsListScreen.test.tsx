@@ -125,11 +125,15 @@ describe('ApplicantsListScreen (SCR-CUST-011)', () => {
     ).toBeTruthy();
   });
 
-  it('renders applicant cards with name and rating', () => {
+  it('renders applicant cards with structured comparison signals instead of recommendations', () => {
     mockUseApplications.mockReturnValue({
       data: {
         data: [
-          makeApplicant(),
+          makeApplicant({
+            recommended: true,
+            quote_price: 65000,
+            message: 'I can arrive tomorrow morning and bring the right tools for the sink repair.',
+          }),
           makeApplicant({
             id: 'app-2',
             tasker_id: 'tasker-2',
@@ -149,8 +153,47 @@ describe('ApplicantsListScreen (SCR-CUST-011)', () => {
       refetch: jest.fn(),
     });
     render(<ApplicantsListScreen />);
+    expect(screen.getByTestId('applicant-card-0')).toBeTruthy();
+    expect(screen.getByTestId('applicant-card-1')).toBeTruthy();
     expect(screen.getByText('Bold Bat')).toBeTruthy();
     expect(screen.getByText('Sarnai D')).toBeTruthy();
+    expect(screen.getAllByText('Comparison signals')).toHaveLength(2);
+    expect(screen.getAllByText('ID-verified Tasker').length).toBeGreaterThan(0);
+    expect(screen.getByText('Detailed response')).toBeTruthy();
+    expect(screen.getByText('20 completed jobs')).toBeTruthy();
+    expect(screen.getByText('Accepts your budget')).toBeTruthy();
+    expect(screen.getByText('Quote: ₮65,000')).toBeTruthy();
+    expect(screen.queryByText('4.8')).toBeNull();
+    expect(screen.queryByText('Recommended')).toBeNull();
+    expect(screen.queryByText('Best match')).toBeNull();
+  });
+
+  it('hides applicant rating evidence below the public review threshold', () => {
+    mockUseApplications.mockReturnValue({
+      data: {
+        data: [
+          makeApplicant({
+            tasker: {
+              id: 'tasker-1',
+              full_name: 'Bold Bat',
+              avatar_url: null,
+              rating_avg: 4.9,
+              completed_tasks: 2,
+              is_pro: true,
+            },
+          }),
+        ],
+      },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+
+    render(<ApplicantsListScreen />);
+
+    expect(screen.queryByText('4.9')).toBeNull();
+    expect(screen.getByText('2 completed jobs')).toBeTruthy();
+    expect(screen.getByText('Public rating appears after 3 completed reviews.')).toBeTruthy();
   });
 
   it('renders Accept buttons for each applicant', () => {
@@ -184,7 +227,18 @@ describe('ApplicantsListScreen (SCR-CUST-011)', () => {
     });
     render(<ApplicantsListScreen />);
     fireEvent.press(screen.getByText('View Profile'));
-    expect(mockPush).toHaveBeenCalledWith('/(customer)/taskers/tasker-1');
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pathname: '/(customer)/taskers/[taskerId]',
+        params: expect.objectContaining({
+          taskerId: 'tasker-1',
+          taskerName: 'Bold Bat',
+          taskerRating: '4.5',
+          taskerCompletedTasks: '12',
+          taskerVerified: 'true',
+        }),
+      }),
+    );
   });
 
   it('Accept opens a confirmation sheet before navigation', () => {

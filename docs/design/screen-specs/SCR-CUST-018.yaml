@@ -2,8 +2,23 @@
 screen_id: SCR-CUST-018
 name: 'Confirm Completion — Decision'
 route: null
+presentation:
+  type: inline_modal_sheet
+  host_screen: SCR-CUST-017
+  invocation: "Customer taps 'Confirm Complete' after the tasker marks the booking done"
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-018
+  prd_refs:
+    - REQ-P1-BOOK-25
+    - REQ-P1-SAFE-06
+  journey_refs:
+    - JRN-CUST-04:step-4
+  scenario_refs:
+    - SCN-BOOK-026
+    - SCN-REVIEW-001
 template: modal_sheet
 figma_page: 'Customer/Confirm Completion Decision'
 feature: 'booking'

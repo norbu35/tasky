@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
+import { mobileSurfaces } from '@/design/surfaces';
 import { mobileTheme } from '@/design/tokenAdapter';
 
 const { colors } = mobileTheme;
@@ -26,10 +27,16 @@ export function ReviewHardLock({ bookingId }: ReviewHardLockProps) {
       className="flex-1 justify-center items-center px-lg bg-background"
       testID="review-hard-lock"
     >
-      <View className="w-[72] h-[72] rounded-[18] bg-accent items-center justify-center mb-md">
+      <View
+        className="rounded-lg bg-accent items-center justify-center mb-md"
+        style={{
+          width: mobileSurfaces.statusHero.iconBox,
+          height: mobileSurfaces.statusHero.iconBox,
+        }}
+      >
         <Lock size={24} color={colors.primary} />
       </View>
-      <Text className="text-title font-bold text-foreground text-center mb-md">
+      <Text className="text-title font-sans-bold text-foreground text-center mb-md">
         {t('shared.review.hardLockTitle')}
       </Text>
       <Text className="text-body text-muted-foreground text-center leading-normal">
@@ -38,7 +45,8 @@ export function ReviewHardLock({ bookingId }: ReviewHardLockProps) {
       <Button
         label={t('shared.review.submit')}
         onPress={handleSubmitReview}
-        style={{ marginTop: mobileTheme.spacing.xl, alignSelf: 'stretch' }}
+        className="mt-xl"
+        style={{ alignSelf: 'stretch' }}
         testID="review-hard-lock-cta"
       />
     </View>

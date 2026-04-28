@@ -33,6 +33,21 @@ function formatMoney(amount: number) {
   return `₮${amount.toLocaleString('en-US')}`;
 }
 
+function getBookingCardTestID(status: BookingStatus, isCustomer: boolean): string {
+  const prefix = isCustomer ? 'booking-card' : 'job-card';
+
+  switch (status) {
+    case 'ASSIGNED':
+      return `${prefix}-active`;
+    case 'COMPLETED':
+      return `${prefix}-completed`;
+    case 'CANCELLED':
+      return `${prefix}-cancelled`;
+    case 'NO_SHOW':
+      return `${prefix}-no-show`;
+  }
+}
+
 function BookingCardHeader({ booking, isCustomer }: { booking: BookingItem; isCustomer: boolean }) {
   const counterpartyName = isCustomer ? booking.tasker?.full_name : booking.customer?.full_name;
 
@@ -93,7 +108,7 @@ export default function BookingsTabScreen() {
         headerContent={<BookingCardHeader booking={booking} isCustomer={isCustomer} />}
         bodyContent={<BookingCardBody booking={booking} />}
         onPress={() => handlePress(booking)}
-        testID={`booking-card-${booking.id}`}
+        testID={getBookingCardTestID(booking.status, isCustomer)}
       />
     ),
     [isCustomer, handlePress],
@@ -111,7 +126,7 @@ export default function BookingsTabScreen() {
 
   return (
     <FeedListTemplate
-      testID="SCR-CUST-016"
+      testID={isCustomer ? 'SCR-CUST-016' : 'SCR-TASK-012'}
       data={bookings}
       renderItem={renderItem}
       keyExtractor={keyExtractor}

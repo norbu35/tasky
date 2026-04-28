@@ -55,8 +55,20 @@ public class ModerationService {
      * @param userId Target user identifier.
      */
     public void addStrike(String userId) {
+        addStrike(userId, null, null);
+    }
+
+    /**
+     * Adds a moderation strike with optional reason and booking context, then applies
+     * suspension policy when thresholds are reached.
+     *
+     * @param userId    Target user identifier.
+     * @param reason    Machine-readable reason for the strike.
+     * @param bookingId Optional booking context for the strike.
+     */
+    public void addStrike(String userId, String reason, String bookingId) {
         Instant now = Instant.now();
-        strikeDao.insert(UUID.randomUUID().toString(), userId, null, null, now);
+        strikeDao.insert(UUID.randomUUID().toString(), userId, reason, bookingId, now);
 
         ModerationPolicy policy = moderationPolicy();
         Instant windowStart = now.minus(policy.strikeWindowDays(), ChronoUnit.DAYS);
@@ -84,18 +96,6 @@ public class ModerationService {
         userDao.updateStatusAndSuspensionEnd(userId, "SUSPENDED", suspensionEndAt);
         suspensionEventDao.insert(
                 UUID.randomUUID().toString(), userId, Math.toIntExact(recentStrikes), suspensionDays, now, null);
-    }
-
-    /**
-     * Adds a moderation strike with optional reason and booking context.
-     * Delegates to the single-arg overload for the suspension logic.
-     *
-     * @param userId    Target user identifier.
-     * @param reason    Human-readable reason (for audit; not persisted separately).
-     * @param bookingId Booking context (for audit; not persisted separately).
-     */
-    public void addStrike(String userId, String reason, String bookingId) {
-        addStrike(userId);
     }
 
     public boolean banUser(String adminId, String userId, String reason) {
@@ -150,7 +150,6 @@ public class ModerationService {
      * @param autoUnsuspendEnabled    Whether automatic unsuspend is enabled.
      * @return Updated moderation policy.
      * @throws IllegalArgumentException if provided values fail validation constraints.
-     * @throws IllegalStateException    if moderation policy row is missing at update time.
      */
     public ModerationPolicy updateModerationPolicy(
             int strikeWindowDays,
@@ -162,7 +161,7 @@ public class ModerationService {
         validatePolicy(
                 strikeWindowDays, strikeThreshold, firstSuspensionDays, repeatSuspensionDays, repeatOffenseWindowDays);
         Instant now = Instant.now();
-        int updated = moderationPolicyDao.update(
+        moderationPolicyDao.update(
                 strikeWindowDays,
                 strikeThreshold,
                 firstSuspensionDays,
@@ -170,9 +169,6 @@ public class ModerationService {
                 repeatOffenseWindowDays,
                 autoUnsuspendEnabled,
                 now);
-        if (updated == 0) {
-            throw new IllegalStateException("Moderation policy row is missing.");
-        }
         return moderationPolicyDao
                 .findActive()
                 .orElse(new ModerationPolicy(

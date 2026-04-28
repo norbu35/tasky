@@ -6,10 +6,17 @@ import { useAppStore } from '../../../src/store/appStore';
 
 import OnboardingScreen from '../../../src/app/onboarding';
 
+const mockBack = jest.fn();
+const mockCanGoBack = jest.fn(() => false);
 const mockReplace = jest.fn();
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({
+    replace: mockReplace,
+    push: jest.fn(),
+    back: mockBack,
+    canGoBack: mockCanGoBack,
+  }),
 }));
 
 jest.mock('react-i18next', () => {
@@ -93,6 +100,21 @@ describe('OnboardingScreen (SCR-SHARED-005)', () => {
     render(<OnboardingScreen />);
     fireEvent.press(screen.getByTestId('onboarding-skip'));
     expect(mockReplace).toHaveBeenCalledWith('/(auth)/role-select');
+  });
+
+  it('back returns to auth landing when onboarding has no navigation history', () => {
+    render(<OnboardingScreen />);
+    fireEvent.press(screen.getByTestId('onboarding-back'));
+    expect(mockReplace).toHaveBeenCalledWith('/(auth)');
+    expect(mockBack).not.toHaveBeenCalled();
+  });
+
+  it('back uses router history when onboarding was pushed onto a stack', () => {
+    mockCanGoBack.mockReturnValue(true);
+    render(<OnboardingScreen />);
+    fireEvent.press(screen.getByTestId('onboarding-back'));
+    expect(mockBack).toHaveBeenCalled();
+    expect(mockReplace).not.toHaveBeenCalled();
   });
 
   it('does not mark onboarding complete before the permission primer flow finishes', () => {

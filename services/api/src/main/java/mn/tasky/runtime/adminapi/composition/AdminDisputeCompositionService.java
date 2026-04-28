@@ -150,6 +150,7 @@ public class AdminDisputeCompositionService {
     private Map<String, Object> toMessageResponse(Message message) {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("id", message.id());
+        response.put("conversation_id", message.conversationId());
         response.put("sender_id", message.senderId());
         response.put("content", message.content());
         response.put("sent_at", message.sentAt().toString());

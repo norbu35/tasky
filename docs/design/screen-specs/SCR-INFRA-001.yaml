@@ -1,111 +1,123 @@
 # Screen Spec: Network Error / Offline
 screen_id: SCR-INFRA-001
-name: "Network Error / Offline"
-route: null
+name: 'Network Error / Offline'
+route: '/(shared)/network-error'
+presentation:
+  type: route_backed_full_screen
+  invocation: 'Shown when connectivity loss or repeated network timeout blocks the current task'
 role: [customer, tasker]
-phase: "0-1"
+phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-INFRA-001
+  prd_refs:
+    - NFR-RELI-04
+    - NFR-PERF-01
+  journey_refs:
+    - JRN-INFRA-01-P1
+  scenario_refs: []
 template: error_state
-figma_page: "Infrastructure/Network Error"
-feature: "infrastructure"
+figma_page: 'Infrastructure/Network Error'
+feature: 'infrastructure'
 
 layout:
   template: error_state
   density: comfortable
-  structure: "safe_area -> centered(icon + message + retry)"
+  structure: 'safe_area -> centered(icon + message + retry)'
 
 components:
   - id: COMP-EMPTYSTATE
-    usage: "Full-screen error state with illustration, headline, description, and retry CTA"
+    usage: 'Full-screen error state with illustration, headline, description, and retry CTA'
     props:
-      illustration: "wifi_off"
-      headline: "Интернэт холболтгүй байна"
-      description: "Сүлжээний холболтоо шалгана уу"
-      ctaLabel: "Дахин оролдох"
+      illustration: 'wifi_off'
+      headline: 'Интернэт холболтгүй байна'
+      description: 'Сүлжээний холболтоо шалгана уу'
+      ctaLabel: 'Дахин оролдох'
     variant: error
 
   - id: COMP-BUTTON
-    usage: "Primary retry button at the bottom of the error state"
+    usage: 'Primary retry button at the bottom of the error state'
     props:
-      label: "Дахин оролдох"
+      label: 'Дахин оролдох'
       variant: primary
       size: lg
       loading: false
     variant: primary
 
   - id: COMP-TOAST
-    usage: "Success toast when connectivity is restored"
+    usage: 'Success toast when connectivity is restored'
     props:
-      message: "Холболт сэргэлээ"
+      message: 'Холболт сэргэлээ'
       variant: success
       duration: 4000
     variant: success
 
 states:
   - id: no_connection
-    description: "Device has no network connectivity (airplane mode, no signal)"
+    description: 'Device has no network connectivity (airplane mode, no signal)'
     components_visible: [COMP-EMPTYSTATE, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: slow_connection
-    description: "Network requests are timing out due to very slow connection"
+    description: 'Network requests are timing out due to very slow connection'
     components_visible: [COMP-EMPTYSTATE, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: retry_loading
-    description: "User tapped retry, request is in progress"
+    description: 'User tapped retry, request is in progress'
     components_visible: [COMP-EMPTYSTATE, COMP-BUTTON]
     components_hidden: [COMP-TOAST]
 
   - id: restored
-    description: "Connectivity detected again; auto-navigate back to previous screen"
+    description: 'Connectivity detected again; auto-navigate back to previous screen'
     components_visible: [COMP-TOAST]
     components_hidden: [COMP-EMPTYSTATE]
 
 copy:
   - key: headline_no_connection
-    mn: "Интернэт холболтгүй байна"
-    en: "No internet connection"
+    mn: 'Интернэт холболтгүй байна'
+    en: 'No internet connection'
     max_chars: 40
 
   - key: headline_slow_connection
-    mn: "Холболт удаан байна"
-    en: "Connection is slow"
+    mn: 'Холболт удаан байна'
+    en: 'Connection is slow'
     max_chars: 40
 
   - key: description_no_connection
-    mn: "Сүлжээний холболтоо шалгаад дахин оролдоно уу"
-    en: "Please check your connection and try again"
+    mn: 'Сүлжээний холболтоо шалгаад дахин оролдоно уу'
+    en: 'Please check your connection and try again'
     max_chars: 80
 
   - key: description_slow_connection
-    mn: "Сүлжээний холболт удаан байна. Түр хүлээнэ үү"
-    en: "Connection is slow. Please wait a moment"
+    mn: 'Сүлжээний холболт удаан байна. Түр хүлээнэ үү'
+    en: 'Connection is slow. Please wait a moment'
     max_chars: 80
 
   - key: cta_retry
-    mn: "Дахин оролдох"
-    en: "Try again"
+    mn: 'Дахин оролдох'
+    en: 'Try again'
     max_chars: 20
 
   - key: toast_restored
-    mn: "Холболт сэргэлээ"
-    en: "Connection restored"
+    mn: 'Холболт сэргэлээ'
+    en: 'Connection restored'
     max_chars: 30
 
 api_endpoints: []
 
 analytics_events:
-  - event: "network_error_shown"
-    trigger: "Screen displayed due to connectivity loss"
-  - event: "network_retry_tapped"
-    trigger: "User taps retry button"
-  - event: "network_restored"
-    trigger: "Connectivity restored and user navigated back"
+  - event: 'network_error_shown'
+    trigger: 'Screen displayed due to connectivity loss'
+  - event: 'network_retry_tapped'
+    trigger: 'User taps retry button'
+  - event: 'network_restored'
+    trigger: 'Connectivity restored and user navigated back'
 
 acceptance_criteria:
-  - "No connection state shows wifi-off illustration, headline, description, and retry button"
-  - "Slow connection state shows timeout-specific copy after requests fail for >10 seconds"
-  - "Retry button enters loading state and re-attempts the failed request"
-  - "When connectivity is restored, user is auto-navigated to the previous screen with success toast"
-  - "Cached content is shown beneath the error banner when available"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'No connection state shows wifi-off illustration, headline, description, and retry button'
+  - 'Slow connection state shows timeout-specific copy after requests fail for >10 seconds'
+  - 'Retry button enters loading state and re-attempts the failed request'
+  - 'When connectivity is restored, user is auto-navigated to the previous screen with success toast'
+  - 'Cached content is shown beneath the error banner when available'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

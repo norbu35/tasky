@@ -40,6 +40,11 @@ public class BookingPublicOperationService {
     }
 
     public BookingOperationOutcome cancelBooking(String userId, String bookingId, String idempotencyKey) {
+        return cancelBooking(userId, bookingId, idempotencyKey, null);
+    }
+
+    public BookingOperationOutcome cancelBooking(
+            String userId, String bookingId, String idempotencyKey, String reason) {
         IdempotencyClaim claim = idempotencyService.claim(userId, IdempotencyOperations.CANCEL_BOOKING, idempotencyKey);
         if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
             return BookingOperationOutcome.inProgress();
@@ -49,7 +54,9 @@ public class BookingPublicOperationService {
         }
 
         try {
-            BookingTransitionResult result = bookingCommandPort.cancelBooking(userId, bookingId);
+            BookingTransitionResult result = reason == null
+                    ? bookingCommandPort.cancelBooking(userId, bookingId)
+                    : bookingCommandPort.cancelBooking(userId, bookingId, reason);
             if (result.isSuccess()) {
                 idempotencyService.completeWithResource(
                         userId,
@@ -219,7 +226,7 @@ public class BookingPublicOperationService {
                 case "TOO_EARLY" -> BookingOperationOutcome.failure(
                         BookingOperationOutcome.Status.TOO_EARLY,
                         "TOO_EARLY",
-                        "Cannot flag no-show before 15 minutes past scheduled time.");
+                        "Cannot flag no-show before 1 hour past scheduled time.");
                 case "NO_SCHEDULE" -> BookingOperationOutcome.failure(
                         BookingOperationOutcome.Status.NO_SCHEDULE,
                         "NO_SCHEDULE",

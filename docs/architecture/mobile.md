@@ -15,7 +15,11 @@ Read this after:
 
 This document owns mobile-specific architecture, structural boundaries, and enforcement expectations. Shared system rules remain in `common.md`. Cross-platform frontend contracts (tokens, parity, test naming) remain in `shared-frontend.md`. Backend API contracts remain in `api.md`.
 
-Use `docs/PRD.md` as the authority for active Phase 1 mobile behavior. Use `docs/ROLLOUT_PHASES.md` only to understand deferred mobile surfaces that may already have dormant navigation, components, or state scaffolding. Future-phase references here must not be read as launch commitments.
+Use `docs/PRD.md` as the authority for active Phase 1 mobile behavior. `docs/STRATEGY.md`, `docs/ROLLOUT_PHASES.md`,
+and relevant `docs/maintenance/*.md` constrain launch posture, deferred behavior, and activation policy before mobile
+architecture or screen specs. Use `docs/ROLLOUT_PHASES.md` only to understand deferred mobile surfaces that may already
+have dormant navigation, components, or state scaffolding. Future-phase references here must not be read as launch
+commitments.
 
 ## Platform Contract
 
@@ -26,6 +30,7 @@ Use `docs/PRD.md` as the authority for active Phase 1 mobile behavior. Use `docs
 - Expo Router layouts and shared shell components own tab bars, FAB placement, stack headers, modal presentation, and safe-area policy.
 - Forbidden escape hatches: core `SafeAreaView`, raw `TextInput` outside approved wrappers, `TouchableOpacity` where shared primitives apply, and ad hoc token lookups outside the canonical token graph.
 - If a component exists in `apps/web/src/components/ui/`, a functionally and visually parallel component must exist in `apps/mobile/src/components/ui/` when that primitive is needed on mobile.
+- Mobile screen implementation starts from the traceable screen spec in `docs/design/screen-specs/SCR-*.yaml`: read the linked PRD refs, journey refs, screen graph node, and scenario refs before changing route, screen, state, copy, or tests.
 
 ---
 
@@ -124,6 +129,11 @@ New routes in this class may be tolerated only when they carry no business-flow 
 #### 7.7.5 Screen-Family Contract
 
 A screen family is the bounded grammar of files that together realize one UI screen. Every rule in this section carries a stable ID and a machine-enforceable gate in `apps/mobile/scripts/structure-check.js`.
+
+The corresponding `docs/design/screen-specs/SCR-*.yaml` entry owns the UX contract for the screen family. For new or
+materially changed mobile screens, update the screen spec first and move its `traceability.status` to `validated` once
+the PRD, journey, screen graph, and scenario references are checked. Use `pending_audit` only for an explicitly scoped
+follow-up audit.
 
 Two forms are permitted: flat (siblings in `features/<domain>/screens/`) and folder (a screen-local directory `features/<domain>/screens/<Screen>/`). Promotion from flat to folder is mandatory at a defined threshold (§7.7.5.2). Mixing the two forms for the same screen is forbidden.
 

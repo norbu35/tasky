@@ -13,7 +13,7 @@ import { Separator } from '../components/ui/separator';
 import { Skeleton } from '../components/ui/skeleton';
 import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
-import type { Booking } from '../lib/apiClient';
+import type { Booking, BookingIntent } from '../lib/apiClient';
 import { parseError } from '../lib/errorHandling';
 import { createIdempotencyKey } from '../lib/idempotency';
 
@@ -30,6 +30,7 @@ export function BookingConfirmationPage() {
 
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
   const [successBooking, setSuccessBooking] = useState<Booking | null>(null);
+  const [pendingSelection, setPendingSelection] = useState<BookingIntent | null>(null);
 
   // Fetch Task and Application strictly for displaying info nicely (if possible)
   const { data: tasksPage, isLoading: loadingTask } = useQuery({
@@ -53,7 +54,6 @@ export function BookingConfirmationPage() {
         return apiClient.confirmBookingIntent(
           session.accessToken,
           bookingIntentId,
-          disclaimerAccepted,
           createIdempotencyKey('confirm-intent'),
         );
       }
@@ -63,13 +63,25 @@ export function BookingConfirmationPage() {
         taskId,
         applicationId,
         disclaimerAccepted,
-        createIdempotencyKey('accept'),
+        createIdempotencyKey('accept-application'),
       );
     },
-    onSuccess: (booking) => {
-      setSuccessBooking(booking);
-      trackClientEvent('TASKER_ACCEPTED', { taskId: taskId || undefined, bookingId: booking.id });
-      trackClientEvent('BOOKING_CONFIRMED', { taskId: taskId || undefined, bookingId: booking.id });
+    onSuccess: (result) => {
+      if ('source' in result && result.source === 'APPLICATION_SELECTION') {
+        const intent = result as BookingIntent;
+        setPendingSelection(intent);
+        trackClientEvent('APPLICATION_SELECTED', {
+          taskId: intent.task_id,
+          bookingId: intent.id,
+        });
+      } else {
+        const booking = result as Booking;
+        setSuccessBooking(booking);
+        trackClientEvent('BOOKING_CONFIRMED', {
+          taskId: taskId || undefined,
+          bookingId: booking.id,
+        });
+      }
     },
   });
 
@@ -77,16 +89,11 @@ export function BookingConfirmationPage() {
     return (
       <ScreenFrame maxWidth="narrow">
         <Alert variant="destructive">
-          <AlertTitle>{t('bookingConfirmation.invalidRequestTitle', 'Invalid Request')}</AlertTitle>
-          <AlertDescription>
-            {t(
-              'bookingConfirmation.invalidRequestDesc',
-              'Task ID and Application ID are missing from the URL.',
-            )}
-          </AlertDescription>
+          <AlertTitle>{t('bookingConfirmation.invalidRequestTitle')}</AlertTitle>
+          <AlertDescription>{t('bookingConfirmation.invalidRequestDesc')}</AlertDescription>
         </Alert>
         <Button variant="ghost" className="mt-4" onClick={() => navigate('/customer/tasks')}>
-          {t('bookingConfirmation.backToDashboard', 'Back to Dashboard')}
+          {t('bookingConfirmation.backToDashboard')}
         </Button>
       </ScreenFrame>
     );
@@ -96,13 +103,11 @@ export function BookingConfirmationPage() {
     return (
       <ScreenFrame maxWidth="narrow">
         <Alert variant="destructive">
-          <AlertTitle>{t('bookingConfirmation.invalidRequestTitle', 'Invalid Request')}</AlertTitle>
-          <AlertDescription>
-            {t('bookingConfirmation.invalidRequestDesc', 'Booking intent is missing from the URL.')}
-          </AlertDescription>
+          <AlertTitle>{t('bookingConfirmation.invalidRequestTitle')}</AlertTitle>
+          <AlertDescription>{t('bookingConfirmation.invalidRequestDesc')}</AlertDescription>
         </Alert>
         <Button variant="ghost" className="mt-4" onClick={() => navigate('/customer/tasks')}>
-          {t('bookingConfirmation.backToDashboard', 'Back to Dashboard')}
+          {t('bookingConfirmation.backToDashboard')}
         </Button>
       </ScreenFrame>
     );
@@ -113,46 +118,93 @@ export function BookingConfirmationPage() {
     ? appsPage?.data.find((a) => a.id === applicationId)
     : undefined;
 
-  if (successBooking) {
+  if (pendingSelection) {
     return (
       <ScreenFrame maxWidth="narrow">
         <div className="flex flex-col items-center justify-center text-center py-12">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-            <CheckCircle2 className="w-6 h-6 text-green-600" />
+          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+            <ClipboardList className="w-6 h-6 text-primary" />
           </div>
           <h1 className="text-3xl font-bold font-display tracking-tight mb-2">
-            {t('bookingConfirmation.bookingConfirmedTitle', 'Booking Confirmed!')}
+            {t('bookingConfirmation.selectionRequestedTitle')}
           </h1>
           <p className="text-muted-foreground mb-8">
-            {t(
-              'bookingConfirmation.bookingConfirmedDesc',
-              'Your booking has been successfully created. The Tasker will be notified.',
-            )}
+            {t('bookingConfirmation.selectionRequestedDesc')}
           </p>
 
           <Card className="w-full text-left mb-8 shadow-sm">
             <CardHeader className="bg-muted/30 pb-4">
               <CardTitle className="text-lg">
-                {t('bookingConfirmation.bookingDetails', 'Booking Details')}
+                {t('bookingConfirmation.selectionRequestDetails')}
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-4 grid gap-3">
-              <div className="flex justify-between">
+              <div className="flex justify-between gap-4">
                 <span className="text-muted-foreground">
-                  {t('bookingConfirmation.bookingId', 'Booking ID')}
+                  {t('bookingConfirmation.selectionRequestId')}
                 </span>
+                <span className="font-medium text-right break-all">{pendingSelection.id}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">{t('bookingConfirmation.status')}</span>
+                <span className="font-medium text-primary">{pendingSelection.status}</span>
+              </div>
+              {pendingSelection.expires_at && (
+                <div className="flex justify-between gap-4">
+                  <span className="text-muted-foreground">
+                    {t('bookingConfirmation.respondBy')}
+                  </span>
+                  <span className="font-medium text-right">
+                    {new Date(pendingSelection.expires_at).toLocaleString()}
+                  </span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={() => navigate('/customer/tasks')}
+          >
+            {t('bookingConfirmation.backToTasks')}
+          </Button>
+        </div>
+      </ScreenFrame>
+    );
+  }
+
+  if (successBooking) {
+    return (
+      <ScreenFrame maxWidth="narrow">
+        <div className="flex flex-col items-center justify-center text-center py-12">
+          <div className="w-20 h-20 bg-verified/10 rounded-full flex items-center justify-center mb-6">
+            <CheckCircle2 className="w-6 h-6 text-verified" />
+          </div>
+          <h1 className="text-3xl font-bold font-display tracking-tight mb-2">
+            {t('bookingConfirmation.bookingConfirmedTitle')}
+          </h1>
+          <p className="text-muted-foreground mb-8">
+            {t('bookingConfirmation.bookingConfirmedDesc')}
+          </p>
+
+          <Card className="w-full text-left mb-8 shadow-sm">
+            <CardHeader className="bg-muted/30 pb-4">
+              <CardTitle className="text-lg">{t('bookingConfirmation.bookingDetails')}</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4 grid gap-3">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">{t('bookingConfirmation.bookingId')}</span>
                 <span className="font-medium">{successBooking.id}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">
-                  {t('bookingConfirmation.status', 'Status')}
-                </span>
+                <span className="text-muted-foreground">{t('bookingConfirmation.status')}</span>
                 <span className="font-medium text-primary">{successBooking.status}</span>
               </div>
               {task && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">
-                    {t('bookingConfirmation.totalBudget', 'Total Budget')}
+                    {t('bookingConfirmation.totalBudget')}
                   </span>
                   <span className="font-semibold font-display text-lg">
                     ₮{(task.budget ?? 0).toLocaleString()}
@@ -168,14 +220,14 @@ export function BookingConfirmationPage() {
               className="flex-1"
               onClick={() => navigate('/customer/tasks')}
             >
-              {t('bookingConfirmation.backToTasks', 'Back to Tasks')}
+              {t('bookingConfirmation.backToTasks')}
             </Button>
             <Button
               variant="secondary"
               className="flex-1"
               onClick={() => navigate('/booking/safety')}
             >
-              {t('bookingConfirmation.manageBooking', 'Manage Booking')}
+              {t('bookingConfirmation.manageBooking')}
             </Button>
           </div>
         </div>
@@ -188,18 +240,18 @@ export function BookingConfirmationPage() {
       <div>
         <Button variant="ghost" className="mb-6 -ml-2" onClick={() => navigate(-1)}>
           <ChevronLeft className="w-4 h-4 mr-1" />
-          {t('bookingConfirmation.back', 'Back')}
+          {t('bookingConfirmation.back')}
         </Button>
 
         <h1 className="text-3xl font-bold font-display tracking-tight mb-8">
-          {t('bookingConfirmation.confirmBookingTitle', 'Confirm Booking')}
+          {t('bookingConfirmation.confirmBookingTitle')}
         </h1>
 
         <div className="grid gap-8 md:grid-cols-[1fr_350px]">
           <div className="space-y-6">
             <section>
               <h2 className="text-xl font-semibold font-display mb-4">
-                {t('bookingConfirmation.taskDetailsTitle', 'Task Details')}
+                {t('bookingConfirmation.taskDetailsTitle')}
               </h2>
               {loadingTask ? (
                 <Skeleton className="w-full h-24" />
@@ -211,7 +263,7 @@ export function BookingConfirmationPage() {
                     </h3>
                     <p className="text-muted-foreground text-sm">{task.location_text}</p>
                     <div className="mt-3 text-sm font-medium">
-                      {t('bookingConfirmation.scheduledFor', 'Scheduled for {{date}}', {
+                      {t('bookingConfirmation.scheduledFor', {
                         date: new Date(task.scheduled_at).toLocaleString(),
                       })}
                     </div>
@@ -219,14 +271,14 @@ export function BookingConfirmationPage() {
                 </Card>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  {t('bookingConfirmation.taskLoadError', 'Task details could not be loaded.')}
+                  {t('bookingConfirmation.taskLoadError')}
                 </p>
               )}
             </section>
 
             <section>
               <h2 className="text-xl font-semibold font-display mb-4">
-                {t('bookingConfirmation.selectedTaskerTitle', 'Selected Tasker')}
+                {t('bookingConfirmation.selectedTaskerTitle')}
               </h2>
               {loadingApp ? (
                 <Skeleton className="w-full h-20" />
@@ -246,7 +298,7 @@ export function BookingConfirmationPage() {
                     </div>
                     <div className="text-sm text-muted-foreground">
                       ⭐ {application.tasker.rating_avg.toFixed(1)} •{' '}
-                      {t('bookingConfirmation.completedTasks', '{{count}} completed tasks', {
+                      {t('bookingConfirmation.completedTasks', {
                         count: application.tasker.completed_tasks,
                       })}
                     </div>
@@ -255,14 +307,8 @@ export function BookingConfirmationPage() {
               ) : (
                 <p className="text-sm text-muted-foreground">
                   {source === 'rebook'
-                    ? t(
-                        'bookingConfirmation.rebookTaskerPending',
-                        'Tasker details will load after confirmation.',
-                      )
-                    : t(
-                        'bookingConfirmation.applicantLoadError',
-                        'Applicant details could not be loaded.',
-                      )}
+                    ? t('bookingConfirmation.rebookTaskerPending')
+                    : t('bookingConfirmation.applicantLoadError')}
                 </p>
               )}
             </section>
@@ -271,21 +317,16 @@ export function BookingConfirmationPage() {
               <ShieldCheck className="w-5 h-5 text-primary mt-0.5" />
               <div className="text-sm">
                 <p className="font-semibold mb-1">
-                  {t('bookingConfirmation.trustSafetyGuarantee', 'Trust & Safety Guarantee')}
+                  {t('bookingConfirmation.trustSafetyGuarantee')}
                 </p>
-                <p className="text-muted-foreground">
-                  {t(
-                    'bookingConfirmation.trustSafetyDesc',
-                    'All Taskers are ID-verified. You agree on a fixed price directly with your Tasker before the job begins.',
-                  )}
-                </p>
+                <p className="text-muted-foreground">{t('bookingConfirmation.trustSafetyDesc')}</p>
               </div>
             </section>
 
             {acceptMutation.isError && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle>{t('bookingConfirmation.errorTitle', 'Error')}</AlertTitle>
+                <AlertTitle>{t('bookingConfirmation.errorTitle')}</AlertTitle>
                 <AlertDescription>{parseError(acceptMutation.error)}</AlertDescription>
               </Alert>
             )}
@@ -296,13 +337,13 @@ export function BookingConfirmationPage() {
               <CardHeader className="bg-muted/20 border-b pb-4">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <ClipboardList className="w-4 h-4" />
-                  {t('bookingConfirmation.summaryTitle', 'Summary')}
+                  {t('bookingConfirmation.summaryTitle')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-6">
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-muted-foreground">
-                    {t('bookingConfirmation.taskBudget', 'Agreed Budget')}
+                    {t('bookingConfirmation.taskBudget')}
                   </span>
                   <span className="font-medium">
                     {task?.budget ? `₮${task.budget.toLocaleString()}` : '—'}
@@ -310,10 +351,7 @@ export function BookingConfirmationPage() {
                 </div>
                 <Separator className="my-4" />
                 <p className="text-xs text-muted-foreground mb-6">
-                  {t(
-                    'bookingConfirmation.settlementNotice',
-                    'Payment is settled directly between you and the Tasker.',
-                  )}
+                  {t('bookingConfirmation.settlementNotice')}
                 </p>
 
                 <div className="flex items-start space-x-3 mb-6 bg-muted/20 p-3 rounded-md border">
@@ -328,13 +366,10 @@ export function BookingConfirmationPage() {
                       htmlFor="liability-disclaimer"
                       className="text-sm font-medium leading-tight cursor-pointer"
                     >
-                      {t('bookingConfirmation.acceptTerms', 'Accept Terms & Liability Disclaimer')}
+                      {t('bookingConfirmation.acceptTerms')}
                     </label>
                     <p className="text-xs text-muted-foreground">
-                      {t(
-                        'bookingConfirmation.termsDesc',
-                        "I agree to the platform's terms of service and hold harmless policies for this booking.",
-                      )}
+                      {t('bookingConfirmation.termsDesc')}
                     </p>
                   </div>
                 </div>
@@ -345,8 +380,8 @@ export function BookingConfirmationPage() {
                   onClick={() => acceptMutation.mutate()}
                 >
                   {acceptMutation.isPending
-                    ? t('bookingConfirmation.confirming', 'Confirming...')
-                    : t('bookingConfirmation.confirmBookingBtn', 'Confirm Booking')}
+                    ? t('bookingConfirmation.confirming')
+                    : t('bookingConfirmation.confirmBookingBtn')}
                 </Button>
               </CardContent>
             </Card>

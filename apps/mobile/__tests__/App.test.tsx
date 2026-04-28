@@ -9,7 +9,7 @@ const queryClient = new QueryClient({
 const render = (ui: React.ReactElement, options?: any) =>
   rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
 
-import { designTokens } from '../../../packages/design-tokens/tokens';
+import { designTokens } from '@tasky/design-tokens';
 import { resetTestI18n } from './test-utils/mockI18n';
 import AuthScreen from '../src/app/(auth)/index';
 import IndexScreen from '../src/app/index';
@@ -201,6 +201,7 @@ const baseTask: PublicTask = {
     is_active: true,
     sort_order: 1,
     intake_enabled: false,
+    assisted_distribution_enabled: false,
     intake_schema_version: 0,
   },
   customer: {
@@ -403,7 +404,7 @@ describe('mobile app structure', () => {
     );
 
     expect(screen.getByText('Window cleaning')).toBeTruthy();
-    expect(screen.getByText('Сүхбаатар дүүрэг')).toBeTruthy();
+    expect(screen.getByText(/Сүхбаатар дүүрэг/)).toBeTruthy();
   });
 
   it('TID-TASK-082-MOBILE-AUTHORIZATION-GUARDS enforces restricted-account checks via isRestricted utility', () => {

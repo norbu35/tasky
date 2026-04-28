@@ -64,6 +64,16 @@ public interface CategorySchemaVersionDao {
             + "LIMIT 1")
     Optional<CategorySchemaVersion> findActiveByCategoryId(@Bind("categoryId") UUID categoryId);
 
+    default Optional<CategorySchemaVersion> findLastKnownGoodByCategoryId(String categoryId) {
+        return findLastKnownGoodByCategoryId(required(categoryId, "categoryId"));
+    }
+
+    @SqlQuery("SELECT id, category_id, version, schema_json, status, "
+            + "created_by, created_at, activated_at "
+            + "FROM category_schema_versions WHERE category_id = :categoryId AND status = 'ROLLED_BACK' "
+            + "ORDER BY version DESC LIMIT 1")
+    Optional<CategorySchemaVersion> findLastKnownGoodByCategoryId(@Bind("categoryId") UUID categoryId);
+
     default void updateStatus(String id, String status) {
         updateStatus(required(id, "id"), status);
     }

@@ -1,8 +1,10 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { elevations } from '@/design/elevations';
 import { cn } from '@/lib/cn';
+
+import { Touchable } from './Touchable';
 
 type IconSize = 'sm' | 'md';
 
@@ -24,7 +26,7 @@ export interface ListItemCardProps {
   badge?: React.ReactNode;
   /** Right-aligned slot — renders vertically centered (e.g. PriceTag, ChevronRight). */
   trailing?: React.ReactNode;
-  onPress: () => void;
+  onPress?: () => void;
   testID?: string;
   className?: string;
 }
@@ -40,17 +42,8 @@ export function ListItemCard({
   testID,
   className,
 }: ListItemCardProps) {
-  return (
-    <Pressable
-      testID={testID}
-      accessibilityRole="button"
-      onPress={onPress}
-      className={cn('flex-row items-center gap-md p-lg rounded-md bg-card', className)}
-      style={({ pressed }) => [
-        elevations.card,
-        pressed && { opacity: 0.92, transform: [{ scale: 0.98 }] },
-      ]}
-    >
+  const content = (
+    <>
       {icon != null && (
         <View className={cn('items-center justify-center shrink-0', iconSizeClass[iconSize])}>
           {icon}
@@ -68,6 +61,28 @@ export function ListItemCard({
         )}
       </View>
       {trailing != null && <View className="shrink-0 self-center">{trailing}</View>}
-    </Pressable>
+    </>
+  );
+
+  const cardClassName = cn('flex-row items-center gap-md p-lg rounded-md bg-card', className);
+
+  if (!onPress) {
+    return (
+      <View testID={testID} className={cardClassName} style={elevations.card}>
+        {content}
+      </View>
+    );
+  }
+
+  return (
+    <Touchable
+      testID={testID}
+      accessibilityRole="button"
+      onPress={onPress}
+      className={cardClassName}
+      style={elevations.card}
+    >
+      {content}
+    </Touchable>
   );
 }

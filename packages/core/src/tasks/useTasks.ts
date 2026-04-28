@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { components } from '@tasky/sdk';
 
 export type PublicTask = components['schemas']['PublicTask'];
+export type TaskFeedItem = components['schemas']['TaskFeedItem'];
 export type CursorPagination = components['schemas']['CursorPagination'];
 export interface CursorPage<T> {
   data: T[];
@@ -15,7 +16,7 @@ export interface TaskFilters {
   radiusKm?: number;
 }
 export interface TaskApiClient {
-  listTasks(accessToken: string, filters?: TaskFilters): Promise<CursorPage<PublicTask>>;
+  listTasks(accessToken: string, filters?: TaskFilters): Promise<CursorPage<TaskFeedItem>>;
 }
 
 export function useTasksQuery(

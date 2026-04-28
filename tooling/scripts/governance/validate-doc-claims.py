@@ -105,6 +105,7 @@ LOW_SIGNAL_CLASS_NAMES = {
 }
 YAML_TRUE_KEYS = {True, "true", "True"}
 HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
+GENERIC_DB_COLUMNS = {"id", "status", "created_at", "updated_at"}
 
 
 @dataclass(frozen=True)
@@ -205,11 +206,6 @@ class WorkflowInventory:
 
 
 @dataclass
-class FrontendInventory:
-    exports: dict[str, list[str]]
-
-
-@dataclass
 class PrdRequirementInventory:
     ids: set[str]
 
@@ -284,10 +280,15 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Report findings but do not exit non-zero. Useful for phased rollout cleanup.",
     )
+    parser.add_argument(
+        "--files",
+        nargs="+",
+        help="Limit scanning to the provided repo-relative changed files that are in this validator's doc scope.",
+    )
     return parser.parse_args()
 
 
-def collect_scan_files() -> list[Path]:
+def collect_scan_files(selected_files: list[Path] | None = None) -> list[Path]:
     files: list[Path] = []
     for path in sorted((REPO_ROOT / "docs" / "architecture").rglob("*.md")):
         files.append(path)
@@ -295,7 +296,17 @@ def collect_scan_files() -> list[Path]:
         files.append(path)
     for path in sorted((JAVA_ROOT / "mn" / "tasky").glob("*/AGENTS.md")):
         files.append(path)
-    return files
+    if selected_files is None:
+        return files
+
+    selected: set[Path] = set()
+    for raw_path in selected_files:
+        path = raw_path if raw_path.is_absolute() else REPO_ROOT / raw_path
+        try:
+            selected.add(path.resolve().relative_to(REPO_ROOT))
+        except ValueError:
+            continue
+    return [path for path in files if relative(path) in selected]
 
 
 def load_allowlist() -> Allowlist:
@@ -365,7 +376,11 @@ def build_schema_inventory() -> SchemaInventory:
 
 def build_env_inventory() -> set[str]:
     env_vars: set[str] = set()
-    for path in sorted(REPO_ROOT.glob(".env*.example")):
+    env_example_paths = [
+        *REPO_ROOT.glob(".env*.example"),
+        *(REPO_ROOT / "apps").glob("*/.env*.example"),
+    ]
+    for path in sorted(env_example_paths):
         for line in path.read_text(encoding="utf-8").splitlines():
             stripped = line.strip()
             if not stripped or stripped.startswith("#") or "=" not in stripped:
@@ -485,44 +500,6 @@ def build_workflow_inventory() -> WorkflowInventory:
         names.add(name)
         by_filename[filename] = {"name": name, "triggers": workflow_triggers(data)}
     return WorkflowInventory(filenames=filenames, names=names, by_filename=by_filename)
-
-
-def build_frontend_inventory() -> FrontendInventory:
-    exports: dict[str, list[str]] = defaultdict(list)
-    search_roots = [
-        REPO_ROOT / "apps" / "web" / "src",
-        REPO_ROOT / "apps" / "mobile" / "src",
-        REPO_ROOT / "packages",
-    ]
-    named_export_re = re.compile(
-        r"^\s*export\s+(?:default\s+)?(?:async\s+)?"
-        r"(?:class|function|const|let|var|type|interface|enum)\s+([A-Za-z_][A-Za-z0-9_]*)",
-        re.MULTILINE,
-    )
-    list_export_re = re.compile(r"^\s*export\s*\{([^}]*)\}", re.MULTILINE)
-    for root in search_roots:
-        if not root.exists():
-            continue
-        for path in root.rglob("*"):
-            if not path.is_file():
-                continue
-            if path.suffix not in {".ts", ".tsx"}:
-                continue
-            if "/src/" not in path.as_posix() and not path.as_posix().endswith("/src"):
-                continue
-            text = path.read_text(encoding="utf-8")
-            rel = path.relative_to(REPO_ROOT).as_posix()
-            for match in named_export_re.finditer(text):
-                exports[match.group(1)].append(rel)
-            for match in list_export_re.finditer(text):
-                for raw_item in match.group(1).split(","):
-                    item = raw_item.strip()
-                    if not item:
-                        continue
-                    exported = item.split(" as ")[-1].strip()
-                    if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", exported):
-                        exports[exported].append(rel)
-    return FrontendInventory(exports=dict(exports))
 
 
 def build_prd_requirement_inventory() -> PrdRequirementInventory:
@@ -890,6 +867,23 @@ def validate_db_column(ref: Reference, inventory: SchemaInventory) -> list[Failu
     ]
 
 
+def generic_unscoped_db_column_warning(ref: Reference, inventory: SchemaInventory) -> WarningRecord | None:
+    if ref.kind != "db-column" or ref.table or ref.value not in GENERIC_DB_COLUMNS:
+        return None
+    matches = sorted(table for table, columns in inventory.tables.items() if ref.value in columns)
+    if not matches:
+        return None
+    return WarningRecord(
+        ref.source_file,
+        ref.line,
+        (
+            f"Generic DB column `{ref.value}` is referenced without table context. "
+            "Use same-line table context or a claim:db-table block for precise schema assertions. "
+            f"Matching tables: {', '.join(matches)}"
+        ),
+    )
+
+
 def validate_env_var(ref: Reference, inventory: set[str]) -> list[Failure]:
     if ref.value in inventory:
         return []
@@ -898,7 +892,7 @@ def validate_env_var(ref: Reference, inventory: set[str]) -> list[Failure]:
         Failure(
             ref.source_file,
             ref.line,
-            f"Env var `{ref.value}` not found in .env*.example.",
+            f"Env var `{ref.value}` not found in root or app-level .env*.example files.",
             f"Did you mean: {suggestion}?" if suggestion else None,
         )
     ]
@@ -992,12 +986,6 @@ def validate_workflow(ref: Reference, inventory: WorkflowInventory) -> list[Fail
             f"Did you mean: {suggestion}?" if suggestion else None,
         )
     ]
-
-
-def validate_symbol_claim(ref: Reference, inventory: JavaInventory, path: Path) -> list[Failure]:
-    doc = yaml.safe_load("\n".join(path.read_text(encoding="utf-8").splitlines()[ref.line - 1 : ref.line + 6]))
-    _ = doc
-    return []
 
 
 def claim_payload(path: Path, line_no: int) -> dict[str, Any]:
@@ -1206,9 +1194,9 @@ def main() -> int:
     flyway_inventory = build_flyway_inventory()
     workflow_inventory = build_workflow_inventory()
     prd_requirement_inventory = build_prd_requirement_inventory()
-    _frontend_inventory = build_frontend_inventory()
 
-    scan_files = collect_scan_files()
+    selected_files = [Path(item) for item in args.files] if args.files is not None else None
+    scan_files = collect_scan_files(selected_files)
     failures: list[Failure] = []
     warnings: list[WarningRecord] = []
     claim_payloads: dict[tuple[Path, int], dict[str, Any]] = {}
@@ -1234,6 +1222,10 @@ def main() -> int:
                 failures.extend(validate_db_table(ref, schema_inventory))
             elif ref.kind == "db-column":
                 failures.extend(validate_db_column(ref, schema_inventory))
+                if args.report_only:
+                    generic_warning = generic_unscoped_db_column_warning(ref, schema_inventory)
+                    if generic_warning:
+                        warnings.append(generic_warning)
             elif ref.kind == "env-var":
                 failures.extend(validate_env_var(ref, env_inventory))
             elif ref.kind == "config-key":
@@ -1304,6 +1296,11 @@ def main() -> int:
             f"doc-claims: {len(failures)} failure(s) across "
             f"{len({failure.source_file for failure in failures})} file(s). Run with --json for structured output."
         )
+        print("autonomous remediation:")
+        print(" - run: pnpm repo:docs:claims:triage")
+        print(" - follow: tooling/skills/doc-claims-remediation/SKILL.md")
+        print(" - fix prose first, add claim blocks for load-bearing assertions, touch allowlist only for intentional historical/external refs")
+        print(" - rerun: pnpm repo:docs:check")
     else:
         print(f"doc-claims: PASS ({len(scan_files)} files scanned)")
 

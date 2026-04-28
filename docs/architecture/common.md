@@ -23,6 +23,11 @@ Use the governance docs in this order when reading shared architecture:
 
 If a deferred integration appears in code or infrastructure before its planned phase, keep it labeled dormant. Its existence does not make it part of the active runtime contract.
 
+Dormant does not mean disposable. Deferred payment, escrow, payout, monetization, alternate-auth, and runtime-AI
+surfaces may remain in the repo as future-ready scaffolding when they are default-off, feature-gated, excluded from
+launch UX, and mapped to a target phase in `docs/ROLLOUT_PHASES.md`. Agents should preserve that switchability unless a
+governing doc explicitly retires the feature.
+
 ---
 
 ## 2. System Context & Boundaries
@@ -33,12 +38,15 @@ Tasky acts as a trusted intermediary between **Customers** (Demand) and **Tasker
 
 - **External Systems**:
   - **Facebook OAuth**: the only launch login provider for new sessions.
-  - **SMS Gateway**: critical fallback notifications such as reminders and completion nudges. OTP is not part of the Phase 1 launch baseline.
+  - **Push Notification Service**: default channel for launch lifecycle nudges when a device token exists.
+  - **SMS Gateway**: policy-controlled fallback notifications only; OTP is not part of the Phase 1 launch baseline.
   - **Google Maps / Mapbox**: geocoding and static maps.
   - **Push Provider (Firebase Cloud Messaging)**: mobile notifications via FCM for Android and the FCM → APNs bridge for iOS. Expo Push relay is explicitly not used.
   - **Object Storage (MinIO / S3)**: private storage for uploads such as verification artifacts and images.
 
-Deferred payment, escrow, payout, alternate-auth, and runtime-LLM integrations are not part of the launch baseline even if dormant scaffolding exists in code or schema.
+Deferred payment, escrow, payout, alternate-auth, and runtime-LLM integrations are not part of the launch baseline even
+if dormant scaffolding exists in code or schema. When such scaffolding exists, it should stay behind an explicit switch
+or provider guard and remain easy to activate only after the correct rollout phase is approved.
 
 ### 2.2 Modular Monolith Structure
 
@@ -74,6 +82,19 @@ For the full package-to-domain mapping, see `api.md` §2.
   - **Topic fan-out**: subscribe devices server-side for launch-relevant targeting such as category and district/category combinations.
   - **Configuration**: `FIREBASE_SERVICE_ACCOUNT_JSON` env var; `tasky.push.provider=firebase` activates `FirebasePushProvider`.
   - `FirebasePushProvider` is the active production provider.
+
+```claim env-var
+name: FIREBASE_SERVICE_ACCOUNT_JSON
+```
+
+```claim config-key
+key: tasky.push.provider
+```
+
+```claim symbol-exists
+class: mn.tasky.notification.provider.FirebasePushProvider
+```
+
 - **Geospatial**:
   - **Engine**: PostGIS running in the Postgres container.
   - **Indexing**: GiST index on `tasks.location_point` is mandatory.
@@ -98,6 +119,10 @@ For the full package-to-domain mapping, see `api.md` §2.
 - Events carry correlation and actor context (`correlation_id`, `causation_id`, `command_id`, `workflow_id`, `actor_id`, `locale`, `platform`) so request context survives the async boundary.
 - The outbox is used for launch-critical side effects such as notifications, reminders, analytics emission, and recovery workflows.
 
+```claim symbol-exists
+class: mn.tasky.common.outbox.OutboxRelayService
+```
+
 ### 4.2 Internationalization Baseline
 
 - **Development language**: All source code, comments, API field names, and log messages are in English.
@@ -105,11 +130,15 @@ For the full package-to-domain mapping, see `api.md` §2.
 - **String management**:
   - **Backend**: API error messages and notification templates use keyed message bundles (`messages_en.properties`,
     `messages_mn.properties`) resolved via Spring `MessageSource`.
-  - **Web**: JSON translation files per locale (`en.json`, `mn.json`) loaded by `react-i18next`.
-  - **Mobile**: Same JSON files bundled via `react-i18next` + Expo localization.
+  - **Web**: App-owned JSON translation files under `apps/web/src/locales/{en,mn}/translation.json` loaded by
+    `react-i18next`.
+  - **Mobile**: App-owned JSON translation files under `apps/mobile/src/locales/{en,mn}/translation.json` loaded by
+    `react-i18next` + Expo localization.
 - **Translation workflow**: English remains the technical source for keys, code, and fallback structure. Mongolian
   copy must be authored and reviewed so it reads naturally in Mongolian rather than as machine-translated English.
-  Translation files live under `src/main/resources/i18n/` (backend) and `locales/` (clients).
+  Translation files live under `src/main/resources/i18n/` (backend) and each client's `src/locales/` directory. Web
+  and mobile locale files are not shared artifacts; they are validated together by `pnpm verify:i18n` for key parity
+  within each app, placeholder parity, missing used keys, empty values, and disallowed `t(...)` fallback strings.
 - **Database content**: User-generated content (task descriptions, reviews) is stored as-is. Admin-managed content (
   category names) has explicit `name` (English) and `name_mn` (Mongolian) columns.
 - **API contract**: The API returns server-driven strings (error messages, notification text) localized based on the
@@ -145,7 +174,8 @@ For the full package-to-domain mapping, see `api.md` §2.
 - **Product Metrics (Required)**:
   - Required launch KPIs are the seven metrics defined in `docs/METRICS.md`.
   - Category is the primary slice; district is drilldown.
-  - Native self-serve reporting must exclude both system-assisted and manual-assisted outcomes.
+  - Native self-serve reporting and native confirmation success must exclude outcomes after system-assisted or
+    manual-assisted intervention.
 - **Operational Alerts**:
   - Alert on the four hard-gate KPI families defined in `docs/METRICS.md`.
   - Alert on verification SLA breaches and OAuth outage active windows.
@@ -168,7 +198,7 @@ For the full package-to-domain mapping, see `api.md` §2.
 
 1. **Pick up a task**: Use the active issue, ticket, or approved execution brief.
 2. **Design**: Update `docs/openapi/**` first (contract-first) when the API changes, then regenerate `docs/API.yaml`.
-3. **Generate**: Run `pnpm sdk:generate` to regenerate TypeScript SDK types from the contract.
+3. **Generate**: Run `pnpm contract:sdk:generate` to regenerate TypeScript SDK types from the contract.
 4. **Implement**: Write controller implementations and JDBI repositories.
 5. **Test**: Write tests for every "Done When" criterion. Run `./gradlew --no-daemon test`.
 6. **Verify**: Run `./gradlew openApiValidate`, `pnpm -r typecheck`, `pnpm -r test`.
@@ -191,7 +221,7 @@ For the full package-to-domain mapping, see `api.md` §2.
 | Design tokens and parity         | `shared-frontend.md` §2–§4                             |
 | Accessibility baseline           | `shared-frontend.md` §5                                |
 | Frontend file structure          | `shared-frontend.md` §6                                |
-| TID test naming                  | `shared-frontend.md` §7                                |
+| Frontend test naming             | `shared-frontend.md` §7                                |
 | Intake renderer contract         | `shared-frontend.md` §8                                |
 | Web structural contract          | `web.md`                                               |
 | Mobile structural contract       | `mobile.md`                                            |

@@ -6,7 +6,7 @@ import { makeProfile, makeSession, makeUser } from '../../src/test/factories';
 import type { AuthTokens, Profile } from '../../src/lib/apiClient';
 
 describe('Authorization Guards Integration', () => {
-  it('TID-TASK-080-WEB-AUTHORIZATION-GUARDS enforce auth state, role gating, and banned-user UX', async () => {
+  it('TID-TASK-000-WEB-ROUTE-GUARD-UX redirects guests and shows role-mismatch guard copy', async () => {
     const guestApi = createMockApiClient();
     const guestRender = render(<App apiClient={guestApi} initialRoute="/customer/tasks/new" />);
 
@@ -26,7 +26,9 @@ describe('Authorization Guards Integration', () => {
     ).toBeInTheDocument();
 
     customerRender.unmount();
+  });
 
+  it('SCN-AUTH-008: BANNED or active SUSPENDED account is denied authentication even with otherwise valid credentials', async () => {
     const bannedProfile: Profile = {
       ...makeProfile(),
       status: 'BANNED',

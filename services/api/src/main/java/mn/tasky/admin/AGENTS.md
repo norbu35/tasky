@@ -25,7 +25,7 @@ All endpoints are under `/api/v1/admin/**` and require `ADMIN` role (enforced in
 ## Behavioral Notes
 
 - Verification approve/reject uses `AuthService`; approve sets user status to `VERIFIED`.
-- `POST /admin/disputes/{id}/resolve` accepts outcomes: `RESOLVE_TASKER`, `RESOLVE_CUSTOMER`, `ESCALATE`.
+- `POST /api/v1/admin/disputes/{id}/resolve` accepts outcomes: `RESOLVE_TASKER`, `RESOLVE_CUSTOMER`, `ESCALATE`.
 - Payout endpoints are gated by `escrow_enabled`.
 - Admin payout processing exists in deferred wallet code paths, but it is not part of the active Phase 1 contract surface and is intentionally omitted from the live OpenAPI.
 - Some admin endpoints return mixed error envelopes (`{code,message}` and `{error}`) depending on controller path.

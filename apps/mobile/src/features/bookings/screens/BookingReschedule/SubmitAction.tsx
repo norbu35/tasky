@@ -58,14 +58,23 @@ export function RequestStateCard({ requestState }: RequestStateCardProps) {
 
 interface SubmitButtonProps {
   isPending: boolean;
+  submitError?: string;
   onSubmit: () => void;
 }
 
-export function SubmitButton({ isPending, onSubmit }: SubmitButtonProps) {
+export function SubmitButton({ isPending, submitError, onSubmit }: SubmitButtonProps) {
   const { t } = useTranslation();
   return (
     <StickyActionBar>
-      <View className="pt-md pb-lg px-lg">
+      <View className="pt-md pb-lg gap-sm">
+        {submitError ? (
+          <Text
+            className="text-caption font-sans-semibold text-danger"
+            testID="reschedule-submit-error"
+          >
+            {submitError}
+          </Text>
+        ) : null}
         <Touchable
           accessibilityRole="button"
           onPress={() => void onSubmit()}

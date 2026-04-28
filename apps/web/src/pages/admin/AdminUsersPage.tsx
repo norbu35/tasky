@@ -70,9 +70,7 @@ export function AdminUsersPage() {
       const result = await adminApiClient.adminSearchUsers(session.accessToken, phone);
       setUsers(result.data);
     } catch (err) {
-      setSearchError(
-        err instanceof Error ? err.message : t('admin.users.searchError', 'Failed to search users'),
-      );
+      setSearchError(err instanceof Error ? err.message : t('admin.users.searchError'));
     } finally {
       setSearchLoading(false);
     }
@@ -89,11 +87,9 @@ export function AdminUsersPage() {
         banReason,
       );
       setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
-      toast.success(t('admin.users.banSuccess', 'User banned successfully'));
+      toast.success(t('admin.users.banSuccess'));
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : t('admin.users.banError', 'Failed to ban user'),
-      );
+      toast.error(err instanceof Error ? err.message : t('admin.users.banError'));
     } finally {
       setBanBusy(false);
       setBanTarget(null);
@@ -107,11 +103,9 @@ export function AdminUsersPage() {
     try {
       const updated = await adminApiClient.adminUnbanUser(session.accessToken, userId);
       setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
-      toast.success(t('admin.users.unbanSuccess', 'User unbanned successfully'));
+      toast.success(t('admin.users.unbanSuccess'));
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : t('admin.users.unbanError', 'Failed to unban user'),
-      );
+      toast.error(err instanceof Error ? err.message : t('admin.users.unbanError'));
     }
   };
 
@@ -124,11 +118,7 @@ export function AdminUsersPage() {
       const result = await adminApiClient.adminListFlaggedMessages(session.accessToken);
       setFlaggedMessages(result.data);
     } catch (err) {
-      setFlaggedError(
-        err instanceof Error
-          ? err.message
-          : t('admin.users.loadFlaggedError', 'Failed to load flagged messages'),
-      );
+      setFlaggedError(err instanceof Error ? err.message : t('admin.users.loadFlaggedError'));
     } finally {
       setFlaggedLoading(false);
       setFlaggedLoaded(true);
@@ -145,26 +135,24 @@ export function AdminUsersPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold font-display">{t('admin.users.title', 'Users')}</h1>
+      <h1 className="text-2xl font-bold font-display">{t('admin.users.title')}</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="search">{t('admin.users.searchTab', 'Search Users')}</TabsTrigger>
-          <TabsTrigger value="flagged">
-            {t('admin.users.flaggedTab', 'Flagged Messages')}
-          </TabsTrigger>
+          <TabsTrigger value="search">{t('admin.users.searchTab')}</TabsTrigger>
+          <TabsTrigger value="flagged">{t('admin.users.flaggedTab')}</TabsTrigger>
         </TabsList>
 
         {/* ── Search Users Tab ─────────────────────────────────────── */}
         <TabsContent value="search">
           <div className="flex gap-2 mb-4">
             <Input
-              placeholder={t('admin.users.phonePlaceholder', 'Phone number')}
+              placeholder={t('admin.users.phonePlaceholder')}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
             />
             <Button onClick={doSearch} disabled={searchLoading}>
-              {t('admin.users.search', 'Search')}
+              {t('admin.users.search')}
             </Button>
           </div>
 
@@ -183,10 +171,8 @@ export function AdminUsersPage() {
           {searchError && (
             <Card>
               <CardContent className="flex flex-col items-center gap-4 p-6">
-                <p className="text-destructive">
-                  {t('admin.users.searchError', 'Failed to search users')}
-                </p>
-                <Button onClick={doSearch}>{t('admin.users.retry', 'Retry')}</Button>
+                <p className="text-destructive">{t('admin.users.searchError')}</p>
+                <Button onClick={doSearch}>{t('admin.users.retry')}</Button>
               </CardContent>
             </Card>
           )}
@@ -194,9 +180,7 @@ export function AdminUsersPage() {
           {!searchLoading && !searchError && hasSearched && users.length === 0 && (
             <Card>
               <CardContent className="p-6 text-center">
-                <p className="text-muted-foreground">
-                  {t('admin.users.noResults', 'No users found')}
-                </p>
+                <p className="text-muted-foreground">{t('admin.users.noResults')}</p>
               </CardContent>
             </Card>
           )}
@@ -206,20 +190,16 @@ export function AdminUsersPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b bg-muted/50">
+                    <th className="px-4 py-3 text-left font-medium">{t('admin.users.colPhone')}</th>
+                    <th className="px-4 py-3 text-left font-medium">{t('admin.users.colRole')}</th>
                     <th className="px-4 py-3 text-left font-medium">
-                      {t('admin.users.colPhone', 'Phone')}
+                      {t('admin.users.colStatus')}
                     </th>
                     <th className="px-4 py-3 text-left font-medium">
-                      {t('admin.users.colRole', 'Role')}
+                      {t('admin.users.colCreated')}
                     </th>
                     <th className="px-4 py-3 text-left font-medium">
-                      {t('admin.users.colStatus', 'Status')}
-                    </th>
-                    <th className="px-4 py-3 text-left font-medium">
-                      {t('admin.users.colCreated', 'Created')}
-                    </th>
-                    <th className="px-4 py-3 text-left font-medium">
-                      {t('admin.users.colActions', 'Actions')}
+                      {t('admin.users.colActions')}
                     </th>
                   </tr>
                 </thead>
@@ -237,7 +217,7 @@ export function AdminUsersPage() {
                       <td className="px-4 py-3">
                         {user.status === 'BANNED' ? (
                           <Button variant="outline" size="sm" onClick={() => handleUnban(user.id)}>
-                            {t('admin.users.unban', 'Unban')}
+                            {t('admin.users.unban')}
                           </Button>
                         ) : (
                           <Button
@@ -245,7 +225,7 @@ export function AdminUsersPage() {
                             size="sm"
                             onClick={() => setBanTarget(user)}
                           >
-                            {t('admin.users.ban', 'Ban')}
+                            {t('admin.users.ban')}
                           </Button>
                         )}
                       </td>
@@ -275,7 +255,7 @@ export function AdminUsersPage() {
             <Card>
               <CardContent className="flex flex-col items-center gap-4 p-6">
                 <p className="text-destructive">{flaggedError}</p>
-                <Button onClick={fetchFlagged}>{t('admin.users.retry', 'Retry')}</Button>
+                <Button onClick={fetchFlagged}>{t('admin.users.retry')}</Button>
               </CardContent>
             </Card>
           )}
@@ -283,9 +263,7 @@ export function AdminUsersPage() {
           {!flaggedLoading && !flaggedError && flaggedLoaded && flaggedMessages.length === 0 && (
             <Card>
               <CardContent className="p-6 text-center">
-                <p className="text-muted-foreground">
-                  {t('admin.users.noFlagged', 'No flagged messages')}
-                </p>
+                <p className="text-muted-foreground">{t('admin.users.noFlagged')}</p>
               </CardContent>
             </Card>
           )}
@@ -297,8 +275,8 @@ export function AdminUsersPage() {
                   <CardContent className="p-4 space-y-1">
                     <p className="text-sm">{msg.content}</p>
                     <p className="text-xs text-muted-foreground">
-                      {t('admin.users.sender', 'Sender')}: {msg.sender_id} &middot;{' '}
-                      {formatTimestamp(msg.created_at, locale)}
+                      {t('admin.users.sender')}: {msg.sender_id} &middot;{' '}
+                      {formatTimestamp(msg.sent_at, locale)}
                     </p>
                   </CardContent>
                 </Card>
@@ -320,16 +298,11 @@ export function AdminUsersPage() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('admin.users.banDialogTitle', 'Ban User')}</DialogTitle>
-            <DialogDescription>
-              {t(
-                'admin.users.banDialogDesc',
-                'Provide a reason for banning this user. This action can be reversed.',
-              )}
-            </DialogDescription>
+            <DialogTitle>{t('admin.users.banDialogTitle')}</DialogTitle>
+            <DialogDescription>{t('admin.users.banDialogDesc')}</DialogDescription>
           </DialogHeader>
           <Input
-            placeholder={t('admin.users.banReasonPlaceholder', 'Reason for ban')}
+            placeholder={t('admin.users.banReasonPlaceholder')}
             value={banReason}
             onChange={(e) => setBanReason(e.target.value)}
           />
@@ -342,14 +315,14 @@ export function AdminUsersPage() {
               }}
               disabled={banBusy}
             >
-              {t('admin.users.cancel', 'Cancel')}
+              {t('admin.users.cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleBan}
               disabled={banBusy || !banReason.trim()}
             >
-              {t('admin.users.confirm', 'Confirm')}
+              {t('admin.users.confirm')}
             </Button>
           </DialogFooter>
         </DialogContent>

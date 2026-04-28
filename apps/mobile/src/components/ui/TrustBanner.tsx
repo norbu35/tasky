@@ -2,13 +2,13 @@ import { ShieldCheck } from 'lucide-react-native';
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
 import { Reveal } from './Reveal';
 
-const { colors } = mobileTheme;
+const { colors, iconSizes } = mobileTheme;
 const { tint } = mobileSurfaces;
 
 interface TrustBannerProps {
@@ -26,35 +26,32 @@ export function TrustBanner({
 }: TrustBannerProps) {
   const isCompact = variant === 'compact';
   return (
-    <Reveal
-      delay={90}
-      style={
-        isCompact
-          ? { backgroundColor: colors.trust }
-          : { backgroundColor: tint.trustSoft, borderColor: colors.trust }
-      }
-      className={cn(
-        'flex-row items-center gap-[16px] p-[17px] rounded-md',
-        !isCompact && 'border',
-        className,
-      )}
-    >
+    <Reveal delay={90}>
       <View
         style={
-          isCompact ? { backgroundColor: tint.primarySubtle } : { backgroundColor: colors.trust }
+          isCompact
+            ? { backgroundColor: colors.trust }
+            : { backgroundColor: tint.trustSoft, borderColor: colors.trust, borderWidth: 1 }
         }
-        className={cn(
-          'items-center justify-center',
-          isCompact ? 'w-[40px] h-[40px] rounded-full' : 'w-[37px] h-[40px] rounded-sm',
-        )}
+        className={cn('flex-row items-center gap-md p-lg rounded-md', className)}
       >
-        <ShieldCheck size={isCompact ? 16 : 20} color={colors.trustMuted} />
-      </View>
-      <View className="flex-1">
-        <Text className="text-caption font-sans-bold text-trust-muted uppercase tracking-[0.075em]">
-          {title}
-        </Text>
-        <Text className="text-label text-foreground leading-[20px]">{description}</Text>
+        <View
+          style={
+            isCompact ? { backgroundColor: tint.primarySubtle } : { backgroundColor: colors.trust }
+          }
+          className={cn(
+            'items-center justify-center',
+            isCompact ? 'w-10 h-10 rounded-full' : 'w-9 h-10 rounded-sm',
+          )}
+        >
+          <ShieldCheck size={isCompact ? iconSizes.xs : iconSizes.sm} color={colors.trustMuted} />
+        </View>
+        <View className="flex-1">
+          <Text className="text-label font-sans-bold text-foreground" numberOfLines={2}>
+            {title}
+          </Text>
+          <Text className="text-label text-foreground">{description}</Text>
+        </View>
       </View>
     </Reveal>
   );

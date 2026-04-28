@@ -16,29 +16,22 @@ export function GlobalErrorFallback({ error, resetErrorBoundary }: FallbackProps
 
         <div className="space-y-2 max-w-md">
           <h1 className="text-3xl font-bold tracking-tight text-foreground font-display">
-            {t('errors.somethingWentWrong', 'Something went wrong')}
+            {t('errors.somethingWentWrong')}
           </h1>
-          <p className="text-muted-foreground">
-            {t(
-              'errors.unexpectedErrorMsg',
-              'An unexpected error has crashed this page. Our team has been notified.',
-            )}
-          </p>
+          <p className="text-muted-foreground">{t('errors.unexpectedErrorMsg')}</p>
         </div>
 
         <div className="bg-muted/50 w-full max-w-xl p-4 rounded-lg font-mono text-sm text-left text-muted-foreground overflow-auto border shadow-inner">
-          <p className="font-semibold text-foreground mb-1">
-            {t('errors.errorDetails', 'Error details:')}
-          </p>
+          <p className="font-semibold text-foreground mb-1">{t('errors.errorDetails')}</p>
           {error instanceof Error ? error.message : String(error)}
         </div>
 
         <div className="flex gap-4 pt-4">
           <Button onClick={resetErrorBoundary} size="lg" className="gap-2">
-            <RefreshCcw className="w-4 h-4" /> {t('common.tryAgain', 'Try again')}
+            <RefreshCcw className="w-4 h-4" /> {t('common.tryAgain')}
           </Button>
           <Button variant="secondary" size="lg" onClick={() => (window.location.href = '/')}>
-            {t('common.goHome', 'Go home')}
+            {t('common.goHome')}
           </Button>
         </div>
       </div>

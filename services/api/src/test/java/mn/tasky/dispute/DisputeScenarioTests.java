@@ -21,7 +21,9 @@ import mn.tasky.dispute.application.DisputeService;
 import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.dispute.dao.DisputeEvidenceDao;
 import mn.tasky.dispute.dto.Dispute;
+import mn.tasky.dispute.dto.DisputeEvidenceResult;
 import mn.tasky.dispute.dto.DisputeRaiseResult;
+import mn.tasky.dispute.dto.DisputeRequest;
 import mn.tasky.dispute.dto.DisputeResolutionResult;
 import mn.tasky.dispute.scheduling.DisputeEvidenceGraceScheduler;
 import org.junit.jupiter.api.BeforeEach;
@@ -107,7 +109,11 @@ class DisputeScenarioTests {
         Dispute created = openDispute();
         when(disputeDao.findById(anyString())).thenReturn(Optional.of(created));
 
-        DisputeRaiseResult result = disputeService.raiseDispute(CUSTOMER_ID, BOOKING_ID, REASON);
+        DisputeRaiseResult result = disputeService.raiseDispute(
+                CUSTOMER_ID,
+                BOOKING_ID,
+                REASON,
+                List.of(new DisputeRequest.EvidenceItem("WRITTEN_TIMELINE", null, "Timeline of what happened")));
 
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.dispute().status()).isEqualTo("OPEN");
@@ -162,19 +168,16 @@ class DisputeScenarioTests {
     // ── SCN-DISPUTE-005 ──────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-DISPUTE-005: Dispute submission requires at least one evidence artifact")
+    @DisplayName("SCN-DISPUTE-005: Dispute without evidence enters the evidence-needed grace path")
     void disputeWithoutEvidenceRecordedAsOpenPendingEvidence() {
-        // When no evidenceItems are supplied, dispute is created but open (pending evidence)
         when(bookingQueryPort.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("ASSIGNED", Instant.now())));
-        Dispute created = openDispute();
-        when(disputeDao.findById(anyString())).thenReturn(Optional.of(created));
 
-        // No evidence items — dispute is created with OPEN status awaiting evidence
         DisputeRaiseResult result = disputeService.raiseDispute(CUSTOMER_ID, BOOKING_ID, REASON, null);
 
         assertThat(result.isSuccess()).isTrue();
-        assertThat(result.dispute().status()).isEqualTo("OPEN");
-        // No evidence inserts happened
+        assertThat(result.dispute().status()).isEqualTo("EVIDENCE_NEEDED");
+        assertThat(result.dispute().evidenceReminderSentAt()).isNotNull();
+        assertThat(result.dispute().evidenceDueAt()).isAfter(result.dispute().evidenceReminderSentAt());
         verify(disputeEvidenceDao, never()).insert(anyString(), anyString(), anyString(), anyString(), anyString());
     }
 
@@ -184,24 +187,28 @@ class DisputeScenarioTests {
     @DisplayName("SCN-DISPUTE-006: Missing evidence after reminder and 24-hour grace"
             + " auto-closes the dispute as INSUFFICIENT_EVIDENCE")
     void staleDisputeWithNoEvidenceAutoCloses() {
-        // Dispute is OPEN and older than 24h, with zero evidence
+        Instant reminderSentAt = Instant.now().minus(25, ChronoUnit.HOURS);
         Dispute stale = new Dispute(
                 UUID.randomUUID().toString(),
                 BOOKING_ID,
                 CUSTOMER_ID,
                 REASON,
-                "OPEN",
+                "EVIDENCE_NEEDED",
                 null,
                 null,
                 null,
-                Instant.now().minus(25, ChronoUnit.HOURS),
-                Instant.now().minus(25, ChronoUnit.HOURS));
-        when(disputeDao.findOpenOlderThan(org.mockito.ArgumentMatchers.any())).thenReturn(List.of(stale));
+                reminderSentAt,
+                null,
+                reminderSentAt,
+                reminderSentAt.plus(24, ChronoUnit.HOURS));
+        when(disputeDao.findEvidenceGraceDue(org.mockito.ArgumentMatchers.any()))
+                .thenReturn(List.of(stale));
         when(disputeEvidenceDao.countByDisputeId(stale.id())).thenReturn(0);
 
         DisputeEvidenceGraceScheduler scheduler = new DisputeEvidenceGraceScheduler(disputeDao, disputeEvidenceDao);
         scheduler.closeStaleDisputes();
 
+        verify(disputeEvidenceDao).countByDisputeId(stale.id());
         verify(disputeDao)
                 .update(
                         org.mockito.ArgumentMatchers.eq(stale.id()),
@@ -217,33 +224,31 @@ class DisputeScenarioTests {
     @Test
     @DisplayName("SCN-DISPUTE-007: Evidence added during the grace window prevents insufficient-evidence auto-close")
     void disputeWithEvidenceNotAutoClosedByScheduler() {
+        Instant reminderSentAt = Instant.now().minus(1, ChronoUnit.HOURS);
         Dispute withEvidence = new Dispute(
                 UUID.randomUUID().toString(),
                 BOOKING_ID,
                 CUSTOMER_ID,
                 REASON,
-                "OPEN",
+                "EVIDENCE_NEEDED",
                 null,
                 null,
                 null,
-                Instant.now().minus(25, ChronoUnit.HOURS),
-                Instant.now().minus(25, ChronoUnit.HOURS));
-        when(disputeDao.findOpenOlderThan(org.mockito.ArgumentMatchers.any())).thenReturn(List.of(withEvidence));
-        // Evidence exists
-        when(disputeEvidenceDao.countByDisputeId(withEvidence.id())).thenReturn(1);
+                reminderSentAt,
+                null,
+                reminderSentAt,
+                reminderSentAt.plus(24, ChronoUnit.HOURS));
+        when(disputeDao.findById(withEvidence.id())).thenReturn(Optional.of(withEvidence));
+        when(bookingQueryPort.getBooking(BOOKING_ID)).thenReturn(Optional.of(bookingWith("ASSIGNED", Instant.now())));
 
-        DisputeEvidenceGraceScheduler scheduler = new DisputeEvidenceGraceScheduler(disputeDao, disputeEvidenceDao);
-        scheduler.closeStaleDisputes();
+        DisputeEvidenceResult result = disputeService.addEvidence(
+                CUSTOMER_ID,
+                withEvidence.id(),
+                List.of(new DisputeRequest.EvidenceItem("WRITTEN_TIMELINE", null, "Timeline of what happened")));
 
-        // Should NOT auto-close
-        verify(disputeDao, never())
-                .update(
-                        org.mockito.ArgumentMatchers.eq(withEvidence.id()),
-                        anyString(),
-                        org.mockito.ArgumentMatchers.any(),
-                        org.mockito.ArgumentMatchers.any(),
-                        org.mockito.ArgumentMatchers.any(),
-                        org.mockito.ArgumentMatchers.any());
+        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.dispute().status()).isEqualTo("OPEN");
+        verify(disputeDao).markEvidenceSubmitted(withEvidence.id());
     }
 
     // ── SCN-DISPUTE-008 ──────────────────────────────────────────────────────

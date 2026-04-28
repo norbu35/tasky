@@ -24,9 +24,7 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
   }
 
   if (profileBusy && !profile) {
-    return (
-      <LoadingCard message={t('routeGuards.loadingProfile', 'Loading your account profile...')} />
-    );
+    return <LoadingCard message={t('routeGuards.loadingProfile')} />;
   }
 
   return <>{children}</>;
@@ -37,7 +35,7 @@ export function RoleGuard({ role, children }: { role: Role; children: ReactNode 
   const { t } = useTranslation();
 
   if (!profile) {
-    return <LoadingCard message={t('routeGuards.resolvingRole', 'Resolving role access...')} />;
+    return <LoadingCard message={t('routeGuards.resolvingRole')} />;
   }
 
   if (profile.role !== role) {
@@ -47,20 +45,18 @@ export function RoleGuard({ role, children }: { role: Role; children: ReactNode 
           <CardHeader>
             <CardTitle>
               {role === 'TASKER'
-                ? t('routeGuards.taskerRequired', 'Tasker role required')
-                : t('routeGuards.customerRequired', 'Customer role required')}
+                ? t('routeGuards.taskerRequired')
+                : t('routeGuards.customerRequired')}
             </CardTitle>
             <CardDescription>
               {t('routeGuards.blockedDesc', {
                 role: profile.role,
-                defaultValue:
-                  'Route guard blocked this path because your account role is currently {{role}}.',
               })}
             </CardDescription>
           </CardHeader>
           <CardFooter>
             <Button asChild>
-              <NavLink to="/profile">{t('routeGuards.goToProfile', 'Go to profile')}</NavLink>
+              <NavLink to="/profile">{t('routeGuards.goToProfile')}</NavLink>
             </Button>
           </CardFooter>
         </Card>

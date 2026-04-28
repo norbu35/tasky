@@ -2,8 +2,32 @@
 screen_id: SCR-TASK-014
 name: 'No-Show Flag (Tasker)'
 route: null
+presentation:
+  type: inline_modal_sheet
+  host_screen: SCR-TASK-013
+  invocation: 'Tasker opens the no-show reminder or flag action from booking detail after policy timers allow it'
 role: [tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-014
+  prd_refs:
+    - REQ-P1-BOOK-19
+    - REQ-P1-BOOK-20
+    - REQ-P1-BOOK-21
+    - REQ-P1-BOOK-22
+    - REQ-P1-BOOK-23
+    - REQ-P1-BOOK-24
+  journey_refs:
+    - JRN-TASK-04-A2
+  scenario_refs:
+    - SCN-BOOK-010
+    - SCN-BOOK-011
+    - SCN-BOOK-012
+    - SCN-BOOK-013
+    - SCN-BOOK-014
+    - SCN-BOOK-015
+    - SCN-BOOK-016
 template: modal_sheet
 figma_page: 'Tasker/No-Show Flag Tasker'
 feature: 'tasker-bookings'
@@ -38,8 +62,8 @@ components:
     variant: outline
 
 states:
-  - id: pre_reminder_10min
-    description: 'Schedule +10min — system sends reminder to both parties to update arrival status; sheet prompts tasker to confirm status'
+  - id: pre_reminder_30min
+    description: 'Schedule +30min — system sends reminder to both parties to update arrival status; sheet prompts tasker to confirm status'
     components_visible:
       [
         handle_bar,
@@ -51,8 +75,8 @@ states:
       ]
     components_hidden: [flag_button, flagging_spinner, success_content]
 
-  - id: flag_available_15min
-    description: 'Schedule +15min — no check-in from customer in past 30min; flag button becomes available'
+  - id: flag_available_1h
+    description: 'Schedule +1h — no check-in from customer in past 30min; flag button becomes available'
     components_visible:
       [
         handle_bar,
@@ -83,8 +107,8 @@ copy:
     max_chars: 30
 
   - key: reminder_description
-    mn: 'Хуваарьт цагаас 10 минут өнгөрлөө. Ирсэн эсэхээ мэдэгдэнэ үү.'
-    en: '10 minutes past scheduled time. Please update your arrival status.'
+    mn: 'Хуваарьт цагаас 30 минут өнгөрлөө. Ирсэн эсэхээ мэдэгдэнэ үү.'
+    en: '30 minutes past scheduled time. Please update your arrival status.'
     max_chars: 70
 
   - key: update_status_button
@@ -98,8 +122,8 @@ copy:
     max_chars: 30
 
   - key: flag_description
-    mn: 'Хуваарьт цагаас 15 минут өнгөрсөн бөгөөд захиалагч холбогдоогүй байна.'
-    en: '15 minutes past scheduled time and the customer has not checked in.'
+    mn: 'Хуваарьт цагаас 1 цаг өнгөрсөн бөгөөд захиалагч холбогдоогүй байна.'
+    en: '1 hour past scheduled time and the customer has not checked in.'
     max_chars: 80
 
   - key: no_show_warning
@@ -125,7 +149,7 @@ copy:
   - key: flagged_description
     mn: 'Захиалга хянагдахаар илгээгдлээ. Дараагийн алхмын талаар мэдэгдэл авна.'
     en: "Booking sent for review. You'll be notified about next steps."
-    max_chars: 70
+    max_chars: 80
 
   - key: done_button
     mn: 'Ойлголоо'
@@ -144,9 +168,9 @@ api_endpoints:
 
 analytics_events:
   - event: 'no_show_reminder_tasker_viewed'
-    trigger: 'Pre-reminder sheet shown at schedule +10min'
+    trigger: 'Pre-reminder sheet shown at schedule +30min'
   - event: 'no_show_flag_available_tasker'
-    trigger: 'Flag button becomes available at schedule +15min'
+    trigger: 'Flag button becomes available at schedule +1h'
   - event: 'no_show_flag_tasker_tapped'
     trigger: 'Tasker taps Flag No-Show button'
   - event: 'no_show_flag_tasker_confirmed'
@@ -156,8 +180,8 @@ analytics_events:
 
 acceptance_criteria:
   - 'This is a bottom sheet overlay, not a standalone route'
-  - 'Pre-reminder appears at scheduled start +10 minutes'
-  - 'Flag button becomes available only at scheduled start +15 minutes'
+  - 'Pre-reminder appears at scheduled start +30 minutes'
+  - 'Flag button becomes available only at scheduled start +1 hour'
   - 'Flag is permitted only if the system verifies neither party has posted a status update or check-in in the preceding 30 minutes'
   - 'No mutually accepted in-app reschedule must have superseded the current schedule'
   - 'Warning text informs tasker that false reports carry consequences'

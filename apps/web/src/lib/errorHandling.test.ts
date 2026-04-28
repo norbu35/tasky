@@ -35,5 +35,18 @@ describe('errorHandling', () => {
         }),
       );
     });
+
+    test('tracks error event with provided locale', () => {
+      const tracker = vi.fn() as ClientAnalyticsTracker;
+      const error = new Error('Locale error');
+
+      parseError(error, tracker, 'en-US');
+
+      expect(tracker).toHaveBeenCalledWith(
+        expect.objectContaining({
+          locale: 'en-US',
+        }),
+      );
+    });
   });
 });

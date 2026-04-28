@@ -8,6 +8,7 @@ import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
+import { PostingGuidanceCard } from '@/features/tasks/components/PostingGuidance';
 import { useTaskDraftStore } from '@/features/tasks/draft';
 import { useCategories } from '@/features/tasks/hooks/useCategories';
 import type { Category } from '@/lib/api/types';
@@ -87,13 +88,21 @@ function getCategoryVisual(name: string): CategoryVisual {
 }
 
 export default function TaskCategoryScreen() {
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
   const router = useRouter();
   const { data, isLoading, isError, refetch } = useCategories();
   const createDraft = useTaskDraftStore((s) => s.createDraft);
   const updateDraft = useTaskDraftStore((s) => s.updateDraft);
 
-  const categories = useMemo(() => data?.data ?? [], [data?.data]);
+  const categories = useMemo(() => {
+    const seen = new Set<string>();
+    return (data?.data ?? []).filter((category) => {
+      const key = category.name.trim().toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [data?.data]);
 
   const handleCategorySelect = useCallback(
     (category: Category) => {
@@ -130,8 +139,12 @@ export default function TaskCategoryScreen() {
       <Text className="text-body text-text-secondary leading-[22px]">
         {t('CategorySelectionScreen.intro')}
       </Text>
+      <PostingGuidanceCard
+        titleKey="PostingGuidance.structuredTitle"
+        bodyKey="PostingGuidance.structuredBody"
+        testID="posting-guidance-structured"
+      />
 
-      {/* Category list */}
       {isLoading ? (
         <View className="py-xl items-center" testID="category-selection-loading">
           <ActivityIndicator color={colors.primary} />
@@ -164,6 +177,10 @@ export default function TaskCategoryScreen() {
         <View style={{ gap: spacing.md }} testID="category-selection-grid">
           {categories.map((category) => {
             const visual = getCategoryVisual(category.name);
+            const categoryLabel =
+              i18n.language?.startsWith('mn') && category.name_mn
+                ? category.name_mn
+                : category.name;
             const Icon = visual.icon;
             return (
               <Touchable
@@ -177,7 +194,6 @@ export default function TaskCategoryScreen() {
                   pressed && { opacity: 0.92, transform: [{ scale: 0.98 }] },
                 ]}
               >
-                {/* Image placeholder — swap for <Image> when assets are ready */}
                 <View
                   className="rounded-md items-center justify-center overflow-hidden shrink-0"
                   style={{ width: 120, height: 80, backgroundColor: visual.tone }}
@@ -186,7 +202,7 @@ export default function TaskCategoryScreen() {
                 </View>
                 <View className="flex-1 gap-xs min-w-0">
                   <Text className="font-screen-card-title text-primary-deep" numberOfLines={1}>
-                    {category.name}
+                    {categoryLabel}
                   </Text>
                   <Text className="text-caption text-text-secondary" numberOfLines={2}>
                     {t(visual.descriptionKey)}
@@ -199,7 +215,6 @@ export default function TaskCategoryScreen() {
         </View>
       )}
 
-      {/* Featured banner */}
       <View className="p-xl overflow-hidden rounded-md bg-primary">
         <Text className="text-subtitle font-sans-bold mb-xs text-primary-foreground">
           {t('CategorySelectionScreen.featuredTitle')}

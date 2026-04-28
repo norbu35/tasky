@@ -15,7 +15,7 @@ export function SuccessOverlay({ scale }: { scale: Animated.Value }) {
   return (
     <Animated.View
       style={{ transform: [{ scale }] }}
-      className="items-center justify-center py-[48px] gap-md"
+      className="items-center justify-center py-3xl gap-md"
       testID="review-success-state"
     >
       <View

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { render, screen } from '@testing-library/react';
-import { designTokens } from '../../../../packages/design-tokens/tokens';
+import { designTokens } from '@tasky/design-tokens';
 import { App } from '../../src/App';
 import type { ApiClient } from '../../src/lib/apiClient';
 function hexToRgb(hexColor: string): [number, number, number] {
@@ -43,6 +43,7 @@ function createMockApiClient(): ApiClient {
         created_at: '2026-02-14T00:00:00Z',
       },
     }),
+    getFacebookAuthStatus: vi.fn().mockResolvedValue({ available: true }),
     getMyProfile: vi.fn().mockResolvedValue({
       id: 'user-1',
       phone: '+97699001122',
@@ -62,20 +63,26 @@ function createMockApiClient(): ApiClient {
     listCategories: vi.fn(),
     createTask: vi.fn(),
     listTasks: vi.fn(),
+    getTask: vi.fn(),
     listMyTasks: vi.fn(),
     applyToTask: vi.fn(),
+    withdrawApplication: vi.fn(),
     listTaskApplications: vi.fn(),
-    acceptApplication: vi.fn(),
     createBookingIntent: vi.fn(),
     confirmBookingIntent: vi.fn(),
+    declineBookingIntent: vi.fn(),
     initiatePayment: vi.fn(),
     listBookings: vi.fn(),
     getBooking: vi.fn(),
     cancelBooking: vi.fn(),
+    requestReschedule: vi.fn(),
+    respondReschedule: vi.fn(),
+    flagNoShow: vi.fn(),
     completeBooking: vi.fn(),
     submitReview: vi.fn(),
     getUserReviews: vi.fn(),
     raiseDispute: vi.fn(),
+    addDisputeEvidence: vi.fn(),
     getDispute: vi.fn(),
     listConversations: vi.fn(),
     listMessages: vi.fn(),
@@ -86,6 +93,14 @@ function createMockApiClient(): ApiClient {
     getVerificationUploadUrl: vi.fn(),
     submitVerification: vi.fn(),
     getVerificationStatus: vi.fn(),
+    // Wave 6: Contract hygiene
+    acceptApplication: vi.fn(),
+    markBookingDone: vi.fn(),
+    rebookBooking: vi.fn(),
+    cancelTask: vi.fn(),
+    listMyRecentLocations: vi.fn(),
+    listBookingScheduleEvents: vi.fn(),
+    logout: vi.fn(),
   };
 }
 afterEach(() => {

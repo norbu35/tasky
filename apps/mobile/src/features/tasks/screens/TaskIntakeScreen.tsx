@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 import { FormField } from '@/components/ui/FormField';
 import { Input } from '@/components/ui/Input';
+import { PostingGuidanceCard } from '@/features/tasks/components/PostingGuidance';
 
 import { SchemaFieldRenderer } from './TaskIntake.SchemaFieldRenderer';
 import { useTaskIntakeScreen } from './useTaskIntakeScreen';
@@ -33,16 +34,15 @@ export default function TaskIntakeScreen() {
       onNext={handleNext}
       onBack={goBack}
       nextLabel={t('common.continue')}
+      title={t('Intake.intakePageTitle')}
+      subtitle={t('Intake.intakeInstruction')}
       testID="SCR-CUST-003"
     >
-      <View className="gap-sm pt-sm" testID="intake-header">
-        <Text className="text-heading font-extrabold text-primary-deep">
-          {t('Intake.intakePageTitle')}
-        </Text>
-        <Text className="text-body text-text-secondary leading-relaxed">
-          {t('Intake.intakeInstruction')}
-        </Text>
-      </View>
+      <PostingGuidanceCard
+        titleKey="PostingGuidance.structuredTitle"
+        bodyKey="PostingGuidance.structuredBody"
+        testID="posting-guidance-intake-structured"
+      />
 
       <FormField label={t('Intake.intakeDescription')} errorText={descriptionError || undefined}>
         <Input

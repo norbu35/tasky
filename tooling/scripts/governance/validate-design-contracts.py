@@ -19,11 +19,36 @@ try:
     import yaml
 except ImportError:
     print("design-contracts: ERROR: pyyaml not installed. Run: pip3 install pyyaml", file=sys.stderr)
+    print("autonomous remediation:", file=sys.stderr)
+    print(" - install the missing dependency in the active environment", file=sys.stderr)
+    print(" - rerun the narrow lane: python3 tooling/scripts/governance/validate-design-contracts.py", file=sys.stderr)
     sys.exit(1)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CONTRACT = REPO_ROOT / "docs" / "design" / "component-contract.yaml"
+
+INHERITED_PROPS_BY_TYPE = {
+    "PressableProps": {
+        "accessibilityLabel",
+        "accessibilityRole",
+        "android_ripple",
+        "delayLongPress",
+        "disabled",
+        "hitSlop",
+        "onBlur",
+        "onFocus",
+        "onHoverIn",
+        "onHoverOut",
+        "onLongPress",
+        "onPress",
+        "onPressIn",
+        "onPressMove",
+        "onPressOut",
+        "pressRetentionOffset",
+        "testID",
+    }
+}
 
 
 @dataclass(frozen=True)
@@ -51,6 +76,7 @@ def prop_names(raw: Any) -> list[str]:
 
 def exports_component(source: str, name: str) -> bool:
     patterns = [
+        rf"\bexport\s+default\s+function\s+{re.escape(name)}\b",
         rf"\bexport\s+function\s+{re.escape(name)}\b",
         rf"\bexport\s+const\s+{re.escape(name)}\b",
         rf"\bexport\s+class\s+{re.escape(name)}\b",
@@ -60,14 +86,49 @@ def exports_component(source: str, name: str) -> bool:
     return any(re.search(pattern, source) for pattern in patterns)
 
 
+def documented_prop_is_inherited(source: str, runtime_name: str, prop: str) -> bool:
+    """Return true when a component props type inherits a documented prop.
+
+    Component contracts document the public API, including props inherited from
+    React Native primitives. A source text substring check alone falsely reports
+    those inherited props as missing.
+    """
+
+    interface_match = re.search(
+        rf"\binterface\s+{re.escape(runtime_name)}Props\s+extends\s+([^\{{]+)\{{",
+        source,
+        re.MULTILINE,
+    )
+    type_match = re.search(
+        rf"\btype\s+{re.escape(runtime_name)}Props\s*=\s*([^=;]+)",
+        source,
+        re.MULTILINE,
+    )
+
+    inherited_clause = ""
+    if interface_match:
+        inherited_clause += interface_match.group(1)
+    if type_match:
+        inherited_clause += f" {type_match.group(1)}"
+
+    return any(
+        inherited_type in inherited_clause and prop in props
+        for inherited_type, props in INHERITED_PROPS_BY_TYPE.items()
+    )
+
+
 def validate_component(entry: dict[str, Any], group: str) -> list[Finding]:
     findings: list[Finding] = []
     component_id = entry.get("id", "<missing id>")
     name = entry.get("name", "<missing name>")
+    runtime_name = entry.get("runtime_name", name)
+    implementation_status = str(entry.get("implementation_status", "active"))
     path_value = entry.get("path")
     required = group == "existing_components"
 
     if not path_value:
+        if implementation_status == "deferred":
+            return findings
         level = "FAIL" if required else "WARN"
         findings.append(Finding(level, f"{component_id} {name} has no implementation path."))
         return findings
@@ -79,15 +140,21 @@ def validate_component(entry: dict[str, Any], group: str) -> list[Finding]:
         return findings
 
     source = implementation.read_text(encoding="utf-8")
-    if not exports_component(source, str(name)):
+    if not exports_component(source, str(runtime_name)):
         level = "FAIL" if required else "WARN"
-        findings.append(Finding(level, f"{component_id} {name} is not exported from {relative(implementation)}."))
+        findings.append(
+            Finding(
+                level,
+                f"{component_id} {name} runtime export {runtime_name} is not exported from "
+                f"{relative(implementation)}.",
+            )
+        )
 
     missing_props = []
     for prop in prop_names(entry.get("props")):
         if prop.startswith("..."):
             continue
-        if prop not in source:
+        if prop not in source and not documented_prop_is_inherited(source, str(runtime_name), prop):
             missing_props.append(prop)
     if missing_props:
         findings.append(
@@ -118,6 +185,10 @@ def main() -> int:
             print(f" - {finding.message}")
         for finding in warnings:
             print(f" - warning: {finding.message}")
+        print("autonomous remediation:")
+        print(" - fix docs/design/component-contract.yaml or the exported component path it names")
+        print(" - implemented entries must resolve to a real exported component; future entries may stay warning-only")
+        print(" - rerun: pnpm repo:docs:check")
         return 1
 
     print(f"design-contracts: PASS ({len(warnings)} warning(s))")

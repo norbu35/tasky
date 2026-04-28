@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
+
 import { Button } from '../ui/Button';
 import { Reveal } from '../ui/Reveal';
 
@@ -44,7 +45,7 @@ export function ErrorStateTemplate({
           <Button
             label={retryLabel ?? t('error.retry')}
             onPress={onRetry}
-            style={{ marginTop: 24, alignSelf: 'stretch' }}
+            className="mt-xl self-stretch"
             testID={testID ? `${testID}-retry` : undefined}
           />
         </Reveal>
@@ -55,7 +56,7 @@ export function ErrorStateTemplate({
             label={t('error.goBack')}
             variant="outline"
             onPress={onBack}
-            style={{ marginTop: 12, alignSelf: 'stretch' }}
+            className="mt-md self-stretch"
             testID={testID ? `${testID}-back` : undefined}
           />
         </Reveal>

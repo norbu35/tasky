@@ -8,20 +8,12 @@ export function TaskerBookingDetailPage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('taskerPages.bookingDetail.title', 'Booking detail')}
-      description={t(
-        'taskerPages.bookingDetail.description',
-        'Review booking status, timeline, and support actions.',
-      )}
+      title={t('taskerPages.bookingDetail.title')}
+      description={t('taskerPages.bookingDetail.description')}
     >
       <Card>
         <CardContent className="space-y-3 p-4 text-sm text-muted-foreground">
-          <p>
-            {t(
-              'taskerPages.bookingDetail.content',
-              'Taskers can review the booking and respond to issues here.',
-            )}
-          </p>
+          <p>{t('taskerPages.bookingDetail.content')}</p>
         </CardContent>
       </Card>
     </ResponsiveDetailShell>

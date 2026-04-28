@@ -153,15 +153,10 @@ export function AuthPage() {
   }, [facebookAppId]);
 
   useEffect(() => {
-    const apiBase =
-      (import.meta.env['VITE_API_BASE_URL'] as string | undefined)?.replace(/\/$/, '') ?? '';
     const check = async () => {
       try {
-        const res = await fetch(`${apiBase}/api/v1/auth/facebook/status`);
-        if (res.ok) {
-          const data = (await res.json()) as { available: boolean };
-          setFacebookOutage(!data.available);
-        }
+        const data = await apiClient.getFacebookAuthStatus();
+        setFacebookOutage(!data.available);
       } catch {
         // silently ignore — banner stays in last known state
       }
@@ -169,11 +164,11 @@ export function AuthPage() {
     void check();
     const id = setInterval(() => void check(), 30_000);
     return () => clearInterval(id);
-  }, []);
+  }, [apiClient]);
 
   const handleFacebookLogin = async (): Promise<void> => {
     if (!window.FB) {
-      toast.error(t('auth.loginUnavailable', 'Facebook login is unavailable right now.'));
+      toast.error(t('auth.loginUnavailable'));
       return;
     }
 
@@ -213,7 +208,7 @@ export function AuthPage() {
     try {
       const devPhone =
         role === 'ADMIN' ? '+97694000001' : role === 'TASKER' ? '+97693000001' : '+97692000001';
-      const session = await apiClient.devLogin(devPhone, role as 'CUSTOMER' | 'TASKER');
+      const session = await apiClient.devLogin(devPhone, role);
       setSession(session);
       setProfile(null);
       await loadProfile(session.accessToken);
@@ -227,23 +222,16 @@ export function AuthPage() {
 
   return (
     <main className="min-h-screen w-full flex bg-background font-sans overflow-hidden">
-      <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 text-white relative overflow-hidden bg-gradient-to-br from-primary-deep via-primary to-primary-deep">
+      <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 text-primary-foreground relative overflow-hidden bg-gradient-to-br from-primary-deep via-primary to-primary-deep">
         {/* Background Image & Overlay */}
-        <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(105deg,transparent_20%,rgba(255,255,255,0.4)_35%,rgba(255,255,255,0.4)_40%,transparent_55%)] mix-blend-overlay opacity-50" />
         <img
           src="/images/auth-bg.png"
-          alt={t('auth.heroImageAlt', 'Premium abstract interior')}
+          alt={t('auth.heroImageAlt')}
           className="pointer-events-none absolute inset-0 z-0 w-full h-full object-cover mix-blend-overlay opacity-50"
         />
 
-        <div className="absolute top-[-10%] left-[-30%] w-[50vw] h-[50vw] rounded-full bg-accent/40 blur-[130px] z-0 mix-blend-screen" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-secondary/20 blur-[100px] z-0 mix-blend-screen" />
-
-        <div className="relative z-10 flex items-center gap-4">
-          <div className="p-3.5 bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-[var(--shadow-elevated)]">
-            <Shield className="w-6 h-6 text-accent" strokeWidth={2.5} />
-          </div>
-          <span className="text-3xl font-display font-extrabold tracking-tight">Tasky</span>
+        <div className="relative z-10 flex items-center">
+          <img src="/logo.png" alt="" className="h-20 w-20 rounded-2xl shadow-elevated" />
         </div>
 
         <div className="relative z-10 max-w-lg mt-auto mb-20 space-y-6">
@@ -253,7 +241,7 @@ export function AuthPage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-5xl font-display font-medium leading-[1.1]"
           >
-            {t('auth.trustedNetwork', 'Your trusted network for everyday tasks.')}
+            {t('auth.trustedNetwork')}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -261,21 +249,16 @@ export function AuthPage() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-lg text-primary-foreground/80 font-medium"
           >
-            {t(
-              'auth.connectSecurely',
-              'Connect with verified professionals securely. Fast, reliable, and completely guaranteed.',
-            )}
+            {t('auth.connectSecurely')}
           </motion.p>
         </div>
 
-        <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between border-t border-white/20 pt-8 gap-4 text-sm text-primary-foreground/60 w-full">
-          <p>{t('auth.copyright', '© 2026 Tasky Network')}</p>
+        <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between border-t border-primary-foreground/20 pt-8 gap-4 text-sm text-primary-foreground/60 w-full">
+          <p>{t('auth.copyright')}</p>
           <div className="flex items-center gap-4">
             <p className="hidden sm:block aria-hidden">
-              {t('auth.sdkBindingLabel', 'SDK Binding')}:{' '}
-              {contractLoaded
-                ? t('auth.sdkBindingVerified', 'Verified')
-                : t('auth.sdkBindingOffline', 'Offline')}
+              {t('auth.sdkBindingLabel')}:{' '}
+              {contractLoaded ? t('auth.sdkBindingVerified') : t('auth.sdkBindingOffline')}
             </p>
             <LanguageSwitcher className="hover:bg-foreground/10" />
           </div>
@@ -284,11 +267,8 @@ export function AuthPage() {
 
       <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 relative z-10">
         <div className="w-full max-w-md space-y-8">
-          <div className="lg:hidden flex items-center gap-3 mb-8">
-            <div className="p-2 bg-primary/10 rounded-xl">
-              <Shield className="w-6 h-6 text-primary" />
-            </div>
-            <span className="text-2xl font-display font-bold text-foreground">Tasky</span>
+          <div className="lg:hidden mb-8 flex items-center">
+            <img src="/logo.png" alt="" className="h-14 w-14 rounded-xl shadow-card" />
           </div>
 
           <motion.div
@@ -296,17 +276,14 @@ export function AuthPage() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Card className="border-none shadow-[var(--shadow-deep)] rounded-[2rem] overflow-hidden backdrop-blur-3xl bg-white/90 ring-1 ring-black/5">
+            <Card className="border-none shadow-deep rounded-2xl overflow-hidden backdrop-blur-3xl bg-card/90 ring-1 ring-primary-deep/5">
               <CardHeader className="space-y-3 pb-8 pt-10 px-10 border-b border-border/40 bg-gradient-to-b from-muted/50 to-transparent">
-                <h1 className="sr-only">{t('auth.facebookLoginTitle', 'Facebook login')}</h1>
+                <h1 className="sr-only">{t('auth.facebookLoginTitle')}</h1>
                 <CardTitle className="text-3xl font-display font-bold tracking-tight">
-                  {t('auth.welcomeBack', 'Welcome back')}
+                  {t('auth.welcomeBack')}
                 </CardTitle>
                 <CardDescription className="text-base font-medium text-muted-foreground leading-relaxed">
-                  {t(
-                    'auth.continueDesc',
-                    'Continue with Facebook to log in or create your Tasky account.',
-                  )}
+                  {t('auth.continueDesc')}
                 </CardDescription>
               </CardHeader>
 
@@ -314,58 +291,34 @@ export function AuthPage() {
                 {facebookOutage && (
                   <div className="flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
                     <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-                    <span>
-                      {t(
-                        'auth.facebookOutage',
-                        "Facebook login is temporarily unavailable. We're working on it.",
-                      )}
-                    </span>
+                    <span>{t('auth.facebookOutage')}</span>
                   </div>
                 )}
                 <Button
-                  className="w-full h-14 text-base rounded-2xl font-bold shadow-[var(--shadow-fab)] transition-all duration-300 hover:scale-[1.02] bg-gradient-to-r from-primary-deep to-primary"
+                  className="w-full h-14 text-base rounded-2xl font-bold shadow-fab transition-all duration-300 hover:scale-[1.02] bg-gradient-to-r from-primary-deep to-primary"
                   disabled={loading || !facebookReady || facebookOutage}
                   onClick={handleFacebookLogin}
                   type="button"
-                  aria-label={t('auth.continueFacebook', 'Continue with Facebook')}
+                  aria-label={t('auth.continueFacebook')}
                 >
                   {loading ? (
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   ) : (
                     <FacebookIcon className="mr-2 h-5 w-5 text-primary-foreground" />
                   )}
-                  {t('auth.continueFacebook', 'Continue with Facebook')}
+                  {t('auth.continueFacebook')}
                   {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
-                </Button>
-
-                <div className="relative my-4">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border"></div>
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase tracking-[0.075em]">
-                    <span className="bg-card px-2 text-text-tertiary font-medium tracking-[0.075em]">
-                      {t('auth.later', 'Later')}
-                    </span>
-                  </div>
-                </div>
-
-                <Button
-                  variant="secondary"
-                  className="w-full text-muted-foreground opacity-50"
-                  disabled={true}
-                >
-                  {t('auth.continuePhone', 'Phone verification disabled for MVP')}
                 </Button>
 
                 {!facebookReady && !facebookOutage && (
                   <p className="text-sm text-muted-foreground text-center">
-                    {t('auth.initializing', 'Initializing Facebook login...')}
+                    {t('auth.initializing')}
                   </p>
                 )}
 
                 {!facebookAppId && !facebookReady && import.meta.env.DEV && (
                   <p className="text-sm text-muted-foreground text-center">
-                    {t('auth.loginUnavailable', 'Facebook login is unavailable right now.')}
+                    {t('auth.loginUnavailable')}
                   </p>
                 )}
               </CardContent>
@@ -383,8 +336,8 @@ export function AuthPage() {
             >
               <div className="flex items-center gap-4">
                 <div className="h-px bg-border flex-1" />
-                <span className="text-xs font-semibold uppercase tracking-[0.075em] text-muted-foreground">
-                  {t('auth.devLogin', 'Local dev login')}
+                <span className="text-overline font-semibold uppercase text-muted-foreground">
+                  {t('auth.devLogin')}
                 </span>
                 <div className="h-px bg-border flex-1" />
               </div>
@@ -396,7 +349,7 @@ export function AuthPage() {
                   disabled={loading}
                 >
                   <User className="w-5 h-5 text-muted-foreground" />
-                  <span className="text-xs">{t('auth.loginAsCustomer', 'Customer')}</span>
+                  <span className="text-xs">{t('auth.loginAsCustomer')}</span>
                 </Button>
                 <Button
                   variant="ghost"
@@ -405,7 +358,7 @@ export function AuthPage() {
                   disabled={loading}
                 >
                   <Wrench className="w-5 h-5 text-muted-foreground" />
-                  <span className="text-xs">{t('auth.loginAsTasker', 'Tasker')}</span>
+                  <span className="text-xs">{t('auth.loginAsTasker')}</span>
                 </Button>
                 <Button
                   variant="ghost"
@@ -414,7 +367,7 @@ export function AuthPage() {
                   disabled={loading}
                 >
                   <Shield className="w-5 h-5 text-muted-foreground" />
-                  <span className="text-xs">{t('auth.loginAsAdmin', 'Admin')}</span>
+                  <span className="text-xs">{t('auth.loginAsAdmin')}</span>
                 </Button>
               </div>
             </motion.div>

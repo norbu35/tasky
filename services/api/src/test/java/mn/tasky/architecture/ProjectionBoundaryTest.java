@@ -19,6 +19,7 @@ class ProjectionBoundaryTest {
     void projectionPlaneMarkerExists() {
         assertMarkerExists("mn.tasky.projection.PackageMarker");
         assertMarkerExists("mn.tasky.projection.admin.PackageMarker");
+        assertMarkerExists("mn.tasky.projection.publicfeed.PackageMarker");
     }
 
     @ArchTest

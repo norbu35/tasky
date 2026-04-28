@@ -4,6 +4,18 @@ name: 'Post Task — Photo Upload'
 route: '/(customer)/tasks/new/photos'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-004
+  prd_refs:
+    - REQ-P1-TASK-02
+    - REQ-P1-TASK-03
+  journey_refs:
+    - JRN-CUST-01:step-4
+    - JRN-CUST-01-A2
+    - JRN-CUST-01-A4
+  scenario_refs:
+    - SCN-TASK-006
 template: form_wizard
 figma_page: 'Customer/Post Task Photo Upload'
 feature: 'task_posting'
@@ -12,6 +24,29 @@ layout:
   template: form_wizard
   density: default
   structure: 'safe_area -> nav_header(back + title) -> step_indicator(step 3/7) -> scrollview(photo_grid + helper) -> bottom_nav(back + next)'
+
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: guided
+  proof_scope: customer_posting_wizard_surface
+  cue_scope: flow_level_cues_not_required_on_every_step
+  trust_cues:
+    - structured_scope
+    - pricing_mode_clarity
+    - address_privacy
+    - deterministic_summary
+    - next_step_guidance
+  non_goals:
+    - no_runtime_ai_posting
+    - no_payment_protection_claims
+    - no_open_ended_pre_booking_chat
+  airbnb_scaffold:
+    - guided_creation_step_rhythm
+    - progressive_disclosure
+    - bottom_sheet_pickers
+    - sticky_cta
+    - review_before_post
+    - edit_in_place_summary_rows
 
 components:
   - id: COMP-STEPINDICATOR

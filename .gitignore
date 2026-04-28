@@ -16,14 +16,33 @@
 .serena/cache/
 .serena/memories/
 
+# Graphify knowledge graph
+graphify-out/*
+!graphify-out/GRAPH_REPORT.md
+!graphify-out/graph.json
+!graphify-out/wiki/
+!graphify-out/wiki/**
+
 # Claude Code local state
 .claude/
+
+# Codex local state
+.codex
 
 # Misc local files
 .ignore
 postflight.json
 monorepo-hardening-report.md
-.pi/
+.pi/*
+!.pi/README.md
+!.pi/settings.json
+!.pi/skills/
+!.pi/skills/**
+!.pi/prompts/
+!.pi/prompts/**
+.pi/extensions/
+.pi/sessions/
+sessions/
 
 # Generated audit / analysis snapshots (session artifacts)
 docs/DEPENDENCY_VERSION_MATRIX.md
@@ -60,6 +79,7 @@ repomix-*.xml
 node_modules/
 apps/*/node_modules/
 packages/*/node_modules/
+*.tsbuildinfo
 apps/*/dist/
 packages/*/dist/
 .expo/
@@ -69,6 +89,7 @@ apps/*/test-results/
 
 # Local env overrides
 .env
+apps/*/.env.local
 
 # Web app local env (may contain real Facebook App ID)
 apps/web/.env.local

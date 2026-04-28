@@ -36,11 +36,6 @@ export default function RoleSelectScreen() {
     customer: t('RoleSelectScreen.copy1'),
     tasker: t('RoleSelectScreen.copy2'),
   };
-  const roleCopy = {
-    customer: t('RoleSelectScreen.copy3'),
-    tasker: t('RoleSelectScreen.copy4'),
-  } as const;
-
   const handleConfirm = () => {
     if (!selectedRole) return;
     setIsConfirming(true);
@@ -96,7 +91,7 @@ export default function RoleSelectScreen() {
           </View>
           <View className="flex-1">
             <Text className="text-title font-sans-semibold" style={{ color: colors.primaryDeep }}>
-              {t(titleKey, roleLabels[role])}
+              {t(titleKey)}
             </Text>
             <Text
               className="text-label mt-xs"
@@ -105,7 +100,7 @@ export default function RoleSelectScreen() {
                 lineHeight: ROLE_SELECT_SURFACE.descriptionLineHeight,
               }}
             >
-              {t(descriptionKey, roleCopy[role])}
+              {t(descriptionKey)}
             </Text>
           </View>
           {isSelected ? (
@@ -184,7 +179,6 @@ export default function RoleSelectScreen() {
         >
           {t('auth.roleSelection.confirmSheetMessage', {
             role: roleLabel,
-            defaultValue: `${roleLabel} болохоо баталгаажуулна уу. Тохиргооноос дараа солих боломжтой.`,
           })}
         </Text>
       </ModalSheet>

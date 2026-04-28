@@ -1,3 +1,7 @@
+---
+description: Index file for the tooling package
+---
+
 # Tasky Repo Skills
 
 Use this file when the task touches `tooling/skills/**`.
@@ -14,9 +18,13 @@ Repo skills are harness-agnostic agent workflows stored in the repository.
 ## Current Skills
 
 - `tooling/skills/doc-claims-remediation/SKILL.md`
-  Use when `validate-doc-claims.py` fails or when editing architecture / maintenance docs or backend module `AGENTS.md` files that name code, schema, config, or contract surfaces.
+  Use reactively when `validate-doc-claims.py` fails, or proactively when editing architecture / maintenance docs or backend module `AGENTS.md` files that name live code, schema, config, workflow, or contract surfaces. Includes a proactive audit helper (`pnpm repo:docs:claims:audit`) for discovering load-bearing references that lack claim blocks.
 - `tooling/skills/intake-to-prd/SKILL.md`
-  Use when a request, bug, or execution brief may change product behavior and needs deterministic PRD-first routing.
+  Use when a request, bug, or execution brief may change product behavior and needs deterministic PRD-first routing. Includes a PRD diff helper (`pnpm repo:prd:diff-ids`) that extracts changed requirement IDs from the narrowest matching git diff for the current workflow state.
+- `tooling/skills/design-surface-drift/SKILL.md`
+  Use when editing `docs/design/screen-graph.yaml`, `docs/design/journey-catalog.yaml`, or `docs/design/domain-lifecycles.yaml`, or when `pnpm repo:design:check` / `pnpm repo:docs:check` fails on one of those structural validators. Do not route unrelated design-doc work here by default.
+- `tooling/skills/scenario-fidelity/SKILL.md`
+  Report-only triage for likely weak tests behind covered scenarios. Use `pnpm verify:scenario:fidelity` after writing or strengthening scenario-linked tests, or before proposing non-blocking nightly wiring. Not a blocking gate in v1.
 
 ## Rules
 

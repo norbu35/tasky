@@ -27,7 +27,7 @@ public class MessagingPublicCompositionService {
         if (hasMore) {
             EnrichedConversation last = pageData.getLast();
             Instant cursorTime = last.lastMessageAt() != null ? last.lastMessageAt() : last.createdAt();
-            nextCursor = cursorTime.toString();
+            nextCursor = cursorTime + "|" + last.id();
         }
         List<Map<String, Object>> data =
                 pageData.stream().map(this::conversationResponse).toList();
@@ -40,7 +40,7 @@ public class MessagingPublicCompositionService {
         List<Message> pageMessages = hasMore ? messages.subList(0, limit) : messages;
         List<Map<String, Object>> data =
                 pageMessages.stream().map(this::messageResponse).toList();
-        String nextCursor = hasMore ? pageMessages.getLast().id() : null;
+        String nextCursor = hasMore ? messageCursor(pageMessages.getLast()) : null;
         return new MessagingMessagePage(data, nextCursor, hasMore);
     }
 
@@ -52,6 +52,10 @@ public class MessagingPublicCompositionService {
         response.put("content", message.content());
         response.put("sent_at", message.sentAt().toString());
         return response;
+    }
+
+    private static String messageCursor(Message message) {
+        return message.sentAt().toString() + "|" + message.id();
     }
 
     private Map<String, Object> conversationResponse(EnrichedConversation conversation) {

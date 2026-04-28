@@ -1,103 +1,115 @@
 # Screen Spec: App Update
 screen_id: SCR-INFRA-002
-name: "App Update"
-route: null
+name: 'App Update'
+route: '/(shared)/app-update'
+presentation:
+  type: route_backed_full_screen
+  invocation: 'Shown after launch version check when a soft or force update is required'
 role: [customer, tasker]
-phase: "0-1"
+phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-INFRA-002
+  prd_refs:
+    - NFR-RELI-03
+    - NFR-PERF-01
+  journey_refs:
+    - JRN-INFRA-01-P3
+  scenario_refs: []
 template: error_state
-figma_page: "Infrastructure/App Update"
-feature: "infrastructure"
+figma_page: 'Infrastructure/App Update'
+feature: 'infrastructure'
 
 layout:
   template: error_state
   density: comfortable
-  structure: "safe_area -> centered(icon + message + cta)"
+  structure: 'safe_area -> centered(icon + message + cta)'
 
 components:
   - id: COMP-EMPTYSTATE
-    usage: "Full-screen prompt with app icon illustration, update headline and description"
+    usage: 'Full-screen prompt with app icon illustration, update headline and description'
     props:
-      illustration: "app_update"
-      headline: "Шинэ хувилбар гарлаа"
-      description: "Аппын шинэ хувилбар бэлэн болсон байна"
-      ctaLabel: "Шинэчлэх"
+      illustration: 'app_update'
+      headline: 'Шинэ хувилбар гарлаа'
+      description: 'Аппын шинэ хувилбар бэлэн болсон байна'
+      ctaLabel: 'Шинэчлэх'
     variant: error
 
   - id: COMP-BUTTON
-    usage: "Primary CTA to open App Store / Play Store for update"
+    usage: 'Primary CTA to open App Store / Play Store for update'
     props:
-      label: "Шинэчлэх"
+      label: 'Шинэчлэх'
       variant: primary
       size: lg
     variant: primary
 
   - id: COMP-BUTTON
-    usage: "Secondary dismiss button for soft update only (ghost variant)"
+    usage: 'Secondary dismiss button for soft update only (ghost variant)'
     props:
-      label: "Дараа нь"
+      label: 'Дараа нь'
       variant: ghost
       size: md
     variant: ghost
 
 states:
   - id: soft_update
-    description: "A newer version is available but current version still supported; user can dismiss"
+    description: 'A newer version is available but current version still supported; user can dismiss'
     components_visible: [COMP-EMPTYSTATE, COMP-BUTTON.primary, COMP-BUTTON.ghost]
     components_hidden: []
 
   - id: force_update
-    description: "Current version is below minimum supported; user must update to continue"
+    description: 'Current version is below minimum supported; user must update to continue'
     components_visible: [COMP-EMPTYSTATE, COMP-BUTTON.primary]
     components_hidden: [COMP-BUTTON.ghost]
 
 copy:
   - key: headline_soft
-    mn: "Шинэ хувилбар гарлаа"
-    en: "New version available"
+    mn: 'Шинэ хувилбар гарлаа'
+    en: 'New version available'
     max_chars: 30
 
   - key: headline_force
-    mn: "Шинэчлэлт шаардлагатай"
-    en: "Update required"
+    mn: 'Шинэчлэлт шаардлагатай'
+    en: 'Update required'
     max_chars: 30
 
   - key: description_soft
-    mn: "Аппын шинэ хувилбар бэлэн болсон байна. Шинэчилж илүү сайн туршлагатай болоорой"
-    en: "A new version is available. Update for a better experience"
+    mn: 'Аппын шинэ хувилбар бэлэн болсон байна. Шинэчилж илүү сайн туршлагатай болоорой'
+    en: 'A new version is available. Update for a better experience'
     max_chars: 100
 
   - key: description_force
-    mn: "Аппыг үргэлжлүүлэн ашиглахын тулд шинэчлэлт хийх шаардлагатай"
-    en: "An update is required to continue using the app"
+    mn: 'Аппыг үргэлжлүүлэн ашиглахын тулд шинэчлэлт хийх шаардлагатай'
+    en: 'An update is required to continue using the app'
     max_chars: 100
 
   - key: cta_update
-    mn: "Шинэчлэх"
-    en: "Update"
+    mn: 'Шинэчлэх'
+    en: 'Update'
     max_chars: 20
 
   - key: cta_later
-    mn: "Дараа нь"
-    en: "Later"
+    mn: 'Дараа нь'
+    en: 'Later'
     max_chars: 20
 
 api_endpoints:
   - method: GET
-    path: "/system/version"
-    purpose: "Check minimum and latest app version on launch"
+    path: '/system/version'
+    purpose: 'Check minimum and latest app version on launch'
 
 analytics_events:
-  - event: "app_update_shown"
-    trigger: "Update screen displayed (with type: soft or force)"
-  - event: "app_update_tapped"
+  - event: 'app_update_shown'
+    trigger: 'Update screen displayed (with type: soft or force)'
+  - event: 'app_update_tapped'
     trigger: "User taps 'Update' button to open store"
-  - event: "app_update_dismissed"
+  - event: 'app_update_dismissed'
     trigger: "User taps 'Later' on soft update"
 
 acceptance_criteria:
   - "Soft update shows update CTA and a dismissible 'Later' ghost button"
-  - "Force update hides the dismiss button; user cannot proceed without updating"
+  - 'Force update hides the dismiss button; user cannot proceed without updating'
   - "Tapping 'Update' opens the platform-specific app store via external link"
-  - "Force update screen is shown at system z-index (60) above all other content"
-  - "Version check happens on every app launch via GET /system/version"
-  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - 'Force update screen is shown at system z-index (60) above all other content'
+  - 'Version check happens on every app launch via GET /system/version'
+  - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

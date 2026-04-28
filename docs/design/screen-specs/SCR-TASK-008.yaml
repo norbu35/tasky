@@ -4,6 +4,18 @@ name: 'Verification — Approved'
 route: '/(tasker)/verification/approved'
 role: [tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-008
+  prd_refs:
+    - REQ-P1-SAFE-02
+    - REQ-P1-MATCH-01
+    - REQ-P1-NOTIF-06
+  journey_refs:
+    - JRN-TASK-01:step-7
+  scenario_refs:
+    - SCN-VERIF-004
+    - SCN-NOTIF-006
 template: success_celebration
 figma_page: 'Tasker/Verification Approved'
 feature: 'verification'
@@ -33,7 +45,6 @@ components:
     usage: "Verification badge display showing the tasker's new verified status"
     props:
       isVerified: true
-      isPro: false
       size: 'lg'
     variant: default
 

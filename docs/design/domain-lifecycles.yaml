@@ -32,7 +32,8 @@ entities:
         trigger: customer_selects_applicant
         guard: applicant.status == APPLIED, customer accepts liability disclaimer
         side_effects:
-          - create booking_intent(PENDING)
+          - create booking_intent(PENDING) with selected application, accepted liability
+            disclaimer, and candidate agreed price
           - mark application as SELECTED
           - notify selected Tasker
           - start 4-hour response timer
@@ -41,11 +42,16 @@ entities:
         source: OPEN
         target: ASSIGNED
         trigger: selected_tasker_confirms_selection
-        guard: active booking intent exists and selected Tasker accepts within SLA
+        guard: active booking intent exists and selected Tasker accepts within the default
+          four-hour response window
         side_effects:
           - create confirmed booking record
           - reject remaining applicants
+          - lock agreed booking price on the booking record
+          - persist liability-disclaimer acceptance on the booking record
           - reveal exact address to Tasker
+          - create or enable platform-mediated conversation for the confirmed, price-locked booking
+          - surface locked-price and intake-scope baseline guidance to both parties
           - cancel no-qualified-application evaluation window
         phase: 0-1
       - id: TASK-T04
@@ -65,7 +71,7 @@ entities:
         guard: tasker_marked_done == true
         side_effects:
           - booking → COMPLETED
-          - trigger review prompts for both parties
+          - trigger review debt and prompts for both parties
           - record completion metrics
         phase: 0-1
       - id: TASK-T07
@@ -85,6 +91,7 @@ entities:
         side_effects:
           - booking → CANCELLED
           - record reliability incident if < 4h to schedule
+          - create review debt if cancellation is fault-attributed
         phase: 0-1
       - id: TASK-T09
         source: ASSIGNED
@@ -94,16 +101,18 @@ entities:
         side_effects:
           - booking → CANCELLED
           - record Tasker strike (3 in 30d → 7d suspension)
+          - create review debt unless safety/fraud handling defers fault attribution
           - task re-opens for applications
         phase: 0-1
       - id: TASK-T10
         source: ASSIGNED
         target: NO_SHOW
         trigger: counterparty_flags_no_show
-        guard: schedule_start + 15min elapsed, no check-in in 30min, no accepted reschedule
+        guard: schedule_start + 1h elapsed, no check-in in 30min, no accepted reschedule
         side_effects:
           - booking → NO_SHOW
           - enter admin reliability review
+          - trigger review debt and prompts for both parties
           - 2+ no-shows in 28d → strike review
         phase: 0-1
       - id: TASK-T11
@@ -116,6 +125,16 @@ entities:
           - sanitize task payload for off-platform distribution
           - mark intervention_type=external_distribution
           - persist assisted-distribution event for KPI exclusion from self-serve reporting
+        phase: 0-1
+      - id: TASK-T12
+        source: ASSIGNED
+        target: COMPLETED
+        trigger: completion_timeout_auto_completes
+        guard: tasker_marked_done == true, configured completion timeout elapsed, reminder attempts sent
+        side_effects:
+          - booking → COMPLETED
+          - trigger review debt and prompts for both parties
+          - record completion metrics with auto_completed marker
         phase: 0-1
     business_rules:
       - Pricing mode must be either budget or quote
@@ -149,8 +168,9 @@ entities:
         guard: task transitions OPEN → ASSIGNED
         side_effects:
           - create booking record
+          - lock agreed booking price and liability-disclaimer acceptance
           - reveal exact address to Tasker
-          - schedule no-show reminder at start +10min
+          - schedule no-show reminder at start +30min
         phase: 0-1
       - id: BOOK-T02
         source: ASSIGNED
@@ -169,7 +189,7 @@ entities:
         guard: tasker_marked_done == true
         side_effects:
           - task → COMPLETED
-          - trigger bilateral review prompts
+          - trigger bilateral review debt and prompts
         phase: 0-1
       - id: BOOK-T04
         source: ASSIGNED
@@ -178,6 +198,7 @@ entities:
         guard: booking.status == ASSIGNED
         side_effects:
           - record reliability incident if < 4h to schedule
+          - create review debt if cancellation is fault-attributed
           - 'first incident in 28d: warning only'
           - '2 incidents in 28d: ranking penalty + strike review'
         phase: 0-1
@@ -189,16 +210,18 @@ entities:
         side_effects:
           - task → OPEN (re-opens for applications)
           - record Tasker cancellation strike
+          - create review debt unless safety/fraud handling defers fault attribution
           - 3 cancellations in 30d → 7-day suspension
         phase: 0-1
       - id: BOOK-T06
         source: ASSIGNED
         target: NO_SHOW
         trigger: counterparty_flags_no_show
-        guard: schedule_start + 15min, no check-in in 30min, no accepted reschedule
+        guard: schedule_start + 1h, no check-in in 30min, no accepted reschedule
         side_effects:
           - task → NO_SHOW
           - enter admin reliability review
+          - trigger bilateral review debt and prompts
           - 2+ no-shows in 28d → strike review
         phase: 0-1
       - id: BOOK-T07
@@ -234,20 +257,34 @@ entities:
         source: ASSIGNED
         target: ASSIGNED
         trigger: pre_noshow_reminder
-        guard: schedule_start + 10min elapsed
+        guard: schedule_start + 30min elapsed
         side_effects:
           - push both parties to update status
         phase: 0-1
+      - id: BOOK-T11
+        source: ASSIGNED
+        target: COMPLETED
+        trigger: completion_timeout_auto_completes
+        guard: tasker_marked_done == true, configured timeout elapsed, reminder attempts sent
+        side_effects:
+          - task → COMPLETED
+          - notify both parties that the booking auto-completed
+          - trigger bilateral review debt and prompts
+          - record completion as auto-completed rather than customer-confirmed
+        phase: 0-1
     business_rules:
       - Booking is separate from Task and begins only after the selected Tasker accepts
-        within SLA
+        within the default four-hour response window
       - Free cancellation applies more than 4 hours before schedule
       - Late cancellation records a reliability incident
       - Tasker cancel re-opens the task and records a strike
+      - Review debt follows completed, no-show, and fault-attributed cancellation outcomes
       - Chat-only schedule changes do not affect timers
       - Reschedule requires counterparty acceptance
       - Timeline events are immutable audit records
       - Direct settlement is the launch default
+      - Completion silence reminders use push notifications where the customer has a device token; SMS is not required for the launch completion nudge
+      - The locked booking price and intake scope are the baseline agreement; material, supply, or scope changes should be kept in platform-mediated chat or support evidence
   application:
     description: Tasker's expression of interest in a task
     states:
@@ -256,19 +293,22 @@ entities:
       - ACCEPTED
       - DECLINED
       - EXPIRED
+      - WITHDRAWN
     initial: APPLIED
     terminal:
       - ACCEPTED
       - DECLINED
       - EXPIRED
+      - WITHDRAWN
     transitions:
       - id: APP-T01
         source: null
         target: APPLIED
         trigger: tasker_applies
         guard: tasker.verification == APPROVED, task.status == OPEN, user is not banned
-          or suspended
+          or suspended, pricing response is valid for task pricing mode
         side_effects:
+          - persist structured application note and pricing response
           - increment task.application_count
           - notify customer
         phase: 0-1
@@ -299,6 +339,7 @@ entities:
         guard: within 4-hour response window
         side_effects:
           - close booking intent
+          - task remains OPEN and selectable from remaining applicants
           - prompt customer to select next applicant
         phase: 0-1
       - id: APP-T05
@@ -308,6 +349,7 @@ entities:
         guard: 4-hour window elapsed without response
         side_effects:
           - expire booking intent
+          - task remains OPEN and selectable from remaining applicants
           - prompt customer to select next applicant
         phase: 0-1
       - id: APP-T06
@@ -326,12 +368,25 @@ entities:
         side_effects:
           - notify Tasker
         phase: 0-1
+      - id: APP-T08
+        source: APPLIED
+        target: WITHDRAWN
+        trigger: tasker_withdraws_application
+        guard: task.status == OPEN, application not yet selected
+        side_effects:
+          - mark application as withdrawn
+          - remove withdrawn application from customer selectable list
+          - notify customer that an application was withdrawn
+        phase: 0-1
     business_rules:
       - Tasker must be verified to apply
+      - 'Application pricing response follows the task pricing mode: budget acceptance or one quote'
+      - 'Category-specific vetting and service-area preferences are not application gates in Phase 1'
       - Customers can review all applications; the UI may optionally highlight a suggested
         subset
       - Selected Tasker has the default 4-hour window to accept or decline
       - Non-selected applications close automatically once a booking is confirmed
+      - Taskers may withdraw an application before customer selection
   verification:
     description: Tasker identity verification process
     states:
@@ -408,7 +463,7 @@ entities:
         source: null
         target: OPEN
         trigger: party_raises_dispute
-        guard: booking ASSIGNED or within the allowed post-completion window, with evidence
+        guard: booking ASSIGNED or within 24 hours after completion, with evidence
           attached or grace path opened
         side_effects:
           - create dispute record
@@ -464,16 +519,18 @@ entities:
         source: OPEN
         target: CLOSED_INSUFFICIENT_EVIDENCE
         trigger: evidence_timeout
-        guard: no evidence provided after the grace reminder window
+        guard: no evidence provided within 24 hours after the evidence reminder
         side_effects:
           - auto-close dispute
           - notify raising party
         phase: 0-1
     business_rules:
-      - Can raise during ASSIGNED or within the allowed post-completion window
-      - 'At least 1 evidence artifact required: chat, photo, or written timeline'
-      - Grace-path disputes may close as insufficient evidence if evidence is not provided
-      - Open dispute triggers review hard lock for both parties
+      - Can raise during ASSIGNED or within 24 hours after completion
+      - Disputes can be submitted with evidence, or without evidence only into the
+        evidence-needed grace path
+      - Grace-path disputes may close as insufficient evidence if evidence is not provided within 24 hours after the evidence reminder
+      - Open disputes do not create review debt; review gates follow reviewable terminal
+        outcomes only
       - Dispute resolution affects trust metrics
       - Admin can resolve from both OPEN and ESCALATED states
       - 'Evidence types: chat excerpt, photo, written timeline'

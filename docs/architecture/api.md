@@ -119,6 +119,14 @@ table: domain_outbox_events
 required_columns: [id, event_type, payload, status, attempts, created_at]
 ```
 
+```claim config-key
+key: tasky.automation.broker.enabled
+```
+
+```claim symbol-exists
+class: mn.tasky.admin.api.OutboxReplayController
+```
+
 **Handler dispatch:**
 
 1. `EventWorkerConsumer` (RabbitMQ listener) dispatches to the registered `EventHandler` by event type.
@@ -159,6 +167,22 @@ mn.tasky.<module>.provider.<ConcreteProvider>          ← @ConditionalOnPropert
 | `GeocodingProvider`                    | `DistrictGeocodingProvider`                   | `tasky.location.geocoding.provider` |
 | `StorageProvider` / `S3StorageService` | S3/MinIO                                      | —                                   |
 
+```claim config-key
+key: tasky.push.provider
+```
+
+```claim config-key
+key: tasky.notification.sms.provider
+```
+
+```claim config-key
+key: tasky.auth.oauth.provider
+```
+
+```claim config-key
+key: tasky.location.geocoding.provider
+```
+
 Deferred adapters for payment, escrow, payout, alternate auth, or LLM-assisted copy may exist in the codebase, but they are not part of the Phase 1 runtime contract and must stay disabled unless the PRD and downstream contracts are updated first.
 
 **Boundary rules (ArchUnit-enforced):**
@@ -169,11 +193,12 @@ Deferred adapters for payment, escrow, payout, alternate auth, or LLM-assisted c
 
 ### 1.1.5 Projection (Read-Model Optimization)
 
-**Intent.** Admin list and queue queries go through dedicated projection read models rather than
-directly querying domain tables.
+**Intent.** High-read list and queue queries go through dedicated projection read models rather than
+composing rich domain tables on every row.
 
-Projections live under `mn.tasky.projection.admin` and are consumed only by `runtime.adminapi.composition`
-services. They are derived read models — they must not depend on inbound adapters (`api`, `scheduling`).
+Projections live under `mn.tasky.projection.*` packages and are consumed only by runtime composition
+services. Admin queues use `projection.admin`; the public task feed uses `projection.publicfeed`. They are
+derived read models — they must not depend on inbound adapters (`api`, `scheduling`).
 
 **Enforcement.** `ProjectionBoundaryTest`.
 
@@ -217,6 +242,10 @@ consistent tracing context.
 - `JobContext` → derived from WorkflowContext. Exists as a type but is **not yet used at runtime**
   (no job layer currently).
 - `ContextPropagator` bridges between contexts and MDC; all canonical keys are defined in `LogField`.
+
+```claim symbol-exists
+class: mn.tasky.common.observability.RequestObservabilityFilter
+```
 
 **Propagation chain (wired):**
 `RequestContext` (ingress) → MDC → `ContextPropagator.captureMdc()` (outbox write) → envelope fields →
@@ -271,7 +300,7 @@ The backend is a single deployable unit (`tasky-server`) organized by business d
 | **Booking**      | `booking`      | Booking intent window, confirmation, reschedule, cancellation, no-show, completion         | `BookingCommandPort`, `BookingIntentCommandPort`, `BookingQueryPort` |
 | **Location**     | `location`     | District and service-area lookup used for eligibility and notification targeting           | `LocationQueryPort` (read-only)                                      |
 | **Trust**        | `trust`        | Cross-cutting facade for review, dispute, reliability, and moderation signals              | `TrustCommandPort`, `TrustQueryPort`                                 |
-| **Review**       | `review`       | Post-completion review workflow and review debt enforcement                                | _(ports not yet extracted)_                                          |
+| **Review**       | `review`       | Terminal-outcome review workflow and review debt enforcement                               | _(ports not yet extracted)_                                          |
 | **Dispute**      | `dispute`      | Evidence-backed dispute handling and admin outcomes                                        | _(ports not yet extracted)_                                          |
 | **Messaging**    | `messaging`    | Platform-mediated post-confirmation messaging and auditability                             | `MessagingCommandPort`, `MessagingQueryPort`                         |
 | **Notification** | `notification` | Push/SMS notification delivery                                                             | `NotificationCommandPort`                                            |
@@ -340,7 +369,14 @@ This section inventories the launch-aligned backend data model. Non-launch resid
 
 ### 4.1 Launch-aligned domain schema inventory
 
-For exact column definitions, use the Flyway migrations in `services/api/src/main/resources/db/migration/`.
+For exact column definitions, use the active Flyway baseline in
+`services/api/src/main/resources/db/migration/V1__baseline.sql` and the generated inventory in
+`tooling/config/expected-schema.json`.
+
+The pre-production database history has been reset to a schema-only baseline. Fresh databases start with tables,
+constraints, indexes, views, triggers, functions, and extensions, but no catalog, district, user, task, booking,
+review, moderation-policy, feature-toggle, or sandbox/demo rows. Launch catalog setup and private-sandbox sample data
+are operator/admin setup responsibilities, not Flyway migration data. Future schema changes start at `V2`.
 
 #### Identity and access
 
@@ -350,9 +386,9 @@ For exact column definitions, use the Flyway migrations in `services/api/src/mai
 
 #### Marketplace and booking
 
-- `tasks`: customer task record with launch category, pricing mode (`BUDGET` / `QUOTE`), structured intake answers, schedule, approximate/exact location fields, lifecycle status, and summary provenance. Launch summary generation is deterministic; any LLM-related provenance must remain dormant.
+- `tasks`: customer task record with admin-active category, pricing mode (`BUDGET` / `QUOTE`), structured intake answers, schedule, approximate/exact location fields, lifecycle status, and summary provenance. Launch summary generation is deterministic; any LLM-related provenance must remain dormant.
 - `task_drafts`: draft posting state bound to a specific intake schema version.
-- `categories`: launch category catalog and active intake schema pointers.
+- `categories`: admin-governed category catalog and active intake schema pointers.
 - `category_schema_versions`: versioned structured-intake definitions with draft/canary/active lifecycle.
 - `task_applications`: tasker applications, structured pricing response data, selection state, and response-window timestamps.
 - `bookings`: confirmed work agreement between customer and selected tasker. Phase 1 lifecycle centers on confirmed, completed, canceled, disputed, and no-show outcomes. If physical schema includes monetization-oriented states or settlement modes, they remain dormant outside launch.
@@ -370,7 +406,7 @@ For exact column definitions, use the Flyway migrations in `services/api/src/mai
 
 #### Trust, disputes, and moderation
 
-- `booking_reviews`: bilateral structured review submissions after completion.
+- `booking_reviews`: bilateral structured review submissions after reviewable terminal outcomes.
 - `review_enforcement_cases`: reminder cadence and lock state for owed reviews.
 - `tasker_reliability_scores`: derived reliability data used for ranking and trust operations.
 - `tasker_badges`: trust badge assignments. Badge display remains subordinate to verification and threshold-based public reputation policy.
@@ -381,7 +417,7 @@ For exact column definitions, use the Flyway migrations in `services/api/src/mai
 
 #### Operational support
 
-- `oauth_states`, `oauth_outage_events`: auth-session coordination and provider outage posture.
+- `refresh_sessions`, `otp_challenges`: auth-session and dormant OTP challenge coordination.
 - `rate_limit_counters`: request-rate limiting state.
 - `moderation_policy`: operator-controlled moderation threshold configuration.
 - `booking_reliability_incidents`: auditable late-cancel and no-show incidents.
@@ -391,9 +427,12 @@ For exact column definitions, use the Flyway migrations in `services/api/src/mai
 
 ### 4.3 Read models and projections
 
-Admin read models live in the `projection.admin` package.
+Admin read models live in the `projection.admin` package. The public open-task feed read model lives in
+`projection.publicfeed` and is backed by the `public_task_feed_projection` SQL view.
 
-No SQL views or materialized projections are currently part of the architecture contract. Admin read models are composed in Java through composition services backed by query ports.
+View-backed projections are the current Phase 1 pattern for read-heavy queues and feeds. Runtime composition
+services own the HTTP response shape and may swap a view for a materialized table later without changing the
+controller contract.
 
 ### 4.4 Launch-aligned data flow patterns
 
@@ -407,15 +446,15 @@ No SQL views or materialized projections are currently part of the architecture 
    - Customers can review the full application set, with ranking allowed but no hard comparison cap.
    - Customer selection creates a pending booking intent.
    - Booking becomes confirmed only when the selected tasker accepts within the four-hour acceptance window.
-   - Expiry or decline returns the task to selectable-applicant state without confirming a booking.
+   - Expiry or explicit decline returns the task to selectable-applicant state without confirming a booking.
 3. **Reschedule, cancellation, and no-show authority**
    - Only accepted in-app reschedule events change the canonical schedule.
    - Late-cancel and no-show timers always read the latest accepted in-app schedule.
-   - No-show reminder triggers at scheduled start +10 minutes; no-show flag is allowed no earlier than +15 minutes.
-   - Recent in-app activity and accepted future reschedules block premature no-show adjudication.
+   - No-show reminder triggers at scheduled start +30 minutes; no-show flag is allowed no earlier than +1 hour.
+   - In-app activity in the trailing 30 minutes and accepted future reschedules block premature no-show adjudication.
 4. **Completion, review gate, and disputes**
-   - Completion sequence is: tasker marks complete → customer confirms or disputes → reminder on silence → timeout auto-complete → ops fallback for edge cases.
-   - Every completed booking creates bilateral review debt.
+   - Completion sequence is: tasker marks complete → customer confirms or disputes → push notification reminder on silence where a device token exists → timeout auto-complete → ops fallback for edge cases.
+   - Every reviewable terminal booking outcome creates bilateral review debt.
    - Customer posting and tasker application actions remain blocked until the owed review is submitted.
    - Disputes remain evidence-backed moderation flows, not escrow or payout flows.
 5. **Assistance and rescue**
@@ -424,7 +463,7 @@ No SQL views or materialized projections are currently part of the architecture 
    - Any such intervention remains measurable and must not be counted as self-serve.
 6. **Messaging and contact control**
    - Open-ended pre-booking chat is not part of the Phase 1 launch contract.
-   - If messaging is enabled, it is a post-confirmation, platform-mediated channel between booking participants and remains available for admin review.
+   - Post-confirmation in-app chat is the launch contact channel after the booking price is locked; it remains platform-mediated and available for admin review.
    - Exact address and any direct contact surface remain policy-controlled and unavailable before booking confirmation.
 7. **Identity, verification, and outage posture**
    - Facebook OAuth is the only launch login path for new sessions.
@@ -476,6 +515,29 @@ Standardized error response:
   - Exact task address remains hidden until confirmed booking and is then visible only to the task owner, confirmed tasker, and authorized admin surfaces.
   - Raw direct contact details remain hidden unless an approved policy surface intentionally unlocks them. Phase 1 normal operation does not require direct raw contact exchange.
   - Liability disclaimer acceptance is required where booking confirmation policy says so and is enforced both at DTO validation and service level.
+
+```claim symbol-exists
+class: mn.tasky.common.security.JwtTokenService
+```
+
+```claim symbol-exists
+class: mn.tasky.common.security.TokenBlacklistService
+```
+
+```claim endpoint
+operationId: logout
+method: POST
+path: /api/v1/auth/logout
+```
+
+```claim symbol-exists
+class: mn.tasky.common.config.SecurityConfig
+```
+
+```claim symbol-exists
+class: mn.tasky.common.security.JwtAuthenticationFilter
+```
+
 - **Bean Validation**: `@Valid` + JSR-380 annotations enforce request-shape constraints on controller DTOs. Security-sensitive invariants also receive service-layer checks.
 - **Rate limiting**:
   - General API traffic uses sliding-window limits backed by `rate_limit_counters`.
@@ -526,28 +588,33 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 - **Category intake contract**:
   - Category endpoints must expose `intake_enabled`, `intake_schema_version`, and the active schema payload needed by posting clients.
-  - Launch task creation is category-specific. Generic free-form posting is not the primary creation path.
+  - Launch task creation is category-specific and uses the current admin-active category catalog. Generic free-form posting is not the primary creation path.
 - **Draft contract**:
   - Draft create/update APIs persist the schema version bound at form start.
   - Final task submission validates against the bound schema version and returns field-level errors for missing or invalid required answers.
+- **Location eligibility contract**:
+  - Final task submission validates coordinates against the Ulaanbaatar service area through the location public query port before persistence.
+  - The launch district-centroid provider uses active UB district centroid bounds as a deterministic fail-closed approximation until polygon-backed service-area data exists.
 - **Summary contract**:
   - Task submission performs deterministic scope summary generation.
   - On summary-generation failure, the server still returns success with a canonical fallback summary and records the failure event.
 - **Booking contract**:
   - Customer selection creates a pending booking intent first.
   - Booking is confirmed only after the selected tasker accepts within the active four-hour response window.
-  - Expired or declined selections do not create bookings and return the task to applicant-review state.
+  - Expired or explicitly declined selections do not create bookings and return the task to applicant-review state.
   - Applicant ranking is allowed, but the customer remains free to inspect and choose across the full application set.
-  - No-show policy is deterministic: reminder at `+10m`, no-show flag eligibility at `+15m`, activity lookback protection, and accepted-reschedule precedence over earlier schedules.
+  - No-show policy is deterministic: reminder at `+30m`, no-show flag eligibility at `+1h`, trailing 30-minute activity lookback protection, and accepted-reschedule precedence over earlier schedules.
+  - Booking confirmation copy and payloads must communicate that the locked price and intake scope are the baseline agreement. Materials, supplies, vehicles, or post-confirmation scope changes are participant agreements recorded through platform-mediated chat or support evidence, not platform payment protection.
   - Launch lifecycle transitions align with the PRD: tasks move through open/assigned/completed-or-terminal states, and bookings move through confirmed/completed-or-terminal states without requiring payment-gated intermediates.
 - **Pricing contract**:
-  - Every launch-category task uses exactly one of the two Phase 1 pricing modes: `I have a budget` or `I want quotes`.
-  - Structured application pricing must support budget acceptance, counter-offer, and quote submission as required by the PRD.
+  - Every Phase 1 task uses exactly one of the two launch pricing modes: `I have a budget` or `I want quotes`.
+  - Structured application pricing must support budget acceptance for budget-mode tasks and one quote submission for quote-mode tasks. Counter-offers are not part of the Phase 1 budget flow.
 - **Trust contract**:
-  - Disputes may be opened during active bookings and for the limited post-completion window defined by product policy.
+  - Disputes may be opened during active bookings and for 24 hours after completion.
   - Evidence-backed moderation remains the dispute model for Phase 1.
-  - Review reminders follow the required cadence, and the next post/apply action remains gated on owed review completion.
-  - Public trust presentation prioritizes verification and trust badges, while ratings remain threshold-gated.
+  - Dispute evidence grace auto-closes for insufficient evidence 24 hours after the evidence reminder when no evidence is added.
+  - Review reminders follow the immediate, 24-hour, and 72-hour cadence, and the next post/apply action remains gated on owed review completion.
+  - Public trust presentation prioritizes verification and trust badges, while ratings remain hidden until at least three customer-to-tasker reviews exist.
 - **Admin contract**:
   - Admin can manage verification queues, disputes, moderation actions, rescue actions, category schemas, and feature toggles with audit trails.
   - Category management supports lint, preview, activate, deactivate, canary, and rollback operations.
@@ -568,6 +635,7 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 - All SQL is written explicitly via JDBI SQL Object API. No ORM magic.
 - Flyway manages schema migrations. Migration naming: `V<version>__<description>.sql`.
+- `V1__baseline.sql` is the schema-only pre-production baseline. Future schema changes start at `V2`.
 - Migrations are forward-only in production. Use new migrations to fix; never modify merged migrations.
 
 ### 6.3 Async Workers & Outbox Consumers
@@ -614,11 +682,29 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 ### CI enforcement (actual wiring)
 
-| CI workflow          | What it runs                                                                 | When             |
-| -------------------- | ---------------------------------------------------------------------------- | ---------------- |
-| `quality-gates.yml`  | `:services:api:check` + `jacocoTestCoverageVerification` + `openApiValidate` | every PR         |
-| `release-gate.yml`   | migration safety, rollback readiness, performance smoke, E2E smoke           | deploy           |
-| `nightly-regression` | `gateRegression` + `openApiValidate`                                         | nightly schedule |
+| CI workflow              | What it runs                                                                                          | When                                             |
+| ------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `quality-gates.yml`      | `pnpm repo:docs:check` + `:services:api:check` + `jacocoTestCoverageVerification` + `openApiValidate` | pushes to `main` / `staging`                     |
+| `release-gate.yml`       | migration safety, rollback readiness, performance smoke, E2E smoke                                    | deploy                                           |
+| `nightly-regression.yml` | `gateRegression` + `openApiValidate`                                                                  | manual dispatch while nightly schedule is paused |
 
-`gateSmoke` is a local smoke gate, not the only PR gate. The PR gate runs the broader `check`, and release and
+```claim workflow
+filename: quality-gates.yml
+name: quality-gates
+triggers: [push, workflow_dispatch]
+```
+
+```claim workflow
+filename: release-gate.yml
+name: release-gate
+triggers: [workflow_dispatch, workflow_call]
+```
+
+```claim workflow
+filename: nightly-regression.yml
+name: nightly-regression
+triggers: [workflow_dispatch]
+```
+
+`gateSmoke` is a local smoke gate, not the only merge gate. The merge gate runs the broader `check`, and release and
 nightly gates are governed by their respective workflows.

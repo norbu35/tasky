@@ -18,18 +18,18 @@ import { useAppContext } from '../../context/AppContext';
 import { useAdminApiClient } from '../../lib/adminApiClient';
 import type { FeatureToggle } from '../../lib/apiClient';
 
-const FEATURE_LABELS: Record<string, string> = {
-  lead_fee_enabled: 'Lead Fee',
-  subscription_enabled: 'Subscriptions',
-  escrow_enabled: 'Escrow Payments',
-  ai_scope_summary_enabled: 'AI Scope Summary',
+const FEATURE_LABEL_KEYS: Record<string, string> = {
+  lead_fee_enabled: 'admin.features.featureLabels.lead_fee_enabled',
+  subscription_enabled: 'admin.features.featureLabels.subscription_enabled',
+  escrow_enabled: 'admin.features.featureLabels.escrow_enabled',
+  ai_scope_summary_enabled: 'admin.features.featureLabels.ai_scope_summary_enabled',
 };
 
-const FEATURE_DESCRIPTIONS: Record<string, string> = {
-  lead_fee_enabled: 'Charge taskers a fee for each lead they receive',
-  subscription_enabled: 'Enable subscription-based plans for taskers',
-  escrow_enabled: 'Hold payments in escrow until task completion',
-  ai_scope_summary_enabled: 'Generate AI-powered scope summaries for tasks',
+const FEATURE_DESCRIPTION_KEYS: Record<string, string> = {
+  lead_fee_enabled: 'admin.features.featureDescriptions.lead_fee_enabled',
+  subscription_enabled: 'admin.features.featureDescriptions.subscription_enabled',
+  escrow_enabled: 'admin.features.featureDescriptions.escrow_enabled',
+  ai_scope_summary_enabled: 'admin.features.featureDescriptions.ai_scope_summary_enabled',
 };
 
 function formatTimestamp(iso: string): string {
@@ -63,6 +63,22 @@ export function AdminFeaturesPage() {
   } | null>(null);
   const [updating, setUpdating] = useState(false);
 
+  const getFeatureLabel = useCallback(
+    (featureName: string) => {
+      const key = FEATURE_LABEL_KEYS[featureName];
+      return key ? t(key) : featureName;
+    },
+    [t],
+  );
+
+  const getFeatureDescription = useCallback(
+    (featureName: string) => {
+      const key = FEATURE_DESCRIPTION_KEYS[featureName];
+      return key ? t(key) : '';
+    },
+    [t],
+  );
+
   const fetchToggles = useCallback(async () => {
     if (!session) return;
     setLoading(true);
@@ -71,11 +87,11 @@ export function AdminFeaturesPage() {
       const result = await adminApiClient.adminListFeatureToggles(session.accessToken);
       setToggles(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load feature toggles');
+      setError(err instanceof Error ? err.message : t('admin.features.loadTogglesError'));
     } finally {
       setLoading(false);
     }
-  }, [adminApiClient, session]);
+  }, [adminApiClient, session, t]);
 
   useEffect(() => {
     fetchToggles();
@@ -98,12 +114,15 @@ export function AdminFeaturesPage() {
         prev.map((t) => (t.feature_name === updated.feature_name ? updated : t)),
       );
       toast.success(
-        `${FEATURE_LABELS[pendingToggle.featureName] ?? pendingToggle.featureName} ${
-          pendingToggle.newValue ? 'enabled' : 'disabled'
-        }`,
+        t(
+          pendingToggle.newValue
+            ? 'admin.features.toggleEnabledToast'
+            : 'admin.features.toggleDisabledToast',
+          { feature: getFeatureLabel(pendingToggle.featureName) },
+        ),
       );
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to update toggle');
+      toast.error(err instanceof Error ? err.message : t('admin.features.updateToggleError'));
     } finally {
       setUpdating(false);
       setPendingToggle(null);
@@ -118,7 +137,7 @@ export function AdminFeaturesPage() {
   if (loading) {
     return (
       <div data-testid="features-loading" className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">{t('admin.features.title', 'Features')}</h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.features.title')}</h1>
         {[1, 2, 3, 4].map((i) => (
           <Card key={i}>
             <CardContent className="flex items-center justify-between p-6">
@@ -138,13 +157,11 @@ export function AdminFeaturesPage() {
   if (error) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold font-display">{t('admin.features.title', 'Features')}</h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.features.title')}</h1>
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
-            <p className="text-destructive">
-              {t('admin.features.loadError', 'Failed to load feature toggles')}
-            </p>
-            <Button onClick={fetchToggles}>{t('common.retry', 'Retry')}</Button>
+            <p className="text-destructive">{t('admin.features.loadError')}</p>
+            <Button onClick={fetchToggles}>{t('common.retry')}</Button>
           </CardContent>
         </Card>
       </div>
@@ -153,21 +170,19 @@ export function AdminFeaturesPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold font-display">{t('admin.features.title', 'Features')}</h1>
+      <h1 className="text-2xl font-bold font-display">{t('admin.features.title')}</h1>
 
       {toggles.map((toggle) => (
         <Card key={toggle.feature_name} data-testid={`toggle-row-${toggle.feature_name}`}>
           <CardContent className="flex items-center justify-between p-6">
             <div className="space-y-1">
-              <p className="text-base font-medium">
-                {FEATURE_LABELS[toggle.feature_name] ?? toggle.feature_name}
-              </p>
+              <p className="text-base font-medium">{getFeatureLabel(toggle.feature_name)}</p>
               <p className="text-sm text-muted-foreground">
-                {FEATURE_DESCRIPTIONS[toggle.feature_name] ?? ''}
+                {getFeatureDescription(toggle.feature_name)}
               </p>
               <p className="text-xs text-muted-foreground">
                 {toggle.updated_by &&
-                  t('admin.features.updatedBy', 'Updated by {{name}} — ', {
+                  t('admin.features.updatedBy', {
                     name: toggle.updated_by,
                   })}
                 {formatTimestamp(toggle.updated_at)}
@@ -176,7 +191,9 @@ export function AdminFeaturesPage() {
             <Switch
               checked={toggle.is_enabled}
               onCheckedChange={() => handleSwitchClick(toggle.feature_name, toggle.is_enabled)}
-              aria-label={`Toggle ${FEATURE_LABELS[toggle.feature_name] ?? toggle.feature_name}`}
+              aria-label={t('admin.features.toggleAriaLabel', {
+                feature: getFeatureLabel(toggle.feature_name),
+              })}
             />
           </CardContent>
         </Card>
@@ -186,29 +203,22 @@ export function AdminFeaturesPage() {
       <Dialog open={pendingToggle !== null} onOpenChange={(open) => !open && handleCancel()}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('admin.features.confirmTitle', 'Are you sure?')}</DialogTitle>
+            <DialogTitle>{t('admin.features.confirmTitle')}</DialogTitle>
             <DialogDescription>
               {pendingToggle
-                ? t(
-                    'admin.features.confirmDesc',
-                    'You are about to {{action}} "{{feature}}". This change will take effect immediately.',
-                    {
-                      action: pendingToggle.newValue
-                        ? t('common.enable', 'enable')
-                        : t('common.disable', 'disable'),
-                      feature:
-                        FEATURE_LABELS[pendingToggle.featureName] ?? pendingToggle.featureName,
-                    },
-                  )
+                ? t('admin.features.confirmDesc', {
+                    action: pendingToggle.newValue ? t('common.enable') : t('common.disable'),
+                    feature: getFeatureLabel(pendingToggle.featureName),
+                  })
                 : ''}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="secondary" onClick={handleCancel} disabled={updating}>
-              {t('common.cancel', 'Cancel')}
+              {t('common.cancel')}
             </Button>
             <Button onClick={handleConfirm} disabled={updating}>
-              {t('common.confirm', 'Confirm')}
+              {t('common.confirm')}
             </Button>
           </DialogFooter>
         </DialogContent>

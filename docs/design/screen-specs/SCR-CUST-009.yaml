@@ -4,6 +4,23 @@ name: 'Task Detail (Customer)'
 route: '/(customer)/tasks/:taskId'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-009
+  prd_refs:
+    - REQ-P1-MATCH-03
+    - REQ-P1-PRICE-05
+    - REQ-P1-TASK-10
+    - REQ-P1-MSG-01
+    - REQ-P1-BOOK-08
+  journey_refs:
+    - JRN-CUST-02:step-1
+    - JRN-CUST-07:step-1
+  scenario_refs:
+    - SCN-TASK-024
+    - SCN-TASK-029
+    - SCN-SEC-007
+    - SCN-SEC-008
 template: detail
 figma_page: 'Customer/Task Detail Customer'
 feature: 'tasks'
@@ -12,6 +29,25 @@ layout:
   template: detail
   density: default
   structure: 'safe_area -> nav_header(back + title) -> scrollview(task_info + applicant_summary + status_actions) -> sticky_bottom_cta'
+
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: balanced
+  trust_cues:
+    - verified_badge_as_eligibility
+    - completed_jobs
+    - review_threshold_state
+    - structured_pricing_response
+    - approximate_location_until_booking
+  non_goals:
+    - no_fake_top_candidate_ranking
+    - no_payment_protection_claims
+  airbnb_scaffold:
+    - structured_comparison_signals
+    - no_recommended_ranking
+    - review_threshold_state
+    - quote_and_timing_evidence
+    - verification_and_eligibility_evidence
 
 components:
   - id: COMP-STATUSBADGE
@@ -171,7 +207,7 @@ copy:
   - key: awaiting_tasker_acceptance
     mn: 'Гүйцэтгэгчийн зөвшөөрлийг хүлээж байна'
     en: 'Waiting for tasker acceptance'
-    max_chars: 35
+    max_chars: 45
 
   - key: tasker_marked_done_prompt
     mn: 'Гүйцэтгэгч ажил дууслаа гэж мэдэгдлээ. Баталгаажуулна уу'
@@ -195,7 +231,7 @@ copy:
 
   - key: cta_message_tasker
     mn: 'Зурвас илгээх'
-    en: 'Contact Tasker'
+    en: 'Message Tasker'
     max_chars: 20
 
   - key: cta_confirm_complete
@@ -227,7 +263,7 @@ analytics_events:
   - event: 'cancel_task_tapped'
     trigger: 'User taps Cancel Task'
   - event: 'message_tasker_tapped'
-    trigger: 'User taps the booking contact CTA from assigned task detail'
+    trigger: 'User taps the platform-mediated message CTA from assigned task detail'
   - event: 'confirm_complete_tapped'
     trigger: 'User taps Confirm Complete when Tasker has marked done'
 
@@ -237,8 +273,8 @@ acceptance_criteria:
   - 'OPEN state with no applicants shows waiting message'
   - 'OPEN state with applicants shows count badge and View Applicants CTA navigating (push) to SCR-CUST-011'
   - 'Awaiting-tasker-acceptance state shows the selected Tasker summary, response-window status, and no direct contact CTA before booking confirmation'
-  - 'ASSIGNED state shows assigned Tasker profile with avatar, name, verification badge, and rating'
-  - 'ASSIGNED state shows booking contact CTA navigating (push) to SCR-SHARED-010 for the confirmed booking conversation'
+  - 'ASSIGNED state shows assigned Tasker profile with avatar, name, verification badge, and thresholded public reputation when available'
+  - 'ASSIGNED state shows booking contact CTA navigating (push) to SCR-SHARED-011 for the confirmed booking conversation'
   - 'Tasker marked done state shows prominent Confirm Complete CTA'
   - 'Cancel CTA opens modal sheet SCR-CUST-010 for cancellation confirmation'
   - 'COMPLETED state shows final task summary'

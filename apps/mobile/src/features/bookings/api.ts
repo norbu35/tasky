@@ -1,4 +1,3 @@
-import { createMobileApiClient } from '@/lib/mobileApiClient';
 import type {
   Booking,
   BookingFilters,
@@ -6,6 +5,7 @@ import type {
   BookingScheduleEvent,
   CursorPage,
 } from '@/lib/api/types';
+import { createMobileApiClient } from '@/lib/mobileApiClient';
 
 const getClient = () => createMobileApiClient();
 
@@ -107,8 +107,8 @@ export async function acceptApplication(
   applicationId: string,
   liabilityDisclaimerAccepted: boolean,
   idempotencyKey: string,
-): Promise<Booking> {
-  return getClient().requestJson<Booking>(
+): Promise<BookingIntent> {
+  return getClient().requestJson<BookingIntent>(
     `/tasks/${taskId}/applications/${applicationId}/accept`,
     {
       method: 'POST',
@@ -145,7 +145,6 @@ export async function createBookingIntent(
 export async function confirmBookingIntent(
   accessToken: string,
   bookingIntentId: string,
-  liabilityDisclaimerAccepted: boolean,
   idempotencyKey: string,
 ): Promise<Booking> {
   return getClient().requestJson<Booking>(
@@ -153,7 +152,21 @@ export async function confirmBookingIntent(
     {
       method: 'POST',
       headers: { 'Idempotency-Key': idempotencyKey },
-      body: JSON.stringify({ liability_disclaimer_accepted: liabilityDisclaimerAccepted }),
+    },
+    accessToken,
+  );
+}
+
+export async function declineBookingIntent(
+  accessToken: string,
+  bookingIntentId: string,
+  idempotencyKey: string,
+): Promise<BookingIntent> {
+  return getClient().requestJson<BookingIntent>(
+    `/booking-intents/${bookingIntentId}/decline`,
+    {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey },
     },
     accessToken,
   );

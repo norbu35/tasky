@@ -2,8 +2,37 @@
 screen_id: SCR-TASK-017
 name: 'Booking Request — Accept/Decline'
 route: null
+presentation:
+  type: app_level_modal_sheet
+  host_screen: current_tasker_context
+  invocation: 'Shown from a selected-tasker notification or notification-center item during the four-hour response window'
 role: [tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-017
+  prd_refs:
+    - REQ-P1-BOOK-01
+    - REQ-P1-BOOK-02
+    - REQ-P1-BOOK-03
+    - REQ-P1-BOOK-04
+    - REQ-P1-PRICE-07
+    - REQ-P1-NOTIF-02
+    - REQ-P1-NOTIF-03
+  journey_refs:
+    - JRN-TASK-03:step-1
+    - JRN-TASK-03:step-2
+    - JRN-TASK-03-A1
+    - JRN-TASK-03-A2
+  scenario_refs:
+    - SCN-BOOK-022
+    - SCN-BOOK-023
+    - SCN-BOOK-024
+    - SCN-BOOK-025
+    - SCN-BOOK-031
+    - SCN-ANALYTICS-002
+    - SCN-NOTIF-002
+    - SCN-NOTIF-003
 template: modal_sheet
 figma_page: 'Tasker/Booking Request Accept Decline'
 feature: 'booking'
@@ -100,7 +129,7 @@ copy:
   - key: countdown_format
     mn: '{hours}:{minutes}'
     en: '{hours}:{minutes}'
-    max_chars: 8
+    max_chars: 17
 
   - key: accept_button
     mn: 'Зөвшөөрөх'
@@ -115,7 +144,7 @@ copy:
   - key: accepting_message
     mn: 'Захиалгыг баталгаажуулж байна...'
     en: 'Processing...'
-    max_chars: 30
+    max_chars: 35
 
   - key: accepted_heading
     mn: 'Амжилттай!'
@@ -181,7 +210,7 @@ acceptance_criteria:
   - 'This is a bottom sheet overlay triggered by push notification, not a standalone route'
   - 'The default four-hour response timer is prominently displayed'
   - 'Accept confirms the booking and opens the tasker booking flow'
-  - 'Decline returns control to the customer so they can choose another applicant'
+  - 'Decline closes the pending selection without confirming a booking and returns control to the customer so they can choose another applicant'
   - 'Expired state closes the request without creating a booking'
   - 'On accept success, dismissed to My Jobs (SCR-TASK-012)'
   - 'On decline or expiry, dismissed to My Jobs (SCR-TASK-012)'

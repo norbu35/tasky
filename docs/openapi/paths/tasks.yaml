@@ -141,7 +141,24 @@
             schema:
               $ref: ../components/schemas/common.yaml#/PresignedUrlResponse
       '400':
-        $ref: ../components/responses.yaml#/BadRequest
+        description: Bad request for pricing-mode validation.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+            examples:
+              quotePriceRequired:
+                summary: QUOTE task missing quote_price
+                value:
+                  code: QUOTE_PRICE_REQUIRED
+                  message: Quote price is required for QUOTE pricing mode tasks.
+                  trace_id: abc-123
+              budgetPriceNotAllowed:
+                summary: BUDGET task includes quote_price
+                value:
+                  code: BUDGET_PRICE_NOT_ALLOWED
+                  message: Budget-mode applications accept the posted budget and cannot include a quote price.
+                  trace_id: abc-123
       '401':
         $ref: ../components/responses.yaml#/Unauthorized
 /tasks:
@@ -151,7 +168,9 @@
     summary: List open tasks
     description: |
       Returns a paginated list of OPEN tasks. Supports filtering by category and
-      geospatial radius search. Location data is fuzzed for privacy.
+      geospatial radius search. The feed is a summary projection: location data
+      is district-level/approximate, and customer identity, photos, application
+      counts, exact location, and intake details are detail-only.
     operationId: listTasks
     security:
       - BearerAuth: []
@@ -198,7 +217,7 @@
                 data:
                   type: array
                   items:
-                    $ref: ../components/schemas/tasks.yaml#/PublicTask
+                    $ref: ../components/schemas/tasks.yaml#/TaskFeedItem
                 cursor:
                   $ref: ../components/schemas/common.yaml#/CursorPagination
       '400':
@@ -213,6 +232,8 @@
       Creates a new task in OPEN status using schema-driven intake payload.
       Deterministic scope summary generation runs before final submit; if generation fails,
       server falls back to canonical key-value summary and still returns success.
+      Task coordinates are validated against the Ulaanbaatar service area at posting time;
+      outside-area locations return `400 OUTSIDE_SERVICE_AREA`.
       Only authenticated customers can create tasks.
     operationId: createTask
     security:
@@ -468,7 +489,8 @@
     summary: Apply to a task
     description: |
       Tasker applies to an OPEN task. Only verified taskers can apply.
-      The current live contract captures a short application note and optional quote_price.
+      The current live contract captures a short application note and quote_price for QUOTE tasks.
+      BUDGET task applications accept the posted budget and must omit quote_price or send it as null.
       Phase 1 launch UX does not expose open-ended pre-booking chat.
     operationId: applyToTask
     security:
@@ -494,7 +516,7 @@
                 nullable: true
                 minimum: 20000
                 maximum: 50000000
-                description: "Tasker's price response. For BUDGET tasks, this is a counter-offer (optional). For QUOTE tasks, this is the required quote."
+                description: "Tasker's price response for QUOTE tasks. For BUDGET tasks, omit or send null because applying accepts the posted budget."
     responses:
       '201':
         description: Application submitted.
@@ -503,7 +525,24 @@
             schema:
               $ref: ../components/schemas/tasks.yaml#/TaskApplication
       '400':
-        $ref: ../components/responses.yaml#/BadRequest
+        description: Bad request for pricing-mode validation.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/common.yaml#/Error
+            examples:
+              quotePriceRequired:
+                summary: QUOTE task missing quote_price
+                value:
+                  code: QUOTE_PRICE_REQUIRED
+                  message: Quote price is required for QUOTE pricing mode tasks.
+                  trace_id: abc-123
+              budgetPriceNotAllowed:
+                summary: BUDGET task includes quote_price
+                value:
+                  code: BUDGET_PRICE_NOT_ALLOWED
+                  message: Budget-mode applications accept the posted budget and cannot include a quote price.
+                  trace_id: abc-123
       '401':
         $ref: ../components/responses.yaml#/Unauthorized
       '403':
@@ -627,97 +666,14 @@
           application/json:
             schema:
               $ref: ../components/schemas/common.yaml#/Error
-/tasks/{id}/applications/{applicationId}/select:
-  post:
-    tags:
-      - Tasks
-    summary: Select an applicant (customer action)
-    description: |
-      Customer selects a tasker's application, starting the 4-hour acceptance window.
-      The tasker receives a push notification to confirm.
-    operationId: selectApplication
-    security:
-      - BearerAuth: []
-    parameters:
-      - $ref: ../components/parameters.yaml#/PathId
-      - name: applicationId
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-    responses:
-      '200':
-        description: Application selected. Tasker has 4 hours to confirm.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/tasks.yaml#/TaskApplication
-      '401':
-        $ref: ../components/responses.yaml#/Unauthorized
-      '403':
-        $ref: ../components/responses.yaml#/Forbidden
-      '404':
-        $ref: ../components/responses.yaml#/NotFound
-      '409':
-        description: Application already processed or task assigned.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/common.yaml#/Error
-/tasks/{id}/applications/{applicationId}/confirm:
-  post:
-    tags:
-      - Tasks
-    summary: Confirm acceptance (tasker action)
-    description: |
-      Tasker confirms their selection within the 4-hour window.
-      Creates a booking and rejects other pending applications.
-    operationId: confirmAcceptance
-    security:
-      - BearerAuth: []
-    parameters:
-      - $ref: ../components/parameters.yaml#/PathId
-      - name: applicationId
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-      - $ref: ../components/parameters.yaml#/IdempotencyKeyHeader
-    responses:
-      '200':
-        description: Booking created successfully.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                booking_id:
-                  type: string
-                  format: uuid
-                status:
-                  type: string
-      '401':
-        $ref: ../components/responses.yaml#/Unauthorized
-      '403':
-        $ref: ../components/responses.yaml#/Forbidden
-      '404':
-        $ref: ../components/responses.yaml#/NotFound
-      '409':
-        description: Selection expired or already processed.
-        content:
-          application/json:
-            schema:
-              $ref: ../components/schemas/common.yaml#/Error
 /tasks/{id}/applications/{applicationId}/withdraw:
   post:
     tags:
       - Tasks
     summary: Withdraw an application (tasker action)
     description: |
-      Tasker withdraws their application. If the application was SELECTED,
-      the task is reopened for new applications.
+      Tasker withdraws an application before customer selection. Selected applications must be
+      accepted or declined through the booking-intent response endpoints.
     operationId: withdrawApplication
     security:
       - BearerAuth: []

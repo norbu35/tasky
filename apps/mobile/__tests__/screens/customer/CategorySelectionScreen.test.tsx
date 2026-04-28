@@ -96,6 +96,27 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
     expect(screen.getByText('Moving')).toBeTruthy();
   });
 
+  it('uses localized category names and removes duplicate category cards', () => {
+    setTestLanguage('mn');
+    mockUseCategories.mockReturnValue({
+      data: {
+        data: [
+          { id: 'cat-1', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
+          { id: 'cat-duplicate', name: 'Cleaning', name_mn: 'Цэвэрлэгээ' },
+          { id: 'cat-2', name: 'Handyman', name_mn: 'Гар ажил' },
+        ],
+      },
+      isLoading: false,
+      isError: false,
+    });
+
+    render(<CategorySelectionScreen />);
+
+    expect(screen.getByText('Цэвэрлэгээ')).toBeTruthy();
+    expect(screen.getByText('Гар ажил')).toBeTruthy();
+    expect(screen.queryByTestId('category-item-cat-duplicate')).toBeNull();
+  });
+
   it('selecting a category creates a draft and navigates to intake with draftId', () => {
     mockUseCategories.mockReturnValue({
       data: {

@@ -1,14 +1,14 @@
 import React, { useMemo } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FlatList, RefreshControl, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ScreenContainer } from '@/components/shells';
 import { screenLayout } from '@/design/screenLayout';
 import { mobileTheme } from '@/design/tokenAdapter';
 
-import { TaskCard, SkeletonCard } from './TaskCard';
 import { Header } from './Header';
 import { EmptyState, ErrorState } from './States';
+import { TaskCard, SkeletonCard } from './TaskCard';
 import { useCustomerTasksScreen } from './useCustomerTasksScreen';
 
 const { colors } = mobileTheme;

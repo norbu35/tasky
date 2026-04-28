@@ -29,21 +29,21 @@ export function ReviewCard({
   return (
     <View
       className={cn(
-        'bg-muted rounded-md p-[20px] gap-[11px]',
-        featured && 'border-l-4 border-l-primary-deep pl-[24px]',
+        'bg-muted rounded-md p-lg gap-md',
+        featured && 'border-l-4 border-l-primary-deep pl-xl',
         className,
       )}
     >
       <View className="flex-row items-center justify-between">
-        <View className="flex-row items-center gap-[12px]">
-          <View className="w-[32px] h-[32px] rounded-full bg-muted items-center justify-center">
+        <View className="flex-row items-center gap-md">
+          <View className="w-8 h-8 rounded-full bg-muted items-center justify-center">
             <Text className="text-caption font-sans-bold text-text-secondary">
               {reviewerInitials}
             </Text>
           </View>
           <Text className="text-body font-sans-bold text-foreground">{reviewerName}</Text>
         </View>
-        <View className="flex-row gap-[1px]">
+        <View className="flex-row">
           {Array.from({ length: 5 }).map((_, i) => (
             <Star
               key={i}
@@ -54,10 +54,8 @@ export function ReviewCard({
           ))}
         </View>
       </View>
-      <Text className="text-label text-muted-foreground leading-[19px] italic">{comment}</Text>
-      <Text className="text-micro font-sans-semibold text-text-tertiary uppercase tracking-[0.075em]">
-        {timeAgo}
-      </Text>
+      <Text className="text-label text-muted-foreground italic">{comment}</Text>
+      <Text className="text-micro font-sans-semibold text-text-tertiary uppercase">{timeAgo}</Text>
     </View>
   );
 }

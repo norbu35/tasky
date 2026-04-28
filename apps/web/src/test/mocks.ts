@@ -14,12 +14,14 @@ import {
   makeMessage,
   makeConversation,
   makeTask,
+  makeTaskFeedItem,
   makeCursorPage,
 } from './factories';
 
 export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClient {
   return {
     loginWithFacebook: vi.fn().mockResolvedValue(makeSession()),
+    getFacebookAuthStatus: vi.fn().mockResolvedValue({ available: true }),
     getMyProfile: vi.fn().mockResolvedValue(makeProfile()),
     updateMyProfile: vi.fn().mockImplementation(async (_token, payload) => ({
       ...makeProfile(),
@@ -41,7 +43,8 @@ export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClie
     }),
     listCategories: vi.fn().mockResolvedValue(makeCursorPage([makeCategory()])),
     createTask: vi.fn().mockResolvedValue(makeTask()),
-    listTasks: vi.fn().mockResolvedValue(makeCursorPage([makeTask()])),
+    listTasks: vi.fn().mockResolvedValue(makeCursorPage([makeTaskFeedItem()])),
+    getTask: vi.fn().mockResolvedValue(makeTask()),
     listMyTasks: vi.fn().mockResolvedValue(makeCursorPage([])),
     applyToTask: vi.fn().mockResolvedValue({
       id: 'app-1',
@@ -59,7 +62,10 @@ export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClie
       created_at: '2026-02-14T00:00:00Z',
     }),
     listTaskApplications: vi.fn().mockResolvedValue(makeCursorPage([])),
-    acceptApplication: vi.fn().mockResolvedValue(makeBooking()),
+    withdrawApplication: vi.fn().mockResolvedValue({
+      application_id: 'app-1',
+      status: 'WITHDRAWN',
+    }),
     createBookingIntent: vi.fn().mockResolvedValue({
       id: 'intent-1',
       task_id: 'task-1',
@@ -86,6 +92,26 @@ export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClie
       ...makeBooking(),
       status: 'CANCELLED',
     }),
+    requestReschedule: vi.fn().mockResolvedValue({
+      id: 'event-1',
+      booking_id: 'booking-1',
+      event_type: 'RESCHEDULE_REQUESTED',
+      proposed_scheduled_at: new Date().toISOString(),
+      status: 'PENDING',
+      created_at: new Date().toISOString(),
+    }),
+    respondReschedule: vi.fn().mockResolvedValue({
+      id: 'event-1',
+      booking_id: 'booking-1',
+      event_type: 'RESCHEDULE_ACCEPTED',
+      proposed_scheduled_at: new Date().toISOString(),
+      status: 'ACCEPTED',
+      created_at: new Date().toISOString(),
+    }),
+    flagNoShow: vi.fn().mockResolvedValue({
+      ...makeBooking(),
+      status: 'NO_SHOW',
+    }),
     completeBooking: vi.fn().mockResolvedValue({
       ...makeBooking(),
       status: 'COMPLETED',
@@ -93,6 +119,7 @@ export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClie
     submitReview: vi.fn().mockResolvedValue(makeReview()),
     getUserReviews: vi.fn().mockResolvedValue(makeCursorPage([makeReview()])),
     raiseDispute: vi.fn().mockResolvedValue(makeDispute()),
+    addDisputeEvidence: vi.fn().mockResolvedValue(makeDispute()),
     getDispute: vi.fn().mockResolvedValue(makeDispute()),
     listConversations: vi.fn().mockResolvedValue(makeCursorPage([makeConversation()])),
     listMessages: vi.fn().mockResolvedValue(makeCursorPage([makeMessage()])),
@@ -122,6 +149,67 @@ export function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClie
       submitted_at: null,
       reviewed_at: null,
     }),
+
+    // Wave 6: Contract hygiene methods
+    acceptApplication: vi.fn().mockResolvedValue({
+      id: 'intent-application-1',
+      task_id: 'task-1',
+      tasker_id: 'tasker-1',
+      customer_id: 'customer-1',
+      source: 'APPLICATION_SELECTION',
+      status: 'PENDING',
+      selected_application_id: 'app-1',
+      original_booking_id: null,
+      offer_id: null,
+      expires_at: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
+      confirmed_booking_id: null,
+      confirmed_at: null,
+      created_at: '2026-02-14T00:00:00Z',
+      updated_at: '2026-02-14T00:00:00Z',
+    }),
+    declineBookingIntent: vi.fn().mockResolvedValue({
+      id: 'intent-application-1',
+      task_id: 'task-1',
+      tasker_id: 'tasker-1',
+      customer_id: 'customer-1',
+      source: 'APPLICATION_SELECTION',
+      status: 'DECLINED',
+      selected_application_id: 'app-1',
+      original_booking_id: null,
+      offer_id: null,
+      expires_at: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
+      confirmed_booking_id: null,
+      confirmed_at: null,
+      created_at: '2026-02-14T00:00:00Z',
+      updated_at: '2026-02-14T00:00:00Z',
+    }),
+    markBookingDone: vi.fn().mockResolvedValue({
+      ...makeBooking(),
+      status: 'COMPLETED',
+    }),
+    rebookBooking: vi.fn().mockResolvedValue({
+      id: 'intent-rebook',
+      task_id: 'task-1',
+      tasker_id: 'tasker-1',
+      customer_id: 'customer-1',
+      source: 'REBOOK',
+      status: 'PENDING',
+      original_booking_id: 'booking-1',
+      offer_id: null,
+      expires_at: null,
+      confirmed_booking_id: null,
+      confirmed_at: null,
+      created_at: '2026-02-14T00:00:00Z',
+      updated_at: '2026-02-14T00:00:00Z',
+    }),
+    cancelTask: vi.fn().mockResolvedValue({
+      ...makeTask(),
+      status: 'CANCELLED',
+    }),
+    listMyRecentLocations: vi.fn().mockResolvedValue([]),
+    listBookingScheduleEvents: vi.fn().mockResolvedValue(makeCursorPage([])),
+    logout: vi.fn().mockResolvedValue(undefined),
+
     ...overrides,
   } as unknown as ApiClient;
 }

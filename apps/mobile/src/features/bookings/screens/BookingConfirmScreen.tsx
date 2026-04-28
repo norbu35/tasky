@@ -9,6 +9,7 @@ import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
 import { Touchable } from '@/components/ui/Touchable';
 import { useAcceptApplication } from '@/features/bookings/hooks/useAcceptApplication';
 import { useConfirmBookingIntent } from '@/features/bookings/hooks/useConfirmBookingIntent';
+import type { BookingIntent } from '@/lib/api/types';
 
 export default function BookingConfirmScreen() {
   const { t } = useTranslation();
@@ -28,6 +29,7 @@ export default function BookingConfirmScreen() {
   }>();
 
   const [disclaimerChecked, setDisclaimerChecked] = useState(false);
+  const [pendingIntent, setPendingIntent] = useState<BookingIntent | null>(null);
   const { mutateAsync: acceptApplication, isPending } = useAcceptApplication();
   const { mutateAsync: confirmBookingIntent, isPending: isConfirmingIntent } =
     useConfirmBookingIntent();
@@ -38,23 +40,85 @@ export default function BookingConfirmScreen() {
     const idempotencyKey = usesBookingIntent
       ? `confirm-intent-${params.bookingIntentId}-${Date.now()}`
       : `confirm-${params.taskId}-${params.applicationId}-${Date.now()}`;
-    const booking = usesBookingIntent
-      ? await confirmBookingIntent({
-          bookingIntentId: params.bookingIntentId!,
-          liabilityDisclaimerAccepted: true,
-          idempotencyKey,
-        })
-      : await acceptApplication({
-          taskId: params.taskId,
-          applicationId: params.applicationId,
-          liabilityDisclaimerAccepted: true,
-          idempotencyKey,
-        });
+    if (!usesBookingIntent) {
+      const intent = await acceptApplication({
+        taskId: params.taskId,
+        applicationId: params.applicationId,
+        liabilityDisclaimerAccepted: true,
+        idempotencyKey,
+      });
+      setPendingIntent(intent);
+      return;
+    }
+    const booking = await confirmBookingIntent({
+      bookingIntentId: params.bookingIntentId!,
+      idempotencyKey,
+    });
     router.replace({
       pathname: '/(customer)/bookings/confirmed',
       params: { bookingId: booking.id, taskerName: params.taskerName },
     });
   }, [params, acceptApplication, confirmBookingIntent, router]);
+
+  if (pendingIntent) {
+    return (
+      <DetailTemplate
+        testID="SCR-CUST-014"
+        ctaLabel={t('customer.bookings.ctaDone')}
+        ctaOnPress={() => router.replace('/(tabs)')}
+      >
+        <View className="mb-xl">
+          <Text className="text-heading font-sans-bold text-primary-deep mb-sm">
+            {t('customer.bookings.selectionPendingTitle')}
+          </Text>
+          <Text className="text-body text-text-secondary leading-relaxed">
+            {t('customer.bookings.selectionPendingBody')}
+          </Text>
+        </View>
+
+        <View className="mb-xl">
+          <Text className="text-heading font-sans-bold text-primary-deep mb-md">
+            {t('customer.bookings.sectionTasker')}
+          </Text>
+          <View className="flex-row items-center gap-md bg-muted rounded-md p-md">
+            <ProfileAvatar
+              uri={params.taskerAvatar}
+              name={params.taskerName}
+              size="lg"
+              showVerified
+            />
+            <View className="flex-1">
+              <Text className="text-body font-sans-semibold text-primary-deep">
+                {params.taskerName}
+              </Text>
+              {params.taskerRating && (
+                <Text className="text-caption text-text-secondary mt-xs">
+                  {params.taskerRating}
+                </Text>
+              )}
+            </View>
+          </View>
+        </View>
+
+        <View className="bg-muted rounded-md p-md">
+          <Text className="text-caption text-text-secondary mb-xs">
+            {t('customer.bookings.selectionRequestId')}
+          </Text>
+          <Text className="text-body text-primary-deep mb-md">{pendingIntent.id}</Text>
+          {pendingIntent.expires_at && (
+            <>
+              <Text className="text-caption text-text-secondary mb-xs">
+                {t('customer.bookings.selectionRespondBy')}
+              </Text>
+              <Text className="text-body text-primary-deep">
+                {new Date(pendingIntent.expires_at).toLocaleString()}
+              </Text>
+            </>
+          )}
+        </View>
+      </DetailTemplate>
+    );
+  }
 
   return (
     <DetailTemplate
@@ -77,7 +141,9 @@ export default function BookingConfirmScreen() {
             showVerified
           />
           <View className="flex-1">
-            <Text className="text-body font-semibold text-primary-deep">{params.taskerName}</Text>
+            <Text className="text-body font-sans-semibold text-primary-deep">
+              {params.taskerName}
+            </Text>
             {params.taskerRating && (
               <Text className="text-caption text-text-secondary mt-xs">{params.taskerRating}</Text>
             )}
@@ -111,7 +177,7 @@ export default function BookingConfirmScreen() {
         <Text className="text-heading font-sans-bold text-primary-deep mb-md">
           {t('customer.bookings.sectionDisclaimer')}
         </Text>
-        <Text className="text-caption text-text-secondary leading-[20px] mb-md">
+        <Text className="text-caption text-text-secondary leading-relaxed mb-md">
           {t('BookingConfirmScreen.copy1')}
         </Text>
         <Touchable
@@ -129,7 +195,7 @@ export default function BookingConfirmScreen() {
             }
           >
             {disclaimerChecked && (
-              <Text className="text-primary-foreground text-[14px] font-bold">{'✓'}</Text>
+              <Text className="text-primary-foreground text-label font-sans-bold">{'✓'}</Text>
             )}
           </View>
           <Text className="text-body text-primary-deep flex-1">
@@ -140,7 +206,7 @@ export default function BookingConfirmScreen() {
 
       {/* Calendar Prompt */}
       <View className="mb-xl">
-        <Text className="text-subtitle font-semibold text-primary mb-sm">
+        <Text className="text-subtitle font-sans-semibold text-primary mb-sm">
           {t('customer.bookings.calendarPromptTitle')}
         </Text>
         <Text className="text-caption text-text-secondary">{t('BookingConfirmScreen.copy2')}</Text>

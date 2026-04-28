@@ -13,6 +13,7 @@ public record TaskCreateResult(TaskState task, String errorCode, String errorMes
     public static final String INTAKE_VALIDATION_FAILED = "INTAKE_VALIDATION_FAILED";
     public static final String DRAFT_NOT_FOUND = "DRAFT_NOT_FOUND";
     public static final String REVIEW_LOCK_ACTIVE = "REVIEW_LOCK_ACTIVE";
+    public static final String OUTSIDE_SERVICE_AREA = "OUTSIDE_SERVICE_AREA";
 
     public static TaskCreateResult success(TaskState task) {
         return new TaskCreateResult(task, null, null);

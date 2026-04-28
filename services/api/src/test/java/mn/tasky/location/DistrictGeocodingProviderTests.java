@@ -59,6 +59,18 @@ class DistrictGeocodingProviderTests {
     }
 
     @Test
+    @DisplayName("service area accepts coordinates within launch Ulaanbaatar bounds")
+    void serviceAreaAcceptsUlaanbaatarCoordinates() {
+        assertThat(provider.isWithinServiceArea(47.9200, 106.9200)).isTrue();
+    }
+
+    @Test
+    @DisplayName("service area rejects coordinates outside launch Ulaanbaatar bounds")
+    void serviceAreaRejectsOutsideUlaanbaatarCoordinates() {
+        assertThat(provider.isWithinServiceArea(49.4867, 105.9228)).isFalse();
+    }
+
+    @Test
     @DisplayName("search filters by name substring (English)")
     void searchFiltersByEnglishName() {
         var results = provider.search("sukh", null, null);

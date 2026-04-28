@@ -79,15 +79,17 @@ public interface ReviewDao {
             + "quality_rating, punctuality_rating, communication_rating, clarity_rating, respectfulness_rating, "
             + "comment, would_book_again, created_at "
             + "FROM booking_reviews WHERE reviewee_id = :userId "
-            + "ORDER BY id LIMIT :limit")
+            + "ORDER BY created_at DESC, id DESC LIMIT :limit")
     List<Review> findByRevieweeIdFirstPage(@Bind("userId") UUID userId, @Bind("limit") int limit);
 
-    @SqlQuery("SELECT id, booking_id, reviewer_id, reviewee_id, "
-            + "quality_rating, punctuality_rating, communication_rating, clarity_rating, respectfulness_rating, "
-            + "comment, would_book_again, created_at "
-            + "FROM booking_reviews WHERE reviewee_id = :userId "
-            + "AND id > :cursor "
-            + "ORDER BY id LIMIT :limit")
+    @SqlQuery("WITH cursor_row AS (SELECT created_at, id FROM booking_reviews WHERE id = :cursor) "
+            + "SELECT r.id, r.booking_id, r.reviewer_id, r.reviewee_id, "
+            + "r.quality_rating, r.punctuality_rating, r.communication_rating, r.clarity_rating, "
+            + "r.respectfulness_rating, r.comment, r.would_book_again, r.created_at "
+            + "FROM booking_reviews r, cursor_row c "
+            + "WHERE r.reviewee_id = :userId "
+            + "AND (r.created_at < c.created_at OR (r.created_at = c.created_at AND r.id < c.id)) "
+            + "ORDER BY r.created_at DESC, r.id DESC LIMIT :limit")
     List<Review> findByRevieweeIdAfterCursor(
             @Bind("userId") UUID userId, @Bind("cursor") UUID cursor, @Bind("limit") int limit);
 

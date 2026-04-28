@@ -10,8 +10,9 @@ accepted
 
 ## Context
 
-The monorepo uses pnpm workspaces with four frontend packages (`apps/web`,
-`apps/mobile`, `packages/sdk`, `packages/design-tokens`). Before this change,
+The monorepo uses pnpm workspaces for the frontend apps, shared frontend packages,
+and reusable tooling configuration (`apps/web`, `apps/mobile`, `packages/*`, and
+`tooling/config`). Before this change,
 all cross-workspace commands used `pnpm -r <task>`, which runs every workspace
 in parallel with no awareness of build dependencies. This caused two problems:
 
@@ -32,23 +33,33 @@ Adopt Turborepo (`turbo@2.9.x`) as the frontend task orchestrator.
 - Local caching (`.turbo/`, gitignored) skips unchanged workspaces. Second runs
   hit cache for 6/7 tasks.
 - Root `package.json` scripts delegate to `turbo` (`"build": "turbo build"`,
-  `"test": "turbo test"`, etc.). Workspace-level scripts remain unchanged.
+  `"test": "turbo test"`, etc.).
+- Workspace packages that participate in the canonical Turbo graph expose concrete
+  package scripts. The graph must not rely on Turborepo's implicit
+  `<NONEXISTENT>` no-op tasks.
+- SDK generation remains exposed through the root contract lane
+  (`pnpm contract:sdk:generate`) and runs Turborepo's `generate` task for
+  `@tasky/sdk`. That task hashes the split OpenAPI source and contract tooling
+  scripts because the generator reads outside the SDK package directory.
 - Backend commands (`./gradlew`) are unaffected — Turborepo only manages
   pnpm-workspace tasks.
 
 Configured tasks and their dependency chains:
 
-| Task            | Depends on            | Outputs                             |
-| --------------- | --------------------- | ----------------------------------- |
-| `build`         | `^build`              | `dist/**`, `.output/**`, `build/**` |
-| `typecheck`     | `^build`              | —                                   |
-| `test`          | `^build`, `typecheck` | —                                   |
-| `test:unit`     | `^build`, `typecheck` | —                                   |
-| `test:coverage` | `^build`, `typecheck` | `coverage/**`                       |
-| `lint`          | `^build`              | —                                   |
-| `format`        | —                     | —                                   |
-| `format:check`  | —                     | —                                   |
-| `sdk:generate`  | —                     | `src/generated/**`                  |
+| Task            | Depends on            | Outputs            |
+| --------------- | --------------------- | ------------------ |
+| `build`         | `^build`              | `dist/**`          |
+| `typecheck`     | `^build`              | —                  |
+| `test`          | `^build`, `typecheck` | —                  |
+| `test:unit`     | `^build`, `typecheck` | —                  |
+| `test:coverage` | `^build`, `typecheck` | `coverage/**`      |
+| `lint`          | `^build`              | —                  |
+| `format`        | —                     | —                  |
+| `format:check`  | —                     | —                  |
+| `generate`      | —                     | `src/generated/**` |
+
+Root `pnpm test:coverage` is intentionally filtered to the packages that own
+coverage-producing test runners: `@tasky/web`, `@tasky/mobile`, and `@tasky/core`.
 
 ## Consequences
 
@@ -59,8 +70,9 @@ Positive:
    feedback on repeat runs.
 3. Foundation for remote caching — when CI is set up, `--token` enables shared
    cache across machines.
-4. No workspace-level changes required — Turborepo reads existing `package.json`
-   scripts.
+4. Concrete graph validation — tooling tests fail if canonical Turbo commands
+   schedule `<NONEXISTENT>` tasks or if SDK generation stops hashing its
+   OpenAPI/tooling inputs.
 
 Negative:
 
@@ -71,7 +83,7 @@ Negative:
 ## Alternatives Considered
 
 1. **Nx** — more features (affected-project detection, code generation), but
-   heavier config and unnecessary for a 4-workspace frontend. Turborepo is
+   heavier config and unnecessary for the current frontend workspace. Turborepo is
    simpler and purpose-built for pnpm monorepos.
 
 2. **Lerna** — legacy tool, mostly subsumed by Nx. No compelling reason to

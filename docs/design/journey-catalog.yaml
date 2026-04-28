@@ -63,7 +63,7 @@ journeys:
       - customer
       - tasker
     phase: 0-1
-    goal: Exchange messages about a confirmed booking
+    goal: Exchange messages about a confirmed, price-locked booking
     entry: SCR-SHARED-010
     exit:
       - SCR-SHARED-011
@@ -118,6 +118,13 @@ journeys:
         screens:
           - SCR-SHARED-013
         outcome: Error toast, retry
+      - id: JRN-SHARED-05-A2
+        name: Tasker stats
+        branch_at: 1
+        condition: Tasker taps stats from profile
+        screens:
+          - SCR-TASK-016
+        outcome: Tasker sees personal reputation, completion, and reliability summary
   - id: JRN-SHARED-06
     name: Settings & Account
     actor:
@@ -130,6 +137,9 @@ journeys:
       - SCR-SHARED-014
       - SCR-SHARED-015
       - SCR-TASK-003
+      - SCR-INFRA-004
+      - SCR-INFRA-005
+      - SCR-TASK-018
     happy_path:
       - step: 1
         screen: SCR-SHARED-014
@@ -154,20 +164,48 @@ journeys:
           - SCR-SHARED-015
         outcome: Confirmation sheet → deletion or blocked by active bookings
         lifecycle: USER-T14 (account_deletion)
+      - id: JRN-SHARED-06-A3
+        name: Terms of service
+        branch_at: 1
+        condition: User taps terms
+        screens:
+          - SCR-INFRA-004
+        outcome: User reviews legal terms
+      - id: JRN-SHARED-06-A4
+        name: Help and support
+        branch_at: 1
+        condition: User taps help
+        screens:
+          - SCR-INFRA-005
+        outcome: User reviews support guidance or starts support contact
+      - id: JRN-SHARED-06-A5
+        name: Privacy policy
+        branch_at: 1
+        condition: User taps privacy
+        screens:
+          - SCR-TASK-018
+        outcome: User reviews privacy policy
+      - id: JRN-SHARED-06-A6
+        name: Tasker service-area preferences
+        branch_at: 1
+        condition: Verified Tasker edits service-area notification preferences
+        screens:
+          - SCR-SHARED-014
+        outcome: Service-area preferences update notification targeting only; browsing and application eligibility remain citywide
   - id: JRN-SHARED-07
     name: Review Submission
     actor:
       - customer
       - tasker
     phase: 0-1
-    goal: Submit mandatory review after booking completion
+    goal: Submit mandatory review after a reviewable terminal booking outcome
     entry: SCR-SHARED-017
     exit:
       - SCR-SHARED-017
     happy_path:
       - step: 1
         screen: SCR-SHARED-017
-        action: Rate categories + optional freetext
+        action: Rate three role-specific categories + optional text marked not required
         next: SCR-SHARED-017
       - step: 2
         screen: SCR-SHARED-017
@@ -180,14 +218,51 @@ journeys:
         condition: User doesn't review immediately
         screens:
           - SCR-SHARED-018
-        outcome: 24h reminder → 72h reminder → hard lock if risk-triggered
+        outcome: 24h reminder → 72h reminder → hard lock while review debt remains
       - id: JRN-SHARED-07-A2
         name: Hard lock
         branch_at: 0
-        condition: 'Risk conditions: open dispute, 2 missed reviews, investigation'
+        condition: User has any open review enforcement case
         screens:
           - SCR-SHARED-019
         outcome: Cannot post/apply until review submitted
+  - id: JRN-SHARED-08
+    name: Notification Center
+    actor:
+      - customer
+      - tasker
+    phase: 0-1
+    goal: Review launch-critical notifications and open the related task, booking, or dispute
+    entry: SCR-SHARED-016
+    exit:
+      - SCR-CUST-009
+      - SCR-CUST-017
+      - SCR-TASK-002
+      - SCR-TASK-013
+      - SCR-TASK-017
+      - SCR-CUST-025
+    happy_path:
+      - step: 1
+        screen: SCR-SHARED-016
+        action: Open notification center
+        next: related screen
+    alternate_paths:
+      - id: JRN-SHARED-08-A1
+        name: Empty notifications
+        branch_at: 1
+        condition: User has no notifications
+        screens:
+          - SCR-SHARED-016
+        outcome: Empty state with notification permission guidance
+      - id: JRN-SHARED-08-A2
+        name: Selected-tasker response notification
+        branch_at: 1
+        condition: Tasker taps a selected-tasker booking request notification during the active response window
+        screens:
+          - SCR-SHARED-016
+          - SCR-TASK-017
+        outcome: Accept or decline sheet opens for the pending booking request
+        lifecycle: APP-T03 or APP-T04
   - id: JRN-CUST-01
     name: Post a Task
     actor:
@@ -208,7 +283,7 @@ journeys:
         next: SCR-CUST-003
       - step: 3
         screen: SCR-CUST-003
-        action: Complete intake form
+        action: Complete intake form, including material, supply, item, or vehicle ownership fields where the category requires them
         next: SCR-CUST-004
         lifecycle: TASK-T01 (prepare)
       - step: 4
@@ -225,7 +300,7 @@ journeys:
         next: SCR-CUST-007
       - step: 7
         screen: SCR-CUST-007
-        action: Review auto-generated Job Scope Summary (editable), then Post Task
+        action: Review deterministic Job Scope Summary generated from intake answers, then Post Task
         next: SCR-CUST-008
         lifecycle: TASK-T01 (customer_publishes_task)
       - step: 8
@@ -272,6 +347,7 @@ journeys:
     exit:
       - SCR-CUST-015
       - SCR-CUST-017
+      - SCR-CUST-009
     happy_path:
       - step: 1
         screen: SCR-CUST-009
@@ -292,14 +368,13 @@ journeys:
         lifecycle: APP-T02 (customer_selects_applicant)
       - step: 5
         screen: SCR-CUST-014
-        action: Accept liability disclaimer, send booking request
+        action: Review locked price and intake-scope baseline, accept liability disclaimer, send booking request
         next: SCR-CUST-015
         lifecycle: APP-T02 (customer_selects_applicant)
       - step: 6
         screen: SCR-CUST-015
         action: Success — request sent, wait for tasker response
-        next: SCR-CUST-017
-        lifecycle: APP-T03 (tasker_confirms_selection)
+        next: SCR-CUST-009
     alternate_paths:
       - id: JRN-CUST-02-A1
         name: No applicants yet
@@ -326,6 +401,15 @@ journeys:
           - SCR-CUST-011
         outcome: Timeout notification, select next applicant
         lifecycle: APP-T05 (selection_window_expires)
+      - id: JRN-CUST-02-A5
+        name: Tasker accepts
+        branch_at: 6
+        condition: Selected Tasker accepts within the default four-hour response window
+        screens:
+          - SCR-CUST-015
+          - SCR-CUST-017
+        outcome: Booking confirmed; locked price, intake-scope baseline, exact address, scope-change guidance, and platform-mediated contact become available
+        lifecycle: APP-T03 (tasker_confirms_selection)
   - id: JRN-CUST-04
     name: Manage Active Booking
     actor:
@@ -378,7 +462,7 @@ journeys:
         condition: Tasker doesn't show up
         screens:
           - SCR-CUST-021
-        outcome: Flag no-show after 15min
+        outcome: Flag no-show after 1 hour
         lifecycle: BOOK-T06 (counterparty_flags_no_show)
       - id: JRN-CUST-04-A4
         name: View timeline
@@ -395,6 +479,15 @@ journeys:
           - SCR-CUST-017
         outcome: Customer accepts or declines reschedule
         lifecycle: BOOK-T08 (reschedule_accepted) or BOOK-T09 (reschedule_declined)
+      - id: JRN-CUST-04-A6
+        name: Customer silence after tasker marks done
+        branch_at: 3
+        condition: Customer does not confirm or dispute completion after push notification reminder attempts where a device token exists
+        screens:
+          - SCR-CUST-017
+          - SCR-TASK-013
+        outcome: Booking auto-completes via timeout, both parties are notified, and review debt is created
+        lifecycle: BOOK-T11 (completion_timeout_auto_completes) and TASK-T12 (completion_timeout_auto_completes)
   - id: JRN-CUST-06
     name: Raise & Track Dispute
     actor:
@@ -425,11 +518,11 @@ journeys:
         condition: No evidence uploaded
         screens:
           - SCR-CUST-024
-        outcome: Validation error — at least 1 artifact required
+        outcome: Dispute opens in evidence-needed grace state with a reminder and 24-hour deadline to add artifacts
       - id: JRN-CUST-06-A2
         name: Auto-close
         branch_at: 3
-        condition: Evidence not provided within 24h
+        condition: Evidence not provided within 24h after the evidence reminder
         screens:
           - SCR-CUST-025
         outcome: Dispute auto-closed
@@ -452,7 +545,7 @@ journeys:
         screen: SCR-CUST-010
         action: Confirm cancellation
         next: SCR-CUST-001
-        lifecycle: TASK-T06 (customer_cancels_open_task)
+        lifecycle: TASK-T07 (customer_cancels_open_task)
   - id: JRN-TASK-01
     name: Tasker Verification
     actor:
@@ -490,6 +583,10 @@ journeys:
         action: Wait for admin review in the verification queue
         next: SCR-TASK-008
         lifecycle: VER-T02 (admin_approves)
+      - step: 7
+        screen: SCR-TASK-008
+        action: View approval confirmation and start browsing tasks
+        next: SCR-TASK-001
     alternate_paths:
       - id: JRN-TASK-01-A1
         name: Rejected
@@ -520,7 +617,7 @@ journeys:
     happy_path:
       - step: 1
         screen: SCR-TASK-001
-        action: Browse task feed, filter by category/distance
+        action: Browse task feed; filter the view by category or distance without changing application eligibility
         next: SCR-TASK-002
       - step: 2
         screen: SCR-TASK-002
@@ -531,6 +628,10 @@ journeys:
         action: Tap 'Apply'
         next: SCR-TASK-011
         lifecycle: APP-T01 (tasker_applies)
+      - step: 4
+        screen: SCR-TASK-011
+        action: Application sent confirmation
+        next: SCR-TASK-001
     alternate_paths:
       - id: JRN-TASK-02-A1
         name: Unverified
@@ -541,12 +642,12 @@ journeys:
           - SCR-TASK-003
         outcome: Redirected to verification gate
       - id: JRN-TASK-02-A2
-        name: Application cap reached
+        name: Task closed to applications
         branch_at: 3
-        condition: Task at max applications
+        condition: Task is assigned, canceled, expired, or otherwise no longer accepting applications
         screens:
           - SCR-TASK-002
-        outcome: Cap reached state shown
+        outcome: Application action disabled with status explanation
       - id: JRN-TASK-02-A3
         name: Already applied
         branch_at: 3
@@ -561,6 +662,14 @@ journeys:
         screens:
           - SCR-TASK-001
         outcome: Empty activation state
+      - id: JRN-TASK-02-A5
+        name: Withdraw application before selection
+        branch_at: 3
+        condition: Tasker already applied and customer has not selected the application
+        screens:
+          - SCR-TASK-002
+        outcome: Application becomes withdrawn and is no longer selectable by the customer
+        lifecycle: APP-T08 (tasker_withdraws_application)
   - id: JRN-TASK-03
     name: Booking Request Accept/Decline
     actor:
@@ -588,7 +697,7 @@ journeys:
         condition: Tasker taps Decline
         screens:
           - SCR-TASK-017
-        outcome: Customer can choose another applicant
+        outcome: Pending selection closes without booking confirmation and the customer can choose another applicant
         lifecycle: APP-T04 (tasker_declines_selection)
       - id: JRN-TASK-03-A2
         name: Timeout
@@ -641,7 +750,7 @@ journeys:
         condition: Customer doesn't show
         screens:
           - SCR-TASK-014
-        outcome: Flag no-show after 15min
+        outcome: Flag no-show after 1 hour
         lifecycle: BOOK-T06 (counterparty_flags_no_show)
       - id: JRN-TASK-04-A3
         name: Tasker cancels (Safety/Fraud)
@@ -676,17 +785,22 @@ journeys:
     goal: Recover from network/session errors
     entry: SCR-INFRA-001
     exit:
-      - previous screen
+      - SCR-INFRA-001
+      - SCR-INFRA-002
+      - SCR-INFRA-003
     paths:
-      - name: Network error
+      - id: JRN-INFRA-01-P1
+        name: Network error
         screens:
           - SCR-INFRA-001
         outcome: Retry button, show cached content if available
-      - name: Session expired
+      - id: JRN-INFRA-01-P2
+        name: Session expired
         screens:
           - SCR-INFRA-003
         outcome: Bottom sheet → re-login flow
-      - name: App update required
+      - id: JRN-INFRA-01-P3
+        name: App update required
         screens:
           - SCR-INFRA-002
         outcome: 'Soft: dismissible. Force: blocks until update'
@@ -702,30 +816,30 @@ journeys:
       - SCR-SHARED-020
       - SCR-SHARED-021
     paths:
-      - name: Suspended
+      - id: JRN-INFRA-02-P1
+        name: Suspended
         screens:
           - SCR-SHARED-020
         outcome: Show expiry, appeal option
         lifecycle: USER-T05 (strike_threshold_reached)
         note: Pending-user suspensions use USER-T06
-      - name: Banned
+      - id: JRN-INFRA-02-P2
+        name: Banned
         screens:
           - SCR-SHARED-021
         outcome: No app access
         lifecycle: USER-T09 (admin_bans)
         note: Suspended/pending-user bans use USER-T10 or USER-T11
 summary:
-  total_journeys: 30
+  scope_note: Customer, tasker, shared, and infrastructure journeys describe app-facing Phase 1 screens. Admin and KPI operations are governed by the PRD, metrics, architecture, and observability docs until a first-party admin UX is introduced.
+  total_journeys: 17
   by_actor:
-    shared: 7
-    customer: 9
-    tasker: 8
-    b2b: 4
+    shared: 6
+    customer: 5
+    tasker: 4
     infrastructure: 2
   by_phase:
     0-1: 17
-    '2': 9
-    3+: 4
   coverage:
     lifecycle_entities_covered:
       - task
@@ -734,7 +848,5 @@ summary:
       - verification
       - dispute
       - user
-      - business_account
-      - business_subscription
     all_screens_reachable: true
     all_terminal_states_reachable: true

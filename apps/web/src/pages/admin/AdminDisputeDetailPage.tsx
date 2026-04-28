@@ -13,6 +13,7 @@ import type { AdminDisputeDetail, Dispute } from '../../lib/apiClient';
 
 function disputeStatusVariant(status: string): 'default' | 'secondary' | 'outline' | 'destructive' {
   switch (status) {
+    case 'EVIDENCE_NEEDED':
     case 'OPEN':
       return 'default';
     case 'RESOLVED_CUSTOMER':
@@ -24,6 +25,21 @@ function disputeStatusVariant(status: string): 'default' | 'secondary' | 'outlin
     default:
       return 'secondary';
   }
+}
+
+const DISPUTE_STATUS_LABEL_KEYS = {
+  EVIDENCE_NEEDED: 'admin.disputes.statusLabel.EVIDENCE_NEEDED',
+  OPEN: 'admin.disputes.statusLabel.OPEN',
+  RESOLVED_CUSTOMER: 'admin.disputes.statusLabel.RESOLVED_CUSTOMER',
+  RESOLVED_TASKER: 'admin.disputes.statusLabel.RESOLVED_TASKER',
+  ESCALATED: 'admin.disputes.statusLabel.ESCALATED',
+  CLOSED_INSUFFICIENT_EVIDENCE: 'admin.disputes.statusLabel.CLOSED_INSUFFICIENT_EVIDENCE',
+  UNKNOWN: 'admin.disputes.statusLabel.UNKNOWN',
+} as const;
+
+function getDisputeStatusLabelKey(status: string): string {
+  const key = status as keyof typeof DISPUTE_STATUS_LABEL_KEYS;
+  return DISPUTE_STATUS_LABEL_KEYS[key] ?? DISPUTE_STATUS_LABEL_KEYS.UNKNOWN;
 }
 
 export function AdminDisputeDetailPage() {
@@ -48,7 +64,7 @@ export function AdminDisputeDetailPage() {
       const result = await adminApiClient.adminGetDispute(session.accessToken, id);
       setDetail(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('common.unknownError', 'Unknown error'));
+      setError(err instanceof Error ? err.message : t('common.unknownError'));
     } finally {
       setLoading(false);
     }
@@ -61,7 +77,7 @@ export function AdminDisputeDetailPage() {
   const handleResolve = useCallback(
     async (resolution: 'RESOLVE_CUSTOMER' | 'RESOLVE_TASKER' | 'ESCALATE') => {
       if (!notes.trim()) {
-        setValidationError(t('admin.disputeDetail.notesRequired', 'Notes are required.'));
+        setValidationError(t('admin.disputeDetail.notesRequired'));
         return;
       }
       setValidationError(null);
@@ -78,7 +94,7 @@ export function AdminDisputeDetailPage() {
         );
         navigate('/admin/disputes');
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Resolution failed');
+        setError(err instanceof Error ? err.message : t('admin.disputeDetail.resolutionFailed'));
       } finally {
         setResolving(false);
       }
@@ -89,10 +105,8 @@ export function AdminDisputeDetailPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold font-display">
-          {t('admin.disputeDetail.title', 'Dispute Detail')}
-        </h1>
-        <p className="sr-only">{t('common.loading', 'Loading...')}</p>
+        <h1 className="text-2xl font-bold font-display">{t('admin.disputeDetail.title')}</h1>
+        <p className="sr-only">{t('common.loading')}</p>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <Card key={i}>
@@ -109,13 +123,11 @@ export function AdminDisputeDetailPage() {
   if (error && !detail) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold font-display">
-          {t('admin.disputeDetail.title', 'Dispute Detail')}
-        </h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.disputeDetail.title')}</h1>
         <Card>
           <CardContent className="p-6 text-center space-y-4">
             <p className="text-destructive">
-              {t('common.error', 'Error')}: {error}
+              {t('common.error')}: {error}
             </p>
           </CardContent>
         </Card>
@@ -134,37 +146,35 @@ export function AdminDisputeDetailPage() {
     id: string;
     sender_id: string;
     content: string;
-    created_at: string;
+    sent_at: string;
   }>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" onClick={() => navigate('/admin/disputes')}>
-          {t('common.back', 'Back')}
+          {t('common.back')}
         </Button>
-        <h1 className="text-2xl font-bold font-display">
-          {t('admin.disputeDetail.title', 'Dispute Detail')}
-        </h1>
+        <h1 className="text-2xl font-bold font-display">{t('admin.disputeDetail.title')}</h1>
       </div>
 
       {/* Dispute Info */}
       <Card>
         <CardContent className="space-y-2 p-6">
           <h2 className="text-lg font-semibold font-display">
-            {t('admin.disputeDetail.disputeInfo', 'Dispute Info')}
+            {t('admin.disputeDetail.disputeInfo')}
           </h2>
           <p>
-            <strong>{t('admin.disputeDetail.reason', 'Reason')}:</strong> {dispute.reason}
+            <strong>{t('admin.disputeDetail.reason')}:</strong> {dispute.reason}
           </p>
           <div className="flex items-center gap-2">
-            <strong>{t('admin.disputeDetail.status', 'Status')}:</strong>
+            <strong>{t('admin.disputeDetail.status')}:</strong>
             <Badge variant={disputeStatusVariant(dispute.status)}>
-              {t(`admin.disputes.status_${dispute.status}`, dispute.status)}
+              {t(getDisputeStatusLabelKey(dispute.status))}
             </Badge>
           </div>
           <p>
-            <strong>{t('admin.disputeDetail.createdAt', 'Created')}:</strong>{' '}
+            <strong>{t('admin.disputeDetail.createdAt')}:</strong>{' '}
             {new Date(dispute.created_at).toLocaleString()}
           </p>
         </CardContent>
@@ -174,21 +184,21 @@ export function AdminDisputeDetailPage() {
       <Card>
         <CardContent className="space-y-2 p-6">
           <h2 className="text-lg font-semibold font-display">
-            {t('admin.disputeDetail.bookingContext', 'Booking Context')}
+            {t('admin.disputeDetail.bookingContext')}
           </h2>
           {task && (
             <>
               <p>
-                <strong>{t('admin.disputeDetail.taskDescription', 'Task')}:</strong>{' '}
+                <strong>{t('admin.disputeDetail.taskDescription')}:</strong>{' '}
                 {String(task['description'] ?? '')}
               </p>
               <p>
-                <strong>{t('admin.disputeDetail.budget', 'Budget')}:</strong>{' '}
+                <strong>{t('admin.disputeDetail.budget')}:</strong>{' '}
                 {Number(task['budget'] ?? booking['price'] ?? 0).toLocaleString()}
               </p>
               {task['scheduled_at'] && (
                 <p>
-                  <strong>{t('admin.disputeDetail.schedule', 'Schedule')}:</strong>{' '}
+                  <strong>{t('admin.disputeDetail.schedule')}:</strong>{' '}
                   {new Date(String(task['scheduled_at'])).toLocaleString()}
                 </p>
               )}
@@ -196,20 +206,20 @@ export function AdminDisputeDetailPage() {
           )}
           {!task && booking['price'] !== undefined && (
             <p>
-              <strong>{t('admin.disputeDetail.budget', 'Budget')}:</strong>{' '}
+              <strong>{t('admin.disputeDetail.budget')}:</strong>{' '}
               {Number(booking['price']).toLocaleString()}
             </p>
           )}
           {customer && (
             <p>
-              <strong>{t('admin.disputeDetail.customer', 'Customer')}:</strong>{' '}
-              {String(customer['full_name'] ?? t('common.unknown', 'Unknown'))}
+              <strong>{t('admin.disputeDetail.customer')}:</strong>{' '}
+              {String(customer['full_name'] ?? t('common.unknown'))}
             </p>
           )}
           {tasker && (
             <p>
-              <strong>{t('admin.disputeDetail.tasker', 'Tasker')}:</strong>{' '}
-              {String(tasker['full_name'] ?? t('common.unknown', 'Unknown'))}
+              <strong>{t('admin.disputeDetail.tasker')}:</strong>{' '}
+              {String(tasker['full_name'] ?? t('common.unknown'))}
             </p>
           )}
         </CardContent>
@@ -220,12 +230,12 @@ export function AdminDisputeDetailPage() {
         <Card>
           <CardContent className="space-y-3 p-6">
             <h2 className="text-lg font-semibold font-display">
-              {t('admin.disputeDetail.evidence', 'Evidence Messages')}
+              {t('admin.disputeDetail.evidence')}
             </h2>
             {evidenceMessages.map((msg) => (
               <div key={msg.id} className="border-l-2 border-border pl-3 py-1">
                 <p className="text-xs text-muted-foreground">
-                  {new Date(msg.created_at).toLocaleString()}
+                  {new Date(msg.sent_at).toLocaleString()}
                 </p>
                 <p className="text-sm">{msg.content}</p>
               </div>
@@ -238,16 +248,16 @@ export function AdminDisputeDetailPage() {
       <Card>
         <CardContent className="space-y-4 p-6">
           <h2 className="text-lg font-semibold font-display">
-            {t('admin.disputeDetail.resolution', 'Resolution')}
+            {t('admin.disputeDetail.resolution')}
           </h2>
           <div>
             <label htmlFor="resolution-notes" className="block text-sm font-medium mb-1">
-              {t('admin.disputeDetail.notesLabel', 'Resolution Notes')}
+              {t('admin.disputeDetail.notesLabel')}
             </label>
             <Textarea
               id="resolution-notes"
               rows={4}
-              placeholder={t('admin.disputeDetail.notesPlaceholder', 'Enter resolution notes...')}
+              placeholder={t('admin.disputeDetail.notesPlaceholder')}
               value={notes}
               onChange={(e) => {
                 setNotes(e.target.value);
@@ -258,22 +268,22 @@ export function AdminDisputeDetailPage() {
           </div>
           {error && detail && (
             <p className="text-destructive text-sm">
-              {t('common.error', 'Error')}: {error}
+              {t('common.error')}: {error}
             </p>
           )}
           <div className="flex gap-3">
             <Button disabled={resolving} onClick={() => handleResolve('RESOLVE_CUSTOMER')}>
-              {t('admin.disputeDetail.resolveCustomer', 'Resolve for Customer')}
+              {t('admin.disputeDetail.resolveCustomer')}
             </Button>
             <Button disabled={resolving} onClick={() => handleResolve('RESOLVE_TASKER')}>
-              {t('admin.disputeDetail.resolveTasker', 'Resolve for Tasker')}
+              {t('admin.disputeDetail.resolveTasker')}
             </Button>
             <Button
               variant="secondary"
               disabled={resolving}
               onClick={() => handleResolve('ESCALATE')}
             >
-              {t('admin.disputeDetail.escalate', 'Escalate')}
+              {t('admin.disputeDetail.escalate')}
             </Button>
           </div>
         </CardContent>

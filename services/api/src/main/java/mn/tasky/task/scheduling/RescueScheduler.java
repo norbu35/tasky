@@ -5,11 +5,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.UUID;
-import mn.tasky.notification.application.NotificationService;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
+import mn.tasky.task.application.TaskAssistanceService;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
-import mn.tasky.task.dao.TaskRescueEventDao;
 import mn.tasky.task.dto.TaskState;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
@@ -19,10 +18,10 @@ import org.springframework.stereotype.Component;
 
 /**
  * Periodically checks for OPEN tasks that have received zero applications after
- * 120 minutes. Triggers backend-controlled rescue actions: broadened tasker
+ * 8 hours. Triggers backend-controlled rescue actions: broadened tasker
  * push, concierge flag, and intervention tracking.
  *
- * REQ-P1-ASSIST-03A: customers are not asked to choose rescue behavior.
+ * REQ-P1-ASSIST-03: customers are not asked to choose rescue behavior.
  * Only runs during daytime hours (08:00-21:59) in Asia/Ulaanbaatar timezone.
  */
 @Component
@@ -34,24 +33,21 @@ public class RescueScheduler {
     private static final int HOUR_START = 8;
     private static final int HOUR_END = 21;
     private static final int BATCH_LIMIT = 200;
-    private static final String RESCUE_ACTIONS_JSON =
-            "{\"actions\": [\"BROADENED_TASKER_PUSH\", \"CONCIERGE_FLAG\", \"INTERVENTION_CREATED\"]}";
-    private static final String INTERVENTION_TYPE = "SYSTEM_ASSISTED";
 
     private final TaskDao taskDao;
     private final TaskApplicationDao taskApplicationDao;
-    private final TaskRescueEventDao taskRescueEventDao;
-    private final NotificationService notificationService;
+    private final TaskAssistanceService taskAssistanceService;
+    private final NotificationCommandPort notificationCommandPort;
 
     public RescueScheduler(
             TaskDao taskDao,
             TaskApplicationDao taskApplicationDao,
-            TaskRescueEventDao taskRescueEventDao,
-            NotificationService notificationService) {
+            TaskAssistanceService taskAssistanceService,
+            NotificationCommandPort notificationCommandPort) {
         this.taskDao = taskDao;
         this.taskApplicationDao = taskApplicationDao;
-        this.taskRescueEventDao = taskRescueEventDao;
-        this.notificationService = notificationService;
+        this.taskAssistanceService = taskAssistanceService;
+        this.notificationCommandPort = notificationCommandPort;
     }
 
     @Scheduled(fixedDelay = 300000)
@@ -61,7 +57,7 @@ public class RescueScheduler {
         int hour = now.getHour();
 
         if (hour < HOUR_START || hour > HOUR_END) {
-            log.debug("Rescue scheduler skipped — outside operating hours ({}:00 UB)", hour);
+            log.debug("Rescue scheduler skipped - outside operating hours ({}:00 UB)", hour);
             return;
         }
 
@@ -85,25 +81,23 @@ public class RescueScheduler {
 
     private void processTask(TaskState task, String triggerWindow) {
         int applicationCount = taskApplicationDao.countByTaskId(task.id());
-        if (applicationCount > 0) {
-            return;
-        }
-
-        if (taskRescueEventDao.existsByTaskId(task.id())) {
+        if (!taskAssistanceService
+                .evaluateExternalDistribution(task, applicationCount, Instant.now())
+                .externalDistributionAllowed()) {
             return;
         }
 
         Instant now = Instant.now();
-        String eventId = UUID.randomUUID().toString();
-        taskRescueEventDao.insert(eventId, task.id(), now, triggerWindow, RESCUE_ACTIONS_JSON, INTERVENTION_TYPE);
+        var event = taskAssistanceService.recordExternalDistribution(task, triggerWindow, now);
 
-        notificationService.sendPush(
+        notificationCommandPort.sendPush(
                 task.customerId(), "Finding taskers", "We're expanding the search for your task.", "RESCUE_INFO");
 
-        // Concierge / admin notification — send to the task's customer ID channel as a proxy;
+        // Concierge / admin notification - send to the task's customer ID channel as a proxy;
         // in production this would target an admin user or ops channel.
-        log.warn("Task {} triggered rescue — needs concierge attention", task.id());
+        log.warn("Task {} triggered rescue - needs concierge attention", task.id());
 
-        log.info("Rescue event created for task {}: eventId={}, triggerWindow={}", task.id(), eventId, triggerWindow);
+        log.info(
+                "Rescue event created for task {}: eventId={}, triggerWindow={}", task.id(), event.id(), triggerWindow);
     }
 }

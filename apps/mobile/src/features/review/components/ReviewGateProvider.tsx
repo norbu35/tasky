@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useMemo } from 'react';
 
 import type { PendingReview } from '@/lib/api/types';
+
 import { usePendingReviews } from '../hooks/usePendingReviews';
 
 interface ReviewGateContextValue {
@@ -29,11 +30,7 @@ export function ReviewGateProvider({ children }: { children: React.ReactNode }) 
     );
     const oldestPending = sorted[0];
 
-    // Locked if oldest pending is older than 72 hours
-    const isLocked =
-      Date.now() - new Date(oldestPending.triggered_at).getTime() > 72 * 60 * 60 * 1000;
-
-    return { isLocked, hasPending: true, oldestPending };
+    return { isLocked: true, hasPending: true, oldestPending };
   }, [pendingReviews]);
 
   return <ReviewGateContext.Provider value={value}>{children}</ReviewGateContext.Provider>;

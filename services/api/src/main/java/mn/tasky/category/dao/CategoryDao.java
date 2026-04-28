@@ -22,6 +22,7 @@ public interface CategoryDao {
             boolean isActive,
             int sortOrder,
             Boolean intakeEnabled,
+            Boolean assistedDistributionEnabled,
             Integer intakeSchemaVersion,
             String intakeSchemaJson) {
         insert(
@@ -32,14 +33,15 @@ public interface CategoryDao {
                 isActive,
                 sortOrder,
                 intakeEnabled,
+                assistedDistributionEnabled,
                 intakeSchemaVersion,
                 intakeSchemaJson);
     }
 
     @SqlUpdate("INSERT INTO categories (id, name, name_mn, icon_url, is_active, sort_order, "
-            + "intake_enabled, intake_schema_version, intake_schema_json) "
+            + "intake_enabled, assisted_distribution_enabled, intake_schema_version, intake_schema_json) "
             + "VALUES (:id, :name, :nameMn, :iconUrl, :isActive, :sortOrder, "
-            + "COALESCE(:intakeEnabled, true), :intakeSchemaVersion, "
+            + "COALESCE(:intakeEnabled, true), COALESCE(:assistedDistributionEnabled, false), :intakeSchemaVersion, "
             + "CAST(:intakeSchemaJson AS jsonb))")
     void insert(
             @Bind("id") UUID id,
@@ -49,6 +51,7 @@ public interface CategoryDao {
             @Bind("isActive") boolean isActive,
             @Bind("sortOrder") int sortOrder,
             @Bind("intakeEnabled") Boolean intakeEnabled,
+            @Bind("assistedDistributionEnabled") Boolean assistedDistributionEnabled,
             @Bind("intakeSchemaVersion") Integer intakeSchemaVersion,
             @Bind("intakeSchemaJson") String intakeSchemaJson);
 
@@ -111,6 +114,7 @@ public interface CategoryDao {
             boolean isActive,
             int sortOrder,
             Boolean intakeEnabled,
+            Boolean assistedDistributionEnabled,
             Integer intakeSchemaVersion,
             String intakeSchemaJson) {
         update(
@@ -121,6 +125,7 @@ public interface CategoryDao {
                 isActive,
                 sortOrder,
                 intakeEnabled,
+                assistedDistributionEnabled,
                 intakeSchemaVersion,
                 intakeSchemaJson);
     }
@@ -128,6 +133,7 @@ public interface CategoryDao {
     @SqlUpdate("UPDATE categories SET name = :name, name_mn = :nameMn, icon_url = :iconUrl, "
             + "is_active = :isActive, sort_order = :sortOrder, "
             + "intake_enabled = COALESCE(:intakeEnabled, intake_enabled), "
+            + "assisted_distribution_enabled = COALESCE(:assistedDistributionEnabled, assisted_distribution_enabled), "
             + "intake_schema_version = :intakeSchemaVersion, "
             + "intake_schema_json = CAST(:intakeSchemaJson AS jsonb) "
             + "WHERE id = :id")
@@ -139,6 +145,7 @@ public interface CategoryDao {
             @Bind("isActive") boolean isActive,
             @Bind("sortOrder") int sortOrder,
             @Bind("intakeEnabled") Boolean intakeEnabled,
+            @Bind("assistedDistributionEnabled") Boolean assistedDistributionEnabled,
             @Bind("intakeSchemaVersion") Integer intakeSchemaVersion,
             @Bind("intakeSchemaJson") String intakeSchemaJson);
 }

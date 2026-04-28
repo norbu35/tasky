@@ -52,7 +52,7 @@ Message:
     - conversation_id
     - sender_id
     - content
-    - created_at
+    - sent_at
   properties:
     id:
       type: string
@@ -71,6 +71,6 @@ Message:
     content_hash:
       type: string
       nullable: true
-    created_at:
+    sent_at:
       type: string
       format: date-time

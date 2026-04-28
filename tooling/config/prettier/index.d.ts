@@ -5,6 +5,10 @@ export interface PrettierOptions {
   printWidth: number;
   tabWidth: number;
   bracketSpacing: boolean;
+  bracketSameLine: boolean;
+  plugins: string[];
+  xmlSelfClosingSpace: boolean;
+  xmlWhitespaceSensitivity: 'strict' | 'preserve' | 'ignore';
 }
 declare const config: PrettierOptions;
 export default config;

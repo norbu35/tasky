@@ -1,104 +1,127 @@
 # Screen Spec: Application Sent
 screen_id: SCR-TASK-011
-name: "Application Sent"
-route: null
+name: 'Application Sent'
+route: '/(tasker)/tasks/applied'
+presentation:
+  type: route_backed_success
+  host_screen: SCR-TASK-002
+  invocation: 'Shown after a verified tasker submits a structured application from task detail'
 role: [tasker]
-phase: "0-1"
+phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-011
+  prd_refs:
+    - REQ-P1-MATCH-01
+    - REQ-P1-MATCH-02
+    - REQ-P1-PRICE-03
+    - REQ-P1-PRICE-04
+    - REQ-P1-PRICE-06
+    - REQ-P1-KPI-04
+  journey_refs:
+    - JRN-TASK-02:step-4
+  scenario_refs:
+    - SCN-TASK-022
+    - SCN-TASK-023
+    - SCN-TASK-027
+    - SCN-TASK-028
+    - SCN-ANALYTICS-004
 template: success_celebration
-figma_page: "Tasker/Application Sent"
-feature: "task-browse"
+figma_page: 'Tasker/Application Sent'
+feature: 'task-browse'
 
 layout:
   template: success_celebration
   density: comfortable
-  structure: "safe_area -> centered(animated_checkmark + heading + description + next_steps + primary_cta + secondary_cta)"
+  structure: 'safe_area -> centered(animated_checkmark + heading + description + next_steps + primary_cta + secondary_cta)'
 
 components:
   - id: COMP-ANIMATEDCHECKMARK
-    usage: "Animated checkmark celebrating successful application submission"
+    usage: 'Animated checkmark celebrating successful application submission'
     props:
-      size: "xl"
-      color: "verified"
+      size: 'xl'
+      color: 'verified'
     variant: default
 
   - id: COMP-BUTTON
-    usage: "Primary CTA to continue browsing more tasks"
+    usage: 'Primary CTA to continue browsing more tasks'
     props:
-      label: "Бусад даалгавар үзэх"
+      label: 'Бусад даалгавар үзэх'
       variant: primary
       size: xl
     variant: primary
 
   - id: COMP-BUTTON
-    usage: "Secondary CTA to view the applied task detail"
+    usage: 'Secondary CTA to view the applied task detail'
     props:
-      label: "Даалгавар харах"
+      label: 'Даалгавар харах'
       variant: outline
       size: lg
     variant: outline
 
 states:
   - id: default
-    description: "Application submitted successfully — inline celebration with CTAs to browse more or view task"
-    components_visible: [animated_checkmark, heading, description, next_steps, browse_more_button, view_task_button]
+    description: 'Application submitted successfully — inline celebration with CTAs to browse more or view task'
+    components_visible:
+      [animated_checkmark, heading, description, next_steps, browse_more_button, view_task_button]
     components_hidden: []
 
 copy:
   - key: heading
-    mn: "Анкет амжилттай илгээгдлээ!"
-    en: "Application Sent!"
+    mn: 'Анкет амжилттай илгээгдлээ!'
+    en: 'Application Sent!'
     max_chars: 30
 
   - key: description
-    mn: "Таны анкет захиалагчид хүргэгдлээ. Захиалагч таныг сонговол мэдэгдэл авна."
+    mn: 'Таны анкет захиалагчид хүргэгдлээ. Захиалагч таныг сонговол мэдэгдэл авна.'
     en: "Your application has been sent to the customer. You'll be notified if selected."
     max_chars: 80
 
   - key: next_steps_heading
-    mn: "Дараа нь юу болох вэ?"
-    en: "What happens next?"
+    mn: 'Дараа нь юу болох вэ?'
+    en: 'What happens next?'
     max_chars: 25
 
   - key: next_step_customer_reviews
-    mn: "Захиалагч анкетуудыг хянаж, сонголт хийнэ"
-    en: "The customer will review applications and choose"
+    mn: 'Захиалагч анкетуудыг хянаж, сонголт хийнэ'
+    en: 'The customer will review applications and choose'
     max_chars: 55
 
   - key: next_step_notification
-    mn: "Таныг сонговол мэдэгдэл авна"
+    mn: 'Таныг сонговол мэдэгдэл авна'
     en: "You'll get a notification if selected"
     max_chars: 45
 
   - key: next_step_keep_applying
-    mn: "Бусад даалгавруудад ч анкет илгээх боломжтой"
-    en: "You can keep applying to other tasks"
+    mn: 'Бусад даалгавруудад ч анкет илгээх боломжтой'
+    en: 'You can keep applying to other tasks'
     max_chars: 50
 
   - key: browse_more_button
-    mn: "Бусад даалгавар үзэх"
-    en: "Browse More"
+    mn: 'Бусад даалгавар үзэх'
+    en: 'Browse More'
     max_chars: 25
 
   - key: view_task_button
-    mn: "Даалгавар харах"
-    en: "View Task"
+    mn: 'Даалгавар харах'
+    en: 'View Task'
     max_chars: 15
 
 api_endpoints: []
 
 analytics_events:
-  - event: "application_sent_viewed"
-    trigger: "Application Sent screen becomes visible"
-  - event: "application_sent_browse_tapped"
-    trigger: "User taps Browse More to return to task feed"
-  - event: "application_sent_view_task_tapped"
-    trigger: "User taps View Task to see the applied task detail"
+  - event: 'application_sent_viewed'
+    trigger: 'Application Sent screen becomes visible'
+  - event: 'application_sent_browse_tapped'
+    trigger: 'User taps Browse More to return to task feed'
+  - event: 'application_sent_view_task_tapped'
+    trigger: 'User taps View Task to see the applied task detail'
 
 acceptance_criteria:
-  - "This is an inline success overlay, not a standalone route"
-  - "Animated checkmark plays spring animation on display"
-  - "Next steps explain customer review process and notification promise"
+  - 'This is a route-backed success screen using the success_celebration contract; the same content may be reused inline after application submit'
+  - 'Animated checkmark plays spring animation on display'
+  - 'Next steps explain customer review process and notification promise'
   - "Tapping 'Бусад даалгавар үзэх' navigates to Task Feed (SCR-TASK-001) via replace"
   - "Tapping 'Даалгавар харах' dismisses to Task Detail (SCR-TASK-002)"
-  - "Comfortable density for celebratory moment"
-  - "Application is created via POST /tasks/:id/applications on the preceding detail screen"
+  - 'Comfortable density for celebratory moment'
+  - 'Application is created via POST /tasks/:id/applications on the preceding detail screen'

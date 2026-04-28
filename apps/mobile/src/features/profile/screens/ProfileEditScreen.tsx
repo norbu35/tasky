@@ -11,8 +11,8 @@ import { Input } from '@/components/ui/Input';
 import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
 import { Touchable } from '@/components/ui/Touchable';
 import { mobileTheme } from '@/design/tokenAdapter';
-import { useMyProfile, useUpdateProfile } from '@/features/profile/hooks/useProfile';
 import { getAvatarUploadUrl } from '@/features/profile/api';
+import { useMyProfile, useUpdateProfile } from '@/features/profile/hooks/useProfile';
 import { useAuthStore } from '@/store/authStore';
 
 const { colors } = mobileTheme;
@@ -98,6 +98,7 @@ export default function ProfileEditScreen() {
   return (
     <FormWizardTemplate
       testID="SCR-SHARED-013"
+      title={t('shared.profile.editTitle')}
       currentStep={0}
       totalSteps={1}
       onNext={handleSave}

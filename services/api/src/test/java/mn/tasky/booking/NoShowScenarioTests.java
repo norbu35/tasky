@@ -26,6 +26,7 @@ import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
 import mn.tasky.notification.application.NotificationService;
+import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.TaskLifecycleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -51,6 +52,7 @@ class NoShowScenarioTests {
     private ModerationService moderationService;
     private AuditEventDao auditEventDao;
     private TaskLifecycleService taskLifecycleService;
+    private ReviewEnforcementService reviewEnforcementService;
     private NoShowService noShowService;
 
     @BeforeEach
@@ -65,6 +67,7 @@ class NoShowScenarioTests {
         moderationService = mock(ModerationService.class);
         auditEventDao = mock(AuditEventDao.class);
         taskLifecycleService = mock(TaskLifecycleService.class);
+        reviewEnforcementService = mock(ReviewEnforcementService.class);
 
         // flagNoShow uses findByIdForUpdate; other paths use findById
         when(bookingDao.findByIdForUpdate(anyString()))
@@ -80,7 +83,8 @@ class NoShowScenarioTests {
                 taskLifecycleService,
                 moderationService,
                 notificationService,
-                auditEventDao);
+                auditEventDao,
+                reviewEnforcementService);
 
         // Default: no recent activity, no accepted reschedule, no conversation
         when(timelineEventDao.existsRecentByBookingId(anyString(), any())).thenReturn(false);
@@ -113,10 +117,10 @@ class NoShowScenarioTests {
     // ── SCN-BOOK-010 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-BOOK-010: Scheduled start plus 10 minutes sends no-show reminder to both parties")
-    void reminderSentAtPlusTenMinutes() {
-        // Booking past the 10-minute threshold (schedule was 11 minutes ago)
-        Instant scheduledAt = Instant.now().minus(11, ChronoUnit.MINUTES);
+    @DisplayName("SCN-BOOK-010: Scheduled start plus 30 minutes sends no-show reminder to both parties")
+    void reminderSentAtPlusThirtyMinutes() {
+        // Booking past the 30-minute threshold (schedule was 31 minutes ago)
+        Instant scheduledAt = Instant.now().minus(31, ChronoUnit.MINUTES);
         BookingState booking = assignedBooking(scheduledAt);
         noShowService.sendReminder(booking);
 
@@ -129,10 +133,10 @@ class NoShowScenarioTests {
     // ── SCN-BOOK-011 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-BOOK-011: No-show flag before 15 minutes after schedule returns TOO_EARLY")
-    void noShowFlagBefore15MinutesReturnsTooEarly() {
-        // Scheduled 10 minutes ago — still too early (< 15 min threshold)
-        BookingState booking = assignedBooking(Instant.now().minus(10, ChronoUnit.MINUTES));
+    @DisplayName("SCN-BOOK-011: No-show flag before 1 hour after schedule returns TOO_EARLY")
+    void noShowFlagBeforeOneHourReturnsTooEarly() {
+        // Scheduled 45 minutes ago: still too early (< 1 hour threshold)
+        BookingState booking = assignedBooking(Instant.now().minus(45, ChronoUnit.MINUTES));
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(booking));
 
         NoShowFlagResult result = noShowService.flagNoShow(BOOKING_ID, CUSTOMER_ID);
@@ -146,8 +150,8 @@ class NoShowScenarioTests {
     @Test
     @DisplayName("SCN-BOOK-012: Recent in-app activity within 30 minutes blocks no-show flag")
     void recentActivityBlocksNoShowFlag() {
-        // Past the 15-minute threshold
-        BookingState booking = assignedBooking(Instant.now().minus(20, ChronoUnit.MINUTES));
+        // Past the 1-hour threshold
+        BookingState booking = assignedBooking(Instant.now().minus(61, ChronoUnit.MINUTES));
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(booking));
         // Recent timeline activity from a participant
         when(timelineEventDao.existsRecentByBookingId(eq(BOOKING_ID), any())).thenReturn(true);
@@ -163,8 +167,8 @@ class NoShowScenarioTests {
     @Test
     @DisplayName("SCN-BOOK-013: Accepted future reschedule supersedes no-show adjudication on the original schedule")
     void acceptedFutureRescheduleSupersedes() {
-        // Past the 15-minute threshold, no activity
-        BookingState booking = assignedBooking(Instant.now().minus(20, ChronoUnit.MINUTES));
+        // Past the 1-hour threshold, no activity
+        BookingState booking = assignedBooking(Instant.now().minus(61, ChronoUnit.MINUTES));
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(booking));
         // An accepted reschedule for a future time exists
         BookingScheduleEvent acceptedReschedule = new BookingScheduleEvent(
@@ -188,8 +192,8 @@ class NoShowScenarioTests {
     @Test
     @DisplayName("SCN-BOOK-014: Valid no-show flag transitions booking and task to NO_SHOW and records audit history")
     void validNoShowFlagTransitionsToNoShowAndRecordsAudit() {
-        // All preconditions met: past 15 min, no activity, no superseding reschedule
-        BookingState booking = assignedBooking(Instant.now().minus(20, ChronoUnit.MINUTES));
+        // All preconditions met: past 1 hour, no activity, no superseding reschedule
+        BookingState booking = assignedBooking(Instant.now().minus(61, ChronoUnit.MINUTES));
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(booking));
         // After update, return updated state
         BookingState updated = new BookingState(
@@ -220,6 +224,8 @@ class NoShowScenarioTests {
         verify(timelineService)
                 .recordEvent(eq(BOOKING_ID), eq(BookingTimelineService.NO_SHOW_CONFIRMED), anyString(), anyString());
         verify(auditEventDao).insert(anyString(), eq("NO_SHOW_FLAGGED"), eq("BOOKING"), eq(BOOKING_ID), anyString());
+        verify(reviewEnforcementService)
+                .createCasesForBooking(eq(BOOKING_ID), eq(CUSTOMER_ID), eq(TASKER_ID), eq("BOOKING_NO_SHOW"));
     }
 
     // ── SCN-BOOK-015 ─────────────────────────────────────────────────────────
@@ -228,7 +234,7 @@ class NoShowScenarioTests {
     @DisplayName("SCN-BOOK-015: Repeated no-shows within 28 days create a strike-review case")
     void repeatedNoShowsCreateStrikeReviewCase() {
         // When no-show party is the tasker, moderationService.addStrike() is called
-        BookingState booking = assignedBooking(Instant.now().minus(20, ChronoUnit.MINUTES));
+        BookingState booking = assignedBooking(Instant.now().minus(61, ChronoUnit.MINUTES));
         when(bookingDao.findById(BOOKING_ID)).thenReturn(Optional.of(booking));
         when(bookingDao.findById(BOOKING_ID))
                 .thenReturn(Optional.of(booking))
@@ -272,7 +278,7 @@ class NoShowScenarioTests {
                 "NO_SHOW",
                 null,
                 true,
-                Instant.now().minus(20, ChronoUnit.MINUTES),
+                Instant.now().minus(61, ChronoUnit.MINUTES),
                 "DIRECT",
                 false,
                 null,

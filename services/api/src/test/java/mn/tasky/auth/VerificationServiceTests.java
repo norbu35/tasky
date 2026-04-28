@@ -492,8 +492,6 @@ class VerificationServiceTests {
         }
     }
 
-    // SCN-VERIF-005 is an IMPLEMENTATION GAP: queue age and SLA posture metrics
-    // are not yet implemented in the codebase. The admin_verification_queue_projection
-    // view exposes submittedAt but no computed age or SLA metrics. Deferred to
-    // implementation work, not test-rehab.
+    // SCN-VERIF-005 is covered by AdminVerificationCompositionServiceTests because
+    // queue age and SLA posture are admin projection concerns.
 }

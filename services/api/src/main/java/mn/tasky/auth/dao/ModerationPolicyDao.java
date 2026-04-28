@@ -16,15 +16,19 @@ public interface ModerationPolicyDao {
             + "FROM moderation_policy WHERE id = 1")
     Optional<ModerationPolicy> findActive();
 
-    @SqlUpdate("UPDATE moderation_policy "
-            + "SET strike_window_days = :strikeWindowDays, "
-            + "strike_threshold = :strikeThreshold, "
-            + "first_suspension_days = :firstSuspensionDays, "
-            + "repeat_suspension_days = :repeatSuspensionDays, "
-            + "repeat_offense_window_days = :repeatOffenseWindowDays, "
-            + "auto_unsuspend_enabled = :autoUnsuspendEnabled, "
-            + "updated_at = :updatedAt "
-            + "WHERE id = 1")
+    @SqlUpdate("INSERT INTO moderation_policy (id, strike_window_days, strike_threshold, "
+            + "first_suspension_days, repeat_suspension_days, repeat_offense_window_days, "
+            + "auto_unsuspend_enabled, updated_at) "
+            + "VALUES (1, :strikeWindowDays, :strikeThreshold, :firstSuspensionDays, "
+            + ":repeatSuspensionDays, :repeatOffenseWindowDays, :autoUnsuspendEnabled, :updatedAt) "
+            + "ON CONFLICT (id) DO UPDATE SET "
+            + "strike_window_days = EXCLUDED.strike_window_days, "
+            + "strike_threshold = EXCLUDED.strike_threshold, "
+            + "first_suspension_days = EXCLUDED.first_suspension_days, "
+            + "repeat_suspension_days = EXCLUDED.repeat_suspension_days, "
+            + "repeat_offense_window_days = EXCLUDED.repeat_offense_window_days, "
+            + "auto_unsuspend_enabled = EXCLUDED.auto_unsuspend_enabled, "
+            + "updated_at = EXCLUDED.updated_at")
     int update(
             @Bind("strikeWindowDays") int strikeWindowDays,
             @Bind("strikeThreshold") int strikeThreshold,

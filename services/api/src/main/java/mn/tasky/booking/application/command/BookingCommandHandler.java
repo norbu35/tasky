@@ -60,6 +60,11 @@ public class BookingCommandHandler implements BookingCommandPort {
     }
 
     @Override
+    public BookingTransitionResult cancelBooking(String actorUserId, String bookingId, String reason) {
+        return bookingLifecycleService.cancelBooking(actorUserId, bookingId, reason);
+    }
+
+    @Override
     public BookingTransitionResult completeBooking(String actorUserId, String bookingId) {
         return bookingLifecycleService.completeBooking(actorUserId, bookingId);
     }

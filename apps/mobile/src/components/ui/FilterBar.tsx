@@ -2,6 +2,7 @@ import { cva } from 'class-variance-authority';
 import React from 'react';
 import { Pressable, ScrollView, Text } from 'react-native';
 
+import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
 const chipVariants = cva('px-lg py-sm rounded-full', {
@@ -52,9 +53,11 @@ export function FilterBar({ filters, activeFilters, onToggle, testID, className 
             key={filter.id}
             onPress={() => onToggle(filter.id)}
             className={chipVariants({ active: isActive })}
+            style={{ minHeight: mobileTheme.iconSizes.touchTargetMin }}
             accessibilityRole="button"
             accessibilityState={{ selected: isActive }}
             accessibilityLabel={filter.label}
+            testID={testID ? `${testID}-option-${filter.id}` : undefined}
           >
             <Text className={textVariants({ active: isActive })}>{filter.label}</Text>
           </Pressable>

@@ -1,11 +1,16 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import React from 'react';
+import type { TextProps } from 'react-native';
+
+import TaskDetailRoute from '../../../src/app/task/[id]';
+import { useTaskDetail } from '../../../src/features/tasks/hooks/useTasks';
+import type { PublicTask, Task } from '../../../src/lib/api/types';
 import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
-import type { PublicTask } from '../../../src/lib/api/types';
 
 const mockPush = jest.fn();
 const mockBack = jest.fn();
 const mockReplace = jest.fn();
+const mockRequestJson = jest.fn();
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: mockReplace, back: mockBack }),
@@ -14,18 +19,24 @@ jest.mock('expo-router', () => ({
 }));
 
 jest.mock('react-i18next', () => {
-  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  const { createReactI18nextMock } = jest.requireActual(
+    '../../test-utils/mockI18n',
+  ) as typeof import('../../test-utils/mockI18n');
   return createReactI18nextMock('mn');
 });
 
-jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
+jest.mock('react-native-reanimated', () => jest.requireActual('react-native-reanimated/mock'));
 
 jest.mock('lucide-react-native', () => {
-  const { Text } = require('react-native');
+  const { Text: MockText } = jest.requireActual('react-native') as typeof import('react-native');
+
   return new Proxy(
     {},
     {
-      get: (_, name) => (props: any) => <Text testID={`icon-${String(name)}`} {...props} />,
+      get: (_target: unknown, name: string) =>
+        function MockIcon(props: TextProps) {
+          return <MockText testID={`icon-${String(name)}`} {...props} />;
+        },
     },
   );
 });
@@ -37,14 +48,7 @@ jest.mock('../../../src/features/tasks/hooks/useTasks', () => ({
 
 jest.mock('../../../src/lib/mobileApiClient', () => ({
   createMobileApiClient: () => ({
-    requestJson: jest.fn().mockResolvedValue({
-      id: 'app-1',
-      task_id: 'task-123',
-      tasker_id: 'tasker-1',
-      message: 'I can do this',
-      status: 'PENDING',
-      created_at: '2026-03-23T00:00:00Z',
-    }),
+    requestJson: mockRequestJson,
     requestVoid: jest.fn(),
   }),
   ApiError: class ApiError extends Error {
@@ -56,9 +60,37 @@ jest.mock('../../../src/lib/mobileApiClient', () => ({
   },
 }));
 
+type AuthStoreState = {
+  session: {
+    accessToken: string;
+    refreshToken: string;
+    user: {
+      id: string;
+      phone: string;
+      role: string;
+      status: string;
+      created_at: string;
+    };
+  };
+  profile: {
+    id: string;
+    phone: string;
+    role: string;
+    status: string;
+    full_name: string;
+    avatar_url: string | null;
+    rating_avg: number;
+    completed_tasks: number;
+    is_pro: boolean;
+    created_at: string;
+  };
+};
+
+type AuthSelector = (state: AuthStoreState) => unknown;
+
 jest.mock('../../../src/store/authStore', () => ({
   useAuthStore: Object.assign(
-    (selector: any) =>
+    (selector: AuthSelector) =>
       selector({
         session: {
           accessToken: 'test-token',
@@ -82,8 +114,7 @@ jest.mock('../../../src/store/authStore', () => ({
   ),
 }));
 
-const { useTaskDetail } = require('../../../src/features/tasks/hooks/useTasks');
-const mockUseTaskDetail = useTaskDetail as jest.MockedFunction<any>;
+const mockUseTaskDetail = useTaskDetail as jest.MockedFunction<(taskId: string) => unknown>;
 
 const baseTask: PublicTask = {
   id: 'task-123',
@@ -95,6 +126,7 @@ const baseTask: PublicTask = {
     is_active: true,
     sort_order: 1,
     intake_enabled: false,
+    assisted_distribution_enabled: false,
     intake_schema_version: 0,
   },
   customer: {
@@ -105,6 +137,7 @@ const baseTask: PublicTask = {
   },
   description: 'Deep clean a 3-bedroom apartment',
   budget: 75000,
+  pricing_mode: 'BUDGET',
   approximate_location: 'Bayangol district',
   approximate_lat: 47.91,
   approximate_lng: 106.91,
@@ -115,8 +148,43 @@ const baseTask: PublicTask = {
   created_at: '2026-03-23T00:00:00Z',
 };
 
+const ownerTaskDetail: Task = {
+  id: 'task-123',
+  category_id: 'cat-cleaning',
+  category: baseTask.category,
+  customer_id: 'u1',
+  description: 'Deep clean a 3-bedroom apartment',
+  budget: 75000,
+  pricing_mode: 'BUDGET',
+  location_lat: 47.91,
+  location_lng: 106.91,
+  location_text: 'Bayangol district, apartment 12',
+  status: 'OPEN',
+  scheduled_at: '2026-03-25T10:00:00Z',
+  intake_answers: {},
+  intake_schema_version: 1,
+  photos: [
+    {
+      storage_key: 'task-photo-1.jpg',
+      url: 'https://example.com/task-photo-1.jpg',
+      sort_order: 0,
+    },
+  ],
+  created_at: '2026-03-23T00:00:00Z',
+  updated_at: '2026-03-23T00:00:00Z',
+};
+
 beforeEach(() => {
   jest.clearAllMocks();
+  mockRequestJson.mockResolvedValue({
+    id: 'app-1',
+    task_id: 'task-123',
+    tasker_id: 'tasker-1',
+    message: 'I can do this',
+    quote_price: null,
+    status: 'PENDING',
+    created_at: '2026-03-23T00:00:00Z',
+  });
   resetTestI18n();
   setTestLanguage('mn');
 });
@@ -132,8 +200,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
       capReached: false,
     });
 
-    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
-    render(<TaskDetailScreen />);
+    render(<TaskDetailRoute />);
 
     expect(screen.getByTestId('SCR-TASK-002')).toBeTruthy();
     expect(screen.getByTestId('SCR-TASK-002-cta')).toBeTruthy();
@@ -149,12 +216,26 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
       capReached: false,
     });
 
-    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
-    render(<TaskDetailScreen />);
+    render(<TaskDetailRoute />);
 
     expect(screen.getByText('Deep clean a 3-bedroom apartment')).toBeTruthy();
     expect(screen.getByText('John Customer')).toBeTruthy();
     expect(screen.getByText('Bayangol district')).toBeTruthy();
+  });
+
+  it('does not expose applicant counts on tasker task detail', () => {
+    mockUseTaskDetail.mockReturnValue({
+      task: baseTask,
+      isLoading: false,
+      isError: false,
+      isVerified: true,
+      hasApplied: false,
+      capReached: false,
+    });
+
+    render(<TaskDetailRoute />);
+
+    expect(screen.queryByText(/3\s+Өргөдөл гаргагчид/)).toBeNull();
   });
 
   it('shows the apply button when verified', () => {
@@ -167,10 +248,56 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
       capReached: false,
     });
 
-    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
-    render(<TaskDetailScreen />);
+    render(<TaskDetailRoute />);
 
     expect(screen.getByText('Ажилд өргөдөл гаргах')).toBeTruthy();
+  });
+
+  it('notifies the tasker when the task is their own posted task', () => {
+    mockUseTaskDetail.mockReturnValue({
+      task: {
+        ...baseTask,
+        customer: {
+          ...baseTask.customer,
+          id: 'u1',
+        },
+      },
+      isLoading: false,
+      isError: false,
+      isVerified: true,
+      hasApplied: false,
+      capReached: false,
+    });
+
+    render(<TaskDetailRoute />);
+
+    expect(
+      screen.getByText(
+        'Энэ таны нийтэлсэн даалгавар. Өргөдөл гаргагчдыг удирдах бол Захиалагч горим руу буцна уу.',
+      ),
+    ).toBeTruthy();
+    expect(screen.queryByTestId('application-form')).toBeNull();
+    expect(screen.getByText('Таны даалгавар')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-002-cta')).toBeDisabled();
+  });
+
+  it('SCN-TASK-010: renders owner task detail returned as the full Task shape', () => {
+    mockUseTaskDetail.mockReturnValue({
+      task: ownerTaskDetail,
+      isLoading: false,
+      isError: false,
+      isVerified: true,
+      hasApplied: false,
+      capReached: false,
+    });
+
+    render(<TaskDetailRoute />);
+
+    expect(screen.getByText('Deep clean a 3-bedroom apartment')).toBeTruthy();
+    expect(screen.getByText('Bayangol district, apartment 12')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-photos')).toBeTruthy();
+    expect(screen.getByText('Таны даалгавар')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-002-cta')).toBeDisabled();
   });
 
   it('shows the verification CTA when unverified', () => {
@@ -183,8 +310,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
       capReached: false,
     });
 
-    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
-    render(<TaskDetailScreen />);
+    render(<TaskDetailRoute />);
 
     expect(screen.getByText('Өргөдөл гаргахын тулд баталгаажна уу')).toBeTruthy();
   });
@@ -199,8 +325,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
       capReached: false,
     });
 
-    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
-    render(<TaskDetailScreen />);
+    render(<TaskDetailRoute />);
 
     fireEvent.press(screen.getByTestId('SCR-TASK-002-cta'));
     expect(mockPush).toHaveBeenCalledWith('/(tasker)/verification');
@@ -216,8 +341,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
       capReached: false,
     });
 
-    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
-    render(<TaskDetailScreen />);
+    render(<TaskDetailRoute />);
 
     expect(screen.getByText('Өргөдөл илгээгдлээ')).toBeTruthy();
   });
@@ -232,14 +356,81 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
       capReached: false,
     });
 
-    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
-    render(<TaskDetailScreen />);
+    render(<TaskDetailRoute />);
 
+    fireEvent.changeText(screen.getByTestId('application-note-input'), 'I can do this carefully.');
     fireEvent.press(screen.getByText('Ажилд өргөдөл гаргах'));
 
     await waitFor(() => {
       expect(screen.getByText('Өргөдөл илгээгдлээ!')).toBeTruthy();
     });
+    expect(mockRequestJson).toHaveBeenCalledWith(
+      '/tasks/task-123/applications',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ message: 'I can do this carefully.' }),
+      }),
+      'test-token',
+    );
+  });
+
+  it('notifies the tasker when application submission fails', async () => {
+    mockRequestJson.mockRejectedValueOnce(new Error('Forbidden'));
+    mockUseTaskDetail.mockReturnValue({
+      task: baseTask,
+      isLoading: false,
+      isError: false,
+      isVerified: true,
+      hasApplied: false,
+      capReached: false,
+    });
+
+    render(<TaskDetailRoute />);
+
+    fireEvent.changeText(screen.getByTestId('application-note-input'), 'I can do this carefully.');
+    fireEvent.press(screen.getByText('Ажилд өргөдөл гаргах'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Өргөдөл илгээж чадсангүй. Дахин оролдоно уу.')).toBeTruthy();
+    });
+    expect(screen.queryByText('Өргөдөл илгээгдлээ!')).toBeNull();
+  });
+
+  it('SCN-TASK-046: quote mode requires a tasker price quote in the application', async () => {
+    mockUseTaskDetail.mockReturnValue({
+      task: {
+        ...baseTask,
+        pricing_mode: 'QUOTE',
+        budget: null,
+      },
+      isLoading: false,
+      isError: false,
+      isVerified: true,
+      hasApplied: false,
+      capReached: false,
+    });
+
+    render(<TaskDetailRoute />);
+
+    expect(screen.getByText('Захиалагч үнийн санал хүсэж байна')).toBeTruthy();
+    expect(screen.getByTestId('application-quote-input')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-002-cta')).toBeDisabled();
+
+    fireEvent.changeText(screen.getByTestId('application-note-input'), 'I can bring supplies.');
+    fireEvent.changeText(screen.getByTestId('application-quote-input'), '90000');
+    fireEvent.press(screen.getByTestId('SCR-TASK-002-cta'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Өргөдөл илгээгдлээ!')).toBeTruthy();
+    });
+    expect(mockRequestJson).toHaveBeenCalledWith(
+      '/tasks/task-123/applications',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ message: 'I can bring supplies.', quote_price: 90000 }),
+      }),
+      'test-token',
+    );
   });
 
   it('shows error state with retry', () => {
@@ -252,13 +443,12 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
       capReached: false,
     });
 
-    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
-    render(<TaskDetailScreen />);
+    render(<TaskDetailRoute />);
 
     expect(screen.getByTestId('SCR-TASK-002-error')).toBeTruthy();
   });
 
-  it('shows a secondary message button for verified taskers', () => {
+  it('SCN-MSG-005: does not show pre-booking message CTA for verified taskers', () => {
     mockUseTaskDetail.mockReturnValue({
       task: baseTask,
       isLoading: false,
@@ -268,10 +458,9 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
       capReached: false,
     });
 
-    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
-    render(<TaskDetailScreen />);
+    render(<TaskDetailRoute />);
 
-    expect(screen.getByText('Зурвас илгээх')).toBeTruthy();
+    expect(screen.queryByText('Зурвас илгээх')).toBeNull();
   });
 
   it('renders task photos and approximate location note', () => {
@@ -284,8 +473,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
       capReached: false,
     });
 
-    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
-    render(<TaskDetailScreen />);
+    render(<TaskDetailRoute />);
 
     expect(screen.getByText('Зурагнууд')).toBeTruthy();
     expect(screen.getByTestId('task-detail-photos')).toBeTruthy();

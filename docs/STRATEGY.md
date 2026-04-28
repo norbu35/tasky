@@ -21,21 +21,21 @@ Later phases stay conditional. A draft screen, dormant toggle, or placeholder co
 
 ### 2.2 What Phase 1 is trying to prove
 
-1. Qualified applications arrive quickly enough across the launch categories.
+1. Applications from ID-verified taskers arrive quickly enough across the launch categories.
 2. Structured tasks turn into confirmed bookings at a usable rate.
 3. Jobs complete without heavy manual intervention.
 4. Trust outcomes are strong enough to support expansion.
 
-### 2.3 Launch categories
+### 2.3 Launch category set
 
-The initial liquidity bet is:
+The initial liquidity bet starts with:
 
 1. Home cleaning
 2. Furniture assembly
 3. Moving help / lifting help
 4. Minor handyman
 
-These categories are a good fit for structured intake, concrete scoping fields, and selective assisted distribution when native matching falls short.
+These categories are a good fit for structured intake, concrete scoping fields, and selective assisted distribution when native matching falls short. Runtime category activation is governed by the admin dashboard, so the active category count can change as operators activate or deactivate templates.
 
 ## 3. Matching and assistance model
 
@@ -57,7 +57,7 @@ Rules:
 
 - External distribution is not self-serve.
 - External distribution is used only after native matching fails, not by default.
-- The trigger is no qualified application within 8 hours.
+- The trigger is no `qualified_application` event within 8 hours, meaning no application from a Phase 1 globally ID-verified tasker.
 - Assisted distribution is an operator or backend decision, not a customer-facing option.
 - Assisted distribution is initially limited to cleaning, furniture assembly, moving help, and minor handyman.
 
@@ -85,12 +85,12 @@ Rules:
 
 The rollout sequence beyond launch is recorded in `docs/ROLLOUT_PHASES.md`. The strategy view is:
 
-| Phase       | Strategic job                                                                                   | Notes                                                                                              |
-| ----------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| **Phase 1** | Prove the marketplace works across Ulaanbaatar with the launch categories and direct settlement | This is the current product.                                                                       |
-| **Phase 2** | Improve matching quality and test light monetization without changing the settlement model      | Lead credits and promoted listings are optional tools inside the phase, not automatic commitments. |
-| **Phase 3** | Add stronger trust rails and supply-side monetization                                           | Escrow, wallet, payouts, and subscription belong here if earlier evidence supports them.           |
-| **Phase 4** | Expand geography and revenue mix                                                                | This is where broader payment rails, customer plans, and any managed B2B layer belong.             |
+| Phase       | Strategic job                                                                                           | Notes                                                                                              |
+| ----------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Phase 1** | Prove the marketplace works across Ulaanbaatar with the initial launch categories and direct settlement | This is the current product.                                                                       |
+| **Phase 2** | Improve matching quality and test light monetization without changing the settlement model              | Lead credits and promoted listings are optional tools inside the phase, not automatic commitments. |
+| **Phase 3** | Add stronger trust rails and supply-side monetization                                                   | Escrow, wallet, payouts, and subscription belong here if earlier evidence supports them.           |
+| **Phase 4** | Expand geography and revenue mix                                                                        | This is where broader payment rails, customer plans, and any managed B2B layer belong.             |
 
 ### 6.1 Conditional tracks
 

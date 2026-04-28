@@ -4,6 +4,29 @@ name: 'Applicants List'
 route: '/(customer)/tasks/:taskId/applicants'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-011
+  prd_refs:
+    - REQ-P1-MATCH-01
+    - REQ-P1-MATCH-03
+    - REQ-P1-MATCH-04
+    - REQ-P1-MATCH-06
+    - REQ-P1-MATCH-07
+    - REQ-P1-PRICE-05
+    - REQ-P1-SAFE-13
+  journey_refs:
+    - JRN-CUST-02:step-2
+    - JRN-CUST-02:step-4
+    - JRN-CUST-02-A1
+    - JRN-CUST-02-A3
+    - JRN-CUST-02-A4
+  scenario_refs:
+    - SCN-TASK-024
+    - SCN-TASK-029
+    - SCN-BOOK-022
+    - SCN-BOOK-031
+    - SCN-REVIEW-007
 template: feed_list
 figma_page: 'Customer/Applicants List'
 feature: 'matching'
@@ -13,12 +36,31 @@ layout:
   density: default
   structure: 'safe_area -> nav_header(back + title + applicant_count) -> scrollview(applicant_cards)'
 
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: balanced
+  trust_cues:
+    - verified_badge_as_eligibility
+    - completed_jobs
+    - review_threshold_state
+    - structured_pricing_response
+    - approximate_location_until_booking
+  non_goals:
+    - no_fake_top_candidate_ranking
+    - no_payment_protection_claims
+  airbnb_scaffold:
+    - structured_comparison_signals
+    - no_recommended_ranking
+    - review_threshold_state
+    - quote_and_timing_evidence
+    - verification_and_eligibility_evidence
+
 components:
   - id: COMP-SPLITCARD
-    usage: 'Applicant cards showing Tasker avatar, name, verification/trust cues, optional public reputation when thresholded, and structured pricing response summary'
+    usage: 'Applicant cards showing Tasker avatar, name, ID-verification/trust cues, optional public reputation after the three-review threshold, and structured pricing response summary'
     props:
       headerContent: '{tasker_avatar, tasker_name, trust_summary}'
-      bodyContent: '{verification_badge, category_match, distance, pricing_response_summary}'
+      bodyContent: '{verification_badge, completed_jobs, pricing_response_summary}'
       status: 'open'
     variant: application
 
@@ -31,7 +73,7 @@ components:
     variant: md
 
   - id: COMP-TRUSTBANNER
-    usage: 'Trust summary in each applicant card; verification and completed jobs are always shown, public rating appears only after the minimum review threshold is met'
+    usage: 'Trust summary in each applicant card; ID verification and completed jobs are always shown, public rating appears only after at least three customer-to-tasker reviews are submitted'
     props:
       verifiedCount: 1
       completedCount: 24
@@ -39,7 +81,7 @@ components:
     variant: default
 
   - id: COMP-VERIFICATIONBADGE
-    usage: 'Verified identity badge on each applicant avatar'
+    usage: 'ID verification badge on each applicant avatar'
     props:
       isVerified: true
       size: 'avatar_badge'
@@ -95,8 +137,8 @@ states:
       [COMP-SPLITCARD, COMP-PROFILEAVATAR, COMP-TRUSTBANNER, COMP-VERIFICATIONBADGE, COMP-BUTTON]
     components_hidden: [COMP-EMPTYSTATE, COMP-LOADINGSKELETON, COMP-MODALSHEET]
 
-  - id: populated_highlighted
-    description: 'Optional highlighted view: the UI surfaces a suggested subset while still showing all applications'
+  - id: populated_structured_comparison
+    description: 'Applications are shown with structured comparison signals without recommended, best-match, or ranked subset cues'
     components_visible:
       [COMP-SPLITCARD, COMP-PROFILEAVATAR, COMP-TRUSTBANNER, COMP-VERIFICATIONBADGE, COMP-BUTTON]
     components_hidden: [COMP-EMPTYSTATE, COMP-LOADINGSKELETON, COMP-MODALSHEET]
@@ -123,10 +165,10 @@ copy:
     en: '{count} applications'
     max_chars: 20
 
-  - key: recommended_label
-    mn: 'Санал болгох'
-    en: 'Suggested'
-    max_chars: 15
+  - key: structured_signals_label
+    mn: 'Харьцуулах үзүүлэлтүүд'
+    en: 'Comparison signals'
+    max_chars: 24
 
   - key: completed_jobs
     mn: '{count} дууссан ажил'
@@ -138,11 +180,6 @@ copy:
     en: 'Accepts your budget'
     max_chars: 26
 
-  - key: pricing_counter_offer
-    mn: 'Эсрэг үнэ: ₮{amount}'
-    en: 'Counter-offer: ₮{amount}'
-    max_chars: 28
-
   - key: pricing_quote
     mn: 'Үнийн санал: ₮{amount}'
     en: 'Quote: ₮{amount}'
@@ -150,7 +187,7 @@ copy:
 
   - key: verified_label
     mn: 'Баталгаажсан'
-    en: 'Verified'
+    en: 'ID-verified'
     max_chars: 15
 
   - key: empty_headline
@@ -216,15 +253,16 @@ analytics_events:
     trigger: 'User dismisses the selection confirmation sheet'
 
 acceptance_criteria:
-  - 'Applicant cards use SplitCard application variant with Tasker avatar, name, verification badge, completed-jobs trust cues, and structured pricing response summary'
+  - 'Applicant cards use SplitCard application variant with Tasker avatar, name, ID verification badge, completed-jobs trust cues, and structured pricing response summary'
   - 'Each applicant card has a tappable area to view Tasker profile (push to SCR-CUST-013) and a Select button'
-  - 'Customers can review all applications, and the UI may optionally highlight a suggested subset without hiding the rest'
-  - 'If the task is in budget mode, each card clearly shows whether the Tasker accepts the budget or proposes a structured counter-offer; if the task is in quote mode, each card shows the submitted quote'
-  - 'Public rating and review count appear only when the Tasker has crossed the minimum review-count threshold; otherwise trust cues rely on verification and completed-job history'
+  - 'Customers can review all applications without recommended, best-match, or ranked subset cues'
+  - 'Customer choice is based on structured application data and pricing responses; no pre-booking chat CTA appears in the applicant review flow'
+  - 'If the task is in budget mode, each card shows that the Tasker accepts the posted budget; if the task is in quote mode, each card shows the submitted quote'
+  - 'Public rating and review count appear only when the Tasker has at least three submitted customer-to-tasker reviews; otherwise trust cues rely on ID verification and completed-job history'
   - 'Tapping Select opens a confirmation bottom sheet before proceeding'
   - 'Confirming Select navigates (push) to Booking Request Confirmation SCR-CUST-014'
   - 'After a customer selects one applicant, the selected tasker has the default four-hour response window to accept or decline'
-  - 'Decline or response-window expiry triggers SCR-CUST-012'
+  - 'Decline or response-window expiry triggers SCR-CUST-012 and returns the task to selectable-applicant state'
   - 'Empty state shows waiting message with notification promise'
   - 'Back button pops to Task Detail SCR-CUST-009'
   - 'Network error shows error state with retry'

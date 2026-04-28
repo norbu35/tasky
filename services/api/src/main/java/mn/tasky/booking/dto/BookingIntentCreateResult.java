@@ -9,6 +9,7 @@ public record BookingIntentCreateResult(Optional<BookingIntentState> intent, Str
     public static final String NOT_COMPLETED = "NOT_COMPLETED";
     public static final String TASK_NOT_OPEN = "TASK_NOT_OPEN";
     public static final String INVALID_REQUEST = "INVALID_REQUEST";
+    public static final String DISCLAIMER_REQUIRED = "DISCLAIMER_REQUIRED";
     public static final String DEFERRED = "DEFERRED";
     public static final String CONFLICT = "CONFLICT";
 

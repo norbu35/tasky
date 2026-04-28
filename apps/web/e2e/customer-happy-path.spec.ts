@@ -1,17 +1,19 @@
-import { expect, test } from '@playwright/test';
-
-import { loginThroughDevAuth, nextLocalDateTimeInput } from './support/mockApi';
+import { expect, test } from './support/fixtures';
+import { nextLocalDateTimeInput } from './support/mockApi';
 
 test.describe('Customer happy path', () => {
-  test('@smoke customer can create a task through the browser wizard', async ({ page }) => {
-    await loginThroughDevAuth(page, 'Customer');
-    await expect(page).toHaveURL(/\/profile/);
+  test('TID-TASK-000-WEB-CUSTOMER-HAPPY-PATH @smoke customer can create a task through the browser wizard', async ({
+    loginAs,
+    page,
+  }) => {
+    await loginAs('CUSTOMER');
+    await expect(page).toHaveURL(/\/customer\/dashboard/);
+    await page.getByRole('button', { name: 'Post new task' }).click();
 
-    await page.goto('/customer/tasks/new');
-    await expect(page.getByRole('heading', { name: 'Create task' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Post a new task' })).toBeVisible();
     await expect(page.locator('#task-category')).toHaveValue('cat-cleaning');
 
-    await page.getByLabel('Description').fill('Deep clean a two-bedroom apartment');
+    await page.getByLabel('Task details').fill('Deep clean a two-bedroom apartment');
     await page.getByLabel('Scheduled at').fill(nextLocalDateTimeInput(24));
     await page.getByLabel('Address description').fill('HUD, 15-r khoroo, Olimpiin khotkhon');
 

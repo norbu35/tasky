@@ -6,7 +6,7 @@ import { Text, View } from 'react-native';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
-const { colors } = mobileTheme;
+const { colors, iconSizes } = mobileTheme;
 
 type VerificationStatus = 'verified' | 'pending' | 'unverified';
 type BadgeSize = 'sm' | 'md';
@@ -19,8 +19,8 @@ interface VerifiedBadgeProps {
 }
 
 const iconSizeMap: Record<BadgeSize, number> = {
-  sm: 16,
-  md: 16,
+  sm: iconSizes.semantic.status,
+  md: iconSizes.semantic.status,
 };
 
 export function VerifiedBadge({ status, size = 'sm', testID, className }: VerifiedBadgeProps) {
@@ -31,23 +31,23 @@ export function VerifiedBadge({ status, size = 'sm', testID, className }: Verifi
   const isVerified = status === 'verified';
   const iconSize = iconSizeMap[size];
   const Icon = isVerified ? ShieldCheck : Shield;
+  const statusLabelKey = isVerified ? 'verification.verified' : 'verification.pending';
 
   return (
     <View
       className={cn(
         'flex-row items-center rounded-full self-start',
         isVerified ? 'bg-verified' : 'bg-accent',
-        size === 'md' ? 'px-md py-xs gap-xs' : 'px-sm gap-xs',
-        size === 'sm' ? 'py-[2px]' : '',
+        size === 'md' ? 'px-md py-xs gap-xs' : 'px-sm py-xs gap-xs',
         className,
       )}
       testID={testID}
-      accessibilityLabel={t(`verification.${status}`)}
+      accessibilityLabel={t(statusLabelKey)}
     >
       <Icon size={iconSize} color={colors.primaryForeground} />
       {size === 'md' && (
         <Text className="text-label font-sans-bold text-primary-foreground">
-          {t(`verification.${status}`)}
+          {t(statusLabelKey)}
         </Text>
       )}
     </View>

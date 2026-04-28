@@ -8,20 +8,12 @@ export function VerificationPendingPage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('verification.pending.title', 'Verification pending')}
-      description={t(
-        'verification.pending.description',
-        'Your submission is awaiting manual review.',
-      )}
+      title={t('verification.pending.title')}
+      description={t('verification.pending.description')}
     >
       <Card>
         <CardContent className="space-y-3 p-4 text-sm text-muted-foreground">
-          <p>
-            {t(
-              'verification.pending.content',
-              'We will notify you when your verification is reviewed.',
-            )}
-          </p>
+          <p>{t('verification.pending.content')}</p>
         </CardContent>
       </Card>
     </ResponsiveDetailShell>

@@ -4,6 +4,29 @@ name: 'Auth — Login'
 route: '/auth/login'
 role: [customer, tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-SHARED-002
+  prd_refs:
+    - REQ-P1-AUTH-01
+    - REQ-P1-AUTH-02
+    - REQ-P1-AUTH-03
+    - REQ-P1-AUTH-04
+    - REQ-P1-AUTH-05
+    - REQ-P1-AUTH-06
+  journey_refs:
+    - JRN-SHARED-01:step-2
+    - JRN-SHARED-01-A1
+  scenario_refs:
+    - SCN-AUTH-004
+    - SCN-AUTH-005
+    - SCN-AUTH-007
+    - SCN-AUTH-008
+    - SCN-AUTH-012
+    - SCN-AUTH-013
+    - SCN-AUTH-014
+    - SCN-AUTH-015
+    - SCN-SMOKE-001
 template: auth
 figma_page: 'Shared/Auth Login'
 feature: 'auth'

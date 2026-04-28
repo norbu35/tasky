@@ -4,6 +4,36 @@ name: 'Booking Detail (Tasker)'
 route: '/(tasker)/jobs/:bookingId'
 role: [tasker]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-TASK-013
+  prd_refs:
+    - REQ-P1-BOOK-07
+    - REQ-P1-BOOK-08
+    - REQ-P1-BOOK-09
+    - REQ-P1-BOOK-10
+    - REQ-P1-BOOK-11
+    - REQ-P1-BOOK-12
+    - REQ-P1-BOOK-13
+    - REQ-P1-BOOK-25
+    - REQ-P1-BOOK-26
+    - REQ-P1-BOOK-29
+    - REQ-P1-MSG-02
+  journey_refs:
+    - JRN-TASK-04:step-2
+    - JRN-TASK-04:step-3
+    - JRN-TASK-04:step-4
+    - JRN-CUST-04-A6
+    - JRN-TASK-04-A4
+    - JRN-TASK-04-A5
+  scenario_refs:
+    - SCN-BOOK-005
+    - SCN-BOOK-009
+    - SCN-BOOK-026
+    - SCN-BOOK-027
+    - SCN-BOOK-032
+    - SCN-SEC-007
+    - SCN-MSG-003
 template: detail
 figma_page: 'Tasker/Booking Detail Tasker'
 feature: 'tasker-bookings'
@@ -11,7 +41,27 @@ feature: 'tasker-bookings'
 layout:
   template: detail
   density: default
-  structure: 'safe_area -> nav_header(back + title) -> scrollview(status_section + customer_info + task_description + exact_address + schedule + payment_note + action_section) -> sticky_bottom_cta(primary_action)'
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(status_section + customer_info + task_description + exact_address + schedule + payment_note + scope_change_notice + action_section) -> sticky_bottom_cta(primary_action + secondary_actions)'
+
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: balanced
+  trust_cues:
+    - lifecycle_timeline
+    - exact_address_reveal_rule
+    - platform_mediated_contact
+    - cancellation_no_show_warning
+    - dispute_entry
+  non_goals:
+    - no_escrow_claim
+    - no_wallet_claim
+    - no_payment_protection_claim
+  airbnb_scaffold:
+    - timeline_first_detail
+    - address_visibility_rule
+    - direct_settlement_payment_note
+    - cancellation_completion_actions
+    - support_reason_sheet
 
 components:
   - id: COMP-BUTTON
@@ -31,6 +81,14 @@ components:
     variant: outline
 
   - id: COMP-BUTTON
+    usage: 'Secondary CTA — Request or respond to a booking reschedule'
+    props:
+      label: 'Цаг өөрчлөх'
+      variant: outline
+      size: lg
+    variant: outline
+
+  - id: COMP-BUTTON
     usage: 'Danger ghost link to cancel the booking'
     props:
       label: 'Захиалга цуцлах'
@@ -39,7 +97,7 @@ components:
     variant: ghost
 
   - id: COMP-BUTTON
-    usage: 'Ghost link to leave a review after completion'
+    usage: 'Ghost link to leave a review when review debt exists'
     props:
       label: 'Үнэлгээ өгөх'
       variant: outline
@@ -86,6 +144,7 @@ states:
         schedule,
         payment_note,
         message_button,
+        reschedule_button,
         cancel_link,
       ]
     components_hidden: [mark_done_button, review_button, completion_status, no_show_status]
@@ -103,6 +162,7 @@ states:
         schedule_highlighted,
         payment_note,
         message_button,
+        reschedule_button,
         cancel_link,
       ]
     components_hidden: [mark_done_button, review_button]
@@ -120,11 +180,12 @@ states:
         payment_note,
         mark_done_button,
         message_button,
+        reschedule_button,
       ]
     components_hidden: [cancel_link, review_button]
 
   - id: marked_done_awaiting
-    description: 'Tasker has marked work done — awaiting customer confirmation'
+    description: 'Tasker has marked work done — awaiting customer confirmation or timeout auto-complete after reminder attempts'
     components_visible:
       [
         nav_header,
@@ -144,6 +205,21 @@ states:
       [
         nav_header,
         status_badge_completed,
+        customer_info,
+        task_description,
+        schedule,
+        payment_note,
+        review_button,
+      ]
+    components_hidden: [mark_done_button, cancel_link, exact_address, message_button]
+
+  - id: auto_completed
+    description: 'Booking auto-completed after customer silence and reminder attempts — review CTA shown and completion is read-only'
+    components_visible:
+      [
+        nav_header,
+        status_badge_completed,
+        auto_complete_note,
         customer_info,
         task_description,
         schedule,
@@ -194,6 +270,11 @@ copy:
     en: 'Completed'
     max_chars: 12
 
+  - key: status_auto_completed
+    mn: 'Автоматаар дууссан'
+    en: 'Auto-completed'
+    max_chars: 25
+
   - key: status_cancelled
     mn: 'Цуцлагдсан'
     en: 'Cancelled'
@@ -239,6 +320,11 @@ copy:
     en: 'Payment is arranged directly with the customer. Tasky is a connector, not a payment processor.'
     max_chars: 100
 
+  - key: scope_change_note
+    mn: 'Үндсэн үнэ ба ажлын хүрээ захиалга баталгаажих үед түгжигдсэн. Өөрчлөлтийг Tasky чат эсвэл тусламжийн нотолгоонд тохиролцоорой.'
+    en: 'The baseline price and scope were locked at confirmation. Agree any material, supply, or scope changes in Tasky chat or support evidence.'
+    max_chars: 150
+
   - key: mark_done_button
     mn: 'Ажил дууссан'
     en: 'Mark Done'
@@ -248,6 +334,16 @@ copy:
     mn: 'Зурвас илгээх'
     en: 'Message'
     max_chars: 15
+
+  - key: reschedule_button
+    mn: 'Цаг өөрчлөх'
+    en: 'Reschedule'
+    max_chars: 20
+
+  - key: reschedule_pending
+    mn: 'Цаг өөрчлөх хүсэлтийн хариу хүлээж байна'
+    en: 'Waiting for reschedule response'
+    max_chars: 50
 
   - key: cancel_link
     mn: 'Захиалга цуцлах'
@@ -263,6 +359,11 @@ copy:
     mn: 'Захиалагч баталгаажуулахыг хүлээж байна'
     en: 'Waiting for customer to confirm completion'
     max_chars: 50
+
+  - key: auto_complete_note
+    mn: 'Захиалагч хариу өгөөгүй тул сануулгын дараа автоматаар дууссан'
+    en: 'Auto-completed after reminders because the customer did not respond'
+    max_chars: 90
 
   - key: approaching_reminder
     mn: 'Хуваарьт цаг ойрхон байна!'
@@ -291,6 +392,12 @@ api_endpoints:
   - method: PUT
     path: '/bookings/:id/mark-done'
     purpose: 'Mark booking as done — triggers customer confirmation flow'
+  - method: POST
+    path: '/bookings/:id/reschedule-requests'
+    purpose: 'Request a new schedule for the confirmed booking'
+  - method: PUT
+    path: '/bookings/:id/reschedule-requests/:requestId'
+    purpose: 'Accept or decline a pending reschedule request'
 
 analytics_events:
   - event: 'booking_detail_tasker_viewed'
@@ -301,22 +408,31 @@ analytics_events:
     trigger: 'Mark Done API call succeeds'
   - event: 'booking_message_tapped'
     trigger: 'Tasker taps Message button'
+  - event: 'booking_reschedule_tapped'
+    trigger: 'Tasker taps Reschedule button or responds to a pending reschedule request'
   - event: 'booking_cancel_tapped'
     trigger: 'Tasker taps Cancel Booking link'
   - event: 'booking_review_tapped'
-    trigger: 'Tasker taps Leave Review button after completion'
+    trigger: 'Tasker taps Leave Review button when review debt exists'
 
 acceptance_criteria:
   - 'Exact address is shown only after booking is assigned and visible only to the confirmed tasker'
   - 'Exact address section includes note that it is visible only to the tasker'
   - 'Payment note clearly states direct settlement between parties'
   - 'Locked price display adapts to the task pricing mode and agreed booking price'
+  - 'Detail states that the locked price and intake scope are the baseline agreement and that material, supply, or scope changes must stay in Tasky chat or support evidence'
+  - 'Scope and price guidance does not promise automatic price adjustment, payment hold, or payment protection'
   - 'Mark Done button triggers PUT /bookings/:id/mark-done'
   - 'After marking done, awaiting confirmation banner replaces Mark Done button'
+  - 'If the customer stays silent through reminder attempts, the booking auto-completes, shows an auto-completed note, and creates review debt'
   - 'Cancel link opens Booking Cancel modal (SCR-TASK-015)'
+  - 'Reschedule action opens the in-app reschedule flow for requesting or responding to schedule changes'
+  - 'Reschedule actions are in-app only; external phone or SMS flows are not used'
+  - 'Accepted reschedule updates the canonical booking schedule and recalculates time-based reminders'
+  - 'Declined or expired reschedule request preserves the prior confirmed schedule'
   - 'No-show flag modal (SCR-TASK-014) is triggered based on schedule timing'
   - 'Message button navigates to Chat Detail (SCR-SHARED-011)'
-  - 'Leave Review button navigates to Review Form (SCR-SHARED-017) after completion'
+  - 'Leave Review button navigates to Review Form (SCR-SHARED-017) when review debt exists'
   - 'Approaching reminder highlights when within 2 hours of scheduled time'
   - 'Completed state shows booking in read-only mode with review CTA'
   - 'Cancelled and No-Show states show relevant details and reason'

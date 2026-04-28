@@ -5,6 +5,7 @@ import { ActivityIndicator, Text, View } from 'react-native';
 import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
 import { Button } from '@/components/ui/Button';
 import { mobileTheme } from '@/design/tokenAdapter';
+
 import { useFlagNoShow } from '../hooks/useFlagNoShow';
 
 const { colors } = mobileTheme;
@@ -94,7 +95,7 @@ export function TaskerNoShowSheet({
           </Text>
           <View className="bg-muted rounded-md p-md">
             <Text className="text-micro text-muted-foreground leading-[18px]">
-              {t('tasker.jobs.noShow.warning', t('TaskerNoShowSheet.copy4'))}
+              {t('tasker.jobs.noShow.warning')}
             </Text>
           </View>
           <Button

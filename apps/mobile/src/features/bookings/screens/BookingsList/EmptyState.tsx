@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { Touchable } from '@/components/ui/Touchable';
-import { mobileTheme } from '@/design/tokenAdapter';
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 const { colors } = mobileTheme;
 const { bookingList } = mobileSurfaces;

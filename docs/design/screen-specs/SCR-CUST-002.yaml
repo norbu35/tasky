@@ -4,6 +4,22 @@ name: 'Post Task — Category Selection'
 route: '/(customer)/tasks/new/category'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-002
+  prd_refs:
+    - REQ-P1-CAT-01
+    - REQ-P1-CAT-02
+    - REQ-P1-CAT-03
+    - REQ-P1-CAT-05
+    - REQ-P1-COVER-02
+  journey_refs:
+    - JRN-CUST-01:step-2
+  scenario_refs:
+    - SCN-TASK-001
+    - SCN-TASK-019
+    - SCN-CATEGORY-002
+    - SCN-CATEGORY-015
 template: feed_list
 figma_page: 'Customer/Post Task Category Selection'
 feature: 'task_posting'
@@ -12,6 +28,29 @@ layout:
   template: feed_list
   density: default
   structure: 'safe_area -> nav_header(back + title) -> step_indicator(step 1/7) -> scrollview(category_grid)'
+
+redesign_proof:
+  thesis: warm_marketplace_with_operational_spine
+  density: guided
+  proof_scope: customer_posting_wizard_surface
+  cue_scope: flow_level_cues_not_required_on_every_step
+  trust_cues:
+    - structured_scope
+    - pricing_mode_clarity
+    - address_privacy
+    - deterministic_summary
+    - next_step_guidance
+  non_goals:
+    - no_runtime_ai_posting
+    - no_payment_protection_claims
+    - no_open_ended_pre_booking_chat
+  airbnb_scaffold:
+    - guided_creation_step_rhythm
+    - progressive_disclosure
+    - bottom_sheet_pickers
+    - sticky_cta
+    - review_before_post
+    - edit_in_place_summary_rows
 
 components:
   - id: COMP-STEPINDICATOR
@@ -101,4 +140,5 @@ acceptance_criteria:
   - 'Loading state shows skeleton grid matching category card layout'
   - 'Network error shows inline error with retry CTA'
   - 'Only active categories are shown; deactivated categories are hidden'
+  - 'Minor handyman appears only as the launch-safe category entry; regulated, dangerous, or diagnosis-heavy work is not advertised as selectable'
   - 'All copy renders correctly in Mongolian Cyrillic at 16px minimum body size'

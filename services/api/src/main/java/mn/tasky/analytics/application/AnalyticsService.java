@@ -28,16 +28,24 @@ public class AnalyticsService {
     public static final String EVENT_APPLICATION_SUBMITTED = "APPLICATION_SUBMITTED";
     public static final String EVENT_TASKER_ACCEPTED = "TASKER_ACCEPTED";
     public static final String EVENT_BOOKING_CONFIRMED = "BOOKING_CONFIRMED";
+    public static final String EVENT_QUALIFIED_APPLICATION = "QUALIFIED_APPLICATION";
+    public static final String EVENT_INTERVENTION_RECORDED = "INTERVENTION_RECORDED";
     public static final String EVENT_PAYMENT_INITIATED = "PAYMENT_INITIATED";
     public static final String EVENT_PAYMENT_CONFIRMED = "PAYMENT_CONFIRMED";
     public static final String EVENT_BOOKING_COMPLETED = "BOOKING_COMPLETED";
     public static final String EVENT_DISPUTE_RAISED = "DISPUTE_RAISED";
     public static final String PROPERTY_TASK_ID = "task_id";
     public static final String PROPERTY_BOOKING_ID = "booking_id";
+    public static final String PROPERTY_TASKER_ID = "tasker_id";
+    public static final String PROPERTY_CATEGORY_ID = "category_id";
+    public static final String PROPERTY_PRICING_MODE = "pricing_mode";
+    public static final String PROPERTY_INTERVENTION_TYPE = "intervention_type";
+    public static final String PROPERTY_INTERVENTION_STAGE = "intervention_stage";
     public static final String PROPERTY_CORRELATION_ID = "correlation_id";
     public static final String PROPERTY_LOCALE = "locale";
     public static final String PROPERTY_PLATFORM = "platform";
 
+    private static final int DEFAULT_EVENT_READ_LIMIT = 1000;
     private static final Logger log = LoggerFactory.getLogger(AnalyticsService.class);
     private final AnalyticsEventDao analyticsEventDao;
     private final ObjectMapper objectMapper;
@@ -102,7 +110,7 @@ public class AnalyticsService {
      * @return A list of {@link Event} objects.
      */
     public List<Event> getEvents() {
-        return analyticsEventDao.findAll();
+        return analyticsEventDao.findLatest(DEFAULT_EVENT_READ_LIMIT);
     }
 
     private String sanitizeForLog(Object value) {

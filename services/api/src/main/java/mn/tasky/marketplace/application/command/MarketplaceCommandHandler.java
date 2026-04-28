@@ -1,9 +1,11 @@
 package mn.tasky.marketplace.application.command;
 
 import java.util.Optional;
+import mn.tasky.booking.dto.BookingIntentCreateResult;
 import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.marketplace.publicapi.MarketplaceCommandPort;
 import mn.tasky.task.application.TaskApplicationService;
+import mn.tasky.task.application.TaskAssistanceService;
 import mn.tasky.task.application.TaskCreationService;
 import mn.tasky.task.application.TaskDraftService;
 import mn.tasky.task.application.TaskLifecycleService;
@@ -15,7 +17,6 @@ import mn.tasky.task.dto.TaskApplyResult;
 import mn.tasky.task.dto.TaskCancelResult;
 import mn.tasky.task.dto.TaskCreateResult;
 import mn.tasky.task.dto.TaskDraft;
-import mn.tasky.task.dto.TaskSelectResult;
 import mn.tasky.task.dto.TaskUpdateResult;
 import mn.tasky.task.dto.TaskWithdrawResult;
 import mn.tasky.task.dto.UpdateTask;
@@ -29,6 +30,7 @@ public class MarketplaceCommandHandler implements MarketplaceCommandPort {
     private final TaskApplicationService taskApplicationService;
     private final TaskPhotoService taskPhotoService;
     private final TaskDraftService taskDraftService;
+    private final TaskAssistanceService taskAssistanceService;
 
     public MarketplaceCommandHandler(
             TaskCreationService taskCreationService,
@@ -36,13 +38,15 @@ public class MarketplaceCommandHandler implements MarketplaceCommandPort {
             TaskLifecycleService taskLifecycleService,
             TaskApplicationService taskApplicationService,
             TaskPhotoService taskPhotoService,
-            TaskDraftService taskDraftService) {
+            TaskDraftService taskDraftService,
+            TaskAssistanceService taskAssistanceService) {
         this.taskCreationService = taskCreationService;
         this.taskMutationService = taskMutationService;
         this.taskLifecycleService = taskLifecycleService;
         this.taskApplicationService = taskApplicationService;
         this.taskPhotoService = taskPhotoService;
         this.taskDraftService = taskDraftService;
+        this.taskAssistanceService = taskAssistanceService;
     }
 
     @Override
@@ -67,19 +71,14 @@ public class MarketplaceCommandHandler implements MarketplaceCommandPort {
     }
 
     @Override
-    public TaskAcceptResult acceptApplication(
+    public BookingIntentCreateResult acceptApplication(
             String customerId, String taskId, String applicationId, boolean liabilityDisclaimerAccepted) {
         return taskApplicationService.acceptApplication(customerId, taskId, applicationId, liabilityDisclaimerAccepted);
     }
 
     @Override
-    public TaskSelectResult selectApplication(String customerId, String taskId, String applicationId) {
-        return taskApplicationService.selectApplication(customerId, taskId, applicationId);
-    }
-
-    @Override
-    public TaskAcceptResult confirmAcceptance(String taskerId, String applicationId) {
-        return taskApplicationService.confirmAcceptance(taskerId, applicationId);
+    public TaskAcceptResult confirmAcceptance(String taskerId, String taskId, String applicationId) {
+        return taskApplicationService.confirmAcceptance(taskerId, taskId, applicationId);
     }
 
     @Override
@@ -95,6 +94,11 @@ public class MarketplaceCommandHandler implements MarketplaceCommandPort {
     @Override
     public void updateTaskStatus(String taskId, String status) {
         taskLifecycleService.updateTaskStatus(taskId, status);
+    }
+
+    @Override
+    public void recordManualRescueIntervention(String taskId, String interventionStage, String actorUserId) {
+        taskAssistanceService.recordManualRescue(taskId, interventionStage, actorUserId);
     }
 
     @Override

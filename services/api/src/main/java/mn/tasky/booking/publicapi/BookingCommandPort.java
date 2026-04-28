@@ -22,6 +22,10 @@ public interface BookingCommandPort {
 
     BookingTransitionResult cancelBooking(String actorUserId, String bookingId);
 
+    default BookingTransitionResult cancelBooking(String actorUserId, String bookingId, String reason) {
+        return cancelBooking(actorUserId, bookingId);
+    }
+
     BookingTransitionResult completeBooking(String actorUserId, String bookingId);
 
     BookingMarkDoneResult markBookingDone(String userId, String bookingId);

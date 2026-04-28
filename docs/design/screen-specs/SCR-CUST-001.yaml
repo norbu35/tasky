@@ -4,6 +4,17 @@ name: 'My Tasks — Task List'
 route: '/(customer)/tasks'
 role: [customer]
 phase: '0-1'
+traceability:
+  status: validated
+  screen_graph_node: SCR-CUST-001
+  prd_refs:
+    - REQ-P1-TASK-01
+    - REQ-P1-BOOK-13
+    - NFR-RELI-04
+  journey_refs:
+    - JRN-CUST-01:step-1
+  scenario_refs:
+    - SCN-SMOKE-003
 template: feed_list
 figma_page: 'Customer/My Tasks Task List'
 feature: 'tasks'

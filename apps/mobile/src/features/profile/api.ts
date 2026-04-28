@@ -1,14 +1,10 @@
-import { createMobileApiClient } from '@/lib/mobileApiClient';
 import type { Profile, ProfilePolishPreviewPayload, User } from '@/lib/api/types';
+import { createMobileApiClient } from '@/lib/mobileApiClient';
 
 const getClient = () => createMobileApiClient();
 
 export async function getMyProfile(accessToken: string): Promise<Profile> {
   return getClient().requestJson<Profile>('/users/me', { method: 'GET' }, accessToken);
-}
-
-export async function getPublicProfile(accessToken: string, userId: string): Promise<Profile> {
-  return getClient().requestJson<Profile>(`/users/${userId}`, { method: 'GET' }, accessToken);
 }
 
 export async function updateMyProfile(

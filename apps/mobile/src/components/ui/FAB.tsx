@@ -3,12 +3,17 @@ import { Plus } from 'lucide-react-native';
 import React from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { useAnimatedStyle, useSharedValue, runOnJS } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  runOnJS,
+  withSpring,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { elevations } from '@/design/elevations';
 import { screenLayout } from '@/design/screenLayout';
-import { mobileTheme, withFloatingSpring } from '@/design/tokenAdapter';
+import { mobileTheme, springs } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 import { useAuthStore } from '@/store/authStore';
 
@@ -21,10 +26,16 @@ const FAB_Z_INDEX = 999;
 type FABProps = {
   testID?: string;
   authGuard?: boolean;
+  hidden?: boolean;
   className?: string;
 };
 
-export function FAB({ testID = 'global-fab', authGuard = true, className }: FABProps) {
+export function FAB({
+  testID = 'global-fab',
+  authGuard = true,
+  hidden = false,
+  className,
+}: FABProps) {
   const router = useRouter();
   const session = useAuthStore((state) => state.session);
   const insets = useSafeAreaInsets();
@@ -67,7 +78,7 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
       startX.value = translateX.value;
       startY.value = translateY.value;
       isDragging.value = false;
-      scale.value = withFloatingSpring(0.95);
+      scale.value = withSpring(0.95, springs.floating);
     })
     .onUpdate((event) => {
       isDragging.value = true;
@@ -80,8 +91,8 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
       // Snap to nearest horizontal edge
       const midX = screenWidth / 2;
       const snapX = translateX.value + fabSize / 2 < midX ? minX : maxX;
-      translateX.value = withFloatingSpring(snapX);
-      scale.value = withFloatingSpring(1);
+      translateX.value = withSpring(snapX, springs.floating);
+      scale.value = withSpring(1, springs.floating);
       isDragging.value = false;
     });
 
@@ -94,6 +105,10 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
       { scale: scale.value },
     ],
   }));
+
+  if (hidden) {
+    return null;
+  }
 
   return (
     <GestureDetector gesture={composed}>

@@ -63,6 +63,19 @@ PATH_RE = re.compile(
 # placeholders, glob shorthand, shell variable interpolation, URLs).
 SKIP_PATH_TOKENS = ("${", "<", "$(", "**", "://")
 
+# Graphify installs always-on agent guidance that points to generated outputs
+# under graphify-out/. These files may be absent until the first graph build,
+# and wiki output is optional, so treat those references as plugin-owned
+# generated artifacts rather than stale repo paths.
+OPTIONAL_GENERATED_PATH_REFS = {
+    "graphify-out/GRAPH_REPORT.md",
+    "graphify-out/graph.html",
+    "graphify-out/graph.json",
+}
+OPTIONAL_GENERATED_PATH_PREFIXES = (
+    "graphify-out/wiki/",
+)
+
 
 def collect_scan_files() -> list[Path]:
     files: list[Path] = []
@@ -124,6 +137,12 @@ def find_path_refs(text: str) -> set[str]:
     return refs
 
 
+def is_allowed_missing_path_ref(ref: str) -> bool:
+    if ref in OPTIONAL_GENERATED_PATH_REFS:
+        return True
+    return any(ref.startswith(prefix) for prefix in OPTIONAL_GENERATED_PATH_PREFIXES)
+
+
 def main() -> int:
     pkg_scripts = load_pnpm_scripts()
     failures: list[str] = []
@@ -144,12 +163,18 @@ def main() -> int:
             target = ROOT / ref
             if target.exists():
                 continue
+            if is_allowed_missing_path_ref(ref):
+                continue
             failures.append(f"{rel}: references missing path: {ref}")
 
     if failures:
         print("doc-references: FAIL")
         for failure in failures:
             print(f" - {failure}")
+        print("autonomous remediation:")
+        print(" - update the stale command or path in the governing doc instead of working around the check")
+        print(" - if a script was renamed, refresh package.json and doc references together")
+        print(" - rerun: pnpm repo:docs:check")
         return 1
 
     print(f"doc-references: PASS ({len(scan_files)} files scanned)")

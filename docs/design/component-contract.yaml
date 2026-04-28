@@ -49,6 +49,15 @@
 # Export barrel
 #   All components export from: apps/mobile/src/components/ui/index.ts
 #   Screens import as:  import { Button, StatusBadge, … } from '../components/ui';
+#
+# Implementation metadata
+#   runtime_name: optional exported symbol when the design component name is stable but runtime uses a
+#     more specific name, such as EmptyState -> EmptyStateTemplate.
+#   implementation_status:
+#     active       implemented shared primitive/component (default)
+#     template     implemented as a shared template under apps/mobile/src/components/templates
+#     screen_local implemented inside a screen family rather than as a shared primitive
+#     deferred     retained design intent without an active runtime path
 
 # ═══════════════════════════════════════════════════
 # EXISTING COMPONENTS (from apps/mobile/src/components/ui/)
@@ -80,7 +89,7 @@ existing_components:
         style,
       ]
     states: [default, pressed, disabled, loading]
-    animation: 'spring scale 0.96 (Reanimated useAnimatedStyle)'
+    animation: 'NativeWind active:opacity-pressed active:scale-pressed'
     shadow: 'elevations.card applied via style={} for default variant only'
     tokens:
       colors: [primary, secondary, danger, background]
@@ -101,19 +110,7 @@ existing_components:
     variants:
       - default
       - multiline
-    props:
-      [
-        value,
-        onChangeText,
-        placeholder,
-        label,
-        error,
-        disabled,
-        secureTextEntry,
-        leftIcon,
-        rightIcon,
-        maxLength,
-      ]
+    props: [invalid, editable, readOnly, className, style, '...TextInputProps']
     states: [default, focused, filled, invalid, disabled]
     tokens:
       colors: [primary, danger, textTertiary, muted]
@@ -130,7 +127,7 @@ existing_components:
     path: 'apps/mobile/src/components/ui/FormField.tsx'
     nativewind: true
     variants: [default]
-    props: [label, error, helperText, required, children]
+    props: [label, helperText, errorText, children, className, style]
     states: [default, error, helper]
     tokens:
       typography: [label, caption]
@@ -145,14 +142,13 @@ existing_components:
     path: 'apps/mobile/src/components/ui/Card.tsx'
     nativewind: true
     sub_components:
-      - Card.Container
       - Card.Header
-      - Card.Body
+      - Card.Title
+      - Card.Description
+      - Card.Content
       - Card.Footer
-      - Card.Image
-      - Card.Badge
     variants: [default, elevated, outlined]
-    props: [onPress, disabled, children]
+    props: [className, style, '...ViewProps']
     states: [default, pressed]
     tokens:
       colors: [background, primary]
@@ -160,15 +156,15 @@ existing_components:
       spacing: [md, lg]
       radius: [md, lg]
     rules:
-      - 'Cards are always tappable (navigate to detail)'
-      - 'Use SplitCard (new) for task/booking cards, plain Card for generic'
+      - 'Plain Card is a static surface primitive'
+      - 'Use PressableCard or SplitCard for tappable task/booking cards'
 
   - id: COMP-FAB
     name: FAB
     path: 'apps/mobile/src/components/ui/FAB.tsx'
     nativewind: true
     variants: [default]
-    props: [onPress, icon, label]
+    props: [testID, authGuard, className]
     states: [default, pressed, hidden_on_scroll]
     animation: 'fab_appear / fab_disappear'
     tokens:
@@ -181,8 +177,9 @@ existing_components:
       - 'Auth check before action'
 
   - id: COMP-MODALSHEET
-    name: ModalSheet
+    name: Dialog
     path: 'apps/mobile/src/components/ui/ModalSheet.tsx'
+    runtime_name: ModalSheet
     nativewind: true
     variants: [default]
     props: [visible, onClose, title, children, primaryAction, secondaryAction]
@@ -194,7 +191,7 @@ existing_components:
       radius: [lg]
       spacing: [lg, xl]
     rules:
-      - 'All destructive confirmations use ModalSheet'
+      - 'All destructive confirmations use Dialog'
       - 'Max 2 action buttons (primary + secondary)'
       - 'Handle bar always visible for drag-to-dismiss'
 
@@ -206,7 +203,7 @@ existing_components:
       - info
       - success
       - error
-    props: [message, variant, duration, action]
+    props: [message, variant, className]
     states: [entering, visible, exiting]
     animation: 'toast_slide_in / toast_slide_out'
     tokens:
@@ -214,9 +211,9 @@ existing_components:
       colors: [primary, verified, danger]
       typography: [body_default]
     rules:
-      - 'Auto-dismiss after 4s (info/success) or 6s (error)'
-      - 'Error toasts include optional retry action'
-      - 'Never overlap with ModalSheet'
+      - 'Host-owned lifecycle controls auto-dismiss timing'
+      - 'Error retry actions belong in the host surface, not inside Toast'
+      - 'Never overlap with Dialog'
 
   - id: COMP-STATUSBADGE
     name: StatusBadge
@@ -262,7 +259,7 @@ existing_components:
     path: 'apps/mobile/src/components/ui/TrustBanner.tsx'
     nativewind: true
     variants: [default, compact]
-    props: [verifiedCount, completedCount]
+    props: [title, description, variant, className]
     states: [default]
     tokens:
       colors: [trust, verified]
@@ -276,14 +273,14 @@ existing_components:
     path: 'apps/mobile/src/components/ui/StatCard.tsx'
     nativewind: true
     variants: [default]
-    props: [label, value, trend, icon]
+    props: [value, label, className]
     states: [default, loading]
     tokens:
       typography: [price_display, label]
       colors: [primary, verified, danger]
       shadows: [card]
     rules:
-      - 'Used in Tasker Stats Dashboard'
+      - 'Used in Tasker reputation and reliability summaries'
       - 'Loading state shows skeleton'
 
   - id: COMP-REVIEWCARD
@@ -291,7 +288,7 @@ existing_components:
     path: 'apps/mobile/src/components/ui/ReviewCard.tsx'
     nativewind: true
     variants: [default, featured]
-    props: [review, isFeatured]
+    props: [reviewerInitials, reviewerName, rating, comment, timeAgo, featured, className]
     states: [default]
     tokens:
       typography: [body_default, caption, label]
@@ -301,18 +298,18 @@ existing_components:
       - 'Featured variant has highlighted border'
 
   - id: COMP-PROFILEAVATAR
-    name: ProfileAvatar
+    name: Avatar
     path: 'apps/mobile/src/components/ui/ProfileAvatar.tsx'
+    runtime_name: ProfileAvatar
     nativewind: true
     variants: [xs, sm, md, lg]
-    props: [imageUrl, size, isVerified, isPro]
+    props: [uri, name, size, showVerified, className]
     states: [default, loading, fallback_initials]
     tokens:
       icon_sizes: [avatar_badge]
       colors: [verified, secondary]
     rules:
       - 'Verification badge anchored bottom-right'
-      - 'Pro badge shown as secondary indicator'
       - 'Fallback: initials on primary background'
 
   - id: COMP-LANGUAGESWITCHER
@@ -320,7 +317,7 @@ existing_components:
     path: 'apps/mobile/src/components/ui/LanguageSwitcher.tsx'
     nativewind: true
     variants: [default]
-    props: [currentLang, onSwitch]
+    props: [className]
     states: [en, mn]
     tokens:
       typography: [label]
@@ -333,7 +330,7 @@ existing_components:
     path: 'apps/mobile/src/components/ui/LoginRequiredCTA.tsx'
     nativewind: true
     variants: [default]
-    props: [message, onLogin]
+    props: [message, testID, className]
     states: [default]
     tokens:
       typography: [section_heading, body_default]
@@ -352,8 +349,8 @@ new_components:
     nativewind: true
     description: 'Hybrid two-tone card: dark teal header (person + price), light body (task details)'
     variants: [task, booking, application]
-    props: [headerContent, bodyContent, onPress, status, isPromoted, isUrgent]
-    states: [default, pressed, promoted, urgent]
+    props: [headerContent, bodyContent, onPress, testID, className]
+    states: [default, pressed, urgent]
     tokens:
       colors: [primaryDeep, background, accent, secondary]
       typography: [card_title, body_default, price_display, badge_text]
@@ -362,17 +359,18 @@ new_components:
     rules:
       - 'Header: dark teal background, white text, person avatar, price'
       - 'Body: light background, task details, status badge'
-      - 'Promoted tasks get secondary accent border'
       - 'Urgent tasks get accent highlight + label'
     composition:
-      header: [ProfileAvatar, price_display, StatusBadge]
+      header: [Avatar, price_display, StatusBadge]
       body: [card_title, body_default, CategoryChip, TrustBanner.compact]
 
   - id: COMP-STEPINDICATOR
     name: StepIndicator
+    path: 'apps/mobile/src/components/ui/StepIndicator.tsx'
+    nativewind: true
     description: 'Multi-step form progress indicator'
     variants: [horizontal, minimal]
-    props: [currentStep, totalSteps, labels]
+    props: [currentStep, totalSteps, testID, className]
     states: [default]
     tokens:
       colors: [primary, muted, verified]
@@ -385,9 +383,11 @@ new_components:
 
   - id: COMP-SEARCHBAR
     name: SearchBar
+    path: 'apps/mobile/src/components/ui/SearchBar.tsx'
+    nativewind: true
     description: 'Text search input with filter trigger'
     variants: [default, with_filter]
-    props: [value, onChangeText, placeholder, onFilterPress]
+    props: [className, containerClassName, '...TextInputProps']
     states: [default, focused, active_filter]
     tokens:
       colors: [muted, primary]
@@ -404,7 +404,7 @@ new_components:
     path: 'apps/mobile/src/components/ui/FilterBar.tsx'
     nativewind: true
     variants: [inline, sheet]
-    props: [filters, activeFilters, onFilterChange, onClear, className]
+    props: [filters, activeFilters, onToggle, testID, className]
     states: [default, sheet_open, filters_active]
     variant_api: 'cva chipVariants({ active: boolean }) — internal to FilterBar'
     tokens:
@@ -417,7 +417,7 @@ new_components:
       - 'Clear all button when filters active'
     composition:
       chips: [CategoryChip]
-      sheet: [ModalSheet]
+      sheet: [Dialog]
 
   - id: COMP-TOUCHABLE
     name: Touchable
@@ -435,9 +435,25 @@ new_components:
 
   - id: COMP-DATEPICKER
     name: DatePicker
-    description: 'Date and time selector for scheduling'
-    variants: [date_only, date_time]
-    props: [value, onChange, minDate, mode]
+    path: 'apps/mobile/src/components/ui/SchedulePickerSheet.tsx'
+    runtime_name: SchedulePickerSheet
+    implementation_status: active
+    description: 'Shared date and time selector sheet for task scheduling and booking reschedules'
+    variants: [date, time]
+    props:
+      [
+        mode,
+        draftDate,
+        draftTime,
+        dateOptions,
+        timeOptions,
+        onModeChange,
+        onDateChange,
+        onTimeChange,
+        onReset,
+        onClose,
+        onSave,
+      ]
     states: [default, open, selected]
     tokens:
       colors: [primary, muted]
@@ -449,9 +465,12 @@ new_components:
 
   - id: COMP-MAPPICKER
     name: MapPicker
+    implementation_status: screen_local
+    path: 'apps/mobile/src/features/tasks/screens/TaskLocation/Screen.tsx'
+    runtime_name: TaskLocationScreen
     description: 'Map-based location pin selector'
     variants: [default]
-    props: [location, onLocationChange, textDescription]
+    props: ['...routeScreenProps']
     states: [default, pin_placed, permission_denied]
     tokens:
       colors: [accent, primary]
@@ -463,9 +482,12 @@ new_components:
 
   - id: COMP-EMPTYSTATE
     name: EmptyState
+    implementation_status: template
+    path: 'apps/mobile/src/components/templates/EmptyStateTemplate.tsx'
+    runtime_name: EmptyStateTemplate
     description: 'Illustration + headline + description + CTA for empty lists'
     variants: [activation, no_results, error]
-    props: [illustration, headline, description, ctaLabel, onCtaPress]
+    props: [title, description, ctaLabel, ctaOnPress, icon, testID, className]
     states: [default]
     tokens:
       typography: [section_heading, body_default, button_label]
@@ -477,10 +499,12 @@ new_components:
       - 'Illustration centered above text'
 
   - id: COMP-LOADINGSKELETON
-    name: LoadingSkeleton
+    name: Skeleton
+    path: 'apps/mobile/src/components/ui/SkeletonLoader.tsx'
+    runtime_name: SkeletonLoader
     description: 'Content-matching skeleton loading placeholder'
     variants: [card, list_row, detail, profile]
-    props: [variant, count]
+    props: [width, height, borderRadius, style, testID]
     states: [loading]
     animation: 'skeleton_pulse'
     tokens:
@@ -492,9 +516,11 @@ new_components:
 
   - id: COMP-ANIMATEDCHECKMARK
     name: AnimatedCheckmark
+    path: 'apps/mobile/src/components/ui/HandDrawnCheck.tsx'
+    runtime_name: HandDrawnCheck
     description: 'Animated success checkmark for celebration screens'
     variants: [default]
-    props: [size, color]
+    props: [size, color, animated, testID, className]
     states: [idle, animating, complete]
     animation: 'success_checkmark'
     tokens:
@@ -505,9 +531,11 @@ new_components:
 
   - id: COMP-LISTROW
     name: ListRow
+    path: 'apps/mobile/src/components/ui/ActionRow.tsx'
+    runtime_name: ActionRow
     description: 'Standard list row with disclosure indicator'
     variants: [default, destructive, toggle]
-    props: [label, value, onPress, icon, showDisclosure, isDestructive]
+    props: [icon, label, onPress, showDivider, trailing, value, destructive, testID, className]
     states: [default, pressed]
     tokens:
       typography: [body_default, body_emphasis]
@@ -520,6 +548,7 @@ new_components:
 
   - id: COMP-TOGGLE
     name: Toggle
+    implementation_status: deferred
     description: 'On/off switch for settings'
     variants: [default]
     props: [value, onValueChange, disabled]
@@ -532,9 +561,11 @@ new_components:
 
   - id: COMP-PHOTOPICKER
     name: PhotoPicker
+    path: 'apps/mobile/src/components/ui/PhotoGrid.tsx'
+    runtime_name: PhotoGrid
     description: 'Multi-photo upload with preview grid'
     variants: [default]
-    props: [photos, onAdd, onRemove, maxPhotos]
+    props: [photos, maxPhotos, onAddPhoto, showAddButton, testID, className]
     states: [empty, uploading, has_photos, max_reached, error]
     tokens:
       colors: [primary, danger, muted]
@@ -548,6 +579,8 @@ new_components:
 
   - id: COMP-STARRATING
     name: StarRating
+    path: 'apps/mobile/src/components/ui/RatingStars.tsx'
+    runtime_name: RatingStars
     description: 'Interactive star rating input and display'
     variants: [input, display, compact]
     props: [value, onChange, readonly, size]
@@ -562,23 +595,27 @@ new_components:
 
   - id: COMP-VERIFICATIONBADGE
     name: VerificationBadge
+    path: 'apps/mobile/src/components/ui/VerifiedBadge.tsx'
+    runtime_name: VerifiedBadge
     description: 'Verified identity badge icon'
-    variants: [default, pro]
-    props: [isVerified, isPro, size]
+    variants: [default]
+    props: [status, size, testID, className]
     states: [default]
     tokens:
       colors: [verified, secondary]
       icon_sizes: [avatar_badge, status]
     rules:
-      - 'Anchored to ProfileAvatar bottom-right'
-      - 'Pro variant adds golden accent'
+      - 'Anchored to Avatar bottom-right'
       - 'Never shown for unverified users'
 
   - id: COMP-TIMELINEEVENT
     name: TimelineEvent
+    implementation_status: screen_local
+    path: 'apps/mobile/src/features/bookings/screens/BookingTimeline.TimelineRow.tsx'
+    runtime_name: TimelineEventRow
     description: 'Vertical timeline entry for booking history'
     variants: [default, current, future]
-    props: [event, timestamp, description, isCurrent]
+    props: [index, event, isActive, isFuture, t]
     states: [default]
     tokens:
       typography: [body_default, caption]
@@ -591,6 +628,7 @@ new_components:
 
   - id: COMP-CREDITBALANCE
     name: CreditBalance
+    implementation_status: deferred
     description: 'Credit balance display with purchase CTA'
     variants: [header, inline]
     props: [balance, onPurchase]
@@ -605,6 +643,7 @@ new_components:
 
   - id: COMP-PROGRESSTRACKER
     name: ProgressTracker
+    implementation_status: deferred
     description: 'Visual progress bar with milestones'
     variants: [default]
     props: [current, total, milestones]
@@ -657,7 +696,7 @@ templates:
       - fab
       - pull_to_refresh
       - pagination_footer
-    components: [SearchBar, FilterBar, SplitCard, Card, FAB, EmptyState, LoadingSkeleton]
+    components: [SearchBar, FilterBar, SplitCard, Card, FAB, EmptyState, Skeleton]
     required_states: [loading, empty, populated, error, offline]
     rules:
       - 'Pull-to-refresh on all list screens'
@@ -676,7 +715,7 @@ templates:
       - hero_section
       - content_sections
       - bottom_cta_bar
-    components: [Button, StatusBadge, ProfileAvatar, TrustBanner, StarRating, TimelineEvent]
+    components: [Button, StatusBadge, Avatar, TrustBanner, StarRating, TimelineEvent]
     rules:
       - 'Back button in nav header'
       - 'Sticky CTA bar at bottom for primary action'
@@ -728,7 +767,7 @@ templates:
       - content
       - primary_action
       - secondary_action
-    components: [Button, ModalSheet]
+    components: [Button, Dialog]
     rules:
       - 'Drag-to-dismiss via handle bar'
       - 'Max 2 action buttons'
@@ -790,14 +829,14 @@ templates:
 
 composition_rules:
   - rule: 'All forms use FormField wrapper with inline error below field'
-  - rule: 'Destructive actions always use ModalSheet confirmation with explicit copy'
+  - rule: 'Destructive actions always use Dialog confirmation with explicit copy'
   - rule: 'List → Detail flows always use push navigation (page_enter/page_exit)'
-  - rule: 'Search/Filter/Sort follows: SearchBar → FilterBar → ModalSheet pattern'
+  - rule: 'Search/Filter/Sort follows: SearchBar → FilterBar → Dialog pattern'
   - rule: 'Pull-to-refresh on all feed_list and detail screens with async data'
-  - rule: 'Pagination via infinite scroll with LoadingSkeleton footer'
+  - rule: 'Pagination via infinite scroll with Skeleton footer'
   - rule: "Empty states include activation CTAs (not just 'nothing here')"
   - rule: "All success moments include 'what happens next' guidance"
-  - rule: 'Loading states use LoadingSkeleton matching content layout (never spinner)'
+  - rule: 'Loading states use Skeleton matching content layout (never spinner)'
   - rule: 'Error states use shared error component with retry CTA'
   - rule: 'Offline states show banner + cached content or full-screen EmptyState'
 
@@ -806,14 +845,14 @@ composition_rules:
 # ═══════════════════════════════════════════════════
 
 forbidden_combinations:
-  - combination: 'Toast + ModalSheet simultaneously'
-    reason: 'Visual conflict — Toast is z:50, ModalSheet z:30, but they compete for attention'
+  - combination: 'Toast + Dialog simultaneously'
+    reason: 'Visual conflict — Toast is z:50, Dialog z:30, but they compete for attention'
   - combination: 'FAB on non-Customer-My-Tasks screens'
     reason: "FAB is exclusively for 'Post Task' action"
-  - combination: 'danger Button without ModalSheet confirmation'
+  - combination: 'danger Button without Dialog confirmation'
     reason: 'Destructive actions require explicit confirmation'
   - combination: 'Generic spinner as loading state'
-    reason: 'Always use LoadingSkeleton matching content layout'
+    reason: 'Always use Skeleton matching content layout'
   - combination: 'price_display typography outside price/budget contexts'
     reason: 'Reserve Manrope bold 20px for monetary values only'
   - combination: 'caption typography for primary content'

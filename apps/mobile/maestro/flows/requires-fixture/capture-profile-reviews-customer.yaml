@@ -1,0 +1,74 @@
+appId: mn.tasky.mobile
+---
+# Capture SCR-SHARED-012 customer profile and SCR-CUST-013 public tasker profile.
+# Precondition: app is already logged in as a customer on SCR-CUST-001 and the
+# seeded customer task has at least one applicant.
+
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-001'
+    timeout: 10000
+
+- tapOn:
+    id: 'tab-profile'
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-SHARED-012'
+    timeout: 10000
+- assertVisible:
+    id: 'my-profile-hero-card'
+- takeScreenshot: screenshots/SCR-SHARED-012-profile-customer
+
+- tapOn:
+    id: 'tab-home'
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-001'
+    timeout: 10000
+
+- tapOn:
+    id: 'my-tasks-feed'
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-009'
+    timeout: 10000
+- tapOn:
+    id: 'SCR-CUST-009-cta'
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-011'
+    timeout: 10000
+- tapOn:
+    id: 'applicant-view-profile-0'
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-013'
+    timeout: 10000
+- assertVisible:
+    id: 'tasker-profile-hero-card'
+- takeScreenshot: screenshots/SCR-CUST-013-tasker-profile
+
+- swipe:
+    direction: UP
+    duration: 500
+- waitForAnimationToEnd
+
+- runFlow:
+    when:
+      visible:
+        id: 'tasker-profile-review-search'
+    commands:
+      - tapOn:
+          id: 'tasker-profile-review-search'
+      - inputText: 'does-not-match'
+      - hideKeyboard
+      - assertVisible:
+          id: 'tasker-profile-review-no-results'
+      - takeScreenshot: screenshots/SCR-CUST-013-tasker-profile-review-search-empty
+
+- runFlow:
+    when:
+      visible:
+        id: 'tasker-profile-low-review-summary'
+    commands:
+      - takeScreenshot: screenshots/SCR-CUST-013-tasker-profile-low-review

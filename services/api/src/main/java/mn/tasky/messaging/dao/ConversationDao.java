@@ -81,15 +81,25 @@ public interface ConversationDao {
 
     @SqlQuery("SELECT * FROM conversations "
             + "WHERE (customer_id = :userId OR tasker_id = :userId) "
-            + "ORDER BY id LIMIT :limit")
+            + "ORDER BY created_at DESC, id DESC LIMIT :limit")
     List<Conversation> findByUserIdFirstPage(@Bind("userId") UUID userId, @Bind("limit") int limit);
 
-    @SqlQuery("SELECT * FROM conversations "
-            + "WHERE (customer_id = :userId OR tasker_id = :userId) "
-            + "AND id > :cursor "
-            + "ORDER BY id LIMIT :limit")
+    @SqlQuery("WITH cursor_row AS (SELECT created_at, id FROM conversations WHERE id = :cursor) "
+            + "SELECT c.* FROM conversations c, cursor_row cursor_row "
+            + "WHERE (c.customer_id = :userId OR c.tasker_id = :userId) "
+            + "AND (c.created_at < cursor_row.created_at "
+            + "OR (c.created_at = cursor_row.created_at AND c.id < cursor_row.id)) "
+            + "ORDER BY c.created_at DESC, c.id DESC LIMIT :limit")
     List<Conversation> findByUserIdAfterCursor(
             @Bind("userId") UUID userId, @Bind("cursor") UUID cursor, @Bind("limit") int limit);
+
+    default List<EnrichedConversation> findEnriched(String userId, String cursor, int limit) {
+        ConversationCursor parsed = ConversationCursor.parse(cursor);
+        if (parsed == null) {
+            return findEnrichedFirstPage(userId, limit);
+        }
+        return findEnrichedAfterCursor(userId, parsed.sortAt(), parsed.id(), limit);
+    }
 
     @SqlQuery("SELECT "
             + "c.id, "
@@ -147,9 +157,33 @@ public interface ConversationDao {
             + ") lm ON true "
             + "WHERE (c.customer_id = CAST(:userId AS UUID) "
             + "    OR c.tasker_id = CAST(:userId AS UUID)) "
-            + "  AND COALESCE(lm.sent_at, c.created_at) < CAST(:cursor AS TIMESTAMPTZ) "
+            + "  AND (COALESCE(lm.sent_at, c.created_at) < :cursorSortAt "
+            + "       OR (CAST(:cursorId AS UUID) IS NOT NULL "
+            + "           AND COALESCE(lm.sent_at, c.created_at) = :cursorSortAt "
+            + "           AND c.id < CAST(:cursorId AS UUID))) "
             + "ORDER BY COALESCE(lm.sent_at, c.created_at) DESC, c.id DESC "
             + "LIMIT :limit")
     List<EnrichedConversation> findEnrichedAfterCursor(
-            @Bind("userId") String userId, @Bind("cursor") String cursor, @Bind("limit") int limit);
+            @Bind("userId") String userId,
+            @Bind("cursorSortAt") Instant cursorSortAt,
+            @Bind("cursorId") UUID cursorId,
+            @Bind("limit") int limit);
+
+    record ConversationCursor(Instant sortAt, UUID id) {
+        static ConversationCursor parse(String cursor) {
+            if (cursor == null || cursor.isBlank()) {
+                return null;
+            }
+            int separator = cursor.lastIndexOf('|');
+            if (separator < 0) {
+                return new ConversationCursor(Instant.parse(cursor), null);
+            }
+            if (separator == 0 || separator == cursor.length() - 1) {
+                throw new IllegalArgumentException("Invalid conversation cursor");
+            }
+            return new ConversationCursor(
+                    Instant.parse(cursor.substring(0, separator)),
+                    required(cursor.substring(separator + 1), "cursorId"));
+        }
+    }
 }

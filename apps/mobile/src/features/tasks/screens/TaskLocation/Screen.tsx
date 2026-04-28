@@ -1,19 +1,30 @@
+import Constants from 'expo-constants';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
-import MapView, { Marker, PROVIDER_DEFAULT, UrlTile } from 'react-native-maps';
+import { Platform, View } from 'react-native';
+import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE, UrlTile } from 'react-native-maps';
 
 import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 import { elevations } from '@/design/elevations';
+import { PostingGuidanceCard } from '@/features/tasks/components/PostingGuidance';
 
-import { UB_CENTER, DEFAULT_DELTA } from './model';
+import { LocationStatusCard } from './LocationCard';
 import { MapControls } from './MapControls';
 import { MapOverlay } from './MapOverlay';
-import { LocationStatusCard } from './LocationCard';
+import {
+  DEFAULT_DELTA,
+  getGoogleMapsRenderer,
+  shouldUseGoogleMapsProvider,
+  TaskLocationAppExtra,
+  UB_CENTER,
+} from './model';
 import { useTaskLocationScreen } from './useTaskLocationScreen';
 
 export default function TaskLocationScreen() {
   const { t } = useTranslation();
+  const appExtra = Constants.expoConfig?.extra as TaskLocationAppExtra | undefined;
+  const useGoogleMapsProvider = shouldUseGoogleMapsProvider(Platform.OS, appExtra);
+  const googleRenderer = getGoogleMapsRenderer(Platform.OS, useGoogleMapsProvider);
   const {
     pin,
     locating,
@@ -42,20 +53,20 @@ export default function TaskLocationScreen() {
       onBack={goBack}
       nextLabel={t('common.continue')}
       nextDisabled={!pin}
+      title={t('LocationScreen.locationPageTitle')}
+      subtitle={t('LocationScreen.locationInstruction')}
     >
-      <View className="gap-sm">
-        <Text className="text-heading font-extrabold text-primary-deep">
-          {t('LocationScreen.locationPageTitle')}
-        </Text>
-        <Text className="text-body text-text-secondary leading-relaxed">
-          {t('LocationScreen.locationInstruction')}
-        </Text>
-      </View>
+      <PostingGuidanceCard
+        titleKey="PostingGuidance.addressPrivacyTitle"
+        bodyKey="PostingGuidance.addressPrivacyBody"
+        testID="posting-guidance-address-privacy"
+      />
 
       <View className="rounded-lg overflow-hidden bg-muted min-h-[280px]" style={elevations.soft}>
         <MapView
           ref={mapRef}
-          provider={PROVIDER_DEFAULT}
+          provider={useGoogleMapsProvider ? PROVIDER_GOOGLE : PROVIDER_DEFAULT}
+          googleRenderer={googleRenderer}
           style={{ alignSelf: 'stretch', height: 280 }}
           initialRegion={{
             ...UB_CENTER,
@@ -66,11 +77,13 @@ export default function TaskLocationScreen() {
           onRegionChangeComplete={handleRegionChange}
           testID="location-map"
         >
-          <UrlTile
-            urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-            maximumZ={19}
-            flipY={false}
-          />
+          {!useGoogleMapsProvider ? (
+            <UrlTile
+              urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+              maximumZ={19}
+              flipY={false}
+            />
+          ) : null}
           {pin ? <Marker coordinate={pin} /> : null}
         </MapView>
 

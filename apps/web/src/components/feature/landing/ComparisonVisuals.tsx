@@ -49,9 +49,9 @@ export const CustomerAdvantageVisual = () => {
             x="150"
             y="-15"
             textAnchor="middle"
-            className="text-sm font-bold uppercase tracking-[0.075em] fill-red-800/60"
+            className="text-sm font-bold uppercase tracking-caps fill-red-800/60"
           >
-            {t('landing.vizChaos', 'Social Media Noise')}
+            {t('landing.vizChaos')}
           </text>
 
           {/* Wireframe Phone */}
@@ -335,9 +335,9 @@ export const CustomerAdvantageVisual = () => {
             x="150"
             y="-15"
             textAnchor="middle"
-            className="text-sm font-bold fill-primary uppercase tracking-[0.075em]"
+            className="text-sm font-bold fill-primary uppercase tracking-caps"
           >
-            {t('landing.vizTasky', 'The Tasky Way')}
+            {t('landing.vizTasky')}
           </text>
 
           {/* Wireframe Phone */}
@@ -527,9 +527,9 @@ export const TaskerAdvantageVisual = () => {
             x="150"
             y="-15"
             textAnchor="middle"
-            className="text-sm font-bold uppercase tracking-[0.075em] fill-red-800/60"
+            className="text-sm font-bold uppercase tracking-caps fill-red-800/60"
           >
-            {t('landing.vizLeadless', 'Leadless Searching')}
+            {t('landing.vizLeadless')}
           </text>
 
           <rect
@@ -602,7 +602,7 @@ export const TaskerAdvantageVisual = () => {
                 fontWeight="bold"
                 className="text-destructive"
               >
-                {t('landing.vizTooFar', '90km!')}
+                {t('landing.vizTooFar')}
               </text>
               <line
                 x1="10"
@@ -726,7 +726,7 @@ export const TaskerAdvantageVisual = () => {
                 textAnchor="middle"
                 fontWeight="bold"
               >
-                {t('landing.vizNoMatch', 'NO MATCHES')}
+                {t('landing.vizNoMatch')}
               </text>
             </g>
           </g>
@@ -754,7 +754,7 @@ export const TaskerAdvantageVisual = () => {
                 textAnchor="middle"
                 fontWeight="bold"
               >
-                {t('landing.vizRetrying', 'RETRYING...')}
+                {t('landing.vizRetrying')}
               </text>
             </g>
           </g>
@@ -830,9 +830,9 @@ export const TaskerAdvantageVisual = () => {
             x="150"
             y="-15"
             textAnchor="middle"
-            className="text-sm font-bold fill-accent uppercase tracking-[0.075em]"
+            className="text-sm font-bold fill-accent uppercase tracking-caps"
           >
-            {t('landing.vizMatching', 'Precision Matching')}
+            {t('landing.vizMatching')}
           </text>
 
           <rect

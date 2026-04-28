@@ -8,6 +8,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '@/components/shells';
 import { Button } from '@/components/ui/Button';
 import { mobileTheme, elevations } from '@/design/tokenAdapter';
+import { PostingGuidanceCard } from '@/features/tasks/components/PostingGuidance';
 import { useTaskDraftStore } from '@/features/tasks/draft';
 
 const { colors, spacing, typography } = mobileTheme;
@@ -51,7 +52,7 @@ export default function TaskSuccessScreen() {
         extraBottomInset={120}
         showsVerticalScrollIndicator={false}
       >
-        <View className="px-lg pt-lg gap-2xl">
+        <View className="pt-lg gap-2xl">
           <View className="items-center gap-md pt-lg">
             <Animated.View
               style={[{ backgroundColor: `${colors.verified}1A` }, animatedCheckStyle]}
@@ -87,6 +88,12 @@ export default function TaskSuccessScreen() {
             </View>
           </View>
 
+          <PostingGuidanceCard
+            titleKey="PostingGuidance.nextStepsTitle"
+            bodyKey="PostingGuidance.nextStepsBody"
+            testID="posting-guidance-next-steps"
+          />
+
           <View className="rounded-md bg-muted p-2xl gap-sm" style={elevations.soft}>
             <Text className="text-caption font-sans-bold uppercase text-primary-deep mb-xs tracking-[0.8px]">
               {t('TaskPostedSuccessScreen.successNextLabel')}
@@ -111,7 +118,7 @@ export default function TaskSuccessScreen() {
       </InsetScrollView>
 
       <StickyActionBar>
-        <View className="px-lg pt-md pb-lg gap-sm">
+        <View className="pt-md pb-lg gap-sm">
           <Button
             label={t('TaskPostedSuccessScreen.successCta')}
             onPress={handleViewTask}

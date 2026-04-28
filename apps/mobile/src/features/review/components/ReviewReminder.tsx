@@ -5,8 +5,6 @@ import { Text, View } from 'react-native';
 
 import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
 import { Button } from '@/components/ui/Button';
-import { mobileTheme } from '@/design/tokenAdapter';
-
 interface ReviewReminderProps {
   isOpen: boolean;
   onDismiss: () => void;
@@ -25,7 +23,7 @@ export function ReviewReminder({ isOpen, onDismiss, bookingId }: ReviewReminderP
   return (
     <ModalSheetTemplate isOpen={isOpen} onClose={onDismiss} testID="review-reminder">
       <View className="items-center gap-md">
-        <Text className="text-title font-bold text-foreground text-center">
+        <Text className="text-title font-sans-bold text-foreground text-center">
           {t('shared.review.reminderTitle')}
         </Text>
         <Text className="text-body text-muted-foreground text-center leading-normal">
@@ -35,7 +33,8 @@ export function ReviewReminder({ isOpen, onDismiss, bookingId }: ReviewReminderP
         <Button
           label={t('shared.review.reminderCta')}
           onPress={handleReviewNow}
-          style={{ alignSelf: 'stretch', marginTop: mobileTheme.spacing.sm }}
+          className="mt-sm"
+          style={{ alignSelf: 'stretch' }}
           testID="review-reminder-cta"
         />
 

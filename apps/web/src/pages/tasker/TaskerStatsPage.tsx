@@ -8,23 +8,13 @@ export function TaskerStatsPage() {
 
   return (
     <ResponsiveDetailShell
-      title={t('taskerPages.stats.title', 'Tasker stats')}
-      description={t('taskerPages.stats.description', 'View a concise performance summary.')}
+      title={t('taskerPages.stats.title')}
+      description={t('taskerPages.stats.description')}
     >
       <Card>
         <CardContent className="grid gap-3 p-4 text-sm text-muted-foreground md:grid-cols-2">
-          <p>
-            {t(
-              'taskerPages.stats.content1',
-              'Completion rate, rating, and response time stay visible for taskers.',
-            )}
-          </p>
-          <p>
-            {t(
-              'taskerPages.stats.content2',
-              'Phase 1 keeps the stats surface lightweight and auditable.',
-            )}
-          </p>
+          <p>{t('taskerPages.stats.content1')}</p>
+          <p>{t('taskerPages.stats.content2')}</p>
         </CardContent>
       </Card>
     </ResponsiveDetailShell>

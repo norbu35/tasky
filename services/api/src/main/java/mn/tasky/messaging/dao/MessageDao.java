@@ -1,6 +1,5 @@
 package mn.tasky.messaging.dao;
 
-import static mn.tasky.common.persistence.UuidHelper.optional;
 import static mn.tasky.common.persistence.UuidHelper.required;
 
 import java.time.Instant;
@@ -48,24 +47,29 @@ public interface MessageDao {
 
     default List<Message> findByConversationId(String conversationId, String cursor, int limit) {
         UUID conversationUuid = required(conversationId, "conversationId");
-        return findByConversationId(conversationUuid, optional(cursor), limit);
+        return findByConversationId(conversationUuid, cursor, limit);
     }
 
-    default List<Message> findByConversationId(UUID conversationId, UUID cursor, int limit) {
-        if (cursor == null) {
+    default List<Message> findByConversationId(UUID conversationId, String cursor, int limit) {
+        MessageCursor messageCursor = MessageCursor.parse(cursor);
+        if (messageCursor == null) {
             return findByConversationIdFirstPage(conversationId, limit);
         }
-        return findByConversationIdAfterCursor(conversationId, cursor, limit);
+        return findByConversationIdAfterCursor(conversationId, messageCursor.sentAt(), messageCursor.id(), limit);
     }
 
-    @SqlQuery("SELECT * FROM messages WHERE conversation_id = :conversationId " + "ORDER BY id LIMIT :limit")
+    @SqlQuery("SELECT * FROM messages WHERE conversation_id = :conversationId "
+            + "ORDER BY sent_at DESC, id DESC LIMIT :limit")
     List<Message> findByConversationIdFirstPage(@Bind("conversationId") UUID conversationId, @Bind("limit") int limit);
 
     @SqlQuery("SELECT * FROM messages WHERE conversation_id = :conversationId "
-            + "AND id > :cursor "
-            + "ORDER BY id LIMIT :limit")
+            + "AND (sent_at < :cursorSentAt OR (sent_at = :cursorSentAt AND id < :cursorId)) "
+            + "ORDER BY sent_at DESC, id DESC LIMIT :limit")
     List<Message> findByConversationIdAfterCursor(
-            @Bind("conversationId") UUID conversationId, @Bind("cursor") UUID cursor, @Bind("limit") int limit);
+            @Bind("conversationId") UUID conversationId,
+            @Bind("cursorSentAt") Instant cursorSentAt,
+            @Bind("cursorId") UUID cursorId,
+            @Bind("limit") int limit);
 
     default boolean existsRecentByConversationId(String conversationId, Instant since) {
         return existsRecentByConversationId(required(conversationId, "conversationId"), since);
@@ -76,19 +80,38 @@ public interface MessageDao {
     boolean existsRecentByConversationId(@Bind("conversationId") UUID conversationId, @Bind("since") Instant since);
 
     default List<Message> findFlagged(String cursor, int limit) {
-        return findFlagged(optional(cursor), limit);
+        return findFlagged(MessageCursor.parse(cursor), limit);
     }
 
-    default List<Message> findFlagged(UUID cursor, int limit) {
+    default List<Message> findFlagged(MessageCursor cursor, int limit) {
         if (cursor == null) {
             return findFlaggedFirstPage(limit);
         }
-        return findFlaggedAfterCursor(cursor, limit);
+        return findFlaggedAfterCursor(cursor.sentAt(), cursor.id(), limit);
     }
 
-    @SqlQuery("SELECT * FROM messages WHERE phone_number_flagged = true ORDER BY id LIMIT :limit")
+    @SqlQuery(
+            "SELECT * FROM messages WHERE phone_number_flagged = true " + "ORDER BY sent_at DESC, id DESC LIMIT :limit")
     List<Message> findFlaggedFirstPage(@Bind("limit") int limit);
 
-    @SqlQuery("SELECT * FROM messages WHERE phone_number_flagged = true AND id > :cursor ORDER BY id LIMIT :limit")
-    List<Message> findFlaggedAfterCursor(@Bind("cursor") UUID cursor, @Bind("limit") int limit);
+    @SqlQuery("SELECT * FROM messages WHERE phone_number_flagged = true "
+            + "AND (sent_at < :cursorSentAt OR (sent_at = :cursorSentAt AND id < :cursorId)) "
+            + "ORDER BY sent_at DESC, id DESC LIMIT :limit")
+    List<Message> findFlaggedAfterCursor(
+            @Bind("cursorSentAt") Instant cursorSentAt, @Bind("cursorId") UUID cursorId, @Bind("limit") int limit);
+
+    record MessageCursor(Instant sentAt, UUID id) {
+        static MessageCursor parse(String cursor) {
+            if (cursor == null || cursor.isBlank()) {
+                return null;
+            }
+            int separator = cursor.lastIndexOf('|');
+            if (separator <= 0 || separator == cursor.length() - 1) {
+                throw new IllegalArgumentException("Invalid message cursor");
+            }
+            return new MessageCursor(
+                    Instant.parse(cursor.substring(0, separator)),
+                    required(cursor.substring(separator + 1), "cursorId"));
+        }
+    }
 }
