@@ -5,6 +5,8 @@ import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.automation.event.AutomationEventEnvelope;
 import mn.tasky.automation.event.AutomationEventTypes;
 import mn.tasky.automation.worker.AbstractEventHandler;
+import mn.tasky.common.feature.FeatureToggleService;
+import mn.tasky.common.i18n.BackendMessageResolver;
 import mn.tasky.identity.publicapi.IdentityCommandPort;
 import mn.tasky.notification.publicapi.NotificationCommandPort;
 import mn.tasky.trust.publicapi.TrustCommandPort;
@@ -20,12 +22,15 @@ import org.springframework.stereotype.Component;
 public class BookingCompletedHandler extends AbstractEventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(BookingCompletedHandler.class);
+    private static final String ESCROW_ENABLED = "escrow_enabled";
 
     private final WalletCommandPort walletCommandPort;
     private final NotificationCommandPort notificationCommandPort;
     private final AnalyticsCommandPort analyticsCommandPort;
     private final TrustCommandPort trustCommandPort;
     private final IdentityCommandPort identityCommandPort;
+    private final FeatureToggleService featureToggleService;
+    private final BackendMessageResolver messages;
     private final int platformFeeBasisPoints;
 
     public BookingCompletedHandler(
@@ -34,12 +39,16 @@ public class BookingCompletedHandler extends AbstractEventHandler {
             AnalyticsCommandPort analyticsCommandPort,
             TrustCommandPort trustCommandPort,
             IdentityCommandPort identityCommandPort,
+            FeatureToggleService featureToggleService,
+            BackendMessageResolver messages,
             @Value("${tasky.wallet.platform-fee-basis-points:1500}") int platformFeeBasisPoints) {
         this.walletCommandPort = walletCommandPort;
         this.notificationCommandPort = notificationCommandPort;
         this.analyticsCommandPort = analyticsCommandPort;
         this.trustCommandPort = trustCommandPort;
         this.identityCommandPort = identityCommandPort;
+        this.featureToggleService = featureToggleService;
+        this.messages = messages;
         this.platformFeeBasisPoints = platformFeeBasisPoints;
     }
 
@@ -62,11 +71,18 @@ public class BookingCompletedHandler extends AbstractEventHandler {
         String taskerId = requiredString(payload, "tasker_id");
         int price = requiredInt(payload);
 
-        walletCommandPort.creditTaskCompletion(taskerId, bookingId, price, platformFeeBasisPoints);
+        if (featureToggleService.isEnabled(ESCROW_ENABLED)) {
+            walletCommandPort.creditTaskCompletion(taskerId, bookingId, price, platformFeeBasisPoints);
+        } else {
+            log.info("Skipping wallet completion credit while {} is disabled: bookingId={}", ESCROW_ENABLED, bookingId);
+        }
         notificationCommandPort.sendPushWithEventKey(
                 taskerId,
-                "Job Complete",
-                "The customer has marked the job as complete.",
+                messages.messageForLocale(envelope.locale(), "notification.bookingCompleted.title", "Job Complete"),
+                messages.messageForLocale(
+                        envelope.locale(),
+                        "notification.bookingCompleted.body",
+                        "The customer has marked the job as complete."),
                 "JOB_COMPLETED",
                 "BOOKING_COMPLETED_" + bookingId);
 

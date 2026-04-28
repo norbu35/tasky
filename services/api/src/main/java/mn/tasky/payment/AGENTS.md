@@ -2,6 +2,10 @@
 
 Escrow payment intent initiation and QPay callback processing.
 
+This module currently describes the deferred escrow/full-job payment path. It is not the Phase 2 platform-fee pilot
+surface. Future platform-fee work must use a separate activation guard such as `platform_fee_enabled` and must not
+reuse `escrow_enabled` unless escrow, wallet, and payout semantics are intentionally activated by the governing docs.
+
 ## Implemented API
 
 | Method | Path                                      | Notes                                          |

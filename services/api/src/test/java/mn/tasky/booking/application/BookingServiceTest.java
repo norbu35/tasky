@@ -228,6 +228,13 @@ class BookingServiceTest {
     }
 
     @Test
+    void forceTransition_rejectsPaymentStateOverride() {
+        BookingTransitionResult result = service.forceTransition("b1", "PAID");
+
+        assertThat(result).isEqualTo(BookingTransitionResult.INVALID_TRANSITION_RESULT);
+    }
+
+    @Test
     void transitionToDisputed_success() {
         when(bookingDao.findByIdForUpdate("b1")).thenReturn(Optional.of(assignedBooking()));
         when(bookingDao.findById("b1")).thenReturn(Optional.of(assignedBooking()));

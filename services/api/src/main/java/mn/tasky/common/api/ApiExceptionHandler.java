@@ -6,6 +6,7 @@ import java.util.UUID;
 import mn.tasky.auth.AccountRestrictedException;
 import mn.tasky.auth.FacebookAuthException;
 import mn.tasky.auth.RateLimitExceededException;
+import mn.tasky.common.i18n.BackendMessageResolver;
 import mn.tasky.common.idempotency.IdempotencyException;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import org.slf4j.Logger;
@@ -22,6 +23,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ApiExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
+
+    private final BackendMessageResolver messages;
+
+    public ApiExceptionHandler(BackendMessageResolver messages) {
+        this.messages = messages;
+    }
 
     @ExceptionHandler(RateLimitExceededException.class)
     public ResponseEntity<ErrorResponse> handleRateLimit(RateLimitExceededException ex, HttpServletRequest request) {
@@ -99,6 +106,7 @@ public class ApiExceptionHandler {
         Object traceId = request.getAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE);
         String resolvedTraceId =
                 traceId != null ? traceId.toString() : UUID.randomUUID().toString();
-        return ResponseEntity.status(status).body(new ErrorResponse(code, message, resolvedTraceId));
+        return ResponseEntity.status(status)
+                .body(new ErrorResponse(code, messages.errorMessage(code, message), resolvedTraceId));
     }
 }

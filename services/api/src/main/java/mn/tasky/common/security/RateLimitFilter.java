@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import mn.tasky.auth.dao.RateLimitCounterDao;
+import mn.tasky.common.i18n.BackendMessageResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +39,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private final RateLimitCounterDao rateLimitCounterDao;
     private final ObjectMapper objectMapper;
+    private final BackendMessageResolver messages;
     private final ClientIpResolver clientIpResolver;
     private final int authenticatedRpm;
     private final int unauthenticatedRpm;
@@ -45,11 +47,13 @@ public class RateLimitFilter extends OncePerRequestFilter {
     public RateLimitFilter(
             RateLimitCounterDao rateLimitCounterDao,
             ObjectMapper objectMapper,
+            BackendMessageResolver messages,
             ClientIpResolver clientIpResolver,
             @Value("${tasky.rate-limit.authenticated-rpm:100}") int authenticatedRpm,
             @Value("${tasky.rate-limit.unauthenticated-rpm:30}") int unauthenticatedRpm) {
         this.rateLimitCounterDao = rateLimitCounterDao;
         this.objectMapper = objectMapper;
+        this.messages = messages;
         this.clientIpResolver = clientIpResolver;
         this.authenticatedRpm = authenticatedRpm;
         this.unauthenticatedRpm = unauthenticatedRpm;
@@ -114,7 +118,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("code", "RATE_LIMITED");
-        body.put("message", "Too many requests");
+        body.put("message", messages.errorMessage("RATE_LIMITED", "Too many requests"));
         body.put("retry_after", retryAfter);
 
         response.getWriter().write(objectMapper.writeValueAsString(body));

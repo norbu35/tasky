@@ -1,6 +1,6 @@
 CreditBalance:
   x-tasky-status: deferred
-  x-tasky-phase: phase_2
+  x-tasky-phase: phase_3
   type: object
   required:
     - balance
@@ -19,7 +19,7 @@ CreditBalance:
       type: integer
 CreditTransaction:
   x-tasky-status: deferred
-  x-tasky-phase: phase_2
+  x-tasky-phase: phase_3
   type: object
   required:
     - id
@@ -47,7 +47,7 @@ CreditTransaction:
       format: date-time
 CreditPack:
   x-tasky-status: deferred
-  x-tasky-phase: phase_2
+  x-tasky-phase: phase_3
   type: object
   required:
     - id
@@ -186,7 +186,7 @@ FeatureToggle:
       format: date-time
 LeadUnlockPrice:
   x-tasky-status: deferred
-  x-tasky-phase: phase_2
+  x-tasky-phase: phase_3
   type: object
   required:
     - id
@@ -270,7 +270,7 @@ BusinessAccount:
       format: date-time
 LeadUnlockPricePayload:
   x-tasky-status: deferred
-  x-tasky-phase: phase_2
+  x-tasky-phase: phase_3
   type: object
   required:
     - category_id

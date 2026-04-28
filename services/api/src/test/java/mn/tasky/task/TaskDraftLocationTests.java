@@ -10,8 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.Optional;
-import mn.tasky.category.dao.CategoryDao;
-import mn.tasky.category.dao.CategorySchemaVersionDao;
+import mn.tasky.category.publicapi.CategoryQueryPort;
 import mn.tasky.task.application.TaskDraftService;
 import mn.tasky.task.dao.TaskDraftDao;
 import mn.tasky.task.dto.TaskDraft;
@@ -24,7 +23,7 @@ class TaskDraftLocationTests {
     @DisplayName("updateDraft passes location fields to DAO")
     void updateDraftPassesLocation() {
         TaskDraftDao dao = mock(TaskDraftDao.class);
-        var service = new TaskDraftService(dao, mock(CategoryDao.class), mock(CategorySchemaVersionDao.class));
+        var service = new TaskDraftService(dao, mock(CategoryQueryPort.class));
 
         var existing = new TaskDraft(
                 "d1",
@@ -49,10 +48,7 @@ class TaskDraftLocationTests {
     @DisplayName("updateDraft rejects mismatched owner (security: must throw, not silently update)")
     void updateDraftRejectsWrongOwner() {
         TaskDraftDao dao = mock(TaskDraftDao.class);
-        var service = new TaskDraftService(
-                dao,
-                mock(mn.tasky.category.dao.CategoryDao.class),
-                mock(mn.tasky.category.dao.CategorySchemaVersionDao.class));
+        var service = new TaskDraftService(dao, mock(CategoryQueryPort.class));
 
         var existing = new TaskDraft(
                 "d1",

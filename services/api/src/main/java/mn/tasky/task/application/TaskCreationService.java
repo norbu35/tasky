@@ -11,15 +11,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import mn.tasky.analytics.application.AnalyticsService;
-import mn.tasky.category.application.CategoryService;
-import mn.tasky.category.dao.CategorySchemaVersionDao;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.category.dto.CategorySchemaVersion;
 import mn.tasky.category.dto.CategoryState;
+import mn.tasky.category.publicapi.CategoryQueryPort;
 import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.location.publicapi.LocationQueryPort;
-import mn.tasky.notification.application.NotificationService;
-import mn.tasky.review.application.ReviewEnforcementService;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
 import mn.tasky.task.dao.TaskDraftDao;
@@ -29,6 +27,7 @@ import mn.tasky.task.dto.PricingMode;
 import mn.tasky.task.dto.TaskCreateResult;
 import mn.tasky.task.dto.TaskDraft;
 import mn.tasky.task.dto.TaskState;
+import mn.tasky.trust.publicapi.TrustQueryPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,48 +44,45 @@ public class TaskCreationService {
 
     private static final Logger log = LoggerFactory.getLogger(TaskCreationService.class);
 
-    private final CategoryService categoryService;
-    private final NotificationService notificationService;
-    private final AnalyticsService analyticsService;
+    private final CategoryQueryPort categoryQueryPort;
+    private final NotificationCommandPort notificationCommandPort;
+    private final AnalyticsCommandPort analyticsCommandPort;
     private final ScopeSummaryGenerator scopeSummaryGenerator;
     private final TaskDao taskDao;
     private final TaskPhotoDao taskPhotoDao;
     private final TaskApplicationDao taskApplicationDao;
-    private final CategorySchemaVersionDao categorySchemaVersionDao;
     private final TaskDraftDao taskDraftDao;
     private final ObjectMapper objectMapper;
-    private final ReviewEnforcementService reviewEnforcementService;
+    private final TrustQueryPort trustQueryPort;
     private final LocationQueryPort locationQueryPort;
     private final TaskPhotoKeyHelper taskPhotoKeyHelper;
     private final double taskMatchNotificationRadiusKm;
     private final int taskMatchNotificationLimit;
 
     public TaskCreationService(
-            CategoryService categoryService,
-            NotificationService notificationService,
-            AnalyticsService analyticsService,
-            ReviewEnforcementService reviewEnforcementService,
+            CategoryQueryPort categoryQueryPort,
+            NotificationCommandPort notificationCommandPort,
+            AnalyticsCommandPort analyticsCommandPort,
+            TrustQueryPort trustQueryPort,
             LocationQueryPort locationQueryPort,
             ScopeSummaryGenerator scopeSummaryGenerator,
             TaskDao taskDao,
             TaskPhotoDao taskPhotoDao,
             TaskApplicationDao taskApplicationDao,
-            CategorySchemaVersionDao categorySchemaVersionDao,
             TaskDraftDao taskDraftDao,
             ObjectMapper objectMapper,
             TaskPhotoKeyHelper taskPhotoKeyHelper,
             @Value("${tasky.notifications.task-match-radius-km:10}") double taskMatchNotificationRadiusKm,
             @Value("${tasky.notifications.task-match-limit:50}") int taskMatchNotificationLimit) {
-        this.categoryService = categoryService;
-        this.notificationService = notificationService;
-        this.analyticsService = analyticsService;
-        this.reviewEnforcementService = reviewEnforcementService;
+        this.categoryQueryPort = categoryQueryPort;
+        this.notificationCommandPort = notificationCommandPort;
+        this.analyticsCommandPort = analyticsCommandPort;
+        this.trustQueryPort = trustQueryPort;
         this.locationQueryPort = locationQueryPort;
         this.scopeSummaryGenerator = scopeSummaryGenerator;
         this.taskDao = taskDao;
         this.taskPhotoDao = taskPhotoDao;
         this.taskApplicationDao = taskApplicationDao;
-        this.categorySchemaVersionDao = categorySchemaVersionDao;
         this.taskDraftDao = taskDraftDao;
         this.objectMapper = objectMapper;
         this.taskPhotoKeyHelper = taskPhotoKeyHelper;
@@ -104,13 +100,13 @@ public class TaskCreationService {
      * @return Success or validation failure details.
      */
     public TaskCreateResult createTask(String customerId, CreateTask command) {
-        if (reviewEnforcementService.isUserLocked(customerId)) {
+        if (trustQueryPort.isUserLocked(customerId)) {
             return TaskCreateResult.error(
                     TaskCreateResult.REVIEW_LOCK_ACTIVE,
                     "You must complete pending reviews before creating a new task.");
         }
 
-        Optional<CategoryState> categoryOpt = categoryService.getCategory(command.categoryId());
+        Optional<CategoryState> categoryOpt = categoryQueryPort.getCategory(command.categoryId());
         if (categoryOpt.isEmpty() || !categoryOpt.get().isActive()) {
             return TaskCreateResult.error(TaskCreateResult.INVALID_CATEGORY, "Category not found or inactive.");
         }
@@ -181,7 +177,7 @@ public class TaskCreationService {
             }
 
             Optional<CategorySchemaVersion> schemaOpt =
-                    categorySchemaVersionDao.findByCategoryIdAndVersion(command.categoryId(), intakeSchemaVersion);
+                    categoryQueryPort.getSchemaVersion(command.categoryId(), intakeSchemaVersion);
             if (schemaOpt.isEmpty()) {
                 return TaskCreateResult.error(
                         TaskCreateResult.INVALID_SCHEMA_VERSION,
@@ -251,10 +247,8 @@ public class TaskCreationService {
                 now,
                 now);
 
-        analyticsService.track(
-                AnalyticsService.EVENT_TASK_POSTED,
-                customerId,
-                Map.of(AnalyticsService.PROPERTY_TASK_ID, id, "category_id", command.categoryId()));
+        analyticsCommandPort.track(
+                "TASK_POSTED", customerId, Map.of("task_id", id, "category_id", command.categoryId()));
 
         notifyNearbyTaskers(task);
         return TaskCreateResult.success(task);
@@ -405,7 +399,7 @@ public class TaskCreationService {
                 task.customerId(),
                 taskMatchNotificationLimit);
         for (String taskerId : candidates) {
-            notificationService.sendPush(
+            notificationCommandPort.sendPush(
                     taskerId,
                     "New task nearby",
                     "A new task matching your recent work area is available.",

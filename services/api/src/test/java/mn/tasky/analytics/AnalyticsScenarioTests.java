@@ -3,10 +3,12 @@ package mn.tasky.analytics;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,6 +28,8 @@ import mn.tasky.analytics.dao.AnalyticsEventDao;
 import mn.tasky.analytics.dto.Event;
 import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.automation.event.AutomationEventEnvelope;
+import mn.tasky.common.feature.FeatureToggleService;
+import mn.tasky.common.i18n.BackendMessageResolver;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import mn.tasky.identity.publicapi.IdentityCommandPort;
 import mn.tasky.messaging.publicapi.MessagingCommandPort;
@@ -45,6 +49,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.context.support.StaticMessageSource;
 
 @SuppressWarnings("PMD.SingularField")
 @ExtendWith(MockitoExtension.class)
@@ -63,6 +68,9 @@ class AnalyticsScenarioTests {
     private WalletCommandPort walletCommandPort;
 
     @Mock
+    private FeatureToggleService featureToggleService;
+
+    @Mock
     private TrustCommandPort trustCommandPort;
 
     @Mock
@@ -77,12 +85,14 @@ class AnalyticsScenarioTests {
     private AnalyticsService analyticsService;
     private AnalyticsCommandPort analyticsCommandPort;
     private ObjectMapper objectMapper;
+    private BackendMessageResolver messages;
 
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
         analyticsService = new AnalyticsService(analyticsEventDao, objectMapper);
         analyticsCommandPort = new AnalyticsCommandHandler(analyticsService);
+        messages = new BackendMessageResolver(new StaticMessageSource());
     }
 
     @AfterEach
@@ -134,8 +144,8 @@ class AnalyticsScenarioTests {
         when(messagingCommandPort.startConversation(anyString(), anyString(), anyString()))
                 .thenReturn("conv-123");
 
-        TaskApplicationAcceptedHandler handler =
-                new TaskApplicationAcceptedHandler(messagingCommandPort, notificationCommandPort, analyticsCommandPort);
+        TaskApplicationAcceptedHandler handler = new TaskApplicationAcceptedHandler(
+                messagingCommandPort, notificationCommandPort, analyticsCommandPort, messages);
 
         AutomationEventEnvelope envelope = AutomationEventEnvelope.builder()
                 .eventId(UUID.randomUUID().toString())
@@ -210,6 +220,8 @@ class AnalyticsScenarioTests {
                 analyticsCommandPort,
                 trustCommandPort,
                 identityCommandPort,
+                featureToggleService,
+                messages,
                 1500);
 
         AutomationEventEnvelope envelope = AutomationEventEnvelope.builder()
@@ -252,6 +264,7 @@ class AnalyticsScenarioTests {
         assertThat(props).contains(entry(AnalyticsService.PROPERTY_CORRELATION_ID, "corr-2"));
         assertThat(props).contains(entry(AnalyticsService.PROPERTY_LOCALE, "mn"));
         assertThat(props).contains(entry(AnalyticsService.PROPERTY_PLATFORM, "ANDROID"));
+        verify(walletCommandPort, never()).creditTaskCompletion(anyString(), anyString(), anyInt(), anyInt());
     }
 
     // ── Branch coverage: MDC enrichment ─────────────────────────────────────

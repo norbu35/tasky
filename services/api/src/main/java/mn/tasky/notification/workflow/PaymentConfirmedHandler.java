@@ -5,6 +5,7 @@ import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.automation.event.AutomationEventEnvelope;
 import mn.tasky.automation.event.AutomationEventTypes;
 import mn.tasky.automation.worker.AbstractEventHandler;
+import mn.tasky.common.i18n.BackendMessageResolver;
 import mn.tasky.notification.publicapi.NotificationCommandPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +20,15 @@ public class PaymentConfirmedHandler extends AbstractEventHandler {
 
     private final NotificationCommandPort notificationCommandPort;
     private final AnalyticsCommandPort analyticsCommandPort;
+    private final BackendMessageResolver messages;
 
     public PaymentConfirmedHandler(
-            NotificationCommandPort notificationCommandPort, AnalyticsCommandPort analyticsCommandPort) {
+            NotificationCommandPort notificationCommandPort,
+            AnalyticsCommandPort analyticsCommandPort,
+            BackendMessageResolver messages) {
         this.notificationCommandPort = notificationCommandPort;
         this.analyticsCommandPort = analyticsCommandPort;
+        this.messages = messages;
     }
 
     @Override
@@ -47,14 +52,24 @@ public class PaymentConfirmedHandler extends AbstractEventHandler {
 
         notificationCommandPort.sendPushWithEventKey(
                 taskerId,
-                "Booking Confirmed",
-                "Payment received for booking #" + bookingId,
+                messages.messageForLocale(
+                        envelope.locale(), "notification.paymentConfirmed.tasker.title", "Booking Confirmed"),
+                messages.messageForLocale(
+                        envelope.locale(),
+                        "notification.paymentConfirmed.tasker.body",
+                        "Payment received for booking #" + bookingId,
+                        bookingId),
                 "BOOKING_CONFIRMED",
                 "BOOKING_CONFIRMED_TASKER_" + bookingId);
         notificationCommandPort.sendPushWithEventKey(
                 customerId,
-                "Booking Confirmed",
-                "Your payment for booking #" + bookingId + " was successful.",
+                messages.messageForLocale(
+                        envelope.locale(), "notification.paymentConfirmed.customer.title", "Booking Confirmed"),
+                messages.messageForLocale(
+                        envelope.locale(),
+                        "notification.paymentConfirmed.customer.body",
+                        "Your payment for booking #" + bookingId + " was successful.",
+                        bookingId),
                 "BOOKING_CONFIRMED",
                 "BOOKING_CONFIRMED_CUSTOMER_" + bookingId);
 

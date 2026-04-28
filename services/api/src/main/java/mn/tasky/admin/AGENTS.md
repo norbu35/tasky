@@ -1,6 +1,7 @@
 # Feature: admin
 
-Admin-only operations for moderation, verification review, dispute resolution, and payout processing.
+Admin-only operations for moderation, verification review, and dispute resolution.
+Payout processing is a Phase 3 deferred surface (gated by `escrow_enabled`).
 
 ## Implemented API
 
@@ -19,15 +20,16 @@ All endpoints are under `/api/v1/admin/**` and require `ADMIN` role (enforced in
 | `POST` | `/api/v1/admin/disputes/{id}/resolve`      | Resolve dispute; idempotent                                        |
 | `GET`  | `/api/v1/admin/moderation/strike-policy`   | Current moderation policy                                          |
 | `PUT`  | `/api/v1/admin/moderation/strike-policy`   | Update moderation policy                                           |
-| `GET`  | `/api/v1/admin/payouts/pending`            | Pending payouts (feature-flagged)                                  |
-| `POST` | `/api/v1/admin/payouts/{id}/process`       | Process payout (feature-flagged, Tue/Fri only, idempotent)         |
+| `GET`  | `/api/v1/admin/payouts/pending`            | **Deferred – Phase 3.** Pending payouts (escrow_enabled gate)      |
+| `POST` | `/api/v1/admin/payouts/{id}/process`       | **Deferred – Phase 3.** Process payout (Tue/Fri only, idempotent)  |
 
 ## Behavioral Notes
 
 - Verification approve/reject uses `AuthService`; approve sets user status to `VERIFIED`.
 - `POST /api/v1/admin/disputes/{id}/resolve` accepts outcomes: `RESOLVE_TASKER`, `RESOLVE_CUSTOMER`, `ESCALATE`.
 - Payout endpoints are gated by `escrow_enabled`.
-- Admin payout processing exists in deferred wallet code paths, but it is not part of the active Phase 1 contract surface and is intentionally omitted from the live OpenAPI.
+- Admin payout processing exists in deferred wallet code paths and may appear in the split OpenAPI only as a
+  `x-tasky-status: deferred` Phase 3 discovery surface. It is not active Phase 1 behavior.
 - Some admin endpoints return mixed error envelopes (`{code,message}` and `{error}`) depending on controller path.
 
 ## Idempotency

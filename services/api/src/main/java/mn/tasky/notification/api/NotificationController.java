@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import java.util.Map;
 import mn.tasky.api.generated.NotificationsApi;
 import mn.tasky.api.generated.model.RegisterDevice200Response;
+import mn.tasky.common.i18n.BackendMessageResolver;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.runtime.publicapi.composition.NotificationCompositionService;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotificationController implements NotificationsApi {
 
     private final NotificationCompositionService notificationCompositionService;
+    private final BackendMessageResolver messages;
 
-    public NotificationController(NotificationCompositionService notificationCompositionService) {
+    public NotificationController(
+            NotificationCompositionService notificationCompositionService, BackendMessageResolver messages) {
         this.notificationCompositionService = notificationCompositionService;
+        this.messages = messages;
     }
 
     @Override
@@ -37,8 +41,9 @@ public class NotificationController implements NotificationsApi {
                 registerDeviceRequest.getToken(),
                 registerDeviceRequest.getPlatform().getValue());
         notificationCompositionService.registerDevice(principal.userId(), domainReq);
-        return (ResponseEntity<RegisterDevice200Response>)
-                (ResponseEntity<?>) ResponseEntity.ok(Map.of("message", "Device registered successfully."));
+        return (ResponseEntity<RegisterDevice200Response>) (ResponseEntity<?>) ResponseEntity.ok(Map.of(
+                "message",
+                messages.message("notification.deviceRegistered.message", "Device registered successfully.")));
     }
 
     @Override

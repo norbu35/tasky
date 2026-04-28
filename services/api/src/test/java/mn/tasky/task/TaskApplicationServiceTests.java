@@ -15,16 +15,15 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import mn.tasky.analytics.application.AnalyticsService;
-import mn.tasky.auth.application.UserProfileService;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.auth.dto.UserProfile;
 import mn.tasky.booking.dto.BookingIntentCreateResult;
 import mn.tasky.booking.dto.BookingIntentState;
 import mn.tasky.booking.publicapi.BookingCommandPort;
 import mn.tasky.booking.publicapi.BookingIntentCommandPort;
 import mn.tasky.common.outbox.DomainEventOutboxService;
-import mn.tasky.notification.application.NotificationService;
-import mn.tasky.review.application.ReviewEnforcementService;
+import mn.tasky.identity.publicapi.IdentityQueryPort;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
 import mn.tasky.task.application.TaskApplicationService;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
@@ -32,6 +31,7 @@ import mn.tasky.task.dto.TaskApplicationState;
 import mn.tasky.task.dto.TaskApplicationsListResult;
 import mn.tasky.task.dto.TaskApplyResult;
 import mn.tasky.task.dto.TaskState;
+import mn.tasky.trust.publicapi.TrustQueryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -53,7 +53,7 @@ class TaskApplicationServiceTests {
     private static final String APPLICATION_ID = UUID.randomUUID().toString();
 
     @Mock
-    private UserProfileService userProfileService;
+    private IdentityQueryPort userProfileService;
 
     @Mock
     private BookingCommandPort bookingCommandPort;
@@ -62,16 +62,16 @@ class TaskApplicationServiceTests {
     private BookingIntentCommandPort bookingIntentCommandPort;
 
     @Mock
-    private NotificationService notificationService;
+    private NotificationCommandPort notificationService;
 
     @Mock
-    private AnalyticsService analyticsService;
+    private AnalyticsCommandPort analyticsService;
 
     @Mock
     private DomainEventOutboxService domainEventOutboxService;
 
     @Mock
-    private ReviewEnforcementService reviewEnforcementService;
+    private TrustQueryPort reviewEnforcementService;
 
     @Mock
     private TaskDao taskDao;
@@ -316,7 +316,7 @@ class TaskApplicationServiceTests {
                             eq("APPLIED"),
                             any(Instant.class));
             verify(notificationService).sendPush(eq(CUSTOMER_ID), anyString(), anyString(), eq("TASKER_APPLIED"));
-            verify(analyticsService).track(eq(AnalyticsService.EVENT_APPLICATION_SUBMITTED), eq(TASKER_ID), any());
+            verify(analyticsService).track(eq("APPLICATION_SUBMITTED"), eq(TASKER_ID), any());
         }
 
         @Test
@@ -335,12 +335,12 @@ class TaskApplicationServiceTests {
             assertThat(result.isSuccess()).isTrue();
             verify(analyticsService)
                     .track(
-                            eq(AnalyticsService.EVENT_QUALIFIED_APPLICATION),
+                            eq("QUALIFIED_APPLICATION"),
                             eq(TASKER_ID),
-                            argThat(properties -> TASK_ID.equals(properties.get(AnalyticsService.PROPERTY_TASK_ID))
-                                    && TASKER_ID.equals(properties.get(AnalyticsService.PROPERTY_TASKER_ID))
-                                    && "cat-1".equals(properties.get(AnalyticsService.PROPERTY_CATEGORY_ID))
-                                    && "BUDGET".equals(properties.get(AnalyticsService.PROPERTY_PRICING_MODE))));
+                            argThat(properties -> TASK_ID.equals(properties.get("task_id"))
+                                    && TASKER_ID.equals(properties.get("tasker_id"))
+                                    && "cat-1".equals(properties.get("category_id"))
+                                    && "BUDGET".equals(properties.get("pricing_mode"))));
         }
     }
 

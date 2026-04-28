@@ -3,10 +3,9 @@ package mn.tasky.task.application;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
-import mn.tasky.category.dao.CategoryDao;
-import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.category.dto.CategorySchemaVersion;
 import mn.tasky.category.dto.CategoryState;
+import mn.tasky.category.publicapi.CategoryQueryPort;
 import mn.tasky.task.dao.TaskDraftDao;
 import mn.tasky.task.dto.TaskDraft;
 import org.springframework.stereotype.Service;
@@ -19,14 +18,11 @@ import org.springframework.stereotype.Service;
 public class TaskDraftService {
 
     private final TaskDraftDao taskDraftDao;
-    private final CategoryDao categoryDao;
-    private final CategorySchemaVersionDao categorySchemaVersionDao;
+    private final CategoryQueryPort categoryQueryPort;
 
-    public TaskDraftService(
-            TaskDraftDao taskDraftDao, CategoryDao categoryDao, CategorySchemaVersionDao categorySchemaVersionDao) {
+    public TaskDraftService(TaskDraftDao taskDraftDao, CategoryQueryPort categoryQueryPort) {
         this.taskDraftDao = taskDraftDao;
-        this.categoryDao = categoryDao;
-        this.categorySchemaVersionDao = categorySchemaVersionDao;
+        this.categoryQueryPort = categoryQueryPort;
     }
 
     /**
@@ -42,8 +38,9 @@ public class TaskDraftService {
      *                                  or no active schema version exists
      */
     public TaskDraft createDraft(String customerId, String categoryId) {
-        CategoryState category =
-                categoryDao.findById(categoryId).orElseThrow(() -> new IllegalArgumentException("Category not found."));
+        CategoryState category = categoryQueryPort
+                .getCategory(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found."));
 
         if (!category.isActive()) {
             throw new IllegalStateException("Category is not active.");
@@ -53,8 +50,8 @@ public class TaskDraftService {
             throw new IllegalStateException("Intake is not enabled for this category.");
         }
 
-        CategorySchemaVersion activeSchema = categorySchemaVersionDao
-                .findActiveByCategoryId(categoryId)
+        CategorySchemaVersion activeSchema = categoryQueryPort
+                .getActiveSchemaVersion(categoryId)
                 .orElseThrow(() -> new IllegalStateException("No active schema version for this category."));
 
         String id = UUID.randomUUID().toString();

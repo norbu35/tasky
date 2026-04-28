@@ -5,6 +5,7 @@ import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.automation.event.AutomationEventEnvelope;
 import mn.tasky.automation.event.AutomationEventTypes;
 import mn.tasky.automation.worker.AbstractEventHandler;
+import mn.tasky.common.i18n.BackendMessageResolver;
 import mn.tasky.messaging.publicapi.MessagingCommandPort;
 import mn.tasky.notification.publicapi.NotificationCommandPort;
 import org.slf4j.Logger;
@@ -21,14 +22,17 @@ public class TaskApplicationAcceptedHandler extends AbstractEventHandler {
     private final MessagingCommandPort messagingCommandPort;
     private final NotificationCommandPort notificationCommandPort;
     private final AnalyticsCommandPort analyticsCommandPort;
+    private final BackendMessageResolver messages;
 
     public TaskApplicationAcceptedHandler(
             MessagingCommandPort messagingCommandPort,
             NotificationCommandPort notificationCommandPort,
-            AnalyticsCommandPort analyticsCommandPort) {
+            AnalyticsCommandPort analyticsCommandPort,
+            BackendMessageResolver messages) {
         this.messagingCommandPort = messagingCommandPort;
         this.notificationCommandPort = notificationCommandPort;
         this.analyticsCommandPort = analyticsCommandPort;
+        this.messages = messages;
     }
 
     @Override
@@ -52,7 +56,15 @@ public class TaskApplicationAcceptedHandler extends AbstractEventHandler {
 
         String conversationId = messagingCommandPort.startConversation(taskId, taskerId, customerId);
         notificationCommandPort.sendPushWithEventKey(
-                taskerId, "You are hired!", "Your application has been accepted.", "HIRED", "HIRED_" + bookingId);
+                taskerId,
+                messages.messageForLocale(
+                        envelope.locale(), "notification.taskApplicationAccepted.title", "You are hired!"),
+                messages.messageForLocale(
+                        envelope.locale(),
+                        "notification.taskApplicationAccepted.body",
+                        "Your application has been accepted."),
+                "HIRED",
+                "HIRED_" + bookingId);
 
         analyticsCommandPort.track(
                 "TASKER_ACCEPTED",

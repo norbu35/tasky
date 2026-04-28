@@ -2,16 +2,82 @@ package mn.tasky.architecture;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.tngtech.archunit.core.domain.Dependency;
+import com.tngtech.archunit.core.domain.JavaClass;
+import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @AnalyzeClasses(
         packages = "mn.tasky",
         importOptions = {ImportOption.DoNotIncludeTests.class})
 class BackendArchitectureTest {
+
+    private static final Set<String> FEATURE_MODULES = Set.of(
+            "auth",
+            "booking",
+            "category",
+            "task",
+            "review",
+            "wallet",
+            "payment",
+            "dispute",
+            "messaging",
+            "notification",
+            "admin",
+            "analytics",
+            "user",
+            "verification",
+            "security");
+    private static final Set<String> INTERNAL_FEATURE_SEGMENTS =
+            Set.of("application", "dao", "api", "scheduling", "provider");
+    private static final Set<String> EXPLICIT_BOUNDARY_SEGMENTS = Set.of("publicapi", "facade", "config");
+    private static final Set<String> LEGACY_CROSS_FEATURE_INTERNAL_DEPENDENCIES = Set.of(
+            "mn.tasky.auth.application.ReliabilityScoreService -> mn.tasky.booking.dao.BookingDao",
+            "mn.tasky.auth.application.ReliabilityScoreService -> mn.tasky.review.dao.ReviewDao",
+            "mn.tasky.booking.application.BookingIntentService -> mn.tasky.analytics.application.AnalyticsService",
+            "mn.tasky.booking.application.BookingIntentService -> mn.tasky.notification.application.NotificationService",
+            "mn.tasky.booking.application.BookingIntentService -> mn.tasky.task.dao.TaskApplicationDao",
+            "mn.tasky.booking.application.BookingIntentService -> mn.tasky.task.dao.TaskDao",
+            "mn.tasky.booking.application.BookingLifecycleService -> mn.tasky.auth.application.ModerationService",
+            "mn.tasky.booking.application.BookingLifecycleService -> "
+                    + "mn.tasky.notification.application.NotificationService",
+            "mn.tasky.booking.application.BookingLifecycleService -> "
+                    + "mn.tasky.review.application.ReviewEnforcementService",
+            "mn.tasky.booking.application.BookingLifecycleService -> mn.tasky.task.application.TaskLifecycleService",
+            "mn.tasky.booking.application.BookingLifecycleService -> mn.tasky.task.application.TaskQueryService",
+            "mn.tasky.booking.application.BookingScheduleService -> "
+                    + "mn.tasky.notification.application.NotificationService",
+            "mn.tasky.booking.application.BookingService -> mn.tasky.auth.application.UserProfileService",
+            "mn.tasky.booking.application.CompletionTimeoutService -> "
+                    + "mn.tasky.notification.application.NotificationService",
+            "mn.tasky.booking.application.NoShowService -> mn.tasky.auth.application.ModerationService",
+            "mn.tasky.booking.application.NoShowService -> mn.tasky.messaging.dao.ConversationDao",
+            "mn.tasky.booking.application.NoShowService -> mn.tasky.messaging.dao.MessageDao",
+            "mn.tasky.booking.application.NoShowService -> mn.tasky.notification.application.NotificationService",
+            "mn.tasky.booking.application.NoShowService -> mn.tasky.review.application.ReviewEnforcementService",
+            "mn.tasky.booking.application.NoShowService -> mn.tasky.task.application.TaskLifecycleService",
+            "mn.tasky.booking.application.RepeatBookingService -> mn.tasky.category.dao.CategorySchemaVersionDao",
+            "mn.tasky.booking.application.RepeatBookingService -> mn.tasky.task.dao.TaskDao",
+            "mn.tasky.messaging.application.MessagingService -> mn.tasky.analytics.application.AnalyticsService",
+            "mn.tasky.notification.application.NotificationService -> mn.tasky.auth.dao.UserDao",
+            "mn.tasky.payment.application.PaymentService -> mn.tasky.analytics.application.AnalyticsService",
+            "mn.tasky.payment.application.PaymentService -> mn.tasky.booking.application.BookingService",
+            "mn.tasky.payment.application.PaymentService -> mn.tasky.task.application.TaskLifecycleService",
+            "mn.tasky.review.application.ReviewEnforcementService -> mn.tasky.dispute.dao.DisputeDao",
+            "mn.tasky.review.application.ReviewEnforcementService -> "
+                    + "mn.tasky.notification.application.NotificationService",
+            "mn.tasky.review.application.ReviewService -> mn.tasky.auth.application.BadgeEvaluationService",
+            "mn.tasky.review.application.ReviewService -> mn.tasky.auth.application.UserProfileService",
+            "mn.tasky.review.application.ReviewService -> mn.tasky.booking.application.BookingService");
 
     @ArchTest
     static final ArchRule daoMustNotDependOnInboundOrServiceLayers = classes()
@@ -179,4 +245,63 @@ class BackendArchitectureTest {
             .dependOnClassesThat()
             .resideInAnyPackage("mn.tasky.notification.application..")
             .because("task schedulers cross the notification boundary through NotificationCommandPort");
+
+    @ArchTest
+    static void featureModulesMustNotAddCrossFeatureInternalDependencies(JavaClasses importedClasses) {
+        Set<String> violations = importedClasses.stream()
+                .flatMap(origin -> origin.getDirectDependenciesFromSelf().stream())
+                .map(BackendArchitectureTest::crossFeatureInternalDependency)
+                .flatMap(Optional::stream)
+                .filter(dependency -> !LEGACY_CROSS_FEATURE_INTERNAL_DEPENDENCIES.contains(dependency))
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        assertTrue(
+                violations.isEmpty(),
+                () -> "Feature modules must cross boundaries through publicapi ports, facade, or config packages. "
+                        + "New internal dependencies: "
+                        + violations);
+    }
+
+    private static Optional<String> crossFeatureInternalDependency(Dependency dependency) {
+        JavaClass origin = dependency.getOriginClass();
+        JavaClass target = dependency.getTargetClass();
+        String originFeature = featureRoot(origin);
+        String targetFeature = featureRoot(target);
+        if (originFeature == null
+                || targetFeature == null
+                || originFeature.equals(targetFeature)
+                || !FEATURE_MODULES.contains(originFeature)
+                || !FEATURE_MODULES.contains(targetFeature)) {
+            return Optional.empty();
+        }
+        String targetSegment = segmentAfterFeature(target);
+        if (EXPLICIT_BOUNDARY_SEGMENTS.contains(targetSegment)) {
+            return Optional.empty();
+        }
+        if (!INTERNAL_FEATURE_SEGMENTS.contains(targetSegment)) {
+            return Optional.empty();
+        }
+        return Optional.of(origin.getName() + " -> " + target.getName());
+    }
+
+    private static String featureRoot(JavaClass javaClass) {
+        String packageName = javaClass.getPackageName();
+        if (!packageName.startsWith("mn.tasky.")) {
+            return null;
+        }
+        String remainder = packageName.substring("mn.tasky.".length());
+        int separator = remainder.indexOf('.');
+        return separator >= 0 ? remainder.substring(0, separator) : remainder;
+    }
+
+    private static String segmentAfterFeature(JavaClass javaClass) {
+        String packageName = javaClass.getPackageName();
+        String prefix = "mn.tasky." + featureRoot(javaClass) + ".";
+        if (!packageName.startsWith(prefix)) {
+            return "";
+        }
+        String remainder = packageName.substring(prefix.length());
+        int separator = remainder.indexOf('.');
+        return separator >= 0 ? remainder.substring(0, separator) : remainder;
+    }
 }

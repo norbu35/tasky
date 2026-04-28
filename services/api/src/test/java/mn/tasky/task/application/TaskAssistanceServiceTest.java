@@ -5,7 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
-import mn.tasky.analytics.application.AnalyticsService;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.category.dto.CategoryState;
 import mn.tasky.category.publicapi.CategoryQueryPort;
 import mn.tasky.task.dao.TaskRescueEventDao;
@@ -22,7 +22,7 @@ class TaskAssistanceServiceTest {
     void setUp() {
         categoryQueryPort = mock(CategoryQueryPort.class);
         service = new TaskAssistanceService(
-                mock(TaskRescueEventDao.class), categoryQueryPort, mock(AnalyticsService.class));
+                mock(TaskRescueEventDao.class), categoryQueryPort, mock(AnalyticsCommandPort.class));
     }
 
     @Test

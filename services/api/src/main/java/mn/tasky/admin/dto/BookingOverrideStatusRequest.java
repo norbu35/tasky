@@ -7,5 +7,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record BookingOverrideStatusRequest(
-        @NotBlank @Pattern(regexp = "ASSIGNED|PAID|COMPLETED|CANCELLED") @JsonProperty("new_status") String newStatus,
+        @NotBlank @Pattern(regexp = "ASSIGNED|COMPLETED|CANCELLED|NO_SHOW|DISPUTED") @JsonProperty("new_status")
+                String newStatus,
         @NotNull @Size(min = 3, max = 500) String reason) {}

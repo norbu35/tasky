@@ -37,10 +37,11 @@ info:
 
     ## Contract Scope
 
-    This active contract describes the Phase 1 launch baseline only.
+    Live, ungated behavior in this contract describes the Phase 1 launch baseline only.
 
-    Deferred-phase API design is tracked in `docs/ROLLOUT_PHASES.md` and archived
-    references, not in this live contract.
+    Deliberately deferred path and schema surfaces may remain in the split contract
+    only when marked with `x-tasky-status: deferred` plus phase metadata. Those
+    entries are contract discovery surfaces, not launch scope.
 
     "
   version: 1.4.0

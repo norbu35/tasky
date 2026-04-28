@@ -13,19 +13,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import mn.tasky.analytics.application.AnalyticsService;
-import mn.tasky.category.application.CategoryService;
-import mn.tasky.category.dao.CategorySchemaVersionDao;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.category.dto.CategoryState;
+import mn.tasky.category.publicapi.CategoryQueryPort;
 import mn.tasky.location.publicapi.LocationQueryPort;
-import mn.tasky.notification.application.NotificationService;
-import mn.tasky.review.application.ReviewEnforcementService;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
 import mn.tasky.task.dao.TaskDraftDao;
 import mn.tasky.task.dao.TaskPhotoDao;
 import mn.tasky.task.dto.CreateTask;
 import mn.tasky.task.dto.TaskCreateResult;
+import mn.tasky.trust.publicapi.TrustQueryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -39,16 +38,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TaskCreationServiceTest {
 
     @Mock
-    private CategoryService categoryService;
+    private CategoryQueryPort categoryService;
 
     @Mock
-    private NotificationService notificationService;
+    private NotificationCommandPort notificationService;
 
     @Mock
-    private AnalyticsService analyticsService;
+    private AnalyticsCommandPort analyticsService;
 
     @Mock
-    private ReviewEnforcementService reviewEnforcementService;
+    private TrustQueryPort reviewEnforcementService;
 
     @Mock
     private LocationQueryPort locationQueryPort;
@@ -64,9 +63,6 @@ class TaskCreationServiceTest {
 
     @Mock
     private TaskApplicationDao taskApplicationDao;
-
-    @Mock
-    private CategorySchemaVersionDao categorySchemaVersionDao;
 
     @Mock
     private TaskDraftDao taskDraftDao;
@@ -91,7 +87,6 @@ class TaskCreationServiceTest {
                 taskDao,
                 taskPhotoDao,
                 taskApplicationDao,
-                categorySchemaVersionDao,
                 taskDraftDao,
                 new ObjectMapper(),
                 taskPhotoKeyHelper,

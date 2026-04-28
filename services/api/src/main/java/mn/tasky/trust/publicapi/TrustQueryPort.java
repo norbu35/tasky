@@ -22,4 +22,9 @@ public interface TrustQueryPort {
      * Used by booking completion to block completion when a dispute is active.
      */
     boolean hasOpenDispute(String bookingId);
+
+    /**
+     * Returns true when a user's unresolved review obligations block new marketplace actions.
+     */
+    boolean isUserLocked(String userId);
 }

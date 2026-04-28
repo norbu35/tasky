@@ -17,18 +17,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
-import mn.tasky.analytics.application.AnalyticsService;
-import mn.tasky.auth.application.UserProfileService;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.auth.dto.UserProfile;
 import mn.tasky.booking.publicapi.BookingCommandPort;
 import mn.tasky.booking.publicapi.BookingIntentCommandPort;
-import mn.tasky.category.application.CategoryService;
-import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.category.dto.CategoryState;
+import mn.tasky.category.publicapi.CategoryQueryPort;
 import mn.tasky.common.outbox.DomainEventOutboxService;
+import mn.tasky.identity.publicapi.IdentityQueryPort;
 import mn.tasky.location.publicapi.LocationQueryPort;
-import mn.tasky.notification.application.NotificationService;
-import mn.tasky.review.application.ReviewEnforcementService;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
 import mn.tasky.task.application.ScopeSummaryGenerator;
 import mn.tasky.task.application.TaskApplicationService;
 import mn.tasky.task.application.TaskCreationService;
@@ -45,6 +43,7 @@ import mn.tasky.task.dto.TaskApplyResult;
 import mn.tasky.task.dto.TaskCreateResult;
 import mn.tasky.task.dto.TaskState;
 import mn.tasky.task.dto.TaskWithdrawResult;
+import mn.tasky.trust.publicapi.TrustQueryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -69,7 +68,7 @@ class TaskApplicationScenarioTests {
     private static final String CATEGORY_ID = UUID.randomUUID().toString();
 
     @Mock
-    private UserProfileService userProfileService;
+    private IdentityQueryPort userProfileService;
 
     @Mock
     private BookingCommandPort bookingCommandPort;
@@ -78,16 +77,16 @@ class TaskApplicationScenarioTests {
     private BookingIntentCommandPort bookingIntentCommandPort;
 
     @Mock
-    private NotificationService notificationService;
+    private NotificationCommandPort notificationService;
 
     @Mock
-    private AnalyticsService analyticsService;
+    private AnalyticsCommandPort analyticsService;
 
     @Mock
     private DomainEventOutboxService domainEventOutboxService;
 
     @Mock
-    private ReviewEnforcementService reviewEnforcementService;
+    private TrustQueryPort reviewEnforcementService;
 
     @Mock
     private LocationQueryPort locationQueryPort;
@@ -99,16 +98,13 @@ class TaskApplicationScenarioTests {
     private TaskApplicationDao taskApplicationDao;
 
     @Mock
-    private CategoryService categoryService;
+    private CategoryQueryPort categoryService;
 
     @Mock
     private ScopeSummaryGenerator scopeSummaryGenerator;
 
     @Mock
     private TaskPhotoDao taskPhotoDao;
-
-    @Mock
-    private CategorySchemaVersionDao categorySchemaVersionDao;
 
     @Mock
     private TaskDraftDao taskDraftDao;
@@ -142,7 +138,6 @@ class TaskApplicationScenarioTests {
                 taskDao,
                 taskPhotoDao,
                 taskApplicationDao,
-                categorySchemaVersionDao,
                 taskDraftDao,
                 new ObjectMapper(),
                 taskPhotoKeyHelper,

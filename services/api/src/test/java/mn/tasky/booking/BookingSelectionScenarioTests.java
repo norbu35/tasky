@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import mn.tasky.analytics.application.AnalyticsService;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.auth.application.ModerationService;
 import mn.tasky.auth.application.UserProfileService;
 import mn.tasky.booking.application.BookingLifecycleService;
@@ -39,7 +39,9 @@ import mn.tasky.booking.dto.BookingTransitionResult;
 import mn.tasky.booking.publicapi.BookingCommandPort;
 import mn.tasky.booking.publicapi.BookingIntentCommandPort;
 import mn.tasky.common.outbox.DomainEventOutboxService;
+import mn.tasky.identity.publicapi.IdentityQueryPort;
 import mn.tasky.notification.application.NotificationService;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
 import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.TaskApplicationService;
 import mn.tasky.task.application.TaskLifecycleService;
@@ -80,6 +82,7 @@ class BookingSelectionScenarioTests {
     private BookingCommandPort bookingCommandPort;
     private BookingIntentCommandPort bookingIntentCommandPort;
     private NotificationService notificationService;
+    private NotificationCommandPort taskNotificationCommandPort;
     private TaskApplicationService taskApplicationService;
 
     private BookingDao bookingDao;
@@ -99,19 +102,20 @@ class BookingSelectionScenarioTests {
         bookingCommandPort = mock(BookingCommandPort.class);
         bookingIntentCommandPort = mock(BookingIntentCommandPort.class);
         notificationService = mock(NotificationService.class);
-        AnalyticsService analyticsService = mock(AnalyticsService.class);
+        taskNotificationCommandPort = mock(NotificationCommandPort.class);
+        AnalyticsCommandPort analyticsCommandPort = mock(AnalyticsCommandPort.class);
         DomainEventOutboxService outboxService = mock(DomainEventOutboxService.class);
-        ReviewEnforcementService reviewEnforcementService = mock(ReviewEnforcementService.class);
-        UserProfileService userProfileService = mock(UserProfileService.class);
+        TrustQueryPort taskTrustQueryPort = mock(TrustQueryPort.class);
+        IdentityQueryPort identityQueryPort = mock(IdentityQueryPort.class);
 
         taskApplicationService = new TaskApplicationService(
-                userProfileService,
+                identityQueryPort,
                 bookingCommandPort,
                 bookingIntentCommandPort,
-                notificationService,
-                analyticsService,
+                taskNotificationCommandPort,
+                analyticsCommandPort,
                 outboxService,
-                reviewEnforcementService,
+                taskTrustQueryPort,
                 taskDao,
                 taskApplicationDao);
 
@@ -132,6 +136,7 @@ class BookingSelectionScenarioTests {
         DomainEventOutboxService lifecycleOutbox = mock(DomainEventOutboxService.class);
         TrustQueryPort trustQueryPort = mock(TrustQueryPort.class);
         ModerationService moderationService = mock(ModerationService.class);
+        ReviewEnforcementService reviewEnforcementService = mock(ReviewEnforcementService.class);
 
         bookingLifecycleService = new BookingLifecycleService(
                 bookingService,
@@ -301,7 +306,8 @@ class BookingSelectionScenarioTests {
         taskApplicationService.expireStaleSelections();
 
         verify(taskApplicationDao).updateStatus(APP_ID, "EXPIRED");
-        verify(notificationService).sendPush(eq(CUSTOMER_ID), anyString(), anyString(), eq("SELECTION_EXPIRED"));
+        verify(taskNotificationCommandPort)
+                .sendPush(eq(CUSTOMER_ID), anyString(), anyString(), eq("SELECTION_EXPIRED"));
     }
 
     // ── SCN-BOOK-024 ─────────────────────────────────────────────────────────

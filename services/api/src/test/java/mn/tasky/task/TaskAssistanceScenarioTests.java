@@ -13,7 +13,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import mn.tasky.analytics.application.AnalyticsService;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.category.dto.CategoryState;
 import mn.tasky.category.publicapi.CategoryQueryPort;
 import mn.tasky.task.application.TaskAssistanceService;
@@ -45,7 +45,7 @@ class TaskAssistanceScenarioTests {
     private CategoryQueryPort categoryQueryPort;
 
     @Mock
-    private AnalyticsService analyticsService;
+    private AnalyticsCommandPort analyticsService;
 
     private TaskAssistanceService service;
 
@@ -218,12 +218,12 @@ class TaskAssistanceScenarioTests {
                         eq(TaskAssistanceService.INTERVENTION_STAGE_PRE_MATCH));
         verify(analyticsService)
                 .track(
-                        eq(AnalyticsService.EVENT_INTERVENTION_RECORDED),
+                        eq("INTERVENTION_RECORDED"),
                         eq("admin-1"),
-                        argThat(properties -> TASK_ID.equals(properties.get(AnalyticsService.PROPERTY_TASK_ID))
-                                && "manual_rescue".equals(properties.get(AnalyticsService.PROPERTY_INTERVENTION_TYPE))
+                        argThat(properties -> TASK_ID.equals(properties.get("task_id"))
+                                && "manual_rescue".equals(properties.get("intervention_type"))
                                 && TaskAssistanceService.INTERVENTION_STAGE_PRE_MATCH.equals(
-                                        properties.get(AnalyticsService.PROPERTY_INTERVENTION_STAGE))));
+                                        properties.get("intervention_stage"))));
     }
 
     @Test
@@ -234,12 +234,11 @@ class TaskAssistanceScenarioTests {
 
         verify(analyticsService)
                 .track(
-                        eq(AnalyticsService.EVENT_INTERVENTION_RECORDED),
+                        eq("INTERVENTION_RECORDED"),
                         eq(CUSTOMER_ID),
-                        argThat(properties -> TASK_ID.equals(properties.get(AnalyticsService.PROPERTY_TASK_ID))
-                                && "external_distribution"
-                                        .equals(properties.get(AnalyticsService.PROPERTY_INTERVENTION_TYPE))
+                        argThat(properties -> TASK_ID.equals(properties.get("task_id"))
+                                && "external_distribution".equals(properties.get("intervention_type"))
                                 && TaskAssistanceService.INTERVENTION_STAGE_PRE_MATCH.equals(
-                                        properties.get(AnalyticsService.PROPERTY_INTERVENTION_STAGE))));
+                                        properties.get("intervention_stage"))));
     }
 }

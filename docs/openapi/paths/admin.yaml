@@ -149,7 +149,7 @@
   post:
     tags:
       - Admin
-    summary: Concierge assign task to tasker (Phase 0-1)
+    summary: Concierge assign task to tasker (Phase 1)
     description: |
       Founder/admin manual dispatch fallback for low-liquidity periods.
       Creates booking assignment if target tasker is eligible and verified.
@@ -1069,7 +1069,6 @@
                 type: string
                 enum:
                   - ASSIGNED
-                  - PAID
                   - COMPLETED
                   - CANCELLED
                   - NO_SHOW
@@ -1132,7 +1131,7 @@
       '403':
         $ref: ../components/responses.yaml#/Forbidden
       '503':
-        description: Payout operations are deferred during the liquidity-first MVP phase.
+        description: Payout operations are deferred during the Phase 1 launch baseline.
         content:
           application/json:
             schema:
@@ -1195,7 +1194,7 @@
             schema:
               $ref: ../components/schemas/common.yaml#/Error
       '503':
-        description: Payout operations are deferred during the liquidity-first MVP phase.
+        description: Payout operations are deferred during the Phase 1 launch baseline.
         content:
           application/json:
             schema:

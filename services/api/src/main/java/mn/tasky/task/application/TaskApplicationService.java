@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import mn.tasky.analytics.application.AnalyticsService;
-import mn.tasky.auth.application.UserProfileService;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.auth.dto.UserProfile;
 import mn.tasky.booking.dto.BookingIntentCreateResult;
 import mn.tasky.booking.dto.BookingIntentState;
@@ -16,8 +15,8 @@ import mn.tasky.booking.publicapi.BookingIntentCommandPort;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.common.validation.TextSanitizer;
-import mn.tasky.notification.application.NotificationService;
-import mn.tasky.review.application.ReviewEnforcementService;
+import mn.tasky.identity.publicapi.IdentityQueryPort;
+import mn.tasky.notification.publicapi.NotificationCommandPort;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
 import mn.tasky.task.dto.PricingMode;
@@ -27,6 +26,7 @@ import mn.tasky.task.dto.TaskApplicationsListResult;
 import mn.tasky.task.dto.TaskApplyResult;
 import mn.tasky.task.dto.TaskState;
 import mn.tasky.task.dto.TaskWithdrawResult;
+import mn.tasky.trust.publicapi.TrustQueryPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -36,40 +36,40 @@ import org.springframework.transaction.annotation.Transactional;
 public class TaskApplicationService {
     private static final Logger log = LoggerFactory.getLogger(TaskApplicationService.class);
     private static final long SELECTION_WINDOW_HOURS = 4;
-    private final UserProfileService userProfileService;
+    private final IdentityQueryPort identityQueryPort;
     private final BookingCommandPort bookingCommandPort;
     private final BookingIntentCommandPort bookingIntentCommandPort;
-    private final NotificationService notificationService;
-    private final AnalyticsService analyticsService;
+    private final NotificationCommandPort notificationCommandPort;
+    private final AnalyticsCommandPort analyticsCommandPort;
     private final DomainEventOutboxService domainEventOutboxService;
     private final TaskDao taskDao;
     private final TaskApplicationDao taskApplicationDao;
-    private final ReviewEnforcementService reviewEnforcementService;
+    private final TrustQueryPort trustQueryPort;
 
     public TaskApplicationService(
-            UserProfileService userProfileService,
+            IdentityQueryPort identityQueryPort,
             BookingCommandPort bookingCommandPort,
             BookingIntentCommandPort bookingIntentCommandPort,
-            NotificationService notificationService,
-            AnalyticsService analyticsService,
+            NotificationCommandPort notificationCommandPort,
+            AnalyticsCommandPort analyticsCommandPort,
             DomainEventOutboxService domainEventOutboxService,
-            ReviewEnforcementService reviewEnforcementService,
+            TrustQueryPort trustQueryPort,
             TaskDao taskDao,
             TaskApplicationDao taskApplicationDao) {
-        this.userProfileService = userProfileService;
+        this.identityQueryPort = identityQueryPort;
         this.bookingCommandPort = bookingCommandPort;
         this.bookingIntentCommandPort = bookingIntentCommandPort;
-        this.notificationService = notificationService;
-        this.analyticsService = analyticsService;
+        this.notificationCommandPort = notificationCommandPort;
+        this.analyticsCommandPort = analyticsCommandPort;
         this.domainEventOutboxService = domainEventOutboxService;
-        this.reviewEnforcementService = reviewEnforcementService;
+        this.trustQueryPort = trustQueryPort;
         this.taskDao = taskDao;
         this.taskApplicationDao = taskApplicationDao;
     }
 
     public TaskApplyResult applyToTask(
             String taskerId, String taskerRole, String taskId, String message, Integer quotePrice) {
-        if (reviewEnforcementService.isUserLocked(taskerId)) {
+        if (trustQueryPort.isUserLocked(taskerId)) {
             return new TaskApplyResult(null, TaskApplyResult.REVIEW_LOCK_ACTIVE);
         }
         Optional<TaskState> taskOpt = taskDao.findById(taskId);
@@ -83,7 +83,7 @@ public class TaskApplicationService {
         if (!"OPEN".equals(task.status()) || taskApplicationDao.hasAccepted(taskId)) {
             return TaskApplyResult.TASK_NOT_OPEN_RESULT;
         }
-        Optional<UserProfile> profileOpt = userProfileService.getProfile(taskerId);
+        Optional<UserProfile> profileOpt = identityQueryPort.getProfile(taskerId);
         if (profileOpt.isEmpty()) {
             return TaskApplyResult.FORBIDDEN_RESULT;
         }
@@ -122,23 +122,21 @@ public class TaskApplicationService {
                 null,
                 null,
                 Instant.now());
-        notificationService.sendPush(
+        notificationCommandPort.sendPush(
                 task.customerId(), "New Applicant", "A tasker has applied to your task.", "TASKER_APPLIED");
-        analyticsService.track(
-                AnalyticsService.EVENT_APPLICATION_SUBMITTED,
-                taskerId,
-                Map.of(AnalyticsService.PROPERTY_TASK_ID, taskId, "application_id", application.id()));
-        analyticsService.track(
-                AnalyticsService.EVENT_QUALIFIED_APPLICATION,
+        analyticsCommandPort.track(
+                "APPLICATION_SUBMITTED", taskerId, Map.of("task_id", taskId, "application_id", application.id()));
+        analyticsCommandPort.track(
+                "QUALIFIED_APPLICATION",
                 taskerId,
                 Map.of(
-                        AnalyticsService.PROPERTY_TASK_ID,
+                        "task_id",
                         taskId,
-                        AnalyticsService.PROPERTY_TASKER_ID,
+                        "tasker_id",
                         taskerId,
-                        AnalyticsService.PROPERTY_CATEGORY_ID,
+                        "category_id",
                         task.categoryId(),
-                        AnalyticsService.PROPERTY_PRICING_MODE,
+                        "pricing_mode",
                         task.pricingMode()));
         return TaskApplyResult.success(application);
     }
@@ -214,9 +212,9 @@ public class TaskApplicationService {
                 "BOOKING",
                 booking.id(),
                 Map.of(
-                        AnalyticsService.PROPERTY_TASK_ID,
+                        "task_id",
                         task.id(),
-                        AnalyticsService.PROPERTY_BOOKING_ID,
+                        "booking_id",
                         booking.id(),
                         "customer_id",
                         task.customerId(),
@@ -224,7 +222,7 @@ public class TaskApplicationService {
                         selected.taskerId(),
                         "application_id",
                         applicationId));
-        notificationService.sendPush(
+        notificationCommandPort.sendPush(
                 task.customerId(),
                 "Tasker confirmed!",
                 "The tasker has accepted your task. Your booking is confirmed.",
@@ -240,7 +238,7 @@ public class TaskApplicationService {
                 taskApplicationDao.updateStatus(application.id(), "EXPIRED");
                 Optional<TaskState> taskOpt = taskDao.findById(application.taskId());
                 if (taskOpt.isPresent()) {
-                    notificationService.sendPush(
+                    notificationCommandPort.sendPush(
                             taskOpt.get().customerId(),
                             "Selection expired",
                             "The tasker did not confirm in time. You can select another applicant.",
@@ -266,21 +264,15 @@ public class TaskApplicationService {
         }
         taskApplicationDao.updateStatus(application.id(), "WITHDRAWN");
         Optional<TaskState> taskOpt = taskDao.findById(application.taskId());
-        taskOpt.ifPresent(task -> notificationService.sendPush(
+        taskOpt.ifPresent(task -> notificationCommandPort.sendPush(
                 task.customerId(),
                 "Applicant withdrew",
                 "A tasker has withdrawn their application from your task.",
                 "APPLICANT_WITHDREW"));
-        analyticsService.track(
+        analyticsCommandPort.track(
                 "APPLICATION_WITHDRAWN",
                 taskerId,
-                Map.of(
-                        AnalyticsService.PROPERTY_TASK_ID,
-                        application.taskId(),
-                        "application_id",
-                        applicationId,
-                        "was_selected",
-                        false));
+                Map.of("task_id", application.taskId(), "application_id", applicationId, "was_selected", false));
         TaskApplicationState updated =
                 taskApplicationDao.findById(applicationId).orElse(application);
         return TaskWithdrawResult.success(updated);
@@ -333,22 +325,22 @@ public class TaskApplicationService {
             return intentResult;
         }
         taskApplicationDao.updateSelection(selected.id(), "SELECTED", now, respondBy);
-        notificationService.sendPush(
+        notificationCommandPort.sendPush(
                 selected.taskerId(),
                 "You've been selected!",
                 "A customer has selected you for their task. You have 4 hours to confirm.",
                 "TASKER_SELECTED");
-        analyticsService.track(
+        analyticsCommandPort.track(
                 "APPLICATION_SELECTED",
                 customerId,
                 Map.of(
-                        AnalyticsService.PROPERTY_TASK_ID,
+                        "task_id",
                         taskId,
                         "application_id",
                         applicationId,
                         "tasker_id",
                         selected.taskerId(),
-                        AnalyticsService.PROPERTY_CATEGORY_ID,
+                        "category_id",
                         task.categoryId()));
         return intentResult;
     }

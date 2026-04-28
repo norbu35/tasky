@@ -16,12 +16,14 @@ import java.util.UUID;
 import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.automation.event.AutomationEventEnvelope;
 import mn.tasky.automation.event.AutomationEventTypes;
+import mn.tasky.common.i18n.BackendMessageResolver;
 import mn.tasky.kernel.idempotency.WorkflowIdempotencyGuard;
 import mn.tasky.messaging.publicapi.MessagingCommandPort;
 import mn.tasky.notification.publicapi.NotificationCommandPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticMessageSource;
 
 class TaskApplicationAcceptedHandlerTest {
 
@@ -48,8 +50,11 @@ class TaskApplicationAcceptedHandlerTest {
         when(messagingCommandPort.startConversation(anyString(), anyString(), anyString()))
                 .thenReturn(UUID.randomUUID().toString());
 
-        handler =
-                new TaskApplicationAcceptedHandler(messagingCommandPort, notificationCommandPort, analyticsCommandPort);
+        handler = new TaskApplicationAcceptedHandler(
+                messagingCommandPort,
+                notificationCommandPort,
+                analyticsCommandPort,
+                new BackendMessageResolver(new StaticMessageSource()));
         setField(handler, "idempotencyGuard", idempotencyGuard);
     }
 

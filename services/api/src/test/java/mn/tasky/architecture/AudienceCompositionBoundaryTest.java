@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.tngtech.archunit.core.domain.JavaClass;
+import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
@@ -13,6 +15,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import mn.tasky.admin.api.AdminDisputeController;
 import mn.tasky.task.api.TaskController;
@@ -97,6 +100,7 @@ class AudienceCompositionBoundaryTest {
         assertDoesNotThrow(
                 () -> Class.forName("mn.tasky.runtime.publicapi.composition.BookingPublicCompositionService"));
         assertDoesNotThrow(() -> Class.forName("mn.tasky.runtime.publicapi.composition.BookingPublicOperationService"));
+        assertDoesNotThrow(() -> Class.forName("mn.tasky.runtime.adminapi.composition.AdminBookingCompositionService"));
         assertDoesNotThrow(
                 () -> Class.forName("mn.tasky.runtime.publicapi.composition.DisputePublicCompositionService"));
         assertDoesNotThrow(() -> Class.forName("mn.tasky.runtime.publicapi.composition.DisputeRaiseService"));
@@ -212,6 +216,16 @@ class AudienceCompositionBoundaryTest {
                 mn.tasky.admin.api.AdminPayoutController.class, "mn.tasky.wallet.publicapi.WalletCommandPort");
         assertControllerOmitsMethods(
                 mn.tasky.admin.api.AdminPayoutController.class, Set.of("deferredResponse", "toPayoutResponse"));
+
+        assertControllerDependsOn(
+                mn.tasky.admin.api.AdminBookingController.class,
+                "mn.tasky.runtime.adminapi.composition.AdminBookingCompositionService");
+        assertControllerDoesNotDependOn(
+                mn.tasky.admin.api.AdminBookingController.class, "mn.tasky.booking.publicapi.BookingCommandPort");
+        assertControllerDoesNotDependOn(
+                mn.tasky.admin.api.AdminBookingController.class, "mn.tasky.booking.publicapi.BookingQueryPort");
+        assertControllerOmitsMethods(
+                mn.tasky.admin.api.AdminBookingController.class, Set.of("toBookingDetailResponse"));
 
         assertControllerDependsOn(
                 mn.tasky.user.api.UserProfileController.class,
@@ -370,11 +384,12 @@ class AudienceCompositionBoundaryTest {
      *
      * This prevents controllers from silently escaping the boundary checks.
      */
-    @Test
-    void allControllersAreAccountedFor() {
+    @ArchTest
+    static void allControllersAreAccountedFor(JavaClasses importedClasses) {
         // Controllers covered by representativeControllersDelegateAudienceCompositionToRuntimeServices
         Set<String> coveredControllers = Set.of(
                 "mn.tasky.task.api.TaskController",
+                "mn.tasky.admin.api.AdminBookingController",
                 "mn.tasky.admin.api.AdminDisputeController",
                 "mn.tasky.payment.api.PaymentController",
                 "mn.tasky.wallet.api.WalletController",
@@ -394,39 +409,13 @@ class AudienceCompositionBoundaryTest {
                 "mn.tasky.notification.api.NotificationController",
                 "mn.tasky.admin.api.AdminUserController");
 
-        // All known controllers in the codebase
-        Set<String> allKnownControllers = Set.of(
-                "mn.tasky.admin.api.AdminDisputeController",
-                "mn.tasky.admin.api.AdminFeatureToggleController",
-                "mn.tasky.admin.api.AdminMessageController",
-                "mn.tasky.admin.api.AdminModerationController",
-                "mn.tasky.admin.api.AdminPayoutController",
-                "mn.tasky.admin.api.AdminTaskController",
-                "mn.tasky.admin.api.AdminUserController",
-                "mn.tasky.admin.api.AdminVerificationController",
-                "mn.tasky.admin.api.OutboxReplayController",
-                "mn.tasky.auth.api.DevAuthController",
-                "mn.tasky.auth.api.FacebookAuthController",
-                "mn.tasky.auth.api.OtpController",
-                "mn.tasky.auth.api.TokenController",
-                "mn.tasky.booking.api.BookingController",
-                "mn.tasky.booking.api.BookingIntentController",
-                "mn.tasky.category.api.CategoryController",
-                "mn.tasky.common.config.SystemInfoController",
-                "mn.tasky.dispute.api.DisputeController",
-                "mn.tasky.location.api.LocationController",
-                "mn.tasky.messaging.api.MessagingController",
-                "mn.tasky.notification.api.NotificationController",
-                "mn.tasky.notification.api.ServiceAreaController",
-                "mn.tasky.payment.api.PaymentController",
-                "mn.tasky.review.api.ReviewController",
-                "mn.tasky.security.api.SecurityScopeController",
-                "mn.tasky.task.api.TaskController",
-                "mn.tasky.user.api.UserProfileController",
-                "mn.tasky.verification.api.VerificationController",
-                "mn.tasky.wallet.api.WalletController");
+        Set<String> allControllers = importedClasses.stream()
+                .filter(javaClass -> javaClass.getPackageName().contains(".api"))
+                .filter(javaClass -> javaClass.getSimpleName().endsWith("Controller"))
+                .map(JavaClass::getName)
+                .collect(Collectors.toCollection(TreeSet::new));
 
-        for (String controller : allKnownControllers) {
+        for (String controller : allControllers) {
             boolean isException = EXCEPTION_CONTROLLERS.contains(controller);
             boolean isCovered = coveredControllers.contains(controller);
             assertTrue(

@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import mn.tasky.auth.application.UserProfileService;
 import mn.tasky.booking.dao.BookingCompletionSignalDao;
@@ -22,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class BookingService {
     private static final Logger log = LoggerFactory.getLogger(BookingService.class);
+    private static final Set<String> ADMIN_OVERRIDE_STATUSES =
+            Set.of("ASSIGNED", "COMPLETED", "CANCELLED", "NO_SHOW", "DISPUTED");
     private final UserProfileService userProfileService;
     private final BookingDao bookingDao;
     private final BookingReliabilityIncidentDao bookingReliabilityIncidentDao;
@@ -266,6 +269,9 @@ public class BookingService {
 
     @Transactional
     public BookingTransitionResult forceTransition(String bookingId, String newStatus) {
+        if (!ADMIN_OVERRIDE_STATUSES.contains(newStatus)) {
+            return BookingTransitionResult.INVALID_TRANSITION_RESULT;
+        }
         var bookingOpt = bookingDao.findByIdForUpdate(bookingId);
         if (bookingOpt.isEmpty()) {
             return BookingTransitionResult.NOT_FOUND_RESULT;

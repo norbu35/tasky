@@ -1,13 +1,13 @@
 /credits/balance:
   x-tasky-status: deferred
-  x-tasky-phase: phase_2
-  x-tasky-target-phase: phase_2
+  x-tasky-phase: phase_3
+  x-tasky-target-phase: phase_3
   get:
     tags:
       - Credits
     summary: Get lead-unlock credit balance
     description: |
-      **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
+      **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
       Tasker credit balance for lead-unlock purchases.
     operationId: getCreditBalance
     security:
@@ -29,8 +29,8 @@
               $ref: ../components/schemas/common.yaml#/Error
 /credits/transactions:
   x-tasky-status: deferred
-  x-tasky-phase: phase_2
-  x-tasky-target-phase: phase_2
+  x-tasky-phase: phase_3
+  x-tasky-target-phase: phase_3
   get:
     tags:
       - Credits
@@ -68,8 +68,8 @@
               $ref: ../components/schemas/common.yaml#/Error
 /credits/packs:
   x-tasky-status: deferred
-  x-tasky-phase: phase_2
-  x-tasky-target-phase: phase_2
+  x-tasky-phase: phase_3
+  x-tasky-target-phase: phase_3
   get:
     tags:
       - Credits
@@ -101,8 +101,8 @@
               $ref: ../components/schemas/common.yaml#/Error
 /credits/purchase:
   x-tasky-status: deferred
-  x-tasky-phase: phase_2
-  x-tasky-target-phase: phase_2
+  x-tasky-phase: phase_3
+  x-tasky-target-phase: phase_3
   post:
     tags:
       - Credits

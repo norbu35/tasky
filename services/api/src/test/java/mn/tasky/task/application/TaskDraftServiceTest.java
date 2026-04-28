@@ -7,10 +7,9 @@ import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.Optional;
-import mn.tasky.category.dao.CategoryDao;
-import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.category.dto.CategorySchemaVersion;
 import mn.tasky.category.dto.CategoryState;
+import mn.tasky.category.publicapi.CategoryQueryPort;
 import mn.tasky.task.dao.TaskDraftDao;
 import mn.tasky.task.dto.TaskDraft;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,10 +28,7 @@ class TaskDraftServiceTest {
     private TaskDraftDao taskDraftDao;
 
     @Mock
-    private CategoryDao categoryDao;
-
-    @Mock
-    private CategorySchemaVersionDao categorySchemaVersionDao;
+    private CategoryQueryPort categoryQueryPort;
 
     private TaskDraftService service;
 
@@ -44,7 +40,7 @@ class TaskDraftServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new TaskDraftService(taskDraftDao, categoryDao, categorySchemaVersionDao);
+        service = new TaskDraftService(taskDraftDao, categoryQueryPort);
     }
 
     private TaskDraft makeDraft(String id, String customerId, Instant expiresAt) {
@@ -57,7 +53,7 @@ class TaskDraftServiceTest {
         @Test
         @DisplayName("throws when category not found")
         void categoryNotFound() {
-            when(categoryDao.findById("cat99")).thenReturn(Optional.empty());
+            when(categoryQueryPort.getCategory("cat99")).thenReturn(Optional.empty());
             assertThatThrownBy(() -> service.createDraft("c1", "cat99"))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("Category not found");
@@ -67,7 +63,7 @@ class TaskDraftServiceTest {
         @DisplayName("throws when category is inactive")
         void inactiveCategory() {
             CategoryState inactive = new CategoryState("cat1", "Pl", "d", null, false, 0, true, false, null, null);
-            when(categoryDao.findById("cat1")).thenReturn(Optional.of(inactive));
+            when(categoryQueryPort.getCategory("cat1")).thenReturn(Optional.of(inactive));
             assertThatThrownBy(() -> service.createDraft("c1", "cat1"))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("not active");
@@ -77,7 +73,7 @@ class TaskDraftServiceTest {
         @DisplayName("throws when intake not enabled")
         void intakeNotEnabled() {
             CategoryState noIntake = new CategoryState("cat1", "Pl", "d", null, true, 0, false, false, null, null);
-            when(categoryDao.findById("cat1")).thenReturn(Optional.of(noIntake));
+            when(categoryQueryPort.getCategory("cat1")).thenReturn(Optional.of(noIntake));
             assertThatThrownBy(() -> service.createDraft("c1", "cat1"))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("Intake is not enabled");
@@ -86,8 +82,8 @@ class TaskDraftServiceTest {
         @Test
         @DisplayName("throws when no active schema version")
         void noActiveSchema() {
-            when(categoryDao.findById("cat1")).thenReturn(Optional.of(activeCategory));
-            when(categorySchemaVersionDao.findActiveByCategoryId("cat1")).thenReturn(Optional.empty());
+            when(categoryQueryPort.getCategory("cat1")).thenReturn(Optional.of(activeCategory));
+            when(categoryQueryPort.getActiveSchemaVersion("cat1")).thenReturn(Optional.empty());
             assertThatThrownBy(() -> service.createDraft("c1", "cat1"))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("No active schema version");
@@ -97,8 +93,8 @@ class TaskDraftServiceTest {
         @DisplayName("creates draft successfully")
         void success() {
             TaskDraft draft = makeDraft("d1", "c1", Instant.now().plusSeconds(3600));
-            when(categoryDao.findById("cat1")).thenReturn(Optional.of(activeCategory));
-            when(categorySchemaVersionDao.findActiveByCategoryId("cat1")).thenReturn(Optional.of(schemaVersion));
+            when(categoryQueryPort.getCategory("cat1")).thenReturn(Optional.of(activeCategory));
+            when(categoryQueryPort.getActiveSchemaVersion("cat1")).thenReturn(Optional.of(schemaVersion));
             when(taskDraftDao.findById(anyString())).thenReturn(Optional.of(draft));
             TaskDraft result = service.createDraft("c1", "cat1");
             assertThat(result.id()).isEqualTo("d1");

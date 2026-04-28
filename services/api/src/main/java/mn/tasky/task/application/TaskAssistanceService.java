@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import mn.tasky.analytics.application.AnalyticsService;
+import mn.tasky.analytics.publicapi.AnalyticsCommandPort;
 import mn.tasky.category.dto.CategoryState;
 import mn.tasky.category.publicapi.CategoryQueryPort;
 import mn.tasky.task.dao.TaskRescueEventDao;
@@ -31,15 +31,15 @@ public class TaskAssistanceService {
 
     private final TaskRescueEventDao taskRescueEventDao;
     private final CategoryQueryPort categoryQueryPort;
-    private final AnalyticsService analyticsService;
+    private final AnalyticsCommandPort analyticsCommandPort;
 
     public TaskAssistanceService(
             TaskRescueEventDao taskRescueEventDao,
             CategoryQueryPort categoryQueryPort,
-            AnalyticsService analyticsService) {
+            AnalyticsCommandPort analyticsCommandPort) {
         this.taskRescueEventDao = taskRescueEventDao;
         this.categoryQueryPort = categoryQueryPort;
-        this.analyticsService = analyticsService;
+        this.analyticsCommandPort = analyticsCommandPort;
     }
 
     public AssistanceEvaluation evaluateExternalDistribution(
@@ -72,11 +72,11 @@ public class TaskAssistanceService {
 
     public Map<String, Object> buildExternalDistributionPayload(TaskState task) {
         return Map.of(
-                AnalyticsService.PROPERTY_TASK_ID,
+                "task_id",
                 task.id(),
-                AnalyticsService.PROPERTY_CATEGORY_ID,
+                "category_id",
                 task.categoryId(),
-                AnalyticsService.PROPERTY_PRICING_MODE,
+                "pricing_mode",
                 task.pricingMode(),
                 "budget",
                 task.budget() != null ? task.budget() : 0,
@@ -150,15 +150,15 @@ public class TaskAssistanceService {
 
     private void trackIntervention(
             String taskId, String storedInterventionType, String interventionStage, String userId) {
-        analyticsService.track(
-                AnalyticsService.EVENT_INTERVENTION_RECORDED,
+        analyticsCommandPort.track(
+                "INTERVENTION_RECORDED",
                 userId,
                 Map.of(
-                        AnalyticsService.PROPERTY_TASK_ID,
+                        "task_id",
                         taskId,
-                        AnalyticsService.PROPERTY_INTERVENTION_TYPE,
+                        "intervention_type",
                         storedInterventionType,
-                        AnalyticsService.PROPERTY_INTERVENTION_STAGE,
+                        "intervention_stage",
                         interventionStage));
     }
 }

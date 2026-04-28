@@ -5,6 +5,7 @@ import java.util.Optional;
 import mn.tasky.dispute.application.DisputeService;
 import mn.tasky.dispute.dto.Dispute;
 import mn.tasky.dispute.dto.DisputeEvidence;
+import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.review.application.ReviewService;
 import mn.tasky.review.dto.Review;
 import mn.tasky.trust.publicapi.TrustQueryPort;
@@ -14,10 +15,15 @@ import org.springframework.stereotype.Service;
 public class TrustQueryHandler implements TrustQueryPort {
     private final ReviewService reviewService;
     private final DisputeService disputeService;
+    private final ReviewEnforcementService reviewEnforcementService;
 
-    public TrustQueryHandler(ReviewService reviewService, DisputeService disputeService) {
+    public TrustQueryHandler(
+            ReviewService reviewService,
+            DisputeService disputeService,
+            ReviewEnforcementService reviewEnforcementService) {
         this.reviewService = reviewService;
         this.disputeService = disputeService;
+        this.reviewEnforcementService = reviewEnforcementService;
     }
 
     @Override
@@ -48,5 +54,10 @@ public class TrustQueryHandler implements TrustQueryPort {
     @Override
     public boolean hasOpenDispute(String bookingId) {
         return disputeService.hasOpenDispute(bookingId);
+    }
+
+    @Override
+    public boolean isUserLocked(String userId) {
+        return reviewEnforcementService.isUserLocked(userId);
     }
 }
