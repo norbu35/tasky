@@ -1,22 +1,10 @@
-version: '1.0'
+####################################################################################################################
+# WARNING: Do not store sensitive information in this file, as its contents will be included in the Qodana report. #
+####################################################################################################################
 
+version: "1.0"
+linter: jetbrains/qodana-jvm-community:2026.1
 profile:
   name: qodana.recommended
-
-projectJDK: '21'
-
-exclude:
-  - name: All
-    paths:
-      - '**/build/generated-sources/**'
-      - '**/generated/**'
-
-failureConditions:
-  severityThresholds:
-    any: 15
-    critical: 5
-  testCoverageThresholds:
-    fresh: 70
-    total: 50
-
-linter: jetbrains/qodana-jvm:2025.3
+include:
+  - name: CheckDependencyLicenses
