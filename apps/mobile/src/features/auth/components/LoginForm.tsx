@@ -4,6 +4,7 @@ import { Text, View, Alert } from 'react-native';
 
 import { Button, FormField, Input } from '@/components/ui';
 import { elevations } from '@/design/elevations';
+import { parseError } from '@/utils/errorHandling';
 import {
   DEV_LOGIN_CUSTOMER_PHONE,
   DEV_LOGIN_TASKER_PHONE,
@@ -14,7 +15,7 @@ import {
 
 export function LoginForm() {
   const runtimeEnv = typeof process !== 'undefined' ? process.env : undefined;
-  const devAuthEnabled = runtimeEnv?.['EXPO_PUBLIC_DEV_AUTH_ENABLED'] === 'true';
+  const devAuthEnabled = __DEV__ && runtimeEnv?.['EXPO_PUBLIC_DEV_AUTH_ENABLED'] === 'true';
   const [phone, setPhone] = useState('+976');
   const [code, setCode] = useState('');
   const [step, setStep] = useState<'options' | 'phone' | 'otp'>('options');
@@ -139,7 +140,7 @@ export function LoginForm() {
 
       {(requestOtp.error || verifyOtp.error || devLogin.error) && (
         <Text className="text-danger mt-md text-center">
-          {requestOtp.error?.message || verifyOtp.error?.message || devLogin.error?.message}
+          {parseError(requestOtp.error || verifyOtp.error || devLogin.error)}
         </Text>
       )}
     </View>

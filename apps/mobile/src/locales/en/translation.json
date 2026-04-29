@@ -759,7 +759,10 @@
   },
   "SplashScreen": {
     "tagline": "Trusted taskers, easy booking",
-    "poweredBy": "Powered by secure tech"
+    "poweredBy": "Powered by secure tech",
+    "startingUp": "Starting up…",
+    "loadingData": "Loading your data…",
+    "almostReady": "Almost ready…"
   },
   "Stats": {
     "heroLabel": "Your Rating",
@@ -2062,6 +2065,7 @@
       "subtitle": "New tasks nearby",
       "trustTitle": "ID-verified Task Provider",
       "openFilters": "Open filters",
+      "openFiltersShort": "Filters",
       "activeFilters": "Active filters",
       "searchFilterLabel": "Search: {{query}}",
       "resultSummary": "{{count}} tasks match your filters",
@@ -2071,7 +2075,19 @@
       "quoteRequested": "Quote requested",
       "noResultsRemediation": "Clear filters or widen your search to see more open tasks.",
       "filterSheetTitle": "Filter tasks",
-      "filterSheetDescription": "Choose categories and search terms before returning to the feed.",
+      "filterSheetDescription": "Tune schedule, pricing, budget, and categories to match the work you want.",
+      "filterSchedule": "Schedule",
+      "scheduleAny": "Anytime",
+      "scheduleToday": "Today",
+      "scheduleTomorrow": "Tomorrow",
+      "scheduleThisWeek": "This week",
+      "filterPricing": "Pricing",
+      "pricingAny": "Any",
+      "pricingBudget": "Budget tasks",
+      "pricingQuote": "Quote tasks",
+      "filterBudget": "Budget range (₮)",
+      "budgetMinPlaceholder": "Min",
+      "budgetMaxPlaceholder": "Max",
       "postedAt": "Posted {{date}}"
     },
     "taskDetail": {

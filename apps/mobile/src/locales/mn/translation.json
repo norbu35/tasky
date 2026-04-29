@@ -759,7 +759,10 @@
   },
   "SplashScreen": {
     "tagline": "Итгэмжлэгдсэн ажилчид, хялбар захиалга",
-    "poweredBy": "Аюулгүй технологиор ажилладаг"
+    "poweredBy": "Аюулгүй технологиор ажилладаг",
+    "startingUp": "Ачааллаж байна…",
+    "loadingData": "Мэдээллээ ачааллаж байна…",
+    "almostReady": "Бараг л бэлэн боллоо…"
   },
   "Stats": {
     "heroLabel": "Таны үнэлгээ",
@@ -2062,6 +2065,7 @@
       "subtitle": "Шинэ даалгаврууд ойрхон",
       "trustTitle": "ID баталгаажсан даалгавар гүйцэтгэгч",
       "openFilters": "Шүүлтүүр нээх",
+      "openFiltersShort": "Шүүлтүүр",
       "activeFilters": "Идэвхтэй шүүлтүүр",
       "searchFilterLabel": "Хайлт: {{query}}",
       "resultSummary": "{{count}} даалгавар таны шүүлтүүрт таарч байна",
@@ -2071,7 +2075,19 @@
       "quoteRequested": "Үнийн санал шаардлагатай",
       "noResultsRemediation": "Шүүлтүүрээ арилгах эсвэл хайлтаа өргөтгөж илүү олон нээлттэй даалгавар харна уу.",
       "filterSheetTitle": "Даалгавар шүүх",
-      "filterSheetDescription": "Жагсаалт руу буцахын өмнө ангилал болон хайлтын үгээ сонгоно уу.",
+      "filterSheetDescription": "Хуваарь, үнэ, төсөв, ангиллыг тохируулж өөрт тохирох ажлыг олно уу.",
+      "filterSchedule": "Хуваарь",
+      "scheduleAny": "Дурын үед",
+      "scheduleToday": "Өнөөдөр",
+      "scheduleTomorrow": "Маргааш",
+      "scheduleThisWeek": "Энэ долоо хоног",
+      "filterPricing": "Үнэ",
+      "pricingAny": "Бүгд",
+      "pricingBudget": "Тогтсон төсөв",
+      "pricingQuote": "Үнийн санал",
+      "filterBudget": "Төсвийн хязгаар (₮)",
+      "budgetMinPlaceholder": "Доод",
+      "budgetMaxPlaceholder": "Дээд",
       "postedAt": "{{date}} нийтэлсэн"
     },
     "taskDetail": {

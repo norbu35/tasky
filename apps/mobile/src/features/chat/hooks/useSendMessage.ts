@@ -13,15 +13,16 @@ interface SendMessageInput {
 export function useSendMessage() {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
+  const uid = session?.user.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (input: SendMessageInput) =>
       sendMessage(token!, input.conversationId, input.content),
     onSuccess: (_data, variables) => {
-      if (token) {
+      if (uid) {
         void queryClient.invalidateQueries({
-          queryKey: queryKeys.chat.messages(token, variables.conversationId),
+          queryKey: queryKeys.chat.messages(uid, variables.conversationId),
         });
       }
       void queryClient.invalidateQueries({

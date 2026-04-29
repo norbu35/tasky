@@ -16,6 +16,27 @@ const secureStorage = {
   removeItem: (name: string) => SecureStore.deleteItemAsync(name),
 };
 
+/**
+ * Strips PII fields (phone, facebook_id) from the user object before
+ * persisting to SecureStore.  These fields are re-fetched from /users/me
+ * on every app launch via the bootstrap prefetch, so they are never needed
+ * from disk.  Keeping them out of persisted storage reduces the PII surface
+ * on disk.
+ */
+function sanitizeForStorage(state: AuthState): { session: AuthTokens | null } {
+  if (!state.session) return { session: null };
+
+  const { phone, facebook_id, ...safeUser } = state.session.user;
+
+  return {
+    session: {
+      accessToken: state.session.accessToken,
+      refreshToken: state.session.refreshToken,
+      user: safeUser,
+    },
+  };
+}
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
@@ -26,6 +47,7 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'tasky-auth-storage',
       storage: createJSONStorage(() => secureStorage),
+      partialize: sanitizeForStorage,
     },
   ),
 );

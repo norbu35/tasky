@@ -8,8 +8,9 @@ import { getMyPendingReviews } from '../api';
 export function usePendingReviews() {
   const session = useAuthStore((state) => state.session);
   const token = session?.accessToken;
+  const uid = session?.user.id;
   return useQuery({
-    queryKey: queryKeys.reviews.pending(token!),
+    queryKey: queryKeys.reviews.pending(uid!),
     queryFn: async () => {
       if (!token) return [];
       return getMyPendingReviews(token);

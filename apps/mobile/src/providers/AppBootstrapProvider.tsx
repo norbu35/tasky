@@ -1,6 +1,6 @@
 import type { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
-import { focusManager } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { focusManager, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useRef } from 'react';
 import { AppState, Platform } from 'react-native';
 
 import { getSharedApiClient } from '../lib/mobileApiClient';
@@ -8,6 +8,22 @@ import { isNativeFirebaseAvailable } from '../lib/nativeFirebase';
 import { useAuthStore } from '../store/authStore';
 
 export function AppBootstrapProvider({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
+  const session = useAuthStore((s) => s.session);
+  const prevSessionRef = useRef(session);
+
+  // ── Clear React Query cache on sign-out ──────────────────────────
+  // Watches for session transitioning from authenticated to null across
+  // ALL sign-out paths (manual, token-refresh failure, account deletion)
+  // and clears the entire query cache so stale data from a previous user
+  // never leaks to the next session.
+  useEffect(() => {
+    if (prevSessionRef.current && !session) {
+      queryClient.clear();
+    }
+    prevSessionRef.current = session;
+  }, [session, queryClient]);
+
   // Wire token refresh delegate so 401s trigger silent refresh
   useEffect(() => {
     const apiClient = getSharedApiClient();

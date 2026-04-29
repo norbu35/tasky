@@ -145,7 +145,7 @@ describe('useDevLogin', () => {
       });
       expect(mockGetMyProfile).toHaveBeenCalledWith('dev-access-token');
       expect(useAuthStore.getState().session?.user.role).toBe('CUSTOMER');
-      expect(queryClient.getQueryData(['me', 'dev-access-token'])).toEqual(
+      expect(queryClient.getQueryData(['me', 'customer-1'])).toEqual(
         expect.objectContaining({ full_name: 'Test Customer' }),
       );
       expect(useAppStore.getState().currentRole).toBe('customer');
@@ -180,7 +180,7 @@ describe('useDevLogin', () => {
       await waitFor(() => {
         expect(mockListMyTasks).toHaveBeenCalledWith('dev-access-token');
       });
-      expect(queryClient.getQueryData(['myTasks', 'dev-access-token'])).toEqual(
+      expect(queryClient.getQueryData(['myTasks', 'customer-1'])).toEqual(
         expect.objectContaining({
           data: [expect.objectContaining({ id: 'task-1' })],
         }),

@@ -14,6 +14,7 @@ import {
   DEV_LOGIN_TASKER_PHONE,
   useDevLogin,
 } from '@/features/auth/hooks/useAuth';
+import { parseError } from '@/utils/errorHandling';
 import { setStoredLanguage } from '@/utils/i18n';
 
 const { colors } = mobileTheme;
@@ -28,7 +29,7 @@ export default function AuthHomeScreen() {
   const devLogin = useDevLogin();
   const runtimeEnv = typeof process !== 'undefined' ? process.env : undefined;
 
-  const devAuthEnabled = runtimeEnv?.['EXPO_PUBLIC_DEV_AUTH_ENABLED'] === 'true';
+  const devAuthEnabled = __DEV__ && runtimeEnv?.['EXPO_PUBLIC_DEV_AUTH_ENABLED'] === 'true';
   const isFacebookLoading = state === 'facebook_loading';
   const busy = devLogin.isPending;
 
@@ -123,7 +124,9 @@ export default function AuthHomeScreen() {
                 disabled={busy}
               />
               {devLogin.error ? (
-                <Text className="text-body text-center text-danger">{devLogin.error.message}</Text>
+                <Text className="text-body text-center text-danger">
+                  {parseError(devLogin.error)}
+                </Text>
               ) : null}
             </View>
           ) : null}

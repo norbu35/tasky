@@ -8,9 +8,10 @@ import { listCategories } from '../api';
 export function useCategories() {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
+  const uid = session?.user.id;
 
   return useQuery({
-    queryKey: queryKeys.tasks.categories(token!),
+    queryKey: queryKeys.tasks.categories(uid!),
     queryFn: () => listCategories(token!),
     enabled: !!token,
     staleTime: 1000 * 60 * 30,

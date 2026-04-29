@@ -16,9 +16,10 @@ export interface CustomerTaskDetailState {
 export function useCustomerTaskDetail(taskId: string): CustomerTaskDetailState {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
+  const uid = session?.user.id;
 
   const query = useQuery({
-    queryKey: queryKeys.tasks.my(token!),
+    queryKey: queryKeys.tasks.my(uid!),
     queryFn: () => listMyTasks(token!),
     enabled: !!token,
   });

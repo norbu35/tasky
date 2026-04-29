@@ -12,6 +12,7 @@ import { queryClient } from '../lib/react-query';
 import { AppBootstrapProvider } from '../providers/AppBootstrapProvider';
 import { NotificationProvider } from '../providers/NotificationProvider';
 import { RoleProvider } from '../providers/RoleProvider';
+import { SplashBootstrapProvider } from '../providers/SplashBootstrapProvider';
 import { initializeI18n } from '../utils/i18n';
 
 import '../design/nativewind-interop';
@@ -54,12 +55,14 @@ export default function RootLayout() {
         <NotificationProvider>
           <QueryClientProvider client={queryClient}>
             <AppBootstrapProvider>
-              <RoleProvider>
-                <ReviewGateProvider>
-                  <Stack screenOptions={{ headerShown: false }} />
-                  <StatusBar style="auto" />
-                </ReviewGateProvider>
-              </RoleProvider>
+              <SplashBootstrapProvider>
+                <RoleProvider>
+                  <ReviewGateProvider>
+                    <Stack screenOptions={{ headerShown: false }} />
+                    <StatusBar style="auto" />
+                  </ReviewGateProvider>
+                </RoleProvider>
+              </SplashBootstrapProvider>
             </AppBootstrapProvider>
           </QueryClientProvider>
         </NotificationProvider>

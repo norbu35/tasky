@@ -15,6 +15,7 @@ type TaskFeedFilters = Omit<TaskFilters, 'cursor' | 'limit'>;
 export function useTasks(filters?: TaskFeedFilters) {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
+  const uid = session?.user.id;
 
   const queryFilters = useMemo<TaskFeedFilters>(
     () => ({
@@ -27,7 +28,7 @@ export function useTasks(filters?: TaskFeedFilters) {
   );
 
   const query = useInfiniteQuery({
-    queryKey: queryKeys.tasks.feed(token!, queryFilters),
+    queryKey: queryKeys.tasks.feed(uid!, queryFilters),
     queryFn: ({ pageParam }) => {
       const cursor = typeof pageParam === 'string' ? pageParam : undefined;
       return listTasks(token!, {
@@ -77,9 +78,10 @@ export function useTaskDetail(taskId: string): TaskDetailState {
   const session = useAuthStore((s) => s.session);
   const { data: profile } = useMyProfile();
   const token = session?.accessToken;
+  const uid = session?.user.id;
 
   const tasksQuery = useQuery({
-    queryKey: queryKeys.tasks.detail(token!, taskId),
+    queryKey: queryKeys.tasks.detail(uid!, taskId),
     queryFn: () => getTask(token!, taskId),
     enabled: !!token && !!taskId,
   });

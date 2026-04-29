@@ -5,6 +5,7 @@ import { Alert, Image, Modal, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui';
 import { mobileTheme } from '@/design/tokenAdapter';
+import { parseError } from '@/utils/errorHandling';
 
 import { useVerificationSubmit } from '../hooks/useVerificationSubmit';
 
@@ -59,7 +60,10 @@ export function VerificationModal({ visible, onClose, onSuccess }: Props) {
           onSuccess();
         },
         onError: (err: Error) => {
-          Alert.alert(t('verification.uploadFailed'), err.message || t('verification.uploadError'));
+          Alert.alert(
+            t('verification.uploadFailed'),
+            parseError(err) || t('verification.uploadError'),
+          );
         },
       },
     );

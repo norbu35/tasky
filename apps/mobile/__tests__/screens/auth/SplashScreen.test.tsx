@@ -6,6 +6,12 @@ import { useAppStore } from '../../../src/store/appStore';
 
 import SplashScreen from '../../../src/app/index';
 
+const mockSplashBootstrap = jest.fn();
+jest.mock('../../../src/providers/SplashBootstrapProvider', () => ({
+  useSplashBootstrap: () => mockSplashBootstrap(),
+  SplashBootstrapProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 jest.mock('expo-router', () => {
   const { Text } = require('react-native');
   return {
@@ -71,6 +77,11 @@ beforeEach(() => {
   setTestLanguage('mn');
   useAuthStore.setState({ session: null });
   useAppStore.setState({ hasSeenOnboarding: true, currentRole: 'customer' });
+  mockSplashBootstrap.mockReturnValue({
+    phase: 'ready',
+    destination: 'auth',
+    error: null,
+  });
 });
 
 describe('SplashScreen (SCR-SHARED-001)', () => {
@@ -86,8 +97,9 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
     expect(screen.getByText('Итгэмжлэгдсэн ажилчид, хялбар захиалга')).toBeTruthy();
   });
 
-  it('shows a loading indicator', () => {
+  it('shows a loading indicator during bootstrap', () => {
     useAuthStore.setState({ session: null });
+    mockSplashBootstrap.mockReturnValue({ phase: 'prefetching', destination: 'auth', error: null });
     render(<SplashScreen />);
     expect(screen.getByTestId('splash-loading')).toBeTruthy();
   });
@@ -99,6 +111,7 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
         user: { ...baseSession.user, role: 'CUSTOMER', primary_auth: 'FACEBOOK' },
       },
     });
+    mockSplashBootstrap.mockReturnValue({ phase: 'ready', destination: 'tabs', error: null });
     render(<SplashScreen />);
     expectRedirectHref('/(tabs)');
   });
@@ -110,6 +123,7 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
         user: { ...baseSession.user, role: 'TASKER', primary_auth: 'FACEBOOK' },
       },
     });
+    mockSplashBootstrap.mockReturnValue({ phase: 'ready', destination: 'tabs', error: null });
     render(<SplashScreen />);
     expectRedirectHref('/(tabs)');
   });
@@ -121,6 +135,7 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
         user: { ...baseSession.user, role: 'CUSTOMER', primary_auth: 'FACEBOOK' },
       },
     });
+    mockSplashBootstrap.mockReturnValue({ phase: 'ready', destination: 'tabs', error: null });
     render(<SplashScreen />);
     expectRedirectHref('/(tabs)');
   });

@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/authStore';
 export function useTaskerProfile(userId: string | undefined) {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
+  const uid = session?.user.id;
 
   const profileQuery = {
     data: undefined,
@@ -16,7 +17,7 @@ export function useTaskerProfile(userId: string | undefined) {
   };
 
   const reviewsQuery = useQuery({
-    queryKey: queryKeys.reviews.user(token!, userId!),
+    queryKey: queryKeys.reviews.user(uid!, userId!),
     queryFn: () => getUserReviews(token!, userId!),
     enabled: !!token && !!userId,
   });

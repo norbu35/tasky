@@ -85,7 +85,7 @@ function renderWithProviders(
 ) {
   const queryClient = createTestQueryClient();
   if (profile !== undefined && profile !== null) {
-    queryClient.setQueryData(['me', 'access-token'], profile);
+    queryClient.setQueryData(['me', baseProfile.id], profile);
   }
   return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
 }

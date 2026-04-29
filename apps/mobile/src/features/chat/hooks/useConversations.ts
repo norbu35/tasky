@@ -8,9 +8,10 @@ import { listConversations } from '../api';
 export function useConversations() {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
+  const uid = session?.user.id;
 
   return useQuery({
-    queryKey: queryKeys.chat.conversations(token!),
+    queryKey: queryKeys.chat.conversations(uid!),
     queryFn: () => listConversations(token!),
     enabled: !!token,
   });

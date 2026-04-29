@@ -28,7 +28,7 @@ export async function submitReview(
 export async function getMyPendingReviews(accessToken: string): Promise<PendingReview[]> {
   return getClient()
     .requestJson<{ data: PendingReview[] }>('/me/pending-reviews', { method: 'GET' }, accessToken)
-    .then((r) => r.data);
+    .then((r) => (Array.isArray(r?.data) ? r.data : []));
 }
 
 export async function getUserReviews(

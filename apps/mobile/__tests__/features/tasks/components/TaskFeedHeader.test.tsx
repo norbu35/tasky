@@ -1,7 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import React from 'react';
 
-import { TaskFeedHeader } from '@/features/tasks/components/TaskFeedHeader';
+import {
+  TaskFeedStickyHeader,
+  TaskFeedSubHeader,
+} from '@/features/tasks/components/TaskFeedHeader';
 
 import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
@@ -28,46 +31,28 @@ jest.mock('lucide-react-native', () => {
   );
 });
 
-jest.mock('@/features/review/components/ReviewGateBanner', () => {
-  const { Text } = require('react-native');
-  return {
-    ReviewGateBanner: ({ pendingReview }: { pendingReview: { booking_id?: string } }) => (
-      <Text testID="review-gate-banner">{pendingReview.booking_id}</Text>
-    ),
-  };
-});
-
-function renderHeader(overrides: Partial<React.ComponentProps<typeof TaskFeedHeader>> = {}) {
-  const props: React.ComponentProps<typeof TaskFeedHeader> = {
-    activeFilterCount: 0,
-    hasActiveBrowseFilters: false,
-    hasPending: false,
-    oldestPending: null,
-    resultCount: 3,
-    searchQuery: '',
-    selectedFilterItems: [],
-    trimmedSearchQuery: '',
-    onClearFilters: jest.fn(),
-    onClearSearch: jest.fn(),
-    onOpenFilters: jest.fn(),
-    onSearchChange: jest.fn(),
-    onToggleFilter: jest.fn(),
-    ...overrides,
-  };
-
-  render(<TaskFeedHeader {...props} />);
-  return props;
-}
-
 beforeEach(() => {
   resetTestI18n();
   setTestLanguage('en');
   jest.clearAllMocks();
 });
 
-describe('TaskFeedHeader', () => {
+describe('TaskFeedStickyHeader', () => {
   it('renders search and opens the filter sheet', () => {
-    const props = renderHeader();
+    const props = {
+      categories: [
+        { id: 'all', label: 'All' },
+        { id: 'cleaning', label: 'Cleaning' },
+      ],
+      activeFilters: [],
+      activeFilterCount: 0,
+      searchQuery: '',
+      onOpenFilters: jest.fn(),
+      onSearchChange: jest.fn(),
+      onToggleFilter: jest.fn(),
+    };
+
+    render(<TaskFeedStickyHeader {...props} />);
 
     fireEvent.press(screen.getByTestId('task-feed-open-filters'));
     fireEvent.changeText(screen.getByTestId('task-feed-search'), 'paint');
@@ -76,16 +61,22 @@ describe('TaskFeedHeader', () => {
     expect(props.onSearchChange).toHaveBeenCalledWith('paint');
     expect(screen.queryByTestId('task-feed-filter-count')).toBeNull();
   });
+});
 
+describe('TaskFeedSubHeader', () => {
   it('renders active filters and clears them', () => {
-    const props = renderHeader({
-      activeFilterCount: 2,
+    const props = {
+      resultCount: 3,
       hasActiveBrowseFilters: true,
       selectedFilterItems: [{ id: 'cleaning', label: 'Cleaning' }],
       trimmedSearchQuery: 'home',
-    });
+      onClearFilters: jest.fn(),
+      onClearSearch: jest.fn(),
+      onToggleFilter: jest.fn(),
+    };
 
-    expect(screen.getByTestId('task-feed-filter-count')).toBeTruthy();
+    render(<TaskFeedSubHeader {...props} />);
+
     expect(screen.getByTestId('task-feed-active-filters')).toBeTruthy();
 
     fireEvent.press(screen.getByTestId('task-feed-active-filter-clear'));

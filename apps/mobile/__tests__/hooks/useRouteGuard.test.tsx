@@ -66,7 +66,7 @@ describe('useRouteGuard', () => {
   it('returns isAuthenticated true when session exists', () => {
     const queryClient = createTestQueryClient();
     useAuthStore.setState({ session: baseSession });
-    queryClient.setQueryData(['me', baseSession.accessToken], baseProfile);
+    queryClient.setQueryData(['me', baseSession.user.id], baseProfile);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -107,7 +107,7 @@ describe('useRouteGuard', () => {
   it('redirects to /account/banned when profile status is BANNED', () => {
     const queryClient = createTestQueryClient();
     useAuthStore.setState({ session: baseSession });
-    queryClient.setQueryData(['me', baseSession.accessToken], {
+    queryClient.setQueryData(['me', baseSession.user.id], {
       ...baseProfile,
       status: 'BANNED',
     });
@@ -125,7 +125,7 @@ describe('useRouteGuard', () => {
   it('redirects to /account/suspended when profile status is SUSPENDED', () => {
     const queryClient = createTestQueryClient();
     useAuthStore.setState({ session: baseSession });
-    queryClient.setQueryData(['me', baseSession.accessToken], {
+    queryClient.setQueryData(['me', baseSession.user.id], {
       ...baseProfile,
       status: 'SUSPENDED',
     });
@@ -143,7 +143,7 @@ describe('useRouteGuard', () => {
   it('does not redirect when authenticated and not restricted', () => {
     const queryClient = createTestQueryClient();
     useAuthStore.setState({ session: baseSession });
-    queryClient.setQueryData(['me', baseSession.accessToken], baseProfile);
+    queryClient.setQueryData(['me', baseSession.user.id], baseProfile);
 
     render(
       <QueryClientProvider client={queryClient}>

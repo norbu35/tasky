@@ -7,12 +7,43 @@ import { FeedListTemplate } from '@/components/templates/FeedListTemplate';
 import { useReviewGate } from '@/features/review/components/ReviewGateProvider';
 import { CustomerTasksScreen } from '@/features/tasks';
 import { TaskFeedCard } from '@/features/tasks/components/TaskFeedCard';
-import { TaskFeedFilterSheet } from '@/features/tasks/components/TaskFeedFilterSheet';
-import { TaskFeedHeader } from '@/features/tasks/components/TaskFeedHeader';
+import {
+  type PricingModeFilter,
+  type ScheduleWindow,
+  TaskFeedFilterSheet,
+} from '@/features/tasks/components/TaskFeedFilterSheet';
+import {
+  TaskFeedHeaderTop,
+  TaskFeedStickyHeader,
+  TaskFeedSubHeader,
+} from '@/features/tasks/components/TaskFeedHeader';
 import { useCategories } from '@/features/tasks/hooks/useCategories';
 import { useTasks } from '@/features/tasks/hooks/useTasks';
 import type { TaskFeedItem } from '@/lib/api/types';
 import { useRole } from '@/providers/RoleProvider';
+
+function startOfDay(d: Date): Date {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x;
+}
+
+function isWithinScheduleWindow(scheduledAt: string, window: ScheduleWindow): boolean {
+  if (window === 'any') return true;
+  const scheduled = new Date(scheduledAt);
+  if (Number.isNaN(scheduled.getTime())) return true;
+  const start = startOfDay(new Date());
+  const end = new Date(start);
+  if (window === 'today') {
+    end.setDate(end.getDate() + 1);
+  } else if (window === 'tomorrow') {
+    start.setDate(start.getDate() + 1);
+    end.setDate(end.getDate() + 2);
+  } else {
+    end.setDate(end.getDate() + 7);
+  }
+  return scheduled >= start && scheduled < end;
+}
 
 function TaskerBrowseScreen() {
   const { t } = useTranslation();
@@ -32,21 +63,36 @@ function TaskerBrowseScreen() {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+  const [scheduleWindow, setScheduleWindow] = useState<ScheduleWindow>('any');
+  const [pricingMode, setPricingMode] = useState<PricingModeFilter>('any');
+  const [budgetRange, setBudgetRange] = useState<{ min: number | null; max: number | null }>({
+    min: null,
+    max: null,
+  });
   const { data: categoriesData } = useCategories();
   const categories = useMemo(() => {
-    const apiCategories = (categoriesData?.data ?? []).map(
-      (cat: { id: string; name?: string; name_mn?: string }) => ({
+    const seen = new Set<string>();
+    const apiCategories = (categoriesData?.data ?? [])
+      .map((cat: { id: string; name?: string; name_mn?: string }) => ({
         id: cat.name?.toLowerCase() ?? cat.id,
         label: cat.name_mn ?? cat.name ?? cat.id,
-      }),
-    );
+      }))
+      .filter((cat) => {
+        if (seen.has(cat.id)) return false;
+        seen.add(cat.id);
+        return true;
+      });
     return [{ id: 'all', label: t('TaskerBrowseScreen.all') }, ...apiCategories];
   }, [categoriesData, t]);
+
+  const sheetCategories = useMemo(() => categories.filter((cat) => cat.id !== 'all'), [categories]);
 
   const handleClearFilters = useCallback(() => {
     setActiveFilters([]);
     setSearchQuery('');
-    setIsFilterSheetOpen(false);
+    setScheduleWindow('any');
+    setPricingMode('any');
+    setBudgetRange({ min: null, max: null });
   }, []);
 
   const handleClearSearch = useCallback(() => {
@@ -55,36 +101,81 @@ function TaskerBrowseScreen() {
 
   const filteredTasks = useMemo(() => {
     const tasks = data?.data ?? [];
+    const normalizedSearch = searchQuery.trim().toLowerCase();
+    const hasBudgetBounds = budgetRange.min != null || budgetRange.max != null;
     return tasks.filter((task) => {
       const matchesCategory =
         activeFilters.length === 0 ||
         activeFilters.includes('all') ||
         (task.category && activeFilters.includes(task.category.name.toLowerCase()));
-      const normalizedSearch = searchQuery.trim().toLowerCase();
       const matchesSearch =
         normalizedSearch.length === 0 ||
         task.description.toLowerCase().includes(normalizedSearch) ||
         task.category.name.toLowerCase().includes(normalizedSearch) ||
         task.approximate_location.toLowerCase().includes(normalizedSearch);
-      return matchesCategory && matchesSearch;
+      const matchesSchedule = isWithinScheduleWindow(task.scheduled_at, scheduleWindow);
+      const matchesPricingMode = pricingMode === 'any' || task.pricing_mode === pricingMode;
+      let matchesBudget = true;
+      if (hasBudgetBounds) {
+        if (task.budget == null) {
+          matchesBudget = false;
+        } else {
+          if (budgetRange.min != null && task.budget < budgetRange.min) matchesBudget = false;
+          if (budgetRange.max != null && task.budget > budgetRange.max) matchesBudget = false;
+        }
+      }
+      return (
+        matchesCategory && matchesSearch && matchesSchedule && matchesPricingMode && matchesBudget
+      );
     });
-  }, [data, activeFilters, searchQuery]);
+  }, [data, activeFilters, searchQuery, scheduleWindow, pricingMode, budgetRange]);
 
-  const hasActiveBrowseFilters = activeFilters.length > 0 || searchQuery.trim().length > 0;
-  const selectedFilterItems = useMemo(
-    () =>
-      activeFilters
-        .map((id) => {
-          const label = categories.find((category) => category.id === id)?.label;
-          return label ? { id, label } : null;
-        })
-        .filter((item): item is { id: string; label: string } => Boolean(item)),
-    [activeFilters, categories],
-  );
   const trimmedSearchQuery = searchQuery.trim();
+  const selectedFilterItems = useMemo(() => {
+    const items: Array<{ id: string; label: string }> = [];
+    activeFilters.forEach((id) => {
+      const label = categories.find((category) => category.id === id)?.label;
+      if (label) items.push({ id, label });
+    });
+    if (scheduleWindow !== 'any') {
+      const labelMap: Record<Exclude<ScheduleWindow, 'any'>, string> = {
+        today: t('tasker.browse.scheduleToday'),
+        tomorrow: t('tasker.browse.scheduleTomorrow'),
+        'this-week': t('tasker.browse.scheduleThisWeek'),
+      };
+      items.push({ id: `schedule:${scheduleWindow}`, label: labelMap[scheduleWindow] });
+    }
+    if (pricingMode !== 'any') {
+      const label =
+        pricingMode === 'BUDGET'
+          ? t('tasker.browse.pricingBudget')
+          : t('tasker.browse.pricingQuote');
+      items.push({ id: `pricing:${pricingMode}`, label });
+    }
+    if (budgetRange.min != null || budgetRange.max != null) {
+      const min = budgetRange.min != null ? `₮${budgetRange.min.toLocaleString('en-US')}` : '';
+      const max = budgetRange.max != null ? `₮${budgetRange.max.toLocaleString('en-US')}` : '';
+      items.push({ id: 'budget', label: min && max ? `${min}–${max}` : min || max });
+    }
+    return items;
+  }, [activeFilters, categories, scheduleWindow, pricingMode, budgetRange, t]);
+
+  const hasActiveBrowseFilters = selectedFilterItems.length > 0 || trimmedSearchQuery.length > 0;
   const activeFilterCount = selectedFilterItems.length + (trimmedSearchQuery ? 1 : 0);
 
   const handleToggleFilter = useCallback((id: string) => {
+    if (id.startsWith('schedule:')) {
+      setScheduleWindow('any');
+      return;
+    }
+    if (id.startsWith('pricing:')) {
+      setPricingMode('any');
+      return;
+    }
+    if (id === 'budget') {
+      setBudgetRange({ min: null, max: null });
+      return;
+    }
     setActiveFilters((prev) => {
       if (id === 'all') return [];
       const next = prev.includes(id)
@@ -137,19 +228,27 @@ function TaskerBrowseScreen() {
         isLoadingMore={isFetchingNextPage}
         animateItems={false}
         ListHeaderComponent={
-          <TaskFeedHeader
+          <TaskFeedHeaderTop hasPending={hasPending} oldestPending={oldestPending} />
+        }
+        StickyHeaderComponent={
+          <TaskFeedStickyHeader
             activeFilterCount={activeFilterCount}
-            hasActiveBrowseFilters={hasActiveBrowseFilters}
-            hasPending={hasPending}
-            oldestPending={oldestPending}
-            resultCount={filteredTasks.length}
+            categories={categories}
+            activeFilters={activeFilters}
             searchQuery={searchQuery}
+            onOpenFilters={() => setIsFilterSheetOpen(true)}
+            onSearchChange={setSearchQuery}
+            onToggleFilter={handleToggleFilter}
+          />
+        }
+        SubHeaderComponent={
+          <TaskFeedSubHeader
+            hasActiveBrowseFilters={hasActiveBrowseFilters}
+            resultCount={filteredTasks.length}
             selectedFilterItems={selectedFilterItems}
             trimmedSearchQuery={trimmedSearchQuery}
             onClearFilters={handleClearFilters}
             onClearSearch={handleClearSearch}
-            onOpenFilters={() => setIsFilterSheetOpen(true)}
-            onSearchChange={setSearchQuery}
             onToggleFilter={handleToggleFilter}
           />
         }
@@ -164,9 +263,16 @@ function TaskerBrowseScreen() {
       />
       <TaskFeedFilterSheet
         visible={isFilterSheetOpen}
-        categories={categories}
+        categories={sheetCategories}
         activeFilters={activeFilters}
         resultCount={filteredTasks.length}
+        scheduleWindow={scheduleWindow}
+        onScheduleWindowChange={setScheduleWindow}
+        pricingMode={pricingMode}
+        onPricingModeChange={setPricingMode}
+        minBudget={budgetRange.min}
+        maxBudget={budgetRange.max}
+        onBudgetChange={setBudgetRange}
         onToggleFilter={handleToggleFilter}
         onClearFilters={handleClearFilters}
         onClose={() => setIsFilterSheetOpen(false)}

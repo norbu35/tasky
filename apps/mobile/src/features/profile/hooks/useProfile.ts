@@ -8,9 +8,10 @@ import { getMyProfile, updateMyProfile } from '../api';
 export function useMyProfile() {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
+  const uid = session?.user.id;
 
   return useQuery({
-    queryKey: queryKeys.me.all(token!),
+    queryKey: queryKeys.me.all(uid!),
     queryFn: () => getMyProfile(token!),
     enabled: !!token,
   });
@@ -19,14 +20,15 @@ export function useMyProfile() {
 export function useUpdateProfile() {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
+  const uid = session?.user.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: { full_name?: string; avatar_url?: string; bio?: string }) =>
       updateMyProfile(token!, payload),
     onSuccess: (updatedProfile) => {
-      if (token) {
-        queryClient.setQueryData(queryKeys.me.all(token), updatedProfile);
+      if (uid) {
+        queryClient.setQueryData(queryKeys.me.all(uid), updatedProfile);
       }
     },
   });

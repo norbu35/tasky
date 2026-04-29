@@ -1,10 +1,12 @@
+import { LinearGradient } from 'expo-linear-gradient';
+import { Calendar, MapPin } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
-import { ListItemCard } from '@/components/ui/ListItemCard';
 import { PriceTag } from '@/components/ui/PriceTag';
-import { StatusBadge } from '@/components/ui/StatusBadge';
+import { Touchable } from '@/components/ui/Touchable';
+import { elevations } from '@/design/elevations';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { getTaskVisual } from '@/features/tasks/components/CustomerTasksView';
 import type { TaskFeedItem } from '@/lib/api/types';
@@ -29,48 +31,18 @@ function getCategoryLabel(category: FeedCategory, language?: string) {
   return decodeDisplayLabel(localizedName || category.name);
 }
 
-function TaskFeedPill({ label }: { label: string }) {
+/** Overlay pill badge on the card hero — white bg with translucency. */
+function HeroBadge({ label }: { label: string }) {
   return (
     <View
-      className="self-start px-sm py-xs rounded-full shrink"
-      style={{ backgroundColor: `${colors.primary}14`, maxWidth: 148 }}
+      className="self-start px-md py-xs rounded-full"
+      style={{ backgroundColor: 'rgba(255,255,255,0.95)' }}
     >
       <Text className="text-caption font-sans-bold text-primary-deep" numberOfLines={1}>
         {label}
       </Text>
     </View>
   );
-}
-
-function TaskCardBadge({ task }: { task: TaskFeedItem }) {
-  const { i18n, t } = useTranslation();
-  const isQuoteMode = task.pricing_mode === 'QUOTE' || task.budget == null;
-  return (
-    <View className="flex-row flex-wrap items-start gap-xs">
-      {task.category && <TaskFeedPill label={getCategoryLabel(task.category, i18n.language)} />}
-      {isQuoteMode ? (
-        <View
-          className="self-start px-sm py-xs rounded-full shrink"
-          style={{ backgroundColor: `${colors.accent}18`, maxWidth: 172 }}
-        >
-          <Text className="text-caption font-sans-bold text-accent" numberOfLines={1}>
-            {t('tasker.browse.quoteRequested')}
-          </Text>
-        </View>
-      ) : (
-        <StatusBadge status="open" />
-      )}
-    </View>
-  );
-}
-
-function getTaskSubtitle(task: TaskFeedItem, postedAtLabel?: string | null) {
-  const parts = [
-    task.approximate_location,
-    task.scheduled_at ? formatShortDate(task.scheduled_at) : null,
-    postedAtLabel,
-  ].filter((part): part is string => Boolean(part));
-  return parts.join(' · ');
 }
 
 interface TaskFeedCardProps {
@@ -80,30 +52,101 @@ interface TaskFeedCardProps {
 }
 
 export function TaskFeedCard({ task, onPress, testID }: TaskFeedCardProps) {
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
   const visual = getTaskVisual(task.category?.name, t);
   const Icon = visual.Icon;
   const isQuoteMode = task.pricing_mode === 'QUOTE' || task.budget == null;
-  const postedAtLabel = task.created_at
-    ? t('tasker.browse.postedAt', { date: formatShortDate(task.created_at) })
-    : null;
 
-  return (
-    <ListItemCard
-      testID={testID}
-      onPress={onPress}
-      icon={
+  const categoryLabel = task.category ? getCategoryLabel(task.category, i18n.language) : null;
+
+  // Prefer scheduled_at, otherwise fallback to created_at
+  const displayDate = task.scheduled_at
+    ? formatShortDate(task.scheduled_at)
+    : task.created_at
+      ? formatShortDate(task.created_at)
+      : null;
+
+  // Using a stable random image based on task ID for the placeholder
+  const placeholderUrl = `https://picsum.photos/seed/${task.id}/400/200`;
+
+  const card = (
+    <View className="bg-card rounded-2xl overflow-hidden" style={elevations.card}>
+      {/* ── Hero Image Area ── */}
+      <View className="h-[180px] w-full bg-muted">
+        <Image
+          source={{ uri: placeholderUrl }}
+          className="absolute inset-0 w-full h-full"
+          resizeMode="cover"
+        />
+        {/* Subtle gradient overlay to ensure text/badges are readable */}
+        <LinearGradient
+          colors={['rgba(0,0,0,0.4)', 'transparent', 'rgba(0,0,0,0.6)']}
+          className="absolute inset-0 w-full h-full"
+        />
+
+        {/* Overlay badges row */}
+        <View className="absolute top-md left-md right-md flex-row justify-between items-start">
+          {categoryLabel ? <HeroBadge label={categoryLabel} /> : <View />}
+        </View>
+
+        {/* Icon at bottom right of the image */}
         <View
-          className="w-12 h-12 rounded-md items-center justify-center"
+          className="absolute bottom-md right-md w-12 h-12 rounded-xl items-center justify-center shadow-sm"
           style={{ backgroundColor: visual.tone }}
         >
           <Icon color={visual.tint} size={24} />
         </View>
-      }
-      badge={<TaskCardBadge task={task} />}
-      title={decodeDisplayLabel(task.description)}
-      subtitle={getTaskSubtitle(task, postedAtLabel)}
-      trailing={isQuoteMode ? null : <PriceTag amount={task.budget} size="sm" />}
-    />
+      </View>
+
+      {/* ── Content below hero ── */}
+      <View className="p-lg gap-md">
+        {/* Title */}
+        <Text className="text-h4 font-sans-bold text-primary-deep leading-tight" numberOfLines={2}>
+          {decodeDisplayLabel(task.description)}
+        </Text>
+
+        {/* Location & Date */}
+        <View className="flex-row items-center gap-md">
+          {task.approximate_location ? (
+            <View className="flex-row items-center gap-xs shrink">
+              <MapPin size={14} color={colors.textSecondary} strokeWidth={2.5} />
+              <Text className="text-body text-text-secondary" numberOfLines={1}>
+                {task.approximate_location}
+              </Text>
+            </View>
+          ) : null}
+
+          {displayDate ? (
+            <View className="flex-row items-center gap-xs shrink-0">
+              <Calendar size={14} color={colors.textSecondary} strokeWidth={2.5} />
+              <Text className="text-body text-text-secondary">{displayDate}</Text>
+            </View>
+          ) : null}
+        </View>
+
+        {/* Price / Quote (More prominent) */}
+        <View className="mt-xs pt-md border-t border-border">
+          {isQuoteMode ? (
+            <Text className="text-h4 font-sans-bold text-accent">
+              {t('tasker.browse.quoteRequested')}
+            </Text>
+          ) : task.budget != null ? (
+            <View className="self-start scale-110 origin-left">
+              <PriceTag amount={task.budget} size="lg" />
+            </View>
+          ) : null}
+        </View>
+      </View>
+    </View>
+  );
+
+  if (!onPress) {
+    return <View testID={testID}>{card}</View>;
+  }
+
+  return (
+    <Touchable testID={testID} accessibilityRole="button" onPress={onPress}>
+      {card}
+    </Touchable>
   );
 }

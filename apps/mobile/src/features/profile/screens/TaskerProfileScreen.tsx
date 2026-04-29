@@ -52,7 +52,8 @@ export default function TaskerProfileScreen() {
   const reviewCount = reviews.length;
   const isLoading = profileQuery.isLoading && !routeProfile;
   const isError = (profileQuery.isError || !profile) && !routeProfile;
-  const categories = (detail?.categories ?? []) as string[];
+  const rawCategories = (detail?.categories ?? []) as string[];
+  const categories = [...new Set(rawCategories)];
   const publicRatingVisible = canShowPublicRating(reviewCount, detail?.rating_avg);
   const memberSince = detail?.created_at ? new Date(detail.created_at).toLocaleDateString() : null;
 
@@ -134,9 +135,9 @@ export default function TaskerProfileScreen() {
             </Text>
             <View className="flex-row flex-wrap gap-sm">
               {categories.length > 0 ? (
-                categories.map((category) => (
+                categories.map((category, idx) => (
                   <View
-                    key={category}
+                    key={`${category}-${idx}`}
                     className="px-md py-sm rounded-full"
                     style={{ backgroundColor: mobileSurfaces.tint.categoryPill }}
                   >

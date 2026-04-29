@@ -15,6 +15,7 @@ interface RescheduleParams {
 export function useReschedule() {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
+  const uid = session?.user.id;
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -27,7 +28,7 @@ export function useReschedule() {
       ),
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({
-        queryKey: queryKeys.bookings.detail(token!, variables.bookingId),
+        queryKey: queryKeys.bookings.detail(uid!, variables.bookingId),
       });
     },
   });

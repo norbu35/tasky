@@ -70,22 +70,31 @@ jest.mock('../../src/features/auth/hooks/useAuth', () => ({
   }),
 }));
 
+const mockSplashBootstrap = jest.fn();
+jest.mock('../../src/providers/SplashBootstrapProvider', () => ({
+  useSplashBootstrap: () => mockSplashBootstrap(),
+  SplashBootstrapProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 beforeEach(() => {
   jest.clearAllMocks();
   resetStores();
   resetTestI18n();
   setTestLanguage('mn');
+  mockSplashBootstrap.mockReturnValue({ phase: 'ready', destination: 'auth', error: null });
 });
 
 describe('Auth flow integration', () => {
   it('first-time unauthenticated user lands on auth from splash', () => {
     setFirstTimeUser();
+    mockSplashBootstrap.mockReturnValue({ phase: 'ready', destination: 'auth', error: null });
     render(<SplashScreen />);
     expect(screen.getByTestId('redirect')).toHaveTextContent('/(auth)');
   });
 
   it('returning guest is redirected to auth', () => {
     resetStores(); // hasSeenOnboarding=true, session=null
+    mockSplashBootstrap.mockReturnValue({ phase: 'ready', destination: 'auth', error: null });
     render(<SplashScreen />);
     const redirects = screen.getAllByTestId('redirect');
     const authRedirect = redirects.find((el) => el.props.children === '/(auth)');
@@ -94,6 +103,7 @@ describe('Auth flow integration', () => {
 
   it('authenticated user is redirected to tabs', () => {
     setAuthenticated();
+    mockSplashBootstrap.mockReturnValue({ phase: 'ready', destination: 'tabs', error: null });
     render(<SplashScreen />);
     expect(screen.getByTestId('redirect')).toHaveTextContent('/(tabs)');
   });
@@ -136,6 +146,7 @@ describe('Auth flow integration', () => {
 
   it('full auth state transition: guest -> authenticated', () => {
     resetStores();
+    mockSplashBootstrap.mockReturnValue({ phase: 'ready', destination: 'auth', error: null });
     const { unmount } = render(<SplashScreen />);
     const redirects = screen.getAllByTestId('redirect');
     const authRedirect = redirects.find((el) => el.props.children === '/(auth)');
@@ -145,6 +156,7 @@ describe('Auth flow integration', () => {
 
     // Simulate login completing
     useAuthStore.setState({ session: baseSession });
+    mockSplashBootstrap.mockReturnValue({ phase: 'ready', destination: 'tabs', error: null });
     render(<SplashScreen />);
     expect(screen.getByTestId('redirect')).toHaveTextContent('/(tabs)');
   });

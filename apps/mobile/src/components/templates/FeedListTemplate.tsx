@@ -41,6 +41,8 @@ export interface FeedListTemplateProps<T> {
   retryLabel?: string;
   filterBar?: React.ReactNode;
   ListHeaderComponent?: React.ReactElement;
+  StickyHeaderComponent?: React.ReactElement;
+  SubHeaderComponent?: React.ReactElement;
   animateItems?: boolean;
   testID?: string;
   className?: string;
@@ -102,6 +104,8 @@ export function FeedListTemplate<T>({
   retryLabel,
   filterBar,
   ListHeaderComponent,
+  StickyHeaderComponent,
+  SubHeaderComponent,
   animateItems = true,
   testID,
   className,
@@ -109,13 +113,39 @@ export function FeedListTemplate<T>({
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
+  const extendedData = React.useMemo(() => {
+    const items: any[] = [];
+    if (StickyHeaderComponent) items.push({ __isStickyHeader: true });
+    if (SubHeaderComponent) items.push({ __isSubHeader: true });
+    return [...items, ...data];
+  }, [data, StickyHeaderComponent, SubHeaderComponent]);
+
   const renderListItem = useCallback(
-    ({ item, index }: { item: T; index: number }) => {
-      const renderedItem = renderItem(item, index);
+    ({ item, index }: { item: any; index: number }) => {
+      if (item.__isStickyHeader) {
+        return <View className="z-50 bg-background">{StickyHeaderComponent}</View>;
+      }
+      if (item.__isSubHeader) {
+        return <View>{SubHeaderComponent}</View>;
+      }
+
+      const offset = (StickyHeaderComponent ? 1 : 0) + (SubHeaderComponent ? 1 : 0);
+      const dataIndex = index - offset;
+
+      const renderedItem = renderItem(item, dataIndex);
       if (!animateItems) return renderedItem;
-      return <Reveal delay={Math.min(index * 35, 180)}>{renderedItem}</Reveal>;
+      return <Reveal delay={Math.min(dataIndex * 35, 180)}>{renderedItem}</Reveal>;
     },
-    [animateItems, renderItem],
+    [animateItems, renderItem, StickyHeaderComponent, SubHeaderComponent],
+  );
+
+  const extendedKeyExtractor = useCallback(
+    (item: any) => {
+      if (item.__isStickyHeader) return 'feed-sticky-header';
+      if (item.__isSubHeader) return 'feed-sub-header';
+      return keyExtractor(item);
+    },
+    [keyExtractor],
   );
 
   const renderFooter = useCallback(() => {
@@ -126,6 +156,19 @@ export function FeedListTemplate<T>({
       </View>
     );
   }, [isLoadingMore]);
+
+  const earlyReturnHeader = (
+    <View className="gap-0">
+      {ListHeaderComponent || filterBar ? (
+        <View className="pt-header-top pb-md gap-sm">
+          {ListHeaderComponent ? <Reveal delay={20}>{ListHeaderComponent}</Reveal> : null}
+          {filterBar ? <Reveal delay={60}>{filterBar}</Reveal> : null}
+        </View>
+      ) : null}
+      {StickyHeaderComponent ? <View>{StickyHeaderComponent}</View> : null}
+      {SubHeaderComponent ? <View>{SubHeaderComponent}</View> : null}
+    </View>
+  );
 
   const combinedHeader =
     ListHeaderComponent || filterBar ? (
@@ -138,7 +181,7 @@ export function FeedListTemplate<T>({
   if (isLoading) {
     return (
       <ScreenContainer className={className} testID={testID}>
-        {combinedHeader}
+        {earlyReturnHeader}
         <View>
           {Array.from({ length: 5 }).map((_, i) => (
             <React.Fragment key={i}>
@@ -154,7 +197,7 @@ export function FeedListTemplate<T>({
   if (isError) {
     return (
       <ScreenContainer className={className} testID={testID}>
-        {combinedHeader}
+        {earlyReturnHeader}
         <ErrorStateTemplate
           message={errorMessage ?? t('feed.errorMessage')}
           onRetry={onRetry}
@@ -168,7 +211,7 @@ export function FeedListTemplate<T>({
   if (isEmpty || data.length === 0) {
     return (
       <ScreenContainer className={className} testID={testID}>
-        {combinedHeader}
+        {earlyReturnHeader}
         <EmptyStateTemplate
           title={emptyTitle ?? t('feed.emptyTitle')}
           description={emptyDescription}
@@ -184,9 +227,10 @@ export function FeedListTemplate<T>({
     <ScreenContainer className={className} testID={testID}>
       <FlatList
         className="flex-1"
-        data={data}
+        data={extendedData}
         renderItem={renderListItem}
-        keyExtractor={keyExtractor}
+        keyExtractor={extendedKeyExtractor}
+        stickyHeaderIndices={StickyHeaderComponent ? [combinedHeader ? 1 : 0] : undefined}
         contentContainerStyle={{
           paddingBottom: screenLayout.chrome.contentBottomClearance + insets.bottom,
         }}

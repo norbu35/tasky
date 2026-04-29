@@ -8,9 +8,10 @@ import { getVerificationStatus, submitVerification } from '../api';
 export function useVerificationStatus() {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
+  const uid = session?.user.id;
 
   return useQuery({
-    queryKey: queryKeys.verification.status(token!),
+    queryKey: queryKeys.verification.status(uid!),
     queryFn: () => getVerificationStatus(token!),
     enabled: !!token,
   });

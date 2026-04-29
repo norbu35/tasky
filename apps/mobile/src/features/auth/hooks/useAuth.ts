@@ -18,7 +18,7 @@ function prefetchPostAuthHome(queryClient: QueryClient, session: AuthTokens): vo
   if (session.user.role !== 'CUSTOMER') return;
 
   void queryClient.prefetchQuery({
-    queryKey: queryKeys.tasks.my(session.accessToken),
+    queryKey: queryKeys.tasks.my(session.user.id),
     queryFn: () => listMyTasks(session.accessToken),
   });
 }
@@ -44,9 +44,11 @@ export function useVerifyOtp() {
       prefetchPostAuthHome(queryClient, session);
       try {
         const profile = await getMyProfile(session.accessToken);
-        queryClient.setQueryData(queryKeys.me.all(session.accessToken), profile);
+        queryClient.setQueryData(queryKeys.me.all(session.user.id), profile);
       } catch (e) {
-        console.error('Failed to fetch profile after login', e);
+        if (__DEV__) {
+          console.error('Failed to fetch profile after login', e);
+        }
       }
 
       router.replace(resolvePostAuthHref(session, useAppStore.getState().hasSeenOnboarding));
@@ -61,6 +63,7 @@ export function useDevLogin() {
 
   return useMutation({
     mutationFn: async ({ phone, role }: { phone: string; role: 'CUSTOMER' | 'TASKER' }) => {
+      if (!__DEV__) throw new Error('Dev login unavailable in production');
       return await devLogin(phone, role);
     },
     onSuccess: async (session, variables) => {
@@ -69,9 +72,11 @@ export function useDevLogin() {
       prefetchPostAuthHome(queryClient, session);
       try {
         const profile = await getMyProfile(session.accessToken);
-        queryClient.setQueryData(queryKeys.me.all(session.accessToken), profile);
+        queryClient.setQueryData(queryKeys.me.all(session.user.id), profile);
       } catch (e) {
-        console.error('Failed to fetch profile after dev login', e);
+        if (__DEV__) {
+          console.error('Failed to fetch profile after dev login', e);
+        }
       }
 
       router.replace(resolvePostAuthHref(session, useAppStore.getState().hasSeenOnboarding));

@@ -19,6 +19,12 @@ import { Button, Card, FormField, Input, Toast } from '../src/components/ui';
 import { FormWizardTemplate } from '../src/components/templates/FormWizardTemplate';
 import { mobileTheme } from '../src/design/tokenAdapter';
 import { RoleProvider } from '../src/providers/RoleProvider';
+
+const mockSplashBootstrap = jest.fn();
+jest.mock('../src/providers/SplashBootstrapProvider', () => ({
+  useSplashBootstrap: () => mockSplashBootstrap(),
+  SplashBootstrapProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
 import { useDevLogin } from '../src/features/auth/hooks/useAuth';
 import { useBookings } from '../src/features/bookings/hooks/useBookings';
 import {
@@ -289,16 +295,19 @@ beforeEach(() => {
   resetTestI18n();
   resetStores();
   installDefaultHookMocks();
+  mockSplashBootstrap.mockReturnValue({ phase: 'ready', destination: 'auth', error: null });
 });
 
 describe('mobile app structure', () => {
   it('TID-TASK-000-MOBILE-UNIT renders auth-first shell and core error utility', () => {
     // With hasSeenOnboarding=true (set in resetStores), guest redirects to /(auth)
+    mockSplashBootstrap.mockReturnValue({ phase: 'ready', destination: 'auth', error: null });
     const guestRender = render(<IndexScreen />);
     expect(screen.getByTestId('redirect-target')).toHaveTextContent('/(auth)');
     guestRender.unmount();
 
     useAuthStore.setState({ session: baseSession });
+    mockSplashBootstrap.mockReturnValue({ phase: 'ready', destination: 'tabs', error: null });
     render(<IndexScreen />);
     expect(screen.getByTestId('redirect-target')).toHaveTextContent('/(tabs)');
 

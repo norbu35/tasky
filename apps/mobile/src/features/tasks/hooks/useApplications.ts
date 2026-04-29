@@ -8,9 +8,10 @@ import { listApplications } from '../api';
 export function useApplications(taskId: string) {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
+  const uid = session?.user.id;
 
   return useQuery({
-    queryKey: queryKeys.tasks.applications(token!, taskId),
+    queryKey: queryKeys.tasks.applications(uid!, taskId),
     queryFn: () => listApplications(token!, taskId),
     enabled: !!token && !!taskId,
   });

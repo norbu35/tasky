@@ -1,10 +1,11 @@
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Shield, Sparkles, Users } from 'lucide-react-native';
+import { ArrowLeft } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dimensions,
   FlatList,
+  Image,
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
@@ -33,8 +34,9 @@ export default function OnboardingScreen() {
       id: '1',
       titleKey: 'auth.onboarding.slide1Title',
       bodyKey: 'auth.onboarding.slide1Body',
-      icon: Users,
-      iconColor: colors.primary,
+      image: {
+        uri: 'https://images.unsplash.com/photo-1528825871115-3581a5387915?auto=format&fit=crop&w=400&q=80',
+      },
       titleFallback: t('OnboardingScreen.copy1'),
       bodyFallback: t('OnboardingScreen.copy2'),
     },
@@ -42,8 +44,9 @@ export default function OnboardingScreen() {
       id: '2',
       titleKey: 'auth.onboarding.slide2Title',
       bodyKey: 'auth.onboarding.slide2Body',
-      icon: Sparkles,
-      iconColor: colors.secondary,
+      image: {
+        uri: 'https://images.unsplash.com/photo-1587132137056-bfbf0166836e?auto=format&fit=crop&w=400&q=80',
+      },
       titleFallback: t('OnboardingScreen.copy3'),
       bodyFallback: t('OnboardingScreen.copy4'),
     },
@@ -51,8 +54,9 @@ export default function OnboardingScreen() {
       id: '3',
       titleKey: 'auth.onboarding.slide3Title',
       bodyKey: 'auth.onboarding.slide3Body',
-      icon: Shield,
-      iconColor: colors.verified,
+      image: {
+        uri: 'https://images.unsplash.com/photo-1571508601891-ca5e7a713859?auto=format&fit=crop&w=400&q=80',
+      },
       titleFallback: t('OnboardingScreen.copy5'),
       bodyFallback: t('OnboardingScreen.copy6'),
     },
@@ -125,15 +129,14 @@ export default function OnboardingScreen() {
             className="self-stretch h-full overflow-hidden items-center justify-center"
             style={{
               borderRadius: illustrationCard.radius,
-              backgroundColor:
-                item.id === '3'
-                  ? mobileSurfaces.tint.verifiedSoft
-                  : item.id === '2'
-                    ? mobileSurfaces.tint.primarySubtle
-                    : mobileSurfaces.tint.primaryStrong,
+              backgroundColor: colors.muted,
             }}
           >
-            <item.icon size={illustrationCard.iconSize} color={item.iconColor} />
+            <Image
+              source={item.image}
+              style={{ width: '100%', height: '100%' }}
+              resizeMode="cover"
+            />
             {item.id === '1' ? (
               <View
                 className="absolute bottom-6 left-6 rounded-xl px-lg py-sm"

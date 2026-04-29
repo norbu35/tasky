@@ -18,10 +18,12 @@ jest.mock('@gorhom/bottom-sheet', () => {
         children,
         index = 0,
         testID = 'mock-bottom-sheet',
+        footerComponent,
       }: {
         children?: ReactNode;
         index?: number;
         testID?: string;
+        footerComponent?: (props: Record<string, unknown>) => ReactNode;
       },
       ref: Ref<{ close: () => void; snapToIndex: (index: number) => void }>,
     ) => {
@@ -34,13 +36,23 @@ jest.mock('@gorhom/bottom-sheet', () => {
         return null;
       }
 
-      return React.createElement(View, { testID }, children);
+      const footerNode = footerComponent
+        ? footerComponent({ animatedFooterPosition: 0, animatedPosition: 0 })
+        : null;
+
+      return React.createElement(View, { testID }, children, footerNode);
     },
   );
   BottomSheet.displayName = 'MockBottomSheet';
 
   const BottomSheetView = ({ children, ...props }: { children?: ReactNode }) =>
     React.createElement(View, props, children);
+
+  const BottomSheetScrollView = ({ children, ...props }: { children?: ReactNode }) =>
+    React.createElement(View, props, children);
+
+  const BottomSheetFooter = ({ children }: { children?: ReactNode }) =>
+    React.createElement(View, { testID: 'mock-bottom-sheet-footer' }, children);
 
   const BottomSheetBackdrop = (props: Record<string, unknown>) =>
     React.createElement(View, { ...props, testID: 'mock-bottom-sheet-backdrop' });
@@ -50,6 +62,8 @@ jest.mock('@gorhom/bottom-sheet', () => {
     default: BottomSheet,
     BottomSheetBackdrop,
     BottomSheetView,
+    BottomSheetScrollView,
+    BottomSheetFooter,
   };
 });
 

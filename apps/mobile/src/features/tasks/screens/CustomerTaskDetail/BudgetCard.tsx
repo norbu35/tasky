@@ -18,8 +18,9 @@ interface BudgetCardProps {
 
 export function BudgetCard({ budget, applicantCount, t }: BudgetCardProps) {
   return (
-    <View className="bg-primary-deep rounded-lg p-lg gap-sm" style={elevations.soft}>
-      <View className="flex-row items-center justify-between">
+    <View className="flex-row gap-sm">
+      {/* Budget stat card */}
+      <View className="flex-1 bg-primary-deep rounded-2xl p-lg gap-xs" style={elevations.soft}>
         <Text
           className="text-caption font-bold uppercase"
           style={{
@@ -29,21 +30,29 @@ export function BudgetCard({ budget, applicantCount, t }: BudgetCardProps) {
         >
           {t('TaskDetailCustomerScreen.budgetLabel')}
         </Text>
-        <View
-          className="px-sm py-xs rounded-full"
-          style={{ backgroundColor: tint.primaryForegroundSoft }}
+        <Text
+          className="text-secondary font-extrabold"
+          style={{ fontSize: typography.heroTitle, lineHeight: taskDetail.budgetLineHeight }}
         >
-          <Text className="text-micro font-bold text-primary-foreground">
-            {applicantCount} {t('TaskDetailCustomerScreen.applicants')}
-          </Text>
-        </View>
+          {formatBudget(budget)}
+        </Text>
       </View>
-      <Text
-        className="text-secondary font-extrabold"
-        style={{ fontSize: typography.heroTitle, lineHeight: taskDetail.budgetLineHeight }}
-      >
-        {formatBudget(budget)}
-      </Text>
+
+      {/* Applicants stat card */}
+      <View className="flex-1 bg-muted rounded-2xl p-lg gap-xs justify-between">
+        <Text
+          className="text-caption font-bold uppercase text-text-secondary"
+          style={{ letterSpacing: taskDetail.sectionTracking }}
+        >
+          {t('TaskDetailCustomerScreen.applicants')}
+        </Text>
+        <Text
+          className="text-primary-deep font-extrabold"
+          style={{ fontSize: typography.heroTitle, lineHeight: taskDetail.budgetLineHeight }}
+        >
+          {applicantCount}
+        </Text>
+      </View>
     </View>
   );
 }

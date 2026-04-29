@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { Platform } from 'react-native';
 
-import { registerDevice } from '../features/notifications/api';
+import { registerDevice, unregisterDevice } from '../features/notifications/api';
 import { registerForPushNotificationsAsync } from '../lib/notifications';
 import { useAuthStore } from '../store/authStore';
 
@@ -22,22 +22,40 @@ export function useNotificationContext() {
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const [pushToken, setPushToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { session } = useAuthStore();
+  const session = useAuthStore((s) => s.session);
+
+  // Refs survive across renders so the cleanup path can read the latest
+  // push token even after the state setter has queued an update.
+  const pushTokenRef = useRef<string | null>(null);
+  const prevSessionRef = useRef(session);
 
   useEffect(() => {
+    const prev = prevSessionRef.current;
+    prevSessionRef.current = session;
+
+    // ── Session cleared — unregister push token from previous user ────
+    // The previous access token is still server-valid (only the local
+    // store was cleared), so the unregister call will succeed.
+    if (prev?.accessToken && !session?.accessToken && pushTokenRef.current) {
+      void unregisterDevice(prev.accessToken, pushTokenRef.current).catch(() => {});
+    }
+
     // Only attempt to register if the user is authenticated
     if (!session?.accessToken) return;
 
     registerForPushNotificationsAsync()
       .then(async (result) => {
         if (result.error) {
-          console.warn('[Notifications] Setup error:', result.error);
+          if (__DEV__) {
+            console.warn('[Notifications] Setup error:', result.error);
+          }
           setError(result.error);
           return;
         }
 
         if (result.token) {
           setPushToken(result.token);
+          pushTokenRef.current = result.token;
 
           // Register the token with the Tasky backend
           try {
@@ -46,12 +64,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
               platform: Platform.OS === 'ios' ? 'IOS' : 'ANDROID',
             });
           } catch (e) {
-            console.error('[Notifications] Failed to sync token to backend', e);
+            if (__DEV__) {
+              console.error('[Notifications] Failed to sync token to backend', e);
+            }
           }
         }
       })
       .catch((e) => setError(String(e)));
-  }, [session?.accessToken]);
+  }, [session]);
 
   return (
     <NotificationContext.Provider value={{ pushToken, error }}>
