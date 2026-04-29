@@ -31,16 +31,10 @@ References:
 - No deep `../../` imports in `src/**`.
 - `screens/` is not a dumping ground for helpers or barrels.
 - Orchestration hooks under `screens/` use the `Screen` suffix; domain hooks outside `screens/` do not.
-- Use `ModalSheetTemplate` from `src/components/templates` for bottom-sheet composition; `ActionSheet` and `ConfirmSheet` are wrappers over that template. Do not reintroduce a separate UI `ModalSheet` primitive.
-- Prefer token-backed NativeWind utilities for touch and badge sizing (`min-h-touch-lg`, `min-h-touch-xl`, `size-touch`, `size-touch-sm`, `tracking-badge`) before adding bracketed one-off values.
 
 ## I18n
 
 Follow the canonical i18n rules in root `AGENTS.md`. Mobile locale files: `apps/mobile/src/locales/{en,mn}/translation.json`. Do not create or use shared client locale files.
-
-## Env
-
-Mobile app env is app-local. Copy `apps/mobile/.env.example` to `apps/mobile/.env` for Expo and native builds. Use `EXPO_PUBLIC_*` only for values that may be bundled into the client, and keep native SDK keys such as Google Maps in the mobile env file. Do not read the root `.env` from mobile app or native config code for app-owned client/native settings.
 
 ## Screen Workflow
 
@@ -53,11 +47,9 @@ For new, redesigned, or behavior-changing mobile screens:
 
 ## Mobile Testing Rules
 
-- Follow the root testing discipline: mobile tests should cover stable screen behavior, journey/scenario rules, accessibility or structural invariants, not one-off bug observations.
 - Before writing or changing mobile integration tests for launch behavior, check `tests/registry.yaml` and the relevant `tests/scenarios/<domain>.md`.
 - If a touched mobile behavioral test has a clean scenario match, name it `SCN-XXX-NNN: <exact title from scenario file>`.
 - If no scenario covers the behavior and you are not the designated scenario curator, stop and report the gap.
-- When a mobile bug exposes a real product rule, update or strengthen the screen/journey/scenario-backed test that owns the rule; do not add a narrow regression whose only purpose is to remember that specific bug.
 - Keep `TID-*` for mobile-only technical checks (token binding, parity, accessibility, structural smoke).
 - Stack: Jest + RNTL. For auth, payments, wallet, migrations, or `SecurityConfig` changes, write positive and negative tests and call them out in the PR.
 

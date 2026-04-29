@@ -27,10 +27,6 @@ References:
 
 Follow the canonical i18n rules in root `AGENTS.md`. Web locale files: `apps/web/src/locales/{en,mn}/translation.json`. Do not create or use shared client locale files.
 
-## Env
-
-Web app env is app-local. Copy `apps/web/.env.example` to `apps/web/.env.local` for local development. Vite loads env files from `apps/web`, not the monorepo root. Keep browser-exposed values under `VITE_*`; do not read the root `.env` from web app code and do not put secrets in web env files.
-
 ## Web Testing Rules
 
 - Before writing or changing web integration or E2E tests for launch behavior, check `tests/registry.yaml` and the relevant `tests/scenarios/<domain>.md`.

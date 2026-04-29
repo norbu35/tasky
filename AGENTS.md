@@ -42,13 +42,6 @@ On conflict, the more specific surface wins unless it contradicts a higher gover
 - Branches flow `feature/*` → `staging` → `main`. Promote `staging` to `main` only after full local verification passes.
 - Do not bypass `.husky/pre-push` with `--no-verify` (or equivalent) for pushes that target `staging` or `main`. This is the canonical statement; downstream files do not restate it.
 
-## Env File Ownership
-
-- Root `.env` and `.env*.example` files are for the monorepo stack, backend runtime, infrastructure services, and deployment orchestration.
-- Web local client config lives in `apps/web/.env.local`, seeded from `apps/web/.env.example`. Keep browser-exposed values under `VITE_*`; never put secrets there.
-- Mobile local client/native config lives in `apps/mobile/.env`, seeded from `apps/mobile/.env.example`. Keep JS-exposed values under `EXPO_PUBLIC_*`; never put secrets there.
-- App code must not read the root `.env` directly for app-owned client config. Use real process env plus the app-local env file. Deployment compose/build scripts may still pass app build args from deployment env files when they are orchestration inputs.
-
 ## I18n Rules (canonical)
 
 Frontend code consumes i18n via `react-i18next` with locale keys; web and mobile each own their locales.
@@ -61,14 +54,6 @@ Frontend code consumes i18n via `react-i18next` with locale keys; web and mobile
 - Run `pnpm verify:i18n` after touching frontend copy, locale files, i18n setup, or tests that render translated UI.
 
 `apps/web/AGENTS.md` and `apps/mobile/AGENTS.md` reference these rules; they do not restate them.
-
-## Testing Discipline (canonical)
-
-- Tests are durable checks for product behavior, contracts, scenarios, and reusable technical invariants. They are not a changelog of incidental bugs found during implementation.
-- Before adding or changing behavioral tests, trace the behavior through the governing `REQ-P1`/`NFR`, `JRN`, `SCR`, and existing `SCN` IDs. Prefer strengthening an existing scenario-backed test over adding a new narrowly tailored case.
-- Do not add one-off regression tests for isolated findings, transient environment issues, or local implementation mistakes. If a finding exposes a durable product rule, encode the rule at the scenario/spec level and test that broader behavior.
-- If no scenario/spec owns the behavior and you are not explicitly asked to curate scenarios, report the coverage gap instead of freezing the one-off observation into the test suite.
-- Narrow technical guardrail tests are allowed when they protect a shared invariant, tooling contract, or cross-cutting boundary; name and place them as technical checks rather than product-scenario regressions.
 
 ## Workflow Rules (triggers)
 
@@ -126,22 +111,3 @@ Pick the smallest gate that matches the claim. Areas declare their own defaults 
 | Nightly regression           | `./gradlew gateRegression`, `./gradlew gateFull` |
 
 `./gradlew gateSmoke` is fast local critical-scenario confidence, not the singular pre-merge source of truth.
-
-## Graphify
-
-This project tracks a Graphify knowledge graph in `graphify-out/` as advisory navigation context. Governing docs in
-the discovery path still win; Graphify never overrides `docs/PRD.md`, maintenance policy, area `AGENTS.md`, OpenAPI, or
-design contracts.
-
-Rules:
-
-- Run `pnpm repo:graph:setup` after installing or upgrading Graphify. The wrapper uses uv, runs
-  `graphify codex install`, enables Codex `multi_agent` for parallel extraction, and normalizes the generated
-  PreToolUse hook to the Codex-supported top-level `systemMessage` payload.
-- For architecture or codebase orientation, start with `graphify-out/GRAPH_REPORT.md`. If `graphify-out/wiki/index.md`
-  exists, use the wiki for graph navigation before broad raw-file reads.
-- Use `pnpm repo:graph:query -- "<question>" [--budget N]` for focused graph lookups.
-- After modifying code or tooling source in this session, run `pnpm repo:graph:update` to refresh
-  `graphify-out/GRAPH_REPORT.md`, `graphify-out/graph.json`, and `graphify-out/wiki/**`.
-- Do not install Graphify git hooks by default. This repo uses explicit `repo:graph:*` commands to avoid
-  post-commit/post-checkout dirty-tree churn.

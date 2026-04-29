@@ -45,7 +45,6 @@ These commands are conditional, not default finish gates:
 - Keep one canonical path per concern. Prefer shared scripts and root aliases over duplicated workflow logic.
 - Every script in `tooling/scripts/**` must be classified in `tooling/config/ops-registry.yaml`. `blocking` and `called_by_script` scripts must have an executable caller in `package.json`, `.github/workflows/**`, Gradle, compose, hooks, or another script. Manual-only scripts must stay classified as `manual`.
 - After package-script, hook, workflow, compose, or tooling-script wiring changes, run `pnpm repo:ops:sync --fix` and commit the refreshed generated inventory.
-- `pnpm repo:ops:sync --fix` owns the canonical YAML serialization of `tooling/config/ops-registry.yaml`; review the semantic entries it logs rather than preserving hand formatting.
 - Generated outputs must be regenerated through their owning script, not hand-maintained as independent authority.
 - Merge-gate workflow edits must keep the docs lane wired into `quality-gates.yml` through `pnpm verify:cleanup`, and any change to that wiring must update `tooling/config/ops-registry.yaml`, `tooling/scripts/gates/check-ops-config.mjs`, and the docs that describe the gate in the same change.
 - Design navigation/lifecycle docs and screen specs are machine-readable contracts: keep ID-bearing fields free of prose placeholders; require canonical `SCR-*`, `JRN-*`, lifecycle IDs, and `traceability.status` fields before considering the change complete.
