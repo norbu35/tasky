@@ -78,9 +78,9 @@ key: tasky.automation.broker.enabled
 ## Internationalization — BackendMessageResolver
 
 `BackendMessageResolver` resolves localized strings from Spring `MessageSource` backed by
-`src/main/resources/i18n/messages_en.properties` and `messages_mn.properties`.
+`services/api/src/main/resources/i18n/messages_en.properties` and `messages_mn.properties`.
 
-- `message(key, defaultMessage, args...)` — resolves against `LocaleContextHolder` locale.
+- `message(key, defaultMessage, args...)` — resolves against the current thread locale (Spring LocaleContextHolder).
 - `messageForLocale(localeTag, key, defaultMessage, args...)` — resolves against a caller-supplied
   locale tag (used by workflow handlers that carry locale from the event envelope).
 - `errorMessage(code, defaultMessage)` — resolves `error.<code>` key; used by `RateLimitFilter`,
