@@ -27,7 +27,7 @@
   "devDependencies": {
     "@tasky/tooling-config": "workspace:*",
     "openapi-typescript": "7.13.0",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.3",
     "typescript": "~5.9.2"
   }
 }
