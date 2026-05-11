@@ -1,5 +1,5 @@
 {
-  "_generated_from_migrations": "V1 through V1",
+  "_generated_from_migrations": "V1 through V2",
   "_description": "Canonical schema inventory. Regenerate with: python3 tooling/scripts/governance/validate-schema-parity.py --update-expected",
   "tables": {
     "analytics_events": {
@@ -444,6 +444,12 @@
         "pricing_mode": ["BUDGET", "QUOTE"],
         "scope_summary_source": ["LLM", "TEMPLATE", "USER_EDITED"],
         "status": ["ASSIGNED", "CANCELLED", "COMPLETED", "NO_SHOW", "OPEN"]
+      }
+    },
+    "user_consents": {
+      "columns": ["accepted_at", "id", "policy_kind", "user_id", "version"],
+      "check_constraints": {
+        "policy_kind": ["PRIVACY", "TOS"]
       }
     },
     "users": {

@@ -24,6 +24,7 @@ import mn.tasky.auth.dto.AuthUser;
 import mn.tasky.auth.dto.OtpChallenge;
 import mn.tasky.auth.dto.RefreshSession;
 import mn.tasky.auth.dto.UserProfileState;
+import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.security.CryptoService;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.common.security.JwtTokenService;
@@ -69,6 +70,7 @@ public class AuthService {
     private final UserStatusResolver userStatusResolver;
     private final MeterRegistry meterRegistry;
     private final TokenBlacklistService tokenBlacklistService;
+    private final AuditEventDao auditEventDao;
 
     public AuthService(
             JwtTokenService jwtTokenService,
@@ -85,6 +87,7 @@ public class AuthService {
             UserStatusResolver userStatusResolver,
             MeterRegistry meterRegistry,
             TokenBlacklistService tokenBlacklistService,
+            AuditEventDao auditEventDao,
             @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled,
             @Value("${tasky.otp.enabled:false}") boolean otpEnabled,
             @Value("${tasky.auth.otp-ttl-seconds:300}") long otpTtlSeconds,
@@ -103,6 +106,7 @@ public class AuthService {
         this.userStatusResolver = userStatusResolver;
         this.meterRegistry = meterRegistry;
         this.tokenBlacklistService = tokenBlacklistService;
+        this.auditEventDao = auditEventDao;
         this.devAuthEnabled = devAuthEnabled;
         this.otpEnabled = otpEnabled;
         this.otpTtlSeconds = otpTtlSeconds;
@@ -248,6 +252,12 @@ public class AuthService {
             meterRegistry
                     .counter("tasky.auth.login_attempts", "method", "otp", "result", "failure")
                     .increment();
+            auditEventDao.insert(
+                    (String) null,
+                    "LOGIN_FAILURE",
+                    "user",
+                    (String) null,
+                    "{\"reason\":\"no_challenge\",\"method\":\"otp\"}");
             return Optional.empty();
         }
 
@@ -257,6 +267,12 @@ public class AuthService {
             meterRegistry
                     .counter("tasky.auth.login_attempts", "method", "otp", "result", "failure")
                     .increment();
+            auditEventDao.insert(
+                    (String) null,
+                    "LOGIN_FAILURE",
+                    "user",
+                    (String) null,
+                    "{\"reason\":\"expired\",\"method\":\"otp\"}");
             return Optional.empty();
         }
 
@@ -271,6 +287,12 @@ public class AuthService {
             meterRegistry
                     .counter("tasky.auth.login_attempts", "method", "otp", "result", "failure")
                     .increment();
+            auditEventDao.insert(
+                    (String) null,
+                    "LOGIN_FAILURE",
+                    "user",
+                    (String) null,
+                    "{\"reason\":\"invalid_code\",\"method\":\"otp\"}");
             return Optional.empty();
         }
 
@@ -298,6 +320,12 @@ public class AuthService {
         meterRegistry
                 .counter("tasky.auth.login_attempts", "method", "otp", "result", "success")
                 .increment();
+        auditEventDao.insert(
+                effectiveUser.id().toString(),
+                "LOGIN_SUCCESS",
+                "user",
+                effectiveUser.id().toString(),
+                null);
         return Optional.of(issueSession(effectiveUser));
     }
 
@@ -387,6 +415,7 @@ public class AuthService {
      * @throws AccountRestrictedException when account status resolves to suspended or banned.
      */
     public AuthSession facebookLogin(String accessToken) {
+        auditEventDao.insert((String) null, "FACEBOOK_AUTH_ATTEMPT", "user", (String) null, null);
         String token = accessToken.strip();
         try {
             String debugTokenUserId = facebookGraphClient.debugToken(token);
@@ -418,6 +447,12 @@ public class AuthService {
             meterRegistry
                     .counter("tasky.auth.login_attempts", "method", "facebook", "result", "success")
                     .increment();
+            auditEventDao.insert(
+                    user.id().toString(),
+                    "FACEBOOK_AUTH_SUCCESS",
+                    "user",
+                    user.id().toString(),
+                    null);
             return issueSession(effectiveUser);
         } catch (AccountRestrictedException e) {
             throw e;
@@ -550,6 +585,7 @@ public class AuthService {
                 user.createdAt(),
                 user.updatedAt());
         AuthSession rotated = issueSession(effectiveUser);
+        auditEventDao.insert(parsed.userId().toString(), "TOKEN_REFRESH", "session", (String) null, null);
         return Optional.of(new AuthTokens(rotated.accessToken(), rotated.refreshToken()));
     }
 
@@ -559,6 +595,7 @@ public class AuthService {
      * @param jti the JWT ID claim from the access token being revoked
      */
     public void logout(String jti) {
+        auditEventDao.insert((String) null, "LOGOUT", "session", jti, null);
         tokenBlacklistService.revoke(jti);
     }
 }
