@@ -18,14 +18,19 @@ Current assessed state on 2026-04-22:
 - `ready for staging` for the private VPS sandbox path
 - not `ready for production`
 
-## 3. Current production blockers
+## 3. Production runbook
+
+The canonical production runbook lives at [`docs/maintenance/PRODUCTION_RUNBOOK.md`](PRODUCTION_RUNBOOK.md).
+Every section must be filled (zero `_TODO` markers) before the readiness state can move to `ready for production`.
+
+## 4. Current production blockers
 
 1. No release-grade staging environment with real Facebook OAuth callback rehearsal.
 2. No recorded live staging rehearsal evidence on a real host.
 3. Remaining blocker-grade backend scenario gaps listed in the active QA registry flow.
 4. Launch dashboarding and alert routing are not yet verified against a deployed environment.
 
-## 4. Required runtime controls
+## 5. Required runtime controls
 
 The following controls must remain intact:
 
@@ -39,29 +44,29 @@ The following controls must remain intact:
 - DB-backed feature toggles with auditability
 - backup and restore scripts plus rehearsal evidence
 
-## 5. Verification expectations
+## 6. Verification expectations
 
-### 5.1 Local and CI
+### 6.1 Local and CI
 
 - Local baseline verification is documented in `AGENTS.md` and `docs/maintenance/OPERATING_MODEL.md`.
 - Merge CI is `quality-gates.yml` on pushes to `main` and `staging`.
 - Release gate is `release-gate.yml`.
 - Nightly regression is `nightly-regression` when manually dispatched plus `./gradlew gateRegression`.
 
-### 5.2 Launch evidence expectations
+### 6.2 Launch evidence expectations
 
 - backend and frontend checks remain green at the appropriate gate
 - unresolved blocker-grade scenario gaps are either closed or explicitly waived with signoff
 - staging smoke or rehearsal evidence exists
 
-## 6. Environment readiness
+## 7. Environment readiness
 
 - The private VPS sandbox deploy path remains working.
 - Release-grade staging must run with production-like auth posture and reachable Facebook callbacks.
 - Production secrets must remain outside the repository.
 - Runtime dependencies must include Postgres + PostGIS, PgBouncer, S3-compatible storage, and Firebase credentials.
 
-## 7. Launch KPI and dashboard gate
+## 8. Launch KPI and dashboard gate
 
 Production launch must not proceed without a real dashboard for all seven approved Phase 1 metrics. Metric formulas, thresholds, denominator rules, and data-quality policy are defined in `docs/METRICS.md`:
 
@@ -81,7 +86,7 @@ Rules:
 - KPI computation must come from backend-exported business metrics, not ad hoc dashboard SQL.
 - Native confirmation and self-serve reporting must not count successes that occur after assisted or manual intervention.
 
-## 8. Incident severity and ownership
+## 9. Incident severity and ownership
 
 Tasky is operated by a small founder-led team.
 
@@ -93,7 +98,7 @@ Tasky is operated by a small founder-led team.
 | `SEV-2`  | Core flow degraded but partially usable | Stop new releases, mitigate quickly, roll back if unstable                 |
 | `SEV-3`  | Non-critical defect with workaround     | Record, prioritize, and fix in the maintenance lane                        |
 
-## 9. Rollback triggers
+## 10. Rollback triggers
 
 Roll back immediately if any of the following occur after deploy:
 
@@ -103,7 +108,7 @@ Roll back immediately if any of the following occur after deploy:
 4. Migration issues corrupt or block launch-critical flows.
 5. Hard-gate KPI or operational alert thresholds breach in a sustained way during the launch window.
 
-## 10. Exit criteria for `ready for production`
+## 11. Exit criteria for `ready for production`
 
 The recommendation may move to `ready for production` only when:
 
@@ -113,7 +118,7 @@ The recommendation may move to `ready for production` only when:
 4. Backup, restore, and rollback have been rehearsed.
 5. The Phase 1 baseline remains intact: citywide Ulaanbaatar launch, no payment-protection promise, and later-phase toggles still off.
 
-## 11. Commerce-pilot readiness
+## 12. Commerce-pilot readiness
 
 Platform fees, recurring cleaning, manual B2B account reporting, paid memberships, escrow, wallet, and payout surfaces
 are outside the Phase 1 production-readiness gate. Before any post-launch commerce pilot is activated, the activation
@@ -128,7 +133,7 @@ evidence in `docs/maintenance/FEATURE_ACTIVATION_POLICY.md` must exist, includin
 
 ---
 
-## 12. Pre-deployment audit go/no-go signoff (2026-05-11)
+## 13. Pre-deployment audit go/no-go signoff (2026-05-11)
 
 Comprehensive pre-deployment audit executed per `audit/REPORT.md`. Full backlog in `audit/REMEDIATION_BACKLOG.md`.
 
