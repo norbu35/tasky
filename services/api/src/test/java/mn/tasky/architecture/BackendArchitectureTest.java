@@ -44,7 +44,8 @@ class BackendArchitectureTest {
             "mn.tasky.auth.application.ReliabilityScoreService -> mn.tasky.booking.dao.BookingDao",
             "mn.tasky.auth.application.ReliabilityScoreService -> mn.tasky.review.dao.ReviewDao",
             "mn.tasky.booking.application.BookingIntentService -> mn.tasky.analytics.application.AnalyticsService",
-            "mn.tasky.booking.application.BookingIntentService -> mn.tasky.notification.application.NotificationService",
+            "mn.tasky.booking.application.BookingIntentService -> "
+                    + "mn.tasky.notification.application.NotificationService",
             "mn.tasky.booking.application.BookingIntentService -> mn.tasky.task.dao.TaskApplicationDao",
             "mn.tasky.booking.application.BookingIntentService -> mn.tasky.task.dao.TaskDao",
             "mn.tasky.booking.application.BookingLifecycleService -> mn.tasky.auth.application.ModerationService",
