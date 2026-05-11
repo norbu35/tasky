@@ -108,6 +108,20 @@ public interface UserDao {
     void updatePhoneAndBlindIndex(
             @Bind("id") UUID id, @Bind("phone") String phone, @Bind("phoneBlindIdx") String phoneBlindIdx);
 
+    @SqlQuery("SELECT id, phone, facebook_id, role, status, primary_auth, created_at, updated_at "
+            + "FROM users WHERE apple_sub = :appleSub")
+    Optional<AuthUser> findByAppleSub(@Bind("appleSub") String appleSub);
+
+    @SqlUpdate("INSERT INTO users (id, apple_sub, role, status, primary_auth, created_at) "
+            + "VALUES (:id, :appleSub, 'CUSTOMER', 'ACTIVE', 'APPLE', now())")
+    void insertWithApple(@Bind("id") UUID id, @Bind("appleSub") String appleSub);
+
+    default AuthUser createWithApple(String appleSub) {
+        UUID id = UUID.randomUUID();
+        insertWithApple(id, appleSub);
+        return findByAppleSub(appleSub).orElseThrow();
+    }
+
     @SqlQuery("SELECT id, phone, facebook_id, role, status, primary_auth, created_at, updated_at FROM users")
     List<AuthUser> findAll();
 

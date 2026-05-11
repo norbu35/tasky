@@ -1,5 +1,5 @@
 {
-  "_generated_from_migrations": "V1 through V2",
+  "_generated_from_migrations": "V1 through V3",
   "_description": "Canonical schema inventory. Regenerate with: python3 tooling/scripts/governance/validate-schema-parity.py --update-expected",
   "tables": {
     "analytics_events": {
@@ -454,6 +454,7 @@
     },
     "users": {
       "columns": [
+        "apple_sub",
         "created_at",
         "facebook_id",
         "id",
