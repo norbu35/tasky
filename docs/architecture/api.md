@@ -511,7 +511,7 @@ Standardized error response:
   - `JwtTokenService` validates signature, expiry, issuer, audience, and token type on every parse.
   - Facebook OAuth is the only launch authentication method for new sessions.
   - Any non-launch auth residue must remain disabled and absent from launch UX.
-- **Token revocation**: `TokenBlacklistService` holds an in-memory Caffeine cache of revoked `jti` values with a 15-minute TTL (matching access token lifetime). The logout endpoint (`POST /api/v1/auth/logout`) revokes the current access token's JTI. The blacklist is also consulted on STOMP `CONNECT` when messaging is enabled.
+- **Token revocation**: `TokenBlacklistService` dual-writes revoked `jti` values to both an in-memory Caffeine cache (15-minute TTL, hot path) and the `token_blacklist` PostgreSQL table (persistence across restarts). The logout endpoint (`POST /api/v1/auth/logout`) revokes both the access token JTI and, when a `refreshToken` is provided in the request body, the associated refresh session. The blacklist is also consulted on STOMP `CONNECT` when messaging is enabled. Expired blacklist rows are pruned periodically by `RateLimitCleanupScheduler`.
 - **Authorization**:
   - `SecurityConfig` enforces role boundaries for launch surfaces: task posting and draft flows for customers, verification/service-area flows for taskers, booking/review/dispute/messaging flows for booking participants, and admin-only operator surfaces.
   - `JwtAuthenticationFilter` rejects `BANNED`, `SUSPENDED`, and `DELETED` users on authenticated requests, refresh-token rotation, and auth entry points.
@@ -548,7 +548,7 @@ class: mn.tasky.common.security.JwtAuthenticationFilter
   - Any non-launch auth endpoints that still exist in code must stay disabled and must not leak into launch UX or policy.
   - When messaging is enabled, STOMP `SEND` frames are rate-limited and subscriptions are authorization-checked.
 - **Web frontend security**:
-  - `Caddyfile.production` sets a `Content-Security-Policy` header: `default-src 'self'`, `script-src` allows Facebook CDN and the inline polyfill hash, `style-src` allows Google Fonts, `connect-src` allows `wss:` and `graph.facebook.com`.
+  - `Caddyfile.production` sets a `Content-Security-Policy` header: `default-src 'self'`, `script-src` allows Facebook CDN and the inline polyfill hash, `style-src` allows Google Fonts, `connect-src` allows `'self'` (covers WebSocket via Caddy reverse proxy) and `graph.facebook.com`.
   - Built JS/CSS chunks include `integrity` (SRI) attributes generated at build time.
 - **Data privacy**:
   - Government ID images are stored in a private object store and served to admin only through short-lived presigned URLs.

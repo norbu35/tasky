@@ -141,25 +141,25 @@ Comprehensive pre-deployment audit executed per `audit/REPORT.md`. Full backlog 
 
 Production deploy is gated on **zero open P0** items.
 
-| ID    | Category          | Finding                                          | Status    | Resolved by |
-| ----- | ----------------- | ------------------------------------------------ | --------- | ----------- |
-| P0-01 | Mobile security   | Android release signing uses debug keystore      | ✅ Closed | T9          |
-| P0-02 | Infrastructure    | Host firewall not documented                     | ✅ Closed | T6          |
-| P0-03 | Infrastructure    | SSH hardening not documented                     | ✅ Closed | T6          |
-| P0-04 | Database          | Encryption at rest not verified/documented       | ✅ Closed | T6          |
-| P0-05 | Database          | Offsite backup copy not configured               | ✅ Closed | T3          |
-| P0-06 | Database          | Restore drill not exercised                      | ✅ Closed | T13         |
-| P0-07 | Data governance   | PII inventory document not produced              | ✅ Closed | T2          |
-| P0-08 | Observability     | Missing disk-free and backup-stale alerts        | ✅ Closed | T4          |
-| P0-09 | Observability     | Alertmanager destination is placeholder          | ✅ Closed | T4          |
-| P0-10 | Observability     | No crash reporting (Sentry/Crashlytics)          | ✅ Closed | T5          |
-| P0-11 | Incident response | No on-call/paging mechanism documented           | ✅ Closed | T6          |
-| P0-12 | Operations        | Production runbook does not exist                | ✅ Closed | T1+T13      |
-| P0-13 | App store         | App Privacy questionnaire not produced           | ✅ Closed | T8          |
-| P0-14 | App store         | ATT not implemented for iOS                      | ✅ Closed | T10         |
-| P0-15 | App store         | Sign in with Apple not implemented               | ✅ Closed | T10         |
-| P0-16 | Legal             | Privacy Policy / ToS not published at public URL | ✅ Closed | T8          |
-| P0-17 | Legal             | Signup consent not captured                      | ✅ Closed | T8          |
+| ID    | Category          | Finding                                          | Status     | Resolved by |
+| ----- | ----------------- | ------------------------------------------------ | ---------- | ----------- |
+| P0-01 | Mobile security   | Android release signing uses debug keystore      | ✅ Closed  | T9          |
+| P0-02 | Infrastructure    | Host firewall not documented                     | ✅ Closed  | T6          |
+| P0-03 | Infrastructure    | SSH hardening not documented                     | ✅ Closed  | T6          |
+| P0-04 | Database          | Encryption at rest not verified/documented       | ✅ Closed  | T6          |
+| P0-05 | Database          | Offsite backup copy not configured               | ✅ Closed  | T3          |
+| P0-06 | Database          | Restore drill not exercised                      | ✅ Closed  | T13         |
+| P0-07 | Data governance   | PII inventory document not produced              | ✅ Closed  | T2          |
+| P0-08 | Observability     | Missing disk-free and backup-stale alerts        | ✅ Closed  | T4          |
+| P0-09 | Observability     | Alertmanager destination is placeholder          | ✅ Closed  | T4          |
+| P0-10 | Observability     | No crash reporting (Sentry/Crashlytics)          | ✅ Closed  | T5          |
+| P0-11 | Incident response | No on-call/paging mechanism documented           | ✅ Closed  | T6          |
+| P0-12 | Operations        | Production runbook does not exist                | ✅ Closed  | T1+T13      |
+| P0-13 | App store         | App Privacy questionnaire not produced           | ✅ Closed  | T8          |
+| P0-14 | App store         | ATT not implemented for iOS                      | ✅ Closed  | T10         |
+| P0-15 | App store         | Sign in with Apple — deferred, not in PRD        | ⏸ Deferred | —           |
+| P0-16 | Legal             | Privacy Policy / ToS not published at public URL | ✅ Closed  | T8          |
+| P0-17 | Legal             | Signup consent not captured                      | ✅ Closed  | T8          |
 
 ### P1 findings — should fix before or shortly after launch
 

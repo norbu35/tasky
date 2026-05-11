@@ -116,5 +116,5 @@ cd apps/mobile && npx expo config --type public | jq '.android'
 - [ ] Screenshots uploaded for 6.7", 6.5", 5.5" (en + mn)
 - [ ] App Review Information: demo account, contact info
 - [ ] App Privacy nutrition label completed (matches APP_PRIVACY_QUESTIONNAIRE.md)
-- [ ] Sign in with Apple capability enabled in Apple Developer portal
+- [ ] Sign in with Apple capability enabled in Apple Developer portal _(deferred -- not in Phase 1 PRD)_
 - [ ] ATT usage description present in Info.plist

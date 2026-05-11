@@ -171,15 +171,7 @@
 
 ### P0-15: Implement Sign in with Apple
 
-- **Section:** §10
-- **Owner:** Backend + mobile developer
-- **Acceptance criteria:**
-  1. Apple Developer account configured with "Sign in with Apple" capability
-  2. Backend endpoint `/api/v1/auth/apple` validates Apple identity token
-  3. Mobile app shows "Sign in with Apple" button on iOS (required when Facebook Login is offered)
-  4. Apple credential stored/retrieved via Keychain
-- **Estimated effort:** L (6–10 hours)
-- **Files:** Backend: new controller + service. Mobile: new auth flow, `app.config.ts`
+> **DEFERRED** — Not in PRD for Phase 1. Apple Sign-In was implemented and then removed (2026-05-11 security remediation) after audit found 3 Critical vulnerabilities in the implementation. Revisit only when PRD explicitly includes this feature. ATT (P0-14) remains in scope when Facebook Login ships on iOS.
 
 ### P0-16: Publish Privacy Policy and Terms of Service at public URL
 
