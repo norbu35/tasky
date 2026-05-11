@@ -16,25 +16,5 @@ route:
 receivers:
   - name: webhook
     webhook_configs:
-      - url: '__ALERT_WEBHOOK_URL__'
+      - url: '${ALERT_WEBHOOK_URL}'
         send_resolved: true
-
-  # ── Email receiver (uncomment and configure for production) ──────────
-  # - name: email
-  #   email_configs:
-  #     - to: ops@example.com
-  #       from: alertmanager@tasky.example.com
-  #       smarthost: smtp.example.com:587
-  #       auth_username: alertmanager@tasky.example.com
-  #       auth_password: "{{ .EnvAlertEmailPassword }}"
-  #       require_tls: true
-  #       headers:
-  #         Subject: "[Tasky Alert] {{ .GroupLabels.alertname }}"
-
-  # ── Slack receiver (uncomment and configure for production) ──────────
-  # - name: slack
-  #   slack_configs:
-  #     - api_url: "{{ .EnvSlackWebhookUrl }}"
-  #       channel: "#tasky-alerts"
-  #       title: "{{ .GroupLabels.alertname }}"
-  #       text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"

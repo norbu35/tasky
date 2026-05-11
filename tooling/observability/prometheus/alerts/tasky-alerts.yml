@@ -65,6 +65,36 @@ groups:
       #       Firebase push notification delivery error rate exceeds 10% over 15 minutes.
       #       Treat as SEV-2: mitigation required before production confidence can increase.
 
+      - alert: DiskFreeLow
+        expr: >-
+          (node_filesystem_avail_bytes{mountpoint="/",fstype!~"tmpfs|nsfs"}
+          /
+          node_filesystem_size_bytes{mountpoint="/",fstype!~"tmpfs|nsfs"}) * 100 < 15
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Disk space below 15% on root filesystem'
+          description: >-
+            Root filesystem has {{ $value | printf "%.1f" }}% free space remaining.
+            Investigate large files, prune old backups, or expand the volume.
+            If below 5%, treat as SEV-2.
+          runbook_url: 'https://github.com/norbu/tasky/blob/main/docs/maintenance/PRODUCTION_RUNBOOK.md#14-per-alert-runbook-entries'
+
+      - alert: BackupStale
+        expr: >-
+          (time() - tasky_backup_last_success_unixtime) > 7200
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'No successful backup in over 2 hours'
+          description: >-
+            Last successful backup was {{ $value | printf "%.0f" }} seconds ago
+            (threshold: 7200s = 2h). Check backup-cron container logs:
+            docker logs tasky-backup-cron --tail 50
+          runbook_url: 'https://github.com/norbu/tasky/blob/main/docs/maintenance/PRODUCTION_RUNBOOK.md#8-backup-verification--offsite'
+
   # ── Product KPI alerts (section 11) ──────────────────────────────────
   # All rules below are placeholders. They require a custom event metrics
   # pipeline that aggregates from the events table (section 8) into

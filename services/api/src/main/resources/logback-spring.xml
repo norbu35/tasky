@@ -14,11 +14,13 @@
 
     <!-- Production: structured JSON for log aggregation -->
     <springProfile name="prod">
+        <conversionRule conversionWord="maskedMsg" converterClass="mn.tasky.kernel.logging.PiiMaskingConverter" />
         <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <includeMdcKeyName>correlationId</includeMdcKeyName>
                 <includeMdcKeyName>userId</includeMdcKeyName>
                 <includeMdcKeyName>traceId</includeMdcKeyName>
+                <customFields>{"log_type":"application"}</customFields>
             </encoder>
         </appender>
         <root level="INFO">
