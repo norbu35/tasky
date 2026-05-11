@@ -99,6 +99,8 @@ tasky:
     refresh-token-ttl-seconds: ${TASKY_REFRESH_TOKEN_TTL_SECONDS:1209600}
   qpay:
     webhook-secret: ${TASKY_QPAY_WEBHOOK_SECRET}
+  client:
+    min-version: ${TASKY_MIN_CLIENT_VERSION:}
   features:
     monetization-enabled: ${TASKY_FEATURE_MONETIZATION_ENABLED:false}
   cors:
