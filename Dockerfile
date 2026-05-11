@@ -1,5 +1,5 @@
 # digest: obtain with docker buildx imagetools inspect eclipse-temurin:21-jdk
-FROM eclipse-temurin:21-jdk@sha256:0000000000000000000000000000000000000000000000000000000000000000 AS build
+FROM eclipse-temurin:25-jdk@sha256:e23592541431eaeef5c13c84c21db71f97cdca0e70181ea6222ec9bccac24f6c AS build
 WORKDIR /workspace
 
 COPY gradlew gradlew
@@ -14,7 +14,7 @@ COPY docs/openapi docs/openapi
 RUN chmod +x gradlew && ./gradlew --no-daemon :services:api:bootJar
 
 # digest: obtain with docker buildx imagetools inspect eclipse-temurin:21-jre
-FROM eclipse-temurin:21-jre@sha256:0000000000000000000000000000000000000000000000000000000000000000
+FROM eclipse-temurin:25-jre@sha256:9c9e7c4f5f3840e5254be62ea9a7de56b2d0af23864032a8a3654bf63c31cd5b
 WORKDIR /app
 
 COPY --from=build /workspace/services/api/build/libs/*.jar app.jar
