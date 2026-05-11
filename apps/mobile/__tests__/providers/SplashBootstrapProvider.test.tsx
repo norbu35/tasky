@@ -89,7 +89,14 @@ describe('SplashBootstrapProvider', () => {
     useAuthStore.setState({
       session: {
         accessToken: 'tok',
-        user: { id: 'u1', role: 'CUSTOMER', email: 'a@b.c' },
+        refreshToken: 'rtok',
+        user: {
+          id: 'u1',
+          role: 'CUSTOMER',
+          primary_auth: 'FACEBOOK',
+          status: 'ACTIVE',
+          created_at: '2026-01-01T00:00:00Z',
+        },
       },
     });
     useAppStore.setState({ hasSeenOnboarding: false });
@@ -115,7 +122,14 @@ describe('SplashBootstrapProvider', () => {
     useAuthStore.setState({
       session: {
         accessToken: 'tok',
-        user: { id: 'u1', role: 'TASKER', email: 'a@b.c' },
+        refreshToken: 'rtok',
+        user: {
+          id: 'u1',
+          role: 'TASKER',
+          primary_auth: 'FACEBOOK',
+          status: 'VERIFIED',
+          created_at: '2026-01-01T00:00:00Z',
+        },
       },
     });
     useAppStore.setState({ hasSeenOnboarding: true });
