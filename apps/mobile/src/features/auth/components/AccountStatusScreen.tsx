@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Linking, Text, View } from 'react-native';
 
 import { ScreenContainer } from '@/components/shells/ScreenContainer';
+import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { mobileSurfaces } from '@/design/surfaces';
 import { mobileTheme } from '@/design/tokenAdapter';
@@ -100,7 +101,10 @@ export default function AccountStatusScreen({ variant }: AccountStatusScreenProp
         <Button
           label={t('shared.account.logout')}
           variant={variant === 'suspended' ? 'ghost' : undefined}
-          onPress={() => router.replace('/(auth)')}
+          onPress={() => {
+            useAuthStore.getState().signOut();
+            router.replace('/(auth)');
+          }}
           className="self-stretch mt-sm"
           testID={`${variant}-logout-button`}
         />

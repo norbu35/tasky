@@ -25,6 +25,9 @@ export async function verifyOtp(phone: string, code: string): Promise<AuthTokens
 }
 
 export async function devLogin(phone: string, role: 'CUSTOMER' | 'TASKER'): Promise<AuthTokens> {
+  if (!__DEV__) {
+    throw new Error('Dev login is unavailable in production builds');
+  }
   return getClient()
     .requestJson<{ access_token: string; refresh_token: string; user: User }>('/auth/dev/login', {
       method: 'POST',

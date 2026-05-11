@@ -42,7 +42,8 @@ public class StompRateLimitInterceptor implements ChannelInterceptor {
 
         String userId = resolveUserId(accessor);
         if (userId == null) {
-            return message;
+            log.warn("STOMP SEND from unauthenticated session rejected");
+            throw new IllegalStateException("Authentication required for messaging");
         }
 
         Bucket bucket = buckets.computeIfAbsent(userId, this::newBucket);

@@ -25,6 +25,7 @@ import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.feature.FeatureToggleDao;
 import mn.tasky.common.idempotency.IdempotencyDao;
 import mn.tasky.common.outbox.OutboxEventDao;
+import mn.tasky.common.security.TokenBlacklistDao;
 import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.dispute.dao.DisputeEvidenceDao;
 import mn.tasky.kernel.idempotency.EventIdempotencyDao;
@@ -78,6 +79,11 @@ public class JdbiConfig {
     @Bean
     public UserDao userDao(Jdbi jdbi) {
         return jdbi.onDemand(UserDao.class);
+    }
+
+    @Bean
+    public TokenBlacklistDao tokenBlacklistDao(Jdbi jdbi) {
+        return jdbi.onDemand(TokenBlacklistDao.class);
     }
 
     @Bean

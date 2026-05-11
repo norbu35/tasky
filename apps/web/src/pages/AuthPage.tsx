@@ -63,7 +63,7 @@ function FacebookIcon({ className }: { className?: string }) {
 
 export function AuthPage() {
   const contractLoaded: boolean = typeof ({} as paths) === 'object';
-  const devAuthEnabled = import.meta.env['VITE_DEV_AUTH_ENABLED'] === 'true';
+  const devAuthEnabled = import.meta.env.DEV && import.meta.env['VITE_DEV_AUTH_ENABLED'] === 'true';
   const facebookAppId = import.meta.env['VITE_FACEBOOK_APP_ID'];
 
   const { apiClient, session, setSession, setProfile, loadProfile } = useAppContext();

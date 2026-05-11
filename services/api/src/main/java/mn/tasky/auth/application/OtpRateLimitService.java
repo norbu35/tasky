@@ -67,7 +67,6 @@ public class OtpRateLimitService {
 
     private void enforce(String key, int limit, Duration window, String errorCode) {
         Instant now = Instant.now();
-        rateLimitCounterDao.deleteExpired(now);
         int attempts = rateLimitCounterDao.incrementAndGet(key, now, now.minus(window), now.plus(window));
         if (attempts > limit) {
             throw new RateLimitExceededException(errorCode, "Too many OTP attempts. Please try again later.");

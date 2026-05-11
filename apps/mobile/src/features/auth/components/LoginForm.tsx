@@ -26,9 +26,16 @@ export function LoginForm() {
   const devLogin = useDevLogin();
 
   const handleRequest = () => {
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length < 8) {
+      Alert.alert(t('auth.invalidPhone'), t('auth.phoneTooShort'));
+      return;
+    }
     requestOtp.mutate(phone, {
       onSuccess: () => setStep('otp'),
-      onError: (err) => console.error(err),
+      onError: (err) => {
+        if (__DEV__) console.error(err);
+      },
     });
   };
 
@@ -114,6 +121,7 @@ export function LoginForm() {
             onChangeText={setCode}
             placeholder={t('auth.otpPlaceholder')}
             keyboardType="number-pad"
+            maxLength={6}
           />
         </FormField>
       )}

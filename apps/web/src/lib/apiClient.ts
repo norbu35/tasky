@@ -234,7 +234,7 @@ export interface ApiClient {
     bookingId: string,
   ): Promise<CursorPage<BookingScheduleEvent>>;
 
-  logout(accessToken: string): Promise<void>;
+  logout(accessToken: string, refreshToken?: string): Promise<void>;
 }
 
 function inferRuntimeOrigin(): string | null {
@@ -892,8 +892,9 @@ export class HttpApiClient extends HttpTransport implements ApiClient {
     );
   }
 
-  logout(accessToken: string): Promise<void> {
-    return this.requestVoid('/auth/logout', { method: 'POST' }, accessToken);
+  logout(accessToken: string, refreshToken?: string): Promise<void> {
+    const body = refreshToken ? JSON.stringify({ refreshToken }) : undefined;
+    return this.requestVoid('/auth/logout', { method: 'POST', body }, accessToken);
   }
 }
 

@@ -25,13 +25,16 @@ class TokenBlacklistServiceTest {
     @Mock
     private Cache cache;
 
+    @Mock
+    private TokenBlacklistDao tokenBlacklistDao;
+
     private TokenBlacklistService service;
 
     @BeforeEach
     void setUp() {
         org.mockito.Mockito.when(cacheManager.getCache(CacheConfig.TOKEN_BLACKLIST_CACHE))
                 .thenReturn(cache);
-        service = new TokenBlacklistService(cacheManager);
+        service = new TokenBlacklistService(cacheManager, tokenBlacklistDao);
     }
 
     @Test
@@ -39,7 +42,7 @@ class TokenBlacklistServiceTest {
     void constructorThrowsOnMissingCache() {
         org.mockito.Mockito.when(cacheManager.getCache(CacheConfig.TOKEN_BLACKLIST_CACHE))
                 .thenReturn(null);
-        assertThatThrownBy(() -> new TokenBlacklistService(cacheManager))
+        assertThatThrownBy(() -> new TokenBlacklistService(cacheManager, tokenBlacklistDao))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining(CacheConfig.TOKEN_BLACKLIST_CACHE);
     }

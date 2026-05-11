@@ -81,7 +81,7 @@ export function AppShell({
 
   const signOut = useCallback(() => {
     if (session?.accessToken) {
-      apiClient.logout(session.accessToken).catch(() => {
+      apiClient.logout(session.accessToken, session.refreshToken).catch(() => {
         // Best-effort: clear session regardless of API response
       });
     }
@@ -89,7 +89,7 @@ export function AppShell({
     setProfile(null);
     setProfileError(null);
     setProfileBusy(false);
-  }, [session?.accessToken, apiClient]);
+  }, [session?.accessToken, session?.refreshToken, apiClient]);
 
   const sessionRef = useRef(session);
   sessionRef.current = session;

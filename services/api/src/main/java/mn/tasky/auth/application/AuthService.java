@@ -345,13 +345,13 @@ public class AuthService {
         AuthUser facebookUser = facebookUserOpt.get();
         Optional<AuthUser> phoneUserOpt = userDao.findByPhoneBlindIndex(blindIndex);
         if (phoneUserOpt.isPresent() && !phoneUserOpt.get().id().equals(facebookUser.id())) {
-            throw new IllegalArgumentException("Phone number is already linked to another account.");
+            throw new IllegalArgumentException("Unable to verify phone number.");
         }
 
         String encryptedPhone = cryptoService.encrypt(phone);
         String existingPhone = decryptPhone(facebookUser.phone());
         if (StringUtils.hasText(existingPhone) && !phone.equals(existingPhone)) {
-            throw new IllegalArgumentException("Phone number does not match linked Facebook account.");
+            throw new IllegalArgumentException("Unable to verify phone number.");
         }
         if (!StringUtils.hasText(existingPhone)) {
             userDao.updatePhoneAndBlindIndex(facebookUser.id(), encryptedPhone, blindIndex);
@@ -597,5 +597,14 @@ public class AuthService {
     public void logout(String jti) {
         auditEventDao.insert((String) null, "LOGOUT", "session", jti, null);
         tokenBlacklistService.revoke(jti);
+    }
+
+    /**
+     * Revokes the refresh session associated with the given raw refresh token.
+     * Called during logout to ensure the refresh token cannot be used after
+     * the user explicitly signs out.
+     */
+    public void revokeRefreshSession(String rawRefreshToken) {
+        jwtTokenService.parseRefreshToken(rawRefreshToken).ifPresent(p -> refreshSessionDao.findAndDelete(p.tokenId()));
     }
 }

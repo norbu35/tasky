@@ -25,6 +25,7 @@ import mn.tasky.auth.dto.AuthTokens;
 import mn.tasky.auth.dto.AuthUser;
 import mn.tasky.auth.dto.OtpChallenge;
 import mn.tasky.auth.dto.RefreshSession;
+import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.security.CryptoService;
 import mn.tasky.common.security.JwtTokenService;
 import mn.tasky.common.security.TokenBlacklistService;
@@ -88,6 +89,9 @@ class AuthServiceTest {
     private TokenBlacklistService tokenBlacklistService;
 
     @Mock
+    private AuditEventDao auditEventDao;
+
+    @Mock
     private Counter counter;
 
     private AuthService service;
@@ -116,6 +120,7 @@ class AuthServiceTest {
                 userStatusResolver,
                 meterRegistry,
                 tokenBlacklistService,
+                auditEventDao,
                 false,
                 true,
                 300,
@@ -157,6 +162,7 @@ class AuthServiceTest {
                     userStatusResolver,
                     meterRegistry,
                     tokenBlacklistService,
+                    auditEventDao,
                     true,
                     false,
                     300,
@@ -187,6 +193,7 @@ class AuthServiceTest {
                     userStatusResolver,
                     meterRegistry,
                     tokenBlacklistService,
+                    auditEventDao,
                     true,
                     false,
                     300,
@@ -217,6 +224,7 @@ class AuthServiceTest {
                     userStatusResolver,
                     meterRegistry,
                     tokenBlacklistService,
+                    auditEventDao,
                     false,
                     true,
                     300,
@@ -247,6 +255,7 @@ class AuthServiceTest {
                     userStatusResolver,
                     meterRegistry,
                     tokenBlacklistService,
+                    auditEventDao,
                     false,
                     true,
                     300,
@@ -278,6 +287,7 @@ class AuthServiceTest {
                     userStatusResolver,
                     meterRegistry,
                     tokenBlacklistService,
+                    auditEventDao,
                     true,
                     false,
                     300,
@@ -306,6 +316,7 @@ class AuthServiceTest {
                     userStatusResolver,
                     meterRegistry,
                     tokenBlacklistService,
+                    auditEventDao,
                     false,
                     false,
                     300,
@@ -371,6 +382,7 @@ class AuthServiceTest {
                     userStatusResolver,
                     meterRegistry,
                     tokenBlacklistService,
+                    auditEventDao,
                     false,
                     true,
                     300,
@@ -625,7 +637,7 @@ class AuthServiceTest {
 
             assertThatThrownBy(() -> service.verifyOtp(phone, "123456", "fb-token"))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("already linked to another account");
+                    .hasMessageContaining("Unable to verify phone number.");
         }
 
         @Test
@@ -647,7 +659,7 @@ class AuthServiceTest {
 
             assertThatThrownBy(() -> service.verifyOtp(phone, "123456", "fb-token"))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("does not match");
+                    .hasMessageContaining("Unable to verify phone number.");
         }
     }
 
@@ -779,6 +791,7 @@ class AuthServiceTest {
                     userStatusResolver,
                     meterRegistry,
                     tokenBlacklistService,
+                    auditEventDao,
                     true,
                     false,
                     300,
