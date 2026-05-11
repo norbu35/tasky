@@ -40,6 +40,7 @@ services:
       TASKY_STORAGE_DOWNLOAD_TTL_SECONDS: ${TASKY_STORAGE_DOWNLOAD_TTL_SECONDS:-3600}
       TASKY_ACCESS_TOKEN_TTL_SECONDS: ${TASKY_ACCESS_TOKEN_TTL_SECONDS:-900}
       TASKY_REFRESH_TOKEN_TTL_SECONDS: ${TASKY_REFRESH_TOKEN_TTL_SECONDS:-1209600}
+      TASKY_BACKUP_METRIC_FILE: /backups/.backup_success_timestamp
     depends_on:
       pgbouncer:
         condition: service_healthy
@@ -53,6 +54,8 @@ services:
       timeout: 5s
       retries: 6
       start_period: 30s
+    volumes:
+      - ./docker/backups:/backups:ro
 
   web:
     image: tasky-web:production
@@ -179,25 +182,24 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB: ${POSTGRES_DB}
       PGPASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_CONTAINER: tasky-postgres
+      BACKUP_DIR: /backups
+      OFFSITE_S3_ENDPOINT: ${OFFSITE_S3_ENDPOINT:-}
+      OFFSITE_S3_BUCKET: ${OFFSITE_S3_BUCKET:-}
+      OFFSITE_S3_ACCESS_KEY: ${OFFSITE_S3_ACCESS_KEY:-}
+      OFFSITE_S3_SECRET_KEY: ${OFFSITE_S3_SECRET_KEY:-}
     volumes:
       - ./docker/backups:/backups
+      - ./docker/backup.sh:/usr/local/bin/backup.sh:ro
     depends_on:
       postgres:
         condition: service_healthy
     entrypoint: >
       /bin/bash -c "
       while true; do
-        TIMESTAMP=$$(date +%Y%m%dT%H%M%S);
-        echo \"[$$TIMESTAMP] Starting scheduled backup...\";
-        pg_dump -h postgres -U $${POSTGRES_USER} -d $${POSTGRES_DB} -Fc --clean --if-exists > /backups/tasky-$${TIMESTAMP}.dump;
-        if [ $$? -eq 0 ]; then
-          SIZE=$$(du -h /backups/tasky-$${TIMESTAMP}.dump | cut -f1);
-          echo \"[$$TIMESTAMP] Backup complete: tasky-$${TIMESTAMP}.dump ($$SIZE)\";
-        else
-          echo \"[$$TIMESTAMP] ERROR: Backup failed\";
-        fi;
-        find /backups -name 'tasky-*.dump' -mtime +7 -delete 2>/dev/null || true;
-        echo \"Pruned backups older than 7 days. Sleeping 1 hour...\";
+        echo \"[$$(date +%Y%m%dT%H%M%S)] Starting scheduled backup...\";
+        /usr/local/bin/backup.sh;
+        echo \"Sleeping 1 hour...\";
         sleep 3600;
       done
       "

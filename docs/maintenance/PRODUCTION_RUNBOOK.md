@@ -72,21 +72,127 @@ _TODO (T13)_
 
 ## 8. Backup Verification + Offsite
 
-<!-- TODO (T3): backup check, offsite upload procedure -->
+### Schedule
 
-_TODO (T3)_
+The `backup-cron` service runs `docker/backup.sh` hourly inside the compose stack.
+
+### Verification steps
+
+1. Confirm the latest dump exists:
+
+   ```bash
+   ls -lh docker/backups/tasky-*.dump | tail -5
+   ```
+
+2. Verify the dump is restorable (dry-run restore):
+
+   ```bash
+   docker exec tasky-postgres pg_restore --list /path/to/latest.dump | head
+   ```
+
+3. Check the Prometheus metric:
+
+   ```bash
+   curl -s http://localhost:8080/actuator/prometheus | grep tasky_backup_last_success_unixtime
+   ```
+
+   If the value is `0`, no backup has succeeded. The `BackupStale` alert fires if no success is recorded within 2 hours.
+
+### Offsite upload
+
+Offsite upload uses an S3-compatible endpoint (any provider). Configure these env vars in `.env`:
+
+```
+OFFSITE_S3_ENDPOINT=https://s3.us-east-1.amazonaws.com
+OFFSITE_S3_BUCKET=tasky-production-backups
+OFFSITE_S3_ACCESS_KEY=<key>
+OFFSITE_S3_SECRET_KEY=<secret>
+```
+
+If any variable is unset, the script logs a warning and skips upload — the local dump still succeeds.
+
+Upload path: `s3://<bucket>/<YYYYMMDDTHHMMSS>/tasky.dump`
+
+### RPO / RTO
+
+- **RPO** (Recovery Point Objective): ≤ 1 hour (hourly backup interval + WAL archiving)
+- **RTO** (Recovery Time Objective): < 4 hours (restore from dump + replay WAL if needed)
 
 ## 9. Restore Drill Evidence
 
-<!-- TODO (T3): restore drill template and evidence log -->
+### Procedure (run quarterly or after infrastructure changes)
 
-_TODO (T3)_
+1. Identify the latest production backup:
+
+   ```bash
+   LATEST=$(ls -t docker/backups/tasky-*.dump | head -1)
+   echo "Restoring from: $LATEST ($(du -h "$LATEST" | cut -f1))"
+   ```
+
+2. Create a temporary restore target (do NOT restore into production):
+
+   ```bash
+   docker exec -i tasky-postgres createdb -U tasky tasky_restore_test
+   ```
+
+3. Restore into the test database:
+
+   ```bash
+   docker exec -i tasky-postgres \
+     pg_restore -U tasky -d tasky_restore_test --no-owner --no-privileges \
+     < "$LATEST"
+   ```
+
+4. Verify row counts match expected ranges:
+
+   ```bash
+   docker exec tasky-postgres psql -U tasky -d tasky_restore_test -c \
+     "SELECT 'users' AS table, count(*) FROM users UNION ALL
+      SELECT 'tasks', count(*) FROM tasks UNION ALL
+      SELECT 'bookings', count(*) FROM bookings UNION ALL
+      SELECT 'messages', count(*) FROM messages;"
+   ```
+
+5. Clean up:
+
+   ```bash
+   docker exec -i tasky-postgres dropdb -U tasky tasky_restore_test
+   ```
+
+6. Record evidence in the table below.
+
+### Evidence log
+
+| Date         | Backup file                  | Rows verified        | Restore time | Operator | Notes                                   |
+| ------------ | ---------------------------- | -------------------- | ------------ | -------- | --------------------------------------- |
+| _YYYY-MM-DD_ | _tasky-YYYYMMDDTHHMMSS.dump_ | _users: N, tasks: N_ | _Xm Ys_      | _name_   | _e.g., "All tables present, no errors"_ |
 
 ## 10. WAL Archive Retention
 
-<!-- TODO (T3): WAL prune policy -->
+### Configuration
 
-_TODO (T3)_
+WAL archiving is enabled in `docker-compose.production.yml` via Postgres parameters:
+
+- `wal_level=replica`
+- `archive_mode=on`
+- `archive_command=test ! -f /var/lib/postgresql/wal_archive/%f && cp %p /var/lib/postgresql/wal_archive/%f`
+
+WAL files are stored in the `production_wal_archive` Docker volume.
+
+### Prune policy
+
+`docker/backup.sh` prunes WAL archive files older than **7 days** on every run (hourly).
+
+Manual prune (if needed):
+
+```bash
+docker exec tasky-postgres \
+  find /var/lib/postgresql/wal_archive -type f -mtime +7 -delete
+```
+
+### Monitoring
+
+The `BackupStale` Prometheus alert indirectly monitors backup (and WAL prune) health. If backup runs stop, the alert fires within 2 hours.
 
 ## 11. Blind-Index Key Rotation
 
