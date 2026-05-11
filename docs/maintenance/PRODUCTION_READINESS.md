@@ -13,10 +13,10 @@ activation evidence and must not be treated as launch readiness requirements.
 | `ready for staging`    | The repo and its staging path can be exercised, but production signoff is still blocked.    |
 | `ready for production` | Launch scope, verification, environments, observability, and rollback posture are ratified. |
 
-Current assessed state on 2026-04-22:
+Current assessed state on 2026-05-11:
 
-- `ready for staging` for the private VPS sandbox path
-- not `ready for production`
+- `ready for production` for the Phase 1 Ulaanbaatar launch baseline
+- Production runbook complete, staging rehearsal passed, rollback drill passed
 
 ## 3. Production runbook
 
@@ -141,25 +141,25 @@ Comprehensive pre-deployment audit executed per `audit/REPORT.md`. Full backlog 
 
 Production deploy is gated on **zero open P0** items.
 
-| ID    | Category          | Finding                                          | Status  |
-| ----- | ----------------- | ------------------------------------------------ | ------- |
-| P0-01 | Mobile security   | Android release signing uses debug keystore      | 🔴 Open |
-| P0-02 | Infrastructure    | Host firewall not documented                     | 🔴 Open |
-| P0-03 | Infrastructure    | SSH hardening not documented                     | 🔴 Open |
-| P0-04 | Database          | Encryption at rest not verified/documented       | 🔴 Open |
-| P0-05 | Database          | Offsite backup copy not configured               | 🔴 Open |
-| P0-06 | Database          | Restore drill not exercised                      | 🔴 Open |
-| P0-07 | Data governance   | PII inventory document not produced              | 🔴 Open |
-| P0-08 | Observability     | Missing disk-free and backup-stale alerts        | 🔴 Open |
-| P0-09 | Observability     | Alertmanager destination is placeholder          | 🔴 Open |
-| P0-10 | Observability     | No crash reporting (Sentry/Crashlytics)          | 🔴 Open |
-| P0-11 | Incident response | No on-call/paging mechanism documented           | 🔴 Open |
-| P0-12 | Operations        | Production runbook does not exist                | 🔴 Open |
-| P0-13 | App store         | App Privacy questionnaire not produced           | 🔴 Open |
-| P0-14 | App store         | ATT not implemented for iOS                      | 🔴 Open |
-| P0-15 | App store         | Sign in with Apple not implemented               | 🔴 Open |
-| P0-16 | Legal             | Privacy Policy / ToS not published at public URL | 🔴 Open |
-| P0-17 | Legal             | Signup consent not captured                      | 🔴 Open |
+| ID    | Category          | Finding                                          | Status    | Resolved by |
+| ----- | ----------------- | ------------------------------------------------ | --------- | ----------- |
+| P0-01 | Mobile security   | Android release signing uses debug keystore      | ✅ Closed | T9          |
+| P0-02 | Infrastructure    | Host firewall not documented                     | ✅ Closed | T6          |
+| P0-03 | Infrastructure    | SSH hardening not documented                     | ✅ Closed | T6          |
+| P0-04 | Database          | Encryption at rest not verified/documented       | ✅ Closed | T6          |
+| P0-05 | Database          | Offsite backup copy not configured               | ✅ Closed | T3          |
+| P0-06 | Database          | Restore drill not exercised                      | ✅ Closed | T13         |
+| P0-07 | Data governance   | PII inventory document not produced              | ✅ Closed | T2          |
+| P0-08 | Observability     | Missing disk-free and backup-stale alerts        | ✅ Closed | T4          |
+| P0-09 | Observability     | Alertmanager destination is placeholder          | ✅ Closed | T4          |
+| P0-10 | Observability     | No crash reporting (Sentry/Crashlytics)          | ✅ Closed | T5          |
+| P0-11 | Incident response | No on-call/paging mechanism documented           | ✅ Closed | T6          |
+| P0-12 | Operations        | Production runbook does not exist                | ✅ Closed | T1+T13      |
+| P0-13 | App store         | App Privacy questionnaire not produced           | ✅ Closed | T8          |
+| P0-14 | App store         | ATT not implemented for iOS                      | ✅ Closed | T10         |
+| P0-15 | App store         | Sign in with Apple not implemented               | ✅ Closed | T10         |
+| P0-16 | Legal             | Privacy Policy / ToS not published at public URL | ✅ Closed | T8          |
+| P0-17 | Legal             | Signup consent not captured                      | ✅ Closed | T8          |
 
 ### P1 findings — should fix before or shortly after launch
 
@@ -171,7 +171,6 @@ Production deploy is gated on **zero open P0** items.
 
 ### Assessed state
 
-- **Current state:** `ready for staging` (unchanged from 2026-04-22)
-- **Production readiness:** **BLOCKED** — 17 open P0 items must be resolved
-- **Next step:** Resolve P0 items per execution order in `audit/REMEDIATION_BACKLOG.md`
-- **Re-audit:** After all P0 items are closed, re-assess production readiness
+- **Current state:** `ready for production` (updated 2026-05-11)
+- **Production readiness:** All 17 P0 items resolved. Staging rehearsal and rollback drill passed.
+- **Re-audit:** Next re-audit after first production deploy or if new P0 items emerge

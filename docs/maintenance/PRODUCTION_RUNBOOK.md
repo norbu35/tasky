@@ -428,15 +428,129 @@ Regardless of which option is chosen:
 
 ## 6. Deploy Procedure
 
-<!-- TODO (T13): deploy steps -->
+### 6.1 Pre-deploy checks
 
-_TODO (T13)_
+```bash
+# On your local machine, verify CI is green
+gh run list --branch main --limit 3 --json conclusion,name | jq '.[].conclusion'
+# All must be "success"
+
+# Verify the image tag you're about to deploy
+export TAG=v1.0.0  # adjust to the release tag
+echo "Deploying tag: $TAG"
+```
+
+### 6.2 Build and push images
+
+```bash
+# Trigger the build-and-push workflow on main
+gh workflow run build-and-push.yml --ref main
+# Or push images manually from CI output
+```
+
+### 6.3 Deploy to production VPS
+
+```bash
+# SSH into the production VPS
+ssh deploy@<PRODUCTION_HOST>
+
+cd /opt/tasky
+
+# Pull latest images
+docker compose -f docker-compose.production.yml pull
+
+# Deploy with zero-downtime rolling update
+docker compose -f docker-compose.production.yml up -d --remove-orphans
+
+# Wait for health check
+until curl -sf http://localhost:8080/actuator/health | grep -q UP; do
+  echo "Waiting for app health..."
+  sleep 5
+done
+echo "App is healthy."
+```
+
+### 6.4 Post-deploy smoke test
+
+```bash
+# 1. Health endpoint
+curl -s http://localhost:8080/actuator/health | python3 -m json.tool
+
+# 2. Prometheus metrics available
+curl -sf http://localhost:8080/actuator/prometheus | grep -c "jvm_memory"
+
+# 3. Web frontend responds
+curl -sf -o /dev/null -w "%{http_code}" https://<DOMAIN>/
+
+# 4. Test login flow (use demo account)
+curl -s -X POST https://<DOMAIN>/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"phone":"<DEMO_PHONE>","code":"<DEMO_CODE>"}' | python3 -m json.tool
+```
+
+### 6.5 Record deployment
+
+Log the deployment in the rehearsal log (section below) with timestamp, tag, and smoke test results.
 
 ## 7. Rollback Procedure
 
-<!-- TODO (T13): rollback steps -->
+### 7.1 Quick rollback (previous image)
 
-_TODO (T13)_
+If a deployment introduces errors, roll back to the previous known-good image immediately.
+
+```bash
+# SSH into the production VPS
+ssh deploy@<PRODUCTION_HOST>
+cd /opt/tasky
+
+# 1. Identify the current and previous image tags
+docker compose -f docker-compose.production.yml images app
+
+# 2. Edit .env to set the previous image tag
+# For example, if current is v1.1.0 and you want v1.0.0:
+# Edit TASKY_APP_IMAGE_TAG=v1.0.0
+
+# 3. Pull the previous image and restart
+docker compose -f docker-compose.production.yml pull app
+docker compose -f docker-compose.production.yml up -d app --no-deps
+
+# 4. Verify health
+until curl -sf http://localhost:8080/actuator/health | grep -q UP; do
+  echo "Waiting for rollback to stabilize..."
+  sleep 5
+done
+echo "Rollback complete. App is healthy on previous version."
+```
+
+### 7.2 Database rollback (migration reversal)
+
+**WARNING:** Flyway does not support automatic rollback of applied migrations.
+If a migration was applied during the failed deploy:
+
+1. **Do NOT roll back the migration manually** unless you have a tested reverse migration.
+2. Instead, write a compensating migration (e.g. `V4__revert_X.sql`) that undoes the change.
+3. Deploy the compensating migration as part of a hotfix release.
+
+### 7.3 Full environment rollback
+
+If the VPS itself is compromised or broken:
+
+1. Provision a new VPS following section 1 (Bootstrap).
+2. Restore the database from the latest backup (section 9).
+3. Deploy the last known-good image tag.
+4. Update DNS to point to the new VPS IP.
+
+### 7.4 Rollback drill (P1-13)
+
+Perform quarterly or after significant infrastructure changes:
+
+1. Deploy a deliberately-breaking change to staging (e.g., an API endpoint that returns 500).
+2. Observe monitoring: the `High5xxRate` alert should fire within 15 minutes.
+3. Execute the quick rollback procedure (7.1).
+4. Measure total time from alert to restored service.
+5. Record evidence in `docs/maintenance/REHEARSAL_LOG.md`.
+
+Target: rollback completed within **15 minutes** of alert firing.
 
 ## 8. Backup Verification + Offsite
 
@@ -993,9 +1107,68 @@ Run the test message procedure once per month to confirm the bot token is still 
 
 ## 16. Incident Response (SEV-1/2/3)
 
-<!-- TODO (T13): SEV-1/2/3 procedures -->
+### 16.1 Severity definitions
 
-_TODO (T13)_
+| Severity | Definition                              | Response time | Examples                                               |
+| -------- | --------------------------------------- | ------------- | ------------------------------------------------------ |
+| SEV-1    | Launch-critical flow unavailable        | ≤ 15 min      | Login down, all tasks unviewable, DB unreachable       |
+| SEV-2    | Core flow degraded but partially usable | ≤ 30 min      | Slow bookings, one auth provider down, high error rate |
+| SEV-3    | Non-critical defect with workaround     | ≤ 4 hours     | UI glitch, non-essential feature broken, cosmetic bug  |
+
+### 16.2 SEV-1 response procedure
+
+1. **Acknowledge** — Primary on-call acknowledges the page in the Telegram alerts group.
+2. **Assess** — Determine blast radius: how many users are affected? Is data integrity at risk?
+3. **Communicate** — Post to the Telegram group: "SEV-1: <brief description>. Investigating."
+4. **Mitigate** — First option is rollback (section 7). Do not attempt to fix forward under pressure.
+5. **Resolve** — Confirm the fix is working via smoke test (section 6.4).
+6. **Post-mortem** — Within 24 hours, write a brief post-mortem:
+   - Timeline (UTC timestamps)
+   - Root cause
+   - What went wrong / what went right
+   - Action items (link to GitHub issues)
+7. **Store** — File post-mortem in `docs/maintenance/postmortems/YYYY-MM-DD-<title>.md`.
+
+### 16.3 SEV-2 response procedure
+
+1. **Acknowledge** within 30 minutes.
+2. **Assess** severity — if escalation to SEV-1 is warranted, upgrade immediately.
+3. **Mitigate** — attempt quick fix; if unstable after 30 minutes, roll back.
+4. **Resolve** and verify.
+5. **Record** — brief incident summary in the Telegram group or ops log.
+
+### 16.4 SEV-3 response procedure
+
+1. **Record** the issue in the GitHub issue tracker with `severity: SEV-3` label.
+2. **Prioritize** in the next sprint planning session.
+3. No immediate on-call action required.
+
+### 16.5 Escalation path
+
+```
+Alert fires → Telegram group → Primary on-call acknowledges
+                                   ↓ (no ack in 15 min)
+                               Backup on-call paged
+                                   ↓ (no ack in 30 min)
+                               Founder contacted directly
+```
+
+### 16.6 Incident log template
+
+```markdown
+## Incident: <title>
+
+- **Date:** YYYY-MM-DD
+- **Duration:** X hours Y minutes
+- **Severity:** SEV-1/2/3
+- **Impact:** <number of users affected, which flows broken>
+- **Root cause:** <one-line summary>
+- **Resolution:** <what was done>
+- **Action items:**
+  1. <item> — #issue-number
+```
+
+Store completed logs in `docs/maintenance/postmortems/`.
 
 ## 17. Capacity Sizing + Cost Model
 
@@ -1057,12 +1230,124 @@ If any of the following are observed, evaluate a VPS upgrade or architecture cha
 
 ## 18. Cutover Plan
 
-<!-- TODO (T13): DNS, store release, comms -->
+### 18.1 Pre-cutover checklist
 
-_TODO (T13)_
+Complete all items before starting the cutover:
+
+- [ ] All P0 items resolved (see PRODUCTION_READINESS.md §13)
+- [ ] Production runbook complete (zero `_TODO` markers)
+- [ ] Staging rehearsal completed and evidence recorded in REHEARSAL_LOG.md
+- [ ] Backup verified: latest dump exists and is restorable (section 9)
+- [ ] Monitoring stack healthy: Prometheus scraping, Grafana dashboards loaded, Alertmanager routing to Telegram
+- [ ] Legal docs published at public URLs (privacy policy, terms of service)
+- [ ] App store submissions approved (Google Play + Apple App Store)
+
+### 18.2 DNS cutover
+
+```bash
+# 1. Verify the production VPS is reachable and healthy
+curl -sf https://<DOMAIN>/actuator/health
+curl -sf https://<DOMAIN>/ -o /dev/null -w "%{http_code}\n"
+
+# 2. Update DNS A record to point to the production VPS IP
+# Use your DNS provider's dashboard or CLI:
+#   Host: @ (or tasky.mn)
+#   Type: A
+#   Value: <PRODUCTION_VPS_IP>
+#   TTL: 300 (5 min — low for quick rollback)
+
+# 3. Wait for DNS propagation (typically 1-5 min with low TTL)
+dig +short <DOMAIN>
+
+# 4. Verify via external check
+curl -sf https://<DOMAIN>/actuator/health | grep -q UP
+```
+
+### 18.3 App store release
+
+```bash
+# 1. Submit to Google Play
+cd apps/mobile
+eas build --platform android --profile production
+# Upload AAB to Google Play Console → Production track
+# Submit for review
+
+# 2. Submit to Apple App Store
+eas build --platform ios --profile production
+# Upload IPA via EAS Submit or Transporter
+# Submit for review in App Store Connect
+
+# 3. Both stores: set release to "Manual release" to control timing
+```
+
+### 18.4 Communications
+
+| When          | Channel      | Message                                                     |
+| ------------- | ------------ | ----------------------------------------------------------- |
+| T-24h         | Social media | "Tasky launches tomorrow! 🎉 Ulaanbaatar task marketplace." |
+| T-0 (cutover) | Social media | "Tasky is live! Download now: <store links>"                |
+| T+1h          | Internal     | Verify metrics, check error rates, confirm no SEV-1 alerts  |
+| T+24h         | Internal     | Day-2 check-in (see section 19)                             |
+
+### 18.5 Rollback criteria for cutover
+
+Abort or roll back the cutover if:
+
+1. Health endpoint returns non-UP for more than 5 minutes after DNS propagation.
+2. Login flow fails for real users (SEV-1 alert fires).
+3. App store review rejects the submission — fix and resubmit.
+4. DNS rollback: revert A record to previous IP (or a maintenance page).
 
 ## 19. Day-2 Plan
 
-<!-- TODO (T13): first 48 h, escalation, rollback criteria -->
+### 19.1 First 48 hours after launch
 
-_TODO (T13)_
+#### Hour 0–4: Intensive watch
+
+- Operator monitors the Telegram alert channel continuously.
+- Check dashboards every 30 minutes: error rate, p95 latency, active users.
+- Verify backup ran at least once: `curl -s http://localhost:8080/actuator/prometheus | grep tasky_backup`.
+- Respond to any SEV-1 or SEV-2 alerts immediately.
+
+#### Hour 4–24: Stabilization
+
+- Review error logs for non-critical issues: `docker logs tasky-app --since 4h | grep -i "warn\|error" | tail -50`.
+- Check Sentry for new crash reports. Triage any new issues.
+- Verify first backup offsite upload succeeded (check S3 bucket).
+- Post status update to the team: user signups, any issues encountered.
+
+#### Hour 24–48: Normalization
+
+- Review Grafana dashboards for trends: is latency stable? Are there spikes?
+- Confirm all scheduled backups completed: check for 24 backup files.
+- Review user feedback channels (app store reviews, social media).
+- If no SEV-1/SEV-2 incidents occurred, declare the launch stable.
+
+### 19.2 Escalation during Day-2
+
+| Condition                        | Action                                     |
+| -------------------------------- | ------------------------------------------ |
+| SEV-1 alert fires                | Follow SEV-1 procedure (section 16.2)      |
+| SEV-2 alert fires                | Follow SEV-2 procedure (section 16.3)      |
+| Sustained high error rate (> 5%) | Evaluate rollback (section 7)              |
+| User reports data loss           | Stop app, investigate, restore if needed   |
+| App store rejection              | Fix issue, resubmit — no VPS action needed |
+
+### 19.3 Rollback criteria during Day-2
+
+Roll back immediately if:
+
+1. Login or session refresh fails for real users (sustained > 5 min).
+2. Task creation or booking confirmation shows sustained 5xx (> 5% error rate for > 15 min).
+3. Data integrity concern: incorrect data displayed, missing records, or corruption suspected.
+4. Performance degradation: p95 latency > 2 seconds sustained for > 15 minutes.
+
+### 19.4 Week-1 review
+
+After the first week post-launch:
+
+- Review all incident logs (if any).
+- Check key metrics against SLO targets (see `docs/maintenance/SLO.md`).
+- Verify backup restore drill is still passing (run quarterly drill per section 9).
+- Plan any hotfixes or minor improvements for the first update release.
+- Archive the cutover checklist and update this runbook with any lessons learned.
