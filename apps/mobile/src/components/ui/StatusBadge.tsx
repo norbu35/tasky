@@ -5,7 +5,7 @@ import { Text, View } from 'react-native';
 
 import { cn } from '@/lib/cn';
 
-type StatusType = 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show';
+export type StatusType = 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show';
 
 const badgeVariants = cva('self-start px-md py-xs rounded-full', {
   variants: {

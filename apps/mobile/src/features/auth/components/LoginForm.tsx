@@ -4,7 +4,6 @@ import { Text, View, Alert } from 'react-native';
 
 import { Button, FormField, Input } from '@/components/ui';
 import { elevations } from '@/design/elevations';
-import { parseError } from '@/utils/errorHandling';
 import {
   DEV_LOGIN_CUSTOMER_PHONE,
   DEV_LOGIN_TASKER_PHONE,
@@ -12,6 +11,7 @@ import {
   useVerifyOtp,
   useDevLogin,
 } from '@/features/auth/hooks/useAuth';
+import { parseError } from '@/utils/errorHandling';
 
 export function LoginForm() {
   const runtimeEnv = typeof process !== 'undefined' ? process.env : undefined;

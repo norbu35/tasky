@@ -1,6 +1,4 @@
-import { mobileTheme } from '@/design/tokenAdapter';
-
-const { colors } = mobileTheme;
+import type { StatusType } from '@/components/ui/StatusBadge';
 
 export type BookingTab = 'active' | 'completed';
 
@@ -36,18 +34,19 @@ export function getBookingStatusLabel(
   }
 }
 
-export function getBookingStatusColors(status?: string): { bg: string; text: string } {
+export function mapBookingStatus(status?: string): StatusType {
   switch ((status ?? '').toUpperCase()) {
     case 'ASSIGNED':
-      return { bg: colors.statusAssigned, text: colors.statusAssignedForeground };
+    case 'TASKER_MARKED_DONE':
+      return 'assigned';
     case 'COMPLETED':
-      return { bg: colors.verified, text: colors.verifiedForeground };
+      return 'completed';
     case 'CANCELLED':
-      return { bg: colors.muted, text: colors.textSecondary };
+      return 'cancelled';
     case 'NO_SHOW':
-      return { bg: colors.danger, text: colors.dangerForeground };
+      return 'no_show';
     default:
-      return { bg: colors.secondary, text: colors.secondaryForeground };
+      return 'open';
   }
 }
 

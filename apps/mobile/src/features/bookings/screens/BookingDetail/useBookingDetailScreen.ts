@@ -124,7 +124,7 @@ export function useBookingDetailScreen() {
 
   const handleCancelConfirmed = useCallback(() => {
     setShowCancelSheet(false);
-    router.replace('/(customer)/bookings');
+    router.replace('/(tabs)/bookings');
   }, [router]);
 
   return {

@@ -58,14 +58,14 @@ export function useBookingConfirmedScreen(): BookingConfirmedScreenState {
 
   const handleViewBooking = React.useCallback(() => {
     if (!bookingId) {
-      router.replace('/(customer)/bookings');
+      router.replace('/(tabs)/bookings');
       return;
     }
     router.replace(`/(customer)/bookings/${bookingId}`);
   }, [bookingId, router]);
 
   const handleDone = React.useCallback(() => {
-    router.replace('/(customer)/bookings');
+    router.replace('/(tabs)/bookings');
   }, [router]);
 
   const handleMessage = React.useCallback(() => {
