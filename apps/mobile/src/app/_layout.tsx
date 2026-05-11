@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/react-native';
+
 import type { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
@@ -18,6 +20,18 @@ import { initializeI18n } from '../utils/i18n';
 import '../design/nativewind-interop';
 
 import '../../global.css';
+
+// Initialise Sentry before any code that could throw.
+// DSN is read from EXPO_PUBLIC_SENTRY_DSN in the environment.
+Sentry.init({
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  tracesSampleRate: 0.0, // Phase 1: errors only
+});
+
+// Dev-only: expose testSentry() on global for manual crash-report verification.
+if (__DEV__) {
+  (global as any).testSentry = () => Sentry.captureException(new Error('Sentry test error'));
+}
 
 // Firebase background handler must be registered at module scope for headless JS execution.
 if (isNativeFirebaseAvailable()) {
@@ -44,7 +58,7 @@ if (isNativeFirebaseAvailable()) {
   }
 }
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
   useEffect(() => {
     void initializeI18n();
   }, []);
@@ -69,4 +83,4 @@ export default function RootLayout() {
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
-}
+});

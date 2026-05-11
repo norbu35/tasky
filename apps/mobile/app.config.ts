@@ -111,6 +111,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: [
     'expo-asset',
     'expo-router',
+    'sentry-expo',
     [
       'expo-font',
       {
