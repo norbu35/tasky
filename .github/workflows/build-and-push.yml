@@ -56,6 +56,14 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # P2-04: Image signing with cosign (requires cosign installed).
+      # Uncomment after setting up keyless signing with GitHub OIDC.
+      # - name: Sign container images
+      #   if: github.ref == 'refs/heads/main'
+      #   uses: sigstore/cosign-installer@v3
+      # - run: |
+      #     cosign sign --yes ${{ steps.meta.outputs.tags }}
+
   build-web:
     runs-on: ubuntu-latest
     steps:
@@ -98,6 +106,14 @@ jobs:
             VITE_FACEBOOK_APP_ID=${{ vars.VITE_FACEBOOK_APP_ID }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      # P2-04: Image signing with cosign (requires cosign installed).
+      # Uncomment after setting up keyless signing with GitHub OIDC.
+      # - name: Sign container images
+      #   if: github.ref == 'refs/heads/main'
+      #   uses: sigstore/cosign-installer@v3
+      # - run: |
+      #     cosign sign --yes ${{ steps.meta.outputs.tags }}
 
   scan-images:
     needs: [build-backend, build-web]

@@ -31,6 +31,13 @@ repositories {
     mavenCentral()
 }
 
+// Dependency locking — ensures reproducible builds.
+// Run: ./gradlew :services:api:dependencies --write-locks
+// This creates services/api/gradle.lockfile with pinned versions.
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 dependencies {
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web")

@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "mn.tasky.app",
+      "sha256_cert_fingerprints": [
+        "PLACEHOLDER: obtain with: keytool -list -v -keystore release.keystore | grep SHA256"
+      ]
+    }
+  }
+]

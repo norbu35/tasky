@@ -109,7 +109,24 @@ docker compose version
 sudo install -d -o deploy -g deploy /opt/tasky
 ```
 
-### 1.7 Verify bootstrap
+### 1.7 Docker userns-remap (future hardening)
+
+Docker userns-remap remaps container users to unprivileged host UIDs, mitigating
+container-escape attacks. This is a **planned hardening step** (P2-10) for post-launch.
+
+```bash
+# /etc/docker/daemon.json
+{
+  "userns-remap": "taskydock"
+}
+# Then: sudo useradd -r -s /bin/false taskydock
+# Restart: sudo systemctl restart docker
+```
+
+**Not yet applied.** Requires testing that all volume mounts and bind-mount paths
+are accessible by the remapped user before enabling in production.
+
+### 1.8 Verify bootstrap
 
 ```bash
 docker compose version        # docker compose available
