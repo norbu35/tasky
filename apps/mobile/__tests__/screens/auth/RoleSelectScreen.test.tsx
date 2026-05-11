@@ -1,9 +1,9 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
-import { useAppStore } from '../../../src/store/appStore';
+import React from 'react';
 
 import RoleSelectScreen from '../../../src/app/(auth)/role-select';
+import { useAppStore } from '../../../src/store/appStore';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockReplace = jest.fn();
 

@@ -1,5 +1,5 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import React from 'react';
 
 import ReviewSubmitScreen from '../../../src/app/(customer)/tasks/new/review';
 

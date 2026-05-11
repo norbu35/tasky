@@ -1,5 +1,6 @@
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react-native';
+import React from 'react';
+
 import { CategoryChip } from '../../../src/components/ui/CategoryChip';
 
 describe('CategoryChip', () => {

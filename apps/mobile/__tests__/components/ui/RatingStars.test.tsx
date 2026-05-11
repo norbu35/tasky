@@ -1,5 +1,6 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import React from 'react';
+
 import { RatingStars } from '../../../src/components/ui/RatingStars';
 
 jest.mock('lucide-react-native', () => {

@@ -1,12 +1,12 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
+import React from 'react';
 
 import ScheduleBudgetScreen from '../../../src/app/(customer)/tasks/new/schedule';
 import {
   createScheduleDateOptions,
   createScheduleTimeOptions,
 } from '../../../src/features/tasks/screens/TaskSchedule.model';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockPush = jest.fn();
 const mockBack = jest.fn();

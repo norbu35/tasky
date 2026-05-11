@@ -1,7 +1,8 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
-import { useConversations } from '../../../../src/features/chat/hooks/useConversations';
+import React from 'react';
+
 import { useBookingDetail } from '../../../../src/features/bookings/hooks/useBookingDetail';
+import { useConversations } from '../../../../src/features/chat/hooks/useConversations';
 import type { Booking } from '../../../../src/lib/api/types';
 import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 

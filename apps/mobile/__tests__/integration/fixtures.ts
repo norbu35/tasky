@@ -1,6 +1,6 @@
 import type { AuthTokens, Booking, Profile, PublicTask, User } from '../../src/lib/api/types';
-import { useAuthStore } from '../../src/store/authStore';
 import { useAppStore } from '../../src/store/appStore';
+import { useAuthStore } from '../../src/store/authStore';
 
 export const baseUser: User = {
   id: 'user-1',

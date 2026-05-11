@@ -1,9 +1,10 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
-import type { PublicTask } from '@/lib/api/types';
+import React from 'react';
 
 import { TaskDetailSummary } from '@/features/tasks/screens/TaskDetail.Summary';
+import type { PublicTask } from '@/lib/api/types';
+
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 jest.mock('react-i18next', () => {
   const { createReactI18nextMock } = require('../../../test-utils/mockI18n');

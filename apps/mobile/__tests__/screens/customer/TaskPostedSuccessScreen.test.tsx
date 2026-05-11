@@ -1,8 +1,8 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
+import React from 'react';
 
 import TaskPostedSuccessScreen from '../../../src/app/(customer)/tasks/new/success';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockReplace = jest.fn();
 const mockParams = { taskId: 'task-new-1' };

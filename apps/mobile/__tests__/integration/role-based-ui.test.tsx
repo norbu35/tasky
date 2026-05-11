@@ -1,18 +1,19 @@
-import React from 'react';
-import { render as rtlRender, screen } from '@testing-library/react-native';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render as rtlRender, screen } from '@testing-library/react-native';
+import React from 'react';
+
+import TabsLayout from '../../src/app/(tabs)/_layout';
+import MyProfileScreen from '../../src/app/(tabs)/profile';
+import { useMyProfile } from '../../src/features/profile/hooks/useProfile';
+import { RoleProvider } from '../../src/providers/RoleProvider';
+import { useAppStore } from '../../src/store/appStore';
+import { resetTestI18n, setTestLanguage } from '../test-utils/mockI18n';
+
+import { baseSession, baseProfile, resetStores, setAuthenticated } from './fixtures';
+
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 const render = (ui: React.ReactElement, options?: any) =>
   rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
-
-import { resetTestI18n, setTestLanguage } from '../test-utils/mockI18n';
-import { baseSession, baseProfile, resetStores, setAuthenticated } from './fixtures';
-import { useAppStore } from '../../src/store/appStore';
-import { RoleProvider } from '../../src/providers/RoleProvider';
-import { useMyProfile } from '../../src/features/profile/hooks/useProfile';
-import TabsLayout from '../../src/app/(tabs)/_layout';
-import MyProfileScreen from '../../src/app/(tabs)/profile';
 
 jest.mock('expo-router', () => {
   const React = require('react');

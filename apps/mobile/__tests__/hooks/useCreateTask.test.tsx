@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
-import { act, render, waitFor } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, render, waitFor } from '@testing-library/react-native';
+import React, { useEffect } from 'react';
+
 import { useAuthStore } from '../../src/store/authStore';
 import { createTestQueryClient } from '../test-utils/queryClient';
 

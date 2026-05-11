@@ -1,13 +1,15 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../test-utils/mockI18n';
-import { useAuthStore } from '../../src/store/authStore';
-import { useAppStore } from '../../src/store/appStore';
-import { baseSession, resetStores, setFirstTimeUser, setAuthenticated } from './fixtures';
+import React from 'react';
+
+import LoginScreen from '../../src/app/(auth)/index';
+import RoleSelectScreen from '../../src/app/(auth)/role-select';
 import SplashScreen from '../../src/app/index';
 import OnboardingScreen from '../../src/app/onboarding';
-import RoleSelectScreen from '../../src/app/(auth)/role-select';
-import LoginScreen from '../../src/app/(auth)/index';
+import { useAppStore } from '../../src/store/appStore';
+import { useAuthStore } from '../../src/store/authStore';
+import { resetTestI18n, setTestLanguage } from '../test-utils/mockI18n';
+
+import { baseSession, resetStores, setFirstTimeUser, setAuthenticated } from './fixtures';
 
 const mockReplace = jest.fn();
 const mockPush = jest.fn();

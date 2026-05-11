@@ -1,5 +1,5 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react-native';
+import React from 'react';
 
 import DisputeStatusScreen from '../../../../src/app/(customer)/disputes/[disputeId]';
 

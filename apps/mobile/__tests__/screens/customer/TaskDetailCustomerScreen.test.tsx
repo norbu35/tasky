@@ -1,8 +1,8 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
-import { useConversations } from '../../../src/features/chat/hooks/useConversations';
+import React from 'react';
 
 import TaskDetailCustomerScreen from '../../../src/app/(customer)/tasks/[taskId]/index';
+import { useConversations } from '../../../src/features/chat/hooks/useConversations';
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();

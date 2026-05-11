@@ -1,7 +1,8 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react-native';
+import React from 'react';
 
 import { ReviewThresholdSummary } from '@/features/profile/components/ReviewThresholdSummary';
+
 import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 jest.mock('react-i18next', () => {

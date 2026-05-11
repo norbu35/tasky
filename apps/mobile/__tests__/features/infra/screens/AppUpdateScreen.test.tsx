@@ -1,9 +1,10 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
-import AppUpdateScreen from '../../../../src/features/infra/screens/AppUpdateScreen';
-
 import { openURL as mockOpenURL } from 'expo-linking';
+import React from 'react';
+
+import AppUpdateScreen from '../../../../src/features/infra/screens/AppUpdateScreen';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
+
 const mockBack = jest.fn();
 
 jest.mock('react-native-reanimated', () => {

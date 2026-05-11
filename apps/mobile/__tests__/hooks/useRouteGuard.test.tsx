@@ -1,10 +1,11 @@
+import { QueryClientProvider } from '@tanstack/react-query';
+import { render, screen } from '@testing-library/react-native';
 import React from 'react';
 import { Text } from 'react-native';
-import { render, screen } from '@testing-library/react-native';
-import { QueryClientProvider } from '@tanstack/react-query';
+
 import { useRouteGuard } from '../../src/hooks/useRouteGuard';
-import { useAuthStore } from '../../src/store/authStore';
 import type { AuthTokens, Profile, User } from '../../src/lib/api/types';
+import { useAuthStore } from '../../src/store/authStore';
 import { createTestQueryClient } from '../test-utils/queryClient';
 
 const mockReplace = jest.fn();

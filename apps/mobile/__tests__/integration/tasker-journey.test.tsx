@@ -1,12 +1,17 @@
-import React from 'react';
-import { render as rtlRender, screen } from '@testing-library/react-native';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-const render = (ui: React.ReactElement, options?: any) =>
-  rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
+import { render as rtlRender, screen } from '@testing-library/react-native';
+import React from 'react';
 
+import TabsLayout from '../../src/app/(tabs)/_layout';
+import HomeTab from '../../src/app/(tabs)/index';
+import MyProfileScreen from '../../src/app/(tabs)/profile';
+import { useMyProfile } from '../../src/features/profile/hooks/useProfile';
+import { useMyTasks } from '../../src/features/tasks/hooks/useMyTasks';
+import { useTasks } from '../../src/features/tasks/hooks/useTasks';
+import { RoleProvider } from '../../src/providers/RoleProvider';
+import { useAppStore } from '../../src/store/appStore';
 import { resetTestI18n, setTestLanguage } from '../test-utils/mockI18n';
+
 import {
   baseTask,
   repairTask,
@@ -15,14 +20,10 @@ import {
   resetStores,
   setAuthenticated,
 } from './fixtures';
-import { useAppStore } from '../../src/store/appStore';
-import { RoleProvider } from '../../src/providers/RoleProvider';
-import { useTasks } from '../../src/features/tasks/hooks/useTasks';
-import { useMyTasks } from '../../src/features/tasks/hooks/useMyTasks';
-import { useMyProfile } from '../../src/features/profile/hooks/useProfile';
-import HomeTab from '../../src/app/(tabs)/index';
-import TabsLayout from '../../src/app/(tabs)/_layout';
-import MyProfileScreen from '../../src/app/(tabs)/profile';
+
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+const render = (ui: React.ReactElement, options?: any) =>
+  rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
 
 jest.mock('expo-router', () => {
   const React = require('react');

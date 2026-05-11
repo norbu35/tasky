@@ -1,16 +1,18 @@
+import { QueryClientProvider } from '@tanstack/react-query';
+import { render, screen } from '@testing-library/react-native';
 import React from 'react';
 import { Text } from 'react-native';
-import { render, screen } from '@testing-library/react-native';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { useAppStore } from '../../src/store/appStore';
-import { useAuthStore } from '../../src/store/authStore';
-import { RoleProvider, useRole } from '../../src/providers/RoleProvider';
+
 import {
   NotificationProvider,
   useNotificationContext,
 } from '../../src/providers/NotificationProvider';
-import { baseSession, resetStores } from './fixtures';
+import { RoleProvider, useRole } from '../../src/providers/RoleProvider';
+import { useAppStore } from '../../src/store/appStore';
+import { useAuthStore } from '../../src/store/authStore';
 import { createTestQueryClient } from '../test-utils/queryClient';
+
+import { baseSession, resetStores } from './fixtures';
 
 jest.mock('expo-router', () => {
   const React = require('react');

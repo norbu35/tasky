@@ -1,5 +1,6 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react-native';
+import React from 'react';
+
 import { StatusBadge } from '../../../src/components/ui/StatusBadge';
 
 jest.mock('react-i18next', () => ({

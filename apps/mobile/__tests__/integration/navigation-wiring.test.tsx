@@ -1,20 +1,20 @@
-import React from 'react';
-import { render as rtlRender, screen } from '@testing-library/react-native';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render as rtlRender, screen } from '@testing-library/react-native';
+import React from 'react';
+
+import AuthLayout from '../../src/app/(auth)/_layout';
+import CustomerLayout from '../../src/app/(customer)/_layout';
+import SharedLayout from '../../src/app/(shared)/_layout';
+import TabsLayout from '../../src/app/(tabs)/_layout';
+import TaskerLayout from '../../src/app/(tasker)/_layout';
+import { RoleProvider } from '../../src/providers/RoleProvider';
+import { useAppStore } from '../../src/store/appStore';
+import { resetTestI18n, setTestLanguage } from '../test-utils/mockI18n';
+
+import { resetStores } from './fixtures';
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 const render = (ui: React.ReactElement, options?: any) =>
   rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
-
-import { resetTestI18n, setTestLanguage } from '../test-utils/mockI18n';
-import { useAppStore } from '../../src/store/appStore';
-import { RoleProvider } from '../../src/providers/RoleProvider';
-import { resetStores } from './fixtures';
-import AuthLayout from '../../src/app/(auth)/_layout';
-import TabsLayout from '../../src/app/(tabs)/_layout';
-import CustomerLayout from '../../src/app/(customer)/_layout';
-import TaskerLayout from '../../src/app/(tasker)/_layout';
-import SharedLayout from '../../src/app/(shared)/_layout';
 
 jest.mock('expo-router', () => {
   const React = require('react');
