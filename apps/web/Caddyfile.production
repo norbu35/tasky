@@ -6,6 +6,12 @@
     root * /srv
     encode zstd gzip
 
+    # Block sourcemap files from being served in production
+    @sourcemap path *.map
+    respond @sourcemap 404 {
+        close
+    }
+
     header {
         # Security headers
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"

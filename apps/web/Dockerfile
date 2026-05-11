@@ -1,5 +1,6 @@
 # ---- Stage 1: Prune monorepo to only what @tasky/web needs ----
-FROM node:22-bookworm AS pruner
+# digest: obtain with docker buildx imagetools inspect node:22-bookworm
+FROM node:22-bookworm@sha256:0000000000000000000000000000000000000000000000000000000000000000 AS pruner
 WORKDIR /workspace
 
 ENV PNPM_HOME="/pnpm"
@@ -15,7 +16,8 @@ COPY . .
 RUN turbo prune @tasky/web --docker
 
 # ---- Stage 2: Install dependencies from pruned lockfile ----
-FROM node:22-bookworm AS installer
+# digest: obtain with docker buildx imagetools inspect node:22-bookworm
+FROM node:22-bookworm@sha256:0000000000000000000000000000000000000000000000000000000000000000 AS installer
 WORKDIR /workspace
 
 ENV PNPM_HOME="/pnpm"
@@ -44,7 +46,8 @@ ENV VITE_FACEBOOK_APP_ID="$VITE_FACEBOOK_APP_ID"
 RUN pnpm turbo run build --filter=@tasky/web
 
 # ---- Stage 4: Production image ----
-FROM caddy:2.9-alpine
+# digest: obtain with docker buildx imagetools inspect caddy:2.9-alpine
+FROM caddy:2.9-alpine@sha256:0000000000000000000000000000000000000000000000000000000000000000
 
 COPY apps/web/Caddyfile /etc/caddy/Caddyfile
 COPY --from=builder /workspace/apps/web/dist /srv
@@ -53,3 +56,6 @@ RUN addgroup -S caddy && adduser -S -G caddy caddy
 USER caddy
 
 EXPOSE 80
+
+HEALTHCHECK --interval=10s --timeout=5s --start-period=5s --retries=3 \
+    CMD wget -q --spider http://127.0.0.1:80/healthz || exit 1
