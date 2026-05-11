@@ -276,6 +276,11 @@ workflows:
       - ':services:api:dependencyCheckAnalyze'
       - ':services:api:gateRegression'
       - 'bash tooling/scripts/deploy/performance-smoke.sh'
+  .github/workflows/qodana_code_quality.yml:
+    lifecycle: manual
+    jobs:
+      - qodana
+    requiredCommands: []
   .github/workflows/security-review.yml:
     lifecycle: blocking
     jobs:

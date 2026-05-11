@@ -1,6 +1,8 @@
 // apps/mobile/tailwind.config.ts
 import type { Config } from 'tailwindcss';
+
 import { nativeTokens } from '@tasky/design-tokens';
+
 import { screenTypographyPlugin } from './src/design/tailwind-screen-typography';
 
 function camelToKebab(str: string) {
