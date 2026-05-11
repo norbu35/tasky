@@ -1,5 +1,5 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react-native';
+import React from 'react';
 
 import { BookingLifecyclePreview } from '../../../../src/features/bookings/components/BookingLifecyclePreview';
 import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';

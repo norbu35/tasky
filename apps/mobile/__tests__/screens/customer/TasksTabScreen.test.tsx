@@ -1,8 +1,8 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
+import React from 'react';
 
 import TasksTabScreen from '../../../src/app/(customer)/tasks/index';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),

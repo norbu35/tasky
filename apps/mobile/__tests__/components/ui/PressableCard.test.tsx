@@ -1,6 +1,7 @@
+import { fireEvent, render, screen } from '@testing-library/react-native';
 import React from 'react';
 import { Text } from 'react-native';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+
 import { PressableCard } from '../../../src/components/ui/PressableCard';
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));

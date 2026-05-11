@@ -1,7 +1,8 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
+import React from 'react';
+
 import mnTranslation from '../../../../src/locales/mn/translation.json';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 const translation = mnTranslation as Record<string, unknown>;
 const t = (key: string) =>

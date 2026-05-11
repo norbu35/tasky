@@ -4,15 +4,14 @@ import { Text, View } from 'react-native';
 
 import { PriceTag } from '@/components/ui/PriceTag';
 import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
-import { mobileSurfaces } from '@/design/surfaces';
 import { mobileTheme } from '@/design/tokenAdapter';
 
-import { formatSchedule, getBookingStatusLabel, getBookingStatusColors } from './model';
+import { formatSchedule, mapBookingStatus } from './model';
 
-const { colors } = mobileTheme;
-const { bookingList } = mobileSurfaces;
+const { colors, spacing } = mobileTheme;
 
 export function BookingCard({
   booking,
@@ -33,94 +32,44 @@ export function BookingCard({
   statusTestID?: string;
 }) {
   const schedule = formatSchedule(booking.task?.scheduled_at);
-  const statusColors = getBookingStatusColors(booking.status);
+  const taskerName = booking.tasker?.full_name ?? t('BookingsListScreen.taskerFallback');
+  const description = booking.task?.description ?? t('BookingsListScreen.taskFallback');
 
   return (
     <Touchable
       onPress={onPress}
-      className="bg-card rounded-lg p-card gap-item"
-      style={elevations.soft}
+      className="bg-card rounded-2xl p-lg gap-md"
+      style={elevations.card}
       testID={testID ?? `booking-card-${booking.id}`}
     >
-      <View className="flex-row items-start justify-between gap-item">
-        <View className="flex-row items-center flex-1 gap-item">
-          <ProfileAvatar
-            uri={booking.tasker?.avatar_url}
-            name={booking.tasker?.full_name ?? t('BookingsListScreen.taskerFallback')}
-            size="md"
-            showVerified
-          />
-          <View className="flex-1 gap-[2px]">
-            <Text className="text-body font-bold text-primary-deep" numberOfLines={1}>
-              {booking.tasker?.full_name ?? t('BookingsListScreen.taskerFallback')}
+      <View className="flex-row items-center" style={{ gap: spacing.md }}>
+        <ProfileAvatar uri={booking.tasker?.avatar_url} name={taskerName} size="md" showVerified />
+        <View className="flex-1">
+          <View className="flex-row items-center justify-between gap-sm">
+            <Text className="text-body font-sans-bold text-primary-deep flex-1" numberOfLines={1}>
+              {taskerName}
             </Text>
-            <Text className="text-caption text-text-secondary" numberOfLines={1}>
-              {booking.task?.description ?? t('BookingsListScreen.taskFallback')}
-            </Text>
+            <View testID={statusTestID}>
+              <StatusBadge status={mapBookingStatus(booking.status)} />
+            </View>
           </View>
-        </View>
-
-        <View
-          testID={statusTestID}
-          className="self-start rounded-full px-md py-xs"
-          style={{ backgroundColor: statusColors.bg }}
-        >
-          <Text
-            className="text-micro font-bold uppercase tracking-[0.6px]"
-            style={{ letterSpacing: bookingList.statusTracking, color: statusColors.text }}
-          >
-            {getBookingStatusLabel(booking.status, t)}
+          <Text className="text-caption text-text-secondary mt-xs" numberOfLines={2}>
+            {description}
           </Text>
         </View>
       </View>
 
-      <View className="bg-border opacity-40" style={{ height: bookingList.railHeight }} />
+      <View className="border-t border-border" />
 
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center gap-xs flex-1">
-          <CalendarDays size={16} color={colors.textSecondary} />
-          <Text className="text-caption text-text-secondary flex-1">{schedule ?? '—'}</Text>
+          <CalendarDays size={16} color={colors.textSecondary} strokeWidth={2.5} />
+          <Text className="text-caption text-text-secondary flex-1" numberOfLines={1}>
+            {schedule ?? '—'}
+          </Text>
         </View>
         <PriceTag amount={booking.task?.budget ?? 0} size="sm" />
       </View>
     </Touchable>
-  );
-}
-
-export function LoadingSkeletonCard() {
-  return (
-    <View className="bg-card rounded-lg p-lg gap-md" style={elevations.soft}>
-      <View className="flex-row items-center gap-md">
-        <View
-          className="rounded-md bg-muted"
-          style={{ width: bookingList.skeletonAvatar, height: bookingList.skeletonAvatar }}
-        />
-        <View className="flex-1 gap-xs">
-          <View
-            className="h-3 rounded-xs bg-muted"
-            style={{ width: bookingList.skeletonTitleWidth }}
-          />
-          <View
-            className="rounded-xs bg-muted"
-            style={{ height: 10, width: bookingList.skeletonSubtitleWidth }}
-          />
-        </View>
-        <View
-          className="rounded-full bg-muted"
-          style={{ width: bookingList.skeletonPillWidth, height: bookingList.skeletonPillHeight }}
-        />
-      </View>
-      <View className="bg-border opacity-40" style={{ height: bookingList.railHeight }} />
-      <View className="flex-row justify-between items-center">
-        <View
-          className="rounded-xs bg-muted"
-          style={{ height: 10, width: bookingList.skeletonMetaWidth }}
-        />
-        <View
-          className="rounded-xs bg-muted"
-          style={{ height: bookingList.skeletonPriceHeight, width: bookingList.skeletonPriceWidth }}
-        />
-      </View>
-    </View>
   );
 }

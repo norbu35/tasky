@@ -1,10 +1,10 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
-import { useAuthStore } from '../../../src/store/authStore';
-import { useAppStore } from '../../../src/store/appStore';
+import React from 'react';
 
 import SplashScreen from '../../../src/app/index';
+import { useAppStore } from '../../../src/store/appStore';
+import { useAuthStore } from '../../../src/store/authStore';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockSplashBootstrap = jest.fn();
 jest.mock('../../../src/providers/SplashBootstrapProvider', () => ({

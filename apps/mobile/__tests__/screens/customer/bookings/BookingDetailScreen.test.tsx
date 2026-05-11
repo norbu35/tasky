@@ -1,9 +1,9 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
-import { useConversations } from '../../../../src/features/chat/hooks/useConversations';
-import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
+import React from 'react';
 
 import BookingDetailScreen from '../../../../src/app/(customer)/bookings/[bookingId]/index';
+import { useConversations } from '../../../../src/features/chat/hooks/useConversations';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();

@@ -1,50 +1,39 @@
 import { useRouter } from 'expo-router';
+import { CalendarDays } from 'lucide-react-native';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { FeedListTemplate } from '@/components/templates/FeedListTemplate';
 import { FilterBar } from '@/components/ui/FilterBar';
+import { PriceTag } from '@/components/ui/PriceTag';
+import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
-import { SplitCard } from '@/components/ui/SplitCard';
-import { StatusBadge } from '@/components/ui/StatusBadge';
+import { StatusBadge, type StatusType } from '@/components/ui/StatusBadge';
+import { Touchable } from '@/components/ui/Touchable';
+import { elevations } from '@/design/elevations';
+import { mobileTheme } from '@/design/tokenAdapter';
 import { useBookings } from '@/features/bookings/hooks/useBookings';
 import { NotificationBellButton } from '@/features/notifications/components/NotificationBellButton';
 import type { Booking } from '@/lib/api/types';
+import { formatDateTime } from '@/utils/formatDate';
 
-function BookingCardHeader({ booking, statusTestID }: { booking: Booking; statusTestID?: string }) {
-  const customerName = booking.customer?.full_name ?? '';
-  const status = booking.status.toLowerCase() as 'assigned' | 'completed' | 'cancelled' | 'no_show';
+const { colors, spacing } = mobileTheme;
 
-  return (
-    <View testID="SCR-TASK-012" className="flex-row items-center justify-between">
-      <Text
-        className="text-body font-semibold text-primary-foreground flex-1 mr-sm"
-        numberOfLines={1}
-      >
-        {customerName}
-      </Text>
-      <View testID={statusTestID}>
-        <StatusBadge status={status} />
-      </View>
-    </View>
-  );
-}
-
-function BookingCardBody({ booking }: { booking: Booking }) {
-  const taskTitle = booking.task?.description ?? '';
-  const scheduledDate = booking.confirmed_scheduled_at
-    ? new Date(booking.confirmed_scheduled_at).toLocaleDateString()
-    : '';
-
-  return (
-    <View className="gap-xs">
-      <Text className="text-body font-medium text-foreground" numberOfLines={2}>
-        {taskTitle}
-      </Text>
-      <Text className="text-micro text-muted-foreground">{scheduledDate}</Text>
-    </View>
-  );
+function mapJobStatus(status?: string): StatusType {
+  switch ((status ?? '').toUpperCase()) {
+    case 'ASSIGNED':
+    case 'TASKER_MARKED_DONE':
+      return 'assigned';
+    case 'COMPLETED':
+      return 'completed';
+    case 'CANCELLED':
+      return 'cancelled';
+    case 'NO_SHOW':
+      return 'no_show';
+    default:
+      return 'open';
+  }
 }
 
 function getJobCardTestID(status?: string): string | undefined {
@@ -61,6 +50,69 @@ function getJobCardTestID(status?: string): string | undefined {
     default:
       return undefined;
   }
+}
+
+function TaskerJobCard({
+  booking,
+  onPress,
+  testID,
+  statusTestID,
+}: {
+  booking: Booking;
+  onPress: () => void;
+  testID: string;
+  statusTestID?: string;
+}) {
+  const { t } = useTranslation();
+  const customerName = booking.customer?.full_name ?? t('tasker.jobs.customerFallback');
+  const description = booking.task?.description ?? '';
+  const scheduledAt = booking.confirmed_scheduled_at ?? booking.task?.scheduled_at;
+  const schedule = formatDateTime(scheduledAt);
+  const price = booking.price ?? booking.task?.budget ?? 0;
+
+  return (
+    <Touchable
+      onPress={onPress}
+      className="bg-card rounded-2xl p-lg gap-md"
+      style={elevations.card}
+      testID={testID}
+    >
+      <View className="flex-row items-center" style={{ gap: spacing.md }}>
+        <ProfileAvatar uri={booking.customer?.avatar_url} name={customerName} size="md" />
+        <View className="flex-1">
+          <View className="flex-row items-center justify-between gap-sm">
+            <Text
+              testID="SCR-TASK-012"
+              className="text-body font-sans-bold text-primary-deep flex-1"
+              numberOfLines={1}
+            >
+              {customerName}
+            </Text>
+            <View testID={statusTestID}>
+              <StatusBadge status={mapJobStatus(booking.status)} />
+            </View>
+          </View>
+          {description ? (
+            <Text className="text-caption text-text-secondary mt-xs" numberOfLines={2}>
+              {description}
+            </Text>
+          ) : null}
+        </View>
+      </View>
+
+      <View className="border-t border-border" />
+
+      <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center gap-xs flex-1">
+          <CalendarDays size={16} color={colors.textSecondary} strokeWidth={2.5} />
+          <Text className="text-caption text-text-secondary flex-1" numberOfLines={1}>
+            {schedule || '—'}
+          </Text>
+        </View>
+        <PriceTag amount={price} size="sm" />
+      </View>
+    </Touchable>
+  );
 }
 
 export default function TaskerJobsScreen() {
@@ -99,13 +151,11 @@ export default function TaskerJobsScreen() {
 
   const renderItem = useCallback(
     (booking: Booking) => (
-      <SplitCard
-        headerContent={
-          <BookingCardHeader booking={booking} statusTestID={getJobCardTestID(booking.status)} />
-        }
-        bodyContent={<BookingCardBody booking={booking} />}
+      <TaskerJobCard
+        booking={booking}
         onPress={() => router.push(`/(tasker)/jobs/${booking.id}`)}
         testID={`booking-card-${booking.id}`}
+        statusTestID={getJobCardTestID(booking.status)}
       />
     ),
     [router],

@@ -125,3 +125,48 @@ evidence in `docs/maintenance/FEATURE_ACTIVATION_POLICY.md` must exist, includin
 - rollback criteria and staging rehearsal evidence
 - explicit confirmation that platform-fee collection does not imply payment protection, escrow, wallet balances, or
   tasker payout operations
+
+---
+
+## 12. Pre-deployment audit go/no-go signoff (2026-05-11)
+
+Comprehensive pre-deployment audit executed per `audit/REPORT.md`. Full backlog in `audit/REMEDIATION_BACKLOG.md`.
+
+### P0 findings — production blockers
+
+Production deploy is gated on **zero open P0** items.
+
+| ID    | Category          | Finding                                          | Status  |
+| ----- | ----------------- | ------------------------------------------------ | ------- |
+| P0-01 | Mobile security   | Android release signing uses debug keystore      | 🔴 Open |
+| P0-02 | Infrastructure    | Host firewall not documented                     | 🔴 Open |
+| P0-03 | Infrastructure    | SSH hardening not documented                     | 🔴 Open |
+| P0-04 | Database          | Encryption at rest not verified/documented       | 🔴 Open |
+| P0-05 | Database          | Offsite backup copy not configured               | 🔴 Open |
+| P0-06 | Database          | Restore drill not exercised                      | 🔴 Open |
+| P0-07 | Data governance   | PII inventory document not produced              | 🔴 Open |
+| P0-08 | Observability     | Missing disk-free and backup-stale alerts        | 🔴 Open |
+| P0-09 | Observability     | Alertmanager destination is placeholder          | 🔴 Open |
+| P0-10 | Observability     | No crash reporting (Sentry/Crashlytics)          | 🔴 Open |
+| P0-11 | Incident response | No on-call/paging mechanism documented           | 🔴 Open |
+| P0-12 | Operations        | Production runbook does not exist                | 🔴 Open |
+| P0-13 | App store         | App Privacy questionnaire not produced           | 🔴 Open |
+| P0-14 | App store         | ATT not implemented for iOS                      | 🔴 Open |
+| P0-15 | App store         | Sign in with Apple not implemented               | 🔴 Open |
+| P0-16 | Legal             | Privacy Policy / ToS not published at public URL | 🔴 Open |
+| P0-17 | Legal             | Signup consent not captured                      | 🔴 Open |
+
+### P1 findings — should fix before or shortly after launch
+
+22 items. See `audit/REMEDIATION_BACKLOG.md` for full list.
+
+### P2 findings — post-launch
+
+10 items. See `audit/REMEDIATION_BACKLOG.md` for full list.
+
+### Assessed state
+
+- **Current state:** `ready for staging` (unchanged from 2026-04-22)
+- **Production readiness:** **BLOCKED** — 17 open P0 items must be resolved
+- **Next step:** Resolve P0 items per execution order in `audit/REMEDIATION_BACKLOG.md`
+- **Re-audit:** After all P0 items are closed, re-assess production readiness

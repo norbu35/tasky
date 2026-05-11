@@ -1,8 +1,9 @@
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
+import React from 'react';
 
 import { ApplicationForm } from '@/features/tasks/screens/TaskDetail.ApplicationForm';
+
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 jest.mock('react-i18next', () => {
   const { createReactI18nextMock } = require('../../../test-utils/mockI18n');

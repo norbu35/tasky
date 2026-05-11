@@ -1,5 +1,5 @@
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react-native';
+import React from 'react';
 
 import { SchedulePickerSheet } from '../../../src/components/ui/SchedulePickerSheet';
 import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';

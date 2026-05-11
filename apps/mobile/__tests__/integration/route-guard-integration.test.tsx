@@ -1,8 +1,12 @@
+import { QueryClientProvider } from '@tanstack/react-query';
+import { render, screen } from '@testing-library/react-native';
 import React from 'react';
 import { Text } from 'react-native';
-import { render, screen } from '@testing-library/react-native';
-import { QueryClientProvider } from '@tanstack/react-query';
+
+import { useRouteGuard } from '../../src/hooks/useRouteGuard';
+import { isRestricted } from '../../src/utils/routeGuard';
 import { createTestQueryClient } from '../test-utils/queryClient';
+
 import {
   baseProfile,
   bannedProfile,
@@ -11,8 +15,6 @@ import {
   setAuthenticated,
   setBannedUser,
 } from './fixtures';
-import { useRouteGuard } from '../../src/hooks/useRouteGuard';
-import { isRestricted } from '../../src/utils/routeGuard';
 
 const mockReplace = jest.fn();
 const mockPush = jest.fn();

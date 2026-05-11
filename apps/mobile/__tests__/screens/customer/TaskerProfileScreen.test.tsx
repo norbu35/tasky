@@ -1,8 +1,8 @@
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
+import React from 'react';
 
 import TaskerProfileScreen from '../../../src/app/(customer)/taskers/[taskerId]';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockPush = jest.fn();
 const mockBack = jest.fn();

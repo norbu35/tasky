@@ -1,7 +1,8 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react-native';
-import { PriceTag } from '../../../src/components/ui/PriceTag';
+import React from 'react';
+
 import { InfoRow } from '../../../src/components/ui/InfoRow';
+import { PriceTag } from '../../../src/components/ui/PriceTag';
 
 describe('PriceTag', () => {
   it('renders formatted amount with tugrik symbol', () => {

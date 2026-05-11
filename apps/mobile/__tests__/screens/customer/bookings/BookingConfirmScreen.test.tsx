@@ -1,8 +1,8 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
+import React from 'react';
 
 import BookingConfirmScreen from '../../../../src/app/(customer)/bookings/confirm';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();

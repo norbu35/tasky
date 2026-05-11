@@ -1,4 +1,5 @@
 import expoFlat from 'eslint-config-expo/flat.js';
+
 import { baseConfig, mobileOverrides } from '@tasky/tooling-config/eslint/react-native';
 
 // Drop Expo entries that register plugins already provided by baseConfig.
@@ -18,7 +19,10 @@ export default [
   {
     files: ['src/**/*.{ts,tsx}'],
     rules: {
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@tanstack/query/exhaustive-deps': 'warn',
     },

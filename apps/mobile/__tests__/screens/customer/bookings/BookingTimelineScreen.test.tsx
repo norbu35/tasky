@@ -1,8 +1,8 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
+import React from 'react';
 
 import BookingTimelineScreen from '../../../../src/app/(customer)/bookings/[bookingId]/timeline';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 const mockBack = jest.fn();
 

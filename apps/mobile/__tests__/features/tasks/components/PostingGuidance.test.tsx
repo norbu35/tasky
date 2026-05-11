@@ -1,11 +1,12 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
+import React from 'react';
 
 import {
   PostingGuidanceCard,
   PostingProofChecklist,
 } from '@/features/tasks/components/PostingGuidance';
+
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 jest.mock('react-i18next', () => {
   const { createReactI18nextMock } = require('../../../test-utils/mockI18n');

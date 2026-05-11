@@ -1,5 +1,5 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react-native';
+import React from 'react';
 
 import { TaskerJobDetailSections } from '../../../../src/features/bookings/screens/TaskerJobDetail.Sections';
 import type { Booking } from '../../../../src/lib/api/types';

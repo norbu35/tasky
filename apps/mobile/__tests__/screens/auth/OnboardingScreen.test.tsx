@@ -1,10 +1,10 @@
+import { render, screen, fireEvent } from '@testing-library/react-native';
 import React from 'react';
 import { Dimensions, FlatList, StyleSheet } from 'react-native';
-import { render, screen, fireEvent } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
-import { useAppStore } from '../../../src/store/appStore';
 
 import OnboardingScreen from '../../../src/app/onboarding';
+import { useAppStore } from '../../../src/store/appStore';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockBack = jest.fn();
 const mockCanGoBack = jest.fn(() => false);

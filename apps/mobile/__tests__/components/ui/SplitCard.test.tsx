@@ -1,6 +1,7 @@
+import { render, screen, fireEvent } from '@testing-library/react-native';
 import React from 'react';
 import { Text } from 'react-native';
-import { render, screen, fireEvent } from '@testing-library/react-native';
+
 import { SplitCard } from '../../../src/components/ui/SplitCard';
 
 jest.mock('react-native-reanimated', () => {

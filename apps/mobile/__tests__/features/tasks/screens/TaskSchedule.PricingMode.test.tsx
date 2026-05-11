@@ -1,11 +1,12 @@
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
+import React from 'react';
 
 import {
   PricingModeSelector,
   QuoteModeNotice,
 } from '@/features/tasks/screens/TaskSchedule.PricingMode';
+
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 jest.mock('react-i18next', () => {
   const { createReactI18nextMock } = require('../../../test-utils/mockI18n');

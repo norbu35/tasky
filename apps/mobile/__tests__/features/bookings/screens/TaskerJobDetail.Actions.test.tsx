@@ -1,5 +1,5 @@
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react-native';
+import React from 'react';
 
 import { TaskerJobDetailActions } from '../../../../src/features/bookings/screens/TaskerJobDetail.Actions';
 import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';

@@ -1,19 +1,20 @@
-import React from 'react';
-import { render as rtlRender, screen } from '@testing-library/react-native';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render as rtlRender, screen } from '@testing-library/react-native';
+import React from 'react';
+
+import BookingsScreen from '../../src/app/(tabs)/bookings';
+import FeedScreen from '../../src/app/(tabs)/index';
+import { useBookings } from '../../src/features/bookings/hooks/useBookings';
+import { useTasks } from '../../src/features/tasks/hooks/useTasks';
+import { RoleProvider } from '../../src/providers/RoleProvider';
+import { useAppStore } from '../../src/store/appStore';
+import { resetTestI18n, setTestLanguage } from '../test-utils/mockI18n';
+
+import { baseTask, baseBooking, resetStores } from './fixtures';
+
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 const render = (ui: React.ReactElement, options?: any) =>
   rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
-
-import { resetTestI18n, setTestLanguage } from '../test-utils/mockI18n';
-import { baseTask, baseBooking, resetStores } from './fixtures';
-import { useAppStore } from '../../src/store/appStore';
-import { useTasks } from '../../src/features/tasks/hooks/useTasks';
-import { useBookings } from '../../src/features/bookings/hooks/useBookings';
-import { RoleProvider } from '../../src/providers/RoleProvider';
-import FeedScreen from '../../src/app/(tabs)/index';
-import BookingsScreen from '../../src/app/(tabs)/bookings';
 
 jest.mock('expo-router', () => {
   const React = require('react');

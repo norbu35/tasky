@@ -13,38 +13,22 @@ export default function InboxScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { data, isLoading, isError, isRefetching, refetch } = useConversations();
-  const [search, setSearch] = useState('');
-  const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [activeFilter, setActiveFilter] = useState<InboxFilter>('all');
 
   const conversations = useMemo<ConversationItem[]>(() => data?.data ?? [], [data?.data]);
   const filteredConversations = useMemo(() => {
-    const normalizedQuery = search.trim().toLowerCase();
     const sorted = [...conversations].sort((a, b) => {
       const aTime = new Date(a.last_message_at ?? a.created_at).getTime();
       const bTime = new Date(b.last_message_at ?? b.created_at).getTime();
       return bTime - aTime;
     });
 
-    const filteredByChip = sorted.filter((item) => {
+    return sorted.filter((item) => {
       if (activeFilter === 'unread') return (item.unread_count ?? 0) > 0;
       if (activeFilter === 'bookings') return Boolean(item.task_id);
       return true;
     });
-
-    if (!normalizedQuery) return filteredByChip;
-
-    return filteredByChip.filter((item) => {
-      const haystack = [
-        item.counterparty_name ?? '',
-        item.last_message_content ?? '',
-        item.task_title ?? '',
-      ]
-        .join(' ')
-        .toLowerCase();
-      return haystack.includes(normalizedQuery);
-    });
-  }, [activeFilter, conversations, search]);
+  }, [activeFilter, conversations]);
 
   const formatTimestamp = useCallback((value?: string) => {
     if (!value) return '';
@@ -59,25 +43,7 @@ export default function InboxScreen() {
     return timestamp.toLocaleDateString();
   }, []);
 
-  const handleToggleSearch = useCallback(() => {
-    setIsSearchVisible((visible) => !visible);
-  }, []);
-
-  const handleOpenSettings = useCallback(() => {
-    router.push('/(shared)/profile/settings');
-  }, [router]);
-
-  const listHeader = (
-    <InboxHeader
-      activeFilter={activeFilter}
-      isSearchVisible={isSearchVisible}
-      search={search}
-      onOpenSettings={handleOpenSettings}
-      onSearchChange={setSearch}
-      onSelectFilter={setActiveFilter}
-      onToggleSearch={handleToggleSearch}
-    />
-  );
+  const listHeader = <InboxHeader activeFilter={activeFilter} onSelectFilter={setActiveFilter} />;
 
   const renderItem = useCallback(
     (item: ConversationItem) => {

@@ -1,11 +1,12 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
+import React from 'react';
 
 import TaskLocationScreen from '@/features/tasks/screens/TaskLocation';
 import TaskReviewSubmitScreen from '@/features/tasks/screens/TaskReviewSubmitScreen';
 import TaskScheduleScreen from '@/features/tasks/screens/TaskScheduleScreen';
 import TaskSuccessScreen from '@/features/tasks/screens/TaskSuccessScreen';
+
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 const mockBack = jest.fn();
 const mockPush = jest.fn();

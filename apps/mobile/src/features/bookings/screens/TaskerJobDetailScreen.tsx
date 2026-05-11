@@ -17,6 +17,23 @@ import { useConversationRouteForBooking } from '@/features/chat';
 import { TaskerJobDetailActions } from './TaskerJobDetail.Actions';
 import { TaskerJobDetailSections } from './TaskerJobDetail.Sections';
 
+function getStatusHeading(status: string | undefined, t: (key: string) => string): string {
+  switch (status) {
+    case 'ASSIGNED':
+      return t('customer.bookings.statusAssigned');
+    case 'TASKER_MARKED_DONE':
+      return t('customer.bookings.statusMarkedDone');
+    case 'COMPLETED':
+      return t('customer.bookings.statusCompleted');
+    case 'CANCELLED':
+      return t('customer.bookings.statusCancelled');
+    case 'NO_SHOW':
+      return t('customer.bookings.statusNoShow');
+    default:
+      return t('tasker.jobs.bookingDetail');
+  }
+}
+
 export default function TaskerJobDetailScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -64,34 +81,43 @@ export default function TaskerJobDetailScreen() {
         }
       >
         {booking && (
-          <View className="gap-lg">
-            {status && (
-              <View className="border-b border-border pb-lg">
-                <Text className="text-caption text-text-secondary mb-xs">
-                  {t('tasker.jobs.bookingDetail')}
-                </Text>
-                <StatusBadge status={status} />
-              </View>
-            )}
-
+          <>
             <BookingLifecyclePreview
               status={bookingStatus}
               createdAt={booking.created_at}
               scheduledAt={booking.confirmed_scheduled_at ?? booking.task?.scheduled_at}
             />
 
+            {status && (
+              <View
+                className="border-b border-border pb-lg mb-lg"
+                testID="tasker-job-detail-status-section"
+              >
+                <View className="flex-row justify-between items-center">
+                  <View className="flex-1 pr-md">
+                    <Text className="text-caption text-text-secondary mb-xs">
+                      {t('tasker.jobs.bookingDetail')}
+                    </Text>
+                    <Text className="text-heading font-display-bold text-primary-deep">
+                      {getStatusHeading(bookingStatus, t)}
+                    </Text>
+                  </View>
+                  <StatusBadge status={status} />
+                </View>
+                {isMarkedDone ? (
+                  <View className="mt-md rounded-md border border-border bg-muted p-md">
+                    <Text className="text-body font-semibold text-primary-deep">
+                      {t('tasker.jobs.awaitingConfirmation')}
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
+            )}
+
             <TaskerJobDetailSections
               booking={booking}
               showExactAddress={isAssigned || isMarkedDone}
             />
-
-            {isMarkedDone && (
-              <View className="bg-muted rounded-md p-md">
-                <Text className="text-body text-foreground font-semibold">
-                  {t('tasker.jobs.awaitingConfirmation')}
-                </Text>
-              </View>
-            )}
 
             <TaskerJobDetailActions
               isAssigned={isAssigned}
@@ -106,7 +132,7 @@ export default function TaskerJobDetailScreen() {
                 })
               }
             />
-          </View>
+          </>
         )}
       </DetailTemplate>
 
@@ -120,7 +146,7 @@ export default function TaskerJobDetailScreen() {
               strikeCount={0}
               onCancelled={() => {
                 setCancelSheetOpen(false);
-                router.replace('/(tasker)/jobs');
+                router.replace('/(tabs)/bookings');
               }}
             />
           ) : null}

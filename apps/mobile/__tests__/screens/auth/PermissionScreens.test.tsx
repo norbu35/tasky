@@ -1,11 +1,11 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
-import { useAppStore } from '../../../src/store/appStore';
+import React from 'react';
 
 import PermissionCameraScreen from '../../../src/app/(auth)/permission-camera';
 import PermissionLocationScreen from '../../../src/app/(auth)/permission-location';
 import PermissionNotificationsScreen from '../../../src/app/(auth)/permission-notifications';
+import { useAppStore } from '../../../src/store/appStore';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockReplace = jest.fn();
 

@@ -1,8 +1,9 @@
+import { render, screen, fireEvent } from '@testing-library/react-native';
 import React from 'react';
 import { FlatList, StyleSheet, Text } from 'react-native';
-import { render, screen, fireEvent } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
+
 import { FeedListTemplate } from '../../../src/components/templates/FeedListTemplate';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 jest.mock('react-native-reanimated', () => {
   const RN = require('react-native');

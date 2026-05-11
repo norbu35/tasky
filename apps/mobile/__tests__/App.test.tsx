@@ -1,30 +1,18 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { render as rtlRender, screen } from '@testing-library/react-native';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: false, gcTime: Infinity } },
-});
-const render = (ui: React.ReactElement, options?: any) =>
-  rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
+import { render as rtlRender, screen } from '@testing-library/react-native';
 
 import { designTokens } from '@tasky/design-tokens';
-import { resetTestI18n } from './test-utils/mockI18n';
+
 import AuthScreen from '../src/app/(auth)/index';
-import IndexScreen from '../src/app/index';
 import BookingsScreen from '../src/app/(tabs)/bookings';
 import FeedScreen from '../src/app/(tabs)/index';
-import { Button, Card, FormField, Input, Toast } from '../src/components/ui';
+import IndexScreen from '../src/app/index';
 import { FormWizardTemplate } from '../src/components/templates/FormWizardTemplate';
+import { Button, Card, FormField, Input, Toast } from '../src/components/ui';
 import { mobileTheme } from '../src/design/tokenAdapter';
-import { RoleProvider } from '../src/providers/RoleProvider';
-
-const mockSplashBootstrap = jest.fn();
-jest.mock('../src/providers/SplashBootstrapProvider', () => ({
-  useSplashBootstrap: () => mockSplashBootstrap(),
-  SplashBootstrapProvider: ({ children }: { children: React.ReactNode }) => children,
-}));
 import { useDevLogin } from '../src/features/auth/hooks/useAuth';
 import { useBookings } from '../src/features/bookings/hooks/useBookings';
 import {
@@ -34,10 +22,6 @@ import {
 } from '../src/features/profile/hooks/useProfile';
 import { useTasks } from '../src/features/tasks/hooks/useTasks';
 import {
-  createMemoryClientAnalyticsTracker,
-  resolveClientLocale,
-} from '../src/lib/clientAnalytics';
-import {
   ApiError,
   type AuthTokens,
   type Booking,
@@ -45,11 +29,29 @@ import {
   type PublicTask,
   type User,
 } from '../src/lib/api/types';
+import {
+  createMemoryClientAnalyticsTracker,
+  resolveClientLocale,
+} from '../src/lib/clientAnalytics';
 import { createMobileApiClient } from '../src/lib/mobileApiClient';
-import { useAuthStore } from '../src/store/authStore';
+import { RoleProvider } from '../src/providers/RoleProvider';
 import { useAppStore } from '../src/store/appStore';
+import { useAuthStore } from '../src/store/authStore';
 import { parseError } from '../src/utils/errorHandling';
 import { isRestricted } from '../src/utils/routeGuard';
+
+import { resetTestI18n } from './test-utils/mockI18n';
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false, gcTime: Infinity } },
+});
+const render = (ui: React.ReactElement, options?: any) =>
+  rtlRender(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>, options);
+
+const mockSplashBootstrap = jest.fn();
+jest.mock('../src/providers/SplashBootstrapProvider', () => ({
+  useSplashBootstrap: () => mockSplashBootstrap(),
+  SplashBootstrapProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
 
 jest.mock('@react-native-async-storage/async-storage', () => ({
   __esModule: true,

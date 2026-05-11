@@ -1,8 +1,9 @@
+import { render, screen, fireEvent } from '@testing-library/react-native';
 import React from 'react';
 import { Text } from 'react-native';
-import { render, screen, fireEvent } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
+
 import { DetailTemplate } from '../../../src/components/templates/DetailTemplate';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 jest.mock('react-native-reanimated', () => {
   const RN = require('react-native');

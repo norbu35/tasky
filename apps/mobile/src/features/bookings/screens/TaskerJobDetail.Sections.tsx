@@ -1,4 +1,4 @@
-import { Banknote, CalendarClock, FileText, MapPin, UserCircle } from 'lucide-react-native';
+import { Banknote, CalendarClock, CheckCircle, FileText, MapPin } from 'lucide-react-native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
@@ -11,9 +11,9 @@ import { formatDateTime } from '@/utils/formatDate';
 
 const { colors, spacing } = mobileTheme;
 
-function DetailSection({ children, testID }: { children: React.ReactNode; testID?: string }) {
+function DividerSection({ children, testID }: { children: React.ReactNode; testID?: string }) {
   return (
-    <View className="border-b border-border pb-lg" testID={testID}>
+    <View className="border-b border-border pb-lg mb-lg" testID={testID}>
       {children}
     </View>
   );
@@ -63,7 +63,7 @@ export function TaskerJobDetailSections({
 
   return (
     <>
-      <DetailSection>
+      <DividerSection>
         <Text className="text-heading font-display-bold text-primary-deep mb-md">
           {t('tasker.jobs.customerLabel')}
         </Text>
@@ -77,14 +77,17 @@ export function TaskerJobDetailSections({
             <Text className="text-subtitle font-sans-bold text-primary-deep">
               {booking.customer?.full_name ?? ''}
             </Text>
-            <Text className="text-caption text-text-secondary mt-xs">
-              {t('tasker.jobs.platformContactNote')}
-            </Text>
+            <View className="flex-row items-center mt-xs" style={{ gap: spacing.xs }}>
+              <CheckCircle size={16} color={colors.verified} />
+              <Text className="text-caption text-text-secondary">
+                {t('tasker.jobs.platformContactNote')}
+              </Text>
+            </View>
           </View>
         </View>
-      </DetailSection>
+      </DividerSection>
 
-      <DetailSection>
+      <DividerSection>
         <Text className="text-heading font-display-bold text-primary-deep mb-md">
           {t('tasker.jobs.taskDescription')}
         </Text>
@@ -120,16 +123,16 @@ export function TaskerJobDetailSections({
             />
           </View>
         </View>
-      </DetailSection>
+      </DividerSection>
 
-      <DetailSection testID="booking-detail-tasker-payment-note">
+      <DividerSection testID="booking-detail-tasker-payment-note">
         <DetailRow
-          icon={<UserCircle size={22} color={colors.sunLight} />}
+          icon={<Banknote size={22} color={colors.sunLight} />}
           label={t('tasker.jobs.paymentNoteHeading')}
           body={t('BookingDetailTaskerScreen.copy1')}
           note={t('tasker.jobs.directSettlementNote')}
         />
-      </DetailSection>
+      </DividerSection>
     </>
   );
 }

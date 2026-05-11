@@ -1,7 +1,8 @@
-import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
+import React from 'react';
+
 import NetworkErrorScreen from '../../../../src/features/infra/screens/NetworkErrorScreen';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 const mockBack = jest.fn();
 
 jest.mock('react-native-reanimated', () => {

@@ -1,6 +1,7 @@
+import { render, screen, fireEvent } from '@testing-library/react-native';
 import React from 'react';
 import { Text } from 'react-native';
-import { render, screen, fireEvent } from '@testing-library/react-native';
+
 import { RoleProvider, useRole } from '../../src/providers/RoleProvider';
 import { useAppStore } from '../../src/store/appStore';
 

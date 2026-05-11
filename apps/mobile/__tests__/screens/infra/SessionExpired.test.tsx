@@ -1,8 +1,9 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
-import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
+import React from 'react';
+
 import SessionExpiredScreen from '../../../src/app/(shared)/session-expired';
 import { useAuthStore } from '../../../src/store/authStore';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 jest.mock('react-native-reanimated', () => {
   const RN = require('react-native');
