@@ -48,6 +48,12 @@ Quick reference:
 - Security-sensitive code needs positive and negative tests.
 - Schema parity: if a Flyway migration adds, drops, or renames a column or table, run `python3 tooling/scripts/governance/validate-schema-parity.py --update-expected` and commit the updated `tooling/config/expected-schema.json`.
 
+### Structural Conventions
+
+- Domain services live directly in `application/`. Do not introduce sub-packages unless the module already has them and the sub-package follows a recognized pattern (`command/`, `query/`).
+- Add methods to existing `*CommandPort` / `*QueryPort` interfaces. Create a new port interface only if the module has no port for that concern.
+- Before adding a module-specific boundary test, check whether the broader tests (e.g., `PublicPortBoundaryTest`) already enforce the same rule. Module-specific tests must assert something the cross-cutting test does not.
+
 ## Backend Testing Rules
 
 Before writing any backend test: check `tests/registry.yaml` for an existing scenario and read `tests/scenarios/<domain>.md`. If no scenario covers the behavior, stop and report the gap unless you are the designated scenario curator for the current execution brief.

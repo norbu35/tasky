@@ -35,6 +35,7 @@ public class PiiMaskingConverter extends MessageConverter {
         return message;
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private static String mask(MatchResult mr) {
         return "***";
     }

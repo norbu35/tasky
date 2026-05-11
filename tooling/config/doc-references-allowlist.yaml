@@ -50,3 +50,31 @@ per_file:
         value: CustomerTaskDetail
       - kind: java-class
         value: CustomerTasks
+  - file: docs/architecture/api.md
+    suppress:
+      - kind: db-table
+        value: jti
+  - file: docs/maintenance/PII_INVENTORY.md
+    suppress:
+      - kind: db-table
+        value: actor_user_id
+  - file: docs/maintenance/PRODUCTION_RUNBOOK.md
+    suppress:
+      - kind: env-var
+        value: DOCKER_CONFIG
+      - kind: env-var
+        value: TASKY_APP_IMAGE_TAG
+      - kind: env-var
+        value: TASKY_BLIND_INDEX_KEY_NEW
+      - kind: env-var
+        value: NEW_JWT_SECRET
+      - kind: env-var
+        value: NEW_ENCRYPTION_KEY
+      - kind: flyway
+        value: V4__revert_X.sql
+      - kind: java-fqn
+        value: com.tasky.BlindIndexBackfill
+      - kind: java-fqn
+        value: com.tasky.EncryptionKeyRotation
+      - kind: workflow
+        value: alertmanager.yml

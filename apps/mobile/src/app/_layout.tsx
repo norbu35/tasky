@@ -24,7 +24,7 @@ import '../../global.css';
 // Initialise Sentry before any code that could throw.
 // DSN is read from EXPO_PUBLIC_SENTRY_DSN in the environment.
 Sentry.init({
-  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  dsn: process.env['EXPO_PUBLIC_SENTRY_DSN'],
   tracesSampleRate: 0.0, // Phase 1: errors only
 });
 

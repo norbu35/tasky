@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/react';
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
@@ -10,12 +9,13 @@ import './styles.css';
 // Initialise Sentry before any code that could throw.
 // DSN is read from VITE_SENTRY_DSN in the environment.
 Sentry.init({
-  dsn: import.meta.env.VITE_SENTRY_DSN,
+  dsn: import.meta.env['VITE_SENTRY_DSN'],
   tracesSampleRate: 0.0, // Phase 1: errors only
 });
 
 // Dev-only: expose testSentry() on window for manual crash-report verification.
 if (import.meta.env.DEV) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).testSentry = () => Sentry.captureException(new Error('Sentry test error'));
 }
 

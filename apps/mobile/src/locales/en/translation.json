@@ -1167,19 +1167,31 @@
     },
     "devBypass": "Dev bypass",
     "loginAsCustomer": "Login as Customer",
-    "loginAsTasker": "Login as Tasker"
+    "loginAsTasker": "Login as Tasker",
+    "invalidPhone": "Invalid phone number",
+    "phoneTooShort": "Phone number is too short"
   },
   "booking": {
-    "confirmTitle": "Confirm Booking",
-    "reviews": "reviews",
-    "summaryTitle": "Booking Summary",
-    "date": "Date",
-    "time": "Time",
-    "budget": "Budget",
-    "liabilityTitle": "Liability Disclaimer",
-    "liabilityBody": "Tasky acts solely as a connector between task posters and taskers. Tasky does not process payments, employ taskers, or guarantee work quality. All arrangements, payments, and liability for task completion are between the poster and the tasker directly.",
-    "acceptLiability": "I accept the liability terms",
-    "confirmAction": "Confirm Booking"
+    "lifecycle": {
+      "title": "Booking timeline",
+      "requested": "Task posted",
+      "confirmed": "Booking confirmed",
+      "scheduled": "Scheduled work",
+      "pending": "Pending",
+      "confirmedTimestamp": "Confirmed with both parties",
+      "addressNote": "Exact address is shown only after the booking is confirmed."
+    },
+    "support": {
+      "title": "Report or get help",
+      "prompt": "What's happening?",
+      "privacyNote": "Shared only with Tasky support when review is required.",
+      "description": "Pick the closest reason so Tasky can route the next step without changing the booking contract.",
+      "cta": "Get help",
+      "primary": "Continue",
+      "reasonArrival": "Arrival or no-show",
+      "reasonSchedule": "Schedule change",
+      "reasonSafety": "Safety or conduct concern"
+    }
   },
   "bookingList": {
     "loading": "Loading bookings...",
@@ -1580,28 +1592,6 @@
     },
     "rebook": {
       "title": "Rebook"
-    }
-  },
-  "booking": {
-    "lifecycle": {
-      "title": "Booking timeline",
-      "requested": "Task posted",
-      "confirmed": "Booking confirmed",
-      "scheduled": "Scheduled work",
-      "pending": "Pending",
-      "confirmedTimestamp": "Confirmed with both parties",
-      "addressNote": "Exact address is shown only after the booking is confirmed."
-    },
-    "support": {
-      "title": "Report or get help",
-      "prompt": "What's happening?",
-      "privacyNote": "Shared only with Tasky support when review is required.",
-      "description": "Pick the closest reason so Tasky can route the next step without changing the booking contract.",
-      "cta": "Get help",
-      "primary": "Continue",
-      "reasonArrival": "Arrival or no-show",
-      "reasonSchedule": "Schedule change",
-      "reasonSafety": "Safety or conduct concern"
     }
   },
   "detail": {
@@ -2223,7 +2213,8 @@
       "paymentNoteHeading": "Payment Information",
       "directSettlementNote": "Do not collect deposits or fees through Tasky.",
       "schedule": "Schedule",
-      "taskDescription": "Task Description"
+      "taskDescription": "Task Description",
+      "customerFallback": "Unknown customer"
     },
     "stats": {
       "title": "My Stats",

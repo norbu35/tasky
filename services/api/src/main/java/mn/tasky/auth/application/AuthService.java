@@ -320,12 +320,7 @@ public class AuthService {
         meterRegistry
                 .counter("tasky.auth.login_attempts", "method", "otp", "result", "success")
                 .increment();
-        auditEventDao.insert(
-                effectiveUser.id().toString(),
-                "LOGIN_SUCCESS",
-                "user",
-                effectiveUser.id().toString(),
-                null);
+        auditEventDao.insert(effectiveUser.id(), "LOGIN_SUCCESS", "user", effectiveUser.id(), null);
         return Optional.of(issueSession(effectiveUser));
     }
 
@@ -447,12 +442,7 @@ public class AuthService {
             meterRegistry
                     .counter("tasky.auth.login_attempts", "method", "facebook", "result", "success")
                     .increment();
-            auditEventDao.insert(
-                    user.id().toString(),
-                    "FACEBOOK_AUTH_SUCCESS",
-                    "user",
-                    user.id().toString(),
-                    null);
+            auditEventDao.insert(user.id(), "FACEBOOK_AUTH_SUCCESS", "user", user.id(), null);
             return issueSession(effectiveUser);
         } catch (AccountRestrictedException e) {
             throw e;
@@ -585,7 +575,7 @@ public class AuthService {
                 user.createdAt(),
                 user.updatedAt());
         AuthSession rotated = issueSession(effectiveUser);
-        auditEventDao.insert(parsed.userId().toString(), "TOKEN_REFRESH", "session", (String) null, null);
+        auditEventDao.insert(parsed.userId(), "TOKEN_REFRESH", "session", (String) null, null);
         return Optional.of(new AuthTokens(rotated.accessToken(), rotated.refreshToken()));
     }
 

@@ -36,13 +36,13 @@ path: /api/v1/auth/logout
 ```
 
 ```claim endpoint
-operationId: facebookLogin
+operationId: loginWithFacebook
 method: POST
 path: /api/v1/auth/facebook
 ```
 
 ```claim endpoint
-operationId: facebookStatus
+operationId: getFacebookStatus
 method: GET
 path: /api/v1/auth/facebook/status
 ```

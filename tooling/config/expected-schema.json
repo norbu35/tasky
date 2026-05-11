@@ -1,5 +1,5 @@
 {
-  "_generated_from_migrations": "V1 through V3",
+  "_generated_from_migrations": "V1 through V4",
   "_description": "Canonical schema inventory. Regenerate with: python3 tooling/scripts/governance/validate-schema-parity.py --update-expected",
   "tables": {
     "analytics_events": {
@@ -445,6 +445,9 @@
         "scope_summary_source": ["LLM", "TEMPLATE", "USER_EDITED"],
         "status": ["ASSIGNED", "CANCELLED", "COMPLETED", "NO_SHOW", "OPEN"]
       }
+    },
+    "token_blacklist": {
+      "columns": ["expires_at", "jti", "revoked_at"]
     },
     "user_consents": {
       "columns": ["accepted_at", "id", "policy_kind", "user_id", "version"],
