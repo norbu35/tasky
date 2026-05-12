@@ -4,6 +4,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
+import { ScreenContainer } from '@/components/shells';
 import { Button } from '@/components/ui/Button';
 import { mobileTheme, elevations } from '@/design/tokenAdapter';
 
@@ -14,17 +15,17 @@ export default function PendingScreen() {
   const router = useRouter();
 
   return (
-    <View testID="SCR-TASK-007" className="flex-1 justify-center items-center px-lg">
+    <ScreenContainer testID="SCR-TASK-007">
       <View className="w-24 h-24 rounded-full bg-muted justify-center items-center mb-xl">
         <Clock size={24} color={colors.accent} />
       </View>
-      <Text className="text-title font-bold text-foreground text-center">
+      <Text className="text-title font-sans-bold text-foreground text-center">
         {t('tasker.verification.pendingTitle')}
       </Text>
       <Text className="text-body text-text-secondary text-center mt-sm leading-relaxed">
         {t('tasker.verification.pendingBody')}
       </Text>
-      <Text className="text-body text-accent text-center mt-md font-medium">
+      <Text className="text-body text-accent text-center mt-md font-sans-medium">
         {t('tasker.verification.pendingSla')}
       </Text>
 
@@ -60,6 +61,6 @@ export default function PendingScreen() {
         className="mt-sm"
         testID="verification-pending-screen-back"
       />
-    </View>
+    </ScreenContainer>
   );
 }

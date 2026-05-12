@@ -91,7 +91,7 @@ describe('RoleSelectScreen (SCR-SHARED-006)', () => {
     fireEvent.press(screen.getByTestId('role-confirm-button'));
     fireEvent.press(screen.getByTestId('role-sheet-confirm'));
     expect(useAppStore.getState().currentRole).toBe('customer');
-    expect(mockReplace).toHaveBeenCalledWith('/(auth)/permission-camera');
+    expect(mockReplace).toHaveBeenCalledWith('/(auth)/permission-notifications');
   });
 
   it('confirming tasker selection sets role and navigates', () => {
@@ -100,7 +100,7 @@ describe('RoleSelectScreen (SCR-SHARED-006)', () => {
     fireEvent.press(screen.getByTestId('role-confirm-button'));
     fireEvent.press(screen.getByTestId('role-sheet-confirm'));
     expect(useAppStore.getState().currentRole).toBe('tasker');
-    expect(mockReplace).toHaveBeenCalledWith('/(auth)/permission-camera');
+    expect(mockReplace).toHaveBeenCalledWith('/(auth)/permission-notifications');
   });
 
   it('go back closes the confirmation sheet without navigating', () => {

@@ -6,7 +6,7 @@ import { Text, View } from 'react-native';
 import { ModalSheetTemplate } from '@/components/templates/ModalSheetTemplate';
 import { mobileTheme } from '@/design/tokenAdapter';
 
-const { colors } = mobileTheme;
+const { colors, iconSizes } = mobileTheme;
 
 interface ConfirmSheetProps {
   isOpen: boolean;
@@ -53,7 +53,7 @@ export function ConfirmSheet({
       }}
     >
       <View className="items-center gap-sm">
-        {isDestructive && <AlertTriangle size={24} color={colors.danger} />}
+        {isDestructive && <AlertTriangle size={iconSizes.md} color={colors.danger} />}
         <Text className="text-title font-sans-bold text-foreground text-center">{title}</Text>
         <Text className="text-body text-muted-foreground text-center leading-6">{description}</Text>
       </View>

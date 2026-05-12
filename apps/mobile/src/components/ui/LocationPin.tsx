@@ -5,7 +5,7 @@ import { Text, View } from 'react-native';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
-const { colors } = mobileTheme;
+const { colors, iconSizes } = mobileTheme;
 
 interface LocationPinProps {
   text: string;
@@ -21,7 +21,7 @@ export function LocationPin({ text, compact = false, testID, className }: Locati
       testID={testID}
       accessibilityLabel={text}
     >
-      <MapPin size={16} color={colors.accent} />
+      <MapPin size={iconSizes.xs} color={colors.accent} />
       <Text
         className={cn('text-label text-text-secondary shrink', compact && 'text-caption')}
         numberOfLines={compact ? 1 : undefined}

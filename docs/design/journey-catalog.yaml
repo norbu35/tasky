@@ -27,17 +27,9 @@ journeys:
       - step: 4
         screen: SCR-SHARED-006
         action: Select role (Customer or Tasker)
-        next: SCR-SHARED-007
+        next: SCR-SHARED-009
         lifecycle: USER-T02 or USER-T04
       - step: 5
-        screen: SCR-SHARED-007
-        action: Grant/skip camera permission
-        next: SCR-SHARED-008
-      - step: 6
-        screen: SCR-SHARED-008
-        action: Grant/skip location permission
-        next: SCR-SHARED-009
-      - step: 7
         screen: SCR-SHARED-009
         action: Grant/skip notification permission
         next: SCR-CUST-001

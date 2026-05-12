@@ -10,7 +10,7 @@ import { mobileTheme, withEmphasisSpring } from '@/design/tokenAdapter';
 import { InsetScrollView, ScreenContainer } from '../shells';
 import { Button } from '../ui/Button';
 
-const { colors, spacing } = mobileTheme;
+const { colors, iconSizes, spacing } = mobileTheme;
 
 export interface SuccessCelebrationTemplateProps {
   headline: string;
@@ -38,7 +38,7 @@ function AnimatedCheckmark() {
   return (
     <Animated.View style={animatedStyle}>
       <View className="mb-xl">
-        <CheckCircle size={24} color={colors.verified} />
+        <CheckCircle size={iconSizes.md} color={colors.verified} />
       </View>
     </Animated.View>
   );

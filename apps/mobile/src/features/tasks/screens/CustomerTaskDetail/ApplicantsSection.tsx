@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 import { mobileSurfaces } from '@/design/surfaces';
+import { mobileTheme } from '@/design/tokenAdapter';
 
 const { tint } = mobileSurfaces;
 
@@ -15,16 +16,16 @@ export function ApplicantsSection({ hasApplicants, applicantCount, t }: Applican
   return (
     <View className="bg-muted rounded-sm p-lg gap-sm">
       <View className="flex-row justify-between items-center">
-        <Text className="text-subtitle font-extrabold text-foreground">
+        <Text className="text-subtitle font-sans-bold text-foreground">
           {t('TaskDetailCustomerScreen.applicants')}
         </Text>
         <Text
-          className="text-caption font-extrabold text-center text-primary-deep"
+          className="text-caption font-sans-bold text-center text-primary-deep"
           style={{
             minWidth: mobileSurfaces.taskDetail.pillMinWidth,
             paddingHorizontal: mobileSurfaces.taskDetail.pillInsetX,
             paddingVertical: mobileSurfaces.taskDetail.pillInsetY,
-            borderRadius: 9999,
+            borderRadius: mobileTheme.radius.full,
             backgroundColor: tint.primarySoft,
           }}
         >

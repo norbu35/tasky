@@ -82,10 +82,9 @@ export const mobileSurfaces = {
     statusTracking: 0.6,
   },
   permissionPrimer: {
-    topIllustrationSize: 128,
-    sheetHandleWidth: 40,
-    sheetHandleHeight: 4,
-    iconPreviewSize: 96,
+    outerRingSize: 200,
+    middleRingSize: 156,
+    innerIconSize: 112,
     badgeOffset: -8,
     badgeSize: 32,
     badgeBorder: 4,

@@ -4,10 +4,12 @@ import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Text, View } from 'react-native';
 
+import { nativeTokens } from '@tasky/design-tokens';
+
 import { FormWizardTemplate } from '@/components/templates/FormWizardTemplate';
 import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
-import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
 import { PostingGuidanceCard } from '@/features/tasks/components/PostingGuidance';
 import { useTaskDraftStore } from '@/features/tasks/draft';
 import { useCategories } from '@/features/tasks/hooks/useCategories';
@@ -30,7 +32,7 @@ function getCategoryVisual(name: string): CategoryVisual {
       descriptionKey: 'CategorySelectionScreen.cleaningDescription',
       icon: Sparkles,
       tint: colors.primary,
-      tone: `${colors.primary}12`,
+      tone: withAlpha(colors.primary, 0.07),
     };
   }
 
@@ -39,7 +41,7 @@ function getCategoryVisual(name: string): CategoryVisual {
       descriptionKey: 'CategorySelectionScreen.repairDescription',
       icon: Hammer,
       tint: colors.secondary,
-      tone: `${colors.secondary}1A`,
+      tone: withAlpha(colors.secondary, 0.1),
     };
   }
 
@@ -48,7 +50,7 @@ function getCategoryVisual(name: string): CategoryVisual {
       descriptionKey: 'CategorySelectionScreen.movingDescription',
       icon: Package,
       tint: colors.accent,
-      tone: `${colors.accent}1A`,
+      tone: withAlpha(colors.accent, 0.1),
     };
   }
 
@@ -57,7 +59,7 @@ function getCategoryVisual(name: string): CategoryVisual {
       descriptionKey: 'CategorySelectionScreen.laundryDescription',
       icon: Shirt,
       tint: colors.primaryDeep,
-      tone: `${colors.primaryDeep}14`,
+      tone: withAlpha(colors.primaryDeep, 0.08),
     };
   }
 
@@ -66,7 +68,7 @@ function getCategoryVisual(name: string): CategoryVisual {
       descriptionKey: 'CategorySelectionScreen.electricDescription',
       icon: Bolt,
       tint: colors.secondary,
-      tone: `${colors.secondary}1A`,
+      tone: withAlpha(colors.secondary, 0.1),
     };
   }
 
@@ -75,7 +77,7 @@ function getCategoryVisual(name: string): CategoryVisual {
       descriptionKey: 'CategorySelectionScreen.gardenDescription',
       icon: Leaf,
       tint: colors.trust,
-      tone: `${colors.trust}18`,
+      tone: withAlpha(colors.trust, 0.09),
     };
   }
 
@@ -83,7 +85,7 @@ function getCategoryVisual(name: string): CategoryVisual {
     descriptionKey: 'CategorySelectionScreen.defaultDescription',
     icon: Sparkles,
     tint: colors.primary,
-    tone: `${colors.primary}12`,
+    tone: withAlpha(colors.primary, 0.07),
   };
 }
 
@@ -191,7 +193,10 @@ export default function TaskCategoryScreen() {
                 className="flex-row items-center gap-md p-md rounded-lg bg-card"
                 style={({ pressed }) => [
                   elevations.soft,
-                  pressed && { opacity: 0.92, transform: [{ scale: 0.98 }] },
+                  pressed && {
+                    opacity: nativeTokens.interaction.hover.opacity,
+                    transform: [{ scale: nativeTokens.interaction.pressed.scale }],
+                  },
                 ]}
               >
                 <View

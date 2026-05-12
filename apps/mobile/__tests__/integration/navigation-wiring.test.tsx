@@ -111,8 +111,6 @@ describe('navigation-wiring', () => {
     expect(screen.getByTestId('stack-layout')).toBeTruthy();
     expect(screen.getByTestId('stack-index')).toBeTruthy();
     expect(screen.getByTestId('stack-role-select')).toBeTruthy();
-    expect(screen.getByTestId('stack-permission-camera')).toBeTruthy();
-    expect(screen.getByTestId('stack-permission-location')).toBeTruthy();
     expect(screen.getByTestId('stack-permission-notifications')).toBeTruthy();
   });
 

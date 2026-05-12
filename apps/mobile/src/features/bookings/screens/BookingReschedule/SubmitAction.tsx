@@ -10,7 +10,7 @@ import { mobileTheme } from '@/design/tokenAdapter';
 
 import { RESCHEDULE_SURFACE, type RescheduleState } from './model';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 
 interface RequestStateCardProps {
   requestState: RescheduleState;
@@ -89,7 +89,7 @@ export function SubmitButton({ isPending, submitError, onSubmit }: SubmitButtonP
             style={[
               {
                 minHeight: RESCHEDULE_SURFACE.ctaHeight,
-                borderRadius: 8,
+                borderRadius: radius.sm,
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'center',

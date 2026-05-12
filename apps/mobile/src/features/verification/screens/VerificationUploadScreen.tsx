@@ -152,7 +152,7 @@ export default function VerificationUploadScreen() {
 
       {showReview ? (
         <View className="gap-md p-lg rounded-md bg-muted" testID="verification-review">
-          <Text className="text-subtitle font-semibold text-primary">
+          <Text className="text-subtitle font-sans-semibold text-primary">
             {t('tasker.verification.reviewHeading')}
           </Text>
           <Text className="text-body text-text-secondary leading-[26px]">

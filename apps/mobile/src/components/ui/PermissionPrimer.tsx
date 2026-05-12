@@ -2,16 +2,18 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { elevations, overlays } from '@/design/elevations';
+import { nativeTokens } from '@tasky/design-tokens';
+
 import { mobileSurfaces } from '@/design/surfaces';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
 import { Button } from './Button';
-import { IllustrationArea, IconPreview } from './PermissionPrimer.Illustration';
+import { PermissionIllustration } from './PermissionPrimer.Illustration';
 
-const { colors, spacing } = mobileTheme;
+const { spacing } = mobileTheme;
 const { permissionPrimer } = mobileSurfaces;
+const colorOpacity = nativeTokens.colorOpacity;
 
 interface PermissionPrimerProps {
   icon: React.ReactNode;
@@ -56,39 +58,31 @@ export function PermissionPrimer({
   const resolvedContinueLabel = continueLabel ?? t('common.continue');
 
   return (
-    <View className={cn('flex-1 justify-end', className)} testID={testID}>
-      <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.muted }]} />
-      <View style={[StyleSheet.absoluteFill, { backgroundColor: overlays.sheet }]} />
-      <IllustrationArea icon={icon} />
-      <View
-        className="bg-background rounded-tl-lg rounded-tr-lg px-xl pt-md pb-xl items-center"
-        style={elevations.card}
-      >
-        <View
-          className="rounded-full bg-border mb-lg"
-          style={{
-            width: permissionPrimer.sheetHandleWidth,
-            height: permissionPrimer.sheetHandleHeight,
-          }}
-        />
-        <IconPreview icon={icon} badgeLabel={badgeLabel} />
+    <View className={cn('flex-1 items-center justify-center', className)} testID={testID}>
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: colorOpacity.primary[5] }]} />
+
+      <View className="px-xl items-center" style={{ gap: spacing.md }}>
+        <PermissionIllustration icon={icon} badgeLabel={badgeLabel} />
+
         <Text
-          className="text-heading font-display-bold text-primary-deep text-center mb-sm"
+          className="text-heading font-display-bold text-primary-deep text-center"
           style={{
             letterSpacing: permissionPrimer.titleTracking,
           }}
         >
           {title}
         </Text>
+
         <Text
-          className="text-body text-muted-foreground text-center mb-md"
+          className="text-body text-muted-foreground text-center"
           style={{ lineHeight: permissionPrimer.bodyLineHeight }}
         >
           {isDenied && deniedMessage ? deniedMessage : description}
         </Text>
+
         {isDenied && settingsHint ? (
           <Text
-            className="text-label text-text-secondary text-center mb-xl"
+            className="text-label text-text-secondary text-center"
             style={{
               lineHeight: permissionPrimer.hintLineHeight,
             }}
@@ -96,7 +90,8 @@ export function PermissionPrimer({
             {settingsHint}
           </Text>
         ) : null}
-        <View className="self-stretch gap-sm">
+
+        <View className="self-stretch" style={{ gap: spacing.sm }}>
           {isDenied ? (
             <Button
               testID="permission-continue-button"
@@ -126,6 +121,7 @@ export function PermissionPrimer({
             </>
           )}
         </View>
+
         {footerNote ? (
           <Text
             className="text-caption text-text-secondary text-center"

@@ -6,7 +6,7 @@ import { reverseGeocode } from '@/features/tasks/api';
 import { useTaskDraftStore } from '@/features/tasks/draft';
 import { useRecentLocations } from '@/features/tasks/hooks/useRecentLocations';
 import { useAuthStore } from '@/store/authStore';
-import { getCurrentLocation } from '@/utils/permissions';
+import { getCurrentLocation, requestLocationPermission } from '@/utils/permissions';
 
 import { UB_CENTER, DEFAULT_DELTA, ZOOM_DELTA, ANIMATE_DURATION, makeRegion } from './model';
 
@@ -47,15 +47,20 @@ export function useTaskLocationScreen() {
   useEffect(() => {
     if (initialLat !== null && initialLng !== null) return;
     let cancelled = false;
-    getCurrentLocation().then((loc) => {
-      if (cancelled || !loc) return;
-      const coord = { latitude: loc.latitude, longitude: loc.longitude };
-      setPin(coord);
-      mapRef.current?.animateToRegion(
-        makeRegion(loc.latitude, loc.longitude, ZOOM_DELTA),
-        ANIMATE_DURATION,
-      );
-    });
+    requestLocationPermission()
+      .then(({ status }) => {
+        if (cancelled || status !== 'granted') return;
+        return getCurrentLocation();
+      })
+      .then((loc) => {
+        if (cancelled || !loc) return;
+        const coord = { latitude: loc.latitude, longitude: loc.longitude };
+        setPin(coord);
+        mapRef.current?.animateToRegion(
+          makeRegion(loc.latitude, loc.longitude, ZOOM_DELTA),
+          ANIMATE_DURATION,
+        );
+      });
     return () => {
       cancelled = true;
     };

@@ -6,7 +6,7 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
-const { colors } = mobileTheme;
+const { colors, iconSizes } = mobileTheme;
 
 interface PhotoGridProps {
   photos: string[];
@@ -64,7 +64,7 @@ export function PhotoGrid({
             className="w-9 h-9 rounded-full items-center justify-center"
             style={{ backgroundColor: withAlpha(colors.primary, 0.07) }}
           >
-            <Plus size={20} color={colors.primary} />
+            <Plus size={iconSizes.sm} color={colors.primary} />
           </View>
           <Text className="text-caption font-sans-bold text-primary text-center">
             {t('Photos.addPhoto')}

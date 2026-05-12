@@ -51,7 +51,7 @@ export default function NetworkErrorScreen() {
         >
           <WifiOff size={24} color={colors.danger} />
         </View>
-        <Text className="text-title font-bold text-foreground text-center">{headline}</Text>
+        <Text className="text-title font-sans-bold text-foreground text-center">{headline}</Text>
         <Text className="text-body text-text-secondary text-center mt-sm leading-6">
           {description}
         </Text>

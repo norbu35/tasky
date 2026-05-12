@@ -22,16 +22,16 @@ export default function AuthLayout() {
         options={{ headerShown: true, title: t('auth.roleSelection.header') }}
       />
       <Stack.Screen
+        name="permission-notifications"
+        options={{ headerShown: true, title: t('AuthLayout.copy4') }}
+      />
+      <Stack.Screen
         name="permission-camera"
-        options={{ headerShown: true, title: t('AuthLayout.copy2') }}
+        options={{ headerShown: true, title: t('auth.permissions.camera.title') }}
       />
       <Stack.Screen
         name="permission-location"
-        options={{ headerShown: true, title: t('AuthLayout.copy3') }}
-      />
-      <Stack.Screen
-        name="permission-notifications"
-        options={{ headerShown: true, title: t('AuthLayout.copy4') }}
+        options={{ headerShown: true, title: t('auth.permissions.location.title') }}
       />
     </Stack>
   );

@@ -12,6 +12,7 @@ import { Button } from './Button';
 import { Reveal } from './Reveal';
 
 const { tint } = mobileSurfaces;
+const { iconSizes } = mobileTheme;
 
 interface LoginRequiredCTAProps {
   message?: string;
@@ -33,7 +34,7 @@ export function LoginRequiredCTA({ message, testID, className }: LoginRequiredCT
           className="w-[100px] h-[100px] rounded-full justify-center items-center mb-xl"
           style={{ backgroundColor: tint.primaryStrong }}
         >
-          <Lock color={mobileTheme.colors.primary} size={24} />
+          <Lock color={mobileTheme.colors.primary} size={iconSizes.md} />
         </View>
       </Reveal>
       <Reveal delay={60}>

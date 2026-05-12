@@ -8,9 +8,9 @@
     "verifyOtp": "Баталгаажуулах",
     "developerBypass": "Хөгжүүлэгчийн нэвтрэлт (OTP шаардлагагүй):",
     "loginAsCustomer": "Үйлчлүүлэгч",
-    "loginAsTasker": "Ажилтан",
+    "loginAsTasker": "Гүйцэтгэгч",
     "loginUnavailable": "Facebook нэвтрэлт одоогоор боломжгүй байна.",
-    "trustedNetwork": "Өдөр тутмын ажлаа даатгах таны найдвартай сүлжээ.",
+    "trustedNetwork": "Өдөр тутмын ажлаа даатгах итгэлтэй сүлжээ.",
     "connectSecurely": "Баталгаажсан мэргэжилтнүүдтэй аюулгүй холбогд. Бүртгэлтэй захиалга, тунгалаг үнэлгээ, орон нутгийн маргаан шийдвэрлэх дэмжлэг.",
     "copyright": "© 2026 Tasky Сүлжээ",
     "welcomeBack": "Эргэн тавтай морил",
@@ -24,7 +24,7 @@
     "heroImageAlt": "Дээд зэрэглэлийн хийсвэр интерьер",
     "sdkBindingLabel": "SDK холболт",
     "sdkBindingVerified": "Баталгаатай",
-    "sdkBindingOffline": "Салангид",
+    "sdkBindingOffline": "Офлайн",
     "facebookLoginTitle": "Facebook нэвтрэлт",
     "devLogin": "Локал хөгжүүлэгчийн нэвтрэлт"
   },
@@ -38,7 +38,7 @@
     "confirmBooking": "Батлах",
     "safety": "Аюулгүй байдал",
     "taskerFeed": "Ажлын жагсаалт",
-    "taskerTasks": "Миний ажлууд",
+    "taskerTasks": "Миний захиалгууд",
     "inbox": "Зурвас",
     "logout": "Гарах",
     "bottomNavigation": "Доод навигац"
@@ -54,7 +54,7 @@
     "post": "Оруулах",
     "errorTitle": "Алдаа",
     "errorFailedLoad": "Ачааллахад алдаа гарлаа",
-    "noTasksTitle": "Одоогоор ажил алга",
+    "noTasksTitle": "Одоогоор ажил байхгүй",
     "noTasksDesc": "Та ямар нэгэн ажил оруулаагүй байна. Анхны ажлаа оруулж ажилтантай холбогдоорой.",
     "postFirstTask": "Анхны ажлаа оруулах",
     "tabOpen": "Нээлттэй ажлууд",
@@ -152,7 +152,7 @@
     "categoryFallback": "Ажил",
     "statusOpen": "Нээлттэй",
     "approxLocation": "Ойролцоох байршил: ",
-    "payStructure": "Цалингийн бүтэц: ",
+    "payStructure": "Төлбөрийн хэлбэр: ",
     "fixedPrice": "Тогтмол үнэ",
     "appMessageLabel": "Хүсэлтийн тайлбар",
     "appMessagePlaceholder": "Та яагаад энэ ажилд тохирох вэ гэдгээ тайлбарлана уу...",
@@ -238,7 +238,7 @@
     "invalidFileFormat": "Буруу формат. JPEG, PNG, эсвэл WebP файл ашиглана уу.",
     "avatarUploaded": "Зураг хуулагдлаа. Хадгалах товч дарж баталгаажуулна уу.",
     "profileUpdated": "Профайл амжилттай шинэчлэгдлээ",
-    "taskerActivated": "Ажилтны сүлжээнд тавтай морил!",
+    "taskerActivated": "Таскерийн сүлжээнд тавтай морил!",
     "yourProfile": "Таны профайл",
     "manageInfo": "Хувийн мэдээллээ удирдах.",
     "identityAvatar": "Мэдээлэл болон зураг",
@@ -252,8 +252,8 @@
     "accountVerification": "Бүртгэл баталгаажуулах",
     "status": "Төлөв",
     "earnWithTasky": "Tasky-тай хамт орлого олох",
-    "activateTaskerDesc": "Ажил хийхэд бэлэн үү? Гүйцэтгэгчийн эрхээ идэвхижүүлээд ажилд орж эхлээрэй.",
-    "activateTaskerBtn": "Ажилтны эрх идэвхижүүлэх"
+    "activateTaskerDesc": "Ажил хийхэд бэлэн үү? Гүйцэтгэгчийн эрхээ идэвхжүүлээд ажилд орж эхлээрэй.",
+    "activateTaskerBtn": "Таскерийн эрх идэвхжүүлэх"
   },
   "bookingSafety": {
     "bookingManagement": "Захиалгын удирдлага",
@@ -417,9 +417,9 @@
     "vizNoMatch": "Хариу байхгүй",
     "vizRetrying": "Дахин хайж байна...",
     "vizTooFar": "90км!",
-    "promiseTitle": "Таскигийн амлалт",
+    "promiseTitle": "Tasky-ийн амлалт",
     "promiseImageAlt": "Захиалагч болон гүйцэтгэгч гар барьж буй зураг",
-    "promiseSub": "Бид Таскиг бүтээсэн учир нь тусламж хайх нь эрсдэл биш байх ёстой. Хариуцлага бол бидний суурь.",
+    "promiseSub": "Бид Tasky-г бүтээсэн учир нь тусламж хайх нь эрсдэл биш байх ёстой. Хариуцлага бол бидний суурь.",
     "pillar1Title": "100% Иргэний үнэмлэхээр баталгаажсан",
     "pillar1Desc": "Таскер бүр нэгдэхээсээ өмнө нарийн иргэний үнэмлэхийн шалгалтад ордог. Нэргүй профайл байхгүй. Хуурамч бүртгэл байхгүй.",
     "pillar2Title": "Үнэлгээний хүч",
@@ -568,13 +568,13 @@
       "underReviewTitle": "Хянагдаж байна",
       "viewBooking": "Захиалга үзэх",
       "statusLabel": {
-        "EVIDENCE_NEEDED": "EVIDENCE_NEEDED",
-        "OPEN": "OPEN",
-        "RESOLVED_CUSTOMER": "RESOLVED_CUSTOMER",
-        "RESOLVED_TASKER": "RESOLVED_TASKER",
-        "ESCALATED": "ESCALATED",
-        "CLOSED_INSUFFICIENT_EVIDENCE": "CLOSED_INSUFFICIENT_EVIDENCE",
-        "UNKNOWN": "UNKNOWN"
+        "EVIDENCE_NEEDED": "Нотлох баримт шаардлагатай",
+        "OPEN": "Нээлттэй",
+        "RESOLVED_CUSTOMER": "Үйлчлүүлэгчийн талд шийдэгдсэн",
+        "RESOLVED_TASKER": "Гүйцэтгэгчийн талд шийдэгдсэн",
+        "ESCALATED": "Шилжүүлсэн",
+        "CLOSED_INSUFFICIENT_EVIDENCE": "Нотлох баримт дутмаг — хаагдсан",
+        "UNKNOWN": "Тодорхойгүй"
       }
     },
     "noApplicantRescue": {
@@ -665,43 +665,43 @@
       "quoteModeHint": "Таскерууд танд үнийн санал илгээнэ",
       "quoteModeDesc": "Та үнэ тавихгүй. Таскерууд өөрсдийн үнийн саналыг илгээж, та хамгийн шилдэгийг нь сонгоно.",
       "recentLocations": "Сүүлийн:",
-      "addressLabel": "Address description",
+      "addressLabel": "Хаягийн дэлгэрэнгүй",
       "addressPlaceholder": "ХУД, 15-р хороо, Олимп хотхон",
-      "basicsDesc": "Add photos and place the map pin so taskers can find the job. Browser prompts for location and uploads may appear while you complete this form.",
-      "basicsTitle": "Task basics",
-      "categoryLabel": "Category",
-      "createAction": "Create task",
-      "detailsPlaceholder": "Auto-generated from your answers above",
-      "draftSaved": "Draft saved in-memory",
-      "errorTitle": "Unable to create task",
-      "intakeDesc": "Use the answers below to auto-generate the task summary.",
-      "intakeTitle": "Intake",
-      "saveDraft": "Save draft",
-      "scheduleTitle": "Schedule and pricing",
-      "scheduledAtLabel": "Scheduled at",
-      "selectCategory": "Select category",
-      "stepLabel": "Phase 1 customer posting",
-      "successMessage": "Task created successfully.",
-      "successTitle": "Task posted successfully",
-      "taskDetails": "Task details",
-      "taskId": "Task ID: {{id}}"
+      "basicsDesc": "Ажилтнууд ажлыг олоход зориулж зураг оруулж, газрын зураг дээр байршлаа тэмдэглэнэ үү. Энэ маягтыг бөглөх үед хөтөч байршил болон файл оруулах хүсэлт гаргаж болно.",
+      "basicsTitle": "Ажлын үндсэн мэдээлэл",
+      "categoryLabel": "Ангилал",
+      "createAction": "Ажил үүсгэх",
+      "detailsPlaceholder": "Дээрх хариултуудаас автоматаар үүсгэгдэнэ",
+      "draftSaved": "Ноорог санах ойд хадгалагдлаа",
+      "errorTitle": "Ажил үүсгэх боломжгүй",
+      "intakeDesc": "Ажлын хураангуйг автоматаар үүсгэхийн тулд доорх хариултуудыг ашиглана уу.",
+      "intakeTitle": "Асуулга",
+      "saveDraft": "Ноорог хадгалах",
+      "scheduleTitle": "Цагийн хуваарь ба үнэ",
+      "scheduledAtLabel": "Товлосон цаг",
+      "selectCategory": "Ангилал сонгох",
+      "stepLabel": "1-р шатны захиалагчийн ажил нийтлэлт",
+      "successMessage": "Ажил амжилттай үүсгэгдлээ.",
+      "successTitle": "Ажил амжилттай нийтлэгдлээ",
+      "taskDetails": "Ажлын дэлгэрэнгүй",
+      "taskId": "Ажлын ID: {{id}}"
     },
     "taskerProfile": {
-      "title": "Ажилтны профайл",
+      "title": "Гүйцэтгэгчийн профайл",
       "description": "Гүйцэтгэгчийн дэлгэрэнгүйг шалгана уу.",
       "openProfile": "Профайл нээх",
       "primaryActions": "Үндсэн үйлдлүүд",
-      "messageTasker": "Ажилтан руу бичих",
+      "messageTasker": "Гүйцэтгэгч рүү бичих",
       "openChat": "Чат нээх",
-      "verifiedTasker": "ID баталгаажсан ажилтан",
-      "trustedLabel": "1-р үе шатны шууд төлбөр тооцоонд итгэмжлэгдсэн ажилтан.",
+      "verifiedTasker": "ID баталгаажсан гүйцэтгэгч",
+      "trustedLabel": "1-р үе шатны шууд төлбөр тооцоонд итгэмжлэгдсэн гүйцэтгэгч.",
       "ratingStats": "{{count}} ажлаас {{rating}} үнэлгээтэй",
       "responseDetail": "Ажлын цагаар хурдан хариу өгдөг",
       "reviews": "({{count}} үнэлгээ)",
-      "railTitle": "Primary actions",
-      "ratingText": "4.9 rating from 37 jobs",
-      "respondsQuickly": "Responds quickly during business hours",
-      "trustedDesc": "Trusted for Phase 1 customer bookings and direct settlement flows."
+      "railTitle": "Үндсэн үйлдлүүд",
+      "ratingText": "37 ажлаас 4.9 үнэлгээтэй",
+      "respondsQuickly": "Ажлын цагаар хурдан хариу өгдөг",
+      "trustedDesc": "1-р үе шатны захиалагчийн захиалга болон шууд төлбөр тооцоонд итгэмжлэгдсэн."
     },
     "tasksList": {
       "title": "Миний ажлууд",
@@ -716,11 +716,11 @@
       "noTasksDesc": "Эхний ажлаа нийтэлж гүйцэтгэгчдээс хүсэлт хүлээж аваарай.",
       "customerTask": "Хэрэглэгчийн ажил",
       "viewDetails": "Дэлгэрэнгүй",
-      "cardType": "Customer task",
-      "errorTitle": "Failed to load tasks",
-      "freshRequest": "Need a fresh request?",
-      "postFirst": "Post your first task to start collecting applications.",
-      "startNewDesc": "Start a new customer task from the same posting flow."
+      "cardType": "Үйлчлүүлэгчийн ажил",
+      "errorTitle": "Ажлуудыг ачаалахад алдаа гарлаа",
+      "freshRequest": "Шинэ хүсэлт хэрэгтэй юу?",
+      "postFirst": "Өргөдөл цуглуулж эхлэхийн тулд анхны ажлаа нийтлээрэй.",
+      "startNewDesc": "Яг ижил нийтлэх урсгалаар шинэ үйлчлүүлэгчийн ажил эхлүүлэх."
     },
     "timeline": {
       "title": "Захиалгын явц",
@@ -728,18 +728,18 @@
       "backToBooking": "Захиалга руу буцах",
       "cardTitle": "Цагийн дараалал",
       "confirmedLabel": "Захиалга баталгаажсан",
-      "confirmedDesc": "Үйлчлүүлэгч ажилтныг сонгосон",
+      "confirmedDesc": "Үйлчлүүлэгч гүйцэтгэгчийг сонгосон",
       "inProgressLabel": "Ажил хийгдэж байна",
-      "inProgressDesc": "Ажилтан очиж байна",
+      "inProgressDesc": "Гүйцэтгэгч очиж байна",
       "awaitingLabel": "Дуусахыг хүлээж байна",
       "awaitingDesc": "Эцсийн дүгнэлтийг оруулах эсвэл маргаан үүсгэх",
-      "backAction": "Back to booking",
-      "step1": "Booking confirmed",
-      "step1Desc": "Customer accepted the tasker",
-      "step2": "Task in progress",
-      "step2Desc": "Tasker is on the way",
-      "step3": "Awaiting completion",
-      "step3Desc": "Capture final review or raise a dispute"
+      "backAction": "Захиалга руу буцах",
+      "step1": "Захиалга баталгаажсан",
+      "step1Desc": "Үйлчлүүлэгч гүйцэтгэгчийг сонгосон",
+      "step2": "Ажил хийгдэж байна",
+      "step2Desc": "Гүйцэтгэгч замдаа гарсан",
+      "step3": "Дуусгахыг хүлээж байна",
+      "step3Desc": "Эцсийн үнэлгээ оруулах эсвэл маргаан үүсгэх"
     }
   },
   "sharedPages": {
@@ -749,8 +749,8 @@
       "updateNow": "Одоо шинэчлэх",
       "cardTitle": "Зайлшгүй өөрчлөлтүүд",
       "cardDesc": "Энэ нь API нийцтэй байдлыг хангахад шаардлагатай.",
-      "panelDesc": "Reload the app after you finish any active form or chat work.",
-      "panelTitle": "New version ready"
+      "panelDesc": "Идэвхтэй маягт эсвэл чатын ажлаа дуусгаад аппыг дахин ачаална уу.",
+      "panelTitle": "Шинэ хувилбар бэлэн"
     },
     "banned": {
       "title": "Бүртгэл хаагдсан",
@@ -776,8 +776,8 @@
       "confirmDelete": "Устгахыг баталгаажуулах",
       "cardTitle": "Мэдээлэл устгах",
       "cardDesc": "Энэ үйлдлийг буцаах боломжгүй бөгөөд идэвхтэй ажлууд цуцлагдана.",
-      "confirmLabel": "I understand that my account and history will be removed.",
-      "deleteAction": "Delete permanently"
+      "confirmLabel": "Би бүртгэл болон түүх маань устахыг ойлгож байна.",
+      "deleteAction": "Бүрмөсөн устгах"
     },
     "editProfile": {
       "title": "Профайл засах",
@@ -788,30 +788,30 @@
       "bio": "Товч намтар",
       "successTitle": "Профайл шинэчлэгдлээ",
       "successDesc": "Өөрчлөлтүүд амжилттай хадгалагдлаа.",
-      "bioLabel": "Bio",
-      "defaultBio": "Reliable and responsive.",
-      "defaultName": "Tasky User",
-      "displayName": "Display name",
-      "saveAction": "Save profile"
+      "bioLabel": "Товч танилцуулга",
+      "defaultBio": "Найдвартай, хариуцлагатай.",
+      "defaultName": "Tasky Хэрэглэгч",
+      "displayName": "Харагдах нэр",
+      "saveAction": "Профайл хадгалах"
     },
     "help": {
       "title": "Тусламжийн төв",
       "description": "Асуултын хариу олох эсвэл дэмжлэгийн багтай холбогдох.",
       "cardTitle": "Түгээмэл асуултууд",
       "cardDesc": "FAQ-г ашиглан хүний оролцоотой тусламжийг бууруулдаг.",
-      "faq1Answer": "Open the booking detail and choose the new time before the task starts.",
-      "faq1Question": "How do I reschedule a booking?",
-      "sectionGeneral": "General"
+      "faq1Answer": "Захиалгын дэлгэрэнгүй хэсэгт орж, ажил эхлэхээс өмнө шинэ цагаа сонгоно уу.",
+      "faq1Question": "Захиалгын цагийг хэрхэн өөрчлөх вэ?",
+      "sectionGeneral": "Ерөнхий"
     },
     "inbox": {
       "title": "Захидлын хайрцаг",
       "description": "Гүйцэтгэгч болон захиалагчаас ирсэн шинэ зурвасууд.",
       "cardTitle": "Зурвасын жагсаалт",
       "cardDesc": "Идэвхтэй захиалгын чатын нэгтгэсэн харагдац.",
-      "sampleThreadPreview": "Tasker confirmed the Saturday slot.",
-      "sampleThreadTitle": "Apartment cleaning",
-      "searchPlaceholder": "Search conversations",
-      "sideRail": "Pinned threads and booking updates appear here."
+      "sampleThreadPreview": "Гүйцэтгэгч Бямба гарагийн цагийг баталгаажуулсан.",
+      "sampleThreadTitle": "Орон сууц цэвэрлэгээ",
+      "searchPlaceholder": "Зурвас хайх",
+      "sideRail": "Хавчуулсан яриа болон захиалгын шинэчлэлтүүд энд харагдана."
     },
     "networkError": {
       "title": "Холболтын алдаа",
@@ -825,16 +825,16 @@
       "description": "Шинэ анхааруулга болон мэдээллүүд.",
       "cardTitle": "Үйл ажиллагааны жагсаалт",
       "cardDesc": "Захиалгын өөрчлөлт болон системийн мэдэгдлүүд.",
-      "emptyDesc": "You are all caught up for now.",
-      "emptyTitle": "All caught up"
+      "emptyDesc": "Одоогоор шинэ мэдэгдэл байхгүй байна.",
+      "emptyTitle": "Шинэ зүйл байхгүй"
     },
     "privacy": {
       "title": "Нууцлалын бодлого",
       "description": "Бид таны мэдээллийг хэрхэн цуглуулж, ашиглаж, хамгаалдаг тухай.",
       "cardTitle": "Мэдээлэл боловсруулах",
       "cardDesc": "Хувийн мэдээлэл болон захиалгын түүхийг хамруулах журам.",
-      "content1": "We minimize public address exposure and keep exact location details limited to active booking participants.",
-      "content2": "Operational logs and moderation records are retained for trust and safety review."
+      "content1": "Бид хаягийн дэлгэрэнгүй мэдээллийг нийтэд харуулахгүй байж, зөвхөн идэвхтэй захиалгын оролцогчдод хязгаарлана.",
+      "content2": "Үйл ажиллагааны лог болон зохицуулалтын бүртгэлийг аюулгүй байдлын хяналтад хадгална."
     },
     "reviewHardLock": {
       "title": "Өмнөх захиалгаа үнэлэх",
@@ -857,7 +857,7 @@
       "title": "Үнэлгээ өгөхөө мартуузай",
       "description": "Өөрийн туршлагаа үнэлж түр хугацаа зарцуулна уу.",
       "close": "Хаах",
-      "remindAction": "Remind me later"
+      "remindAction": "Дараа сануулах"
     },
     "sessionExpired": {
       "title": "Хугацаа дууссан",
@@ -868,10 +868,10 @@
       "description": "Мэдэгдэл, хэл болон бусад тохиргоог удирдах.",
       "cardTitle": "Аппын тохиргоо",
       "cardDesc": "Анхааруулга болон хэлний сонголт хийх.",
-      "account": "Account",
-      "notificationsAction": "Notification preferences",
-      "preferences": "Preferences",
-      "signOutAction": "Sign out"
+      "account": "Бүртгэл",
+      "notificationsAction": "Мэдэгдлийн тохиргоо",
+      "preferences": "Тохиргоо",
+      "signOutAction": "Гарах"
     },
     "suspended": {
       "title": "Бүртгэл түр хаагдсан",
@@ -884,18 +884,18 @@
       "description": "Маркетплейсийн ашиглалтыг зохицуулах дүрэм.",
       "cardTitle": "Эрх зүйн баримт бичиг",
       "cardDesc": "Маргаан шийдвэрлэх болон гэрээний нөхцөлүүдийг тодорхойлно.",
-      "content1": "Bookings require honest task descriptions, respectful communication, and accurate arrival timing.",
-      "content2": "Disputes should be raised quickly with factual details and supporting context."
+      "content1": "Захиалгад ажлын шударга тодорхойлолт, хүндэтгэлтэй харилцаа, цагтаа очих шаардлагатай.",
+      "content2": "Маргааныг баримт болон дэмжих нотолгоотойгоор шуурхай гаргах ёстой."
     },
-    "currencyMNT": "MNT",
+    "currencyMNT": "₮",
     "status": {
-      "OPEN": "OPEN",
-      "ASSIGNED": "ASSIGNED",
-      "COMPLETED": "COMPLETED",
-      "CANCELLED": "CANCELLED",
-      "NO_SHOW": "NO_SHOW",
-      "PENDING": "PENDING",
-      "UNKNOWN": "UNKNOWN"
+      "OPEN": "Нээлттэй",
+      "ASSIGNED": "Томилогдсон",
+      "COMPLETED": "Дууссан",
+      "CANCELLED": "Цуцлагдсан",
+      "NO_SHOW": "Ирээгүй",
+      "PENDING": "Хүлээгдэж буй",
+      "UNKNOWN": "Тодорхойгүй"
     }
   },
   "taskerPages": {
@@ -904,34 +904,34 @@
       "description": "Таны хүсэлт үйлчлүүлэгч рүү очсон бөгөөд шалгахыг хүлээж байна.",
       "backToFeed": "Буцах",
       "sentDesc": "Хүсэлт илгээгдлээ.",
-      "backAction": "Back to feed",
-      "content": "Application sent."
+      "backAction": "Буцах",
+      "content": "Хүсэлт илгээгдлээ."
     },
     "bookingDetail": {
       "title": "Захиалгын дэлгэрэнгүй",
       "description": "Захиалгын байдал, явц болон туслалцааны талаар мэдээлэл.",
-      "cardDesc": "Ажилтан захиалгатай танилцаж, асуудлуудад хариу өгөх боломжтой.",
-      "content": "Taskers can review the booking and respond to issues here."
+      "cardDesc": "Гүйцэтгэгч захиалгатай танилцаж, асуудлуудад хариу өгөх боломжтой.",
+      "content": "Гүйцэтгэгчид захиалгыг хянаж, асуудал гарвал хариу өгөх боломжтой."
     },
     "cancelDialog": {
       "title": "Захиалга цуцлах",
       "description": "Хоёр талын баталгаажсан захиалгыг шалтгаантайгаар цуцлах.",
-      "cardDesc": "Захиалгыг цуцлахын өмнө ажилтан баталгаажуулна.",
-      "confirmButton": "Confirm cancellation",
-      "detailsLabel": "Additional details (optional)",
-      "detailsPlaceholder": "Provide more context...",
-      "keepBooking": "Keep booking",
-      "reasonTitle": "Cancellation reason",
-      "safetyNotice": "Safety/fraud cancellations bypass automated strike logic and are handled by the trust & safety team.",
-      "selectReasonLabel": "Why are you cancelling?",
-      "strikeNotice": "Cancellations may affect your reliability record. The task will reopen for other taskers.",
-      "success": "Booking cancelled.",
+      "cardDesc": "Захиалгыг цуцлахын өмнө гүйцэтгэгч баталгаажуулна.",
+      "confirmButton": "Цуцлахыг баталгаажуулах",
+      "detailsLabel": "Нэмэлт мэдээлэл (заавал биш)",
+      "detailsPlaceholder": "Дэлгэрэнгүй тайлбар оруулах...",
+      "keepBooking": "Захиалгыг үлдээх",
+      "reasonTitle": "Цуцлах шалтгаан",
+      "safetyNotice": "Аюулгүй байдал/залилтай холбоотой цуцлалтууд автомат торгуульд тооцогдохгүй бөгөөд аюулгүй байдлын багаар шийдвэрлэгдэнэ.",
+      "selectReasonLabel": "Яагаад цуцлах гэж байна вэ?",
+      "strikeNotice": "Цуцлалт нь таны найдвартай байдлын үзүүлэлтэд нөлөөлж болно. Ажил бусад гүйцэтгэгчдэд нээгдэнэ.",
+      "success": "Захиалга цуцлагдлаа.",
       "reasonLabel": {
-        "SCHEDULE_CONFLICT": "Schedule conflict",
-        "UNABLE_TO_COMPLETE": "Unable to complete",
-        "SAFETY_FRAUD": "Safety fraud",
-        "PERSONAL_EMERGENCY": "Personal emergency",
-        "OTHER": "Other"
+        "SCHEDULE_CONFLICT": "Цагийн зөрчил",
+        "UNABLE_TO_COMPLETE": "Гүйцэтгэх боломжгүй",
+        "SAFETY_FRAUD": "Аюулгүй байдал/Залилал",
+        "PERSONAL_EMERGENCY": "Гэнэтийн тохиолдол",
+        "OTHER": "Бусад"
       }
     },
     "jobs": {
@@ -965,7 +965,7 @@
       "title": "Нууцлалын бодлого",
       "description": "Ажилтны мэдээлэл 1-р үе шатанд хэрхэн зохицуулагддаг талаар.",
       "cardDesc": "Бид ажлыг гүйцэтгэхэд шаардлагатай хамгийн бага мэдээллийг л үзүүлдэг.",
-      "content": "We only show the minimum task details needed to complete assigned jobs safely."
+      "content": "Бид ажлыг аюулгүй гүйцэтгэхэд шаардлагатай хамгийн бага мэдээллийг л харуулдаг."
     },
     "profilePolish": {
       "title": "Профайл сайжруулагч AI",
@@ -977,32 +977,32 @@
       "description": "Гүйцэтгэлийн хураангуйг үзэх.",
       "desc1": "Амжилтын хувь, үнэлгээ, хариу өгөх хугацааг харуулна.",
       "desc2": "1-р шатанд үзүүлэлтүүдийг илүү хялбар, баталгаатай байлгана.",
-      "content1": "Completion rate, rating, and response time stay visible for taskers.",
-      "content2": "Phase 1 keeps the stats surface lightweight and auditable."
+      "content1": "Гүйцэтгэлийн хувь, үнэлгээ, хариу өгөх хугацаа гүйцэтгэгчдэд харагдана.",
+      "content2": "1-р шатанд статистик үзүүлэлтийг хөнгөн, ил тод байлгана."
     },
     "taskDetail": {
       "title": "Ажлын мэдээлэл",
       "description": "Ажилд орох хүсэлт өгөхөөс өмнө ажлыг нягтлан үзнэ үү.",
       "desc1": "Төсөв, бүдүүвчилсэн байршил, ажлын товч мэдээллийг энд харуулна.",
       "desc2": "0-ээс 1-р үе шатанд ажилтан баталгаажих үйл явц хэвээр байх болно.",
-      "content1": "Task summary, budget, and approximate location are shown here.",
-      "content2": "Manual verification stays intact for Phase 0-1 tasker access."
+      "content1": "Ажлын хураангуй, төсөв, ойролцоо байршлыг энд харуулна.",
+      "content2": "0-1-р шатанд гараар баталгаажуулах үйл явц хэвээр байна."
     },
     "noShow": {
-      "cancel": "Cancel",
-      "confirmLabel": "Type NO-SHOW to confirm",
-      "confirmTitle": "Confirm no-show",
-      "description": "Flag the other party as a no-show. The system validates eligibility automatically.",
-      "eligibleRule": "No-show flag becomes eligible",
-      "flagButton": "Flag no-show",
-      "reminderRule": "Reminder sent automatically",
-      "success": "No-show flagged successfully.",
-      "timingTitle": "Timing rules",
-      "title": "Flag no-show",
-      "warningActivity": "Recent in-app activity blocks premature flags.",
-      "warningAudit": "No-show adjudication creates an audit trail.",
-      "warningReschedule": "An accepted reschedule supersedes the original schedule.",
-      "warningTitle": "Before you flag"
+      "cancel": "Цуцлах",
+      "confirmLabel": "ИРЭЭГҮЙ гэж бичээд баталгаажуулна уу",
+      "confirmTitle": "Ирээгүй гэж тэмдэглэх",
+      "description": "Нөгөө талыг ирээгүй гэж тэмдэглэнэ. Систем автоматаар шалгана.",
+      "eligibleRule": "Ирээгүй тэмдэглэгээ хийх боломжтой болно",
+      "flagButton": "Ирээгүй гэж тэмдэглэх",
+      "reminderRule": "Сануулга автоматаар илгээгдэнэ",
+      "success": "Ирээгүй гэж амжилттай тэмдэглэгдлээ.",
+      "timingTitle": "Цагийн дүрмүүд",
+      "title": "Ирээгүй гэж тэмдэглэх",
+      "warningActivity": "Саяхан апп доторх үйлдэл нь хугацаанаас өмнө тэмдэглэхээс сэргийлнэ.",
+      "warningAudit": "Ирээгүй шалгалт нь хяналтын бүртгэл үүсгэнэ.",
+      "warningReschedule": "Зөвшөөрөгдсөн цагийн өөрчлөлт нь анхны хуваарийг хүчингүй болгоно.",
+      "warningTitle": "Тэмдэглэхээс өмнө"
     }
   },
   "verification": {
@@ -1016,45 +1016,45 @@
       "title": "Баталгаажуулах зөвшөөрөл",
       "description": "Бичиг баримт байршуулахын өмнө журмыг зөвшөөрнө үү.",
       "cardDesc": "Та байршуулсан бичиг баримт өөрийнх гэдгийг батална.",
-      "content": "By continuing, you confirm that the uploaded documents belong to you."
+      "content": "Үргэлжлүүлснээр та байршуулсан баримтууд өөрийнхөө гэдгийг баталгаажуулж байна."
     },
     "gate": {
       "title": "Биеийн байцаалт баталгаажуулах",
       "description": "Бүртгэл баталгаажуулах үйлдлийг эхлүүлнэ үү.",
       "cardDesc": "Ажил авахын тулд манай багийн гараарх хяналт шаардлагатай.",
-      "content": "Manual review is required before a tasker can accept jobs."
+      "content": "Гүйцэтгэгч ажил хүлээн авахаас өмнө гараар хянах шаардлагатай."
     },
     "pending": {
       "title": "Баталгаажуулалт хүлээгдэж байна",
       "description": "Таны бүртгэл хянагдаж байна.",
       "cardDesc": "Бид таныг шалгаж дууссан үед мэдэгдэх болно.",
-      "content": "We will notify you when your verification is reviewed."
+      "content": "Баталгаажуулалтыг хянаж дууссаны дараа бид танд мэдэгдэх болно."
     },
     "rejected": {
       "title": "Баталгаажилт амжилтгүй",
       "description": "Татгалзсан шалтгааныг уншаад дахин оролдоно уу.",
       "cardDesc": "Хянагчийн үлдээсэн алдааг засч байж дахин явуулаарай.",
-      "content": "Fix the issues noted by the reviewer before resubmitting."
+      "content": "Дахин илгээхээс өмнө хянагчийн тэмдэглэсэн асуудлуудыг засах."
     },
     "submitted": {
       "title": "Хүсэлт илгээгдсэн",
       "description": "Таны баримтууд дараалалд орлоо.",
       "cardDesc": "Мэдээлэл амжилттай бүртгэгдэж, шалгагч хүлээж байна.",
-      "content": "Submission is recorded and waiting for the reviewer queue."
+      "content": "Илгээлт бүртгэгдэж, хянагчийн дараалалд хүлээж байна."
     },
     "upload": {
       "title": "Баримт бичиг байршуулах",
       "description": "Иргэний үнэмлэхний урд болон хойд талыг зургаар оруулна уу.",
       "cardDesc": "1-р үе шат нь байршуулах алхмыг энгийн байлгадаг.",
-      "content": "Phase 1 keeps the upload step simple and reviewable."
+      "content": "1-р үе шат нь байршуулах алхамыг энгийн, хянах боломжтой байлгадаг."
     }
   },
   "taskCreation": {
     "locationPicker": {
       "mapLocation": "Газрын зураг",
       "clickMap": "Байршлыг тэмдэглэхийн тулд газрын зураг дээр дарна уу.",
-      "hint": "Click on the map to place the location pin.",
-      "label": "Map Location"
+      "hint": "Байршлыг тэмдэглэхийн тулд газрын зураг дээр дарна уу.",
+      "label": "Газрын зураг дээрх байршил"
     },
     "photoUpload": {
       "taskPhotos": "Ажлын зургууд",
@@ -1062,9 +1062,9 @@
       "invalidType": "Буруу файл. Зөвхөн JPG, PNG, эсвэл WebP зөвшөөрөгдөнө.",
       "maxPhotos": "Та дээд тал нь {{max}} зураг оруулах боломжтой.",
       "uploadStoredFailed": "Зургийг санах ойд хадгалж чадсангүй.",
-      "label": "Task Photos",
-      "maxPhotosError": "You can only upload up to {{maxPhotos}} photos.",
-      "uploadFailed": "Failed to upload image to storage layer."
+      "label": "Ажлын зургууд",
+      "maxPhotosError": "Та дээд тал нь {{maxPhotos}} зураг оруулах боломжтой.",
+      "uploadFailed": "Зургийг санах ойд хадгалж чадсангүй."
     },
     "intakeForm": {
       "select": "Сонгох...",
@@ -1127,7 +1127,7 @@
       "selectTask": "Даалгаврыг сонгоно уу",
       "status": "Статус",
       "title": "Гарчиг",
-      "disclaimerLabel": "I accept liability for this manual assignment"
+      "disclaimerLabel": "Би энэхүү гараар хийх даалгаврын хариуцлагыг хүлээж байна"
     },
     "disputeDetail": {
       "bookingContext": "Захиалгын контекст",
@@ -1156,17 +1156,17 @@
       "empty": "Хоосон",
       "error": "Алдаа",
       "reason": "Шалтгаан",
-      "status": "Статус",
+      "status": "Төлөв",
       "statusLabel": {
-        "EVIDENCE_NEEDED": "EVIDENCE_NEEDED",
-        "OPEN": "OPEN",
-        "RESOLVED_CUSTOMER": "RESOLVED_CUSTOMER",
-        "RESOLVED_TASKER": "RESOLVED_TASKER",
-        "ESCALATED": "ESCALATED",
-        "CLOSED_INSUFFICIENT_EVIDENCE": "CLOSED_INSUFFICIENT_EVIDENCE",
-        "UNKNOWN": "UNKNOWN"
+        "EVIDENCE_NEEDED": "Нотлох баримт шаардлагатай",
+        "OPEN": "Нээлттэй",
+        "RESOLVED_CUSTOMER": "Үйлчлүүлэгчийн талд шийдэгдсэн",
+        "RESOLVED_TASKER": "Гүйцэтгэгчийн талд шийдэгдсэн",
+        "ESCALATED": "Нэмэлт шалгалтад шилжүүлсэн",
+        "CLOSED_INSUFFICIENT_EVIDENCE": "Нотлох баримт хангалтгүй — хаагдсан",
+        "UNKNOWN": "Тодорхойгүй"
       },
-      "title": "Гарчиг"
+      "title": "Маргаанууд"
     },
     "features": {
       "confirmTitle": "Feature toggle өөрчлөлтийг баталгаажуулах",
@@ -1176,7 +1176,7 @@
       "confirmDesc": "Та \"{{feature}}\"-г {{action}} гэж байна. Энэ өөрчлөлт шууд хэрэгжинэ.",
       "loadTogglesError": "Feature toggle жагсаалтыг ачаалж чадсангүй",
       "updateToggleError": "Toggle шинэчлэхэд алдаа гарлаа",
-      "toggleAriaLabel": "{{feature}} toggle",
+      "toggleAriaLabel": "{{feature}} унтраалга",
       "toggleEnabledToast": "{{feature}} идэвхжлээ",
       "toggleDisabledToast": "{{feature}} идэвхгүй боллоо",
       "featureLabels": {
@@ -1194,10 +1194,10 @@
     },
     "moderation": {
       "autoUnsuspend": "Автомат түр зогсоох",
-      "firstSuspensionDays": "Эхний түдгэлзүүлсэн өдрүүд",
+      "firstSuspensionDays": "Эхний түдгэлзүүлэлтийн өдрүүд",
       "loadError": "Ачаалах алдаа",
       "repeatOffenseWindowDays": "Гэмт хэргийн цонхны өдрүүдийг давт",
-      "repeatSuspensionDays": "Түдгэлзүүлсэн өдрүүдийг давтана",
+      "repeatSuspensionDays": "Давтан түдгэлзүүлэлтийн өдрүүд",
       "saved": "Хадгалсан",
       "strikeThreshold": "Ажил хаях босго",
       "strikeWindowDays": "Цонхны ажил хаях өдрүүд",
@@ -1288,6 +1288,6 @@
       "submittedAt": "Илгээсэн огноо",
       "title": "Баталгаажуулалтууд"
     },
-    "title": "Tasky Admin"
+    "title": "Tasky Админ"
   }
 }

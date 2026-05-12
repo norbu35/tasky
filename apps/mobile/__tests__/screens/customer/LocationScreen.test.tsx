@@ -81,6 +81,7 @@ jest.mock('../../../src/features/tasks/hooks/useRecentLocations', () => ({
 
 jest.mock('../../../src/utils/permissions', () => ({
   getCurrentLocation: jest.fn(() => new Promise(() => {})),
+  requestLocationPermission: jest.fn(() => Promise.resolve({ status: 'granted' })),
 }));
 
 jest.mock('../../../src/features/tasks/api', () => ({

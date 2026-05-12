@@ -137,7 +137,7 @@ acceptance_criteria:
   - 'Tapping Continue opens a confirmation bottom sheet'
   - 'Confirmation sheet has primary (confirm) and secondary (go back) actions'
   - 'On confirmation, PUT /users/me/role is called'
-  - 'On success, the app replaces to Permission Primer Camera (SCR-SHARED-007)'
+  - 'On success, the app replaces to Permission Primer Notifications (SCR-SHARED-009)'
   - 'User can switch role later from Settings (SCR-SHARED-014)'
   - 'Each card includes an icon, title, and description'
   - 'Selected card has primary border highlight'

@@ -16,7 +16,7 @@ traceability:
     - REQ-P1-NOTIF-06
     - REQ-P1-NOTIF-07
   journey_refs:
-    - JRN-SHARED-01:step-7
+    - JRN-SHARED-01:step-5
   scenario_refs:
     - SCN-NOTIF-004
     - SCN-NOTIF-005

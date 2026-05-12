@@ -9,7 +9,7 @@ import { cn } from '@/lib/cn';
 import { Button } from '../ui/Button';
 import { Reveal } from '../ui/Reveal';
 
-const { colors } = mobileTheme;
+const { colors, iconSizes } = mobileTheme;
 
 export interface ErrorStateTemplateProps {
   message?: string;
@@ -33,7 +33,7 @@ export function ErrorStateTemplate({
   return (
     <View className={cn('flex-1 justify-center items-center px-lg', className)} testID={testID}>
       <Reveal delay={20}>
-        <AlertTriangle size={24} color={colors.danger} />
+        <AlertTriangle size={iconSizes.md} color={colors.danger} />
       </Reveal>
       <Reveal delay={60}>
         <Text className="text-body font-sans text-foreground text-center mt-lg leading-relaxed">

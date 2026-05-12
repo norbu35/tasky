@@ -8,7 +8,7 @@ import { animationPresets } from '@/design/animations';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
-const { colors } = mobileTheme;
+const { colors, iconSizes } = mobileTheme;
 
 interface OfflineBannerProps {
   visible: boolean;
@@ -44,7 +44,7 @@ export function OfflineBanner({ visible, testID, className }: OfflineBannerProps
           className,
         )}
       >
-        <WifiOff size={16} color={colors.primaryDeep} />
+        <WifiOff size={iconSizes.xs} color={colors.primaryDeep} />
         <Text className="text-label font-sans-semibold text-primary-deep">
           {t('offline.banner')}
         </Text>

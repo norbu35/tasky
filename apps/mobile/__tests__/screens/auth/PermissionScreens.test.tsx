@@ -1,8 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 import React from 'react';
 
-import PermissionCameraScreen from '../../../src/app/(auth)/permission-camera';
-import PermissionLocationScreen from '../../../src/app/(auth)/permission-location';
 import PermissionNotificationsScreen from '../../../src/app/(auth)/permission-notifications';
 import { useAppStore } from '../../../src/store/appStore';
 import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
@@ -46,13 +44,9 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   },
 }));
 
-const mockRequestCameraPermission = jest.fn().mockResolvedValue({ status: 'granted' });
-const mockRequestLocationPermission = jest.fn().mockResolvedValue({ status: 'granted' });
 const mockRequestNotificationPermission = jest.fn().mockResolvedValue({ status: 'granted' });
 
 jest.mock('../../../src/utils/permissions', () => ({
-  requestCameraPermission: () => mockRequestCameraPermission(),
-  requestLocationPermission: () => mockRequestLocationPermission(),
   requestNotificationPermission: () => mockRequestNotificationPermission(),
 }));
 
@@ -60,98 +54,8 @@ beforeEach(() => {
   jest.clearAllMocks();
   resetTestI18n();
   setTestLanguage('mn');
-  mockRequestCameraPermission.mockResolvedValue({ status: 'granted' });
-  mockRequestLocationPermission.mockResolvedValue({ status: 'granted' });
   mockRequestNotificationPermission.mockResolvedValue({ status: 'granted' });
   useAppStore.setState({ hasSeenOnboarding: false, currentRole: 'customer' });
-});
-
-describe('Permission Camera Screen (SCR-SHARED-007)', () => {
-  it('renders camera permission copy from Figma', () => {
-    render(<PermissionCameraScreen />);
-    expect(screen.getByText('Камер ашиглах зөвшөөрөл')).toBeTruthy();
-    expect(screen.getByText('Зураг оруулах, баталгаажуулалт хийхэд камер хэрэгтэй')).toBeTruthy();
-    expect(screen.getByText('Зөвшөөрөх')).toBeTruthy();
-    expect(screen.getByText('Дараа хийх')).toBeTruthy();
-  });
-
-  it('renders Allow and Skip buttons', () => {
-    render(<PermissionCameraScreen />);
-    expect(screen.getByTestId('permission-allow-button')).toBeTruthy();
-    expect(screen.getByTestId('permission-skip-button')).toBeTruthy();
-  });
-
-  it('Allow button triggers camera permission request', async () => {
-    render(<PermissionCameraScreen />);
-    fireEvent.press(screen.getByTestId('permission-allow-button'));
-    expect(mockRequestCameraPermission).toHaveBeenCalledTimes(1);
-  });
-
-  it('shows denied guidance when camera permission is rejected', async () => {
-    mockRequestCameraPermission.mockResolvedValue({ status: 'denied' });
-    render(<PermissionCameraScreen />);
-    fireEvent.press(screen.getByTestId('permission-allow-button'));
-    expect(await screen.findByText('Камерын зөвшөөрөл хаагдсан')).toBeTruthy();
-    expect(screen.getByText('Тохиргооноос камерыг нээх боломжтой')).toBeTruthy();
-    expect(screen.getByTestId('permission-continue-button')).toBeTruthy();
-    expect(screen.getByText('Үргэлжлүүлэх')).toBeTruthy();
-  });
-
-  it('Skip navigates to location permission', () => {
-    render(<PermissionCameraScreen />);
-    fireEvent.press(screen.getByTestId('permission-skip-button'));
-    expect(mockReplace).toHaveBeenCalledWith('/(auth)/permission-location');
-  });
-
-  it('has a testID on the screen container', () => {
-    render(<PermissionCameraScreen />);
-    expect(screen.getByTestId('SCR-SHARED-007')).toBeTruthy();
-  });
-});
-
-describe('Permission Location Screen (SCR-SHARED-008)', () => {
-  it('renders location permission copy from Figma', () => {
-    render(<PermissionLocationScreen />);
-    expect(screen.getByText('Байршил ашиглах зөвшөөрөл')).toBeTruthy();
-    expect(
-      screen.getByText('Ойролцоох даалгавруудыг харуулах, байршил тодорхойлоход хэрэгтэй'),
-    ).toBeTruthy();
-    expect(screen.getByText('Зөвшөөрөх')).toBeTruthy();
-    expect(screen.getByText('Дараа хийх')).toBeTruthy();
-  });
-
-  it('renders Allow and Skip buttons', () => {
-    render(<PermissionLocationScreen />);
-    expect(screen.getByTestId('permission-allow-button')).toBeTruthy();
-    expect(screen.getByTestId('permission-skip-button')).toBeTruthy();
-  });
-
-  it('Allow button triggers location permission request', async () => {
-    render(<PermissionLocationScreen />);
-    fireEvent.press(screen.getByTestId('permission-allow-button'));
-    expect(mockRequestLocationPermission).toHaveBeenCalledTimes(1);
-  });
-
-  it('shows denied guidance when location permission is rejected', async () => {
-    mockRequestLocationPermission.mockResolvedValue({ status: 'denied' });
-    render(<PermissionLocationScreen />);
-    fireEvent.press(screen.getByTestId('permission-allow-button'));
-    expect(await screen.findByText('Байршлын зөвшөөрөл хаагдсан')).toBeTruthy();
-    expect(screen.getByText('Тохиргооноос байршлыг нээх боломжтой')).toBeTruthy();
-    expect(screen.getByTestId('permission-continue-button')).toBeTruthy();
-    expect(screen.getByText('Үргэлжлүүлэх')).toBeTruthy();
-  });
-
-  it('Skip navigates to notifications permission', () => {
-    render(<PermissionLocationScreen />);
-    fireEvent.press(screen.getByTestId('permission-skip-button'));
-    expect(mockReplace).toHaveBeenCalledWith('/(auth)/permission-notifications');
-  });
-
-  it('has a testID on the screen container', () => {
-    render(<PermissionLocationScreen />);
-    expect(screen.getByTestId('SCR-SHARED-008')).toBeTruthy();
-  });
 });
 
 describe('Permission Notifications Screen (SCR-SHARED-009)', () => {

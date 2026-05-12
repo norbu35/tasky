@@ -18,7 +18,7 @@ import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 import { Button } from '../ui/Button';
 import { ScreenHeader } from '../ui/ScreenHeader';
 
-const { colors } = mobileTheme;
+const { colors, iconSizes } = mobileTheme;
 
 const BAR_HEIGHT = 6;
 
@@ -114,7 +114,7 @@ export function FormWizardTemplate({
           accessibilityRole="button"
           hitSlop={8}
         >
-          <X size={20} color={colors.textSecondary} />
+          <X size={iconSizes.sm} color={colors.textSecondary} />
         </Pressable>
       </View>
 

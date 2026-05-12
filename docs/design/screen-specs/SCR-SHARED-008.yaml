@@ -1,22 +1,21 @@
 # Screen Spec: Permission Primer — Location
 screen_id: SCR-SHARED-008
 name: 'Permission Primer — Location'
-route: '/onboarding/permission-location'
+route: '/permissions/location'
 role: [customer, tasker]
 phase: '0-1'
 traceability:
-  status: validated
+  status: pending_audit
   screen_graph_node: SCR-SHARED-008
   prd_refs:
     - REQ-P1-COVER-01
     - REQ-P1-TASK-08
-  journey_refs:
-    - JRN-SHARED-01:step-6
+  journey_refs: []
   scenario_refs:
     - SCN-TASK-020
 template: modal_sheet
 figma_page: 'Shared/Permission Primer Location'
-feature: 'onboarding'
+feature: 'permissions'
 
 layout:
   template: modal_sheet
@@ -121,10 +120,9 @@ analytics_events:
 acceptance_criteria:
   - 'Bottom sheet displays location icon, explanation heading, and description'
   - 'Allow button triggers the OS native location permission dialog'
-  - 'If granted, screen auto-advances to Permission Primer Notifications (SCR-SHARED-009)'
   - 'If denied, fallback message shows with a hint to open device Settings'
   - 'Skip link allows user to proceed without granting permission'
-  - 'Skipping also advances to Permission Primer Notifications (SCR-SHARED-009)'
-  - 'Sheet has drag handle but is not dismissible by dragging (onboarding context)'
+  - 'Used as inline contextual primer when location is first needed (e.g., task location pin)'
+  - 'Sheet is dismissible by dragging when used inline'
   - 'No API calls are made on this screen'
   - 'Location improves Tasker feed sorting and Customer task pinning, but skipping permission does not block citywide browsing or applying'

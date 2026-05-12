@@ -1,65 +1,78 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
+import { nativeTokens } from '@tasky/design-tokens';
+
 import { elevations } from '@/design/elevations';
 import { mobileSurfaces } from '@/design/surfaces';
 import { mobileTheme } from '@/design/tokenAdapter';
 
 const { colors } = mobileTheme;
 const { permissionPrimer } = mobileSurfaces;
+const colorOpacity = nativeTokens.colorOpacity;
 
-interface IllustrationAreaProps {
-  icon: React.ReactNode;
-}
-
-export function IllustrationArea({ icon }: IllustrationAreaProps) {
-  return (
-    <View
-      className="absolute left-0 right-0 top-0 bottom-[40%] items-center justify-center"
-      pointerEvents="none"
-    >
-      <View
-        className="rounded-full items-center justify-center"
-        style={{
-          width: permissionPrimer.topIllustrationSize,
-          height: permissionPrimer.topIllustrationSize,
-          backgroundColor: colors.card,
-          ...elevations.elevated,
-        }}
-      >
-        {icon}
-      </View>
-    </View>
-  );
-}
-
-interface IconPreviewProps {
+interface PermissionIllustrationProps {
   icon: React.ReactNode;
   badgeLabel: string;
 }
 
-export function IconPreview({ icon, badgeLabel }: IconPreviewProps) {
+export function PermissionIllustration({ icon, badgeLabel }: PermissionIllustrationProps) {
   return (
-    <View className="mt-sm mb-lg items-center">
+    <View className="items-center justify-center mb-xl">
+      {/* Outer decorative ring */}
       <View
-        className="rounded-md items-center justify-center bg-muted"
+        className="rounded-full items-center justify-center"
         style={{
-          width: permissionPrimer.iconPreviewSize,
-          height: permissionPrimer.iconPreviewSize,
+          width: permissionPrimer.outerRingSize,
+          height: permissionPrimer.outerRingSize,
+          backgroundColor: colorOpacity.primary[5],
         }}
       >
-        {icon}
+        {/* Middle decorative ring */}
+        <View
+          className="rounded-full items-center justify-center"
+          style={{
+            width: permissionPrimer.middleRingSize,
+            height: permissionPrimer.middleRingSize,
+            backgroundColor: colorOpacity.primary[15],
+          }}
+        >
+          {/* Inner icon container */}
+          <View
+            className="rounded-full items-center justify-center"
+            style={[
+              {
+                width: permissionPrimer.innerIconSize,
+                height: permissionPrimer.innerIconSize,
+                backgroundColor: colors.card,
+              },
+              elevations.card,
+            ]}
+          >
+            {icon}
+          </View>
+        </View>
       </View>
+
+      {/* Badge */}
       <View
-        className="absolute rounded-md items-center justify-center bg-accent border-background"
+        className="absolute rounded-full items-center justify-center"
         style={[
           elevations.card,
           {
-            top: permissionPrimer.badgeOffset,
-            right: permissionPrimer.badgeOffset,
+            bottom:
+              permissionPrimer.outerRingSize / 2 -
+              permissionPrimer.innerIconSize / 2 +
+              permissionPrimer.badgeOffset,
+            right:
+              permissionPrimer.outerRingSize / 2 -
+              permissionPrimer.innerIconSize / 2 +
+              permissionPrimer.badgeOffset,
             width: permissionPrimer.badgeSize,
             height: permissionPrimer.badgeSize,
+            backgroundColor: colors.accent,
             borderWidth: permissionPrimer.badgeBorder,
+            borderColor: colors.background,
           },
         ]}
       >

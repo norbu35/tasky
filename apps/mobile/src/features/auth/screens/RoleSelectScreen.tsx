@@ -35,7 +35,7 @@ export default function RoleSelectScreen() {
     if (!selectedRole) return;
     setRole(selectedRole);
     setIsConfirming(false);
-    router.replace('/(auth)/permission-camera');
+    router.replace('/(auth)/permission-notifications');
   };
 
   const roleLabel = selectedRole ? roleLabels[selectedRole] : roleLabels.customer;

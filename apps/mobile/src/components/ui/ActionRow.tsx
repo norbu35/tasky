@@ -7,7 +7,7 @@ import { cn } from '@/lib/cn';
 
 import { Touchable } from './Touchable';
 
-const { colors } = mobileTheme;
+const { colors, iconSizes } = mobileTheme;
 
 export interface ActionRowProps {
   /** Left icon — rendered inside a 40×40 tinted circle. */
@@ -70,10 +70,10 @@ export function ActionRow({
       ) : value ? (
         <View className="flex-row items-center">
           <Text className="mr-xs text-body text-text-secondary">{value}</Text>
-          {isInteractive ? <ChevronRight size={16} color={colors.textTertiary} /> : null}
+          {isInteractive ? <ChevronRight size={iconSizes.xs} color={colors.textTertiary} /> : null}
         </View>
       ) : isInteractive ? (
-        <ChevronRight size={16} color={colors.textTertiary} />
+        <ChevronRight size={iconSizes.xs} color={colors.textTertiary} />
       ) : null}
     </Touchable>
   );

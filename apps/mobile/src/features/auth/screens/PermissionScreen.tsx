@@ -15,7 +15,7 @@ import {
 
 const { colors } = mobileTheme;
 
-type PermissionType = 'camera' | 'location' | 'notifications';
+type PermissionType = 'notifications' | 'camera' | 'location';
 
 interface PermissionScreenProps {
   permissionType: PermissionType;
@@ -32,22 +32,6 @@ const CONFIG: Record<
     isLast: boolean;
   }
 > = {
-  camera: {
-    testID: 'camera',
-    screenTestID: 'SCR-SHARED-007',
-    primerTestID: 'permission-camera-primer',
-    nextRoute: '/(auth)/permission-location',
-    allowUnavailable: false,
-    isLast: false,
-  },
-  location: {
-    testID: 'location',
-    screenTestID: 'SCR-SHARED-008',
-    primerTestID: 'permission-location-primer',
-    nextRoute: '/(auth)/permission-notifications',
-    allowUnavailable: true,
-    isLast: false,
-  },
   notifications: {
     testID: 'notifications',
     screenTestID: 'SCR-SHARED-009',
@@ -55,6 +39,22 @@ const CONFIG: Record<
     nextRoute: '/(tabs)',
     allowUnavailable: true,
     isLast: true,
+  },
+  camera: {
+    testID: 'camera',
+    screenTestID: 'SCR-SHARED-007',
+    primerTestID: 'permission-camera-primer',
+    nextRoute: '/(tabs)',
+    allowUnavailable: true,
+    isLast: false,
+  },
+  location: {
+    testID: 'location',
+    screenTestID: 'SCR-SHARED-008',
+    primerTestID: 'permission-location-primer',
+    nextRoute: '/(tabs)',
+    allowUnavailable: true,
+    isLast: false,
   },
 };
 
@@ -67,6 +67,12 @@ const PERMISSION_COPY_KEYS: Record<
     settingsHintKey: string;
   }
 > = {
+  notifications: {
+    titleKey: 'auth.permissions.notifications.title',
+    descriptionKey: 'auth.permissions.notifications.description',
+    deniedKey: 'auth.permissions.notifications.denied',
+    settingsHintKey: 'auth.permissions.notifications.settingsHint',
+  },
   camera: {
     titleKey: 'auth.permissions.camera.title',
     descriptionKey: 'auth.permissions.camera.description',
@@ -79,24 +85,18 @@ const PERMISSION_COPY_KEYS: Record<
     deniedKey: 'auth.permissions.location.denied',
     settingsHintKey: 'auth.permissions.location.settingsHint',
   },
-  notifications: {
-    titleKey: 'auth.permissions.notifications.title',
-    descriptionKey: 'auth.permissions.notifications.description',
-    deniedKey: 'auth.permissions.notifications.denied',
-    settingsHintKey: 'auth.permissions.notifications.settingsHint',
-  },
 };
 
 const REQUEST_FNS: Record<PermissionType, () => Promise<{ status: string }>> = {
+  notifications: requestNotificationPermission,
   camera: requestCameraPermission,
   location: requestLocationPermission,
-  notifications: requestNotificationPermission,
 };
 
 const ICONS: Record<PermissionType, React.ReactNode> = {
+  notifications: <Bell size={24} color={colors.primaryDeep} />,
   camera: <Camera size={24} color={colors.primaryDeep} />,
   location: <MapPin size={24} color={colors.primaryDeep} />,
-  notifications: <Bell size={24} color={colors.primaryDeep} />,
 };
 
 export default function PermissionScreen({ permissionType }: PermissionScreenProps) {

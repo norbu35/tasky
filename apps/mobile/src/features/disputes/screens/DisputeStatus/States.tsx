@@ -12,10 +12,9 @@ const { colors } = mobileTheme;
 export function DecorativeScale() {
   return (
     <View
-      className="rounded-lg overflow-hidden items-center justify-center"
+      className="rounded-lg overflow-hidden items-center justify-center opacity-disabled"
       style={{
         height: DISPUTE_STATUS_SURFACE.timeline.decorativeScaleHeight,
-        opacity: 0.4,
       }}
     >
       <Scale size={24} color={colors.textSecondary} />

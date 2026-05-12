@@ -98,7 +98,11 @@ export function TermsContent() {
   return (
     <InsetScrollView
       className="flex-1"
-      contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 24, paddingBottom: 24 }}
+      contentContainerStyle={{
+        paddingHorizontal: spacing.xl,
+        paddingTop: spacing.xl,
+        paddingBottom: spacing.xl,
+      }}
       showsVerticalScrollIndicator={false}
       extraBottomInset={spacing.lg}
     >
@@ -108,15 +112,12 @@ export function TermsContent() {
           className="mb-lg p-lg"
           style={{ backgroundColor: colors.muted, borderRadius: radius.md }}
         >
-          <Text
-            className="text-subtitle font-sans-semibold mb-sm"
-            style={{ color: colors.primaryDeep }}
-          >
+          <Text className="text-subtitle font-sans-semibold mb-sm text-primary-deep">
             {section.title}
           </Text>
           <Text
-            className="text-body"
-            style={{ color: colors.textSecondary, lineHeight: mobileSurfaces.paragraphLineHeight }}
+            className="text-body text-text-secondary"
+            style={{ lineHeight: mobileSurfaces.paragraphLineHeight }}
           >
             {section.lead}
           </Text>

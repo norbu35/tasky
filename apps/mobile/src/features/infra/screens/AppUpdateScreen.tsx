@@ -34,7 +34,7 @@ export default function AppUpdateScreen() {
         <View className="h-20 w-20 rounded-full bg-muted items-center justify-center mb-lg">
           <Download size={24} color={colors.primary} />
         </View>
-        <Text className="text-title font-bold text-foreground text-center">
+        <Text className="text-title font-sans-bold text-foreground text-center">
           {isForce ? t('infra.appUpdate.forceTitle') : t('infra.appUpdate.softTitle')}
         </Text>
         <Text className="text-body text-text-secondary text-center mt-sm leading-6">

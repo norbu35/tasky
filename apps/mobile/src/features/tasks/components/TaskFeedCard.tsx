@@ -7,7 +7,7 @@ import { Image, Text, View } from 'react-native';
 import { PriceTag } from '@/components/ui/PriceTag';
 import { Touchable } from '@/components/ui/Touchable';
 import { elevations } from '@/design/elevations';
-import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
 import { getTaskVisual } from '@/features/tasks/components/CustomerTasksView';
 import type { TaskFeedItem } from '@/lib/api/types';
 import { formatShortDate } from '@/utils/formatDate';
@@ -36,7 +36,7 @@ function HeroBadge({ label }: { label: string }) {
   return (
     <View
       className="self-start px-md py-xs rounded-full"
-      style={{ backgroundColor: 'rgba(255,255,255,0.95)' }}
+      style={{ backgroundColor: withAlpha(colors.card, 0.95) }}
     >
       <Text className="text-caption font-sans-bold text-primary-deep" numberOfLines={1}>
         {label}
@@ -80,7 +80,7 @@ export function TaskFeedCard({ task, onPress, testID }: TaskFeedCardProps) {
         />
         {/* Subtle gradient overlay to ensure text/badges are readable */}
         <LinearGradient
-          colors={['rgba(0,0,0,0.4)', 'transparent', 'rgba(0,0,0,0.6)']}
+          colors={[withAlpha('#000000', 0.4), 'transparent', withAlpha('#000000', 0.6)]}
           className="absolute inset-0 w-full h-full"
         />
 

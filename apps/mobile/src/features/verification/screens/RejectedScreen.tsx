@@ -4,8 +4,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
+import { ScreenContainer } from '@/components/shells';
 import { Button } from '@/components/ui/Button';
-import { mobileTheme } from '@/design/tokenAdapter';
+import { mobileTheme, withAlpha } from '@/design/tokenAdapter';
 
 const { colors } = mobileTheme;
 
@@ -15,14 +16,14 @@ export default function RejectedScreen() {
   const { reason } = useLocalSearchParams<{ reason?: string }>();
 
   return (
-    <View testID="SCR-TASK-009" className="flex-1 items-center justify-center px-lg">
+    <ScreenContainer testID="SCR-TASK-009">
       <View
         className="w-18 h-18 rounded-full justify-center items-center mb-xl"
-        style={{ backgroundColor: `${colors.danger}1A` }}
+        style={{ backgroundColor: withAlpha(colors.danger, 0.1) }}
       >
         <AlertTriangle size={24} color={colors.danger} />
       </View>
-      <Text className="text-title font-bold text-danger text-center">
+      <Text className="text-title font-sans-bold text-danger text-center">
         {t('tasker.verification.rejectedTitle')}
       </Text>
       <Text className="text-body text-text-secondary text-center mt-sm leading-relaxed">
@@ -61,6 +62,6 @@ export default function RejectedScreen() {
         className="self-stretch mt-md"
         testID="rejected-screen-browse"
       />
-    </View>
+    </ScreenContainer>
   );
 }

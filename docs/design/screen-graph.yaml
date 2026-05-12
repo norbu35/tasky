@@ -38,7 +38,7 @@ nodes:
   SCR-SHARED-006:
     label: Role Selection
     edges:
-      - to: SCR-SHARED-007
+      - to: SCR-SHARED-009
         type: replace
         guard: role selected
     data_deps:
@@ -50,6 +50,7 @@ nodes:
         type: replace
         guard: granted or skipped
     data_deps: []
+    note: 'Used inline at first camera access point (SCR-CUST-004, SCR-TASK-005, SCR-SHARED-013), not in onboarding flow'
   SCR-SHARED-008:
     label: Permission — Location
     edges:
@@ -57,6 +58,7 @@ nodes:
         type: replace
         guard: granted or skipped
     data_deps: []
+    note: 'Used inline at first location access point (SCR-CUST-005), not in onboarding flow'
   SCR-SHARED-009:
     label: Permission — Notifications
     edges:

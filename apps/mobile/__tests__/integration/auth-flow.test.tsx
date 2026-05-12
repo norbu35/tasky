@@ -128,7 +128,7 @@ describe('Auth flow integration', () => {
     expect(screen.getByText('Та итгэлтэй байна уу?')).toBeTruthy();
     fireEvent.press(screen.getByTestId('role-sheet-confirm'));
     expect(useAppStore.getState().currentRole).toBe('customer');
-    expect(mockReplace).toHaveBeenCalledWith('/(auth)/permission-camera');
+    expect(mockReplace).toHaveBeenCalledWith('/(auth)/permission-notifications');
   });
 
   it('role selection works for tasker', () => {

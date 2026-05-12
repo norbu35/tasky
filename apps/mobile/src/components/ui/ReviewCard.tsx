@@ -5,7 +5,7 @@ import { Text, View } from 'react-native';
 import { mobileTheme } from '@/design/tokenAdapter';
 import { cn } from '@/lib/cn';
 
-const { colors } = mobileTheme;
+const { colors, iconSizes } = mobileTheme;
 
 interface ReviewCardProps {
   reviewerInitials: string;
@@ -47,7 +47,7 @@ export function ReviewCard({
           {Array.from({ length: 5 }).map((_, i) => (
             <Star
               key={i}
-              size={16}
+              size={iconSizes.xs}
               color={i < rating ? colors.accent : colors.chipInactive}
               fill={i < rating ? colors.accent : 'none'}
             />

@@ -13,7 +13,7 @@ export interface SearchBarProps extends TextInputProps {
   containerClassName?: string;
 }
 
-const { colors, spacing } = mobileTheme;
+const { colors, iconSizes, spacing } = mobileTheme;
 
 export function SearchBar({
   elevated = false,
@@ -30,7 +30,11 @@ export function SearchBar({
       )}
       style={elevated ? elevations.card : undefined}
     >
-      <Search size={20} color={colors.textTertiary} style={{ marginRight: spacing.sm }} />
+      <Search
+        size={iconSizes.semantic.inputIcon}
+        color={colors.textTertiary}
+        style={{ marginRight: spacing.sm }}
+      />
       <TextInput
         className={cn('flex-1 text-body text-foreground font-sans p-0 m-0', className)}
         placeholderTextColor={colors.textTertiary}
