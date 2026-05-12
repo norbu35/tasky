@@ -45,13 +45,13 @@ class StompRateLimitInterceptorTest {
     }
 
     @Test
-    void preSend_noUser_passesThrough() {
+    void preSend_noUser_rejectsUnauthenticated() {
         Message<?> msg = stompSend(null);
         MessageChannel channel = mock(MessageChannel.class);
 
-        Message<?> result = interceptor.preSend(msg, channel);
-
-        assertThat(result).isSameAs(msg);
+        assertThatThrownBy(() -> interceptor.preSend(msg, channel))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Authentication required for messaging");
     }
 
     @Test

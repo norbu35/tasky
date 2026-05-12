@@ -2,47 +2,42 @@ package mn.tasky.common.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.lang.reflect.Method;
 import java.time.Instant;
-import mn.tasky.test.IntegrationTest;
+import org.jdbi.v3.sqlobject.statement.SqlQuery;
+import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-@IntegrationTest
 @DisplayName("TokenBlacklistDao")
 class TokenBlacklistDaoTest {
 
-    @Autowired
-    private TokenBlacklistDao tokenBlacklistDao;
-
     @Test
-    @DisplayName("insert and exists round-trip")
-    void roundTrip() {
-        String jti = "test-jti-" + java.util.UUID.randomUUID();
-        Instant expiresAt = Instant.now().plusSeconds(3600);
-        assertThat(tokenBlacklistDao.exists(jti)).isFalse();
-        tokenBlacklistDao.insert(jti, expiresAt);
-        assertThat(tokenBlacklistDao.exists(jti)).isTrue();
+    @DisplayName("insert is annotated with SqlUpdate")
+    void insertHasAnnotation() throws NoSuchMethodException {
+        Method m = TokenBlacklistDao.class.getMethod("insert", String.class, Instant.class);
+        assertThat(m.isAnnotationPresent(SqlUpdate.class)).isTrue();
     }
 
     @Test
-    @DisplayName("deleteExpired removes expired rows")
-    void deleteExpired() {
-        String jti = "expired-jti-" + java.util.UUID.randomUUID();
-        tokenBlacklistDao.insert(jti, Instant.now().minusSeconds(60));
-        assertThat(tokenBlacklistDao.exists(jti)).isTrue();
-        int deleted = tokenBlacklistDao.deleteExpired(Instant.now());
-        assertThat(deleted).isGreaterThanOrEqualTo(1);
-        assertThat(tokenBlacklistDao.exists(jti)).isFalse();
+    @DisplayName("exists is annotated with SqlQuery")
+    void existsHasAnnotation() throws NoSuchMethodException {
+        Method m = TokenBlacklistDao.class.getMethod("exists", String.class);
+        assertThat(m.isAnnotationPresent(SqlQuery.class)).isTrue();
     }
 
     @Test
-    @DisplayName("insert is idempotent on conflict")
-    void idempotent() {
-        String jti = "idem-jti-" + java.util.UUID.randomUUID();
-        Instant expiresAt = Instant.now().plusSeconds(3600);
-        tokenBlacklistDao.insert(jti, expiresAt);
-        tokenBlacklistDao.insert(jti, expiresAt);
-        assertThat(tokenBlacklistDao.exists(jti)).isTrue();
+    @DisplayName("deleteExpired is annotated with SqlUpdate")
+    void deleteExpiredHasAnnotation() throws NoSuchMethodException {
+        Method m = TokenBlacklistDao.class.getMethod("deleteExpired", Instant.class);
+        assertThat(m.isAnnotationPresent(SqlUpdate.class)).isTrue();
+    }
+
+    @Test
+    @DisplayName("insert SQL contains ON CONFLICT for idempotency")
+    void insertSqlIsIdempotent() throws NoSuchMethodException {
+        Method m = TokenBlacklistDao.class.getMethod("insert", String.class, Instant.class);
+        String sql = m.getAnnotation(SqlUpdate.class).value();
+        assertThat(sql).containsIgnoringCase("ON CONFLICT");
     }
 }

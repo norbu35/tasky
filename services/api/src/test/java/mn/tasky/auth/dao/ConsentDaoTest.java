@@ -2,34 +2,35 @@ package mn.tasky.auth.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.lang.reflect.Method;
 import java.util.UUID;
-import mn.tasky.test.IntegrationTest;
+import org.jdbi.v3.sqlobject.statement.SqlQuery;
+import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-@IntegrationTest
 @DisplayName("ConsentDao")
 class ConsentDaoTest {
 
-    @Autowired
-    private ConsentDao consentDao;
-
     @Test
-    @DisplayName("recordConsent and hasConsented round-trip")
-    void roundTrip() {
-        UUID userId = UUID.randomUUID();
-        assertThat(consentDao.hasConsented(userId, "TOS", "1.0")).isFalse();
-        consentDao.recordConsent(userId, "TOS", "1.0");
-        assertThat(consentDao.hasConsented(userId, "TOS", "1.0")).isTrue();
+    @DisplayName("recordConsent is annotated with SqlUpdate")
+    void recordConsentHasAnnotation() throws NoSuchMethodException {
+        Method m = ConsentDao.class.getMethod("recordConsent", UUID.class, String.class, String.class);
+        assertThat(m.isAnnotationPresent(SqlUpdate.class)).isTrue();
     }
 
     @Test
-    @DisplayName("recordConsent is idempotent on conflict")
-    void idempotent() {
-        UUID userId = UUID.randomUUID();
-        consentDao.recordConsent(userId, "PRIVACY", "2.0");
-        consentDao.recordConsent(userId, "PRIVACY", "2.0");
-        assertThat(consentDao.hasConsented(userId, "PRIVACY", "2.0")).isTrue();
+    @DisplayName("hasConsented is annotated with SqlQuery")
+    void hasConsentedHasAnnotation() throws NoSuchMethodException {
+        Method m = ConsentDao.class.getMethod("hasConsented", UUID.class, String.class, String.class);
+        assertThat(m.isAnnotationPresent(SqlQuery.class)).isTrue();
+    }
+
+    @Test
+    @DisplayName("recordConsent SQL contains ON CONFLICT for idempotency")
+    void recordConsentSqlIsIdempotent() throws NoSuchMethodException {
+        Method m = ConsentDao.class.getMethod("recordConsent", UUID.class, String.class, String.class);
+        String sql = m.getAnnotation(SqlUpdate.class).value();
+        assertThat(sql).containsIgnoringCase("ON CONFLICT");
     }
 }

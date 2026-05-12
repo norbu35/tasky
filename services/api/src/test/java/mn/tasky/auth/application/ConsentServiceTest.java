@@ -3,8 +3,8 @@ package mn.tasky.auth.application;
 import static org.mockito.Mockito.verify;
 
 import java.util.UUID;
-import mn.tasky.auth.dao.AuditEventDao;
 import mn.tasky.auth.dao.ConsentDao;
+import mn.tasky.common.audit.AuditEventDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

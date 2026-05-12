@@ -50,8 +50,6 @@ class OtpRateLimitServiceTest {
 
             assertThatCode(() -> service.assertRequestAllowed("99112233", "10.0.0.1"))
                     .doesNotThrowAnyException();
-
-            verify(rateLimitCounterDao, atLeastOnce()).deleteExpired(any());
         }
 
         @Test

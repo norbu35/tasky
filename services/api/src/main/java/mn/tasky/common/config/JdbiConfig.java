@@ -3,6 +3,7 @@ package mn.tasky.common.config;
 import javax.sql.DataSource;
 import mn.tasky.analytics.dao.AnalyticsEventDao;
 import mn.tasky.auth.dao.BadgeDao;
+import mn.tasky.auth.dao.ConsentDao;
 import mn.tasky.auth.dao.ModerationPolicyDao;
 import mn.tasky.auth.dao.OtpChallengeDao;
 import mn.tasky.auth.dao.ProfileDao;
@@ -134,6 +135,11 @@ public class JdbiConfig {
     @Bean
     public ReliabilityScoreDao reliabilityScoreDao(Jdbi jdbi) {
         return jdbi.onDemand(ReliabilityScoreDao.class);
+    }
+
+    @Bean
+    public ConsentDao consentDao(Jdbi jdbi) {
+        return jdbi.onDemand(ConsentDao.class);
     }
 
     @Bean
