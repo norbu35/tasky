@@ -87,7 +87,7 @@
     "locationRequired": "Байршил оруулах шаардлагатай",
     "createTaskButton": "Ажил үүсгэх",
     "myCreatedTasksTitle": "Миний үүсгэсэн ажлууд",
-    "myCreatedTasksDesc": "Ажил горилогчдын хүсэлтийг эндээс шалгана.",
+    "myCreatedTasksDesc": "Өргөдөл гаргагчдын хүсэлтийг эндээс шалгана.",
     "noTasksCreated": "Одоогоор ажил үүсгээгүй байна.",
     "taskId": "Ажлын ID: ",
     "status": "Төлөв: ",
@@ -472,9 +472,9 @@
   },
   "customerPages": {
     "applicants": {
-      "title": "Ажил горилогчид",
+      "title": "Өргөдөл гаргагчид",
       "description": "Ажил хийх хүсэлтэй хүмүүстэй танилцан, холбогдох.",
-      "loading": "Горилогчдыг ачааллаж байна...",
+      "loading": "Өргөдөл гаргагчдыг ачааллаж байна...",
       "noApplicants": "Өргөдөл гаргагч алга",
       "noApplicantsDesc": "Хүн хүсэлт илгээхийг хүлээх, эсвэл ажлаа засварлаж илүү олон хүнд таалагдуулаарай.",
       "backToTask": "Ажил руу буцах",
@@ -625,7 +625,7 @@
     },
     "taskSuccess": {
       "title": "Ажил амжилттай нийтлэгдлээ",
-      "description": "Таны даалгавар нийтлэгдэж, ажилтнуудад харагдахуйц боллоо.",
+      "description": "Таны ажил нийтлэгдэж, гүйцэтгэгчдэд харагдахуйц боллоо.",
       "stepLabel": "Үйлчлүүлэгч нийтэлж дууслаа",
       "backToTasks": "Ажлууд руу буцах",
       "postAnother": "Өөр ажил нэмэх",
@@ -1119,7 +1119,7 @@
       "assignmentForm": "Даалгаврын маягт",
       "assignmentSuccess": "Даалгавар амжилттай",
       "bookingId": "Захиалгын ID",
-      "findTasker": "Даалгавар хай",
+      "findTasker": "Гүйцэтгэгч хайх",
       "loadError": "Ачаалах алдаа",
       "phonePlaceholder": "Утасны орлуулагч",
       "reasonPlaceholder": "Шалтгаан орлуулагч",
@@ -1148,7 +1148,7 @@
       "schedule": "Хуваарь",
       "status": "Статус",
       "taskDescription": "Ажлын тодорхойлолт",
-      "tasker": "Даалгагч",
+      "tasker": "Гүйцэтгэгч",
       "title": "Гарчиг"
     },
     "disputes": {
@@ -1180,13 +1180,13 @@
       "toggleEnabledToast": "{{feature}} идэвхжлээ",
       "toggleDisabledToast": "{{feature}} идэвхгүй боллоо",
       "featureLabels": {
-        "lead_fee_enabled": "Lead fee удирдлага (хойшлуулсан)",
+        "lead_fee_enabled": "Сэжмийн хураамжийн удирдлага (хойшлуулсан)",
         "subscription_enabled": "Subscription удирдлага (хойшлуулсан)",
         "escrow_enabled": "Escrow удирдлага (хойшлуулсан)",
         "ai_scope_summary_enabled": "AI scope summary (хойшлуулсан)"
       },
       "featureDescriptions": {
-        "lead_fee_enabled": "Хойшлуулсан орлогын удирдлага. PRD, гэрээ, launch UX, мониторинг, rollback нотолгоо бүгд батлаагүй бол идэвхгүй хэвээр байна.",
+        "lead_fee_enabled": "Хойшлуулсан сэжмийн хураамжийн удирдлага. PRD, гэрээ, launch UX, мониторинг, rollback нотолгоо бүгд батлаагүй бол идэвхгүй хэвээр байна.",
         "subscription_enabled": "Хойшлуулсан tasker subscription удирдлага. PRD, гэрээ, launch UX, мониторинг, rollback нотолгоо бүгд батлаагүй бол идэвхгүй хэвээр байна.",
         "escrow_enabled": "Хойшлуулсан төлбөрийн итгэлцлийн удирдлага. Энэ нь Phase 1 payment-protection амлалт биш бөгөөд дараагийн үеийн идэвхжүүлэлт батлагдаагүй бол идэвхгүй хэвээр байна.",
         "ai_scope_summary_enabled": "Хойшлуулсан summary-polish удирдлага. PRD болон rollout удирдлага батлаагүй бол task нийтлэх үндсэн урсгалаас гадуур байна."
@@ -1228,15 +1228,15 @@
       "colTo": "Хүчинтэй дуусах",
       "create": "Үнэ үүсгэх",
       "created": "Үнэ дүрэм үүслээ",
-      "createDesc": "Ангилал болон дүүрэгт лид нээх кредитийн шаардлага тогтооно.",
+      "createDesc": "Ангилал болон дүүрэгт сэжим нээх кредитийн шаардлага тогтооно.",
       "createTitle": "Үнэ дүрэм үүсгэх",
       "creditsPlaceholder": "Кредит (доод тал нь 1)",
       "districtPlaceholder": "Дүүргийн slug",
       "empty": "Одоогоор үнэ тохироогүй байна.",
       "fromPlaceholder": "Эхлэх огноо",
-      "loadError": "Лидийн үнийг ачаалж чадсангүй",
-      "phaseGated": "Лидийн үнэ одоогийн шатанд идэвхгүй байна.",
-      "title": "Лидийн үнэ",
+      "loadError": "Сэжмийн үнийг ачаалж чадсангүй",
+      "phaseGated": "Сэжмийн үнэ одоогийн шатанд идэвхгүй байна.",
+      "title": "Сэжмийн үнэ",
       "toPlaceholder": "Дуусах огноо (сонголттой)"
     },
     "users": {

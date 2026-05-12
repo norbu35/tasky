@@ -94,7 +94,7 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
   it('renders the Figma splash tagline', () => {
     useAuthStore.setState({ session: null });
     render(<SplashScreen />);
-    expect(screen.getByText('Итгэмжлэгдсэн ажилчид, хялбар захиалга')).toBeTruthy();
+    expect(screen.getByText('Итгэмжлэгдсэн гүйцэтгэгчид, хялбар захиалга')).toBeTruthy();
   });
 
   it('shows a loading indicator during bootstrap', () => {
