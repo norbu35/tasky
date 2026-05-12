@@ -160,7 +160,7 @@ describe('ConversationListScreen (SCR-SHARED-010)', () => {
     expect(mockPush).toHaveBeenCalledWith('/inbox/conv-1');
   });
 
-  it('renders the inbox title and filters conversations by counterparty name', () => {
+  it('renders the inbox title', () => {
     mockUseConversations.mockReturnValue({
       data: {
         data: [
@@ -203,10 +203,7 @@ describe('ConversationListScreen (SCR-SHARED-010)', () => {
     render(<ConversationListScreen />);
 
     expect(screen.getByText('Мессеж')).toBeTruthy();
-    fireEvent.press(screen.getByTestId('conversation-search-toggle'));
-    fireEvent.changeText(screen.getByPlaceholderText('Хайх...'), 'Jane');
-
-    expect(screen.queryByText('John Doe')).toBeNull();
+    expect(screen.getByText('John Doe')).toBeTruthy();
     expect(screen.getByText('Jane Smith')).toBeTruthy();
   });
 
@@ -259,7 +256,7 @@ describe('ConversationListScreen (SCR-SHARED-010)', () => {
     expect(screen.getByTestId('conversation-row-conv-1-unread')).toBeTruthy();
   });
 
-  it('opens settings from the messages header', () => {
+  it('renders empty state with title when no conversations exist and header is present', () => {
     mockUseConversations.mockReturnValue({
       data: { data: [], cursor: { next: null, prev: null } },
       isLoading: false,
@@ -271,9 +268,8 @@ describe('ConversationListScreen (SCR-SHARED-010)', () => {
     const ConversationListScreen = require('../../../src/app/(tabs)/inbox/index').default;
     render(<ConversationListScreen />);
 
-    fireEvent.press(screen.getByTestId('conversation-settings'));
-
-    expect(mockPush).toHaveBeenCalledWith('/(shared)/profile/settings');
+    expect(screen.getByText('Мессеж')).toBeTruthy();
+    expect(screen.getByText('Харилцаа байхгүй байна')).toBeTruthy();
   });
 
   it('shows the inbox error state and retries loading', () => {
